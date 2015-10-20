@@ -18,6 +18,7 @@ import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
@@ -244,7 +245,10 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testDoCrossingExportSuccess() throws Exception {
 		Workbook wb = Mockito.mock(Workbook.class);
-		Mockito.when(wb.getStudyId()).thenReturn(CrossingSettingsControllerTest.DUMMY_STUDY_ID);
+		StudyDetails studyDetails = Mockito.mock(StudyDetails.class);
+
+		Mockito.when(wb.getStudyDetails()).thenReturn(studyDetails);
+		Mockito.when(studyDetails.getId()).thenReturn(CrossingSettingsControllerTest.DUMMY_STUDY_ID);
 		Mockito.when(wb.getStudyName()).thenReturn("dummy study name");
 		Mockito.when(this.studySelection.getWorkbook()).thenReturn(wb);
 
@@ -262,7 +266,10 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testDoCrossingExportFail() throws Exception {
 		Workbook wb = Mockito.mock(Workbook.class);
-		Mockito.when(wb.getStudyId()).thenReturn(CrossingSettingsControllerTest.DUMMY_STUDY_ID);
+		StudyDetails studyDetails = Mockito.mock(StudyDetails.class);
+
+		Mockito.when(wb.getStudyDetails()).thenReturn(studyDetails);
+		Mockito.when(studyDetails.getId()).thenReturn(CrossingSettingsControllerTest.DUMMY_STUDY_ID);
 		Mockito.when(wb.getStudyName()).thenReturn("dummy study name");
 		Mockito.when(this.studySelection.getWorkbook()).thenReturn(wb);
 

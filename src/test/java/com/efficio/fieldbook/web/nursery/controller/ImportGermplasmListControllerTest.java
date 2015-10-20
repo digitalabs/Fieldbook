@@ -24,7 +24,6 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -393,10 +392,10 @@ public class ImportGermplasmListControllerTest extends AbstractBaseIntegrationTe
 
 		List<GermplasmListData> list = this.createGermplasmListData();
 		List<Enumeration> checkList = this.createCheckList();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID, 0, list.size());
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn(Long.valueOf(list.size())).when(this.germplasmListManager).countGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
-		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
+		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckTypeList();
 
 		this.importGermplasmListController.displayGermplasmDetails(this.LIST_ID, "N", form, this.model);
 
@@ -431,10 +430,10 @@ public class ImportGermplasmListControllerTest extends AbstractBaseIntegrationTe
 
 		List<GermplasmListData> list = this.createGermplasmListData();
 		List<Enumeration> checkList = this.createCheckList();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID, 0, list.size());
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn(Long.valueOf(list.size())).when(this.germplasmListManager).countGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
-		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
+		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckTypeList();
 
 		this.importGermplasmListController.displayGermplasmDetails(this.LIST_ID, "T", form, this.model);
 
@@ -469,10 +468,10 @@ public class ImportGermplasmListControllerTest extends AbstractBaseIntegrationTe
 
 		List<GermplasmListData> list = this.createGermplasmListData();
 		List<Enumeration> checkList = this.createCheckList();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID, 0, list.size());
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn(Long.valueOf(list.size())).when(this.germplasmListManager).countGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
-		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
+		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckTypeList();
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
 		.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.NURSERY);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
@@ -514,10 +513,10 @@ public class ImportGermplasmListControllerTest extends AbstractBaseIntegrationTe
 
 		List<GermplasmListData> list = this.createGermplasmListData();
 		List<Enumeration> checkList = this.createCheckList();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID, 0, list.size());
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn(Long.valueOf(list.size())).when(this.germplasmListManager).countGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
-		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
+		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckTypeList();
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
 		.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.TRIAL);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
@@ -561,10 +560,10 @@ public class ImportGermplasmListControllerTest extends AbstractBaseIntegrationTe
 
 		List<GermplasmListData> list = this.createGermplasmListData();
 		List<Enumeration> checkList = this.createCheckList();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID, 0, list.size());
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn(Long.valueOf(list.size())).when(this.germplasmListManager).countGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
-		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
+		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckTypeList();
 
 		this.importGermplasmListController.displayCheckGermplasmDetails(this.LIST_ID, form, this.model);
 
@@ -582,10 +581,10 @@ public class ImportGermplasmListControllerTest extends AbstractBaseIntegrationTe
 
 		List<GermplasmListData> list = this.createGermplasmListData();
 		List<Enumeration> checkList = this.createCheckList();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID, 0, list.size());
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn(Long.valueOf(list.size())).when(this.germplasmListManager).countGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
-		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
+		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckTypeList();
 
 		Mockito.doReturn(this.workbook).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();

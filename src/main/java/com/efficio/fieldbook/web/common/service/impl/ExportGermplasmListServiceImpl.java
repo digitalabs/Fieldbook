@@ -10,9 +10,6 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -22,8 +19,10 @@ import org.generationcp.commons.pojo.GermplasmListExportInputValues;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.vaadin.spring.SimpleResourceBundleMessageSource;
+import org.generationcp.middleware.dao.GermplasmListDAO;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Variable;
@@ -41,6 +40,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.support.ResourceBundleMessageSource;
+
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
+import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 
 @Configurable
 public class ExportGermplasmListServiceImpl implements ExportGermplasmListService {
@@ -76,53 +80,72 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	}
 
 	@Override
-	public void exportGermplasmListXLS(String fileNamePath, int listId, Map<String, Boolean> visibleColumns, Boolean isNursery)
-			throws GermplasmListExporterException {
-
-		GermplasmListExportInputValues input = new GermplasmListExportInputValues();
-		input.setFileName(fileNamePath);
+	public void exportGermplasmListXLS(final String fileNamePath, final int listId, final Map<String, Boolean> visibleColumns,
+			final Boolean isNursery) throws GermplasmListExporterException {
 
 		try {
-
-			GermplasmList germplasmList;
-			List<? extends GermplasmExportSource> germplasmlistData = new ArrayList<>();
-
-			germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
-
-			germplasmlistData = this.germplasmListManager.retrieveSnapshotListData(listId);
-
-			List<ValueReference> possibleValues = this.getPossibleValues(this.userSelection.getPlotsLevelList(), TermId.ENTRY_TYPE.getId());
-			this.processEntryTypeCode(germplasmlistData, possibleValues);
-
-			input.setGermplasmList(germplasmList);
-
-			input.setListData(germplasmlistData);
-
-			input.setOwnerName(this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
-
-			Integer currentLocalIbdbUserId = this.contextUtil.getCurrentUserLocalId();
-			input.setCurrentLocalIbdbUserId(currentLocalIbdbUserId);
-
-			input.setExporterName(this.fieldbookMiddlewareService.getOwnerListName(currentLocalIbdbUserId));
-
-			input.setVisibleColumnMap(visibleColumns);
-
-			input.setColumnTermMap(this.generateColumnStandardVariableMap(visibleColumns, isNursery));
+			final GermplasmListExportInputValues input = this.setUpInput(fileNamePath, listId, visibleColumns, isNursery);
 
 			this.germplasmExportService.generateGermplasmListExcelFile(input);
 
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			throw new GermplasmListExporterException("Error with exporting germplasm list to XLS.", e);
 		}
 
 	}
 
-	private Map<Integer, Term> generateColumnStandardVariableMap(Map<String, Boolean> visibleColumnMap, Boolean isNursery) {
+	GermplasmListExportInputValues setUpInput(final String fileNamePath, final int listId, final Map<String, Boolean> visibleColumns,
+			final Boolean isNursery) {
+		final GermplasmListExportInputValues input = new GermplasmListExportInputValues();
+		input.setFileName(fileNamePath);
+		GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 
-		Map<Integer, Term> standardVariableMap = new HashMap<>();
+		final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
+		GermplasmListType germplasmListType = GermplasmListType.NURSERY;
+		if (!isNursery) {
+			germplasmListType = GermplasmListType.TRIAL;
+		}
+
+		// retrieval of germplasm list data from snapshot list
+		final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, germplasmListType);
+		List<? extends GermplasmExportSource> germplasmlistData = new ArrayList<>();
+		if (germplasmLists != null && !germplasmLists.isEmpty()) {
+			germplasmList = germplasmLists.get(0);
+
+			if (germplasmList != null && germplasmList.getListRef() != null) {
+				// set the ImportedGermplasmListMainInfo to the List reference of the list, so that it still points to the original list
+				this.userSelection.getImportedGermplasmMainInfo().setListId(germplasmList.getListRef());
+			}
+			germplasmlistData = this.germplasmListManager.retrieveSnapshotListData(germplasmList.getId());
+		}
+
+		this.setExportListTypeFromOriginalGermplasm(germplasmList);
+
+		final List<ValueReference> possibleValues =
+				this.getPossibleValues(this.userSelection.getPlotsLevelList(), TermId.ENTRY_TYPE.getId());
+		this.processEntryTypeCode(germplasmlistData, possibleValues);
+
+		input.setGermplasmList(germplasmList);
+
+		input.setListData(germplasmlistData);
+
+		input.setOwnerName(this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
+
+		final Integer currentLocalIbdbUserId = this.contextUtil.getCurrentUserLocalId();
+		input.setCurrentLocalIbdbUserId(currentLocalIbdbUserId);
+		input.setExporterName(this.fieldbookMiddlewareService.getOwnerListName(currentLocalIbdbUserId));
+		input.setVisibleColumnMap(visibleColumns);
+
+		input.setColumnTermMap(this.generateColumnStandardVariableMap(visibleColumns, isNursery));
+		return input;
+	}
+
+	private Map<Integer, Term> generateColumnStandardVariableMap(final Map<String, Boolean> visibleColumnMap, final Boolean isNursery) {
+
+		final Map<Integer, Term> standardVariableMap = new HashMap<>();
 		if (isNursery) {
 
-			VariableFilter filter = new VariableFilter();
+			final VariableFilter filter = new VariableFilter();
 			filter.addVariableId(TermId.ENTRY_NO.getId());
 			filter.addVariableId(TermId.DESIG.getId());
 			filter.addVariableId(TermId.GID.getId());
@@ -131,19 +154,19 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 			filter.addVariableId(TermId.ENTRY_CODE.getId());
 			filter.setProgramUuid(this.contextUtil.getCurrentProgramUUID());
 
-			List<Variable> variableList = this.ontologyVariableDataManager.getWithFilter(filter);
+			final List<Variable> variableList = this.ontologyVariableDataManager.getWithFilter(filter);
 
-			for (Variable variable : variableList) {
+			for (final Variable variable : variableList) {
 				standardVariableMap.put(variable.getId(), variable);
 			}
 
 		} else {
 			if (this.userSelection.getPlotsLevelList() != null) {
-				for (SettingDetail settingDetail : this.userSelection.getPlotsLevelList()) {
-					Boolean isVisible = visibleColumnMap.get(settingDetail.getVariable().getCvTermId().toString());
+				for (final SettingDetail settingDetail : this.userSelection.getPlotsLevelList()) {
+					final Boolean isVisible = visibleColumnMap.get(settingDetail.getVariable().getCvTermId().toString());
 					if (!settingDetail.isHidden() && isVisible != null && isVisible) {
-						Integer variableId = settingDetail.getVariable().getCvTermId();
-						Variable variable =
+						final Integer variableId = settingDetail.getVariable().getCvTermId();
+						final Variable variable =
 								this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, false, false);
 						standardVariableMap.put(variableId, variable);
 					}
@@ -154,9 +177,9 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		return standardVariableMap;
 	}
 
-	protected List<ValueReference> getPossibleValues(List<SettingDetail> settingDetails, int termId) {
+	protected List<ValueReference> getPossibleValues(final List<SettingDetail> settingDetails, final int termId) {
 
-		for (SettingDetail settingDetail : settingDetails) {
+		for (final SettingDetail settingDetail : settingDetails) {
 			if (Objects.equals(settingDetail.getVariable().getCvTermId(), termId)) {
 				return settingDetail.getPossibleValues();
 			}
@@ -166,11 +189,11 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 	}
 
-	protected void processEntryTypeCode(List<? extends GermplasmExportSource> listData, List<ValueReference> possibleValues) {
+	protected void processEntryTypeCode(final List<? extends GermplasmExportSource> listData, final List<ValueReference> possibleValues) {
 
-		for (GermplasmExportSource data : listData) {
+		for (final GermplasmExportSource data : listData) {
 			if (possibleValues != null && !possibleValues.isEmpty()) {
-				for (ValueReference possibleValue : possibleValues) {
+				for (final ValueReference possibleValue : possibleValues) {
 					if (possibleValue.getId().equals(Integer.valueOf(data.getCheckType().toString()))) {
 						((ListDataProject) data).setCheckTypeDescription(possibleValue.getName());
 					}
@@ -182,65 +205,65 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	}
 
 	@Override
-	public void exportGermplasmListCSV(String fileNamePath, Map<String, Boolean> visibleColumns, Boolean isNursery)
+	public void exportGermplasmListCSV(final String fileNamePath, final Map<String, Boolean> visibleColumns, final Boolean isNursery)
 			throws GermplasmListExporterException {
 
-		List<Map<Integer, ExportColumnValue>> exportColumnValues = this.getExportColumnValuesFromTable(visibleColumns, isNursery);
-		List<ExportColumnHeader> exportColumnHeaders = this.getExportColumnHeadersFromTable(visibleColumns, isNursery);
+		final List<Map<Integer, ExportColumnValue>> exportColumnValues = this.getExportColumnValuesFromTable(visibleColumns, isNursery);
+		final List<ExportColumnHeader> exportColumnHeaders = this.getExportColumnHeadersFromTable(visibleColumns, isNursery);
 
 		try {
 
 			this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileNamePath);
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new GermplasmListExporterException("Error with exporting list to CSV File.", e);
 		}
 
 	}
 
-	protected List<ExportColumnHeader> getExportColumnHeadersFromTable(Map<String, Boolean> visibleColumns, Boolean isNursery) {
+	protected List<ExportColumnHeader> getExportColumnHeadersFromTable(final Map<String, Boolean> visibleColumns, final Boolean isNursery) {
 
-		List<ExportColumnHeader> exportColumnHeaders = new ArrayList<>();
+		final List<ExportColumnHeader> exportColumnHeaders = new ArrayList<>();
 
-		List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
+		final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 
 		if (isNursery) {
 
 			try {
-				StandardVariable gid =
+				final StandardVariable gid =
 						this.ontologyService.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.GID.getId(), gid.getName(), true));
 
-				StandardVariable cross =
+				final StandardVariable cross =
 						this.ontologyService.getStandardVariable(TermId.CROSS.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.CROSS.getId(), cross.getName(), true));
 
-				StandardVariable entryNo =
+				final StandardVariable entryNo =
 						this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_NO.getId(), entryNo.getName(), true));
 
-				StandardVariable desig =
+				final StandardVariable desig =
 						this.ontologyService.getStandardVariable(TermId.DESIG.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.DESIG.getId(), desig.getName(), true));
 
-				StandardVariable seedSource =
+				final StandardVariable seedSource =
 						this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.SEED_SOURCE.getId(), seedSource.getName(), true));
 
-				StandardVariable entryCode =
+				final StandardVariable entryCode =
 						this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_CODE.getId(), entryCode.getName(), true));
-			} catch (MiddlewareException e) {
+			} catch (final MiddlewareException e) {
 				ExportGermplasmListServiceImpl.LOG.error(e.getMessage(), e);
 			}
 
 		} else {
 
-			for (SettingDetail settingDetail : factorsList) {
-				Boolean isExist = visibleColumns.get(settingDetail.getVariable().getCvTermId().toString());
+			for (final SettingDetail settingDetail : factorsList) {
+				final Boolean isExist = visibleColumns.get(settingDetail.getVariable().getCvTermId().toString());
 				if (!settingDetail.isHidden() && isExist != null && isExist == Boolean.TRUE) {
-					exportColumnHeaders.add(new ExportColumnHeader(settingDetail.getVariable().getCvTermId(), settingDetail.getVariable()
-							.getName(), true));
+					exportColumnHeaders.add(
+							new ExportColumnHeader(settingDetail.getVariable().getCvTermId(), settingDetail.getVariable().getName(), true));
 				}
 			}
 
@@ -249,46 +272,42 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		return exportColumnHeaders;
 	}
 
-	protected List<Map<Integer, ExportColumnValue>> getExportColumnValuesFromTable(Map<String, Boolean> visibleColumns, Boolean isNursery) {
+	protected List<Map<Integer, ExportColumnValue>> getExportColumnValuesFromTable(final Map<String, Boolean> visibleColumns,
+			final Boolean isNursery) {
 
-		List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
+		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
 
-		List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
-		List<ImportedGermplasm> listData = this.getImportedGermplasm();
+		final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
+		final List<ImportedGermplasm> listData = this.getImportedGermplasm();
 
-		for (ImportedGermplasm data : listData) {
-
-			Map<Integer, ExportColumnValue> row = new HashMap<>();
+		for (final ImportedGermplasm data : listData) {
+			final Map<Integer, ExportColumnValue> row = new HashMap<>();
 
 			if (isNursery) {
 
 				row.put(TermId.GID.getId(),
 						new ExportColumnValue(TermId.GID.getId(), this.getGermplasmInfo(String.valueOf(TermId.GID.getId()), data, null)));
 
-				row.put(TermId.CROSS.getId(),
-						new ExportColumnValue(TermId.CROSS.getId(), this.getGermplasmInfo(String.valueOf(TermId.CROSS.getId()), data, null)));
+				row.put(TermId.CROSS.getId(), new ExportColumnValue(TermId.CROSS.getId(),
+						this.getGermplasmInfo(String.valueOf(TermId.CROSS.getId()), data, null)));
 
-				row.put(TermId.ENTRY_NO.getId(),
-						new ExportColumnValue(TermId.ENTRY_NO.getId(), this.getGermplasmInfo(String.valueOf(TermId.ENTRY_NO.getId()), data,
-								null)));
+				row.put(TermId.ENTRY_NO.getId(), new ExportColumnValue(TermId.ENTRY_NO.getId(),
+						this.getGermplasmInfo(String.valueOf(TermId.ENTRY_NO.getId()), data, null)));
 
-				row.put(TermId.DESIG.getId(),
-						new ExportColumnValue(TermId.DESIG.getId(), this.getGermplasmInfo(String.valueOf(TermId.DESIG.getId()), data, null)));
+				row.put(TermId.DESIG.getId(), new ExportColumnValue(TermId.DESIG.getId(),
+						this.getGermplasmInfo(String.valueOf(TermId.DESIG.getId()), data, null)));
 
-				row.put(TermId.SEED_SOURCE.getId(),
-						new ExportColumnValue(TermId.SEED_SOURCE.getId(), this.getGermplasmInfo(String.valueOf(TermId.SEED_SOURCE.getId()),
-								data, null)));
+				row.put(TermId.SEED_SOURCE.getId(), new ExportColumnValue(TermId.SEED_SOURCE.getId(),
+						this.getGermplasmInfo(String.valueOf(TermId.SEED_SOURCE.getId()), data, null)));
 
-				row.put(TermId.ENTRY_CODE.getId(),
-						new ExportColumnValue(TermId.ENTRY_CODE.getId(), this.getGermplasmInfo(String.valueOf(TermId.ENTRY_CODE.getId()),
-								data, null)));
+				row.put(TermId.ENTRY_CODE.getId(), new ExportColumnValue(TermId.ENTRY_CODE.getId(),
+						this.getGermplasmInfo(String.valueOf(TermId.ENTRY_CODE.getId()), data, null)));
 
 			} else {
-				for (SettingDetail settingDetail : factorsList) {
-					Integer termId = settingDetail.getVariable().getCvTermId();
-					row.put(termId,
-							new ExportColumnValue(termId, this.getGermplasmInfo(settingDetail.getVariable().getCvTermId().toString(), data,
-									settingDetail)));
+				for (final SettingDetail settingDetail : factorsList) {
+					final Integer termId = settingDetail.getVariable().getCvTermId();
+					row.put(termId, new ExportColumnValue(termId,
+							this.getGermplasmInfo(settingDetail.getVariable().getCvTermId().toString(), data, settingDetail)));
 				}
 			}
 
@@ -302,10 +321,10 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		return this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 	}
 
-	protected String getGermplasmInfo(String termId, ImportedGermplasm germplasm, SettingDetail settingDetail) {
+	protected String getGermplasmInfo(final String termId, final ImportedGermplasm germplasm, final SettingDetail settingDetail) {
 		String val = "";
 		if (termId != null && NumberUtils.isNumber(termId)) {
-			Integer term = Integer.valueOf(termId);
+			final Integer term = Integer.valueOf(termId);
 			if (term.intValue() == TermId.GID.getId()) {
 				val = germplasm.getGid().toString();
 			} else if (term.intValue() == TermId.ENTRY_CODE.getId()) {
@@ -326,10 +345,10 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		return val;
 	}
 
-	protected String getCategoricalCodeValue(ImportedGermplasm germplasm, SettingDetail settingDetail) {
+	protected String getCategoricalCodeValue(final ImportedGermplasm germplasm, final SettingDetail settingDetail) {
 		String val = "";
 		if (settingDetail.getPossibleValues() != null) {
-			for (ValueReference possibleValue : settingDetail.getPossibleValues()) {
+			for (final ValueReference possibleValue : settingDetail.getPossibleValues()) {
 				if (possibleValue.getId().equals(Integer.valueOf(germplasm.getCheck().toString()))) {
 					val = possibleValue.getName();
 				}
@@ -341,11 +360,11 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		return val;
 	}
 
-	protected void setMessageSource(SimpleResourceBundleMessageSource messageSource) {
+	protected void setMessageSource(final SimpleResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 
-	protected void setGermplasmListManager(GermplasmListManager germplasmListManager) {
+	protected void setGermplasmListManager(final GermplasmListManager germplasmListManager) {
 		this.germplasmListManager = germplasmListManager;
 	}
 
@@ -353,7 +372,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		return this.userSelection;
 	}
 
-	protected void setUserSelection(UserSelection userSelection) {
+	protected void setUserSelection(final UserSelection userSelection) {
 		this.userSelection = userSelection;
 	}
 
@@ -361,7 +380,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		return this.fieldbookMiddlewareService;
 	}
 
-	protected void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+	protected void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
@@ -369,8 +388,21 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		return this.ontologyService;
 	}
 
-	protected void setOntologyService(OntologyService ontologyService) {
+	protected void setOntologyService(final OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
 
+	protected void setExportListTypeFromOriginalGermplasm(final GermplasmList list) throws MiddlewareQueryException {
+		if (list != null && list.getListRef() != null) {
+			final GermplasmList origList = this.fieldbookMiddlewareService.getGermplasmListById(list.getListRef());
+
+			if (origList != null) {
+				if (origList.getStatus() != null && origList.getStatus().intValue() != GermplasmListDAO.STATUS_DELETED.intValue()) {
+					list.setType(origList.getType());
+				} else {
+					list.setType(ExportGermplasmListController.GERPLASM_TYPE_LST);
+				}
+			}
+		}
+	}
 }

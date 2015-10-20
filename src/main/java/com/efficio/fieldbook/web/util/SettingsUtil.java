@@ -174,6 +174,9 @@ public class SettingsUtil {
 					new Variate(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
 							variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
 							settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
+            if(settingDetail.getVariableType() != null){
+                variate.setVariableType(settingDetail.getVariableType().getName());
+            }
 			variate.setOperation(variable.getOperation());
 			variate.setId(variable.getCvTermId());
 			variateList.add(variate);
@@ -766,9 +769,9 @@ public class SettingsUtil {
 					settingDetail.setPossibleValuesToJson(possibleValues);
 					final List<ValueReference> possibleValuesFavorite =
 							SettingsUtil.getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
-					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                    settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 
-					if (SettingsUtil.inPropertyList(standardVariable.getProperty().getId())) {
+					if(Objects.equals(VariableType.getByName(variate.getVariableType()), VariableType.SELECTION_METHOD)){
 						selectionVariates.add(settingDetail);
 					} else {
 						baselineTraitsList.add(settingDetail);
@@ -1253,7 +1256,8 @@ public class SettingsUtil {
 						new Variate(mvar.getName(), mvar.getDescription(), mvar.getProperty(), mvar.getScale(), mvar.getMethod(),
 								PhenotypicType.VARIATE.toString(), mvar.getDataType(), mvar.getDataTypeId(), mvar.getPossibleValues(),
 								mvar.getMinRange(), mvar.getMaxRange());
-				variate.setId(mvar.getTermId());
+                variate.setVariableType(mvar.getVariableType().getName());
+                variate.setId(mvar.getTermId());
 				variates.add(variate);
 			}
 		}
@@ -1419,7 +1423,10 @@ public class SettingsUtil {
 				new MeasurementVariable(variate.getName(), variate.getDescription(), variate.getScale(), variate.getMethod(),
 						variate.getProperty(), variate.getDatatype(), null, PhenotypicType.TRIAL_DESIGN.getLabelList().get(0),
 						variate.getMinRange(), variate.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(variate.getRole()));
-		mvar.setOperation(variate.getOperation());
+        if(variate.getVariableType() != null){
+        	mvar.setVariableType(VariableType.getByName(variate.getVariableType()));
+        }
+        mvar.setOperation(variate.getOperation());
 		mvar.setTermId(variate.getId());
 		mvar.setFactor(false);
 		mvar.setDataTypeId(variate.getDataTypeId());

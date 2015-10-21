@@ -76,6 +76,9 @@ public class DesignImportValidatorTest {
 				.validateIfStandardVariableExists(
 						this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM),
 						"design.import.error.entry.no.is.required", TermId.ENTRY_NO);
+		
+		Mockito.doReturn("Error encountered entries {0} and listsize {1}").when(this.messageSource)
+		.getMessage("design.import.error.mismatch.count.of.germplasm.entries", null, Locale.ENGLISH);
 	}
 
 	@Test
@@ -147,7 +150,7 @@ public class DesignImportValidatorTest {
 	}
 
 	@Test
-	public void testValidateGermplasmEntriesFromShouldMatchTheGermplasmList() {
+	public void testValidateGermplasmEntriesShouldMatchTheGermplasmList() {
 
 		final Set<String> entryNumbers = new HashSet<>();
 		for (int x = 1; x <= DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES; x++) {
@@ -156,11 +159,31 @@ public class DesignImportValidatorTest {
 
 		try {
 
-			this.designImportValidator.validateGermplasmEntriesFromShouldMatchTheGermplasmList(entryNumbers);
+			this.designImportValidator.validateGermplasmEntriesShouldMatchTheGermplasmList(entryNumbers);
 
 		} catch (final DesignValidationException e) {
 
 			Assert.fail("The data should pass the validateGermplasmEntriesFromShouldMatchTheGermplasmList test");
+		}
+
+	}
+	
+	@Test
+	public void testValidateGermplasmEntriesDoNotMatchTheGermplasmList() {
+		
+		int wrongNumberOfEntries = DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + 5;
+		final Set<String> entryNumbers = new HashSet<>();
+		for (int x = 1; x <= wrongNumberOfEntries; x++) {
+			entryNumbers.add(String.valueOf(x));
+		}
+
+		try {
+
+			this.designImportValidator.validateGermplasmEntriesShouldMatchTheGermplasmList(entryNumbers);
+
+		} catch (final DesignValidationException e) {
+
+			Assert.assertEquals(e.getMessage(), "Error encountered entries 7 and listsize 2");
 		}
 
 	}

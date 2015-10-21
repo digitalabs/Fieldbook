@@ -9,6 +9,8 @@ import junit.framework.Assert;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -17,307 +19,323 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
+@RunWith(value = MockitoJUnitRunner.class)
 public class ExcelImportStudyServiceImplTest {
 
-	private ExcelImportStudyServiceImpl importStudy;
+	private static final String TRIAL_INSTANCE_NO = "1";
+	private static final String CATEGORICAL_ID = TRIAL_INSTANCE_NO;
+	private static final String POSSIBLE_VALUE_NAME = "Possible Value Name";
+	private static final String TEMPLATE_SECTION_CONDITION = "CONDITION";
+	private static final String TEMPLATE_SECTION_FACTOR = "FACTOR";
+
+	private static final String LABEL = "Label";
+	private static final String METHOD = "Method";
+	private static final String SCALE = "Scale";
+	private static final String PROPERTY = "Property";
 	private final String testValue = "testValue";
 	private final String currentValue = "currentValue";
 
+	private MeasurementData wData;
+	private int columnIndex;
+	private int termId;
+	private Row xlsRow;
+	private Cell cell;
+	private Workbook workbook;
+
+	private Cell propertyCell;
+	private Cell scaleCell;
+	private Cell methodCell;
+	private Cell labelCell;
+	private Cell trialInstanceCell;
+	private org.apache.poi.ss.usermodel.Workbook xlsBook;
+
+	@Mock
+	private FieldbookService fieldbookMiddlewareService;
+
+	@InjectMocks
+	private ExcelImportStudyServiceImpl importStudy;
+
 	@Before
 	public void setUp() {
-		this.importStudy = Mockito.spy(new ExcelImportStudyServiceImpl());
+
+		this.initTestVariables();
+	}
+
+	private void initTestVariables() {
+		this.wData = this.createMeasurementData();
+		this.columnIndex = 1;
+		this.termId = 2;
+
+		this.xlsRow = Mockito.mock(Row.class);
+		this.cell = Mockito.mock(Cell.class);
+		this.workbook = new Workbook();
+
+		this.propertyCell = Mockito.mock(Cell.class);
+		this.scaleCell = Mockito.mock(Cell.class);
+		this.methodCell = Mockito.mock(Cell.class);
+		this.labelCell = Mockito.mock(Cell.class);
+		this.trialInstanceCell = Mockito.mock(Cell.class);
+
+		Mockito.doReturn(PROPERTY).when(this.propertyCell).getStringCellValue();
+		Mockito.doReturn(SCALE).when(this.scaleCell).getStringCellValue();
+		Mockito.doReturn(METHOD).when(this.methodCell).getStringCellValue();
+		Mockito.doReturn(LABEL).when(this.labelCell).getStringCellValue();
+
+		this.xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
 	}
 
 	@Test
 	public void testImportDataCellValuesWhenExcelCellIsNotNull() {
-		MeasurementData wData = new MeasurementData();
-		wData.setEditable(true);
-		int columnIndex = 1;
 
-		Row xlsRow = Mockito.mock(Row.class);
-		Cell cell = Mockito.mock(Cell.class);
-		Mockito.when(xlsRow.getCell(columnIndex)).thenReturn(cell);
-		Mockito.when(cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
-		Mockito.when(cell.getStringCellValue()).thenReturn(this.testValue);
-		Workbook workbook = new Workbook();
-		wData.setMeasurementVariable(null);
-		this.importStudy.importDataCellValues(wData, xlsRow, columnIndex, workbook, new HashMap<Integer, MeasurementVariable>());
-		Assert.assertEquals("MeasurementData value should be set from the cell value", wData.getValue(), cell.getStringCellValue());
+		Mockito.when(this.xlsRow.getCell(this.columnIndex)).thenReturn(this.cell);
+		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
+		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
+
+		this.wData.setMeasurementVariable(null);
+
+		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
+				new HashMap<Integer, MeasurementVariable>());
+		Assert.assertEquals("MeasurementData value should be set from the cell value", this.wData.getValue(),
+				this.cell.getStringCellValue());
 	}
 
 	@Test
 	public void testImportDataCellValuesWhenExcelCellIsNull() {
 
-		MeasurementData wData = new MeasurementData();
-		wData.setEditable(true);
-		wData.setValue(this.currentValue);
-		int columnIndex = 1;
-		Row xlsRow = Mockito.mock(Row.class);
-		Cell cell = Mockito.mock(Cell.class);
-		Mockito.when(xlsRow.getCell(columnIndex)).thenReturn(null);
-		Mockito.when(cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
-		Mockito.when(cell.getStringCellValue()).thenReturn(this.testValue);
-		Workbook workbook = new Workbook();
-		wData.setMeasurementVariable(null);
-		this.importStudy.importDataCellValues(wData, xlsRow, columnIndex, workbook, new HashMap<Integer, MeasurementVariable>());
-		Assert.assertEquals("MeasurementData value should still be the same since the cell value is null", wData.getValue(),
+		Mockito.when(this.xlsRow.getCell(this.columnIndex)).thenReturn(null);
+		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
+		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
+
+		this.wData.setMeasurementVariable(null);
+
+		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
+				new HashMap<Integer, MeasurementVariable>());
+		Assert.assertEquals("MeasurementData value should still be the same since the cell value is null", this.wData.getValue(),
 				this.currentValue);
 	}
 
 	@Test
 	public void testImportDataCellValuesWhenDataHasExistingValue() {
 
-		MeasurementData wData = new MeasurementData();
-		wData.setEditable(true);
-		wData.setValue(this.currentValue);
-		int columnIndex = 1;
-		int termId = 2;
-		Row xlsRow = Mockito.mock(Row.class);
-		Cell cell = Mockito.mock(Cell.class);
-		Mockito.when(xlsRow.getCell(columnIndex)).thenReturn(cell);
-		Mockito.when(cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
-		Mockito.when(cell.getStringCellValue()).thenReturn(this.testValue);
-		Workbook workbook = new Workbook();
-		MeasurementVariable var = new MeasurementVariable();
-		var.setTermId(termId);
-		wData.setMeasurementVariable(var);
-		wData.setValue("test value");
-		this.importStudy.importDataCellValues(wData, xlsRow, columnIndex, workbook, new HashMap<Integer, MeasurementVariable>());
-		Assert.assertTrue("Workbook flag for has existing data overwrite should be true", workbook.hasExistingDataOverwrite());
+		Mockito.when(this.xlsRow.getCell(this.columnIndex)).thenReturn(this.cell);
+		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
+		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
+
+		final MeasurementVariable var = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
+
+		this.wData.setMeasurementVariable(var);
+		this.wData.setValue("test value");
+
+		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
+				new HashMap<Integer, MeasurementVariable>());
+		Assert.assertTrue("Workbook flag for has existing data overwrite should be true", this.workbook.hasExistingDataOverwrite());
 	}
 
 	@Test
 	public void testImportDataCellValuesWhenDataHasExistingValueAndCellIsNumeric() {
 
-		MeasurementData wData = new MeasurementData();
-		wData.setEditable(true);
-		wData.setValue(this.currentValue);
-		int columnIndex = 1;
-		int termId = 2;
-		Row xlsRow = Mockito.mock(Row.class);
-		Cell cell = Mockito.mock(Cell.class);
-		Mockito.when(xlsRow.getCell(columnIndex)).thenReturn(cell);
-		Mockito.when(cell.getCellType()).thenReturn(Cell.CELL_TYPE_NUMERIC);
-		Mockito.when(cell.getNumericCellValue()).thenReturn(Double.valueOf("1.2"));
-		Workbook workbook = new Workbook();
-		MeasurementVariable var = new MeasurementVariable();
-		var.setTermId(termId);
-		wData.setMeasurementVariable(var);
-		wData.setValue("test value");
-		this.importStudy.importDataCellValues(wData, xlsRow, columnIndex, workbook, new HashMap<Integer, MeasurementVariable>());
-		Assert.assertTrue("Workbook flag for has existing data overwrite should be true", workbook.hasExistingDataOverwrite());
+		Mockito.when(this.xlsRow.getCell(this.columnIndex)).thenReturn(this.cell);
+		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_NUMERIC);
+		Mockito.when(this.cell.getNumericCellValue()).thenReturn(Double.valueOf("1.2"));
+
+		final MeasurementVariable var = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
+
+		this.wData.setMeasurementVariable(var);
+		this.wData.setValue("test value");
+
+		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
+				new HashMap<Integer, MeasurementVariable>());
+		Assert.assertTrue("Workbook flag for has existing data overwrite should be true", this.workbook.hasExistingDataOverwrite());
 	}
 
 	@Test
 	public void testImportDataCellValuesWhenDataHasExistingValueAndCellIsNumericAndHasPossibleValues() {
 
-		MeasurementData wData = new MeasurementData();
-		wData.setEditable(true);
-		wData.setValue(this.currentValue);
-		int columnIndex = 1;
-		int termId = 2;
-		Row xlsRow = Mockito.mock(Row.class);
-		Cell cell = Mockito.mock(Cell.class);
-		Mockito.when(xlsRow.getCell(columnIndex)).thenReturn(cell);
-		Mockito.when(cell.getCellType()).thenReturn(Cell.CELL_TYPE_NUMERIC);
-		Mockito.when(cell.getNumericCellValue()).thenReturn(Double.valueOf("1.2"));
-		Workbook workbook = new Workbook();
-		MeasurementVariable var = new MeasurementVariable();
-		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
-		possibleValues.add(new ValueReference(1, "1"));
-		var.setPossibleValues(possibleValues);
-		var.setTermId(termId);
-		var.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
-		wData.setMeasurementVariable(var);
-		wData.setValue("test value");
-		this.importStudy.importDataCellValues(wData, xlsRow, columnIndex, workbook, new HashMap<Integer, MeasurementVariable>());
-		Assert.assertTrue("Workbook flag for has existing data overwrite should be true", workbook.hasExistingDataOverwrite());
+		Mockito.when(this.xlsRow.getCell(this.columnIndex)).thenReturn(this.cell);
+		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_NUMERIC);
+		Mockito.when(this.cell.getNumericCellValue()).thenReturn(Double.valueOf("1.2"));
+
+		final MeasurementVariable var = this.createMeasurementVariable(TermId.CATEGORICAL_VARIABLE.getId());
+
+		this.wData.setMeasurementVariable(var);
+		this.wData.setValue("test value");
+
+		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
+				new HashMap<Integer, MeasurementVariable>());
+		Assert.assertTrue("Workbook flag for has existing data overwrite should be true", this.workbook.hasExistingDataOverwrite());
 	}
 
 	@Test
 	public void testImportDataCellValuesWhenDataHasExistingValueAndCellIsStringAndHasPossibleValues() {
 
-		MeasurementData wData = new MeasurementData();
-		wData.setEditable(true);
-		wData.setValue(this.currentValue);
-		int columnIndex = 1;
-		int termId = 2;
-		Row xlsRow = Mockito.mock(Row.class);
-		Cell cell = Mockito.mock(Cell.class);
-		Mockito.when(xlsRow.getCell(columnIndex)).thenReturn(cell);
-		Mockito.when(cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
-		Mockito.when(cell.getStringCellValue()).thenReturn(this.testValue);
-		Workbook workbook = new Workbook();
-		MeasurementVariable var = new MeasurementVariable();
-		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
-		possibleValues.add(new ValueReference(1, "1"));
-		var.setPossibleValues(possibleValues);
-		var.setTermId(termId);
-		var.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
-		wData.setMeasurementVariable(var);
-		wData.setValue("test value");
-		this.importStudy.importDataCellValues(wData, xlsRow, columnIndex, workbook, new HashMap<Integer, MeasurementVariable>());
-		Assert.assertTrue("Workbook flag for has existing data overwrite should be true", workbook.hasExistingDataOverwrite());
+		Mockito.when(this.xlsRow.getCell(this.columnIndex)).thenReturn(this.cell);
+		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
+		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
+
+		final MeasurementVariable var = this.createMeasurementVariable(TermId.CATEGORICAL_VARIABLE.getId());
+
+		this.wData.setMeasurementVariable(var);
+		this.wData.setValue("test value");
+
+		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
+				new HashMap<Integer, MeasurementVariable>());
+		Assert.assertTrue("Workbook flag for has existing data overwrite should be true", this.workbook.hasExistingDataOverwrite());
 	}
 
 	@Test
 	public void testImportDataCellValuesWhenDataHasNoExistingValue() {
 
-		MeasurementData wData = new MeasurementData();
-		wData.setEditable(true);
-		wData.setValue(this.currentValue);
-		int columnIndex = 1;
-		int termId = 2;
-		Row xlsRow = Mockito.mock(Row.class);
-		Cell cell = Mockito.mock(Cell.class);
-		Mockito.when(xlsRow.getCell(columnIndex)).thenReturn(cell);
-		Mockito.when(cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
-		Mockito.when(cell.getStringCellValue()).thenReturn(this.testValue);
-		Workbook workbook = new Workbook();
-		MeasurementVariable var = new MeasurementVariable();
-		var.setTermId(termId);
-		wData.setMeasurementVariable(var);
-		wData.setValue(null);
-		this.importStudy.importDataCellValues(wData, xlsRow, columnIndex, workbook, new HashMap<Integer, MeasurementVariable>());
-		Assert.assertFalse("Workbook flag for has existing data overwrite should be false", workbook.hasExistingDataOverwrite());
+		Mockito.when(this.xlsRow.getCell(this.columnIndex)).thenReturn(this.cell);
+		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
+		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
+
+		this.wData.setValue(null);
+
+		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
+				new HashMap<Integer, MeasurementVariable>());
+		Assert.assertFalse("Workbook flag for has existing data overwrite should be false", this.workbook.hasExistingDataOverwrite());
 	}
 
 	@Test
 	public void testImportDataCellValuesWhenExcelCellIsNotNullAcceptedFlagMustAlwaysBeFalse() {
-		MeasurementData wData = new MeasurementData();
-		wData.setEditable(true);
-		int columnIndex = 1;
 
-		Row xlsRow = Mockito.mock(Row.class);
-		Cell cell = Mockito.mock(Cell.class);
-		Mockito.when(xlsRow.getCell(columnIndex)).thenReturn(cell);
-		Mockito.when(cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
-		Mockito.when(cell.getStringCellValue()).thenReturn(this.testValue);
-		Workbook workbook = new Workbook();
-		wData.setMeasurementVariable(null);
-		this.importStudy.importDataCellValues(wData, xlsRow, columnIndex, workbook, new HashMap<Integer, MeasurementVariable>());
-		Assert.assertFalse("The Accepted Flag must be always set to false", wData.isAccepted());
+		Mockito.when(this.xlsRow.getCell(this.columnIndex)).thenReturn(this.cell);
+		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
+		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
+
+		this.wData.setMeasurementVariable(null);
+
+		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
+				new HashMap<Integer, MeasurementVariable>());
+		Assert.assertFalse("The Accepted Flag must be always set to false", this.wData.isAccepted());
 	}
 
 	@Test
 	public void testHasCellValueIfNull() {
-		boolean resp = this.importStudy.hasCellValue(null);
+		final boolean resp = this.importStudy.hasCellValue(null);
 		Assert.assertFalse("Should return false since cell is null", resp);
 	}
 
 	@Test
 	public void testIsPropertyScaleMethodLabelCellNotNull_ReturnsTrueIfAllFieldsIsNotNull() {
-		Cell propertyCell = Mockito.mock(Cell.class);
-		Cell scaleCell = Mockito.mock(Cell.class);
-		Cell methodCell = Mockito.mock(Cell.class);
-		Cell labelCell = Mockito.mock(Cell.class);
-
 		Assert.assertTrue("Expecting to return true if Property,Scale,Method,Label is not null but didn't.",
-				this.importStudy.isPropertyScaleMethodLabelCellNotNull(propertyCell, scaleCell, methodCell, labelCell));
-
+				this.importStudy.isPropertyScaleMethodLabelCellNotNull(this.propertyCell, this.scaleCell, this.methodCell, this.labelCell));
 	}
 
 	@Test
 	public void testIsPropertyScaleMethodLabelCellNotNull_ReturnsFalseIfAtLeastOneFieldIsNull() {
-		Cell propertyCell = Mockito.mock(Cell.class);
-		Cell scaleCell = Mockito.mock(Cell.class);
-		Cell methodCell = Mockito.mock(Cell.class);
-		Cell labelCell = null;
-
+		this.labelCell = null;
 		Assert.assertFalse("Expecting to return false if at least 1 field from Property,Scale,Method,Label is null but didn't.",
-				this.importStudy.isPropertyScaleMethodLabelCellNotNull(propertyCell, scaleCell, methodCell, labelCell));
-
+				this.importStudy.isPropertyScaleMethodLabelCellNotNull(this.propertyCell, this.scaleCell, this.methodCell, this.labelCell));
 	}
 
 	@Test
 	public void testIsPropertyScaleMethodLabelCellHasStringValue_ReturnsTrueIfAllFieldsHasStringValue() {
-		Cell propertyCell = Mockito.mock(Cell.class);
-		Cell scaleCell = Mockito.mock(Cell.class);
-		Cell methodCell = Mockito.mock(Cell.class);
-		Cell labelCell = Mockito.mock(Cell.class);
 
-		Mockito.doReturn("Property").when(propertyCell).getStringCellValue();
-		Mockito.doReturn("Scale").when(scaleCell).getStringCellValue();
-		Mockito.doReturn("Method").when(methodCell).getStringCellValue();
-		Mockito.doReturn("Label").when(labelCell).getStringCellValue();
-
-		Assert.assertTrue("Expecting to return true if Property,Scale,Method,Label have string value but didn't.",
-				this.importStudy.isPropertyScaleMethodLabelCellHasStringValue(propertyCell, scaleCell, methodCell, labelCell));
+		Assert.assertTrue("Expecting to return true if Property,Scale,Method,Label have string value but didn't.", this.importStudy
+				.isPropertyScaleMethodLabelCellHasStringValue(this.propertyCell, this.scaleCell, this.methodCell, this.labelCell));
 	}
 
 	@Test
 	public void testIsPropertyScaleMethodLabelCellHasStringValue_ReturnsFalseIfAtLeastOneFromFieldsHasNoStringValue() {
-		Cell propertyCell = Mockito.mock(Cell.class);
-		Cell scaleCell = Mockito.mock(Cell.class);
-		Cell methodCell = Mockito.mock(Cell.class);
-		Cell labelCell = Mockito.mock(Cell.class);
 
-		Mockito.doReturn("Property").when(propertyCell).getStringCellValue();
-		Mockito.doReturn("Scale").when(scaleCell).getStringCellValue();
-		Mockito.doReturn("Method").when(methodCell).getStringCellValue();
-		Mockito.doReturn(null).when(labelCell).getStringCellValue();
+		Mockito.doReturn(null).when(this.labelCell).getStringCellValue();
 
 		Assert.assertFalse("Expecting to return false if at least one from Property,Scale,Method,Label has no string value but didn't.",
-				this.importStudy.isPropertyScaleMethodLabelCellHasStringValue(propertyCell, scaleCell, methodCell, labelCell));
+				this.importStudy.isPropertyScaleMethodLabelCellHasStringValue(this.propertyCell, this.scaleCell, this.methodCell,
+						this.labelCell));
 	}
 
 	@Test
 	public void testGetTrialInstanceNumber_ForNursery() throws WorkbookParserException {
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 
-		org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
-		Assert.assertEquals("Expecting to return 1 for the value of trialInstance in Nursery but didn't.", "1",
+		final org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		Assert.assertEquals("Expecting to return 1 for the value of trialInstance in Nursery but didn't.", TRIAL_INSTANCE_NO,
 				this.importStudy.getTrialInstanceNumber(workbook, xlsBook));
 	}
 
 	@Test
 	public void testGetTrialInstanceNumber_ForTrial() throws WorkbookParserException {
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
 
-		org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		this.setUpXLSWorkbookTestData();
+		Mockito.doReturn(TermId.TRIAL_INSTANCE_FACTOR.getId()).when(this.fieldbookMiddlewareService)
+				.getStandardVariableIdByPropertyScaleMethodRole(PROPERTY, SCALE, METHOD, PhenotypicType.getPhenotypicTypeForLabel(LABEL));
 
-		String toBeReturned = "2";
-		Mockito.doReturn(toBeReturned).when(this.importStudy).getTrialInstanceNumber(xlsBook);
+		final String toBeReturned = "2";
+		Mockito.doReturn(toBeReturned).when(this.trialInstanceCell).getStringCellValue();
 
 		Assert.assertEquals("Expecting to return the value returned from the getTrialInstaceNumber method but didn't.", toBeReturned,
-				this.importStudy.getTrialInstanceNumber(workbook, xlsBook));
+				this.importStudy.getTrialInstanceNumber(workbook, this.xlsBook));
+	}
+
+	private void setUpXLSWorkbookTestData() {
+		final Sheet descriptionSheet = Mockito.mock(Sheet.class);
+		Mockito.doReturn(descriptionSheet).when(this.xlsBook).getSheetAt(0);
+		final int noOfRows = 3;
+		Mockito.doReturn(noOfRows).when(descriptionSheet).getLastRowNum();
+
+		final Row conditionRow = Mockito.mock(Row.class);
+		Mockito.doReturn(conditionRow).when(descriptionSheet).getRow(1);
+		final Cell conditionCell = Mockito.mock(Cell.class);
+		Mockito.doReturn(conditionCell).when(conditionRow).getCell(0);
+		Mockito.doReturn(TEMPLATE_SECTION_CONDITION).when(conditionCell).getStringCellValue();
+
+		final Row factorRow = Mockito.mock(Row.class);
+		Mockito.doReturn(factorRow).when(descriptionSheet).getRow(noOfRows);
+		final Cell factorCell = Mockito.mock(Cell.class);
+		Mockito.doReturn(factorCell).when(factorRow).getCell(0);
+		Mockito.doReturn(TEMPLATE_SECTION_FACTOR).when(factorCell).getStringCellValue();
+
+		Mockito.doReturn(conditionRow).when(descriptionSheet).getRow(2);
+		Mockito.doReturn(this.propertyCell).when(conditionRow).getCell(2);
+		Mockito.doReturn(this.scaleCell).when(conditionRow).getCell(3);
+		Mockito.doReturn(this.methodCell).when(conditionRow).getCell(4);
+		Mockito.doReturn(this.labelCell).when(conditionRow).getCell(7);
+
+		Mockito.doReturn(Cell.CELL_TYPE_STRING).when(this.trialInstanceCell).getCellType();
+		Mockito.doReturn(this.trialInstanceCell).when(conditionRow).getCell(6);
 	}
 
 	@Test
 	public void testGetTrialInstanceNumber_ForTrial_ReturnsExceptionForNullTrialInstance() {
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
 
-		org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
-
-		Mockito.doReturn(null).when(this.importStudy).getTrialInstanceNumber(xlsBook);
+		this.setUpXLSWorkbookTestData();
+		Mockito.doReturn(null).when(this.fieldbookMiddlewareService)
+				.getStandardVariableIdByPropertyScaleMethodRole(PROPERTY, SCALE, METHOD, PhenotypicType.getPhenotypicTypeForLabel(LABEL));
 
 		try {
-			this.importStudy.getTrialInstanceNumber(workbook, xlsBook);
+			this.importStudy.getTrialInstanceNumber(workbook, this.xlsBook);
 			Assert.fail("Expecting to return an exception when the trial instance from the xls file is null but didn't.");
-		} catch (WorkbookParserException e) {
+		} catch (final WorkbookParserException e) {
 			// do nothing
 		}
 	}
 
 	@Test
 	public void testGetXlsValue_MeasurementRowIsNull() {
-		MeasurementRow temp = null;
-		MeasurementVariable var = new MeasurementVariable();
-		MeasurementVariable origVar = new MeasurementVariable();
-		MeasurementData data = new MeasurementData();
+		final MeasurementRow temp = null;
+		final MeasurementVariable var = new MeasurementVariable();
+		final MeasurementVariable origVar = new MeasurementVariable();
+		final MeasurementData data = new MeasurementData();
 
-		String expectedValue = "tempValue";
+		final String expectedValue = "tempValue";
 		var.setValue(expectedValue);
 		Assert.assertEquals("Expecting to return the value from var when the measurement row is null but didn't.", expectedValue,
 				this.importStudy.getXlsValue(var, temp, data, origVar));
@@ -325,14 +343,14 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testGetXlsValue_OrigVarPossibleValuesIsNull() {
-		MeasurementRow temp = new MeasurementRow();
-		MeasurementVariable var = new MeasurementVariable();
-		MeasurementVariable origVar = new MeasurementVariable();
-		MeasurementData data = new MeasurementData();
+		final MeasurementRow temp = new MeasurementRow();
+		final MeasurementVariable var = new MeasurementVariable();
+		final MeasurementVariable origVar = new MeasurementVariable();
+		final MeasurementData data = new MeasurementData();
 
 		origVar.setPossibleValues(null);
 
-		String expectedValue = "tempValue";
+		final String expectedValue = "tempValue";
 		var.setValue(expectedValue);
 		Assert.assertEquals("Expecting to return the value from var when the origVar's possible value is null but didn't.", expectedValue,
 				this.importStudy.getXlsValue(var, temp, data, origVar));
@@ -340,14 +358,14 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testGetXlsValue_OrigVarPossibleValuesIsEmpty() {
-		MeasurementRow temp = new MeasurementRow();
-		MeasurementVariable var = new MeasurementVariable();
-		MeasurementVariable origVar = new MeasurementVariable();
-		MeasurementData data = new MeasurementData();
+		final MeasurementRow temp = new MeasurementRow();
+		final MeasurementVariable var = new MeasurementVariable();
+		final MeasurementVariable origVar = new MeasurementVariable();
+		final MeasurementData data = new MeasurementData();
 
 		origVar.setPossibleValues(new ArrayList<ValueReference>());
 
-		String expectedValue = "tempValue";
+		final String expectedValue = "tempValue";
 		var.setValue(expectedValue);
 		Assert.assertEquals("Expecting to return the value from var when the origVar's possible value is empty but didn't.", expectedValue,
 				this.importStudy.getXlsValue(var, temp, data, origVar));
@@ -355,43 +373,25 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testGetXlsValue_ReturnsXlsValueFromCategoricalVariablePossibleValues() {
-		MeasurementRow temp = new MeasurementRow();
-		MeasurementVariable var = new MeasurementVariable();
-		MeasurementVariable origVar = new MeasurementVariable();
-		MeasurementData data = new MeasurementData();
+		final MeasurementRow temp = new MeasurementRow();
 
-		var.setValue("tempValue");
-		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
-		possibleValues.add(new ValueReference());
-		origVar.setPossibleValues(possibleValues);
-		origVar.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
+		final MeasurementVariable var = new MeasurementVariable();
+		var.setValue(POSSIBLE_VALUE_NAME);
 
-		String expectedValue = "ExpectedXlsValue";
-		Mockito.doReturn(expectedValue).when(this.importStudy).getCategoricalIdCellValue(var, origVar);
+		final MeasurementData data = new MeasurementData();
 
-		Assert.assertEquals("Expecting to return the value from getCategoricalIdCellValue() but didn't.", expectedValue,
+		final MeasurementVariable origVar = this.createMeasurementVariable(TermId.CATEGORICAL_VARIABLE.getId());
+		origVar.setValue(POSSIBLE_VALUE_NAME);
+
+		Assert.assertEquals("Expecting to return the value from getCategoricalIdCellValue() but didn't.", CATEGORICAL_ID,
 				this.importStudy.getXlsValue(var, temp, data, origVar));
 	}
 
 	@Test
 	public void testIsMatchingPropertyScaleMethodLabel_ReturnsTrueIfAllFieldsValueAreMatched() {
-		String propertyVal = "Property";
-		String scaleVal = "Scale";
-		String methodVal = "Method";
-		String labelVal = "Label";
 
-		MeasurementVariable var = new MeasurementVariable();
-		var.setProperty(propertyVal);
-		var.setScale(scaleVal);
-		var.setMethod(methodVal);
-		var.setLabel(labelVal);
-
-		MeasurementVariable temp = new MeasurementVariable();
-		temp.setProperty(propertyVal);
-		temp.setScale(scaleVal);
-		temp.setMethod(methodVal);
-		temp.setLabel(labelVal);
-
+		final MeasurementVariable var = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
+		final MeasurementVariable temp = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
 		Assert.assertTrue(
 				"Expecting to return true if all values of property, scale, method and label of two measurement variables are the same.",
 				this.importStudy.isMatchingPropertyScaleMethodLabel(var, temp));
@@ -399,26 +399,41 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testIsMatchingPropertyScaleMethodLabel_ReturnsFalseIfAtLeast1FromFieldsValueAreNotMatched() {
-		String propertyVal = "Property";
-		String scaleVal = "Scale";
-		String methodVal = "Method";
-		String labelVal = "Label";
 
-		MeasurementVariable var = new MeasurementVariable();
-		var.setProperty(propertyVal);
-		var.setScale(scaleVal);
-		var.setMethod(methodVal);
-		var.setLabel(labelVal);
-
-		MeasurementVariable temp = new MeasurementVariable();
-		temp.setProperty(propertyVal);
-		temp.setScale(scaleVal);
-		temp.setMethod(methodVal);
-		temp.setLabel(labelVal + "deviation");
+		final MeasurementVariable var = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
+		final MeasurementVariable temp = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
+		temp.setLabel(temp.getLabel() + "deviation");
 
 		Assert.assertFalse(
 				"Expecting to return false if at least 1 value from property, scale, method and label of two measurement variables are not the same.",
 				this.importStudy.isMatchingPropertyScaleMethodLabel(var, temp));
+	}
+
+	private MeasurementVariable createMeasurementVariable(final int dataTypeId) {
+
+		final MeasurementVariable var = new MeasurementVariable();
+		var.setProperty(PROPERTY);
+		var.setScale(SCALE);
+		var.setMethod(METHOD);
+		var.setLabel(LABEL);
+		var.setTermId(this.termId);
+		var.setDataTypeId(dataTypeId);
+
+		if (TermId.CATEGORICAL_VARIABLE.getId() == dataTypeId) {
+			final List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+			possibleValues.add(new ValueReference(1, POSSIBLE_VALUE_NAME));
+			var.setPossibleValues(possibleValues);
+		}
+
+		return var;
+	}
+
+	private MeasurementData createMeasurementData() {
+		final MeasurementData wData = new MeasurementData();
+		wData.setEditable(true);
+		wData.setValue(this.currentValue);
+
+		return wData;
 	}
 
 }

@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.web.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +27,10 @@ public class ExportImportStudyUtil {
 		// do nothing
 	}
 
-	public static String getCategoricalCellValue(String idValue, List<ValueReference> possibleValues) {
+	public static String getCategoricalCellValue(final String idValue, final List<ValueReference> possibleValues) {
 		// With the New Data Table, the idValue will contain the long text instead of the id.
 		if (idValue != null && possibleValues != null && !possibleValues.isEmpty()) {
-			for (ValueReference possibleValue : possibleValues) {
+			for (final ValueReference possibleValue : possibleValues) {
 				if (idValue.equalsIgnoreCase(possibleValue.getDescription())) {
 					return possibleValue.getName();
 				}
@@ -37,7 +38,7 @@ public class ExportImportStudyUtil {
 		}
 		// just in case an id was passed, but this won't be the case most of the time
 		if (idValue != null && NumberUtils.isNumber(idValue)) {
-			for (ValueReference ref : possibleValues) {
+			for (final ValueReference ref : possibleValues) {
 				if (ref.getId().equals(Integer.valueOf(idValue))) {
 					return ref.getName();
 				}
@@ -46,13 +47,14 @@ public class ExportImportStudyUtil {
 		return idValue;
 	}
 
-	public static String getCategoricalIdCellValue(String description, List<ValueReference> possibleValues) {
+	public static String getCategoricalIdCellValue(final String description, final List<ValueReference> possibleValues) {
 		return ExportImportStudyUtil.getCategoricalIdCellValue(description, possibleValues, false);
 	}
 
-	public static String getCategoricalIdCellValue(String description, List<ValueReference> possibleValues, boolean isReturnOriginalValue) {
+	public static String getCategoricalIdCellValue(final String description, final List<ValueReference> possibleValues,
+			final boolean isReturnOriginalValue) {
 		if (description != null) {
-			for (ValueReference possibleValue : possibleValues) {
+			for (final ValueReference possibleValue : possibleValues) {
 				if (description.equalsIgnoreCase(possibleValue.getName())) {
 					return possibleValue.getId().toString();
 				}
@@ -61,24 +63,24 @@ public class ExportImportStudyUtil {
 		return isReturnOriginalValue ? description : "";
 	}
 
-	public static List<Integer> getLocationIdsFromTrialInstances(Workbook workbook, List<Integer> instances) {
-		List<Integer> locationIds = new ArrayList<Integer>();
+	public static List<Integer> getLocationIdsFromTrialInstances(final Workbook workbook, final List<Integer> instances) {
+		final List<Integer> locationIds = new ArrayList<Integer>();
 
-		List<MeasurementVariable> trialVariables = workbook.getTrialVariables();
+		final List<MeasurementVariable> trialVariables = workbook.getTrialVariables();
 		String label = null;
-		List<MeasurementRow> trialObservations = workbook.getTrialObservations();
+		final List<MeasurementRow> trialObservations = workbook.getTrialObservations();
 		if (trialVariables != null && instances != null && !instances.isEmpty()) {
-			for (MeasurementVariable trialVariable : trialVariables) {
+			for (final MeasurementVariable trialVariable : trialVariables) {
 				if (trialVariable.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 					label = trialVariable.getName();
 					break;
 				}
 			}
 			if (trialObservations != null && label != null) {
-				for (MeasurementRow trialObservation : trialObservations) {
-					String trialInstanceString = trialObservation.getMeasurementDataValue(label);
+				for (final MeasurementRow trialObservation : trialObservations) {
+					final String trialInstanceString = trialObservation.getMeasurementDataValue(label);
 					if (trialInstanceString != null && NumberUtils.isNumber(trialInstanceString)) {
-						int trialInstanceNumber = Double.valueOf(trialInstanceString).intValue();
+						final int trialInstanceNumber = Double.valueOf(trialInstanceString).intValue();
 						if (instances != null && instances.indexOf(Integer.valueOf(trialInstanceNumber)) != -1) {
 							locationIds.add((int) trialObservation.getLocationId());
 						}
@@ -88,7 +90,7 @@ public class ExportImportStudyUtil {
 		}
 
 		if (locationIds.isEmpty() && trialObservations != null) {
-			for (MeasurementRow trialObservation : trialObservations) {
+			for (final MeasurementRow trialObservation : trialObservations) {
 				locationIds.add((int) trialObservation.getLocationId());
 			}
 		}
@@ -96,13 +98,13 @@ public class ExportImportStudyUtil {
 		return locationIds;
 	}
 
-	public static List<MeasurementRow> getApplicableObservations(Workbook workbook, List<MeasurementRow> observations,
-			List<Integer> instances) {
+	public static List<MeasurementRow> getApplicableObservations(final Workbook workbook, final List<MeasurementRow> observations,
+			final List<Integer> instances) {
 		List<MeasurementRow> rows = null;
 		if (instances != null && !instances.isEmpty()) {
 			rows = new ArrayList<MeasurementRow>();
-			List<Integer> locationIds = ExportImportStudyUtil.getLocationIdsFromTrialInstances(workbook, instances);
-			for (MeasurementRow row : observations) {
+			final List<Integer> locationIds = ExportImportStudyUtil.getLocationIdsFromTrialInstances(workbook, instances);
+			for (final MeasurementRow row : observations) {
 				if (locationIds.contains((int) row.getLocationId())) {
 					rows.add(row);
 				}
@@ -113,10 +115,10 @@ public class ExportImportStudyUtil {
 		return rows;
 	}
 
-	public static String getSiteNameOfTrialInstance(MeasurementRow trialObservation,
-			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
+	public static String getSiteNameOfTrialInstance(final MeasurementRow trialObservation,
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
 		if (trialObservation != null && trialObservation.getMeasurementVariables() != null) {
-			for (MeasurementData data : trialObservation.getDataList()) {
+			for (final MeasurementData data : trialObservation.getDataList()) {
 				if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_LOCATION.getId()) {
 					return "_" + data.getValue();
 				} else if (data.getMeasurementVariable().getTermId() == TermId.LOCATION_ID.getId()) {
@@ -128,7 +130,7 @@ public class ExportImportStudyUtil {
 	}
 
 	private static String getSiteNameOfTrialInstanceBasedOnLocationID(
-			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, MeasurementData data)
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final MeasurementData data)
 			throws MiddlewareQueryException {
 		if (data.getValue() != null && !data.getValue().isEmpty() && NumberUtils.isNumber(data.getValue())) {
 			return "_" + fieldbookMiddlewareService.getLocationById(Integer.parseInt(data.getValue())).getLname();
@@ -137,8 +139,8 @@ public class ExportImportStudyUtil {
 		}
 	}
 
-	public static boolean partOfRequiredColumns(int termId) {
-		for (int id : ExportImportStudyUtil.REQUIRED_COLUMNS) {
+	public static boolean partOfRequiredColumns(final int termId) {
+		for (final int id : ExportImportStudyUtil.REQUIRED_COLUMNS) {
 			if (termId == id) {
 				return true;
 			}
@@ -146,25 +148,65 @@ public class ExportImportStudyUtil {
 		return false;
 	}
 
-	public static String getPropertyName(OntologyService ontologyService) {
+	public static String getPropertyName(final OntologyService ontologyService) {
 		String propertyName = "";
 		try {
 			propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			ExportImportStudyUtil.LOG.error(e.getMessage(), e);
 		}
 		return propertyName;
 	}
 
-	public static boolean measurementVariableHasValue(MeasurementData dataCell) {
+	public static boolean measurementVariableHasValue(final MeasurementData dataCell) {
 		return dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null;
 	}
 
-	public static boolean isColumnVisible(int termId, List<Integer> visibleColumns) {
+	public static boolean isColumnVisible(final int termId, final List<Integer> visibleColumns) {
 		if (visibleColumns == null) {
 			return true;
 		} else {
 			return ExportImportStudyUtil.partOfRequiredColumns(termId) || visibleColumns.contains(termId);
 		}
+	}
+
+	public static String getFileNamePath(final int trialInstanceNo, final MeasurementRow trialObservation, final List<Integer> instances,
+			final String filename, final boolean isNursery, final FieldbookProperties fieldbookProperties,
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+
+		String filenamePath = "";
+		StringBuilder filenameBuilder = new StringBuilder();
+		filenameBuilder.append(fieldbookProperties.getUploadDirectory());
+		filenameBuilder.append(File.separator);
+		filenameBuilder.append(SettingsUtil.cleanSheetAndFileName(filename));
+
+		filenamePath = filenameBuilder.toString();
+
+		if (isNursery) {
+			return filenamePath;
+		}
+
+		// For Trial
+		if (instances != null && !instances.isEmpty()) {
+
+			final int fileExtensionIndex = filenamePath.lastIndexOf(".");
+			final String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservation, fieldbookMiddlewareService);
+
+			filenameBuilder = new StringBuilder();
+			if (instances.size() > 1) {
+				filenameBuilder.append(filenamePath.substring(0, fileExtensionIndex));
+			} else {
+				filenameBuilder.append(filename.substring(0, filename.lastIndexOf(".")));
+			}
+
+			filenameBuilder.append("-");
+			filenameBuilder.append(trialInstanceNo);
+			filenameBuilder.append(SettingsUtil.cleanSheetAndFileName(siteName));
+			filenameBuilder.append(filenamePath.substring(fileExtensionIndex));
+
+			filenamePath = filenameBuilder.toString();
+		}
+
+		return filenamePath;
 	}
 }

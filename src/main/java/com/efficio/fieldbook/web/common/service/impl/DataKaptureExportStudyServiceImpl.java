@@ -35,11 +35,11 @@ public class DataKaptureExportStudyServiceImpl implements DataKaptureExportStudy
 
 	@Override
 	public String export(Workbook workbook, String filename, List<Integer> instances) {
-		List<MeasurementRow> observations =
+		List<MeasurementRow> plotLevelObservations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
-		List<MeasurementRow> trialObservations =
+		List<MeasurementRow> instanceLevelObservations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), instances);
-		CSVOziel csv = new CSVOziel(workbook, observations, trialObservations, true);
+		CSVOziel csv = new CSVOziel(workbook, plotLevelObservations, instanceLevelObservations, true);
 
 		List<String> filenameList = new ArrayList<String>();
 		filenameList.add(this.exportObservations(filename, csv));

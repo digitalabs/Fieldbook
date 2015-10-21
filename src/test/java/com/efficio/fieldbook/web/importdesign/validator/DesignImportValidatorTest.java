@@ -171,7 +171,7 @@ public class DesignImportValidatorTest {
 	@Test
 	public void testValidateGermplasmEntriesDoNotMatchTheGermplasmList() {
 		
-		int wrongNumberOfEntries = DesignImportDataInitializer.NO_OF_TEST_ENTRIES + 5;
+		int wrongNumberOfEntries = DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + 5;
 		final Set<String> entryNumbers = new HashSet<>();
 		for (int x = 1; x <= wrongNumberOfEntries; x++) {
 			entryNumbers.add(String.valueOf(x));

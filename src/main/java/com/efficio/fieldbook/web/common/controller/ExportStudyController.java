@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -44,6 +45,7 @@ import org.generationcp.middleware.service.api.ReportService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,6 +79,11 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 @RequestMapping(ExportStudyController.URL)
 public class ExportStudyController extends AbstractBaseFieldbookController {
 
+	private static final String CONTENT_TYPE = "contentType";
+	private static final String FILENAME = "filename";
+	private static final String OUTPUT_FILENAME = "outputFilename";
+	private static final String ERROR_MESSAGE = "errorMessage";
+	private static final String IS_SUCCESS = "isSuccess";
 	private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
 	private static final String CSV_CONTENT_TYPE = "text/csv";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportStudyController.class);
@@ -135,6 +142,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@Resource
 	private ReportService reportService;
 
+	@Resource
+	private MessageSource messageSource;
+
 	@Override
 	public String getContentName() {
 		return null;
@@ -144,9 +154,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/download/file", method = RequestMethod.GET)
 	public String downloadFile(final HttpServletRequest req, final HttpServletResponse response) throws UnsupportedEncodingException {
 
-		final String outputFilename = new String(req.getParameter("outputFilename").getBytes("iso-8859-1"), "UTF-8");
-		final String filename = new String(req.getParameter("filename").getBytes("iso-8859-1"), "UTF-8");
-		final String contentType = req.getParameter("contentType");
+		final String outputFilename = new String(req.getParameter(OUTPUT_FILENAME).getBytes("iso-8859-1"), "UTF-8");
+		final String filename = new String(req.getParameter(FILENAME).getBytes("iso-8859-1"), "UTF-8");
+		final String contentType = req.getParameter(CONTENT_TYPE);
 
 		// the selected name + current date
 		final File xls = new File(outputFilename);
@@ -202,6 +212,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		String fileName = "";
 		String outputFilename = "";
 		Reporter rep;
+		final Map<String, Object> results = new HashMap<String, Object>();
 		try {
 			rep = this.reportService.getStreamReport(reportCode, Integer.parseInt(studyId), baos);
 
@@ -211,13 +222,17 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			final File reportFile = new File(outputFilename);
 			baos.writeTo(new FileOutputStream(reportFile));
 
+			results.put(IS_SUCCESS, true);
+			results.put(OUTPUT_FILENAME, outputFilename);
+			results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(fileName));
+			results.put(CONTENT_TYPE, response.getContentType());
+
 		} catch (NumberFormatException | JRException | IOException | BuildReportException e) {
 			ExportStudyController.LOG.error(e.getMessage(), e);
+			results.put(IS_SUCCESS, false);
+			results.put(ERROR_MESSAGE, this.messageSource.getMessage("export.study.error", null, Locale.ENGLISH));
 		}
-		final Map<String, Object> results = new HashMap<String, Object>();
-		results.put("outputFilename", outputFilename);
-		results.put("filename", SettingsUtil.cleanSheetAndFileName(fileName));
-		results.put("contentType", response.getContentType());
+
 		return super.convertObjectToJson(results);
 
 	}
@@ -427,9 +442,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			}
 		}
 		final Map<String, Object> results = new HashMap<String, Object>();
-		results.put("outputFilename", outputFilename);
-		results.put("filename", SettingsUtil.cleanSheetAndFileName(filename));
-		results.put("contentType", response.getContentType());
+		results.put(OUTPUT_FILENAME, outputFilename);
+		results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(filename));
+		results.put(CONTENT_TYPE, response.getContentType());
 
 		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), true, this.ontologyService);
 
@@ -563,9 +578,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		response.setContentType(contentType);
 		;
 		final Map<String, Object> results = new HashMap<String, Object>();
-		results.put("outputFilename", outputFilename);
-		results.put("filename", SettingsUtil.cleanSheetAndFileName(file.getName()));
-		results.put("contentType", contentType);
+		results.put(OUTPUT_FILENAME, outputFilename);
+		results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(file.getName()));
+		results.put(CONTENT_TYPE, contentType);
 
 		return super.convertObjectToJson(results);
 	}
@@ -628,9 +643,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final String contentType = ExportStudyController.APPLICATION_VND_MS_EXCEL;
 		response.setContentType(contentType);
 		final Map<String, Object> results = new HashMap<String, Object>();
-		results.put("outputFilename", outputFilename);
-		results.put("filename", SettingsUtil.cleanSheetAndFileName(file.getName()));
-		results.put("contentType", contentType);
+		results.put(OUTPUT_FILENAME, outputFilename);
+		results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(file.getName()));
+		results.put(CONTENT_TYPE, contentType);
 
 		return super.convertObjectToJson(results);
 	}

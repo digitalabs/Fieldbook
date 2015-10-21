@@ -341,6 +341,9 @@ var ImportDesign = (function() {
 						$('li#nursery-measurements-li a').tab('show');
 						
 						$('#changeDesignModal').modal('hide');
+						
+						// to enforce overwrite when the nursery is saved
+					    $('#chooseGermplasmAndChecks').data('replace', '1');
 					}
 				});
 			} 

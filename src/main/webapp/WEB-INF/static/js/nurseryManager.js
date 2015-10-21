@@ -1380,7 +1380,6 @@ function choosePreviousNursery(studyId) {
 				cache: false,
 				data: '',
 				success: function(html) {
-					console.log(html);
 					if ($('#specifyCheckSection').length !== 0) {
 						$('#specifyCheckSection').html(html);
 					}

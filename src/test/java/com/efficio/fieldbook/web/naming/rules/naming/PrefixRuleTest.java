@@ -43,6 +43,7 @@ public class PrefixRuleTest extends BaseNamingRuleTest {
 		} catch (RuleException re) {
 			Assert.fail("Rule failed to run for Prefix" + this.row.getBreedingMethod().getSeparator());
 		}
+		System.out.println(input.get(0));
 		Assert.assertEquals(1, input.size());
 		Assert.assertEquals("Should return the correct name appended with prefix text", this.testGermplasmName
 				+ this.row.getBreedingMethod().getPrefix(), input.get(0));
@@ -59,6 +60,7 @@ public class PrefixRuleTest extends BaseNamingRuleTest {
 		} catch (RuleException re) {
 			Assert.fail("Rule failed to run for Prefix" + this.row.getBreedingMethod().getSeparator());
 		}
+		System.out.println(input.get(0));
 		Assert.assertEquals(1, input.size());
 		Assert.assertEquals("Should return the correct name appended with prefix text", this.testGermplasmName + this.row.getSeason(),
 				input.get(0));

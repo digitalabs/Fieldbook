@@ -31,6 +31,7 @@ import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import org.springframework.web.util.HtmlUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -970,5 +971,9 @@ public class UserSelection implements Serializable {
 
 	public List<InventoryDetails> getInventoryDetails() {
 		return this.previousInventoryDetails;
+	}
+
+	public String getEscapedStudyName() {
+		return HtmlUtils.htmlUnescape(this.getWorkbook().getStudyDetails().getStudyName());
 	}
 }

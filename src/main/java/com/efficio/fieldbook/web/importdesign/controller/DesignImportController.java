@@ -1235,4 +1235,3 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-}

@@ -1221,25 +1221,18 @@ public class DesignImportController extends SettingsController {
 
 	protected boolean hasCheckVariables(final List<MeasurementVariable> conditions) {
 		if (conditions != null && !conditions.isEmpty()) {
+			final StringTokenizer tokenizer = new StringTokenizer(AppConstants.CHECK_VARIABLES.getString(), ",");
 			for (final MeasurementVariable var : conditions) {
-				if (this.isCheckVariable(var.getTermId())) {
-					return true;
+				while (tokenizer.hasMoreTokens()) {
+					if (Integer.valueOf(tokenizer.nextToken()).intValue() == var.getTermId()) {
+						return true;
+					}
 				}
 			}
 		}
 		return false;
 	}
 
-	private boolean isCheckVariable(final int termId) {
-		final StringTokenizer tokenizer = new StringTokenizer(AppConstants.CHECK_VARIABLES.getString(), ",");
-		if (tokenizer.hasMoreTokens()) {
-			while (tokenizer.hasMoreTokens()) {
-				if (Integer.valueOf(tokenizer.nextToken()).intValue() == termId) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 }

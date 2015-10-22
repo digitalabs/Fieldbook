@@ -990,6 +990,33 @@ public class DesignImportControllerTest {
 
 	}
 
+	@Test
+	public void testHasCheckVariablesTrue() {
+
+		List<MeasurementVariable> conditions = new ArrayList<>();
+		conditions.add(this.createMeasurementVariable(TermId.CHECK_START.getId(), "CHECK_START", "ED - check start", "Number",
+				"Field trial", "TRIAL"));
+		conditions.add(this.createMeasurementVariable(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL", "ED - check interval", "Number",
+				"Field trial", "TRIAL"));
+		conditions.add(this.createMeasurementVariable(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", "ED - check plan", "Code of CHECK_PLAN",
+				"Assigned", "TRIAL"));
+
+		Assert.assertTrue(this.designImportController.hasCheckVariables(conditions));
+
+	}
+
+	@Test
+	public void testHasCheckVariablesFalse() {
+
+		List<MeasurementVariable> conditions = new ArrayList<>();
+
+		conditions.add(this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "Location", "Location name",
+				"Assigned", "TRIAL"));
+
+		Assert.assertFalse(this.designImportController.hasCheckVariables(conditions));
+
+	}
+
 	private MeasurementVariable getMeasurementVariable(final int termId, final Set<MeasurementVariable> trialVariables) {
 		for (final MeasurementVariable mvar : trialVariables) {
 			if (termId == mvar.getTermId()) {

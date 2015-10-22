@@ -28,22 +28,24 @@ import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.DataImportService;
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +75,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.hazelcast.util.StringUtil;
 
 /**
  * This controller handles the 2nd step in the nursery manager process.
@@ -93,6 +96,8 @@ public class ImportGermplasmListController extends SettingsController {
 	protected static final String TYPE2 = "type";
 
 	protected static final String LIST_DATA_TABLE = "listDataTable";
+
+	protected static final String HAS_EXPERIMENTAL_DESIGN = "hasExperimentalDesign";
 
 	protected static final String CHECK_LISTS = "checkLists";
 
@@ -130,10 +135,6 @@ public class ImportGermplasmListController extends SettingsController {
 	/** The Constant CHECK_PAGINATION_TEMPLATE. */
 	public static final String CHECK_PAGINATION_TEMPLATE = "/NurseryManager/showCheckGermplasmPagination";
 
-	/** The user selection. */
-	@Resource
-	private UserSelection userSelection;
-
 	/** The germplasm list manager. */
 	@Resource
 	private GermplasmListManager germplasmListManager;
@@ -150,9 +151,6 @@ public class ImportGermplasmListController extends SettingsController {
 	@Resource
 	private MeasurementsGeneratorService measurementsGeneratorService;
 
-	/** The fieldbook middleware service. */
-	@Resource
-	private FieldbookService fieldbookMiddlewareService;
 	@Resource
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
@@ -173,9 +171,6 @@ public class ImportGermplasmListController extends SettingsController {
 
 	private static String DEFAULT_CHECK_VALUE = "C";
 	private static String DEFAULT_TEST_VALUE = "T";
-
-	@Resource
-	private ContextUtil contextUtil;
 
 	/*
 	 * (non-Javadoc)
@@ -239,14 +234,15 @@ public class ImportGermplasmListController extends SettingsController {
 	@RequestMapping(value = {"/next", "/submitAll"}, method = RequestMethod.POST)
 	@Transactional
 	public String nextScreen(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final BindingResult result,
-			final Model model, final HttpServletRequest req) throws MiddlewareException {
+			final Model model, final HttpServletRequest req) {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
-		final String[] selectedCheck = form.getSelectedCheck();
+
 		final boolean isNursery = this.userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N;
 		boolean hasTemporaryWorkbook = false;
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
+
 			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
 			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook()
 					.getObservations(), false, this.userSelection, this.ontologyService, this.fieldbookService, this.contextUtil
@@ -255,116 +251,26 @@ public class ImportGermplasmListController extends SettingsController {
 					.getObservations(), true, this.userSelection, this.ontologyService, this.fieldbookService, this.contextUtil
 					.getCurrentProgramUUID());
 
-			if (this.userSelection.getExperimentalDesignVariables() != null) {
-				final Set<MeasurementVariable> unique = new HashSet<>(this.userSelection.getWorkbook().getFactors());
-				unique.addAll(this.userSelection.getTemporaryWorkbook().getFactors());
-				unique.addAll(this.userSelection.getExperimentalDesignVariables());
-				this.userSelection.getWorkbook().getFactors().clear();
-				this.userSelection.getWorkbook().getFactors().addAll(unique);
+			this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
 
-				final Set<MeasurementVariable> makeUniqueVariates = new HashSet<>(this.userSelection.getTemporaryWorkbook().getVariates());
-				makeUniqueVariates.addAll(this.userSelection.getWorkbook().getVariates());
-				this.userSelection.getWorkbook().getVariates().clear();
-				this.userSelection.getWorkbook().getVariates().addAll(makeUniqueVariates);
-			}
+			this.updateObservationsFromTemporaryWorkbookToWorkbook(this.userSelection);
 
-			final Map<Integer, MeasurementVariable> observationVariables =
-					WorkbookUtil.createVariableList(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook()
-							.getVariates());
-
-			WorkbookUtil.deleteDeletedVariablesInObservations(observationVariables, this.userSelection.getWorkbook().getObservations());
-			this.userSelection.setMeasurementRowList(this.userSelection.getWorkbook().getObservations());
-			WorkbookUtil.updateTrialObservations(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
 			this.userSelection.setTemporaryWorkbook(null);
+
 			hasTemporaryWorkbook = true;
 			isDeleteObservations = true;
 
 		}
 
 		if (isNursery && !hasTemporaryWorkbook) {
-			if (selectedCheck != null && selectedCheck.length != 0) {
 
-				ImportedGermplasmMainInfo importedGermplasmMainInfoToUse = this.getUserSelection().getImportedCheckGermplasmMainInfo();
-				if (importedGermplasmMainInfoToUse == null) {
-					// since for trial, we are using only the original info
-					importedGermplasmMainInfoToUse = this.getUserSelection().getImportedGermplasmMainInfo();
-				}
-				if (importedGermplasmMainInfoToUse != null) {
-					for (int i = 0; i < selectedCheck.length; i++) {
-						if (NumberUtils.isNumber(selectedCheck[i])) {
-							importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(i)
-									.setCheck(selectedCheck[i]);
-							importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(i)
-									.setCheckId(Integer.parseInt(selectedCheck[i]));
-						}
-					}
-				}
-			} else {
-				// we set the check to null
-				if (this.getUserSelection().getImportedGermplasmMainInfo() != null
-						&& this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null
-						&& this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null) {
-					// this is to keep track of the original list before merging
-					// with the checks
-					for (final ImportedGermplasm germplasm : this.getUserSelection().getImportedGermplasmMainInfo()
-							.getImportedGermplasmList().getImportedGermplasms()) {
-						germplasm.setCheckId(null);
-						germplasm.setCheck("");
-					}
-				}
-			}
+			this.processImportedGermplasmAndChecks(this.userSelection, form);
 
-			// end: section for taking note of the check germplasm
-			if (this.getUserSelection().getImportedGermplasmMainInfo() != null) {
-				form.setImportedGermplasmMainInfo(this.getUserSelection().getImportedGermplasmMainInfo());
-				form.setImportedGermplasm(this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms());
-				form.setImportedCheckGermplasmMainInfo(this.getUserSelection().getImportedCheckGermplasmMainInfo());
-				if (this.getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
-					form.setImportedCheckGermplasm(this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-							.getImportedGermplasms());
-				}
-				if (this.getUserSelection().getImportedGermplasmMainInfo() != null
-						&& this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null) {
-					// this is to keep track of the original list before merging
-					// with the checks
-					this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().copyImportedGermplasms();
-				}
-				// merge primary and check germplasm list
-				if (this.getUserSelection().getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null
-						&& SettingsUtil.checkVariablesHaveValues(form.getCheckVariables())) {
-
-					this.mergeCheckService.updatePrimaryListAndChecksBeforeMerge(form);
-
-					final int interval = this.getIntervalValue(form);
-
-					final String defaultTestCheckId =
-							this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
-					final List<ImportedGermplasm> newImportedGermplasm =
-							this.mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), form.getImportedCheckGermplasm(),
-									Integer.parseInt(SettingsUtil.getSettingDetailValue(form.getCheckVariables(),
-											TermId.CHECK_START.getId())), interval, SettingsUtil.getCodeInPossibleValues(
-											SettingsUtil.getFieldPossibleVales(this.fieldbookService, TermId.CHECK_PLAN.getId()),
-											SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId())),
-									defaultTestCheckId);
-
-					this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-							.setImportedGermplasms(newImportedGermplasm);
-					form.setImportedGermplasm(this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-							.getImportedGermplasms());
-				}
-
-				// this would validate and add CHECK factor if necessary
-				this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), this.getUserSelection()
-						.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), this.userSelection);
-				this.userSelection.setMeasurementRowList(this.measurementsGeneratorService.generateRealMeasurementRows(this.userSelection));
-
-				// add or remove check variables if needed
-				this.fieldbookService.manageCheckVariables(this.userSelection, form);
-			}
 		} else if (!hasTemporaryWorkbook) {
+
 			isDeleteObservations = true;
 			this.userSelection.setMeasurementRowList(null);
+
 		}
 
 		this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());
@@ -377,6 +283,7 @@ public class ImportGermplasmListController extends SettingsController {
 				this.dataImportService.saveDataset(this.userSelection.getWorkbook(), true, isDeleteObservations, this.getCurrentProject()
 						.getUniqueID());
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
+
 		// for saving the list data project
 		this.saveListDataProject(isNursery, studyId);
 
@@ -402,7 +309,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param studyId
 	 * @throws MiddlewareQueryException
 	 */
-	private void saveListDataProject(final boolean isNursery, final int studyId) throws MiddlewareQueryException {
+	private void saveListDataProject(final boolean isNursery, final int studyId) {
 
 		if (this.getUserSelection().getImportedGermplasmMainInfo() != null
 				&& this.getUserSelection().getImportedGermplasmMainInfo().getListId() != null) {
@@ -697,6 +604,8 @@ public class ImportGermplasmListController extends SettingsController {
 			this.getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
 			this.getUserSelection().setImportValid(true);
 
+			model.addAttribute(ImportGermplasmListController.HAS_EXPERIMENTAL_DESIGN,
+					this.hasExperimentalDesign(this.userSelection.getWorkbook()));
 			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmCheckTableHeader());
 
 		} catch (final Exception e) {
@@ -827,7 +736,8 @@ public class ImportGermplasmListController extends SettingsController {
 		return this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty();
 	}
 
-	protected String getCheckId(final String checkCode, final List<Enumeration> checksList) throws MiddlewareQueryException {
+	protected String getCheckId(final String checkCode, final List<Enumeration> checksList) {
+
 		String checkId = "";
 
 		for (final Enumeration enumVar : checksList) {
@@ -1392,5 +1302,218 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * 
+	 * @param userSelection
+	 */
+	protected void updateObservationsFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
+
+		final Map<Integer, MeasurementVariable> observationVariables =
+				WorkbookUtil.createVariableList(userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getVariates());
+
+		WorkbookUtil.deleteDeletedVariablesInObservations(observationVariables, userSelection.getWorkbook().getObservations());
+
+		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
+
+		WorkbookUtil.updateTrialObservations(userSelection.getWorkbook(), userSelection.getTemporaryWorkbook());
+
+	}
+
+	/**
+	 * This will copy the factors, variates and experimental design variable generated from importing a Custom Design to the Workbook that
+	 * will be saved.
+	 * 
+	 * @param userSelection
+	 */
+	protected void addVariablesFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
+
+		if (userSelection.getExperimentalDesignVariables() != null) {
+
+			// Make sure that measurement variables are unique.
+			final Set<MeasurementVariable> unique = new HashSet<>(userSelection.getWorkbook().getFactors());
+			unique.addAll(userSelection.getTemporaryWorkbook().getFactors());
+			unique.addAll(userSelection.getExperimentalDesignVariables());
+			userSelection.getWorkbook().getFactors().clear();
+			userSelection.getWorkbook().getFactors().addAll(unique);
+
+			final Set<MeasurementVariable> makeUniqueVariates = new HashSet<>(userSelection.getTemporaryWorkbook().getVariates());
+			makeUniqueVariates.addAll(userSelection.getWorkbook().getVariates());
+			userSelection.getWorkbook().getVariates().clear();
+			userSelection.getWorkbook().getVariates().addAll(makeUniqueVariates);
+
+		}
+	}
+
+	/**
+	 * Updates the Check value and Check ID of Imported Germplasm based on the Selected Checks from ImportGermplasmListForm
+	 * 
+	 * @param userSelection
+	 * @param form
+	 */
+	protected void processChecks(final UserSelection userSelection, final ImportGermplasmListForm form) {
+
+		final String[] selectedCheck = form.getSelectedCheck();
+
+		if (selectedCheck != null && selectedCheck.length != 0) {
+
+			ImportedGermplasmMainInfo importedGermplasmMainInfoToUse = userSelection.getImportedCheckGermplasmMainInfo();
+			if (importedGermplasmMainInfoToUse == null) {
+
+				// since for trial, we are using only the original info
+				importedGermplasmMainInfoToUse = userSelection.getImportedGermplasmMainInfo();
+			}
+			if (importedGermplasmMainInfoToUse != null) {
+				for (int i = 0; i < selectedCheck.length; i++) {
+					if (NumberUtils.isNumber(selectedCheck[i])) {
+						importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(i).setCheck(selectedCheck[i]);
+						importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(i)
+								.setCheckId(Integer.parseInt(selectedCheck[i]));
+					}
+				}
+			}
+		} else {
+			// we set the check to null
+			if (userSelection.getImportedGermplasmMainInfo() != null
+					&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList() != null
+					&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null) {
+
+				// this is to keep track of the original list before merging
+				// with the checks
+				for (final ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()
+						.getImportedGermplasms()) {
+					germplasm.setCheckId(null);
+					germplasm.setCheck("");
+				}
+			}
+		}
+
+		// end: section for taking note of the check germplasm
+	}
+
+	protected void processImportedGermplasmAndChecks(final UserSelection userSelection, final ImportGermplasmListForm form) {
+
+		this.processChecks(userSelection, form);
+
+		if (userSelection.getImportedGermplasmMainInfo() != null) {
+
+			this.copyImportedGermplasmFromUserSelectionToForm(userSelection, form);
+
+			this.mergePrimaryAndCheckGermplasmList(userSelection, form);
+
+			// his would validate and add CHECK factor if necessary
+			this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), userSelection
+					.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
+
+			userSelection.setMeasurementRowList(this.measurementsGeneratorService.generateRealMeasurementRows(userSelection));
+
+			// add or remove check variables if needed
+			this.fieldbookService.manageCheckVariables(userSelection, form);
+
+			// remove the experimental design variable if the user changed or updated the germplasm/check list
+			this.addExperimentFactorToBeDeleted(userSelection.getWorkbook().getConditions());
+		}
+
+	}
+
+	/**
+	 * Copies the Germplasm List and Check list from userSelection to ImportGermplasmListForm
+	 * 
+	 * @param userSelection
+	 * @param form
+	 */
+	protected void copyImportedGermplasmFromUserSelectionToForm(final UserSelection userSelection, final ImportGermplasmListForm form) {
+
+		if (userSelection.getImportedGermplasmMainInfo() != null) {
+
+			form.setImportedGermplasmMainInfo(userSelection.getImportedGermplasmMainInfo());
+			form.setImportedGermplasm(userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+
+			// this is to keep track of the original list before merging
+			// with the checks
+			if (userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList() != null) {
+				userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().copyImportedGermplasms();
+			}
+
+		}
+
+		if (userSelection.getImportedCheckGermplasmMainInfo() != null) {
+
+			form.setImportedCheckGermplasmMainInfo(userSelection.getImportedCheckGermplasmMainInfo());
+			form.setImportedCheckGermplasm(userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
+					.getImportedGermplasms());
+		}
+
+	}
+
+	/**
+	 * This will merge the selected Germplasm List and Check list into one Imported Germplasm list. This is necessary for generation of
+	 * Observation with checks.
+	 * 
+	 * @param userSelection
+	 * @param form
+	 */
+	protected void mergePrimaryAndCheckGermplasmList(final UserSelection userSelection, final ImportGermplasmListForm form) {
+
+		// merge primary and check germplasm list
+		if (userSelection.getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null
+				&& SettingsUtil.checkVariablesHaveValues(form.getCheckVariables())) {
+
+			this.mergeCheckService.updatePrimaryListAndChecksBeforeMerge(form);
+
+			final int interval = this.getIntervalValue(form);
+
+			final String defaultTestCheckId =
+					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
+			final List<ImportedGermplasm> newImportedGermplasm =
+					this.mergeCheckService.mergeGermplasmList(
+							form.getImportedGermplasm(),
+							form.getImportedCheckGermplasm(),
+							Integer.parseInt(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId())),
+							interval,
+							SettingsUtil.getCodeInPossibleValues(
+									SettingsUtil.getFieldPossibleVales(this.fieldbookService, TermId.CHECK_PLAN.getId()),
+									SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId())),
+							defaultTestCheckId);
+
+			userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(newImportedGermplasm);
+			form.setImportedGermplasm(userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+		}
+
+	}
+
+	/**
+	 * This will remove the Experimental Design Factor in workbook.
+	 * 
+	 * @param conditions
+	 */
+	protected void addExperimentFactorToBeDeleted(final List<MeasurementVariable> conditions) {
+		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.EXPERIMENT_DESIGN_FACTOR.getId()), "", Operation.DELETE,
+				PhenotypicType.TRIAL_ENVIRONMENT));
+	}
+
+	protected MeasurementVariable createMeasurementVariable(final String idToCreate, final String value, final Operation operation,
+			final PhenotypicType role) {
+		final StandardVariable stdvar =
+				this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate), this.contextUtil.getCurrentProgramUUID());
+		stdvar.setPhenotypicType(role);
+		final MeasurementVariable var =
+				new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(),
+						stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType()
+								.getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
+		var.setRole(role);
+		var.setDataTypeId(stdvar.getDataType().getId());
+		var.setFactor(false);
+		var.setOperation(operation);
+		return var;
+
+	}
+
+	protected boolean hasExperimentalDesign(final Workbook workbook) {
+		final ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
+		return expDesignVar != null && expDesignVar.getExperimentalDesign() != null
+				&& !StringUtil.isNullOrEmpty(expDesignVar.getExperimentalDesign().getValue());
+
 	}
 }

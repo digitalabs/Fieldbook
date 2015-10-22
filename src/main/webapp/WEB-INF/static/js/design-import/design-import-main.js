@@ -338,11 +338,11 @@
 		function checkMeasurementsConflict(result) {
 			var deferred = $q.defer();
 
-			if (result.hasConflict) {
+			if (result.hasConflict || result.hasChecksSelected) {
 				// NOTE: by default, bootbox.confirm local is set to EN
 				bootbox.dialog({
 					title: Messages.DESIGN_IMPORT_CONFLICT_ALERT_HEADER,
-					message: Messages.DESIGN_IMPORT_CONFLICT_ALERT_MESSAGE,
+					message: result.hasChecksSelected ? Messages.DESIGN_IMPORT_HAS_CHECKS_SELECTED_ALERT_MESSAGE : Messages.DESIGN_IMPORT_CONFLICT_ALERT_MESSAGE,
 					closeButton: false,
 					onEscape: false,
 					buttons: {

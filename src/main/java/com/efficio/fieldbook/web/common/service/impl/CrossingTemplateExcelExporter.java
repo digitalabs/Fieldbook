@@ -62,7 +62,7 @@ public class CrossingTemplateExcelExporter {
 			final GermplasmList gpList = crossesList.get(0);
 			gpList.setType(GermplasmListType.LST.name());
 
-			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook)excelWorkbook));
+			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook));
 
 			// 3. update observation sheet
 			int rowIndex = 1;
@@ -85,15 +85,15 @@ public class CrossingTemplateExcelExporter {
 		}
 	}
 
-	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final GermplasmList germplasmList, final ExcelCellStyleBuilder sheetStyles) {
+	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final GermplasmList germplasmList,
+			final ExcelCellStyleBuilder sheetStyles) {
 		final CellStyle labelStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.LABEL_STYLE);
 		final CellStyle textStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.TEXT_STYLE);
 
 		int actualRow = startingRow - 1;
 
-		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(actualRow))
-				.writeListDetailsRow(descriptionSheet, GermplasmExportedWorkbook.LIST_NAME, "",
-						"Enter a list name here, or add it when saving in the BMS", labelStyle, textStyle);
+		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(actualRow)).writeListDetailsRow(descriptionSheet,
+				GermplasmExportedWorkbook.LIST_NAME, "", "Enter a list name here, or add it when saving in the BMS", labelStyle, textStyle);
 
 		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(++actualRow)).writeListDetailsRow(descriptionSheet,
 				GermplasmExportedWorkbook.LIST_DESCRIPTION, "", "Enter a list description here, or add it when saving in the BMS",
@@ -115,8 +115,8 @@ public class CrossingTemplateExcelExporter {
 	}
 
 	private File createExcelOutputFile(final String studyName, final Workbook excelWorkbook) throws IOException {
-		final String outputFileName = String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT,
-				StringUtil.cleanNameValueCommas(studyName));
+		final String outputFileName =
+				String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT, StringUtil.cleanNameValueCommas(studyName));
 		try (OutputStream out = new FileOutputStream(outputFileName)) {
 			excelWorkbook.write(out);
 		}

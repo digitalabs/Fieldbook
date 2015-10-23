@@ -63,7 +63,7 @@ var ImportDesign = (function() {
 					keyboard: true
 				});
 			} else {
-				
+
 				showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
 				
 			}
@@ -341,9 +341,9 @@ var ImportDesign = (function() {
 						$('li#nursery-measurements-li a').tab('show');
 						
 						$('#changeDesignModal').modal('hide');
-						
+
 						// to enforce overwrite when the nursery is saved
-					    $('#chooseGermplasmAndChecks').data('replace', '1');
+						$('#chooseGermplasmAndChecks').data('replace', '1');
 					}
 				});
 			} 

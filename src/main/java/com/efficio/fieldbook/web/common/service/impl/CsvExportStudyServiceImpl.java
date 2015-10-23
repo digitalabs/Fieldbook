@@ -74,8 +74,8 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 				final MeasurementRow instanceLevelObservation = workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo);
 
 				final String filenamePath =
-						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename, workbook.isNursery(),
-								this.fieldbookProperties, this.fieldbookMiddlewareService);
+						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename,
+								workbook.isNursery(), this.fieldbookProperties, this.fieldbookMiddlewareService);
 
 				final List<ExportColumnHeader> exportColumnHeaders =
 						this.getExportColumnHeaders(visibleColumns, workbook.getMeasurementDatasetVariables());

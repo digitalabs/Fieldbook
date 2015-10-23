@@ -14,9 +14,9 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import junit.framework.Assert;
 
 public class SeasonExpressionTest extends TestExpression {
-	
+
 	public static final Logger LOG = LoggerFactory.getLogger(SeasonExpressionTest.class);
-	
+
 	@Test
 	public void testSeasonAsPrefix() throws Exception {
 		LOG.debug("Testing Season As Prefix");

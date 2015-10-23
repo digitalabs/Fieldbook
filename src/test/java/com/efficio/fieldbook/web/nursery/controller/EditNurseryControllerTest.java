@@ -216,10 +216,11 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testSanitizeSettingDetailList() {
-		List<SettingDetail> settingDetails = new ArrayList<>();
+		final List<SettingDetail> settingDetails = new ArrayList<>();
 
 		settingDetails.add(new SettingDetail());
-		SettingDetail settingDetail = new SettingDetail(Mockito.mock(SettingVariable.class), new ArrayList<ValueReference>(), "", false);
+		final SettingDetail settingDetail =
+				new SettingDetail(Mockito.mock(SettingVariable.class), new ArrayList<ValueReference>(), "", false);
 		settingDetails.add(settingDetail);
 
 		this.editNurseryController.sanitizeSettingDetailList(settingDetails);

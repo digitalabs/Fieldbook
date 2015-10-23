@@ -501,6 +501,6 @@
 		<aop:scoped-proxy />
 	</bean>
 
-	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" scope="request"/>
+	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" scope="prototype"/>
 	
 </beans>

@@ -12,6 +12,8 @@ import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.common.service.KsuCsvImportStudyService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -77,6 +79,10 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	public static final String URL = "/ImportManager";
 	private static final String ADD_OR_REMOVE_TRAITS_HTML = "/NurseryManager/addOrRemoveTraits";
 
+	public static final int STATUS_ADD_NAME_TO_GID = 1;
+	public static final int STATUS_ADD_GERMPLASM_AND_NAME = 2;
+	public static final int STATUS_SELECT_GID = 3;
+
 	@Resource
 	private UserSelection studySelection;
 
@@ -112,9 +118,12 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
-	
+
 	@Resource
 	private ContextUtil contextUtil;
+
+	@Resource
+	private ObjectMapper objectMapper;
 
 	@Override
 	public String getContentName() {
@@ -123,12 +132,12 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/import/{studyType}/{importType}", method = RequestMethod.POST)
-	public String importFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, @PathVariable String studyType,
-			@PathVariable int importType, BindingResult result, Model model) {
+	public String importFile(@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form,
+			@PathVariable final String studyType, @PathVariable final int importType, final BindingResult result, final Model model) {
 
-		boolean isTrial = "TRIAL".equalsIgnoreCase(studyType);
+		final boolean isTrial = "TRIAL".equalsIgnoreCase(studyType);
 		ImportResult importResult = null;
-		UserSelection userSelection = this.getUserSelection(isTrial);
+		final UserSelection userSelection = this.getUserSelection(isTrial);
 
 		/**
 		 * Should always revert the data first to the original data here we should move here that part the copies it to the original
@@ -138,8 +147,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 		importResult = this.importWorkbookByType(form.getFile(), result, userSelection.getWorkbook(), importType);
 
-		Locale locale = LocaleContextHolder.getLocale();
-		Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Locale locale = LocaleContextHolder.getLocale();
+		final Map<String, Object> resultsMap = new HashMap<String, Object>();
 		resultsMap.put("hasDataOverwrite", userSelection.getWorkbook().hasExistingDataOverwrite() ? "1" : "0");
 		if (!result.hasErrors()) {
 			userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
@@ -161,10 +170,10 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				this.populateConfirmationMessages(importResult.getChangeDetails());
 				resultsMap.put("changeDetails", importResult.getChangeDetails());
 				resultsMap.put("errorMessage", importResult.getErrorMessage());
-				List<String> detailErrorMessage = new ArrayList<String>();
+				final List<String> detailErrorMessage = new ArrayList<String>();
 				String reminderConfirmation = "";
 				if (importResult.getModes() != null && !importResult.getModes().isEmpty()) {
-					for (ChangeType mode : importResult.getModes()) {
+					for (final ChangeType mode : importResult.getModes()) {
 						String message = this.messageSource.getMessage(mode.getMessageCode(), null, locale);
 						if (mode == ChangeType.ADDED_TRAITS) {
 							message +=
@@ -183,10 +192,10 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 		} else {
 			resultsMap.put(ImportStudyController.IS_SUCCESS, 0);
-			String errorCode = result.getFieldError("file").getCode();
+			final String errorCode = result.getFieldError("file").getCode();
 			try {
 				resultsMap.put(ImportStudyController.ERROR, this.messageSource.getMessage(errorCode, null, locale));
-			} catch (NoSuchMessageException e) {
+			} catch (final NoSuchMessageException e) {
 				resultsMap.put(ImportStudyController.ERROR, errorCode);
 				ImportStudyController.LOG.error(e.getMessage(), e);
 			}
@@ -195,14 +204,15 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		return super.convertObjectToJson(resultsMap);
 	}
 
-	protected ImportResult importWorkbookByType(MultipartFile file, BindingResult result, Workbook workbook, Integer importType) {
+	protected ImportResult importWorkbookByType(final MultipartFile file, final BindingResult result, final Workbook workbook,
+			final Integer importType) {
 		ImportResult importResult = null;
 
 		this.validateImportFile(file, result, importType);
 
 		if (!result.hasErrors()) {
 			try {
-				String filename = this.fileService.saveTemporaryFile(file.getInputStream());
+				final String filename = this.fileService.saveTemporaryFile(file.getInputStream());
 				if (AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType) {
 					importResult =
 							this.fieldroidImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
@@ -220,13 +230,15 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 							this.ksuExcelImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
 									this.ontologyService, this.fieldbookMiddlewareService);
 				} else if (AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
-					importResult = this.ksuCsvImportStudyService.importWorkbook(workbook,this.fileService.getFilePath(filename),file.getOriginalFilename());
+					importResult =
+							this.ksuCsvImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
+									file.getOriginalFilename());
 				}
 
-			} catch (WorkbookParserException e) {
+			} catch (final WorkbookParserException e) {
 				ImportStudyController.LOG.error(e.getMessage(), e);
 				result.rejectValue("file", e.getMessage());
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				ImportStudyController.LOG.error(e.getMessage(), e);
 			}
 		}
@@ -234,19 +246,18 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		return importResult;
 	}
 
-	protected void validateImportFile(MultipartFile file, BindingResult result, Integer importType) {
+	protected void validateImportFile(final MultipartFile file, final BindingResult result, final Integer importType) {
 		if (file == null) {
 			result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
 		} else {
 			if (AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType
-					|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType
-					|| AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
-				boolean isCSVFile = file.getOriginalFilename().contains(".csv");
+					|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType || AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
+				final boolean isCSVFile = file.getOriginalFilename().contains(".csv");
 				if (!isCSVFile) {
 					result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
 				}
 			} else if (AppConstants.IMPORT_NURSERY_EXCEL.getInt() == importType || AppConstants.IMPORT_KSU_EXCEL.getInt() == importType) {
-				boolean isExcelFile = file.getOriginalFilename().contains(".xls") || file.getOriginalFilename().contains(".xlsx");
+				final boolean isExcelFile = file.getOriginalFilename().contains(".xls") || file.getOriginalFilename().contains(".xlsx");
 				if (!isExcelFile) {
 					result.rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
 				}
@@ -254,13 +265,14 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		}
 	}
 
-	private List<List<ValueReference>> transformTrialObservations(List<MeasurementRow> trialObservations, List<SettingDetail> trialHeaders) {
-		List<List<ValueReference>> list = new ArrayList<List<ValueReference>>();
+	private List<List<ValueReference>> transformTrialObservations(final List<MeasurementRow> trialObservations,
+			final List<SettingDetail> trialHeaders) {
+		final List<List<ValueReference>> list = new ArrayList<List<ValueReference>>();
 		if (trialHeaders != null && !trialHeaders.isEmpty() && trialObservations != null && !trialObservations.isEmpty()) {
-			for (MeasurementRow row : trialObservations) {
-				List<ValueReference> refList = new ArrayList<ValueReference>();
-				for (SettingDetail header : trialHeaders) {
-					for (MeasurementData data : row.getDataList()) {
+			for (final MeasurementRow row : trialObservations) {
+				final List<ValueReference> refList = new ArrayList<ValueReference>();
+				for (final SettingDetail header : trialHeaders) {
+					for (final MeasurementData data : row.getDataList()) {
 						if (data.getMeasurementVariable() != null
 								&& data.getMeasurementVariable().getTermId() == header.getVariable().getCvTermId()) {
 
@@ -274,39 +286,39 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		return list;
 	}
 
-	private UserSelection getUserSelection(boolean isTrial) {
+	private UserSelection getUserSelection(final boolean isTrial) {
 		return this.studySelection;
 	}
 
-	public String show(Model model, boolean isTrial) {
+	public String show(final Model model, final boolean isTrial) {
 		this.setupModelInfo(model);
 		model.addAttribute(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, this.getContentName(isTrial));
 		return AbstractBaseFieldbookController.BASE_TEMPLATE_NAME;
 	}
 
-	private String getContentName(boolean isTrial) {
+	private String getContentName(final boolean isTrial) {
 		return isTrial ? "TrialManager/openTrial" : "NurseryManager/addOrRemoveTraits";
 	}
 
 	@RequestMapping(value = "/revert/data", method = RequestMethod.GET)
-	public String revertData(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+	public String revertData(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
 
 		this.doRevertData(form);
 
 		return super.showAjaxPage(model, ImportStudyController.ADD_OR_REMOVE_TRAITS_HTML);
 	}
 
-	private void doRevertData(CreateNurseryForm form) {
-		UserSelection userSelection = this.getUserSelection(false);
+	private void doRevertData(final CreateNurseryForm form) {
+		final UserSelection userSelection = this.getUserSelection(false);
 		// we should remove here the newly added traits
-		List<MeasurementVariable> newVariableList = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> newVariableList = new ArrayList<MeasurementVariable>();
 
 		newVariableList.addAll(userSelection.getWorkbook().isNursery() ? userSelection.getWorkbook().getMeasurementDatasetVariables()
 				: userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 		form.setMeasurementVariables(newVariableList);
-		List<MeasurementRow> list = new ArrayList<MeasurementRow>();
+		final List<MeasurementRow> list = new ArrayList<MeasurementRow>();
 		if (userSelection.getWorkbook().getOriginalObservations() != null) {
-			for (MeasurementRow row : userSelection.getWorkbook().getOriginalObservations()) {
+			for (final MeasurementRow row : userSelection.getWorkbook().getOriginalObservations()) {
 				list.add(row.copy());
 			}
 		}
@@ -318,63 +330,111 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/apply/change/details", method = RequestMethod.POST)
-	public String applyChangeDetails(@RequestParam(value = "data") String userResponses) throws FieldbookException {
-		UserSelection userSelection = this.getUserSelection(false);
-		GermplasmChangeDetail[] responseDetails = this.getResponseDetails(userResponses);
-		List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
-		Map<String, Map<String, String>> changeMap = new HashMap<String, Map<String, String>>();
-		for (GermplasmChangeDetail responseDetail : responseDetails) {
-			if (responseDetail.getIndex() < observations.size()) {
-				MeasurementRow row = observations.get(responseDetail.getIndex());
-				int userId = this.getUserId();
-				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
-				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
-				MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
-				if (responseDetail.getStatus() == 1) {
-					// add germplasm name to gid
-					String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
-					Integer dateInteger = Integer.valueOf(gDate);
-					this.addGermplasmName(responseDetail.getNewDesig(), Integer.valueOf(responseDetail.getOriginalGid()), userId,
-							responseDetail.getNameType(), responseDetail.getImportLocationId(), dateInteger);
-					desigData.setValue(responseDetail.getNewDesig());
-					gidData.setValue(responseDetail.getOriginalGid());
-				} else if (responseDetail.getStatus() == 2) {
-					// create new germlasm
-					String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
-					Integer dateInteger = Integer.valueOf(gDate);
-					Name name =
-							new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(),
-									responseDetail.getImportLocationId(), dateInteger, 0);
-					Germplasm germplasm =
-							new Germplasm(null, responseDetail.getImportMethodId(), 0, 0, 0, userId, 0,
-									responseDetail.getImportLocationId(), dateInteger, name);
-					int newGid = this.addGermplasm(germplasm, name);
-					desigData.setValue(responseDetail.getNewDesig());
-					gidData.setValue(String.valueOf(newGid));
-				} else if (responseDetail.getStatus() == 3) {
-					// choose gids
-					desigData.setValue(responseDetail.getNewDesig());
-					gidData.setValue(String.valueOf(responseDetail.getSelectedGid()));
+	public String applyChangeDetails(@RequestParam(value = "data") final String userResponses) throws FieldbookException {
+		final UserSelection userSelection = this.getUserSelection(false);
+		final GermplasmChangeDetail[] responseDetails = this.getResponseDetails(userResponses);
+		final List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
+		final Map<String, Map<String, String>> changeMap = new HashMap<>();
 
-				}
+		// create data structures that will be used to store values that will eventually be stored into the database
+		final List<Name> namesForAdding = new ArrayList<>();
+		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
+		final Map<Integer, MeasurementRow> entryNumberIndexMap = new HashMap<>();
+		int germplasmPairIndex = 0;
+		for (final GermplasmChangeDetail responseDetail : responseDetails) {
+			// reduce the nesting of the loop by continuing the loop in case expected condition is not satisfied
+			if (responseDetail.getIndex() >= observations.size()) {
+				continue;
+			}
 
-				if (responseDetail.getStatus() > 0 && entryNumData != null && entryNumData.getValue() != null) {
-					Map<String, String> tempMap = new HashMap<String, String>();
-					tempMap.put(Integer.toString(TermId.GID.getId()), gidData.getValue());
-					tempMap.put(Integer.toString(TermId.DESIG.getId()), desigData.getValue());
-					changeMap.put(entryNumData.getValue(), tempMap);
+			final MeasurementRow row = observations.get(responseDetail.getIndex());
+			final int userId = this.getUserId();
+			final MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
+			final MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
+			final MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
+
+			if (responseDetail.getStatus() == ImportStudyController.STATUS_ADD_NAME_TO_GID) {
+				// add germplasm name to gid
+				final String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
+				final Integer dateInteger = Integer.valueOf(gDate);
+				// instead of directly saving the new name value, store the name into the prepared list
+				namesForAdding.add(new Name(null, Integer.valueOf(responseDetail.getOriginalGid()), responseDetail.getNameType(), 0,
+						userId, responseDetail.getNewDesig(), responseDetail.getImportLocationId(), dateInteger, 0));
+				desigData.setValue(responseDetail.getNewDesig());
+				gidData.setValue(responseDetail.getOriginalGid());
+			} else if (responseDetail.getStatus() == ImportStudyController.STATUS_ADD_GERMPLASM_AND_NAME) {
+				// create new germlasm
+				final String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
+				final Integer dateInteger = Integer.valueOf(gDate);
+				final Name name =
+						new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(),
+								responseDetail.getImportLocationId(), dateInteger, 0);
+				final Germplasm germplasm =
+						new Germplasm(null, responseDetail.getImportMethodId(), 0, 0, 0, userId, 0, responseDetail.getImportLocationId(),
+								dateInteger, name);
+
+				// instead of directly saving into the database, store the germplasm - name pair into a list
+				germplasmPairs.add(new ImmutablePair<Germplasm, Name>(germplasm, name));
+
+				// store the measurement row and the associated index of the entry so that the GID resulting in the database save later on
+				// can still be used to properly update the required data structures
+				entryNumberIndexMap.put(germplasmPairIndex++, row);
+
+				// update the value of the DESIG measurementdata with the new value
+				desigData.setValue(responseDetail.getNewDesig());
+			} else if (responseDetail.getStatus() == ImportStudyController.STATUS_SELECT_GID) {
+				// choose gids
+				desigData.setValue(responseDetail.getNewDesig());
+				gidData.setValue(String.valueOf(responseDetail.getSelectedGid()));
+
+			}
+
+			if (responseDetail.getStatus() > 0 && entryNumData != null && entryNumData.getValue() != null) {
+				final Map<String, String> tempMap = new HashMap<>();
+				tempMap.put(Integer.toString(TermId.GID.getId()), gidData.getValue());
+				tempMap.put(Integer.toString(TermId.DESIG.getId()), desigData.getValue());
+				changeMap.put(entryNumData.getValue(), tempMap);
+			}
+
+		}
+
+		// perform the database / transaction managed operations outside of the loop for better performance
+		try {
+			if (namesForAdding.size() > 0) {
+				this.fieldbookMiddlewareService.addGermplasmNames(namesForAdding);
+			}
+
+			if (germplasmPairs.size() > 0) {
+				final List<Integer> newGids = this.fieldbookMiddlewareService.addGermplasm(germplasmPairs);
+
+				// update both the maintained change map as well as the GID measurement data with the new GID created from saving to the
+				// database
+
+				for (int i = 0; i < newGids.size(); i++) {
+					final Integer newGid = newGids.get(i);
+					final MeasurementRow row = entryNumberIndexMap.get(i);
+
+					final MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
+					final MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
+
+					gidData.setValue(newGid.toString());
+					changeMap.get(entryNumData.getValue()).put(Integer.toString(TermId.GID.getId()), String.valueOf(newGid));
+
 				}
 			}
+		} catch (final MiddlewareQueryException e) {
+			ImportStudyController.LOG.error(e.getMessage(), e);
+			throw new FieldbookException(e.getMessage());
 		}
 
 		// we need to set the gid and desig for the trial with the same entry number
 		if (!userSelection.getWorkbook().isNursery()) {
-			for (MeasurementRow row : observations) {
-				MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
+			for (final MeasurementRow row : observations) {
+				final MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
 				if (entryNumData != null && entryNumData.getValue() != null && changeMap.containsKey(entryNumData.getValue())) {
-					Map<String, String> tempMap = changeMap.get(entryNumData.getValue());
-					MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
-					MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
+					final Map<String, String> tempMap = changeMap.get(entryNumData.getValue());
+					final MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
+					final MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
 					desigData.setValue(tempMap.get(Integer.toString(TermId.DESIG.getId())));
 					gidData.setValue(tempMap.get(Integer.toString(TermId.GID.getId())));
 				}
@@ -384,74 +444,53 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		return "success";
 	}
 
-	// germplasm trial entry plot - 345
-
-	private int addGermplasm(Germplasm germplasm, Name name) throws FieldbookException {
-		try {
-			return this.fieldbookMiddlewareService.addGermplasm(germplasm, name);
-		} catch (MiddlewareQueryException e) {
-			ImportStudyController.LOG.error(e.getMessage(), e);
-			throw new FieldbookException(e.getMessage());
-		}
-	}
-
-	private void addGermplasmName(String nameValue, Integer gid, int userId, int nameTypeId, int locationId, Integer date)
-			throws FieldbookException {
-		try {
-			this.fieldbookMiddlewareService.addGermplasmName(nameValue, gid, userId, nameTypeId, locationId, date);
-		} catch (MiddlewareQueryException e) {
-			ImportStudyController.LOG.error(e.getMessage(), e);
-			throw new FieldbookException(e.getMessage());
-		}
-
-	}
-
 	private int getUserId() throws FieldbookException {
 		try {
 			return this.getCurrentIbdbUserId();
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			ImportStudyController.LOG.error(e.getMessage(), e);
 			throw new FieldbookException(e.getMessage());
 		}
 	}
 
-	private GermplasmChangeDetail[] getResponseDetails(String userResponses) throws FieldbookException {
-		ObjectMapper objectMapper = new ObjectMapper();
+	private GermplasmChangeDetail[] getResponseDetails(final String userResponses) throws FieldbookException {
+
 		try {
 			return objectMapper.readValue(userResponses, GermplasmChangeDetail[].class);
-		} catch (JsonParseException e) {
+		} catch (final JsonParseException e) {
 			ImportStudyController.LOG.error(e.getMessage(), e);
 			throw new FieldbookException(e.getMessage());
-		} catch (JsonMappingException e) {
+		} catch (final JsonMappingException e) {
 			ImportStudyController.LOG.error(e.getMessage(), e);
 			throw new FieldbookException(e.getMessage());
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			ImportStudyController.LOG.error(e.getMessage(), e);
 			throw new FieldbookException(e.getMessage());
 		}
 	}
 
-	private void populateConfirmationMessages(List<GermplasmChangeDetail> details) {
+	private void populateConfirmationMessages(final List<GermplasmChangeDetail> details) {
 		if (details != null && !details.isEmpty()) {
 			for (int index = 0; index < details.size(); index++) {
-				String[] args =
+				final String[] args =
 						new String[] {String.valueOf(index + 1), String.valueOf(details.size()), details.get(index).getOriginalDesig(),
 								details.get(index).getTrialInstanceNumber(), details.get(index).getEntryNumber(),
 								details.get(index).getPlotNumber()};
-				String message = this.messageSource.getMessage("import.change.desig.confirmation", args, LocaleContextHolder.getLocale());
+				final String message =
+						this.messageSource.getMessage("import.change.desig.confirmation", args, LocaleContextHolder.getLocale());
 				details.get(index).setMessage(message);
 			}
 		}
 	}
 
 	@RequestMapping(value = "/import/save", method = RequestMethod.POST)
-	public String saveImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model)
+	public String saveImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model)
 			throws MiddlewareException {
-		UserSelection userSelection = this.getUserSelection(false);
-		List<MeasurementVariable> traits =
+		final UserSelection userSelection = this.getUserSelection(false);
+		final List<MeasurementVariable> traits =
 				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
 						.getObservations());
-		Workbook workbook = userSelection.getWorkbook();
+		final Workbook workbook = userSelection.getWorkbook();
 		userSelection.getWorkbook().getVariates().addAll(traits);
 
 		this.fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
@@ -460,13 +499,13 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		// will do the cleanup for BM_CODE_VTE here
 		SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 				this.ontologyService);
-		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(),contextUtil.getCurrentProgramUUID());
+		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), contextUtil.getCurrentProgramUUID());
 		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService);
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
 
 		userSelection.getWorkbook().setOriginalObservations(userSelection.getWorkbook().getObservations());
-		List<SettingDetail> newTraits = new ArrayList<SettingDetail>();
-		List<SettingDetail> selectedVariates = new ArrayList<SettingDetail>();
+		final List<SettingDetail> newTraits = new ArrayList<SettingDetail>();
+		final List<SettingDetail> selectedVariates = new ArrayList<SettingDetail>();
 		SettingsUtil.convertWorkbookVariatesToSettingDetails(traits, this.fieldbookMiddlewareService, this.fieldbookService, newTraits,
 				selectedVariates);
 
@@ -480,10 +519,10 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		userSelection.getBaselineTraitsList().addAll(newTraits);
 		userSelection.setNewTraits(newTraits);
 
-		for (SettingDetail detail : newTraits) {
+		for (final SettingDetail detail : newTraits) {
 			detail.getVariable().setOperation(Operation.UPDATE);
 		}
-		for (SettingDetail detail : selectedVariates) {
+		for (final SettingDetail detail : selectedVariates) {
 			detail.getVariable().setOperation(Operation.UPDATE);
 		}
 		form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(userSelection.getWorkbook()
@@ -496,14 +535,14 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/import/preview", method = RequestMethod.POST)
-	public String previewImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
-		UserSelection userSelection = this.getUserSelection(false);
-		List<MeasurementVariable> traits =
+	public String previewImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
+		final UserSelection userSelection = this.getUserSelection(false);
+		final List<MeasurementVariable> traits =
 				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
 						.getObservations());
 
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
-		List<MeasurementVariable> newVariableList = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> newVariableList = new ArrayList<MeasurementVariable>();
 
 		form.setMeasurementVariables(newVariableList);
 
@@ -516,41 +555,40 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/retrieve/new/import/variables", method = RequestMethod.GET)
 	public Map<String, String> getNewlyImportedTraits() throws IOException {
-		UserSelection userSelection = this.getUserSelection(false);
-		ObjectMapper objectMapper = new ObjectMapper();
-		Map<String, String> map = new HashMap<String, String>();
-		List<SettingDetail> newTraits = userSelection.getNewTraits();
-		List<SettingDetail> selectedVariates = userSelection.getNewSelectionVariates();
+		final UserSelection userSelection = this.getUserSelection(false);
+		final Map<String, String> map = new HashMap<>();
+		final List<SettingDetail> newTraits = userSelection.getNewTraits();
+		final List<SettingDetail> selectedVariates = userSelection.getNewSelectionVariates();
 		map.put("newTraits", objectMapper.writeValueAsString(newTraits));
 		map.put("newSelectionVariates", objectMapper.writeValueAsString(selectedVariates));
 		return map;
 	}
 
-	public void setFileService(FileService fileService) {
+	public void setFileService(final FileService fileService) {
 		this.fileService = fileService;
 	}
 
-	public void setFieldroidImportStudyService(FieldroidImportStudyService fieldroidImportStudyService) {
+	public void setFieldroidImportStudyService(final FieldroidImportStudyService fieldroidImportStudyService) {
 		this.fieldroidImportStudyService = fieldroidImportStudyService;
 	}
 
-	public void setExcelImportStudyService(ExcelImportStudyService excelImportStudyService) {
+	public void setExcelImportStudyService(final ExcelImportStudyService excelImportStudyService) {
 		this.excelImportStudyService = excelImportStudyService;
 	}
 
-	public void setDataKaptureImportStudyService(DataKaptureImportStudyService dataKaptureImportStudyService) {
+	public void setDataKaptureImportStudyService(final DataKaptureImportStudyService dataKaptureImportStudyService) {
 		this.dataKaptureImportStudyService = dataKaptureImportStudyService;
 	}
 
-	public void setKsuExcelImportStudyService(KsuExcelImportStudyService ksuExcelImportStudyService) {
+	public void setKsuExcelImportStudyService(final KsuExcelImportStudyService ksuExcelImportStudyService) {
 		this.ksuExcelImportStudyService = ksuExcelImportStudyService;
 	}
 
-	public void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+	public void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
-	public void setOntologyService(OntologyService ontologyService) {
+	public void setOntologyService(final OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
 

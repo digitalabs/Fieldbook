@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -211,6 +212,21 @@ public class EditNurseryControllerTest {
 				this.editNurseryController.hasMeasurementDataEntered(EditNurseryControllerTest.NOT_EXIST_TERM_ID));
 		Assert.assertFalse("DEFAULT_TERM_ID_2 has measurement data without value (null)",
 				this.editNurseryController.hasMeasurementDataEntered(EditNurseryControllerTest.DEFAULT_TERM_ID_2));
+	}
+
+	@Test
+	public void testSanitizeSettingDetailList() {
+		List<SettingDetail> settingDetails = new ArrayList<>();
+
+		settingDetails.add(new SettingDetail());
+		SettingDetail settingDetail = new SettingDetail(Mockito.mock(SettingVariable.class), new ArrayList<ValueReference>(), "", false);
+		settingDetails.add(settingDetail);
+
+		this.editNurseryController.sanitizeSettingDetailList(settingDetails);
+
+		Assert.assertEquals("Sanitize function does not properly remove setting variable objects that have empty state", 1,
+				settingDetails.size());
+		Assert.assertEquals("Expected remaining setting detail not found in sanitized list", settingDetail, settingDetails.get(0));
 	}
 
 	@Test

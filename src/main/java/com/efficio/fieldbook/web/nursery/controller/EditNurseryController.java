@@ -11,10 +11,7 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -379,6 +376,11 @@ public class EditNurseryController extends SettingsController {
 			throws MiddlewareQueryException {
 		// get the name of the nursery
 
+		// TODO : provide a longer term fix - find cause of the null setting details being included in the form
+		// when attempting to remove variables from a nursery generated through the template
+		sanitizeSettingDetailList(form.getStudyLevelVariables());
+		sanitizeSettingDetailList(form.getBaselineTraitVariables());
+
 		String name = null;
 		for (final SettingDetail nvar : form.getBasicDetails()) {
 			if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null
@@ -549,6 +551,15 @@ public class EditNurseryController extends SettingsController {
 			this.userSelection.getPlotsLevelList().addAll(this.userSelection.getRemovedFactors());
 		}
 		return studyLevelVariables;
+	}
+
+	protected void sanitizeSettingDetailList(List<SettingDetail> settingDetails) {
+		for (Iterator<SettingDetail> iter = settingDetails.iterator(); iter.hasNext();) {
+			SettingDetail current = iter.next();
+			if (current.getVariable() == null) {
+				iter.remove();
+			}
+		}
 	}
 
 	void addNurseryTypeFromDesignImport(final List<SettingDetail> studyLevelVariables) {

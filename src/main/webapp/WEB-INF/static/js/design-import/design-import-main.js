@@ -2,6 +2,7 @@
  * Angular JS codes for the OWN design function, contains services, directives, and controller mainly used in the mapping page/modal
  * Created by cyrus on 05/12/15.
  */
+/* global $, _, angular, bootbox, createErrorNotification, showAlertMessage, ImportDesign, isNursery */
 (function(_isNursery) {
 	'use strict';
 
@@ -17,9 +18,11 @@
 		};
 
 		scope.validateAndSend = function() {
-			var onValidate = DesignMappingService.validateMapping();
-
-			onValidate.then(function(result) {
+			DesignMappingService.showConfirmIfHasUnmapped().then(function() {
+				return DesignMappingService.validateMapping();
+			}, function() {
+				return { cancelMapping: true };
+			}).then(function(result) {
 				if (result.cancelDesignImport) {
 					ImportDesign.cancelDesignImport();
 					return;
@@ -37,8 +40,11 @@
 
 				ImportDesign.showReviewPopup();
 			}, function(failResult) {
-				var msg = Messages.DESIGN_IMPORT_MISSING_MAPPING.replace('{0}', failResult);
+				if (failResult.cancelMapping) {
+					return;
+				}
 
+				var msg = Messages.DESIGN_IMPORT_MISSING_MAPPING_TEXT;
 				createErrorNotification(Messages.DESIGN_MAPPING_ERROR_HEADER, msg);
 			});
 
@@ -212,7 +218,7 @@
 							},
 							apiUrl: '/Fieldbook/manageSettings/settings/role/' + attrs.group,
 							options: {
-								variableSelectBtnName: Messages.SELECT_TEXT, //TODO i18n
+								variableSelectBtnName: Messages.SELECT_TEXT,
 								variableSelectBtnIco: 'glyphicon-chevron-right',
 								noAlias: true
 							}
@@ -295,6 +301,40 @@
 			});
 		}
 
+		function showConfirmIfHasUnmapped() {
+			var hasUnmappedVariables = service.data.unmappedHeaders.length > 0;
+			var deferred = $q.defer();
+
+			if (!hasUnmappedVariables) {
+				deferred.resolve(true);
+			} else {
+				bootbox.dialog({
+					title: Messages.DESIGN_IMPORT_UNMAPPED_PROMPT_TITLE,
+					message: Messages.DESIGN_IMPORT_UNMAPPED_PROMPT_TEXT,
+					closeButton: false,
+					onEscape: false,
+					buttons: {
+						yes: {
+							label: Messages.YES,
+							className: 'btn-primary',
+							callback: function() {
+								deferred.resolve(true);
+							}
+						},
+						no: {
+							label: Messages.NO,
+							className: 'btn-default',
+							callback: function() {
+								deferred.reject(false);
+							}
+						}
+					}
+				});
+			}
+
+			return deferred.promise;
+		}
+
 		function warnDesignOverwritePopup(result) {
 			var deferred = $q.defer();
 			var dialogMessage = result.hasChecksSelected ? Messages.DESIGN_IMPORT_HAS_CHECKS_SELECTED_ALERT_MESSAGE : Messages.DESIGN_IMPORT_CONFLICT_ALERT_MESSAGE;
@@ -350,7 +390,8 @@
 			},
 			validateMapping: validateMapping,
 			getDistinctNurseryTypes: getDistinctNurseryTypes,
-			postSelectedNurseryType: postSelectedNurseryType
+			postSelectedNurseryType: postSelectedNurseryType,
+			showConfirmIfHasUnmapped: showConfirmIfHasUnmapped
 		};
 
 		return service;

@@ -1,11 +1,15 @@
 
-package com.efficio.fieldbook.web.nursery.validator;
+package com.efficio.fieldbook.web.importdesign.validator;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.ontology.Scale;
 
 public class NumericVariableValidator {
+
+	private NumericVariableValidator() {
+		// do nothing
+	}
 
 	/**
 	 * Return true if value is within the range of possible values of the numeric variable

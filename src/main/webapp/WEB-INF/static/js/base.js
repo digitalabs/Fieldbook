@@ -1,3 +1,5 @@
+'use strict';
+
 $(document).ready(function() {
 	$('.help-tooltip').tooltip();
 	$('.help-tooltip-nursery').tooltip();
@@ -9,26 +11,50 @@ $(document).ready(function() {
 		}
 	});
 });
+
+// Avoid `console` errors in browsers that lack a console.
+// this code was taken from a suggestion on stackowerflow
+// http://stackoverflow.com/questions/7742781/why-javascript-only-works-after-opening-developer-tools-in-ie-once
+// the code is stored here:
+// https://github.com/h5bp/html5-boilerplate/blob/master/src/js/plugins.js
+(function stubConsole() {
+	var method;
+	var noop = function() {};
+	var methods = [
+		'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+		'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+		'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+		'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn'
+	];
+	var length = methods.length;
+	var console = (window.console = window.console || {});
+
+	while (length--) {
+		method = methods[length];
+
+		// Only stub undefined methods.
+		if (!console[method]) {
+			console[method] = noop;
+		}
+	}
+}());
+
 function createErrorNotification(titleDisplay, textDisplay) {
-	'use strict';
 	$('.error-notify').remove();
 	createNotification('default-notification', titleDisplay, textDisplay, false, 'error-notify');
 }
 function createSuccessNotification(titleDisplay, textDisplay) {
 	//we remove all error
-	'use strict';
 	$('.error-notify').remove();
 	createNotification('default-notification', titleDisplay, textDisplay, 3000, '');
 }
 function createWarningNotification(titleDisplay, textDisplay, duration) {
-	'use strict';
 	if (! duration) {
 		duration = 3000;
 	}
 	createNotification('default-notification', titleDisplay, textDisplay, duration, 'warning-notify');
 }
 function createNotification(template, titleDisplay, textDisplay, expires, className) {
-	'use strict';
 	var $container = $('#notification-container').notify();
 	if (textDisplay !== null && textDisplay !== '' && textDisplay.length > 0) {
 		if (textDisplay[textDisplay.length - 1] !== '.') {

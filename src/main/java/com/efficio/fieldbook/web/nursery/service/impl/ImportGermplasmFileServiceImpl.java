@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- *
+ * 
  * Generation Challenge Programme (GCP)
- *
- *
+ * 
+ * 
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
+ * 
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.nursery.service.impl;
@@ -40,7 +40,6 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class ImportGermplasmFileServiceImpl.
- *
+ * 
  * @author Daniel Jao This should parse the import file from the user. Can handle basic and advance file format
  */
 @SuppressWarnings("unused")
@@ -77,9 +76,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/** The current row. */
 	private Integer currentRow;
-
-	/** The current column. */
-	private Integer currentColumn;
 
 	/** The file is valid. */
 	private boolean fileIsValid;
@@ -116,7 +112,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-	
+
 	@Resource
 	private ContextUtil contextUtil;
 
@@ -177,7 +173,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Do process now. This would be used for the junit testing
-	 *
+	 * 
 	 * @param workbook the workbook
 	 * @param mainInfo the main info
 	 * @throws Exception the exception
@@ -187,8 +183,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		this.wb = workbook;
 		this.currentSheet = 0;
 		this.currentRow = 0;
-		this.currentColumn = 0;
-
 		this.fileIsValid = true;
 		this.errorMessages = new HashSet<>();
 
@@ -228,8 +222,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 	private void readSheet2() {
 		this.currentSheet = 1;
 		this.currentRow = 0;
-		this.currentColumn = 0;
-
 		ImportedGermplasm importedGermplasm;
 		Boolean entryColumnIsPresent = false;
 		Boolean desigColumnIsPresent = false;
@@ -451,7 +443,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Row is empty.
-	 *
+	 * 
 	 * @return the boolean
 	 */
 	private Boolean rowIsEmpty() {
@@ -460,7 +452,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Row is empty.
-	 *
+	 * 
 	 * @param row the row
 	 * @return the boolean
 	 */
@@ -470,7 +462,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Row is empty.
-	 *
+	 * 
 	 * @param sheet the sheet
 	 * @param row the row
 	 * @return the boolean
@@ -486,7 +478,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Gets the cell string value.
-	 *
+	 * 
 	 * @param sheetNumber the sheet number
 	 * @param rowNumber the row number
 	 * @param columnNumber the column number
@@ -498,7 +490,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Gets the cell string value.
-	 *
+	 * 
 	 * @param sheetNumber the sheet number
 	 * @param rowNumber the row number
 	 * @param columnNumber the column number
@@ -509,7 +501,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		if (followThisPosition) {
 			this.currentSheet = sheetNumber;
 			this.currentRow = rowNumber;
-			this.currentColumn = columnNumber;
 		}
 
 		try {
@@ -531,7 +522,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Show invalid file error.
-	 *
+	 * 
 	 * @param message the message
 	 */
 	private void showInvalidFileError(String message) {
@@ -570,8 +561,8 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			List<MeasurementVariable> measurementVariables = userSelection.getWorkbook().getFactors();
 
 			Integer checkVariableTermId = TermId.CHECK.getId();
-			StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(checkVariableTermId,
-					contextUtil.getCurrentProgramUUID());
+			StandardVariable stdvar =
+					this.fieldbookMiddlewareService.getStandardVariable(checkVariableTermId, this.contextUtil.getCurrentProgramUUID());
 			MeasurementVariable checkVariable =
 					new MeasurementVariable(checkVariableTermId, "CHECK", stdvar.getDescription(), stdvar.getScale().getName(), stdvar
 							.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(), "",
@@ -604,6 +595,10 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			}
 		}
 		ImportGermplasmFileServiceImpl.LOG.info("validataAndAddCheckFactor Time duration: " + (System.currentTimeMillis() - start));
+	}
+
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 
 }

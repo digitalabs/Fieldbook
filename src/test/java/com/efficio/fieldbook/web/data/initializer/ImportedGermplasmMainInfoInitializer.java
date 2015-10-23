@@ -20,7 +20,7 @@ public class ImportedGermplasmMainInfoInitializer {
 
 	public static List<ImportedGermplasm> createImportedGermplasmList() {
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
-		for (int x = 1; x <= DesignImportDataInitializer.NO_OF_TEST_ENTRIES; x++) {
+		for (int x = 1; x <= DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES; x++) {
 			importedGermplasmList.add(createImportedGermplasm(x));
 		}
 

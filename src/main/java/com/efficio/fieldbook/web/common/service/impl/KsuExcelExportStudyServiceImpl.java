@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,40 +45,40 @@ public class KsuExcelExportStudyServiceImpl implements KsuExcelExportStudyServic
 	private OntologyService ontologyService;
 
 	@Override
-	public String export(Workbook workbook, String filename, List<Integer> instances) {
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
 
 		String outputFilename = null;
 		FileOutputStream fos = null;
 
-		int fileExtensionIndex = filename.lastIndexOf(".");
-		String studyName = filename.substring(0, fileExtensionIndex);
+		final int fileExtensionIndex = filename.lastIndexOf(".");
+		final String studyName = filename.substring(0, fileExtensionIndex);
 
 		try {
-			List<String> filenameList = new ArrayList<String>();
-			int fileCount = instances.size();
-			for (Integer index : instances) {
-				List<Integer> indexes = new ArrayList<Integer>();
+			final List<String> filenameList = new ArrayList<String>();
+			final int fileCount = instances.size();
+			for (final Integer index : instances) {
+				final List<Integer> indexes = new ArrayList<Integer>();
 				indexes.add(index);
-				List<MeasurementRow> observations =
+				final List<MeasurementRow> plotLevelObservations =
 						ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
-				List<List<String>> dataTable =
-						KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
+				final List<List<String>> dataTable =
+						KsuFieldbookUtil.convertWorkbookData(plotLevelObservations, workbook.getMeasurementDatasetVariables());
 
-				HSSFWorkbook xlsBook = new HSSFWorkbook();
+				final HSSFWorkbook xlsBook = new HSSFWorkbook();
 
 				if (dataTable != null && !dataTable.isEmpty()) {
-					HSSFSheet xlsSheet = xlsBook.createSheet(filename.substring(0, filename.lastIndexOf(".")));
+					final HSSFSheet xlsSheet = xlsBook.createSheet(filename.substring(0, filename.lastIndexOf(".")));
 					for (int rowIndex = 0; rowIndex < dataTable.size(); rowIndex++) {
-						HSSFRow xlsRow = xlsSheet.createRow(rowIndex);
+						final HSSFRow xlsRow = xlsSheet.createRow(rowIndex);
 
 						for (int colIndex = 0; colIndex < dataTable.get(rowIndex).size(); colIndex++) {
-							HSSFCell cell = xlsRow.createCell(colIndex);
+							final HSSFCell cell = xlsRow.createCell(colIndex);
 							cell.setCellValue(dataTable.get(rowIndex).get(colIndex));
 						}
 					}
 				}
 
-				String filenamePath =
+				final String filenamePath =
 						this.fieldbookProperties.getUploadDirectory() + File.separator + studyName
 								+ (fileCount > 1 ? "-" + String.valueOf(index) : "") + filename.substring(fileExtensionIndex);
 				fos = new FileOutputStream(new File(filenamePath));
@@ -86,7 +87,7 @@ public class KsuExcelExportStudyServiceImpl implements KsuExcelExportStudyServic
 
 			}
 
-			String traitFilenamePath =
+			final String traitFilenamePath =
 					this.fieldbookProperties.getUploadDirectory() + File.separator + studyName + "-Traits"
 							+ AppConstants.EXPORT_KSU_TRAITS_SUFFIX.getString();
 			KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath, this.fieldbookMiddlewareService, this.ontologyService);
@@ -98,15 +99,9 @@ public class KsuExcelExportStudyServiceImpl implements KsuExcelExportStudyServic
 							+ AppConstants.ZIP_FILE_SUFFIX.getString();
 			ZipUtil.zipIt(outputFilename, filenameList);
 
-		} catch (Exception e) {
-			KsuExcelExportStudyServiceImpl.LOG.error("Export was not successful", e);
 		} finally {
 			if (fos != null) {
-				try {
-					fos.close();
-				} catch (Exception e) {
-					KsuExcelExportStudyServiceImpl.LOG.error("Export was not successful", e);
-				}
+				fos.close();
 			}
 		}
 

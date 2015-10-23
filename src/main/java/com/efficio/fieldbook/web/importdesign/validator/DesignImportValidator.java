@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.validator;
+package com.efficio.fieldbook.web.importdesign.validator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,7 +26,7 @@ import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.common.service.DesignImportService;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.mysql.jdbc.StringUtils;
 
 public class DesignImportValidator {
@@ -96,22 +96,24 @@ public class DesignImportValidator {
 				set.add(value);
 			}
 		}
-		this.validateGermplasmEntriesFromShouldMatchTheGermplasmList(set);
+		this.validateGermplasmEntriesShouldMatchTheGermplasmList(set);
 	}
-
-	protected void validateGermplasmEntriesFromShouldMatchTheGermplasmList(final Set<String> entryNumbers) throws DesignValidationException {
+	
+	/**
+	 * Checks that the size of the set of unique Entry Numbers matches the size of the already attached list for the Nursery or Trial
+	 * @param entryNumbers
+	 * @throws DesignValidationException
+	 */
+	protected void validateGermplasmEntriesShouldMatchTheGermplasmList(final Set<String> entryNumbers) throws DesignValidationException {
 
 		final List<ImportedGermplasm> importedGermplasmList =
 				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
-		for (final ImportedGermplasm importedGermplasm : importedGermplasmList) {
-			if (!entryNumbers.contains(importedGermplasm.getEntryId().toString())) {
-				throw new DesignValidationException(this.messageSource.getMessage(
-						"design.import.error.mismatch.count.of.germplasm.entries", null, Locale.ENGLISH));
-			}
-		}
 		if (importedGermplasmList.size() != entryNumbers.size()) {
 			throw new DesignValidationException(this.messageSource.getMessage("design.import.error.mismatch.count.of.germplasm.entries",
-					null, Locale.ENGLISH));
+					null, Locale.ENGLISH)
+					.replace("{0}", String.valueOf(entryNumbers.size()))
+					.replace("{1}", String.valueOf(importedGermplasmList.size()))
+					);
 		}
 	}
 
@@ -250,7 +252,7 @@ public class DesignImportValidator {
 			final String valueToValidate = columnValues.get(columnIndex);
 
 			// categorical variables are expected to have possible values, otherwise this will cause data error
-			if (!CategoricalVariableValidator.hasPossibleValues(standardVariable)) {
+			if (!standardVariable.hasEnumerations()) {
 				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.no.valid.values", null,
 						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
 			}

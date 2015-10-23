@@ -11,6 +11,7 @@ import junit.framework.Assert;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.junit.Before;
@@ -114,7 +115,7 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 		Name resultName = resultIG.getNames().get(0);
 		Assert.assertNull(resultName.getNid());
 		Assert.assertEquals(new Integer(133), resultName.getGermplasmId());
-		Assert.assertEquals(new Integer(6), resultName.getTypeId());
+		Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName.getTypeId().intValue());
 		Assert.assertEquals(new Integer(1), resultName.getNstat());
 		Assert.assertEquals("BARRA DE ORO DULCE-B", resultName.getNval());
 

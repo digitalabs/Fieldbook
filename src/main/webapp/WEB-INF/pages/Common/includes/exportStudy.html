@@ -324,11 +324,16 @@ function showExportOptions() {
 function showExportResponse(responseText, statusText, xhr, $form) {
 	'use strict';
 	var resp = $.parseJSON(responseText);
+	
+	if(resp.isSuccess){
+		$('#exportStudyDownloadForm #outputFilename').val(resp.outputFilename);
+		$('#exportStudyDownloadForm #filename').val(resp.filename);
+		$('#exportStudyDownloadForm #contentType').val(resp.contentType);
+		$('#exportStudyDownloadForm').submit();	
+	} else {
+		showErrorMessage('', resp.errorMessage);		
+	}
 
-	$('#exportStudyDownloadForm #outputFilename').val(resp.outputFilename);
-	$('#exportStudyDownloadForm #filename').val(resp.filename);
-	$('#exportStudyDownloadForm #contentType').val(resp.contentType);
-	$('#exportStudyDownloadForm').submit();
 	$('#exportStudyModal').modal('hide');
 
 }

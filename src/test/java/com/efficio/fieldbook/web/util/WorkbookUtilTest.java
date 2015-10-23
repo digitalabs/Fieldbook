@@ -13,7 +13,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.junit.Test;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.data.initializer.DesignImportDataInitializer;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 
 public class WorkbookUtilTest {
 
@@ -36,7 +36,7 @@ public class WorkbookUtilTest {
 		final Workbook nursery = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 		final List<MeasurementRow> observations = nursery.getObservations();
 
-		DesignImportDataInitializer.updatePlotNoValue(observations);
+		DesignImportTestDataInitializer.updatePlotNoValue(observations);
 
 		WorkbookUtil.resetObservationToDefaultDesign(observations);
 

@@ -132,8 +132,7 @@ public class EditNurseryController extends SettingsController {
 	public String useExistingNursery(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form2, @PathVariable final int nurseryId,
 			@RequestParam(required = false) final String isAjax, final Model model, final HttpServletRequest request,
-			final RedirectAttributes redirectAttributes)
-			throws MiddlewareQueryException {
+			final RedirectAttributes redirectAttributes) {
 
 		final String contextParams = this.retrieveContextInfo(request);
 
@@ -553,9 +552,9 @@ public class EditNurseryController extends SettingsController {
 		return studyLevelVariables;
 	}
 
-	protected void sanitizeSettingDetailList(List<SettingDetail> settingDetails) {
-		for (Iterator<SettingDetail> iter = settingDetails.iterator(); iter.hasNext();) {
-			SettingDetail current = iter.next();
+	protected void sanitizeSettingDetailList(final List<SettingDetail> settingDetails) {
+		for (final Iterator<SettingDetail> iter = settingDetails.iterator(); iter.hasNext();) {
+			final SettingDetail current = iter.next();
 			if (current.getVariable() == null) {
 				iter.remove();
 			}

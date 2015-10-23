@@ -297,7 +297,7 @@
 				});
 				return deferred.promise;
 			}).then(function(result) {
-				return checkMeasurementsConflict(result.data);
+				return warnDesignOverwritePopup(result.data);
 			});
 		}
 
@@ -335,37 +335,33 @@
 			return deferred.promise;
 		}
 
-		function checkMeasurementsConflict(result) {
+		function warnDesignOverwritePopup(result) {
 			var deferred = $q.defer();
+			var dialogMessage = result.hasChecksSelected ? Messages.DESIGN_IMPORT_HAS_CHECKS_SELECTED_ALERT_MESSAGE : Messages.DESIGN_IMPORT_CONFLICT_ALERT_MESSAGE;
 
-			if (result.hasConflict || result.hasChecksSelected) {
-				// NOTE: by default, bootbox.confirm local is set to EN
-				bootbox.dialog({
-					title: Messages.DESIGN_IMPORT_CONFLICT_ALERT_HEADER,
-					message: result.hasChecksSelected ? Messages.DESIGN_IMPORT_HAS_CHECKS_SELECTED_ALERT_MESSAGE : Messages.DESIGN_IMPORT_CONFLICT_ALERT_MESSAGE,
-					closeButton: false,
-					onEscape: false,
-					buttons: {
-						yes: {
-							label: Messages.YES,
-							className: 'btn-primary',
-							callback: function() {
-								deferred.resolve(result);
-							}
-						},
-						no: {
-							label: Messages.NO,
-							className: 'btn-default',
-							callback: function() {
-								result.cancelDesignImport = true;
-								deferred.resolve(result);
-							}
+			bootbox.dialog({
+				title: Messages.DESIGN_IMPORT_CONFLICT_ALERT_HEADER,
+				message: dialogMessage,
+				closeButton: false,
+				onEscape: false,
+				buttons: {
+					yes: {
+						label: Messages.YES,
+						className: 'btn-primary',
+						callback: function() {
+							deferred.resolve(result);
+						}
+					},
+					no: {
+						label: Messages.NO,
+						className: 'btn-default',
+						callback: function() {
+							result.cancelDesignImport = true;
+							deferred.resolve(result);
 						}
 					}
-				});
-			} else {
-				deferred.resolve(result);
-			}
+				}
+			});
 
 			return deferred.promise;
 		}

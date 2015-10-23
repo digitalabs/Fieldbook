@@ -1233,5 +1233,4 @@ public class DesignImportController extends SettingsController {
 		return false;
 	}
 
-	}
-
+}

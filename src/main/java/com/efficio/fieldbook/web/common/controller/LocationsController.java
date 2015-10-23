@@ -74,9 +74,9 @@ public class LocationsController extends AbstractBaseFieldbookController {
 		Map<String, Object> result = new HashMap<>();
 
 		try {
-			List<Long> locationsIds =
+			List<Integer> locationsIds =
 					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.contextUtil.getCurrentProgramUUID());
-			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByProjectId(locationsIds);
+			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
 			List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocations();
 			List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
 			result.put("success", "1");

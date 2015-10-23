@@ -67,8 +67,6 @@ public class SeedStoreManagerControllerTest {
 		this.seedStoreManager.setOntologyService(this.ontologyService);
 		this.seedStoreManager.setOntologyDataManager(this.ontologyDataManager);
 		this.seedStoreManager.setMessageSource(this.messageSource);
-		this.seedStoreManager.setHttpRequest(Mockito.mock(HttpServletRequest.class));
-		this.seedStoreManager.setWorkbenchDataManager(this.workbenchDataManager);
 
 		Project testProject = new Project();
 		testProject.setUniqueID(UUID.randomUUID().toString());

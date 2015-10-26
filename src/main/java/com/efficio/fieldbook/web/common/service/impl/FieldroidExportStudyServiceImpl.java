@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- *
+ * 
  * Generation Challenge Programme (GCP)
- *
- *
+ * 
+ * 
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
+ * 
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.common.service.impl;
@@ -51,15 +51,15 @@ public class FieldroidExportStudyServiceImpl implements FieldroidExportStudyServ
 	 * java.lang.String)
 	 */
 	@Override
-	public String export(Workbook workbook, String filename, List<Integer> instances) {
-		String outputFile = this.fieldbookProperties.getUploadDirectory() + File.separator + filename;
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
+		final String outputFile = this.fieldbookProperties.getUploadDirectory() + File.separator + filename;
 		CsvWriter csvOutput = null;
-		List<MeasurementRow> observations =
+		final List<MeasurementRow> plotLevelObservations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
-		List<MeasurementRow> trialObservations =
+		final List<MeasurementRow> instanceLevelObservations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), instances);
 		try {
-			CSVOziel csv = new CSVOziel(workbook, observations, trialObservations);
+			final CSVOziel csv = new CSVOziel(workbook, plotLevelObservations, instanceLevelObservations);
 			csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');
 			csvOutput.write("Trial");
 			csvOutput.write("Rep");
@@ -78,9 +78,6 @@ public class FieldroidExportStudyServiceImpl implements FieldroidExportStudyServ
 			csvOutput.endRecord();
 			csv.writeRows(csvOutput, 23);
 			csv.writeDATA(csvOutput, this.ontologyService);
-
-		} catch (IOException e) {
-			FieldroidExportStudyServiceImpl.LOG.error("ERROR AL CREAR CVS fieldlog", e);
 
 		} finally {
 			if (csvOutput != null) {

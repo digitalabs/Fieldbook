@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class TestExpression {
-	
+
 	public static final Logger LOG = LoggerFactory.getLogger(TestExpression.class);
 
 	public void printResult(List<StringBuilder> values, AdvancingSource source) {
@@ -24,7 +24,7 @@ public class TestExpression {
 			LOG.debug("\t" + value);
 		}
 	}
-	
+
 	public String buildResult(List<StringBuilder> values) {
 		String result = "";
 		for (StringBuilder value : values) {
@@ -64,9 +64,9 @@ public class TestExpression {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(source.getGermplasm().getDesig()).append(this.getNonNullValue(source.getBreedingMethod().getSeparator()))
-		.append(this.getNonNullValue(source.getBreedingMethod().getPrefix()))
-		.append(this.getNonNullValue(source.getBreedingMethod().getCount()))
-		.append(this.getNonNullValue(source.getBreedingMethod().getSuffix()));
+				.append(this.getNonNullValue(source.getBreedingMethod().getPrefix()))
+				.append(this.getNonNullValue(source.getBreedingMethod().getCount()))
+				.append(this.getNonNullValue(source.getBreedingMethod().getSuffix()));
 		builders.add(builder);
 
 		return builders;

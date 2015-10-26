@@ -98,9 +98,10 @@ public class DesignImportValidator {
 		}
 		this.validateGermplasmEntriesShouldMatchTheGermplasmList(set);
 	}
-	
+
 	/**
 	 * Checks that the size of the set of unique Entry Numbers matches the size of the already attached list for the Nursery or Trial
+	 * 
 	 * @param entryNumbers
 	 * @throws DesignValidationException
 	 */
@@ -109,11 +110,9 @@ public class DesignImportValidator {
 		final List<ImportedGermplasm> importedGermplasmList =
 				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 		if (importedGermplasmList.size() != entryNumbers.size()) {
-			throw new DesignValidationException(this.messageSource.getMessage("design.import.error.mismatch.count.of.germplasm.entries",
-					null, Locale.ENGLISH)
-					.replace("{0}", String.valueOf(entryNumbers.size()))
-					.replace("{1}", String.valueOf(importedGermplasmList.size()))
-					);
+			throw new DesignValidationException(this.messageSource
+					.getMessage("design.import.error.mismatch.count.of.germplasm.entries", null, Locale.ENGLISH)
+					.replace("{0}", String.valueOf(entryNumbers.size())).replace("{1}", String.valueOf(importedGermplasmList.size())));
 		}
 	}
 

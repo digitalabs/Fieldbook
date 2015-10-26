@@ -72,7 +72,7 @@ public class CsvExportStudyServiceImplTest {
 		CsvExportStudyServiceImplTest.csvExportStudyService.setGermplasmExportService(this.germplasmExportService);
 		CsvExportStudyServiceImplTest.csvExportStudyService.setOntologyService(this.ontologyService);
 
-		Property prop = Mockito.mock(Property.class);
+		final Property prop = Mockito.mock(Property.class);
 		Mockito.doReturn(prop).when(this.ontologyService).getProperty(TermId.BREEDING_METHOD_PROP.getId());
 		Mockito.doReturn(new Term(1, CsvExportStudyServiceImplTest.PROPERTY_NAME, "Dummy defintion")).when(prop).getTerm();
 		Mockito.doReturn(Mockito.mock(File.class)).when(this.germplasmExportService)
@@ -83,15 +83,15 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testCSVStudyExportForTrial() throws IOException {
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, 2);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, 2);
 		workbook.setExportArrangedObservations(workbook.getObservations());
 
-		List<Integer> instances = WorkbookDataUtil.getTrialInstances();
+		final List<Integer> instances = WorkbookDataUtil.getTrialInstances();
 
 		Mockito.doReturn(workbook.getObservations()).when(CsvExportStudyServiceImplTest.csvExportStudyService)
 				.getApplicableObservations(workbook, instances);
 
-		String outputFilename =
+		final String outputFilename =
 				CsvExportStudyServiceImplTest.csvExportStudyService.export(workbook, CsvExportStudyServiceImplTest.FILENAME, instances);
 
 		Assert.assertTrue("Expected the filename must end in .zip",
@@ -101,16 +101,16 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testCSVStudyExportForNursery() throws IOException {
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
 		workbook.setExportArrangedObservations(workbook.getObservations());
 
-		List<Integer> instances = new ArrayList<Integer>();
+		final List<Integer> instances = new ArrayList<Integer>();
 		instances.add(1);
 
 		Mockito.doReturn(workbook.getObservations()).when(CsvExportStudyServiceImplTest.csvExportStudyService)
 				.getApplicableObservations(workbook, instances);
 
-		String outputFilename =
+		final String outputFilename =
 				CsvExportStudyServiceImplTest.csvExportStudyService.export(workbook, CsvExportStudyServiceImplTest.FILENAME, instances);
 
 		Assert.assertTrue("Expected the filename must end in .csv",
@@ -118,71 +118,10 @@ public class CsvExportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetFileNamePathForNursery() throws MiddlewareQueryException {
-		String expectedFileName = File.separator + CsvExportStudyServiceImplTest.FILENAME;
-
-		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
-		List<Integer> instances = new ArrayList<Integer>();
-		instances.add(1);
-
-		// with boolean flag for Nursery
-		String filePathName =
-				CsvExportStudyServiceImplTest.csvExportStudyService.getFileNamePath(1, workbook.getTrialObservations().get(0), instances,
-						CsvExportStudyServiceImplTest.FILENAME, true);
-		Assert.assertEquals("Expecting the return values are equals." + expectedFileName + " : " + filePathName, expectedFileName,
-				filePathName);
-
-		// with no instances
-		filePathName =
-				CsvExportStudyServiceImplTest.csvExportStudyService.getFileNamePath(1, workbook.getTrialObservations().get(0), null,
-						CsvExportStudyServiceImplTest.FILENAME, true);
-		Assert.assertEquals("Expecting the return values are equals." + expectedFileName + " : " + filePathName, expectedFileName,
-				filePathName);
-	}
-
-	@Test
-	public void testGetFileNamePathForTrialWithMultipleInstance() throws MiddlewareQueryException {
-		String expectedFileName =
-				File.separator
-						+ CsvExportStudyServiceImplTest.FILENAME.substring(0, CsvExportStudyServiceImplTest.FILENAME.lastIndexOf("."))
-						+ "-2_Location_1.csv";
-
-		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, 2);
-		List<Integer> instances = WorkbookDataUtil.getTrialInstances();
-
-		String filePathName =
-				CsvExportStudyServiceImplTest.csvExportStudyService.getFileNamePath(2, workbook.getTrialObservations().get(0), instances,
-						CsvExportStudyServiceImplTest.FILENAME, false);
-
-		Assert.assertEquals("Expecting the return values are equals." + expectedFileName + " : " + filePathName, expectedFileName,
-				filePathName);
-	}
-
-	@Test
-	public void testGetFileNamePathForTrialWithSingleInstance() throws MiddlewareQueryException {
-		String expectedFileName =
-				CsvExportStudyServiceImplTest.FILENAME.substring(0, CsvExportStudyServiceImplTest.FILENAME.lastIndexOf("."))
-						+ "-1_Location_1.csv";
-
-		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, 1);
-		List<Integer> instances = WorkbookDataUtil.getTrialInstances();
-
-		String filePathName =
-				CsvExportStudyServiceImplTest.csvExportStudyService.getFileNamePath(1, workbook.getTrialObservations().get(0), instances,
-						CsvExportStudyServiceImplTest.FILENAME, false);
-
-		Assert.assertEquals("Expecting the return values are equals." + expectedFileName + " : " + filePathName, expectedFileName,
-				filePathName);
-	}
-
-	@Test
 	public void testGetExportColumnHeadersWhenVisibleColumnsIsNull() {
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
-		List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
 		CsvExportStudyServiceImplTest.csvExportStudyService.getExportColumnHeaders(null, variables);
 
@@ -193,13 +132,13 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testGetExportColumnHeadersWhenVisibleColumnsHasValues() {
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
-		List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
-		List<Integer> visibleColumns = this.getVisibleColumnListWithOutRequiredColumns();
+		final List<Integer> visibleColumns = this.getVisibleColumnListWithOutRequiredColumns();
 		CsvExportStudyServiceImplTest.csvExportStudyService.getExportColumnHeaders(visibleColumns, variables);
 
-		for (MeasurementVariable variable : variables) {
+		for (final MeasurementVariable variable : variables) {
 			Mockito.verify(CsvExportStudyServiceImplTest.csvExportStudyService, Mockito.times(1)).getColumnsBasedOnVisibility(
 					visibleColumns, variable);
 		}
@@ -209,14 +148,14 @@ public class CsvExportStudyServiceImplTest {
 	public void testGetColumnsBasedOnVisibilityWhenTheColumnHeadersIncludeAllRequiredFields() {
 
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
-		List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
-		List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
+		final List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
 
 		int noOfVisibleColumns = 0;
-		for (MeasurementVariable variable : variables) {
-			ExportColumnHeader columnHeader =
+		for (final MeasurementVariable variable : variables) {
+			final ExportColumnHeader columnHeader =
 					CsvExportStudyServiceImplTest.csvExportStudyService.getColumnsBasedOnVisibility(visibleColumns, variable);
 
 			if (visibleColumns.contains(columnHeader.getId())) {
@@ -235,14 +174,14 @@ public class CsvExportStudyServiceImplTest {
 	public void testGetColumnsBasedOnVisibilityWhenSomeRequiredColumnHeadersIsNotIncluded() {
 
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
-		List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
-		List<Integer> visibleColumns = this.getVisibleColumnListWithSomeRequiredColumns();
+		final List<Integer> visibleColumns = this.getVisibleColumnListWithSomeRequiredColumns();
 
 		int noOfVisibleColumns = 0;
-		for (MeasurementVariable variable : variables) {
-			ExportColumnHeader columnHeader =
+		for (final MeasurementVariable variable : variables) {
+			final ExportColumnHeader columnHeader =
 					CsvExportStudyServiceImplTest.csvExportStudyService.getColumnsBasedOnVisibility(visibleColumns, variable);
 
 			if (visibleColumns.contains(columnHeader.getId())) {
@@ -261,15 +200,15 @@ public class CsvExportStudyServiceImplTest {
 			}
 		}
 
-		int expectedNoOfColumns = visibleColumns.size() + 2;
+		final int expectedNoOfColumns = visibleColumns.size() + 2;
 		Assert.assertEquals("Expected that the no of visible column headers is " + expectedNoOfColumns + " but returned "
 				+ noOfVisibleColumns, expectedNoOfColumns, noOfVisibleColumns);
 	}
 
-	private Object getNoOfVisibleColumns(List<ExportColumnHeader> visibleColumnHeaders) {
+	private Object getNoOfVisibleColumns(final List<ExportColumnHeader> visibleColumnHeaders) {
 		int visibleColumns = 0;
 
-		for (ExportColumnHeader column : visibleColumnHeaders) {
+		for (final ExportColumnHeader column : visibleColumnHeaders) {
 			if (column.isDisplay()) {
 				visibleColumns++;
 			}
@@ -278,7 +217,7 @@ public class CsvExportStudyServiceImplTest {
 	}
 
 	private List<Integer> getVisibleColumnListWithOutRequiredColumns() {
-		List<Integer> visibleColumns = new ArrayList<Integer>();
+		final List<Integer> visibleColumns = new ArrayList<Integer>();
 
 		visibleColumns.add(TermId.CROSS.getId());
 		visibleColumns.add(TermId.GID.getId());
@@ -287,7 +226,7 @@ public class CsvExportStudyServiceImplTest {
 	}
 
 	private List<Integer> getVisibleColumnListWithSomeRequiredColumns() {
-		List<Integer> visibleColumns = new ArrayList<Integer>();
+		final List<Integer> visibleColumns = new ArrayList<Integer>();
 
 		visibleColumns.add(TermId.PLOT_NO.getId());
 		visibleColumns.add(TermId.CROSS.getId());
@@ -297,7 +236,7 @@ public class CsvExportStudyServiceImplTest {
 	}
 
 	private List<Integer> getVisibleColumnListWithRequiredColumns() {
-		List<Integer> visibleColumns = new ArrayList<Integer>();
+		final List<Integer> visibleColumns = new ArrayList<Integer>();
 
 		visibleColumns.add(TermId.PLOT_NO.getId());
 		visibleColumns.add(TermId.DESIG.getId());
@@ -310,14 +249,14 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testGetExportColumnValues() {
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
-		List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
-		List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
-		List<ExportColumnHeader> columnHeaders =
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
+		final List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
+		final List<ExportColumnHeader> columnHeaders =
 				CsvExportStudyServiceImplTest.csvExportStudyService.getExportColumnHeaders(visibleColumns, variables);
-		List<MeasurementRow> observations = workbook.getObservations();
+		final List<MeasurementRow> observations = workbook.getObservations();
 
-		List<Map<Integer, ExportColumnValue>> columnValuesForAllRows =
+		final List<Map<Integer, ExportColumnValue>> columnValuesForAllRows =
 				CsvExportStudyServiceImplTest.csvExportStudyService.getExportColumnValues(columnHeaders, variables, observations);
 
 		Assert.assertEquals("Expecting the no of entries of column values equal to the original no of observatios but didn't. ",
@@ -327,21 +266,21 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testGetColumnValueMap() {
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
-		List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
-		List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
-		List<ExportColumnHeader> columnHeaders =
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
+		final List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
+		final List<ExportColumnHeader> columnHeaders =
 				CsvExportStudyServiceImplTest.csvExportStudyService.getExportColumnHeaders(visibleColumns, variables);
-		MeasurementRow row = workbook.getObservations().get(0);
+		final MeasurementRow row = workbook.getObservations().get(0);
 
-		Map<Integer, ExportColumnValue> columnValuesInARow =
+		final Map<Integer, ExportColumnValue> columnValuesInARow =
 				CsvExportStudyServiceImplTest.csvExportStudyService.getColumnValueMap(columnHeaders, row);
 
 		Assert.assertEquals("Expecting the number of generated column values in a row "
 				+ "is equal to the number of visible column headers but didn't.", columnValuesInARow.size(),
 				this.getNoOfVisibleColumns(columnHeaders));
 
-		for (ExportColumnHeader columnHeader : columnHeaders) {
+		for (final ExportColumnHeader columnHeader : columnHeaders) {
 			if (columnHeader.isDisplay() && !columnValuesInARow.containsKey(columnHeader.getId())) {
 				Assert.fail("Expecting that the ids of visibleColumnHeaders can be found in the generated list of column values in a row but didn't.");
 			}
@@ -351,7 +290,7 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testGetColumnValue() {
 		// For categorical variables
-		MeasurementData data = this.getMeasurementData();
+		final MeasurementData data = this.getMeasurementData();
 		data.setMeasurementVariable(this.getMeasurementVariableForCategoricalVariable()); // set categorical values
 
 		ExportColumnValue columnValue = CsvExportStudyServiceImplTest.csvExportStudyService.getColumnValue(data, TermId.ENTRY_NO.getId());
@@ -364,7 +303,7 @@ public class CsvExportStudyServiceImplTest {
 
 		try {
 			Mockito.verify(CsvExportStudyServiceImplTest.csvExportStudyService, Mockito.times(1)).getCategoricalCellValue(data);
-		} catch (NeverWantedButInvoked e) {
+		} catch (final NeverWantedButInvoked e) {
 			Assert.fail(e.getMessage());
 		}
 
@@ -377,19 +316,19 @@ public class CsvExportStudyServiceImplTest {
 
 	@Test
 	public void testGetNumericColumnValueIfMissing() {
-		MeasurementData dataCell = new MeasurementData();
+		final MeasurementData dataCell = new MeasurementData();
 		dataCell.setValue(ValidationServiceImpl.MISSING_VAL);
-		Integer termId = 2001;
-		ExportColumnValue columnValue = CsvExportStudyServiceImplTest.csvExportStudyService.getNumericColumnValue(dataCell, termId);
+		final Integer termId = 2001;
+		final ExportColumnValue columnValue = CsvExportStudyServiceImplTest.csvExportStudyService.getNumericColumnValue(dataCell, termId);
 		Assert.assertEquals("Value should be missing", ValidationServiceImpl.MISSING_VAL, columnValue.getValue());
 	}
 
 	@Test
 	public void testGetNumericColumnValueIfNotMissing() {
-		MeasurementData dataCell = new MeasurementData();
+		final MeasurementData dataCell = new MeasurementData();
 		dataCell.setValue("20");
-		Integer termId = 2001;
-		ExportColumnValue columnValue = CsvExportStudyServiceImplTest.csvExportStudyService.getNumericColumnValue(dataCell, termId);
+		final Integer termId = 2001;
+		final ExportColumnValue columnValue = CsvExportStudyServiceImplTest.csvExportStudyService.getNumericColumnValue(dataCell, termId);
 		Assert.assertEquals("Value should be 20", Double.valueOf("20").toString(), columnValue.getValue());
 	}
 
@@ -398,7 +337,7 @@ public class CsvExportStudyServiceImplTest {
 	}
 
 	private MeasurementVariable getMeasurementVariableForCategoricalVariable() {
-		MeasurementVariable variable =
+		final MeasurementVariable variable =
 				new MeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL", "TRIAL NUMBER", WorkbookDataUtil.NUMBER,
 						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "", WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
@@ -407,7 +346,7 @@ public class CsvExportStudyServiceImplTest {
 	}
 
 	private MeasurementVariable getMeasureVariableForNumericalVariable() {
-		MeasurementVariable variable =
+		final MeasurementVariable variable =
 				new MeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL", "TRIAL NUMBER", WorkbookDataUtil.NUMBER,
 						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "", WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
@@ -416,10 +355,10 @@ public class CsvExportStudyServiceImplTest {
 	}
 
 	private List<ValueReference> getValueReferenceList() {
-		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+		final List<ValueReference> possibleValues = new ArrayList<ValueReference>();
 
 		for (int i = 0; i < 5; i++) {
-			ValueReference possibleValue = new ValueReference(i, String.valueOf(i));
+			final ValueReference possibleValue = new ValueReference(i, String.valueOf(i));
 			possibleValues.add(possibleValue);
 		}
 		return possibleValues;

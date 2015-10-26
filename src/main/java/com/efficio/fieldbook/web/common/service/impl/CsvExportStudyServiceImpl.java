@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,6 @@ import com.efficio.fieldbook.web.nursery.service.impl.ValidationServiceImpl;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
@@ -52,48 +51,45 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 	private GermplasmExportService germplasmExportService;
 
 	@Override
-	public String export(Workbook workbook, String filename, List<Integer> instances) {
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
 		return this.export(workbook, filename, instances, null);
 	}
 
 	@Override
-	public String export(Workbook workbook, String filename, List<Integer> instances, List<Integer> visibleColumns) {
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances, final List<Integer> visibleColumns)
+			throws IOException {
 
-		FileOutputStream fos = null;
-		List<String> filenameList = new ArrayList<String>();
+		final FileOutputStream fos = null;
+		final List<String> filenameList = new ArrayList<String>();
 		String outputFilename = null;
 
-		for (Integer index : instances) {
-			List<Integer> indexes = new ArrayList<Integer>();
-			indexes.add(index);
+		for (final Integer trialInstanceNo : instances) {
+			final List<Integer> listOfTrialInstanceNo = new ArrayList<Integer>();
+			listOfTrialInstanceNo.add(trialInstanceNo);
 
-			List<MeasurementRow> observations = this.getApplicableObservations(workbook, indexes);
+			final List<MeasurementRow> plotLevelObservations = this.getApplicableObservations(workbook, listOfTrialInstanceNo);
 
 			try {
 
-				String filenamePath =
-						this.getFileNamePath(index, workbook.getTrialObservations().get(index - 1), instances, filename,
-								workbook.isNursery());
+				final MeasurementRow instanceLevelObservation = workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo);
 
-				List<ExportColumnHeader> exportColumnHeaders =
+				final String filenamePath =
+						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename,
+								workbook.isNursery(), this.fieldbookProperties, this.fieldbookMiddlewareService);
+
+				final List<ExportColumnHeader> exportColumnHeaders =
 						this.getExportColumnHeaders(visibleColumns, workbook.getMeasurementDatasetVariables());
-				List<Map<Integer, ExportColumnValue>> exportColumnValues =
-						this.getExportColumnValues(exportColumnHeaders, workbook.getMeasurementDatasetVariables(), observations);
+				final List<Map<Integer, ExportColumnValue>> exportColumnValues =
+						this.getExportColumnValues(exportColumnHeaders, workbook.getMeasurementDatasetVariables(), plotLevelObservations);
 
 				this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, filenamePath);
 
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
 
-			} catch (Exception e) {
-				CsvExportStudyServiceImpl.LOG.error(e.getMessage(), e);
 			} finally {
 				if (fos != null) {
-					try {
-						fos.close();
-					} catch (Exception e) {
-						CsvExportStudyServiceImpl.LOG.error(e.getMessage(), e);
-					}
+					fos.close();
 				}
 			}
 		}
@@ -110,33 +106,16 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 
 	}
 
-	protected List<MeasurementRow> getApplicableObservations(Workbook workbook, List<Integer> indexes) {
+	protected List<MeasurementRow> getApplicableObservations(final Workbook workbook, final List<Integer> indexes) {
 		return ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
 	}
 
-	protected String getFileNamePath(int index, MeasurementRow trialObservation, List<Integer> instances, String filename, boolean isNursery)
-			throws MiddlewareQueryException {
-		String filenamePath = this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(filename);
-		if (instances != null && (instances.size() > 1 || !isNursery)) {
-			int fileExtensionIndex = filenamePath.lastIndexOf(".");
-			String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservation, this.fieldbookMiddlewareService);
-			if (instances.size() > 1) {
-				return filenamePath.substring(0, fileExtensionIndex) + "-" + index + SettingsUtil.cleanSheetAndFileName(siteName)
-						+ filenamePath.substring(fileExtensionIndex);
-			} else {
-				return filename.substring(0, filename.lastIndexOf(".")) + "-" + index + SettingsUtil.cleanSheetAndFileName(siteName)
-						+ filenamePath.substring(fileExtensionIndex);
-			}
-		}
-		return filenamePath;
-	}
+	protected List<ExportColumnHeader> getExportColumnHeaders(final List<Integer> visibleColumns, final List<MeasurementVariable> variables) {
 
-	protected List<ExportColumnHeader> getExportColumnHeaders(List<Integer> visibleColumns, List<MeasurementVariable> variables) {
-
-		List<ExportColumnHeader> exportColumnHeaders = new ArrayList<>();
+		final List<ExportColumnHeader> exportColumnHeaders = new ArrayList<>();
 
 		if (variables != null && !variables.isEmpty()) {
-			for (MeasurementVariable variable : variables) {
+			for (final MeasurementVariable variable : variables) {
 				if (visibleColumns == null) {
 					exportColumnHeaders.add(new ExportColumnHeader(variable.getTermId(), variable.getName(), true));
 				} else {
@@ -149,7 +128,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		return exportColumnHeaders;
 	}
 
-	protected ExportColumnHeader getColumnsBasedOnVisibility(List<Integer> visibleColumns, MeasurementVariable variable) {
+	protected ExportColumnHeader getColumnsBasedOnVisibility(final List<Integer> visibleColumns, final MeasurementVariable variable) {
 		if (visibleColumns.contains(variable.getTermId()) || ExportImportStudyUtil.partOfRequiredColumns(variable.getTermId())) {
 			return new ExportColumnHeader(variable.getTermId(), variable.getName(), true);
 		} else {
@@ -157,24 +136,24 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		}
 	}
 
-	protected List<Map<Integer, ExportColumnValue>> getExportColumnValues(List<ExportColumnHeader> columns,
-			List<MeasurementVariable> variables, List<MeasurementRow> observations) {
+	protected List<Map<Integer, ExportColumnValue>> getExportColumnValues(final List<ExportColumnHeader> columns,
+			final List<MeasurementVariable> variables, final List<MeasurementRow> observations) {
 
-		List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
+		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
 
-		for (MeasurementRow dataRow : observations) {
+		for (final MeasurementRow dataRow : observations) {
 			exportColumnValues.add(this.getColumnValueMap(columns, dataRow));
 		}
 
 		return exportColumnValues;
 	}
 
-	protected Map<Integer, ExportColumnValue> getColumnValueMap(List<ExportColumnHeader> columns, MeasurementRow dataRow) {
-		Map<Integer, ExportColumnValue> columnValueMap = new HashMap<>();
+	protected Map<Integer, ExportColumnValue> getColumnValueMap(final List<ExportColumnHeader> columns, final MeasurementRow dataRow) {
+		final Map<Integer, ExportColumnValue> columnValueMap = new HashMap<>();
 
-		for (ExportColumnHeader column : columns) {
-			Integer termId = column.getId();
-			MeasurementData dataCell = dataRow.getMeasurementData(termId);
+		for (final ExportColumnHeader column : columns) {
+			final Integer termId = column.getId();
+			final MeasurementData dataCell = dataRow.getMeasurementData(termId);
 
 			if (column.isDisplay() && dataCell != null) {
 				if (dataCell.getMeasurementVariable() != null
@@ -190,7 +169,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		return columnValueMap;
 	}
 
-	protected ExportColumnValue getColumnValue(MeasurementData dataCell, Integer termId) {
+	protected ExportColumnValue getColumnValue(final MeasurementData dataCell, final Integer termId) {
 		ExportColumnValue columnValue = null;
 
 		if (ExportImportStudyUtil.measurementVariableHasValue(dataCell) && !dataCell.getMeasurementVariable().getPossibleValues().isEmpty()
@@ -198,7 +177,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 				&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
 				&& !dataCell.getMeasurementVariable().getProperty().equals(ExportImportStudyUtil.getPropertyName(this.ontologyService))) {
 
-			String value = this.getCategoricalCellValue(dataCell);
+			final String value = this.getCategoricalCellValue(dataCell);
 			columnValue = new ExportColumnValue(termId, value);
 
 		} else {
@@ -215,7 +194,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		return columnValue;
 	}
 
-	protected ExportColumnValue getNumericColumnValue(MeasurementData dataCell, Integer termId) {
+	protected ExportColumnValue getNumericColumnValue(final MeasurementData dataCell, final Integer termId) {
 		ExportColumnValue columnValue = null;
 		String cellVal = "";
 
@@ -230,19 +209,19 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		return columnValue;
 	}
 
-	protected String getCategoricalCellValue(MeasurementData dataCell) {
+	protected String getCategoricalCellValue(final MeasurementData dataCell) {
 		return ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues());
 	}
 
-	public void setOntologyService(OntologyService ontologyService) {
+	public void setOntologyService(final OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
 
-	public void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
+	public void setFieldbookProperties(final FieldbookProperties fieldbookProperties) {
 		this.fieldbookProperties = fieldbookProperties;
 	}
 
-	public void setGermplasmExportService(GermplasmExportService germplasmExportService) {
+	public void setGermplasmExportService(final GermplasmExportService germplasmExportService) {
 		this.germplasmExportService = germplasmExportService;
 	}
 }

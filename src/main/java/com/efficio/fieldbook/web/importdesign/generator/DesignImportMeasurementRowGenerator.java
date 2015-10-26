@@ -114,7 +114,12 @@ public class DesignImportMeasurementRowGenerator {
 					&& this.workbook.getStudyDetails().getStudyType() == StudyType.N) {
 				// do not add the trial instance to measurement data list if the workbook is Nursery
 				continue;
+			} else if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
+					&& this.workbook.getStudyDetails().getStudyType() == StudyType.T) {
+				final String value = rowValues.get(headerItem.getColumnIndex());
+				dataList.add(this.createMeasurementData(headerItem.getVariable(), value, fieldbookService));
 			}
+
 			if (this.isPreview) {
 				// only add the trial environment factors in measurement row ONLY in PREVIEW mode
 				final String value = rowValues.get(headerItem.getColumnIndex());

@@ -101,8 +101,9 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	public List<Location> getFavoriteLocationList() {
 		try {
 
-			List<Long> locationsIds = this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
-			List<Location> dataTypes = this.fieldbookMiddlewareService.getFavoriteLocationByProjectId(locationsIds);
+			List<Integer> locationsIds =
+					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
+			List<Location> dataTypes = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
 
 			return dataTypes;
 		} catch (MiddlewareQueryException e) {

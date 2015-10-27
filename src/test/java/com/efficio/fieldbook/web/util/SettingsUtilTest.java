@@ -2,31 +2,63 @@
 package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import junit.framework.Assert;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.dms.VariableConstraints;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.util.Debug;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 @Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class SettingsUtilTest {
 
+	@Mock
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+
 	private static final String PROGRAM_UUID = "123456789";
-	
+
+	// Test data
+	private static final Integer variableId = 8040;
+	private static final String variableName = "PM_KEY";
+	private static final String variableDescription = "Project management key ";
+	private static final Term property = new Term(2002, "User", "Database user");
+	private static final Term scale = new Term(6000, "DBCV", "Controlled vocabulary from a database");
+	private static final Term method = new Term(4030, "Assigned", "Term, name or id assigned");
+	private static final Term dataType = new Term(DataType.NUMERIC_VARIABLE.getId(), DataType.NUMERIC_VARIABLE.getName(), "Numeric Variable Description");
+	private static final String cropOntologyId = "CO:1010";
+	private static final Double minValue = 100.00;
+	private static final Double maxValue = 200.00;
+
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
+
 	@Test
 	public void testConvertXmlDatasetToWorkbookAndBack() {
 		Dataset dataset = new Dataset();
@@ -199,7 +231,7 @@ public class SettingsUtilTest {
 		Assert.assertEquals("Should return 2 since the matching name for 8415 is 2", 2,
 				SettingsUtil.getCodeInPossibleValues(valueRefs, "8415"));
 	}
-	
+
 	@Test
 	public void testSetSettingDetailRole(){
 		for(VariableType varType : VariableType.values()){
@@ -210,5 +242,126 @@ public class SettingsUtilTest {
 			Assert.assertEquals("Should have the correct phenotypic type role as per the variable type", detail.getRole(), varType.getRole());
 		}
 		
+	}
+
+	/**
+	 * Test for check if given baseline traits property converted into variates or not.
+	 */
+	@Test
+	public void testConvertBaselineTraitsToVariates(){
+		List<SettingDetail> baselineTraits = new ArrayList<>();
+		baselineTraits.add(this.createTestDataForSettingDetails());
+
+		UserSelection userSelection = this.createTestDataForUserSelection();
+
+		Mockito.doReturn(this.createStandardVariable()).when(this.fieldbookMiddlewareService).getStandardVariable(this.createTestDataForSettingDetails().getVariable().getCvTermId(), PROGRAM_UUID);
+
+		List<Variate> baselineVariates =
+				SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, userSelection, fieldbookMiddlewareService, PROGRAM_UUID);
+
+		if(!baselineVariates.isEmpty()){
+			Variate baselineVariate = baselineVariates.get(0);
+
+			StandardVariable cachedStandardVariable = userSelection.getCacheStandardVariable(baselineTraits.get(0).getVariable().getCvTermId());
+
+			if(cachedStandardVariable != null){
+
+				Assert.assertEquals(baselineVariate.getId(), cachedStandardVariable.getId());
+				Assert.assertEquals(baselineVariate.getName(), cachedStandardVariable.getName());
+				Assert.assertEquals(baselineVariate.getProperty(), cachedStandardVariable.getProperty().getName());
+				Assert.assertEquals(baselineVariate.getScale(), cachedStandardVariable.getScale().getName());
+				Assert.assertEquals(baselineVariate.getMethod(), cachedStandardVariable.getMethod().getName());
+				Assert.assertEquals(baselineVariate.getDataTypeId().intValue(), cachedStandardVariable.getDataType().getId());
+				Assert.assertEquals(baselineVariate.getMinRange(), cachedStandardVariable.getConstraints().getMinValue());
+				Assert.assertEquals(baselineVariate.getMaxRange(), cachedStandardVariable.getConstraints().getMaxValue());
+			}
+		}
+	}
+
+	/**
+	 * Test for check if given baseline traits empty or null then empty variate list should be returned.
+	 */
+	@Test
+	public void testConvertBaselineTraitsToVariatesWithEmptyBaselineTraits(){
+		List<SettingDetail> baselineTraits = new ArrayList<>();
+
+		UserSelection userSelection = new UserSelection();
+
+		List<Variate> baselineVariates =
+				SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, userSelection, fieldbookMiddlewareService, PROGRAM_UUID);
+
+		Assert.assertEquals(baselineTraits.size(), baselineVariates.size());
+	}
+
+	/**
+	 * create SettingDetail instance with variable data, possible values.
+	 * @return setting details instance.
+	 */
+	private SettingDetail createTestDataForSettingDetails(){
+
+		final SettingDetail settingDetail = new SettingDetail();
+
+		SettingVariable settingVariable = new SettingVariable();
+		settingVariable.setCvTermId(variableId);
+		settingVariable.setName(variableName);
+		settingVariable.setDescription(variableDescription);
+		settingVariable.setProperty(property.getName());
+		settingVariable.setScale(scale.getName());
+		settingVariable.setMethod(method.getName());
+		settingVariable.setDataType(dataType.getName());
+		settingVariable.setCropOntologyId(cropOntologyId);
+		settingVariable.setDataTypeId(DataType.NUMERIC_VARIABLE.getId());
+		settingVariable.setMinRange(minValue);
+		settingVariable.setMaxRange(maxValue);
+		settingVariable.setOperation(Operation.LIKE);
+		Set<VariableType> variableTypes = new HashSet<>();
+		variableTypes.add(VariableType.STUDY_DETAIL);
+		settingVariable.setVariableTypes(variableTypes);
+
+		settingDetail.setVariable(settingVariable);
+		ValueReference possibleValue = new ValueReference("Key", "Name", "Description");
+		List<ValueReference> possibleValues = new ArrayList<>();
+		possibleValues.add(possibleValue);
+		settingDetail.setPossibleValues(possibleValues);
+
+		ValueReference possibleValueFav = new ValueReference("Key Fav", "Name Fav", "Description Fav");
+		List<ValueReference> possibleValuesFav = new ArrayList<>();
+		possibleValuesFav.add(possibleValueFav);
+		settingDetail.setPossibleValuesFavorite(possibleValuesFav);
+
+		settingDetail.setValue("Setting Detail Value");
+		settingDetail.setRole(PhenotypicType.STUDY);
+		settingDetail.setVariableType(VariableType.STUDY_DETAIL);
+
+		return settingDetail;
+	}
+
+	/**
+	 * User selection instance with standard variable.
+	 * @return user selection instance.
+	 */
+	private UserSelection createTestDataForUserSelection(){
+		final UserSelection userSelection = new UserSelection();
+		userSelection.putStandardVariableInCache(this.createStandardVariable());
+		return userSelection;
+	}
+
+	/**
+	 * Create standard variable instance.
+	 * @return standard variable instance.
+	 */
+	private StandardVariable createStandardVariable(){
+		final StandardVariable stdVariable = new StandardVariable();
+		stdVariable.setId(variableId);
+		stdVariable.setName(variableName);
+		stdVariable.setDescription(variableDescription);
+		stdVariable.setProperty(property);
+		stdVariable.setMethod(method);
+		stdVariable.setScale(scale);
+		stdVariable.setDataType(dataType);
+		stdVariable.setIsA(new Term(1050, "Study condition", "Study condition class"));
+		stdVariable.setConstraints(new VariableConstraints(minValue, maxValue));
+		stdVariable.setCropOntologyId(cropOntologyId);
+		return stdVariable;
 	}
 }

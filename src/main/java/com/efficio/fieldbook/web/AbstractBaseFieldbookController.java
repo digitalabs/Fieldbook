@@ -41,7 +41,7 @@ public abstract class AbstractBaseFieldbookController {
 	private WorkbenchService workbenchService;
 
 	@Resource
-	private ContextUtil contextUtil;
+	protected ContextUtil contextUtil;
 
 	@Resource
 	protected FieldbookProperties fieldbookProperties;

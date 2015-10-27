@@ -96,22 +96,23 @@ public class DesignImportValidator {
 				set.add(value);
 			}
 		}
-		this.validateGermplasmEntriesFromShouldMatchTheGermplasmList(set);
+		this.validateGermplasmEntriesShouldMatchTheGermplasmList(set);
 	}
 
-	protected void validateGermplasmEntriesFromShouldMatchTheGermplasmList(final Set<String> entryNumbers) throws DesignValidationException {
+	/**
+	 * Checks that the size of the set of unique Entry Numbers matches the size of the already attached list for the Nursery or Trial
+	 * 
+	 * @param entryNumbers
+	 * @throws DesignValidationException
+	 */
+	protected void validateGermplasmEntriesShouldMatchTheGermplasmList(final Set<String> entryNumbers) throws DesignValidationException {
 
 		final List<ImportedGermplasm> importedGermplasmList =
 				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
-		for (final ImportedGermplasm importedGermplasm : importedGermplasmList) {
-			if (!entryNumbers.contains(importedGermplasm.getEntryId().toString())) {
-				throw new DesignValidationException(this.messageSource.getMessage(
-						"design.import.error.mismatch.count.of.germplasm.entries", null, Locale.ENGLISH));
-			}
-		}
 		if (importedGermplasmList.size() != entryNumbers.size()) {
-			throw new DesignValidationException(this.messageSource.getMessage("design.import.error.mismatch.count.of.germplasm.entries",
-					null, Locale.ENGLISH));
+			throw new DesignValidationException(this.messageSource
+					.getMessage("design.import.error.mismatch.count.of.germplasm.entries", null, Locale.ENGLISH)
+					.replace("{0}", String.valueOf(entryNumbers.size())).replace("{1}", String.valueOf(importedGermplasmList.size())));
 		}
 	}
 

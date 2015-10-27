@@ -157,8 +157,7 @@ public interface FieldbookService {
 	 * @param idNamePairs the id name pairs
 	 * @param deleteIdWhenNameExists the delete id when name exists
 	 */
-	void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs,
-			boolean deleteIdWhenNameExists);
+	void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs, boolean deleteIdWhenNameExists);
 
 	/**
 	 * Creates the id code name variable pairs.

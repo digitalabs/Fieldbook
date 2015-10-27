@@ -8,18 +8,29 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class TestExpression {
 
+	public static final Logger LOG = LoggerFactory.getLogger(TestExpression.class);
+
 	public void printResult(List<StringBuilder> values, AdvancingSource source) {
-		System.out.println("DESIG = " + source.getGermplasm().getDesig());
-		System.out.println("RESULTS=");
+		LOG.debug("DESIG = " + source.getGermplasm().getDesig());
+		LOG.debug("RESULTS=");
 		for (StringBuilder value : values) {
-			System.out.println("\t" + value);
+			LOG.debug("\t" + value);
 		}
-		System.out.println();
+	}
+
+	public String buildResult(List<StringBuilder> values) {
+		String result = "";
+		for (StringBuilder value : values) {
+			result = result + value;
+		}
+		return result;
 	}
 
 	public AdvancingSource createAdvancingSourceTestData(String name, String separator, String prefix, String count, String suffix,
@@ -53,9 +64,9 @@ public class TestExpression {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(source.getGermplasm().getDesig()).append(this.getNonNullValue(source.getBreedingMethod().getSeparator()))
-		.append(this.getNonNullValue(source.getBreedingMethod().getPrefix()))
-		.append(this.getNonNullValue(source.getBreedingMethod().getCount()))
-		.append(this.getNonNullValue(source.getBreedingMethod().getSuffix()));
+				.append(this.getNonNullValue(source.getBreedingMethod().getPrefix()))
+				.append(this.getNonNullValue(source.getBreedingMethod().getCount()))
+				.append(this.getNonNullValue(source.getBreedingMethod().getSuffix()));
 		builders.add(builder);
 
 		return builders;

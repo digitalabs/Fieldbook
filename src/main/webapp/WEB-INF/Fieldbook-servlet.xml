@@ -189,7 +189,7 @@
 
 
 	<bean id="designImportService"
-		class="com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceImpl" />
+		  class="com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceImpl"/>
 
 
 	<bean id="multipartResolver"
@@ -420,7 +420,7 @@
 	</bean>
 	
 	<bean id="designImportValidator"
-		class="com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator"
+		  class="com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator"
 		scope="prototype">
 		<aop:scoped-proxy />
 	</bean>
@@ -493,11 +493,14 @@
 	<bean id="managerFactoryProvider"
 		class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency">
 		<constructor-arg ref="workbenchDataManager" />
+		<property name="pedigreeProfile" value="${pedigree.profile}"/>
 	</bean>
 
 	<bean id="managerFactory" name="managerFactory" factory-bean="managerFactoryProvider"
 		factory-method="createInstance" scope="request">
 		<aop:scoped-proxy />
 	</bean>
+
+	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" scope="prototype"/>
 	
 </beans>

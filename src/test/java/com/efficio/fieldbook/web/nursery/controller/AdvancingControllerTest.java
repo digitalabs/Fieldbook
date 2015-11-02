@@ -28,6 +28,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
@@ -110,7 +111,7 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
-	public void testPostAdvanceNursery() throws RuleException, MiddlewareException {
+	public void testPostAdvanceNursery() throws RuleException, MiddlewareException, FieldbookException {
 		// setup
 
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
@@ -137,7 +138,7 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
-	public void testPostAdvanceNurseryThrowsRuleException() throws MiddlewareException, RuleException {
+	public void testPostAdvanceNurseryThrowsRuleException() throws MiddlewareException, RuleException, FieldbookException {
 		// setup
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
@@ -159,7 +160,7 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
-	public void testPostAdvanceNurseryGenerativeMethodError() throws RuleException, MiddlewareException {
+	public void testPostAdvanceNurseryGenerativeMethodError() throws RuleException, MiddlewareException, FieldbookException {
 		// setup
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
@@ -181,7 +182,7 @@ public class AdvancingControllerTest {
 	}
 
 	private void preparePostAdvanceNursery(AdvancingNurseryForm form, Method method, ArrayList<ImportedGermplasm> importedGermplasm)
-			throws RuleException, MiddlewareException {
+			throws RuleException, MiddlewareException, FieldbookException {
 		// setup
 		form.setMethodChoice("1");
 		form.setAdvanceBreedingMethodId("10");

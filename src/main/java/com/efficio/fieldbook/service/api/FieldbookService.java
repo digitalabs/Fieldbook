@@ -26,7 +26,9 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -59,7 +61,7 @@ public interface FieldbookService {
 	 * @return the list
 	 * @throws RuleException
 	 */
-	AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws RuleException;
+	AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws RuleException, MiddlewareQueryException, FieldbookException;
 
 	/**
 	 * Filters the variables based on the current setting mode and excludes the selected ones.

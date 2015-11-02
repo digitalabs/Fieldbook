@@ -19,8 +19,6 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
@@ -29,8 +27,6 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 public class DesignImportMeasurementRowGenerator {
-
-	private static final Logger LOG = LoggerFactory.getLogger(DesignImportMeasurementRowGenerator.class);
 
 	private Workbook workbook;
 	private Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeaders;

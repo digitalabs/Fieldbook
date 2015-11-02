@@ -366,20 +366,14 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testSubmitWhereMeasurementsListHasNoValue() {
-		final Workbook workbook = Mockito.mock(Workbook.class);
-		final SettingDetail settingDetail = Mockito.mock(SettingDetail.class);
-		final SettingVariable variable = Mockito.mock(SettingVariable.class);
-		final StandardVariable standardVariable = Mockito.mock(StandardVariable.class);
-		final Term term = Mockito.mock(Term.class);
+		Workbook testWorkbook = new Workbook();
+		testWorkbook.setTrialDatasetId(1);
+		testWorkbook.setMeasurementDatesetId(2);
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(testWorkbook);
 
-		Mockito.when(settingDetail.getVariable()).thenReturn(variable);
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
-		Mockito.when(settingDetail.getRole()).thenReturn(PhenotypicType.STUDY);
-		Mockito.when(standardVariable.getProperty()).thenReturn(term);
-		Mockito.when(standardVariable.getScale()).thenReturn(term);
-		Mockito.when(standardVariable.getMethod()).thenReturn(term);
-		Mockito.when(standardVariable.getPhenotypicType()).thenReturn(PhenotypicType.STUDY);
-		Mockito.when(standardVariable.getDataType()).thenReturn(term);
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString())).thenReturn(
+				this.standardVariable);
+
 		final Map<String, String> out = this.editNurseryController.submit(this.createNurseryForm, this.model);
 
 		Assert.assertEquals("The status should be 1", "1", out.get("status"));

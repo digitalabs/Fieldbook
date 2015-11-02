@@ -116,6 +116,9 @@ public class OpenTrialControllerTest {
 		Mockito.when(this.workbenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(project);
 		Mockito.when(this.studyDataManager.getProject(1)).thenReturn(dmsProject);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+		Project testProject = new Project();
+		testProject.setProjectId(1L);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
 
 		this.initializeOntology();
 

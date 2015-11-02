@@ -100,8 +100,7 @@ public class SettingsUtil {
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @return the standard variable
 	 */
-	private static StandardVariable getStandardVariable(final int id, final UserSelection userSelection,
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
+	private static StandardVariable getStandardVariable(final int id, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 
 		return fieldbookMiddlewareService.getStandardVariable(id, programUUID);
 	}
@@ -138,7 +137,7 @@ public class SettingsUtil {
 			final SettingVariable variable = settingDetail.getVariable();
 
 			final StandardVariable standardVariable =
-					SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService, programUUID);
+					SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 
 			if (standardVariable.getName() == null) {
 				continue;
@@ -177,7 +176,7 @@ public class SettingsUtil {
 			final SettingVariable variable = settingDetail.getVariable();
 
 			final StandardVariable standardVariable =
-					SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService, programUUID);
+					SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 			variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
 
 			final Variate variate =
@@ -205,7 +204,7 @@ public class SettingsUtil {
 			final SettingVariable variable = settingDetail.getVariable();
 
 			final StandardVariable standardVariable =
-					SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService, programUUID);
+					SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 			variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
 
 			final Factor factor = SettingsUtil.convertStandardVariableToFactor(standardVariable);
@@ -246,7 +245,7 @@ public class SettingsUtil {
 			final SettingVariable variable = settingDetail.getVariable();
 
 			final StandardVariable standardVariable =
-					SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService, programUUID);
+					SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 
 			variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
 			// need to get the name from the session
@@ -300,8 +299,7 @@ public class SettingsUtil {
 
 		for (final SettingDetail detail : treatmentFactorDetails) {
 			final Integer termId = detail.getVariable().getCvTermId();
-			final StandardVariable levelVariable =
-					SettingsUtil.getStandardVariable(termId, userSelection, fieldbookMiddlewareService, programUUID);
+			final StandardVariable levelVariable = SettingsUtil.getStandardVariable(termId, fieldbookMiddlewareService, programUUID);
 			levelVariable.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			final Factor levelFactor = SettingsUtil.convertStandardVariableToFactor(levelVariable);
 			levelFactor.setName(detail.getVariable().getName());
@@ -313,7 +311,7 @@ public class SettingsUtil {
 
 			if (data != null) {
 				final StandardVariable valueVariable =
-						SettingsUtil.getStandardVariable(data.getVariableId(), userSelection, fieldbookMiddlewareService, programUUID);
+						SettingsUtil.getStandardVariable(data.getVariableId(), fieldbookMiddlewareService, programUUID);
 
 				valueVariable.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 				valueFactor = SettingsUtil.convertStandardVariableToFactor(valueVariable);
@@ -646,7 +644,7 @@ public class SettingsUtil {
 
 					if (userSelection != null) {
 						final StandardVariable standardVariable =
-								SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService,
+								SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService,
 										programUUID);
 						variable.setPSMRFromStandardVariable(standardVariable, condition.getRole());
 						final Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(condition.getValue());
@@ -764,7 +762,7 @@ public class SettingsUtil {
 
 					final StandardVariable standardVariable =
 							SettingsUtil
-							.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService, programUUID);
+							.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 
 					final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
 
@@ -820,7 +818,7 @@ public class SettingsUtil {
 					nurseryConditions.add(settingDetail);
 					if (userSelection != null) {
 						final StandardVariable standardVariable =
-								SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService,
+								SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService,
 										programUUID);
 						variable.setPSMRFromStandardVariable(standardVariable, constant.getRole());
 						final Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(constant.getValue());
@@ -920,7 +918,7 @@ public class SettingsUtil {
 						studyLevelConditions.add(settingDetail);
 						if (userSelection != null) {
 							final StandardVariable standardVariable =
-									SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService,
+									SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService,
 											programUUID);
 							variable.setPSMRFromStandardVariable(standardVariable, condition.getRole());
 						}
@@ -1004,7 +1002,7 @@ public class SettingsUtil {
 
 						if (userSelection != null) {
 							final StandardVariable standardVariable =
-									SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService,
+									SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService,
 											programUUID);
 							variable.setPSMRFromStandardVariable(standardVariable, factor.getRole());
 						}
@@ -1445,7 +1443,7 @@ public class SettingsUtil {
 				new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(), factor.getScale(), factor.getMethod(),
 						factor.getRole(), factor.getDatatype());
 		final StandardVariable standardVariable =
-				SettingsUtil.getStandardVariable(factor.getTermId(), userSelection, fieldbookMiddlewareService, programUUID);
+				SettingsUtil.getStandardVariable(factor.getTermId(), fieldbookMiddlewareService, programUUID);
 		variable.setPSMRFromStandardVariable(standardVariable, factor.getRole());
 		variable.setCvTermId(standardVariable.getId());
 		final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, standardVariable.getId());
@@ -1819,7 +1817,7 @@ public class SettingsUtil {
 		variable.setCvTermId(stdVar);
 		if (userSelection != null) {
 			final StandardVariable standardVariable =
-					SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService, programUUID);
+					SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 			variable.setPSMRFromStandardVariable(standardVariable, role);
 			stdVar = standardVariable.getId();
 		}
@@ -2435,8 +2433,8 @@ public class SettingsUtil {
 
 					if (settingDetail.getVariable().getVariableTypes() == null && fieldbookMiddlewareService != null) {
 						final StandardVariable standardVariable =
-								SettingsUtil.getStandardVariable(settingDetail.getVariable().getCvTermId(), userSelection,
-										fieldbookMiddlewareService, programUUID);
+								SettingsUtil.getStandardVariable(settingDetail.getVariable().getCvTermId(), fieldbookMiddlewareService,
+										programUUID);
 						settingDetail.getVariable().setVariableTypes(standardVariable.getVariableTypes());
 					}
 

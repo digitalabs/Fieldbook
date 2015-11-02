@@ -373,7 +373,6 @@ public class EditNurseryControllerTest {
 		final Term term = Mockito.mock(Term.class);
 
 		Mockito.when(settingDetail.getVariable()).thenReturn(variable);
-		Mockito.when(this.userSelection.getCacheStandardVariable(Matchers.anyInt())).thenReturn(standardVariable);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 		Mockito.when(settingDetail.getRole()).thenReturn(PhenotypicType.STUDY);
 		Mockito.when(standardVariable.getProperty()).thenReturn(term);
@@ -399,7 +398,6 @@ public class EditNurseryControllerTest {
 
 		Mockito.when(this.userSelection.getMeasurementRowList()).thenReturn(measurementsRows);
 		Mockito.when(settingDetail.getVariable()).thenReturn(variable);
-		Mockito.when(this.userSelection.getCacheStandardVariable(Matchers.anyInt())).thenReturn(standardVariable);
 		Workbook testWorkbook = new Workbook();
 		testWorkbook.setTrialDatasetId(1);
 		testWorkbook.setMeasurementDatesetId(2);

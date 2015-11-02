@@ -11,12 +11,15 @@
 
 package com.efficio.fieldbook.web.util;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.*;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.hazelcast.util.StringUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -25,7 +28,11 @@ import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.*;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.TreatmentVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -33,13 +40,28 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.workbench.settings.*;
+import org.generationcp.middleware.pojos.workbench.settings.Condition;
+import org.generationcp.middleware.pojos.workbench.settings.Constant;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.pojos.workbench.settings.Factor;
+import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
+import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
+import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
-import java.util.*;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.PairedVariable;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.hazelcast.util.StringUtil;
 
 /**
  * The Class SettingsUtil.
@@ -72,7 +94,7 @@ public class SettingsUtil {
 
 	/**
 	 * Get standard variable.
-	 * 
+	 *
 	 * @param id the id
 	 * @param userSelection the user selection
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
@@ -81,24 +103,12 @@ public class SettingsUtil {
 	private static StandardVariable getStandardVariable(final int id, final UserSelection userSelection,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 
-		StandardVariable variable = userSelection.getCacheStandardVariable(id);
-		if (variable == null) {
-			try {
-				variable = fieldbookMiddlewareService.getStandardVariable(id, programUUID);
-			} catch (final MiddlewareException e) {
-				SettingsUtil.LOG.error(e.getMessage(), e);
-			}
-			if (variable != null) {
-				userSelection.putStandardVariableInCache(variable);
-			}
-		}
-
-		return variable;
+		return fieldbookMiddlewareService.getStandardVariable(id, programUUID);
 	}
 
 	/**
 	 * Convert pojo to xml dataset.
-	 * 
+	 *
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param name the name
 	 * @param nurseryLevelConditions the nursery level conditions
@@ -146,7 +156,7 @@ public class SettingsUtil {
 					new Condition(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
 							variable.getMethod(), variable.getRole(), variable.getDataType(), DateUtil.convertToDBDateFormat(
 									variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(),
-							variable.getMinRange(), variable.getMaxRange());
+									variable.getMinRange(), variable.getMaxRange());
 			condition.setOperation(variable.getOperation());
 			condition.setId(variable.getCvTermId());
 			conditions.add(condition);
@@ -245,7 +255,7 @@ public class SettingsUtil {
 					new Constant(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
 							variable.getMethod(), variable.getRole(), variable.getDataType(), DateUtil.convertToDBDateFormat(
 									variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(),
-							variable.getMinRange(), variable.getMaxRange(), isTrial);
+									variable.getMinRange(), variable.getMaxRange(), isTrial);
 			constant.setOperation(variable.getOperation());
 			constant.setId(variable.getCvTermId());
 			constants.add(constant);
@@ -328,7 +338,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert pojo to xml dataset.
-	 * 
+	 *
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param name the name
 	 * @param studyLevelConditions the nursery level conditions
@@ -411,7 +421,7 @@ public class SettingsUtil {
 
 	/**
 	 * Gets the field possible vales.
-	 * 
+	 *
 	 * @param fieldbookService the fieldbook service
 	 * @param standardVariableId the standard variable id
 	 * @return the field possible vales
@@ -429,7 +439,7 @@ public class SettingsUtil {
 
 	/**
 	 * Gets the field possible values favorite.
-	 * 
+	 *
 	 * @param fieldbookService the fieldbook service
 	 * @param standardVariableId the standard variable id
 	 * @param programUUID the project id
@@ -449,7 +459,7 @@ public class SettingsUtil {
 
 	/**
 	 * Checks if is setting variable deletable.
-	 * 
+	 *
 	 * @param standardVariableId the standard variable id
 	 * @param requiredFields the required fields
 	 * @return true, if is setting variable deletable
@@ -468,7 +478,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert xml dataset to pojo.
-	 * 
+	 *
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param fieldbookService the fieldbook service
 	 * @param dataset the dataset
@@ -559,7 +569,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert xml nursery dataset to pojo.
-	 * 
+	 *
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param fieldbookService the fieldbook service
 	 * @param dataset the dataset
@@ -754,7 +764,7 @@ public class SettingsUtil {
 
 					final StandardVariable standardVariable =
 							SettingsUtil
-									.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService, programUUID);
+							.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService, programUUID);
 
 					final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
 
@@ -850,7 +860,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert xml trial dataset to pojo.
-	 * 
+	 *
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param fieldbookService the fieldbook service
 	 * @param dataset the dataset
@@ -1042,7 +1052,7 @@ public class SettingsUtil {
 
 	/**
 	 * In hide variable fields.
-	 * 
+	 *
 	 * @param stdVarId the std var id
 	 * @param variableList the variable list
 	 * @return true, if successful
@@ -1065,7 +1075,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert xml dataset to workbook.
-	 * 
+	 *
 	 * @param dataset the dataset
 	 * @return the workbook
 	 */
@@ -1108,7 +1118,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert workbook to xml dataset.
-	 * 
+	 *
 	 * @param workbook the workbook
 	 * @return the dataset
 	 */
@@ -1155,7 +1165,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert measurement variables to conditions.
-	 * 
+	 *
 	 * @param mlist the mlist
 	 * @return the list
 	 */
@@ -1196,7 +1206,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert measurement variables to factors.
-	 * 
+	 *
 	 * @param mlist the mlist
 	 * @return the list
 	 */
@@ -1240,7 +1250,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert measurement variables to variates.
-	 * 
+	 *
 	 * @param mlist the mlist
 	 * @return the list
 	 */
@@ -1263,7 +1273,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert conditions to measurement variables.
-	 * 
+	 *
 	 * @param conditions the conditions
 	 * @return the list
 	 */
@@ -1289,7 +1299,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert condition to measurement variable.
-	 * 
+	 *
 	 * @param condition the condition
 	 * @return the measurement variable
 	 */
@@ -1332,7 +1342,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert factors to measurement variables.
-	 * 
+	 *
 	 * @param factors the factors
 	 * @return the list
 	 */
@@ -1348,7 +1358,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert factor to measurement variable.
-	 * 
+	 *
 	 * @param factor the factor
 	 * @return the measurement variable
 	 */
@@ -1393,7 +1403,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert variates to measurement variables.
-	 * 
+	 *
 	 * @param variates the variates
 	 * @return the list
 	 */
@@ -1409,7 +1419,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert variate to measurement variable.
-	 * 
+	 *
 	 * @param variate the variate
 	 * @return the measurement variable
 	 */
@@ -1562,7 +1572,7 @@ public class SettingsUtil {
 			final String id = String.valueOf(condition.getTermId());
 			final String role = condition.getRole().name();
 			if (!SettingsUtil.isIdInFieldListForHiding(userSelection, id)
-			// do not show breeding method id if code exists
+					// do not show breeding method id if code exists
 					&& !SettingsUtil.breedingCodeExists(condition.getTermId(), variableMap)) {
 				// do not name if code or id exists
 
@@ -1838,7 +1848,7 @@ public class SettingsUtil {
 		for (final MeasurementData data : mrow.getDataList()) {
 			if (data.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
 					&& ontologyService.getProperty(data.getMeasurementVariable().getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP
-							.getId() && isResetAll || !isResetAll
+					.getId() && isResetAll || !isResetAll
 					&& data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
 				indeces.add(index);
 			}
@@ -1970,7 +1980,7 @@ public class SettingsUtil {
 
 	/**
 	 * Adds the deleted settings list.
-	 * 
+	 *
 	 * @param previousFormList the form list
 	 * @param deletedList the deleted list
 	 * @param previousSessionList the session list
@@ -2002,7 +2012,7 @@ public class SettingsUtil {
 
 	/**
 	 * Removes the basic details variables.
-	 * 
+	 *
 	 * @param nurseryLevelConditions the nursery level conditions
 	 */
 	public static void removeBasicDetailsVariables(final List<SettingDetail> nurseryLevelConditions) {
@@ -2016,7 +2026,7 @@ public class SettingsUtil {
 
 	/**
 	 * In fixed nursery list.
-	 * 
+	 *
 	 * @param propertyId the property id
 	 * @return true, if successful
 	 */
@@ -2088,7 +2098,7 @@ public class SettingsUtil {
 								stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(), value,
 								PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0), stdvar.getConstraints() != null ? stdvar
 										.getConstraints().getMinValue() : null, stdvar.getConstraints() != null ? stdvar.getConstraints()
-										.getMaxValue() : null, PhenotypicType.TRIAL_ENVIRONMENT);
+												.getMaxValue() : null, PhenotypicType.TRIAL_ENVIRONMENT);
 				mvar.setOperation(Operation.ADD);
 				mvar.setDataTypeId(stdvar.getDataType().getId());
 				workbook.getConditions().add(mvar);
@@ -2269,7 +2279,7 @@ public class SettingsUtil {
 
 	/**
 	 * Gets the setting detail value.
-	 * 
+	 *
 	 * @param details the details
 	 * @param termId the term id
 	 * @return the setting detail value

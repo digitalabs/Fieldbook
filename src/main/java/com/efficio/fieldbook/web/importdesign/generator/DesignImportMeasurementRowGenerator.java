@@ -19,6 +19,8 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
@@ -27,6 +29,8 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 public class DesignImportMeasurementRowGenerator {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(DesignImportMeasurementRowGenerator.class);
 
 	private Workbook workbook;
 	private Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeaders;
@@ -59,7 +63,8 @@ public class DesignImportMeasurementRowGenerator {
 	}
 
 	public MeasurementRow createMeasurementRow(final List<String> rowValues) {
-
+		
+		LOG.debug("Design Import - Creating Measurement Row");
 		final MeasurementRow measurement = new MeasurementRow();
 
 		final Map<Integer, DesignHeaderItem> trialEnvironmentHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT);
@@ -69,7 +74,8 @@ public class DesignImportMeasurementRowGenerator {
 				.getColumnIndex()))) {
 			return null;
 		}
-
+		
+		LOG.debug("Design Import - Creating Data List");
 		final List<MeasurementData> dataList = this.createMeasurementRowDataList(rowValues);
 		measurement.setDataList(dataList);
 
@@ -81,10 +87,13 @@ public class DesignImportMeasurementRowGenerator {
 		final List<MeasurementData> dataList = new ArrayList<>();
 
 		this.addTrialEnvironmentVariablesToDataList(rowValues, dataList);
-
+		LOG.debug("Added Environment Variables to MeasurementDataList : size=" + dataList.size() );
+		
 		this.addGermplasmVariablesToDataList(rowValues, dataList);
+		LOG.debug("Added Germplasm Variables to MeasurementDataList : size=" + dataList.size() );
 
 		this.addTrialDesignAndVariatesToDataList(rowValues, dataList);
+		LOG.debug("Added TrialDesign and Variates to MeasurementDataList : size=" + dataList.size() );
 
 		return dataList;
 	}
@@ -101,6 +110,7 @@ public class DesignImportMeasurementRowGenerator {
 			final String value = rowValues.get(headerItem.getColumnIndex());
 			dataList.add(this.createMeasurementData(headerItem.getVariable(), value));
 		}
+		
 	}
 
 	private void addTrialEnvironmentVariablesToDataList(final List<String> rowValues, final List<MeasurementData> dataList) {
@@ -112,9 +122,11 @@ public class DesignImportMeasurementRowGenerator {
 			if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
 					&& this.workbook.getStudyDetails().getStudyType() == StudyType.N) {
 				// do not add the trial instance to measurement data list if the workbook is Nursery
+				LOG.debug("Study Type is Nursery - did not add Trial Instance Factor");
 				continue;
 			} else if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
 					&& this.workbook.getStudyDetails().getStudyType() == StudyType.T) {
+				LOG.debug("Study Type is Trial - adding Trial Instance Factor");
 				final String value = rowValues.get(headerItem.getColumnIndex());
 				dataList.add(this.createMeasurementData(headerItem.getVariable(), value));
 			}

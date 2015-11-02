@@ -110,6 +110,8 @@ public class DesignImportMeasurementRowGenerator {
 		final Map<Integer, DesignHeaderItem> trialEnvironmentHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT);
 		for (final Map.Entry<Integer, DesignHeaderItem> trialEnvironmentHeader : trialEnvironmentHeaders.entrySet()) {
 			final DesignHeaderItem headerItem = trialEnvironmentHeader.getValue();
+
+			// add trial instance factor
 			if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
 					&& this.workbook.getStudyDetails().getStudyType() == StudyType.N) {
 				// do not add the trial instance to measurement data list if the workbook is Nursery
@@ -120,7 +122,8 @@ public class DesignImportMeasurementRowGenerator {
 				dataList.add(this.createMeasurementData(headerItem.getVariable(), value, fieldbookService));
 			}
 
-			if (this.isPreview) {
+			// add the remaining trial environment factors here. i.e SITE NAME
+			if (this.isPreview && headerItem.getVariable().getId() != TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				// only add the trial environment factors in measurement row ONLY in PREVIEW mode
 				final String value = rowValues.get(headerItem.getColumnIndex());
 				dataList.add(this.createMeasurementData(headerItem.getVariable(), value, fieldbookService));

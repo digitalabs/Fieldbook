@@ -871,10 +871,6 @@ public class CreateNurseryController extends SettingsController {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
-	protected void setFieldbookService(FieldbookService fieldbookService) {
-		this.fieldbookService = fieldbookService;
-	}
-
 	@Override
 	protected void setUserSelection(UserSelection userSelection) {
 		this.userSelection = userSelection;

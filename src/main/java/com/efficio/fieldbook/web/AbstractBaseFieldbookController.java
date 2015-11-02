@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
+ *
+ *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web;
@@ -41,7 +41,7 @@ public abstract class AbstractBaseFieldbookController {
 	private WorkbenchService workbenchService;
 
 	@Resource
-	private ContextUtil contextUtil;
+	protected ContextUtil contextUtil;
 
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
@@ -55,7 +55,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
-	 * 
+	 *
 	 */
 	public abstract String getContentName();
 
@@ -66,7 +66,7 @@ public abstract class AbstractBaseFieldbookController {
 	// TODO change the return type to Long.
 	public String getCurrentProjectId() {
 		try {
-			final Project projectInContext = contextUtil.getProjectInContext();
+			final Project projectInContext = this.contextUtil.getProjectInContext();
 			if (projectInContext != null) {
 				return projectInContext.getProjectId().toString();
 			}
@@ -78,12 +78,12 @@ public abstract class AbstractBaseFieldbookController {
 	}
 
 	public Project getCurrentProject() throws MiddlewareQueryException {
-		return contextUtil.getProjectInContext();
+		return this.contextUtil.getProjectInContext();
 	}
 
 	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {
 		return this.workbenchService
-				.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), contextUtil.getCurrentWorkbenchUserId());
+				.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), this.contextUtil.getCurrentWorkbenchUserId());
 	}
 
 	public String getOldFieldbookPath() {
@@ -124,7 +124,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the page.
-	 * 
+	 *
 	 * @param model the model
 	 * @return the string
 	 */
@@ -148,7 +148,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the error page.
-	 * 
+	 *
 	 * @param model the model
 	 * @return the string
 	 */
@@ -159,7 +159,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the page.
-	 * 
+	 *
 	 * @param model the model
 	 * @param ajaxPage the ajax page
 	 * @return the string
@@ -171,7 +171,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Convert favorite location to json.
-	 * 
+	 *
 	 * @param locations the locations
 	 * @return the string
 	 */
@@ -193,6 +193,10 @@ public abstract class AbstractBaseFieldbookController {
 
 	public void setPaginationListSelection(final PaginationListSelection paginationListSelection) {
 		this.paginationListSelection = paginationListSelection;
+	}
+
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 
 }

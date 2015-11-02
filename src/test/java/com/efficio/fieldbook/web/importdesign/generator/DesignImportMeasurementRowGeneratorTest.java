@@ -100,11 +100,13 @@ public class DesignImportMeasurementRowGeneratorTest {
 		this.trialInstancesFromUI.add("1");
 
 		this.generator =
-				new DesignImportMeasurementRowGenerator(this.workbook, this.mappedHeadersWithStdVarId, this.importedGermplasm,
-						this.germplasmStandardVariables, this.trialInstancesFromUI, this.isPreview, this.availableCheckTypes);
+				new DesignImportMeasurementRowGenerator(this.fieldbookService, this.workbook, this.mappedHeadersWithStdVarId,
+						this.importedGermplasm, this.germplasmStandardVariables, this.trialInstancesFromUI, this.isPreview,
+						this.availableCheckTypes);
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private Property createProperty(final int id) {
 		final Term term = new Term();
 		term.setId(id);
@@ -124,8 +126,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 		final List<MeasurementData> dataList = new ArrayList<>();
 
 		this.generator.setWorkbook(workbook);
-		this.generator.addGermplasmDetailsToDataList(importedGermplasm, germplasmStandardVariables, dataList, 1, this.fieldbookService,
-				false);
+		this.generator.addGermplasmDetailsToDataList(importedGermplasm, germplasmStandardVariables, dataList, 1, false);
 
 		Assert.assertEquals("The added MeasurementData should Match the germplasm Standard Variables", germplasmStandardVariables.size(),
 				dataList.size());
@@ -196,8 +197,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 		}
 
 		this.generator.setWorkbook(workbook);
-		this.generator.addVariatesToMeasurementRows(measurements, this.userSelection, this.fieldbookService, this.ontologyService,
-				this.contextUtil);
+		this.generator.addVariatesToMeasurementRows(measurements, this.userSelection, this.ontologyService, this.contextUtil);
 
 		final Integer actualSize = measurements.get(0).getDataList().size();
 		final Integer noOfAddedVariates = 1;
@@ -224,13 +224,13 @@ public class DesignImportMeasurementRowGeneratorTest {
 	@Test
 	public void testCreateMeasurementRow() {
 
-		final List<String> rowValues = this.designImportData.getCsvData().get(2);
-		final MeasurementRow measurementRow = this.generator.createMeasurementRow(rowValues, this.fieldbookService);
+		this.rowValues = this.designImportData.getCsvData().get(2);
+		final MeasurementRow measurementRow = this.generator.createMeasurementRow(this.rowValues);
 		final List<MeasurementData> dataList = measurementRow.getDataList();
 
 		Assert.assertEquals(
 				"Expecting that all column values from imported design will be included to data list of the generated measurement row.",
-				dataList.size(), rowValues.size());
+				dataList.size(), this.rowValues.size());
 
 		final Map<String, String> actualVariableValueMap = new HashMap<String, String>();
 		for (final MeasurementData data : dataList) {
@@ -239,8 +239,8 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 		final List<String> headerValues = this.designImportData.getCsvData().get(0);
 		final Map<String, String> expectedVariableValueMap = new HashMap<String, String>();
-		for (int i = 0; i < rowValues.size(); i++) {
-			expectedVariableValueMap.put(headerValues.get(i), rowValues.get(i));
+		for (int i = 0; i < this.rowValues.size(); i++) {
+			expectedVariableValueMap.put(headerValues.get(i), this.rowValues.get(i));
 		}
 
 		for (final Map.Entry<String, String> actualEntry : actualVariableValueMap.entrySet()) {

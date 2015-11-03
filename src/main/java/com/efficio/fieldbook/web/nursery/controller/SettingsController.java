@@ -450,16 +450,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the standard variable
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected StandardVariable getStandardVariable(int id) throws MiddlewareException {
-		StandardVariable variable = this.userSelection.getCacheStandardVariable(id);
-		if (variable == null) {
-			variable = this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
-			if (variable != null) {
-				this.userSelection.putStandardVariableInCache(variable);
-			}
-		}
-
-		return variable;
+	protected StandardVariable getStandardVariable(int id) {
+		return this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
 	}
 
 	/**

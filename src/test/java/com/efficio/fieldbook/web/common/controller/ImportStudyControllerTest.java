@@ -130,10 +130,6 @@ public class ImportStudyControllerTest {
 	}
 
 	@Test
-	@Ignore(
-			value = "This test fails on mvn command line because the WorkbookDataUtil class used to setup data "
-					+ " has an internal state which is modified by other tests see calls to com.efficio.fieldbook.utils.test.WorkbookDataUtil.setTestWorkbook(Workbook), "
-					+ " casuing this test to fail when run alongside other tests.")
 	public void testApplyChangeDetailsAddGidName() throws IOException, FieldbookException {
 		final String dummyUserResponse = "";
 		final GermplasmChangeDetail[] changeDetails = this.createTestChangeDetail();

@@ -13,15 +13,12 @@ package com.efficio.fieldbook.web.common.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.settings.CrossSetting;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -29,9 +26,9 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
+import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import org.springframework.web.util.HtmlUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -86,9 +83,6 @@ public class UserSelection implements Serializable {
 
 	/** The imported advanced germplasm list. */
 	private List<ImportedGermplasm> importedAdvancedGermplasmList;
-
-	/** The standard variable map. */
-	private final Map<String, StandardVariable> standardVariableMap = new HashMap<String, StandardVariable>(); // for easy access
 
 	/** The trait ref list. */
 	private List<TraitClassReference> traitRefList;
@@ -388,28 +382,6 @@ public class UserSelection implements Serializable {
 	 */
 	public void setBaselineTraitsList(List<SettingDetail> baselineTraitsList) {
 		this.baselineTraitsList = baselineTraitsList;
-	}
-
-	/**
-	 * Gets the cache standard variable.
-	 *
-	 * @param id the id
-	 * @return the cache standard variable
-	 */
-	public StandardVariable getCacheStandardVariable(int id) {
-		if (this.standardVariableMap != null && this.standardVariableMap.containsKey(Integer.toString(id))) {
-			return this.standardVariableMap.get(Integer.toString(id));
-		}
-		return null;
-	}
-
-	/**
-	 * Put standard variable in cache.
-	 *
-	 * @param variable the variable
-	 */
-	public void putStandardVariableInCache(StandardVariable variable) {
-		this.standardVariableMap.put(Integer.toString(variable.getId()), variable);
 	}
 
 	/**

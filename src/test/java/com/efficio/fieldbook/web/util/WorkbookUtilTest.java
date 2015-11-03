@@ -19,10 +19,8 @@ public class WorkbookUtilTest {
 
 	@Test
 	public void testUpdateTrialObservations() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		final Workbook currentWorkbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
-		WorkbookDataUtil.setTestWorkbook(null);
 		final Workbook temporaryWorkbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 2);
 
 		WorkbookUtil.updateTrialObservations(currentWorkbook, temporaryWorkbook);

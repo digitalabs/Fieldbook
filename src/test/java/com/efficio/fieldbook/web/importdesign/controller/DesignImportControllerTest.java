@@ -139,7 +139,7 @@ public class DesignImportControllerTest {
 		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 		Mockito.doReturn(data).when(this.userSelection).getDesignImportData();
 
-		WorkbookDataUtil.setTestWorkbook(null);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(this.project);
 
 		this.initializeOntologyData();
 		this.initializeDesignImportService();

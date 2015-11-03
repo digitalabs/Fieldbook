@@ -84,6 +84,7 @@ public abstract class AbstractBaseFieldbookController {
 	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {
 		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
 				this.contextUtil.getCurrentWorkbenchUserId());
+
 	}
 
 	public String getOldFieldbookPath() {
@@ -193,6 +194,10 @@ public abstract class AbstractBaseFieldbookController {
 
 	public void setPaginationListSelection(final PaginationListSelection paginationListSelection) {
 		this.paginationListSelection = paginationListSelection;
+	}
+
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 
 }

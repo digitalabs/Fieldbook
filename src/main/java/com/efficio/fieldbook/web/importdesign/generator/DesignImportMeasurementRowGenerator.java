@@ -29,7 +29,7 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 public class DesignImportMeasurementRowGenerator {
-
+	
 	private static final Logger LOG = LoggerFactory.getLogger(DesignImportMeasurementRowGenerator.class);
 
 	private Workbook workbook;
@@ -41,15 +41,18 @@ public class DesignImportMeasurementRowGenerator {
 	private boolean isPreview;
 	private Map<String, Integer> availableCheckTypes;
 
+	private FieldbookService fieldbookService;
+
 	public DesignImportMeasurementRowGenerator() {
 		super();
 	}
 
-	public DesignImportMeasurementRowGenerator(final Workbook workbook,
+	public DesignImportMeasurementRowGenerator(final FieldbookService fieldbookService, final Workbook workbook,
 			final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId,
 			final List<ImportedGermplasm> importedGermplasm, final Map<Integer, StandardVariable> germplasmStandardVariables,
 			final Set<String> trialInstancesFromUI, final boolean isPreview, final Map<String, Integer> availableCheckTypes) {
 		super();
+		this.fieldbookService = fieldbookService;
 		this.workbook = workbook;
 		this.mappedHeaders = mappedHeadersWithStdVarId;
 		this.importedGermplasm = importedGermplasm;
@@ -59,8 +62,9 @@ public class DesignImportMeasurementRowGenerator {
 		this.availableCheckTypes = availableCheckTypes;
 	}
 
-	public MeasurementRow createMeasurementRow(final List<String> rowValues, final FieldbookService fieldbookService) {
-
+	public MeasurementRow createMeasurementRow(final List<String> rowValues) {
+		
+		LOG.debug("Design Import - Creating Measurement Row");
 		final MeasurementRow measurement = new MeasurementRow();
 
 		final Map<Integer, DesignHeaderItem> trialEnvironmentHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT);
@@ -70,28 +74,31 @@ public class DesignImportMeasurementRowGenerator {
 				.getColumnIndex()))) {
 			return null;
 		}
-
-		final List<MeasurementData> dataList = this.createMeasurementRowDataList(rowValues, fieldbookService);
+		
+		LOG.debug("Design Import - Creating Data List");
+		final List<MeasurementData> dataList = this.createMeasurementRowDataList(rowValues);
 		measurement.setDataList(dataList);
 
 		return measurement;
 	}
 
-	private List<MeasurementData> createMeasurementRowDataList(final List<String> rowValues, final FieldbookService fieldbookService) {
+	private List<MeasurementData> createMeasurementRowDataList(final List<String> rowValues) {
 
 		final List<MeasurementData> dataList = new ArrayList<>();
 
-		this.addTrialEnvironmentVariablesToDataList(rowValues, fieldbookService, dataList);
+		this.addTrialEnvironmentVariablesToDataList(rowValues, dataList);
+		LOG.debug("Added Environment Variables to MeasurementDataList : size=" + dataList.size() );
+		
+		this.addGermplasmVariablesToDataList(rowValues, dataList);
+		LOG.debug("Added Germplasm Variables to MeasurementDataList : size=" + dataList.size() );
 
-		this.addGermplasmVariablesToDataList(rowValues, fieldbookService, dataList);
-
-		this.addTrialDesignAndVariatesToDataList(rowValues, fieldbookService, dataList);
+		this.addTrialDesignAndVariatesToDataList(rowValues, dataList);
+		LOG.debug("Added TrialDesign and Variates to MeasurementDataList : size=" + dataList.size() );
 
 		return dataList;
 	}
 
-	private void addTrialDesignAndVariatesToDataList(final List<String> rowValues, final FieldbookService fieldbookService,
-			final List<MeasurementData> dataList) {
+	private void addTrialDesignAndVariatesToDataList(final List<String> rowValues, final List<MeasurementData> dataList) {
 
 		final Map<Integer, DesignHeaderItem> trialDesignHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_DESIGN);
 		final Map<Integer, DesignHeaderItem> variateHeaders = this.mappedHeaders.get(PhenotypicType.VARIATE);
@@ -101,30 +108,39 @@ public class DesignImportMeasurementRowGenerator {
 
 		for (final DesignHeaderItem headerItem : remainingColumnHeaders) {
 			final String value = rowValues.get(headerItem.getColumnIndex());
-			dataList.add(this.createMeasurementData(headerItem.getVariable(), value, fieldbookService));
+			dataList.add(this.createMeasurementData(headerItem.getVariable(), value));
 		}
+		
 	}
 
-	private void addTrialEnvironmentVariablesToDataList(final List<String> rowValues, final FieldbookService fieldbookService,
-			final List<MeasurementData> dataList) {
+	private void addTrialEnvironmentVariablesToDataList(final List<String> rowValues, final List<MeasurementData> dataList) {
 		final Map<Integer, DesignHeaderItem> trialEnvironmentHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT);
 		for (final Map.Entry<Integer, DesignHeaderItem> trialEnvironmentHeader : trialEnvironmentHeaders.entrySet()) {
 			final DesignHeaderItem headerItem = trialEnvironmentHeader.getValue();
+
+			// add trial instance factor
 			if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
 					&& this.workbook.getStudyDetails().getStudyType() == StudyType.N) {
 				// do not add the trial instance to measurement data list if the workbook is Nursery
+				LOG.debug("Study Type is Nursery - did not add Trial Instance Factor");
 				continue;
+			} else if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
+					&& this.workbook.getStudyDetails().getStudyType() == StudyType.T) {
+				LOG.debug("Study Type is Trial - adding Trial Instance Factor");
+				final String value = rowValues.get(headerItem.getColumnIndex());
+				dataList.add(this.createMeasurementData(headerItem.getVariable(), value));
 			}
-			if (this.isPreview) {
+
+			// add the remaining trial environment factors here. i.e SITE NAME
+			if (this.isPreview && headerItem.getVariable().getId() != TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				// only add the trial environment factors in measurement row ONLY in PREVIEW mode
 				final String value = rowValues.get(headerItem.getColumnIndex());
-				dataList.add(this.createMeasurementData(headerItem.getVariable(), value, fieldbookService));
+				dataList.add(this.createMeasurementData(headerItem.getVariable(), value));
 			}
 		}
 	}
 
-	private void addGermplasmVariablesToDataList(final List<String> rowValues, final FieldbookService fieldbookService,
-			final List<MeasurementData> dataList) {
+	private void addGermplasmVariablesToDataList(final List<String> rowValues, final List<MeasurementData> dataList) {
 
 		final Map<Integer, DesignHeaderItem> germplasmHeaders = this.mappedHeaders.get(PhenotypicType.GERMPLASM);
 
@@ -134,8 +150,7 @@ public class DesignImportMeasurementRowGenerator {
 		if (entryTypeHeaderItem != null && this.germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()) != null) {
 			final String checkType = String.valueOf(rowValues.get(entryTypeHeaderItem.getColumnIndex()));
 			final String checkTypeId = String.valueOf(this.availableCheckTypes.get(checkType));
-			dataList.add(this.createMeasurementData(this.germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), checkTypeId,
-					fieldbookService));
+			dataList.add(this.createMeasurementData(this.germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), checkTypeId));
 			hasEntryTypeColumnFromTheImport = true;
 		}
 
@@ -144,55 +159,49 @@ public class DesignImportMeasurementRowGenerator {
 		if (entryNoHeaderItem != null) {
 			final Integer entryNo = Integer.parseInt(rowValues.get(entryNoHeaderItem.getColumnIndex()));
 			this.addGermplasmDetailsToDataList(this.importedGermplasm, this.germplasmStandardVariables, dataList, entryNo,
-					fieldbookService, hasEntryTypeColumnFromTheImport);
+					hasEntryTypeColumnFromTheImport);
 		}
 
 	}
 
 	protected void addGermplasmDetailsToDataList(final List<ImportedGermplasm> importedGermplasm,
 			final Map<Integer, StandardVariable> germplasmStandardVariables, final List<MeasurementData> dataList, final Integer entryNo,
-			final FieldbookService fieldbookService, final boolean hasEntryTypeColumnFromTheImport) {
+			final boolean hasEntryTypeColumnFromTheImport) {
 
 		final ImportedGermplasm germplasmEntry = importedGermplasm.get(entryNo - 1);
 
 		if (germplasmStandardVariables.get(TermId.ENTRY_NO.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_NO.getId()), germplasmEntry.getEntryId()
-					.toString(), fieldbookService));
+					.toString()));
 		}
 		if (germplasmStandardVariables.get(TermId.GID.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GID.getId()), germplasmEntry.getGid(),
-					fieldbookService));
+			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GID.getId()), germplasmEntry.getGid()));
 		}
 		if (germplasmStandardVariables.get(TermId.DESIG.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.DESIG.getId()), germplasmEntry.getDesig(),
-					fieldbookService));
+			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.DESIG.getId()), germplasmEntry.getDesig()));
 		}
 		if (germplasmStandardVariables.get(TermId.CROSS.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.CROSS.getId()), germplasmEntry.getCross(),
-					fieldbookService));
+			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.CROSS.getId()), germplasmEntry.getCross()));
 		}
 		if (germplasmStandardVariables.get(TermId.ENTRY_CODE.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_CODE.getId()),
-					germplasmEntry.getEntryCode(), fieldbookService));
+					germplasmEntry.getEntryCode()));
 		}
 		if (germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()) != null && !hasEntryTypeColumnFromTheImport) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), germplasmEntry.getCheck(),
-					fieldbookService));
+			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), germplasmEntry.getCheck()));
 		}
 		if (germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()),
-					germplasmEntry.getSource(), fieldbookService));
+					germplasmEntry.getSource()));
 		}
 		if (germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()), germplasmEntry.getSource(),
-					fieldbookService));
+			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()), germplasmEntry.getSource()));
 		}
 	}
 
-	protected MeasurementData createMeasurementData(final StandardVariable standardVariable, final String value,
-			final FieldbookService fieldbookService) {
+	protected MeasurementData createMeasurementData(final StandardVariable standardVariable, final String value) {
 		final MeasurementData data = new MeasurementData();
-		data.setMeasurementVariable(this.createMeasurementVariable(standardVariable, fieldbookService));
+		data.setMeasurementVariable(this.createMeasurementVariable(standardVariable));
 		data.setValue(value);
 		data.setLabel(data.getMeasurementVariable().getName());
 		data.setDataType(data.getMeasurementVariable().getDataType());
@@ -208,8 +217,8 @@ public class DesignImportMeasurementRowGenerator {
 		return data;
 	}
 
-	protected MeasurementVariable createMeasurementVariable(final StandardVariable standardVariable, final FieldbookService fieldbookService) {
-		return ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, fieldbookService);
+	protected MeasurementVariable createMeasurementVariable(final StandardVariable standardVariable) {
+		return ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, this.fieldbookService);
 	}
 
 	public void addFactorsToMeasurementRows(final List<MeasurementRow> measurements) {
@@ -234,7 +243,7 @@ public class DesignImportMeasurementRowGenerator {
 	}
 
 	public void addVariatesToMeasurementRows(final List<MeasurementRow> measurements, final UserSelection userSelection,
-			final FieldbookService fieldbookService, final OntologyService ontologyService, final ContextUtil contextUtil) {
+			final OntologyService ontologyService, final ContextUtil contextUtil) {
 
 		final Set<MeasurementVariable> temporaryList = new HashSet<>();
 		for (final MeasurementVariable mvar : this.workbook.getVariates()) {
@@ -245,7 +254,7 @@ public class DesignImportMeasurementRowGenerator {
 		}
 
 		WorkbookUtil.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true,
-				userSelection, ontologyService, fieldbookService, contextUtil.getCurrentProgramUUID());
+				userSelection, ontologyService, this.fieldbookService, contextUtil.getCurrentProgramUUID());
 
 	}
 

@@ -1212,6 +1212,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(repNo).when(this.ontologyDataManager).getStandardVariable(TermId.REP_NO.getId(), this.project.getUniqueID());
 		Mockito.doReturn(cooperator).when(this.ontologyDataManager)
 				.getStandardVariable(TermId.COOPERATOR.getId(), this.project.getUniqueID());
+
 		Mockito.doReturn(cooperatorId).when(this.ontologyDataManager)
 				.getStandardVariable(TermId.COOPERATOOR_ID.getId(), this.project.getUniqueID());
 		Mockito.doReturn(principalInvestigator).when(this.ontologyDataManager)
@@ -1239,6 +1240,7 @@ public class DesignImportControllerTest {
 				.getStandardVariable(TermId.REP_NO.getId(), this.project.getUniqueID());
 		Mockito.doReturn(cooperator).when(this.fieldbookMiddlewareService)
 				.getStandardVariable(TermId.COOPERATOR.getId(), this.project.getUniqueID());
+
 		Mockito.doReturn(cooperatorId).when(this.fieldbookMiddlewareService)
 				.getStandardVariable(TermId.COOPERATOOR_ID.getId(), this.project.getUniqueID());
 		Mockito.doReturn(principalInvestigator).when(this.fieldbookMiddlewareService)

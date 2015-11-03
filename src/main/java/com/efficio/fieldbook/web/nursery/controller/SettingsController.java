@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -969,8 +968,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	public void setContextUtil(ContextUtil contextUtil) {
-		this.contextUtil = contextUtil;
+	public void setFieldbookService(FieldbookService fieldbookService) {
+		this.fieldbookService = fieldbookService;
 	}
 
 }

@@ -79,8 +79,6 @@ public class DesignImportMeasurementRowGeneratorTest {
 		this.userSelection = new UserSelection();
 		this.userSelection.setImportedGermplasmMainInfo(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo());
 
-		WorkbookDataUtil.setTestWorkbook(null);
-
 		Mockito.doReturn(this.createProperty(TermId.BREEDING_METHOD_PROP.getId())).when(this.ontologyService)
 				.getProperty(Mockito.anyString());
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(DesignImportMeasurementRowGeneratorTest.PROGRAM_UUID);

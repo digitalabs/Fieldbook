@@ -58,7 +58,6 @@ public class ExportImportStudyUtilTest {
 
 		this.locations = WorkbookDataUtil.createLocationData();
 		this.fileName = "trial_" + new Random().nextInt(1000) + ".xls";
-		WorkbookDataUtil.setTestWorkbook(null);
 	}
 
 	@Test
@@ -66,7 +65,6 @@ public class ExportImportStudyUtilTest {
 		String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(null, this.fieldbookMiddlewareService);
 		Assert.assertTrue("The site name is '' ", "".equalsIgnoreCase(siteName));
 
-		WorkbookDataUtil.setTestWorkbook(null);
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
 		final MeasurementRow trialObservationWithTrialLocation = workbook.getTrialObservations().get(0);
 		siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservationWithTrialLocation, this.fieldbookMiddlewareService);
@@ -144,7 +142,7 @@ public class ExportImportStudyUtilTest {
 		Mockito.when(this.fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_2)).thenReturn(this.locations.get(1));
 
 		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 2);
-		this.instances = WorkbookDataUtil.getTrialInstances();
+		this.instances = WorkbookDataUtil.getTrialInstances(this.workbook);
 
 		int index = 1;
 		for (final MeasurementRow row : this.workbook.getTrialObservations()) {
@@ -163,7 +161,7 @@ public class ExportImportStudyUtilTest {
 		Mockito.when(this.fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(this.locations.get(0));
 
 		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 1);
-		this.instances = WorkbookDataUtil.getTrialInstances();
+		this.instances = WorkbookDataUtil.getTrialInstances(this.workbook);
 
 		final String outputFileName =
 				ExportImportStudyUtil.getFileNamePath(1, this.workbook.getTrialObservations().get(0), this.instances, this.fileName, false,

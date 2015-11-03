@@ -309,8 +309,7 @@ var ImportDesign = (function() {
 		},
 		
 		hideChangeButton : function(){
-			//change button must only appear in nursery manager
-			if(!isNursery() || $('#measurementDataExisting').val() == 'true'){
+			if( $('#measurementDataExisting').val() == 'true'){
 				$('#change-import-design-url-link').hide();
 			} else {
 				$('#change-import-design-url-link').show();

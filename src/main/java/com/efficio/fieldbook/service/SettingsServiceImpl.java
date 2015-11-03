@@ -17,7 +17,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 public class SettingsServiceImpl implements SettingsService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsServiceImpl.class);
-	
+
 
 	/**
 	 * The fieldbook service.
@@ -61,50 +60,50 @@ public class SettingsServiceImpl implements SettingsService {
 
 	@Override
 	public SettingDetail createSettingDetail(int id, String name, UserSelection userSelection, int currentIbDbUserId, String programUUID) throws MiddlewareException {
-        
+
 		String variableName;
-		StandardVariable stdVar = this.getCachedStandardVariable(id, userSelection, programUUID);
-		
-         if (name != null && !name.isEmpty()) {
-             variableName = name;
-         } else {
-             variableName = stdVar.getName();
-         }
-         
-         if (stdVar != null && stdVar.getName() != null) {
+		StandardVariable stdVar = this.fieldbookMiddlewareService.getStandardVariable(id, programUUID);
+
+		if (name != null && !name.isEmpty()) {
+			variableName = name;
+		} else {
+			variableName = stdVar.getName();
+		}
+
+		if (stdVar != null && stdVar.getName() != null) {
 			SettingVariable svar =
 					new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
 							stdVar.getMethod().getName(), null, stdVar.getDataType().getName(), stdVar
-									.getDataType().getId(), stdVar.getConstraints() != null
-									&& stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
-							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
-									.getMaxValue() : null);
-             svar.setCvTermId(stdVar.getId());
-             svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
-             svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
-             svar.setOperation(Operation.ADD);
+							.getDataType().getId(), stdVar.getConstraints() != null
+							&& stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
+									stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
+											.getMaxValue() : null);
+			svar.setCvTermId(stdVar.getId());
+			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
+			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
+			svar.setOperation(Operation.ADD);
 
 			List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
-                 SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
-                 if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
-                     settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
-                 } else if (id == TermId.STUDY_UID.getId()) {
-                     settingDetail.setValue(String.valueOf(currentIbDbUserId));
-                 } else if (id == TermId.STUDY_UPDATE.getId()) {
-                     settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
-                 }
-                 settingDetail.setPossibleValuesToJson(possibleValues);
+			SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
+			if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
+				settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
+			} else if (id == TermId.STUDY_UID.getId()) {
+				settingDetail.setValue(String.valueOf(currentIbDbUserId));
+			} else if (id == TermId.STUDY_UPDATE.getId()) {
+				settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
+			}
+			settingDetail.setPossibleValuesToJson(possibleValues);
 			List<ValueReference> possibleValuesFavorite =
 					this.fieldbookService.getAllPossibleValuesFavorite(id, programUUID);
-                 settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
-                 settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-                 return settingDetail;
-         } else {
-             SettingVariable svar = new SettingVariable();
-             svar.setCvTermId(stdVar.getId());
-             return new SettingDetail(svar, null, null, false);
-         }
- }
+			settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
+			settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+			return settingDetail;
+		} else {
+			SettingVariable svar = new SettingVariable();
+			svar.setCvTermId(stdVar.getId());
+			return new SettingDetail(svar, null, null, false);
+		}
+	}
 
 	@Override
 	public List<LabelFields> retrieveTrialSettingsAsLabels(Workbook workbook) {
@@ -136,15 +135,15 @@ public class SettingsServiceImpl implements SettingsService {
 	public boolean isGermplasmListField(Integer id, boolean isNursery) {
 
 		try {
-			StandardVariable stdVar = this.fieldbookMiddlewareService.getStandardVariable(id,  contextUtil.getCurrentProgramUUID());
+			StandardVariable stdVar = this.fieldbookMiddlewareService.getStandardVariable(id,  this.contextUtil.getCurrentProgramUUID());
 			if (isNursery && (SettingsUtil.hasVariableType(VariableType.GERMPLASM_DESCRIPTOR,
-						stdVar.getVariableTypes()) || SettingsUtil.hasVariableType(VariableType.EXPERIMENTAL_DESIGN,
-								stdVar.getVariableTypes()))){
-					return true;
+					stdVar.getVariableTypes()) || SettingsUtil.hasVariableType(VariableType.EXPERIMENTAL_DESIGN,
+							stdVar.getVariableTypes()))){
+				return true;
 			} else if(!isNursery && SettingsUtil.hasVariableType(VariableType.GERMPLASM_DESCRIPTOR,
-						stdVar.getVariableTypes())){
-					return true;
-				
+					stdVar.getVariableTypes())){
+				return true;
+
 			}
 
 		} catch (MiddlewareException e) {
@@ -186,7 +185,7 @@ public class SettingsServiceImpl implements SettingsService {
 		List<LabelFields> traitList = new ArrayList<>();
 		for (MeasurementVariable var : workbook.getVariates()) {
 			traitList
-					.add(new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery())));
+			.add(new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery())));
 		}
 
 		return traitList;
@@ -246,23 +245,4 @@ public class SettingsServiceImpl implements SettingsService {
 
 		return managementDetailList;
 	}
-
-	 /**
-     * Get standard variable.
-     *
-     * @param id the id
-     * @return the standard variable
-     * @throws MiddlewareQueryException the middleware query exception
-     */
-    protected StandardVariable getCachedStandardVariable(int id, UserSelection userSelection, String programUUID) throws MiddlewareException {
-		StandardVariable variable = userSelection.getCacheStandardVariable(id);
-    	if (variable == null) {
-			variable = this.fieldbookMiddlewareService.getStandardVariable(id, programUUID);
-    		if (variable != null) {
-				userSelection.putStandardVariableInCache(variable);
-    		}
-    	}
-    	
-    	return variable;
-    }
 }

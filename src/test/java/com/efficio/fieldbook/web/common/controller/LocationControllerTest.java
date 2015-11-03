@@ -66,14 +66,14 @@ public class LocationControllerTest {
 
 	@Test
 	public void testGetLocations() {
-		List<Long> locationIDs = new ArrayList<>();
+		List<Integer> locationIDs = new ArrayList<>();
 		List<Location> breedingLocationsList = new ArrayList<>();
 		List<Location> favoriteLocationsList = new ArrayList<>();
 
 		try {
 			Mockito.doReturn(locationIDs).when(this.fieldbookMiddlewareService).getFavoriteProjectLocationIds(Matchers.anyString());
 			Mockito.doReturn(breedingLocationsList).when(this.fieldbookMiddlewareService).getAllBreedingLocations();
-			Mockito.doReturn(favoriteLocationsList).when(this.fieldbookMiddlewareService).getFavoriteLocationByProjectId(locationIDs);
+			Mockito.doReturn(favoriteLocationsList).when(this.fieldbookMiddlewareService).getFavoriteLocationByLocationIDs(locationIDs);
 			Map<String, Object> locations = this.mole.getLocations();
 
 			Assert.assertNotNull(locations);

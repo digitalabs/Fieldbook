@@ -77,9 +77,9 @@ public class CrossingTemplateExcelExporterTest {
 
 	@Test
 	public void testExport() throws Exception {
-		Mockito.when(this.fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID, GermplasmListType.NURSERY)).thenReturn(
-				this.initializeCrossesList());
+		Mockito.when(
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
+						GermplasmListType.NURSERY)).thenReturn(this.initializeCrossesList());
 
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
 		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager)
@@ -87,8 +87,9 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
 
-		//to test
-		final File exportFile = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+		// to test
+		final File exportFile =
+				this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
 		Assert.assertEquals("uses same study name", "CrossingTemplate-" + CrossingTemplateExcelExporterTest.STUDY_NAME + ".xls",
 				exportFile.getName());
 	}

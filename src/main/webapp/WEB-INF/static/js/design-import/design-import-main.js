@@ -21,7 +21,7 @@
 			DesignMappingService.showConfirmIfHasUnmapped().then(function() {
 				return DesignMappingService.validateMapping();
 			}, function() {
-				return { cancelMapping: true };
+				return {cancelMapping: true};
 			}).then(function(result) {
 				if (result.cancelDesignImport) {
 					ImportDesign.cancelDesignImport();

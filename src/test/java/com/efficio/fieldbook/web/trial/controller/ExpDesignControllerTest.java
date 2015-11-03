@@ -51,7 +51,6 @@ public class ExpDesignControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testCombineNewlyGeneratedMeasurementsWithNullObservations() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 		workbook.setObservations(null);
 
@@ -68,7 +67,6 @@ public class ExpDesignControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testCombineNewlyGeneratedMeasurementsWithExisting() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 		List<MeasurementRow> measurementRows = WorkbookDataUtil.createNewObservations(ExpDesignControllerTest.NO_OF_OBSERVATIONS);
 
@@ -85,7 +83,6 @@ public class ExpDesignControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testCombineNewlyGeneratedMeasurementsWithExistingTempWorkbook() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 		List<MeasurementRow> measurementRows = WorkbookDataUtil.createNewObservations(ExpDesignControllerTest.NO_OF_OBSERVATIONS);
 
@@ -102,7 +99,6 @@ public class ExpDesignControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testCombineNewlyGeneratedMeasurementsWithoutMeasurementData() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 
 		List<MeasurementRow> measurementRows = WorkbookDataUtil.createNewObservations(ExpDesignControllerTest.NO_OF_OBSERVATIONS);
@@ -131,7 +127,6 @@ public class ExpDesignControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testCountNewEnvironmentsWithNoObservationsInTempWorkbook() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 		workbook.setObservations(null);
 
@@ -147,7 +142,6 @@ public class ExpDesignControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testCountNewEnvironmentsWithNoObservations() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 		workbook.setObservations(null);
 
@@ -163,7 +157,6 @@ public class ExpDesignControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testCountNewEnvironments() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 
 		this.userSelection.setTemporaryWorkbook(null);
@@ -179,7 +172,6 @@ public class ExpDesignControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testCountNewEnvironmentsWithExistingTempWorkbook() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 
 		this.userSelection.setTemporaryWorkbook(workbook);
@@ -195,7 +187,6 @@ public class ExpDesignControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testCountNewEnvironmentsWithoutMeasurementData() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 
 		this.userSelection.setTemporaryWorkbook(null);

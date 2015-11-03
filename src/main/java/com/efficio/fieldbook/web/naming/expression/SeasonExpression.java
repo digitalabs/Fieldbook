@@ -26,7 +26,7 @@ public class SeasonExpression implements Expression {
 
 			String newValue = source.getSeason();
 			// If a season value is not specified for a Nursery, then default to the current year-month
-			if(newValue == null || newValue.equals("")){
+			if (newValue == null || newValue.equals("")) {
 				SimpleDateFormat formatter = new SimpleDateFormat("YYYYMM");
 				newValue = formatter.format(new Date());
 			}

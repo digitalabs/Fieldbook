@@ -10,26 +10,28 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.*;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -44,8 +46,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import javax.annotation.Resource;
-import java.util.*;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * The Class SettingsController.
@@ -85,9 +97,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	@Resource
 	protected OntologyService ontologyService;
-
-	@Resource
-	protected ContextUtil contextUtil;
 
 	/**
 	 * Checks if the measurement table has user input data for a particular variable id
@@ -441,16 +450,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the standard variable
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected StandardVariable getStandardVariable(int id) throws MiddlewareException {
-		StandardVariable variable = this.userSelection.getCacheStandardVariable(id);
-		if (variable == null) {
-			variable = this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
-			if (variable != null) {
-				this.userSelection.putStandardVariableInCache(variable);
-			}
-		}
-
-		return variable;
+	protected StandardVariable getStandardVariable(int id) {
+		return this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
 	}
 
 	/**
@@ -960,8 +961,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	public void setContextUtil(ContextUtil contextUtil) {
-		this.contextUtil = contextUtil;
+	public void setFieldbookService(FieldbookService fieldbookService) {
+		this.fieldbookService = fieldbookService;
 	}
 
 }

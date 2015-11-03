@@ -123,8 +123,6 @@ public class OpenTrialControllerTest {
 
 		this.initializeOntology();
 
-		WorkbookDataUtil.setTestWorkbook(null);
-
 	}
 
 	@Test

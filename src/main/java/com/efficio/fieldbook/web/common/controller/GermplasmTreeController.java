@@ -30,7 +30,6 @@ import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.settings.CrossSetting;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -131,10 +130,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private ResourceBundleMessageSource messageSource;
+
 	@Resource
 	private UserSelection userSelection;
-	@Resource
-	public ContextUtil contextUtil;
+
 	@Resource
 	private UserProgramStateDataManager userProgramStateDataManager;
 
@@ -767,18 +766,18 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 						newList = new GermplasmList(null, folderName,
 								Long.valueOf(
 										new SimpleDateFormat(GermplasmTreeController.DATE_FORMAT).format(Calendar.getInstance().getTime())),
-								GermplasmTreeController.FOLDER, userId, folderName, null, 0);
+										GermplasmTreeController.FOLDER, userId, folderName, null, 0);
 					} else {
 						newList = new GermplasmList(null, folderName,
 								Long.valueOf(
 										new SimpleDateFormat(GermplasmTreeController.DATE_FORMAT).format(Calendar.getInstance().getTime())),
-								GermplasmTreeController.FOLDER, userId, folderName, parent, 0);
+										GermplasmTreeController.FOLDER, userId, folderName, parent, 0);
 					}
 				} else {
 					newList = new GermplasmList(null, folderName,
 							Long.valueOf(
 									new SimpleDateFormat(GermplasmTreeController.DATE_FORMAT).format(Calendar.getInstance().getTime())),
-							GermplasmTreeController.FOLDER, userId, folderName, gpList, 0);
+									GermplasmTreeController.FOLDER, userId, folderName, gpList, 0);
 				}
 
 			}
@@ -930,9 +929,4 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	public void setUserProgramStateDataManager(final UserProgramStateDataManager userProgramStateDataManager) {
 		this.userProgramStateDataManager = userProgramStateDataManager;
 	}
-
-	public void setContextUtil(final ContextUtil contextUtil) {
-		this.contextUtil = contextUtil;
-	}
-
 }

@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -450,16 +449,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the standard variable
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected StandardVariable getStandardVariable(final int id) throws MiddlewareException {
-		StandardVariable variable = this.userSelection.getCacheStandardVariable(id);
-		if (variable == null) {
-			variable = this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
-			if (variable != null) {
-				this.userSelection.putStandardVariableInCache(variable);
-			}
-		}
-
-		return variable;
+	protected StandardVariable getStandardVariable(int id) {
+		return this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
 	}
 
 	/**
@@ -973,8 +964,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	public void setContextUtil(final ContextUtil contextUtil) {
-		this.contextUtil = contextUtil;
+	public void setFieldbookService(FieldbookService fieldbookService) {
+		this.fieldbookService = fieldbookService;
 	}
 
 }

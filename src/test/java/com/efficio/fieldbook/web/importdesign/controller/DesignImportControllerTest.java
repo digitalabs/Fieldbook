@@ -149,27 +149,23 @@ public class DesignImportControllerTest {
 
 	@Test
 	public void testValidateAndSaveNewMapping() throws Exception {
-
-		Mockito.when(this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(3, this.userSelection.getDesignImportData()))
-		.thenReturn(true);
-
-		final Map<String, Object> results = this.designImportController.validateAndSaveNewMapping(this.createTestMappedHeaders(), 3);
-
-		Mockito.verify(this.designImportValidator).validateDesignData(this.userSelection.getDesignImportData());
-
-		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = this.userSelection.getDesignImportData().getMappedHeaders();
-
-		Assert.assertEquals(1, mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).size());
-		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.GERMPLASM).size());
-		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.TRIAL_DESIGN).size());
-		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.VARIATE).size());
-
-		final DesignHeaderItem designHeaderItem = mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).get(0);
-		Assert.assertEquals("The DesignHeaderItem SITE_NAME should be mapped to the SITE_NAME Standard Variable", TermId.SITE_NAME.getId(),
-				designHeaderItem.getVariable().getId());
+		Map<String, Object> results = verifyMapDesignImportData();
 
 		Assert.assertTrue((Boolean) results.get("success"));
 		Assert.assertFalse((Boolean) results.get("hasConflict"));
+	}
+
+	@Test
+	public void testValidateAndSaveNewMappingWithExistingDesign() throws Exception {
+		Map<String, Object> results = verifyMapDesignImportData();
+
+		// lets set a design here
+		final Workbook workbook = Mockito.mock(Workbook.class);
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		Mockito.when(workbook.hasExistingExperimentalDesign()).thenReturn(true);
+
+		Assert.assertTrue((Boolean) results.get("success"));
+		Assert.assertFalse((Boolean) results.get("hasExistingDesign"));
 	}
 
 	@Test
@@ -191,24 +187,9 @@ public class DesignImportControllerTest {
 		Mockito.when(workbook.getMeasurementDatasetVariables()).thenReturn(workbookMeasurementVariables);
 		Mockito.doReturn(designFileMeasurementVariables).when(this.designImportService)
 		.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
-		Mockito.when(this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(3, this.userSelection.getDesignImportData()))
-		.thenReturn(true);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 
-		final Map<String, Object> results = this.designImportController.validateAndSaveNewMapping(this.createTestMappedHeaders(), 3);
-
-		Mockito.verify(this.designImportValidator).validateDesignData(this.userSelection.getDesignImportData());
-
-		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = this.userSelection.getDesignImportData().getMappedHeaders();
-
-		Assert.assertEquals(1, mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).size());
-		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.GERMPLASM).size());
-		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.TRIAL_DESIGN).size());
-		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.VARIATE).size());
-
-		final DesignHeaderItem designHeaderItem = mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).get(0);
-		Assert.assertEquals("The DesignHeaderItem SITE_NAME should be mapped to the SITE_NAME Standard Variable", TermId.SITE_NAME.getId(),
-				designHeaderItem.getVariable().getId());
+		Map<String, Object> results = verifyMapDesignImportData();
 
 		Assert.assertTrue((Boolean) results.get("success"));
 		Assert.assertTrue((Boolean) results.get("hasConflict"));
@@ -1017,6 +998,33 @@ public class DesignImportControllerTest {
 
 	}
 
+	/**
+	 * Reusable test assertions for DesignImportController.validateAndSaveNewMapping
+	 * @return results
+	 * @throws DesignValidationException
+	 */
+	private Map<String, Object> verifyMapDesignImportData() throws DesignValidationException {
+		Mockito.when(DesignImportControllerTest.this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(3, DesignImportControllerTest.this.userSelection.getDesignImportData()))
+				.thenReturn(true);
+
+		Map<String,Object> results = DesignImportControllerTest.this.designImportController.validateAndSaveNewMapping(DesignImportControllerTest.this.createTestMappedHeaders(), 3);
+
+		Mockito.verify(DesignImportControllerTest.this.designImportValidator).validateDesignData(DesignImportControllerTest.this.userSelection.getDesignImportData());
+
+		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = DesignImportControllerTest.this.userSelection.getDesignImportData().getMappedHeaders();
+
+		Assert.assertEquals(1, mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).size());
+		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.GERMPLASM).size());
+		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.TRIAL_DESIGN).size());
+		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.VARIATE).size());
+
+		final DesignHeaderItem designHeaderItem = mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).get(0);
+		Assert.assertEquals("The DesignHeaderItem SITE_NAME should be mapped to the SITE_NAME Standard Variable", TermId.SITE_NAME.getId(),
+				designHeaderItem.getVariable().getId());
+
+		return results;
+	}
+
 	private MeasurementVariable getMeasurementVariable(final int termId, final Set<MeasurementVariable> trialVariables) {
 		for (final MeasurementVariable mvar : trialVariables) {
 			if (termId == mvar.getTermId()) {
@@ -1317,5 +1325,4 @@ public class DesignImportControllerTest {
 		testNewMap.put("mappedTraits", new ArrayList<DesignHeaderItem>());
 		return testNewMap;
 	}
-
 }

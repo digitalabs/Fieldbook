@@ -114,7 +114,6 @@ public class ManageSettingsControllerTest {
 
 	@Test
 	public void testGetObservationsOnEnvironment() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook =
 				WorkbookDataUtil.getTestWorkbookForTrial(ManageSettingsControllerTest.NO_OF_OBSERVATIONS,
 						ManageSettingsControllerTest.NO_OF_TRIAL_INSTANCES);
@@ -126,7 +125,6 @@ public class ManageSettingsControllerTest {
 
 	@Test
 	public void testHasMeasurementDataOnEnvronmentReturnsTrueForExistingTraits() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook =
 				WorkbookDataUtil.getTestWorkbookForTrial(ManageSettingsControllerTest.NO_OF_OBSERVATIONS,
 						ManageSettingsControllerTest.NO_OF_TRIAL_INSTANCES);
@@ -142,7 +140,6 @@ public class ManageSettingsControllerTest {
 
 	@Test
 	public void testHasMeasurementDataOnEnvronmentReturnsFalseForNonExistingTraits() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook =
 				WorkbookDataUtil.getTestWorkbookForTrial(ManageSettingsControllerTest.NO_OF_OBSERVATIONS,
 						ManageSettingsControllerTest.NO_OF_TRIAL_INSTANCES);

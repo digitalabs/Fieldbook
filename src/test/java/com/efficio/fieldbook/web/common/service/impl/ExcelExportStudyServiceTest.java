@@ -77,7 +77,6 @@ public class ExcelExportStudyServiceTest extends AbstractBaseIntegrationTest {
 		// set filename path, create test data for workbook
 		FileOutputStream fos = null;
 		final HSSFWorkbook xlsBook = new HSSFWorkbook();
-		WorkbookDataUtil.setTestWorkbook(null);
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(WorkbookDataUtil.NUMBER_OF_OBSERVATIONS, StudyType.N);
 		final String filenamePath =
 				this.fieldbookProperties.getUploadDirectory() + File.separator + WorkbookDataUtil.FILE_NAME

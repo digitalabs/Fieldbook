@@ -337,31 +337,36 @@
 
 		function warnDesignOverwritePopup(result) {
 			var deferred = $q.defer();
-			var dialogMessage = result.hasChecksSelected ? Messages.DESIGN_IMPORT_HAS_CHECKS_SELECTED_ALERT_MESSAGE : Messages.DESIGN_IMPORT_CONFLICT_ALERT_MESSAGE;
 
-			bootbox.dialog({
-				title: Messages.DESIGN_IMPORT_CONFLICT_ALERT_HEADER,
-				message: dialogMessage,
-				closeButton: false,
-				onEscape: false,
-				buttons: {
-					yes: {
-						label: Messages.YES,
-						className: 'btn-primary',
-						callback: function() {
-							deferred.resolve(result);
-						}
-					},
-					no: {
-						label: Messages.NO,
-						className: 'btn-default',
-						callback: function() {
-							result.cancelDesignImport = true;
-							deferred.resolve(result);
+			if (result.hasChecksSelected || result.hasExistingDesign)  {
+				var dialogMessage = result.hasChecksSelected ? Messages.DESIGN_IMPORT_HAS_CHECKS_SELECTED_ALERT_MESSAGE : Messages.DESIGN_IMPORT_CONFLICT_ALERT_MESSAGE;
+
+				bootbox.dialog({
+					title: Messages.DESIGN_IMPORT_CONFLICT_ALERT_HEADER,
+					message: dialogMessage,
+					closeButton: false,
+					onEscape: false,
+					buttons: {
+						yes: {
+							label: Messages.YES,
+							className: 'btn-primary',
+							callback: function() {
+								deferred.resolve(result);
+							}
+						},
+						no: {
+							label: Messages.NO,
+							className: 'btn-default',
+							callback: function() {
+								result.cancelDesignImport = true;
+								deferred.resolve(result);
+							}
 						}
 					}
-				}
-			});
+				});
+			} else {
+				deferred.resolve(result);
+			}
 
 			return deferred.promise;
 		}

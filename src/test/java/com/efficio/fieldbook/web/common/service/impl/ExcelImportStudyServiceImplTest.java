@@ -259,7 +259,6 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testGetTrialInstanceNumber_ForNursery() throws WorkbookParserException {
-		WorkbookDataUtil.setTestWorkbook(null);
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 
 		final org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
@@ -269,7 +268,6 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testGetTrialInstanceNumber_ForTrial() throws WorkbookParserException {
-		WorkbookDataUtil.setTestWorkbook(null);
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
 
 		this.setUpXLSWorkbookTestData();
@@ -313,7 +311,6 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testGetTrialInstanceNumber_ForTrial_ReturnsExceptionForNullTrialInstance() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
 
 		this.setUpXLSWorkbookTestData();

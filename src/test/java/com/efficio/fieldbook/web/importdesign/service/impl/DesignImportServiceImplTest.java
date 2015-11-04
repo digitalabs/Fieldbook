@@ -104,8 +104,6 @@ public class DesignImportServiceImplTest {
 		this.initializeDesignImportData();
 		this.initializeGermplasmList();
 
-		WorkbookDataUtil.setTestWorkbook(null);
-
 	}
 
 	@Test

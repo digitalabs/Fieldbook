@@ -151,9 +151,6 @@ public class ImportGermplasmListController extends SettingsController {
 	@Resource
 	private MeasurementsGeneratorService measurementsGeneratorService;
 
-	@Resource
-	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
-
 	/** The ontology service. */
 	@Resource
 	private OntologyService ontologyService;

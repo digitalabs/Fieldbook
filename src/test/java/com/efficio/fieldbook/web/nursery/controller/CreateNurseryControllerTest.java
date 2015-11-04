@@ -94,7 +94,6 @@ public class CreateNurseryControllerTest {
 
 	@Test
 	public void testShow() throws Exception {
-		controller.setContextUtil(contextUtil);
 		controller.show(createNurseryForm,importGermplasmListForm,model,session,request);
 
 		ArgumentCaptor<Integer> traitArg = ArgumentCaptor.forClass(Integer.class);

@@ -4,28 +4,19 @@ package com.efficio.fieldbook.web.nursery.service.impl;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
-
+@RunWith(MockitoJUnitRunner.class)
 public class ValidationServiceImplTest {
+	
+	@InjectMocks
+	private ValidationServiceImpl validationService;
 
-	private ValidationService validationService;
-
-	private static final String DATA_TYPE_NUMERIC = "Numeric variable";
-
-	@Before
-	public void setUp() {
-
-		MockitoAnnotations.initMocks(this);
-
-		this.validationService = Mockito.spy(new ValidationServiceImpl());
-
-	}
-
+	private static final String DATA_TYPE_NUMERIC = "Numeric";
+	
 	@Test
 	public void testisValidValueValidDefault() {
 

@@ -245,40 +245,6 @@ public class SettingsUtilTest {
 	}
 
 	/**
-	 * Test for check if given baseline traits property converted into variates or not.
-	 */
-	@Test
-	public void testConvertBaselineTraitsToVariates(){
-		List<SettingDetail> baselineTraits = new ArrayList<>();
-		baselineTraits.add(this.createTestDataForSettingDetails());
-
-		UserSelection userSelection = this.createTestDataForUserSelection();
-
-		Mockito.doReturn(this.createStandardVariable()).when(this.fieldbookMiddlewareService).getStandardVariable(this.createTestDataForSettingDetails().getVariable().getCvTermId(), PROGRAM_UUID);
-
-		List<Variate> baselineVariates =
-				SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, userSelection, fieldbookMiddlewareService, PROGRAM_UUID);
-
-		if(!baselineVariates.isEmpty()){
-			Variate baselineVariate = baselineVariates.get(0);
-
-			StandardVariable cachedStandardVariable = userSelection.getCacheStandardVariable(baselineTraits.get(0).getVariable().getCvTermId());
-
-			if(cachedStandardVariable != null){
-
-				Assert.assertEquals(baselineVariate.getId(), cachedStandardVariable.getId());
-				Assert.assertEquals(baselineVariate.getName(), cachedStandardVariable.getName());
-				Assert.assertEquals(baselineVariate.getProperty(), cachedStandardVariable.getProperty().getName());
-				Assert.assertEquals(baselineVariate.getScale(), cachedStandardVariable.getScale().getName());
-				Assert.assertEquals(baselineVariate.getMethod(), cachedStandardVariable.getMethod().getName());
-				Assert.assertEquals(baselineVariate.getDataTypeId().intValue(), cachedStandardVariable.getDataType().getId());
-				Assert.assertEquals(baselineVariate.getMinRange(), cachedStandardVariable.getConstraints().getMinValue());
-				Assert.assertEquals(baselineVariate.getMaxRange(), cachedStandardVariable.getConstraints().getMaxValue());
-			}
-		}
-	}
-
-	/**
 	 * Test for check if given baseline traits empty or null then empty variate list should be returned.
 	 */
 	@Test
@@ -334,16 +300,6 @@ public class SettingsUtilTest {
 		settingDetail.setVariableType(VariableType.STUDY_DETAIL);
 
 		return settingDetail;
-	}
-
-	/**
-	 * User selection instance with standard variable.
-	 * @return user selection instance.
-	 */
-	private UserSelection createTestDataForUserSelection(){
-		final UserSelection userSelection = new UserSelection();
-		userSelection.putStandardVariableInCache(this.createStandardVariable());
-		return userSelection;
 	}
 
 	/**

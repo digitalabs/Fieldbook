@@ -21,6 +21,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
@@ -401,6 +402,33 @@ public class EditNurseryControllerTest {
 		final Map<String, String> out = this.editNurseryController.submit(this.createNurseryForm, this.model);
 
 		Assert.assertEquals("The status should be 1", "1", out.get("status"));
+	}
+
+	@Test
+	public void testCombineVariateShould(){
+		CreateNurseryForm form = new CreateNurseryForm();
+		List<SettingDetail> baselineTraitVariables = new ArrayList<>();
+
+		SettingDetail traitDetail = new SettingDetail();
+		traitDetail.setRole(PhenotypicType.VARIATE);
+		baselineTraitVariables.add(traitDetail);
+
+		form.setBaselineTraitVariables(baselineTraitVariables);
+
+		List<SettingDetail> selectionVariates = new ArrayList<>();
+
+		SettingDetail selectionDetail = new SettingDetail();
+		selectionDetail.setRole(PhenotypicType.VARIATE);
+		selectionVariates.add(selectionDetail);
+
+		form.setSelectionVariatesVariables(selectionVariates);
+
+		EditNurseryController controller = new EditNurseryController();
+		controller.setUserSelection(this.userSelection);
+		List<SettingDetail> combineVariates = controller.combineVariates(form);
+
+		Assert.assertEquals(combineVariates.get(0).getVariableType(), VariableType.TRAIT);
+		Assert.assertEquals(combineVariates.get(1).getVariableType(), VariableType.SELECTION_METHOD);
 	}
 
 	private SettingDetail initializeSettingDetails(final boolean isAddNursery) {

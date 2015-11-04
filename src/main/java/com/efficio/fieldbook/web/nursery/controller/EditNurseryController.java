@@ -505,7 +505,7 @@ public class EditNurseryController extends SettingsController {
 				this.userSelection.getNurseryConditions());
 	}
 
-	private List<SettingDetail> combineVariates(final CreateNurseryForm form) {
+	protected List<SettingDetail> combineVariates(final CreateNurseryForm form) {
 
         this.setVariableTypeForTrait(form);
         this.setVariableTypeForSelectionMethod(form);

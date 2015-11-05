@@ -100,7 +100,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Checks if the measurement table has user input data for a particular variable id
-	 *
+	 * 
 	 * @param variableId, List<MeasurementRow>
 	 * @return
 	 */
@@ -118,7 +118,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Gets the settings list.
-	 *
+	 * 
 	 * @return the settings list
 	 */
 	@ModelAttribute("settingsList")
@@ -140,7 +140,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Gets the trial settings list.
-	 *
+	 * 
 	 * @return the trial settings list
 	 */
 	@ModelAttribute("settingsTrialList")
@@ -162,7 +162,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Builds the required factors.
-	 *
+	 * 
 	 * @param requiredFields the required fields
 	 * @return the list
 	 */
@@ -172,7 +172,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Builds the required factors label.
-	 *
+	 * 
 	 * @param requiredFields the required fields
 	 * @param hasLabels the has labels
 	 * @return the list
@@ -195,7 +195,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Builds the required factors flag.
-	 *
+	 * 
 	 * @param requiredFields the required fields
 	 * @return the boolean[]
 	 */
@@ -220,7 +220,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Update required fields.
-	 *
+	 * 
 	 * @param requiredVariables the required variables
 	 * @param requiredVariablesLabel the required variables label
 	 * @param requiredVariablesFlag the required variables flag
@@ -231,7 +231,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 */
 	protected List<SettingDetail> updateRequiredFields(List<Integer> requiredVariables, List<String> requiredVariablesLabel,
 			boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels, String idCodeNameCombination, String role)
-					throws MiddlewareException {
+			throws MiddlewareException {
 
 		// create a map of id and its id-code-name combination
 		Map<String, String> idCodeNameMap = new HashMap<>();
@@ -259,10 +259,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			if (variable.getVariable().getCvTermId() != null) {
 				stdVar = variable.getVariable().getCvTermId();
 			} else {
-				stdVar = this.fieldbookMiddlewareService
-						.getStandardVariableIdByPropertyScaleMethodRole(variable.getVariable().getProperty(),
-								variable.getVariable().getScale(), variable.getVariable().getMethod(),
-								PhenotypicType.valueOf(variable.getVariable().getRole()));
+				stdVar =
+						this.fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+								variable.getVariable().getProperty(), variable.getVariable().getScale(),
+								variable.getVariable().getMethod(), PhenotypicType.valueOf(variable.getVariable().getRole()));
 			}
 
 			// mark required variables that are already in the list
@@ -294,8 +294,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				if (TermId.BREEDING_METHOD_CODE.getId() == requiredVariables.get(i)
 						&& variablesMap.get(String.valueOf(TermId.BREEDING_METHOD.getId())) != null
 						&& variablesMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) == null) {
-					Method method = this.fieldbookMiddlewareService
-							.getMethodByName(variablesMap.get(String.valueOf(TermId.BREEDING_METHOD.getId())).getValue());
+					Method method =
+							this.fieldbookMiddlewareService.getMethodByName(variablesMap
+									.get(String.valueOf(TermId.BREEDING_METHOD.getId())).getValue());
 					newSettingDetail.setValue(method.getMid() == null ? "" : method.getMid().toString());
 				}
 
@@ -317,7 +318,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Builds the default variables.
-	 *
+	 * 
 	 * @param defaults the defaults
 	 * @param requiredFields the required fields
 	 * @param requiredVariablesLabel the required variables label
@@ -337,7 +338,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Creates the setting detail.
-	 *
+	 * 
 	 * @param id the id
 	 * @param name the name
 	 * @return the setting detail
@@ -356,11 +357,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingVariable svar =
 					new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
 							stdVar.getMethod().getName(), role, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
-							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ?
-									stdVar.getConstraints().getMinValue() :
-										null, stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ?
-												stdVar.getConstraints().getMaxValue() :
-													null);
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints()
+									.getMinValue() : null,
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
+									.getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
@@ -392,7 +392,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Populates Setting Variable.
-	 *
+	 * 
 	 * @param var the var
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
@@ -408,19 +408,17 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
 			var.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
 			var.setDataTypeId(stdvar.getDataType().getId());
-			var.setMinRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMinValue() != null ?
-					stdvar.getConstraints().getMinValue() :
-						null);
-			var.setMaxRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null ?
-					stdvar.getConstraints().getMaxValue() :
-						null);
+			var.setMinRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMinValue() != null ? stdvar.getConstraints()
+					.getMinValue() : null);
+			var.setMaxRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null ? stdvar.getConstraints()
+					.getMaxValue() : null);
 			var.setWidgetType();
 		}
 	}
 
 	/**
 	 * Get setting variable.
-	 *
+	 * 
 	 * @param id the id
 	 * @return the setting variable
 	 * @throws MiddlewareQueryException the middleware query exception
@@ -428,13 +426,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	protected SettingVariable getSettingVariable(int id) throws MiddlewareException {
 		StandardVariable stdVar = this.getStandardVariable(id);
 		if (stdVar != null) {
-			SettingVariable svar = new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(),
-					stdVar.getScale().getName(), stdVar.getMethod().getName(), null, stdVar.getDataType().getName(),
-					stdVar.getDataType().getId(), stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ?
-							stdVar.getConstraints().getMinValue() :
-								null, stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ?
-										stdVar.getConstraints().getMaxValue() :
-											null);
+			SettingVariable svar =
+					new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale()
+							.getName(), stdVar.getMethod().getName(), null, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints()
+									.getMinValue() : null,
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
+									.getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
@@ -445,7 +443,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Get standard variable.
-	 *
+	 * 
 	 * @param id the id
 	 * @return the standard variable
 	 * @throws MiddlewareQueryException the middleware query exception
@@ -456,7 +454,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Creates the study details.
-	 *
+	 * 
 	 * @param workbook the workbook
 	 * @param conditions the conditions
 	 * @param folderId the folder id
@@ -487,7 +485,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Checks if the measurement table has user input data for a particular variable id
-	 *
+	 * 
 	 * @param variableId
 	 * @return
 	 */
@@ -598,8 +596,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			this.removeCodeVariablesIfNeeded(this.userSelection.getStudyLevelConditions(),
 					AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 			// set value of breeding method code back to code after saving
-			SettingsUtil
-			.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService);
+			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
+					this.ontologyService);
 			// remove selection variates from traits list
 			this.removeSelectionVariatesFromTraits(this.userSelection.getBaselineTraitsList());
 		}
@@ -637,7 +635,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Removes the deleted set update.
-	 *
+	 * 
 	 * @param settingList the setting list
 	 * @param variableList the variable list
 	 */
@@ -682,7 +680,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Removes the selection variates from traits.
-	 *
+	 * 
 	 * @param traits the traits
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
@@ -700,6 +698,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Removes the hidden variables.
+	 * 
 	 * @param settingList
 	 * @param hiddenVarList
 	 */
@@ -750,14 +749,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					// add code to the removed conditions if code is not yet in the list
 					if (studyConditionMap.get(idTermId) != null && studyConditionMap.get(codeTermId) != null
 							&& removedConditionsMap.get(codeTermId) == null) {
-						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, codeTermId,
-								method == null ? "" : method.getMcode(), this.getCurrentIbdbUserId().toString());
+						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, codeTermId, method == null ? ""
+								: method.getMcode(), this.getCurrentIbdbUserId().toString());
 					}
 
 					// add name to the removed conditions if name is not yet in the list
 					if (studyConditionMap.get(nameTermId) != null && removedConditionsMap.get(nameTermId) == null) {
-						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, nameTermId,
-								method == null ? "" : method.getMname(), this.getCurrentIbdbUserId().toString());
+						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, nameTermId, method == null ? ""
+								: method.getMname(), this.getCurrentIbdbUserId().toString());
 
 					}
 				}
@@ -769,13 +768,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			throws MiddlewareQueryException {
 		Method method = null;
 		if (studyConditionMap.get(idTermId) != null) {
-			method = studyConditionMap.get(idTermId).getValue().isEmpty() ?
-					null :
-						this.fieldbookMiddlewareService.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
+			method =
+					studyConditionMap.get(idTermId).getValue().isEmpty() ? null : this.fieldbookMiddlewareService.getMethodById(Double
+							.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
 		} else if (studyConditionMap.get(codeTermId) != null) {
-			method = studyConditionMap.get(codeTermId).getValue().isEmpty() ?
-					null :
-						this.fieldbookMiddlewareService.getMethodByCode(studyConditionMap.get(codeTermId).getValue(), programUUID);
+			method =
+					studyConditionMap.get(codeTermId).getValue().isEmpty() ? null : this.fieldbookMiddlewareService.getMethodByCode(
+							studyConditionMap.get(codeTermId).getValue(), programUUID);
 		}
 		return method;
 	}
@@ -841,7 +840,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Gets the basic details.
-	 *
+	 * 
 	 * @param nurseryLevelConditions the nursery level conditions
 	 * @return the basic details
 	 */

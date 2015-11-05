@@ -862,9 +862,9 @@ public class DesignImportControllerTest {
 	public void testResetCheckList() {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
-		UserSelection testUserSelection = new UserSelection();
+		final UserSelection testUserSelection = new UserSelection();
 
-		List<SettingDetail> studyLevelConditions = new ArrayList<>();
+		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
 
 		testUserSelection.setStudyLevelConditions(studyLevelConditions);
 
@@ -881,13 +881,13 @@ public class DesignImportControllerTest {
 	@Test
 	public void testAddCheckVariablesToDeleted() {
 
-		List<SettingDetail> studyLevelConditions = new ArrayList<>();
+		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
 
 		this.designImportController.addCheckVariablesToDeleted(studyLevelConditions);
 
 		Assert.assertEquals(3, studyLevelConditions.size());
 
-		for (SettingDetail checkSettingDetail : studyLevelConditions) {
+		for (final SettingDetail checkSettingDetail : studyLevelConditions) {
 			Assert.assertEquals(Operation.DELETE, checkSettingDetail.getVariable().getOperation());
 			Assert.assertEquals(PhenotypicType.TRIAL_ENVIRONMENT, checkSettingDetail.getRole());
 		}
@@ -896,11 +896,11 @@ public class DesignImportControllerTest {
 
 	protected void initializeSettingServiceForChecks() {
 
-		SettingDetail checkStart =
+		final SettingDetail checkStart =
 				SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_START.getId(), "CHECK_START", "", "TRIAL");
-		SettingDetail checkInterval =
+		final SettingDetail checkInterval =
 				SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL", "", "TRIAL");
-		SettingDetail checkPlan =
+		final SettingDetail checkPlan =
 				SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", "", "TRIAL");
 
 		Mockito.when(
@@ -957,7 +957,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testHasCheckVariablesTrue() {
 
-		List<MeasurementVariable> conditions = new ArrayList<>();
+		final List<MeasurementVariable> conditions = new ArrayList<>();
 		conditions.add(this.createMeasurementVariable(TermId.CHECK_START.getId(), "CHECK_START", "ED - check start", "Number",
 				"Field trial", "TRIAL"));
 		conditions.add(this.createMeasurementVariable(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL", "ED - check interval", "Number",
@@ -972,7 +972,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testHasCheckVariablesFalse() {
 
-		List<MeasurementVariable> conditions = new ArrayList<>();
+		final List<MeasurementVariable> conditions = new ArrayList<>();
 
 		conditions.add(this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "Location", "Location name",
 				"Assigned", "TRIAL"));

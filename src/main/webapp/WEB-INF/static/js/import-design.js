@@ -57,17 +57,20 @@ var ImportDesign = (function() {
 		},
 
 		showPopup: function(hasGermplasmListSelected) {
-			if (hasGermplasmListSelected) {
+			
+			var studyType = isNursery() ? 'Nursery' : 'Trial';
+		
+			if (hasMeasurementData()) {
+				showErrorMessage(designImportErrorHeader, 'This ' + studyType + ' has saved observations, the experimental design can no longer be modified.');
+			} else if (!hasGermplasmListSelected) {
+				showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
+			} else {
 				$('#importDesignModal').modal({
 					backdrop: 'static',
 					keyboard: true
 				});
-			} else {
-
-				showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
-				
 			}
-
+		
 		},
 
 		showDesignMapPopup: function() {

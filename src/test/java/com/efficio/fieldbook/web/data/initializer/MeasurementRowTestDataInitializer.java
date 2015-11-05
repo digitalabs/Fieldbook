@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.data.initializer;
 
 import java.util.ArrayList;
@@ -11,17 +12,16 @@ import org.generationcp.middleware.domain.oms.TermId;
 
 public class MeasurementRowTestDataInitializer {
 
-
 	public static Map<String, MeasurementRow> createEnvironmentDataMap() {
-		Map<String,MeasurementRow> environmentData = new HashMap<String,MeasurementRow>();
-		MeasurementRow measurementRow = createSecondMeasurementRow();
+		final Map<String, MeasurementRow> environmentData = new HashMap<String, MeasurementRow>();
+		final MeasurementRow measurementRow = MeasurementRowTestDataInitializer.createSecondMeasurementRow();
 		environmentData.put("test1", measurementRow);
 		return environmentData;
 	}
 
 	public static Map<String, List<MeasurementRow>> createMeasurementDataMap() {
-		Map<String,List<MeasurementRow>> measurementData = new HashMap<String,List<MeasurementRow>>();
-		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
+		final Map<String, List<MeasurementRow>> measurementData = new HashMap<String, List<MeasurementRow>>();
+		final List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		measurementData.put("test1", measurementRowList);
 		return measurementData;
 	}

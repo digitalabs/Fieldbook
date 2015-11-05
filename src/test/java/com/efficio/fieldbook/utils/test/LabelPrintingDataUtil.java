@@ -14,12 +14,12 @@ package com.efficio.fieldbook.utils.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
+import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -60,12 +60,12 @@ public class LabelPrintingDataUtil {
 	private static final String LABEL_SHEET_SIZE = "1";
 	private static final String LABEL_PER_ROW = "3";
 	private static final String ROWS_PER_PAGE = "7";
-	private static final String LEFT_LABEL_FIELDS = AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt() + ","
-			+ AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt();
+	private static final String LEFT_LABEL_FIELDS =
+			AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt() + "," + AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt();
 	private static final String RIGHT_LABEL_FIELDS = String.valueOf(AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt());
-	private static final String MAIN_LABEL_FIELDS = AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt() + ","
-			+ AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt() + ","
-			+ String.valueOf(AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt());
+	private static final String MAIN_LABEL_FIELDS =
+			AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt() + "," + AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()
+					+ "," + String.valueOf(AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt());
 	private static final String FIRST_BARCODE_FIELD = "1";
 	private static final String SECOND_BARCODE_FIELD = "";
 	private static final String THIRD_BARCODE_FIELD = "";

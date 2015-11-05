@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.data.initializer;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class InventoryDetailsTestDataInitializer {
 	public static Map<String, InventoryDetails> createInventoryDetailsMap() {
 		final Map<String, InventoryDetails> inventoryDetails = new HashMap<String, InventoryDetails>();
 
-		for (int i = 1; i <= NO_OF_STOCK_LIST_ENTRIES; i++) {
+		for (int i = 1; i <= InventoryDetailsTestDataInitializer.NO_OF_STOCK_LIST_ENTRIES; i++) {
 			inventoryDetails.put(String.valueOf(i), new InventoryDetails());
 		}
 

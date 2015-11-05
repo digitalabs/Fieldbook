@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.data.initializer;
 
 import java.util.ArrayList;
@@ -8,7 +9,6 @@ import org.generationcp.middleware.pojos.GermplasmListData;
 
 public class GermplasmListTestDataInitializer {
 
-
 	public static List<GermplasmList> createGermplasmLists(final int numOfEntries) {
 		final List<GermplasmList> germplasmLists = new ArrayList<GermplasmList>();
 
@@ -18,7 +18,7 @@ public class GermplasmListTestDataInitializer {
 			germplasmList.setId(id);
 			germplasmList.setName("List " + id);
 			germplasmList.setDescription("Description " + id);
-			germplasmList.setListData(getGermplasmListData(numOfEntries));
+			germplasmList.setListData(GermplasmListTestDataInitializer.getGermplasmListData(numOfEntries));
 
 			germplasmLists.add(germplasmList);
 		}
@@ -35,8 +35,8 @@ public class GermplasmListTestDataInitializer {
 			germplasmList.setId(id);
 			germplasmList.setName("List " + id);
 			germplasmList.setDescription("Description " + id);
-			germplasmList.setListData(getGermplasmListData(numOfEntries));
-			germplasmList.setType("test"+id);
+			germplasmList.setListData(GermplasmListTestDataInitializer.getGermplasmListData(numOfEntries));
+			germplasmList.setType("test" + id);
 			germplasmLists.add(germplasmList);
 		}
 

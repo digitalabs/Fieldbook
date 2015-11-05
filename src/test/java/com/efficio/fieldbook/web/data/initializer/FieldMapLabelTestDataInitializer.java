@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.data.initializer;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class FieldMapLabelTestDataInitializer {
 	public static List<FieldMapLabel> createFieldMapLabelList() {
 		final List<FieldMapLabel> labelFields = new ArrayList<FieldMapLabel>();
 
-		for (int i = 1; i <= NO_OF_GERMPLASM_LIST_OBSERVATION; i++) {
+		for (int i = 1; i <= FieldMapLabelTestDataInitializer.NO_OF_GERMPLASM_LIST_OBSERVATION; i++) {
 			final FieldMapLabel fieldMapLabel = new FieldMapLabel();
 			fieldMapLabel.setExperimentId(i);
 			labelFields.add(fieldMapLabel);

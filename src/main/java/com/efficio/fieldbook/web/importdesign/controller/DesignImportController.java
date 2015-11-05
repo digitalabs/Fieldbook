@@ -5,6 +5,7 @@ package com.efficio.fieldbook.web.importdesign.controller;
  * Created by cyrus on 5/8/15.
  */
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,8 +17,24 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.common.form.ImportDesignForm;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -50,25 +67,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
 /**
  * The Class DesignImportController.
@@ -304,23 +302,22 @@ public class DesignImportController extends SettingsController {
 			}
 
 			boolean hasConflict = false;
-
-			if (this.userSelection.getWorkbook() != null && this.userSelection.getWorkbook().getMeasurementDatasetVariables() != null) {
-				hasConflict =
-						this.hasConflict(this.designImportService.getMeasurementVariablesFromDataFile(
-								this.userSelection.getTemporaryWorkbook(), this.userSelection.getDesignImportData()), new HashSet<>(
-								this.userSelection.getWorkbook().getMeasurementDatasetVariables()));
-			}
-
 			boolean hasChecksSelected = false;
+			boolean hasExistingDesign = false;
 
 			if (this.userSelection.getWorkbook() != null) {
+				hasConflict = this.userSelection.getWorkbook().getMeasurementDatasetVariables() != null && this.hasConflict(this.designImportService.getMeasurementVariablesFromDataFile(
+						this.userSelection.getTemporaryWorkbook(), this.userSelection.getDesignImportData()), new HashSet<>(
+						this.userSelection.getWorkbook().getMeasurementDatasetVariables()));
 				hasChecksSelected = this.hasCheckVariables(this.userSelection.getWorkbook().getConditions());
+				hasExistingDesign = this.userSelection.getWorkbook().hasExistingExperimentalDesign();
 			}
+
 
 			resultsMap.put(DesignImportController.SUCCESS, Boolean.TRUE);
 			resultsMap.put("hasConflict", hasConflict);
 			resultsMap.put("hasChecksSelected", hasChecksSelected);
+			resultsMap.put("hasExistingDesign",hasExistingDesign);
 
 		} catch (final DesignValidationException e) {
 

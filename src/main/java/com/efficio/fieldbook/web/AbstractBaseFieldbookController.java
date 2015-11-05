@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- *
+ * 
  * Generation Challenge Programme (GCP)
- *
- *
+ * 
+ * 
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
+ * 
  *******************************************************************************/
 
 package com.efficio.fieldbook.web;
@@ -55,7 +55,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
-	 *
+	 * 
 	 */
 	public abstract String getContentName();
 
@@ -82,8 +82,9 @@ public abstract class AbstractBaseFieldbookController {
 	}
 
 	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {
-		return this.workbenchService
-				.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), this.contextUtil.getCurrentWorkbenchUserId());
+		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
+				this.contextUtil.getCurrentWorkbenchUserId());
+
 	}
 
 	public String getOldFieldbookPath() {
@@ -124,7 +125,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the page.
-	 *
+	 * 
 	 * @param model the model
 	 * @return the string
 	 */
@@ -148,7 +149,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the error page.
-	 *
+	 * 
 	 * @param model the model
 	 * @return the string
 	 */
@@ -159,7 +160,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the page.
-	 *
+	 * 
 	 * @param model the model
 	 * @param ajaxPage the ajax page
 	 * @return the string
@@ -171,7 +172,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Convert favorite location to json.
-	 *
+	 * 
 	 * @param locations the locations
 	 * @return the string
 	 */

@@ -172,6 +172,10 @@ public class EditNurseryController extends SettingsController {
 			}
 
 			this.setFormStaticData(form, contextParams, workbook);
+
+			model.addAttribute("baselineTraitsSegment",VariableType.TRAIT.getId());
+			model.addAttribute("selectionVariatesSegment",VariableType.SELECTION_METHOD.getId());
+
 			model.addAttribute("createNurseryForm", form);
 
 			return this.getReturnValue(model, isAjax);

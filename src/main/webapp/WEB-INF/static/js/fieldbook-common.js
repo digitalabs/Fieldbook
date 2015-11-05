@@ -3270,6 +3270,16 @@ function displayCorrespondingGermplasmSections() {
 	displayStudyGermplasmSection(hasData, measurementRowCount);
 }
 
+function hasMeasurementData() {
+	'use strict';
+
+	if (isNursery()) {
+		return $('#measurementDataExisting').val() === 'true' ? true : false;
+	} else {
+		return angular.element('#mainApp').injector().get('TrialManagerDataService').trialMeasurement.hasMeasurement;
+	}
+}
+
 function displayStudyGermplasmSection(hasData, observationCount) {
 	'use strict';
 	if (hasData) {

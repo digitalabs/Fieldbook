@@ -224,6 +224,9 @@ public class CreateNurseryController extends SettingsController {
 		this.assignDefaultValues(form);
 		form.setMeasurementRowList(new ArrayList<MeasurementRow>());
 
+		model.addAttribute("baselineTraitsSegment",VariableType.TRAIT.getId().intValue());
+		model.addAttribute("selectionVariatesSegment",VariableType.SELECTION_METHOD.getId().intValue());
+
 		// create check variables for specify checks
 		this.setCheckVariablesInForm(form2);
 

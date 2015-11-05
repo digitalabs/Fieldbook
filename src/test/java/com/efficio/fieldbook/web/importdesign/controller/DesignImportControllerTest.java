@@ -950,6 +950,7 @@ public class DesignImportControllerTest {
 						this.project.getUniqueID())).thenReturn(checkPlan);
 	}
 
+	@Test
 	public void testChangeDesignForNewNurseryWithImportedDesign() {
 
 		this.designImportController.changeDesign(0, true);
@@ -981,13 +982,48 @@ public class DesignImportControllerTest {
 		Mockito.verify(this.userSelection).setExpDesignParams(null);
 		Mockito.verify(this.userSelection).setExpDesignVariables(null);
 
+		assertIfDesignIsResetToDefault(observations);
+
+	}
+
+	@Test
+	public void testChangeDesignForNewTrialWithImportedDesign() {
+		final Workbook trial = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
+		trial.getStudyDetails().setId(1);
+		final List<MeasurementRow> observations = trial.getObservations();
+
+		Mockito.doReturn(trial).when(this.userSelection).getWorkbook();
+
+		DesignImportTestDataInitializer.updatePlotNoValue(observations);
+
+		this.designImportController.changeDesign(trial.getStudyDetails().getId(), false);
+
+		assertIfDesignIsResetToDefault(observations);
+	}
+
+	@Test
+	public void testChangeDesignForExistingTrialWithImportedDesign() {
+		final Workbook trial = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
+		trial.getStudyDetails().setId(1);
+		final List<MeasurementRow> observations = trial.getObservations();
+
+		Mockito.doReturn(trial).when(this.userSelection).getTemporaryWorkbook();
+		Mockito.doReturn(trial).when(this.userSelection).getWorkbook();
+
+		DesignImportTestDataInitializer.updatePlotNoValue(observations);
+
+		this.designImportController.changeDesign(trial.getStudyDetails().getId(), false);
+
+		assertIfDesignIsResetToDefault(observations);
+	}
+
+	private void assertIfDesignIsResetToDefault(final List<MeasurementRow> observations) {
 		for (final MeasurementRow row : observations) {
 			final List<MeasurementData> dataList = row.getDataList();
 			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
 			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
 			Assert.assertEquals("Expecting that the PLOT_NO value is equal to ENTRY_NO.", entryNoData.getValue(), plotNoData.getValue());
 		}
-
 	}
 
 	@Test

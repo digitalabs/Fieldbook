@@ -900,6 +900,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			environmentData = this.extractEnvironmentMeasurementDataPerTrialInstance(workbook);
 		}
 
+		checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params, measurementData,
+				environmentData);
+	}
+
+	void checkAndSetFieldMapInstanceInfo(final List<FieldMapTrialInstanceInfo> trialFieldMap,
+			final Workbook workbook, final boolean isTrial, final boolean isStockList,
+			final LabelPrintingProcessingParams params, Map<String, List<MeasurementRow>> measurementData,
+			Map<String, MeasurementRow> environmentData) {
+		
 		for (final FieldMapTrialInstanceInfo instanceInfo : trialFieldMap) {
 			params.setInstanceInfo(instanceInfo);
 
@@ -916,8 +925,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				params.setInstanceMeasurements(workbook.getObservations());
 			}
 
+			
 			this.processUserSpecificLabelsForInstance(params, workbook);
-			this.processInventorySpecificLabelsForInstance(params, workbook);
+			
+			if(!isStockList){
+				this.processInventorySpecificLabelsForInstance(params, workbook);
+			}
 		}
 	}
 

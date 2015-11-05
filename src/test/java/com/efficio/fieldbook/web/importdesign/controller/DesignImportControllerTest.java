@@ -952,7 +952,7 @@ public class DesignImportControllerTest {
 
 	public void testChangeDesignForNewNurseryWithImportedDesign() {
 
-		this.designImportController.changeDesign(0, StudyType.N.toString());
+		this.designImportController.changeDesign(0, true);
 
 		// the following fields are expected to be set to null
 		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
@@ -972,7 +972,7 @@ public class DesignImportControllerTest {
 
 		DesignImportTestDataInitializer.updatePlotNoValue(observations);
 
-		this.designImportController.changeDesign(nursery.getStudyDetails().getId(), StudyType.N.toString());
+		this.designImportController.changeDesign(nursery.getStudyDetails().getId(), true);
 
 		// the following fields are expected to be set to null
 		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);

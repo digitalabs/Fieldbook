@@ -361,34 +361,38 @@ var ImportDesign = (function() {
 		doResetDesign : function() {
 			'use strict';
 			var studyId = 0;
-			if ($('#studyId').val() != undefined) {
+			if ($('#studyId').val() != undefined && $('#studyId').val() != '') {
 				studyId = $('#studyId').val();
 			}
 
-			if (isNursery()) {
-				$.ajax({
-					url : '/Fieldbook/DesignImport/import/change/' + studyId
-							+ '/N',
-					type : 'POST',
-					data : '',
-					cache : false,
-					success : function(response) {
-						showSuccessfulMessage('', response.success);
+			$.ajax({
+				url : '/Fieldbook/DesignImport/import/change/' + studyId + '/'
+						+ isNursery(),
+				type : 'POST',
+				data : '',
+				cache : false,
+				success : function(response) {
+					showSuccessfulMessage('', response.success);
 
+					if(isNursery()){
 						// hide experimental design
 						$('#nursery-experimental-design-li').hide();
 						$('#nursery-experimental-design').hide();
-
+						
 						// show measurement row
 						$('li#nursery-measurements-li a').tab('show');
-
-						$('#changeDesignModal').modal('hide');
-
+						
 						// to enforce overwrite when the nursery is saved
 						$('#chooseGermplasmAndChecks').data('replace', '1');
+					} else {
+						angular.element('#mainApp').injector().get(
+						'TrialManagerDataService').isGeneratedOwnDesign = true;
+						ImportDesign.reloadMeasurements();
 					}
-				});
-			}
+
+					$('#changeDesignModal').modal('hide');			
+				}
+			});
 		}
 	};
 })();

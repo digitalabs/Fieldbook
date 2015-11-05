@@ -175,18 +175,31 @@ public class DesignImportController extends SettingsController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/import/change/{studyId}/{studyType}", method = RequestMethod.POST,
+	@RequestMapping(value = "/import/change/{studyId}/{isNursery}", method = RequestMethod.POST,
 			produces = "application/json; charset=utf-8")
-	public String changeDesign(@PathVariable final Integer studyId, @PathVariable final String studyType) {
+	public String changeDesign(@PathVariable final Integer studyId, @PathVariable final Boolean isNursery) {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
-		// reset
-		this.cancelImportDesign();
+		if (isNursery) {
+			// reset
+			this.cancelImportDesign();
+			this.userSelection.setExperimentalDesignVariables(null);
+			this.userSelection.setExpDesignParams(null);
+			this.userSelection.setExpDesignVariables(null);
 
-		this.userSelection.setExperimentalDesignVariables(null);
-		this.userSelection.setExpDesignParams(null);
-		this.userSelection.setExpDesignVariables(null);
+			resultsMap.put(DesignImportController.SUCCESS,
+					this.messageSource.getMessage("design.import.change.design.success.message.nursery", null, Locale.ENGLISH));
+		} else {
+			// For Trial
+
+			if (this.userSelection.getTemporaryWorkbook() != null) {
+				WorkbookUtil.resetObservationToDefaultDesign(this.userSelection.getTemporaryWorkbook().getObservations());
+			}
+
+			resultsMap.put(DesignImportController.SUCCESS,
+					this.messageSource.getMessage("design.import.change.design.success.message.trial", null, Locale.ENGLISH));
+		}
 
 		// handling for existing study
 		if (studyId != null && studyId != 0) {
@@ -194,8 +207,6 @@ public class DesignImportController extends SettingsController {
 		}
 
 		resultsMap.put(DesignImportController.IS_SUCCESS, 1);
-		resultsMap.put(DesignImportController.SUCCESS,
-				this.messageSource.getMessage("design.import.change.design.success.message", null, Locale.ENGLISH));
 
 		// we return string instead of json to fix IE issue rel. DataTable
 		return this.convertObjectToJson(resultsMap);

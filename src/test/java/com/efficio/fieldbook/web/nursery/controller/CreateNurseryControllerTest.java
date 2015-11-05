@@ -39,6 +39,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CreateNurseryControllerTest {
+	private final String TEST_PROG_UUID = "UUID_STRING";
+
 	private MockHttpServletRequest request;
 	private MockHttpSession session;
 
@@ -89,7 +91,9 @@ public class CreateNurseryControllerTest {
 		Mockito.when(contextUtil.getProjectInContext()).thenReturn(project);
 		session.setAttribute(ContextConstants.SESSION_ATTR_CONTEXT_INFO,contextInfo);
 
-		Mockito.when(userSelection.getCacheStandardVariable(Mockito.anyInt())).thenReturn(createTestVariable());
+		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(TEST_PROG_UUID);
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(Mockito.anyInt(),Mockito.eq(TEST_PROG_UUID))).thenReturn(createTestVariable());
+
 	}
 
 	@Test

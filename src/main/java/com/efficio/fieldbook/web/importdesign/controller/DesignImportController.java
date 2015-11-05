@@ -40,9 +40,9 @@ import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
-import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -748,7 +748,7 @@ public class DesignImportController extends SettingsController {
 				newDetails.add(newDetail);
 			}
 
-			this.resolveTheEnvironmentFactorsWithIDNamePairing(environmentData, designImportData, newDetails);
+			this.resolveIDNamePairingAndValuesForNursery(environmentData, designImportData, newDetails);
 
 			this.userSelection.getStudyLevelConditions().clear();
 			this.userSelection.getStudyLevelConditions().addAll(newDetails);
@@ -796,7 +796,7 @@ public class DesignImportController extends SettingsController {
 			}
 		}
 
-		this.resolveTheEnvironmentFactorsWithIDNamePairing(environmentData, designImportData, trialVariables);
+		this.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData, trialVariables);
 
 		final List<MeasurementRow> trialEnvironmentValues =
 				WorkbookUtil.createMeasurementRowsFromEnvironments(environmentData.getEnvironments(), new ArrayList<>(trialVariables),
@@ -855,8 +855,17 @@ public class DesignImportController extends SettingsController {
 		}
 	}
 
-	protected void resolveTheEnvironmentFactorsWithIDNamePairing(final EnvironmentData environmentData,
-			final DesignImportData designImportData, final Set<MeasurementVariable> trialVariables) {
+	/**
+	 * 
+	 * If a variable(s) is expected to have a pair ID variable (e.g. LOCATION_NAME has LOCATION_NAME_ID pair), the pair ID should be created
+	 * and added to the trial variables in order for the system to properly save the Trial.
+	 * 
+	 * @param environmentData
+	 * @param designImportData
+	 * @param trialVariables
+	 */
+	protected void resolveIDNamePairingAndValuesForTrial(final EnvironmentData environmentData, final DesignImportData designImportData,
+			final Set<MeasurementVariable> trialVariables) {
 
 		final Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		final Map<String, String> nameIdMap = this.switchKey(idNameMap);
@@ -868,16 +877,16 @@ public class DesignImportController extends SettingsController {
 
 			for (final Entry<String, String> managementDetail : environment.getManagementDetailValues().entrySet()) {
 
-				String headerName =
+				String variableLocalName =
 						this.getLocalNameFromSettingDetails(Integer.valueOf(managementDetail.getKey()),
 								this.userSelection.getTrialLevelVariableList());
 				String standardVariableName =
 						this.getVariableNameFromSettingDetails(Integer.valueOf(managementDetail.getKey()),
 								this.userSelection.getTrialLevelVariableList());
 
-				if ("".equals(headerName)) {
+				if ("".equals(variableLocalName)) {
 
-					headerName =
+					variableLocalName =
 							this.getHeaderName(Integer.valueOf(managementDetail.getKey()),
 									designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 				}
@@ -888,36 +897,31 @@ public class DesignImportController extends SettingsController {
 									.get(PhenotypicType.TRIAL_ENVIRONMENT));
 				}
 
-				// For TRIAL_LOCATION (Location Name)
-				if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()) {
+				// For LOCATION_NAME and LOCATION_NAME_ID
+				if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()
+						|| Integer.valueOf(managementDetail.getKey()) == TermId.LOCATION_ID.getId()) {
+
+					// The termId of the pair ID variable
 					final String termId = nameIdMap.get(managementDetail.getKey().toUpperCase());
 					if (termId != null) {
 
 						if (this.isTermIdExisting(Integer.valueOf(managementDetail.getKey()),
 								designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT))) {
-							final Location location =
-									this.fieldbookMiddlewareService.getLocationByName(managementDetail.getValue(), Operation.EQUAL);
-							if (location == null) {
-								copyOfManagementDetailValues.put(termId, "");
-							} else {
-								copyOfManagementDetailValues.put(termId, String.valueOf(location.getLocid()));
-							}
+							this.populateTheValueOfLocationIDBasedOnLocationName(copyOfManagementDetailValues, Integer.valueOf(termId),
+									managementDetail.getValue());
 						}
 
 						final SettingDetail settingDetail =
-								this.createSettingDetail(Integer.valueOf(termId), headerName, VariableType.ENVIRONMENT_DETAIL.name());
+								this.createSettingDetail(Integer.valueOf(termId), variableLocalName, VariableType.ENVIRONMENT_DETAIL.name());
 						settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+
 						this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 
-						MeasurementVariable measurementVariable = null;
-						final StandardVariable var =
-								this.ontologyDataManager.getStandardVariable(Integer.valueOf(termId), this.getCurrentProject()
-										.getUniqueID());
-						var.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
-						measurementVariable =
-								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
-						measurementVariable.setName(standardVariableName + AppConstants.ID_SUFFIX.getString());
-						measurementVariable.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+						MeasurementVariable measurementVariable =
+								this.createMeasurementVariableFromStandardVariable(
+										standardVariableName + AppConstants.ID_SUFFIX.getString(), Integer.valueOf(termId),
+										PhenotypicType.TRIAL_ENVIRONMENT);
+
 						trialVariables.add(measurementVariable);
 
 						copyOfManagementDetailValues.remove(managementDetail.getKey());
@@ -925,26 +929,28 @@ public class DesignImportController extends SettingsController {
 						SettingsUtil.hideVariableInSession(this.userSelection.getTrialLevelVariableList(),
 								Integer.valueOf(managementDetail.getKey()));
 					}
-				} else if (Integer.valueOf(managementDetail.getKey()) == 8373) {
+
+					// For COOPERATOR and COOPERATOR_ID
+				} else if (Integer.valueOf(managementDetail.getKey()) == TermId.COOPERATOR.getId()
+						|| Integer.valueOf(managementDetail.getKey()) == TermId.COOPERATOOR_ID.getId()) {
+
+					// The termId of the pair ID variable
 					final String termId = nameIdMap.get(managementDetail.getKey());
+
 					if (termId != null) {
 
 						copyOfManagementDetailValues.put(termId, String.valueOf(super.getCurrentIbdbUserId()));
 
 						final SettingDetail settingDetail =
-								this.createSettingDetail(Integer.valueOf(termId), headerName, VariableType.ENVIRONMENT_DETAIL.name());
+								this.createSettingDetail(Integer.valueOf(termId), variableLocalName, VariableType.ENVIRONMENT_DETAIL.name());
 						settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 						this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 
-						MeasurementVariable measurementVariable = null;
-						final StandardVariable var =
-								this.ontologyDataManager.getStandardVariable(Integer.valueOf(termId), this.getCurrentProject()
-										.getUniqueID());
-						var.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
-						measurementVariable =
-								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
-						measurementVariable.setName(standardVariableName + AppConstants.ID_SUFFIX.getString());
-						measurementVariable.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+						MeasurementVariable measurementVariable =
+								this.createMeasurementVariableFromStandardVariable(
+										standardVariableName + AppConstants.ID_SUFFIX.getString(), Integer.valueOf(termId),
+										PhenotypicType.TRIAL_ENVIRONMENT);
+
 						trialVariables.add(measurementVariable);
 
 						copyOfManagementDetailValues.remove(managementDetail.getKey());
@@ -954,31 +960,17 @@ public class DesignImportController extends SettingsController {
 					}
 
 				} else {
-					MeasurementVariable measurementVariable = null;
-					final StandardVariable var =
-							this.ontologyDataManager.getStandardVariable(Integer.valueOf(managementDetail.getKey()), this
-									.getCurrentProject().getUniqueID());
 
-					var.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
-					measurementVariable =
-							ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
-					measurementVariable.setName(var.getName());
+					MeasurementVariable measurementVariable =
+							this.createMeasurementVariableFromStandardVariable(standardVariableName,
+									Integer.valueOf(managementDetail.getKey()), PhenotypicType.TRIAL_ENVIRONMENT);
+
 					trialVariables.add(measurementVariable);
+
 				}
 
-				// For Categorical Variables
-				final StandardVariable tempStandardVarable =
-						this.ontologyDataManager.getStandardVariable(Integer.valueOf(managementDetail.getKey()), this.getCurrentProject()
-								.getUniqueID());
-				tempStandardVarable.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
-				if (tempStandardVarable != null && tempStandardVarable.hasEnumerations()) {
-
-					final Enumeration enumeration =
-							this.findInEnumeration(managementDetail.getValue(), tempStandardVarable.getEnumerations());
-					if (enumeration != null) {
-						copyOfManagementDetailValues.put(managementDetail.getKey(), String.valueOf(enumeration.getId()));
-					}
-				}
+				this.populateTheValueOfCategoricalVariable(Integer.valueOf(managementDetail.getKey()), managementDetail.getValue(),
+						copyOfManagementDetailValues);
 
 			}
 
@@ -989,8 +981,16 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void resolveTheEnvironmentFactorsWithIDNamePairing(final EnvironmentData environmentData,
-			final DesignImportData designImportData, final List<SettingDetail> newDetails) {
+	/**
+	 * If a variable(s) is expected to have a pair ID variable (e.g. LOCATION_NAME has LOCATION_NAME_ID pair), the pair ID should be created
+	 * and added to setting details list in order for the system to properly save the Trial.
+	 * 
+	 * @param environmentData
+	 * @param designImportData
+	 * @param newDetails
+	 */
+	protected void resolveIDNamePairingAndValuesForNursery(final EnvironmentData environmentData, final DesignImportData designImportData,
+			final List<SettingDetail> newDetails) {
 
 		final Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		final Map<String, String> nameIdMap = this.switchKey(idNameMap);
@@ -1036,7 +1036,8 @@ public class DesignImportController extends SettingsController {
 			}
 
 			// For COOPERATOR and PI_NAME
-			if (Integer.valueOf(managementDetail.getKey()) == 8373 || Integer.valueOf(managementDetail.getKey()) == 8100) {
+			if (Integer.valueOf(managementDetail.getKey()) == TermId.COOPERATOR.getId()
+					|| Integer.valueOf(managementDetail.getKey()) == TermId.PI_NAME.getId()) {
 				final String termId = nameIdMap.get(managementDetail.getKey());
 				if (termId != null) {
 
@@ -1060,34 +1061,14 @@ public class DesignImportController extends SettingsController {
 
 			}
 
-			// For Categorical Variables
-			final StandardVariable tempStandardVarable =
-					this.ontologyDataManager.getStandardVariable(Integer.valueOf(managementDetail.getKey()), this.getCurrentProject()
-							.getUniqueID());
-			if (tempStandardVarable != null && tempStandardVarable.hasEnumerations()) {
-
-				final Enumeration enumeration = this.findInEnumeration(managementDetail.getValue(), tempStandardVarable.getEnumerations());
-				if (enumeration != null) {
-					copyOfManagementDetailValues.put(managementDetail.getKey(), String.valueOf(enumeration.getId()));
-				}
-			}
+			this.populateTheValueOfCategoricalVariable(Integer.valueOf(managementDetail.getKey()), managementDetail.getValue(),
+					copyOfManagementDetailValues);
 
 		}
 
 		environment.getManagementDetailValues().clear();
 		environment.getManagementDetailValues().putAll(copyOfManagementDetailValues);
 
-	}
-
-	protected Enumeration findInEnumeration(final String value, final List<Enumeration> enumerations) {
-		for (final Enumeration enumeration : enumerations) {
-			if (enumeration.getName().equalsIgnoreCase(value)) {
-				return enumeration;
-			} else if (enumeration.getDescription().equalsIgnoreCase(value)) {
-				return enumeration;
-			}
-		}
-		return null;
 	}
 
 	protected void addSettingDetailToTrialLevelVariableListIfNecessary(final SettingDetail settingDetail) {
@@ -1188,6 +1169,50 @@ public class DesignImportController extends SettingsController {
 		return "";
 	}
 
+	protected MeasurementVariable createMeasurementVariableFromStandardVariable(String localName, final int termId,
+			PhenotypicType phenotypicType) {
+
+		MeasurementVariable measurementVariable = null;
+
+		final StandardVariable var = this.ontologyDataManager.getStandardVariable(termId, this.getCurrentProject().getUniqueID());
+
+		var.setPhenotypicType(phenotypicType);
+		measurementVariable = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
+		measurementVariable.setName(localName);
+		measurementVariable.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+
+		return measurementVariable;
+	}
+
+	protected void populateTheValueOfLocationIDBasedOnLocationName(final Map<String, String> copyOfManagementDetailValues,
+			final int termId, final String locationName) {
+
+		final Location location = this.fieldbookMiddlewareService.getLocationByName(locationName, Operation.EQUAL);
+		if (location == null) {
+			copyOfManagementDetailValues.put(String.valueOf(termId), "");
+		} else {
+			copyOfManagementDetailValues.put(String.valueOf(termId), String.valueOf(location.getLocid()));
+		}
+
+	}
+
+	protected void populateTheValueOfCategoricalVariable(int termid, String name, Map<String, String> managementDetailValues) {
+
+		List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(termid);
+
+		if (possibleValues != null && !possibleValues.isEmpty()) {
+
+			for (final ValueReference possibleValue : possibleValues) {
+				if (possibleValue.getName().equalsIgnoreCase(name)) {
+					managementDetailValues.put(String.valueOf(termid), possibleValue.getKey());
+				} else if (possibleValue.getDescription().equalsIgnoreCase(name)) {
+					managementDetailValues.put(String.valueOf(termid), possibleValue.getKey());
+				}
+			}
+
+		}
+	}
+
 	/**
 	 * Create check variables to be deleted.
 	 * 
@@ -1235,6 +1260,7 @@ public class DesignImportController extends SettingsController {
 		}
 
 		return false;
+
 	}
 
 }

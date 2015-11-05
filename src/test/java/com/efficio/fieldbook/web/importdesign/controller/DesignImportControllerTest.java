@@ -17,9 +17,9 @@ import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -31,6 +31,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.junit.Assert;
 import org.junit.Before;
@@ -72,8 +73,6 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 public class DesignImportControllerTest {
 
 	private static final int GW_100G_TERMID = 9999;
-
-	private static final int COOPERATOR_TERMID = 8373;
 
 	@Mock
 	private HttpServletRequest httpRequest;
@@ -128,6 +127,7 @@ public class DesignImportControllerTest {
 	@Before
 	public void init() throws Exception {
 
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(this.project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(this.project.getUniqueID());
 		Mockito.when(this.httpSession.getAttribute(ContextConstants.SESSION_ATTR_CONTEXT_INFO)).thenReturn(new ContextInfo(1, 1L));
 		Mockito.when(this.httpRequest.getSession(Matchers.anyBoolean())).thenReturn(this.httpSession);
@@ -186,7 +186,9 @@ public class DesignImportControllerTest {
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		Mockito.when(workbook.getMeasurementDatasetVariables()).thenReturn(workbookMeasurementVariables);
 		Mockito.doReturn(designFileMeasurementVariables).when(this.designImportService)
-		.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
+				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
+		Mockito.when(this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(3, this.userSelection.getDesignImportData()))
+				.thenReturn(true);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 
 		Map<String, Object> results = verifyMapDesignImportData();
@@ -199,7 +201,7 @@ public class DesignImportControllerTest {
 	public void testValidateAndSaveNewMappingWithWarning() throws Exception {
 
 		Mockito.doReturn(false).when(this.designImportService)
-		.areTrialInstancesMatchTheSelectedEnvironments(Matchers.anyInt(), Matchers.any(DesignImportData.class));
+				.areTrialInstancesMatchTheSelectedEnvironments(Matchers.anyInt(), Matchers.any(DesignImportData.class));
 
 		Mockito.when(this.messageSource.getMessage("design.import.warning.trial.instances.donotmatch", null, Locale.ENGLISH)).thenReturn(
 				"WARNING_MSG");
@@ -228,10 +230,10 @@ public class DesignImportControllerTest {
 	public void testValidateAndSaveNewMappingWithException() throws Exception {
 
 		Mockito.when(this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(3, this.userSelection.getDesignImportData()))
-		.thenReturn(false);
+				.thenReturn(false);
 
 		Mockito.doThrow(new DesignValidationException("DesignValidationException thrown")).when(this.designImportValidator)
-		.validateDesignData(Matchers.any(DesignImportData.class));
+				.validateDesignData(Matchers.any(DesignImportData.class));
 
 		final Map<String, Object> results = this.designImportController.validateAndSaveNewMapping(this.createTestMappedHeaders(), 3);
 
@@ -299,7 +301,7 @@ public class DesignImportControllerTest {
 		Mockito.when(this.userSelection.getTemporaryWorkbook()).thenReturn(workbook);
 
 		Mockito.doReturn(Mockito.mock(Set.class)).when(this.designImportService)
-		.getDesignMeasurementVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.anyBoolean());
+				.getDesignMeasurementVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.anyBoolean());
 
 		final Model model = Mockito.mock(Model.class);
 
@@ -320,9 +322,9 @@ public class DesignImportControllerTest {
 
 		Mockito.when(this.userSelection.getTemporaryWorkbook()).thenReturn(workbook);
 		Mockito.doReturn(workbook.getObservations())
-		.when(this.designImportService)
-		.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-				Matchers.anyBoolean());
+				.when(this.designImportService)
+				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
+						Matchers.anyBoolean());
 		;
 
 		final List<Map<String, Object>> result = this.designImportController.showDetailsData(environmentData, model, form);
@@ -340,50 +342,14 @@ public class DesignImportControllerTest {
 
 		Mockito.when(this.userSelection.getTemporaryWorkbook()).thenReturn(workbook);
 		Mockito.doThrow(new DesignValidationException(""))
-		.when(this.designImportService)
-		.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-				Matchers.anyBoolean());
+				.when(this.designImportService)
+				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
+						Matchers.anyBoolean());
 		;
 
 		final List<Map<String, Object>> result = this.designImportController.showDetailsData(environmentData, model, form);
 
 		Assert.assertEquals(0, result.size());
-	}
-
-	@Test
-	public void testFindInEnumerationMatchedByName() {
-
-		final List<Enumeration> enumerations = new ArrayList<>();
-		enumerations.add(new Enumeration(1, "Item 1", "Description 1", 0));
-		enumerations.add(new Enumeration(2, "Item 2", "Description 2", 0));
-
-		final Enumeration result = this.designImportController.findInEnumeration("Item 1", enumerations);
-
-		Assert.assertEquals("Item 1", result.getName());
-	}
-
-	@Test
-	public void testFindInEnumerationMatchedByDescription() {
-
-		final List<Enumeration> enumerations = new ArrayList<>();
-		enumerations.add(new Enumeration(1, "Item 1", "Description 1", 0));
-		enumerations.add(new Enumeration(2, "Item 2", "Description 2", 0));
-
-		final Enumeration result = this.designImportController.findInEnumeration("Description 2", enumerations);
-
-		Assert.assertEquals("Description 2", result.getDescription());
-	}
-
-	@Test
-	public void testFindInEnumerationMatchedNoMatch() {
-
-		final List<Enumeration> enumerations = new ArrayList<>();
-		enumerations.add(new Enumeration(1, "Item 1", "Description 1", 0));
-		enumerations.add(new Enumeration(2, "Item 2", "Description 2", 0));
-
-		final Enumeration result = this.designImportController.findInEnumeration("Some text", enumerations);
-
-		Assert.assertNull(result);
 	}
 
 	@Test
@@ -401,7 +367,7 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testResolveTheEnvironmentFactorsWithIDNamePairingForTrial() {
+	public void testResolveIDNamePairingAndValuesForTrial() {
 
 		final Set<MeasurementVariable> trialVariables = new HashSet<>();
 
@@ -409,7 +375,7 @@ public class DesignImportControllerTest {
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
 		Mockito.doReturn(this.createSettingDetails()).when(this.userSelection).getTrialLevelVariableList();
-		this.designImportController.resolveTheEnvironmentFactorsWithIDNamePairing(environmentData, designImportData, trialVariables);
+		this.designImportController.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData, trialVariables);
 
 		Assert.assertEquals(5, trialVariables.size());
 		Assert.assertEquals("LOCATION_NAME_ID should be added to the Trial Variables", "LOCATION_NAME_ID",
@@ -440,7 +406,7 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testResolveTheEnvironmentFactorsWithIDNamePairingForNursery() {
+	public void testResolveIDNamePairingAndValuesForNursery() {
 
 		Mockito.mock(Workbook.class);
 		final List<SettingDetail> newDetails = new ArrayList<>();
@@ -448,7 +414,7 @@ public class DesignImportControllerTest {
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
 
-		this.designImportController.resolveTheEnvironmentFactorsWithIDNamePairing(environmentData, designImportData, newDetails);
+		this.designImportController.resolveIDNamePairingAndValuesForNursery(environmentData, designImportData, newDetails);
 
 		Assert.assertEquals(3, newDetails.size());
 		Assert.assertEquals("LOCATION_NAME_ID should be added to the Trial Variables", "LOCATION_NAME_ID",
@@ -482,7 +448,7 @@ public class DesignImportControllerTest {
 		measurementVariables.add(this.createMeasurementVariable(TermId.COL.getId(), "COL", "ENTRY"));
 
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
-		.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
+				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
 
@@ -508,7 +474,7 @@ public class DesignImportControllerTest {
 		measurementVariables.add(this.getMeasurementVariable(TermId.GID.getId(), new HashSet<>(workbook.getFactors())));
 
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
-		.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
+				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
 		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 
@@ -528,7 +494,7 @@ public class DesignImportControllerTest {
 		measurementVariables.add(this.getMeasurementVariable(TermId.TRIAL_LOCATION.getId(), new HashSet<>(workbook.getConditions())));
 
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
-		.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
+				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
 		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 		this.designImportController.addConditionsIfNecessary(workbook, data);
@@ -545,7 +511,7 @@ public class DesignImportControllerTest {
 		measurementVariables.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITENAME", "TRIAL"));
 
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
-		.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
+				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
 
@@ -570,7 +536,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(settingDetails).when(this.userSelection).getTrialLevelVariableList();
 
 		Mockito.doReturn(siteNameSettingDetail).when(this.settingsService)
-		.createSettingDetail(siteName.getTermId(), siteName.getName(), this.userSelection, 1, project.getUniqueID());
+				.createSettingDetail(siteName.getTermId(), siteName.getName(), this.userSelection, 1, project.getUniqueID());
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 3);
 
@@ -611,9 +577,9 @@ public class DesignImportControllerTest {
 		final List<SettingDetail> newSettingDetails = new ArrayList<>();
 
 		Mockito.doReturn(siteNameSettingDetail).when(this.settingsService)
-		.createSettingDetail(siteName.getTermId(), siteName.getName(), this.userSelection, 1, project.getUniqueID());
+				.createSettingDetail(siteName.getTermId(), siteName.getName(), this.userSelection, 1, project.getUniqueID());
 		Mockito.doReturn(piNameSettingDetail).when(this.settingsService)
-		.createSettingDetail(piName.getTermId(), piName.getName(), this.userSelection, 1, project.getUniqueID());
+				.createSettingDetail(piName.getTermId(), piName.getName(), this.userSelection, 1, project.getUniqueID());
 		Mockito.doReturn(newSettingDetails).when(this.userSelection).getStudyLevelConditions();
 
 		this.designImportController.populateStudyLevelVariableListIfNecessary(workbook, environmentData, designImportData);
@@ -648,7 +614,7 @@ public class DesignImportControllerTest {
 		selection.setDeletedTrialLevelVariables(deletedTrialLevelVariables);
 
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
-		.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
+				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 
 		this.designImportController.checkTheDeletedSettingDetails(selection, designImportData);
 
@@ -681,7 +647,7 @@ public class DesignImportControllerTest {
 
 		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
-		.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
+				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
@@ -699,9 +665,9 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
 
 		Mockito.doThrow(new DesignValidationException(""))
-		.when(this.designImportService)
-		.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-				Matchers.anyBoolean());
+				.when(this.designImportService)
+				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
+						Matchers.anyBoolean());
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(environmentData);
@@ -998,6 +964,84 @@ public class DesignImportControllerTest {
 
 	}
 
+	@Test
+	public void testCreateMeasurementVariableFromStandardVariable() {
+
+		MeasurementVariable measurementVariable =
+				this.designImportController.createMeasurementVariableFromStandardVariable("LOCATION_NAME_ID", TermId.LOCATION_ID.getId(),
+						PhenotypicType.TRIAL_ENVIRONMENT);
+
+		Assert.assertEquals("LOCATION_NAME_ID", measurementVariable.getName());
+		Assert.assertEquals(PhenotypicType.TRIAL_ENVIRONMENT, measurementVariable.getRole());
+
+	}
+
+	@Test
+	public void testPopulateTheValueOfLocationIDBasedOnLocationName() {
+
+		Map<String, String> managementDetailValues = new HashMap<>();
+
+		Location location = new Location(98987);
+		String locationName = "Agua Fria";
+
+		location.setLname(locationName);
+		Mockito.when(this.fieldbookMiddlewareService.getLocationByName(locationName, Operation.EQUAL)).thenReturn(location);
+
+		this.designImportController.populateTheValueOfLocationIDBasedOnLocationName(managementDetailValues, TermId.LOCATION_ID.getId(),
+				locationName);
+
+		Assert.assertEquals("If the location is found in the database, the value should be the id of the location ", location.getLocid()
+				.toString(), managementDetailValues.get(String.valueOf(TermId.LOCATION_ID.getId())));
+
+	}
+
+	@Test
+	public void testPopulateTheValueOfLocationIDBasedOnLocationNameLocationDoesNotExist() {
+
+		Map<String, String> managementDetailValues = new HashMap<>();
+
+		Mockito.when(this.fieldbookMiddlewareService.getLocationByName(Mockito.anyString(), Mockito.any(Operation.class))).thenReturn(null);
+
+		this.designImportController.populateTheValueOfLocationIDBasedOnLocationName(managementDetailValues, TermId.LOCATION_ID.getId(),
+				"Agua Fria");
+
+		Assert.assertEquals("If the location does not exist, the value should be empty", "",
+				managementDetailValues.get(String.valueOf(TermId.LOCATION_ID.getId())));
+
+	}
+
+	@Test
+	public void testPopulateTheValueOfCategoricalVariable() {
+
+		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId()))
+				.thenReturn(this.createEntryTypePossibleValues());
+
+		Map<String, String> managementDetailValues = new HashMap<>();
+		managementDetailValues.put(String.valueOf(TermId.ENTRY_TYPE.getId()), null);
+
+		this.designImportController.populateTheValueOfCategoricalVariable(TermId.ENTRY_TYPE.getId(), "T", managementDetailValues);
+
+		Assert.assertEquals("The key value of 'T' entry type should be 10170", "10170",
+				managementDetailValues.get(String.valueOf(TermId.ENTRY_TYPE.getId())));
+
+	}
+
+	@Test
+	public void testPopulateTheValueOfCategoricalVariableValueDoesNotExist() {
+
+		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId()))
+				.thenReturn(this.createEntryTypePossibleValues());
+
+		Map<String, String> managementDetailValues = new HashMap<>();
+		managementDetailValues.put(String.valueOf(TermId.ENTRY_TYPE.getId()), null);
+
+		this.designImportController.populateTheValueOfCategoricalVariable(TermId.ENTRY_TYPE.getId(), "A", managementDetailValues);
+
+		Assert.assertNull("It will return null for an input not part of possible values",
+				managementDetailValues.get(String.valueOf(TermId.ENTRY_TYPE.getId())));
+
+	}
+
 	/**
 	 * Reusable test assertions for DesignImportController.validateAndSaveNewMapping
 	 * @return results
@@ -1068,21 +1112,21 @@ public class DesignImportControllerTest {
 		map.put(String.valueOf(TermId.LOCATION_ID.getId()), "1234");
 		map.put(String.valueOf(TermId.SITE_NAME.getId()), "Test Site");
 		map.put(String.valueOf(TermId.PI_NAME.getId()), null);
-		map.put(String.valueOf(DesignImportControllerTest.COOPERATOR_TERMID), "4321");
+		map.put(String.valueOf(TermId.COOPERATOR.getId()), "4321");
 		return map;
 	}
 
 	private List<SettingDetail> createSettingDetails() {
 		final List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
-		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(),
-				"TRIAL_INSTANCE_FACTOR", "", "TRIAL"));
-		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(), "TRIAL_LOCATION", "",
+
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "",
 				"TRIAL"));
+		settingDetails
+				.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "", "TRIAL"));
 		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(), "LOCATION_ID", "", "TRIAL"));
 		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), "SITE_NAME", "", "TRIAL"));
 		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.PI_NAME.getId(), "PI_NAME", "", "TRIAL"));
-		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(DesignImportControllerTest.COOPERATOR_TERMID, "COOPERATOR",
-				"", "TRIAL"));
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.COOPERATOR.getId(), "COOPERATOR", "", "TRIAL"));
 
 		return settingDetails;
 	}
@@ -1127,8 +1171,8 @@ public class DesignImportControllerTest {
 				this.createStandardVariable(PhenotypicType.TRIAL_ENVIRONMENT, TermId.LOCATION_ID.getId(), "LOCATION_NAME_ID", "", "", "",
 						"", "", "");
 		final StandardVariable cooperator =
-				this.createStandardVariable(PhenotypicType.TRIAL_ENVIRONMENT, DesignImportControllerTest.COOPERATOR_TERMID, "COOPERATOR",
-						"", "", "", "", "", "");
+				this.createStandardVariable(PhenotypicType.TRIAL_ENVIRONMENT, TermId.COOPERATOR.getId(), "COOPERATOR", "", "", "", "", "",
+						"");
 
 		final StandardVariable cooperatorId =
 				this.createStandardVariable(PhenotypicType.TRIAL_ENVIRONMENT, TermId.COOPERATOOR_ID.getId(), "COOPERATOR_ID", "", "", "",
@@ -1166,71 +1210,73 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(map).when(this.ontologyDataManager).getStandardVariablesInProjects(Matchers.anyList(), Matchers.anyString());
 
 		Mockito.doReturn(trialInstance).when(this.ontologyDataManager)
-		.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), this.project.getUniqueID());
 		Mockito.doReturn(siteName).when(this.ontologyDataManager).getStandardVariable(TermId.SITE_NAME.getId(), this.project.getUniqueID());
 		Mockito.doReturn(locationName).when(this.ontologyDataManager)
-		.getStandardVariable(TermId.TRIAL_LOCATION.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.TRIAL_LOCATION.getId(), this.project.getUniqueID());
 		Mockito.doReturn(locationID).when(this.ontologyDataManager)
-		.getStandardVariable(TermId.LOCATION_ID.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.LOCATION_ID.getId(), this.project.getUniqueID());
 		Mockito.doReturn(entryNo).when(this.ontologyDataManager).getStandardVariable(TermId.ENTRY_NO.getId(), this.project.getUniqueID());
 		Mockito.doReturn(plotNo).when(this.ontologyDataManager).getStandardVariable(TermId.PLOT_NO.getId(), this.project.getUniqueID());
 		Mockito.doReturn(blockNo).when(this.ontologyDataManager).getStandardVariable(TermId.BLOCK_NO.getId(), this.project.getUniqueID());
 		Mockito.doReturn(repNo).when(this.ontologyDataManager).getStandardVariable(TermId.REP_NO.getId(), this.project.getUniqueID());
 		Mockito.doReturn(cooperator).when(this.ontologyDataManager)
-		.getStandardVariable(DesignImportControllerTest.COOPERATOR_TERMID, this.project.getUniqueID());
+				.getStandardVariable(TermId.COOPERATOR.getId(), this.project.getUniqueID());
+
 		Mockito.doReturn(cooperatorId).when(this.ontologyDataManager)
-		.getStandardVariable(TermId.COOPERATOOR_ID.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.COOPERATOOR_ID.getId(), this.project.getUniqueID());
 		Mockito.doReturn(principalInvestigator).when(this.ontologyDataManager)
-		.getStandardVariable(TermId.PI_NAME.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.PI_NAME.getId(), this.project.getUniqueID());
 		Mockito.doReturn(principalInvestigatorId).when(this.ontologyDataManager)
-		.getStandardVariable(TermId.PI_ID.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.PI_ID.getId(), this.project.getUniqueID());
 		Mockito.doReturn(gw100g).when(this.ontologyDataManager)
-		.getStandardVariable(DesignImportControllerTest.GW_100G_TERMID, this.project.getUniqueID());
+				.getStandardVariable(DesignImportControllerTest.GW_100G_TERMID, this.project.getUniqueID());
 
 		Mockito.doReturn(trialInstance).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), this.project.getUniqueID());
 		Mockito.doReturn(siteName).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(TermId.SITE_NAME.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.SITE_NAME.getId(), this.project.getUniqueID());
 		Mockito.doReturn(locationName).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(TermId.TRIAL_LOCATION.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.TRIAL_LOCATION.getId(), this.project.getUniqueID());
 		Mockito.doReturn(locationID).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(TermId.LOCATION_ID.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.LOCATION_ID.getId(), this.project.getUniqueID());
 		Mockito.doReturn(entryNo).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(TermId.ENTRY_NO.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.ENTRY_NO.getId(), this.project.getUniqueID());
 		Mockito.doReturn(plotNo).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(TermId.PLOT_NO.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.PLOT_NO.getId(), this.project.getUniqueID());
 		Mockito.doReturn(blockNo).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(TermId.BLOCK_NO.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.BLOCK_NO.getId(), this.project.getUniqueID());
 		Mockito.doReturn(repNo).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(TermId.REP_NO.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.REP_NO.getId(), this.project.getUniqueID());
 		Mockito.doReturn(cooperator).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(DesignImportControllerTest.COOPERATOR_TERMID, this.project.getUniqueID());
+				.getStandardVariable(TermId.COOPERATOR.getId(), this.project.getUniqueID());
+
 		Mockito.doReturn(cooperatorId).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(TermId.COOPERATOOR_ID.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.COOPERATOOR_ID.getId(), this.project.getUniqueID());
 		Mockito.doReturn(principalInvestigator).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(TermId.PI_NAME.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.PI_NAME.getId(), this.project.getUniqueID());
 		Mockito.doReturn(principalInvestigatorId).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(TermId.PI_ID.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.PI_ID.getId(), this.project.getUniqueID());
 		Mockito.doReturn(gw100g).when(this.fieldbookMiddlewareService)
-		.getStandardVariable(DesignImportControllerTest.GW_100G_TERMID, this.project.getUniqueID());
+				.getStandardVariable(DesignImportControllerTest.GW_100G_TERMID, this.project.getUniqueID());
 
 	}
 
 	private void initializeDesignImportService() throws DesignValidationException {
 		Mockito.doReturn(Mockito.mock(Set.class)).when(this.designImportService)
-		.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
+				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 		Mockito.doReturn(new ArrayList<MeasurementRow>())
-		.when(this.designImportService)
-		.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-				Matchers.anyBoolean());
+				.when(this.designImportService)
+				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
+						Matchers.anyBoolean());
 		Mockito.doReturn(new HashSet<MeasurementVariable>()).when(this.designImportService)
-		.getDesignMeasurementVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.anyBoolean());
+				.getDesignMeasurementVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.anyBoolean());
 		Mockito.doReturn(new HashSet<MeasurementVariable>()).when(this.designImportService)
-		.getDesignMeasurementVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.anyBoolean());
+				.getDesignMeasurementVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.anyBoolean());
 		Mockito.doReturn(new HashSet<MeasurementVariable>()).when(this.designImportService)
-		.getDesignRequiredStandardVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
+				.getDesignRequiredStandardVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 		Mockito.doReturn(new HashSet<MeasurementVariable>()).when(this.designImportService)
-		.getDesignRequiredMeasurementVariable(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
+				.getDesignRequiredMeasurementVariable(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 	}
 
 	private StandardVariable createStandardVariable(final PhenotypicType phenotypicType, final int id, final String name,
@@ -1290,7 +1336,7 @@ public class DesignImportControllerTest {
 		measurementVariables.add(this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "TRIAL"));
 		measurementVariables.add(this.createMeasurementVariable(TermId.LOCATION_ID.getId(), "LOCATION_NAME_ID", "TRIAL"));
 		measurementVariables.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITE_NAME", "TRIAL"));
-		measurementVariables.add(this.createMeasurementVariable(DesignImportControllerTest.COOPERATOR_TERMID, "COOPERATOR", "TRIAL"));
+		measurementVariables.add(this.createMeasurementVariable(TermId.COOPERATOR.getId(), "COOPERATOR", "TRIAL"));
 		measurementVariables.add(this.createMeasurementVariable(TermId.ENTRY_NO.getId(), "ENTRY_NO", "GERMPLASM ENTRY"));
 		measurementVariables.add(this.createMeasurementVariable(TermId.PLOT_NO.getId(), "PLOT_NO", "PLOT"));
 		measurementVariables.add(this.createMeasurementVariable(TermId.REP_NO.getId(), "REP_NO", "PLOT"));
@@ -1325,4 +1371,14 @@ public class DesignImportControllerTest {
 		testNewMap.put("mappedTraits", new ArrayList<DesignHeaderItem>());
 		return testNewMap;
 	}
+	private List<ValueReference> createEntryTypePossibleValues() {
+
+		List<ValueReference> list = new ArrayList<>();
+
+		list.add(new ValueReference(10170, "T", "Test entry"));
+		list.add(new ValueReference(10180, "C", "Check entry"));
+
+		return list;
+	}
+
 }

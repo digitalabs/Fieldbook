@@ -21,6 +21,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,7 +148,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			this.validationService.validateObservationValues(workbook, "");
 			this.fieldbookMiddlewareService.saveMeasurementRows(workbook,contextUtil.getCurrentProgramUUID());
 			resultMap.put(ObservationMatrixController.STATUS, "1");
-		} catch (MiddlewareException e) {
+		} catch (WorkbookParserException e) {
 			ObservationMatrixController.LOG.error(e.getMessage(), e);
 			resultMap.put(ObservationMatrixController.STATUS, "-1");
 			resultMap.put(ObservationMatrixController.ERROR_MESSAGE, e.getMessage());

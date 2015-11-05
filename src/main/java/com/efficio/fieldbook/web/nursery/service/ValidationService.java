@@ -15,12 +15,13 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.exceptions.WorkbookParserException;
 
 public interface ValidationService {
 
 	boolean isValidValue(MeasurementVariable var, String value, boolean validateDateForDB);
 
-	void validateObservationValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException;
+	void validateObservationValues(Workbook workbook, String instanceNumber) throws WorkbookParserException;
 
 	void validateConditionAndConstantValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException;
 

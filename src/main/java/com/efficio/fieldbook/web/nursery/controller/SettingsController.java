@@ -295,10 +295,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				if (TermId.BREEDING_METHOD_CODE.getId() == requiredVariables.get(i)
 						&& variablesMap.get(String.valueOf(TermId.BREEDING_METHOD.getId())) != null
 						&& variablesMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) == null) {
-					final Method method =
+						final Method method =
 							this.fieldbookMiddlewareService.getMethodByName(variablesMap
 									.get(String.valueOf(TermId.BREEDING_METHOD.getId())).getValue());
-					newSettingDetail.setValue(method.getMid() == null ? "" : method.getMid().toString());
+						newSettingDetail.setValue(method.getMid() == null ? "" : method.getMid().toString());
 				}
 
 				variables.add(newSettingDetail);

@@ -1,6 +1,8 @@
 
 package com.efficio.fieldbook.web.importdesign.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,9 +12,24 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.common.form.ImportDesignForm;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
+import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
+import com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceImpl;
+import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.FileParsingException;
@@ -46,25 +63,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
-
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
-import com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceImpl;
-import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
 /**
  * Created by cyrus on 5/28/15.
@@ -1044,6 +1042,7 @@ public class DesignImportControllerTest {
 
 	/**
 	 * Reusable test assertions for DesignImportController.validateAndSaveNewMapping
+	 *
 	 * @return results
 	 * @throws DesignValidationException
 	 */
@@ -1051,7 +1050,7 @@ public class DesignImportControllerTest {
 		Mockito.when(DesignImportControllerTest.this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(3, DesignImportControllerTest.this.userSelection.getDesignImportData()))
 				.thenReturn(true);
 
-		Map<String,Object> results = DesignImportControllerTest.this.designImportController.validateAndSaveNewMapping(DesignImportControllerTest.this.createTestMappedHeaders(), 3);
+		Map<String, Object> results = DesignImportControllerTest.this.designImportController.validateAndSaveNewMapping(DesignImportControllerTest.this.createTestMappedHeaders(), 3);
 
 		Mockito.verify(DesignImportControllerTest.this.designImportValidator).validateDesignData(DesignImportControllerTest.this.userSelection.getDesignImportData());
 
@@ -1280,7 +1279,7 @@ public class DesignImportControllerTest {
 	}
 
 	private StandardVariable createStandardVariable(final PhenotypicType phenotypicType, final int id, final String name,
-			final String property, final String scale, final String method, final String dataType, final String storedIn, final String isA) {
+	                                                final String property, final String scale, final String method, final String dataType, final String storedIn, final String isA) {
 
 		final StandardVariable stdVar =
 				new StandardVariable(new Term(0, property, ""), new Term(0, scale, ""), new Term(0, method, ""), new Term(0, dataType, ""),
@@ -1318,7 +1317,7 @@ public class DesignImportControllerTest {
 	}
 
 	private MeasurementVariable createMeasurementVariable(final int termId, final String name, final String property, final String scale,
-			final String method, final String label) {
+	                                                      final String method, final String label) {
 		final MeasurementVariable measurementVariable = new MeasurementVariable();
 		measurementVariable.setTermId(termId);
 		measurementVariable.setName(name);
@@ -1371,6 +1370,7 @@ public class DesignImportControllerTest {
 		testNewMap.put("mappedTraits", new ArrayList<DesignHeaderItem>());
 		return testNewMap;
 	}
+
 	private List<ValueReference> createEntryTypePossibleValues() {
 
 		List<ValueReference> list = new ArrayList<>();

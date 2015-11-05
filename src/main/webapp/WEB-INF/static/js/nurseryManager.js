@@ -1028,23 +1028,23 @@ function resetIdsOfTables(name, tableId) {
 
 function sortVariableIdsAndNames(variableType) {
 	switch (variableType) {
-	case 1:
+		case 1805:
 		recreateDynamicFieldsAfterDelete('studyLevelVariables',
 				'nurseryLevelSettings-dev', 'nurseryLevelSettings', '');
 		break;
-	case 2:
+		case 1804:
 		resetIdsOfTables('plotLevelVariables', 'plotLevelSettings');
 		break;
-	case 3:
+		case 1808:
 		resetIdsOfTables('baselineTraitVariables', 'baselineTraitSettings');
 		checkTraitsAndSelectionVariateTable('', false);
 		break;
-	case 6:
+		case 1807:
 		resetIdsOfTables('selectionVariatesVariables',
 				'selectionVariatesSettings');
 		checkTraitsAndSelectionVariateTable('', false);
 		break;
-	case 7:
+		case 1803:
 		recreateDynamicFieldsAfterDelete('nurseryConditions',
 				'nurseryConditionsSettings', 'nurseryConditionsSettings',
 				'Cons');

@@ -891,9 +891,9 @@ function deleteMultiVariable(variableType, variableIds, sectionDiv) {
 		});
 
 		// add dummy row to selection variates/traits if no record is left
-		if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 0) {
+		if (variableType === baselineTraitsSegment && $('#baselineTraitSettings tbody tr').length === 0) {
 			showDummyRow('baselineTraitSettings');
-		} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 0) {
+		} else if (variableType === selectionVariatesSegment && $('#selectionVariatesSettings tbody tr').length === 0) {
 			showDummyRow('selectionVariatesSettings');
 		}
 
@@ -954,9 +954,9 @@ function proceedWithDelete() {
 		}
 	});
 	// add dummy row to selection variates/traits if no record is left
-	if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 0) {
+	if (variableType === baselineTraitsSegment && $('#baselineTraitSettings tbody tr').length === 0) {
 		showDummyRow('baselineTraitSettings');
-	} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 0) {
+	} else if (variableType === selectionVariatesSegment && $('#selectionVariatesSettings tbody tr').length === 0) {
 		showDummyRow('selectionVariatesSettings');
 	}
 

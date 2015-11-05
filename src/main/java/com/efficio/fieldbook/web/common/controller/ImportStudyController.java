@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import com.efficio.fieldbook.web.common.service.KsuCsvImportStudyService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,7 +17,6 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.service.FileService;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -63,6 +61,7 @@ import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuCsvImportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -118,9 +117,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
-
-	@Resource
-	private ContextUtil contextUtil;
 
 	@Resource
 	private ObjectMapper objectMapper;
@@ -456,7 +452,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	private GermplasmChangeDetail[] getResponseDetails(final String userResponses) throws FieldbookException {
 
 		try {
-			return objectMapper.readValue(userResponses, GermplasmChangeDetail[].class);
+			return this.objectMapper.readValue(userResponses, GermplasmChangeDetail[].class);
 		} catch (final JsonParseException e) {
 			ImportStudyController.LOG.error(e.getMessage(), e);
 			throw new FieldbookException(e.getMessage());
@@ -499,7 +495,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		// will do the cleanup for BM_CODE_VTE here
 		SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 				this.ontologyService);
-		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), contextUtil.getCurrentProgramUUID());
+		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), this.contextUtil.getCurrentProgramUUID());
 		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService);
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
 
@@ -559,8 +555,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		final Map<String, String> map = new HashMap<>();
 		final List<SettingDetail> newTraits = userSelection.getNewTraits();
 		final List<SettingDetail> selectedVariates = userSelection.getNewSelectionVariates();
-		map.put("newTraits", objectMapper.writeValueAsString(newTraits));
-		map.put("newSelectionVariates", objectMapper.writeValueAsString(selectedVariates));
+		map.put("newTraits", this.objectMapper.writeValueAsString(newTraits));
+		map.put("newSelectionVariates", this.objectMapper.writeValueAsString(selectedVariates));
 		return map;
 	}
 

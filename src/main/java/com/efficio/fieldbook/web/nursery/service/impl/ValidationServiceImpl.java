@@ -27,6 +27,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -42,7 +43,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @Transactional
 public class ValidationServiceImpl implements ValidationService {
 
-	private static final String DATA_TYPE_NUMERIC = "Numeric variable";
+	private static final String DATA_TYPE_NUMERIC = "Numeric";
 	private static final String ERROR_INVALID_CELL = "error.workbook.save.invalidCellValue";
 	public static final String MISSING_VAL = "missing";
 
@@ -82,7 +83,7 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	@Override
-	public void validateObservationValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException {
+	public void validateObservationValues(Workbook workbook, String instanceNumber) throws WorkbookParserException {
 		Locale locale = LocaleContextHolder.getLocale();
 		if (workbook.getObservations() != null) {
 			List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
@@ -99,7 +100,7 @@ public class ValidationServiceImpl implements ValidationService {
 				for (MeasurementData data : row.getDataList()) {
 					MeasurementVariable variate = data.getMeasurementVariable();
 					if (!this.isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
-						throw new MiddlewareQueryException(this.messageSource.getMessage(ValidationServiceImpl.ERROR_INVALID_CELL,
+						throw new WorkbookParserException(this.messageSource.getMessage(ValidationServiceImpl.ERROR_INVALID_CELL,
 								new Object[] {variate.getName(), data.getValue()}, locale));
 
 					}

@@ -29,8 +29,6 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -45,8 +43,6 @@ import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 
 public class DesignImportServiceImpl implements DesignImportService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(DesignImportServiceImpl.class);
 
 	@Resource
 	private UserSelection userSelection;
@@ -94,12 +90,11 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		final Map<String, Integer> availableCheckTypes = this.retrieveAvailableCheckTypes();
 		final DesignImportMeasurementRowGenerator measurementRowGenerator =
-				new DesignImportMeasurementRowGenerator(workbook, mappedHeadersWithStdVarId, importedGermplasm, germplasmStandardVariables,
-						generatedTrialInstancesFromUI, isPreview, availableCheckTypes);
+				new DesignImportMeasurementRowGenerator(this.fieldbookService, workbook, mappedHeadersWithStdVarId, importedGermplasm,
+						germplasmStandardVariables, generatedTrialInstancesFromUI, isPreview, availableCheckTypes);
 
 		while (rowCounter <= csvData.size() - 1) {
-			final MeasurementRow measurementRow =
-					measurementRowGenerator.createMeasurementRow(csvData.get(rowCounter), this.fieldbookService);
+			final MeasurementRow measurementRow = measurementRowGenerator.createMeasurementRow(csvData.get(rowCounter));
 			if (measurementRow != null) {
 				measurements.add(measurementRow);
 			}
@@ -110,8 +105,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		measurementRowGenerator.addFactorsToMeasurementRows(measurements);
 
 		// add trait data to the list of measurement row
-		measurementRowGenerator.addVariatesToMeasurementRows(measurements, this.userSelection, this.fieldbookService, this.ontologyService,
-				this.contextUtil);
+		measurementRowGenerator.addVariatesToMeasurementRows(measurements, this.userSelection, this.ontologyService, this.contextUtil);
 
 		return measurements;
 	}

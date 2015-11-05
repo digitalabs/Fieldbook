@@ -68,7 +68,6 @@ public class SettingsControllerTest {
 
 	@Test
 	public void testHasMeasurementDataEnteredGivenAListOfMeasurementRowsWithData() {
-		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
 
 		List<MeasurementRow> measurementRowList = workbook.getObservations();

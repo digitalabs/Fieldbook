@@ -41,7 +41,7 @@ public abstract class AbstractBaseFieldbookController {
 	private WorkbenchService workbenchService;
 
 	@Resource
-	private ContextUtil contextUtil;
+	protected ContextUtil contextUtil;
 
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
@@ -66,7 +66,7 @@ public abstract class AbstractBaseFieldbookController {
 	// TODO change the return type to Long.
 	public String getCurrentProjectId() {
 		try {
-			final Project projectInContext = contextUtil.getProjectInContext();
+			final Project projectInContext = this.contextUtil.getProjectInContext();
 			if (projectInContext != null) {
 				return projectInContext.getProjectId().toString();
 			}
@@ -78,12 +78,13 @@ public abstract class AbstractBaseFieldbookController {
 	}
 
 	public Project getCurrentProject() throws MiddlewareQueryException {
-		return contextUtil.getProjectInContext();
+		return this.contextUtil.getProjectInContext();
 	}
 
 	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {
-		return this.workbenchService
-				.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), contextUtil.getCurrentWorkbenchUserId());
+		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
+				this.contextUtil.getCurrentWorkbenchUserId());
+
 	}
 
 	public String getOldFieldbookPath() {
@@ -193,6 +194,10 @@ public abstract class AbstractBaseFieldbookController {
 
 	public void setPaginationListSelection(final PaginationListSelection paginationListSelection) {
 		this.paginationListSelection = paginationListSelection;
+	}
+
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 
 }

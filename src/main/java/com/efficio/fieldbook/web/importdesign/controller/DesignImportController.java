@@ -5,7 +5,6 @@ package com.efficio.fieldbook.web.importdesign.controller;
  * Created by cyrus on 5/8/15.
  */
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,24 +16,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -67,6 +50,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.common.form.ImportDesignForm;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
 /**
  * The Class DesignImportController.
@@ -317,18 +319,20 @@ public class DesignImportController extends SettingsController {
 			boolean hasExistingDesign = false;
 
 			if (this.userSelection.getWorkbook() != null) {
-				hasConflict = this.userSelection.getWorkbook().getMeasurementDatasetVariables() != null && this.hasConflict(this.designImportService.getMeasurementVariablesFromDataFile(
-						this.userSelection.getTemporaryWorkbook(), this.userSelection.getDesignImportData()), new HashSet<>(
-						this.userSelection.getWorkbook().getMeasurementDatasetVariables()));
+				hasConflict =
+						this.userSelection.getWorkbook().getMeasurementDatasetVariables() != null
+								&& this.hasConflict(
+										this.designImportService.getMeasurementVariablesFromDataFile(
+												this.userSelection.getTemporaryWorkbook(), this.userSelection.getDesignImportData()),
+										new HashSet<>(this.userSelection.getWorkbook().getMeasurementDatasetVariables()));
 				hasChecksSelected = this.hasCheckVariables(this.userSelection.getWorkbook().getConditions());
 				hasExistingDesign = this.userSelection.getWorkbook().hasExistingExperimentalDesign();
 			}
 
-
 			resultsMap.put(DesignImportController.SUCCESS, Boolean.TRUE);
 			resultsMap.put("hasConflict", hasConflict);
 			resultsMap.put("hasChecksSelected", hasChecksSelected);
-			resultsMap.put("hasExistingDesign",hasExistingDesign);
+			resultsMap.put("hasExistingDesign", hasExistingDesign);
 
 		} catch (final DesignValidationException e) {
 
@@ -928,7 +932,7 @@ public class DesignImportController extends SettingsController {
 
 						this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 
-						MeasurementVariable measurementVariable =
+						final MeasurementVariable measurementVariable =
 								this.createMeasurementVariableFromStandardVariable(
 										standardVariableName + AppConstants.ID_SUFFIX.getString(), Integer.valueOf(termId),
 										PhenotypicType.TRIAL_ENVIRONMENT);
@@ -957,7 +961,7 @@ public class DesignImportController extends SettingsController {
 						settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 						this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 
-						MeasurementVariable measurementVariable =
+						final MeasurementVariable measurementVariable =
 								this.createMeasurementVariableFromStandardVariable(
 										standardVariableName + AppConstants.ID_SUFFIX.getString(), Integer.valueOf(termId),
 										PhenotypicType.TRIAL_ENVIRONMENT);
@@ -972,7 +976,7 @@ public class DesignImportController extends SettingsController {
 
 				} else {
 
-					MeasurementVariable measurementVariable =
+					final MeasurementVariable measurementVariable =
 							this.createMeasurementVariableFromStandardVariable(standardVariableName,
 									Integer.valueOf(managementDetail.getKey()), PhenotypicType.TRIAL_ENVIRONMENT);
 
@@ -1180,8 +1184,8 @@ public class DesignImportController extends SettingsController {
 		return "";
 	}
 
-	protected MeasurementVariable createMeasurementVariableFromStandardVariable(String localName, final int termId,
-			PhenotypicType phenotypicType) {
+	protected MeasurementVariable createMeasurementVariableFromStandardVariable(final String localName, final int termId,
+			final PhenotypicType phenotypicType) {
 
 		MeasurementVariable measurementVariable = null;
 
@@ -1207,9 +1211,10 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void populateTheValueOfCategoricalVariable(int termid, String name, Map<String, String> managementDetailValues) {
+	protected void populateTheValueOfCategoricalVariable(final int termid, final String name,
+			final Map<String, String> managementDetailValues) {
 
-		List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(termid);
+		final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(termid);
 
 		if (possibleValues != null && !possibleValues.isEmpty()) {
 
@@ -1255,7 +1260,7 @@ public class DesignImportController extends SettingsController {
 	protected boolean hasCheckVariables(final List<MeasurementVariable> conditions) {
 		if (conditions != null && !conditions.isEmpty()) {
 
-			List<Integer> checkTermIds = new ArrayList<>();
+			final List<Integer> checkTermIds = new ArrayList<>();
 
 			// Extract first the termIds of the check variables
 			final StringTokenizer tokenizer = new StringTokenizer(AppConstants.CHECK_VARIABLES.getString(), ",");

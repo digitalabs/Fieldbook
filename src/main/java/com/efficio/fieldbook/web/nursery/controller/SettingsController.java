@@ -104,9 +104,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param variableId, List<MeasurementRow>
 	 * @return
 	 */
-	public static boolean hasMeasurementDataEntered(int variableId, List<MeasurementRow> measurementRow) {
-		for (MeasurementRow row : measurementRow) {
-			for (MeasurementData data : row.getDataList()) {
+	public static boolean hasMeasurementDataEntered(final int variableId, final List<MeasurementRow> measurementRow) {
+		for (final MeasurementRow row : measurementRow) {
+			for (final MeasurementData data : row.getDataList()) {
 				if (data.getMeasurementVariable() != null && data.getMeasurementVariable().getTermId() == variableId
 						&& data.getValue() != null && !data.getValue().isEmpty()) {
 					return true;
@@ -124,14 +124,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	@ModelAttribute("settingsList")
 	public List<TemplateSetting> getNurserySettingsList() {
 		try {
-			TemplateSetting templateSettingFilter =
+			final TemplateSetting templateSettingFilter =
 					new TemplateSetting(null, Integer.valueOf(this.getCurrentProjectId()), null, this.getNurseryTool(), null, null);
 			templateSettingFilter.setIsDefaultToNull();
-			List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
+			final List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
 			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "", false));
 			return templateSettingsList;
 
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 
@@ -146,14 +146,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	@ModelAttribute("settingsTrialList")
 	public List<TemplateSetting> getTrialSettingsList() {
 		try {
-			TemplateSetting templateSettingFilter =
+			final TemplateSetting templateSettingFilter =
 					new TemplateSetting(null, Integer.valueOf(this.getCurrentProjectId()), null, this.getTrialTool(), null, null);
 			templateSettingFilter.setIsDefaultToNull();
-			List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
+			final List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
 			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "", false));
 			return templateSettingsList;
 
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 
@@ -166,7 +166,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param requiredFields the required fields
 	 * @return the list
 	 */
-	protected List<Integer> buildVariableIDList(String requiredFields) {
+	protected List<Integer> buildVariableIDList(final String requiredFields) {
 		return FieldbookUtil.getInstance().buildVariableIDList(requiredFields);
 	}
 
@@ -177,10 +177,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param hasLabels the has labels
 	 * @return the list
 	 */
-	protected List<String> buildRequiredVariablesLabel(String requiredFields, boolean hasLabels) {
+	protected List<String> buildRequiredVariablesLabel(final String requiredFields, final boolean hasLabels) {
 
-		List<String> requiredVariables = new ArrayList<>();
-		StringTokenizer token = new StringTokenizer(requiredFields, ",");
+		final List<String> requiredVariables = new ArrayList<>();
+		final StringTokenizer token = new StringTokenizer(requiredFields, ",");
 		while (token.hasMoreTokens()) {
 			if (hasLabels) {
 				requiredVariables.add(AppConstants.getString(token.nextToken() + AppConstants.LABEL.getString()));
@@ -199,17 +199,17 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param requiredFields the required fields
 	 * @return the boolean[]
 	 */
-	protected boolean[] buildRequiredVariablesFlag(String requiredFields) {
-		StringTokenizer token = new StringTokenizer(requiredFields, ",");
-		boolean[] requiredVariablesFlag = new boolean[token.countTokens()];
+	protected boolean[] buildRequiredVariablesFlag(final String requiredFields) {
+		final StringTokenizer token = new StringTokenizer(requiredFields, ",");
+		final boolean[] requiredVariablesFlag = new boolean[token.countTokens()];
 		for (int i = 0; i < requiredVariablesFlag.length; i++) {
 			requiredVariablesFlag[i] = false;
 		}
 		return requiredVariablesFlag;
 	}
 
-	private String getCodeCounterpart(String idCodeNameCombination) {
-		StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, "|");
+	private String getCodeCounterpart(final String idCodeNameCombination) {
+		final StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, "|");
 		if (tokenizer.hasMoreTokens()) {
 			tokenizer.nextToken();
 			return tokenizer.nextToken();
@@ -229,32 +229,32 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the list
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected List<SettingDetail> updateRequiredFields(List<Integer> requiredVariables, List<String> requiredVariablesLabel,
-			boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels, String idCodeNameCombination, String role)
-			throws MiddlewareException {
+	protected List<SettingDetail> updateRequiredFields(final List<Integer> requiredVariables, final List<String> requiredVariablesLabel,
+			final boolean[] requiredVariablesFlag, final List<SettingDetail> variables, final boolean hasLabels,
+			final String idCodeNameCombination, final String role) throws MiddlewareException {
 
 		// create a map of id and its id-code-name combination
-		Map<String, String> idCodeNameMap = new HashMap<>();
+		final Map<String, String> idCodeNameMap = new HashMap<>();
 		if (idCodeNameCombination != null & !idCodeNameCombination.isEmpty()) {
-			StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
+			final StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
 			if (tokenizer.hasMoreTokens()) {
 				while (tokenizer.hasMoreTokens()) {
-					String pair = tokenizer.nextToken();
-					StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+					final String pair = tokenizer.nextToken();
+					final StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
 					idCodeNameMap.put(tokenizerPair.nextToken(), pair);
 				}
 			}
 		}
 
 		// save hidden conditions in a map
-		Map<String, SettingDetail> variablesMap = new HashMap<>();
+		final Map<String, SettingDetail> variablesMap = new HashMap<>();
 		if (variables != null) {
-			for (SettingDetail variable : this.userSelection.getRemovedConditions()) {
+			for (final SettingDetail variable : this.userSelection.getRemovedConditions()) {
 				variablesMap.put(variable.getVariable().getCvTermId().toString(), variable);
 			}
 		}
 
-		for (SettingDetail variable : variables) {
+		for (final SettingDetail variable : variables) {
 			Integer stdVar;
 			if (variable.getVariable().getCvTermId() != null) {
 				stdVar = variable.getVariable().getCvTermId();
@@ -267,7 +267,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 			// mark required variables that are already in the list
 			int ctr = 0;
-			for (Integer requiredFactor : requiredVariables) {
+			for (final Integer requiredFactor : requiredVariables) {
 				String code = "0";
 				// if the variable is in the id-code-name combination list, get code counterpart of id
 				if (idCodeNameMap.get(String.valueOf(stdVar)) != null) {
@@ -288,16 +288,17 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		// add required variables that are not in existing nursery
 		for (int i = 0; i < requiredVariablesFlag.length; i++) {
 			if (!requiredVariablesFlag[i]) {
-				SettingDetail newSettingDetail = this.createSettingDetail(requiredVariables.get(i), requiredVariablesLabel.get(i), role);
+				final SettingDetail newSettingDetail =
+						this.createSettingDetail(requiredVariables.get(i), requiredVariablesLabel.get(i), role);
 				newSettingDetail.setOrder((requiredVariables.size() - i) * -1);
 				// set value of breeding method code if name is provided but id is not
 				if (TermId.BREEDING_METHOD_CODE.getId() == requiredVariables.get(i)
 						&& variablesMap.get(String.valueOf(TermId.BREEDING_METHOD.getId())) != null
 						&& variablesMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) == null) {
-					Method method =
+						final Method method =
 							this.fieldbookMiddlewareService.getMethodByName(variablesMap
 									.get(String.valueOf(TermId.BREEDING_METHOD.getId())).getValue());
-					newSettingDetail.setValue(method.getMid() == null ? "" : method.getMid().toString());
+						newSettingDetail.setValue(method.getMid() == null ? "" : method.getMid().toString());
 				}
 
 				variables.add(newSettingDetail);
@@ -308,7 +309,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		Collections.sort(variables, new Comparator<SettingDetail>() {
 
 			@Override
-			public int compare(SettingDetail o1, SettingDetail o2) {
+			public int compare(final SettingDetail o1, final SettingDetail o2) {
 				return o1.getOrder() - o2.getOrder();
 			}
 		});
@@ -325,9 +326,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the list
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected List<SettingDetail> buildDefaultVariables(List<SettingDetail> defaults, String requiredFields,
-			List<String> requiredVariablesLabel, String role) throws MiddlewareException {
-		StringTokenizer token = new StringTokenizer(requiredFields, ",");
+	protected List<SettingDetail> buildDefaultVariables(final List<SettingDetail> defaults, final String requiredFields,
+			final List<String> requiredVariablesLabel, final String role) throws MiddlewareException {
+		final StringTokenizer token = new StringTokenizer(requiredFields, ",");
 		int ctr = 0;
 		while (token.hasMoreTokens()) {
 			defaults.add(this.createSettingDetail(Integer.valueOf(token.nextToken()), requiredVariablesLabel.get(ctr), role));
@@ -344,9 +345,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the setting detail
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected SettingDetail createSettingDetail(int id, String name, String role) throws MiddlewareException {
+	protected SettingDetail createSettingDetail(final int id, final String name, final String role) throws MiddlewareException {
 		String variableName;
-		StandardVariable stdVar = this.getStandardVariable(id);
+		final StandardVariable stdVar = this.getStandardVariable(id);
 		if (name != null && !name.isEmpty()) {
 			variableName = name;
 		} else {
@@ -354,7 +355,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 
 		if (stdVar != null && stdVar.getName() != null) {
-			SettingVariable svar =
+			final SettingVariable svar =
 					new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
 							stdVar.getMethod().getName(), role, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
 							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints()
@@ -365,9 +366,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 			svar.setOperation(Operation.ADD);
-			List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
-			SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
-			PhenotypicType type = StringUtils.isEmpty(role) ? null : PhenotypicType.getPhenotypicTypeByName(role);
+			final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
+			final SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
+			final PhenotypicType type = StringUtils.isEmpty(role) ? null : PhenotypicType.getPhenotypicTypeByName(role);
 			settingDetail.setRole(type);
 			stdVar.setPhenotypicType(type);
 			if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
@@ -378,13 +379,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
 			}
 			settingDetail.setPossibleValuesToJson(possibleValues);
-			List<ValueReference> possibleValuesFavorite =
+			final List<ValueReference> possibleValuesFavorite =
 					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID());
 			settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 			settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 			return settingDetail;
 		} else {
-			SettingVariable svar = new SettingVariable();
+			final SettingVariable svar = new SettingVariable();
 			svar.setCvTermId(stdVar.getId());
 			return new SettingDetail(svar, null, null, false);
 		}
@@ -396,8 +397,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param var the var
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected void populateSettingVariable(SettingVariable var) throws MiddlewareException {
-		StandardVariable stdvar = this.getStandardVariable(var.getCvTermId());
+	protected void populateSettingVariable(final SettingVariable var) throws MiddlewareException {
+		final StandardVariable stdvar = this.getStandardVariable(var.getCvTermId());
 		if (stdvar != null) {
 			var.setDescription(stdvar.getDescription());
 			var.setProperty(stdvar.getProperty().getName());
@@ -423,10 +424,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the setting variable
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected SettingVariable getSettingVariable(int id) throws MiddlewareException {
-		StandardVariable stdVar = this.getStandardVariable(id);
+	protected SettingVariable getSettingVariable(final int id) throws MiddlewareException {
+		final StandardVariable stdVar = this.getStandardVariable(id);
 		if (stdVar != null) {
-			SettingVariable svar =
+			final SettingVariable svar =
 					new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale()
 							.getName(), stdVar.getMethod().getName(), null, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
 							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints()
@@ -459,11 +460,12 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param conditions the conditions
 	 * @param folderId the folder id
 	 */
-	public void createStudyDetails(Workbook workbook, List<SettingDetail> conditions, Integer folderId, Integer studyId) {
+	public void createStudyDetails(final Workbook workbook, final List<SettingDetail> conditions, final Integer folderId,
+			final Integer studyId) {
 		if (workbook.getStudyDetails() == null) {
 			workbook.setStudyDetails(new StudyDetails());
 		}
-		StudyDetails studyDetails = workbook.getStudyDetails();
+		final StudyDetails studyDetails = workbook.getStudyDetails();
 
 		if (conditions != null && !conditions.isEmpty()) {
 			if (studyId != null) {
@@ -489,9 +491,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param variableId
 	 * @return
 	 */
-	public boolean hasMeasurementDataEntered(int variableId) {
-		for (MeasurementRow row : this.userSelection.getMeasurementRowList()) {
-			for (MeasurementData data : row.getDataList()) {
+	public boolean hasMeasurementDataEntered(final int variableId) {
+		for (final MeasurementRow row : this.userSelection.getMeasurementRowList()) {
+			for (final MeasurementData data : row.getDataList()) {
 				if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
 					return true;
 				}
@@ -500,10 +502,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return false;
 	}
 
-	public boolean hasMeasurementDataEnteredForVariables(List<Integer> variableIds, UserSelection userSelectionTemp) {
-		for (Integer variableId : variableIds) {
-			for (MeasurementRow row : userSelectionTemp.getMeasurementRowList()) {
-				for (MeasurementData data : row.getDataList()) {
+	public boolean hasMeasurementDataEnteredForVariables(final List<Integer> variableIds, final UserSelection userSelectionTemp) {
+		for (final Integer variableId : variableIds) {
+			for (final MeasurementRow row : userSelectionTemp.getMeasurementRowList()) {
+				for (final MeasurementData data : row.getDataList()) {
 					if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
 						return true;
 					}
@@ -513,8 +515,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return false;
 	}
 
-	protected void removeVariablesFromExistingNursery(List<SettingDetail> settingList, String variables) {
-		Iterator<SettingDetail> variableList = settingList.iterator();
+	protected void removeVariablesFromExistingNursery(final List<SettingDetail> settingList, final String variables) {
+		final Iterator<SettingDetail> variableList = settingList.iterator();
 		while (variableList.hasNext()) {
 			if (SettingsUtil.inHideVariableFields(variableList.next().getVariable().getCvTermId(), variables)) {
 				variableList.remove();
@@ -522,14 +524,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	protected void resetSessionVariablesAfterSave(Workbook workbook, boolean isNursery) throws MiddlewareException {
+	protected void resetSessionVariablesAfterSave(final Workbook workbook, final boolean isNursery) throws MiddlewareException {
 
 		// update variables in measurement rows
 		if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
-			MeasurementRow row = this.userSelection.getMeasurementRowList().get(0);
-			for (MeasurementVariable mvar : workbook.getMeasurementDatasetVariables()) {
+			final MeasurementRow row = this.userSelection.getMeasurementRowList().get(0);
+			for (final MeasurementVariable mvar : workbook.getMeasurementDatasetVariables()) {
 				if (mvar.getOperation() == Operation.UPDATE) {
-					for (MeasurementVariable rvar : row.getMeasurementVariables()) {
+					for (final MeasurementVariable rvar : row.getMeasurementVariables()) {
 						if (mvar.getTermId() == rvar.getTermId()) {
 							if (mvar.getName() != null && !"".equals(mvar.getName())) {
 								rvar.setName(mvar.getName());
@@ -557,12 +559,12 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 		// reorder variates based on measurementrow order
 		int index = 0;
-		List<MeasurementVariable> newVariatesList = new ArrayList<>();
+		final List<MeasurementVariable> newVariatesList = new ArrayList<>();
 		if (this.userSelection.getMeasurementRowList() != null) {
-			for (MeasurementRow row : this.userSelection.getMeasurementRowList()) {
+			for (final MeasurementRow row : this.userSelection.getMeasurementRowList()) {
 				if (index == 0) {
-					for (MeasurementData var : row.getDataList()) {
-						for (MeasurementVariable varToArrange : workbook.getVariates()) {
+					for (final MeasurementData var : row.getDataList()) {
+						for (final MeasurementVariable varToArrange : workbook.getVariates()) {
 							if (var.getMeasurementVariable().getTermId() == varToArrange.getTermId()) {
 								newVariatesList.add(varToArrange);
 							}
@@ -603,12 +605,12 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	private void removeRemovedVariablesFromSession(List<SettingDetail> variableList, List<SettingDetail> removedVariableList) {
+	private void removeRemovedVariablesFromSession(final List<SettingDetail> variableList, final List<SettingDetail> removedVariableList) {
 		if (removedVariableList == null || variableList == null) {
 			return;
 		}
-		for (SettingDetail setting : removedVariableList) {
-			Iterator<SettingDetail> iter = variableList.iterator();
+		for (final SettingDetail setting : removedVariableList) {
+			final Iterator<SettingDetail> iter = variableList.iterator();
 			while (iter.hasNext()) {
 				if (iter.next().getVariable().getCvTermId().equals(setting.getVariable().getCvTermId())) {
 					iter.remove();
@@ -617,12 +619,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	private void removeDeletedVariablesInMeasurements(List<SettingDetail> deletedList, Workbook workbook, UserSelection userSelection) {
+	private void removeDeletedVariablesInMeasurements(final List<SettingDetail> deletedList, final Workbook workbook,
+			final UserSelection userSelection) {
 		if (deletedList != null) {
-			for (SettingDetail setting : deletedList) {
+			for (final SettingDetail setting : deletedList) {
 				// remove from header
 				if (workbook.getMeasurementDatasetVariables() != null) {
-					Iterator<MeasurementVariable> iter = workbook.getMeasurementDatasetVariables().iterator();
+					final Iterator<MeasurementVariable> iter = workbook.getMeasurementDatasetVariables().iterator();
 					while (iter.hasNext()) {
 						if (iter.next().getTermId() == setting.getVariable().getCvTermId()) {
 							iter.remove();
@@ -639,12 +642,12 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param settingList the setting list
 	 * @param variableList the variable list
 	 */
-	private void removeDeletedSetUpdate(List<SettingDetail> settingList, List<MeasurementVariable> variableList) {
+	private void removeDeletedSetUpdate(final List<SettingDetail> settingList, final List<MeasurementVariable> variableList) {
 		if (settingList != null) {
 			// remove all variables having delete and add operation
-			Iterator<SettingDetail> iter = settingList.iterator();
+			final Iterator<SettingDetail> iter = settingList.iterator();
 			while (iter.hasNext()) {
-				SettingDetail setting = iter.next();
+				final SettingDetail setting = iter.next();
 				if (setting.getVariable().getOperation() != null && setting.getVariable().getOperation().equals(Operation.DELETE)) {
 					iter.remove();
 				} else if (setting.getVariable().getOperation() != null && setting.getVariable().getOperation().equals(Operation.ADD)) {
@@ -655,9 +658,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 		if (variableList != null) {
 			// remove all variables having delete and add operation
-			Iterator<MeasurementVariable> iter2 = variableList.iterator();
+			final Iterator<MeasurementVariable> iter2 = variableList.iterator();
 			while (iter2.hasNext()) {
-				MeasurementVariable var = iter2.next();
+				final MeasurementVariable var = iter2.next();
 				if (var.getOperation() != null && var.getOperation().equals(Operation.DELETE)) {
 					iter2.remove();
 				} else if (var.getOperation() != null && var.getOperation().equals(Operation.ADD)) {
@@ -670,7 +673,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	/**
 	 * Reset deleted lists.
 	 */
-	private void resetDeletedLists(UserSelection userSelection) {
+	private void resetDeletedLists(final UserSelection userSelection) {
 		userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
 		userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
 		userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
@@ -684,11 +687,11 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param traits the traits
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	private void removeSelectionVariatesFromTraits(List<SettingDetail> traits) throws MiddlewareQueryException {
+	private void removeSelectionVariatesFromTraits(final List<SettingDetail> traits) throws MiddlewareQueryException {
 		if (traits != null) {
-			Iterator<SettingDetail> iter = traits.iterator();
+			final Iterator<SettingDetail> iter = traits.iterator();
 			while (iter.hasNext()) {
-				SettingDetail var = iter.next();
+				final SettingDetail var = iter.next();
 				if (SettingsUtil.inPropertyList(this.ontologyService.getProperty(var.getVariable().getProperty()).getId())) {
 					iter.remove();
 				}
@@ -702,10 +705,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param settingList
 	 * @param hiddenVarList
 	 */
-	private void removeHiddenVariables(List<SettingDetail> settingList, String hiddenVarList) {
+	private void removeHiddenVariables(final List<SettingDetail> settingList, final String hiddenVarList) {
 		if (settingList != null) {
 
-			Iterator<SettingDetail> iter = settingList.iterator();
+			final Iterator<SettingDetail> iter = settingList.iterator();
 			while (iter.hasNext()) {
 				if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(), hiddenVarList)) {
 					iter.remove();
@@ -714,37 +717,37 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	private void addNameVariables(List<SettingDetail> removedConditions, Workbook workbook, String idCodeNamePairs)
+	private void addNameVariables(final List<SettingDetail> removedConditions, final Workbook workbook, final String idCodeNamePairs)
 			throws MiddlewareException {
-		Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
-		Map<String, SettingDetail> removedConditionsMap = new HashMap<>();
+		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
+		final Map<String, SettingDetail> removedConditionsMap = new HashMap<>();
 		if (workbook != null && idCodeNamePairs != null && !"".equalsIgnoreCase(idCodeNamePairs)) {
 			// we get a map so we can check easily instead of traversing it again
-			for (MeasurementVariable var : workbook.getConditions()) {
+			for (final MeasurementVariable var : workbook.getConditions()) {
 				if (var != null) {
 					studyConditionMap.put(Integer.toString(var.getTermId()), var);
 				}
 			}
 
 			if (removedConditions != null) {
-				for (SettingDetail setting : removedConditions) {
+				for (final SettingDetail setting : removedConditions) {
 					if (setting != null) {
 						removedConditionsMap.put(Integer.toString(setting.getVariable().getCvTermId()), setting);
 					}
 				}
 			}
-			String programUUID = this.contextUtil.getCurrentProgramUUID();
-			StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
+			final String programUUID = this.contextUtil.getCurrentProgramUUID();
+			final StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
 			if (tokenizer.hasMoreTokens()) {
 				// we iterate it
 				while (tokenizer.hasMoreTokens()) {
-					String pair = tokenizer.nextToken();
-					StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
-					String idTermId = tokenizerPair.nextToken();
-					String codeTermId = tokenizerPair.nextToken();
-					String nameTermId = tokenizerPair.nextToken();
+					final String pair = tokenizer.nextToken();
+					final StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+					final String idTermId = tokenizerPair.nextToken();
+					final String codeTermId = tokenizerPair.nextToken();
+					final String nameTermId = tokenizerPair.nextToken();
 
-					Method method = this.getMethod(studyConditionMap, idTermId, codeTermId, programUUID);
+					final Method method = this.getMethod(studyConditionMap, idTermId, codeTermId, programUUID);
 
 					// add code to the removed conditions if code is not yet in the list
 					if (studyConditionMap.get(idTermId) != null && studyConditionMap.get(codeTermId) != null
@@ -764,8 +767,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	protected Method getMethod(Map<String, MeasurementVariable> studyConditionMap, String idTermId, String codeTermId, String programUUID)
-			throws MiddlewareQueryException {
+	protected Method getMethod(final Map<String, MeasurementVariable> studyConditionMap, final String idTermId, final String codeTermId,
+			final String programUUID) throws MiddlewareQueryException {
 		Method method = null;
 		if (studyConditionMap.get(idTermId) != null) {
 			method =
@@ -779,13 +782,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return method;
 	}
 
-	private void addSettingDetail(List<SettingDetail> removedConditions, Map<String, SettingDetail> removedConditionsMap,
-			Map<String, MeasurementVariable> studyConditionMap, String id, String value, String userId) throws MiddlewareException {
+	private void addSettingDetail(final List<SettingDetail> removedConditions, final Map<String, SettingDetail> removedConditionsMap,
+			final Map<String, MeasurementVariable> studyConditionMap, final String id, final String value, final String userId)
+			throws MiddlewareException {
 		if (removedConditionsMap.get(id) == null) {
 			removedConditions.add(this.createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName(), null));
 		}
 		if (removedConditions != null) {
-			for (SettingDetail setting : removedConditions) {
+			for (final SettingDetail setting : removedConditions) {
 				if (setting.getVariable().getCvTermId() == Integer.parseInt(id)) {
 					setting.setValue(value);
 					setting.getVariable().setOperation(Operation.UPDATE);
@@ -794,28 +798,28 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	private void removeCodeVariablesIfNeeded(List<SettingDetail> variableList, String idCodeNamePairs) {
-		Map<String, SettingDetail> variableListMap = new HashMap<>();
+	private void removeCodeVariablesIfNeeded(final List<SettingDetail> variableList, final String idCodeNamePairs) {
+		final Map<String, SettingDetail> variableListMap = new HashMap<>();
 		if (variableList != null) {
-			for (SettingDetail setting : variableList) {
+			for (final SettingDetail setting : variableList) {
 				if (setting != null) {
 					variableListMap.put(Integer.toString(setting.getVariable().getCvTermId()), setting);
 				}
 			}
 		}
 
-		StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
+		final StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
 		if (tokenizer.hasMoreTokens()) {
 			// we iterate it
 			while (tokenizer.hasMoreTokens()) {
-				String pair = tokenizer.nextToken();
-				StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
-				String idTermId = tokenizerPair.nextToken();
-				String codeTermId = tokenizerPair.nextToken();
+				final String pair = tokenizer.nextToken();
+				final StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+				final String idTermId = tokenizerPair.nextToken();
+				final String codeTermId = tokenizerPair.nextToken();
 
-				Iterator<SettingDetail> iter = variableList.iterator();
+				final Iterator<SettingDetail> iter = variableList.iterator();
 				while (iter.hasNext()) {
-					Integer cvTermId = iter.next().getVariable().getCvTermId();
+					final Integer cvTermId = iter.next().getVariable().getCvTermId();
 					if (cvTermId.equals(Integer.parseInt(codeTermId)) && variableListMap.get(idTermId) != null) {
 						iter.remove();
 					}
@@ -824,14 +828,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	protected List<SettingDetail> getCheckVariables(List<SettingDetail> nurseryLevelConditions, CreateNurseryForm form) {
-		List<SettingDetail> checkVariables =
+	protected List<SettingDetail> getCheckVariables(final List<SettingDetail> nurseryLevelConditions, final CreateNurseryForm form) {
+		final List<SettingDetail> checkVariables =
 				this.getSettingDetailsOfSection(nurseryLevelConditions, form, AppConstants.CHECK_VARIABLES.getString());
 		// set order by id
 		Collections.sort(checkVariables, new Comparator<SettingDetail>() {
 
 			@Override
-			public int compare(SettingDetail o1, SettingDetail o2) {
+			public int compare(final SettingDetail o1, final SettingDetail o2) {
 				return o1.getVariable().getCvTermId() - o2.getVariable().getCvTermId();
 			}
 		});
@@ -844,14 +848,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param nurseryLevelConditions the nursery level conditions
 	 * @return the basic details
 	 */
-	protected List<SettingDetail> getSettingDetailsOfSection(List<SettingDetail> nurseryLevelConditions, CreateNurseryForm form,
-			String variableList) {
-		List<SettingDetail> settingDetails = new ArrayList<>();
+	protected List<SettingDetail> getSettingDetailsOfSection(final List<SettingDetail> nurseryLevelConditions,
+			final CreateNurseryForm form, final String variableList) {
+		final List<SettingDetail> settingDetails = new ArrayList<>();
 
-		StringTokenizer token = new StringTokenizer(variableList, ",");
+		final StringTokenizer token = new StringTokenizer(variableList, ",");
 		while (token.hasMoreTokens()) {
-			Integer termId = Integer.valueOf(token.nextToken());
-			boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form);
+			final Integer termId = Integer.valueOf(token.nextToken());
+			final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form);
 			if (!isFound) {
 				this.addSettingDetails(settingDetails, termId, form);
 			}
@@ -860,10 +864,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return settingDetails;
 	}
 
-	private boolean searchAndSetValuesOfSpecialVariables(List<SettingDetail> nurseryLevelConditions, Integer termId,
-			List<SettingDetail> settingDetails, CreateNurseryForm form) {
+	private boolean searchAndSetValuesOfSpecialVariables(final List<SettingDetail> nurseryLevelConditions, final Integer termId,
+			final List<SettingDetail> settingDetails, final CreateNurseryForm form) {
 		boolean isFound = false;
-		for (SettingDetail setting : nurseryLevelConditions) {
+		for (final SettingDetail setting : nurseryLevelConditions) {
 			if (termId.equals(setting.getVariable().getCvTermId())) {
 				isFound = true;
 				this.setCreatedByAndStudyUpdate(termId, setting, form);
@@ -873,13 +877,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return isFound;
 	}
 
-	private void setCreatedByAndStudyUpdate(Integer termId, SettingDetail setting, CreateNurseryForm form) {
+	private void setCreatedByAndStudyUpdate(final Integer termId, final SettingDetail setting, final CreateNurseryForm form) {
 		if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
 			try {
 				if (setting.getValue() != null && !setting.getValue().isEmpty() && NumberUtils.isNumber(setting.getValue())) {
 					form.setCreatedBy(this.fieldbookService.getPersonByUserId(Integer.parseInt(setting.getValue())));
 				}
-			} catch (MiddlewareQueryException e) {
+			} catch (final MiddlewareQueryException e) {
 				SettingsController.LOG.error(e.getMessage(), e);
 			}
 		} else if (termId.equals(Integer.valueOf(TermId.STUDY_UPDATE.getId()))) {
@@ -887,25 +891,25 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	private void addSettingDetails(List<SettingDetail> settingDetails, Integer termId, CreateNurseryForm form) {
+	private void addSettingDetails(final List<SettingDetail> settingDetails, final Integer termId, final CreateNurseryForm form) {
 		try {
 			settingDetails.add(this.createSettingDetail(termId, null, null));
 			if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
 				form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.getCurrentIbdbUserId()));
 			}
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 	}
 
-	protected void setUserSelection(UserSelection userSelection) {
+	protected void setUserSelection(final UserSelection userSelection) {
 		this.userSelection = userSelection;
 	}
 
-	protected void addVariableInDeletedList(List<SettingDetail> currentList, int mode, int variableId, boolean createNewSettingIfNull)
-			throws MiddlewareException {
+	protected void addVariableInDeletedList(final List<SettingDetail> currentList, final int mode, final int variableId,
+			final boolean createNewSettingIfNull) throws MiddlewareException {
 		SettingDetail newSetting = null;
-		for (SettingDetail setting : currentList) {
+		for (final SettingDetail setting : currentList) {
 			if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
 				newSetting = setting;
 			}
@@ -915,7 +919,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			try {
 				newSetting = this.createSettingDetail(variableId, "", "");
 				newSetting.getVariable().setOperation(Operation.UPDATE);
-			} catch (MiddlewareQueryException e) {
+			} catch (final MiddlewareQueryException e) {
 				LOG.error(e.getMessage(), e);
 			}
 		} else if (newSetting == null) {

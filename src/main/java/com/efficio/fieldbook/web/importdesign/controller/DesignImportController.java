@@ -184,9 +184,9 @@ public class DesignImportController extends SettingsController {
 		if (isNursery) {
 			// reset
 			this.cancelImportDesign();
-			this.userSelection.setExperimentalDesignVariables(null);
+			this.userSelection.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>());
 			this.userSelection.setExpDesignParams(null);
-			this.userSelection.setExpDesignVariables(null);
+			this.userSelection.setExpDesignVariables(new ArrayList<Integer>());
 
 			resultsMap.put(DesignImportController.SUCCESS,
 					this.messageSource.getMessage("design.import.change.design.success.message.nursery", null, Locale.ENGLISH));

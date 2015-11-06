@@ -75,9 +75,6 @@ var ImportDesign = (function() {
 					backdrop : 'static',
 					keyboard : true
 				});
-				showErrorMessage(designImportErrorHeader,
-						'Please choose a germplasm list before you can import a design.');
-
 			}
 		
 		},

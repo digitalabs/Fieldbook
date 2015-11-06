@@ -175,6 +175,9 @@ public class EditNurseryController extends SettingsController {
 
 			model.addAttribute("baselineTraitsSegment",VariableType.TRAIT.getId());
 			model.addAttribute("selectionVariatesSegment",VariableType.SELECTION_METHOD.getId());
+			model.addAttribute("studyLevelDetailType", VariableType.STUDY_DETAIL.getId().intValue());
+			model.addAttribute("plotLevelDetailType", VariableType.GERMPLASM_DESCRIPTOR.getId().intValue());
+			model.addAttribute("nurseryConditionsType", VariableType.NURSERY_CONDITION.getId().intValue());
 
 			model.addAttribute("createNurseryForm", form);
 

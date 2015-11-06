@@ -224,8 +224,11 @@ public class CreateNurseryController extends SettingsController {
 		this.assignDefaultValues(form);
 		form.setMeasurementRowList(new ArrayList<MeasurementRow>());
 
-		model.addAttribute("baselineTraitsSegment",VariableType.TRAIT.getId().intValue());
-		model.addAttribute("selectionVariatesSegment",VariableType.SELECTION_METHOD.getId().intValue());
+		model.addAttribute("baselineTraitsSegment", VariableType.TRAIT.getId().intValue());
+		model.addAttribute("selectionVariatesSegment", VariableType.SELECTION_METHOD.getId().intValue());
+		model.addAttribute("studyLevelDetailType", VariableType.STUDY_DETAIL.getId().intValue());
+		model.addAttribute("plotLevelDetailType", VariableType.GERMPLASM_DESCRIPTOR.getId().intValue());
+		model.addAttribute("nurseryConditionsType", VariableType.NURSERY_CONDITION.getId().intValue());
 
 		// create check variables for specify checks
 		this.setCheckVariablesInForm(form2);

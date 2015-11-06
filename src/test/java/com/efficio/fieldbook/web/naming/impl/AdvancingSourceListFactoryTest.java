@@ -4,12 +4,22 @@ package com.efficio.fieldbook.web.naming.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TermSummary;
+import org.generationcp.middleware.domain.ontology.Scale;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.context.NoSuchMessageException;
 
 import com.efficio.fieldbook.util.FieldbookException;
@@ -17,6 +27,20 @@ import com.efficio.fieldbook.util.FieldbookException;
 import junit.framework.Assert;
 
 public class AdvancingSourceListFactoryTest {
+	
+	@Mock
+	ContextUtil contextUtil;
+
+	@Mock
+	OntologyVariableDataManager ontologyVariableDataManager;
+
+	@InjectMocks
+	AdvancingSourceListFactory factory = new AdvancingSourceListFactory();
+
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+	}
 	
 	/**
 	 * A simple test that makes sure proper handling for the season setting on a Workbook is handled for naming
@@ -26,8 +50,20 @@ public class AdvancingSourceListFactoryTest {
 	 */
 	@Test
 	public void testGetSeason() throws FieldbookException {
-		AdvancingSourceListFactory factory = new AdvancingSourceListFactory();
-
+		
+		Integer termId = 8371;
+		Integer categoryId = 10030;
+		String programUUID = "TESTUUID";
+		
+		TermSummary ts = new TermSummary(categoryId, "testChoice", "SelectedSeasonCode");
+		Scale scale = new Scale();
+		scale.addCategory(ts);
+		Variable variable = new Variable();
+		variable.setScale(scale);
+		
+		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(programUUID);
+		Mockito.when(ontologyVariableDataManager.getVariable(programUUID, termId, true, false)).thenReturn(variable);
+		
 		// 5 possible season settings to test
 		TermId[] seasonTerms = new TermId[6];
 		seasonTerms[0] = TermId.SEASON;
@@ -100,7 +136,7 @@ public class AdvancingSourceListFactoryTest {
 		} else if (mv.getTermId() == TermId.SEASON_MONTH.getId()) {
 			season = "SEASONMONTH";
 		}	else if (mv.getTermId() == TermId.SEASON_VAR.getId()) {
-			season = "SelectedSeasonCode";
+			season = "10030";
 		}	else if (mv.getTermId() == TermId.SEASON_VAR_TEXT.getId()) {
 			season = "FreeTextSeason";
 		}	else if (mv.getTermId() == TermId.SEASON_WET.getId()) {

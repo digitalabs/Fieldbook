@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -22,7 +23,10 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TermSummary;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -46,7 +50,7 @@ public class AdvancingSourceListFactory {
 	private FieldbookService fieldbookMiddlewareService;
 	
 	@Resource
-	private OntologyService ontologyService;
+	private OntologyVariableDataManager ontologyVariableDataManager;
 	
 	@Resource
 	private ContextUtil contextUtil;
@@ -243,7 +247,13 @@ public class AdvancingSourceListFactory {
 					// the user has failed to choose a season from the available choices
 					throw new FieldbookException("nursery.advance.no.code.selected.for.season");
 				}
-				season = mv.getValue();
+				//season = mv.getValue();
+				Variable variable = ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), mv.getTermId(), true, false);
+				for (TermSummary ts : variable.getScale().getCategories()) {
+					if(ts.getId().equals(Integer.valueOf(mv.getValue()))){
+						season = ts.getDefinition();
+					}
+				}
 			}	else if (mv.getTermId() == TermId.SEASON_VAR_TEXT.getId()) {
 				season = mv.getValue();
 			}	else if (mv.getTermId() == TermId.SEASON_WET.getId()) {
@@ -281,4 +291,14 @@ public class AdvancingSourceListFactory {
 		}
 		return methodId;
 	}
+	
+	void setOntologyVariableDataManager(OntologyVariableDataManager ontologyVariableDataManager) {
+		this.ontologyVariableDataManager = ontologyVariableDataManager;
+	}
+
+	
+	void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
+
 }

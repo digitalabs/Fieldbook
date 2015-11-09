@@ -353,7 +353,7 @@ var ImportDesign = (function() {
 		},
 
 		hideChangeButton : function() {
-			if ($('#measurementDataExisting').val() == 'true') {
+			if ($('#measurementDataExisting').val() === 'true') {
 				$('#change-import-design-url-link').hide();
 			} else {
 				$('#change-import-design-url-link').show();

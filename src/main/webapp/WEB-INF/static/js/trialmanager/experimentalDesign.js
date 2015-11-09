@@ -149,7 +149,7 @@
 						function(response) {
 							if (response.valid === true) {
 								//we show the preview
-								showSuccessfulMessage('', 'Experimental Design generated successfully, please check the measurements tab');
+								showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
 								TrialManagerDataService.clearUnappliedChangesFlag();
 								TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 								$('#chooseGermplasmAndChecks').data('replace', '1');

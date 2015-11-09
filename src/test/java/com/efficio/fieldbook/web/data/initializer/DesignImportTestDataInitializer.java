@@ -89,12 +89,12 @@ public class DesignImportTestDataInitializer {
 		csvData.put(0, Lists.newArrayList("TRIAL_INSTANCE", "SITE_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO", "BLOCK_NO", "AflavER_1_5"));
 
 		// csv data
-		csvData.put(1, Lists.newArrayList("1", "Laguna", "1", "1", "1", "1", "1"));
-		csvData.put(2, Lists.newArrayList("1", "Laguna", "2", "2", "1", "1", "2"));
-		csvData.put(3, Lists.newArrayList("2", "Bicol", "1", "6", "1", "1", "3"));
-		csvData.put(4, Lists.newArrayList("2", "Bicol", "2", "7", "1", "1", "2"));
-		csvData.put(5, Lists.newArrayList("3", "Bulacan", "1", "11", "1", "2", "3"));
-		csvData.put(6, Lists.newArrayList("3", "Bulacan", "2", "12", "1", "2", "1"));
+		csvData.put(1, Lists.newArrayList("1", "Laguna", "1", "1", "1", "1", ""));
+		csvData.put(2, Lists.newArrayList("1", "Laguna", "2", "2", "1", "1", ""));
+		csvData.put(3, Lists.newArrayList("2", "Bicol", "1", "6", "1", "", ""));
+		csvData.put(4, Lists.newArrayList("2", "Bicol", "2", "7", "1", "1", ""));
+		csvData.put(5, Lists.newArrayList("3", "Bulacan", "1", "11", "1", "2", ""));
+		csvData.put(6, Lists.newArrayList("3", "Bulacan", "2", "12", "1", "2", ""));
 
 		return csvData;
 

@@ -228,6 +228,12 @@ public class DesignImportValidator {
 		for (final Map.Entry<Integer, List<String>> row : csvRowData.entrySet()) {
 			final List<String> columnValues = row.getValue();
 			final String valueToValidate = columnValues.get(columnIndex);
+
+			// skip validation if the value is null or empty
+			if (valueToValidate == null || valueToValidate.length() == 0) {
+				return;
+			}
+
 			if (!NumericVariableValidator.isValidNumericValueForNumericVariable(valueToValidate, standardVariable, numericScale)) {
 				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.invalid.value", null,
 						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
@@ -249,6 +255,11 @@ public class DesignImportValidator {
 		for (final Map.Entry<Integer, List<String>> row : csvRowData.entrySet()) {
 			final List<String> columnValues = row.getValue();
 			final String valueToValidate = columnValues.get(columnIndex);
+
+			// skip validation if the value is null or empty
+			if (valueToValidate == null || valueToValidate.length() == 0) {
+				return;
+			}
 
 			// categorical variables are expected to have possible values, otherwise this will cause data error
 			if (!standardVariable.hasEnumerations()) {

@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -31,7 +30,6 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -232,35 +230,35 @@ public class AdvancingSourceListFactory {
 		}
 	}
 	
-	 String getSeason(Workbook workbook) throws FieldbookException {
+	String getSeason(Workbook workbook) throws FieldbookException {
 		String season = "";
 		for (MeasurementVariable mv : workbook.getConditions()) {
-			if(mv.getTermId() == TermId.SEASON.getId()) {
+			if (mv.getTermId() == TermId.SEASON.getId()) {
 				season = mv.getValue();
 			} else if (mv.getTermId() == TermId.SEASON_DRY.getId()) {
 				season = mv.getValue();
 			} else if (mv.getTermId() == TermId.SEASON_MONTH.getId()) {
 				season = mv.getValue();
-			}	else if (mv.getTermId() == TermId.SEASON_VAR.getId()) {
+			} else if (mv.getTermId() == TermId.SEASON_VAR.getId()) {
 				// categorical variable - the value returned is the key to another term
-				if(mv.getValue().equals("")) {
+				if (mv.getValue().equals("")) {
 					// the user has failed to choose a season from the available choices
 					throw new FieldbookException("nursery.advance.no.code.selected.for.season");
 				}
-				//season = mv.getValue();
+				// season = mv.getValue();
 				Variable variable = ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), mv.getTermId(), true, false);
 				for (TermSummary ts : variable.getScale().getCategories()) {
-					if(ts.getId().equals(Integer.valueOf(mv.getValue()))){
+					if (ts.getId().equals(Integer.valueOf(mv.getValue()))) {
 						season = ts.getDefinition();
 					}
 				}
-			}	else if (mv.getTermId() == TermId.SEASON_VAR_TEXT.getId()) {
+			} else if (mv.getTermId() == TermId.SEASON_VAR_TEXT.getId()) {
 				season = mv.getValue();
-			}	else if (mv.getTermId() == TermId.SEASON_WET.getId()) {
+			} else if (mv.getTermId() == TermId.SEASON_WET.getId()) {
 				season = mv.getValue();
-			}			
+			}
 		}
-		
+
 		return season;
 	}
 

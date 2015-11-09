@@ -27,7 +27,7 @@ import com.efficio.fieldbook.util.FieldbookException;
 import junit.framework.Assert;
 
 public class AdvancingSourceListFactoryTest {
-	
+
 	@Mock
 	ContextUtil contextUtil;
 
@@ -41,29 +41,28 @@ public class AdvancingSourceListFactoryTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 	}
-	
+
 	/**
-	 * A simple test that makes sure proper handling for the season setting on a Workbook is handled for naming
-	 * rule processing
+	 * A simple test that makes sure proper handling for the season setting on a Workbook is handled for naming rule processing
 	 * 
 	 * @throws FieldbookException
 	 */
 	@Test
 	public void testGetSeason() throws FieldbookException {
-		
+
 		Integer termId = 8371;
 		Integer categoryId = 10030;
 		String programUUID = "TESTUUID";
-		
+
 		TermSummary ts = new TermSummary(categoryId, "testChoice", "SelectedSeasonCode");
 		Scale scale = new Scale();
 		scale.addCategory(ts);
 		Variable variable = new Variable();
 		variable.setScale(scale);
-		
+
 		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(programUUID);
 		Mockito.when(ontologyVariableDataManager.getVariable(programUUID, termId, true, false)).thenReturn(variable);
-		
+
 		// 5 possible season settings to test
 		TermId[] seasonTerms = new TermId[6];
 		seasonTerms[0] = TermId.SEASON;
@@ -74,31 +73,31 @@ public class AdvancingSourceListFactoryTest {
 		seasonTerms[5] = TermId.SEASON_WET;
 		for (int i = 0; i < seasonTerms.length; i++) {
 			List<MeasurementVariable> conditions = new ArrayList<>();
-			conditions.add(createConditionFixture(seasonTerms[i]));			
+			conditions.add(createConditionFixture(seasonTerms[i]));
 			Workbook workbook = new Workbook();
 			workbook.setConditions(conditions);
 			String season = factory.getSeason(workbook);
 			Assert.assertNotNull(season);
 			Assert.assertNotSame("", season);
-			if(i == 0){
+			if (i == 0) {
 				Assert.assertEquals("SEASON", season);
 			}
-			if(i == 1){
+			if (i == 1) {
 				Assert.assertEquals("SEASONDRY", season);
 			}
-			if(i == 2){
+			if (i == 2) {
 				Assert.assertEquals("SEASONMONTH", season);
 			}
-			if(i == 3){
+			if (i == 3) {
 				Assert.assertEquals("SelectedSeasonCode", season);
 			}
-			if(i == 4){
+			if (i == 4) {
 				Assert.assertEquals("FreeTextSeason", season);
 			}
-			if(i == 5){
+			if (i == 5) {
 				Assert.assertEquals("SEASONWET", season);
 			}
-		}	
+		}
 	}
 
 	/**
@@ -117,33 +116,33 @@ public class AdvancingSourceListFactoryTest {
 		MeasurementVariable mv = new MeasurementVariable();
 		mv.setTermId(TermId.SEASON_VAR.getId());
 		mv.setValue("");
-		conditions.add(mv);			
+		conditions.add(mv);
 		Workbook workbook = new Workbook();
 		workbook.setConditions(conditions);
 		season = factory.getSeason(workbook);
 		Assert.assertEquals(season, "");
-		
+
 	}
 
 	private MeasurementVariable createConditionFixture(TermId term) {
 		String season = "";
 		MeasurementVariable mv = new MeasurementVariable();
 		mv.setTermId(term.getId());
-		if(term.getId() == TermId.SEASON.getId()) {
+		if (term.getId() == TermId.SEASON.getId()) {
 			season = "SEASON";
 		} else if (mv.getTermId() == TermId.SEASON_DRY.getId()) {
 			season = "SEASONDRY";
 		} else if (mv.getTermId() == TermId.SEASON_MONTH.getId()) {
 			season = "SEASONMONTH";
-		}	else if (mv.getTermId() == TermId.SEASON_VAR.getId()) {
+		} else if (mv.getTermId() == TermId.SEASON_VAR.getId()) {
 			season = "10030";
-		}	else if (mv.getTermId() == TermId.SEASON_VAR_TEXT.getId()) {
+		} else if (mv.getTermId() == TermId.SEASON_VAR_TEXT.getId()) {
 			season = "FreeTextSeason";
-		}	else if (mv.getTermId() == TermId.SEASON_WET.getId()) {
+		} else if (mv.getTermId() == TermId.SEASON_WET.getId()) {
 			season = "SEASONWET";
-		}			
+		}
 		mv.setValue(season);
-		
+
 		return mv;
 	}
 

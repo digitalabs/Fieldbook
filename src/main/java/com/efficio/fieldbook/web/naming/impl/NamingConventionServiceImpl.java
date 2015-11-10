@@ -31,6 +31,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
@@ -59,7 +60,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private GermplasmDataManager germplasmDataManger;
 
 	@Resource
-	private AdvancingSourceListFactory factory;
+	private AdvancingSourceListFactory advancingSourceListFactory;
 
 	@Resource
 	private ProcessCodeService processCodeService;
@@ -71,7 +72,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private ResourceBundleMessageSource messageSource;
 
 	@Override
-	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException {
+	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException, MiddlewareQueryException, FieldbookException {
 
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
 		final Map<String, Method> breedingMethodCodeMap = new HashMap<>();
@@ -101,7 +102,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	private AdvancingSourceList createAdvancingSourceList(final AdvancingNursery advanceInfo, Workbook workbook,
-			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) {
+			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws MiddlewareQueryException, FieldbookException {
 
 		final int nurseryId = advanceInfo.getStudy().getId();
 		if (workbook == null) {
@@ -109,7 +110,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 		final Study nursery = advanceInfo.getStudy();
 
-		return this.factory.create(workbook, advanceInfo, nursery, breedingMethodMap, breedingMethodCodeMap);
+		return this.advancingSourceListFactory.createAdvancingSourceList(workbook, advanceInfo, nursery, breedingMethodMap, breedingMethodCodeMap);
 	}
 
 	private void updatePlantsSelectedIfNecessary(final AdvancingSourceList list, final AdvancingNursery info) {

@@ -10,15 +10,18 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.util.JsonIoException;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -47,14 +50,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.*;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.util.JsonIoException;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class CreateNurseryController.
@@ -154,6 +169,8 @@ public class CreateNurseryController extends SettingsController {
 			CreateNurseryController.LOG.error(e.getMessage(), e);
 			this.addErrorMessageToResult(form, e);
 		}
+
+		this.addVariableSectionIdentifiers(model);
 		model.addAttribute("createNurseryForm", form);
 
 		return super.showAjaxPage(model, CreateNurseryController.URL_SETTINGS);
@@ -224,11 +241,7 @@ public class CreateNurseryController extends SettingsController {
 		this.assignDefaultValues(form);
 		form.setMeasurementRowList(new ArrayList<MeasurementRow>());
 
-		model.addAttribute("baselineTraitsSegment", VariableType.TRAIT.getId().intValue());
-		model.addAttribute("selectionVariatesSegment", VariableType.SELECTION_METHOD.getId().intValue());
-		model.addAttribute("studyLevelDetailType", VariableType.STUDY_DETAIL.getId().intValue());
-		model.addAttribute("plotLevelDetailType", VariableType.GERMPLASM_DESCRIPTOR.getId().intValue());
-		model.addAttribute("nurseryConditionsType", VariableType.NURSERY_CONDITION.getId().intValue());
+		this.addVariableSectionIdentifiers(model);
 
 		// create check variables for specify checks
 		this.setCheckVariablesInForm(form2);

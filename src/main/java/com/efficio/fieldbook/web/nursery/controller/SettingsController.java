@@ -969,6 +969,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		this.fieldbookService = fieldbookService;
 	}
 
+	/**
+	 * These model attributes are used in UI JS code e.g. in createNursery.html and editNursery.html to identify various sections on screen
+	 * where variables appear.
+	 */
 	protected void addVariableSectionIdentifiers(Model model) {
 		model.addAttribute("baselineTraitsSegment", VariableType.TRAIT.getId().intValue());
 		model.addAttribute("selectionVariatesSegment", VariableType.SELECTION_METHOD.getId().intValue());

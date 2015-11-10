@@ -106,7 +106,7 @@ public class EditNurseryController extends SettingsController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName ()
 	 */
 
@@ -123,7 +123,7 @@ public class EditNurseryController extends SettingsController {
 
 	/**
 	 * Use existing nursery.
-	 * 
+	 *
 	 * @param form the form
 	 * @param form2 the form2
 	 * @param nurseryId the nursery id
@@ -136,7 +136,7 @@ public class EditNurseryController extends SettingsController {
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form2, @PathVariable final int nurseryId,
 			@RequestParam(required = false) final String isAjax, final Model model, final HttpServletRequest request,
 			final RedirectAttributes redirectAttributes)
-			throws MiddlewareQueryException {
+					throws MiddlewareQueryException {
 
 		final String contextParams = this.retrieveContextInfo(request);
 
@@ -150,7 +150,7 @@ public class EditNurseryController extends SettingsController {
 				}
 
 				// settings part
-				workbook = setUpForWorkbook(form, nurseryId);
+				workbook = this.setUpForWorkbook(form, nurseryId);
 				// nursery-level
 				this.setUpNurserylevelConditions(workbook, form, form2, nurseryId);
 
@@ -173,11 +173,7 @@ public class EditNurseryController extends SettingsController {
 
 			this.setFormStaticData(form, contextParams, workbook);
 
-			model.addAttribute("baselineTraitsSegment",VariableType.TRAIT.getId());
-			model.addAttribute("selectionVariatesSegment",VariableType.SELECTION_METHOD.getId());
-			model.addAttribute("studyLevelDetailType", VariableType.STUDY_DETAIL.getId().intValue());
-			model.addAttribute("plotLevelDetailType", VariableType.GERMPLASM_DESCRIPTOR.getId().intValue());
-			model.addAttribute("nurseryConditionsType", VariableType.NURSERY_CONDITION.getId().intValue());
+			this.addVariableSectionIdentifiers(model);
 
 			model.addAttribute("createNurseryForm", form);
 
@@ -188,7 +184,7 @@ public class EditNurseryController extends SettingsController {
 			redirectAttributes.addFlashAttribute(
 					"redirectErrorMessage",
 					this.errorHandlerService.getErrorMessagesAsString(e.getCode(), new String[] {AppConstants.NURSERY.getString(),
-							StringUtils.capitalize(AppConstants.NURSERY.getString()), AppConstants.NURSERY.getString()}, "\n"));
+						StringUtils.capitalize(AppConstants.NURSERY.getString()), AppConstants.NURSERY.getString()}, "\n"));
 			return "redirect:" + ManageNurseriesController.URL;
 		} catch (final MiddlewareException e) {
 			EditNurseryController.LOG.debug(e.getMessage(), e);
@@ -299,7 +295,7 @@ public class EditNurseryController extends SettingsController {
 
 	/**
 	 * Sets the measurements data.
-	 * 
+	 *
 	 * @param form the form
 	 * @param workbook the workbook
 	 */
@@ -316,7 +312,7 @@ public class EditNurseryController extends SettingsController {
 
 	/**
 	 * Show.
-	 * 
+	 *
 	 * @param form the form
 	 * @param form2 the form2
 	 * @param model the model
@@ -338,7 +334,7 @@ public class EditNurseryController extends SettingsController {
 
 	/**
 	 * Assign default values.
-	 * 
+	 *
 	 * @param form the form
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
@@ -374,7 +370,7 @@ public class EditNurseryController extends SettingsController {
 
 	/**
 	 * Submit.
-	 * 
+	 *
 	 * @param form the form
 	 * @param model the model
 	 * @return the string
@@ -485,7 +481,7 @@ public class EditNurseryController extends SettingsController {
 	}
 
 	private void setSettingDetailRoleForVariables(final CreateNurseryForm form, final List<SettingDetail> studyLevelVariables,
-				final List<SettingDetail> baselineTraits) {
+			final List<SettingDetail> baselineTraits) {
 		SettingsUtil.setSettingDetailRole(VariableType.STUDY_DETAIL.getId(), studyLevelVariables,
 				this.userSelection, this.fieldbookMiddlewareService,
 				this.contextUtil.getCurrentProgramUUID());
@@ -514,8 +510,8 @@ public class EditNurseryController extends SettingsController {
 
 	protected List<SettingDetail> combineVariates(final CreateNurseryForm form) {
 
-        this.setVariableTypeForTrait(form);
-        this.setVariableTypeForSelectionMethod(form);
+		this.setVariableTypeForTrait(form);
+		this.setVariableTypeForSelectionMethod(form);
 
 		List<SettingDetail> baselineTraits = form.getBaselineTraitVariables();
 		final List<SettingDetail> baselineTraitsSession = this.userSelection.getSelectionVariates();
@@ -539,23 +535,23 @@ public class EditNurseryController extends SettingsController {
 		return baselineTraits;
 	}
 
-    private void setVariableTypeForTrait(final CreateNurseryForm form) {
-        if(form.getBaselineTraitVariables() != null) {
-            //NOTE: Setting variable type as TRAIT for Trait Variable List
-            for(SettingDetail selectionDetail : form.getBaselineTraitVariables()){
-                selectionDetail.setVariableType(VariableType.TRAIT);
-            }
-        }
-    }
+	private void setVariableTypeForTrait(final CreateNurseryForm form) {
+		if(form.getBaselineTraitVariables() != null) {
+			//NOTE: Setting variable type as TRAIT for Trait Variable List
+			for(SettingDetail selectionDetail : form.getBaselineTraitVariables()){
+				selectionDetail.setVariableType(VariableType.TRAIT);
+			}
+		}
+	}
 
-    private void setVariableTypeForSelectionMethod (final CreateNurseryForm form) {
-        if(form.getSelectionVariatesVariables() != null){
-            //NOTE: Setting variable type as SELECTION_METHOD for Trait Variable List
-            for(SettingDetail selectionDetail : form.getSelectionVariatesVariables()){
-                selectionDetail.setVariableType(VariableType.SELECTION_METHOD);
-            }
-        }
-    }
+	private void setVariableTypeForSelectionMethod (final CreateNurseryForm form) {
+		if(form.getSelectionVariatesVariables() != null){
+			//NOTE: Setting variable type as SELECTION_METHOD for Trait Variable List
+			for(SettingDetail selectionDetail : form.getSelectionVariatesVariables()){
+				selectionDetail.setVariableType(VariableType.SELECTION_METHOD);
+			}
+		}
+	}
 
 	private List<SettingDetail> combineStudyConditions(final CreateNurseryForm form) {
 		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
@@ -669,7 +665,7 @@ public class EditNurseryController extends SettingsController {
 
 	/**
 	 * Sets the form static data.
-	 * 
+	 *
 	 * @param form the new form static data
 	 */
 	protected void setFormStaticData(final CreateNurseryForm form, final String contextParams, final Workbook workbook) {
@@ -702,7 +698,7 @@ public class EditNurseryController extends SettingsController {
 			if (datasetId == null) {
 				datasetId =
 						this.fieldbookMiddlewareService
-								.getMeasurementDatasetId(workbook.getStudyDetails().getId(), workbook.getStudyName());
+						.getMeasurementDatasetId(workbook.getStudyDetails().getId(), workbook.getStudyName());
 			}
 			form.setHasFieldmap(this.fieldbookMiddlewareService.hasFieldMap(datasetId));
 		} catch (final MiddlewareException e) {
@@ -712,7 +708,7 @@ public class EditNurseryController extends SettingsController {
 
 	/**
 	 * Check measurement data.
-	 * 
+	 *
 	 * @param form the form
 	 * @param model the model
 	 * @param mode the mode
@@ -737,7 +733,7 @@ public class EditNurseryController extends SettingsController {
 
 	/**
 	 * Reset session variables after save.
-	 * 
+	 *
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
@@ -766,7 +762,7 @@ public class EditNurseryController extends SettingsController {
 
 	/**
 	 * Show variable details.
-	 * 
+	 *
 	 * @param id the id
 	 * @return the string
 	 */

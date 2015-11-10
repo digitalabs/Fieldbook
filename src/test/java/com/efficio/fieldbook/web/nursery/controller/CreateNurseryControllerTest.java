@@ -1,15 +1,11 @@
+
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
 import junit.framework.Assert;
+
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -25,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -34,11 +31,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+
 /**
  * Created by cyrus on 21/10/2015.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CreateNurseryControllerTest {
+
 	private final String TEST_PROG_UUID = "UUID_STRING";
 
 	private MockHttpServletRequest request;
@@ -75,39 +80,40 @@ public class CreateNurseryControllerTest {
 	protected FieldbookProperties fieldbookProperties;
 
 	@InjectMocks
-	private CreateNurseryController controller = new CreateNurseryController();
+	private final CreateNurseryController controller = new CreateNurseryController();
 
 	@Before
 	public void setUp() throws Exception {
-		request = new MockHttpServletRequest();
-		session = (MockHttpSession)request.getSession();
-		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+		this.request = new MockHttpServletRequest();
+		this.session = (MockHttpSession) this.request.getSession();
+		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(this.request));
 
-		Project project = new Project();
+		final Project project = new Project();
 		project.setProjectId(1L);
-		CropType cropType = new CropType();
+		final CropType cropType = new CropType();
 		cropType.setCropName("Test");
 		project.setCropType(cropType);
-		Mockito.when(contextUtil.getProjectInContext()).thenReturn(project);
-		session.setAttribute(ContextConstants.SESSION_ATTR_CONTEXT_INFO,contextInfo);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
+		this.session.setAttribute(ContextConstants.SESSION_ATTR_CONTEXT_INFO, this.contextInfo);
 
-		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(TEST_PROG_UUID);
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(Mockito.anyInt(),Mockito.eq(TEST_PROG_UUID))).thenReturn(createTestVariable());
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(this.TEST_PROG_UUID);
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.eq(this.TEST_PROG_UUID))).thenReturn(
+				this.createTestVariable());
 
 	}
 
 	@Test
 	public void testShow() throws Exception {
-		controller.show(createNurseryForm,importGermplasmListForm,model,session,request);
+		this.controller.show(this.createNurseryForm, this.importGermplasmListForm, this.model, this.session, this.request);
 
-		ArgumentCaptor<Integer> traitArg = ArgumentCaptor.forClass(Integer.class);
-		ArgumentCaptor<Integer> selectionMethodArg = ArgumentCaptor.forClass(Integer.class);
+		final ArgumentCaptor<Integer> traitArg = ArgumentCaptor.forClass(Integer.class);
+		final ArgumentCaptor<Integer> selectionMethodArg = ArgumentCaptor.forClass(Integer.class);
 
 		// make sure we have set the model attributes correctly
-		Mockito.verify(model,Mockito.times(1)).addAttribute(Mockito.eq("baselineTraitsSegment"),traitArg.capture());
-		Mockito.verify(model,Mockito.times(1)).addAttribute(Mockito.eq("selectionVariatesSegment"),selectionMethodArg.capture());
-		Assert.assertEquals(VariableType.TRAIT.getId(),traitArg.getValue());
-		Assert.assertEquals(VariableType.SELECTION_METHOD.getId(),selectionMethodArg.getValue());
+		Mockito.verify(this.model, Mockito.times(1)).addAttribute(Matchers.eq("baselineTraitsSegment"), traitArg.capture());
+		Mockito.verify(this.model, Mockito.times(1)).addAttribute(Matchers.eq("selectionVariatesSegment"), selectionMethodArg.capture());
+		Assert.assertEquals(VariableType.TRAIT.getId(), traitArg.getValue());
+		Assert.assertEquals(VariableType.SELECTION_METHOD.getId(), selectionMethodArg.getValue());
 
 	}
 

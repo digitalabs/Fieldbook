@@ -102,7 +102,7 @@ public class ValidationServiceImpl implements ValidationService {
 					MeasurementVariable variate = data.getMeasurementVariable();
 					if (!this.isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
 						throw new WorkbookParserException(this.messageSource.getMessage(ValidationServiceImpl.ERROR_NUMERIC_VARIABLE_VALUE,
-								new Object[] {variate.getName()}, locale));
+								new Object[] {variate.getName(), data.getValue()}, locale));
 
 					}
 				}

@@ -81,7 +81,7 @@ public class LabelPrintingServiceImplTest {
 	private InventoryService inventoryMiddlewareService;
 
 	@InjectMocks
-	LabelPrintingServiceImpl serviceDUT = new LabelPrintingServiceImpl();
+	LabelPrintingServiceImpl labelPrintingServiceImpl = new LabelPrintingServiceImpl();
 
 	@Before
 	public void beforeTest() throws Exception {
@@ -151,19 +151,19 @@ public class LabelPrintingServiceImplTest {
 	@Test
 	public void testGetAllLabelPrintingPresets() throws Exception {
 		final List<LabelPrintingPresets> presetList =
-				this.serviceDUT.getAllLabelPrintingPresets(LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue());
+				this.labelPrintingServiceImpl.getAllLabelPrintingPresets(LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue());
 
 		Assert.assertTrue("should have more than 1 item", presetList.size() > 1);
 	}
 
 	@Test
 	public void testGetLabelPrintingPresetConfig() throws Exception {
-		String config = this.serviceDUT.getLabelPrintingPresetConfig(LabelPrintingServiceImplTest.TEST_PRESET_ID,
+		String config = this.labelPrintingServiceImpl.getLabelPrintingPresetConfig(LabelPrintingServiceImplTest.TEST_PRESET_ID,
 				LabelPrintingPresets.STANDARD_PRESET);
 
 		Assert.assertEquals("should retrieve a standard preset config", LabelPrintingServiceImplTest.STANDARD_PRESET_CONFIG, config);
 
-		config = this.serviceDUT.getLabelPrintingPresetConfig(LabelPrintingServiceImplTest.TEST_PRESET_ID,
+		config = this.labelPrintingServiceImpl.getLabelPrintingPresetConfig(LabelPrintingServiceImplTest.TEST_PRESET_ID,
 				LabelPrintingPresets.PROGRAM_PRESET);
 
 		Assert.assertEquals("should retrieve a program preset config", LabelPrintingServiceImplTest.PROGRAM_PRESET_CONFIG, config);
@@ -172,11 +172,11 @@ public class LabelPrintingServiceImplTest {
 	@Test
 	public void testGetLabelPrintingProgramPreset() throws Exception {
 		LabelPrintingPresets preset =
-				this.serviceDUT.getLabelPrintingPreset(LabelPrintingServiceImplTest.TEST_PRESET_ID, LabelPrintingPresets.STANDARD_PRESET);
+				this.labelPrintingServiceImpl.getLabelPrintingPreset(LabelPrintingServiceImplTest.TEST_PRESET_ID, LabelPrintingPresets.STANDARD_PRESET);
 
 		Assert.assertEquals("should retrieve a standard preset", LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME, preset.getName());
 
-		preset = this.serviceDUT.getLabelPrintingPreset(LabelPrintingServiceImplTest.TEST_PRESET_ID, LabelPrintingPresets.PROGRAM_PRESET);
+		preset = this.labelPrintingServiceImpl.getLabelPrintingPreset(LabelPrintingServiceImplTest.TEST_PRESET_ID, LabelPrintingPresets.PROGRAM_PRESET);
 
 		Assert.assertEquals("should retrieve a program preset", LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME, preset.getName());
 
@@ -185,19 +185,19 @@ public class LabelPrintingServiceImplTest {
 	@Test
 	public void testGetAllLabelPrintingPresetsByName() throws Exception {
 		final List<LabelPrintingPresets> programPresetList =
-				this.serviceDUT.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
+				this.labelPrintingServiceImpl.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
 						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.PROGRAM_PRESET);
 
 		final List<LabelPrintingPresets> emptyProgramPresetList =
-				this.serviceDUT.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
+				this.labelPrintingServiceImpl.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
 						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.PROGRAM_PRESET);
 
 		final List<LabelPrintingPresets> standardPresetList =
-				this.serviceDUT.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
+				this.labelPrintingServiceImpl.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
 						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.STANDARD_PRESET);
 
 		final List<LabelPrintingPresets> emptyStandardPresetList =
-				this.serviceDUT.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
+				this.labelPrintingServiceImpl.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
 						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.STANDARD_PRESET);
 
 		Assert.assertTrue("should have an item", standardPresetList.size() > 0);
@@ -226,7 +226,7 @@ public class LabelPrintingServiceImplTest {
 		.thenReturn(InventoryDetailsTestDataInitializer.createInventoryDetailList(numOfEntries));
 
 		Assert.assertTrue("Expecting to return true for germplasm list entries with inventory details.",
-				this.serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
+				this.labelPrintingServiceImpl.hasInventoryValues(studyId, workbook.isNursery()));
 	}
 
 	@Test
@@ -241,18 +241,18 @@ public class LabelPrintingServiceImplTest {
 		.thenReturn(new ArrayList<InventoryDetails>());
 
 		Assert.assertFalse("Expecting to return false for germplasm list entries with inventory details.",
-				this.serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
+				this.labelPrintingServiceImpl.hasInventoryValues(studyId, workbook.isNursery()));
 	}
 
 	@Test
 	public void testEncodeBardcodeInEnglishCharacters() {
-		final BitMatrix bitMatrix = this.serviceDUT.encodeBarcode("Test", 100, 200);
+		final BitMatrix bitMatrix = this.labelPrintingServiceImpl.encodeBarcode("Test", 100, 200);
 		Assert.assertNotNull("Bit Matrix Barcode should be not null since characters are in English ASCII", bitMatrix);
 	}
 
 	@Test
 	public void testEncodeBardcodeInNonEnglishCharacters() {
-		final BitMatrix bitMatrix = this.serviceDUT.encodeBarcode("乙七九", 100, 200);
+		final BitMatrix bitMatrix = this.labelPrintingServiceImpl.encodeBarcode("乙七九", 100, 200);
 		Assert.assertNull("Bit Matrix Barcode should be null since parameter is non-english ascii", bitMatrix);
 	}
 
@@ -263,7 +263,7 @@ public class LabelPrintingServiceImplTest {
 		final LabelPrintingProcessingParams params = LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParams();
 		final MeasurementRow measurementRow = MeasurementRowTestDataInitializer.createMeasurementRow();
 
-		final Boolean hasData = this.serviceDUT.populateValuesFromMeasurement(params, measurementRow, 1, values, true);
+		final Boolean hasData = this.labelPrintingServiceImpl.populateValuesFromMeasurement(params, measurementRow, 1, values, true);
 
 		Assert.assertFalse("should be false", hasData);
 	}
@@ -276,7 +276,7 @@ public class LabelPrintingServiceImplTest {
 		final MeasurementRow measurementRow = MeasurementRowTestDataInitializer.createMeasurementRow();
 
 		final Boolean hasData =
-				this.serviceDUT.populateValuesFromMeasurement(params, measurementRow, TermId.TRIAL_LOCATION.getId(), values, true);
+				this.labelPrintingServiceImpl.populateValuesFromMeasurement(params, measurementRow, TermId.TRIAL_LOCATION.getId(), values, true);
 
 		Assert.assertTrue("Should be true", hasData);
 		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila",
@@ -300,7 +300,7 @@ public class LabelPrintingServiceImplTest {
 
 		params.setEnvironmentData(MeasurementRowTestDataInitializer.createMeasurementRow());
 
-		this.serviceDUT.populateValuesForTrial(params, workbook, testTermId, values, true);
+		this.labelPrintingServiceImpl.populateValuesForTrial(params, workbook, testTermId, values, true);
 
 		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila",
 				values.get(TermId.TRIAL_LOCATION.getId()));
@@ -315,7 +315,7 @@ public class LabelPrintingServiceImplTest {
 		final Map<Integer, String> values = new HashMap<>();
 		final LabelPrintingProcessingParams params = LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParams();
 
-		this.serviceDUT.populateValuesForNursery(params, workbook, testTermId, values, true);
+		this.labelPrintingServiceImpl.populateValuesForNursery(params, workbook, testTermId, values, true);
 
 		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "", values.get(TermId.TRIAL_LOCATION.getId()));
 	}
@@ -331,7 +331,7 @@ public class LabelPrintingServiceImplTest {
 		final Workbook workbook =
 				WorkbookDataUtil.getTestWorkbook(LabelPrintingServiceImplTest.NO_OF_GERMPLASM_LIST_OBSERVATION, StudyType.N);
 
-		this.serviceDUT.processUserSpecificLabelsForInstance(params, workbook);
+		this.labelPrintingServiceImpl.processUserSpecificLabelsForInstance(params, workbook);
 
 		Assert.assertEquals(LabelPrintingServiceImplTest.NO_OF_STOCK_LIST_ENTRIES, params.getInstanceInfo().getFieldMapLabels().size());
 	}
@@ -348,7 +348,7 @@ public class LabelPrintingServiceImplTest {
 		params.setInstanceMeasurements(workbook.getObservations());
 		params.setAllFieldIDs(new ArrayList<Integer>());
 
-		this.serviceDUT.processUserSpecificLabelsForInstance(params, workbook);
+		this.labelPrintingServiceImpl.processUserSpecificLabelsForInstance(params, workbook);
 
 		Assert.assertEquals(LabelPrintingServiceImplTest.NO_OF_GERMPLASM_LIST_OBSERVATION,
 				params.getInstanceInfo().getFieldMapLabels().size());
@@ -366,7 +366,7 @@ public class LabelPrintingServiceImplTest {
 				FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList(isStockList);
 		final LabelPrintingProcessingParams params = LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParams();
 
-		this.serviceDUT.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params, this.measurementData,
+		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params, this.measurementData,
 				this.environmentData);
 		try{
 			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0))
@@ -389,7 +389,7 @@ public class LabelPrintingServiceImplTest {
 				FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList(isStockList);
 		final LabelPrintingProcessingParams params = LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParams();
 
-		this.serviceDUT.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params, this.measurementData,
+		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params, this.measurementData,
 				this.environmentData);
 		try{
 			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0))
@@ -415,7 +415,7 @@ public class LabelPrintingServiceImplTest {
 		final LabelPrintingProcessingParams params =
 				LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParamsWithAllFieldIDs();
 
-		this.serviceDUT.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params, this.measurementData,
+		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params, this.measurementData,
 				this.environmentData);
 
 		try{

@@ -4,6 +4,8 @@ package com.efficio.fieldbook.web.data.initializer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.generationcp.middleware.data.initializer.FieldMapLabelTestDataInitializer;
+import org.generationcp.middleware.data.initializer.GermplasmListTestDataInitializer;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.pojos.GermplasmList;
 

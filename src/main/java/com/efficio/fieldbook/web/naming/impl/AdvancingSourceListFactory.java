@@ -59,7 +59,7 @@ public class AdvancingSourceListFactory {
 	private static final String DEFAULT_TEST_VALUE = "T";
 
 	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery,
-			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws MiddlewareQueryException, FieldbookException {
+			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
 		AdvancingSourceList list = new AdvancingSourceList();
 
@@ -184,7 +184,7 @@ public class AdvancingSourceListFactory {
 		return germplasm;
 	}
 
-	private void assignSourceGermplasms(AdvancingSourceList list, Map<Integer, Method> breedingMethodMap) throws MiddlewareQueryException {
+	private void assignSourceGermplasms(AdvancingSourceList list, Map<Integer, Method> breedingMethodMap) throws FieldbookException {
 		List<Integer> gidList = new ArrayList<Integer>();
 
 		if (list != null && list.getRows() != null && !list.getRows().isEmpty()) {
@@ -205,8 +205,13 @@ public class AdvancingSourceListFactory {
 						&& NumberUtils.isNumber(source.getGermplasm().getGid())) {
 					Germplasm germplasm = germplasmMap.get(source.getGermplasm().getGid().toString());
 
-					this.checkIfGermplasmIsExisting(germplasm);
-
+					if (germplasm == null) {
+						// we throw exception because germplasm is not existing
+						Locale locale = LocaleContextHolder.getLocale();
+						throw new FieldbookException(this.messageSource.getMessage("error.advancing.germplasm.not.existing", new String[] {},
+								locale));
+					}
+					
 					source.getGermplasm().setGpid1(germplasm.getGpid1());
 					source.getGermplasm().setGpid2(germplasm.getGpid2());
 					source.getGermplasm().setGnpgs(germplasm.getGnpgs());
@@ -218,15 +223,6 @@ public class AdvancingSourceListFactory {
 				}
 			}
 
-		}
-	}
-
-	protected void checkIfGermplasmIsExisting(Germplasm germplasm) throws MiddlewareQueryException {
-		if (germplasm == null) {
-			// we throw exception because germplasm is not existing
-			Locale locale = LocaleContextHolder.getLocale();
-			throw new MiddlewareQueryException(this.messageSource.getMessage("error.advancing.germplasm.not.existing", new String[] {},
-					locale));
 		}
 	}
 	

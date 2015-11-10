@@ -33,7 +33,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
@@ -82,7 +81,7 @@ public class LabelPrintingServiceImplTest {
 	private InventoryService inventoryMiddlewareService;
 
 	@InjectMocks
-	LabelPrintingServiceImpl serviceDUT = Mockito.spy(new LabelPrintingServiceImpl());
+	LabelPrintingServiceImpl serviceDUT = new LabelPrintingServiceImpl();
 
 	@Before
 	public void beforeTest() throws Exception {
@@ -115,7 +114,7 @@ public class LabelPrintingServiceImplTest {
 		Mockito.when(
 				this.presetDataManager.getProgramPresetFromProgramAndToolByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
 						LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23, ToolSection.FBK_LABEL_PRINTING.name()))
-				.thenReturn(new ArrayList<ProgramPreset>());
+						.thenReturn(new ArrayList<ProgramPreset>());
 
 		Mockito.when(this.presetDataManager.getProgramPresetFromProgramAndTool(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23,
 				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(notEmptySearchResult);
@@ -144,7 +143,7 @@ public class LabelPrintingServiceImplTest {
 
 		Mockito.when(this.workbenchService.getStandardPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID)).thenReturn(sp);
 		Mockito.when(this.presetDataManager.getProgramPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID))
-				.thenReturn(searchResultPreset);
+		.thenReturn(searchResultPreset);
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID);
 	}
@@ -222,9 +221,9 @@ public class LabelPrintingServiceImplTest {
 		final GermplasmList germplasmList = germplasmLists.get(0);
 		final Integer numOfEntries = germplasmList.getListData().size();
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY))
-				.thenReturn(germplasmLists);
+		.thenReturn(germplasmLists);
 		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId(), null))
-				.thenReturn(InventoryDetailsTestDataInitializer.createInventoryDetailList(numOfEntries));
+		.thenReturn(InventoryDetailsTestDataInitializer.createInventoryDetailList(numOfEntries));
 
 		Assert.assertTrue("Expecting to return true for germplasm list entries with inventory details.",
 				this.serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
@@ -237,9 +236,9 @@ public class LabelPrintingServiceImplTest {
 		final List<GermplasmList> germplasmLists = GermplasmListTestDataInitializer.createGermplasmLists(1);
 		final GermplasmList germplasmList = germplasmLists.get(0);
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY))
-				.thenReturn(germplasmLists);
+		.thenReturn(germplasmLists);
 		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId()))
-				.thenReturn(new ArrayList<InventoryDetails>());
+		.thenReturn(new ArrayList<InventoryDetails>());
 
 		Assert.assertFalse("Expecting to return false for germplasm list entries with inventory details.",
 				this.serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
@@ -290,8 +289,6 @@ public class LabelPrintingServiceImplTest {
 
 		final Integer testTermId = TermId.TRIAL_LOCATION.getId();
 
-		Mockito.doReturn(testTermId).when(this.serviceDUT).getCounterpartTermId(Matchers.anyInt());
-
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 		final Map<Integer, String> values = new HashMap<>();
 		final LabelPrintingProcessingParams params = LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParams();
@@ -314,8 +311,6 @@ public class LabelPrintingServiceImplTest {
 
 		final Integer testTermId = TermId.TRIAL_LOCATION.getId();
 
-		Mockito.doReturn(testTermId).when(this.serviceDUT).getCounterpartTermId(Matchers.anyInt());
-
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 		final Map<Integer, String> values = new HashMap<>();
 		final LabelPrintingProcessingParams params = LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParams();
@@ -331,17 +326,10 @@ public class LabelPrintingServiceImplTest {
 		params.setInstanceInfo(FieldMapTrialInstanceInfoTestDataInitializer.createFieldMapTrialInstanceInfo());
 		params.setIsStockList(true);
 		params.setInventoryDetailsMap(InventoryDetailsTestDataInitializer.createInventoryDetailsMap());
+		params.setAllFieldIDs(new ArrayList<Integer>());
 
 		final Workbook workbook =
 				WorkbookDataUtil.getTestWorkbook(LabelPrintingServiceImplTest.NO_OF_GERMPLASM_LIST_OBSERVATION, StudyType.N);
-
-		final Map<Integer, String> userSpecifiedLabels = new HashMap<Integer, String>();
-		for (final InventoryDetails inventoryDetail : params.getInventoryDetailsMap().values()) {
-			Mockito.doReturn(userSpecifiedLabels).when(this.serviceDUT).extractDataForUserSpecifiedLabels(params, null, inventoryDetail,
-					true, workbook);
-			Mockito.doReturn(userSpecifiedLabels).when(this.serviceDUT).extractDataForUserSpecifiedLabels(params, null, inventoryDetail,
-					false, workbook);
-		}
 
 		this.serviceDUT.processUserSpecificLabelsForInstance(params, workbook);
 
@@ -358,14 +346,7 @@ public class LabelPrintingServiceImplTest {
 		params.setInstanceInfo(FieldMapTrialInstanceInfoTestDataInitializer.createFieldMapTrialInstanceInfo());
 		params.setIsStockList(false);
 		params.setInstanceMeasurements(workbook.getObservations());
-
-		final Map<Integer, String> userSpecifiedLabels = new HashMap<Integer, String>();
-		for (final MeasurementRow measurement : params.getInstanceMeasurements()) {
-			Mockito.doReturn(userSpecifiedLabels).when(this.serviceDUT).extractDataForUserSpecifiedLabels(params, measurement, null, true,
-					workbook);
-			Mockito.doReturn(userSpecifiedLabels).when(this.serviceDUT).extractDataForUserSpecifiedLabels(params, measurement, null, false,
-					workbook);
-		}
+		params.setAllFieldIDs(new ArrayList<Integer>());
 
 		this.serviceDUT.processUserSpecificLabelsForInstance(params, workbook);
 
@@ -389,7 +370,7 @@ public class LabelPrintingServiceImplTest {
 				this.environmentData);
 		try{
 			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0))
-					.getGermplasmListsByProjectId(LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.TRIAL);
+			.getGermplasmListsByProjectId(LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.TRIAL);
 		} catch(NeverWantedButInvoked e){
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is never invoked.");
 		}
@@ -416,7 +397,7 @@ public class LabelPrintingServiceImplTest {
 		} catch(NeverWantedButInvoked e){
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is never invoked.");
 		}
-		
+
 
 	}
 
@@ -443,7 +424,7 @@ public class LabelPrintingServiceImplTest {
 		} catch(TooLittleActualInvocations e){
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is invoked.");
 		}
-		
+
 
 	}
 

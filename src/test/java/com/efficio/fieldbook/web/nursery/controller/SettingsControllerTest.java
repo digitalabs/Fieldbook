@@ -14,11 +14,13 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.ui.ExtendedModelMap;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
@@ -259,6 +261,21 @@ public class SettingsControllerTest {
 		measurementVariable.setName("TEST");
 		measurementVariable.setValue(value);
 		return measurementVariable;
+	}
+
+	@Test
+	public void testAddVariableSecionIdModelAttributes() {
+		ExtendedModelMap model = new ExtendedModelMap();
+		this.controller.addVariableSectionIdentifiers(model);
+		SettingsControllerTest.checkVariableSecionIdModelAttributes(model);
+	}
+
+	public static void checkVariableSecionIdModelAttributes(ExtendedModelMap model) {
+		Assert.assertEquals(VariableType.TRAIT.getId(), model.get("baselineTraitsSegment"));
+		Assert.assertEquals(VariableType.SELECTION_METHOD.getId(), model.get("selectionVariatesSegment"));
+		Assert.assertEquals(VariableType.STUDY_DETAIL.getId(), model.get("studyLevelDetailType"));
+		Assert.assertEquals(VariableType.GERMPLASM_DESCRIPTOR.getId(), model.get("plotLevelDetailType"));
+		Assert.assertEquals(VariableType.NURSERY_CONDITION.getId(), model.get("nurseryConditionsType"));
 	}
 
 }

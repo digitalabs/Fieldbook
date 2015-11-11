@@ -332,11 +332,15 @@ public class CreateNurseryController extends SettingsController {
 
 		List<SettingDetail> baselineTraits = form.getBaselineTraitVariables();
 		final List<SettingDetail> baselineTraitsSession = this.userSelection.getSelectionVariates();
+
 		// Make sure that selection varieties are marked as selection methods so that this information can be used to save data correctly
 		// into the projectprop table.
-		for (final SettingDetail settingDetail : form.getSelectionVariatesVariables()) {
-			settingDetail.setVariableType(VariableType.SELECTION_METHOD);
+		if (form.getSelectionVariatesVariables() != null) {
+			for (final SettingDetail settingDetail : form.getSelectionVariatesVariables()) {
+				settingDetail.setVariableType(VariableType.SELECTION_METHOD);
+			}
 		}
+
 		if (baselineTraits == null && form.getSelectionVariatesVariables() != null) {
 			baselineTraits = form.getSelectionVariatesVariables();
 			this.userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);

@@ -11,15 +11,8 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.io.IOException;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -97,8 +90,8 @@ public class SettingsUtil {
 	 * Get standard variable.
 	 *
 	 * @param id the id
-	 * @param userSelection the user selection
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
+	 * @param programUUID
 	 * @return the standard variable
 	 */
 	private static StandardVariable getStandardVariable(final int id, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
@@ -1650,13 +1643,18 @@ public class SettingsUtil {
 		if (datasetId == null) {
 			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyDetails().getId(), studyName);
 		}
+
+		List<String> labelFieldsWithPairedVariable = new ArrayList<>(fields);
+		labelFieldsWithPairedVariable.add(AppConstants.SPFLD_PLOT_COUNT.getString());
+		Map<String,String> variableAppConstantLabels = getVariableAppConstantLabels(labelFieldsWithPairedVariable);
+
 		for (final String strFieldId : fields) {
 			if (StringUtils.isEmpty(strFieldId) || conditions == null) {
 				continue;
 			}
 
 			boolean found = false;
-			String label = AppConstants.getString(strFieldId.toUpperCase() + "_LABEL");
+			String label = variableAppConstantLabels.get(strFieldId);
 
 			for (final MeasurementVariable condition : conditions) {
 				if (NumberUtils.isNumber(strFieldId)) {
@@ -1688,7 +1686,7 @@ public class SettingsUtil {
 								SettingsUtil.getSpecialFieldValue(AppConstants.SPFLD_PLOT_COUNT.getString(), datasetId,
 										fieldbookMiddlewareService, workbook);
 						final PairedVariable pair =
-								new PairedVariable(AppConstants.getString(AppConstants.SPFLD_PLOT_COUNT.getString() + "_LABEL"), plotValue);
+								new PairedVariable(variableAppConstantLabels.get(AppConstants.SPFLD_PLOT_COUNT.getString()), plotValue);
 						settingDetail.setPairedVariable(pair);
 					}
 					index = SettingsUtil.addToList(details, settingDetail, index, fields, strFieldId);
@@ -1706,6 +1704,24 @@ public class SettingsUtil {
 
 		}
 		return details;
+	}
+
+	private static Map<String, String> getVariableAppConstantLabels(List<String> labels) {
+		final Map<String,String> variableLabels = new HashMap<>();
+
+		final Properties configFile = new Properties();
+
+		try {
+			configFile.load(AppConstants.class.getClassLoader().getResourceAsStream(AppConstants.PROPERTY_FILE));
+
+			for (final String label : labels) {
+				final String value = configFile.getProperty(label.toUpperCase() + "_LABEL");
+				variableLabels.put(label,value != null ? value : "");
+			}
+		} catch (IOException e) {
+			// will only happen if AppConstants.PROPERTY_FILE does not exists which it does (appconstants.properties)
+		}
+		return variableLabels;
 	}
 
 	private static String getSpecialFieldValue(final String specialFieldLabel, final Integer datasetId,

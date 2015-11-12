@@ -8,8 +8,9 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 (function() {
 	'use strict';
 
-	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$modal' , '$stateParams', '$http',
-		function($scope, TrialManagerDataService, $modal, $stateParams, $http) {
+	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$modal' , '$stateParams',
+	'$http', 'DTOptionsBuilder',
+		function($scope, TrialManagerDataService, $modal, $stateParams, $http, DTOptionsBuilder) {
 
 			$scope.data = {};
 

@@ -55,42 +55,35 @@
 
     <section-container th:attr="heading=#{trial.managesettings.trial.environment.specify.level}">
         <div name="content">
-            <div class="horizontal-level-item" ng-repeat="environment in data.environments">
-                <section-container heading="ENVIRONMENT {{$index + 1}}" icon="bms-environments" action-button-direction="pull-left">
-					
-					<span name="action-buttons">
-						<span ng-click="deleteEnvironment($index)" ng-show="data.noOfEnvironments > 1" class='glyphicon glyphicon-minus-sign delete-factor' 
-						style="cursor: pointer; color: #CE453C; position: relative; top: 6px; width: 25px;">&nbsp;</span>
-		            </span>
-					
-                    <div name="content" class="row form-horizontal">
-                        <div class="col-xs-6 col-md-6">
-                            <div class="form-group" ng-repeat="key in settings.managementDetails.keys()" ng-show="!settings.managementDetails.val(key).hidden">
-                                <div class="col-xs-5 1st">
-                    <span style="word-wrap: break-word" class="control-label nursery-level-label
-                        label-bold var-names">{{settings.managementDetails.val(key).variable.name}}:</span>
-                                </div>
-                                <div class="col-xs-7 2nd">
-                                    <show-setting-form-element settings="settings.managementDetails" targetkey="{{key}}"
-                                                               valuecontainer="environment.managementDetailValues"></show-setting-form-element>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-6 col-md-6">
-                            <div class="form-group" ng-repeat="key in settings.trialConditionDetails.keys()">
-                                <div class="col-xs-5 1st">
-                    <span style="word-wrap: break-word" class="control-label nursery-level-label
-                        label-bold var-names">{{settings.trialConditionDetails.val(key).variable.name}}:</span>
-                                </div>
-                                <div class="col-xs-7 2nd">
-                                    <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
-                                                               valuecontainer="environment.trialDetailValues"></show-setting-form-element>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section-container>
-            </div>
+
+
+            <table id="example" datatable="ng" class="table table-curved table-condensed fbk-table-with-check" width="100%">
+                <thead>
+                <tr>
+                    <th class="fbk-delete-link"></th>
+                    <th>Environment</th>
+                    <th ng-repeat="key in settings.managementDetails.keys()" ng-show="!settings.managementDetails.val(key).hidden">
+                        {{settings.managementDetails.val(key).variable.name}}</th>
+                    <th ng-repeat="key in settings.trialConditionDetails.keys()">
+                        {{settings.trialConditionDetails.val(key).variable.name}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="environment in data.environments" ng-class="{even : $even, odd : $odd}">
+                    <td class="fbk-delete-link">
+                        <input type="checkbox" ng-show="data.noOfEnvironments > 1" />
+                    </td>
+                    <td>{{$index + 1}}</td>
+                    <td ng-repeat="key in settings.managementDetails.keys()"
+                        ng-show="!settings.managementDetails.val(key).hidden">
+                        <show-setting-form-element settings="settings.managementDetails" targetkey="{{key}}"
+                                                   valuecontainer="environment.managementDetailValues"></show-setting-form-element></td>
+                    <td ng-repeat="key in settings.trialConditionDetails.keys()">
+                        <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
+                                                   valuecontainer="environment.trialDetailValues"></show-setting-form-element></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </section-container>
 

@@ -9,7 +9,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
-		'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage']);
+		'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables']);
 
 	// HTTP INTERCEPTOR CONFIGURATION START
 	// The following block defines an interceptor that hooks into AJAX operations initiated by Angular to start / stop the spinner operation

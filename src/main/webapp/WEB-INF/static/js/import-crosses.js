@@ -318,11 +318,6 @@ var ImportCrosses = {
 				showErrorMessage('', 'Separator for parentage designation is required');
 			}
 
-			if (!importSettings.additionalDetailsSetting.harvestLocationId || importSettings.additionalDetailsSetting.harvestLocationId === '') {
-				valid = false;
-				showErrorMessage('', 'Harvest location is required');
-			}
-
 			return valid;
 		},
 

@@ -60,11 +60,12 @@
             <table id="example" datatable="ng" class="table table-curved table-condensed fbk-table-with-check" width="100%">
                 <thead>
                 <tr>
-                    <th class="fbk-delete-link"></th>
-                    <th>Environment</th>
-                    <th ng-repeat="key in settings.managementDetails.keys()" ng-show="!settings.managementDetails.val(key).hidden">
+                    <th data-sortable="false" class="fbk-delete-link"></th>
+                    <th data-sortable="false">Environment</th>
+                    <th data-sortable="false" ng-repeat="key in settings.managementDetails.keys()"
+                        ng-show="!settings.managementDetails.val(key).hidden">
                         {{settings.managementDetails.val(key).variable.name}}</th>
-                    <th ng-repeat="key in settings.trialConditionDetails.keys()">
+                    <th data-sortable="false" ng-repeat="key in settings.trialConditionDetails.keys()">
                         {{settings.trialConditionDetails.val(key).variable.name}}</th>
                 </tr>
                 </thead>

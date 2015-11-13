@@ -11,7 +11,6 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.io.IOException;
 import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
@@ -1458,11 +1457,11 @@ public class SettingsUtil {
 
 	public static StudyDetails convertWorkbookToStudyDetails(final Workbook workbook,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID) {
+			final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID,final Properties appConstantsProperties) {
 
 		final StudyDetails studyDetails =
 				SettingsUtil.convertWorkbookStudyLevelVariablesToStudyDetails(workbook, fieldbookMiddlewareService, fieldbookService,
-						userSelection, workbook.getStudyDetails().getId().toString(), programUUID);
+						userSelection, workbook.getStudyDetails().getId().toString(), programUUID,appConstantsProperties);
 
 		if (workbook.getTrialDatasetId() != null) {
 			studyDetails.setNumberOfEnvironments(Long.valueOf(fieldbookMiddlewareService.countObservations(workbook.getTrialDatasetId()))
@@ -1495,7 +1494,7 @@ public class SettingsUtil {
 
 	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final String projectId, final String programUUID) {
+			final FieldbookService fieldbookService, final UserSelection userSelection, final String projectId, final String programUUID, final Properties appConstantsProperties) {
 
 		final StudyDetails details = new StudyDetails();
 		details.setId(workbook.getStudyDetails().getId());
@@ -1521,7 +1520,7 @@ public class SettingsUtil {
 			}
 			basicDetails =
 					SettingsUtil.convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService, fieldbookService,
-							userSelection, workbook, programUUID);
+							userSelection, workbook, programUUID,appConstantsProperties);
 			managementDetails =
 					SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection,
 							fieldbookMiddlewareService, fieldbookService, programUUID);
@@ -1633,7 +1632,7 @@ public class SettingsUtil {
 	private static List<SettingDetail> convertWorkbookToSettingDetails(final List<String> fields,
 			final List<MeasurementVariable> conditions,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final Workbook workbook, final String programUUID) {
+			final FieldbookService fieldbookService, final UserSelection userSelection, final Workbook workbook, final String programUUID, final Properties appConstantsProperties) {
 
 		final List<SettingDetail> details = new ArrayList<SettingDetail>();
 		int index = fields != null ? fields.size() : 0;
@@ -1646,7 +1645,7 @@ public class SettingsUtil {
 
 		List<String> labelFieldsWithPairedVariable = new ArrayList<>(fields);
 		labelFieldsWithPairedVariable.add(AppConstants.SPFLD_PLOT_COUNT.getString());
-		Map<String,String> variableAppConstantLabels = getVariableAppConstantLabels(labelFieldsWithPairedVariable);
+		Map<String,String> variableAppConstantLabels = getVariableAppConstantLabels(labelFieldsWithPairedVariable,appConstantsProperties);
 
 		for (final String strFieldId : fields) {
 			if (StringUtils.isEmpty(strFieldId) || conditions == null) {
@@ -1706,21 +1705,14 @@ public class SettingsUtil {
 		return details;
 	}
 
-	private static Map<String, String> getVariableAppConstantLabels(List<String> labels) {
+	private static Map<String, String> getVariableAppConstantLabels(final List<String> labels, final Properties appConstantsProperties) {
 		final Map<String,String> variableLabels = new HashMap<>();
 
-		final Properties configFile = new Properties();
-
-		try {
-			configFile.load(AppConstants.class.getClassLoader().getResourceAsStream(AppConstants.PROPERTY_FILE));
-
-			for (final String label : labels) {
-				final String value = configFile.getProperty(label.toUpperCase() + "_LABEL");
-				variableLabels.put(label,value != null ? value : "");
-			}
-		} catch (IOException e) {
-			// will only happen if AppConstants.PROPERTY_FILE does not exists which it does (appconstants.properties)
+		for (final String label : labels) {
+			final String value = appConstantsProperties.getProperty(label.toUpperCase() + "_LABEL");
+			variableLabels.put(label,value != null ? value : "");
 		}
+
 		return variableLabels;
 	}
 

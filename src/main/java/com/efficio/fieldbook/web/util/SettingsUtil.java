@@ -1705,7 +1705,7 @@ public class SettingsUtil {
 		return details;
 	}
 
-	private static Map<String, String> getVariableAppConstantLabels(final List<String> labels, final Properties appConstantsProperties) {
+	protected static Map<String, String> getVariableAppConstantLabels(final List<String> labels, final Properties appConstantsProperties) {
 		final Map<String,String> variableLabels = new HashMap<>();
 
 		for (final String label : labels) {

@@ -2,8 +2,10 @@
 package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -30,6 +32,7 @@ import org.junit.Test;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -143,6 +146,22 @@ public class SettingsUtilTest {
 		int code = SettingsUtil.getCodeValue("8412", removedConditions, TermId.CHECK_INTERVAL.getId());
 		Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
 	}
+
+	@Test
+	public void testGetVariableAppConstantLabels() throws Exception {
+		List<String> labels = new ArrayList<>( Arrays.asList(new String[] {"abc", "def"}) );
+
+		Properties appConfigProp = Mockito.mock(Properties.class);
+		Mockito.when(appConfigProp.getProperty(Mockito.any(String.class))).thenReturn("any value");
+		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+
+		SettingsUtil.getVariableAppConstantLabels(labels,appConfigProp);
+
+		Mockito.verify(appConfigProp, Mockito.times(labels.size())).getProperty(argument.capture());
+		Assert.assertTrue(argument.getValue().contains("LABEL"));
+	}
+
+
 
 	@Test
 	public void testGetCodeValueInvalid() {

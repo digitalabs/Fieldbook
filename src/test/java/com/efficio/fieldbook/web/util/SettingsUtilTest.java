@@ -34,11 +34,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class SettingsUtilTest {
 
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+
+	@Mock
+	private UserSelection userSelection;
 
 	private static final String PROGRAM_UUID = "123456789";
 
@@ -59,6 +61,7 @@ public class SettingsUtilTest {
 		MockitoAnnotations.initMocks(this);
 	}
 
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testConvertXmlDatasetToWorkbookAndBack() {
 		Dataset dataset = new Dataset();
@@ -233,15 +236,45 @@ public class SettingsUtilTest {
 	}
 
 	@Test
-	public void testSetSettingDetailRole(){
+	public void testSetSettingDetailRoleForDefaultVartypes(){
+		// Create a standardVaraible as pre-req
+		StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setVariableTypes(null);
+
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CATEGORICAL_VARIATE.getId(), PROGRAM_UUID)).thenReturn(standardVariable);
+
 		for(VariableType varType : VariableType.values()){
-			List<SettingDetail> newDetails = new ArrayList<SettingDetail>();
-			SettingDetail detail = new SettingDetail();
-			newDetails.add(detail);
-			/*SettingsUtil.setSettingDetailRole(newDetails, varType);*/
-			Assert.assertEquals("Should have the correct phenotypic type role as per the variable type", detail.getRole(), varType.getRole());
+			SettingDetail settingDetail = new SettingDetail();
+			SettingVariable settingVariable = new SettingVariable();
+			settingVariable.setCvTermId(TermId.CATEGORICAL_VARIATE.getId());
+			settingDetail.setVariable(settingVariable);
+			settingDetail.setRole(null);
+
+			List<SettingDetail> detailList = new ArrayList<>();
+			// use any setting variable that is not a trial instance factor
+			detailList.add(settingDetail);
+
+			SettingsUtil.setSettingDetailRole(varType.getId(), detailList, userSelection, fieldbookMiddlewareService,PROGRAM_UUID);
+			Assert.assertEquals("Should have the correct phenotypic type role as per the variable type", varType.getRole(),settingDetail.getRole());
+
 		}
-		
+	}
+
+	@Test
+	public void testSetSettingDetailRoleWithTrialInstanceFactorAsRole() {
+		// SettingDetail contains Trial instance factor
+		List<SettingDetail> newDetails = new ArrayList<SettingDetail>();
+		SettingDetail detail = new SettingDetail();
+		SettingVariable variable = new SettingVariable();
+		variable.setCvTermId(TermId.TRIAL_INSTANCE_FACTOR.getId());
+		detail.setVariable(variable);
+		newDetails.add(detail);
+
+		// for mode, we use any that is not a germplasm descriptor
+		VariableType studyDetailMode = VariableType.STUDY_DETAIL;
+		SettingsUtil.setSettingDetailRole(studyDetailMode.getId().intValue(),newDetails,userSelection,fieldbookMiddlewareService,PROGRAM_UUID);
+		Assert.assertEquals("Since we had a settingDetail that is a trial instance factor, the detail's role should be converted to Trial Environment",PhenotypicType.TRIAL_ENVIRONMENT, detail.getRole());
+
 	}
 
 	/**

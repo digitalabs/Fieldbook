@@ -14,7 +14,7 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 
 			$scope.data = {};
 
-			$scope.dtOptions = DTOptionsBuilder.newOptions().withOption('bFilter', false);
+			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"top"li<"clear">>rt<"bottom"p<"clear">>');
 
 			$scope.data = TrialManagerDataService.currentData.environments;
 			$scope.isHideDelete = false;

@@ -1130,6 +1130,7 @@ a.fbk-edit-experiment{
 }
 
 .mdt-header .dataTables_length,
+.dataTables_wrapper .dataTables_length,
 .mdt-header .dataTables_info {
     float: left;
 }
@@ -1154,11 +1155,13 @@ a.fbk-edit-experiment{
 }
 
 .mdt-header .dataTables_length,
+.dataTables_wrapper .dataTables_length,
 .mdt-header .mdt-filtering-label {
     margin-right: 15px;
 }
 
-.mdt-header .dataTables_length{
+.mdt-header .dataTables_length,
+.dataTables_wrapper .dataTables_length,{
 	position: relative;
 	top: 5px;
 }

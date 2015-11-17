@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Reference;
+import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -89,6 +91,7 @@ public class StudyTreeController {
 					List<Reference> rootFolders =
 							this.studyDataManager.getRootFolders(this.getCurrentProgramUUID(), isNursery ? StudyType.nurseries()
 									: StudyType.trials());
+					this.filterListByChildren(rootFolders, isNursery);
 					childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, false, true, isFolderOnly);
 				} else if (NumberUtils.isNumber(parentKey)) {
 					childNodes = this.getChildrenTreeNodes(parentKey, isNursery, isFolderOnly);
@@ -108,9 +111,62 @@ public class StudyTreeController {
 		List<Reference> folders =
 				this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID(), isNursery ? StudyType.nurseries()
 						: StudyType.trials());
-
+		this.filterListByChildren(folders, isNursery);
 		childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folders, false, true, isFolderOnly);
 		return childNodes;
+	}
+
+	/**
+	 * Filter list by children - Leaves are added by default while folders are filtered based on their children. If a folder does not
+	 * contain any items under the study type, remove the folder. If a folder contains both kinds of items, show the folder, and then when
+	 * expanded show only the items under the study type.
+	 *
+	 * @param list of Reference objects
+	 * @param isNursery boolean
+	 */
+	private void filterListByChildren(final List<Reference> list, final boolean isNursery) {
+		final Iterator<Reference> listIterator = list.iterator();
+		while (listIterator.hasNext()) {
+			final Reference reference = listIterator.next();
+			if (reference.isFolder()) {
+				final List<Reference> children =
+						this.studyDataManager.getChildrenOfFolder(reference.getId(), this.getCurrentProgramUUID(),
+								StudyType.nurseriesAndTrials());
+				if (!this.checkIfListHasLeavesForTheToolOrEmpty(children, isNursery)) {
+					listIterator.remove();
+				}
+			}
+		}
+
+	}
+
+	private boolean checkIfListHasLeavesForTheToolOrEmpty(final List<Reference> list, final boolean isNursery) {
+		if (list == null || list.isEmpty()) {
+			return true;
+		}
+
+		List<StudyType> studyTypesAllowed = null;
+		if (isNursery) {
+			studyTypesAllowed = StudyType.nurseries();
+		} else {
+			studyTypesAllowed = StudyType.trials();
+		}
+
+		for (final Reference reference : list) {
+			if (reference.isFolder()) {
+				final List<Reference> children =
+						this.studyDataManager.getChildrenOfFolder(reference.getId(), this.getCurrentProgramUUID(),
+								StudyType.nurseriesAndTrials());
+				if (this.checkIfListHasLeavesForTheToolOrEmpty(children, isNursery)) {
+					return true;
+				}
+			} else if (reference.isStudy() && studyTypesAllowed.contains(((StudyReference) reference).getStudyType())) {
+				return true;
+			} else {
+				continue;
+			}
+		}
+		return false;
 	}
 
 	@ResponseBody

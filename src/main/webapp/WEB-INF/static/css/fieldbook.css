@@ -297,7 +297,7 @@ table.dataTable thead .sorting_desc {
 
 
 .dataTables_wrapper > div {
-    border-radius: 10px;
+    /*border-radius: 10px;*/
     overflow: hidden;
 }
 
@@ -1565,6 +1565,18 @@ label[data-toggle="collapse"],
 	width: 11px;
 	height: 11px;
 }
+
+.dataTables_wrapper > div.dt-buttons {
+    float: right;
+}
+
+a.dt-button.buttons-colvis,
+a.dt-button.buttons-colvis:hover:not(.disabled) {
+    border: none;
+    background-color: transparent;
+    background-image: none;
+}
+
 
 /* ----- Variable Selection Dialog: Property Select Dropdown ----- */
 

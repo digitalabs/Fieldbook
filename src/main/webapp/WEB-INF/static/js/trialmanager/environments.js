@@ -14,7 +14,10 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 
 			$scope.data = {};
 
-			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"top"li<"clear">>rt<"bottom"p<"clear">>');
+			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('lirtp').withButtons([ {
+				extend:'colvis',
+				text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column fbk-colvis-button"></i>'
+			} ]);
 
 			$scope.data = TrialManagerDataService.currentData.environments;
 			$scope.isHideDelete = false;

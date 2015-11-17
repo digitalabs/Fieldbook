@@ -747,9 +747,15 @@ div.possibleValuesDiv{
 .row{
     margin-right: 0px;
 }
+.rowForNumberingAndChecks{
+    margin-right: 0px;
+    margin-bottom: 25px;
+}
 .select2-container {
     width: 100%;
 }
+.selectcontainer5{width: 150px}
+.selectcontainer5 input{width: 150px !important;}
 .fb-build-options .select2-container{
 	width: 260px;
 }
@@ -1348,7 +1354,18 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
     font-size: 13px;
     font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
 }
-
+input.input1 {
+    display: inline-block;
+    padding: 4px;
+    font-size: 13px;
+    line-height: 18px;
+    color: #808080;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;width: 50px;margin-left: 10px;
+    margin-bottom: 8px;
+}
 .select2-dropdown-open.select2-drop-above [class^="select2-choice"] {
     border-bottom-right-radius: 4px !important;
     border-bottom-left-radius: 4px !important;

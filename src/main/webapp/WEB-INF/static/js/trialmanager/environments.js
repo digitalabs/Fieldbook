@@ -16,7 +16,8 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 
 			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('lirtp').withButtons([ {
 				extend:'colvis',
-				text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column fbk-colvis-button"></i>'
+				text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column fbk-colvis-button"></i>',
+				columns: ':gt(0)'
 			} ]);
 
 			$scope.data = TrialManagerDataService.currentData.environments;

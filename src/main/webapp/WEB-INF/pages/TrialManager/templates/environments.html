@@ -64,7 +64,7 @@
                     <th data-sortable="false" class="fbk-delete-link"></th>
                     <th data-sortable="false">Environment</th>
                     <th data-sortable="false" ng-repeat="key in settings.managementDetails.keys()"
-                        ng-show="!settings.managementDetails.val(key).hidden">
+                        ng-hide="settings.managementDetails.val(key).hidden">
                         {{settings.managementDetails.val(key).variable.name}}</th>
                     <th data-sortable="false" ng-repeat="key in settings.trialConditionDetails.keys()">
                         {{settings.trialConditionDetails.val(key).variable.name}}</th>
@@ -77,7 +77,7 @@
                     </td>
                     <td>{{$index + 1}}</td>
                     <td ng-repeat="key in settings.managementDetails.keys()"
-                        ng-show="!settings.managementDetails.val(key).hidden">
+                        ng-hide="settings.managementDetails.val(key).hidden">
                         <show-setting-form-element settings="settings.managementDetails" targetkey="{{key}}"
                                                    valuecontainer="environment.managementDetailValues"></show-setting-form-element></td>
                     <td ng-repeat="key in settings.trialConditionDetails.keys()">

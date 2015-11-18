@@ -1354,7 +1354,7 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
     font-size: 13px;
     font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
 }
-input.input1 {
+input.inputForNumberingAndChecks {
     display: inline-block;
     padding: 4px;
     font-size: 13px;

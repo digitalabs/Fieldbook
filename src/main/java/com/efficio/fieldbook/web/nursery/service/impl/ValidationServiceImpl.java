@@ -45,6 +45,7 @@ public class ValidationServiceImpl implements ValidationService {
 
 	private static final String DATA_TYPE_NUMERIC = "Numeric";
 	private static final String ERROR_INVALID_CELL = "error.workbook.save.invalidCellValue";
+	private static final String ERROR_NUMERIC_VARIABLE_VALUE = "error.workbook.save.invalidCellValueForNumericVariable";
 	public static final String MISSING_VAL = "missing";
 
 	@Resource
@@ -100,7 +101,7 @@ public class ValidationServiceImpl implements ValidationService {
 				for (MeasurementData data : row.getDataList()) {
 					MeasurementVariable variate = data.getMeasurementVariable();
 					if (!this.isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
-						throw new WorkbookParserException(this.messageSource.getMessage(ValidationServiceImpl.ERROR_INVALID_CELL,
+						throw new WorkbookParserException(this.messageSource.getMessage(ValidationServiceImpl.ERROR_NUMERIC_VARIABLE_VALUE,
 								new Object[] {variate.getName(), data.getValue()}, locale));
 
 					}

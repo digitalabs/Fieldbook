@@ -62,6 +62,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.DesignRunner;
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -160,10 +161,11 @@ public class FieldbookServiceImpl implements FieldbookService {
 	 * Advance Nursery
 	 * 
 	 * @throws RuleException
+	 * @throws FieldbookException 
+	 * @throws MiddlewareQueryException 
 	 */
 	@Override
-	public AdvanceResult advanceNursery(final AdvancingNursery advanceInfo, final Workbook workbook) throws RuleException {
-
+	public AdvanceResult advanceNursery(final AdvancingNursery advanceInfo, final Workbook workbook) throws RuleException, FieldbookException {
 		return this.namingConventionService.advanceNursery(advanceInfo, workbook);
 	}
 

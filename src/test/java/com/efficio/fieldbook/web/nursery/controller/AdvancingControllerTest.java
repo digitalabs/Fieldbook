@@ -28,6 +28,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
@@ -110,7 +111,7 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
-	public void testPostAdvanceNursery() throws RuleException, MiddlewareException {
+	public void testPostAdvanceNursery() throws RuleException, MiddlewareException, FieldbookException {
 		// setup
 
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
@@ -137,7 +138,7 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
-	public void testPostAdvanceNurseryThrowsRuleException() throws MiddlewareException, RuleException {
+	public void testPostAdvanceNurseryThrowsRuleException() throws MiddlewareException, RuleException, FieldbookException {
 		// setup
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
@@ -146,8 +147,8 @@ public class AdvancingControllerTest {
 
 		this.preparePostAdvanceNursery(form, method, importedGermplasm);
 
-		Mockito.when(this.fieldbookService.advanceNursery(Matchers.eq(this.advancingNursery), Matchers.any(Workbook.class))).thenThrow(
-				Mockito.mock(RuleException.class));
+		Mockito.when(this.fieldbookService.advanceNursery(Matchers.eq(this.advancingNursery), Matchers.any(Workbook.class)))
+				.thenThrow(Mockito.mock(RuleException.class));
 
 		Mockito.doNothing().when(this.paginationListSelection).addAdvanceDetails(Matchers.anyString(), Matchers.eq(form));
 
@@ -159,7 +160,7 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
-	public void testPostAdvanceNurseryGenerativeMethodError() throws RuleException, MiddlewareException {
+	public void testPostAdvanceNurseryGenerativeMethodError() throws RuleException, MiddlewareException, FieldbookException {
 		// setup
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
@@ -169,8 +170,8 @@ public class AdvancingControllerTest {
 
 		this.preparePostAdvanceNursery(form, method, importedGermplasm);
 
-		Mockito.when(this.fieldbookService.advanceNursery(Matchers.eq(this.advancingNursery), Matchers.any(Workbook.class))).thenThrow(
-				Mockito.mock(RuleException.class));
+		Mockito.when(this.fieldbookService.advanceNursery(Matchers.eq(this.advancingNursery), Matchers.any(Workbook.class)))
+				.thenThrow(Mockito.mock(RuleException.class));
 
 		// scenario 2, has a method throwing exception
 		Map<String, Object> output = this.advancingController.postAdvanceNursery(form, null, null);
@@ -181,7 +182,7 @@ public class AdvancingControllerTest {
 	}
 
 	private void preparePostAdvanceNursery(AdvancingNurseryForm form, Method method, ArrayList<ImportedGermplasm> importedGermplasm)
-			throws RuleException, MiddlewareException {
+			throws RuleException, MiddlewareException, FieldbookException {
 		// setup
 		form.setMethodChoice("1");
 		form.setAdvanceBreedingMethodId("10");
@@ -191,11 +192,9 @@ public class AdvancingControllerTest {
 		Mockito.when(result.getAdvanceList()).thenReturn(importedGermplasm);
 		Mockito.when(result.getChangeDetails()).thenReturn(new ArrayList<AdvanceGermplasmChangeDetail>());
 		Mockito.when(this.fieldbookMiddlewareService.getMethodById(Matchers.anyInt())).thenReturn(method);
-		Mockito.when(this.fieldbookService.advanceNursery(Matchers.eq(this.advancingNursery), Matchers.any(Workbook.class))).thenReturn(
-				result);
-		Mockito.when(
-				this.messageSource.getMessage(Matchers.eq("nursery.save.advance.error.row.list.empty.generative.method"),
-						Matchers.any(String[].class), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn("error.message");
+		Mockito.when(this.fieldbookService.advanceNursery(Matchers.eq(this.advancingNursery), Matchers.any(Workbook.class))).thenReturn(result);
+		Mockito.when(this.messageSource.getMessage(Matchers.eq("nursery.save.advance.error.row.list.empty.generative.method"),
+				Matchers.any(String[].class), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn("error.message");
 
 		Mockito.doNothing().when(this.paginationListSelection).addAdvanceDetails(Matchers.anyString(), Matchers.eq(form));
 

@@ -14,14 +14,18 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.util.DateUtil;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TermSummary;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -31,6 +35,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
@@ -41,14 +46,20 @@ public class AdvancingSourceListFactory {
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private OntologyVariableDataManager ontologyVariableDataManager;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 
 	private static final String DEFAULT_TEST_VALUE = "T";
 
-	public AdvancingSourceList create(Workbook workbook, AdvancingNursery advanceInfo, Study nursery,
-			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws MiddlewareQueryException {
+	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery,
+			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
 		AdvancingSourceList list = new AdvancingSourceList();
 
@@ -76,9 +87,9 @@ public class AdvancingSourceListFactory {
 				if (germplasm.getGid() != null && NumberUtils.isNumber(germplasm.getGid())) {
 					gids.add(Integer.valueOf(germplasm.getGid()));
 				}
-
-				MeasurementRow trialRow = this.getTrialObservation(workbook, row.getLocationId());
-				season = this.getSeason(trialRow);
+				
+				// the season code is used if season information is captured as part of the BreedingMethod
+				season = this.getSeason(workbook);
 
 				MeasurementData checkData = row.getMeasurementData(TermId.CHECK.getId());
 				String check = null;
@@ -152,17 +163,6 @@ public class AdvancingSourceListFactory {
 		}
 	}
 
-	private MeasurementRow getTrialObservation(Workbook workbook, long geolocationId) {
-		if (workbook.getTrialObservations() != null) {
-			for (MeasurementRow row : workbook.getTrialObservations()) {
-				if (row.getLocationId() == geolocationId) {
-					return row;
-				}
-			}
-		}
-		return null;
-	}
-
 	private Integer getIntegerValue(String value) {
 		Integer integerValue = null;
 
@@ -184,7 +184,7 @@ public class AdvancingSourceListFactory {
 		return germplasm;
 	}
 
-	private void assignSourceGermplasms(AdvancingSourceList list, Map<Integer, Method> breedingMethodMap) throws MiddlewareQueryException {
+	private void assignSourceGermplasms(AdvancingSourceList list, Map<Integer, Method> breedingMethodMap) throws FieldbookException {
 		List<Integer> gidList = new ArrayList<Integer>();
 
 		if (list != null && list.getRows() != null && !list.getRows().isEmpty()) {
@@ -205,8 +205,13 @@ public class AdvancingSourceListFactory {
 						&& NumberUtils.isNumber(source.getGermplasm().getGid())) {
 					Germplasm germplasm = germplasmMap.get(source.getGermplasm().getGid().toString());
 
-					this.checkIfGermplasmIsExisting(germplasm);
-
+					if (germplasm == null) {
+						// we throw exception because germplasm is not existing
+						Locale locale = LocaleContextHolder.getLocale();
+						throw new FieldbookException(this.messageSource.getMessage("error.advancing.germplasm.not.existing", new String[] {},
+								locale));
+					}
+					
 					source.getGermplasm().setGpid1(germplasm.getGpid1());
 					source.getGermplasm().setGpid2(germplasm.getGpid2());
 					source.getGermplasm().setGnpgs(germplasm.getGnpgs());
@@ -220,30 +225,36 @@ public class AdvancingSourceListFactory {
 
 		}
 	}
-
-	protected void checkIfGermplasmIsExisting(Germplasm germplasm) throws MiddlewareQueryException {
-		if (germplasm == null) {
-			// we throw exception becuase germplasm is not existing
-			Locale locale = LocaleContextHolder.getLocale();
-			throw new MiddlewareQueryException(this.messageSource.getMessage("error.advancing.germplasm.not.existing", new String[] {},
-					locale));
-		}
-	}
-
-	private String getSeason(MeasurementRow trialRow) {
-		String season = trialRow.getMeasurementDataValue(TermId.SEASON_MONTH.getId());
-		if (season == null || "".equals(season.trim())) {
-			season = trialRow.getMeasurementDataValue(TermId.SEASON_VAR_TEXT.getId());
-			if (season == null || "".equals(season.trim())) {
-				MeasurementData seasonData = trialRow.getMeasurementData(TermId.SEASON_VAR.getId());
-				if (seasonData != null) {
-					season = seasonData.getDisplayValue();
+	
+	String getSeason(Workbook workbook) throws FieldbookException {
+		String season = "";
+		for (MeasurementVariable mv : workbook.getConditions()) {
+			if (mv.getTermId() == TermId.SEASON.getId()) {
+				season = mv.getValue();
+			} else if (mv.getTermId() == TermId.SEASON_DRY.getId()) {
+				season = mv.getValue();
+			} else if (mv.getTermId() == TermId.SEASON_MONTH.getId()) {
+				season = mv.getValue();
+			} else if (mv.getTermId() == TermId.SEASON_VAR.getId()) {
+				// categorical variable - the value returned is the key to another term
+				if (mv.getValue().equals("")) {
+					// the user has failed to choose a season from the available choices
+					throw new FieldbookException("nursery.advance.no.code.selected.for.season");
 				}
+				// season = mv.getValue();
+				Variable variable = ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), mv.getTermId(), true, false);
+				for (TermSummary ts : variable.getScale().getCategories()) {
+					if (ts.getId().equals(Integer.valueOf(mv.getValue()))) {
+						season = ts.getDefinition();
+					}
+				}
+			} else if (mv.getTermId() == TermId.SEASON_VAR_TEXT.getId()) {
+				season = mv.getValue();
+			} else if (mv.getTermId() == TermId.SEASON_WET.getId()) {
+				season = mv.getValue();
 			}
 		}
-		if (season == null || "".equals(season.trim())) {
-			DateUtil.getCurrentDateAsStringValue("yyyyMM");
-		}
+
 		return season;
 	}
 
@@ -274,4 +285,14 @@ public class AdvancingSourceListFactory {
 		}
 		return methodId;
 	}
+	
+	void setOntologyVariableDataManager(OntologyVariableDataManager ontologyVariableDataManager) {
+		this.ontologyVariableDataManager = ontologyVariableDataManager;
+	}
+
+	
+	void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
+
 }

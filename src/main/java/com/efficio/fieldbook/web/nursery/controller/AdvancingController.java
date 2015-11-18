@@ -62,6 +62,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
@@ -316,11 +317,12 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @param model the model
 	 * @return the string
 	 * @throws MiddlewareQueryException the middleware query exception
+	 * @throws FieldbookException 
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public Map<String, Object> postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, BindingResult result,
-			Model model) throws MiddlewareQueryException {
+			Model model) {
 		Map<String, Object> results = new HashMap<>();
 		this.advancingNursery.setMethodChoice(form.getMethodChoice());
 		this.advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
@@ -371,14 +373,15 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			results.put("advanceGermplasmChangeDetails", advanceGermplasmChangeDetails);
 			results.put(AdvancingController.UNIQUE_ID, id);
 
-		} catch (MiddlewareException | RuleException e) {
+		} catch (MiddlewareException | RuleException | FieldbookException e) {
 			AdvancingController.LOG.error(e.getMessage(), e);
-			form.setErrorInAdvance(e.getMessage());
+			form.setErrorInAdvance(this.messageSource.getMessage(e.getMessage(),
+					new String[] {}, LocaleContextHolder.getLocale()));
 			form.setGermplasmList(new ArrayList<ImportedGermplasm>());
 			form.setEntries(0);
 			results.put(AdvancingController.IS_SUCCESS, "0");
 			results.put(AdvancingController.LIST_SIZE, 0);
-			results.put(AdvancingController.MESSAGE, e.getMessage());
+			results.put(AdvancingController.MESSAGE, form.getErrorInAdvance());
 		}
 
 		return results;

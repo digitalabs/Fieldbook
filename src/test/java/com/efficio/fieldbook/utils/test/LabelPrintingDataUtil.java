@@ -14,12 +14,12 @@ package com.efficio.fieldbook.utils.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
+import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -50,6 +50,7 @@ public class LabelPrintingDataUtil {
 	private static final int RANGE = 1;
 	private static final String STUDY_NAME = "labelPrintingTest";
 	public static final int SAMPLE_EXPERIMENT_NO = -2;
+	public static final int SAMPLE_EXPERIMENT_NO_2 = 0;
 
 	// data for FieldMapDatasetInfo
 	private static final String DATASET_NAME = "labelPrintingTest-PLOT";
@@ -59,12 +60,12 @@ public class LabelPrintingDataUtil {
 	private static final String LABEL_SHEET_SIZE = "1";
 	private static final String LABEL_PER_ROW = "3";
 	private static final String ROWS_PER_PAGE = "7";
-	private static final String LEFT_LABEL_FIELDS = AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt() + ","
-			+ AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt();
+	private static final String LEFT_LABEL_FIELDS =
+			AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt() + "," + AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt();
 	private static final String RIGHT_LABEL_FIELDS = String.valueOf(AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt());
-	private static final String MAIN_LABEL_FIELDS = AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt() + ","
-			+ AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt() + ","
-			+ String.valueOf(AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt());
+	private static final String MAIN_LABEL_FIELDS =
+			AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt() + "," + AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()
+					+ "," + String.valueOf(AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt());
 	private static final String FIRST_BARCODE_FIELD = "1";
 	private static final String SECOND_BARCODE_FIELD = "";
 	private static final String THIRD_BARCODE_FIELD = "";
@@ -176,6 +177,19 @@ public class LabelPrintingDataUtil {
 		return trialInstanceInfo;
 	}
 
+	public static FieldMapTrialInstanceInfo createFieldMapTrialInstanceInfoWithStockList() {
+		final FieldMapTrialInstanceInfo trialInstanceInfo = new FieldMapTrialInstanceInfo();
+
+		trialInstanceInfo.setBlockName(LabelPrintingDataUtil.BLOCK_NAME);
+		trialInstanceInfo.setEntryCount(LabelPrintingDataUtil.ENTRY_COUNT);
+		trialInstanceInfo.setFieldMapLabels(LabelPrintingDataUtil.createFieldMapLabels());
+		trialInstanceInfo.setHasFieldMap(LabelPrintingDataUtil.HAS_FIELDMAP);
+		trialInstanceInfo.setTrialInstanceNo(LabelPrintingDataUtil.TRIAL_INSTANCE_NO);
+		trialInstanceInfo.setFieldName(LabelPrintingDataUtil.FIELD_NAME);
+
+		return trialInstanceInfo;
+	}
+
 	private static FieldMapTrialInstanceInfo createFieldMapSecondTrialInstanceInfo() {
 		final FieldMapTrialInstanceInfo trialInstanceInfo = new FieldMapTrialInstanceInfo();
 
@@ -185,6 +199,19 @@ public class LabelPrintingDataUtil {
 		trialInstanceInfo.setHasFieldMap(LabelPrintingDataUtil.HAS_FIELDMAP);
 		trialInstanceInfo.setTrialInstanceNo(LabelPrintingDataUtil.TRIAL_INSTANCE_NO_2);
 		trialInstanceInfo.setFieldName(LabelPrintingDataUtil.FIELD_NAME_2);
+
+		return trialInstanceInfo;
+	}
+
+	public static FieldMapTrialInstanceInfo createFieldMapThirdTrialInstanceInfo() {
+		final FieldMapTrialInstanceInfo trialInstanceInfo = new FieldMapTrialInstanceInfo();
+
+		trialInstanceInfo.setBlockName(LabelPrintingDataUtil.BLOCK_NAME);
+		trialInstanceInfo.setEntryCount(LabelPrintingDataUtil.ENTRY_COUNT);
+		trialInstanceInfo.setFieldMapLabels(LabelPrintingDataUtil.createFieldMapSecondLabels());
+		trialInstanceInfo.setHasFieldMap(LabelPrintingDataUtil.HAS_FIELDMAP);
+		trialInstanceInfo.setTrialInstanceNo(LabelPrintingDataUtil.TRIAL_INSTANCE_NO);
+		trialInstanceInfo.setFieldName(LabelPrintingDataUtil.FIELD_NAME);
 
 		return trialInstanceInfo;
 	}
@@ -202,6 +229,24 @@ public class LabelPrintingDataUtil {
 		label.setRange(LabelPrintingDataUtil.RANGE);
 		label.setStudyName(LabelPrintingDataUtil.STUDY_NAME);
 		label.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO);
+		labels.add(label);
+
+		return labels;
+	}
+
+	private static List<FieldMapLabel> createFieldMapSecondLabels() {
+		final List<FieldMapLabel> labels = new ArrayList<FieldMapLabel>();
+
+		final FieldMapLabel label = new FieldMapLabel();
+		label.setBlockNo(LabelPrintingDataUtil.BLOCK_NO);
+		label.setColumn(LabelPrintingDataUtil.COLUMN);
+		label.setDatasetId(LabelPrintingDataUtil.DATASET_ID);
+		label.setEntryNumber(LabelPrintingDataUtil.ENTRY_NUMBER);
+		label.setGermplasmName(LabelPrintingDataUtil.GERMPLASM_NAME);
+		label.setPlotCoordinate(LabelPrintingDataUtil.PLOT_COORDINATE);
+		label.setRange(LabelPrintingDataUtil.RANGE);
+		label.setStudyName(LabelPrintingDataUtil.STUDY_NAME);
+		label.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO_2);
 		labels.add(label);
 
 		return labels;

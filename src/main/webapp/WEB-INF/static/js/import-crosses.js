@@ -135,7 +135,7 @@ var ImportCrosses = {
 			LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox', ImportCrosses.showFavoriteLoationsOnly);
 			ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 			ImportCrosses.updateSampleParentageDesignation();
-
+			
 			$('.cross-import-name-setting').off('change');
 			$('.cross-import-name-setting').on('change', ImportCrosses.updateDisplayedSequenceNameValue);
 
@@ -154,7 +154,15 @@ var ImportCrosses = {
 				ImportCrosses.goBackToPage('#crossSettingsModal','#openCrossesListModal');
 			});
 		},
-
+		
+		validateStartingSequenceNumber : function(value) {
+			if((value != null || value != '' ) && (value.indexOf('.') >= 0 || !isInt(value))){
+				createErrorNotification(invalidInputMsgHeader, invalidStartingNumberErrorMsg);
+				return false;
+			}
+			return true;
+		},
+		
 		updateSampleParentageDesignation : function() {
 			var value = $('#parentageDesignationSeparator').val();
 			$('#sampleParentageDesignation').text('ABC-123' + value + 'DEF-456');
@@ -322,20 +330,27 @@ var ImportCrosses = {
 				valid = false;
 				showErrorMessage('', 'Harvest location is required');
 			}
+			
+			if(!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)){
+				return false;
+			}
 
 			return valid;
 		},
 
 		updateDisplayedSequenceNameValue : function() {
-			ImportCrosses.retrieveNextNameInSequence().done(function(data){
-				if (data.success === '1') {
-					$('#importNextSequenceName').text(data.sequenceValue);
-				} else {
+			var value = $('#startingSequenceNumber').val();
+			if (ImportCrosses.validateStartingSequenceNumber(value)){
+				ImportCrosses.retrieveNextNameInSequence().done(function(data){
+					if (data.success === '1') {
+						$('#importNextSequenceName').text(data.sequenceValue);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					}
+				}).fail(function() {
 					showErrorMessage('', ajaxGenericErrorMsg);
-				}
-			}).fail(function() {
-				showErrorMessage('', ajaxGenericErrorMsg);
-			});
+				});
+			}
 		},
 
 		retrieveNextNameInSequence : function() {

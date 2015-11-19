@@ -156,7 +156,7 @@ var ImportCrosses = {
 		},
 		
 		validateStartingSequenceNumber : function(value) {
-			if((value != null || value != '' ) && (value.indexOf('.') >= 0 || !isInt(value))){
+			if(value != null && value != '' && (value.indexOf('.') >= 0 || !isInt(value))){
 				createErrorNotification(invalidInputMsgHeader, invalidStartingNumberErrorMsg);
 				return false;
 			}

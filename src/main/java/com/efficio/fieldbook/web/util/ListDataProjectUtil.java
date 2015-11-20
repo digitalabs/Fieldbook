@@ -10,12 +10,12 @@ import org.generationcp.middleware.pojos.ListDataProject;
 
 public class ListDataProjectUtil {
 
-	public static List<ListDataProject> createListDataProject(List<ImportedGermplasm> importedGermplasmList) {
+	public static List<ListDataProject> createListDataProject(List<ImportedGermplasm> projectGermplasmList) {
 
-		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
-		if (importedGermplasmList != null && !importedGermplasmList.isEmpty()) {
+		List<ListDataProject> listDataProject = new ArrayList<>();
+		if (projectGermplasmList != null && !projectGermplasmList.isEmpty()) {
 			// need a copy of the germplasm list and save
-			for (ImportedGermplasm aData : importedGermplasmList) {
+			for (ImportedGermplasm aData : projectGermplasmList) {
 				ListDataProject listDataProj = new ListDataProject();
 				listDataProj.setGermplasmId(Integer.valueOf(aData.getGid()));
 				if (aData.getCheckId() != null) {

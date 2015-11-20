@@ -195,6 +195,7 @@ if (typeof StockIDFunctions === 'undefined') {
 						$('#saveGermplasmRightSection').html(html);
 						setTimeout(function() {
 							$('#saveListTreeModal').modal({backdrop: 'static', keyboard: true});
+							TreePersist.preLoadGermplasmTreeState(false, '#germplasmFolderTree', true);
 						}, 300);
 						//we preselect the program lists
 						if (germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LISTS') !== null) {

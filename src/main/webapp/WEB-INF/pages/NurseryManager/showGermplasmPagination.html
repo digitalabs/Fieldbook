@@ -46,6 +46,45 @@
 
 	<br/>
 
+    <div class="rowForNumberingAndChecks">
+            <div id="specify-numbering-section"> <img th:src="@{/static/img/review-list-details.png}" />
+                <!-- Section for Specify Numbering -->
+                <label class="control-label"><strong id="specifynumbering" class="sub-content-heading" th:text="#{germplasm.list.specify.numbering}">Specify Numbering</strong></label>
+
+                <div class="form-group">
+                    <div class="col-xs-6">
+                        <label class="control-label control-label-bold" id="startingEntryNumber" th:text="#{germplasm.list.specify.starting.entry.number}" style="padding-right: 160px;">Specify Starting Entry Number</label>
+                        <input class="inputForNumberingAndChecks" id="txtStartingEntryNo" rows="1" th:value="1" th:field="*{entryNo}"/>
+                    </div>
+                    <div class="col-xs-4">
+                        <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}"  style="padding-right: 59px">Specify Starting Plot Number</label>
+                        <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" rows="1" value="1" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="rowForNumberingAndChecks">
+            <div id="specify-checks-section"> <img th:src="@{/static/img/review-list-details.png}" />
+                <!-- Section for Specify Checks -->
+                <label class="control-label"><strong id="specifychecks" class="sub-content-heading" th:text="#{germplasm.list.specify.checks}">Specify Checks</strong></label>
+
+                <div class="form-group">
+                    <div class="col-xs-6">
+                        <label class="control-label control-label-bold"><span th:utext="#{germplasm.list.specify.position.where.first.check.will.be.inserted}"></span></label>
+                        <input class="inputForNumberingAndChecks" id="txtFirstCheckPosition" rows="1" value="1" />
+
+                        <label class="control-label control-label-bold" style="padding-right: 71px"><span th:utext="#{germplasm.list.specify.number.of.entries.between.checks}"></span></label>
+                        <input class="inputForNumberingAndChecks" id="txtNoOfEntriesBetweenChecks" rows="1" />
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label control-label-bold"><span th:utext="#{germplasm.list.choose.how.checks.should.be.inserted}"  style="padding-right: 20px"></span></label>
+                        <select class="selectcontainer5" style="width: 200px"><option value="">Please Choose</option></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 </form>
 
 </div>

@@ -15,9 +15,13 @@
 				<div class="pull-left">
 					<img height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
 
-					<span class="fbk-nursery-heading">
-						<span class="heading" ng-hide="isOpenTrial()">Create Trial</span>
-						<span class="heading" ng-show="isOpenTrial()">Trial : <span truncate-and-tooltip="data.basicDetails[8005]"></span></span>
+					<span class="fbk-nursery-heading" ng-hide="isOpenTrial()">
+						<span class="heading" >Create Trial</span>
+					</span>
+
+                    <span class="fbk-nursery-heading" ng-show="isOpenTrial()">
+    					<span class="heading" >Trial : </span>
+                        <span class="heading" truncate-and-tooltip="data.basicDetails[8005]"></span>
 					</span>
 
 					<div class="fbk-nursery-heading-btns">

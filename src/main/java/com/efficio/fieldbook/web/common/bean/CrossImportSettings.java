@@ -7,6 +7,10 @@ import org.generationcp.commons.settings.CrossSetting;
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 
+/**
+ * The class that holds information from a saved setting. This will be used to populate the fields in Define Crossing Settings when the user
+ * loads a saved setting during Import Crosses process.
+ */
 public class CrossImportSettings {
 
 	private String name;

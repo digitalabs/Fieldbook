@@ -7,6 +7,10 @@ import org.generationcp.commons.settings.CrossSetting;
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 
+/**
+ * The class that holds information from a saved setting. This will be used to populate the fields in Define Crossing Settings when the user
+ * loads a saved setting during Import Crosses process.
+ */
 public class CrossImportSettings {
 
 	private String name;
@@ -20,6 +24,7 @@ public class CrossImportSettings {
 	private Integer startingSequenceNumber;
 	private String parentageDesignationSeparator;
 	private Integer locationID;
+	private Boolean hasParentageDesignationName;
 
 	public CrossImportSettings() {
 	}
@@ -27,7 +32,7 @@ public class CrossImportSettings {
 	public CrossImportSettings(String name, String crossPrefix, Integer breedingMethodID, Boolean basedOnStatusOfParentalLines,
 			String crossSuffix, Integer sequenceNumberDigits, Boolean hasSuffixSpace, Boolean hasPrefixSpace,
 			Integer startingSequenceNumber, String parentageDesignationSeparator, String harvestYear, String harvestMonth,
-			Integer locationID) {
+			Integer locationID, Boolean hasParentageDesignationName) {
 		this.name = name;
 		this.crossPrefix = crossPrefix;
 		this.breedingMethodID = breedingMethodID;
@@ -39,6 +44,7 @@ public class CrossImportSettings {
 		this.startingSequenceNumber = startingSequenceNumber;
 		this.parentageDesignationSeparator = parentageDesignationSeparator;
 		this.locationID = locationID;
+		this.hasParentageDesignationName = hasParentageDesignationName;
 	}
 
 	public String getName() {
@@ -124,7 +130,7 @@ public class CrossImportSettings {
 		this.sequenceNumberDigits = setting.getCrossNameSetting().getNumOfDigits();
 		this.startingSequenceNumber = setting.getCrossNameSetting().getStartNumber();
 		this.parentageDesignationSeparator = setting.getCrossNameSetting().getSeparator();
-
+		this.hasParentageDesignationName = setting.getCrossNameSetting().isSaveParentageDesignationAsAString();
 		this.locationID = setting.getAdditionalDetailsSetting().getHarvestLocationId();
 	}
 
@@ -142,5 +148,13 @@ public class CrossImportSettings {
 
 	public void setLocationID(Integer locationID) {
 		this.locationID = locationID;
+	}
+
+	public Boolean getHasParentageDesignationName() {
+		return this.hasParentageDesignationName;
+	}
+
+	public void setHasParentageDesignationName(Boolean hasParentageDesignationName) {
+		this.hasParentageDesignationName = hasParentageDesignationName;
 	}
 }

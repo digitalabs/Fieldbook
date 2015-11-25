@@ -229,6 +229,7 @@
                 applicationData: {
                     unappliedChangesAvailable: false,
                     unsavedGeneratedDesign: false,
+                    unsavedTreatmentFactorsAvailable: false,
                     unsavedTraitsAvailable: false,
                     germplasmListCleared: false,
                     isGeneratedOwnDesign: false,
@@ -313,9 +314,19 @@
                         }
                     }
                 },
+                
+                indicateUnsavedTreatmentFactorsAvailable: function () {
+                	if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
+                        service.applicationData.unsavedTreatmentFactorsAvailable = true;
+                        if (service.currentData.experimentalDesign.designType === 3) {
+                            service.currentData.experimentalDesign.designType = null;
+                        }
+                    }
+                },
 
                 clearUnappliedChangesFlag: function () {
                     service.applicationData.unappliedChangesAvailable = false;
+                    service.applicationData.unsavedTreatmentFactorsAvailable = false;
                     $('body').data('needGenerateExperimentalDesign', '0');
                 },
                 extractData: extractData,
@@ -330,15 +341,17 @@
                         showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
                         return false;
                     }
-                    if (service.applicationData.unappliedChangesAvailable) {
+                    if (service.applicationData.unsavedTreatmentFactorsAvailable) {
+                        showErrorMessage('', unsavedTreatmentFactor);
+                    } else if (service.applicationData.unappliedChangesAvailable) {
                         showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
-                            'regenerate the design on the Experimental Design tab', 10000);
+                                'regenerate the design on the Experimental Design tab', 10000);
                     } else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         performDataCleanup();
                         var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
                         var serializedData = (JSON.stringify(columnsOrder));
                         if (!service.isOpenTrial()) {
-                            service.currentData.columnOrders = serializedData;
+                        	service.currentData.columnOrders = serializedData;
                             $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).
                                 success(function () {
                                     submitGermplasmList().then(function (generatedID) {

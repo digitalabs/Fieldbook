@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -281,8 +282,12 @@ public class ImportGermplasmListController extends SettingsController {
 						.getUniqueID());
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 
+		Integer entryNo = 0;
+		if (!Objects.isNull(form.getEntryNo())) {
+			 entryNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getEntryNo(), 0);
+		}
 		// for saving the list data project
-		this.saveListDataProject(isNursery, studyId);
+		this.saveListDataProject(isNursery, studyId, entryNo);
 
 		this.fieldbookService.saveStudyColumnOrdering(studyId, this.userSelection.getWorkbook().getStudyName(), form.getColumnOrders(),
 				this.userSelection.getWorkbook());
@@ -306,30 +311,33 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param studyId
 	 * @throws MiddlewareQueryException
 	 */
-	private void saveListDataProject(final boolean isNursery, final int studyId) {
+	private void saveListDataProject(final boolean isNursery, final int studyId, Integer entryNo) {
 
-		if (this.getUserSelection().getImportedGermplasmMainInfo() != null
-				&& this.getUserSelection().getImportedGermplasmMainInfo().getListId() != null) {
+		final ImportedGermplasmMainInfo germplasmMainInfo = this.getUserSelection().getImportedGermplasmMainInfo();
+
+		if (germplasmMainInfo != null && germplasmMainInfo.getListId() != null) {
 			// we save the list
 			// we need to create a new germplasm list
-			final Integer listId = this.getUserSelection().getImportedGermplasmMainInfo().getListId();
-			List<ImportedGermplasm> importedGermplasmList;
+			final Integer listId = germplasmMainInfo.getListId();
+			List<ImportedGermplasm> projectGermplasmList;
 
 			if (isNursery) {
-				if (this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms() != null) {
-					importedGermplasmList =
-							this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-									.getOriginalImportedGermplasms();
+				if (germplasmMainInfo.getImportedGermplasmList().getOriginalImportedGermplasms() != null) {
+					projectGermplasmList = germplasmMainInfo.getImportedGermplasmList().getOriginalImportedGermplasms();
 				} else {
-					importedGermplasmList =
-							this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+					projectGermplasmList = germplasmMainInfo.getImportedGermplasmList().getImportedGermplasms();
 				}
 			} else {
-				importedGermplasmList =
-						this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+				projectGermplasmList = this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 			}
 
-			final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(importedGermplasmList);
+			if (!Objects.equals(entryNo, 0)) {
+				for (ImportedGermplasm germplasm : projectGermplasmList) {
+					germplasm.setEntryId(entryNo++);
+				}
+			}
+
+			final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(projectGermplasmList);
 			this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, isNursery ? GermplasmListType.NURSERY
 					: GermplasmListType.TRIAL, listId, listDataProject, this.getCurrentIbdbUserId());
 		} else {
@@ -495,6 +503,7 @@ public class ImportGermplasmListController extends SettingsController {
 			final String defaultTestCheckId =
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
+			form.setEntryNo(list.get(0).getEntryId().toString());
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 

@@ -104,6 +104,8 @@ public class ImportGermplasmListForm {
 
 	private String columnOrders;
 
+	private String entryNo;
+
 	/**
 	 * Gets the selected check.
 	 *
@@ -634,4 +636,11 @@ public class ImportGermplasmListForm {
 		this.columnOrders = columnOrders;
 	}
 
+	public String getEntryNo() {
+		return entryNo;
+	}
+
+	public void setEntryNo(String entryNo) {
+		this.entryNo = entryNo;
+	}
 }

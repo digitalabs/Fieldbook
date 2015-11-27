@@ -759,11 +759,26 @@ div.possibleValuesDiv{
 .fb-build-options .select2-container{
 	width: 260px;
 }
+
+.labelForNumberingAndChecks {
+    width: 60%;
+    float: left;
+    text-align: left;
+    padding-bottom: 12px;
+}
+
 #plotLevelSettings td, #baselineTraitSettings td{
     word-wrap: break-word;
 }
 .label-bold{
     font-weight: 600;
+}
+select{ border: 1px solid #ccc;
+    border-radius: 3px;
+    color: #808080;
+    display: inline-block;
+    font-size: 13px;
+    line-height: 18px;    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) inset;   padding: 4px;
 }
 
 .trialEnvironmentDiv{
@@ -1365,6 +1380,8 @@ input.inputForNumberingAndChecks {
     -moz-border-radius: 3px;
     border-radius: 3px;width: 50px;margin-left: 10px;
     margin-bottom: 8px;
+    width: 15%;
+    text-align: left;
 }
 .select2-dropdown-open.select2-drop-above [class^="select2-choice"] {
     border-bottom-right-radius: 4px !important;

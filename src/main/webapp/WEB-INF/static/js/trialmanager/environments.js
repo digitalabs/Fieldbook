@@ -8,9 +8,9 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 (function() {
 	'use strict';
 
-	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$modal' , '$stateParams',
+	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal' , '$stateParams',
 	'$http', 'DTOptionsBuilder',
-		function($scope, TrialManagerDataService, $modal, $stateParams, $http, DTOptionsBuilder) {
+		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder) {
 
 			$scope.data = {};
 
@@ -43,7 +43,7 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 			};
 
 			$scope.getModalInstance = function() {
-				return $modal.open({
+				return $uibModal.open({
 					templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
 					controller: 'ConfirmModalController',
 					resolve: {

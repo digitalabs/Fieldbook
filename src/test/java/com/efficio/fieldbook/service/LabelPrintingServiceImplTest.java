@@ -424,16 +424,17 @@ public class LabelPrintingServiceImplTest {
 		} catch(TooLittleActualInvocations e){
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is invoked.");
 		}
-
-
 	}
 	
 	@Test
 	public void testTruncateBarcodeLabelForCode(){
 		String barcodeLabelForCode = "Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Year : 2015";
 		barcodeLabelForCode = this.labelPrintingServiceImpl.truncateBarcodeLabelForCode(barcodeLabelForCode);
-		Assert.assertTrue("BarcodelabelForCOde's length should be <= 79", barcodeLabelForCode.length()<=79);
+		
+		String truncatedBarcodeLabelForCode = "Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Nursery Name : SUPER VERY ";
+		Assert.assertEquals("BarcodelabelForCOde's value should be " + barcodeLabelForCode, truncatedBarcodeLabelForCode, barcodeLabelForCode);
 	}
+	
 	private void setExperimentId(final Workbook workbook) {
 		int i = 1;
 		for (final MeasurementRow measurement : workbook.getObservations()) {

@@ -75,7 +75,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 		for (ExperimentalDesignInfo designInfo : designInfos) {
 
 			int trialNo = designInfo.getTrialNumber();
-			plotNo = 1;
+			plotNo = userSelection.getStartingPlotNo();
 
 			for (int repNo = 1; repNo <= designInfo.getNumberOfReps(); repNo++) {
 
@@ -92,8 +92,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 				}
 			}
 		}
-		MeasurementsGeneratorServiceImpl.LOG.info("generateRealMeasurementRows Time duration: " + (System.currentTimeMillis() - start)
-				/ 1000);
+		MeasurementsGeneratorServiceImpl.LOG.info("generateRealMeasurementRows Time duration: " + (System.currentTimeMillis() - start) / 1000);
 		return measurementRows;
 	}
 

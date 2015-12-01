@@ -239,6 +239,19 @@ public class ImportGermplasmListController extends SettingsController {
 		final boolean isNursery = this.userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N;
 		boolean hasTemporaryWorkbook = false;
 
+		Integer entryNo = 0;
+		if (!Objects.isNull(form.getStartingEntryNo())) {
+			entryNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), 0);
+		}
+
+		Integer plotNo = 0;
+		if (!Objects.isNull(form.getStartingPlotNo())) {
+			plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), 0);
+		}
+
+		this.userSelection.setStartingEntryNo(entryNo);
+		this.userSelection.setStartingPlotNo(plotNo);
+
 		if (this.userSelection.getTemporaryWorkbook() != null) {
 
 			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
@@ -282,12 +295,8 @@ public class ImportGermplasmListController extends SettingsController {
 						.getUniqueID());
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 
-		Integer entryNo = 0;
-		if (!Objects.isNull(form.getEntryNo())) {
-			 entryNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getEntryNo(), 0);
-		}
 		// for saving the list data project
-		this.saveListDataProject(isNursery, studyId, entryNo);
+		this.saveListDataProject(isNursery, studyId);
 
 		this.fieldbookService.saveStudyColumnOrdering(studyId, this.userSelection.getWorkbook().getStudyName(), form.getColumnOrders(),
 				this.userSelection.getWorkbook());
@@ -311,7 +320,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param studyId
 	 * @throws MiddlewareQueryException
 	 */
-	private void saveListDataProject(final boolean isNursery, final int studyId, Integer entryNo) {
+	private void saveListDataProject(final boolean isNursery, final int studyId) {
 
 		final ImportedGermplasmMainInfo germplasmMainInfo = this.getUserSelection().getImportedGermplasmMainInfo();
 
@@ -330,6 +339,8 @@ public class ImportGermplasmListController extends SettingsController {
 			} else {
 				projectGermplasmList = this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 			}
+
+			Integer entryNo = this.userSelection.getStartingEntryNo();
 
 			if (!Objects.equals(entryNo, 0)) {
 				for (ImportedGermplasm germplasm : projectGermplasmList) {
@@ -401,7 +412,7 @@ public class ImportGermplasmListController extends SettingsController {
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
 			// Set first entry number from the list
-			form.setEntryNo(list.get(0).getEntryId().toString());
+			form.setStartingEntryNo(list.get(0).getEntryId().toString());
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 			boolean isNursery = false;
@@ -506,7 +517,7 @@ public class ImportGermplasmListController extends SettingsController {
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
 			// Set first entry number from the list
-			form.setEntryNo(list.get(0).getEntryId().toString());
+			form.setStartingEntryNo(list.get(0).getEntryId().toString());
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 

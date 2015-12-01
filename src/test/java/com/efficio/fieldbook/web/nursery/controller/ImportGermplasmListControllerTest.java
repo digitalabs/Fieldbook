@@ -540,7 +540,7 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testNextScreen() {
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
-		form.setEntryNo("801");
+		form.setStartingEntryNo("801");
 		Workbook workbook = new Workbook();
 		StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyType(StudyType.N);

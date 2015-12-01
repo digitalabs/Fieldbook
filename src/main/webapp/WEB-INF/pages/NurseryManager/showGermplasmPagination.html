@@ -55,13 +55,13 @@
                 <div class="col-xs-5">
                     <!-- The following label and input box will be displayed for both Nursery & Trial -->
                     <label class="control-label-bold labelForNumberingAndChecks" id="startingEntryNumber" th:text="#{germplasm.list.specify.starting.entry.number}">Specify Starting Entry Number</label>
-                    <input class="inputForNumberingAndChecks" id="txtStartingEntryNo" rows="1" th:field="*{entryNo}" />
+                    <input class="inputForNumberingAndChecks" id="txtStartingEntryNo" rows="1" th:field="*{startingEntryNo}" />
                 </div>
 
                 <div class="col-xs-6" th:if="${type == 'N'}">
                     <!-- Display this section for Nursery only -->
                     <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}" style="margin-right: 36px;">Specify Starting Plot Number</label>
-                    <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" rows="1" />
+                    <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" rows="1" th:field="*{startingPlotNo}" />
                 </div>
             </div>
         </div>

@@ -1655,6 +1655,11 @@ public class SettingsUtil {
 			boolean found = false;
 			String label = variableAppConstantLabels.get(strFieldId);
 
+			// label field is a UI construct for the Settings sections of the fieldbook UI (a label field and its value which can be a textfield, number or dropdown)
+			// usually a label field contains the ontology measurement variable name and its value of a study.
+			// special field is a label field that contains additional logic for determining its proper label and value
+			// see SettingsUtil.getSpecialFieldValue()
+
 			for (final MeasurementVariable condition : conditions) {
 				if (NumberUtils.isNumber(strFieldId)) {
 					if (condition.getTermId() == Integer.valueOf(strFieldId)) {
@@ -1676,7 +1681,7 @@ public class SettingsUtil {
 						break;
 					}
 				} else {
-					// special field
+					// special field logic
 					final SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
 					final String value = SettingsUtil.getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
 					final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);

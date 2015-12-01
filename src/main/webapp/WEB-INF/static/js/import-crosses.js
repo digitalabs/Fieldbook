@@ -205,7 +205,8 @@ var ImportCrosses = {
 			$('#crossSuffix').val(setting.crossSuffix);
 			$('input:radio[name=hasPrefixSpace][value=' + setting.hasPrefixSpace + ']').prop('checked', true);
 			$('input:radio[name=hasSuffixSpace][value=' + setting.hasSuffixSpace + ']').prop('checked', true);
-			$('#sequenceNumberDigits').val(setting.sequenceNumberDigits);
+			$('input:radio[name=hasParentageDesignationName][value=' + setting.hasParentageDesignationName + ']').prop('checked', true);
+			$('#sequenceNumberDigits').select2('val', setting.sequenceNumberDigits);
 			$('#parentageDesignationSeparator').val(setting.parentageDesignationSeparator);
 			$('#startingSequenceNumber').val(setting.startingSequenceNumber);
 			$('#locationDropdown').select2('val', setting.locationID);
@@ -316,11 +317,6 @@ var ImportCrosses = {
 			if (!importSettings.crossNameSetting.separator || importSettings.crossNameSetting.separator === '') {
 				valid = false;
 				showErrorMessage('', 'Separator for parentage designation is required');
-			}
-
-			if (!importSettings.additionalDetailsSetting.harvestLocationId || importSettings.additionalDetailsSetting.harvestLocationId === '') {
-				valid = false;
-				showErrorMessage('', 'Harvest location is required');
 			}
 
 			return valid;

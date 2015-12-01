@@ -125,7 +125,7 @@ public enum AppConstants {
 	private static Properties configFile = new Properties();
 
 
-	private static final String PROPERTY_FILE = "appconstants.properties";
+	public static final String PROPERTY_FILE = "appconstants.properties";
 
 	static {
 		try {

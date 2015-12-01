@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 
@@ -65,6 +66,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	@Resource
 	private ContextUtil contextUtil;
 
+	@Resource
+	private Properties appConstantsProperties;
+
 	@Override
 	public String getContentName() {
 		return this.getContentName(this.userSelection.isTrial());
@@ -90,7 +94,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			workbook.getStudyDetails().setId(id);
 			details =
 					SettingsUtil.convertWorkbookToStudyDetails(workbook, this.fieldbookMiddlewareService, this.fieldbookService,
-							this.userSelection, contextUtil.getCurrentProgramUUID());
+							this.userSelection, contextUtil.getCurrentProgramUUID(),appConstantsProperties);
 			this.rearrangeDetails(details);
 			this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
 			if (workbook.getMeasurementDatesetId() != null) {

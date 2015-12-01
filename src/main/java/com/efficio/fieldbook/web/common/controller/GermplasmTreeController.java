@@ -163,9 +163,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 				final Integer germplasmListId = this.saveGermplasmList(form, listDataItems);
 
-				List<GermplasmListData> data = new ArrayList<GermplasmListData>();
+				final List<GermplasmListData> data = new ArrayList<GermplasmListData>();
 				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
-				List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
+				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
 
 				final Integer listDataProjectListId = this.saveListDataProjectList(form, germplasmListId, listDataProject);
 				results.put(GermplasmTreeController.IS_SUCCESS, 1);
@@ -216,7 +216,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	protected Integer saveListDataProjectList(final SaveListForm form, final Integer germplasmListId,
 			final List<ListDataProject> dataProjectList) throws MiddlewareException {
-		GermplasmListType type;
+		final GermplasmListType type;
 		final Integer currentUserID = this.getCurrentIbdbUserId();
 		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
 			type = GermplasmListType.ADVANCED;
@@ -884,9 +884,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/retrieve/state/{type}/{saveMode}", method = RequestMethod.GET)
 	public String retrieveTreeState(@PathVariable final String type, @PathVariable final Boolean saveMode) {
 
-		List<String> stateList;
-		Integer userID = this.contextUtil.getCurrentUserLocalId();
-		String programUUID = this.getCurrentProgramUUID();
+		final List<String> stateList;
+		final Integer userID = this.contextUtil.getCurrentUserLocalId();
+		final String programUUID = this.getCurrentProgramUUID();
 		if (saveMode) {
 			stateList = this.userTreeStateService.getUserProgramTreeStateForSaveList(userID, programUUID);
 		} else {

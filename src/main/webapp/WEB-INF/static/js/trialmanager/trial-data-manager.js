@@ -584,6 +584,7 @@
                     var hasError = false, name = '', customMessage = '', errorCode = 0;
                     var creationDate = service.currentData.basicDetails.basicDetails[8050];
                     var completionDate = service.currentData.basicDetails.basicDetails[8060];
+                    var entryNo = $.trim($('#txtStartingEntryNo').val());
                     if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
                         hasError = true;
                         name = $('#folderLabel').text();
@@ -605,6 +606,17 @@
                     } else if (service.currentData.environments.noOfEnvironments <= 0) {
                         hasError = true;
                         customMessage = 'Trials should have at least one environment';
+                    } else if (entryNo != '') {
+                        // Entry No. must be in 5 digits or less than 5 digits
+                        if (service.validateEntryNo(entryNo)) {
+                            if (service.validateEntryNoAsMaxDigits(entryNo)) {
+                                hasError = true;
+                                customMessage = entryNoMaxLimitExceeded;
+                            }
+                        } else {
+                            hasError = true;
+                            customMessage = entryNoNonNumericValueNotSupported;
+                        }
                     }
 
                     var invalidDateMsg = validateAllDates();
@@ -656,6 +668,22 @@
 
                     return valid;
 
+                },
+
+                validateEntryNo: function(inputNo) {
+                    var validNo = /^\d+$/;
+                    if (inputNo.match(validNo)) {
+                        return true;
+                    }
+                    return false;
+                },
+
+                validateEntryNoAsMaxDigits: function(inputNo) {
+                    var length = 5;
+                    if (inputNo.length > length) {
+                        return true;
+                    }
+                    return false;
                 },
 
                 validateAllVariablesInput: function () {

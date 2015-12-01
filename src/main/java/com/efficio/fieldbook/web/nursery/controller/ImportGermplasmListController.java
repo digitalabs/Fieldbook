@@ -400,6 +400,8 @@ public class ImportGermplasmListController extends SettingsController {
 			final String defaultTestCheckId =
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
+			// Set first entry number from the list
+			form.setEntryNo(list.get(0).getEntryId().toString());
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 			boolean isNursery = false;
@@ -503,6 +505,7 @@ public class ImportGermplasmListController extends SettingsController {
 			final String defaultTestCheckId =
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
+			// Set first entry number from the list
 			form.setEntryNo(list.get(0).getEntryId().toString());
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();

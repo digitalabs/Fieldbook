@@ -65,7 +65,7 @@
 					}
 				});
 
-				TrialManagerDataService.indicateUnappliedChangesAvailable();
+				TrialManagerDataService.indicateUnsavedTreatmentFactorsAvailable();
 			};
 
 			$scope.invalidBlockSizeMsg = '<b class="text-danger">Invalid Block Size</b>';
@@ -171,12 +171,12 @@
 				}).then(function() {
 					$scope.settings.details.remove(key);
 					delete $scope.data.currentData[key];
-					TrialManagerDataService.indicateUnappliedChangesAvailable();
+					TrialManagerDataService.indicateUnsavedTreatmentFactorsAvailable();
 				});
 			};
 
 			$scope.onLabelChange = function() {
-				TrialManagerDataService.indicateUnappliedChangesAvailable();
+				TrialManagerDataService.indicateUnsavedTreatmentFactorsAvailable();
 			};
 
 			$scope.onLevelChange = function(key, levels) {
@@ -200,8 +200,7 @@
 					}
 				}
 
-				TrialManagerDataService.indicateUnappliedChangesAvailable();
-
+				TrialManagerDataService.indicateUnsavedTreatmentFactorsAvailable();
 			};
 
 		}]);

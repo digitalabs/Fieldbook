@@ -11,15 +11,7 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -97,8 +89,8 @@ public class SettingsUtil {
 	 * Get standard variable.
 	 *
 	 * @param id the id
-	 * @param userSelection the user selection
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
+	 * @param programUUID
 	 * @return the standard variable
 	 */
 	private static StandardVariable getStandardVariable(final int id, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
@@ -1465,11 +1457,11 @@ public class SettingsUtil {
 
 	public static StudyDetails convertWorkbookToStudyDetails(final Workbook workbook,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID) {
+			final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID,final Properties appConstantsProperties) {
 
 		final StudyDetails studyDetails =
 				SettingsUtil.convertWorkbookStudyLevelVariablesToStudyDetails(workbook, fieldbookMiddlewareService, fieldbookService,
-						userSelection, workbook.getStudyDetails().getId().toString(), programUUID);
+						userSelection, workbook.getStudyDetails().getId().toString(), programUUID,appConstantsProperties);
 
 		if (workbook.getTrialDatasetId() != null) {
 			studyDetails.setNumberOfEnvironments(Long.valueOf(fieldbookMiddlewareService.countObservations(workbook.getTrialDatasetId()))
@@ -1502,7 +1494,7 @@ public class SettingsUtil {
 
 	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final String projectId, final String programUUID) {
+			final FieldbookService fieldbookService, final UserSelection userSelection, final String projectId, final String programUUID, final Properties appConstantsProperties) {
 
 		final StudyDetails details = new StudyDetails();
 		details.setId(workbook.getStudyDetails().getId());
@@ -1528,7 +1520,7 @@ public class SettingsUtil {
 			}
 			basicDetails =
 					SettingsUtil.convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService, fieldbookService,
-							userSelection, workbook, programUUID);
+							userSelection, workbook, programUUID,appConstantsProperties);
 			managementDetails =
 					SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection,
 							fieldbookMiddlewareService, fieldbookService, programUUID);
@@ -1640,7 +1632,7 @@ public class SettingsUtil {
 	private static List<SettingDetail> convertWorkbookToSettingDetails(final List<String> fields,
 			final List<MeasurementVariable> conditions,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final Workbook workbook, final String programUUID) {
+			final FieldbookService fieldbookService, final UserSelection userSelection, final Workbook workbook, final String programUUID, final Properties appConstantsProperties) {
 
 		final List<SettingDetail> details = new ArrayList<SettingDetail>();
 		int index = fields != null ? fields.size() : 0;
@@ -1650,13 +1642,23 @@ public class SettingsUtil {
 		if (datasetId == null) {
 			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyDetails().getId(), studyName);
 		}
+
+		List<String> labelFieldsWithPairedVariable = new ArrayList<>(fields);
+		labelFieldsWithPairedVariable.add(AppConstants.SPFLD_PLOT_COUNT.getString());
+		Map<String,String> variableAppConstantLabels = getVariableAppConstantLabels(labelFieldsWithPairedVariable,appConstantsProperties);
+
 		for (final String strFieldId : fields) {
 			if (StringUtils.isEmpty(strFieldId) || conditions == null) {
 				continue;
 			}
 
 			boolean found = false;
-			String label = AppConstants.getString(strFieldId.toUpperCase() + "_LABEL");
+			String label = variableAppConstantLabels.get(strFieldId);
+
+			// label field is a UI construct for the Settings sections of the fieldbook UI (a label field and its value which can be a textfield, number or dropdown)
+			// usually a label field contains the ontology measurement variable name and its value of a study.
+			// special field is a label field that contains additional logic for determining its proper label and value
+			// see SettingsUtil.getSpecialFieldValue()
 
 			for (final MeasurementVariable condition : conditions) {
 				if (NumberUtils.isNumber(strFieldId)) {
@@ -1679,7 +1681,7 @@ public class SettingsUtil {
 						break;
 					}
 				} else {
-					// special field
+					// special field logic
 					final SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
 					final String value = SettingsUtil.getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
 					final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
@@ -1688,7 +1690,7 @@ public class SettingsUtil {
 								SettingsUtil.getSpecialFieldValue(AppConstants.SPFLD_PLOT_COUNT.getString(), datasetId,
 										fieldbookMiddlewareService, workbook);
 						final PairedVariable pair =
-								new PairedVariable(AppConstants.getString(AppConstants.SPFLD_PLOT_COUNT.getString() + "_LABEL"), plotValue);
+								new PairedVariable(variableAppConstantLabels.get(AppConstants.SPFLD_PLOT_COUNT.getString()), plotValue);
 						settingDetail.setPairedVariable(pair);
 					}
 					index = SettingsUtil.addToList(details, settingDetail, index, fields, strFieldId);
@@ -1706,6 +1708,17 @@ public class SettingsUtil {
 
 		}
 		return details;
+	}
+
+	protected static Map<String, String> getVariableAppConstantLabels(final List<String> labels, final Properties appConstantsProperties) {
+		final Map<String,String> variableLabels = new HashMap<>();
+
+		for (final String label : labels) {
+			final String value = appConstantsProperties.getProperty(label.toUpperCase() + "_LABEL");
+			variableLabels.put(label,value != null ? value : "");
+		}
+
+		return variableLabels;
 	}
 
 	private static String getSpecialFieldValue(final String specialFieldLabel, final Integer datasetId,

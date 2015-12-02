@@ -8,6 +8,7 @@ import java.util.Locale;
 import javax.annotation.Resource;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -16,6 +17,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -43,6 +45,8 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @RequestMapping(ExpDesignController.URL)
 public class ExpDesignController extends BaseTrialController {
 
+	private static final String WHEAT = "wheat";
+	private static final String CIMMYT = "cimmyt";
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignController.class);
 	public static final String URL = "/TrialManager/experimental/design";
 
@@ -54,10 +58,25 @@ public class ExpDesignController extends BaseTrialController {
 	private ResolvableRowColumnDesignService resolvableRowColumnDesign;
 	@Resource
 	private ResourceBundleMessageSource messageSource;
+	@Resource
+	private CrossExpansionProperties crossExpansionProperties;
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override
 	public String getContentName() {
 		return "TrialManager/openTrial";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/isCimmytProfileWithWheatCrop", method = RequestMethod.GET)
+	public Boolean isCimmytProfileWithWheatCrop() {
+		final String profile = this.crossExpansionProperties.getProfile();
+		final String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
+		if (profile != null && cropName != null) {
+			return CIMMYT.equalsIgnoreCase(profile) && WHEAT.equalsIgnoreCase(cropName);
+		}
+		return false;
 	}
 
 	@ResponseBody
@@ -231,4 +250,5 @@ public class ExpDesignController extends BaseTrialController {
 		}
 		return null;
 	}
+
 }

@@ -398,7 +398,24 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
 		FileInputStream in;
 
+        try {
+            in = new FileInputStream(xls);
+            OutputStream out = response.getOutputStream();
 
+            // use bigger if you want
+            byte[] buffer = new byte[LabelPrintingController.BUFFER_SIZE];
+            int length = 0;
+
+            while ((length = in.read(buffer)) > 0) {
+                out.write(buffer, 0, length);
+            }
+            in.close();
+            out.close();
+        } catch (FileNotFoundException e) {
+            LabelPrintingController.LOG.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LabelPrintingController.LOG.error(e.getMessage(), e);
+        }
 
 		return "";
 	}
@@ -438,6 +455,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             results.put(LabelPrintingController.IS_SUCCESS, 0);
             results.put(AppConstants.MESSAGE.getString(), this.messageSource.getMessage("common.error.invalid.filename.windows",
                     new Object[] {}, Locale.getDefault()));
+
+            return results;
         }
 
 		List<FieldMapInfo> fieldMapInfoList = this.userLabelPrinting.getFieldMapInfoList();

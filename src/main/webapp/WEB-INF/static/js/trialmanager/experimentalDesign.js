@@ -44,19 +44,22 @@
 						id: 4,
 						name: 'E30-2reps-6blocks-5ind', params: 'designTemplateParams.html',
 						isPreset: true,
-						repNo: 2
+						repNo: 2,
+						totalNoOfEntries: 30
 					},
 					{
 						id: 5,
 						name: 'E30-3reps-6blocks-5ind', params: 'designTemplateParams.html',
 						isPreset: true,
-						repNo: 3
+						repNo: 3,
+						totalNoOfEntries: 30
 					},
 					{
 						id: 6,
 						name: 'E50-2reps-5blocks-10ind', params: 'designTemplateParams.html',
 						isPreset: true,
-						repNo: 2
+						repNo: 2,
+						totalNoOfEntries: 50
 					}
 				];
 				
@@ -358,6 +361,17 @@
 
 							break;
 						}
+						case 4:
+						case 5:
+						case 6:
+						{
+							var actualNoOfGermplasmListEntries = $scope.currentDesignType.totalNoOfEntries;
+							if($scope.totalGermplasmEntryListCount !== actualNoOfGermplasmListEntries){
+								showErrorMessage('page-message', EXP_DESIGN_MSGS[28]);
+								return false;
+							}
+							break;
+						} 
 					}
 
 					if ($scope.totalGermplasmEntryListCount <= 0) {

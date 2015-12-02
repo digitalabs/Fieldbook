@@ -221,10 +221,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			fileName = rep.getFileName();
 			outputFilename = this.fieldbookProperties.getUploadDirectory() + File.separator + fileName;
 
-            if (!FileUtils.isFilenameValid(outputFilename)) {
-                outputFilename = FileUtils.sanitizeFileName(outputFilename);
-            }
-
 			final File reportFile = new File(outputFilename);
 			baos.writeTo(new FileOutputStream(reportFile));
 
@@ -590,7 +586,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			contentType = ExportStudyController.APPLICATION_VND_MS_EXCEL;
 		}
 		response.setContentType(contentType);
-		;
+
 		final Map<String, Object> results = new HashMap<String, Object>();
 		results.put(OUTPUT_FILENAME, outputFilename);
 		results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(file.getName()));

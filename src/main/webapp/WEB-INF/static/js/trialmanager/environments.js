@@ -8,17 +8,33 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 (function() {
 	'use strict';
 
-	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal' , '$stateParams',
+	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
 	'$http', 'DTOptionsBuilder',
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder) {
 
 			$scope.data = {};
 
-			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('lirtp').withButtons([ {
+			$scope.buttonsTop = [{
 				extend:'colvis',
 				text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column fbk-colvis-button"></i>',
 				columns: ':gt(0):not(.ng-hide)'
-			} ]);
+			}];
+
+			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp').withButtons($scope.buttonsTop
+			.slice());
+
+			$scope.dtOptions.drawCallback =  function() {
+				var api = $(this).DataTable();
+
+				//temporary fix in buttons disappear bug
+				if (api) {
+					new $.fn.dataTable.Buttons(api, {
+						buttons: $scope.buttonsTop.slice()
+					});
+
+					$(this).parent().find('.dt-buttons').replaceWith(api.buttons().container());
+				}
+			};
 
 			$scope.data = TrialManagerDataService.currentData.environments;
 			$scope.isHideDelete = false;
@@ -29,7 +45,7 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 				$scope.settings.trialConditionDetails = [];
 			}
 
-			TrialManagerDataService.onUpdateData('environments', function(newValue) {
+			TrialManagerDataService.onUpdateData('environments', function() {
 				$scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;
 			});
 

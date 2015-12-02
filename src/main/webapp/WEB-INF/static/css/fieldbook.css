@@ -1131,9 +1131,15 @@ a.fbk-edit-experiment{
 
 .mdt-header .dataTables_length,
 .dataTables_wrapper .dataTables_length,
+.fbk-datatable-panel-top > .dataTables_info,
 .mdt-header .dataTables_info {
     float: left;
 }
+
+.fbk-datatable-panel-top > .dt-buttons {
+    float: right;
+}
+
 .mdt-header .mdt-filtering,
 .mdt-header .mdt-columns {
     float: right;
@@ -1564,10 +1570,6 @@ label[data-toggle="collapse"],
 .vs-icon-sm {
 	width: 11px;
 	height: 11px;
-}
-
-.dataTables_wrapper > div.dt-buttons {
-    float: right;
 }
 
 a.dt-button.buttons-colvis,

@@ -1412,9 +1412,7 @@ function validateCreateNursery() {
 		,customMessage = ''
 		,studyNameId = $('#studyNameTermId').val();
 
-    var entryNo = $.trim($('#txtStartingEntryNo').val());
-    var plotNo = $.trim($('#txtStartingPlotNo').val());
-	$('.nurseryLevelVariableIdClass').each(function() {
+    $('.nurseryLevelVariableIdClass').each(function() {
 		if (studyNameId == $(this).val()) {
 			studyBookName = $(this).parent().find('.form-control').val();
 		}
@@ -1443,31 +1441,6 @@ function validateCreateNursery() {
 	} else if ($('.check-germplasm-list-items tbody tr').length > 0 && $('.germplasm-list-items tbody tr').length === 0) {
 		hasError = true;
 		customMessage = nurseryGermplasmListIsRequired;
-    } else if (entryNo != '' || plotNo != '') {
-        // Entry No. must be in 5 digits or less than 5 digits
-        if (entryNo != '') {
-            if (validateEntryAndPlotNo(entryNo)) {
-                if (validateEntryNoPlotNoAsMaxDigits(entryNo)) {
-                    hasError = true;
-                    customMessage = entryNoMaxLimitExceeded;
-                }
-            } else {
-                hasError = true;
-                customMessage = entryNoNonNumericValueNotSupported;
-            }
-        }
-        // Plot No. must be in 5 digits or less than 5 digits
-        if (plotNo != '') {
-            if (validateEntryAndPlotNo(plotNo)) {
-                if (validateEntryNoPlotNoAsMaxDigits(plotNo)) {
-                    hasError = true;
-                    customMessage = plotNoMaxLimitExceeded;
-                }
-            } else {
-                hasError = true;
-                customMessage = plotNoNonNumericValueNotSupported;
-            }
-        }
     }
 
 	var invalidDateMsg = validateAllDates();
@@ -1580,23 +1553,6 @@ function validateCreateNursery() {
 	}
 
 	return true;
-}
-
-// Validate Germplasm entry number and plot number if it is non-numeric
-function validateEntryAndPlotNo(inputNo) {
-    var validNo = /^\d+$/;
-    if (inputNo.match(validNo)) {
-        return true;
-    }
-    return false;
-}
-
-// Validate Germplasm entry number and plot number if it exceeds 5 digits
-function validateEntryNoPlotNoAsMaxDigits(inputNo) {
-    if (inputNo.length > 5) {
-        return true;
-    }
-    return false;
 }
 
 function nurseryValidateStartEndDateBasic() {

@@ -484,10 +484,7 @@ function submitEditWorkbook() {
 					&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 || measurementRowCount === 0) {
 				submitGermplasmAndCheck();
 			} else if (data.status === '1') {
-				if ($.trim($('#txtStartingEntryNo').val() != '')) {
-                    submitGermplasmAndCheck();
-                }
-                recreateSessionVariablesForEntryNo();
+				recreateSessionVariables();
 				//update the import-desigm change button
 				$('#measurementDataExisting').val(data.hasMeasurementData);
 				ImportDesign.hideChangeButton();

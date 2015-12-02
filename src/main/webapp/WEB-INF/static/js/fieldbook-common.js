@@ -3237,13 +3237,29 @@ function displayEditFactorsAndGermplasmSection() {
 		}
 	}
 }
+
+function toggleControlsForGermplasmListManagement(value) {
+    if(value) {
+        $('#imported-germplasm-list-reset-button').show();
+        $('#txtStartingEntryNo').prop('title', '');
+        $('#txtStartingPlotNo').prop('title', '');
+    } else {
+        $('#imported-germplasm-list-reset-button').hide();
+        $('#txtStartingEntryNo').prop('title', 'Click Replace button to edit entry number');
+        $('#txtStartingPlotNo').prop('title', 'Click Replace button to edit plot number');
+    }
+
+    $('#txtStartingEntryNo').prop('disabled', !value);
+    $('#txtStartingPlotNo').prop('disabled', !value);
+}
+
 function showGermplasmDetailsSection() {
 	'use strict';
 	$('.observation-exists-notif').hide();
 	$('.overwrite-germplasm-list').hide();
 	$('.browse-import-link').show();
 	if ($('.germplasm-list-items tbody tr').length > 0) {
-		$('#imported-germplasm-list-reset-button').show();
+        toggleControlsForGermplasmListManagement(true);
 	}
 	//flag to determine if existing measurements should be deleted
 	$('#chooseGermplasmAndChecks').data('replace', '1');
@@ -3400,7 +3416,7 @@ function displaySelectedGermplasmDetails() {
 			} else {
 				$('.view-header').show();
 			}
-			$('#imported-germplasm-list-reset-button').hide();
+            toggleControlsForGermplasmListManagement(false);
 		}
 	});
 }

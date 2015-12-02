@@ -20,6 +20,7 @@ import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
 import org.generationcp.commons.parsing.ExcelWorkbookRow;
 import org.generationcp.commons.parsing.GermplasmExportedWorkbook;
 import org.generationcp.commons.service.FileService;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -115,8 +116,11 @@ public class CrossingTemplateExcelExporter {
 	}
 
 	private File createExcelOutputFile(final String studyName, final Workbook excelWorkbook) throws IOException {
-		final String outputFileName =
+		String outputFileName =
 				String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT, StringUtil.cleanNameValueCommas(studyName));
+
+        outputFileName = FileUtils.sanitizeFileName(outputFileName);
+
 		try (OutputStream out = new FileOutputStream(outputFileName)) {
 			excelWorkbook.write(out);
 		}

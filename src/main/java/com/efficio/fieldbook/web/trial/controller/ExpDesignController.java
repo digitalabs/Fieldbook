@@ -251,4 +251,13 @@ public class ExpDesignController extends BaseTrialController {
 		return null;
 	}
 
+	public void setCrossExpansionProperties(final CrossExpansionProperties crossExpansionProperties) {
+		this.crossExpansionProperties = crossExpansionProperties;
+	}
+
+	@Override
+	public void setContextUtil(final ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
+
 }

@@ -158,6 +158,10 @@
 						$scope.currentDesignType = $scope.designTypes[newId];
 						$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 						$scope.data.designType = $scope.currentDesignType.id;
+						
+						if(newId >= 4 && newId <= 6){
+							showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
+						}
 					} else {
 						$scope.currentDesignType = null;
 						$scope.data.designType = null;

@@ -264,10 +264,9 @@ public class ImportGermplasmListController extends SettingsController {
 			this.processImportedGermplasmAndChecks(this.userSelection, form);
 
 		} else if (!hasTemporaryWorkbook) {
-
+			// this section of code is only called for existing trial without temporary workbook. No need for reset of measurement row list
+			// here
 			isDeleteObservations = true;
-			this.userSelection.setMeasurementRowList(null);
-
 		}
 
 		this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());

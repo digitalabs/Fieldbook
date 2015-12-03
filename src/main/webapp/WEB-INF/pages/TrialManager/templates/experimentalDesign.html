@@ -4,8 +4,13 @@
 	<section-container icon="bms-exp-design" heading="Experimental Design">
 	<section-container name="content" heading="CHOOSE A DESIGN TYPE">
 	<div class="row" name="content">
-		<div class="col-md-12" ng-show="toggleDesignView()">Design based
-			on an imported design file.</div>
+            	<div class="col-md-12" ng-show="toggleDesignView()">
+            		<div class="col-md-6">
+						Design based on an imported design file.
+						<a ng-hide="data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
+						 class="btn btn-info pull-right chs-add-variable" th:text="#{design.import.change}">Change</a>
+					</div>
+            	</div>
 		<div class="col-md-12" ng-hide="toggleDesignView()">
 			<label class="control-label"
 				style="vertical-align: top; position: relative; top: 6px;"><strong

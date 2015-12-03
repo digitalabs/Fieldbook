@@ -17,6 +17,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.service.internal.DesignRunner;
+import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -186,5 +190,18 @@ public interface FieldbookService {
      * @return the id name pair for retrieve and save
      */
     Map<String,String> getIdNamePairForRetrieveAndSave();
-    
+
+    /**
+     * Run BVDesign
+     * @param workbenchService
+     * @param fieldbookProperties
+     * @param design
+     * @return
+     * @throws IOException
+     */
+    BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design) throws IOException;
+
+    DesignRunner getDesignRunner();
+
+    void setDesignRunner(DesignRunner designRunner);
 }

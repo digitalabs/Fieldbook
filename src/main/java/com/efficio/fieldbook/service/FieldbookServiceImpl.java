@@ -25,6 +25,10 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.service.internal.DesignRunner;
+import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -84,6 +88,9 @@ public class FieldbookServiceImpl implements FieldbookService {
 
     @Resource
     private NamingConventionService namingConventionService;
+
+    @Resource
+    private DesignRunner designRunner;
 
 
     /* (non-Javadoc)
@@ -881,4 +888,24 @@ public class FieldbookServiceImpl implements FieldbookService {
             }
         }
     }
+
+    @Override
+    public BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design)
+            throws IOException {
+
+        return designRunner.runBVDesign(workbenchService, fieldbookProperties, design);
+
+    }
+
+    @Override
+    public DesignRunner getDesignRunner() {
+        return designRunner;
+    }
+
+    @Override
+    public void setDesignRunner(DesignRunner designRunner) {
+        this.designRunner = designRunner;
+    }
+
+
 }

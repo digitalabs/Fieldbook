@@ -39,6 +39,7 @@ import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.manager.api.UserProgramStateDataManager;
+import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
@@ -71,6 +72,7 @@ import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TreeTableNode;
+import com.google.common.collect.Lists;
 
 /**
  * The Class GermplasmTreeController.
@@ -215,9 +217,12 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
 			final AdvancingNurseryForm advancingNurseryForm = this.getPaginationListSelection().getAdvanceDetails(form.getListIdentifier());
 			final List<Pair<Germplasm, List<Name>>> germplasms = new ArrayList<>();
+			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
 
-			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingNurseryForm, form, germplasms, listDataItems, currentUserId);
-			return this.fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList);
+			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingNurseryForm, form, germplasms, listDataItems, currentUserId,
+					germplasmAttributes);
+			return this.fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList,
+					germplasmAttributes);
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
 			final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 			final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
@@ -385,7 +390,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	private void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList, final AdvancingNurseryForm form,
 			final SaveListForm saveListForm, final List<Pair<Germplasm, List<Name>>> germplasms,
-			final List<Pair<Germplasm, GermplasmListData>> listDataItems, final Integer currentUserID) {
+			final List<Pair<Germplasm, GermplasmListData>> listDataItems, final Integer currentUserID,
+			List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) {
 
 		final String harvestDate = form.getHarvestYear() + form.getHarvestMonth() + "00";
 
@@ -461,6 +467,19 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					designation, groupName, listDataStatus, localRecordId);
 
 			listDataItems.add(new ImmutablePair<Germplasm, GermplasmListData>(germplasm, listData));
+
+			// Add the seed source/origin attribute (which is generated based on format strings configured in crossing.properties) to the
+			// germplasm.
+			final Attribute originAttribute = new Attribute();
+			originAttribute.setAval(importedGermplasm.getSource());
+			// FIXME Discuss with Jean/Graham/Matthew and use the appropriate one.
+			// Using one that came closest for now in UDFLD table: id=1146 ftable=ATRIBUTS ftype=PASSPORT fcode=SAMP_ORI fname=Sample origin
+			originAttribute.setTypeId(1146);
+			originAttribute.setUserId(currentUserID);
+			originAttribute.setAdate(gDate);
+			originAttribute.setLocationId(locationId);
+			// originAttribute gid will be set when saving once gid is known
+			germplasmAttributes.add(new ImmutablePair<Germplasm, List<Attribute>>(germplasm, Lists.newArrayList(originAttribute)));
 		}
 	}
 
@@ -641,9 +660,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			if (germplasmList.getType() != null
 					&& (germplasmList.getType().equalsIgnoreCase(GermplasmListType.NURSERY.toString())
 							|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.TRIAL.toString()))
-					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.CHECK.toString())
-					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.CROSSES.toString())
-					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.ADVANCED.toString())) {
+							|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.CHECK.toString())
+							|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.CROSSES.toString())
+							|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.ADVANCED.toString())) {
 				dataResults.put("totalEntries", this.fieldbookMiddlewareService.countListDataProjectGermplasmListDataByListId(listId));
 			} else {
 				dataResults.put("totalEntries", this.fieldbookMiddlewareService.countGermplasmListDataByListId(listId));

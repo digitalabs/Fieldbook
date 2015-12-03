@@ -270,6 +270,17 @@ table.dataTable thead .sorting_desc {
     top: 5pt;
 }
 
+.fbk-delete-sign {
+    cursor: pointer;
+    color: #CE453C;
+    font-size: 16px;
+    width: 25px;
+}
+
+.fbk-table-delete-link {
+    width: 25px;
+}
+
 
 #studyTree, .study-field-map-tree{
     height:350px;

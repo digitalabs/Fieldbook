@@ -72,8 +72,9 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="environment in data.environments" ng-class="{even : $even, odd : $odd}">
-                    <td class="fbk-delete-link">
-                        <input type="checkbox" ng-show="data.noOfEnvironments > 1" ng-click="deleteEnvironment($index)"/>
+                    <td class="fbk-delete-link fbk-table-delete-link">
+                        <span ng-click="deleteEnvironment($index)" ng-show="data.noOfEnvironments > 1"
+                              class="glyphicon glyphicon-minus-sign fbk-delete-sign">&nbsp;</span>
                     </td>
                     <td>{{$index + 1}}</td>
                     <td ng-repeat="key in settings.managementDetails.keys()"

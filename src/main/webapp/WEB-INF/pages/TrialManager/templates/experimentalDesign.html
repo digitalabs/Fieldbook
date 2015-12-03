@@ -4,57 +4,57 @@
 	<section-container icon="bms-exp-design" heading="Experimental Design">
 		<section-container name="content" heading="CHOOSE A DESIGN TYPE">
 			<div class="row" name="content">
-	            	<div class="col-md-12" ng-show="toggleDesignView()">
-	            		<div class="col-md-6">
-							Design based on an imported design file.
-							<a ng-hide="data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
-							 class="btn btn-info pull-right chs-add-variable" th:text="#{design.import.change}">Change</a>
-						</div>
-	            	</div>
-			<div class="col-md-12" ng-hide="toggleDesignView()">
-				<label class="control-label"
-					style="vertical-align: top; position: relative; top: 6px;"><strong
-					th:text="#{trial.experimental.design.select}">Select the
-						design type you would like to use for this trial:</strong></label>
-	
-				<div style="display: inline-block">
-					<div style="width: 350px !important;">
-						<div class="col-xs-10">
-							<select ui-select2="{minimumResultsForSearch : -1}"
-								ng-model="currentDesignTypeId"
-								ng-change="onSwitchDesignTypes(currentDesignTypeId)"
-								ng-disabled="measurementDetails.hasMeasurement">
-								<option value="">Please Choose</option>
-								<option value="{{item.id}}"
-									ng-repeat="item in designTypes| filterExperimentalDesignType">
-									{{item.name}}</option>
-								<option value="" ng-show="isCimmytProfileWithWheatCrop" disabled="true">--------------------------------------------------</option>
-								<option value="{{item.id}}"
-									ng-repeat="item in designTypes| filterExperimentalDesignPresetType"
-									ng-show="isCimmytProfileWithWheatCrop">{{item.name}}</option>
-							</select>
-						</div>
-						<div class="col-xs-2 add-top-padding-small">
-							<span class="bms-fa-question-circle help-tooltip-nursery"
-								tooltip-placement="right" tooltip-append-to-body="true"
-								th:attr="tooltip=#{trial.experimental.design.incomplete.block.design.tooltip}"></span>
-						</div>
+            	<div class="col-md-12" ng-show="toggleDesignView()">
+            		<div class="col-md-6">
+						Design based on an imported design file.
+						<a ng-hide="data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
+						 class="btn btn-info pull-right chs-add-variable" th:text="#{design.import.change}">Change</a>
 					</div>
-					<div ng-show="currentDesignType.withResolvable &amp;&amp; false">
-						<label class="checkbox-inline"> <input type="checkbox"
-							ng-model="data.isResolvable" id="inlineCheckbox2" value="option2" />
-							<span>Design will be resolvable</span>
-						</label>
+            	</div>
+				<div class="col-md-12" ng-hide="toggleDesignView()">
+					<label class="control-label"
+						style="vertical-align: top; position: relative; top: 6px;"><strong
+						th:text="#{trial.experimental.design.select}">Select the
+							design type you would like to use for this trial:</strong></label>
+		
+					<div style="display: inline-block">
+						<div style="width: 350px !important;">
+							<div class="col-xs-10">
+								<select ui-select2="{minimumResultsForSearch : -1}"
+									ng-model="currentDesignTypeId"
+									ng-change="onSwitchDesignTypes(currentDesignTypeId)"
+									ng-disabled="measurementDetails.hasMeasurement">
+									<option value="">Please Choose</option>
+									<option value="{{item.id}}"
+										ng-repeat="item in designTypes| filterExperimentalDesignType">
+										{{item.name}}</option>
+									<option value="" ng-show="isCimmytProfileWithWheatCrop" disabled="true">--------------------------------------------------</option>
+									<option value="{{item.id}}"
+										ng-repeat="item in designTypes| filterExperimentalDesignPresetType"
+										ng-show="isCimmytProfileWithWheatCrop">{{item.name}}</option>
+								</select>
+							</div>
+							<div class="col-xs-2 add-top-padding-small">
+								<span class="bms-fa-question-circle help-tooltip-nursery"
+									tooltip-placement="right" tooltip-append-to-body="true"
+									th:attr="tooltip=#{trial.experimental.design.incomplete.block.design.tooltip}"></span>
+							</div>
+						</div>
+						<div ng-show="currentDesignType.withResolvable &amp;&amp; false">
+							<label class="checkbox-inline"> <input type="checkbox"
+								ng-model="data.isResolvable" id="inlineCheckbox2" value="option2" />
+								<span>Design will be resolvable</span>
+							</label>
+						</div>
 					</div>
 				</div>
+				<div class="col-md-12 add-bottom-padding" ng-hide="toggleDesignView()">
+					<label class="control-label">Or <a class="import-design"
+						onclick="ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());">import</a>
+						an experimental design.
+					</label>
+				</div>
 			</div>
-			<div class="col-md-12 add-bottom-padding" ng-hide="toggleDesignView()">
-				<label class="control-label">Or <a class="import-design"
-					onclick="ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());">import</a>
-					an experimental design.
-				</label>
-			</div>
-		</div>
 		</section-container> 
 	</section-container>
 

@@ -334,8 +334,8 @@ public class ImportGermplasmListController extends SettingsController {
 					.deleteListDataProjects(studyId, isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL);
 		}
 
-		if (germplasmMainInfo != null) {
-			if (germplasmMainInfo.getListId() != null) {
+		if (this.getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
+			if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null) {
 				// came from a list
 				final Integer listId = this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId();
 				final List<ListDataProject> listDataProject =

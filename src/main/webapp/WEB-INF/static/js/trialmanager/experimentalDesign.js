@@ -370,7 +370,7 @@
 						case 6:
 						{
 							var actualNoOfGermplasmListEntries = $scope.currentDesignType.totalNoOfEntries;
-							if($scope.totalGermplasmEntryListCount !== actualNoOfGermplasmListEntries){
+							if($scope.totalGermplasmEntryListCount > 0 && $scope.totalGermplasmEntryListCount !== actualNoOfGermplasmListEntries){
 								showErrorMessage('page-message', EXP_DESIGN_MSGS[28]);
 								return false;
 							}

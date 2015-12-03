@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
@@ -31,6 +32,7 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 	private AdvancingSource row;
 	private Integer breedingMethodSnameType;
 
+	@Override
 	@Before
 	public void setUp() {
 		this.breedingMethodSnameType = 5;
@@ -42,7 +44,7 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 
 	// Testing without unique name checking in order to be
 	@Test
-	public void testGenerateGermplasmList() throws MiddlewareQueryException, RuleException {
+	public void testGenerateGermplasmList() throws MiddlewareQueryException, RuleException, FieldbookException {
 
 		AdvancingSourceList rows = new AdvancingSourceList();
 		rows.setRows(new ArrayList<AdvancingSource>());
@@ -92,7 +94,7 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 		as1.setCurrentMaxSequence(0);
 		rows.getRows().add(as1);
 
-		List<ImportedGermplasm> igList = this.namingConventionService.generateGermplasmList(rows, false);
+		List<ImportedGermplasm> igList = this.namingConventionService.generateGermplasmList(rows, false, null);
 		Assert.assertNotNull(igList);
 		Assert.assertFalse(igList.isEmpty());
 		Assert.assertEquals(1, igList.size());

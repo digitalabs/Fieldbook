@@ -46,10 +46,10 @@ public class AdvancingSourceListFactory {
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-	
+
 	@Resource
 	private OntologyVariableDataManager ontologyVariableDataManager;
-	
+
 	@Resource
 	private ContextUtil contextUtil;
 
@@ -65,7 +65,7 @@ public class AdvancingSourceListFactory {
 
 		List<AdvancingSource> rows = new ArrayList<AdvancingSource>();
 
-		String locationAbbreviation = advanceInfo.getHarvestLocationAbbreviation();
+		String harvestLocation = advanceInfo.getHarvestLocationAbbreviation();
 		String locationIdString = advanceInfo.getHarvestLocationId();
 		Integer locationId = StringUtils.isEmpty(locationIdString) ? null : Integer.valueOf(locationIdString);
 		Integer methodVariateId = advanceInfo.getMethodVariateId();
@@ -87,7 +87,7 @@ public class AdvancingSourceListFactory {
 				if (germplasm.getGid() != null && NumberUtils.isNumber(germplasm.getGid())) {
 					gids.add(Integer.valueOf(germplasm.getGid()));
 				}
-				
+
 				// the season code is used if season information is captured as part of the BreedingMethod
 				season = this.getSeason(workbook);
 
@@ -120,6 +120,8 @@ public class AdvancingSourceListFactory {
 					methodId = this.getIntegerValue(advanceInfo.getBreedingMethodId());
 				}
 
+				MeasurementData plotNumberData = row.getMeasurementData(TermId.PLOT_NO.getId());
+
 				if (methodId != null) {
 					Method breedingMethod = breedingMethodMap.get(methodId);
 					Integer plantsSelected = null;
@@ -135,7 +137,7 @@ public class AdvancingSourceListFactory {
 							}
 						}
 						AdvancingSource source = new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, isCheck, nurseryName, season,
-								locationAbbreviation);
+										harvestLocation, plotNumberData.getValue());
 						source.setLocationId(locationId);
 						rows.add(source);
 					}
@@ -211,7 +213,7 @@ public class AdvancingSourceListFactory {
 						throw new FieldbookException(this.messageSource.getMessage("error.advancing.germplasm.not.existing", new String[] {},
 								locale));
 					}
-					
+
 					source.getGermplasm().setGpid1(germplasm.getGpid1());
 					source.getGermplasm().setGpid2(germplasm.getGpid2());
 					source.getGermplasm().setGnpgs(germplasm.getGnpgs());
@@ -225,7 +227,7 @@ public class AdvancingSourceListFactory {
 
 		}
 	}
-	
+
 	String getSeason(Workbook workbook) throws FieldbookException {
 		String season = "";
 		for (MeasurementVariable mv : workbook.getConditions()) {
@@ -242,7 +244,7 @@ public class AdvancingSourceListFactory {
 					throw new FieldbookException("nursery.advance.no.code.selected.for.season");
 				}
 				// season = mv.getValue();
-				Variable variable = ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), mv.getTermId(), true, false);
+				Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), mv.getTermId(), true, false);
 				for (TermSummary ts : variable.getScale().getCategories()) {
 					if (ts.getId().equals(Integer.valueOf(mv.getValue()))) {
 						season = ts.getDefinition();
@@ -285,12 +287,12 @@ public class AdvancingSourceListFactory {
 		}
 		return methodId;
 	}
-	
+
 	void setOntologyVariableDataManager(OntologyVariableDataManager ontologyVariableDataManager) {
 		this.ontologyVariableDataManager = ontologyVariableDataManager;
 	}
 
-	
+
 	void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}

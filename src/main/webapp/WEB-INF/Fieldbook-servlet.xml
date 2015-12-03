@@ -451,6 +451,20 @@
 		init-method="init" />
 
 	<context:component-scan base-package="com.efficio.fieldbook.web.naming.expression" />
+	
+	<!-- Singleton bean as there is nothing request specific in here. -->
+	<bean id="germplasmNamingProperties" class="org.generationcp.commons.service.GermplasmNamingProperties">
+		<property name="germplasmOriginNurseriesDefault" value="${germplasm.origin.nurseries.default}"/>
+		<property name="germplasmOriginTrialsDefault" value="${germplasm.origin.trials.default}"/>
+		<property name="germplasmOriginNurseriesWheat" value="${germplasm.origin.nurseries.wheat}"/>
+		<property name="germplasmOriginTrialsWheat" value="${germplasm.origin.trials.wheat}"/>
+		<property name="germplasmOriginNurseriesMaize" value="${germplasm.origin.nurseries.maize}"/>
+		<property name="germplasmOriginTrialsMaize" value="${germplasm.origin.trials.maize}"/>
+	</bean>
+	
+	<bean id="germplasmOriginGenerationService" class="org.generationcp.commons.service.impl.GermplasmOriginGenerationServiceImpl">
+		<property name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
+	</bean>
 
 	<bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
 		scope="request">

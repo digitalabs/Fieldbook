@@ -43,11 +43,12 @@ public class AdvancingSource {
 	private String suffix;
 	private Integer rootNameType;
 	private Integer locationId;
+	private String plotNumber;
 
 	private boolean isForceUniqueNameGeneration;
 
 	public AdvancingSource(ImportedGermplasm germplasm, List<Name> names, Integer plantsSelected, Method breedingMethod, boolean isCheck,
-			String nurseryName, String season, String locationAbbreviation) {
+			String nurseryName, String season, String locationAbbreviation, String plotNumber) {
 		super();
 		this.germplasm = germplasm;
 		this.names = names;
@@ -57,6 +58,7 @@ public class AdvancingSource {
 		this.nurseryName = nurseryName;
 		this.season = season;
 		this.locationAbbreviation = locationAbbreviation;
+		this.plotNumber = plotNumber;
 	}
 
 	public AdvancingSource() {
@@ -105,202 +107,211 @@ public class AdvancingSource {
 		this.isCheck = isCheck;
 	}
 
-	 /**
-	  * @return the isBulk
-	  */
-	 public boolean isBulk() {
-		 Boolean isBulk = this.getBreedingMethod().isBulkingMethod();
-		 return this.getBreedingMethod() != null && isBulk != null ? isBulk : false;
-	 }
+	/**
+	 * @return the isBulk
+	 */
+	public boolean isBulk() {
+		Boolean isBulk = this.getBreedingMethod().isBulkingMethod();
+		return this.getBreedingMethod() != null && isBulk != null ? isBulk : false;
+	}
 
-	 /**
-	  * @param isBulk the isBulk to set
-	  */
-	 public void setBulk(boolean isBulk) {
-		 this.isBulk = isBulk;
-	 }
+	/**
+	 * @param isBulk the isBulk to set
+	 */
+	public void setBulk(boolean isBulk) {
+		this.isBulk = isBulk;
+	}
 
-	 /**
-	  * @return the names
-	  */
-	 public List<Name> getNames() {
-		 return this.names;
-	 }
+	/**
+	 * @return the names
+	 */
+	public List<Name> getNames() {
+		return this.names;
+	}
 
-	 /**
-	  * @param names the names to set
-	  */
-	 public void setNames(List<Name> names) {
-		 this.names = names;
-	 }
+	/**
+	 * @param names the names to set
+	 */
+	public void setNames(List<Name> names) {
+		this.names = names;
+	}
 
-	 /**
-	  * @return the breedingMethod
-	  */
-	 public Method getBreedingMethod() {
-		 return this.breedingMethod;
-	 }
+	/**
+	 * @return the breedingMethod
+	 */
+	public Method getBreedingMethod() {
+		return this.breedingMethod;
+	}
 
-	 /**
-	  * @param breedingMethod the breedingMethod to set
-	  */
-	 public void setBreedingMethod(Method breedingMethod) {
-		 this.breedingMethod = breedingMethod;
-	 }
+	/**
+	 * @param breedingMethod the breedingMethod to set
+	 */
+	public void setBreedingMethod(Method breedingMethod) {
+		this.breedingMethod = breedingMethod;
+	}
 
-	 /**
-	  * @return the nurseryName
-	  */
-	 public String getNurseryName() {
-		 return this.nurseryName;
-	 }
+	/**
+	 * @return the nurseryName
+	 */
+	public String getNurseryName() {
+		return this.nurseryName;
+	}
 
-	 /**
-	  * @param nurseryName the nurseryName to set
-	  */
-	 public void setNurseryName(String nurseryName) {
-		 this.nurseryName = nurseryName;
-	 }
+	/**
+	 * @param nurseryName the nurseryName to set
+	 */
+	public void setNurseryName(String nurseryName) {
+		this.nurseryName = nurseryName;
+	}
 
-	 /**
-	  * @return the season
-	  */
-	 public String getSeason() {
-		 return this.season;
-	 }
+	/**
+	 * @return the season
+	 */
+	public String getSeason() {
+		return this.season;
+	}
 
-	 /**
-	  * @param season the season to set
-	  */
-	 public void setSeason(String season) {
-		 this.season = season;
-	 }
+	/**
+	 * @param season the season to set
+	 */
+	public void setSeason(String season) {
+		this.season = season;
+	}
 
-	 /**
-	  * @return the locationAbbreviation
-	  */
-	 public String getLocationAbbreviation() {
-		 return this.locationAbbreviation;
-	 }
+	/**
+	 * @return the locationAbbreviation
+	 */
+	public String getLocationAbbreviation() {
+		return this.locationAbbreviation;
+	}
 
-	 /**
-	  * @param locationAbbreviation the locationAbbreviation to set
-	  */
-	 public void setLocationAbbreviation(String locationAbbreviation) {
-		 this.locationAbbreviation = locationAbbreviation;
-	 }
+	/**
+	 * @param locationAbbreviation the locationAbbreviation to set
+	 */
+	public void setLocationAbbreviation(String locationAbbreviation) {
+		this.locationAbbreviation = locationAbbreviation;
+	}
 
-	 /**
-	  * @return the rootName
-	  */
-	 public String getRootName() {
-		 return this.rootName;
-	 }
+	/**
+	 * @return the rootName
+	 */
+	public String getRootName() {
+		return this.rootName;
+	}
 
-	 /**
-	  * @param rootName the rootName to set
-	  */
-	 public void setRootName(String rootName) {
-		 this.rootName = rootName;
-	 }
+	/**
+	 * @param rootName the rootName to set
+	 */
+	public void setRootName(String rootName) {
+		this.rootName = rootName;
+	}
 
-	 /**
-	  * @return the sourceMethod
-	  */
-	 public Method getSourceMethod() {
-		 return this.sourceMethod;
-	 }
+	/**
+	 * @return the sourceMethod
+	 */
+	public Method getSourceMethod() {
+		return this.sourceMethod;
+	}
 
-	 /**
-	  * @param sourceMethod the sourceMethod to set
-	  */
-	 public void setSourceMethod(Method sourceMethod) {
-		 this.sourceMethod = sourceMethod;
-	 }
+	/**
+	 * @param sourceMethod the sourceMethod to set
+	 */
+	public void setSourceMethod(Method sourceMethod) {
+		this.sourceMethod = sourceMethod;
+	}
 
-	 /**
-	  * @return the currentMaxSequence
-	  */
-	 public int getCurrentMaxSequence() {
-		 return this.currentMaxSequence;
-	 }
+	/**
+	 * @return the currentMaxSequence
+	 */
+	public int getCurrentMaxSequence() {
+		return this.currentMaxSequence;
+	}
 
-	 /**
-	  * @param currentMaxSequence the currentMaxSequence to set
-	  */
-	 public void setCurrentMaxSequence(int currentMaxSequence) {
-		 this.currentMaxSequence = currentMaxSequence;
-	 }
+	/**
+	 * @param currentMaxSequence the currentMaxSequence to set
+	 */
+	public void setCurrentMaxSequence(int currentMaxSequence) {
+		this.currentMaxSequence = currentMaxSequence;
+	}
 
-	 /**
-	  * @return the changeDetail
-	  */
-	 public AdvanceGermplasmChangeDetail getChangeDetail() {
-		 return this.changeDetail;
-	 }
+	/**
+	 * @return the changeDetail
+	 */
+	public AdvanceGermplasmChangeDetail getChangeDetail() {
+		return this.changeDetail;
+	}
 
-	 /**
-	  * @param changeDetail the changeDetail to set
-	  */
-	 public void setChangeDetail(AdvanceGermplasmChangeDetail changeDetail) {
-		 this.changeDetail = changeDetail;
-	 }
+	/**
+	 * @param changeDetail the changeDetail to set
+	 */
+	public void setChangeDetail(AdvanceGermplasmChangeDetail changeDetail) {
+		this.changeDetail = changeDetail;
+	}
 
-	 /**
-	  * @return the prefix
-	  */
-	 public String getPrefix() {
-		 return this.prefix;
-	 }
+	/**
+	 * @return the prefix
+	 */
+	public String getPrefix() {
+		return this.prefix;
+	}
 
-	 /**
-	  * @param prefix the prefix to set
-	  */
-	 public void setPrefix(String prefix) {
-		 this.prefix = prefix;
-	 }
+	/**
+	 * @param prefix the prefix to set
+	 */
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
 
-	 /**
-	  * @return the suffix
-	  */
-	 public String getSuffix() {
-		 return this.suffix;
-	 }
+	/**
+	 * @return the suffix
+	 */
+	public String getSuffix() {
+		return this.suffix;
+	}
 
-	 /**
-	  * @param suffix the suffix to set
-	  */
-	 public void setSuffix(String suffix) {
-		 this.suffix = suffix;
-	 }
+	/**
+	 * @param suffix the suffix to set
+	 */
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
 
-	 public boolean isForceUniqueNameGeneration() {
-		 return this.isForceUniqueNameGeneration;
-	 }
+	public boolean isForceUniqueNameGeneration() {
+		return this.isForceUniqueNameGeneration;
+	}
 
-	 public void setForceUniqueNameGeneration(boolean isForceUniqueNameGeneration) {
-		 this.isForceUniqueNameGeneration = isForceUniqueNameGeneration;
-	 }
+	public void setForceUniqueNameGeneration(boolean isForceUniqueNameGeneration) {
+		this.isForceUniqueNameGeneration = isForceUniqueNameGeneration;
+	}
 
-	 public Integer getRootNameType() {
-		 return this.rootNameType;
-	 }
+	public Integer getRootNameType() {
+		return this.rootNameType;
+	}
 
-	 public void setRootNameType(Integer rootNameType) {
-		 this.rootNameType = rootNameType;
-	 }
+	public void setRootNameType(Integer rootNameType) {
+		this.rootNameType = rootNameType;
+	}
 
-	 @Override
-	 public String toString() {
-		 return "AdvancingSource [germplasm=" + this.germplasm + ", names=" + this.names + ", plantsSelected=" + this.plantsSelected
+	public String getPlotNumber() {
+		return this.plotNumber;
+	}
+
+	public void setPlotNumber(String plotNumber) {
+		this.plotNumber = plotNumber;
+	}
+
+	@Override
+	public String toString() {
+		return "AdvancingSource [germplasm=" + this.germplasm + ", names=" + this.names + ", plantsSelected=" + this.plantsSelected
 				+ ", breedingMethod=" + this.breedingMethod + ", isCheck=" + this.isCheck + ", isBulk=" + this.isBulk + ", nurseryName="
 				+ this.nurseryName + ", season=" + this.season + ", locationAbbreviation=" + this.locationAbbreviation + ", rootName="
 				+ this.rootName + ", sourceMethod=" + this.sourceMethod + ", currentMaxSequence=" + this.currentMaxSequence
-				+ ", changeDetail=" + this.changeDetail + ", prefix=" + this.prefix + ", suffix=" + this.suffix + "]";
-	 }
+				+ ", changeDetail=" + this.changeDetail + ", prefix=" + this.prefix + ", suffix=" + this.suffix + ", plotNumber="
+				+ this.plotNumber + "]";
+	}
 
 	public Integer getLocationId() {
-		return locationId;
+		return this.locationId;
 	}
 
 	public void setLocationId(Integer locationId) {

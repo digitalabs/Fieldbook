@@ -118,9 +118,8 @@ $(document).ready(function() {
 });
 
 function validateAndSetEntryNo() {
-    var name = '';
     var customMessage = '';
-    var entryNo = $("#txtStartingEntryNo").val();
+    var entryNo = $.trim($("#txtStartingEntryNo").val());
     if (entryNo != '') {
         if (validateEntryAndPlotNo(entryNo)) {
             if (validateEntryNoPlotNoAsMaxDigits(entryNo)) {
@@ -134,10 +133,19 @@ function validateAndSetEntryNo() {
             showInvalidInputMessage(customMessage);
             $("#txtStartingEntryNo").val('');
         } else {
-            $("#DataTables_Table_0 tbody tr").each(function (index, value) {
-                $(this).find('td:eq(1)').text(entryNo++);
-            });
+            if (isNursery()) {
+                $("#DataTables_Table_0 tbody tr").each(function (index, value) {
+                    $(this).find('td:eq(1)').text(entryNo++);
+                });
+            } else {
+                $("#DataTables_Table_1_wrapper tbody tr").each(function (index, value) {
+                    $(this).find('td:eq(3)').text(entryNo++);
+                });
+            }
         }
+    } else {
+        // Set starting entry number back to blank if starting entry number is only white spaces
+        $("#txtStartingEntryNo").val('');
     }
 }
 
@@ -159,9 +167,8 @@ function validateEntryNoPlotNoAsMaxDigits(inputNo) {
 }
 
 function validateAndSetPlotNo() {
-    var name = '';
     var customMessage = '';
-    var plotNo = $("#txtStartingPlotNo").val();
+    var plotNo = $.trim($("#txtStartingPlotNo").val());
     if(plotNo != '') {
         if (validateEntryAndPlotNo(plotNo)) {
             if (validateEntryNoPlotNoAsMaxDigits(plotNo)) {
@@ -173,11 +180,13 @@ function validateAndSetPlotNo() {
 
         if (customMessage != '') {
             showInvalidInputMessage(customMessage);
-            debugger;
             $("#txtStartingPlotNo").val('');
         } else {
             // Increment Plot No.
         }
+    } else {
+        // Set starting plot number back to blank if starting plot number is only white spaces
+        $("#txtStartingPlotNo").val('');
     }
 }
 

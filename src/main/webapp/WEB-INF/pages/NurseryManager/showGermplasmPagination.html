@@ -13,7 +13,7 @@
 	<!-- case 2: advanced view of the importedGermplasm -->
 	<div th:if="*{importedGermplasm != null and not #lists.isEmpty(importedGermplasm)}">
 		<div class="germplasm-list-table-old fbk-hide-opacity germplasm-list-data-table" th:if="*{importedGermplasmMainInfo.isAdvanceImportType()}">
-			<table th:if="*{not #lists.isEmpty(importedGermplasm)}"
+			<table id="tableForGermplasm" th:if="*{not #lists.isEmpty(importedGermplasm)}"
 			class="table-curved table-condensed germplasm-list-items check-table-popover">
 				<thead>
 					<tr>
@@ -134,11 +134,11 @@ function validateAndSetEntryNo() {
             $("#txtStartingEntryNo").val('');
         } else {
             if (isNursery()) {
-                $("#DataTables_Table_0 tbody tr").each(function (index, value) {
+                $("#tableForGermplasm tbody tr").each(function (index, value) {
                     $(this).find('td:eq(1)').text(entryNo++);
                 });
             } else {
-                $("#DataTables_Table_1_wrapper tbody tr").each(function (index, value) {
+                $("#tableForGermplasm tbody tr").each(function (index, value) {
                     $(this).find('td:eq(3)').text(entryNo++);
                 });
             }

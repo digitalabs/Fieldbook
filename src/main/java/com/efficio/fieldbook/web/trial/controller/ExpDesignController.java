@@ -36,6 +36,7 @@ import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -62,6 +63,8 @@ public class ExpDesignController extends BaseTrialController {
 	private CrossExpansionProperties crossExpansionProperties;
 	@Resource
 	private ContextUtil contextUtil;
+	@Resource
+	private DesignImportService designImportService;
 
 	@Override
 	public String getContentName() {

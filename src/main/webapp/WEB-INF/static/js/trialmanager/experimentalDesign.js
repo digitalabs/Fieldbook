@@ -10,7 +10,7 @@
 		.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 		.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 		.controller('ExperimentalDesignCtrl', ['$scope', '$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService', '$http',
-			'EXP_DESIGN_MSGS', '_', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS) {
+			'EXP_DESIGN_MSGS', '_', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _) {
 
 				
 				$scope.applicationData = TrialManagerDataService.applicationData;
@@ -168,7 +168,29 @@
 						$scope.currentParams = '';
 					}
 				};
+				
+				$scope.toggleIsPresetWithGeneratedDesign = function(){
+					$scope.applicationData.hasGeneratedDesignPreset = $scope.applicationData.unsavedGeneratedDesign && $scope.data.designType >= 4;
+				};
+				
+				$scope.updateAfterGeneratingDesignSuccessfully = function(){
+					//we show the preview
+					showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
+					TrialManagerDataService.clearUnappliedChangesFlag();
+					TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+					$('#chooseGermplasmAndChecks').data('replace', '1');
+					$('body').data('expDesignShowPreview', '1');
+					$scope.toggleIsPresetWithGeneratedDesign();
+				};
 
+				var errorGenerateDesign = function(){
+					showErrorMessage('', "some error message here");
+				};
+				
+				var successGenerateDesign = function(){
+					$scope.updateAfterGeneratingDesignSuccessfully();
+				};
+				
 				// on click generate design button
 				$scope.generateDesign = function() {
 					if (!$scope.doValidate()) {
@@ -180,23 +202,33 @@
 					if (data && data.treatmentFactors) {
 						data.treatmentFactors = $scope.data.treatmentFactors.vals();
 					}
-
-					TrialManagerDataService.generateExpDesign(data).then(
-						function(response) {
-							if (response.valid === true) {
-								//we show the preview
-								showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
-								TrialManagerDataService.clearUnappliedChangesFlag();
-								TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-								$('#chooseGermplasmAndChecks').data('replace', '1');
-								$('body').data('expDesignShowPreview', '1');
-							} else {
-								showErrorMessage('', response.message);
+					
+					// non-preset design type
+					if($scope.data.designType < 3){
+						TrialManagerDataService.generateExpDesign(data).then(
+							function(response) {
+								if (response.valid === true) {
+									$scope.updateAfterGeneratingDesignSuccessfully();
+								} else {
+									showErrorMessage('', response.message);
+								}
 							}
-						}
-					);
-				};
+						);
+					} else {
+						var environmentData = TrialManagerDataService.currentData.environments;
 
+						_.each(environmentData.environments, function(data, key) {
+							_.each(data.managementDetailValues, function(value, key) {
+								if (value && value.id) {
+									data.managementDetailValues[key] = value.id;
+								}
+							});
+						});
+						successGenerateDesign();
+
+					}
+				};
+				
 				$scope.toggleDesignView = function() {
 					return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType == 3);
 				};

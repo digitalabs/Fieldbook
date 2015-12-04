@@ -233,6 +233,7 @@
                     unsavedTraitsAvailable: false,
                     germplasmListCleared: false,
                     isGeneratedOwnDesign: false,
+                    hasGeneratedDesignPreset: false,
                     germplasmListSelected: GERMPLASM_LIST_SIZE > 0
                 },
 

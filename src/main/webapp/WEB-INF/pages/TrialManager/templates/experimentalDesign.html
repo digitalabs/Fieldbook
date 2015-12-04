@@ -46,7 +46,7 @@
                             <section-container heading="SPECIFY PLOT NUMBERING">
                                 <div name="content">
                                     <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
-                                    <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onblur="validateAndSetPlotNo()"/>
+                                    <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onblur="validateAndSetPlotNo()" ng-model="data.startingPlotNo" />
                                 </div>
                             </section-container>
                         </div>

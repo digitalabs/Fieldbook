@@ -30,7 +30,6 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
@@ -138,9 +137,10 @@ public abstract class BaseTrialController extends SettingsController {
 		return returnVal;
 	}
 
-	protected TabInfo prepareExperimentalDesignTabInfo(ExperimentalDesignVariable xpDesignVariable,
+	protected TabInfo prepareExperimentalDesignTabInfo(Workbook trialWorkbook,
 			boolean isUsePrevious) throws MiddlewareQueryException {
 		TabInfo tabInfo = new TabInfo();
+		ExperimentalDesignVariable xpDesignVariable = trialWorkbook.getExperimentalDesignVariables();
 		// currently, the saved experimental design information is not loaded up
 		// when choosing a previous trial as template
 		if (!isUsePrevious && xpDesignVariable != null) {
@@ -186,6 +186,12 @@ public abstract class BaseTrialController extends SettingsController {
 
 			data.setReplicationsCount(this.getExperimentalDesignData(xpDesignVariable
 					.getNumberOfReplicates()));
+
+			// Set first plot number from observations
+			if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
+				data.setStartingPlotNo(trialWorkbook.getObservations().get(0).getDataList().get(6).getValue());
+			}
+
 			String designTypeString = xpDesignVariable.getExperimentalDesign() == null ? null
 					: xpDesignVariable.getExperimentalDesign().getValue();
 			if (designTypeString != null && NumberUtils.isNumber(designTypeString)) {

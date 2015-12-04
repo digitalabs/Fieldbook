@@ -70,7 +70,7 @@ public class ExpDesignController extends BaseTrialController {
 		List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		// transfer over data from user input into the list of setting details stored in the session
-		List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+		List<SettingDetail> combinedList = new ArrayList<>();
 		combinedList.addAll(basicDetails);
 
 		if (studyLevelConditions != null) {
@@ -113,6 +113,10 @@ public class ExpDesignController extends BaseTrialController {
 					if (expParameterOutput.isValid()) {
 						expDesign.setNoOfEnvironmentsToAdd(this.countNewEnvironments(expDesign.getNoOfEnvironments(), this.userSelection,
 								expDesign.isHasMeasurementData()));
+
+						// Setting starting plot number in user selection
+						this.userSelection.setStartingPlotNo(Integer.parseInt(expDesign.getStartingPlotNo()));
+
 						List<MeasurementRow> measurementRows =
 								designService.generateDesign(germplasmList, expDesign, workbook.getConditions(), workbook.getFactors(),
 										workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
@@ -123,11 +127,11 @@ public class ExpDesignController extends BaseTrialController {
 						workbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection,
 								expDesign.isHasMeasurementData()));
 						// should have at least 1 record
-						List<MeasurementVariable> currentNewFactors = new ArrayList<MeasurementVariable>();
+						List<MeasurementVariable> currentNewFactors = new ArrayList<>();
 						List<MeasurementVariable> oldFactors = workbook.getFactors();
-						List<MeasurementVariable> deletedFactors = new ArrayList<MeasurementVariable>();
+						List<MeasurementVariable> deletedFactors = new ArrayList<>();
 						if (measurementRows != null && !measurementRows.isEmpty()) {
-							List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
+							List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
 							MeasurementRow dataRow = measurementRows.get(0);
 							for (MeasurementData measurementData : dataRow.getDataList()) {
 								measurementDatasetVariables.add(measurementData.getMeasurementVariable());

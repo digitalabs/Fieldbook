@@ -108,6 +108,7 @@
 						'nrlatin': null,
 						'nclatin': null,
 						'replatinGroups': '',
+                        'startingPlotNo': '',
 						'hasMeasurementData': TrialManagerDataService.trialMeasurement.hasMeasurement
 					}, $scope.data);
 				}

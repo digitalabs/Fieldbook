@@ -64,7 +64,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Override
 	public List<MeasurementRow> generateDesign(final Workbook workbook, final DesignImportData designImportData,
-			final EnvironmentData environmentData, final boolean isPreview) throws DesignValidationException {
+			final EnvironmentData environmentData, final boolean isPreview, final boolean isPreset) throws DesignValidationException {
 
 		final Set<String> generatedTrialInstancesFromUI = this.extractTrialInstancesFromEnvironmentData(environmentData);
 
@@ -85,21 +85,12 @@ public class DesignImportServiceImpl implements DesignImportService {
 		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId =
 				designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 
-		// row counter starts at index = 1 because zero index is the header
-		int rowCounter = 1;
-
 		final Map<String, Integer> availableCheckTypes = this.retrieveAvailableCheckTypes();
 		final DesignImportMeasurementRowGenerator measurementRowGenerator =
 				new DesignImportMeasurementRowGenerator(this.fieldbookService, workbook, mappedHeadersWithStdVarId, importedGermplasm,
 						germplasmStandardVariables, generatedTrialInstancesFromUI, isPreview, availableCheckTypes);
 
-		while (rowCounter <= csvData.size() - 1) {
-			final MeasurementRow measurementRow = measurementRowGenerator.createMeasurementRow(csvData.get(rowCounter));
-			if (measurementRow != null) {
-				measurements.add(measurementRow);
-			}
-			rowCounter++;
-		}
+		this.createMeasurementRows(environmentData, isPreset, csvData, measurements, measurementRowGenerator);
 
 		// add factor data to the list of measurement row
 		measurementRowGenerator.addFactorsToMeasurementRows(measurements);
@@ -108,6 +99,46 @@ public class DesignImportServiceImpl implements DesignImportService {
 		measurementRowGenerator.addVariatesToMeasurementRows(measurements, this.userSelection, this.ontologyService, this.contextUtil);
 
 		return measurements;
+	}
+
+	protected void createMeasurementRows(final EnvironmentData environmentData, final boolean isPreset,
+			final Map<Integer, List<String>> csvData, final List<MeasurementRow> measurements,
+			final DesignImportMeasurementRowGenerator measurementRowGenerator) {
+
+		if (isPreset) {
+			for (int trialInstanceNo = 1; trialInstanceNo <= environmentData.getNoOfEnvironments(); trialInstanceNo++) {
+
+				createPresetMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo);
+
+			}
+		} else {
+
+			// row counter starts at index = 1 because zero index is the header
+			int rowCounter = 1;
+
+			while (rowCounter <= csvData.size() - 1) {
+				final MeasurementRow measurementRow = measurementRowGenerator.createMeasurementRow(csvData.get(rowCounter));
+				if (measurementRow != null) {
+					measurements.add(measurementRow);
+				}
+				rowCounter++;
+			}
+		}
+	}
+
+	protected void createPresetMeasurementRowsPerInstance(final Map<Integer, List<String>> csvData,
+			final List<MeasurementRow> measurements, final DesignImportMeasurementRowGenerator measurementRowGenerator, int trialInstanceNo) {
+		// row counter starts at index = 1 because zero index is the header
+		int rowCounter = 1;
+
+		while (rowCounter <= csvData.size() - 1) {
+			final MeasurementRow measurementRow = measurementRowGenerator.createMeasurementRow(csvData.get(rowCounter));
+			measurementRow.getDataList().get(0).setValue(String.valueOf(trialInstanceNo));
+			if (measurementRow != null) {
+				measurements.add(measurementRow);
+			}
+			rowCounter++;
+		}
 	}
 
 	/**

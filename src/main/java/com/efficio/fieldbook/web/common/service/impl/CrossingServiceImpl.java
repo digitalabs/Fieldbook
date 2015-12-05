@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -20,6 +21,8 @@ import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
 import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.cross.CrossingRuleExecutionContext;
+import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
+import org.generationcp.commons.service.GermplasmOriginGenerationService;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -28,10 +31,13 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StringUtil;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
+import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -46,6 +52,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.util.ExpressionHelper;
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 
@@ -61,6 +68,8 @@ public class CrossingServiceImpl implements CrossingService {
 	public static final Integer GERMPLASM_REFID = 0;
 	public static final Integer NAME_REFID = 0;
 	public static final String[] USER_DEF_FIELD_CROSS_NAME = {"CROSS NAME", "CROSSING NAME"};
+	// FIXME change to PLOTCODE
+	public static final String USER_DEFINED_FIELD_PLOTCODE = "COLL";
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingServiceImpl.class);
 	private static final Integer PEDIGREE_NAME_TYPE = 18;
@@ -90,6 +99,9 @@ public class CrossingServiceImpl implements CrossingService {
 
 	@Resource
 	private PedigreeDataManager pedigreeDataManager;
+	
+	@Resource
+	GermplasmOriginGenerationService germplasmOriginGenerationService;
 
 	@Override
 	public ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException {
@@ -97,10 +109,25 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public void applyCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId)
-			throws MiddlewareQueryException {
+	public void applyCrossSetting(CrossSetting crossSetting, GermplasmOriginGenerationParameters germplasmOriginGenerationParameters, 
+			ImportedCrossesList importedCrossesList, Integer userId) throws MiddlewareQueryException {
 
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
+		
+		// apply the source string here, before we save germplasm
+		for (ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
+			String[] sourceTokens = importedCross.getSource().split(":");
+			germplasmOriginGenerationParameters.setStudyName(sourceTokens[0]);
+			germplasmOriginGenerationParameters.setMaleStudyName(sourceTokens[0]);
+			germplasmOriginGenerationParameters.setFemaleStudyName(sourceTokens[2]);
+			germplasmOriginGenerationParameters.setPlotNumber(sourceTokens[1]);
+			germplasmOriginGenerationParameters.setMalePlotNumber(sourceTokens[1]);
+			germplasmOriginGenerationParameters.setFemalePlotNumber(sourceTokens[3]);
+			germplasmOriginGenerationParameters.setCross(true);
+			String generatedSource = germplasmOriginGenerationService.generateOriginString(germplasmOriginGenerationParameters);
+			importedCross.setSource(generatedSource);
+		}
+		
 		List<Pair<Germplasm, Name>> germplasmPairs =
 				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
 						importedCrossesList.hasPlotDuplicate());
@@ -118,23 +145,52 @@ public class CrossingServiceImpl implements CrossingService {
 			throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
 					Locale.getDefault()));
 		}
-
+		
+		// FIXME : make Germplasm + Attribute add transactional
+		// save Germplasm
 		List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmPairs);
 		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
 			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
 		}
-
+		
+		// Set up a default user defined field that will prevent the NPE
+		UserDefinedField plotCodeField = new UserDefinedField(0);
+		List<UserDefinedField> plotCodeFieldIds = germplasmDataManager.getUserDefinedFieldByFieldTableNameAndType("ATRIBUTS", "ATTRIBUTE");
+		for (UserDefinedField userDefinedField : plotCodeFieldIds) {
+			if(userDefinedField.getFcode().equals(USER_DEFINED_FIELD_PLOTCODE)){
+				plotCodeField = userDefinedField;
+			}
+		}
+		
+		// We iterate through the cross list here to merge, so we will create the SeedSource attribute list
+		// at the same time (each GP is linked to a PlotCode)
+		List<Attribute> attributeList = new ArrayList<>();
 		Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
+		Integer today = Integer.valueOf(DateUtil.getCurrentDateAsStringValue());
 		for (ImportedCrosses cross : importedCrossesList.getImportedCrosses()) {
+			
 			// this will do the merging and using the gid and cross from the initial duplicate
 			if (FieldbookUtil.isContinueCrossingMerge(importedCrossesList.hasPlotDuplicate(), crossSetting.isPreservePlotDuplicates(),
 					cross)) {
 				FieldbookUtil.mergeCrossesPlotDuplicateData(cross, importedCrossesList.getImportedCrosses());
 				continue;
 			}
+			
 			Integer newGid = germplasmIdIterator.next();
 			cross.setGid(newGid.toString());
+			
+			// save Attribute for SeedSource as a PlotCode
+			Attribute plotCodeAttribute = new Attribute();
+			plotCodeAttribute.setAdate(today);
+			plotCodeAttribute.setGermplasmId(newGid);
+			plotCodeAttribute.setTypeId(106);
+			plotCodeAttribute.setAval(cross.getSource());	
+			plotCodeAttribute.setUserId(contextUtil.getCurrentWorkbenchUserId());
+			
+			attributeList.add(plotCodeAttribute);
 		}
+
+		germplasmDataManager.addAttributes(attributeList);
 
 	}
 

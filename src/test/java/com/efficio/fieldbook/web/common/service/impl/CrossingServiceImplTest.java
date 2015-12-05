@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -85,12 +86,15 @@ public class CrossingServiceImplTest {
 		return project;
 	}
 
+	// FIXME
 	@Test
 	public void testApplyCrossSetting() throws MiddlewareQueryException {
 
 		CrossNameSetting crossNameSetting = this.crossSetting.getCrossNameSetting();
+		
+		GermplasmOriginGenerationParameters germplasmOriginGenerationParameters = new GermplasmOriginGenerationParameters();
 
-		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID);
+		this.crossingService.applyCrossSetting(this.crossSetting, germplasmOriginGenerationParameters, this.importedCrossesList, CrossingServiceImplTest.USER_ID);
 
 		ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
@@ -118,7 +122,7 @@ public class CrossingServiceImplTest {
 	public void testApplyCrossNameSettingToImportedCrosses() throws MiddlewareQueryException {
 
 		CrossNameSetting setting = this.crossSetting.getCrossNameSetting();
-
+		
 		this.crossingService.applyCrossNameSettingToImportedCrosses(this.crossSetting, this.importedCrossesList.getImportedCrosses());
 
 		ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
@@ -153,12 +157,14 @@ public class CrossingServiceImplTest {
 
 		Mockito.doNothing().when(this.crossingService)
 				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);
+		
+		GermplasmOriginGenerationParameters germplasmOriginGenerationParameters = new GermplasmOriginGenerationParameters();
 
 		CrossNameSetting crossNameSetting = this.createCrossNameSetting();
 		crossNameSetting.setSaveParentageDesignationAsAString(true);
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
-		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID);
+		this.crossingService.applyCrossSetting(this.crossSetting, germplasmOriginGenerationParameters, this.importedCrossesList, CrossingServiceImplTest.USER_ID);
 
 		try {
 			Mockito.verify(this.crossingService, Mockito.times(1)).savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds,
@@ -183,12 +189,14 @@ public class CrossingServiceImplTest {
 
 		Mockito.doNothing().when(this.crossingService)
 				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);
+		
+		GermplasmOriginGenerationParameters germplasmOriginGenerationParameters = new GermplasmOriginGenerationParameters();
 
 		CrossNameSetting crossNameSetting = this.createCrossNameSetting();
 		crossNameSetting.setSaveParentageDesignationAsAString(false);
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
-		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID);
+		this.crossingService.applyCrossSetting(this.crossSetting, germplasmOriginGenerationParameters, this.importedCrossesList, CrossingServiceImplTest.USER_ID);
 
 		try {
 			Mockito.verify(this.crossingService, Mockito.times(0)).savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds,

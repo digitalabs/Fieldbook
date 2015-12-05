@@ -26,11 +26,15 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+//import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
+import org.generationcp.commons.service.GermplasmOriginGenerationService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -138,6 +142,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private UserProgramStateDataManager userProgramStateDataManager;
+	
+	@Resource
+	private GermplasmOriginGenerationService germplasmOriginGenerationService;
 
 	/**
 	 * Load initial germplasm tree.
@@ -226,7 +233,15 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
 			final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 			final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
-			this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId());
+			GermplasmOriginGenerationParameters germplasmOriginGenerationParameters = new GermplasmOriginGenerationParameters();
+			Workbook workbook = userSelection.getWorkbook();
+			germplasmOriginGenerationParameters.setCrop(contextUtil.getProjectInContext().getCropType().getCropName());
+			// FIXME : use utility function to pick these up
+			germplasmOriginGenerationParameters.setLocation("[location]");
+			germplasmOriginGenerationParameters.setSeason("[season]");
+			germplasmOriginGenerationParameters.setStudyName(workbook.getStudyName());
+			germplasmOriginGenerationParameters.setStudyType(workbook.getStudyDetails().getStudyType());
+			this.crossingService.applyCrossSetting(crossSetting, germplasmOriginGenerationParameters, importedCrossesList, this.getCurrentIbdbUserId());
 			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
 			return this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList);
 		} else {

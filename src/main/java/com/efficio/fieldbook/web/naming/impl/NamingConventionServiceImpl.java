@@ -9,7 +9,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
@@ -18,17 +17,11 @@ import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.service.GermplasmOriginGenerationService;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.oms.TermSummary;
-import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
-import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -47,6 +40,7 @@ import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
 import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
 import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
+import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
@@ -84,10 +78,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private GermplasmOriginGenerationService germplasmOriginGenerationService;
 
 	@Resource
-	private ContextUtil contextUtil;
-
-	@Resource
-	private OntologyVariableDataManager ontologyVariableDataManager;
+	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
 
 	@Override
 	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException, MiddlewareQueryException, FieldbookException {
@@ -171,52 +162,13 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 	}
 
-	private String generateSeedSourceOrigin(Workbook workbook, String plotNumber) throws FieldbookException {
-		final GermplasmOriginGenerationParameters originGenerationParameters = new GermplasmOriginGenerationParameters();
-		originGenerationParameters.setCrop(this.contextUtil.getProjectInContext().getCropType().getCropName());
-		originGenerationParameters.setStudyName(workbook.getStudyName());
-		originGenerationParameters.setStudyType(workbook.getStudyDetails().getStudyType());
-
-		// Origin string generation logic when advancing *requires* LOCATION_ABBR(8189) variable to be present in general settings.
-		MeasurementVariable locationAbbrVariable = workbook.findConditionById(TermId.LOCATION_ABBR.getId());
-		if (locationAbbrVariable == null) {
-			throw new FieldbookException("nursery.advance.no.location.abbr.variable.setup");
-		}
-		if (StringUtils.isBlank(locationAbbrVariable.getValue())) {
-			throw new FieldbookException("nursery.advance.no.location.abbr.value.set");
-		}
-		originGenerationParameters.setLocation(locationAbbrVariable.getValue());
-
-		// Origin string generation logic when advancing *requires* Crop_season_Code(8371) variable to be present in general settings.
-		MeasurementVariable seasonVariable = workbook.findConditionById(TermId.SEASON_VAR.getId());
-		if (seasonVariable == null) {
-			throw new FieldbookException("nursery.advance.no.season.variable.setup");
-		}
-		String season = "";
-		if (StringUtils.isBlank(seasonVariable.getValue())) {
-			throw new FieldbookException("nursery.advance.no.season.value.set");
-		}
-		Variable variable =
-				this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), seasonVariable.getTermId(), true,
-						false);
-		for (TermSummary ts : variable.getScale().getCategories()) {
-			if (ts.getId().equals(Integer.valueOf(seasonVariable.getValue()))) {
-				season = ts.getDefinition();
-				break;
-			}
-		}
-		originGenerationParameters.setSeason(season);
-		originGenerationParameters.setPlotNumber(plotNumber);
-		return this.germplasmOriginGenerationService.generateOriginString(originGenerationParameters);
-	}
-
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
 			final String newGermplasmName, final Method breedingMethod, final int index, final String nurseryName, Workbook workbook)
 					throws FieldbookException {
 		// GCP-7652 use the entry number of the originial : index
 		// Current place where source is assigned.
-
-		String seedSourceOriginString = this.generateSeedSourceOrigin(workbook, source.getPlotNumber());
+		final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber());
+		String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
 						, source.getGermplasm().getCross(), seedSourceOriginString,

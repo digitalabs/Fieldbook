@@ -4,7 +4,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
-import org.generationcp.commons.service.GermplasmOriginGenerationService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -19,9 +18,6 @@ import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 
 @Service
 public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParameterBuilder {
-
-	@Resource
-	private GermplasmOriginGenerationService germplasmOriginGenerationService;
 
 	@Resource
 	private ContextUtil contextUtil;

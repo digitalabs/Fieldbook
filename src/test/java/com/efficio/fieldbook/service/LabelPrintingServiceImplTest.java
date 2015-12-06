@@ -432,7 +432,7 @@ public class LabelPrintingServiceImplTest {
 		barcodeLabelForCode = this.labelPrintingServiceImpl.truncateBarcodeLabelForCode(barcodeLabelForCode);
 		
 		String truncatedBarcodeLabelForCode = "Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Nursery Name : SUPER VERY ";
-		Assert.assertEquals("BarcodelabelForCOde's value should be " + barcodeLabelForCode, truncatedBarcodeLabelForCode, barcodeLabelForCode);
+		Assert.assertEquals("Barcode Label For Code's value should be " + barcodeLabelForCode, truncatedBarcodeLabelForCode, barcodeLabelForCode);
 	}
 	
 	private void setExperimentId(final Workbook workbook) {

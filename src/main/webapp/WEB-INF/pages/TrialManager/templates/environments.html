@@ -79,8 +79,8 @@
                     <td>{{$index + 1}}</td>
                     <td ng-repeat="key in settings.managementDetails.keys()"
                         ng-hide="settings.managementDetails.val(key).hidden">
-                        <show-setting-form-element settings="settings.managementDetails" targetkey="{{key}}"
-                                                   valuecontainer="environment.managementDetailValues"></show-setting-form-element></td>
+                        <show-setting-form-element-new settings="settings.managementDetails" targetkey="{{key}}"
+                                                   valuecontainer="environment.managementDetailValues"></show-setting-form-element-new></td>
                     <td ng-repeat="key in settings.trialConditionDetails.keys()">
                         <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
                                                    valuecontainer="environment.trialDetailValues"></show-setting-form-element></td>

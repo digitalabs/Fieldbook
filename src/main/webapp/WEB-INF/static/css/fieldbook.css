@@ -1583,13 +1583,27 @@ label[data-toggle="collapse"],
 	height: 11px;
 }
 
-a.dt-button.buttons-colvis,
-a.dt-button.buttons-colvis:hover:not(.disabled) {
+a.dt-button.fbk-buttons-no-border,
+a.dt-button.fbk-buttons-no-border:hover:not(.disabled) {
     border: none;
     background-color: transparent;
     background-image: none;
 }
 
+a.dt-button.fbk-buttons-link {
+    color: rgb(51, 122, 183);
+    font-size: 13px;
+}
+
+a.dt-button.fbk-colvis-button {
+    font-size: 13px;
+}
+
+a.dt-button.fbk-buttons-link:focus,
+a.dt-button.fbk-buttons-link:hover {
+    color: #23527c;
+    text-decoration: underline;
+}
 
 /* ----- Variable Selection Dialog: Property Select Dropdown ----- */
 

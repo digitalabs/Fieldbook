@@ -1,27 +1,51 @@
-/**
- * Created by cyrus on 7/2/14.
- */
 
-/*global angular, modalConfirmationTitle,
+/*global angular, modalConfirmationTitle, openManageLocations,
 environmentModalConfirmationText,environmentConfirmLabel*/
 
 (function() {
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder) {
+	'$http', 'DTOptionsBuilder', 'LOCATION_ID',
+		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID) {
 
 			$scope.data = {};
 
-			$scope.buttonsTop = [{
+			$scope.settings = TrialManagerDataService.settings.environments;
+            if (Object.keys($scope.settings).length === 0) {
+            	$scope.settings = {};
+            	$scope.settings.managementDetails = [];
+            	$scope.settings.trialConditionDetails = [];
+            }
+
+            $scope.isLocation = $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
+
+			$scope.buttonsTopWithLocation = [{
+				//TODO th:text="#{nursery.managesettings.manage.location}"
+				//TODO show only if there is location in table
+				//TODO disable?
+				text: 'Manage Location',
+				className: 'fbk-buttons-no-border fbk-buttons-link',
+				action: function (e, dt, node, config) {
+					$scope.initiateManageLocationModal();
+				}
+			},
+			{
 				extend:'colvis',
-				text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column fbk-colvis-button"></i>',
+				className: 'fbk-buttons-no-border fbk-colvis-button',
+				text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>',
 				columns: ':gt(0):not(.ng-hide)'
 			}];
 
-			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp').withButtons($scope.buttonsTop
-			.slice());
+			$scope.buttonsTop = [{
+            	extend:'colvis',
+            	className: 'fbk-buttons-no-border fbk-colvis-button',
+            	text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>',
+            	columns: ':gt(0):not(.ng-hide)'
+            }];
+
+			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp').withButtons($scope.isLocation ?
+			$scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice());
 
 			$scope.dtOptions.drawCallback =  function() {
 				var api = $(this).DataTable();
@@ -29,21 +53,20 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 				//temporary fix in buttons disappear bug
 				if (api) {
 					new $.fn.dataTable.Buttons(api, {
-						buttons: $scope.buttonsTop.slice()
+						buttons: $scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice()
 					});
 
 					$(this).parent().find('.dt-buttons').replaceWith(api.buttons().container());
 				}
 			};
 
+			$scope.initiateManageLocationModal = function() {
+				//TODO $scope.variableDefinition.locationUpdated = false;
+                openManageLocations();
+            };
+
 			$scope.data = TrialManagerDataService.currentData.environments;
 			$scope.isHideDelete = false;
-			$scope.settings = TrialManagerDataService.settings.environments;
-			if (Object.keys($scope.settings).length === 0) {
-				$scope.settings = {};
-				$scope.settings.managementDetails = [];
-				$scope.settings.trialConditionDetails = [];
-			}
 
 			TrialManagerDataService.onUpdateData('environments', function() {
 				$scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;

@@ -163,7 +163,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-			final String newGermplasmName, final Method breedingMethod, final int index, final String nurseryName, Workbook workbook)
+			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook)
 					throws FieldbookException {
 		// GCP-7652 use the entry number of the originial : index
 		// Current place where source is assigned.
@@ -222,7 +222,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					}
 
 					for (final String name : names) {
-						this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName(), workbook);
+						this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook);
 					}
 
 				} catch (final RuleException e) {

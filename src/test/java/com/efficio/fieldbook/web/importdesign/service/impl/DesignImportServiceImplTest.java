@@ -186,7 +186,8 @@ public class DesignImportServiceImplTest {
 
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
-		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, this.designImportData, environmentData, true);
+		final List<MeasurementRow> measurements =
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false);
 
 		Assert.assertEquals("The first trial instance has only 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES,
 				measurements.size());
@@ -205,7 +206,8 @@ public class DesignImportServiceImplTest {
 
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
-		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, this.designImportData, environmentData, true);
+		final List<MeasurementRow> measurements =
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false);
 
 		Assert.assertEquals("The 3 trial instances have 6 observations", 6, measurements.size());
 
@@ -219,7 +221,8 @@ public class DesignImportServiceImplTest {
 		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
-		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, this.designImportData, environmentData, true);
+		final List<MeasurementRow> measurements =
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false);
 
 		Assert.assertEquals("The first trial instance only has 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES,
 				measurements.size());

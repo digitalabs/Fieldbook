@@ -326,7 +326,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(workbook.getObservations())
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean());
+						Matchers.anyBoolean(), Matchers.anyBoolean());
 		;
 
 		final List<Map<String, Object>> result = this.designImportController.showDetailsData(environmentData, model, form);
@@ -346,7 +346,7 @@ public class DesignImportControllerTest {
 		Mockito.doThrow(new DesignValidationException(""))
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean());
+						Matchers.anyBoolean(), Matchers.anyBoolean());
 		;
 
 		final List<Map<String, Object>> result = this.designImportController.showDetailsData(environmentData, model, form);
@@ -669,7 +669,7 @@ public class DesignImportControllerTest {
 		Mockito.doThrow(new DesignValidationException(""))
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean());
+						Matchers.anyBoolean(), Matchers.anyBoolean());
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(environmentData);
@@ -1312,7 +1312,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(new ArrayList<MeasurementRow>())
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean());
+						Matchers.anyBoolean(), Matchers.anyBoolean());
 		Mockito.doReturn(new HashSet<MeasurementVariable>()).when(this.designImportService)
 				.getDesignMeasurementVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.anyBoolean());
 		Mockito.doReturn(new HashSet<MeasurementVariable>()).when(this.designImportService)

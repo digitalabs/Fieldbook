@@ -210,27 +210,21 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 
 				final List<String> names;
-				try {
-					final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, isCheckForDuplicateName);
-					names = (List<String>) this.rulesService.runRules(namingExecutionContext);
+				final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, isCheckForDuplicateName);
+				names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
-					// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
-					// reference index
-					if (row.getChangeDetail() != null) {
-						// index - 1 is used because Java uses 0-based referencing
-						row.getChangeDetail().setIndex(index - 1);
-					}
+				// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
+				// reference index
+				if (row.getChangeDetail() != null) {
+					// index - 1 is used because Java uses 0-based referencing
+					row.getChangeDetail().setIndex(index - 1);
+				}
 
-					for (final String name : names) {
-						this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook);
-					}
-
-				} catch (final RuleException e) {
-					NamingConventionServiceImpl.LOG.error(e.getMessage(), e);
+				for (final String name : names) {
+					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook);
 				}
 			}
 		}
-
 		timer.stop();
 		return list;
 	}

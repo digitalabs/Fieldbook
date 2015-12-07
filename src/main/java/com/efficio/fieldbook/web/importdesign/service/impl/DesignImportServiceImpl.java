@@ -145,7 +145,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 	 * @param trialInstanceNo
 	 */
 	protected void createPresetMeasurementRowsPerInstance(final Map<Integer, List<String>> csvData,
-			final List<MeasurementRow> measurements, final DesignImportMeasurementRowGenerator measurementRowGenerator, int trialInstanceNo) {
+			final List<MeasurementRow> measurements, final DesignImportMeasurementRowGenerator measurementRowGenerator,
+			final int trialInstanceNo) {
 		// row counter starts at index = 1 because zero index is the header
 		int rowCounter = 1;
 
@@ -337,6 +338,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 			if (null != match && !match.isEmpty() && null != mappedDesignHeaders.get(match.get(0).getPhenotypicType())) {
 				final StandardVariable standardVariable = match.get(0);
+				item.setId(standardVariable.getId());
 				item.setVariable(standardVariable);
 
 				// let set required if ff condition is true

@@ -215,7 +215,7 @@
 							}
 						);
 					} else {
-						var environmentData = TrialManagerDataService.currentData.environments;
+						var environmentData = angular.copy(TrialManagerDataService.currentData.environments);
 
 						_.each(environmentData.environments, function(data, key) {
 							_.each(data.managementDetailValues, function(value, key) {

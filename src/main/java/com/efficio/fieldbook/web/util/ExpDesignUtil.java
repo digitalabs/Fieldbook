@@ -3,7 +3,6 @@ package com.efficio.fieldbook.web.util;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -302,7 +300,7 @@ public class ExpDesignUtil {
 								}
 							}
 							if(var.getDataTypeId() != null && var.getDataTypeId().intValue() == TermId.DATE_VARIABLE.getId()){
-								value = convertToDBDateFormat(var.getDataTypeId(), value);
+								value = DateUtil.convertToDBDateFormat(var.getDataTypeId(), value);
 								measurementData = new MeasurementData(var.getName(), value, false, var.getDataType(), var);
 							}else if(var.getPossibleValues() != null && !var.getPossibleValues().isEmpty() && NumberUtils.isNumber(value)){
 								measurementData = new MeasurementData(var.getName(), value, false, var.getDataType(), Integer.parseInt(value), var);
@@ -331,7 +329,7 @@ public class ExpDesignUtil {
 																	 List<TreatmentVariable> treatmentVariables, List<StandardVariable> requiredExpDesignVariable,
 																	 List<ImportedGermplasm> germplasmList, MainDesign mainDesign, WorkbenchService workbenchService,
 																	 FieldbookProperties fieldbookProperties, String entryNumberIdentifier, Map<String, List<String>> treatmentFactorValues, FieldbookService fieldbookService)
-			throws BVDesignException{
+			throws JAXBException, IOException, MiddlewareQueryException, BVDesignException{
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();
 		varList.addAll(nonTrialFactors);
@@ -370,7 +368,7 @@ public class ExpDesignUtil {
 			try{
 				bvOutput = fieldbookService.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
 			}catch(Exception e){
-				LOG.error(e.getMessage(),e);
+				LOG.error(e.getMessage());
 				throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
 			}
 			if(bvOutput != null && bvOutput.isSuccess()){
@@ -380,13 +378,8 @@ public class ExpDesignUtil {
 						int germplasmIndex = Integer.valueOf(entryNo) - 1;
 						if(germplasmIndex >= 0 && germplasmIndex < germplasmList.size()){
 							ImportedGermplasm importedGermplasm = germplasmList.get(germplasmIndex);
-							try {
-								MeasurementRow row = createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo, factors, entryNo);
-								measurementRowList.add(row);
-							} catch (MiddlewareQueryException e) {
-								throw new BVDesignException("experiment.design.generate.generic.error");
-							}
-
+							MeasurementRow row = createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo, factors, entryNo);
+							measurementRowList.add(row);
 						}
 					}
 				}
@@ -403,30 +396,5 @@ public class ExpDesignUtil {
 			return "_"+key.replace("-", "_");
 		}
 		return key;
-	}
-
-	public static String convertToDBDateFormat(Integer dataTypeId, String value) {
-		String returnVal = value;
-
-		if (DateUtil.isInDBDateFormat(returnVal)) {
-			return returnVal;
-		}
-
-		if (dataTypeId != null && dataTypeId == TermId.DATE_VARIABLE.getId() && value != null && !"".equalsIgnoreCase(value)) {
-			try {
-				return DateUtil.convertDate(value, DateUtil.FRONTEND_DATE_FORMAT, DateUtil.DATE_AS_NUMBER_FORMAT);
-			} catch (ParseException e) {
-				LOG.error(e.getMessage(), e);
-				returnVal = "";
-			}
-		}
-		return returnVal;
-	}
-
-	public static boolean isInDBDateFormat(String dateString) {
-		if (dateString != null) {
-			return dateString.matches("((19|20)\\d\\d)(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])") ? true : false;
-		}
-		return false;
 	}
 }

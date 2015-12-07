@@ -183,14 +183,6 @@
 					$scope.toggleIsPresetWithGeneratedDesign();
 				};
 
-				var errorGenerateDesign = function(){
-					showErrorMessage('', "some error message here");
-				};
-				
-				var successGenerateDesign = function(){
-					$scope.updateAfterGeneratingDesignSuccessfully();
-				};
-				
 				// on click generate design button
 				$scope.generateDesign = function() {
 					if (!$scope.doValidate()) {
@@ -225,7 +217,13 @@
 							});
 						});
 						
-						$http.post('/Fieldbook/DesignImport/generatePresetMeasurements/'+$scope.data.designType, JSON.stringify(environmentData)).then(successGenerateDesign, errorGenerateDesign);
+						$http.post('/Fieldbook/DesignImport/generatePresetMeasurements/'+$scope.data.designType, JSON.stringify(environmentData)).then(function(resp){
+							if (!resp.data.isSuccess) {
+								showErrorMessage('', resp.data.error[0]);
+								return;
+							}
+							$scope.updateAfterGeneratingDesignSuccessfully();
+						});
 					}
 				};
 				

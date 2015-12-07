@@ -224,8 +224,8 @@
 								}
 							});
 						});
-						successGenerateDesign();
-
+						
+						$http.post('/Fieldbook/DesignImport/generatePresetMeasurements/4', JSON.stringify(environmentData)).then(successGenerateDesign, errorGenerateDesign);
 					}
 				};
 				

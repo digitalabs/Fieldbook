@@ -415,7 +415,7 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
-					.getStudyDetails().getStudyType(), false);
+					.getStudyDetails().getStudyType(), false, DesignType.OTHER_DESIGN.getId());
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -456,7 +456,7 @@ public class DesignImportController extends SettingsController {
 
 			this.performAutomap(designImportData);
 
-			this.generateDesign(environmentData, designImportData, StudyType.T, true);
+			this.generateDesign(environmentData, designImportData, StudyType.T, true, presetId);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -476,7 +476,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData, StudyType studyType,
-			boolean isPreset) throws DesignValidationException {
+			boolean isPreset, int designTypeId) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 
@@ -517,7 +517,7 @@ public class DesignImportController extends SettingsController {
 
 		this.addVariates(workbook, designImportData);
 
-		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables);
+		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeId);
 
 		// Only for Trial
 		this.populateTrialLevelVariableListIfNecessary(workbook);
@@ -687,10 +687,11 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void addExperimentDesign(final Workbook workbook, final Set<MeasurementVariable> experimentalDesignMeasurementVariables) {
+	protected void addExperimentDesign(final Workbook workbook, final Set<MeasurementVariable> experimentalDesignMeasurementVariables,
+			final int designTypeId) {
 
 		final ExpDesignParameterUi designParam = new ExpDesignParameterUi();
-		designParam.setDesignType(3);
+		designParam.setDesignType(designTypeId);
 
 		final List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());

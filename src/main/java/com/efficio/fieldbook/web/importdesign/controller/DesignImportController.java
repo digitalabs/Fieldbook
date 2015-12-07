@@ -434,8 +434,10 @@ public class DesignImportController extends SettingsController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/generatePresetMeasurements/{presetId}", method = RequestMethod.POST)
-	public Map<String, Object> generatePresetMeasurements(@PathVariable int presetId, @RequestBody final EnvironmentData environmentData) {
+	@RequestMapping(value = "/generatePresetMeasurements/{presetId}", method = RequestMethod.POST,
+			produces = "application/json; charset=utf-8")
+	public Map<String, Object> generatePresetMeasurements(final Model model, @PathVariable final int presetId,
+			@RequestBody final EnvironmentData environmentData) {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 

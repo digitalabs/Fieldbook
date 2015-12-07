@@ -269,8 +269,40 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	}
 
-	public void setMessageSource(final ResourceBundleMessageSource messageSource) {
+	void setMessageSource(final ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
+	}
+
+	void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	void setRulesService(RulesService rulesService) {
+		this.rulesService = rulesService;
+	}
+
+	void setGermplasmDataManger(GermplasmDataManager germplasmDataManger) {
+		this.germplasmDataManger = germplasmDataManger;
+	}
+
+	void setAdvancingSourceListFactory(AdvancingSourceListFactory advancingSourceListFactory) {
+		this.advancingSourceListFactory = advancingSourceListFactory;
+	}
+
+	void setProcessCodeService(ProcessCodeService processCodeService) {
+		this.processCodeService = processCodeService;
+	}
+
+	void setRuleFactory(RuleFactory ruleFactory) {
+		this.ruleFactory = ruleFactory;
+	}
+
+	void setGermplasmOriginGenerationService(GermplasmOriginGenerationService germplasmOriginGenerationService) {
+		this.germplasmOriginGenerationService = germplasmOriginGenerationService;
+	}
+
+	void setGermplasmOriginParameterBuilder(GermplasmOriginParameterBuilder germplasmOriginParameterBuilder) {
+		this.germplasmOriginParameterBuilder = germplasmOriginParameterBuilder;
 	}
 
 }

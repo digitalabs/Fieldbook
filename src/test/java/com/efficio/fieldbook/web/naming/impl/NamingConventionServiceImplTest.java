@@ -4,45 +4,83 @@ package com.efficio.fieldbook.web.naming.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import junit.framework.Assert;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.ruleengine.RuleExecutionContext;
+import org.generationcp.commons.ruleengine.RuleFactory;
+import org.generationcp.commons.ruleengine.service.RulesService;
+import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
+import org.generationcp.commons.service.GermplasmOriginGenerationService;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
+import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
+import com.google.common.collect.Lists;
 
-public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest {
+public class NamingConventionServiceImplTest {
 
-	@Resource
-	private NamingConventionService namingConventionService;
+	@Mock
+	private FieldbookService fieldbookMiddlewareService;
+
+	@Mock
+	private RulesService rulesService;
+
+	@Mock
+	private GermplasmDataManager germplasmDataManger;
+
+	@Mock
+	private AdvancingSourceListFactory advancingSourceListFactory;
+
+	@Mock
+	private ProcessCodeService processCodeService;
+
+	@Mock
+	private RuleFactory ruleFactory;
+
+	@Mock
+	private ResourceBundleMessageSource messageSource;
+
+	@Mock
+	private GermplasmOriginGenerationService germplasmOriginGenerationService;
+
+	@Mock
+	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
+
+	@InjectMocks
+	private NamingConventionServiceImpl namingConventionService = new NamingConventionServiceImpl();
 
 	private Method breedingMethod;
 	private AdvancingSource row;
 	private Integer breedingMethodSnameType;
 
-	@Override
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
+		MockitoAnnotations.initMocks(this);
 		this.breedingMethodSnameType = 5;
 		this.breedingMethod = new Method();
 		this.breedingMethod.setSnametype(this.breedingMethodSnameType);
 		this.row = new AdvancingSource();
 		this.row.setBreedingMethod(this.breedingMethod);
+
 	}
 
-	// Testing without unique name checking in order to be
 	@Test
 	public void testGenerateGermplasmList() throws MiddlewareQueryException, RuleException, FieldbookException {
 
@@ -84,8 +122,8 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 		breedingMethod.setSeparator("-");
 		breedingMethod.setPrefix("B");
 		breedingMethod.setCount("");
-		as1.setBreedingMethod(breedingMethod);
 
+		as1.setBreedingMethod(breedingMethod);
 		as1.setPlantsSelected(1);
 		as1.setBulk(false);
 		as1.setCheck(false);
@@ -93,6 +131,14 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 		as1.setSeason("201412");
 		as1.setCurrentMaxSequence(0);
 		rows.getRows().add(as1);
+
+		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(Mockito.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
+		final String ruleGeneratedName = name1.getNval() + "-B";
+		Mockito.when(this.rulesService.runRules(Mockito.any(RuleExecutionContext.class))).thenReturn(
+				Lists.newArrayList(ruleGeneratedName));
+		final String testPlotCode = "NurseryName:Plot#";
+		Mockito.when(this.germplasmOriginGenerationService.generateOriginString(Mockito.any(GermplasmOriginGenerationParameters.class)))
+		.thenReturn(testPlotCode);
 
 		List<ImportedGermplasm> igList = this.namingConventionService.generateGermplasmList(rows, false, null);
 		Assert.assertNotNull(igList);
@@ -102,10 +148,10 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 		// germplasm
 		ImportedGermplasm resultIG = igList.get(0);
 		Assert.assertEquals(new Integer(1), resultIG.getEntryId());
-		Assert.assertEquals("BARRA DE ORO DULCE-B", resultIG.getDesig());
+		Assert.assertEquals(ruleGeneratedName, resultIG.getDesig());
 		Assert.assertNull(resultIG.getGid());
-		Assert.assertEquals("BARRA DE ORO DULCE", resultIG.getCross());
-		Assert.assertEquals("Test One:1", resultIG.getSource());
+		Assert.assertEquals(ig.getCross(), resultIG.getCross());
+		Assert.assertEquals(testPlotCode, resultIG.getSource());
 		Assert.assertEquals("E0001", resultIG.getEntryCode());
 		Assert.assertEquals(new Integer(40), resultIG.getBreedingMethodId());
 		Assert.assertEquals(new Integer(133), resultIG.getGpid1());
@@ -119,8 +165,6 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 		Assert.assertEquals(new Integer(133), resultName.getGermplasmId());
 		Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName.getTypeId().intValue());
 		Assert.assertEquals(new Integer(1), resultName.getNstat());
-		Assert.assertEquals("BARRA DE ORO DULCE-B", resultName.getNval());
-
+		Assert.assertEquals(ruleGeneratedName, resultName.getNval());
 	}
-
 }

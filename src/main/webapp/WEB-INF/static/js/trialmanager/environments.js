@@ -1,6 +1,6 @@
 
 /*global angular, modalConfirmationTitle, openManageLocations,
-environmentModalConfirmationText,environmentConfirmLabel*/
+environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loadInitialMeasurements*/
 
 (function() {
 	'use strict';
@@ -10,23 +10,24 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID) {
 
 			$scope.data = {};
+			$scope.nested = {};
+            $scope.nested.dtInstance = {}
 
 			$scope.settings = TrialManagerDataService.settings.environments;
-            if (Object.keys($scope.settings).length === 0) {
-            	$scope.settings = {};
-            	$scope.settings.managementDetails = [];
-            	$scope.settings.trialConditionDetails = [];
-            }
+			if (Object.keys($scope.settings).length === 0) {
+				$scope.settings = {};
+				$scope.settings.managementDetails = [];
+				$scope.settings.trialConditionDetails = [];
+			}
 
-            $scope.isLocation = $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
+			$scope.isLocation = $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
 
 			$scope.buttonsTopWithLocation = [{
 				//TODO th:text="#{nursery.managesettings.manage.location}"
-				//TODO show only if there is location in table
 				//TODO disable?
 				text: 'Manage Location',
 				className: 'fbk-buttons-no-border fbk-buttons-link',
-				action: function (e, dt, node, config) {
+				action: function() {
 					$scope.initiateManageLocationModal();
 				}
 			},
@@ -38,11 +39,11 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 			}];
 
 			$scope.buttonsTop = [{
-            	extend:'colvis',
-            	className: 'fbk-buttons-no-border fbk-colvis-button',
-            	text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>',
-            	columns: ':gt(0):not(.ng-hide)'
-            }];
+				extend:'colvis',
+				className: 'fbk-buttons-no-border fbk-colvis-button',
+				text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>',
+				columns: ':gt(0):not(.ng-hide)'
+			}];
 
 			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp').withButtons($scope.isLocation ?
 			$scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice());
@@ -50,7 +51,8 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 			$scope.dtOptions.drawCallback =  function() {
 				var api = $(this).DataTable();
 
-				//temporary fix in buttons disappear bug
+				//temporary fix in buttons disappear bug,
+				//see https://github.com/l-lin/angular-datatables/issues/502#issuecomment-161166246
 				if (api) {
 					new $.fn.dataTable.Buttons(api, {
 						buttons: $scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice()
@@ -60,10 +62,14 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 				}
 			};
 
+			$scope.onAddVariable = function() {
+				$scope.nested.dtInstance.rerender();
+			};
+
 			$scope.initiateManageLocationModal = function() {
 				//TODO $scope.variableDefinition.locationUpdated = false;
-                openManageLocations();
-            };
+				openManageLocations();
+			};
 
 			$scope.data = TrialManagerDataService.currentData.environments;
 			$scope.isHideDelete = false;
@@ -156,13 +162,13 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 				TrialManagerDataService.deletedEnvironment = index + 1;
 
 				//update the no of environments in experimental design tab
-				if (TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments != undefined) {
+				if (TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
 					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
 				}
 			};
 
 			$scope.updateTrialInstanceNo = function(environments, index) {
-				for(var i = 0; i <  environments.length; i++) {
+				for (var i = 0; i <  environments.length; i++) {
 					var environment = environments[i];
 					var trialInstanceNo = environment.managementDetailValues[8170];
 					if (trialInstanceNo > index) {
@@ -174,7 +180,8 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 
 			$scope.hasMeasurementDataOnEnvironment = function(environmentNo) {
 				var variableIds = TrialManagerDataService.settings.measurements.m_keys;
-				return $http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' + environmentNo, variableIds, {cache: false});
+				return $http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' + environmentNo,
+					variableIds, {cache: false});
 
 			};
 
@@ -190,7 +197,7 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 					}
 
 					$.each(targetSettingList, function(key, value) {
-						if (value.variable.cvTermId == targetKey) {
+						if (value.variable.cvTermId === targetKey) {
 							$scope.temp.settingMap[targetKey] = value;
 							return false;
 						}
@@ -201,9 +208,10 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 			};
 
 			$scope.addNewEnvironments = function(noOfEnvironments) {
-				for (var ctr=0;ctr<noOfEnvironments;ctr++) {
+				for (var ctr = 0; ctr < noOfEnvironments; ctr++) {
 					$scope.data.environments.push({
-						managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.managementDetails),
+						managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
+							$scope.settings.managementDetails),
 						trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
 					});
 				}
@@ -221,7 +229,8 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 					// if the trial has no measurement data regardless if it is saved or not,
 					// regenerate the experimental design and measurement table
 					if ((TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement) ||
-							(!TrialManagerDataService.isOpenTrial() && TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments != undefined)) {
+							(!TrialManagerDataService.isOpenTrial() &&
+								TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined)) {
 						TrialManagerDataService.refreshMeasurementTableAfterDeletingEnvironment();
 					} else if (TrialManagerDataService.isOpenTrial() && TrialManagerDataService.trialMeasurement.hasMeasurement) {
 						// trigger the showMeasurementsPreview in the background
@@ -279,4 +288,4 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 				$scope.addNewEnvironments(addtlNumOfEnvironments);
 			}
 		}]);
-	})();
+})();

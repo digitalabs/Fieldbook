@@ -9,7 +9,7 @@
                         <section-container icon="bms-mgt-details"
                                            th:attr="heading=#{trial.managesettings.trial.environment.management.details},help-tooltip=#{trial.managesettings.environment.management.details.tooltip}"
                                            add-variable="true" hide-variable="addVariable" model-data="settings.managementDetails"
-                                           variable-type="1806">
+                                           variable-type="1806" callback="onAddVariable(result)">
                             <display-settings hide-delete="isHideDelete" name="content" settings="settings.managementDetails"
                                               variable-type="1806"></display-settings>
                         </section-container>
@@ -19,7 +19,7 @@
                         <section-container
                                 th:attr="heading=#{trial.managesettings.trial.environment.trial.condition.details},help-tooltip=#{trial.managesettings.trial.conditions.tooltip},icon-img=@{/static/svg/conditions.svg}"
                                 icon-size="22" add-variable="true" hide-variable="addVariable" model-data="settings.trialConditionDetails"
-                                variable-type="1802">
+                                variable-type="1802" callback="onAddVariable(result)">
                             <display-settings hide-delete="isHideDelete" name="content" settings="settings.trialConditionDetails"
                                               variable-type="1802"></display-settings>
                         </section-container>
@@ -57,8 +57,8 @@
         <div name="content">
 
 
-            <table datatable="ng" dt-options="dtOptions"
-                   class="table table-curved table-condensed fbk-table-with-check" width="100%">
+            <table datatable="ng" dt-options="dtOptions" dt-instance="nested.dtInstance"
+                   class="table table-curved table-condensed fbk-table-with-check fbk-datatable-environments" width="100%">
                 <thead>
                 <tr>
                     <th data-sortable="false" class="fbk-delete-link"></th>

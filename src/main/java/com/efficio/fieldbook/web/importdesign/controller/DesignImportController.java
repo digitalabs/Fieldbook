@@ -464,7 +464,7 @@ public class DesignImportController extends SettingsController {
 			resultsMap.put("environmentData", environmentData);
 			resultsMap.put("environmentSettings", this.userSelection.getTrialLevelVariableList());
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
@@ -477,8 +477,8 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData, StudyType studyType,
-			boolean isPreset, int designTypeId) throws DesignValidationException {
+	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData, final boolean isPreset,
+			final int designTypeId) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 

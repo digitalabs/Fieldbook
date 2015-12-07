@@ -1,6 +1,6 @@
 
 /*global angular, modalConfirmationTitle, openManageLocations,
-environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loadInitialMeasurements*/
+environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loadInitialMeasurements, SpinnerManager*/
 
 (function() {
 	'use strict';
@@ -11,7 +11,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 
 			$scope.data = {};
 			$scope.nested = {};
-            $scope.nested.dtInstance = {}
+			$scope.nested.dtInstance = {};
 
 			$scope.settings = TrialManagerDataService.settings.environments;
 			if (Object.keys($scope.settings).length === 0) {
@@ -23,9 +23,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 			$scope.isLocation = $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
 
 			$scope.buttonsTopWithLocation = [{
-				//TODO th:text="#{nursery.managesettings.manage.location}"
 				//TODO disable?
-				text: 'Manage Location',
+				text: $.fieldbookMessages.nurseryManageSettingsManageLocation,
 				className: 'fbk-buttons-no-border fbk-buttons-link',
 				action: function() {
 					$scope.initiateManageLocationModal();
@@ -179,7 +178,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 			};
 
 			$scope.hasMeasurementDataOnEnvironment = function(environmentNo) {
-				var variableIds = TrialManagerDataService.settings.measurements.m_keys;
+				var variableIds = TrialManagerDataService.settings.measurements.keys();
 				return $http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' + environmentNo,
 					variableIds, {cache: false});
 

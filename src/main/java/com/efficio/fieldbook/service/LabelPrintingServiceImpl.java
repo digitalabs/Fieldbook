@@ -287,10 +287,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 								thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), true);
 					}
 
-					if (barcodeLabelForCode != null && barcodeLabelForCode.length() > 80) {
-						throw new LabelPrintingException("label.printing.label.too.long", barcodeLabelForCode,
-								"label.printing.label.too.long");
-					}
+					barcodeLabelForCode = this.truncateBarcodeLabelForCode(barcodeLabelForCode);
 
 					Image mainImage = Image.getInstance(
 							LabelPrintingServiceImpl.class.getClassLoader().getResource(LabelPrintingServiceImpl.UNSUPPORTED_CHARSET_IMG));
@@ -469,8 +466,16 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		return fileName;
 	}
+	
+	//truncate the barcode label for code instead of throwing an error
+	protected String truncateBarcodeLabelForCode(String barcodeLabelForCode) {
+		if (barcodeLabelForCode != null && barcodeLabelForCode.length() > 79) {
+			barcodeLabelForCode = barcodeLabelForCode.substring(0, 79);
+		}
+		return barcodeLabelForCode;
+	}
 
-	/**
+		/**
 	 * Generate barcode field.
 	 *
 	 * @param moreFieldInfo the more field info

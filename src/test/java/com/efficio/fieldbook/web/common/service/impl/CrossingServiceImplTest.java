@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
+import org.generationcp.commons.service.GermplasmOriginGenerationService;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -51,9 +52,11 @@ public class CrossingServiceImplTest {
 	private CrossExpansionProperties crossExpansionProperties;
 	@Mock
 	private ContextUtil contextUtil;
+	@Mock
+	private GermplasmOriginGenerationService germplasmOriginGenerationService;
 
 	private CrossSetting crossSetting;
-
+	
 	@Before
 	public void setUp() throws MiddlewareQueryException {
 
@@ -67,12 +70,15 @@ public class CrossingServiceImplTest {
 		this.crossingService.setGermplasmDataManager(this.germplasmDataManager);
 		this.crossingService.setCrossExpansionProperties(this.crossExpansionProperties);
 		this.crossingService.setContextUtil(this.contextUtil);
+		this.crossingService.setGermplasmOriginGenerationService(germplasmOriginGenerationService);
 
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(BREEDING_METHOD_ID);
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
+		Mockito.doReturn("generatedSourceString").when(this.germplasmOriginGenerationService)
+				.generateOriginString((GermplasmOriginGenerationParameters) Matchers.any());
 
 		this.crossSetting = new CrossSetting();
 		this.crossSetting.setCrossNameSetting(this.createCrossNameSetting());
@@ -86,15 +92,15 @@ public class CrossingServiceImplTest {
 		return project;
 	}
 
-	// FIXME
 	@Test
 	public void testApplyCrossSetting() throws MiddlewareQueryException {
 
 		CrossNameSetting crossNameSetting = this.crossSetting.getCrossNameSetting();
-		
+
 		GermplasmOriginGenerationParameters germplasmOriginGenerationParameters = new GermplasmOriginGenerationParameters();
 
-		this.crossingService.applyCrossSetting(this.crossSetting, germplasmOriginGenerationParameters, this.importedCrossesList, CrossingServiceImplTest.USER_ID);
+		this.crossingService.applyCrossSetting(this.crossSetting, germplasmOriginGenerationParameters, this.importedCrossesList,
+				CrossingServiceImplTest.USER_ID);
 
 		ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
@@ -492,7 +498,7 @@ public class CrossingServiceImplTest {
 		cross.setMaleDesig("MALE-54321");
 		cross.setMaleGid("54321");
 		cross.setCross("CROSS");
-		cross.setSource("SOURCE");
+		cross.setSource("MALE:1:FEMALE:1");
 		importedCrosses.add(cross);
 		ImportedCrosses cross2 = new ImportedCrosses();
 		cross2.setFemaleDesig("FEMALE-9999");
@@ -500,7 +506,7 @@ public class CrossingServiceImplTest {
 		cross2.setMaleDesig("MALE-8888");
 		cross2.setMaleGid("8888");
 		cross2.setCross("CROSS");
-		cross2.setSource("SOURCE");
+		cross2.setSource("MALE:2:FEMALE:2");
 		importedCrosses.add(cross2);
 
 		return importedCrosses;

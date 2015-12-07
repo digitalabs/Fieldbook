@@ -101,7 +101,7 @@ public class CrossingServiceImpl implements CrossingService {
 	private PedigreeDataManager pedigreeDataManager;
 	
 	@Resource
-	GermplasmOriginGenerationService germplasmOriginGenerationService;
+	private GermplasmOriginGenerationService germplasmOriginGenerationService;
 
 	@Override
 	public ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException {
@@ -555,5 +555,14 @@ public class CrossingServiceImpl implements CrossingService {
 	 */
 	void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
+	}
+	
+	/**
+	 * For Test Only
+	 * 
+	 * @param germplasmOriginGenerationService
+	 */
+	void setGermplasmOriginGenerationService(GermplasmOriginGenerationService germplasmOriginGenerationService) {
+		this.germplasmOriginGenerationService = germplasmOriginGenerationService;
 	}
 }

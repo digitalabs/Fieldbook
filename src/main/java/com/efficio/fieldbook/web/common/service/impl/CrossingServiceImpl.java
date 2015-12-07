@@ -68,8 +68,6 @@ public class CrossingServiceImpl implements CrossingService {
 	public static final Integer GERMPLASM_REFID = 0;
 	public static final Integer NAME_REFID = 0;
 	public static final String[] USER_DEF_FIELD_CROSS_NAME = {"CROSS NAME", "CROSSING NAME"};
-	// FIXME change to PLOTCODE
-	public static final String USER_DEFINED_FIELD_PLOTCODE = "COLL";
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingServiceImpl.class);
 	private static final Integer PEDIGREE_NAME_TYPE = 18;
@@ -153,15 +151,6 @@ public class CrossingServiceImpl implements CrossingService {
 			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
 		}
 		
-		// Set up a default user defined field that will prevent the NPE
-		UserDefinedField plotCodeField = new UserDefinedField(0);
-		List<UserDefinedField> plotCodeFieldIds = germplasmDataManager.getUserDefinedFieldByFieldTableNameAndType("ATRIBUTS", "ATTRIBUTE");
-		for (UserDefinedField userDefinedField : plotCodeFieldIds) {
-			if(userDefinedField.getFcode().equals(USER_DEFINED_FIELD_PLOTCODE)){
-				plotCodeField = userDefinedField;
-			}
-		}
-		
 		// We iterate through the cross list here to merge, so we will create the SeedSource attribute list
 		// at the same time (each GP is linked to a PlotCode)
 		List<Attribute> attributeList = new ArrayList<>();
@@ -183,7 +172,7 @@ public class CrossingServiceImpl implements CrossingService {
 			Attribute plotCodeAttribute = new Attribute();
 			plotCodeAttribute.setAdate(today);
 			plotCodeAttribute.setGermplasmId(newGid);
-			plotCodeAttribute.setTypeId(106);
+			plotCodeAttribute.setTypeId(this.germplasmDataManager.getPlotCodeField().getFldno());
 			plotCodeAttribute.setAval(cross.getSource());	
 			plotCodeAttribute.setUserId(contextUtil.getCurrentWorkbenchUserId());
 			

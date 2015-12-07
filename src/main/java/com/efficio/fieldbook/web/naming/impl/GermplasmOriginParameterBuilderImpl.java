@@ -15,7 +15,6 @@ import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.springframework.stereotype.Service;
 
-import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 
 @Service
@@ -28,7 +27,7 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@Override
-	public GermplasmOriginGenerationParameters build(Workbook workbook, String plotNumber) throws FieldbookException {
+	public GermplasmOriginGenerationParameters build(Workbook workbook, String plotNumber) {
 		final GermplasmOriginGenerationParameters originGenerationParameters = new GermplasmOriginGenerationParameters();
 		originGenerationParameters.setCrop(this.contextUtil.getProjectInContext().getCropType().getCropName());
 		originGenerationParameters.setStudyName(workbook.getStudyName());

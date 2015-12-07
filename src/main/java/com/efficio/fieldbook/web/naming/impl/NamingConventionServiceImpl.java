@@ -81,7 +81,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
 
 	@Override
-	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException, MiddlewareQueryException, FieldbookException {
+	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException,
+			MiddlewareQueryException, FieldbookException {
 
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
 		final Map<String, Method> breedingMethodCodeMap = new HashMap<>();
@@ -163,8 +164,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook)
-					throws FieldbookException {
+			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook) {
 		// GCP-7652 use the entry number of the originial : index
 		// Current place where source is assigned.
 		final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber());
@@ -199,7 +199,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@Override
 	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final boolean isCheckForDuplicateName,
-			Workbook workbook) throws RuleException, FieldbookException {
+			Workbook workbook) throws RuleException {
 
 		final List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
 		int index = 1;

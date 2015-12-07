@@ -25,7 +25,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.efficio.fieldbook.util.FieldbookException;
 import com.google.common.collect.Lists;
 
 public class GermplasmOriginParameterBuilderImplTest {
@@ -45,7 +44,7 @@ public class GermplasmOriginParameterBuilderImplTest {
 	}
 
 	@Test
-	public void testBuildWhenAllRequiredInputIsAvailable() throws FieldbookException {
+	public void testBuildWhenAllRequiredInputIsAvailable() {
 
 		// Setup workbook
 		final Workbook workbook = new Workbook();
@@ -95,7 +94,7 @@ public class GermplasmOriginParameterBuilderImplTest {
 	}
 
 	@Test
-	public void testBuildWhenLocationVariableIsNotPresent() throws FieldbookException {
+	public void testBuildWhenLocationVariableIsNotPresent() {
 
 		// Setup workbook
 		final Workbook workbook = new Workbook();
@@ -121,7 +120,7 @@ public class GermplasmOriginParameterBuilderImplTest {
 	}
 
 	@Test
-	public void testBuildWhenLocationVariableIsPresentButWithNoValue() throws FieldbookException {
+	public void testBuildWhenLocationVariableIsPresentButWithNoValue() {
 
 		// Setup workbook
 		final Workbook workbook = new Workbook();
@@ -153,7 +152,7 @@ public class GermplasmOriginParameterBuilderImplTest {
 	}
 
 	@Test
-	public void testBuildWhenSeasonVariableIsNotPresent() throws FieldbookException {
+	public void testBuildWhenSeasonVariableIsNotPresent() {
 		// Setup workbook
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -189,7 +188,7 @@ public class GermplasmOriginParameterBuilderImplTest {
 	}
 
 	@Test
-	public void testBuildWhenSeasonVariableIsPresentButWithNoValue() throws FieldbookException {
+	public void testBuildWhenSeasonVariableIsPresentButWithNoValue() {
 
 		// Setup workbook
 		final Workbook workbook = new Workbook();

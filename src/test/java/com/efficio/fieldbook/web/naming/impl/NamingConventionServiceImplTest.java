@@ -27,7 +27,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
@@ -82,7 +81,7 @@ public class NamingConventionServiceImplTest {
 	}
 
 	@Test
-	public void testGenerateGermplasmList() throws MiddlewareQueryException, RuleException, FieldbookException {
+	public void testGenerateGermplasmList() throws MiddlewareQueryException, RuleException {
 
 		AdvancingSourceList rows = new AdvancingSourceList();
 		rows.setRows(new ArrayList<AdvancingSource>());

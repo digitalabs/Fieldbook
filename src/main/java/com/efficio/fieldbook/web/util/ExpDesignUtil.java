@@ -233,7 +233,7 @@ public class ExpDesignUtil {
 
 	public static MeasurementRow createMeasurementRow(List<MeasurementVariable> headerVariable, ImportedGermplasm germplasm,
 			Map<String, String> bvEntryMap, Map<String, List<String>> treatmentFactorValues, List<MeasurementVariable> trialVariables,
-			int trialNo, List<MeasurementVariable> factors, String entryNo) {
+			int trialNo) {
 		MeasurementRow measurementRow = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
 		MeasurementData treatmentLevelData = null;
@@ -252,7 +252,7 @@ public class ExpDesignUtil {
 			Integer termId = var.getTermId();
 
 			if (termId.intValue() == TermId.ENTRY_NO.getId()) {
-				measurementData = new MeasurementData(var.getName(), entryNo, false, var.getDataType(), var);
+				measurementData = new MeasurementData(var.getName(), String.valueOf(germplasm.getEntryId()), false, var.getDataType(), var);
 			} else if (termId.intValue() == TermId.SOURCE.getId() || termId.intValue() == TermId.GERMPLASM_SOURCE.getId()) {
 				measurementData =
 						new MeasurementData(var.getName(), germplasm.getSource() != null ? germplasm.getSource() : "", false,
@@ -376,8 +376,8 @@ public class ExpDesignUtil {
 		varList.addAll(variates);
 
 		int trialInstanceStart = environments - environmentsToAdd + 1;
-		for (int i = trialInstanceStart; i <= environments; i++) {
-			int trialNo = i;
+		for (int trialNo = trialInstanceStart; trialNo <= environments; trialNo++) {
+
 			BVDesignOutput bvOutput = null;
 			try {
 				bvOutput = fieldbookService.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
@@ -385,27 +385,27 @@ public class ExpDesignUtil {
 				ExpDesignUtil.LOG.error(e.getMessage(), e);
 				throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
 			}
-			if (bvOutput != null && bvOutput.isSuccess()) {
-				for (int counter = 0; counter < bvOutput.getBvResultList().size(); counter++) {
-					String entryNo = bvOutput.getEntryValue(entryNumberIdentifier, counter);
-					if (NumberUtils.isNumber(entryNo)) {
-						int germplasmIndex = Integer.valueOf(entryNo) - 1;
-						if (germplasmIndex >= 0 && germplasmIndex < germplasmList.size()) {
-							ImportedGermplasm importedGermplasm = germplasmList.get(germplasmIndex);
-							try {
-								MeasurementRow row =
-										ExpDesignUtil.createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter),
-												treatmentFactorValues, trialVariables, trialNo, factors, entryNo);
-								measurementRowList.add(row);
-							} catch (MiddlewareQueryException e) {
-								ExpDesignUtil.LOG.error(e.getMessage(), e);
-							}
 
+			if (bvOutput == null || !bvOutput.isSuccess()) {
+				throw new BVDesignException("experiment.design.generate.generic.error");
+			}
+
+			for (int counter = 0; counter < bvOutput.getBvResultList().size(); counter++) {
+				String entryNo = bvOutput.getEntryValue(entryNumberIdentifier, counter);
+				if (NumberUtils.isNumber(entryNo)) {
+					int germplasmIndex = Integer.valueOf(entryNo) - 1;
+					if (germplasmIndex >= 0 && germplasmIndex < germplasmList.size()) {
+						ImportedGermplasm importedGermplasm = germplasmList.get(germplasmIndex);
+						try {
+							MeasurementRow row = ExpDesignUtil.createMeasurementRow(varList, importedGermplasm,
+									bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo);
+							measurementRowList.add(row);
+						} catch (MiddlewareQueryException e) {
+							ExpDesignUtil.LOG.error(e.getMessage(), e);
 						}
+
 					}
 				}
-			} else {
-				throw new BVDesignException("experiment.design.generate.generic.error");
 			}
 
 		}

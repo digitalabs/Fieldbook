@@ -3238,6 +3238,7 @@ function displayEditFactorsAndGermplasmSection() {
 	}
 }
 
+// Function to enable/disable & show/hide controls as per Clear list button's visibility
 function toggleControlsForGermplasmListManagement(value) {
     if(value) {
         $('#imported-germplasm-list-reset-button').show();

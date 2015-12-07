@@ -225,7 +225,7 @@
 							});
 						});
 						
-						$http.post('/Fieldbook/DesignImport/generatePresetMeasurements/4', JSON.stringify(environmentData)).then(successGenerateDesign, errorGenerateDesign);
+						$http.post('/Fieldbook/DesignImport/generatePresetMeasurements/'+$scope.data.designType, JSON.stringify(environmentData)).then(successGenerateDesign, errorGenerateDesign);
 					}
 				};
 				

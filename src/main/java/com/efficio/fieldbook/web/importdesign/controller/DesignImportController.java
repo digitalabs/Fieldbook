@@ -477,8 +477,8 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData, final boolean isPreset,
-			final int designTypeId) throws DesignValidationException {
+	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
+			final StudyType studyType, final boolean isPreset, final int designTypeId) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 

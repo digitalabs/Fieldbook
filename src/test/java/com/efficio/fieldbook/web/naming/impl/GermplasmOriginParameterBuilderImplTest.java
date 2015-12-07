@@ -1,6 +1,8 @@
 
 package com.efficio.fieldbook.web.naming.impl;
 
+import java.text.SimpleDateFormat;
+
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -95,147 +97,136 @@ public class GermplasmOriginParameterBuilderImplTest {
 	@Test
 	public void testBuildWhenLocationVariableIsNotPresent() throws FieldbookException {
 
-		try {
-			// Setup workbook
-			final Workbook workbook = new Workbook();
-			final StudyDetails studyDetails = new StudyDetails();
-			studyDetails.setStudyType(StudyType.N);
-			workbook.setStudyDetails(studyDetails);
+		// Setup workbook
+		final Workbook workbook = new Workbook();
+		final StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.N);
+		workbook.setStudyDetails(studyDetails);
 
-			final MeasurementVariable studyNameMV = new MeasurementVariable();
-			studyNameMV.setTermId(TermId.STUDY_NAME.getId());
-			studyNameMV.setValue("Study Name");
-			studyNameMV.setLabel(Workbook.STUDY_LABEL);
+		final MeasurementVariable studyNameMV = new MeasurementVariable();
+		studyNameMV.setTermId(TermId.STUDY_NAME.getId());
+		studyNameMV.setValue("Study Name");
+		studyNameMV.setLabel(Workbook.STUDY_LABEL);
 
-			// No location variable
-			workbook.setConditions(Lists.newArrayList(studyNameMV));
+		// No location variable
+		workbook.setConditions(Lists.newArrayList(studyNameMV));
 
-			final Project testProject = new Project();
-			testProject.setUniqueID("e8e4be0a-5d63-452f-8fde-b1c794ec7b1a");
-			testProject.setCropType(new CropType("maize"));
-			Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
+		final Project testProject = new Project();
+		testProject.setUniqueID("e8e4be0a-5d63-452f-8fde-b1c794ec7b1a");
+		testProject.setCropType(new CropType("maize"));
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
 
-			this.builder.build(workbook, "1");
-			Assert.fail("Expected FieldbookException to be thrown when LOCATION_ABBR variable is missing.");
-		} catch (final FieldbookException fe) {
-			Assert.assertEquals("Expecting FieldbookException with code nursery.advance.no.location.abbr.variable.setup to be thrown.",
-					"nursery.advance.no.location.abbr.variable.setup", fe.getMessage());
-		}
+		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, "1");
+		Assert.assertNull("Expected null location value being set when LOCATION_ABBR variable is missing.", parameters.getLocation());
 	}
 
 	@Test
 	public void testBuildWhenLocationVariableIsPresentButWithNoValue() throws FieldbookException {
 
-		try {
-			// Setup workbook
-			final Workbook workbook = new Workbook();
-			final StudyDetails studyDetails = new StudyDetails();
-			studyDetails.setStudyType(StudyType.N);
-			workbook.setStudyDetails(studyDetails);
+		// Setup workbook
+		final Workbook workbook = new Workbook();
+		final StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.N);
+		workbook.setStudyDetails(studyDetails);
 
-			final MeasurementVariable studyNameMV = new MeasurementVariable();
-			studyNameMV.setTermId(TermId.STUDY_NAME.getId());
-			studyNameMV.setValue("Study Name");
-			studyNameMV.setLabel(Workbook.STUDY_LABEL);
+		final MeasurementVariable studyNameMV = new MeasurementVariable();
+		studyNameMV.setTermId(TermId.STUDY_NAME.getId());
+		studyNameMV.setValue("Study Name");
+		studyNameMV.setLabel(Workbook.STUDY_LABEL);
 
-			final MeasurementVariable locationMV = new MeasurementVariable();
-			locationMV.setTermId(TermId.LOCATION_ABBR.getId());
-			// Location variable present but no value
-			locationMV.setValue(null);
+		final MeasurementVariable locationMV = new MeasurementVariable();
+		locationMV.setTermId(TermId.LOCATION_ABBR.getId());
+		// Location variable present but no value
+		locationMV.setValue(null);
 
-			workbook.setConditions(Lists.newArrayList(studyNameMV, locationMV));
+		workbook.setConditions(Lists.newArrayList(studyNameMV, locationMV));
 
-			final Project testProject = new Project();
-			testProject.setUniqueID("e8e4be0a-5d63-452f-8fde-b1c794ec7b1a");
-			testProject.setCropType(new CropType("maize"));
-			Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
-			Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(testProject.getUniqueID());
+		final Project testProject = new Project();
+		testProject.setUniqueID("e8e4be0a-5d63-452f-8fde-b1c794ec7b1a");
+		testProject.setCropType(new CropType("maize"));
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(testProject.getUniqueID());
 
-			this.builder.build(workbook, "1");
-			Assert.fail("Expected FieldbookException to be thrown when LOCATION_ABBR variable is present but there is no value set.");
-		} catch (final FieldbookException fe) {
-			Assert.assertEquals("Expecting FieldbookException with code nursery.advance.no.location.abbr.value.set to be thrown.",
-					"nursery.advance.no.location.abbr.value.set", fe.getMessage());
-		}
+		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, "1");
+		Assert.assertNull("Expected null location value being set when LOCATION_ABBR variable is present but there is no value set.",
+				parameters.getLocation());
 	}
 
 	@Test
 	public void testBuildWhenSeasonVariableIsNotPresent() throws FieldbookException {
+		// Setup workbook
+		final Workbook workbook = new Workbook();
+		final StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.N);
+		workbook.setStudyDetails(studyDetails);
 
-		try {
-			// Setup workbook
-			final Workbook workbook = new Workbook();
-			final StudyDetails studyDetails = new StudyDetails();
-			studyDetails.setStudyType(StudyType.N);
-			workbook.setStudyDetails(studyDetails);
+		final MeasurementVariable studyNameMV = new MeasurementVariable();
+		studyNameMV.setTermId(TermId.STUDY_NAME.getId());
+		studyNameMV.setValue("Study Name");
+		studyNameMV.setLabel(Workbook.STUDY_LABEL);
 
-			final MeasurementVariable studyNameMV = new MeasurementVariable();
-			studyNameMV.setTermId(TermId.STUDY_NAME.getId());
-			studyNameMV.setValue("Study Name");
-			studyNameMV.setLabel(Workbook.STUDY_LABEL);
+		final MeasurementVariable locationMV = new MeasurementVariable();
+		locationMV.setTermId(TermId.LOCATION_ABBR.getId());
+		locationMV.setValue("MEX");
 
-			final MeasurementVariable locationMV = new MeasurementVariable();
-			locationMV.setTermId(TermId.LOCATION_ABBR.getId());
-			locationMV.setValue("MEX");
+		// No season variable.
+		workbook.setConditions(Lists.newArrayList(studyNameMV, locationMV));
 
-			// No season variable.
-			workbook.setConditions(Lists.newArrayList(studyNameMV, locationMV));
+		final Project testProject = new Project();
+		testProject.setUniqueID("e8e4be0a-5d63-452f-8fde-b1c794ec7b1a");
+		testProject.setCropType(new CropType("maize"));
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(testProject.getUniqueID());
 
-			final Project testProject = new Project();
-			testProject.setUniqueID("e8e4be0a-5d63-452f-8fde-b1c794ec7b1a");
-			testProject.setCropType(new CropType("maize"));
-			Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
-			Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(testProject.getUniqueID());
+		final String plotNumber = "1";
+		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, plotNumber);
 
-			final String plotNumber = "1";
-			this.builder.build(workbook, plotNumber);
-			Assert.fail("Expected FieldbookException to be thrown when Crop_season_Code variable is missing.");
-		} catch (final FieldbookException fe) {
-			Assert.assertEquals("Expecting FieldbookException with code nursery.advance.no.season.variable.setup to be thrown.",
-					"nursery.advance.no.season.variable.setup", fe.getMessage());
-		}
+		SimpleDateFormat formatter = new SimpleDateFormat("YYYYMM");
+		String currentYearAndMonth = formatter.format(new java.util.Date());
+
+		Assert.assertEquals("Expected current year and month being set as Season when Crop_season_Code variable is missing.",
+				currentYearAndMonth, parameters.getSeason());
 	}
 
 	@Test
 	public void testBuildWhenSeasonVariableIsPresentButWithNoValue() throws FieldbookException {
 
-		try {
-			// Setup workbook
-			final Workbook workbook = new Workbook();
-			final StudyDetails studyDetails = new StudyDetails();
-			studyDetails.setStudyType(StudyType.N);
-			workbook.setStudyDetails(studyDetails);
+		// Setup workbook
+		final Workbook workbook = new Workbook();
+		final StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.N);
+		workbook.setStudyDetails(studyDetails);
 
-			final MeasurementVariable studyNameMV = new MeasurementVariable();
-			studyNameMV.setTermId(TermId.STUDY_NAME.getId());
-			studyNameMV.setValue("Study Name");
-			studyNameMV.setLabel(Workbook.STUDY_LABEL);
+		final MeasurementVariable studyNameMV = new MeasurementVariable();
+		studyNameMV.setTermId(TermId.STUDY_NAME.getId());
+		studyNameMV.setValue("Study Name");
+		studyNameMV.setLabel(Workbook.STUDY_LABEL);
 
-			final MeasurementVariable locationMV = new MeasurementVariable();
-			locationMV.setTermId(TermId.LOCATION_ABBR.getId());
-			locationMV.setValue("MEX");
+		final MeasurementVariable locationMV = new MeasurementVariable();
+		locationMV.setTermId(TermId.LOCATION_ABBR.getId());
+		locationMV.setValue("MEX");
 
-			final MeasurementVariable seasonMV = new MeasurementVariable();
-			seasonMV.setTermId(TermId.SEASON_VAR.getId());
-			// season variable present but no value.
-			seasonMV.setValue(null);
+		final MeasurementVariable seasonMV = new MeasurementVariable();
+		seasonMV.setTermId(TermId.SEASON_VAR.getId());
+		// season variable present but no value.
+		seasonMV.setValue(null);
 
-			workbook.setConditions(Lists.newArrayList(studyNameMV, locationMV, seasonMV));
+		workbook.setConditions(Lists.newArrayList(studyNameMV, locationMV, seasonMV));
 
-			// Mocks
-			final Project testProject = new Project();
-			testProject.setUniqueID("e8e4be0a-5d63-452f-8fde-b1c794ec7b1a");
-			testProject.setCropType(new CropType("maize"));
-			Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
-			Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(testProject.getUniqueID());
+		// Mocks
+		final Project testProject = new Project();
+		testProject.setUniqueID("e8e4be0a-5d63-452f-8fde-b1c794ec7b1a");
+		testProject.setCropType(new CropType("maize"));
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(testProject.getUniqueID());
 
-			final String plotNumber = "1";
-			this.builder.build(workbook, plotNumber);
-			Assert.fail("Expected FieldbookException to be thrown when Crop_season_Code variable is present but with no value.");
-		} catch (final FieldbookException fe) {
-			Assert.assertEquals("Expecting FieldbookException with code nursery.advance.no.season.value.set to be thrown.",
-					"nursery.advance.no.season.value.set", fe.getMessage());
-		}
+		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, "1");
+		SimpleDateFormat formatter = new SimpleDateFormat("YYYYMM");
+		String currentYearAndMonth = formatter.format(new java.util.Date());
+
+		Assert.assertEquals(
+				"Expected current year and month being set as Season when Crop_season_Code variable is present but value is missing.",
+				currentYearAndMonth, parameters.getSeason());
 
 	}
 }

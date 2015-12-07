@@ -34,12 +34,14 @@ import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.service.GermplasmOriginGenerationService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.commons.workbook.generator.RowColumnType;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.manager.api.UserProgramStateDataManager;
@@ -142,9 +144,12 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private UserProgramStateDataManager userProgramStateDataManager;
-	
+
 	@Resource
 	private GermplasmOriginGenerationService germplasmOriginGenerationService;
+
+	@Resource
+	private GermplasmDataManager germplasmDataManager;
 
 	/**
 	 * Load initial germplasm tree.
@@ -484,12 +489,21 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			listDataItems.add(new ImmutablePair<Germplasm, GermplasmListData>(germplasm, listData));
 
 			// Add the seed source/origin attribute (which is generated based on format strings configured in crossing.properties) to the
-			// germplasm.
+			// germplasm in FieldbookServiceImpl.advanceNursery().
+			final List<UserDefinedField> udfldAttributes =
+					this.germplasmDataManager.getUserDefinedFieldByFieldTableNameAndType(
+							RowColumnType.PASSPORT_ATTRIBUTE_TYPES.getFtable(), RowColumnType.PASSPORT_ATTRIBUTE_TYPES.getFtype());
+			// Defaulting to a UDFLD with fldno = 0 - this prevents NPEs and DB constraint violations.
+			UserDefinedField plotCodeUdfld = new UserDefinedField(0);
+			for (UserDefinedField userDefinedField : udfldAttributes) {
+				if (userDefinedField.getFcode().equals("PLOTCODE")) {
+					plotCodeUdfld = userDefinedField;
+				}
+			}
+
 			final Attribute originAttribute = new Attribute();
 			originAttribute.setAval(importedGermplasm.getSource());
-			// FIXME Discuss with Jean/Graham/Matthew and use the appropriate one.
-			// Using one that came closest for now in UDFLD table: id=1146 ftable=ATRIBUTS ftype=PASSPORT fcode=SAMP_ORI fname=Sample origin
-			originAttribute.setTypeId(1146);
+			originAttribute.setTypeId(plotCodeUdfld.getFldno());
 			originAttribute.setUserId(currentUserID);
 			originAttribute.setAdate(gDate);
 			originAttribute.setLocationId(locationId);

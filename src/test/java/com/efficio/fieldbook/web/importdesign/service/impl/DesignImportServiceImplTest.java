@@ -209,7 +209,7 @@ public class DesignImportServiceImplTest {
 		final List<MeasurementRow> measurements =
 				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false);
 
-		Assert.assertEquals("The 3 trial instances have 6 observations", 6, measurements.size());
+		Assert.assertEquals("Only the first trial has observations so the measurement count should be 6", 6, measurements.size());
 
 	}
 
@@ -224,8 +224,42 @@ public class DesignImportServiceImplTest {
 		final List<MeasurementRow> measurements =
 				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false);
 
-		Assert.assertEquals("The first trial instance only has 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES,
+		Assert.assertEquals("The first trial instance has only 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES,
 				measurements.size());
+
+	}
+
+	@Test
+	public void testGenerateDesignForThreeInstancesPreset() throws DesignValidationException {
+
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+
+		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
+				.getImportedGermplasmMainInfo();
+
+		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(3);
+
+		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
+
+		final List<MeasurementRow> measurements =
+				this.service.generateDesign(workbook, this.designImportData, environmentData, false, true);
+
+		Assert.assertEquals("The 3 trial instances should have 18 observations", 18, measurements.size());
+
+		for (int i = 0; i <= 5; i++) {
+			Assert.assertEquals("Measurement rows 1 to 6 should be assigned to trial instance 2", "1", measurements.get(i).getDataList()
+					.get(0).getValue());
+		}
+
+		for (int i = 6; i <= 11; i++) {
+			Assert.assertEquals("Measurement rows 7 to 12 should be assigned to trial instance 2", "2", measurements.get(i).getDataList()
+					.get(0).getValue());
+		}
+
+		for (int i = 12; i <= 17; i++) {
+			Assert.assertEquals("Measurement rows 13 to 18 should be assigned to trial instance 2", "3", measurements.get(i).getDataList()
+					.get(0).getValue());
+		}
 
 	}
 
@@ -475,4 +509,5 @@ public class DesignImportServiceImplTest {
 
 		return items;
 	}
+
 }

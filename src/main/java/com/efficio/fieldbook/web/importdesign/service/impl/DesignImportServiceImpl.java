@@ -101,6 +101,15 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return measurements;
 	}
 
+	/**
+	 * Creates measurement rows based on the data from the uploaded design file.
+	 * 
+	 * @param environmentData
+	 * @param isPreset
+	 * @param csvData
+	 * @param measurements
+	 * @param measurementRowGenerator
+	 */
 	protected void createMeasurementRows(final EnvironmentData environmentData, final boolean isPreset,
 			final Map<Integer, List<String>> csvData, final List<MeasurementRow> measurements,
 			final DesignImportMeasurementRowGenerator measurementRowGenerator) {
@@ -108,7 +117,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		if (isPreset) {
 			for (int trialInstanceNo = 1; trialInstanceNo <= environmentData.getNoOfEnvironments(); trialInstanceNo++) {
 
-				createPresetMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo);
+				this.createPresetMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo);
 
 			}
 		} else {
@@ -126,6 +135,15 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 	}
 
+	/**
+	 * This will create measurement rows for the specified trial instance number. The design from the predefined template file will be
+	 * applied.
+	 * 
+	 * @param csvData
+	 * @param measurements
+	 * @param measurementRowGenerator
+	 * @param trialInstanceNo
+	 */
 	protected void createPresetMeasurementRowsPerInstance(final Map<Integer, List<String>> csvData,
 			final List<MeasurementRow> measurements, final DesignImportMeasurementRowGenerator measurementRowGenerator, int trialInstanceNo) {
 		// row counter starts at index = 1 because zero index is the header

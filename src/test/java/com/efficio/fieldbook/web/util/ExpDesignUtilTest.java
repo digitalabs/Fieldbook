@@ -29,6 +29,8 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 
+import javax.xml.bind.JAXBException;
+
 public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 
 	private static final String ENTRY_NO = "ENTRY_NO";
@@ -45,7 +47,7 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 	private FieldbookService fieldbookService;
 
 	@Test
-	public void testGenerateExpDesignMeasurements() {
+	public void testGenerateExpDesignMeasurements() throws MiddlewareQueryException, JAXBException, IOException {
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
 
 		List<String> treatmentFactor = new ArrayList<String>();

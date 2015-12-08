@@ -8,14 +8,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 public class ExpDesign  implements Serializable {
-	
-	private String name;		
+
+	private String name;
 	private List<ExpDesignParameter> parameters;
-	
+
 	public ExpDesign(){
 		super();
 	}
-	
+
 	public ExpDesign(String name, List<ExpDesignParameter> parameters) {
 		super();
 		this.name = name;
@@ -30,7 +30,7 @@ public class ExpDesign  implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 
 	@XmlElement(name="Parameter")
 	public List<ExpDesignParameter> getParameters() {
@@ -40,7 +40,7 @@ public class ExpDesign  implements Serializable {
 	public void setParameters(List<ExpDesignParameter> parameters) {
 		this.parameters = parameters;
 	}
-	
+
 	public void setParameterValue(String name, String value){
 		boolean isFound = false;
 		if(parameters != null){
@@ -54,12 +54,12 @@ public class ExpDesign  implements Serializable {
 		}
 		if(!isFound){
 			if(parameters == null){
-				parameters = new ArrayList();
+				parameters = new ArrayList<ExpDesignParameter>();
 			}
 			parameters.add(new ExpDesignParameter(name, value));
 		}
 	}
-	
+
 	public String getParameterValue(String name){
 		if(parameters != null){
 			for(ExpDesignParameter param : parameters){
@@ -69,5 +69,16 @@ public class ExpDesign  implements Serializable {
 			}
 		}
 		return "";
+	}
+
+	public List<ListItem> getParameterList(String name){
+		if(parameters != null){
+			for(ExpDesignParameter param : parameters){
+				if(name != null && param.getName() != null && param.getName().equalsIgnoreCase(name)){
+					return param.getListItem();
+				}
+			}
+		}
+		return new ArrayList<ListItem>();
 	}
 }

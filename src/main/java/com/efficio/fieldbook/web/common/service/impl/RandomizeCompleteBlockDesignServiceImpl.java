@@ -19,6 +19,8 @@ import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,8 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 @Service
 public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeCompleteBlockDesignService{
 
+	private static final Logger LOG = LoggerFactory.getLogger(RandomizeCompleteBlockDesignServiceImpl.class);
+
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	@Resource
@@ -47,43 +51,44 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
 	@Resource
-    private ResourceBundleMessageSource messageSource;
+	private ResourceBundleMessageSource messageSource;
 	@Resource
 	public FieldbookService fieldbookService;
 	@Resource
-    private UserSelection userSelection;
-	
+	private UserSelection userSelection;
+
 	@Override
 	public  List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList,
-			ExpDesignParameterUi parameter, List<MeasurementVariable> trialVariables, List<MeasurementVariable> factors,
-			List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
-			List<TreatmentVariable> treatmentVariables) throws BVDesignException {
-		
-		
+												ExpDesignParameterUi parameter, List<MeasurementVariable> trialVariables, List<MeasurementVariable> factors,
+												List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates,
+												List<TreatmentVariable> treatmentVariables) throws BVDesignException {
+
+
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
-		String block = parameter.getReplicationsCount();	
-		int environments = Integer.valueOf(parameter.getNoOfEnvironments());				
-		
+		String block = parameter.getReplicationsCount();
+		int environments = Integer.valueOf(parameter.getNoOfEnvironments());
+		int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
+
 		try {
-			
+
 			List<String> treatmentFactor = new ArrayList<String>();
 			List<String> levels = new ArrayList<String>();
-			
-			Map<String, List<String>> treatmentFactorValues = new HashMap<String, List<String>>(); //Key - CVTerm ID , List of values
-			List<TreatmentVariable> treatmentVarList = new ArrayList<TreatmentVariable>();
+
+			//Key - CVTerm ID , List of values
+			Map<String, List<String>> treatmentFactorValues = new HashMap<String, List<String>>();
 			Map treatmentFactorsData = parameter.getTreatmentFactorsData();
-			
+
 			List<SettingDetail> treatmentFactorList = userSelection.getTreatmentFactors();
-			
+
 			if(treatmentFactorsData != null){
 				Iterator keySetIter = treatmentFactorsData.keySet().iterator();
 				while(keySetIter.hasNext()){
 					String key = (String) keySetIter.next();
-					Map treatmentData = (Map) treatmentFactorsData.get(key);						
+					Map treatmentData = (Map) treatmentFactorsData.get(key);
 					treatmentFactorValues.put(key, (List)treatmentData.get("labels"));
 					//add the treatment variables
 					Object pairVarObj = (Object)treatmentData.get("variableId");
-							
+
 					String pairVar = "";
 					if(pairVarObj instanceof String){
 						pairVar = (String) pairVarObj;
@@ -100,12 +105,12 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 						MeasurementVariable measureVar2 = ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVar2, Operation.ADD, fieldbookService);
 						measureVar1.setFactor(true);
 						measureVar2.setFactor(true);
-						
+
 						SettingsUtil.findAndUpdateVariableName(treatmentFactorList, measureVar1);
-						
+
 						measureVar1.setTreatmentLabel(measureVar1.getName());
 						measureVar2.setTreatmentLabel(measureVar1.getName());
-						
+
 						treatmentVar.setLevelVariable(measureVar1);
 						treatmentVar.setValueVariable(measureVar2);
 						treatmentVariables.add(treatmentVar);
@@ -113,29 +118,29 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 
 				}
 			}
-			
-			
-			
+
+
+
 			if(treatmentFactorValues != null){
 				Set<String> keySet = treatmentFactorValues.keySet();
 				for(String key : keySet){
 					int level = treatmentFactorValues.get(key).size();
-					treatmentFactor.add(ExpDesignUtil.cleanBVDesingKey(key));										
+					treatmentFactor.add(ExpDesignUtil.cleanBVDesingKey(key));
 					levels.add(Integer.toString(level));
 				}
 			}
-			
+
 			StandardVariable stdvarTreatment = fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId());
-			
+
 			treatmentFactorValues.put(stdvarTreatment.getName(), Arrays.asList(Integer.toString(germplasmList.size())));
 			treatmentFactor.add(stdvarTreatment.getName());
 			levels.add(Integer.toString(germplasmList.size()));
-			
-			StandardVariable stdvarRep = null;				
+
+			StandardVariable stdvarRep = null;
 			StandardVariable stdvarPlot = null;
-			
+
 			List<StandardVariable> reqVarList = getRequiredVariable();
-			
+
 			for(StandardVariable var : reqVarList){
 				if(var.getId() == TermId.REP_NO.getId()){
 					stdvarRep = var;
@@ -143,43 +148,41 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					stdvarPlot = var;
 				}
 			}
-			
-			
-			MainDesign mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign(block, 
+
+
+			MainDesign mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign(block,
 					stdvarRep.getName(), stdvarPlot.getName(),
-				treatmentFactor, levels, "1", "");
-			
-			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, trialVariables, factors,
-					nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
-					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues, fieldbookService);					
-			
-		}catch(BVDesignException e){
+					treatmentFactor, levels, "");
+
+			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors,
+					nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList,
+					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues, fieldbookService);
+
+		} catch(BVDesignException e) {
 			throw e;
+		} catch(Exception e) {
+			LOG.error(e.getMessage(), e);
 		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
+
 		return measurementRowList;
 	}
-		
-	
+
+
 	@Override
 	public List<StandardVariable> getRequiredVariable() {
 		List<StandardVariable> varList = new ArrayList<StandardVariable>();
-		try {		
-			StandardVariable stdvarRep = fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId());				
+		try {
+			StandardVariable stdvarRep = fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId());
 			StandardVariable stdvarPlot = fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
-			
+
 			varList.add(stdvarRep);
 			varList.add(stdvarPlot);
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		return varList;
 	}
-	
+
 	@Override
 	public ExpDesignValidationOutput validate(
 			ExpDesignParameterUi expDesignParameter,
@@ -190,21 +193,21 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			if(expDesignParameter != null && germplasmList != null){
 				if(!NumberUtils.isNumber(expDesignParameter.getReplicationsCount())){
 					output = new ExpDesignValidationOutput(false, messageSource.getMessage(
-		                    "experiment.design.replication.count.should.be.a.number", null, locale));
+							"experiment.design.replication.count.should.be.a.number", null, locale));
 				}else{
 					int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
-					
+
 					if(replicationCount <= 0 || replicationCount >= 13){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
-			                    "experiment.design.replication.count.rcbd.error", null, locale));
+								"experiment.design.replication.count.rcbd.error", null, locale));
 					}
 				}
 			}
 		}catch(Exception e){
 			output = new ExpDesignValidationOutput(false, messageSource.getMessage(
-                    "experiment.design.invalid.generic.error", null, locale));
+					"experiment.design.invalid.generic.error", null, locale));
 		}
-		
+
 		return output;
 	}
 

@@ -286,5 +286,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 				$scope.addNewEnvironments(addtlNumOfEnvironments);
 			}
-		}]);
+		}]).factory('DTLoadingTemplate', dtLoadingTemplate);
+
+        function dtLoadingTemplate() {
+        	return {
+                    html: '<span class="throbber throbber-2x"></span>'
+               };
+        };
 })();

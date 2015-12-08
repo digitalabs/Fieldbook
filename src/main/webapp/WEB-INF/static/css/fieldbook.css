@@ -1921,3 +1921,29 @@ input.review-select-all{
 	text-align: right;
 	margin: 0 50px 0;
 }
+
+/* new throbber from the styleguide */
+
+.throbber {
+    width: 18px;
+    width: 1.5rem;
+    height: 18px;
+    height: 1.5rem;
+    border-radius: .75rem;
+    box-sizing: border-box;
+    border: 2px solid rgba(27,149,178,.2);
+    border-top-color: #1b95b2;
+    -webkit-animation: spin 1s infinite linear;
+    animation: spin 1s infinite linear;
+    transition: visibility .5s ease-in,opacity .5s ease-in;
+    visibility: visible;
+    display: inline-block;
+}
+
+.throbber-2x {
+    width: 30px;
+    width: 2.5rem;
+    height: 30px;
+    height: 2.5rem;
+    border-radius: 1.25rem;
+}

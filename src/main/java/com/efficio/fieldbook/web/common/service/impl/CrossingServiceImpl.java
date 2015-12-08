@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.util.ExpressionHelper;
@@ -133,13 +134,18 @@ public class CrossingServiceImpl implements CrossingService {
 		boolean isValid = this.verifyGermplasmMethodPresent(germplasmList);
 
 		if (!isValid) {
-
 			throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
 					Locale.getDefault()));
 		}
 		
-		// FIXME : make Germplasm + Attribute add transactional
-		// save Germplasm
+		save(crossSetting, importedCrossesList, germplasmPairs);
+	}
+
+	/**
+	 * @Transactional to make sure Germplasm, Name and Attribute entities save atomically.
+	 */
+	@Transactional
+	private void save(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, List<Pair<Germplasm, Name>> germplasmPairs) {
 		List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmPairs);
 		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
 			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);

@@ -65,6 +65,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				$scope.nested.dtInstance.rerender();
 			};
 
+			$scope.$on('deleteOccurred', function() {
+				$scope.nested.dtInstance.rerender();
+            });
+
 			$scope.initiateManageLocationModal = function() {
 				//TODO $scope.variableDefinition.locationUpdated = false;
 				openManageLocations();

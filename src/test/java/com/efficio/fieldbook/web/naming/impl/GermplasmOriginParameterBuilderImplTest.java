@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.naming.impl;
 
 import java.text.SimpleDateFormat;
 
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -91,6 +92,65 @@ public class GermplasmOriginParameterBuilderImplTest {
 		Assert.assertEquals(locationMV.getValue(), parameters.getLocation());
 		Assert.assertEquals(seasonCategory.getDefinition(), parameters.getSeason());
 		Assert.assertEquals(plotNumber, parameters.getPlotNumber());
+	}
+	
+	@Test
+	public void testBuildWhenAllRequiredInputIsAvailableCrossing() {
+
+		// Setup workbook
+		final Workbook workbook = new Workbook();
+		final StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.N);
+		workbook.setStudyDetails(studyDetails);
+
+		final MeasurementVariable studyNameMV = new MeasurementVariable();
+		studyNameMV.setTermId(TermId.STUDY_NAME.getId());
+		studyNameMV.setValue("Study Name");
+		studyNameMV.setLabel(Workbook.STUDY_LABEL);
+
+		final MeasurementVariable locationMV = new MeasurementVariable();
+		locationMV.setTermId(TermId.LOCATION_ABBR.getId());
+		locationMV.setValue("MEX");
+
+		final MeasurementVariable seasonMV = new MeasurementVariable();
+		seasonMV.setTermId(TermId.SEASON_VAR.getId());
+		seasonMV.setValue("10290");
+
+		workbook.setConditions(Lists.newArrayList(studyNameMV, locationMV, seasonMV));
+
+		final Project testProject = new Project();
+		testProject.setUniqueID("e8e4be0a-5d63-452f-8fde-b1c794ec7b1a");
+		testProject.setCropType(new CropType("maize"));
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(testProject.getUniqueID());
+
+		final Variable seasonVariable = new Variable();
+		final Scale seasonScale = new Scale();
+		final TermSummary seasonCategory = new TermSummary(10290, "Dry Season", "Dry Season");
+		seasonScale.addCategory(seasonCategory);
+		seasonVariable.setScale(seasonScale);
+		Mockito.when(
+				this.ontologyVariableDataManager.getVariable(Matchers.eq(testProject.getUniqueID()),
+						Matchers.eq(TermId.SEASON_VAR.getId()), Matchers.eq(true), Matchers.eq(false))).thenReturn(seasonVariable);
+
+		ImportedCrosses crosses = new ImportedCrosses();
+		crosses.setMaleStudyName("Male Study Name");
+		crosses.setMalePlotNo("1");
+		crosses.setFemaleStudyName("Female Study Name");
+		crosses.setFemaleStudyName("2");
+		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, crosses);
+		
+		Assert.assertNotNull(parameters);
+		Assert.assertEquals(testProject.getCropType().getCropName(), parameters.getCrop());
+		Assert.assertEquals(studyNameMV.getValue(), parameters.getStudyName());
+		Assert.assertEquals(studyDetails.getStudyType(), parameters.getStudyType());
+		Assert.assertEquals(locationMV.getValue(), parameters.getLocation());
+		Assert.assertEquals(seasonCategory.getDefinition(), parameters.getSeason());
+		Assert.assertEquals(crosses.getMaleStudyName(), parameters.getMaleStudyName());
+		Assert.assertEquals(crosses.getMalePlotNo(), parameters.getMalePlotNumber());
+		Assert.assertEquals(crosses.getFemaleStudyName(), parameters.getFemaleStudyName());
+		Assert.assertEquals(crosses.getFemalePlotNo(), parameters.getFemalePlotNumber());
+		Assert.assertTrue(parameters.isCross());
 	}
 
 	@Test

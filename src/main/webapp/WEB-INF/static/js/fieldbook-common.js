@@ -3246,8 +3246,12 @@ function toggleControlsForGermplasmListManagement(value) {
         $('#txtStartingPlotNo').prop('title', '');
     } else {
         $('#imported-germplasm-list-reset-button').hide();
-        $('#txtStartingEntryNo').prop('title', 'Click Replace button to edit entry number');
-        $('#txtStartingPlotNo').prop('title', 'Click Replace button to edit plot number');
+        if (isNursery()) {
+            $('#txtStartingEntryNo').prop('title', 'Click Replace button to edit entry number');
+            $('#txtStartingPlotNo').prop('title', 'Click Replace button to edit plot number');
+        } else {
+            $('#txtStartingEntryNo').prop('title', 'Click Modify List button to edit entry number');
+        }
     }
 
     $('#txtStartingEntryNo').prop('disabled', !value);
@@ -3414,6 +3418,8 @@ function displaySelectedGermplasmDetails() {
 			listId = $('#lastDraggedPrimaryList').val();
 			if (listId === '') {
 				$('.view-header').hide();
+                // Hide Numbering section if germplasm list is not available
+                $('#specify-numbering-section').hide();
 			} else {
 				$('.view-header').show();
 			}

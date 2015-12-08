@@ -951,4 +951,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	public void setUserProgramStateDataManager(final UserProgramStateDataManager userProgramStateDataManager) {
 		this.userProgramStateDataManager = userProgramStateDataManager;
 	}
+	
+	void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
+		this.germplasmDataManager = germplasmDataManager;
+	}
 }

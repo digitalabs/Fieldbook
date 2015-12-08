@@ -548,4 +548,11 @@ public class CrossingServiceImpl implements CrossingService {
 	void setGermplasmOriginGenerationService(GermplasmOriginGenerationService germplasmOriginGenerationService) {
 		this.germplasmOriginGenerationService = germplasmOriginGenerationService;
 	}
+
+	/**
+	 * For Test Only
+	 */
+	void setGermplasmOriginParameterBuilder(GermplasmOriginParameterBuilder germplasmOriginParameterBuilder) {
+		this.germplasmOriginParameterBuilder = germplasmOriginParameterBuilder;
+	}
 }

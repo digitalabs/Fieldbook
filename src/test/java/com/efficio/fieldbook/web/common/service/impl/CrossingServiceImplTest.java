@@ -36,6 +36,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 import org.mockito.exceptions.verification.TooLittleActualInvocations;
 
+import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
+
 public class CrossingServiceImplTest {
 
 	private static final int BREEDING_METHOD_ID = 1;
@@ -47,14 +49,21 @@ public class CrossingServiceImplTest {
 
 	@Mock
 	private GermplasmListManager germplasmListManager;
+	
 	@Mock
 	private GermplasmDataManager germplasmDataManager;
+	
 	@Mock
 	private CrossExpansionProperties crossExpansionProperties;
+	
 	@Mock
 	private ContextUtil contextUtil;
+	
 	@Mock
 	private GermplasmOriginGenerationService germplasmOriginGenerationService;
+	
+	@Mock
+	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
 
 	private CrossSetting crossSetting;
 	
@@ -71,7 +80,8 @@ public class CrossingServiceImplTest {
 		this.crossingService.setGermplasmDataManager(this.germplasmDataManager);
 		this.crossingService.setCrossExpansionProperties(this.crossExpansionProperties);
 		this.crossingService.setContextUtil(this.contextUtil);
-		this.crossingService.setGermplasmOriginGenerationService(germplasmOriginGenerationService);
+		this.crossingService.setGermplasmOriginGenerationService(this.germplasmOriginGenerationService);
+		this.crossingService.setGermplasmOriginParameterBuilder(this.germplasmOriginParameterBuilder);
 
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
@@ -80,6 +90,7 @@ public class CrossingServiceImplTest {
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
 		Mockito.doReturn("generatedSourceString").when(this.germplasmOriginGenerationService)
 				.generateOriginString((GermplasmOriginGenerationParameters) Matchers.any());
+		Mockito.doReturn(new UserDefinedField(1552)).when(this.germplasmDataManager).getPlotCodeField();
 
 		this.crossSetting = new CrossSetting();
 		this.crossSetting.setCrossNameSetting(this.createCrossNameSetting());

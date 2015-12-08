@@ -14,6 +14,7 @@
 
 				
 				$scope.applicationData = TrialManagerDataService.applicationData;
+				$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
 
 				$scope.Math = Math;
 				$scope.designTypes = [
@@ -92,6 +93,8 @@
 						if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
 							$scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
 						}
+						
+						$scope.applicationData.hasGeneratedDesignPreset = $scope.data.designType >= 4 && $scope.studyID != null;
 					}
 
 					$scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
@@ -183,14 +186,6 @@
 					$scope.toggleIsPresetWithGeneratedDesign();
 				};
 
-				var errorGenerateDesign = function(){
-					showErrorMessage('', "some error message here");
-				};
-				
-				var successGenerateDesign = function(){
-					$scope.updateAfterGeneratingDesignSuccessfully();
-				};
-				
 				// on click generate design button
 				$scope.generateDesign = function() {
 					if (!$scope.doValidate()) {
@@ -225,7 +220,13 @@
 							});
 						});
 						
-						$http.post('/Fieldbook/DesignImport/generatePresetMeasurements/'+$scope.data.designType, JSON.stringify(environmentData)).then(successGenerateDesign, errorGenerateDesign);
+						$http.post('/Fieldbook/DesignImport/generatePresetMeasurements/'+$scope.data.designType, JSON.stringify(environmentData)).then(function(resp){
+							if (!resp.data.isSuccess) {
+								showErrorMessage('', resp.data.error[0]);
+								return;
+							}
+							$scope.updateAfterGeneratingDesignSuccessfully();
+						});
 					}
 				};
 				
@@ -234,7 +235,11 @@
 				};
 				
 				$scope.isPreset = function() {
-					return $scope.data.designType >= 4;
+					return ($scope.data.designType >= 4 && !$scope.applicationData.unappliedChangesAvailable) || $scope.applicationData.hasGeneratedDesignPreset;
+				};
+				
+				$scope.withPresetGeneratedDesignForExistingStudy = function(){
+					return $scope.applicationData.hasGeneratedDesignPreset && $scope.studyID != null;
 				};
 				
 				$scope.doValidate = function() {

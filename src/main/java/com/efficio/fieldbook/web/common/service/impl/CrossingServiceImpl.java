@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +31,6 @@ import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -52,9 +50,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.util.ExpressionHelper;
-import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 
 /**
  * Created by cyrus on 1/23/15.
@@ -100,6 +98,9 @@ public class CrossingServiceImpl implements CrossingService {
 	
 	@Resource
 	private GermplasmOriginGenerationService germplasmOriginGenerationService;
+	
+	@Resource
+	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
 
 	@Override
 	public ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException {
@@ -107,22 +108,15 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public void applyCrossSetting(CrossSetting crossSetting, GermplasmOriginGenerationParameters germplasmOriginGenerationParameters, 
-			ImportedCrossesList importedCrossesList, Integer userId) throws MiddlewareQueryException {
+	public void applyCrossSetting(CrossSetting crossSetting, 
+			ImportedCrossesList importedCrossesList, Integer userId, Workbook workbook) throws MiddlewareQueryException {
 
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
 		
 		// apply the source string here, before we save germplasm
 		for (ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-			String[] sourceTokens = importedCross.getSource().split(":");
-			germplasmOriginGenerationParameters.setStudyName(sourceTokens[0]);
-			germplasmOriginGenerationParameters.setMaleStudyName(sourceTokens[0]);
-			germplasmOriginGenerationParameters.setFemaleStudyName(sourceTokens[2]);
-			germplasmOriginGenerationParameters.setPlotNumber(sourceTokens[1]);
-			germplasmOriginGenerationParameters.setMalePlotNumber(sourceTokens[1]);
-			germplasmOriginGenerationParameters.setFemalePlotNumber(sourceTokens[3]);
-			germplasmOriginGenerationParameters.setCross(true);
-			String generatedSource = germplasmOriginGenerationService.generateOriginString(germplasmOriginGenerationParameters);
+			GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, importedCross);
+			String generatedSource = this.germplasmOriginGenerationService.generateOriginString(parameters);
 			importedCross.setSource(generatedSource);
 		}
 		

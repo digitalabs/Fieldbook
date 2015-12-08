@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -59,6 +60,17 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 		}
 		originGenerationParameters.setPlotNumber(plotNumber);
 		return originGenerationParameters;
+	}
+
+	@Override
+	public GermplasmOriginGenerationParameters build(Workbook workbook, ImportedCrosses cross) {
+		GermplasmOriginGenerationParameters parameters = this.build(workbook, (String) null);
+		parameters.setMaleStudyName(cross.getMaleStudyName());
+		parameters.setFemaleStudyName(cross.getFemaleStudyName());
+		parameters.setMalePlotNumber(cross.getMalePlotNo());
+		parameters.setFemalePlotNumber(cross.getFemalePlotNo());
+		parameters.setCross(true);
+		return parameters;
 	}
 
 }

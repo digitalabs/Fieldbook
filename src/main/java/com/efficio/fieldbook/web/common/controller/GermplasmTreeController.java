@@ -237,15 +237,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
 			final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 			final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
-			GermplasmOriginGenerationParameters germplasmOriginGenerationParameters = new GermplasmOriginGenerationParameters();
-			Workbook workbook = this.userSelection.getWorkbook();
-			germplasmOriginGenerationParameters.setCrop(this.contextUtil.getProjectInContext().getCropType().getCropName());
-			// FIXME : use utility function to pick these up
-			germplasmOriginGenerationParameters.setLocation("[location]");
-			germplasmOriginGenerationParameters.setSeason("[season]");
-			germplasmOriginGenerationParameters.setStudyName(workbook.getStudyName());
-			germplasmOriginGenerationParameters.setStudyType(workbook.getStudyDetails().getStudyType());
-			this.crossingService.applyCrossSetting(crossSetting, germplasmOriginGenerationParameters, importedCrossesList, this.getCurrentIbdbUserId());
+			this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
 			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
 			return this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList);
 		} else {

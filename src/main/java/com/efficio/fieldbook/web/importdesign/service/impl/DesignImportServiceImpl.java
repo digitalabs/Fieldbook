@@ -70,9 +70,11 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		/**
 		 * this will add the trial environment factors and their values to ManagementDetailValues so we can pass them to the UI and reflect
-		 * the values in the Environments Tab
+		 * the values in the Environments Tab. Not needed when the design type is preset design type
 		 **/
-		this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, workbook, designImportData);
+		if (!isPreset) {
+			this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, workbook, designImportData);
+		}
 
 		final List<ImportedGermplasm> importedGermplasm =
 				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();

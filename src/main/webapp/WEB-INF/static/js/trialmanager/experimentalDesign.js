@@ -226,6 +226,9 @@
 								return;
 							}
 							$scope.updateAfterGeneratingDesignSuccessfully();
+							
+							TrialManagerDataService.updateCurrentData('environments', environmentData);
+							angular.element('#mainApp').scope().$apply();
 						});
 					}
 				};

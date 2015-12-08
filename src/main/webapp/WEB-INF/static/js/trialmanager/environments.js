@@ -9,6 +9,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 	'$http', 'DTOptionsBuilder', 'LOCATION_ID',
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID) {
 
+			$scope.TRIAL_INSTANCE_NO_INDEX = 8170;
+
 			$scope.data = {};
 			$scope.nested = {};
 			$scope.nested.dtInstance = {};
@@ -67,7 +69,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 
 			$scope.$on('deleteOccurred', function() {
 				$scope.nested.dtInstance.rerender();
-            });
+			});
 
 			$scope.initiateManageLocationModal = function() {
 				//TODO $scope.variableDefinition.locationUpdated = false;
@@ -173,10 +175,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 			$scope.updateTrialInstanceNo = function(environments, index) {
 				for (var i = 0; i <  environments.length; i++) {
 					var environment = environments[i];
-					var trialInstanceNo = environment.managementDetailValues[8170];
+					var trialInstanceNo = environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX];
 					if (trialInstanceNo > index) {
 						trialInstanceNo -= 1;
-						environment.managementDetailValues[8170] = trialInstanceNo;
+						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = trialInstanceNo;
 					}
 				}
 			};
@@ -218,6 +220,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 						trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
 					});
 				}
+				// we need to assign the TrialInstanceNumber and set it equal to index when new environments were added to the list
+				for (var i = 0; i <  $scope.data.environments.length; i++) {
+                	var environment = $scope.data.environments[i];
+                	if (!environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]) {
+                		environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = i + 1;
+                	}
+                }
 				TrialManagerDataService.indicateUnappliedChangesAvailable();
 			};
 
@@ -290,11 +299,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 				$scope.addNewEnvironments(addtlNumOfEnvironments);
 			}
-		}]).factory('DTLoadingTemplate', dtLoadingTemplate);
-
-        function dtLoadingTemplate() {
-        	return {
-                    html: '<span class="throbber throbber-2x"></span>'
-               };
-        };
+		}]).factory('DTLoadingTemplate', function() {
+			return {
+				html: '<span class="throbber throbber-2x"></span>'
+			};
+		});
 })();

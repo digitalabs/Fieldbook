@@ -75,7 +75,7 @@
                         <span ng-click="deleteEnvironment($index)" ng-show="data.noOfEnvironments > 1"
                               class="glyphicon glyphicon-minus-sign fbk-delete-sign">&nbsp;</span>
                     </td>
-                    <td>{{$index + 1}}</td>
+                    <td>{{environment.managementDetailValues[TRIAL_INSTANCE_NO_INDEX]}}</td>
                     <td ng-repeat="key in settings.managementDetails.keys()"
                         ng-hide="settings.managementDetails.val(key).hidden">
                         <show-setting-form-element-new settings="settings.managementDetails" targetkey="{{key}}"

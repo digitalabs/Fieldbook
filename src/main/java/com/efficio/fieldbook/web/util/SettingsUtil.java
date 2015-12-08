@@ -2206,6 +2206,12 @@ public class SettingsUtil {
 						}
 					} else if (param.getDesignType().equals(3)) {
 						return String.valueOf(TermId.OTHER_DESIGN.getId());
+					} else if (param.getDesignType().equals(4)) {
+						return String.valueOf(TermId.ALPHA_LATTICE_E30_REP2.getId());
+					} else if (param.getDesignType().equals(5)) {
+						return String.valueOf(TermId.ALPHA_LATTICE_E30_REP3.getId());
+					} else if (param.getDesignType().equals(6)) {
+						return String.valueOf(TermId.ALPHA_LATTICE_E50_REP2.getId());
 					}
 				}
 				break;
@@ -2267,6 +2273,12 @@ public class SettingsUtil {
 						param.setDesignType(2);
 					} else if (String.valueOf(TermId.OTHER_DESIGN.getId()).equals(var.getValue())) {
 						param.setDesignType(3);
+					} else if (String.valueOf(TermId.ALPHA_LATTICE_E30_REP2.getId()).equals(var.getValue())) {
+						param.setDesignType(4);
+					} else if (String.valueOf(TermId.ALPHA_LATTICE_E30_REP3.getId()).equals(var.getValue())) {
+						param.setDesignType(5);
+					} else if (String.valueOf(TermId.ALPHA_LATTICE_E50_REP2.getId()).equals(var.getValue())) {
+						param.setDesignType(6);
 					}
 					if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())
 							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {

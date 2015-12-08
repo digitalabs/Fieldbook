@@ -9,32 +9,64 @@
 	angular.module('manageTrialApp')
 		.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 		.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
-		.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService',
-			'EXP_DESIGN_MSGS', '_', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, EXP_DESIGN_MSGS) {
+		.controller('ExperimentalDesignCtrl', ['$scope', '$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService', '$http',
+			'EXP_DESIGN_MSGS', '_', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _) {
 
+				
 				$scope.applicationData = TrialManagerDataService.applicationData;
 
 				$scope.Math = Math;
 				$scope.designTypes = [
 					{
 						id: 0,
-						name: 'Randomized Complete Block Design', params: 'randomizedCompleteBlockParams.html'
+						name: 'Randomized Complete Block Design', params: 'randomizedCompleteBlockParams.html',
+						isPreset: false
+							
 					},
 					{
 						id: 1,
 						name: 'Resolvable Incomplete Block Design', params: 'incompleteBlockParams.html',
-						withResolvable: true
+						withResolvable: true,
+						isPreset: false
 					},
 					{
 						id: 2,
 						name: 'Row-and-Column', params: 'rowAndColumnParams.html',
-						withResolvable: true
+						withResolvable: true,
+						isPreset: false
 					},
 					{
 						id: 3,
-						name: 'Other Design', params: null
+						name: 'Other Design', params: null,
+						isPreset: false
+					},
+					{
+						id: 4,
+						name: 'E30-2reps-6blocks-5ind', params: 'designTemplateParams.html',
+						isPreset: true,
+						repNo: 2,
+						totalNoOfEntries: 30
+					},
+					{
+						id: 5,
+						name: 'E30-3reps-6blocks-5ind', params: 'designTemplateParams.html',
+						isPreset: true,
+						repNo: 3,
+						totalNoOfEntries: 30
+					},
+					{
+						id: 6,
+						name: 'E50-2reps-5blocks-10ind', params: 'designTemplateParams.html',
+						isPreset: true,
+						repNo: 2,
+						totalNoOfEntries: 50
 					}
 				];
+				
+				$scope.isCimmytProfileWithWheatCrop = false;
+				$http.get('/Fieldbook/TrialManager/experimental/design/isCimmytProfileWithWheatCrop').success(function (isSuccess) {
+                    $scope.isCimmytProfileWithWheatCrop = isSuccess;
+                });
 
 				// TODO : re run computeLocalData after loading of previous trial as template
 				$scope.computeLocalData = function() {
@@ -126,11 +158,29 @@
 						$scope.currentDesignType = $scope.designTypes[newId];
 						$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 						$scope.data.designType = $scope.currentDesignType.id;
+						
+						if(newId >= 4 && newId <= 6){
+							showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
+						}
 					} else {
 						$scope.currentDesignType = null;
 						$scope.data.designType = null;
 						$scope.currentParams = '';
 					}
+				};
+				
+				$scope.toggleIsPresetWithGeneratedDesign = function(){
+					$scope.applicationData.hasGeneratedDesignPreset = $scope.applicationData.unsavedGeneratedDesign && $scope.data.designType >= 4;
+				};
+				
+				$scope.updateAfterGeneratingDesignSuccessfully = function(){
+					//we show the preview
+					showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
+					TrialManagerDataService.clearUnappliedChangesFlag();
+					TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+					$('#chooseGermplasmAndChecks').data('replace', '1');
+					$('body').data('expDesignShowPreview', '1');
+					$scope.toggleIsPresetWithGeneratedDesign();
 				};
 
 				// on click generate design button
@@ -144,27 +194,47 @@
 					if (data && data.treatmentFactors) {
 						data.treatmentFactors = $scope.data.treatmentFactors.vals();
 					}
-
-					TrialManagerDataService.generateExpDesign(data).then(
-						function(response) {
-							if (response.valid === true) {
-								//we show the preview
-								showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
-								TrialManagerDataService.clearUnappliedChangesFlag();
-								TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-								$('#chooseGermplasmAndChecks').data('replace', '1');
-								$('body').data('expDesignShowPreview', '1');
-							} else {
-								showErrorMessage('', response.message);
+					
+					// non-preset design type
+					if($scope.data.designType < 3){
+						TrialManagerDataService.generateExpDesign(data).then(
+							function(response) {
+								if (response.valid === true) {
+									$scope.updateAfterGeneratingDesignSuccessfully();
+								} else {
+									showErrorMessage('', response.message);
+								}
 							}
-						}
-					);
-				};
+						);
+					} else {
+						var environmentData = angular.copy(TrialManagerDataService.currentData.environments);
 
+						_.each(environmentData.environments, function(data, key) {
+							_.each(data.managementDetailValues, function(value, key) {
+								if (value && value.id) {
+									data.managementDetailValues[key] = value.id;
+								}
+							});
+						});
+						
+						$http.post('/Fieldbook/DesignImport/generatePresetMeasurements/'+$scope.data.designType, JSON.stringify(environmentData)).then(function(resp){
+							if (!resp.data.isSuccess) {
+								showErrorMessage('', resp.data.error[0]);
+								return;
+							}
+							$scope.updateAfterGeneratingDesignSuccessfully();
+						});
+					}
+				};
+				
 				$scope.toggleDesignView = function() {
 					return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType == 3);
 				};
-
+				
+				$scope.isPreset = function() {
+					return $scope.data.designType >= 4;
+				};
+				
 				$scope.doValidate = function() {
 
 					switch ($scope.currentDesignType.id) {
@@ -325,6 +395,17 @@
 
 							break;
 						}
+						case 4:
+						case 5:
+						case 6:
+						{
+							var actualNoOfGermplasmListEntries = $scope.currentDesignType.totalNoOfEntries;
+							if($scope.totalGermplasmEntryListCount > 0 && $scope.totalGermplasmEntryListCount !== actualNoOfGermplasmListEntries){
+								showErrorMessage('page-message', EXP_DESIGN_MSGS[28]);
+								return false;
+							}
+							break;
+						} 
 					}
 
 					if ($scope.totalGermplasmEntryListCount <= 0) {
@@ -354,13 +435,31 @@
 
 			};
 		}])
+		
+		.filter('filterExperimentalDesignPresetType', ['TrialManagerDataService', '_', function(TrialManagerDataService, _) {
+			return function(designTypes) {
+				var result = [];
+
+				var filteredDesignTypes = _.filter(designTypes, function(value) {
+					return value.name !== 'Other Design' && value.isPreset === true;
+				});
+
+				if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
+					result.push(designTypes[0]);
+				} else {
+					result = filteredDesignTypes;
+				}
+
+				return result;
+			};
+		}])
 
 		.filter('filterExperimentalDesignType', ['TrialManagerDataService', '_', function(TrialManagerDataService, _) {
 			return function(designTypes) {
 				var result = [];
 
 				var filteredDesignTypes = _.filter(designTypes, function(value) {
-					return value.name !== 'Other Design';
+					return value.name !== 'Other Design' && value.isPreset === false;
 				});
 
 				if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {

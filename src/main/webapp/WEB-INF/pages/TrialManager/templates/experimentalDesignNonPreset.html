@@ -1,0 +1,77 @@
+<div class="row" ng-if="!isPreset()" ng-hide="toggleDesignView()">
+	<div class="col-md-6 col-sm-7">
+		<section-container heading="SPECIFY DESIGN PARAMETERS">
+		<div name="content">
+			<div ng-include="currentParams"></div>
+			<div class="add_top_padding add-bottom-padding">
+				<input type="submit" class="btn btn-info" value="Generate Design"
+					ng-disabled="disableGenerateDesign" />
+			</div>
+		</div>
+		</section-container>
+	</div>
+	<div class="col-md-6 col-sm-5">
+		<section-container heading="SUMMARY OF DESIGN DETAILS">
+		<div name="content">
+			<div class="add-bottom-padding"
+				ng-show="data.noOfEnvironments &gt;= 0">
+				<b th:text="#{trial.experimental.design.number.of.environments}"></b>
+				<span>{{data.noOfEnvironments}}</span>
+			</div>
+			<div class="add-bottom-padding" ng-show="currentDesignType.id > 0">
+				<b th:text="#{trial.experimental.design.number.of.treatments}"></b>
+				<span>{{totalGermplasmEntryListCount}}</span>
+			</div>
+			<div class="add-bottom-padding" ng-show="currentDesignType.id == 1">
+				<b th:text="#{trial.experimental.design.number.of.blocks}"></b> <span>{{(data.blockSize
+					> 0) ? ((totalGermplasmEntryListCount % data.blockSize === 0) ?
+					totalGermplasmEntryListCount / data.blockSize : '') : 0}} <b
+					class="text-danger"
+					ng-show="data.blockSize > 0 &amp;&amp; totalGermplasmEntryListCount % data.blockSize > 0">Invalid
+						block size</b>
+				</span>
+			</div>
+			<div class="add-bottom-padding"
+				ng-repeat="key in settings.factors.keys() | filterFactors : currentDesignType.id">
+				<b>{{settings.factors.val(key).label}}</b> - <a
+					show-details-modal="key"
+					variable-type="{{VARIABLE_TYPES.TREATMENT_FACTOR}}">{{settings.factors.val(key).variable.name}}</a>
+			</div>
+			<div ng-show="currentDesignType.id == 0">
+				<div class="sub-content-heading">
+					<b>Treatment factors:</b>
+				</div>
+				<table class="table table-curved">
+					<thead>
+						<tr>
+							<th>NAME</th>
+							<th>DESCRIPTION</th>
+							<th># LEVELS</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="even"><a show-details-modal="entry_no_key"
+								ng-init="entry_no_key = 8230"
+								variable-type="{{VARIABLE_TYPES.GERMPLASM_DESCRIPTOR}}">{{germplasmDescriptorSettings.val(entry_no_key).variable.name}}</a>
+							</td>
+							<td class="even">{{germplasmDescriptorSettings.val(8230).variable.description}}</td>
+							<td class="even">{{totalGermplasmEntryListCount}}</td>
+						</tr>
+
+						<tr ng-repeat="treatmentKey in settings.treatmentFactors.keys()">
+							<td ng-class="{odd : $even, even : $odd}"><a
+								show-details-modal="treatmentKey"
+								variable-type="{{VARIABLE_TYPES.TREATMENT_FACTOR}}">{{settings.treatmentFactors.val(treatmentKey).variable.name}}</a>
+							</td>
+							<td ng-class="{odd : $even, even : $odd}">{{settings.treatmentFactors.val(treatmentKey).variable.description}}</td>
+							<td ng-class="{odd : $even, even : $odd}">{{data.treatmentFactorsData[treatmentKey].levels}}</td>
+						</tr>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+		</section-container>
+	</div>
+</div>

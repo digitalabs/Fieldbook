@@ -14,6 +14,7 @@
 
 				
 				$scope.applicationData = TrialManagerDataService.applicationData;
+				$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
 
 				$scope.Math = Math;
 				$scope.designTypes = [
@@ -92,6 +93,8 @@
 						if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
 							$scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
 						}
+						
+						$scope.applicationData.hasGeneratedDesignPreset = $scope.data.designType >= 4 && $scope.studyID != null;
 					}
 
 					$scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
@@ -232,7 +235,11 @@
 				};
 				
 				$scope.isPreset = function() {
-					return $scope.data.designType >= 4;
+					return ($scope.data.designType >= 4 && !$scope.applicationData.unappliedChangesAvailable) || $scope.applicationData.hasGeneratedDesignPreset;
+				};
+				
+				$scope.withPresetGeneratedDesignForExistingStudy = function(){
+					return $scope.applicationData.hasGeneratedDesignPreset && $scope.studyID != null;
 				};
 				
 				$scope.doValidate = function() {

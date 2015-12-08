@@ -30,11 +30,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
-import org.generationcp.commons.service.GermplasmOriginGenerationService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -143,9 +140,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private UserProgramStateDataManager userProgramStateDataManager;
-
-	@Resource
-	private GermplasmOriginGenerationService germplasmOriginGenerationService;
 
 	@Resource
 	private GermplasmDataManager germplasmDataManager;

@@ -73,7 +73,7 @@ public class AdvancingSourceListFactory {
 		Integer plotVariateId = advanceInfo.getPlotVariateId();
 		List<Name> names = null;
 
-		String season = null, nurseryName = null;
+		String nurseryName = null;
 		if (nursery != null) {
 			nurseryName = nursery.getName();
 		}
@@ -81,15 +81,16 @@ public class AdvancingSourceListFactory {
 		List<Integer> gids = new ArrayList<Integer>();
 
 		if (workbook != null && workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
+			
+			// the season code is used if season information is captured as part of the BreedingMethod
+			String season = this.getSeason(workbook);
+			
 			for (MeasurementRow row : workbook.getObservations()) {
 
 				ImportedGermplasm germplasm = this.createGermplasm(row);
 				if (germplasm.getGid() != null && NumberUtils.isNumber(germplasm.getGid())) {
 					gids.add(Integer.valueOf(germplasm.getGid()));
 				}
-				
-				// the season code is used if season information is captured as part of the BreedingMethod
-				season = this.getSeason(workbook);
 
 				MeasurementData checkData = row.getMeasurementData(TermId.CHECK.getId());
 				String check = null;
@@ -108,6 +109,7 @@ public class AdvancingSourceListFactory {
 						}
 					}
 				}
+				
 				boolean isCheck =
 						check != null && !"".equals(check) && !AdvancingSourceListFactory.DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
 
@@ -140,6 +142,7 @@ public class AdvancingSourceListFactory {
 						rows.add(source);
 					}
 				}
+				
 			}
 		}
 		this.setNamesToGermplasm(rows, gids);
@@ -241,12 +244,19 @@ public class AdvancingSourceListFactory {
 					// the user has failed to choose a season from the available choices
 					throw new FieldbookException("nursery.advance.no.code.selected.for.season");
 				}
-				// season = mv.getValue();
-				Variable variable = ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), mv.getTermId(), true, false);
-				for (TermSummary ts : variable.getScale().getCategories()) {
-					if (ts.getId().equals(Integer.valueOf(mv.getValue()))) {
-						season = ts.getDefinition();
-					}
+				// ambulance at the base of the cliff - we do not know if the season will be the numeric
+				// category code, or the text category description, so we will be safe here
+				if(StringUtils.isNumeric(mv.getValue())) {
+					// season is the numeric code referring to the category
+  				Variable variable = ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), mv.getTermId(), true, false);
+  				for (TermSummary ts : variable.getScale().getCategories()) {
+  					if (ts.getId().equals(Integer.valueOf(mv.getValue()))) {
+  						season = ts.getDefinition();
+  					}
+  				}
+				} else {
+					// season captured is the description
+					season = mv.getValue();
 				}
 			} else if (mv.getTermId() == TermId.SEASON_VAR_TEXT.getId()) {
 				season = mv.getValue();

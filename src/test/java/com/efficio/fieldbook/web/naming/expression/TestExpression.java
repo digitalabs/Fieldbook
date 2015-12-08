@@ -54,7 +54,7 @@ public class TestExpression {
 		names.add(new Name(1, 1, 5, 0, 1, name + "_five", 0, 0, 0));
 		names.add(new Name(1, 1, 2, 1, 1, name + "_two", 0, 0, 0));
 
-		AdvancingSource source = new AdvancingSource(germplasm, names, 2, method, false, "NurseryTest", "Dry", "MNL");
+		AdvancingSource source = new AdvancingSource(germplasm, names, 2, method, false, "NurseryTest");
 		source.setRootName(name);
 		return source;
 	}

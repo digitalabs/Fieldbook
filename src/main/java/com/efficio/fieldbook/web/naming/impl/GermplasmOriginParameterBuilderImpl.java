@@ -47,7 +47,11 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 					this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), seasonVariable.getTermId(), true,
 							false);
 			for (TermSummary seasonOption : variable.getScale().getCategories()) {
-				if (seasonVariable.getValue().equals(seasonOption.getId().toString())) {
+				// Sometimes the categorical value of season in Workbook is an ID string, sometimes the actual Value/Definition string.
+				// Right now, only the super natural elements in the Workbook and Fieldbook universe know why.
+				// So we deal with it anyway.
+				if (seasonVariable.getValue().equals(seasonOption.getId().toString()) 
+						|| seasonVariable.getValue().equals(seasonOption.getDefinition())) {
 					originGenerationParameters.setSeason(seasonOption.getDefinition());
 					break;
 				}

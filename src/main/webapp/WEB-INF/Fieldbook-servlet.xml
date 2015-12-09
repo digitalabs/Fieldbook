@@ -515,4 +515,6 @@
 	</bean>
 
 	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" scope="prototype"/>
+
+    <bean id="userTreeStateService" class="org.generationcp.commons.service.impl.UserTreeStateServiceImpl"/>
 </beans>

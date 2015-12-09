@@ -50,6 +50,7 @@ public class ExpDesignUtil {
 	public static final String NBLATIN_PARAM = "nblatin";
 	public static final String REPLICATEFACTOR_PARAM = "replicatefactor";
 	public static final String TREATMENTFACTOR_PARAM = "treatmentfactor";
+	public static final String INITIAL_TREATMENT_NUMBER_PARAM = "initialtreatnum";
 	public static final String NREPLICATES_PARAM = "nreplicates";
 	public static final String NTREATMENTS_PARAM = "ntreatments";
 	public static final String BLOCKSIZE_PARAM = "blocksize";
@@ -135,8 +136,8 @@ public class ExpDesignUtil {
 	}
 
 	public static MainDesign createResolvableIncompleteBlockDesign(String blockSize, String nTreatments, String nReplicates,
-			String treatmentFactor, String replicateFactor, String blockFactor, String plotFactor, Integer initialPlotNumber, String nBlatin, String replatingGroups,
-			String outputfile, boolean useLatinize) {
+			String treatmentFactor, String replicateFactor, String blockFactor, String plotFactor, Integer initialPlotNumber,
+			Integer initialEntryNumber, String nBlatin, String replatingGroups, String outputfile, boolean useLatinize) {
 
 		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
@@ -148,10 +149,18 @@ public class ExpDesignUtil {
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NTREATMENTS_PARAM, nTreatments, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NREPLICATES_PARAM, nReplicates, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.TREATMENTFACTOR_PARAM, treatmentFactor, null));
+
+		if(initialEntryNumber != null){
+			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_TREATMENT_NUMBER_PARAM, String.valueOf(initialEntryNumber), null));
+		}
+
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.REPLICATEFACTOR_PARAM, replicateFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.BLOCKFACTOR_PARAM, blockFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.PLOTFACTOR_PARAM, plotFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM, plotNumberStrValue, null));
+
+
+
 		if (useLatinize) {
 			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NBLATIN_PARAM, nBlatin, null));
 			// we add the string tokenize replating groups
@@ -175,8 +184,8 @@ public class ExpDesignUtil {
 	}
 
 	public static MainDesign createResolvableRowColDesign(String nTreatments, String nReplicates, String nRows, String nColumns,
-			String treatmentFactor, String replicateFactor, String rowFactor, String columnFactor, String plotFactor, Integer initialPlotNumber, String nrLatin,
-			String ncLatin, String replatingGroups, String outputfile, Boolean useLatinize) {
+			String treatmentFactor, String replicateFactor, String rowFactor, String columnFactor, String plotFactor, Integer initialPlotNumber,
+			Integer initialEntryNumber, String nrLatin, String ncLatin, String replatingGroups, String outputfile, Boolean useLatinize) {
 
 		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
@@ -189,6 +198,11 @@ public class ExpDesignUtil {
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NROWS_PARAM, nRows, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NCOLUMNS_PARAM, nColumns, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.TREATMENTFACTOR_PARAM, treatmentFactor, null));
+
+		if(initialEntryNumber != null){
+			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_TREATMENT_NUMBER_PARAM, String.valueOf(initialEntryNumber), null));
+		}
+
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.REPLICATEFACTOR_PARAM, replicateFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.ROWFACTOR_PARAM, rowFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.COLUMNFACTOR_PARAM, columnFactor, null));

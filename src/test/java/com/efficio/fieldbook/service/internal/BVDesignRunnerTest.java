@@ -64,7 +64,7 @@ public class BVDesignRunnerTest {
 	@Test
 	public void testGetXMLStringForResolvableIncompleteBlockDesign() {
 		MainDesign mainDesign =
-				ExpDesignUtil.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps", "Subblocks", "Plots", 301, "0", "", "", false);
+				ExpDesignUtil.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps", "Subblocks", "Plots", 301, null, "0", "", "", false);
 
 		String expectedString =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableIncompleteBlock\">"
@@ -110,9 +110,8 @@ public class BVDesignRunnerTest {
 
 	@Test
 	public void testGetXMLStringForResolvableRowColExpDesign() {
-		MainDesign mainDesign =
-				ExpDesignUtil.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns", "Plots", 301, "0", "0", "",
-						"", false);
+		MainDesign mainDesign = ExpDesignUtil.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns",
+				"Plots", 301, null, "0", "0", "", "", false);
 
 		String expectedString =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableRowColumn\">"

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -115,10 +116,16 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 
 			Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
 
+			Integer entryNo = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
+
+			if(!Objects.equals(stdvarTreatment.getId(), TermId.ENTRY_NO.getId())){
+				entryNo = null;
+			}
+
 			MainDesign mainDesign =
 					ExpDesignUtil.createResolvableRowColDesign(Integer.toString(nTreatments), replicates, rows, cols,
 							stdvarTreatment.getName(), stdvarRep.getName(), stdvarRows.getName(), stdvarCols.getName(),
-							stdvarPlot.getName(), plotNo, parameter.getNrlatin(), parameter.getNclatin(), parameter.getReplatinGroups(), "",
+							stdvarPlot.getName(), plotNo, entryNo, parameter.getNrlatin(), parameter.getNclatin(), parameter.getReplatinGroups(), "",
 							parameter.getUseLatenized());
 
 			measurementRowList =

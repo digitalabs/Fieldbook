@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -110,11 +111,16 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 			}
 
 			Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
+			Integer entryNo = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
+
+			if(!Objects.equals(stdvarTreatment.getId(), TermId.ENTRY_NO.getId())){
+				entryNo = null;
+			}
 
 			MainDesign mainDesign =
 					ExpDesignUtil.createResolvableIncompleteBlockDesign(blockSize, Integer.toString(nTreatments), replicates,
 							stdvarTreatment.getName(), stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(), plotNo,
-							parameter.getNblatin(), parameter.getReplatinGroups(), "", parameter.getUseLatenized());
+							entryNo, parameter.getNblatin(), parameter.getReplatinGroups(), "", parameter.getUseLatenized());
 
 			measurementRowList =
 					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,

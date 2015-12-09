@@ -374,7 +374,7 @@
 										$('body').data('needToSave', '0');
 									});
 								} else {
-									showErrorMessage('', 'Trial could not be saved at the moment. Try again later.');
+									showErrorMessage('', 'Trial could not be saved at the moment. Please try again later.');
 								}
 							});
 						} else {

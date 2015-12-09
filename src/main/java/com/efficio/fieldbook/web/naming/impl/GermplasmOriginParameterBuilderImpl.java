@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.naming.impl;
 
 import java.text.SimpleDateFormat;
@@ -14,6 +15,8 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
@@ -27,6 +30,8 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 	@Resource
 	private OntologyVariableDataManager ontologyVariableDataManager;
 
+	private static final Logger LOG = LoggerFactory.getLogger(GermplasmOriginParameterBuilderImpl.class);
+
 	@Override
 	public GermplasmOriginGenerationParameters build(Workbook workbook, String plotNumber) {
 		final GermplasmOriginGenerationParameters originGenerationParameters = new GermplasmOriginGenerationParameters();
@@ -38,6 +43,10 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 		MeasurementVariable locationAbbrVariable = workbook.findConditionById(TermId.LOCATION_ABBR.getId());
 		if (locationAbbrVariable != null) {
 			originGenerationParameters.setLocation(locationAbbrVariable.getValue());
+		} else {
+			LOG.debug("No LOCATION_ABBR(8189) variable or if present a value, was found in study: {}. Defaulting [LOCATION] to be null/empty.",
+					workbook.getStudyDetails().getStudyName());
+			originGenerationParameters.setLocation(null);
 		}
 
 		// To populate SEASON placeholder we look for Crop_season_Code(8371) variable in general settings.
@@ -60,6 +69,8 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 			// Default the season to current year and month.
 			SimpleDateFormat formatter = new SimpleDateFormat("YYYYMM");
 			String currentYearAndMonth = formatter.format(new java.util.Date());
+			LOG.debug("No Crop_season_Code(8371) variable or if present a value, was found in study: {}. Defaulting [SEASON] with: {}.",
+					workbook.getStudyDetails().getStudyName(), currentYearAndMonth);
 			originGenerationParameters.setSeason(currentYearAndMonth);
 		}
 		originGenerationParameters.setPlotNumber(plotNumber);

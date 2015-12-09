@@ -169,6 +169,14 @@ var ImportDesign = (function() {
 					backdrop : 'static',
 					keyboard : true
 				});
+				
+				if (!isNursery()) {
+					$('#change-design-description-nursery').hide();
+					$('#change-design-description-trial').show();
+				} else {
+					$('#change-design-description-nursery').show();
+					$('#change-design-description-trial').hide();
+				}
 			} else {
 				if (ImportDesign.hasCheckListSelected()) {
 					showErrorMessage(designImportErrorHeader,

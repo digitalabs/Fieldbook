@@ -20,6 +20,7 @@ import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -111,10 +112,13 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 					}
 				}
 			}
+
+			Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
+
 			MainDesign mainDesign =
 					ExpDesignUtil.createResolvableRowColDesign(Integer.toString(nTreatments), replicates, rows, cols,
 							stdvarTreatment.getName(), stdvarRep.getName(), stdvarRows.getName(), stdvarCols.getName(),
-							stdvarPlot.getName(), parameter.getNrlatin(), parameter.getNclatin(), parameter.getReplatinGroups(), "",
+							stdvarPlot.getName(), plotNo, parameter.getNrlatin(), parameter.getNclatin(), parameter.getReplatinGroups(), "",
 							parameter.getUseLatenized());
 
 			measurementRowList =

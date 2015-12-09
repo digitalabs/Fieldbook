@@ -25,7 +25,7 @@ public class BVDesignRunnerTest {
 		levels.add("24");
 		levels.add("3");
 
-		MainDesign mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", treatmentFactor, levels, "");
+		MainDesign mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, treatmentFactor, levels, "");
 
 		String expectedString =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"RandomizedBlock\">"
@@ -41,6 +41,9 @@ public class BVDesignRunnerTest {
 						+ "<Parameter name=\""
 						+ ExpDesignUtil.PLOTFACTOR_PARAM
 						+ "\" value=\"Plots\"/>"
+						+ "<Parameter name=\""
+						+ ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM
+						+ "\" value=\"301\"/>"
 						+ "<Parameter name=\""
 						+ ExpDesignUtil.TREATMENTFACTORS_PARAM
 						+ "\"><ListItem value=\"ENTRY_NO\"/><ListItem value=\"FERTILIZER\"/></Parameter>"
@@ -61,8 +64,7 @@ public class BVDesignRunnerTest {
 	@Test
 	public void testGetXMLStringForResolvableIncompleteBlockDesign() {
 		MainDesign mainDesign =
-				ExpDesignUtil.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps", "Subblocks", "Plots", "0", "", "",
-						false);
+				ExpDesignUtil.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps", "Subblocks", "Plots", 301, "0", "", "", false);
 
 		String expectedString =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableIncompleteBlock\">"
@@ -87,6 +89,9 @@ public class BVDesignRunnerTest {
 						+ ExpDesignUtil.PLOTFACTOR_PARAM
 						+ "\" value=\"Plots\"/>"
 						+ "<Parameter name=\""
+						+ ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM
+						+ "\" value=\"301\"/>"
+						+ "<Parameter name=\""
 						+ ExpDesignUtil.NBLATIN_PARAM
 						+ "\" value=\"0\"/><Parameter name=\""
 						+ ExpDesignUtil.TIMELIMIT_PARAM
@@ -106,7 +111,7 @@ public class BVDesignRunnerTest {
 	@Test
 	public void testGetXMLStringForResolvableRowColExpDesign() {
 		MainDesign mainDesign =
-				ExpDesignUtil.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns", "Plots", "0", "0", "",
+				ExpDesignUtil.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns", "Plots", 301, "0", "0", "",
 						"", false);
 
 		String expectedString =
@@ -136,6 +141,9 @@ public class BVDesignRunnerTest {
 						+ "\" value=\"Columns\"/><Parameter name=\""
 						+ ExpDesignUtil.PLOTFACTOR_PARAM
 						+ "\" value=\"Plots\"/>"
+						+ "<Parameter name=\""
+						+ ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM
+						+ "\" value=\"301\"/>"
 						+ "<Parameter name=\""
 						+ ExpDesignUtil.NRLATIN_PARAM
 						+ "\" value=\"0\"/><Parameter name=\""

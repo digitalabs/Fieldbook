@@ -57,6 +57,7 @@ public class ExpDesignUtil {
 	public static final String LEVELS_PARAM = "levels";
 	public static final String TREATMENTFACTORS_PARAM = "treatmentfactors";
 	public static final String PLOTFACTOR_PARAM = "plotfactor";
+	public static final String INITIAL_PLOT_NUMBER_PARAM = "initialplotnum";
 	public static final String BLOCKFACTOR_PARAM = "blockfactor";
 	public static final String NBLOCKS_PARAM = "nblocks";
 	public static final String OUTPUTFILE_PARAM = "outputfile";
@@ -95,16 +96,19 @@ public class ExpDesignUtil {
 		return designParam;
 	}
 
-	public static MainDesign createRandomizedCompleteBlockDesign(String nBlock, String blockFactor, String plotFactor,
+	public static MainDesign createRandomizedCompleteBlockDesign(String nBlock, String blockFactor, String plotFactor, Integer initialPlotNumber,
 			List<String> treatmentFactor, List<String> levels, String outputfile) {
 
 		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
-		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
+		String plotNumberStrValue = (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
+
+		List<ExpDesignParameter> paramList = new ArrayList<>();
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.SEED_PARAM, "", null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NBLOCKS_PARAM, nBlock, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.BLOCKFACTOR_PARAM, blockFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.PLOTFACTOR_PARAM, plotFactor, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM, plotNumberStrValue, null));
 		List<ListItem> itemsTreatmentFactor = new ArrayList<ListItem>();
 		List<ListItem> itemsLevels = new ArrayList<ListItem>();
 		if (treatmentFactor != null) {
@@ -131,10 +135,12 @@ public class ExpDesignUtil {
 	}
 
 	public static MainDesign createResolvableIncompleteBlockDesign(String blockSize, String nTreatments, String nReplicates,
-			String treatmentFactor, String replicateFactor, String blockFactor, String plotFactor, String nBlatin, String replatingGroups,
+			String treatmentFactor, String replicateFactor, String blockFactor, String plotFactor, Integer initialPlotNumber, String nBlatin, String replatingGroups,
 			String outputfile, boolean useLatinize) {
 
 		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
+
+		String plotNumberStrValue = (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
 
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.SEED_PARAM, "", null));
@@ -145,6 +151,7 @@ public class ExpDesignUtil {
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.REPLICATEFACTOR_PARAM, replicateFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.BLOCKFACTOR_PARAM, blockFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.PLOTFACTOR_PARAM, plotFactor, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM, plotNumberStrValue, null));
 		if (useLatinize) {
 			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NBLATIN_PARAM, nBlatin, null));
 			// we add the string tokenize replating groups
@@ -168,10 +175,12 @@ public class ExpDesignUtil {
 	}
 
 	public static MainDesign createResolvableRowColDesign(String nTreatments, String nReplicates, String nRows, String nColumns,
-			String treatmentFactor, String replicateFactor, String rowFactor, String columnFactor, String plotFactor, String nrLatin,
+			String treatmentFactor, String replicateFactor, String rowFactor, String columnFactor, String plotFactor, Integer initialPlotNumber, String nrLatin,
 			String ncLatin, String replatingGroups, String outputfile, Boolean useLatinize) {
 
 		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
+
+		String plotNumberStrValue = (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
 
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.SEED_PARAM, "", null));
@@ -184,6 +193,7 @@ public class ExpDesignUtil {
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.ROWFACTOR_PARAM, rowFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.COLUMNFACTOR_PARAM, columnFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.PLOTFACTOR_PARAM, plotFactor, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM, plotNumberStrValue, null));
 		if (useLatinize != null && useLatinize.booleanValue()) {
 			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NRLATIN_PARAM, nrLatin, null));
 			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NCLATIN_PARAM, ncLatin, null));

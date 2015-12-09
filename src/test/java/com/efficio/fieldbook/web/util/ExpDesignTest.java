@@ -54,7 +54,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public void testResolvableIncompleteBlockExpDesignRunToBvDesign() {
 
 		MainDesign mainDesign =
-				ExpDesignUtil.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps", "Subblocks", "Plots", "0", "", "",
+				ExpDesignUtil.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps", "Subblocks", "Plots", 301, "0", "", "",
 						false);
 
 		try {
@@ -69,7 +69,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public void testResolvableRowColExpDesignRunToBvDesign() {
 
 		MainDesign mainDesign =
-				ExpDesignUtil.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns", "Plots", "0", "0", "",
+				ExpDesignUtil.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns", "Plots", 301, "0", "0", "",
 						"", false);
 
 		try {
@@ -91,7 +91,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 		levels.add("24");
 		levels.add("3");
 
-		MainDesign mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", treatmentFactor, levels, "");
+		MainDesign mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, treatmentFactor, levels, "");
 
 		try {
 			BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);

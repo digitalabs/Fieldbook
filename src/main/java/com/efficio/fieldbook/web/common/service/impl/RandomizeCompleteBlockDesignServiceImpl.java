@@ -99,7 +99,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					if (pairVarObj instanceof String) {
 						pairVar = (String) pairVarObj;
 					} else {
-						pairVar = ((Integer) pairVarObj).toString();
+						pairVar = pairVarObj.toString();
 					}
 					if (key != null && NumberUtils.isNumber(key) && pairVar != null && NumberUtils.isNumber(pairVar)) {
 						int treatmentPair1 = Integer.parseInt(key);
@@ -160,18 +160,17 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 				}
 			}
 
+			Integer plotNo = this.userSelection.getStartingPlotNo();
+
 			MainDesign mainDesign =
-					ExpDesignUtil.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), treatmentFactor,
-							levels, "");
+					ExpDesignUtil.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, treatmentFactor, levels, "");
 
 			measurementRowList =
 					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
 							variates, treatmentVariables, reqVarList, germplasmList, mainDesign, this.workbenchService,
 							this.fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues, this.fieldbookService);
 
-			Integer plotNo = null;
-			if (!Objects.isNull(this.userSelection.getStartingPlotNo())) {
-				plotNo = this.userSelection.getStartingPlotNo();
+			if (!Objects.isNull(plotNo)) {
 				for (MeasurementRow measurementRow : measurementRowList) {
 					measurementRow.getDataList().get(6).setValue(plotNo.toString());
 					plotNo++;

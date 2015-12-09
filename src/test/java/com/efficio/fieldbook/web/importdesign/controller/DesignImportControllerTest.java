@@ -59,7 +59,7 @@ import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
-import com.efficio.fieldbook.web.importdesign.constant.DesignType;
+import com.efficio.fieldbook.web.importdesign.constant.PresetDesignType;
 import com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceImpl;
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.trial.bean.Environment;
@@ -697,7 +697,7 @@ public class DesignImportControllerTest {
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
 		final Map<String, Object> resultsMap =
-				this.designImportController.generatePresetMeasurements(DesignType.E30_2REPS_6BLOCKS_5IND.getId(), environmentData);
+				this.designImportController.generatePresetMeasurements(PresetDesignType.E30_2REPS_6BLOCKS_5IND.getId(), environmentData);
 
 		Assert.assertEquals(1, resultsMap.get(DesignImportController.IS_SUCCESS));
 
@@ -719,7 +719,7 @@ public class DesignImportControllerTest {
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
 		final Map<String, Object> resultsMap =
-				this.designImportController.generatePresetMeasurements(DesignType.E30_2REPS_6BLOCKS_5IND.getId(), environmentData);
+				this.designImportController.generatePresetMeasurements(PresetDesignType.E30_2REPS_6BLOCKS_5IND.getId(), environmentData);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
 

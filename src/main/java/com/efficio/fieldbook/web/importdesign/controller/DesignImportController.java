@@ -59,7 +59,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.importdesign.constant.DesignType;
+import com.efficio.fieldbook.web.importdesign.constant.PresetDesignType;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
@@ -415,7 +415,7 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
-					.getStudyDetails().getStudyType(), false, DesignType.OTHER_DESIGN.getId());
+					.getStudyDetails().getStudyType(), false, 3, 0);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -444,21 +444,18 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			DesignImportData designImportData = null;
-
-			if (presetId == DesignType.E30_2REPS_6BLOCKS_5IND.getId()) {
+			int replicationsCount = 0;
+			PresetDesignType presetDesignType = PresetDesignType.getPresetDesignTypeById(presetId);
+			if(presetDesignType != null) {
 				designImportData =
-						this.parser.parseFile(ResourceFinder.locateFile(DesignType.E30_2REPS_6BLOCKS_5IND.getTemplateName()).getFile());
-			} else if (presetId == DesignType.E30_3REPS_6BLOCKS_5IND.getId()) {
-				designImportData =
-						this.parser.parseFile(ResourceFinder.locateFile(DesignType.E30_3REPS_6BLOCKS_5IND.getTemplateName()).getFile());
-			} else if (presetId == DesignType.E50_2REPS_5BLOCKS_10IND.getId()) {
-				designImportData =
-						this.parser.parseFile(ResourceFinder.locateFile(DesignType.E50_2REPS_5BLOCKS_10IND.getTemplateName()).getFile());
+						this.parser.parseFile(ResourceFinder.locateFile(presetDesignType.getTemplateName())
+								.getFile());
+				replicationsCount = presetDesignType.getNumberOfReps();
 			}
 
 			this.performAutomap(designImportData);
 
-			this.generateDesign(environmentData, designImportData, StudyType.T, true, presetId);
+			this.generateDesign(environmentData, designImportData, StudyType.T, true, presetId, replicationsCount);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -477,8 +474,8 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-			final StudyType studyType, final boolean isPreset, final int designTypeId) throws DesignValidationException {
+	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData, StudyType studyType,
+			boolean isPreset, int designTypeId, int replicationsCount) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 
@@ -519,7 +516,7 @@ public class DesignImportController extends SettingsController {
 
 		this.addVariates(workbook, designImportData);
 
-		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeId);
+		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeId, replicationsCount);
 
 		// Only for Trial
 		this.populateTrialLevelVariableListIfNecessary(workbook);
@@ -690,28 +687,36 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void addExperimentDesign(final Workbook workbook, final Set<MeasurementVariable> experimentalDesignMeasurementVariables,
-			final int designTypeId) {
+			final int designTypeId, final int replicationsCount) {
 
 		final ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 		designParam.setDesignType(designTypeId);
+		if (replicationsCount != 0) {
+			designParam.setReplicationsCount(Integer.toString(replicationsCount));
+		}
 
 		final List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
+		PresetDesignType presetDesignType = PresetDesignType.getPresetDesignTypeById(designTypeId);
+		if (presetDesignType != null && presetDesignType.getNumberOfReps() > 0) {
+			expDesignTermIds.add(TermId.NUMBER_OF_REPLICATES.getId());
+		}
 
 		this.userSelection.setExpDesignParams(designParam);
 		this.userSelection.setExpDesignVariables(expDesignTermIds);
 
-		final TermId termId = TermId.getById(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
-
-		SettingsUtil.addTrialCondition(termId, designParam, workbook, this.fieldbookMiddlewareService, this.getCurrentProject()
-				.getUniqueID());
+		for (Integer ontologyId : expDesignTermIds) {
+			final TermId termId = TermId.getById(ontologyId);
+			SettingsUtil.addTrialCondition(termId, designParam, workbook, this.fieldbookMiddlewareService, this.getCurrentProject()
+					.getUniqueID());
+		}
 
 		workbook.getFactors().addAll(experimentalDesignMeasurementVariables);
 
 		final ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
 		if (expDesignVar != null && expDesignVar.getExperimentalDesign() != null) {
 			for (final MeasurementVariable mvar : workbook.getConditions()) {
-				if (mvar.getTermId() == termId.getId()) {
+				if (expDesignTermIds.contains(mvar.getTermId())) {
 					mvar.setOperation(Operation.UPDATE);
 				}
 			}

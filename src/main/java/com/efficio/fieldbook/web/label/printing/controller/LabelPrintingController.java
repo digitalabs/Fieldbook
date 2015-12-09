@@ -11,22 +11,8 @@
 
 package com.efficio.fieldbook.web.label.printing.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +32,7 @@ import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CustomReportTypeUtil;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -68,12 +55,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
@@ -397,24 +379,24 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
 		FileInputStream in;
 
-		try {
-			in = new FileInputStream(xls);
-			OutputStream out = response.getOutputStream();
+        try {
+            in = new FileInputStream(xls);
+            OutputStream out = response.getOutputStream();
 
-			// use bigger if you want
-			byte[] buffer = new byte[LabelPrintingController.BUFFER_SIZE];
-			int length = 0;
+            // use bigger if you want
+            byte[] buffer = new byte[LabelPrintingController.BUFFER_SIZE];
+            int length = 0;
 
-			while ((length = in.read(buffer)) > 0) {
-				out.write(buffer, 0, length);
-			}
-			in.close();
-			out.close();
-		} catch (FileNotFoundException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-		} catch (IOException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-		}
+            while ((length = in.read(buffer)) > 0) {
+                out.write(buffer, 0, length);
+            }
+            in.close();
+            out.close();
+        } catch (FileNotFoundException e) {
+            LabelPrintingController.LOG.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LabelPrintingController.LOG.error(e.getMessage(), e);
+        }
 
 		return "";
 	}
@@ -447,6 +429,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
+
+        // add validation for the file name
+        if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
+            Map<String,Object> results = new HashMap<>();
+            results.put(LabelPrintingController.IS_SUCCESS, 0);
+            results.put(AppConstants.MESSAGE.getString(), this.messageSource.getMessage("common.error.invalid.filename.windows",
+                    new Object[] {}, Locale.getDefault()));
+
+            return results;
+        }
 
 		List<FieldMapInfo> fieldMapInfoList = this.userLabelPrinting.getFieldMapInfoList();
 		Workbook workbook = this.userSelection.getWorkbook();
@@ -493,7 +485,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			String fileName = "";
 			if (isCustomReport) {
 				Integer studyId = this.userLabelPrinting.getStudyId();
-				Reporter rep = this.reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId, baos);
+				Reporter rep =
+						this.reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId, contextUtil
+								.getProjectInContext().getProjectName(), baos);
 				fileName = rep.getFileName();
 				this.userLabelPrinting.setFilename(fileName);
 				this.getFileNameAndSetFileLocations("");
@@ -747,6 +741,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	private String getFileNameAndSetFileLocations(String extension) {
 		String fileName = this.userLabelPrinting.getFilename().replaceAll(" ", "-") + extension;
+        fileName = FileUtils.sanitizeFileName(fileName);
 		String fileNameLocation = this.fieldbookProperties.getUploadDirectory() + File.separator + fileName;
 
 		this.userLabelPrinting.setFilenameDL(fileName);

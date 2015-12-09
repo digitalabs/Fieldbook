@@ -7,8 +7,8 @@
 	'use strict';
 
 	angular.module('manageTrialApp').controller('MeasurementsCtrl',
-		['$scope', 'TrialManagerDataService', '$modal', '$q', 'debounce', '$http',
-			function($scope, TrialManagerDataService, $modal, $q, debounce, $http) {
+		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http',
+			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http) {
 
 				$scope.settings = TrialManagerDataService.settings.measurements;
 
@@ -66,7 +66,7 @@
 					$http.post('/Fieldbook/manageSettings/hasMeasurementData/' + variableType, variableIds, {cache: false})
 						.success(function(data, status, headers, config) {
 							if ('true' === data) {
-								var modalInstance = $modal.open({
+								var modalInstance = $uibModal.open({
 									templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
 									controller: 'ConfirmModalController',
 									resolve: {

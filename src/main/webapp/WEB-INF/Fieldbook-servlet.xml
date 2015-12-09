@@ -391,6 +391,21 @@
 		</property>
 	</bean>
 
+    <!--
+        The post processor factory will automatically generate a bean post processor that will handle the
+        automatic registration of component-scanned classes into a target factory / registry instead of having
+        to have a separate class for each bean post processor
+        -->
+    <bean id="postProcessorFactory" class="org.generationcp.commons.spring.util.ComponentPostProcessorFactory"/>
+
+    <bean id="dataProcessorFactory" class="com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory"/>
+
+    <bean factory-bean="postProcessorFactory" factory-method="generatePostProcessorFactory">
+        <constructor-arg name="componentClass" type="java.lang.Class" value="com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor"/>
+        <constructor-arg name="factoryInstance" ref="dataProcessorFactory"/>
+    </bean>
+
+
 	<bean id="ruleService"
 		class="org.generationcp.commons.ruleengine.impl.RulesServiceImpl" />
 	<!-- This component scan automatically registers all implementations of 
@@ -399,6 +414,7 @@
 	<context:component-scan base-package="com.efficio.fieldbook.web.naming.rules.naming" />
 	<context:component-scan base-package="org.generationcp.commons.ruleengine.stockid" />
 	<context:component-scan base-package="org.generationcp.commons.ruleengine.cross" />
+    <context:component-scan base-package="com.efficio.fieldbook.web.naming.expression.dataprocessor"/>
 
 	<bean id="settingsPresetService"
 		class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl" />
@@ -526,4 +542,6 @@
 	</bean>
 
 	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" scope="prototype"/>
+
+    <bean id="userTreeStateService" class="org.generationcp.commons.service.impl.UserTreeStateServiceImpl"/>
 </beans>

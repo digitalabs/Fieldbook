@@ -18,8 +18,10 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 public class GroupCountExpression implements Expression {
 
 	public static final String KEY = "[COUNT]";
+    public static final Integer MINIMUM_BULK_COUNT = 3;
 	public static final String BULK_COUNT_PREFIX = "B*";
 	public static final String POUND_COUNT_PREFIX = "#*";
+    public static final String SEPARATOR = "-";
 
 	@Override
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
@@ -28,22 +30,32 @@ public class GroupCountExpression implements Expression {
 			String countPrefix = this.getCountPrefix(currentValue);
 			String valueWithoutProcessCode = currentValue.replace(countPrefix + this.getExpressionKey(), "");
 
-			if (valueWithoutProcessCode.charAt(valueWithoutProcessCode.length() - 1) == '-') {
+			if (valueWithoutProcessCode.charAt(valueWithoutProcessCode.length() - 1) == SEPARATOR.charAt(0)) {
 				valueWithoutProcessCode = valueWithoutProcessCode.substring(0, valueWithoutProcessCode.length() - 1);
 			}
 
 			String targetCountExpression = this.getTargetCountExpression(countPrefix);
 			CountResultBean result = this.countContinuousExpressionOccurrence(targetCountExpression, valueWithoutProcessCode);
+            currentValue = this.cleanupString(new StringBuilder(valueWithoutProcessCode), result);
+			if (result.getCount() > MINIMUM_BULK_COUNT) {
 
-			if (result.getCount() > 2) {
-				currentValue = this.cleanupString(new StringBuilder(valueWithoutProcessCode), result);
 				currentValue = currentValue + targetCountExpression + "*" + String.valueOf(result.getCount());
 				value.delete(0, value.length());
 				value.append(currentValue);
 			} else {
 				value.delete(0, value.length());
-				value.append(valueWithoutProcessCode).append(targetCountExpression);
-			}
+                value.append(currentValue);
+                value.append(SEPARATOR);
+                String repeatingLetter = targetCountExpression.substring(targetCountExpression.length() - 1,targetCountExpression.length() );
+
+                // do while loop is used because there should be a -B or -# appended if the count is 0
+                int i = 0;
+                do {
+                    value.append(repeatingLetter);
+                    i++;
+                } while (i < result.getCount());
+
+            }
 
 		}
 	}

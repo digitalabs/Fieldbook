@@ -44,11 +44,12 @@ public class AdvancingSource {
 	private Integer rootNameType;
 	private Integer locationId;
 	private String plotNumber;
+    private String selectionTraitValue;
 
 	private boolean isForceUniqueNameGeneration;
 
 	public AdvancingSource(ImportedGermplasm germplasm, List<Name> names, Integer plantsSelected, Method breedingMethod, boolean isCheck,
-			String nurseryName, String season, String locationAbbreviation, String plotNumber) {
+			String nurseryName, String plotNumber) {
 		super();
 		this.germplasm = germplasm;
 		this.names = names;
@@ -56,8 +57,6 @@ public class AdvancingSource {
 		this.breedingMethod = breedingMethod;
 		this.isCheck = isCheck;
 		this.nurseryName = nurseryName;
-		this.season = season;
-		this.locationAbbreviation = locationAbbreviation;
 		this.plotNumber = plotNumber;
 	}
 
@@ -317,4 +316,12 @@ public class AdvancingSource {
 	public void setLocationId(Integer locationId) {
 		this.locationId = locationId;
 	}
+
+    public String getSelectionTraitValue() {
+        return selectionTraitValue;
+    }
+
+    public void setSelectionTraitValue(String selectionTraitValue) {
+        this.selectionTraitValue = selectionTraitValue;
+    }
 }

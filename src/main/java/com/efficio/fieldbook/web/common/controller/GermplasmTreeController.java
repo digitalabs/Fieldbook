@@ -30,6 +30,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.service.UserTreeStateService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -40,7 +41,6 @@ import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
-import org.generationcp.middleware.manager.api.UserProgramStateDataManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -56,12 +56,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -139,7 +134,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private UserSelection userSelection;
 
 	@Resource
-	private UserProgramStateDataManager userProgramStateDataManager;
+	private UserTreeStateService userTreeStateService;
 
 	@Resource
 	private GermplasmDataManager germplasmDataManager;
@@ -185,9 +180,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 				final Integer germplasmListId = this.saveGermplasmList(form, listDataItems);
 
-				List<GermplasmListData> data = new ArrayList<GermplasmListData>();
+				final List<GermplasmListData> data = new ArrayList<GermplasmListData>();
 				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
-				List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
+				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
 
 				final Integer listDataProjectListId = this.saveListDataProjectList(form, germplasmListId, listDataProject);
 				results.put(GermplasmTreeController.IS_SUCCESS, 1);
@@ -241,7 +236,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	protected Integer saveListDataProjectList(final SaveListForm form, final Integer germplasmListId,
 			final List<ListDataProject> dataProjectList) throws MiddlewareException {
-		GermplasmListType type;
+		final GermplasmListType type;
 		final Integer currentUserID = this.getCurrentIbdbUserId();
 		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
 			type = GermplasmListType.ADVANCED;
@@ -908,7 +903,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					states.add(expandedNodes[index]);
 				}
 			}
-			this.userProgramStateDataManager.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentWorkbenchUserId(),
+			this.userTreeStateService.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentUserLocalId(),
 					this.getCurrentProgramUUID(), type, states);
 		} catch (final MiddlewareQueryException e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
@@ -918,16 +913,18 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/retrieve/state/{type}", method = RequestMethod.GET)
-	public String retrieveTreeState(@PathVariable final String type) {
+	@RequestMapping(value = "/retrieve/state/{type}/{saveMode}", method = RequestMethod.GET)
+	public String retrieveTreeState(@PathVariable final String type, @PathVariable final Boolean saveMode) {
 
-		List<String> stateList = new ArrayList<String>();
-		try {
-			stateList = this.userProgramStateDataManager.getUserProgramTreeStateByUserIdProgramUuidAndType(
-					this.contextUtil.getCurrentWorkbenchUserId(), this.getCurrentProgramUUID(), type);
-		} catch (final MiddlewareQueryException e) {
-			GermplasmTreeController.LOG.error(e.getMessage(), e);
+		final List<String> stateList;
+		final Integer userID = this.contextUtil.getCurrentUserLocalId();
+		final String programUUID = this.getCurrentProgramUUID();
+		if (saveMode) {
+			stateList = this.userTreeStateService.getUserProgramTreeStateForSaveList(userID, programUUID);
+		} else {
+			stateList = this.userTreeStateService.getUserProgramTreeStateByUserIdProgramUuidAndType(userID, programUUID, type);
 		}
+
 		return super.convertObjectToJson(stateList);
 	}
 
@@ -946,10 +943,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	protected void setUserSelection(final UserSelection userSelection) {
 		this.userSelection = userSelection;
-	}
-
-	public void setUserProgramStateDataManager(final UserProgramStateDataManager userProgramStateDataManager) {
-		this.userProgramStateDataManager = userProgramStateDataManager;
 	}
 	
 	void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {

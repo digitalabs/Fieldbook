@@ -1,20 +1,8 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +16,7 @@ import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CustomReportTypeUtil;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -47,25 +36,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
-import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
-import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
-import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
-import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
-import com.efficio.fieldbook.web.common.service.RExportStudyService;
+import com.efficio.fieldbook.web.common.service.*;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
@@ -135,8 +112,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private WorkbenchService workbenchService;
-	@Resource
-	private ContextUtil contextUtil;
+
 	@Resource
 	private ReportService reportService;
 
@@ -215,7 +191,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		Reporter rep;
 		final Map<String, Object> results = new HashMap<String, Object>();
 		try {
-			rep = this.reportService.getStreamReport(reportCode, Integer.parseInt(studyId), baos);
+
+			rep =
+					this.reportService.getStreamReport(reportCode, Integer.parseInt(studyId), contextUtil.getProjectInContext()
+							.getProjectName(), baos);
 
 			fileName = rep.getFileName();
 			outputFilename = this.fieldbookProperties.getUploadDirectory() + File.separator + fileName;
@@ -392,7 +371,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 			exportDataCollectionService.reorderWorkbook(workbook);
 
-			String filename = userSelection.getEscapedStudyName();
+			String filename = FileUtils.sanitizeFileName(userSelection.getEscapedStudyName());
 			String outputFilename = null;
 			FieldbookUtil.setColumnOrderingOnWorkbook(workbook, data.get("columnOrders"));
 			if (AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType) {
@@ -447,7 +426,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 			results.put(IS_SUCCESS, true);
 			results.put(OUTPUT_FILENAME, outputFilename);
-			results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(filename));
+			results.put(FILENAME, filename);
 			results.put(CONTENT_TYPE, response.getContentType());
 
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), true,
@@ -585,7 +564,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			contentType = ExportStudyController.APPLICATION_VND_MS_EXCEL;
 		}
 		response.setContentType(contentType);
-		;
+
 		final Map<String, Object> results = new HashMap<String, Object>();
 		results.put(OUTPUT_FILENAME, outputFilename);
 		results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(file.getName()));

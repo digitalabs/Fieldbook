@@ -8,7 +8,7 @@
 
 	var app = angular.module('designImportApp', ['ui.bootstrap', 'ngLodash', 'ngResource', 'ui.sortable']);
 
-	app.controller('designImportCtrl', ['$scope', 'DesignMappingService', 'DesignOntologyService', 'ImportDesign', '$modal', 'Messages', function(scope, DesignMappingService, DesignOntologyService, ImportDesign, $modal, Messages) {
+	app.controller('designImportCtrl', ['$scope', 'DesignMappingService', 'DesignOntologyService', 'ImportDesign', '$uibModal', 'Messages', function(scope, DesignMappingService, DesignOntologyService, ImportDesign, $uibModal, Messages) {
 		// we can retrieve this from a service
 		scope.Messages = Messages;
 		scope.data = DesignMappingService.data;
@@ -58,7 +58,7 @@
 						var title = 'Ontology Browser';
 						var url = '/ibpworkbench/controller/ontology';
 
-						$modal.open({
+						$uibModal.open({
 							windowClass: 'modal-very-huge',
 							controller: 'OntologyBrowserController',
 							templateUrl: '/Fieldbook/static/angular-templates/ontologyBrowserPopup.html',
@@ -112,12 +112,12 @@
 
 	}]);
 
-	app.controller('OntologyBrowserController', ['$scope', '$modalInstance', 'title', 'url',
-		function($scope, $modalInstance, title, url) {
+	app.controller('OntologyBrowserController', ['$scope', '$uibModalInstance', 'title', 'url',
+		function($scope, $uibModalInstance, title, url) {
 			$scope.title = title;
 			$scope.url = url;
 			$scope.close = function() {
-				$modalInstance.dismiss('Cancelled');
+				$uibModalInstance.dismiss('Cancelled');
 			};
 
 		}

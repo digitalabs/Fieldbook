@@ -277,8 +277,6 @@
                 },
                 
                 updateAfterGeneratingDesignSuccessfully : function(){
-					//we show the preview
-					showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
 					service.clearUnappliedChangesFlag();
 					service.applicationData.unsavedGeneratedDesign = true;
 					$('#chooseGermplasmAndChecks').data('replace', '1');

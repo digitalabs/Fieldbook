@@ -210,25 +210,10 @@
 							}
 						);
 					} else {
-						var environmentData = angular.copy(TrialManagerDataService.currentData.environments);
-
-						_.each(environmentData.environments, function(data, key) {
-							_.each(data.managementDetailValues, function(value, key) {
-								if (value && value.id) {
-									data.managementDetailValues[key] = value.id;
-								}
-							});
-						});
-						
-						$http.post('/Fieldbook/DesignImport/generatePresetMeasurements/'+$scope.data.designType, JSON.stringify(environmentData)).then(function(resp){
-							if (!resp.data.isSuccess) {
-								showErrorMessage('', resp.data.error[0]);
-								return;
-							}
+						TrialManagerDataService.generatePresetExpDesign($scope.data.designType).then(function() {
 							$scope.updateAfterGeneratingDesignSuccessfully();
-							
-							TrialManagerDataService.updateCurrentData('environments', environmentData);
-							angular.element('#mainApp').scope().$apply();
+						},function(data) {
+							showErrorMessage('', data.error[0]);
 						});
 					}
 				};

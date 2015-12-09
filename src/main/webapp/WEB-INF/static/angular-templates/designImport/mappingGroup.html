@@ -3,7 +3,7 @@
         <span class="badge-info counter" style="float:right">{{mappingData.length}}</span></b>
     </div>
 
-    <div class="panel-collapse collapse in list-group" collapse="isCollapsed" ui-sortable="sortableOptions" ng-model="mappingData">
+    <div class="panel-collapse collapse in list-group" uib-collapse="isCollapsed" ui-sortable="sortableOptions" ng-model="mappingData">
         <div class="list-group-item" ng-class="{'list-group-item-danger' : !header.variable}" ng-repeat="header in mappingData" data-empty="{{previewMode}}">
             <div class="row">
                 <div class="col-sm-12">

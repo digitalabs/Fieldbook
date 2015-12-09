@@ -296,7 +296,10 @@ return this.date;
 },
 
 setDate: function(d) {
-this.setUTCDate(new Date(d.getTime() - (d.getTimezoneOffset()*60000)));
+d = new Date(d);
+if (!isNaN(d)) {
+	this.setUTCDate(new Date(d.getTime() - (d.getTimezoneOffset()*60000)));
+	}
 },
 
 setUTCDate: function(d) {

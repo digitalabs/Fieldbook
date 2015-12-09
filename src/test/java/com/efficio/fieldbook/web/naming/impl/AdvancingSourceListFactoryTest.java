@@ -49,7 +49,9 @@ public class AdvancingSourceListFactoryTest {
 	 */
 	@Test
 	public void testGetSeason() throws FieldbookException {
-
+		
+		boolean special = false;
+		
 		Integer termId = 8371;
 		Integer categoryId = 10030;
 		String programUUID = "TESTUUID";
@@ -64,16 +66,20 @@ public class AdvancingSourceListFactoryTest {
 		Mockito.when(ontologyVariableDataManager.getVariable(programUUID, termId, true, false)).thenReturn(variable);
 
 		// 5 possible season settings to test
-		TermId[] seasonTerms = new TermId[6];
+		TermId[] seasonTerms = new TermId[7];
 		seasonTerms[0] = TermId.SEASON;
 		seasonTerms[1] = TermId.SEASON_DRY;
 		seasonTerms[2] = TermId.SEASON_MONTH;
 		seasonTerms[3] = TermId.SEASON_VAR;
 		seasonTerms[4] = TermId.SEASON_VAR_TEXT;
 		seasonTerms[5] = TermId.SEASON_WET;
+		seasonTerms[6] = TermId.SEASON_VAR; // special case where SEASON_VAR = text instead of number
 		for (int i = 0; i < seasonTerms.length; i++) {
+			if(i == 6) {
+				special  = true;
+			}
 			List<MeasurementVariable> conditions = new ArrayList<>();
-			conditions.add(createConditionFixture(seasonTerms[i]));
+			conditions.add(createConditionFixture(seasonTerms[i], special));
 			Workbook workbook = new Workbook();
 			workbook.setConditions(conditions);
 			String season = factory.getSeason(workbook);
@@ -96,6 +102,9 @@ public class AdvancingSourceListFactoryTest {
 			}
 			if (i == 5) {
 				Assert.assertEquals("SEASONWET", season);
+			}
+			if (i == 6) {
+				Assert.assertEquals("SpecialTextSeason", season);
 			}
 		}
 	}
@@ -124,7 +133,7 @@ public class AdvancingSourceListFactoryTest {
 
 	}
 
-	private MeasurementVariable createConditionFixture(TermId term) {
+	private MeasurementVariable createConditionFixture(TermId term, boolean special) {
 		String season = "";
 		MeasurementVariable mv = new MeasurementVariable();
 		mv.setTermId(term.getId());
@@ -135,12 +144,16 @@ public class AdvancingSourceListFactoryTest {
 		} else if (mv.getTermId() == TermId.SEASON_MONTH.getId()) {
 			season = "SEASONMONTH";
 		} else if (mv.getTermId() == TermId.SEASON_VAR.getId()) {
-			season = "10030";
+			if(special) {
+				season  = "SpecialTextSeason";
+			} else {
+				season = "10030";
+			}
 		} else if (mv.getTermId() == TermId.SEASON_VAR_TEXT.getId()) {
 			season = "FreeTextSeason";
 		} else if (mv.getTermId() == TermId.SEASON_WET.getId()) {
 			season = "SEASONWET";
-		}
+		} 
 		mv.setValue(season);
 
 		return mv;

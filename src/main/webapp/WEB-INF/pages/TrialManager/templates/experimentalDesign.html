@@ -13,48 +13,39 @@
                 <div class="col-md-12" ng-hide="toggleDesignView()">
                     <label class="control-label" style="vertical-align: top; position: relative; top: 6px;"><strong th:text="#{trial.experimental.design.select}">Select the design type you would like to use for this trial:</strong></label>
 
-                            <div style="display:inline-block">
-                                <div  style="width: 350px !important;">
-                                    <div class="col-xs-10">
-                                        <select ui-select2="{minimumResultsForSearch : -1}"
-                                                ng-model="currentDesignTypeId"
-                                                ng-change="onSwitchDesignTypes(currentDesignTypeId)"
-                                                ng-disabled="measurementDetails.hasMeasurement">
-                                            <option value="">Please Choose</option>
-                                            <option value="{{item.id}}"
-                                                    ng-repeat="item in designTypes| filterExperimentalDesignType">
-                                                {{item.name}}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-xs-2 add-top-padding-small">
-                                    <span class="bms-fa-question-circle help-tooltip-nursery"
-                                          tooltip-placement="right" tooltip-append-to-body="true"
-                                          th:attr="tooltip=#{trial.experimental.design.incomplete.block.design.tooltip}"
-                                          ></span>
-                                    </div>
-                                </div>
-                                <div ng-show="currentDesignType.withResolvable &amp;&amp; false">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" ng-model="data.isResolvable" id="inlineCheckbox2" value="option2"/> <span>Design will be resolvable</span>
-                                    </label>
-                                </div>
+                    <div style="display:inline-block">
+                        <div  style="width: 350px !important;">
+                            <div class="col-xs-10">
+                                <select ui-select2="{minimumResultsForSearch : -1}"
+                                        ng-model="currentDesignTypeId"
+                                        ng-change="onSwitchDesignTypes(currentDesignTypeId)"
+                                        ng-disabled="measurementDetails.hasMeasurement">
+                                    <option value="">Please Choose</option>
+                                    <option value="{{item.id}}"
+                                            ng-repeat="item in designTypes| filterExperimentalDesignType">
+                                        {{item.name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-xs-2 add-top-padding-small">
+                            <span class="bms-fa-question-circle help-tooltip-nursery"
+                                  tooltip-placement="right" tooltip-append-to-body="true"
+                                  th:attr="uib-tooltip=#{trial.experimental.design.incomplete.block.design.tooltip}"
+                                  ></span>
                             </div>
                         </div>
-                        <div class="col-md-12 add-bottom-padding" ng-hide="toggleDesignView()">
-                            <label class="control-label">Or <a class="import-design" onclick="ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());">import</a> an experimental design.</label>
-                        </div>
-
-                        <div style="margin-bottom: 25px; margin-top: 25px; margin-left:12px;">
-                            <section-container heading="SPECIFY PLOT NUMBERING">
-                                <div name="content">
-                                    <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
-                                    <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" />
-                                    <input type="hidden" id="txtStartingEntryNo" ng-model="data.startingEntryNo" />
-                                </div>
-                            </section-container>
+                        <div ng-show="currentDesignType.withResolvable &amp;&amp; false">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" ng-model="data.isResolvable" id="inlineCheckbox2" value="option2"/> <span>Design will be resolvable</span>
+                            </label>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-12 add-bottom-padding" ng-hide="toggleDesignView()">
+					<label class="control-label">Or <a class="import-design" onclick="ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());">import</a> an experimental design.</label>
+				</div>
+            </div>
+
         </section-container>
     </section-container>
 

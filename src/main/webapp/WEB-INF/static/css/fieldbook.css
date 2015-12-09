@@ -182,6 +182,14 @@ table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{
 	user-select: none;
 	outline: medium none;
 }
+
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc {
+    background : none;
+    background-color: #c8c6c6;
+}
+
 .pagination {
     font-size: 10px;
 }
@@ -262,6 +270,17 @@ table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{
     top: 5pt;
 }
 
+.fbk-delete-sign {
+    cursor: pointer;
+    color: #CE453C;
+    font-size: 16px;
+    width: 25px;
+}
+
+.fbk-table-delete-link {
+    width: 25px;
+}
+
 
 #studyTree, .study-field-map-tree{
     height:350px;
@@ -285,13 +304,6 @@ table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{
 .table-curved > thead > tr > th, .table-curved > tbody > tr > td { border-right: 1px solid #c2c3c4; }
 .table-curved > thead > tr > th:last-child, .table-curved > tbody > tr > td:last-child { border-right: 0; }
 
-
-
-
-.dataTables_wrapper > div {
-    border-radius: 10px;
-    overflow: hidden;
-}
 
 div.dataTables_scrollHead table.table-curved,
 div.dataTables_scrollBody table.table-curved {
@@ -1138,14 +1150,17 @@ a.fbk-edit-experiment{
     height: 46px;
 }
 
-.mdt-header > div {
-    height: 30px;
-}
-
 .mdt-header .dataTables_length,
+.dataTables_wrapper .dataTables_length,
+.fbk-datatable-panel-top > .dataTables_info,
 .mdt-header .dataTables_info {
     float: left;
 }
+
+.fbk-datatable-panel-top > .dt-buttons {
+    float: right;
+}
+
 .mdt-header .mdt-filtering,
 .mdt-header .mdt-columns {
     float: right;
@@ -1167,11 +1182,13 @@ a.fbk-edit-experiment{
 }
 
 .mdt-header .dataTables_length,
+.dataTables_wrapper .dataTables_length,
 .mdt-header .mdt-filtering-label {
     margin-right: 15px;
 }
 
-.mdt-header .dataTables_length{
+.mdt-header .dataTables_length,
+.dataTables_wrapper .dataTables_length,{
 	position: relative;
 	top: 5px;
 }
@@ -1589,6 +1606,28 @@ label[data-toggle="collapse"],
 	height: 11px;
 }
 
+a.dt-button.fbk-buttons-no-border,
+a.dt-button.fbk-buttons-no-border:hover:not(.disabled) {
+    border: none;
+    background-color: transparent;
+    background-image: none;
+}
+
+a.dt-button.fbk-buttons-link {
+    color: rgb(51, 122, 183);
+    font-size: 13px;
+}
+
+a.dt-button.fbk-colvis-button {
+    font-size: 13px;
+}
+
+a.dt-button.fbk-buttons-link:focus,
+a.dt-button.fbk-buttons-link:hover {
+    color: #23527c;
+    text-decoration: underline;
+}
+
 /* ----- Variable Selection Dialog: Property Select Dropdown ----- */
 
 .vs-modal .vs-ps-container {
@@ -1904,4 +1943,30 @@ input.review-select-all{
 	font-weight: 400;
 	text-align: right;
 	margin: 0 50px 0;
+}
+
+/* new throbber from the styleguide */
+
+.throbber {
+    width: 18px;
+    width: 1.5rem;
+    height: 18px;
+    height: 1.5rem;
+    border-radius: .75rem;
+    box-sizing: border-box;
+    border: 2px solid rgba(27,149,178,.2);
+    border-top-color: #1b95b2;
+    -webkit-animation: spin 1s infinite linear;
+    animation: spin 1s infinite linear;
+    transition: visibility .5s ease-in,opacity .5s ease-in;
+    visibility: visible;
+    display: inline-block;
+}
+
+.throbber-2x {
+    width: 30px;
+    width: 2.5rem;
+    height: 30px;
+    height: 2.5rem;
+    border-radius: 1.25rem;
 }

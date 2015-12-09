@@ -353,8 +353,15 @@
 						var serializedData = (JSON.stringify(columnsOrder));
 						if (!service.isOpenTrial()) {
 							service.currentData.columnOrders = serializedData;
-							$http.post('/Fieldbook/TrialManager/createTrial', service.currentData).
-								success(function() {
+							// we are receiving 'success' string message from server in a happy case, so the response should not be parsed
+							// as json, we set {{transformResponse: undefined}} to indicate that we don't need json transformation
+							$http({
+								url: '/Fieldbook/TrialManager/createTrial',
+								method: 'POST',
+								data: service.currentData,
+								transformResponse: undefined
+							}).then(function(response) {
+								if (response.data === 'success' && response.status === 200) {
 									submitGermplasmList().then(function(generatedID) {
 										showSuccessfulMessage('', saveSuccessMessage);
 										notifySaveEventListeners();
@@ -366,7 +373,10 @@
 										service.applicationData.unsavedTraitsAvailable = false;
 										$('body').data('needToSave', '0');
 									});
-								});
+								} else {
+									showErrorMessage('', 'Trial could not be saved at the moment. Try again later.');
+								}
+							});
 						} else {
 
 							if (service.trialMeasurement.count > 0 && $('.import-study-data').data('data-import') === '1') {

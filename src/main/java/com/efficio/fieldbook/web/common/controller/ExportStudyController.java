@@ -28,6 +28,7 @@ import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CustomReportTypeUtil;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -392,7 +393,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 			exportDataCollectionService.reorderWorkbook(workbook);
 
-			String filename = userSelection.getEscapedStudyName();
+			String filename = FileUtils.sanitizeFileName(userSelection.getEscapedStudyName());
 			String outputFilename = null;
 			FieldbookUtil.setColumnOrderingOnWorkbook(workbook, data.get("columnOrders"));
 			if (AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType) {
@@ -447,7 +448,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 			results.put(IS_SUCCESS, true);
 			results.put(OUTPUT_FILENAME, outputFilename);
-			results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(filename));
+			results.put(FILENAME, filename);
 			results.put(CONTENT_TYPE, response.getContentType());
 
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), true,
@@ -585,7 +586,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			contentType = ExportStudyController.APPLICATION_VND_MS_EXCEL;
 		}
 		response.setContentType(contentType);
-		;
+
 		final Map<String, Object> results = new HashMap<String, Object>();
 		results.put(OUTPUT_FILENAME, outputFilename);
 		results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(file.getName()));

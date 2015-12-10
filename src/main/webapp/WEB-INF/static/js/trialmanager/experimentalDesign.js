@@ -227,7 +227,7 @@
 				};
 				
 				$scope.withPresetGeneratedDesignForExistingStudy = function(){
-					return $scope.applicationData.hasGeneratedDesignPreset && $scope.studyID != null;
+					return $scope.applicationData.hasGeneratedDesignPreset && $scope.studyID != null && !$scope.applicationData.unsavedGeneratedDesign;
 				};
 				
 				$scope.doValidate = function() {

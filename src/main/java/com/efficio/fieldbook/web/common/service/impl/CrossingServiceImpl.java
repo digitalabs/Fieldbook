@@ -20,6 +20,8 @@ import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
 import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.cross.CrossingRuleExecutionContext;
+import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
+import org.generationcp.commons.service.GermplasmOriginGenerationService;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -28,10 +30,12 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StringUtil;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
+import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -43,11 +47,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.util.ExpressionHelper;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 
 /**
  * Created by cyrus on 1/23/15.
@@ -90,6 +96,12 @@ public class CrossingServiceImpl implements CrossingService {
 
 	@Resource
 	private PedigreeDataManager pedigreeDataManager;
+	
+	@Resource
+	private GermplasmOriginGenerationService germplasmOriginGenerationService;
+	
+	@Resource
+	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
 
 	@Override
 	public ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException {
@@ -97,10 +109,18 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public void applyCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId)
-			throws MiddlewareQueryException {
+	public void applyCrossSetting(CrossSetting crossSetting, 
+			ImportedCrossesList importedCrossesList, Integer userId, Workbook workbook) throws MiddlewareQueryException {
 
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
+		
+		// apply the source string here, before we save germplasm
+		for (ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
+			GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, importedCross);
+			String generatedSource = this.germplasmOriginGenerationService.generateOriginString(parameters);
+			importedCross.setSource(generatedSource);
+		}
+		
 		List<Pair<Germplasm, Name>> germplasmPairs =
 				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
 						importedCrossesList.hasPlotDuplicate());
@@ -114,27 +134,52 @@ public class CrossingServiceImpl implements CrossingService {
 		boolean isValid = this.verifyGermplasmMethodPresent(germplasmList);
 
 		if (!isValid) {
-
 			throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
 					Locale.getDefault()));
 		}
+		
+		save(crossSetting, importedCrossesList, germplasmPairs);
+	}
 
+	/**
+	 * @Transactional to make sure Germplasm, Name and Attribute entities save atomically.
+	 */
+	@Transactional
+	private void save(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, List<Pair<Germplasm, Name>> germplasmPairs) {
 		List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmPairs);
 		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
 			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
 		}
-
+		
+		// We iterate through the cross list here to merge, so we will create the SeedSource attribute list
+		// at the same time (each GP is linked to a PlotCode)
+		List<Attribute> attributeList = new ArrayList<>();
 		Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
+		Integer today = Integer.valueOf(DateUtil.getCurrentDateAsStringValue());
 		for (ImportedCrosses cross : importedCrossesList.getImportedCrosses()) {
+			
 			// this will do the merging and using the gid and cross from the initial duplicate
 			if (FieldbookUtil.isContinueCrossingMerge(importedCrossesList.hasPlotDuplicate(), crossSetting.isPreservePlotDuplicates(),
 					cross)) {
 				FieldbookUtil.mergeCrossesPlotDuplicateData(cross, importedCrossesList.getImportedCrosses());
 				continue;
 			}
+			
 			Integer newGid = germplasmIdIterator.next();
 			cross.setGid(newGid.toString());
+			
+			// save Attribute for SeedSource as a PlotCode
+			Attribute plotCodeAttribute = new Attribute();
+			plotCodeAttribute.setAdate(today);
+			plotCodeAttribute.setGermplasmId(newGid);
+			plotCodeAttribute.setTypeId(this.germplasmDataManager.getPlotCodeField().getFldno());
+			plotCodeAttribute.setAval(cross.getSource());	
+			plotCodeAttribute.setUserId(contextUtil.getCurrentWorkbenchUserId());
+			
+			attributeList.add(plotCodeAttribute);
 		}
+
+		germplasmDataManager.addAttributes(attributeList);
 
 	}
 
@@ -499,5 +544,21 @@ public class CrossingServiceImpl implements CrossingService {
 	 */
 	void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
+	}
+	
+	/**
+	 * For Test Only
+	 * 
+	 * @param germplasmOriginGenerationService
+	 */
+	void setGermplasmOriginGenerationService(GermplasmOriginGenerationService germplasmOriginGenerationService) {
+		this.germplasmOriginGenerationService = germplasmOriginGenerationService;
+	}
+
+	/**
+	 * For Test Only
+	 */
+	void setGermplasmOriginParameterBuilder(GermplasmOriginParameterBuilder germplasmOriginParameterBuilder) {
+		this.germplasmOriginParameterBuilder = germplasmOriginParameterBuilder;
 	}
 }

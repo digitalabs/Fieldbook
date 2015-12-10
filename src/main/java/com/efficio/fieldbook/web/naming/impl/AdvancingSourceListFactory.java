@@ -117,6 +117,11 @@ public class AdvancingSourceListFactory {
 				boolean isCheck =
 						check != null && !"".equals(check) && !AdvancingSourceListFactory.DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
 
+				MeasurementData plotNumberData = row.getMeasurementData(TermId.PLOT_NO.getId());
+				if (plotNumberData != null) {
+					source.setPlotNumber(plotNumberData.getValue());
+				}
+				
 				Method breedingMethod = breedingMethodMap.get(methodId);
 				Integer plantsSelected = null;
 				Boolean isBulk = breedingMethod.isBulkingMethod();

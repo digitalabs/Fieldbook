@@ -118,6 +118,9 @@ public class AdvancingSourceListFactory {
 						check != null && !"".equals(check) && !AdvancingSourceListFactory.DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
 
 				MeasurementData plotNumberData = row.getMeasurementData(TermId.PLOT_NO.getId());
+				if (plotNumberData != null) {
+					source.setPlotNumber(plotNumberData.getValue());
+				}
 				
 				Method breedingMethod = breedingMethodMap.get(methodId);
 				Integer plantsSelected = null;
@@ -138,7 +141,6 @@ public class AdvancingSourceListFactory {
 					source.setBreedingMethod(breedingMethod);
 					source.setCheck(isCheck);
 					source.setNurseryName(nurseryName);
-					source.setPlotNumber(plotNumberData.getValue());
 
                     dataProcessor.processPlotLevelData(source, row);
 

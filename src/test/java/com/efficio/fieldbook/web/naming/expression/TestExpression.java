@@ -56,6 +56,8 @@ public class TestExpression {
 
 		AdvancingSource source = new AdvancingSource(germplasm, names, 2, method, false, "MNL", "1");
 		source.setRootName(name);
+		source.setSeason("Dry");
+		source.setNurseryName("NurseryTest");
 		return source;
 	}
 

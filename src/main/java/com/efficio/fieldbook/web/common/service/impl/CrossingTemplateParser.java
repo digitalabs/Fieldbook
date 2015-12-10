@@ -145,6 +145,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 			ImportedCrosses importedCrosses =
 					new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery, femalePlotNo, malePlotNo, this.currentRow);
+			// Show sounrce as "Pending" in initial dialogue. 
+			// Source (Plot Code) string is generated later in the proces and will be displayed in the final list generated.
+			importedCrosses.setSource("Pending");
 			importedCrosses.setOptionalFields(breedingMethod, crossingDate, seedsHarvested, notes);
 			// this would set the correct cross string depending if the use is cimmyt wheat
 			Germplasm germplasm = new Germplasm();

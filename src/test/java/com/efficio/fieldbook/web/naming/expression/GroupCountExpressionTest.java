@@ -18,49 +18,32 @@ public class GroupCountExpressionTest extends TestExpression {
 
 	@Test
 	public void testNoBulkingInName() {
-		AdvancingSource source = this.createAdvancingSourceTestData("CML451 / ABC1234", "-", null, null, null, false);
-		List<StringBuilder> values = new ArrayList<>();
-		values.add(new StringBuilder(source.getRootName() + "B*[COUNT]"));
-
-		this.dut.apply(values, source);
-		String value = values.get(0).toString();
-
-		Assert.assertEquals("CML451 / ABC1234-B", value);
+        testCountExpression("CML451 / ABC1234", "B*[COUNT]", "CML451 / ABC1234-B");
 	}
 
 	@Test
 	public void testBulkingInName() {
-		AdvancingSource source = this.createAdvancingSourceTestData("CML451 / ABC1234-B-B-B-B", "-", null, null, null, false);
-		List<StringBuilder> values = new ArrayList<>();
-		values.add(new StringBuilder(source.getRootName() + "B*[COUNT]"));
-
-		this.dut.apply(values, source);
-		String value = values.get(0).toString();
-
-		Assert.assertEquals("CML451 / ABC1234-B*4", value);
+        testCountExpression("CML451 / ABC1234-B-B-B-B", "B*[COUNT]", "CML451 / ABC1234-B*4");
 	}
 
 	@Test
 	public void testPoundCountNothingToCount() {
-		AdvancingSource source = this.createAdvancingSourceTestData("CML451 / ABC1234", "-", null, null, null, false);
-		List<StringBuilder> values = new ArrayList<>();
-		values.add(new StringBuilder(source.getRootName() + "#*[COUNT]"));
-
-		this.dut.apply(values, source);
-		String value = values.get(0).toString();
-
-		Assert.assertEquals("CML451 / ABC1234-#", value);
+        testCountExpression("CML451 / ABC1234", "#*[COUNT]", "CML451 / ABC1234-#");
 	}
 
 	@Test
 	public void testPoundCountWithItems() {
-		AdvancingSource source = this.createAdvancingSourceTestData("CML451 / ABC1234-#-#-#", "-", null, null, null, false);
-		List<StringBuilder> values = new ArrayList<>();
-		values.add(new StringBuilder(source.getRootName() + "#*[COUNT]"));
-
-		this.dut.apply(values, source);
-		String value = values.get(0).toString();
-
-		Assert.assertEquals("CML451 / ABC1234-#*3", value);
+        testCountExpression("CML451 / ABC1234-#-#-#", "#*[COUNT]", "CML451 / ABC1234-###");
 	}
+
+    protected void testCountExpression(String sourceName, String countExpression, String expectedValue) {
+        AdvancingSource source = this.createAdvancingSourceTestData(sourceName, "-", null, null, null, false);
+        List<StringBuilder> values = new ArrayList<>();
+        values.add(new StringBuilder(source.getRootName() + countExpression));
+
+        this.dut.apply(values, source);
+        String value = values.get(0).toString();
+
+        Assert.assertEquals(expectedValue, value);
+    }
 }

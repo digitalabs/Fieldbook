@@ -15,6 +15,8 @@ import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
+import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
+import org.generationcp.commons.service.GermplasmOriginGenerationService;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -38,6 +40,7 @@ import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
 import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
 import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
+import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
@@ -71,8 +74,15 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 
+	@Resource
+	private GermplasmOriginGenerationService germplasmOriginGenerationService;
+
+	@Resource
+	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
+
 	@Override
-	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException, MiddlewareQueryException, FieldbookException {
+	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException,
+			MiddlewareQueryException, FieldbookException {
 
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
 		final Map<String, Method> breedingMethodCodeMap = new HashMap<>();
@@ -85,7 +95,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		final AdvancingSourceList list = this.createAdvancingSourceList(info, workbook, breedingMethodMap, breedingMethodCodeMap);
 		this.updatePlantsSelectedIfNecessary(list, info);
-		final List<ImportedGermplasm> importedGermplasmList = this.generateGermplasmList(list, info.isCheckAdvanceLinesUnique());
+		final List<ImportedGermplasm> importedGermplasmList = this.generateGermplasmList(list, info.isCheckAdvanceLinesUnique(), workbook);
 
 		final List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
 		for (final AdvancingSource source : list.getRows()) {
@@ -154,11 +164,14 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-			final String newGermplasmName, final Method breedingMethod, final int index, final String nurseryName) {
+			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook) {
 		// GCP-7652 use the entry number of the originial : index
+		// Current place where source is assigned.
+		final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber());
+		String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
-				, source.getGermplasm().getCross(), nurseryName + ":" + source.getGermplasm().getEntryId(),
+						, source.getGermplasm().getCross(), seedSourceOriginString,
 						FieldbookUtil.generateEntryCode(index), null /* check */
 						, breedingMethod.getMid());
 
@@ -185,8 +198,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	@Override
-	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final boolean isCheckForDuplicateName)
-			throws RuleException {
+	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final boolean isCheckForDuplicateName,
+			Workbook workbook) throws RuleException {
+
 		final List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
 		int index = 1;
 		final TimerWatch timer = new TimerWatch("advance");
@@ -196,27 +210,21 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 
 				final List<String> names;
-				try {
-					final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, isCheckForDuplicateName);
-					names = (List<String>) this.rulesService.runRules(namingExecutionContext);
+				final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, isCheckForDuplicateName);
+				names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
-					// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
-					// reference index
-					if (row.getChangeDetail() != null) {
-						// index - 1 is used because Java uses 0-based referencing
-						row.getChangeDetail().setIndex(index - 1);
-					}
+				// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
+				// reference index
+				if (row.getChangeDetail() != null) {
+					// index - 1 is used because Java uses 0-based referencing
+					row.getChangeDetail().setIndex(index - 1);
+				}
 
-					for (final String name : names) {
-						this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
-					}
-
-				} catch (final RuleException e) {
-					NamingConventionServiceImpl.LOG.error(e.getMessage(), e);
+				for (final String name : names) {
+					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook);
 				}
 			}
 		}
-
 		timer.stop();
 		return list;
 	}
@@ -255,8 +263,40 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	}
 
-	public void setMessageSource(final ResourceBundleMessageSource messageSource) {
+	void setMessageSource(final ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
+	}
+
+	void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	void setRulesService(RulesService rulesService) {
+		this.rulesService = rulesService;
+	}
+
+	void setGermplasmDataManger(GermplasmDataManager germplasmDataManger) {
+		this.germplasmDataManger = germplasmDataManger;
+	}
+
+	void setAdvancingSourceListFactory(AdvancingSourceListFactory advancingSourceListFactory) {
+		this.advancingSourceListFactory = advancingSourceListFactory;
+	}
+
+	void setProcessCodeService(ProcessCodeService processCodeService) {
+		this.processCodeService = processCodeService;
+	}
+
+	void setRuleFactory(RuleFactory ruleFactory) {
+		this.ruleFactory = ruleFactory;
+	}
+
+	void setGermplasmOriginGenerationService(GermplasmOriginGenerationService germplasmOriginGenerationService) {
+		this.germplasmOriginGenerationService = germplasmOriginGenerationService;
+	}
+
+	void setGermplasmOriginParameterBuilder(GermplasmOriginParameterBuilder germplasmOriginParameterBuilder) {
+		this.germplasmOriginParameterBuilder = germplasmOriginParameterBuilder;
 	}
 
 }

@@ -117,7 +117,7 @@ public class ExpDesignController extends BaseTrialController {
 								expDesign.isHasMeasurementData()));
 
 						// Setting starting plot number in user selection
-						if (!Objects.isNull(expDesign.getStartingPlotNo()) && !expDesign.getStartingPlotNo().isEmpty()) {
+						if (expDesign.getStartingPlotNo() != null && !expDesign.getStartingPlotNo().isEmpty()) {
 							this.userSelection.setStartingPlotNo(Integer.parseInt(expDesign.getStartingPlotNo()));
 						} else {
 							// Default plot no will be 1 if not given

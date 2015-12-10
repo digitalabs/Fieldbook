@@ -263,7 +263,7 @@ public class ImportGermplasmListController extends SettingsController {
 		this.assignAndIncrementEntryNumberAndPlotNumber(this.userSelection, form);
 
 		//NOTE: clearing measurements if germplasm list is null
-		if(Objects.isNull(this.userSelection.getImportedGermplasmMainInfo()) && !Objects.isNull(this.userSelection.getMeasurementRowList())){
+		if(this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null){
 			this.userSelection.getMeasurementRowList().clear();
 		}
 
@@ -303,12 +303,12 @@ public class ImportGermplasmListController extends SettingsController {
 
 			//Taking entryNumber as null if not supplied
 			Integer entryNo = null;
-			if (!Objects.isNull(form.getStartingEntryNo())) {
+			if (form.getStartingEntryNo() != null) {
 				entryNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
 			}
 
 			Integer plotNo = 1;
-			if (!Objects.isNull(form.getStartingPlotNo())) {
+			if (form.getStartingPlotNo() != null) {
 				plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), 1);
 			}
 
@@ -318,7 +318,7 @@ public class ImportGermplasmListController extends SettingsController {
 			this.userSelection.setStartingPlotNo(plotNo);
 
 			// Skip applying entry number as it is null. So no change in list
-			if(Objects.isNull(entryNo)){
+			if(entryNo == null){
 				return;
 			}
 

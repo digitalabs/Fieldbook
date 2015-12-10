@@ -66,22 +66,27 @@ var TreePersist = {
 		TreePersist.preLoadTreeState(containerSection,
 				STUDY_LIST_TYPE);
 	},
-	preLoadGermplasmTreeState : function(isTreeTable, containerSection) {
+	preLoadGermplasmTreeState: function(isTreeTable, containerSection, isSaveList) {
 		'use strict';
 
 		if (isTreeTable){
-			TreePersist.preLoadTreeTableState(GERMPLASM_LIST_TYPE);
+			TreePersist.preLoadTreeTableState(GERMPLASM_LIST_TYPE, isSaveList);
 		} else {
-			TreePersist.preLoadTreeState(containerSection, STUDY_LIST_TYPE);
+			TreePersist.preLoadTreeState(containerSection, GERMPLASM_LIST_TYPE, isSaveList);
 		}
 
 	},
 
-	retrievePreviousTreeState : function(listType) {
+	retrievePreviousTreeState: function(listType, isSaveList) {
 		'use strict';
 		var deferred = $.Deferred();
+
+		if (isSaveList === undefined) {
+			isSaveList = false;
+		}
+
 		$.ajax({
-			url : '/Fieldbook/ListTreeManager/retrieve/state/' + listType,
+			url: '/Fieldbook/ListTreeManager/retrieve/state/' + listType + '/' + isSaveList,
 			type : 'GET',
 			data : '',
 			cache : false,
@@ -99,17 +104,17 @@ var TreePersist = {
 		return deferred.promise();
 	},
 
-	preLoadTreeTableState : function(listType) {
+	preLoadTreeTableState: function(listType, isSaveList) {
 		'use strict';
-		TreePersist.retrievePreviousTreeState(listType).done(function(expandedNodes) {
+		TreePersist.retrievePreviousTreeState(listType, isSaveList).done(function(expandedNodes) {
 			TreePersist.traverseNodes(expandedNodes, listType, expandGermplasmListInTreeTable);
 		});
 	},
 
-	preLoadTreeState : function(containerSection, listType) {
+	preLoadTreeState: function(containerSection, listType, isSaveList) {
 		'use strict';
-		
-		TreePersist.retrievePreviousTreeState(listType).done(function(expandedNodes){
+
+		TreePersist.retrievePreviousTreeState(listType, isSaveList).done(function(expandedNodes) {
 			var dynatree = $(containerSection).dynatree('getTree');
 			TreePersist.traverseNodes(expandedNodes, listType, function(key) {
 				var germplasmFocusNode = dynatree.getNodeByKey(key);

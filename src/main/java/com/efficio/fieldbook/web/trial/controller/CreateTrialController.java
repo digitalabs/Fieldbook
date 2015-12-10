@@ -223,7 +223,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public Boolean submit(@RequestBody final TrialData data) throws MiddlewareException {
+	public String submit(@RequestBody final TrialData data) throws MiddlewareException {
 		this.processEnvironmentData(data.getEnvironments());
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
@@ -275,7 +275,7 @@ public class CreateTrialController extends BaseTrialController {
 
 		this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), name, data.getColumnOrders(), workbook);
 
-		return true;
+		return "success";
 	}
 
 	protected TabInfo prepareGermplasmTabInfo(final boolean isClearSettings) {

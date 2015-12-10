@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.common.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +41,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
@@ -142,8 +144,8 @@ public class GermplasmTreeControllerTest {
 					.getMessage("germplasm.save.list.name.unique.error", null, LocaleContextHolder.getLocale());
 		} catch (final Exception e) {
 
-		}
-
+		}	
+		Mockito.when(this.germplasmDataManager.getPlotCodeField()).thenReturn(new UserDefinedField(1152));
 	}
 
 	private Project getProject() {

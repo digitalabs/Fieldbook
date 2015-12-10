@@ -108,6 +108,8 @@
 						'nrlatin': null,
 						'nclatin': null,
 						'replatinGroups': '',
+                        'startingPlotNo': '',
+                        'startingEntryNo' : '',
 						'hasMeasurementData': TrialManagerDataService.trialMeasurement.hasMeasurement
 					}, $scope.data);
 				}
@@ -136,10 +138,13 @@
 				// on click generate design button
 				$scope.generateDesign = function() {
 					if (!$scope.doValidate()) {
-						return;
-					}
+                        return;
+                    }
 
+                    var entryNo = $('#tableForGermplasm tr:first-child td:last-child').html();
 					var data = angular.copy($scope.data);
+                    data.startingEntryNo = entryNo;
+
 					// transform ordered has of treatment factors if existing to just the map
 					if (data && data.treatmentFactors) {
 						data.treatmentFactors = $scope.data.treatmentFactors.vals();

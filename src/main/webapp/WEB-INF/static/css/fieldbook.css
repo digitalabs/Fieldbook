@@ -759,17 +759,38 @@ div.possibleValuesDiv{
 .row{
     margin-right: 0px;
 }
+.rowForNumberingAndChecks{
+    margin-right: 0px;
+    margin-bottom: 25px;
+}
 .select2-container {
     width: 100%;
 }
+.selectcontainer5{width: 150px}
+.selectcontainer5 input{width: 150px !important;}
 .fb-build-options .select2-container{
 	width: 260px;
 }
+
+.labelForNumberingAndChecks {
+    width: 60%;
+    float: left;
+    text-align: left;
+    padding-bottom: 12px;
+}
+
 #plotLevelSettings td, #baselineTraitSettings td{
     word-wrap: break-word;
 }
 .label-bold{
     font-weight: 600;
+}
+select{ border: 1px solid #ccc;
+    border-radius: 3px;
+    color: #808080;
+    display: inline-block;
+    font-size: 13px;
+    line-height: 18px;    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) inset;   padding: 4px;
 }
 
 .trialEnvironmentDiv{
@@ -1365,7 +1386,20 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
     font-size: 13px;
     font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
 }
-
+input.inputForNumberingAndChecks {
+    display: inline-block;
+    padding: 4px;
+    font-size: 13px;
+    line-height: 18px;
+    color: #808080;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;width: 50px;margin-left: 10px;
+    margin-bottom: 8px;
+    width: 15%;
+    text-align: left;
+}
 .select2-dropdown-open.select2-drop-above [class^="select2-choice"] {
     border-bottom-right-radius: 4px !important;
     border-bottom-left-radius: 4px !important;

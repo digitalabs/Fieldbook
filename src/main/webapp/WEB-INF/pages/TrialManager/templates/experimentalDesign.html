@@ -44,6 +44,16 @@
                 <div class="col-md-12 add-bottom-padding" ng-hide="toggleDesignView()">
 					<label class="control-label">Or <a class="import-design" onclick="ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());">import</a> an experimental design.</label>
 				</div>
+
+                <div style="margin-bottom: 25px; margin-top: 25px; margin-left:12px;">
+                    <section-container heading="SPECIFY PLOT NUMBERING">
+                        <div name="content">
+                            <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
+                            <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" />
+                            <input type="hidden" id="txtStartingEntryNo" ng-model="data.startingEntryNo" />
+                        </div>
+                    </section-container>
+                </div>
             </div>
 
         </section-container>
@@ -107,3 +117,48 @@
     <div id="measurementsDivTemp">
     </div>
 </form>
+
+<script type="text/javascript" th:inline="javascript">
+    var plotNoMaxLimitExceeded = /*[[#{germplasm.list.plot.no.should.not.exceed.five.digits}]]*/ '',
+            plotNoNonNumericValueNotSupported = /*[[#{germplasm.list.plot.no.non.numeric.value.is.not.supported}]]*/ '';
+
+    function validateAndSetPlotNo() {
+        var customMessage = '';
+        var plotNo = $.trim($("#txtStartingPlotNo").val());
+        if(plotNo != '') {
+            if (validatePlotNo(plotNo)) {
+                if (validatePlotNoAsMaxDigits(plotNo)) {
+                    customMessage = plotNoMaxLimitExceeded;
+                }
+            } else {
+                customMessage = plotNoNonNumericValueNotSupported;
+            }
+
+            if (customMessage != '') {
+                showInvalidInputMessage(customMessage);
+                $("#txtStartingPlotNo").val('');
+            }
+        } else {
+            // Set starting plot number back to blank if starting plot number is only white spaces
+            $("#txtStartingPlotNo").val('');
+        }
+    }
+
+    // Validate plot number if it is non-numeric
+    function validatePlotNo(inputNo) {
+        var validNo = /^\d+$/;
+        if (inputNo.match(validNo)) {
+            return true;
+        }
+        return false;
+    }
+
+    // Validate plot number if it exceeds 5 digits
+    function validatePlotNoAsMaxDigits(inputNo) {
+        if (inputNo.length > 5) {
+            return true;
+        }
+        return false;
+    }
+
+</script>

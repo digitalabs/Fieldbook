@@ -50,6 +50,7 @@ public class ExpDesignUtil {
 	public static final String NBLATIN_PARAM = "nblatin";
 	public static final String REPLICATEFACTOR_PARAM = "replicatefactor";
 	public static final String TREATMENTFACTOR_PARAM = "treatmentfactor";
+	public static final String INITIAL_TREATMENT_NUMBER_PARAM = "initialtreatnum";
 	public static final String NREPLICATES_PARAM = "nreplicates";
 	public static final String NTREATMENTS_PARAM = "ntreatments";
 	public static final String BLOCKSIZE_PARAM = "blocksize";
@@ -57,6 +58,7 @@ public class ExpDesignUtil {
 	public static final String LEVELS_PARAM = "levels";
 	public static final String TREATMENTFACTORS_PARAM = "treatmentfactors";
 	public static final String PLOTFACTOR_PARAM = "plotfactor";
+	public static final String INITIAL_PLOT_NUMBER_PARAM = "initialplotnum";
 	public static final String BLOCKFACTOR_PARAM = "blockfactor";
 	public static final String NBLOCKS_PARAM = "nblocks";
 	public static final String OUTPUTFILE_PARAM = "outputfile";
@@ -95,16 +97,19 @@ public class ExpDesignUtil {
 		return designParam;
 	}
 
-	public static MainDesign createRandomizedCompleteBlockDesign(String nBlock, String blockFactor, String plotFactor,
+	public static MainDesign createRandomizedCompleteBlockDesign(String nBlock, String blockFactor, String plotFactor, Integer initialPlotNumber,
 			List<String> treatmentFactor, List<String> levels, String outputfile) {
 
 		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
-		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
+		String plotNumberStrValue = (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
+
+		List<ExpDesignParameter> paramList = new ArrayList<>();
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.SEED_PARAM, "", null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NBLOCKS_PARAM, nBlock, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.BLOCKFACTOR_PARAM, blockFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.PLOTFACTOR_PARAM, plotFactor, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM, plotNumberStrValue, null));
 		List<ListItem> itemsTreatmentFactor = new ArrayList<ListItem>();
 		List<ListItem> itemsLevels = new ArrayList<ListItem>();
 		if (treatmentFactor != null) {
@@ -131,10 +136,12 @@ public class ExpDesignUtil {
 	}
 
 	public static MainDesign createResolvableIncompleteBlockDesign(String blockSize, String nTreatments, String nReplicates,
-			String treatmentFactor, String replicateFactor, String blockFactor, String plotFactor, String nBlatin, String replatingGroups,
-			String outputfile, boolean useLatinize) {
+			String treatmentFactor, String replicateFactor, String blockFactor, String plotFactor, Integer initialPlotNumber,
+			Integer initialEntryNumber, String nBlatin, String replatingGroups, String outputfile, boolean useLatinize) {
 
 		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
+
+		String plotNumberStrValue = (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
 
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.SEED_PARAM, "", null));
@@ -142,9 +149,18 @@ public class ExpDesignUtil {
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NTREATMENTS_PARAM, nTreatments, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NREPLICATES_PARAM, nReplicates, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.TREATMENTFACTOR_PARAM, treatmentFactor, null));
+
+		if(initialEntryNumber != null){
+			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_TREATMENT_NUMBER_PARAM, String.valueOf(initialEntryNumber), null));
+		}
+
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.REPLICATEFACTOR_PARAM, replicateFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.BLOCKFACTOR_PARAM, blockFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.PLOTFACTOR_PARAM, plotFactor, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM, plotNumberStrValue, null));
+
+
+
 		if (useLatinize) {
 			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NBLATIN_PARAM, nBlatin, null));
 			// we add the string tokenize replating groups
@@ -168,10 +184,12 @@ public class ExpDesignUtil {
 	}
 
 	public static MainDesign createResolvableRowColDesign(String nTreatments, String nReplicates, String nRows, String nColumns,
-			String treatmentFactor, String replicateFactor, String rowFactor, String columnFactor, String plotFactor, String nrLatin,
-			String ncLatin, String replatingGroups, String outputfile, Boolean useLatinize) {
+			String treatmentFactor, String replicateFactor, String rowFactor, String columnFactor, String plotFactor, Integer initialPlotNumber,
+			Integer initialEntryNumber, String nrLatin, String ncLatin, String replatingGroups, String outputfile, Boolean useLatinize) {
 
 		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
+
+		String plotNumberStrValue = (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
 
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.SEED_PARAM, "", null));
@@ -180,10 +198,16 @@ public class ExpDesignUtil {
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NROWS_PARAM, nRows, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NCOLUMNS_PARAM, nColumns, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.TREATMENTFACTOR_PARAM, treatmentFactor, null));
+
+		if(initialEntryNumber != null){
+			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_TREATMENT_NUMBER_PARAM, String.valueOf(initialEntryNumber), null));
+		}
+
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.REPLICATEFACTOR_PARAM, replicateFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.ROWFACTOR_PARAM, rowFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.COLUMNFACTOR_PARAM, columnFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.PLOTFACTOR_PARAM, plotFactor, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM, plotNumberStrValue, null));
 		if (useLatinize != null && useLatinize.booleanValue()) {
 			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NRLATIN_PARAM, nrLatin, null));
 			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NCLATIN_PARAM, ncLatin, null));
@@ -233,7 +257,7 @@ public class ExpDesignUtil {
 
 	public static MeasurementRow createMeasurementRow(List<MeasurementVariable> headerVariable, ImportedGermplasm germplasm,
 			Map<String, String> bvEntryMap, Map<String, List<String>> treatmentFactorValues, List<MeasurementVariable> trialVariables,
-			int trialNo, List<MeasurementVariable> factors, String entryNo) {
+			int trialNo) {
 		MeasurementRow measurementRow = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
 		MeasurementData treatmentLevelData = null;
@@ -252,7 +276,7 @@ public class ExpDesignUtil {
 			Integer termId = var.getTermId();
 
 			if (termId.intValue() == TermId.ENTRY_NO.getId()) {
-				measurementData = new MeasurementData(var.getName(), entryNo, false, var.getDataType(), var);
+				measurementData = new MeasurementData(var.getName(), String.valueOf(germplasm.getEntryId()), false, var.getDataType(), var);
 			} else if (termId.intValue() == TermId.SOURCE.getId() || termId.intValue() == TermId.GERMPLASM_SOURCE.getId()) {
 				measurementData =
 						new MeasurementData(var.getName(), germplasm.getSource() != null ? germplasm.getSource() : "", false,
@@ -376,8 +400,8 @@ public class ExpDesignUtil {
 		varList.addAll(variates);
 
 		int trialInstanceStart = environments - environmentsToAdd + 1;
-		for (int i = trialInstanceStart; i <= environments; i++) {
-			int trialNo = i;
+		for (int trialNo = trialInstanceStart; trialNo <= environments; trialNo++) {
+
 			BVDesignOutput bvOutput = null;
 			try {
 				bvOutput = fieldbookService.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
@@ -385,27 +409,27 @@ public class ExpDesignUtil {
 				ExpDesignUtil.LOG.error(e.getMessage(), e);
 				throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
 			}
-			if (bvOutput != null && bvOutput.isSuccess()) {
-				for (int counter = 0; counter < bvOutput.getBvResultList().size(); counter++) {
-					String entryNo = bvOutput.getEntryValue(entryNumberIdentifier, counter);
-					if (NumberUtils.isNumber(entryNo)) {
-						int germplasmIndex = Integer.valueOf(entryNo) - 1;
-						if (germplasmIndex >= 0 && germplasmIndex < germplasmList.size()) {
-							ImportedGermplasm importedGermplasm = germplasmList.get(germplasmIndex);
-							try {
-								MeasurementRow row =
-										ExpDesignUtil.createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter),
-												treatmentFactorValues, trialVariables, trialNo, factors, entryNo);
-								measurementRowList.add(row);
-							} catch (MiddlewareQueryException e) {
-								ExpDesignUtil.LOG.error(e.getMessage(), e);
-							}
 
+			if (bvOutput == null || !bvOutput.isSuccess()) {
+				throw new BVDesignException("experiment.design.generate.generic.error");
+			}
+
+			for (int counter = 0; counter < bvOutput.getBvResultList().size(); counter++) {
+				String entryNo = bvOutput.getEntryValue(entryNumberIdentifier, counter);
+				if (NumberUtils.isNumber(entryNo)) {
+					int germplasmIndex = Integer.valueOf(entryNo) - 1;
+					if (germplasmIndex >= 0 && germplasmIndex < germplasmList.size()) {
+						ImportedGermplasm importedGermplasm = germplasmList.get(germplasmIndex);
+						try {
+							MeasurementRow row = ExpDesignUtil.createMeasurementRow(varList, importedGermplasm,
+									bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo);
+							measurementRowList.add(row);
+						} catch (MiddlewareQueryException e) {
+							ExpDesignUtil.LOG.error(e.getMessage(), e);
 						}
+
 					}
 				}
-			} else {
-				throw new BVDesignException("experiment.design.generate.generic.error");
 			}
 
 		}

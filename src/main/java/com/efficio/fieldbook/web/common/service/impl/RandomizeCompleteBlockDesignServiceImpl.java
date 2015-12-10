@@ -1,7 +1,15 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -62,15 +70,15 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			List<MeasurementVariable> trialVariables, List<MeasurementVariable> factors, List<MeasurementVariable> nonTrialFactors,
 			List<MeasurementVariable> variates, List<TreatmentVariable> treatmentVariables) throws BVDesignException {
 
-		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
+		List<MeasurementRow> measurementRowList = new ArrayList<>();
 		String block = parameter.getReplicationsCount();
 		int environments = Integer.valueOf(parameter.getNoOfEnvironments());
 		int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
 
 		try {
 
-			List<String> treatmentFactor = new ArrayList<String>();
-			List<String> levels = new ArrayList<String>();
+			List<String> treatmentFactor = new ArrayList<>();
+			List<String> levels = new ArrayList<>();
 
 			// Key - CVTerm ID , List of values
 			Map<String, List<String>> treatmentFactorValues = new HashMap<String, List<String>>();
@@ -91,7 +99,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					if (pairVarObj instanceof String) {
 						pairVar = (String) pairVarObj;
 					} else {
-						pairVar = ((Integer) pairVarObj).toString();
+						pairVar = pairVarObj.toString();
 					}
 					if (key != null && NumberUtils.isNumber(key) && pairVar != null && NumberUtils.isNumber(pairVar)) {
 						int treatmentPair1 = Integer.parseInt(key);
@@ -152,15 +160,22 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 				}
 			}
 
+			Integer plotNo = this.userSelection.getStartingPlotNo();
+
 			MainDesign mainDesign =
-					ExpDesignUtil.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), treatmentFactor,
-							levels, "");
+					ExpDesignUtil.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, treatmentFactor, levels, "");
 
 			measurementRowList =
 					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
 							variates, treatmentVariables, reqVarList, germplasmList, mainDesign, this.workbenchService,
 							this.fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues, this.fieldbookService);
 
+			if (plotNo != null) {
+				for (MeasurementRow measurementRow : measurementRowList) {
+					measurementRow.getDataList().get(6).setValue(plotNo.toString());
+					plotNo++;
+				}
+			}
 		} catch (BVDesignException e) {
 			throw e;
 		} catch (Exception e) {
@@ -172,7 +187,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 
 	@Override
 	public List<StandardVariable> getRequiredVariable() {
-		List<StandardVariable> varList = new ArrayList<StandardVariable>();
+		List<StandardVariable> varList = new ArrayList<>();
 		try {
 			StandardVariable stdvarRep = this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(),
 					contextUtil.getCurrentProgramUUID());

@@ -339,11 +339,11 @@ public class EditNurseryController extends SettingsController {
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	void assignDefaultValues(final CreateNurseryForm form) throws MiddlewareException {
-		List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
-		List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
-		List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
-		final List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
-		final List<SettingDetail> nurseryConditions = new ArrayList<SettingDetail>();
+		List<SettingDetail> basicDetails = new ArrayList<>();
+		List<SettingDetail> nurseryDefaults = new ArrayList<>();
+		List<SettingDetail> plotDefaults = new ArrayList<>();
+		final List<SettingDetail> baselineTraitsList = new ArrayList<>();
+		final List<SettingDetail> nurseryConditions = new ArrayList<>();
 
 		basicDetails =
 				this.buildDefaultVariables(basicDetails, AppConstants.FIXED_NURSERY_VARIABLES.getString(),
@@ -419,7 +419,7 @@ public class EditNurseryController extends SettingsController {
 		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
 		this.userSelection.setWorkbook(workbook);
 
-		final Map<String, String> resultMap = new HashMap<String, String>();
+		final Map<String, String> resultMap = new HashMap<>();
 		// saving of measurement rows
 		if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
 			this.saveMeasurementRows(form, trialDatasetId, workbook, resultMap);
@@ -718,7 +718,7 @@ public class EditNurseryController extends SettingsController {
 	@RequestMapping(value = "/checkMeasurementData/{mode}/{variableIds}", method = RequestMethod.GET)
 	public Map<String, String> checkMeasurementData(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
 			@PathVariable final int mode, @PathVariable final String variableIds) {
-		final Map<String, String> resultMap = new HashMap<String, String>();
+		final Map<String, String> resultMap = new HashMap<>();
 
 		// if there are measurement rows, check if values are already entered
 		if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()
@@ -785,7 +785,7 @@ public class EditNurseryController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = "/deleteMeasurementRows", method = RequestMethod.POST)
 	public Map<String, String> deleteMeasurementRows() {
-		final Map<String, String> resultMap = new HashMap<String, String>();
+		final Map<String, String> resultMap = new HashMap<>();
 
 		try {
 			this.fieldbookMiddlewareService.deleteObservationsOfStudy(this.userSelection.getWorkbook().getMeasurementDatesetId());
@@ -810,7 +810,7 @@ public class EditNurseryController extends SettingsController {
 			EditNurseryController.LOG.error(e.getMessage(), e);
 		}
 
-		return new ArrayList<UserDefinedField>();
+		return new ArrayList<>();
 	}
 
 	@ModelAttribute("programLocationURL")

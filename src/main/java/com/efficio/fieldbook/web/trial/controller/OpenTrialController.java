@@ -253,7 +253,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("trialSettingsData", this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
 		model.addAttribute("measurementsData", this.prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
 		model.addAttribute("experimentalDesignData",
-				this.prepareExperimentalDesignTabInfo(trialWorkbook.getExperimentalDesignVariables(), false));
+				this.prepareExperimentalDesignTabInfo(trialWorkbook, false));
 		model.addAttribute(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(
 				trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
 		model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());

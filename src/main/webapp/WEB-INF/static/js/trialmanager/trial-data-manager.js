@@ -234,6 +234,7 @@
 					unsavedTraitsAvailable: false,
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
+                    hasGeneratedDesignPreset: false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0
 				},
 
@@ -275,6 +276,39 @@
 				generateExpDesign: function(data) {
 					return GenerateExpDesignService.save(data).$promise;
 				},
+                
+                updateAfterGeneratingDesignSuccessfully : function(){
+					service.clearUnappliedChangesFlag();
+					service.applicationData.unsavedGeneratedDesign = true;
+					$('#chooseGermplasmAndChecks').data('replace', '1');
+					$('body').data('expDesignShowPreview', '1');
+				},
+                
+                generatePresetExpDesign: function(designType) {
+                	var deferred = $q.defer();
+                	
+					var environmentData = angular.copy(service.currentData.environments);
+
+					_.each(environmentData.environments, function(data, key) {
+						_.each(data.managementDetailValues, function(value, key) {
+							if (value && value.id) {
+								data.managementDetailValues[key] = value.id;
+							}
+						});
+					});
+					
+					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements/'+designType, JSON.stringify(environmentData)).then(function(resp){
+						if (!resp.data.isSuccess) {
+							deferred.reject(resp.data);
+							return;
+						}
+						service.updateCurrentData('environments', environmentData);
+						
+						deferred.resolve(true);
+					});
+					
+					return deferred.promise;
+                },
 
 				refreshMeasurementTableAfterDeletingEnvironment: function() {
 					var noOfEnvironments = service.currentData.environments.noOfEnvironments;
@@ -282,18 +316,30 @@
 					//update the no of environments in experimental design tab
 					data.noOfEnvironments = noOfEnvironments;
 
-					service.generateExpDesign(data).then(
-						function(response) {
-							if (response.valid === true) {
-								service.clearUnappliedChangesFlag();
-								service.applicationData.unsavedGeneratedDesign = true;
-								$('#chooseGermplasmAndChecks').data('replace', '1');
-								$('body').data('expDesignShowPreview', '1');
-							} else {
-								showErrorMessage('', response.message);
-							}
-						}
-					);
+                    
+                    if (service.currentData.experimentalDesign.designType >= 4){
+                    	service.generatePresetExpDesign(service.currentData.experimentalDesign.designType).then(function(){
+                    		service.updateAfterGeneratingDesignSuccessfully();
+                    		service.applicationData.hasGeneratedDesignPreset = true;
+                    	});
+                    }else{
+                    	
+                    	  service.generateExpDesign(data).then(
+                                  function (response) {
+                                      if (response.valid === true) {
+                                          service.clearUnappliedChangesFlag();
+                                          service.applicationData.unsavedGeneratedDesign = true;
+                                          $('#chooseGermplasmAndChecks').data('replace', '1');
+                                          $('body').data('expDesignShowPreview', '1');
+                                      } else {
+                                          showErrorMessage('', response.message);
+                                      }
+                                  }
+                              );
+                    	
+                    }
+                    
+                  
 				},
 
 				isOpenTrial: function() {

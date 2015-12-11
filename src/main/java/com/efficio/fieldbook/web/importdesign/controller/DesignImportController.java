@@ -39,6 +39,7 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.util.ResourceFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -58,6 +59,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
+import com.efficio.fieldbook.web.importdesign.constant.PresetDesignType;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
@@ -98,6 +100,8 @@ public class DesignImportController extends SettingsController {
 	public static final String URL = "/DesignImport";
 
 	public static final String REVIEW_DETAILS_PAGINATION_TEMPLATE = "/DesignImport/reviewDetailsPagination";
+
+	public static final String DESIGN_TEMPLATE_FOLDER = "DesignPresets";
 
 	@Resource
 	private DesignImportParser parser;
@@ -258,7 +262,7 @@ public class DesignImportController extends SettingsController {
 		List<MeasurementRow> measurementRows = new ArrayList<>();
 
 		try {
-			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false);
+			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false, false);
 		} catch (final DesignValidationException e) {
 			DesignImportController.LOG.error(e.getMessage(), e);
 		}
@@ -408,61 +412,10 @@ public class DesignImportController extends SettingsController {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
-		this.processEnvironmentData(environmentData);
-
 		try {
 
-			this.checkTheDeletedSettingDetails(this.userSelection, this.userSelection.getDesignImportData());
-
-			this.initializeTemporaryWorkbook(this.userSelection.getTemporaryWorkbook().getStudyDetails().getStudyType().name());
-
-			final Workbook workbook = this.userSelection.getTemporaryWorkbook();
-			final DesignImportData designImportData = this.userSelection.getDesignImportData();
-
-			this.removeExperimentDesignVariables(workbook.getFactors());
-
-			List<MeasurementRow> measurementRows;
-			Set<MeasurementVariable> measurementVariables;
-			Set<StandardVariable> expDesignVariables;
-			Set<MeasurementVariable> experimentalDesignMeasurementVariables;
-
-			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false);
-
-			workbook.setObservations(measurementRows);
-
-			measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData, false);
-
-			workbook.setMeasurementDatasetVariables(new ArrayList<>(measurementVariables));
-
-			expDesignVariables = this.designImportService.getDesignRequiredStandardVariables(workbook, designImportData);
-
-			workbook.setExpDesignVariables(new ArrayList<>(expDesignVariables));
-
-			experimentalDesignMeasurementVariables =
-					this.designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
-
-			this.userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
-
-			// Only for Trial
-			this.addFactorsIfNecessary(workbook, designImportData);
-
-			// Only for Nursery
-			this.addConditionsIfNecessary(workbook, designImportData);
-
-			this.addVariates(workbook, designImportData);
-
-			this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables);
-
-			// Only for Trial
-			this.populateTrialLevelVariableListIfNecessary(workbook);
-
-			// Only for Nursery
-			this.populateStudyLevelVariableListIfNecessary(workbook, environmentData, designImportData);
-
-			this.createTrialObservations(environmentData, workbook, designImportData);
-
-			// Only for Nursery
-			this.resetCheckList(workbook, this.userSelection);
+			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
+					.getStudyDetails().getStudyType(), false, 3, 0);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -478,6 +431,102 @@ public class DesignImportController extends SettingsController {
 		}
 
 		return resultsMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/generatePresetMeasurements/{presetId}", method = RequestMethod.POST,
+			produces = "application/json; charset=utf-8")
+	public Map<String, Object> generatePresetMeasurements(@PathVariable final int presetId,
+			@RequestBody final EnvironmentData environmentData) {
+
+		final Map<String, Object> resultsMap = new HashMap<>();
+
+		try {
+
+			DesignImportData designImportData = null;
+			int replicationsCount = 0;
+			final PresetDesignType presetDesignType = PresetDesignType.getPresetDesignTypeById(presetId);
+			if (presetDesignType != null) {
+				designImportData = this.parser.parseFile(ResourceFinder.locateFile(presetDesignType.getTemplateName()).getFile());
+				replicationsCount = presetDesignType.getNumberOfReps();
+			}
+
+			this.performAutomap(designImportData);
+
+			this.generateDesign(environmentData, designImportData, StudyType.T, true, presetId, replicationsCount);
+
+			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
+			resultsMap.put("environmentData", environmentData);
+			resultsMap.put("environmentSettings", this.userSelection.getTrialLevelVariableList());
+
+		} catch (final Exception e) {
+
+			DesignImportController.LOG.error(e.getMessage(), e);
+
+			resultsMap.put(DesignImportController.IS_SUCCESS, 0);
+			// error messages is still in .prop format,
+			resultsMap.put(DesignImportController.ERROR, new String[] {e.getMessage()});
+		}
+
+		return resultsMap;
+
+	}
+
+	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
+			final StudyType studyType, final boolean isPreset, final int designTypeId, final int replicationsCount)
+			throws DesignValidationException {
+
+		this.processEnvironmentData(environmentData);
+
+		this.checkTheDeletedSettingDetails(this.userSelection, designImportData);
+
+		this.initializeTemporaryWorkbook(studyType.name());
+
+		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
+
+		this.removeExperimentDesignVariables(workbook.getFactors());
+
+		List<MeasurementRow> measurementRows;
+		Set<MeasurementVariable> measurementVariables;
+		Set<StandardVariable> expDesignVariables;
+		Set<MeasurementVariable> experimentalDesignMeasurementVariables;
+
+		measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false, isPreset);
+
+		workbook.setObservations(measurementRows);
+
+		measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData, false);
+
+		workbook.setMeasurementDatasetVariables(new ArrayList<>(measurementVariables));
+
+		expDesignVariables = this.designImportService.getDesignRequiredStandardVariables(workbook, designImportData);
+
+		workbook.setExpDesignVariables(new ArrayList<>(expDesignVariables));
+
+		experimentalDesignMeasurementVariables = this.designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
+
+		this.userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
+
+		// Only for Trial
+		this.addFactorsIfNecessary(workbook, designImportData);
+
+		// Only for Nursery
+		this.addConditionsIfNecessary(workbook, designImportData);
+
+		this.addVariates(workbook, designImportData);
+
+		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeId, replicationsCount);
+
+		// Only for Trial
+		this.populateTrialLevelVariableListIfNecessary(workbook);
+
+		// Only for Nursery
+		this.populateStudyLevelVariableListIfNecessary(workbook, environmentData, designImportData);
+
+		this.createTrialObservations(environmentData, workbook, designImportData);
+
+		// Only for Nursery
+		this.resetCheckList(workbook, this.userSelection);
 	}
 
 	/**
@@ -636,28 +685,37 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void addExperimentDesign(final Workbook workbook, final Set<MeasurementVariable> experimentalDesignMeasurementVariables) {
+	protected void addExperimentDesign(final Workbook workbook, final Set<MeasurementVariable> experimentalDesignMeasurementVariables,
+			final int designTypeId, final int replicationsCount) {
 
 		final ExpDesignParameterUi designParam = new ExpDesignParameterUi();
-		designParam.setDesignType(3);
+		designParam.setDesignType(designTypeId);
+		if (replicationsCount != 0) {
+			designParam.setReplicationsCount(Integer.toString(replicationsCount));
+		}
 
 		final List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
+		final PresetDesignType presetDesignType = PresetDesignType.getPresetDesignTypeById(designTypeId);
+		if (presetDesignType != null && presetDesignType.getNumberOfReps() > 0) {
+			expDesignTermIds.add(TermId.NUMBER_OF_REPLICATES.getId());
+		}
 
 		this.userSelection.setExpDesignParams(designParam);
 		this.userSelection.setExpDesignVariables(expDesignTermIds);
 
-		final TermId termId = TermId.getById(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
-
-		SettingsUtil.addTrialCondition(termId, designParam, workbook, this.fieldbookMiddlewareService, this.getCurrentProject()
-				.getUniqueID());
+		for (final Integer ontologyId : expDesignTermIds) {
+			final TermId termId = TermId.getById(ontologyId);
+			SettingsUtil.addTrialCondition(termId, designParam, workbook, this.fieldbookMiddlewareService, this.getCurrentProject()
+					.getUniqueID());
+		}
 
 		workbook.getFactors().addAll(experimentalDesignMeasurementVariables);
 
 		final ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
 		if (expDesignVar != null && expDesignVar.getExperimentalDesign() != null) {
 			for (final MeasurementVariable mvar : workbook.getConditions()) {
-				if (mvar.getTermId() == termId.getId()) {
+				if (expDesignTermIds.contains(mvar.getTermId())) {
 					mvar.setOperation(Operation.UPDATE);
 				}
 			}
@@ -807,6 +865,8 @@ public class DesignImportController extends SettingsController {
 
 		for (final MeasurementVariable trialCondition : workbook.getTrialConditions()) {
 			if (trialCondition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
+				trialVariables.add(trialCondition);
+			} else if (trialCondition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()) {
 				trialVariables.add(trialCondition);
 			}
 		}

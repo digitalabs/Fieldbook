@@ -168,6 +168,9 @@ public class UserSelection implements Serializable {
 
 	List<InventoryDetails> previousInventoryDetails;
 
+	private Integer startingEntryNo;
+	private Integer startingPlotNo;
+
 	/**
 	 * Gets the current page germplasm list.
 	 *
@@ -947,5 +950,21 @@ public class UserSelection implements Serializable {
 
 	public String getEscapedStudyName() {
 		return HtmlUtils.htmlUnescape(this.getWorkbook().getStudyDetails().getStudyName());
+	}
+
+	public Integer getStartingEntryNo() {
+		return startingEntryNo;
+	}
+
+	public void setStartingEntryNo(Integer startingEntryNo) {
+		this.startingEntryNo = startingEntryNo;
+	}
+
+	public Integer getStartingPlotNo() {
+		return startingPlotNo;
+	}
+
+	public void setStartingPlotNo(Integer startingPlotNo) {
+		this.startingPlotNo = startingPlotNo;
 	}
 }

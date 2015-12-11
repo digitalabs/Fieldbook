@@ -13,7 +13,7 @@
 	<!-- case 2: advanced view of the importedGermplasm -->
 	<div th:if="*{importedGermplasm != null and not #lists.isEmpty(importedGermplasm)}">
 		<div class="germplasm-list-table-old fbk-hide-opacity germplasm-list-data-table" th:if="*{importedGermplasmMainInfo.isAdvanceImportType()}">
-			<table th:if="*{not #lists.isEmpty(importedGermplasm)}" width="100%"
+			<table id="tableForGermplasm" th:if="*{not #lists.isEmpty(importedGermplasm)}" width="100%"
 			class="table-curved table-condensed germplasm-list-items check-table-popover">
 				<thead>
 					<tr>
@@ -46,6 +46,52 @@
 
 	<br/>
 
+    <div class="rowForNumberingAndChecks">
+        <div id="specify-numbering-section"> <img th:src="@{/static/img/review-list-details.png}" />
+            <!-- Section for Specify Numbering -->
+            <label class="control-label"><strong id="specifynumbering" class="sub-content-heading" th:text="#{germplasm.list.specify.numbering}">Specify Numbering</strong></label>
+
+            <div class="form-group">
+                <div class="col-xs-5">
+                    <!-- The following label and input box will be displayed for both Nursery & Trial -->
+                    <label class="control-label-bold labelForNumberingAndChecks" id="startingEntryNumber" th:text="#{germplasm.list.specify.starting.entry.number}">Specify Starting Entry Number</label>
+                    <input class="inputForNumberingAndChecks" id="txtStartingEntryNo" rows="1" th:field="*{startingEntryNo}" onchange="validateAndSetEntryNo()" disabled="disabled"
+                           title="Click Replace button to edit entry number" />
+                </div>
+
+                <div class="col-xs-6" th:if="${type == 'N'}">
+                    <!-- Display this section for Nursery only -->
+                    <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}" style="margin-right: 36px;">Specify Starting Plot Number</label>
+                    <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" rows="1" th:field="*{startingPlotNo}" onchange="validateAndSetPlotNo()" disabled="disabled"
+                           title="Click Replace button to edit plot number" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The following section will be done in BMS-1666 -->
+    <!--<div class="rowForNumberingAndChecks" th:if="${type == 'N'}">
+        &lt;!&ndash; Display this section for Nursery only &ndash;&gt;
+        <div id="specify-checks-section"> <img th:src="@{/static/img/review-list-details.png}" />
+            &lt;!&ndash; Section for Specify Checks &ndash;&gt;
+            <label class="control-label"><strong id="specifychecks" class="sub-content-heading" th:text="#{germplasm.list.specify.checks}">Specify Checks</strong></label>
+
+            <div class="form-group">
+                <div class="col-xs-5">
+                    <label class="control-label-bold labelForNumberingAndChecks"><span th:utext="#{germplasm.list.specify.position.where.first.check.will.be.inserted}"></span></label>
+                    <input class="inputForNumberingAndChecks" id="txtFirstCheckPosition" rows="1" value="1" />
+
+                    <label class="control-label-bold"><span th:utext="#{germplasm.list.specify.number.of.entries.between.checks}"></span></label>
+                    <input class="inputForNumberingAndChecks" id="txtNoOfEntriesBetweenChecks" rows="1" />
+                </div>
+                <div class="col-xs-7">
+                    <label class="control-label control-label-bold"><span th:utext="#{germplasm.list.choose.how.checks.should.be.inserted}"></span></label>
+                    <select class="selectcontainer5"><option value="">Please Choose</option></select>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
 </form>
 
 </div>
@@ -70,5 +116,96 @@ $(document).ready(function() {
 	}
 
 });
+
+
+function validateAndSetEntryNo() {
+    var customMessage = '';
+    var entryNo = $.trim($("#txtStartingEntryNo").val());
+    if (entryNo != '') {
+        if (validateEntryAndPlotNo(entryNo)) {
+            if (validateEntryNoPlotNoAsMaxDigits(entryNo)) {
+                customMessage = entryNoMaxLimitExceeded;
+            }
+        } else {
+            customMessage = entryNoNonNumericValueNotSupported;
+        }
+
+        if (customMessage != '') {
+            showInvalidInputMessage(customMessage);
+            $("#txtStartingEntryNo").val('');
+        } else {
+            if (isNursery()) {
+                $("#tableForGermplasm tbody tr").each(function (index, value) {
+                    $(this).find('td:eq(1)').text(entryNo++);
+                });
+                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+                        'To update the Measurements table, please save the Nursery', 10000);
+            } else {
+                $("#tableForGermplasm tbody tr").each(function (index, value) {
+                    $(this).find('td:eq(3)').text(entryNo++);
+                });
+                setUnappliedChangesAvailable();
+                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+                        'To update the Measurements table, please review your settings and regenerate ' +
+                        'the Experimental Design', 10000);
+            }
+        }
+    } else {
+        // Set starting entry number back to blank if starting entry number is only white spaces
+        $("#txtStartingEntryNo").val('');
+    }
+}
+
+// Validate Germplasm entry number and plot number if it is non-numeric
+function validateEntryAndPlotNo(inputNo) {
+    var validNo = /^\d+$/;
+    if (inputNo.match(validNo)) {
+        return true;
+    }
+    return false;
+}
+
+// Validate Germplasm entry number and plot number if it exceeds 5 digits
+function validateEntryNoPlotNoAsMaxDigits(inputNo) {
+    if (inputNo.length > 5) {
+        return true;
+    }
+    return false;
+}
+
+function validateAndSetPlotNo() {
+    var customMessage = '';
+    var plotNo = $.trim($("#txtStartingPlotNo").val());
+    if(plotNo != '') {
+        if (validateEntryAndPlotNo(plotNo)) {
+            if (validateEntryNoPlotNoAsMaxDigits(plotNo)) {
+                customMessage = plotNoMaxLimitExceeded;
+            }
+        } else {
+            customMessage = plotNoNonNumericValueNotSupported;
+        }
+
+        if (customMessage != '') {
+            showInvalidInputMessage(customMessage);
+            $("#txtStartingPlotNo").val('');
+        } else {
+            if (isNursery()) {
+                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+                        'To update the Measurements table, please save the Nursery', 10000);
+            } else {
+                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+                        'To update the Measurements table, please save the Trial', 10000);
+            }
+        }
+    } else {
+        // Set starting plot number back to blank if starting plot number is only white spaces
+        $("#txtStartingPlotNo").val('');
+    }
+}
+
+function setUnappliedChangesAvailable() {
+    var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
+    trialManager.setUnappliedChangesAvailable();
+}
 //]]>
 </script>

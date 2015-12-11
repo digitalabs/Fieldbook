@@ -27,6 +27,8 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String nblatin;
 	private String replatinGroups;
 	private boolean hasMeasurementData;
+	private String startingPlotNo;
+	private String startingEntryNo;
 	/*
 	 * 1 - single col 2 - single row 3 - adjacent
 	 */
@@ -176,4 +178,19 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		this.hasMeasurementData = hasMeasurementData;
 	}
 
+	public String getStartingPlotNo() {
+		return startingPlotNo;
+	}
+
+	public void setStartingPlotNo(String startingPlotNo) {
+		this.startingPlotNo = startingPlotNo;
+	}
+
+	public String getStartingEntryNo() {
+		return startingEntryNo;
+	}
+
+	public void setStartingEntryNo(String startingEntryNo) {
+		this.startingEntryNo = startingEntryNo;
+	}
 }

@@ -10,18 +10,18 @@ import org.generationcp.middleware.pojos.ListDataProject;
 
 public class ListDataProjectUtil {
 
-	public static List<ListDataProject> createListDataProject(List<ImportedGermplasm> importedGermplasmList) {
+	public static List<ListDataProject> createListDataProject(List<ImportedGermplasm> projectGermplasmList) {
 
-		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
-		if (importedGermplasmList != null && !importedGermplasmList.isEmpty()) {
+		List<ListDataProject> listDataProject = new ArrayList<>();
+		if (projectGermplasmList != null && !projectGermplasmList.isEmpty()) {
 			// need a copy of the germplasm list and save
-			for (ImportedGermplasm aData : importedGermplasmList) {
+			for (ImportedGermplasm aData : projectGermplasmList) {
 				ListDataProject listDataProj = new ListDataProject();
 				listDataProj.setGermplasmId(Integer.valueOf(aData.getGid()));
 				if (aData.getCheckId() != null) {
 					listDataProj.setCheckType(aData.getCheckId());
 				} else {
-					listDataProj.setCheckType(Integer.valueOf(0));
+					listDataProj.setCheckType(0);
 				}
 				listDataProj.setDesignation(aData.getDesig());
 				listDataProj.setEntryId(aData.getEntryId());
@@ -38,7 +38,7 @@ public class ListDataProjectUtil {
 
 	public static List<ListDataProject> createListDataProjectFromGermplasmListData(List<GermplasmListData> germplasmListDatas) {
 
-		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
+		List<ListDataProject> listDataProject = new ArrayList<>();
 		if (germplasmListDatas != null && !germplasmListDatas.isEmpty()) {
 			// need a copy of the germplasm list and save
 			for (GermplasmListData aData : germplasmListDatas) {
@@ -62,11 +62,10 @@ public class ListDataProjectUtil {
 	 * Transform germplasm list data to imported germplasm.
 	 *
 	 * @param data the data
-	 * @param defaultCheckId the default check id
 	 * @return the list
 	 */
 	public static List<ImportedGermplasm> transformListDataProjectToImportedGermplasm(List<ListDataProject> data) {
-		List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+		List<ImportedGermplasm> list = new ArrayList<>();
 		int index = 1;
 		if (data != null && !data.isEmpty()) {
 			for (ListDataProject aData : data) {

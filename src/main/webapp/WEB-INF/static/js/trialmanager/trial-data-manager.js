@@ -356,20 +356,25 @@
 							'the Experimental Design on the next tab', 10000);
 						$('body').data('needGenerateExperimentalDesign', '1');
 
-						if (service.currentData.experimentalDesign.designType === 3) {
-							service.currentData.experimentalDesign.designType = null;
-						}
-					}
-				},
+                        if (service.currentData.experimentalDesign.designType === 3) {
+                            service.currentData.experimentalDesign.designType = null;
+                        }
+                    }
+                },
 
-				indicateUnsavedTreatmentFactorsAvailable: function() {
-					if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
-						service.applicationData.unsavedTreatmentFactorsAvailable = true;
-						if (service.currentData.experimentalDesign.designType === 3) {
-							service.currentData.experimentalDesign.designType = null;
-						}
-					}
-				},
+                // set unappliedChangesAvailable to true if Entry Number is updated
+                setUnappliedChangesAvailable: function() {
+                    service.applicationData.unappliedChangesAvailable = true;
+                },
+
+                indicateUnsavedTreatmentFactorsAvailable: function () {
+                	if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
+                        service.applicationData.unsavedTreatmentFactorsAvailable = true;
+                        if (service.currentData.experimentalDesign.designType === 3) {
+                            service.currentData.experimentalDesign.designType = null;
+                        }
+                    }
+                },
 
 				clearUnappliedChangesFlag: function() {
 					service.applicationData.unappliedChangesAvailable = false;
@@ -715,12 +720,12 @@
 
 				},
 
-				validateAllVariablesInput: function() {
-					var results = {
-						hasError: false,
-						customMessage: '',
-						customHeader: 'Invalid Input '
-					};
+                validateAllVariablesInput: function () {
+                    var results = {
+                        hasError: false,
+                        customMessage: '',
+                        customHeader: 'Invalid Input '
+                    };
 
 					// perform validation on all settings.currentData, (min / max) if any
 					// Validate all Trial Settings

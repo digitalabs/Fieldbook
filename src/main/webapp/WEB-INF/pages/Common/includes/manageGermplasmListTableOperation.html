@@ -155,7 +155,7 @@
 					
 					$('#entries-details').css('display', 'block');
 					$('#numberOfEntries').html($('#totalGermplasms').val());
-					$('#imported-germplasm-list-reset-button').css('opacity', '1');
+                    toggleControlsForGermplasmListManagement(true);
 					if(isNursery()){
 						makeDraggable(makeDraggableBool);					
 						checksFromPrimary = 0;

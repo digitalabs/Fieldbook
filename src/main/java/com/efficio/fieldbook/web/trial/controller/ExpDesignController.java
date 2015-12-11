@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.trial.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
@@ -18,6 +19,7 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -92,7 +94,7 @@ public class ExpDesignController extends BaseTrialController {
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		// transfer over data from user input into the list of setting details stored in the session
-		final List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+		List<SettingDetail> combinedList = new ArrayList<>();
 		combinedList.addAll(basicDetails);
 
 		if (studyLevelConditions != null) {
@@ -135,7 +137,25 @@ public class ExpDesignController extends BaseTrialController {
 					if (expParameterOutput.isValid()) {
 						expDesign.setNoOfEnvironmentsToAdd(this.countNewEnvironments(expDesign.getNoOfEnvironments(), this.userSelection,
 								expDesign.isHasMeasurementData()));
-						final List<MeasurementRow> measurementRows =
+
+						// Setting starting plot number in user selection
+						if (expDesign.getStartingPlotNo() != null && !expDesign.getStartingPlotNo().isEmpty()) {
+							this.userSelection.setStartingPlotNo(Integer.parseInt(expDesign.getStartingPlotNo()));
+						} else {
+							// Default plot no will be 1 if not given
+							expDesign.setStartingPlotNo("1");
+							this.userSelection.setStartingPlotNo(1);
+						}
+
+						this.userSelection.setStartingEntryNo(StringUtil.parseInt(expDesign.getStartingEntryNo(), null));
+
+						if(this.userSelection.getStartingEntryNo() != null){
+							Integer entryNo = this.userSelection.getStartingEntryNo();
+							for(ImportedGermplasm g : germplasmList) {
+								g.setEntryId(entryNo++);
+							}
+						}
+
 								designService.generateDesign(germplasmList, expDesign, workbook.getConditions(), workbook.getFactors(),
 										workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
 
@@ -145,11 +165,11 @@ public class ExpDesignController extends BaseTrialController {
 						workbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection,
 								expDesign.isHasMeasurementData()));
 						// should have at least 1 record
-						final List<MeasurementVariable> currentNewFactors = new ArrayList<MeasurementVariable>();
+						List<MeasurementVariable> currentNewFactors = new ArrayList<>();
 						final List<MeasurementVariable> oldFactors = workbook.getFactors();
-						final List<MeasurementVariable> deletedFactors = new ArrayList<MeasurementVariable>();
+						List<MeasurementVariable> deletedFactors = new ArrayList<>();
 						if (measurementRows != null && !measurementRows.isEmpty()) {
-							final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
+							List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
 							final MeasurementRow dataRow = measurementRows.get(0);
 							for (final MeasurementData measurementData : dataRow.getDataList()) {
 								measurementDatasetVariables.add(measurementData.getMeasurementVariable());

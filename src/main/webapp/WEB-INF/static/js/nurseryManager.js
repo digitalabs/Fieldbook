@@ -1412,7 +1412,7 @@ function validateCreateNursery() {
 		,customMessage = ''
 		,studyNameId = $('#studyNameTermId').val();
 
-	$('.nurseryLevelVariableIdClass').each(function() {
+    $('.nurseryLevelVariableIdClass').each(function() {
 		if (studyNameId == $(this).val()) {
 			studyBookName = $(this).parent().find('.form-control').val();
 		}
@@ -1441,7 +1441,8 @@ function validateCreateNursery() {
 	} else if ($('.check-germplasm-list-items tbody tr').length > 0 && $('.germplasm-list-items tbody tr').length === 0) {
 		hasError = true;
 		customMessage = nurseryGermplasmListIsRequired;
-	}
+    }
+
 	var invalidDateMsg = validateAllDates();
 	if (invalidDateMsg !== '') {
 		hasError = true;
@@ -1675,6 +1676,21 @@ function recreateSessionVariables() {
 
 		}
 	});
+}
+
+function recreateSessionVariablesForEntryNo() {
+    'use strict';
+
+    $.ajax({
+        url: '/Fieldbook/NurseryManager/editNursery/recreate/session/variables',
+        type: 'GET',
+        data: '',
+        cache: false,
+        success: function(html) {
+            $('#measurementsDiv').html(html);
+            displayEditFactorsAndGermplasmSection();
+        }
+    });
 }
 
 // FIXME Should not be using global variables or functions

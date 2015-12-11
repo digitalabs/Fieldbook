@@ -445,11 +445,9 @@ public class DesignImportController extends SettingsController {
 
 			DesignImportData designImportData = null;
 			int replicationsCount = 0;
-			PresetDesignType presetDesignType = PresetDesignType.getPresetDesignTypeById(presetId);
-			if(presetDesignType != null) {
-				designImportData =
-						this.parser.parseFile(ResourceFinder.locateFile(presetDesignType.getTemplateName())
-								.getFile());
+			final PresetDesignType presetDesignType = PresetDesignType.getPresetDesignTypeById(presetId);
+			if (presetDesignType != null) {
+				designImportData = this.parser.parseFile(ResourceFinder.locateFile(presetDesignType.getTemplateName()).getFile());
 				replicationsCount = presetDesignType.getNumberOfReps();
 			}
 
@@ -474,8 +472,9 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData, StudyType studyType,
-			boolean isPreset, int designTypeId, int replicationsCount) throws DesignValidationException {
+	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
+			final StudyType studyType, final boolean isPreset, final int designTypeId, final int replicationsCount)
+			throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 
@@ -697,7 +696,7 @@ public class DesignImportController extends SettingsController {
 
 		final List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
-		PresetDesignType presetDesignType = PresetDesignType.getPresetDesignTypeById(designTypeId);
+		final PresetDesignType presetDesignType = PresetDesignType.getPresetDesignTypeById(designTypeId);
 		if (presetDesignType != null && presetDesignType.getNumberOfReps() > 0) {
 			expDesignTermIds.add(TermId.NUMBER_OF_REPLICATES.getId());
 		}
@@ -705,7 +704,7 @@ public class DesignImportController extends SettingsController {
 		this.userSelection.setExpDesignParams(designParam);
 		this.userSelection.setExpDesignVariables(expDesignTermIds);
 
-		for (Integer ontologyId : expDesignTermIds) {
+		for (final Integer ontologyId : expDesignTermIds) {
 			final TermId termId = TermId.getById(ontologyId);
 			SettingsUtil.addTrialCondition(termId, designParam, workbook, this.fieldbookMiddlewareService, this.getCurrentProject()
 					.getUniqueID());

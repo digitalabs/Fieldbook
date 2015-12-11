@@ -222,6 +222,21 @@
 						});
 					}
 				};
+
+				$scope.resetExperimentalDesign = function() {
+
+					// the following reset the data used for the experimental design, allowing the user to select another design again
+					$scope.applicationData.hasGeneratedDesignPreset = false;
+					$scope.applicationData.isGeneratedOwnDesign = false;
+					$scope.currentDesignTypeId = null;
+					$scope.data.designType = null;
+
+					// the following prevents the user from saving before re-generating the design, to avoid having invalid measurement data
+					if (TrialManagerDataService.trialMeasurement.count > 0) {
+						TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
+					}
+
+				};
 				
 				$scope.toggleDesignView = function() {
 					return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType == 3);

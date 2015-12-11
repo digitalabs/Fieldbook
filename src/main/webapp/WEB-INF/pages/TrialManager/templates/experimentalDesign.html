@@ -80,8 +80,14 @@
 							<b th:text="#{trial.experimental.design.selected.design}"></b>
 							<span>{{currentDesignType.name}}</span>
 							&nbsp;&nbsp;&nbsp;
-							<a ng-hide="data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
-							 class="btn btn-info pull-right chs-add-variable" th:text="#{design.import.change}">Change</a>
+                            <span class="pull-right">
+                                <a ng-hide="data.hasMeasurementData" href="" ng-click="resetExperimentalDesign()"
+                                   class="btn btn-info chs-add-variable" >Reset</a>
+                                &nbsp;&nbsp;&nbsp;
+                                <a ng-hide="data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
+                                   class="btn btn-info chs-add-variable" th:text="#{design.import.change}">Change</a>
+                            </span>
+
 						</div>
 					</div>
 					<div class="col-md-8">

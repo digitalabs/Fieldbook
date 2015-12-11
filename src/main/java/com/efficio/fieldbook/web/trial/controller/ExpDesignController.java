@@ -4,7 +4,6 @@ package com.efficio.fieldbook.web.trial.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 import javax.annotation.Resource;
 
@@ -94,7 +93,7 @@ public class ExpDesignController extends BaseTrialController {
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		// transfer over data from user input into the list of setting details stored in the session
-		List<SettingDetail> combinedList = new ArrayList<>();
+		final List<SettingDetail> combinedList = new ArrayList<>();
 		combinedList.addAll(basicDetails);
 
 		if (studyLevelConditions != null) {
@@ -149,13 +148,14 @@ public class ExpDesignController extends BaseTrialController {
 
 						this.userSelection.setStartingEntryNo(StringUtil.parseInt(expDesign.getStartingEntryNo(), null));
 
-						if(this.userSelection.getStartingEntryNo() != null){
+						if (this.userSelection.getStartingEntryNo() != null) {
 							Integer entryNo = this.userSelection.getStartingEntryNo();
-							for(ImportedGermplasm g : germplasmList) {
+							for (final ImportedGermplasm g : germplasmList) {
 								g.setEntryId(entryNo++);
 							}
 						}
 
+						final List<MeasurementRow> measurementRows =
 								designService.generateDesign(germplasmList, expDesign, workbook.getConditions(), workbook.getFactors(),
 										workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
 
@@ -165,11 +165,11 @@ public class ExpDesignController extends BaseTrialController {
 						workbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection,
 								expDesign.isHasMeasurementData()));
 						// should have at least 1 record
-						List<MeasurementVariable> currentNewFactors = new ArrayList<>();
+						final List<MeasurementVariable> currentNewFactors = new ArrayList<>();
 						final List<MeasurementVariable> oldFactors = workbook.getFactors();
-						List<MeasurementVariable> deletedFactors = new ArrayList<>();
+						final List<MeasurementVariable> deletedFactors = new ArrayList<>();
 						if (measurementRows != null && !measurementRows.isEmpty()) {
-							List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
+							final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
 							final MeasurementRow dataRow = measurementRows.get(0);
 							for (final MeasurementData measurementData : dataRow.getDataList()) {
 								measurementDatasetVariables.add(measurementData.getMeasurementVariable());

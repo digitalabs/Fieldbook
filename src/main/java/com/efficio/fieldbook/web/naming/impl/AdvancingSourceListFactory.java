@@ -54,7 +54,7 @@ public class AdvancingSourceListFactory {
 	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery,
 			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
-		AdvancingSource source = new AdvancingSource();
+		AdvancingSource environmentLevel = new AdvancingSource();
 		ExpressionDataProcessor dataProcessor = dataProcessorFactory.retrieveExecutorProcessor();
 
 		AdvancingSourceList list = new AdvancingSourceList();
@@ -71,12 +71,13 @@ public class AdvancingSourceListFactory {
 			nurseryName = nursery.getName();
 		}
 
-		dataProcessor.processEnvironmentLevelData(source, workbook, advanceInfo, nursery);
+		dataProcessor.processEnvironmentLevelData(environmentLevel, workbook, advanceInfo, nursery);
 
 		List<Integer> gids = new ArrayList<>();
 
 		if (workbook != null && workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
 			for (MeasurementRow row : workbook.getObservations()) {
+                AdvancingSource source = environmentLevel.copy();
 
 				Integer methodId = null;
 				if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {
@@ -149,6 +150,7 @@ public class AdvancingSourceListFactory {
 
 			}
 		}
+
 		this.setNamesToGermplasm(rows, gids);
 		list.setRows(rows);
 		this.assignSourceGermplasms(list, breedingMethodMap);

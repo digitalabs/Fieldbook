@@ -60,7 +60,7 @@ public class AdvancingSource {
 		this.plotNumber = plotNumber;
 	}
 
-	public AdvancingSource() {
+    public AdvancingSource() {
 		super();
 	}
 
@@ -323,5 +323,22 @@ public class AdvancingSource {
 
     public void setSelectionTraitValue(String selectionTraitValue) {
         this.selectionTraitValue = selectionTraitValue;
+    }
+
+    public AdvancingSource copy() {
+        AdvancingSource source = new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, isCheck, nurseryName, plotNumber);
+        source.setSeason(this.season);
+        source.setLocationAbbreviation(this.locationAbbreviation);
+        source.setRootName(this.rootName);
+        source.setSourceMethod(this.sourceMethod);
+        source.setCurrentMaxSequence(this.currentMaxSequence);
+        source.setChangeDetail(this.changeDetail);
+        source.setPrefix(this.prefix);
+        source.setSuffix(this.suffix);
+        source.setRootNameType(this.rootNameType);
+        source.setLocationId(this.locationId);
+        source.setSelectionTraitValue(this.selectionTraitValue);
+
+        return source;
     }
 }

@@ -66,12 +66,12 @@
 	<!-- This section is displayed when the design type is Other Type or Alpha Lattice (Design Presets) -->
 	<div id="experimental-design-detail-summary" class="add-bottom-padding" ng-show="toggleDesignView()">
 		<section-container icon="bms-exp-design" heading="Experimental Design">
-			<section-container name="content" heading="DETAILS OF EXPERIMENTAL DESIGN">
+			<section-container name="content" heading="{{designDetailSummary.heading}}">
 				<div class="row" name="content">
             		<div class="col-md-8">
             			<div class="add-bottom-padding"
 							ng-show="data.noOfEnvironments &gt;= 0">
-							<b th:text="#{trial.experimental.design.selected.design}"></b>
+							<b>{{designDetailSummary.designTemplateLabel}}</b>
 							<span>{{currentDesignType.name}}</span>
 							&nbsp;&nbsp;&nbsp;
                             <span class="pull-right">
@@ -88,7 +88,7 @@
             			<div class="add-bottom-padding"
 							ng-show="data.noOfEnvironments &gt;= 0">
 							<b th:text="#{review.trial.design.type}"></b>
-							<span>Alpha Lattice</span>
+							<span>{{designDetailSummary.designType}}</span>
 						</div>
 					</div>
 				</div>

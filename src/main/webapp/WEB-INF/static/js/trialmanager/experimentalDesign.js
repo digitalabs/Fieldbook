@@ -64,6 +64,29 @@
 					}
 				];
 				
+				$scope.designDetailSummary = {
+					heading : '',
+					designTemplateLabel: '',
+					designType : ''
+				};
+				
+				$scope.$watch(function() {
+					return $scope.data.designType;
+				}, function(newValue) {
+					// If Design Type is Preset Design
+					if(newValue >= 4){
+						$scope.designDetailSummary.heading = 'DETAILS OF EXPERIMENTAL DESIGN';
+						$scope.designDetailSummary.designTemplateLabel = 'Design based on design template:';
+						$scope.designDetailSummary.designType = 'Alpha Lattice';
+						
+					// If Design Type is Imported Design
+					} else if(newValue === 3){
+						$scope.designDetailSummary.heading = 'DETAILS OF IMPORTED EXPERIMENTAL DESIGN';
+						$scope.designDetailSummary.designTemplateLabel = 'Imported design file name:';
+						$scope.designDetailSummary.designType = 'Other Design';
+					}
+				});
+				
 				$scope.isCimmytProfileWithWheatCrop = false;
 				$http.get('/Fieldbook/TrialManager/experimental/design/isCimmytProfileWithWheatCrop').success(function (isSuccess) {
                     $scope.isCimmytProfileWithWheatCrop = isSuccess;
@@ -240,7 +263,7 @@
 				
 				$scope.toggleDesignView = function() {
 					return !$scope.applicationData.unappliedChangesAvailable 
-								&& (($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType == 3)
+								&& (($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType === 3)
 										|| $scope.applicationData.hasGeneratedDesignPreset);
 				};
 				
@@ -249,7 +272,7 @@
 				};
 				
 				$scope.isImportedDesign = function() {
-					return $scope.data.designType != null && $scope.data.designType == 3;
+					return $scope.data.designType != null && $scope.data.designType === 3;
 				};
 				
 				$scope.isBVDesign = function() {

@@ -1,0 +1,96 @@
+<div class="row" ng-if="isImportedDesign()" ng-hide="!isImportedDesign()">
+	<div class="col-md-12 col-sm-12">
+		<section-container heading="SUMMARY OF IMPORTED DESIGN COLUMNS">
+		<div name="content">
+			<div class="col-md-4 col-sm-4">
+				<div class="sub-content-heading">
+					<b>Germplasm Factors</b>
+				</div>
+				<table class="table table-curved">
+					<thead>
+						<tr>
+							<th>COLUMNS IN FILE</th>
+							<th>MAPPED TO</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="even">ENTRY_NO</td>
+							<td class="even"><a show-details-modal="entry_no_key"
+								ng-init="entry_no_key = 8230"
+								variable-type="{{VARIABLE_TYPES.GERMPLASM_DESCRIPTOR}}">ENTRY_NO</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>	
+			</div>
+			<div class="col-md-4 col-sm-4">
+				<div class="sub-content-heading">
+					<b>Environmental Factors</b>
+				</div>
+				<table class="table table-curved">
+					<thead>
+						<tr>
+							<th>COLUMNS IN FILE</th>
+							<th>MAPPED TO</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="even">TRIAL_INSTANCE</td>
+							<td class="even"><a show-details-modal="trial_instance_no_key"
+								ng-init="trial_instance_no_key = 8170"
+								variable-type="{{VARIABLE_TYPES.TRIAL_CONDITION}}">TRIAL_INSTANCE</a>
+							</td>
+						</tr>
+						<tr>
+							<td class="odd">SITE_NAME</td>
+							<td class="odd"><a show-details-modal="site_no_key"
+								ng-init="site_no_key = 8196"
+								variable-type="{{VARIABLE_TYPES.TRIAL_CONDITION}}">SITE_NAME</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-md-4 col-sm-4">
+				<div class="sub-content-heading">
+					<b>Design Factors</b>
+				</div>
+				<table class="table table-curved">
+					<thead>
+						<tr>
+							<th>COLUMNS IN FILE</th>
+							<th>MAPPED TO</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="even">PLOT_NO</td>
+							<td class="even"><a show-details-modal="plot_no_key"
+								ng-init="plot_no_key = 8200"
+								variable-type="{{VARIABLE_TYPES.EXPERIMENTAL_DESIGN}}">PLOT_NO</a>
+							</td>
+						</tr>
+						<tr>
+							<td class="odd">BLOCK</td>
+							<td class="odd"><a show-details-modal="block_key"
+								ng-init="block_key = 8220"
+								variable-type="{{VARIABLE_TYPES.EXPERIMENTAL_DESIGN}}">BLOCK</a>
+							</td>
+						</tr>
+						<tr>
+							<td class="even">REP_NO</td>
+							<td class="even"><a show-details-modal="rep_no_key"
+								ng-init="rep_no_key = 8210"
+								variable-type="{{VARIABLE_TYPES.EXPERIMENTAL_DESIGN}}">REP_NO</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+		</div>
+		</section-container>
+	</div>
+</div>

@@ -49,7 +49,7 @@
 						</label>
 					</div>
 
-	                <div ng-if="isNonPreset()" style="margin-bottom: 25px; margin-top: 25px; margin-left:12px;">
+	                <div ng-if="isBVDesign()" style="margin-bottom: 25px; margin-top: 25px; margin-left:12px;">
 	                    <section-container heading="SPECIFY PLOT NUMBERING">
 	                        <div name="content">
 	                            <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
@@ -97,8 +97,9 @@
 	</div>
 	
 	<div ng-if="data.designType != null">
-		<div id="experimental-design-non-preset" th:include="TrialManager/templates/experimentalDesignNonPreset"></div>
+		<div id="experimental-design-bv-design" th:include="TrialManager/templates/experimentalDesignBVDesign"></div>
 		<div id="experimental-design-preset" th:include="TrialManager/templates/experimentalDesignPreset"></div>
+		<div id="experimental-design-imported-design" th:include="Common/importedDesignColumnsSummary"></div>
 	</div>
 	
 </form>

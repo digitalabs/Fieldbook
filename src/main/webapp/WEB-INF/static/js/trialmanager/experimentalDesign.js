@@ -239,16 +239,21 @@
 				};
 				
 				$scope.toggleDesignView = function() {
-					return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || (
-							$scope.data.designType >= 3 && $scope.data.designType <= 6));
+					return !$scope.applicationData.unappliedChangesAvailable 
+								&& (($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType == 3)
+										|| $scope.applicationData.hasGeneratedDesignPreset);
 				};
 				
 				$scope.isPreset = function() {
-					return ($scope.data.designType >= 4 && !$scope.applicationData.unappliedChangesAvailable) || $scope.applicationData.hasGeneratedDesignPreset;
+					return $scope.data.designType != null && $scope.data.designType >= 4 && !$scope.applicationData.unappliedChangesAvailable;
 				};
 				
-				$scope.isNonPreset = function() {
-					return $scope.data.designType != null && $scope.data.designType < 3;
+				$scope.isImportedDesign = function() {
+					return $scope.data.designType != null && $scope.data.designType == 3 && !$scope.applicationData.unappliedChangesAvailable;
+				};
+				
+				$scope.isBVDesign = function() {
+					return $scope.data.designType != null && $scope.data.designType < 3 && !$scope.applicationData.unappliedChangesAvailable;
 				};
 				
 				$scope.doValidate = function() {

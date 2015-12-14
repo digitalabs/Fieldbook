@@ -75,10 +75,10 @@
 							<span>{{currentDesignType.name}}</span>
 							&nbsp;&nbsp;&nbsp;
                             <span class="pull-right">
-                                <a ng-hide="data.hasMeasurementData" href="" ng-click="resetExperimentalDesign()"
+                                <a ng-hide="!isPreset() || data.hasMeasurementData" href="" ng-click="resetExperimentalDesign()"
                                    class="btn btn-info chs-add-variable" >Reset</a>
                                 &nbsp;&nbsp;&nbsp;
-                                <a ng-hide="data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
+                                <a ng-hide="!isImportedDesign() || data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
                                    class="btn btn-info chs-add-variable" th:text="#{design.import.change}">Change</a>
                             </span>
 

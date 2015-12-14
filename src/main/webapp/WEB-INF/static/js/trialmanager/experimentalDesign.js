@@ -245,15 +245,15 @@
 				};
 				
 				$scope.isPreset = function() {
-					return $scope.data.designType != null && $scope.data.designType >= 4 && !$scope.applicationData.unappliedChangesAvailable;
+					return $scope.data.designType != null && $scope.data.designType >= 4;
 				};
 				
 				$scope.isImportedDesign = function() {
-					return $scope.data.designType != null && $scope.data.designType == 3 && !$scope.applicationData.unappliedChangesAvailable;
+					return $scope.data.designType != null && $scope.data.designType == 3;
 				};
 				
 				$scope.isBVDesign = function() {
-					return $scope.data.designType != null && $scope.data.designType < 3 && !$scope.applicationData.unappliedChangesAvailable;
+					return $scope.data.designType != null && $scope.data.designType < 3;
 				};
 				
 				$scope.doValidate = function() {

@@ -244,6 +244,8 @@ var ImportDesign = (function() {
 									.transformViewSettingsVariable(value));
 				});
 
+				// Set the design type to Other Design Type
+				trialService.currentData.experimentalDesign.designType = 3; 
 				trialService.updateCurrentData('environments', environmentData);
 
 				angular.element('#mainApp').scope().$apply();

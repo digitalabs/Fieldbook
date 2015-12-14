@@ -239,7 +239,8 @@
 				};
 				
 				$scope.toggleDesignView = function() {
-					return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType == 3);
+					return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || (
+							$scope.data.designType >= 3 && $scope.data.designType <= 6));
 				};
 				
 				$scope.isPreset = function() {

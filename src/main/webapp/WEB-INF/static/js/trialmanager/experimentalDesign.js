@@ -250,10 +250,6 @@
 					return $scope.data.designType < 3;
 				};
 				
-				$scope.withPresetGeneratedDesignForExistingStudy = function(){
-					return $scope.applicationData.hasGeneratedDesignPreset && $scope.studyID != null && !$scope.applicationData.unsavedGeneratedDesign;
-				};
-				
 				$scope.doValidate = function() {
 
 					switch ($scope.currentDesignType.id) {

@@ -246,6 +246,10 @@
 					return ($scope.data.designType >= 4 && !$scope.applicationData.unappliedChangesAvailable) || $scope.applicationData.hasGeneratedDesignPreset;
 				};
 				
+				$scope.isNonPreset = function() {
+					return $scope.data.designType < 3;
+				};
+				
 				$scope.withPresetGeneratedDesignForExistingStudy = function(){
 					return $scope.applicationData.hasGeneratedDesignPreset && $scope.studyID != null && !$scope.applicationData.unsavedGeneratedDesign;
 				};

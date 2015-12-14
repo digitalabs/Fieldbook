@@ -56,7 +56,7 @@
 						</label>
 					</div>
 
-                <div ng-hide="isPreset()" style="margin-bottom: 25px; margin-top: 25px; margin-left:12px;">
+                <div ng-show="isNonPreset()" style="margin-bottom: 25px; margin-top: 25px; margin-left:12px;">
                     <section-container heading="SPECIFY PLOT NUMBERING">
                         <div name="content">
                             <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
@@ -94,7 +94,7 @@
             			<div class="add-bottom-padding"
 							ng-show="data.noOfEnvironments &gt;= 0">
 							<b th:text="#{review.trial.design.type}"></b>
-							<span>Alpha Latice</span>
+							<span>Alpha Lattice</span>
 						</div>
 					</div>
 				</div>

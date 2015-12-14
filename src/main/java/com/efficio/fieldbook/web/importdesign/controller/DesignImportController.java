@@ -172,7 +172,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	/**
-	 * For now this method is only applicable in Nursery. Added the studyType as a parameter for future implementation.
+	 * This makes the design revert to default design where for every measurement rows, the entry for PLOT_NO must be equal to ENTRY_NO
 	 * 
 	 * @param studyId
 	 * @param studyType

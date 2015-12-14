@@ -492,7 +492,8 @@ public class DesignImportControllerTest {
 	public void testAddConditionsIfNecessaryVariablesToAddAlreadyExist() throws URISyntaxException, FileParsingException {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
-
+		final int originalConditionsSize = workbook.getConditions().size();
+		
 		final Set<MeasurementVariable> measurementVariables = new HashSet<>();
 		measurementVariables.add(this.getMeasurementVariable(TermId.TRIAL_LOCATION.getId(), new HashSet<>(workbook.getConditions())));
 
@@ -502,7 +503,7 @@ public class DesignImportControllerTest {
 		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 		this.designImportController.addConditionsIfNecessary(workbook, data);
 
-		Assert.assertEquals("LOCATION_NAME should not added to the Conditions, so the size of Conditions must remain 7", 7, workbook
+		Assert.assertEquals("LOCATION_NAME should not added to the Conditions, so the size of Conditions must remain " + originalConditionsSize, originalConditionsSize, workbook
 				.getConditions().size());
 
 	}
@@ -517,11 +518,13 @@ public class DesignImportControllerTest {
 				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
-
+		int originalConditionsSize = workbook.getConditions().size();
+		
 		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 		this.designImportController.addConditionsIfNecessary(workbook, data);
-
-		Assert.assertEquals(8, workbook.getConditions().size());
+		
+		//Add 1 to the originalConditionsSize to include the SITE_NAME in the count.
+		Assert.assertEquals(originalConditionsSize+1, workbook.getConditions().size());
 		Assert.assertEquals("SITENAME should be added to the Conditions since it isn't in the list", "SITENAME", this
 				.getMeasurementVariable(TermId.SITE_NAME.getId(), new HashSet<MeasurementVariable>(workbook.getConditions())).getName());
 

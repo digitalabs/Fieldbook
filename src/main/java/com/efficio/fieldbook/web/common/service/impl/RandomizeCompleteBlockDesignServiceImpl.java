@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -233,4 +232,27 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId());
 	}
 
+	public void setUserSelection(UserSelection userSelection) {
+		this.userSelection = userSelection;
+	}
+
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
+
+	public void setFieldbookService(FieldbookService fieldbookService) {
+		this.fieldbookService = fieldbookService;
+	}
+
+	public void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	public void setWorkbenchService(WorkbenchService workbenchService) {
+		this.workbenchService = workbenchService;
+	}
+
+	public void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
+		this.fieldbookProperties = fieldbookProperties;
+	}
 }

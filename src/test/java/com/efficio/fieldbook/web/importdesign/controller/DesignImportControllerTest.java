@@ -59,6 +59,7 @@ import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
+import com.efficio.fieldbook.web.importdesign.constant.PresetDesignType;
 import com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceImpl;
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.trial.bean.Environment;
@@ -326,7 +327,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(workbook.getObservations())
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean());
+						Matchers.anyBoolean(), Matchers.anyBoolean());
 		;
 
 		final List<Map<String, Object>> result = this.designImportController.showDetailsData(environmentData, model, form);
@@ -346,7 +347,7 @@ public class DesignImportControllerTest {
 		Mockito.doThrow(new DesignValidationException(""))
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean());
+						Matchers.anyBoolean(), Matchers.anyBoolean());
 		;
 
 		final List<Map<String, Object>> result = this.designImportController.showDetailsData(environmentData, model, form);
@@ -669,13 +670,58 @@ public class DesignImportControllerTest {
 		Mockito.doThrow(new DesignValidationException(""))
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean());
+						Matchers.anyBoolean(), Matchers.anyBoolean());
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(environmentData);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
 		Assert.assertTrue(resultsMap.containsKey(DesignImportController.ERROR));
+
+	}
+
+	@Test
+	public void testGeneratePresetMeasurements() throws FileParsingException {
+
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final Set<MeasurementVariable> measurementVariables = this.createMeasurementVariables();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
+
+		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
+		Mockito.doReturn(measurementVariables).when(this.designImportService)
+				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
+		Mockito.doReturn(designImportData).when(this.designImportParser).parseFile(Mockito.anyString());
+		Mockito.doReturn(designImportData.getMappedHeaders()).when(this.designImportService)
+				.categorizeHeadersByPhenotype(Matchers.anyList());
+
+		final EnvironmentData environmentData = this.createEnvironmentData(1);
+
+		final Map<String, Object> resultsMap =
+				this.designImportController.generatePresetMeasurements(PresetDesignType.E30_2REPS_6BLOCKS_5IND.getId(), environmentData);
+
+		Assert.assertEquals(1, resultsMap.get(DesignImportController.IS_SUCCESS));
+
+	}
+
+	@Test
+	public void testGeneratePresetMeasurementsFail() throws FileParsingException {
+
+		final Map<PhenotypicType, List<DesignHeaderItem>> categorizedHeadersMap = new HashMap<>();
+		final Set<MeasurementVariable> measurementVariables = this.createMeasurementVariables();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
+
+		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
+		Mockito.doReturn(measurementVariables).when(this.designImportService)
+				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
+		Mockito.doReturn(categorizedHeadersMap).when(this.designImportService).categorizeHeadersByPhenotype(Matchers.anyList());
+		Mockito.doThrow(FileParsingException.class).when(this.designImportParser).parseFile(Mockito.anyString());
+
+		final EnvironmentData environmentData = this.createEnvironmentData(1);
+
+		final Map<String, Object> resultsMap =
+				this.designImportController.generatePresetMeasurements(PresetDesignType.E30_2REPS_6BLOCKS_5IND.getId(), environmentData);
+
+		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
 
 	}
 
@@ -1312,7 +1358,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(new ArrayList<MeasurementRow>())
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean());
+						Matchers.anyBoolean(), Matchers.anyBoolean());
 		Mockito.doReturn(new HashSet<MeasurementVariable>()).when(this.designImportService)
 				.getDesignMeasurementVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.anyBoolean());
 		Mockito.doReturn(new HashSet<MeasurementVariable>()).when(this.designImportService)

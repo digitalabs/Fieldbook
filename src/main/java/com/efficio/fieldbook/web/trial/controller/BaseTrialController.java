@@ -214,6 +214,12 @@ public abstract class BaseTrialController extends SettingsController {
 					data.setUseLatenized(false);
 				} else if (TermId.OTHER_DESIGN.getId() == designTypeTermID) {
 					data.setDesignType(3);
+				} else if (TermId.ALPHA_LATTICE_E30_REP2.getId() == designTypeTermID) {
+					data.setDesignType(4);
+				} else if (TermId.ALPHA_LATTICE_E30_REP3.getId() == designTypeTermID) {
+					data.setDesignType(5);
+				} else if (TermId.ALPHA_LATTICE_E50_REP2.getId() == designTypeTermID) {
+					data.setDesignType(6);
 				}
 			}
 

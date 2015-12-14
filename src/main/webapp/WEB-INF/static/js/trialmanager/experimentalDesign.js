@@ -247,7 +247,7 @@
 				};
 				
 				$scope.isNonPreset = function() {
-					return $scope.data.designType < 3;
+					return $scope.data.designType != null && $scope.data.designType < 3;
 				};
 				
 				$scope.doValidate = function() {

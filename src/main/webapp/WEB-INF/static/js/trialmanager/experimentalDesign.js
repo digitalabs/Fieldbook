@@ -29,7 +29,7 @@
                     	}
                     });
                    
-                    //separator
+                    // separator
                     if($scope.designTypes.length  > 4){
                     	$scope.designTypeView.push({id:	null, name: '----------------------------------------------', isDisabled: true });
                     }
@@ -138,7 +138,7 @@
 						$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 						$scope.data.designType = $scope.currentDesignType.id;
 						
-						if(newId >= 4 && newId <= 6){
+						if($scope.designTypes[newId].isPreset){
 							showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
 						}
 					} else {
@@ -178,7 +178,7 @@
 					}
 					
 					// non-preset design type
-					if($scope.data.designType < 3){
+					if(!$scope.designTypes[$scope.data.designType].isPreset){
 						TrialManagerDataService.generateExpDesign(data).then(
 							function(response) {
 								if (response.valid === true) {
@@ -217,11 +217,11 @@
 				};
 				
 				$scope.isPreset = function() {
-					return ($scope.data.designType >= 4 && !$scope.applicationData.unappliedChangesAvailable) || $scope.applicationData.hasGeneratedDesignPreset;
+					return ($scope.designTypes[$scope.data.designType].isPreset && !$scope.applicationData.unappliedChangesAvailable) || $scope.applicationData.hasGeneratedDesignPreset;
 				};
 				
 				$scope.isNonPreset = function() {
-					return $scope.data.designType != null && $scope.data.designType < 3;
+					return $scope.data.designType != null && !$scope.designTypes[$scope.data.designType].isPreset;
 				};
 				
 				$scope.doValidate = function() {

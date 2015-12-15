@@ -252,4 +252,34 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.BLOCK_SIZE.getId());
 		}
 	}
+
+	
+	void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	
+	void setWorkbenchService(WorkbenchService workbenchService) {
+		this.workbenchService = workbenchService;
+	}
+
+	
+	void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
+		this.fieldbookProperties = fieldbookProperties;
+	}
+
+	
+	void setMessageSource(ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
+	
+	void setFieldbookService(FieldbookService fieldbookService) {
+		this.fieldbookService = fieldbookService;
+	}
+
+	
+	void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
 }

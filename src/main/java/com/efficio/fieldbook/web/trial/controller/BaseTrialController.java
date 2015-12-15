@@ -171,8 +171,9 @@ public abstract class BaseTrialController extends SettingsController {
 
 			data.setReplicationsCount(this.getExperimentalDesignData(xpDesignVariable.getNumberOfReplicates()));
 
-			// Set first plot number from observations
-			if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
+			// Set first plot number from observations, the 6th element contains the value for the starting plot no
+			if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()
+					&& trialWorkbook.getObservations().get(0).getDataList().size() == 7) {
 				data.setStartingPlotNo(trialWorkbook.getObservations().get(0).getDataList().get(6).getValue());
 			}
 

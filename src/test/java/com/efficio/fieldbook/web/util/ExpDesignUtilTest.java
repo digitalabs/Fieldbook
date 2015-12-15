@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.service.internal.DesignRunner;
+import com.efficio.fieldbook.service.internal.impl.MockDesignRunnerImpl;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.sea.xml.Design;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -23,7 +26,9 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +40,8 @@ import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 
-public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
+@RunWith(MockitoJUnitRunner.class)
+public class ExpDesignUtilTest {
 
 	private static final String ENTRY_NO = "ENTRY_NO";
 	private static final String PLOT_NO = "PLOT_NO";
@@ -194,7 +200,7 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 
 		entries.add(headers);
 
-		for (int i = 0; i < 6; i++) {
+		for (int i = 1; i <= 6; i++) {
 			String value = String.valueOf(i);
 			String[] data = new String[] {value, value, value};
 			entries.add(data);
@@ -220,6 +226,10 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 
 		germplasms.add(new ImportedGermplasm(1, "CLA35", "87395", "", "", "", ""));
 		germplasms.add(new ImportedGermplasm(2, "CLA12", "134287", "", "", "", ""));
+		germplasms.add(new ImportedGermplasm(3, "CLA13", "2342", "", "", "", ""));
+		germplasms.add(new ImportedGermplasm(4, "CLA14", "452353", "", "", "", ""));
+		germplasms.add(new ImportedGermplasm(5, "CLA15", "43323", "", "", "", ""));
+		germplasms.add(new ImportedGermplasm(6, "CLA16", "3225", "", "", "", ""));
 
 		return germplasms;
 	}

@@ -226,7 +226,15 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				TrialManagerDataService.trialMeasurement = angular.copy($localStorage.serviceBackup.trialMeasurement);
 
 				// perform other cleanup tasks
-				$http.get('/Fieldbook/TrialManager/createTrial/clearSettings');
+				$http({
+					url: '/Fieldbook/TrialManager/createTrial/clearSettings',
+					method: 'GET',
+					transformResponse: undefined
+				}).then(function(response) {
+					if (response.data !== 'success' || response.status !== 200) {
+						showErrorMessage('', 'Your trial settings could not be cleared at the moment. Please try again later.');
+					}
+				});
 
 				var measurementDiv = $('#measurementsDiv');
 				if (measurementDiv.length !== 0) {

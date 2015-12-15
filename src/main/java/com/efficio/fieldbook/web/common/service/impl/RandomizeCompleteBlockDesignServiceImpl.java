@@ -176,12 +176,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 							variates, treatmentVariables, reqVarList, germplasmList, mainDesign, this.workbenchService,
 							this.fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues, this.fieldbookService);
 
-			if (plotNo != null) {
-				for (MeasurementRow measurementRow : measurementRowList) {
-					measurementRow.getDataList().get(6).setValue(plotNo.toString());
-					plotNo++;
-				}
-			}
+
 		} catch (BVDesignException e) {
 			throw e;
 		} catch (Exception e) {

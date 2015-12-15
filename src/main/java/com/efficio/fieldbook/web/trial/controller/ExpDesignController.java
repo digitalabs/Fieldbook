@@ -47,8 +47,6 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @RequestMapping(ExpDesignController.URL)
 public class ExpDesignController extends BaseTrialController {
 
-	private static final String WHEAT = "wheat";
-	private static final String CIMMYT = "cimmyt";
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignController.class);
 	public static final String URL = "/TrialManager/experimental/design";
 
@@ -70,17 +68,6 @@ public class ExpDesignController extends BaseTrialController {
 	@Override
 	public String getContentName() {
 		return "TrialManager/openTrial";
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/isCimmytProfileWithWheatCrop", method = RequestMethod.GET)
-	public Boolean isCimmytProfileWithWheatCrop() {
-		final String profile = this.crossExpansionProperties.getProfile();
-		final String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
-		if (profile != null && cropName != null) {
-			return CIMMYT.equalsIgnoreCase(profile) && WHEAT.equalsIgnoreCase(cropName);
-		}
-		return false;
 	}
 
 	@ResponseBody

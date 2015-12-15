@@ -64,10 +64,7 @@
 					}
 				];
 				
-				$scope.isCimmytProfileWithWheatCrop = false;
-				$http.get('/Fieldbook/TrialManager/experimental/design/isCimmytProfileWithWheatCrop').success(function (isSuccess) {
-                    $scope.isCimmytProfileWithWheatCrop = isSuccess;
-                });
+				$scope.isCimmytProfileWithWheatCrop = true;
 
 				// TODO : re run computeLocalData after loading of previous trial as template
 				$scope.computeLocalData = function() {

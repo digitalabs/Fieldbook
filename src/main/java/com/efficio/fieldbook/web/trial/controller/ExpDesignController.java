@@ -77,17 +77,21 @@ public class ExpDesignController extends BaseTrialController {
 	public String retrieveDesignTypes() {
 		final List<DesignTypeItem> designTypes = new ArrayList<DesignTypeItem>();
 
+		designTypes.add(new DesignTypeItem(0, "Randomized Complete Block Design", "randomizedCompleteBlockParams.html", false, false, 0, 0,
+				false));
 		designTypes
-				.add(new DesignTypeItem(0, "Randomized Complete Block Design", "randomizedCompleteBlockParams.html", false, false, 0, 0));
-		designTypes.add(new DesignTypeItem(1, "Resolvable Incomplete Block Design", "incompleteBlockParams.html", false, true, 0, 0));
-		designTypes.add(new DesignTypeItem(2, "Row-and-Column", "rowAndColumnParams.html", false, true, 0, 0));
-		designTypes.add(new DesignTypeItem(3, "Other Design", null, false, false, 0, 0));
+				.add(new DesignTypeItem(1, "Resolvable Incomplete Block Design", "incompleteBlockParams.html", false, true, 0, 0, false));
+		designTypes.add(new DesignTypeItem(2, "Row-and-Column", "rowAndColumnParams.html", false, true, 0, 0, false));
+		designTypes.add(new DesignTypeItem(3, "Other Design", null, false, false, 0, 0, false));
 
 		if (PedigreeFactory.isCimmytWheat(this.crossExpansionProperties.getProfile(), this.contextUtil.getProjectInContext().getCropType()
 				.getCropName())) {
-			designTypes.add(new DesignTypeItem(4, "E30-2reps-6blocks-5ind", "predefinedDesignTemplateParams.html", true, false, 2, 30));
-			designTypes.add(new DesignTypeItem(5, "E30-3reps-6blocks-5ind", "predefinedDesignTemplateParams.html", true, false, 3, 30));
-			designTypes.add(new DesignTypeItem(6, "E50-2reps-5blocks-10ind", "predefinedDesignTemplateParams.html", true, false, 2, 50));
+			designTypes.add(new DesignTypeItem(4, "E30-2reps-6blocks-5ind", "predefinedDesignTemplateParams.html", true, false, 2, 30,
+					false));
+			designTypes.add(new DesignTypeItem(5, "E30-3reps-6blocks-5ind", "predefinedDesignTemplateParams.html", true, false, 3, 30,
+					false));
+			designTypes.add(new DesignTypeItem(6, "E50-2reps-5blocks-10ind", "predefinedDesignTemplateParams.html", true, false, 2, 50,
+					false));
 		}
 		return this.convertObjectToJson(designTypes);
 	}

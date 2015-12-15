@@ -18,8 +18,29 @@
 
 				$scope.Math = Math;
 				
+				$scope.designTypeView = [];
 				$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function (designTypes) {
                     $scope.designTypes = designTypes;
+                    
+                    // BV design
+                    $.each($scope.designTypes, function(index, designType){
+                    	if(!designType.isPreset && designType.name != 'Other Design'){
+                    		$scope.designTypeView.push(designType);
+                    	}
+                    });
+                   
+                    //separator
+                    if($scope.designTypes.length  > 4){
+                    	$scope.designTypeView.push({id:	null, name: '----------------------------------------------', isDisabled: true });
+                    }
+                    
+                    // Preset
+                    $.each($scope.designTypes, function(index, designType){
+                    	if(designType.isPreset && designType.name != 'Other Design'){
+                    		$scope.designTypeView.push(designType);
+                    	}
+                    });
+                    
                 });
 
 				// TODO : re run computeLocalData after loading of previous trial as template
@@ -401,24 +422,6 @@
 					return !_.contains(excludes[designTypeIndex], value);
 				});
 
-			};
-		}])
-
-		.filter('filterExperimentalDesignType', ['TrialManagerDataService', '_', function(TrialManagerDataService, _) {
-			return function(designTypes) {
-				var result = [];
-
-				var filteredDesignTypes = _.filter(designTypes, function(value) {
-					return value.name !== 'Other Design';
-				});
-
-				if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-					result.push(designTypes[0]);
-				} else {
-					result = filteredDesignTypes;
-				}
-
-				return result;
 			};
 		}]);
 

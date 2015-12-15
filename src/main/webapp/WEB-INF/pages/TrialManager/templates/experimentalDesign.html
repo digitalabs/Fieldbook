@@ -29,10 +29,6 @@
 										<option value="{{item.id}}"
 											ng-repeat="item in designTypes| filterExperimentalDesignType">
 											{{item.name}}</option>
-										<option value="" ng-show="isCimmytProfileWithWheatCrop" disabled="true">--------------------------------------------------</option>
-										<option value="{{item.id}}"
-											ng-repeat="item in designTypes| filterExperimentalDesignPresetType"
-											ng-show="isCimmytProfileWithWheatCrop">{{item.name}}</option>
 									</select>
 								</div>
 								<div class="col-xs-2 add-top-padding-small">

@@ -17,54 +17,10 @@
 				$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
 
 				$scope.Math = Math;
-				$scope.designTypes = [
-					{
-						id: 0,
-						name: 'Randomized Complete Block Design', params: 'randomizedCompleteBlockParams.html',
-						isPreset: false
-							
-					},
-					{
-						id: 1,
-						name: 'Resolvable Incomplete Block Design', params: 'incompleteBlockParams.html',
-						withResolvable: true,
-						isPreset: false
-					},
-					{
-						id: 2,
-						name: 'Row-and-Column', params: 'rowAndColumnParams.html',
-						withResolvable: true,
-						isPreset: false
-					},
-					{
-						id: 3,
-						name: 'Other Design', params: null,
-						isPreset: false
-					},
-					{
-						id: 4,
-						name: 'E30-2reps-6blocks-5ind', params: 'predefinedDesignTemplateParams.html',
-						isPreset: true,
-						repNo: 2,
-						totalNoOfEntries: 30
-					},
-					{
-						id: 5,
-						name: 'E30-3reps-6blocks-5ind', params: 'predefinedDesignTemplateParams.html',
-						isPreset: true,
-						repNo: 3,
-						totalNoOfEntries: 30
-					},
-					{
-						id: 6,
-						name: 'E50-2reps-5blocks-10ind', params: 'predefinedDesignTemplateParams.html',
-						isPreset: true,
-						repNo: 2,
-						totalNoOfEntries: 50
-					}
-				];
 				
-				$scope.isCimmytProfileWithWheatCrop = true;
+				$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function (designTypes) {
+                    $scope.designTypes = designTypes;
+                });
 
 				// TODO : re run computeLocalData after loading of previous trial as template
 				$scope.computeLocalData = function() {
@@ -447,31 +403,13 @@
 
 			};
 		}])
-		
-		.filter('filterExperimentalDesignPresetType', ['TrialManagerDataService', '_', function(TrialManagerDataService, _) {
-			return function(designTypes) {
-				var result = [];
-
-				var filteredDesignTypes = _.filter(designTypes, function(value) {
-					return value.name !== 'Other Design' && value.isPreset === true;
-				});
-
-				if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-					result.push(designTypes[0]);
-				} else {
-					result = filteredDesignTypes;
-				}
-
-				return result;
-			};
-		}])
 
 		.filter('filterExperimentalDesignType', ['TrialManagerDataService', '_', function(TrialManagerDataService, _) {
 			return function(designTypes) {
 				var result = [];
 
 				var filteredDesignTypes = _.filter(designTypes, function(value) {
-					return value.name !== 'Other Design' && value.isPreset === false;
+					return value.name !== 'Other Design';
 				});
 
 				if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {

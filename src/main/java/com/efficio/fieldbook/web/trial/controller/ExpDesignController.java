@@ -17,6 +17,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.service.pedigree.PedigreeFactory;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.web.common.bean.DesignTypeItem;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
@@ -68,6 +70,26 @@ public class ExpDesignController extends BaseTrialController {
 	@Override
 	public String getContentName() {
 		return "TrialManager/openTrial";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/retrieveDesignTypes", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public String retrieveDesignTypes() {
+		final List<DesignTypeItem> designTypes = new ArrayList<DesignTypeItem>();
+
+		designTypes
+				.add(new DesignTypeItem(0, "Randomized Complete Block Design", "randomizedCompleteBlockParams.html", false, false, 0, 0));
+		designTypes.add(new DesignTypeItem(1, "Resolvable Incomplete Block Design", "incompleteBlockParams.html", false, true, 0, 0));
+		designTypes.add(new DesignTypeItem(2, "Row-and-Column", "rowAndColumnParams.html", false, true, 0, 0));
+		designTypes.add(new DesignTypeItem(3, "Other Design", null, false, false, 0, 0));
+
+		if (PedigreeFactory.isCimmytWheat(this.crossExpansionProperties.getProfile(), this.contextUtil.getProjectInContext().getCropType()
+				.getCropName())) {
+			designTypes.add(new DesignTypeItem(4, "E30-2reps-6blocks-5ind", "predefinedDesignTemplateParams.html", true, false, 2, 30));
+			designTypes.add(new DesignTypeItem(5, "E30-3reps-6blocks-5ind", "predefinedDesignTemplateParams.html", true, false, 3, 30));
+			designTypes.add(new DesignTypeItem(6, "E50-2reps-5blocks-10ind", "predefinedDesignTemplateParams.html", true, false, 2, 50));
+		}
+		return this.convertObjectToJson(designTypes);
 	}
 
 	@ResponseBody

@@ -42,7 +42,7 @@ public class MockDesignEngineTest extends AbstractBaseIntegrationTest {
 		List<String> levels = Arrays.asList("20");
 		String outputfile = "1416451506872-mock-bv.csv";
 		MockDesignEngineTest.mainDesign =
-				ExpDesignUtil.createRandomizedCompleteBlockDesign(nBlock, blockFactor, plotFactor, 301, treatmentFactor, levels, outputfile);
+				ExpDesignUtil.createRandomizedCompleteBlockDesign(nBlock, blockFactor, plotFactor, 301, 201, treatmentFactor, levels, outputfile);
 	}
 
 	@Test

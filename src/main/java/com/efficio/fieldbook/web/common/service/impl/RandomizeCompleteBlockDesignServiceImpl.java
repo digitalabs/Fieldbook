@@ -24,6 +24,7 @@ import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -160,10 +161,15 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 				}
 			}
 
-			Integer plotNo = this.userSelection.getStartingPlotNo();
+			Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
+			Integer entryNo = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
+
+			if(!Objects.equals(stdvarTreatment.getId(), TermId.ENTRY_NO.getId())){
+				entryNo = null;
+			}
 
 			MainDesign mainDesign =
-					ExpDesignUtil.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, treatmentFactor, levels, "");
+					ExpDesignUtil.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, entryNo, treatmentFactor, levels, "");
 
 			measurementRowList =
 					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,

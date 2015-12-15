@@ -70,8 +70,8 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 		List<String> treatmentFactor = new ArrayList<String>();
 		List<String> levels = new ArrayList<String>();
 		MainDesign mainDesign =
-				ExpDesignUtil.createRandomizedCompleteBlockDesign("2", ExpDesignUtilTest.REP_NO, ExpDesignUtilTest.PLOT_NO, 301,
-						treatmentFactor, levels, "");
+				ExpDesignUtil.createRandomizedCompleteBlockDesign("2", ExpDesignUtilTest.REP_NO, ExpDesignUtilTest.PLOT_NO,
+						301, 201, treatmentFactor, levels, "");
 
 		this.setMockValues(mainDesign);
 

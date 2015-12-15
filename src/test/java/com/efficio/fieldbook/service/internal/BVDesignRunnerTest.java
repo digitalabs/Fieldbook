@@ -25,7 +25,7 @@ public class BVDesignRunnerTest {
 		levels.add("24");
 		levels.add("3");
 
-		MainDesign mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, treatmentFactor, levels, "");
+		MainDesign mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, treatmentFactor, levels, "");
 
 		String expectedString =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"RandomizedBlock\">"
@@ -44,6 +44,9 @@ public class BVDesignRunnerTest {
 						+ "<Parameter name=\""
 						+ ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM
 						+ "\" value=\"301\"/>"
+						+ "<Parameter name=\""
+						+ ExpDesignUtil.INITIAL_TREATMENT_NUMBER_PARAM
+						+ "\" value=\"201\"/>"
 						+ "<Parameter name=\""
 						+ ExpDesignUtil.TREATMENTFACTORS_PARAM
 						+ "\"><ListItem value=\"ENTRY_NO\"/><ListItem value=\"FERTILIZER\"/></Parameter>"

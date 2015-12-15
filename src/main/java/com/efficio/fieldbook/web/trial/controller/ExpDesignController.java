@@ -39,6 +39,8 @@ import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
+import com.efficio.fieldbook.web.importdesign.constant.BreedingViewDesignType;
+import com.efficio.fieldbook.web.importdesign.constant.PresetDesignType;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
@@ -77,21 +79,23 @@ public class ExpDesignController extends BaseTrialController {
 	public String retrieveDesignTypes() {
 		final List<DesignTypeItem> designTypes = new ArrayList<DesignTypeItem>();
 
-		designTypes.add(new DesignTypeItem(0, "Randomized Complete Block Design", "randomizedCompleteBlockParams.html", false, false, 0, 0,
-				false));
-		designTypes
-				.add(new DesignTypeItem(1, "Resolvable Incomplete Block Design", "incompleteBlockParams.html", false, true, 0, 0, false));
-		designTypes.add(new DesignTypeItem(2, "Row-and-Column", "rowAndColumnParams.html", false, true, 0, 0, false));
-		designTypes.add(new DesignTypeItem(3, "Other Design", null, false, false, 0, 0, false));
+		int index = 0;
+
+		for (final BreedingViewDesignType designType : BreedingViewDesignType.values()) {
+			designTypes.add(new DesignTypeItem(index, designType.getName(), designType.getParams(), false, designType.withResolvable(), 0, 0,
+					false));
+			index++;
+		}
+
+		designTypes.add(new DesignTypeItem(index++, "Other Design", null, false, false, 0, 0, false));
 
 		if (PedigreeFactory.isCimmytWheat(this.crossExpansionProperties.getProfile(), this.contextUtil.getProjectInContext().getCropType()
 				.getCropName())) {
-			designTypes.add(new DesignTypeItem(4, "E30-2reps-6blocks-5ind", "predefinedDesignTemplateParams.html", true, false, 2, 30,
-					false));
-			designTypes.add(new DesignTypeItem(5, "E30-3reps-6blocks-5ind", "predefinedDesignTemplateParams.html", true, false, 3, 30,
-					false));
-			designTypes.add(new DesignTypeItem(6, "E50-2reps-5blocks-10ind", "predefinedDesignTemplateParams.html", true, false, 2, 50,
-					false));
+			for (final PresetDesignType designType : PresetDesignType.values()) {
+				designTypes.add(new DesignTypeItem(index, designType.getName(), "predefinedDesignTemplateParams.html", true, false,
+						designType.getNumberOfReps(), designType.getTotalNoOfEntries(), false));
+				index++;
+			}
 		}
 		return this.convertObjectToJson(designTypes);
 	}

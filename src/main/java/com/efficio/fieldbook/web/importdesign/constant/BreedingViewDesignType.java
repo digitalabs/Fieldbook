@@ -10,12 +10,12 @@ public enum BreedingViewDesignType {
 	String name;
 	// this is an html file that contains the specific fields under design type
 	String params;
-	boolean isResolvable;
+	boolean withResolvable;
 
-	private BreedingViewDesignType(final String name, final String params, final boolean isResolvable) {
+	private BreedingViewDesignType(final String name, final String params, final boolean withResolvable) {
 		this.name = name;
 		this.params = params;
-		this.isResolvable = isResolvable;
+		this.withResolvable = withResolvable;
 	}
 
 	public String getName() {
@@ -26,8 +26,8 @@ public enum BreedingViewDesignType {
 		return this.params;
 	}
 
-	public boolean isResolvable() {
-		return this.isResolvable;
+	public boolean withResolvable() {
+		return this.withResolvable;
 	}
 
 }

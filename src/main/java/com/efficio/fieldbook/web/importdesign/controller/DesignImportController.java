@@ -447,7 +447,10 @@ public class DesignImportController extends SettingsController {
 			int replicationsCount = 0;
 			final PresetDesignType presetDesignType = PresetDesignType.getPresetDesignTypeById(presetId);
 			if (presetDesignType != null) {
-				designImportData = this.parser.parseFile(ResourceFinder.locateFile(presetDesignType.getTemplateName()).getFile());
+				designImportData =
+						this.parser.parseFile(ResourceFinder.locateFile(
+								AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString().concat(presetDesignType.getTemplateName()))
+								.getFile());
 				replicationsCount = presetDesignType.getNumberOfReps();
 			}
 

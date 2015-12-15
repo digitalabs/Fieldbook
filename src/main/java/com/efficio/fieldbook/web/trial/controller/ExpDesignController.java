@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +20,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.pedigree.PedigreeFactory;
 import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +42,10 @@ import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignServ
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
 import com.efficio.fieldbook.web.importdesign.constant.BreedingViewDesignType;
-import com.efficio.fieldbook.web.importdesign.constant.PresetDesignType;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -82,8 +84,8 @@ public class ExpDesignController extends BaseTrialController {
 		int index = 0;
 
 		for (final BreedingViewDesignType designType : BreedingViewDesignType.values()) {
-			designTypes.add(new DesignTypeItem(index, designType.getName(), designType.getParams(), false, designType.withResolvable(), 0, 0,
-					false));
+			designTypes.add(new DesignTypeItem(index, designType.getName(), designType.getParams(), false, designType.withResolvable(), 0,
+					0, false));
 			index++;
 		}
 
@@ -91,13 +93,52 @@ public class ExpDesignController extends BaseTrialController {
 
 		if (PedigreeFactory.isCimmytWheat(this.crossExpansionProperties.getProfile(), this.contextUtil.getProjectInContext().getCropType()
 				.getCropName())) {
-			for (final PresetDesignType designType : PresetDesignType.values()) {
-				designTypes.add(new DesignTypeItem(index, designType.getName(), "predefinedDesignTemplateParams.html", true, false,
-						designType.getNumberOfReps(), designType.getTotalNoOfEntries(), false));
+			designTypes.addAll(this.generatePresetDesignTypes(index));
+		}
+
+		return this.convertObjectToJson(designTypes);
+	}
+
+	private List<DesignTypeItem> generatePresetDesignTypes(int index) {
+		final List<DesignTypeItem> designTypeItems = new ArrayList<DesignTypeItem>();
+		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
+
+		for (final File designTemplateFile : presetTemplates) {
+			final String name = designTemplateFile.getName();
+
+			if (this.isValidPresetDesignTemplate(name)) {
+				final int noOfreps = this.getNoOfReps(name);
+				final int totalNoOfEntries = this.getTotalNoOfEntries(name);
+				designTypeItems.add(new DesignTypeItem(index, name, "predefinedDesignTemplateParams.html", true, false, noOfreps,
+						totalNoOfEntries, false));
 				index++;
 			}
 		}
-		return this.convertObjectToJson(designTypes);
+
+		return designTypeItems;
+	}
+
+	/**
+	 * Checks if the filename follows the expected preset template filename
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	private boolean isValidPresetDesignTemplate(final String fileName) {
+		return fileName.matches("E[0-9]+-Rep[0-9]+-Block[0-9]+-[0-9]+Ind.csv");
+	}
+
+	private int getTotalNoOfEntries(final String name) {
+		// i.e. E30-Rep2-Block6-5Ind
+		final int start = name.indexOf("E") + 1;
+		final int end = name.indexOf("-Rep");
+		return Integer.valueOf(name.substring(start, end));
+	}
+
+	private int getNoOfReps(final String name) {
+		final int start = name.indexOf("-Rep") + 4;
+		final int end = name.indexOf("-Block");
+		return Integer.valueOf(name.substring(start, end));
 	}
 
 	@ResponseBody

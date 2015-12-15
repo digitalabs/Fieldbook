@@ -235,7 +235,8 @@
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
                     hasGeneratedDesignPreset: false,
-					germplasmListSelected: GERMPLASM_LIST_SIZE > 0
+					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
+					designTypes: []
 				},
 
 				specialSettings: {
@@ -282,6 +283,12 @@
 					service.applicationData.unsavedGeneratedDesign = true;
 					$('#chooseGermplasmAndChecks').data('replace', '1');
 					$('body').data('expDesignShowPreview', '1');
+				},
+			
+				retrieveDesignType: function(){
+					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function (designTypes) {
+	                   service.applicationData.designTypes = designTypes; 
+	                });
 				},
                 
                 generatePresetExpDesign: function(designType) {
@@ -850,6 +857,8 @@
 				}
 			};
 
+			service.retrieveDesignType();
+			
 			// store the initial values on some service properties so that we can revert to it later
 			$localStorage.serviceBackup = {
 				settings: angular.copy(service.settings),

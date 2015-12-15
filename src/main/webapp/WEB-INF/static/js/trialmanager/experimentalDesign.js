@@ -18,11 +18,11 @@
 
 				$scope.Math = Math;
 				
+				$scope.designTypes = TrialManagerDataService.applicationData.designTypes;
 				$scope.designTypeView = [];
-				$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function (designTypes) {
-                    $scope.designTypes = designTypes;
-                    
-                    // BV design
+
+				$scope.generateDesignView = function(){
+					// BV design
                     $.each($scope.designTypes, function(index, designType){
                     	if(!designType.isPreset && designType.name != 'Other Design'){
                     		$scope.designTypeView.push(designType);
@@ -40,9 +40,10 @@
                     		$scope.designTypeView.push(designType);
                     	}
                     });
-                    
-                });
+				}
 
+				$scope.generateDesignView();
+				
 				// TODO : re run computeLocalData after loading of previous trial as template
 				$scope.computeLocalData = function() {
 					$scope.settings = TrialManagerDataService.specialSettings.experimentalDesign;

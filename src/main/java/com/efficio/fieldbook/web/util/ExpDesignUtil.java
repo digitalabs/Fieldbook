@@ -429,24 +429,19 @@ public class ExpDesignUtil {
 			}
 
 			for (int counter = 0; counter < bvOutput.getBvResultList().size(); counter++) {
-
-				try {
-
-					String entryNoValue = bvOutput.getEntryValue(entryNumberIdentifier, counter);
-					final Integer entryNumber = StringUtil.parseInt(entryNoValue, null);
-
-					//NOTE: Any chances for invalid number from bvOutput? We have logged it.
-					if(entryNumber == null){
-						throw new Exception("ExpDesignUtil: Invalid entry number from bvOutput");
-					}
-
-					ImportedGermplasm importedGermplasm = importedGermplasmMap.get(entryNumber);
-					MeasurementRow row = ExpDesignUtil.createMeasurementRow(varList, importedGermplasm,
-							bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo);
-					measurementRowList.add(row);
-				} catch (Exception e) {
-					ExpDesignUtil.LOG.error(e.getMessage(), e);
+				String entryNoValue = bvOutput.getEntryValue(entryNumberIdentifier, counter);
+				final Integer entryNumber = StringUtil.parseInt(entryNoValue, null);
+				if(entryNumber == null){
+					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
 				}
+				ImportedGermplasm importedGermplasm = importedGermplasmMap.get(entryNumber);
+
+				if(importedGermplasm == null){
+					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
+				}
+				MeasurementRow row = ExpDesignUtil.createMeasurementRow(varList, importedGermplasm,
+						bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo);
+				measurementRowList.add(row);
 			}
 		}
 		return measurementRowList;

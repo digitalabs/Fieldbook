@@ -67,8 +67,7 @@ public class MockDesignRunnerImpl implements DesignRunner {
 		int startingEntryNo = Integer.valueOf(expDesign.getParameterValue(ExpDesignUtil.INITIAL_TREATMENT_NUMBER_PARAM));
 
 		List<String[]> csvLines = new ArrayList<>();
-		String[] csv = {"PLOT_NO", "REP_NO", "ENTRY_NO"};
-		csvLines.add(csv);
+		csvLines.add(new String[] {"PLOT_NO", "REP_NO", "ENTRY_NO"});
 
 		List<Integer> entryNumbers = new ArrayList<>();
 		for (int i = 1; i <= lines; i++) {
@@ -76,13 +75,10 @@ public class MockDesignRunnerImpl implements DesignRunner {
 		}
 
 		for (int rep = 1; rep <= replications; rep++) {
-			int plotNo = startingPlotNo;
 			// Randomize entry number arrangements per replication
 			Collections.shuffle(entryNumbers);
 			for (int j = 0; j < entryNumbers.size(); j++) {
-				plotNo++;
-				csv = new String[] {String.valueOf(plotNo), String.valueOf(rep), entryNumbers.get(j).toString()};
-				csvLines.add(csv);
+				csvLines.add(new String[] {String.valueOf(startingPlotNo++), String.valueOf(rep), entryNumbers.get(j).toString()});
 			}
 		}
 		BVDesignOutput output = new BVDesignOutput(0);

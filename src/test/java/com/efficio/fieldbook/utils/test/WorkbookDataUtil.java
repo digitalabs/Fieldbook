@@ -224,7 +224,19 @@ public class WorkbookDataUtil {
 						WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		conditions.add(variable);
-
+		
+		variable = 
+				new MeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "NREP", "Number of replications in an experiment",
+						"Number", "Assigned", "ED - nrep", "Numeric", "2", null);
+		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
+		conditions.add(variable);
+		
+		variable = 
+				new MeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXPT_DESIGN", "Experimental design - assigned (type)",
+						"Type of EXPT_DESIGN", "Assigned", "Experimental design", "Categorical", "10121", null);
+		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		conditions.add(variable);
+		
 		return conditions;
 	}
 

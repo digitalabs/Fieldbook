@@ -17,52 +17,32 @@
 				$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
 
 				$scope.Math = Math;
-				$scope.designTypes = [
-					{
-						id: 0,
-						name: 'Randomized Complete Block Design', params: 'randomizedCompleteBlockParams.html',
-						isPreset: false
-							
-					},
-					{
-						id: 1,
-						name: 'Resolvable Incomplete Block Design', params: 'incompleteBlockParams.html',
-						withResolvable: true,
-						isPreset: false
-					},
-					{
-						id: 2,
-						name: 'Row-and-Column', params: 'rowAndColumnParams.html',
-						withResolvable: true,
-						isPreset: false
-					},
-					{
-						id: 3,
-						name: 'Other Design', params: null,
-						isPreset: false
-					},
-					{
-						id: 4,
-						name: 'E30-2reps-6blocks-5ind', params: 'designTemplateParams.html',
-						isPreset: true,
-						repNo: 2,
-						totalNoOfEntries: 30
-					},
-					{
-						id: 5,
-						name: 'E30-3reps-6blocks-5ind', params: 'designTemplateParams.html',
-						isPreset: true,
-						repNo: 3,
-						totalNoOfEntries: 30
-					},
-					{
-						id: 6,
-						name: 'E50-2reps-5blocks-10ind', params: 'designTemplateParams.html',
-						isPreset: true,
-						repNo: 2,
-						totalNoOfEntries: 50
-					}
-				];
+				
+				$scope.designTypes = TrialManagerDataService.applicationData.designTypes;
+				$scope.designTypeView = [];
+
+				$scope.generateDesignView = function(){
+					// BV design
+                    $.each($scope.designTypes, function(index, designType){
+                    	if(!designType.isPreset && designType.name != 'Other Design'){
+                    		$scope.designTypeView.push(designType);
+                    	}
+                    });
+                   
+                    // separator
+                    if($scope.designTypes.length  > 4){
+                    	$scope.designTypeView.push({id:	null, name: '----------------------------------------------', isDisabled: true });
+                    }
+                    
+                    // Preset
+                    $.each($scope.designTypes, function(index, designType){
+                    	if(designType.isPreset && designType.name != 'Other Design'){
+                    		$scope.designTypeView.push(designType);
+                    	}
+                    });
+				};
+
+				$scope.generateDesignView();
 				
 				$scope.designDetailSummary = {
 					heading : '',
@@ -74,6 +54,7 @@
 					return $scope.data.designType;
 				}, function(newValue) {
 					// If Design Type is Preset Design
+	
 					if(newValue >= 4){
 						$scope.designDetailSummary.heading = 'DETAILS OF EXPERIMENTAL DESIGN';
 						$scope.designDetailSummary.designTemplateLabel = 'Design based on design template:';
@@ -87,11 +68,6 @@
 					}
 				});
 				
-				$scope.isCimmytProfileWithWheatCrop = false;
-				$http.get('/Fieldbook/TrialManager/experimental/design/isCimmytProfileWithWheatCrop').success(function (isSuccess) {
-                    $scope.isCimmytProfileWithWheatCrop = isSuccess;
-                });
-
 				// TODO : re run computeLocalData after loading of previous trial as template
 				$scope.computeLocalData = function() {
 					$scope.settings = TrialManagerDataService.specialSettings.experimentalDesign;
@@ -187,7 +163,7 @@
 						$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 						$scope.data.designType = $scope.currentDesignType.id;
 						
-						if(newId >= 4 && newId <= 6){
+						if($scope.designTypes[newId].isPreset){
 							showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
 						}
 					} else {
@@ -227,7 +203,7 @@
 					}
 					
 					// non-preset design type
-					if($scope.data.designType < 3){
+					if(!$scope.designTypes[$scope.data.designType].isPreset){
 						TrialManagerDataService.generateExpDesign(data).then(
 							function(response) {
 								if (response.valid === true) {
@@ -268,15 +244,14 @@
 				};
 				
 				$scope.isPreset = function() {
-					return $scope.data.designType != null && $scope.data.designType >= 4;
+					return ($scope.designTypes[$scope.data.designType].isPreset && !$scope.applicationData.unappliedChangesAvailable) || $scope.applicationData.hasGeneratedDesignPreset;
 				};
 				
 				$scope.isImportedDesign = function() {
-					return $scope.data.designType != null && $scope.data.designType === 3;
+					return $scope.data.designType != null && !$scope.designTypes[$scope.data.designType].isPreset;
 				};
 				
 				$scope.isBVDesign = function() {
-					return $scope.data.designType != null && $scope.data.designType < 3;
 				};
 				
 				$scope.doValidate = function() {
@@ -477,42 +452,6 @@
 					return !_.contains(excludes[designTypeIndex], value);
 				});
 
-			};
-		}])
-		
-		.filter('filterExperimentalDesignPresetType', ['TrialManagerDataService', '_', function(TrialManagerDataService, _) {
-			return function(designTypes) {
-				var result = [];
-
-				var filteredDesignTypes = _.filter(designTypes, function(value) {
-					return value.name !== 'Other Design' && value.isPreset === true;
-				});
-
-				if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-					result.push(designTypes[0]);
-				} else {
-					result = filteredDesignTypes;
-				}
-
-				return result;
-			};
-		}])
-
-		.filter('filterExperimentalDesignType', ['TrialManagerDataService', '_', function(TrialManagerDataService, _) {
-			return function(designTypes) {
-				var result = [];
-
-				var filteredDesignTypes = _.filter(designTypes, function(value) {
-					return value.name !== 'Other Design' && value.isPreset === false;
-				});
-
-				if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-					result.push(designTypes[0]);
-				} else {
-					result = filteredDesignTypes;
-				}
-
-				return result;
 			};
 		}]);
 

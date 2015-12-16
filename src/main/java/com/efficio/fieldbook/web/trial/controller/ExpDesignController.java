@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -17,7 +18,9 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.service.pedigree.PedigreeFactory;
 import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.web.common.bean.DesignTypeItem;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
@@ -37,9 +41,11 @@ import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
+import com.efficio.fieldbook.web.importdesign.constant.BreedingViewDesignType;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -47,8 +53,6 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @RequestMapping(ExpDesignController.URL)
 public class ExpDesignController extends BaseTrialController {
 
-	private static final String WHEAT = "wheat";
-	private static final String CIMMYT = "cimmyt";
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignController.class);
 	public static final String URL = "/TrialManager/experimental/design";
 
@@ -73,14 +77,78 @@ public class ExpDesignController extends BaseTrialController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/isCimmytProfileWithWheatCrop", method = RequestMethod.GET)
-	public Boolean isCimmytProfileWithWheatCrop() {
-		final String profile = this.crossExpansionProperties.getProfile();
-		final String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
-		if (profile != null && cropName != null) {
-			return CIMMYT.equalsIgnoreCase(profile) && WHEAT.equalsIgnoreCase(cropName);
+	@RequestMapping(value = "/retrieveDesignTypes", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public String retrieveDesignTypes() {
+		final List<DesignTypeItem> designTypes = new ArrayList<DesignTypeItem>();
+
+		int index = 0;
+
+		for (final BreedingViewDesignType designType : BreedingViewDesignType.values()) {
+			designTypes.add(new DesignTypeItem(index, designType.getName(), designType.getParams(), false, designType.withResolvable(), 0,
+					0, false));
+			index++;
 		}
-		return false;
+
+		designTypes.add(new DesignTypeItem(index++, "Other Design", null, false, false, 0, 0, false));
+
+		if (PedigreeFactory.isCimmytWheat(this.crossExpansionProperties.getProfile(), this.contextUtil.getProjectInContext().getCropType()
+				.getCropName())) {
+			designTypes.addAll(this.generatePresetDesignTypes(index));
+		}
+
+		return this.convertObjectToJson(designTypes);
+	}
+
+	private List<DesignTypeItem> generatePresetDesignTypes(int index) {
+		final List<DesignTypeItem> designTypeItems = new ArrayList<DesignTypeItem>();
+		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
+
+		for (final File designTemplateFile : presetTemplates) {
+			final String templateFileName = designTemplateFile.getName();
+
+			if (this.isValidPresetDesignTemplate(templateFileName)) {
+				final int noOfreps = this.getNoOfReps(templateFileName);
+				final int totalNoOfEntries = this.getTotalNoOfEntries(templateFileName);
+				final String templateName = this.getTemplateName(templateFileName);
+				designTypeItems.add(new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, false, noOfreps,
+						totalNoOfEntries, false));
+				index++;
+			}
+		}
+
+		return designTypeItems;
+	}
+
+	/***
+	 * Removed the .csv extension from the filename
+	 * 
+	 * @param templateFileName
+	 * @return
+	 */
+	private String getTemplateName(final String templateFileName) {
+		return templateFileName.substring(0, templateFileName.indexOf(".csv"));
+	}
+
+	/**
+	 * Checks if the filename follows the expected preset template filename i.e. E30-Rep2-Block6-5Ind.csv
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	private boolean isValidPresetDesignTemplate(final String fileName) {
+		return fileName.matches("E[0-9]+-Rep[0-9]+-Block[0-9]+-[0-9]+Ind.csv");
+	}
+
+	private int getTotalNoOfEntries(final String name) {
+		final int start = name.indexOf("E") + 1;
+		final int end = name.indexOf("-Rep");
+		return Integer.valueOf(name.substring(start, end));
+	}
+
+	private int getNoOfReps(final String name) {
+		final int start = name.indexOf("-Rep") + 4;
+		final int end = name.indexOf("-Block");
+		return Integer.valueOf(name.substring(start, end));
 	}
 
 	@ResponseBody

@@ -53,13 +53,14 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.DesignTypeItem;
+import com.efficio.fieldbook.web.common.bean.GeneratePresetDesignInput;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
-import com.efficio.fieldbook.web.importdesign.constant.PresetDesignType;
 import com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceImpl;
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.trial.bean.Environment;
@@ -493,7 +494,7 @@ public class DesignImportControllerTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
 		final int originalConditionsSize = workbook.getConditions().size();
-		
+
 		final Set<MeasurementVariable> measurementVariables = new HashSet<>();
 		measurementVariables.add(this.getMeasurementVariable(TermId.TRIAL_LOCATION.getId(), new HashSet<>(workbook.getConditions())));
 
@@ -503,8 +504,8 @@ public class DesignImportControllerTest {
 		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 		this.designImportController.addConditionsIfNecessary(workbook, data);
 
-		Assert.assertEquals("LOCATION_NAME should not added to the Conditions, so the size of Conditions must remain " + originalConditionsSize, originalConditionsSize, workbook
-				.getConditions().size());
+		Assert.assertEquals("LOCATION_NAME should not added to the Conditions, so the size of Conditions must remain "
+				+ originalConditionsSize, originalConditionsSize, workbook.getConditions().size());
 
 	}
 
@@ -518,13 +519,13 @@ public class DesignImportControllerTest {
 				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
-		int originalConditionsSize = workbook.getConditions().size();
-		
+		final int originalConditionsSize = workbook.getConditions().size();
+
 		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 		this.designImportController.addConditionsIfNecessary(workbook, data);
-		
-		//Add 1 to the originalConditionsSize to include the SITE_NAME in the count.
-		Assert.assertEquals(originalConditionsSize+1, workbook.getConditions().size());
+
+		// Add 1 to the originalConditionsSize to include the SITE_NAME in the count.
+		Assert.assertEquals(originalConditionsSize + 1, workbook.getConditions().size());
 		Assert.assertEquals("SITENAME should be added to the Conditions since it isn't in the list", "SITENAME", this
 				.getMeasurementVariable(TermId.SITE_NAME.getId(), new HashSet<MeasurementVariable>(workbook.getConditions())).getName());
 
@@ -699,8 +700,10 @@ public class DesignImportControllerTest {
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
-		final Map<String, Object> resultsMap =
-				this.designImportController.generatePresetMeasurements(PresetDesignType.E30_2REPS_6BLOCKS_5IND.getId(), environmentData);
+		final GeneratePresetDesignInput input =
+				new GeneratePresetDesignInput(environmentData, new DesignTypeItem(4, "E30-Rep2-Block6-5Ind",
+						"predefinedDesignTemplateParams.html", true, false, 2, 30, false));
+		final Map<String, Object> resultsMap = this.designImportController.generatePresetMeasurements(input);
 
 		Assert.assertEquals(1, resultsMap.get(DesignImportController.IS_SUCCESS));
 
@@ -721,8 +724,8 @@ public class DesignImportControllerTest {
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
-		final Map<String, Object> resultsMap =
-				this.designImportController.generatePresetMeasurements(PresetDesignType.E30_2REPS_6BLOCKS_5IND.getId(), environmentData);
+		final GeneratePresetDesignInput input = new GeneratePresetDesignInput(environmentData, new DesignTypeItem(5));
+		final Map<String, Object> resultsMap = this.designImportController.generatePresetMeasurements(input);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
 

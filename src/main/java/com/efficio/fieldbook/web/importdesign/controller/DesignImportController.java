@@ -416,7 +416,7 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
-					.getStudyDetails().getStudyType(), false, new DesignTypeItem(3), 0);
+					.getStudyDetails().getStudyType(), false, new DesignTypeItem(3, "Other Design", null, false, false, 0, 0, false), 0);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);

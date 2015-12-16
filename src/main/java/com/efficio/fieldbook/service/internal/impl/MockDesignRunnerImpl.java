@@ -3,6 +3,7 @@ package com.efficio.fieldbook.service.internal.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -50,31 +51,42 @@ public class MockDesignRunnerImpl implements DesignRunner {
 		ExpDesign expDesign = design.getDesign();
 		MockDesignRunnerImpl.LOG.info("Mocking Design for " + expDesign.getName());
 
+		Integer lines = new Integer(0);
+		Integer replications = new Integer(1);
+
+		if (expDesign.getName().equals(ExpDesignUtil.RANDOMIZED_COMPLETE_BLOCK_DESIGN)) {
+			List<ListItem> levelList = expDesign.getParameterList(ExpDesignUtil.LEVELS_PARAM);
+			lines = Integer.parseInt(levelList.get(0).getValue());
+			replications = Integer.parseInt(expDesign.getParameterValue(ExpDesignUtil.NBLOCKS_PARAM));
+		} else {
+			lines = Integer.valueOf(expDesign.getParameterValue(ExpDesignUtil.NTREATMENTS_PARAM));
+			replications = Integer.parseInt(expDesign.getParameterValue(ExpDesignUtil.NREPLICATES_PARAM));
+		}
+
+		int startingPlotNo = Integer.valueOf(expDesign.getParameterValue(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM));
+		int startingEntryNo = Integer.valueOf(expDesign.getParameterValue(ExpDesignUtil.INITIAL_TREATMENT_NUMBER_PARAM));
+
 		List<String[]> csvLines = new ArrayList<>();
 		String[] csv = {"PLOT_NO", "REP_NO", "ENTRY_NO"};
 		csvLines.add(csv);
-		List<ListItem> levelList = expDesign.getParameterList("levels");
-		Integer lines = Integer.parseInt(levelList.get(0).getValue());
-		List<Integer> items = new ArrayList<Integer>(lines);
-		Integer blocks = Integer.parseInt(expDesign.getParameterValue("nblocks"));
-		for (int i = 1; i <= blocks; i++) {
-			int count = 0;
-			items.clear();
-			while (count < lines) {
-				Integer item = Math.round((float) Math.random() * lines) + 1;
-				if (!items.contains(item) && item <= lines) {
-					count++;
-					items.add(item);
-					csv = new String[] {String.valueOf(count), String.valueOf(i), item.toString()};
-					csvLines.add(csv);
-				}
-			}
+
+		List<Integer> entryNumbers = new ArrayList<>();
+		for (int i = 1; i <= lines; i++) {
+			entryNumbers.add(startingEntryNo++);
 		}
 
+		for (int rep = 1; rep <= replications; rep++) {
+			int plotNo = startingPlotNo;
+			// Randomize entry number arrangements per replication
+			Collections.shuffle(entryNumbers);
+			for (int j = 0; j < entryNumbers.size(); j++) {
+				plotNo++;
+				csv = new String[] {String.valueOf(plotNo), String.valueOf(rep), entryNumbers.get(j).toString()};
+				csvLines.add(csv);
+			}
+		}
 		BVDesignOutput output = new BVDesignOutput(0);
 		output.setResults(csvLines);
 		return output;
-
 	}
-
 }

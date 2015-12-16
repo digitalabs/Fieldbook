@@ -66,9 +66,9 @@ public class ExpDesignUtil {
 	public static final String OUTPUTFILE_PARAM = "outputfile";
 	public static final String SEED_PARAM = "seed";
 
-	private static String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
-	private static String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
-	private static String RESOLVABLE_ROW_COL_DESIGN = "ResolvableRowColumn";
+	public static String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
+	public static String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
+	public static String RESOLVABLE_ROW_COL_DESIGN = "ResolvableRowColumn";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignUtil.class);
 

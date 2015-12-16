@@ -72,7 +72,7 @@
             <section-container heading="SUMMARY OF DESIGN DETAILS">
                 <div name="content">
                     <div class="add-bottom-padding" ng-show="data.noOfEnvironments &gt;= 0"><b th:text="#{trial.experimental.design.number.of.environments}"></b> <span>{{data.noOfEnvironments}}</span></div>
-                    <div class="add-bottom-padding" ng-show="currentDesignType.id > 0"><b th:text="#{trial.experimental.design.number.of.treatments}"></b> <span>{{totalGermplasmEntryListCount}}</span></div>
+                    <div class="add-bottom-padding" ng-show="currentDesignType.id > 0"><b th:text="#{trial.experimental.design.number.of.treatments}"></b> <span id="validateAndSetPlotNo()">{{totalGermplasmEntryListCount}}</span></div>
                     <div class="add-bottom-padding" ng-show="currentDesignType.id == 1"><b th:text="#{trial.experimental.design.number.of.blocks}"></b> <span>{{(data.blockSize > 0) ? ((totalGermplasmEntryListCount % data.blockSize === 0) ? totalGermplasmEntryListCount / data.blockSize : '') : 0}} <b class="text-danger" ng-show="data.blockSize > 0 &amp;&amp; totalGermplasmEntryListCount % data.blockSize > 0">Invalid block size</b></span></div>
                     <div class="add-bottom-padding" ng-repeat="key in settings.factors.keys() | filterFactors : currentDesignType.id" >
                         <b>{{settings.factors.val(key).label}}</b> - <a show-details-modal="key"
@@ -119,19 +119,14 @@
 </form>
 
 <script type="text/javascript" th:inline="javascript">
-    var plotNoMaxLimitExceeded = /*[[#{germplasm.list.plot.no.should.not.exceed.five.digits}]]*/ '',
-            plotNoNonNumericValueNotSupported = /*[[#{germplasm.list.plot.no.non.numeric.value.is.not.supported}]]*/ '';
+    var plotNoShouldBeInRange = /*[[#{plot.number.should.be.in.range}]]*/ '';
 
     function validateAndSetPlotNo() {
         var customMessage = '';
         var plotNo = $.trim($("#txtStartingPlotNo").val());
         if(plotNo != '') {
-            if (validatePlotNo(plotNo)) {
-                if (validatePlotNoAsMaxDigits(plotNo)) {
-                    customMessage = plotNoMaxLimitExceeded;
-                }
-            } else {
-                customMessage = plotNoNonNumericValueNotSupported;
+            if (!validateEntryAndPlotNo(plotNo)) {
+                customMessage = plotNoShouldBeInRange;
             }
 
             if (customMessage != '') {
@@ -144,18 +139,11 @@
         }
     }
 
-    // Validate plot number if it is non-numeric
-    function validatePlotNo(inputNo) {
-        var validNo = /^\d+$/;
-        if (inputNo.match(validNo)) {
-            return true;
-        }
-        return false;
-    }
+    // Validate Germplasm entry number and plot number if it is non-numeric
+    function validateEntryAndPlotNo(inputNo) {
+        var validNo = '^(?=.*[1-9].*)[0-9]{1,5}$';
 
-    // Validate plot number if it exceeds 5 digits
-    function validatePlotNoAsMaxDigits(inputNo) {
-        if (inputNo.length > 5) {
+        if (inputNo.match(validNo)) {
             return true;
         }
         return false;

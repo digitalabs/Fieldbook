@@ -248,10 +248,12 @@
 				};
 				
 				$scope.isImportedDesign = function() {
-					return $scope.data.designType != null && !$scope.designTypes[$scope.data.designType].isPreset;
+					return $scope.data.designType != null && $scope.designTypes[$scope.data.designType].name === 'Other Design';
 				};
 				
 				$scope.isBVDesign = function() {
+					var selectedDesignType = $scope.designTypes[$scope.data.designType];
+					return $scope.data.designType != null && !selectedDesignType.isPreset && selectedDesignType.name != 'Other Design'; 
 				};
 				
 				$scope.doValidate = function() {

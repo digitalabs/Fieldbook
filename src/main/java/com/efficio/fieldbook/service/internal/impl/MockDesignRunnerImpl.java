@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -63,8 +64,11 @@ public class MockDesignRunnerImpl implements DesignRunner {
 			replications = Integer.parseInt(expDesign.getParameterValue(ExpDesignUtil.NREPLICATES_PARAM));
 		}
 
-		int startingPlotNo = Integer.valueOf(expDesign.getParameterValue(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM));
-		int startingEntryNo = Integer.valueOf(expDesign.getParameterValue(ExpDesignUtil.INITIAL_TREATMENT_NUMBER_PARAM));
+		final String initPlotNoParam = expDesign.getParameterValue(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM);
+		int startingPlotNo = StringUtils.isNumeric(initPlotNoParam) ? Integer.valueOf(initPlotNoParam) : 1;
+		
+		final String initEntryNoParam = expDesign.getParameterValue(ExpDesignUtil.INITIAL_TREATMENT_NUMBER_PARAM);
+		int startingEntryNo = StringUtils.isNumeric(initEntryNoParam) ? Integer.valueOf(initEntryNoParam) : 1;
 
 		List<String[]> csvLines = new ArrayList<>();
 		csvLines.add(new String[] {"PLOT_NO", "REP_NO", "ENTRY_NO"});

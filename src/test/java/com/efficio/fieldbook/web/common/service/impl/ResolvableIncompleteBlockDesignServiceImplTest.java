@@ -3,7 +3,11 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -16,6 +20,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -29,7 +34,11 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ResolvableIncompleteBlockDesignServiceImplTest {
 
 	@Mock
@@ -41,10 +50,18 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 	@Mock
 	private ContextUtil contextUtil;
 
+	@Mock
+	private ResourceBundleMessageSource messageSource;
+
 	@InjectMocks
 	private ResolvableIncompleteBlockDesignServiceImpl resolveIncompleteBlockDesignImpl;
 
 	private static final String PROGRAM_UUID = "2191a54c-7d98-40d0-ae6f-6a400e4546ce";
+
+	private static final String ENTRY_NUMBER_SHOULD_HAVE_VALID_RANGE = "Entry Number should accept only numbers in range 1 to 99999.";
+	private static final String PLOT_NUMBER_SHOULD_HAVE_VALID_RANGE = "Plot Number should accept only numbers in range 1 to 99999.";
+
+	Locale locale = LocaleContextHolder.getLocale();
 
 	@Before
 	public void beforeEachTest() throws IOException {
@@ -165,6 +182,76 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 
 		Assert.assertTrue(!measurementRowList.isEmpty());
 		Assert.assertEquals("Expected number of measurement rows were not generated: ", 20, measurementRowList.size());
+	}
+
+	@Test
+	public void testValidateInvalidEntryNumber(){
+
+		List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 100, 200);
+
+		ExpDesignParameterUi param = new ExpDesignParameterUi();
+		param.setReplicationsCount("2");
+		param.setNoOfEnvironments("2");
+		param.setBlockSize("25");
+		param.setStartingEntryNo("99990");
+		param.setStartingPlotNo("400");
+
+		Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); // Key - CVTerm
+		// ID , List
+		// of values
+		Map<String, List<String>> treatmentData = new HashMap<String, List<String>>();
+		treatmentData.put("labels", Arrays.asList("100", "200", "300"));
+
+		treatmentFactorValues.put("8284", treatmentData);
+		treatmentFactorValues.put("8377", treatmentData);
+
+		param.setTreatmentFactorsData(treatmentFactorValues);
+
+		try{
+			Mockito.doReturn(ResolvableIncompleteBlockDesignServiceImplTest.ENTRY_NUMBER_SHOULD_HAVE_VALID_RANGE).when(this.messageSource)
+					.getMessage("entry.number.should.be.in.range", null, locale);
+		}catch (Exception e){
+
+		}
+
+		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
+
+		Assert.assertEquals(ResolvableIncompleteBlockDesignServiceImplTest.ENTRY_NUMBER_SHOULD_HAVE_VALID_RANGE, output.getMessage());
+	}
+
+	@Test
+	public void testValidateInvalidPlotNumber(){
+
+		List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 100, 200);
+
+		ExpDesignParameterUi param = new ExpDesignParameterUi();
+		param.setReplicationsCount("2");
+		param.setNoOfEnvironments("2");
+		param.setBlockSize("25");
+		param.setStartingEntryNo("200");
+		param.setStartingPlotNo("99970");
+
+		Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); // Key - CVTerm
+		// ID , List
+		// of values
+		Map<String, List<String>> treatmentData = new HashMap<String, List<String>>();
+		treatmentData.put("labels", Arrays.asList("100", "200", "300"));
+
+		treatmentFactorValues.put("8284", treatmentData);
+		treatmentFactorValues.put("8377", treatmentData);
+
+		param.setTreatmentFactorsData(treatmentFactorValues);
+
+		try{
+			Mockito.doReturn(ResolvableIncompleteBlockDesignServiceImplTest.PLOT_NUMBER_SHOULD_HAVE_VALID_RANGE).when(this.messageSource)
+					.getMessage("plot.number.should.be.in.range", null, locale);
+		}catch (Exception e){
+
+		}
+
+		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
+
+		Assert.assertEquals(ResolvableIncompleteBlockDesignServiceImplTest.PLOT_NUMBER_SHOULD_HAVE_VALID_RANGE, output.getMessage());
 	}
 
 	private MeasurementVariable createMeasurementVariable(final int varId, final String name, final String desc, final String scale,

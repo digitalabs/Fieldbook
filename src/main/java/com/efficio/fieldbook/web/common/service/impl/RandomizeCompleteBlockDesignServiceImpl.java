@@ -51,6 +51,8 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 
 	private static final Logger LOG = LoggerFactory.getLogger(RandomizeCompleteBlockDesignServiceImpl.class);
 
+	private static final Integer maxEntryAndPlotNumberLimit = 99999;
+
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	@Resource
@@ -209,26 +211,52 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	public ExpDesignValidationOutput validate(ExpDesignParameterUi expDesignParameter, List<ImportedGermplasm> germplasmList) {
 		Locale locale = LocaleContextHolder.getLocale();
 		ExpDesignValidationOutput output = new ExpDesignValidationOutput(true, "");
-		try {
-			if (expDesignParameter != null && germplasmList != null) {
-				if (!NumberUtils.isNumber(expDesignParameter.getReplicationsCount())) {
-					output =
-							new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-									"experiment.design.replication.count.should.be.a.number", null, locale));
-				} else {
-					int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
 
-					if (replicationCount <= 0 || replicationCount >= 13) {
-						output =
-								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-										"experiment.design.replication.count.rcbd.error", null, locale));
-					}
-				}
-			}
-		} catch (Exception e) {
+		if (expDesignParameter == null || germplasmList == null) {
+			return output;
+		}
+
+		if (!NumberUtils.isNumber(expDesignParameter.getReplicationsCount())) {
+			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+							"experiment.design.replication.count.should.be.a.number", null, locale));
+			return output;
+		}
+
+		if (expDesignParameter.getStartingPlotNo() != null && !NumberUtils.isNumber(expDesignParameter.getStartingPlotNo())) {
+			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+					"experiment.design.plot.number.should.be.a.number", null, locale));
+			return output;
+		}
+		if (expDesignParameter.getStartingEntryNo() != null && !NumberUtils.isNumber(expDesignParameter.getStartingEntryNo())) {
+			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.entry.number.should.be.a.number", null, locale));
+			return output;
+		}
+
+		final int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
+
+		if (replicationCount <= 0 || replicationCount >= 13) {
 			output =
-					new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.invalid.generic.error", null,
-							locale));
+					new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+							"experiment.design.replication.count.rcbd.error", null, locale));
+			return output;
+		}
+
+		final Integer entryNumber = StringUtil.parseInt(expDesignParameter.getStartingEntryNo(), null);
+		final Integer plotNumber = StringUtil.parseInt(expDesignParameter.getStartingPlotNo(), null);
+		final Integer germplasmCount = germplasmList.size();
+
+		if(Objects.equals(entryNumber, 0)){
+			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+					"entry.number.should.be.in.range", null, locale));
+		} else if(Objects.equals(plotNumber, 0)){
+			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+					"plot.number.should.be.in.range", null, locale));
+		} else if (entryNumber != null && (germplasmCount + entryNumber) > maxEntryAndPlotNumberLimit) {
+			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+					"experiment.design.entry.number.should.not.exceed", null, locale));
+		} else if (entryNumber != null && plotNumber != null && (((germplasmCount * replicationCount) + plotNumber) > maxEntryAndPlotNumberLimit)) {
+			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+					"experiment.design.plot.number.should.not.exceed", null, locale));
 		}
 
 		return output;

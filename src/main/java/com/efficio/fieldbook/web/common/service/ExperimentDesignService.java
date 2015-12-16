@@ -28,6 +28,8 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
  * The Interface ExperimentDesignService.
  */
 public interface ExperimentDesignService {
+	
+	static final Integer MAX_STARTING_ENTRY_PLOT_NO = 99999;
 
 	/**
 	 * Generate design.

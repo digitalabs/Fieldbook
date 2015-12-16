@@ -13,6 +13,15 @@ public class DesignTypeItem {
 	private Integer repNo;
 	private Integer totalNoOfEntries;
 	private Boolean isDisabled;
+	private String templateName;
+
+	public DesignTypeItem() {
+		// do nothing
+	}
+
+	public DesignTypeItem(final int id) {
+		this.id = id;
+	}
 
 	public DesignTypeItem(final Integer id, final String name, final String params, final Boolean isPreset, final Boolean withResolvable,
 			final Integer noOfReps, final Integer noOfEntries, final Boolean isDisabled) {
@@ -25,6 +34,7 @@ public class DesignTypeItem {
 		this.repNo = noOfReps;
 		this.totalNoOfEntries = noOfEntries;
 		this.isDisabled = isDisabled;
+		this.templateName = name.concat(".csv");
 	}
 
 	public Integer getId() {
@@ -41,6 +51,10 @@ public class DesignTypeItem {
 
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	public String getTemplateName() {
+		return this.templateName;
 	}
 
 	public String getParams() {
@@ -83,12 +97,12 @@ public class DesignTypeItem {
 		this.totalNoOfEntries = totalNoOfEntries;
 	}
 
-	public Boolean getIsSelectable() {
+	public Boolean getIsDisabled() {
 		return this.isDisabled;
 	}
 
-	public void setIsSelectable(final Boolean isSelectable) {
-		this.isDisabled = isSelectable;
+	public void setIsDisabled(final Boolean isDisabled) {
+		this.isDisabled = isDisabled;
 	}
 
 }

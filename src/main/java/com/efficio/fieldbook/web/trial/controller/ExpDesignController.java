@@ -104,12 +104,13 @@ public class ExpDesignController extends BaseTrialController {
 		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
 
 		for (final File designTemplateFile : presetTemplates) {
-			final String name = designTemplateFile.getName();
+			final String templateFileName = designTemplateFile.getName();
 
-			if (this.isValidPresetDesignTemplate(name)) {
-				final int noOfreps = this.getNoOfReps(name);
-				final int totalNoOfEntries = this.getTotalNoOfEntries(name);
-				designTypeItems.add(new DesignTypeItem(index, name, "predefinedDesignTemplateParams.html", true, false, noOfreps,
+			if (this.isValidPresetDesignTemplate(templateFileName)) {
+				final int noOfreps = this.getNoOfReps(templateFileName);
+				final int totalNoOfEntries = this.getTotalNoOfEntries(templateFileName);
+				final String templateName = this.getTemplateName(templateFileName);
+				designTypeItems.add(new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, false, noOfreps,
 						totalNoOfEntries, false));
 				index++;
 			}
@@ -118,8 +119,18 @@ public class ExpDesignController extends BaseTrialController {
 		return designTypeItems;
 	}
 
+	/***
+	 * Removed the .csv extension from the filename
+	 * 
+	 * @param templateFileName
+	 * @return
+	 */
+	private String getTemplateName(final String templateFileName) {
+		return templateFileName.substring(0, templateFileName.indexOf(".csv"));
+	}
+
 	/**
-	 * Checks if the filename follows the expected preset template filename
+	 * Checks if the filename follows the expected preset template filename i.e. E30-Rep2-Block6-5Ind.csv
 	 * 
 	 * @param fileName
 	 * @return
@@ -129,7 +140,6 @@ public class ExpDesignController extends BaseTrialController {
 	}
 
 	private int getTotalNoOfEntries(final String name) {
-		// i.e. E30-Rep2-Block6-5Ind
 		final int start = name.indexOf("E") + 1;
 		final int end = name.indexOf("-Rep");
 		return Integer.valueOf(name.substring(start, end));

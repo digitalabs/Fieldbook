@@ -304,7 +304,12 @@
 						});
 					});
 					
-					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements/'+designType, JSON.stringify(environmentData)).then(function(resp){
+					var data = {
+						environmentData : environmentData,
+						selectedDesignType : angular.copy(service.applicationData.designTypes[designType])
+					};
+
+					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data)).then(function(resp){
 						if (!resp.data.isSuccess) {
 							deferred.reject(resp.data);
 							return;

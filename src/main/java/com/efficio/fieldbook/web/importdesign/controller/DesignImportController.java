@@ -55,11 +55,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.DesignTypeItem;
+import com.efficio.fieldbook.web.common.bean.GeneratePresetDesignInput;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.importdesign.constant.PresetDesignType;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
@@ -415,7 +416,7 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
-					.getStudyDetails().getStudyType(), false, 3, 0);
+					.getStudyDetails().getStudyType(), false, new DesignTypeItem(3), 0);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -434,10 +435,11 @@ public class DesignImportController extends SettingsController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/generatePresetMeasurements/{presetId}", method = RequestMethod.POST,
-			produces = "application/json; charset=utf-8")
-	public Map<String, Object> generatePresetMeasurements(@PathVariable final int presetId,
-			@RequestBody final EnvironmentData environmentData) {
+	@RequestMapping(value = "/generatePresetMeasurements", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+	public Map<String, Object> generatePresetMeasurements(@RequestBody final GeneratePresetDesignInput generateDesignInput) {
+
+		final DesignTypeItem selectedDesignType = generateDesignInput.getSelectedDesignType();
+		final EnvironmentData environmentData = generateDesignInput.getEnvironmentData();
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
@@ -445,18 +447,17 @@ public class DesignImportController extends SettingsController {
 
 			DesignImportData designImportData = null;
 			int replicationsCount = 0;
-			final PresetDesignType presetDesignType = PresetDesignType.getPresetDesignTypeById(presetId);
-			if (presetDesignType != null) {
+			if (selectedDesignType != null) {
 				designImportData =
 						this.parser.parseFile(ResourceFinder.locateFile(
-								AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString().concat(presetDesignType.getTemplateName()))
+								AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString().concat(selectedDesignType.getTemplateName()))
 								.getFile());
-				replicationsCount = presetDesignType.getNumberOfReps();
+				replicationsCount = selectedDesignType.getRepNo();
 			}
 
 			this.performAutomap(designImportData);
 
-			this.generateDesign(environmentData, designImportData, StudyType.T, true, presetId, replicationsCount);
+			this.generateDesign(environmentData, designImportData, StudyType.T, true, selectedDesignType, replicationsCount);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -476,7 +477,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-			final StudyType studyType, final boolean isPreset, final int designTypeId, final int replicationsCount)
+			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem, final int replicationsCount)
 			throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
@@ -518,7 +519,7 @@ public class DesignImportController extends SettingsController {
 
 		this.addVariates(workbook, designImportData);
 
-		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeId, replicationsCount);
+		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeItem, replicationsCount);
 
 		// Only for Trial
 		this.populateTrialLevelVariableListIfNecessary(workbook);
@@ -689,18 +690,18 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void addExperimentDesign(final Workbook workbook, final Set<MeasurementVariable> experimentalDesignMeasurementVariables,
-			final int designTypeId, final int replicationsCount) {
+			final DesignTypeItem designTypeItem, final int replicationsCount) {
 
 		final ExpDesignParameterUi designParam = new ExpDesignParameterUi();
-		designParam.setDesignType(designTypeId);
+		designParam.setDesignType(designTypeItem.getId());
 		if (replicationsCount != 0) {
 			designParam.setReplicationsCount(Integer.toString(replicationsCount));
 		}
 
 		final List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
-		final PresetDesignType presetDesignType = PresetDesignType.getPresetDesignTypeById(designTypeId);
-		if (presetDesignType != null && presetDesignType.getNumberOfReps() > 0) {
+
+		if (designTypeItem != null && designTypeItem.getRepNo() > 0) {
 			expDesignTermIds.add(TermId.NUMBER_OF_REPLICATES.getId());
 		}
 

@@ -13,12 +13,8 @@ import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-/**
- * Created by Daniel Villafuerte on 6/12/2015.
- */
-
 @Component
-public class ChangeLocationExpression implements Expression {
+public class ChangeLocationExpression extends BaseExpression {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChangeLocationExpression.class);
 
@@ -29,9 +25,7 @@ public class ChangeLocationExpression implements Expression {
 
     @Override
     public void apply(List<StringBuilder> values, AdvancingSource source) {
-        for (StringBuilder value : values) {
-            int startIndex = value.toString().toUpperCase().indexOf(ChangeLocationExpression.KEY);
-            int endIndex = startIndex + ChangeLocationExpression.KEY.length();
+        for (StringBuilder container : values) {
 
             try {
                 Germplasm originalGermplasm = germplasmDataManager.getGermplasmByGID(Integer.valueOf(source.getGermplasm().getGid()));
@@ -40,7 +34,7 @@ public class ChangeLocationExpression implements Expression {
                     suffixValue = source.getLocationAbbreviation();
                 }
 
-                value.replace(startIndex, endIndex, suffixValue);
+                this.replaceExpressionWithValue(container, suffixValue);
             } catch (MiddlewareQueryException e) {
                 LOG.error(e.getMessage(), e);
             }

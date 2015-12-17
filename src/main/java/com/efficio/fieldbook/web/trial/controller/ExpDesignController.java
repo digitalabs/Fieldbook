@@ -107,16 +107,27 @@ public class ExpDesignController extends BaseTrialController {
 			final String templateFileName = designTemplateFile.getName();
 
 			if (this.isValidPresetDesignTemplate(templateFileName)) {
-				final int noOfreps = this.getNoOfReps(templateFileName);
-				final int totalNoOfEntries = this.getTotalNoOfEntries(templateFileName);
-				final String templateName = this.getTemplateName(templateFileName);
-				designTypeItems.add(new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, false, noOfreps,
-						totalNoOfEntries, false));
+				designTypeItems.add(this.generatePresetDesignTypeItem(templateFileName, index));
 				index++;
 			}
 		}
 
 		return designTypeItems;
+	}
+
+	/**
+	 * Generates a design type item from template file name
+	 * 
+	 * @param templateFileName
+	 * @param index
+	 * @return
+	 */
+	DesignTypeItem generatePresetDesignTypeItem(final String templateFileName, final int index) {
+		final int noOfreps = this.getNoOfReps(templateFileName);
+		final int totalNoOfEntries = this.getTotalNoOfEntries(templateFileName);
+		final String templateName = this.getTemplateName(templateFileName);
+		return new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, false, noOfreps, totalNoOfEntries,
+				false);
 	}
 
 	/***
@@ -125,7 +136,7 @@ public class ExpDesignController extends BaseTrialController {
 	 * @param templateFileName
 	 * @return
 	 */
-	private String getTemplateName(final String templateFileName) {
+	String getTemplateName(final String templateFileName) {
 		return templateFileName.substring(0, templateFileName.indexOf(".csv"));
 	}
 
@@ -135,7 +146,7 @@ public class ExpDesignController extends BaseTrialController {
 	 * @param fileName
 	 * @return
 	 */
-	private boolean isValidPresetDesignTemplate(final String fileName) {
+	boolean isValidPresetDesignTemplate(final String fileName) {
 		return fileName.matches("E[0-9]+-Rep[0-9]+-Block[0-9]+-[0-9]+Ind.csv");
 	}
 
@@ -145,7 +156,7 @@ public class ExpDesignController extends BaseTrialController {
 	 * @param name - preset template filename
 	 * @return
 	 */
-	private int getTotalNoOfEntries(final String name) {
+	int getTotalNoOfEntries(final String name) {
 		final int start = name.indexOf("E") + 1;
 		final int end = name.indexOf("-Rep");
 		return Integer.valueOf(name.substring(start, end));
@@ -157,7 +168,7 @@ public class ExpDesignController extends BaseTrialController {
 	 * @param name - preset template filename
 	 * @return
 	 */
-	private int getNoOfReps(final String name) {
+	int getNoOfReps(final String name) {
 		final int start = name.indexOf("-Rep") + 4;
 		final int end = name.indexOf("-Block");
 		return Integer.valueOf(name.substring(start, end));

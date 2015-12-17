@@ -1,23 +1,28 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
+ *
+ *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.nursery.controller;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.google.common.collect.Lists;
+import com.mchange.util.AssertException;
+
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -41,6 +46,7 @@ import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -559,6 +565,7 @@ public class ImportGermplasmListControllerTest {
 		ArrayList<ImportedGermplasm> germplasmList = new ArrayList<ImportedGermplasm>();
 		ImportedGermplasm importedGermplasm = new ImportedGermplasm();
 		importedGermplasm.setGid("1");
+		importedGermplasm.setEntryId(1);
 		importedGermplasm.setEntryCode("2");
 		importedGermplasm.setDesig("(CML454 X CML451)-B-4-1-112");
 		importedGermplasm.setCheckId(1);
@@ -758,6 +765,52 @@ public class ImportGermplasmListControllerTest {
 		stdVar.setName(name);
 
 		return stdVar;
+	}
+
+	@Test
+	public void testCheckNumbersUpdatedAppropriately() throws Exception {
+		//Unchanged check entry number if there are no new start entry number
+		checkNumberTest(1, 5, 1, 1, null);
+		checkNumberTest(0, 0, 3, 3, null);
+
+		// Since the entry number starts at 100 we expect the check id to be bumped to 100 too
+		checkNumberTest(1, 5, 1, 100, "100");
+
+		// Since the entry number starts at 50 and our choosen check id is 52 we expect the check id to be bumped to 52 too
+		checkNumberTest(1, 5, 3, 52, "50");
+
+
+	}
+
+	private void checkNumberTest(final int startEntryNumberForTestList, final int numberOfItemsInGermplasmList,
+			final int checkNumberInCheckList,
+			final int expectedGermplasmCheckEntryNumber, final String startEntryNumber) {
+		final UserSelection userSelection = new UserSelection();
+		userSelection.setImportedGermplasmMainInfo(getGermplasmMainInfo(startEntryNumberForTestList, 5));
+		userSelection.setImportedCheckGermplasmMainInfo(getGermplasmMainInfo(checkNumberInCheckList, 1));
+
+		final ImportGermplasmListController importGermplasmListController = new ImportGermplasmListController();
+		importGermplasmListController.setUserSelection(userSelection);
+
+		final ImportGermplasmListForm form = new ImportGermplasmListForm();
+		form.setStartingEntryNo(startEntryNumber);
+		form.setStartingPlotNo("100");
+		importGermplasmListController.assignAndIncrementEntryNumberAndPlotNumber(form);
+
+		assertEquals("We exepect this to ", userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
+				new Integer(expectedGermplasmCheckEntryNumber));
+	}
+
+	private ImportedGermplasmMainInfo getGermplasmMainInfo(final int startingEntryId, final int number) {
+		final ImportedGermplasmMainInfo importedGermplasmMainInfo = new ImportedGermplasmMainInfo();
+		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
+		for (int i = 0; i <  number; i++) {
+			germplasmList.add(new ImportedGermplasm(i+startingEntryId, "desig", "check"));
+		}
+		importedGermplasmList.setImportedGermplasms(germplasmList);
+		importedGermplasmMainInfo.setImportedGermplasmList(importedGermplasmList);
+		return importedGermplasmMainInfo;
 	}
 
 }

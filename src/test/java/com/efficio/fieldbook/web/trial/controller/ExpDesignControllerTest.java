@@ -1,6 +1,5 @@
-package com.efficio.fieldbook.web.trial.controller;
 
-import javax.annotation.Resource;
+package com.efficio.fieldbook.web.trial.controller;
 
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.pojos.workbench.CropType;
@@ -22,42 +21,41 @@ import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExpDesignControllerTest {
-	
+
 	@Mock
 	private RandomizeCompleteBlockDesignService randomizeCompleteBlockDesign;
-	
+
 	@Mock
 	private ResolvableIncompleteBlockDesignService resolveIncompleteBlockDesign;
-	
+
 	@Mock
 	private ResolvableRowColumnDesignService resolvableRowColumnDesign;
-	
+
 	@Mock
 	private ResourceBundleMessageSource messageSource;
-	
+
 	@Mock
 	private CrossExpansionProperties crossExpansionProperties;
-	
+
 	@Mock
 	private ContextUtil contextUtil;
-	
+
 	@Mock
 	private DesignImportService designImportService;
-	
+
 	@InjectMocks
 	ExpDesignController expDesignController;
-	
+
 	@Before()
-	public void init(){
+	public void init() {
 		Mockito.doReturn("CIMMYT").when(this.crossExpansionProperties).getProfile();
-		Project project = Mockito.mock(Project.class);
+		final Project project = Mockito.mock(Project.class);
 		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
 		Mockito.doReturn(new CropType("WHEAT")).when(project).getCropType();
 	}
-	
+
 	@Test
-	public void testRetrieveDesignTypes(){
-		String designTypes = expDesignController.retrieveDesignTypes();
-		//To do: convert to java object to test properly
+	public void testRetrieveDesignTypes() {
+		this.expDesignController.retrieveDesignTypes();
 	}
 }

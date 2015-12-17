@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.util;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -24,8 +25,8 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,9 +65,9 @@ public class ExpDesignUtil {
 	public static final String OUTPUTFILE_PARAM = "outputfile";
 	public static final String SEED_PARAM = "seed";
 
-	private static String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
-	private static String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
-	private static String RESOLVABLE_ROW_COL_DESIGN = "ResolvableRowColumn";
+	public static String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
+	public static String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
+	public static String RESOLVABLE_ROW_COL_DESIGN = "ResolvableRowColumn";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignUtil.class);
 
@@ -98,7 +99,7 @@ public class ExpDesignUtil {
 	}
 
 	public static MainDesign createRandomizedCompleteBlockDesign(String nBlock, String blockFactor, String plotFactor, Integer initialPlotNumber,
-			List<String> treatmentFactor, List<String> levels, String outputfile) {
+			Integer initialEntryNumber, List<String> treatmentFactor, List<String> levels, String outputfile) {
 
 		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
@@ -110,6 +111,11 @@ public class ExpDesignUtil {
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.BLOCKFACTOR_PARAM, blockFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.PLOTFACTOR_PARAM, plotFactor, null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM, plotNumberStrValue, null));
+
+		if(initialEntryNumber != null){
+			paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_TREATMENT_NUMBER_PARAM, String.valueOf(initialEntryNumber), null));
+		}
+
 		List<ListItem> itemsTreatmentFactor = new ArrayList<ListItem>();
 		List<ListItem> itemsLevels = new ArrayList<ListItem>();
 		if (treatmentFactor != null) {
@@ -366,6 +372,13 @@ public class ExpDesignUtil {
 			List<StandardVariable> requiredExpDesignVariable, List<ImportedGermplasm> germplasmList, MainDesign mainDesign,
 			WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, String entryNumberIdentifier,
 			Map<String, List<String>> treatmentFactorValues, FieldbookService fieldbookService) throws BVDesignException {
+
+		//Converting germplasm List to map
+		Map<Integer, ImportedGermplasm> importedGermplasmMap = new HashMap<>();
+		for(ImportedGermplasm ig : germplasmList){
+			importedGermplasmMap.put(ig.getEntryId(), ig);
+		}
+
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();
 		varList.addAll(nonTrialFactors);
@@ -415,23 +428,20 @@ public class ExpDesignUtil {
 			}
 
 			for (int counter = 0; counter < bvOutput.getBvResultList().size(); counter++) {
-				String entryNo = bvOutput.getEntryValue(entryNumberIdentifier, counter);
-				if (NumberUtils.isNumber(entryNo)) {
-					int germplasmIndex = Integer.valueOf(entryNo) - 1;
-					if (germplasmIndex >= 0 && germplasmIndex < germplasmList.size()) {
-						ImportedGermplasm importedGermplasm = germplasmList.get(germplasmIndex);
-						try {
-							MeasurementRow row = ExpDesignUtil.createMeasurementRow(varList, importedGermplasm,
-									bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo);
-							measurementRowList.add(row);
-						} catch (MiddlewareQueryException e) {
-							ExpDesignUtil.LOG.error(e.getMessage(), e);
-						}
-
-					}
+				String entryNoValue = bvOutput.getEntryValue(entryNumberIdentifier, counter);
+				final Integer entryNumber = StringUtil.parseInt(entryNoValue, null);
+				if(entryNumber == null){
+					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
 				}
-			}
+				ImportedGermplasm importedGermplasm = importedGermplasmMap.get(entryNumber);
 
+				if(importedGermplasm == null){
+					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
+				}
+				MeasurementRow row = ExpDesignUtil.createMeasurementRow(varList, importedGermplasm,
+						bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo);
+				measurementRowList.add(row);
+			}
 		}
 		return measurementRowList;
 	}

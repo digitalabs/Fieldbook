@@ -104,11 +104,28 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 					this.cleanGermplasmList(form.getImportedGermplasm(), form.getImportedCheckGermplasm());
 			form.setImportedGermplasm(newNurseryGermplasm);
 		} else {
-			Integer entryNumber = form.getImportedGermplasm().size();
-			for (ImportedGermplasm checkGerm : form.getImportedCheckGermplasm()) {
-				entryNumber++;
-				checkGerm.setEntryId(entryNumber);
+			// This is called when the checks are from a different list. The checks start entry number must be custom start entry number + the size of the original list
+			Integer entryNumber = getCheckStartEntryNumber(form);
+			if(form.getImportedCheckGermplasm() != null) {
+				for (ImportedGermplasm checkGerm : form.getImportedCheckGermplasm()) {
+					checkGerm.setEntryId(entryNumber);
+					entryNumber++;
+				}
 			}
+		}
+	}
+
+	private Integer getCheckStartEntryNumber(final ImportGermplasmListForm form) {
+		//Taking entryNumber as null if not supplied
+		Integer customStartEntryNumber = null;
+		if (form.getStartingEntryNo() != null) {
+			customStartEntryNumber = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
+		}
+
+		if(customStartEntryNumber == null) {
+			return form.getImportedGermplasm().size() + 1;
+		} else {
+			return form.getImportedGermplasm().size() + customStartEntryNumber;
 		}
 	}
 

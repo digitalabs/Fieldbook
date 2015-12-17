@@ -139,12 +139,24 @@ public class ExpDesignController extends BaseTrialController {
 		return fileName.matches("E[0-9]+-Rep[0-9]+-Block[0-9]+-[0-9]+Ind.csv");
 	}
 
+	/**
+	 * Retrieves the no of entries from the design preset template name
+	 * 
+	 * @param name - preset template filename
+	 * @return
+	 */
 	private int getTotalNoOfEntries(final String name) {
 		final int start = name.indexOf("E") + 1;
 		final int end = name.indexOf("-Rep");
 		return Integer.valueOf(name.substring(start, end));
 	}
 
+	/**
+	 * Retrieves the no of replications from the design preset template name
+	 * 
+	 * @param name - preset template filename
+	 * @return
+	 */
 	private int getNoOfReps(final String name) {
 		final int start = name.indexOf("-Rep") + 4;
 		final int end = name.indexOf("-Block");

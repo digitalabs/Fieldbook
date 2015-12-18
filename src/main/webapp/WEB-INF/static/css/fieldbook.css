@@ -314,6 +314,11 @@ div.DTFC_RightWrapper table.table-curved {
     margin-top: 0 !important;
 }
 
+div.DTFC_LeftWrapper table.table-curved,
+div.DTFC_RightWrapper table.table-curved {
+    table-layout: fixed;
+}
+
 #measurement-table_wrapper > div > div:nth-child(2) {
     border-radius: 10px;
     overflow: hidden;

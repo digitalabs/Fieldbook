@@ -6,7 +6,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SelectionTraitExpression implements Expression {
+public class SelectionTraitExpression extends BaseExpression {
 
     public static final String KEY = "[SELTRAIT]";
 
@@ -15,12 +15,8 @@ public class SelectionTraitExpression implements Expression {
 
     @Override
     public void apply(List<StringBuilder> values, AdvancingSource source) {
-        for (StringBuilder value : values) {
-            int startIndex = value.toString().toUpperCase().indexOf(SeasonExpression.KEY);
-            int endIndex = startIndex + SeasonExpression.KEY.length();
-
-            String selectionTrait = source.getSelectionTraitValue() == null ? "" : source.getSelectionTraitValue();
-            value.replace(startIndex, endIndex, selectionTrait);
+        for (StringBuilder container : values) {
+            this.replaceExpressionWithValue(container, source.getSelectionTraitValue());
         }
 
     }

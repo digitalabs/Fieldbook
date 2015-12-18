@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
@@ -43,8 +44,6 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumnDesignService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResolvableRowColumnDesignServiceImpl.class);
-
-	private static final Integer maxEntryAndPlotNumberLimit = 99999;
 
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -221,11 +220,11 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 						output =
 								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.replication.count.resolvable.error", null, locale));
-					}else if (entryNumber != null && (germplasmCount + entryNumber) > maxEntryAndPlotNumberLimit) {
+					}else if (entryNumber != null && (germplasmCount + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO) {
 
 						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 								"experiment.design.entry.number.should.not.exceed", null, locale));
-					}else if (entryNumber != null && plotNumber != null && (((germplasmCount * replicationCount) + plotNumber) > maxEntryAndPlotNumberLimit)) {
+					}else if (entryNumber != null && plotNumber != null && (((germplasmCount * replicationCount) + plotNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
 						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 								"experiment.design.plot.number.should.not.exceed", null, locale));
 					}

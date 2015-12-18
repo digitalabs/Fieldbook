@@ -37,6 +37,7 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
@@ -50,8 +51,6 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeCompleteBlockDesignService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RandomizeCompleteBlockDesignServiceImpl.class);
-
-	private static final Integer maxEntryAndPlotNumberLimit = 99999;
 
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -251,10 +250,10 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		} else if(Objects.equals(plotNumber, 0)){
 			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 					"plot.number.should.be.in.range", null, locale));
-		} else if (entryNumber != null && (germplasmCount + entryNumber) > maxEntryAndPlotNumberLimit) {
+		} else if (entryNumber != null && (germplasmCount + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO) {
 			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 					"experiment.design.entry.number.should.not.exceed", null, locale));
-		} else if (entryNumber != null && plotNumber != null && (((germplasmCount * replicationCount) + plotNumber) > maxEntryAndPlotNumberLimit)) {
+		} else if (entryNumber != null && plotNumber != null && (((germplasmCount * replicationCount) + plotNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
 			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 					"experiment.design.plot.number.should.not.exceed", null, locale));
 		}

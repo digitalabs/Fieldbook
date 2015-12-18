@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
@@ -43,8 +44,6 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableIncompleteBlockDesignService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResolvableIncompleteBlockDesignServiceImpl.class);
-
-	private static final Integer maxEntryAndPlotNumberLimit = 99999;
 
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -206,11 +205,11 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.replication.count.resolvable.error", null, locale));
 					}
-					else if (entryNumber != null && (treatmentSize + entryNumber) > maxEntryAndPlotNumberLimit) {
+					else if (entryNumber != null && (treatmentSize + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO) {
 
 						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 								"entry.number.should.be.in.range", null, locale));
-					}else if (entryNumber != null && plotNumber != null && (((treatmentSize * replicationCount) + plotNumber) > maxEntryAndPlotNumberLimit)) {
+					}else if (entryNumber != null && plotNumber != null && (((treatmentSize * replicationCount) + plotNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
 						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 								"plot.number.should.be.in.range", null, locale));
 					}else if (blockSize <= 1) {

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
-public class BracketsExpression implements Expression {
+public class BracketsExpression extends BaseExpression {
 
 	public static final String KEY = "[BRACKETS]";
 
@@ -18,10 +18,7 @@ public class BracketsExpression implements Expression {
 
 	@Override
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
-		for (StringBuilder value : values) {
-
-			int startIndex = value.toString().toUpperCase().indexOf(BracketsExpression.KEY);
-			int endIndex = startIndex + BracketsExpression.KEY.length();
+		for (StringBuilder container : values) {
 
 			String newRootName = source.getRootName();
 
@@ -29,12 +26,12 @@ public class BracketsExpression implements Expression {
 
 				// if root name already has parentheses
 				if (newRootName.charAt(0) != '(' || newRootName.charAt(newRootName.length() - 1) != ')') {
-					value.replace(startIndex, endIndex, ")");
-					value.insert(0, "(");
+					this.replaceExpressionWithValue(container, ")");
+					container.insert(0, "(");
 					continue;
 				}
 			} else {
-				value.replace(startIndex, endIndex, "");
+				this.replaceExpressionWithValue(container, "");
 			}
 		}
 	}

@@ -46,8 +46,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				columns: ':gt(0):not(.ng-hide)'
 			}];
 
-			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp').withButtons($scope.isLocation ?
-			$scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice());
+			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp')
+				.withButtons($scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice())
+				.withOption('scrollX', '600px')
+				.withOption('scrollCollapse', true)
+				.withFixedColumns({
+					leftColumns: 2
+				});
 
 			$scope.dtOptions.drawCallback =  function() {
 				var api = $(this).DataTable();

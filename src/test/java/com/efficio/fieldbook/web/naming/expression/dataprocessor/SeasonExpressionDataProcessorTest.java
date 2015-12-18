@@ -53,6 +53,7 @@ public class SeasonExpressionDataProcessorTest {
 
         Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(programUUID);
         Mockito.when(ontologyVariableDataManager.getVariable(programUUID, termId, true, false)).thenReturn(variable);
+        Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalValue(programUUID, termId, categoryId)).thenReturn("SelectedSeasonCode");
 
 		// 5 possible season settings to test
 		TermId[] seasonTerms = new TermId[7];
@@ -71,9 +72,9 @@ public class SeasonExpressionDataProcessorTest {
 			conditions.add(createConditionFixture(seasonTerms[i], special));
 			Workbook workbook = new Workbook();
 			workbook.setConditions(conditions);
-            AdvancingSource source = new AdvancingSource();
+      AdvancingSource source = new AdvancingSource();
 			unitUnderTest.processEnvironmentLevelData(source, workbook, new AdvancingNursery(), new Study());
-            String season = source.getSeason();
+      String season = source.getSeason();
 			Assert.assertNotNull(season);
 			Assert.assertNotSame("", season);
 			if (i == 0) {

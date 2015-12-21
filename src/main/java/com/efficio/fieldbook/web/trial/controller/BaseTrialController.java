@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -189,7 +190,12 @@ public abstract class BaseTrialController extends SettingsController {
 
 			// Set first plot number from observations
 			if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
-				data.setStartingPlotNo(trialWorkbook.getObservations().get(0).getDataList().get(6).getValue());
+				List<MeasurementData> datas = trialWorkbook.getObservations().get(0).getDataList();
+				for(MeasurementData md : datas){
+					if(Objects.equals(md.getLabel(), TermId.PLOT_NO.toString())){
+						data.setStartingPlotNo(md.getValue());
+					}
+				}
 			}
 
 			String designTypeString = xpDesignVariable.getExperimentalDesign() == null ? null

@@ -61,8 +61,6 @@ public class InventoryImportParserTest {
 	@InjectMocks
 	private InventoryImportParser parser;
 
-	private InventoryImportParser moled;
-
 	public static final String TEST_FILE_NAME = "Inventory_Import_Template_v1.xlsx";
 	public static final String TEST_FILE_NAME_WITH_BULKING = "Inventory_Import_Template_Bulking.xlsx";
 	public static final int DUMMY_INDEX = 1;
@@ -80,7 +78,6 @@ public class InventoryImportParserTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.moled = Mockito.spy(this.parser);
 		this.testLocationList = this.createDummyLocationList();
 		this.testScaleList = this.createDummyScaleList();
 		this.testStockIds = this.createDummyStockIds();
@@ -90,45 +87,25 @@ public class InventoryImportParserTest {
 				.getStockIdsByListDataProjectListId(InventoryImportParserTest.TEST_LIST_ID);
 	}
 
-	private Workbook createWorkbook(GermplasmListType germplasmListType) throws Exception {
-		String filename = InventoryImportParserTest.TEST_FILE_NAME;
-		if (germplasmListType == GermplasmListType.CROSSES) {
-			filename = InventoryImportParserTest.TEST_FILE_NAME_WITH_BULKING;
-		}
-		File workbookFile = new File(ClassLoader.getSystemClassLoader().getResource(filename).toURI());
-
-		assert workbookFile.exists();
-
-		return WorkbookFactory.create(workbookFile);
-	}
-
-	private List<String> createDummyStockIds() {
-		List<String> stockIds = new ArrayList<String>();
-		for (int i = 0; i < 5; i++) {
-			stockIds.add(InventoryImportParserTest.STOCKID_PREFIX + "1-" + i);
-		}
-		return stockIds;
-	}
-
 	@Test
 	public void testBuildAllowedLocationList() {
-		this.moled.setLocations(this.testLocationList);
-		List<String> allowedLocationsList = this.moled.buildAllowedLocationsList();
+		this.parser.setLocations(this.testLocationList);
+		List<String> allowedLocationsList = this.parser.buildAllowedLocationsList();
 		Assert.assertEquals(this.testLocationList.size(), allowedLocationsList.size());
 
 	}
 
 	@Test
 	public void testBuildAllowedScaleList() {
-		this.moled.setScales(this.testScaleList);
-		List<String> allowedScaleList = this.moled.buildAllowedScaleList();
+		this.parser.setScales(this.testScaleList);
+		List<String> allowedScaleList = this.parser.buildAllowedScaleList();
 
 		Assert.assertEquals(this.testScaleList.size(), allowedScaleList.size());
 	}
 
 	@Test
 	public void testConvertToLocationMap() {
-		Map<String, Location> locationMap = this.moled.convertToLocationMap(this.testLocationList);
+		Map<String, Location> locationMap = this.parser.convertToLocationMap(this.testLocationList);
 
 		Assert.assertEquals(locationMap.size(), this.testLocationList.size());
 		Collection<Location> values = locationMap.values();
@@ -139,7 +116,7 @@ public class InventoryImportParserTest {
 
 	@Test
 	public void testConvertToScaleMap() {
-		Map<String, Scale> scaleMap = this.moled.convertToScaleMap(this.testScaleList);
+		Map<String, Scale> scaleMap = this.parser.convertToScaleMap(this.testScaleList);
 
 		Assert.assertEquals(scaleMap.size(), this.testScaleList.size());
 		Collection<Scale> values = scaleMap.values();
@@ -151,7 +128,7 @@ public class InventoryImportParserTest {
 	@Test
 	public void testSetupParsingValidations() {
 		this.generateHeaders(GermplasmListType.CROSSES);
-		ParseValidationMap map = this.moled.setupIndividualColumnValidation();
+		ParseValidationMap map = this.parser.setupIndividualColumnValidation();
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.UNITS)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT)).isEmpty());
@@ -183,8 +160,8 @@ public class InventoryImportParserTest {
 	private void generateHeaders(GermplasmListType crosses) {
 		this.inventoryHeaderLabelsMap = InventoryHeaderLabels.headers(GermplasmListType.CROSSES);
 		this.headers = InventoryHeaderLabels.getHeaderNames(this.inventoryHeaderLabelsMap);
-		this.moled.setInventoryHeaderLabelsMap(this.inventoryHeaderLabelsMap);
-		this.moled.setHeaders(this.headers);
+		this.parser.setInventoryHeaderLabelsMap(this.inventoryHeaderLabelsMap);
+		this.parser.setHeaders(this.headers);
 	}
 
 	@Test
@@ -264,8 +241,8 @@ public class InventoryImportParserTest {
 	}
 
 	protected InventoryImportParser.InventoryRowConverter createForTestingRowConverter(Workbook workbook) {
-		Map<String, Location> locationMap = this.moled.convertToLocationMap(this.testLocationList);
-		Map<String, Scale> scaleMap = this.moled.convertToScaleMap(this.testScaleList);
+		Map<String, Location> locationMap = this.parser.convertToLocationMap(this.testLocationList);
+		Map<String, Scale> scaleMap = this.parser.convertToScaleMap(this.testScaleList);
 		return new InventoryImportParser.InventoryRowConverter(workbook, InventoryImportParserTest.DUMMY_INDEX,
 				InventoryImportParser.INVENTORY_SHEET, this.inventoryHeaderLabelsMap.size(), this.inventoryHeaderLabelsMap, locationMap,
 				scaleMap);
@@ -310,7 +287,70 @@ public class InventoryImportParserTest {
 		additionalParams.put(InventoryImportParser.HEADERS_MAP_PARAM_KEY, InventoryHeaderLabels.headers(GermplasmListType.CROSSES));
 		additionalParams.put(InventoryImportParser.LIST_ID_PARAM_KEY, InventoryImportParserTest.TEST_LIST_ID);
 		additionalParams.put(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY, InventoryImportParserTest.TEST_GERMPLASM_LIST_TYPE);
-		ImportedInventoryList importedInventoryList = this.moled.parseWorkbook(this.createWorkbook(germplasmListType), additionalParams);
+		ImportedInventoryList importedInventoryList = this.parser.parseWorkbook(this.createWorkbook(germplasmListType), additionalParams);
 		Assert.assertNotNull(importedInventoryList);
+	}
+	
+	@Test
+	public void testUpdateBulkWith() throws Exception{
+		String stockID = "stock1-1";
+		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
+		this.generateHeaders(germplasmListType);
+		InventoryImportParser.InventoryRowConverter rowConverter =
+				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
+		rowConverter.setAllowedStockIdList(this.createAllowedStockIdList());
+		Assert.assertEquals("The returned value should be 'STOCK1-1'", "STOCK1-1", rowConverter.updateBulkWith(stockID));
+	}
+	
+	@Test
+	public void testUpdateBulkWithNonExistent() throws Exception{
+		String stockID = "stock2-1";
+		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
+		this.generateHeaders(germplasmListType);
+		InventoryImportParser.InventoryRowConverter rowConverter =
+				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
+		rowConverter.setAllowedStockIdList(this.createAllowedStockIdList());
+		Assert.assertEquals("The returned value should be 'stock2-1'", stockID, rowConverter.updateBulkWith(stockID));
+	}
+	
+	@Test
+	public void testUpdateBulkWithArray() throws Exception{
+		String stockID = "stock1-1,stock1-5";
+		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
+		this.generateHeaders(germplasmListType);
+		InventoryImportParser.InventoryRowConverter rowConverter =
+				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
+		rowConverter.setAllowedStockIdList(this.createAllowedStockIdList());
+		Assert.assertEquals("The returned value should be 'STOCK1-1, STOCK1-5'", "STOCK1-1, STOCK1-5", rowConverter.updateBulkWith(stockID));
+	}
+	
+	private List<String> createAllowedStockIdList() {
+		List<String> allowedStockIDList = new ArrayList<String>();
+		allowedStockIDList.add("STOCK1-1");
+		allowedStockIDList.add("STOCK1-2");
+		allowedStockIDList.add("STOCK1-3");
+		allowedStockIDList.add("STOCK1-4");
+		allowedStockIDList.add("STOCK1-5");
+		return allowedStockIDList;
+	}
+
+	private Workbook createWorkbook(GermplasmListType germplasmListType) throws Exception {
+		String filename = InventoryImportParserTest.TEST_FILE_NAME;
+		if (germplasmListType == GermplasmListType.CROSSES) {
+			filename = InventoryImportParserTest.TEST_FILE_NAME_WITH_BULKING;
+		}
+		File workbookFile = new File(ClassLoader.getSystemClassLoader().getResource(filename).toURI());
+
+		assert workbookFile.exists();
+
+		return WorkbookFactory.create(workbookFile);
+	}
+
+	private List<String> createDummyStockIds() {
+		List<String> stockIds = new ArrayList<String>();
+		for (int i = 0; i < 5; i++) {
+			stockIds.add(InventoryImportParserTest.STOCKID_PREFIX + "1-" + i);
+		}
+		return stockIds;
 	}
 }

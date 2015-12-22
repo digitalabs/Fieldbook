@@ -31,6 +31,8 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
@@ -52,6 +54,8 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	private ImportedInventoryList importedInventoryList;
 
+	private List<String> stockIDList = new ArrayList<>();
+	
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
@@ -86,6 +90,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		this.requiredHeaders = InventoryHeaderLabels.getRequiredHeaderNames(this.inventoryHeaderLabelsMap);
 		this.listId = (Integer) additionalParams.get(InventoryImportParser.LIST_ID_PARAM_KEY);
 		this.listType = (GermplasmListType) additionalParams.get(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY);
+		this.stockIDList = this.buildAllowedStockList();
 		this.validateFileHeader();
 
 		this.parseInventoryDetails();
@@ -114,7 +119,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 				new InventoryRowConverter(this.workbook, this.currentParseIndex, InventoryImportParser.INVENTORY_SHEET, this.headers.length,
 						this.inventoryHeaderLabelsMap, this.convertToLocationMap(this.locations), this.convertToScaleMap(this.scales));
 		inventoryDetailsConverter.setValidationMap(parseValidationMap);
-
+		inventoryDetailsConverter.setAllowedStockIdList(this.stockIDList);
 		List<InventoryDetails> detailList =
 				inventoryDetailsConverter.convertWorkbookRowsToObject(new WorkbookRowConverter.ContinueTillBlank());
 
@@ -161,7 +166,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 				scaleValidator.setValidationErrorMessage("error.import.scales.unaccepted.value");
 				validationMap.addValidation(index, scaleValidator);
 			} else if (InventoryHeaderLabels.BULK_WITH.getName().equals(header)) {
-				CommaDelimitedValueValidator bulkWithValidator = new CommaDelimitedValueValidator(this.buildAllowedStockList());
+				CommaDelimitedValueValidator bulkWithValidator = new CommaDelimitedValueValidator(this.stockIDList);
 				bulkWithValidator.setValidationErrorMessage("error.import.bulk.with.invalid.value");
 				validationMap.addValidation(index, bulkWithValidator);
 			} else if (InventoryHeaderLabels.BULK_COMPL.getName().equals(header)) {
@@ -209,15 +214,13 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 	}
 
 	public List<String> buildAllowedStockList() {
-		List<String> stockIDList = new ArrayList<>();
-
 		try {
-			stockIDList = this.inventoryDataManager.getStockIdsByListDataProjectListId(this.listId);
+			this.stockIDList = this.inventoryDataManager.getStockIdsByListDataProjectListId(this.listId);
 		} catch (MiddlewareQueryException e) {
 			InventoryImportParser.LOG.error(e.getMessage(), e);
 		}
 
-		return stockIDList;
+		return this.stockIDList;
 	}
 
 	public static class InventoryRowConverter extends WorkbookRowConverter<InventoryDetails> {
@@ -225,7 +228,9 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		private final Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap;
 		private final Map<String, Location> locationValidationMap;
 		private final Map<String, Scale> scaleValidationMap;
-
+		private List<String> allowedStockIdList;
+		private Map<String, String> stockIDMap;
+		
 		public InventoryRowConverter(Workbook workbook, int startingIndex, int targetSheetIndex, int columnCount,
 				Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap, Map<String, Location> locationValidationMap,
 				Map<String, Scale> scaleValidationMap) {
@@ -233,6 +238,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			this.inventoryHeaderLabelsMap = inventoryHeaderLabelsMap;
 			this.locationValidationMap = locationValidationMap;
 			this.scaleValidationMap = scaleValidationMap;
+			this.stockIDMap = new HashMap<String, String>();
 		}
 
 		@Override
@@ -258,7 +264,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			details.setParentage(parentage);
 			details.setSource(source);
 			details.setDuplicate(duplicate);
-			details.setBulkWith(bulkWith);
+			details.setBulkWith(this.updateBulkWith(bulkWith));
 			details.setBulkCompl(bulkCompl);
 
 			if (!StringUtils.isEmpty(locationAbbr)) {
@@ -282,6 +288,50 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			details.setAmount(StringUtils.isEmpty(amountString) ? null : Double.parseDouble(amountString));
 
 			return details;
+		}
+		
+		protected String updateBulkWith(String bulkWith) {
+			if(bulkWith != null && bulkWith != "" && !this.allowedStockIdList.contains(bulkWith)){
+				if(bulkWith.contains(",")){
+					return this.matchStockIdArray(bulkWith);
+				} else{
+					return this.matchStockId(bulkWith);
+				}
+			}
+			return bulkWith;
+		}
+		
+		private String matchStockIdArray(String bulkWith){
+			String newBulkWith = "";
+			bulkWith = bulkWith.trim();
+			String[] bulkWithArray = bulkWith.split(",");
+			for (String parsedValue : bulkWithArray) {
+				String trimmedValue = parsedValue.trim();
+				if(parsedValue.equals(bulkWithArray[bulkWithArray.length-1])){
+					newBulkWith += this.matchStockId(trimmedValue);
+					break;
+				}
+				newBulkWith += this.matchStockId(trimmedValue) + ", ";
+			}
+			return newBulkWith;
+		}
+		
+		private String matchStockId(String bulkWith){
+			String value = this.stockIDMap.get(bulkWith.toUpperCase());
+			if(value != null){
+				return value;
+			}
+			return bulkWith;
+		}
+		
+		private void setUpStockIDMap(){
+			for(String stockID: this.allowedStockIdList){
+				this.stockIDMap.put(stockID.toUpperCase(), stockID);
+			}
+		}
+		protected void setAllowedStockIdList(List<String> allowedStockIdList){
+			this.allowedStockIdList = allowedStockIdList;
+			this.setUpStockIDMap();
 		}
 	}
 

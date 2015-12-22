@@ -78,7 +78,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveDesignTypes", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	public String retrieveDesignTypes() {
+	public List<DesignTypeItem> retrieveDesignTypes() {
 		final List<DesignTypeItem> designTypes = new ArrayList<DesignTypeItem>();
 
 		int index = 0;
@@ -96,7 +96,7 @@ public class ExpDesignController extends BaseTrialController {
 			designTypes.addAll(this.generatePresetDesignTypes(index));
 		}
 
-		return this.convertObjectToJson(designTypes);
+		return designTypes;
 	}
 
 	private List<DesignTypeItem> generatePresetDesignTypes(int index) {

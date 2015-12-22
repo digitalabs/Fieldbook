@@ -18,8 +18,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.service.pedigree.PedigreeFactory;
-import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
@@ -46,6 +44,7 @@ import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -65,7 +64,7 @@ public class ExpDesignController extends BaseTrialController {
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 	@Resource
-	private CrossExpansionProperties crossExpansionProperties;
+	private FieldbookProperties fieldbookProperties;
 	@Resource
 	private ContextUtil contextUtil;
 	@Resource
@@ -91,8 +90,7 @@ public class ExpDesignController extends BaseTrialController {
 
 		designTypes.add(new DesignTypeItem(index++, "Other Design", null, false, false, 0, 0, false));
 
-		if (PedigreeFactory.isCimmytWheat(this.crossExpansionProperties.getProfile(), this.contextUtil.getProjectInContext().getCropType()
-				.getCropName())) {
+		if (this.fieldbookProperties.getPresetDesignEnabledCrops().contains(this.contextUtil.getProjectInContext().getCropType().getCropName())) {
 			designTypes.addAll(this.generatePresetDesignTypes(index));
 		}
 
@@ -363,10 +361,6 @@ public class ExpDesignController extends BaseTrialController {
 			return this.resolvableRowColumnDesign;
 		}
 		return null;
-	}
-
-	public void setCrossExpansionProperties(final CrossExpansionProperties crossExpansionProperties) {
-		this.crossExpansionProperties = crossExpansionProperties;
 	}
 
 	@Override

@@ -1,6 +1,9 @@
 
 package com.efficio.fieldbook.web.util;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
 
 public class FieldbookProperties {
@@ -9,6 +12,8 @@ public class FieldbookProperties {
 	private String programBreedingMethodsUrl;
 	private String germplasmImportUrl;
 	private String germplasmDetailsUrl;
+	
+	private Set<String> presetDesignEnabledCrops = new HashSet<>();
 
 	private String uploadDirectory;
 
@@ -51,5 +56,12 @@ public class FieldbookProperties {
 	public void setUploadDirectory(String uploadDirectory) {
 		this.uploadDirectory = uploadDirectory;
 	}
+	
+	public Set<String> getPresetDesignEnabledCrops() {
+		return presetDesignEnabledCrops;
+	}
 
+	public void setPresetDesignEnabledCrops(Set<String> presetDesignEnabledCrops) {
+		this.presetDesignEnabledCrops = presetDesignEnabledCrops;
+	}
 }

@@ -28,6 +28,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private boolean hasMeasurementData;
 	private String startingPlotNo;
 	private String startingEntryNo;
+	private String fileName;
 	/*
 	 * 1 - single col 2 - single row 3 - adjacent
 	 */
@@ -183,5 +184,13 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 
 	public void setStartingEntryNo(String startingEntryNo) {
 		this.startingEntryNo = startingEntryNo;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 }

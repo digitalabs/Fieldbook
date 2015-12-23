@@ -701,6 +701,11 @@ public class DesignImportController extends SettingsController {
 			expDesignTermIds.add(TermId.NUMBER_OF_REPLICATES.getId());
 		}
 
+		if (designTypeItem != null && designTypeItem.getTemplateName() != null) {
+			designParam.setFileName(designTypeItem.getTemplateName());
+			expDesignTermIds.add(TermId.EXPT_DESIGN_SOURCE.getId());
+		}
+
 		this.userSelection.setExpDesignParams(designParam);
 		this.userSelection.setExpDesignVariables(expDesignTermIds);
 

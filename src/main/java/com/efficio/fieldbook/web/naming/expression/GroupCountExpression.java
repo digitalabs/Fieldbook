@@ -10,12 +10,9 @@ import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-/**
- * Created by IntelliJ IDEA. User: Daniel Villafuerte
- */
 
 @Component
-public class GroupCountExpression implements Expression {
+public class GroupCountExpression extends BaseExpression {
 
 	public static final String KEY = "[COUNT]";
     public static final Integer MINIMUM_BULK_COUNT = 3;

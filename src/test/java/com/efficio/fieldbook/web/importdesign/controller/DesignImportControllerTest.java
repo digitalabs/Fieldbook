@@ -702,7 +702,7 @@ public class DesignImportControllerTest {
 
 		final GeneratePresetDesignInput input =
 				new GeneratePresetDesignInput(environmentData, new DesignTypeItem(4, "E30-Rep2-Block6-5Ind",
-						"predefinedDesignTemplateParams.html", true, false, 2, 30, false));
+						"predefinedDesignTemplateParams.html", true, 2, 30, false));
 		final Map<String, Object> resultsMap = this.designImportController.generatePresetMeasurements(input);
 
 		Assert.assertEquals(1, resultsMap.get(DesignImportController.IS_SUCCESS));

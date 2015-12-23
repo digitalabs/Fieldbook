@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
-public class LocationAbbreviationExpression implements Expression {
+public class LocationAbbreviationExpression extends BaseExpression {
 
 	public static final String KEY = "[LABBR]";
 
@@ -17,12 +17,9 @@ public class LocationAbbreviationExpression implements Expression {
 
 	@Override
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
-		for (StringBuilder value : values) {
-			int startIndex = value.toString().toUpperCase().indexOf(LocationAbbreviationExpression.KEY);
-			int endIndex = startIndex + LocationAbbreviationExpression.KEY.length();
-
+		for (StringBuilder container : values) {
 			String newValue = source.getLocationAbbreviation();
-			value.replace(startIndex, endIndex, newValue != null ? newValue : "");
+			this.replaceExpressionWithValue(container, newValue);
 		}
 	}
 

@@ -14,7 +14,6 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String noOfEnvironmentsToAdd;
 	private Integer designType;
 	private String replicationsCount;
-	private Boolean isResolvable;
 	private Boolean useLatenized;
 	private String blockSize;
 	private String rowsPerReplications;
@@ -56,14 +55,6 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 
 	public void setReplicationsCount(String replicationsCount) {
 		this.replicationsCount = replicationsCount;
-	}
-
-	public Boolean getIsResolvable() {
-		return this.isResolvable;
-	}
-
-	public void setIsResolvable(Boolean isResolvable) {
-		this.isResolvable = isResolvable;
 	}
 
 	public Boolean getUseLatenized() {

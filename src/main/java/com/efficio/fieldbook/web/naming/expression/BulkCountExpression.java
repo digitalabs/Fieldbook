@@ -11,7 +11,7 @@ import com.efficio.fieldbook.util.ExpressionHelperCallback;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
-public class BulkCountExpression implements Expression {
+public class BulkCountExpression extends BaseExpression {
 
 	public static final String KEY = "[BCOUNT]";
 
@@ -20,23 +20,24 @@ public class BulkCountExpression implements Expression {
 
 	@Override
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
-		for (StringBuilder value : values) {
-			int startIndex = value.toString().toUpperCase().indexOf(BulkCountExpression.KEY);
-			int endIndex = startIndex + BulkCountExpression.KEY.length();
-
+		for (StringBuilder container : values) {
+            String computedValue;
 			if (source.getRootName() != null) {
 				BulkExpressionHelperCallback callback = new BulkExpressionHelperCallback();
 				ExpressionHelper.evaluateExpression(source.getRootName(), "-([0-9]*)B", callback);
 
 				StringBuilder lastBulkCount = callback.getLastBulkCount();
+
 				if (lastBulkCount.length() > 0) {
-					value.replace(startIndex, endIndex, "-" + (Integer.valueOf(lastBulkCount.toString()) + 1) + "B");
+					computedValue = (Integer.valueOf(lastBulkCount.toString()) + 1) + "B";
 				} else {
-					value.replace(startIndex, endIndex, "-B");
+					computedValue = "-B";
 				}
 			} else {
-				value.replace(startIndex, endIndex, "-B");
+                computedValue = "-B";
 			}
+
+            this.replaceExpressionWithValue(container, computedValue);
 		}
 	}
 

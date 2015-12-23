@@ -11,7 +11,7 @@
         <span><input name="colsPerReplications" ng-model="data.colsPerReplications" input-type="number" valid-number="" class="form-control" style="width: 100px" ng-disabled="measurementDetails.hasMeasurement" /> </span>
     </div>
 
-<div ng-show="data.isResolvable &amp;&amp; !hideFeatures">
+<div ng-show="!hideFeatures">
     <div ng-hide="settings.showAdvancedOptions[currentDesignType.id]" class="add_top_padding">
         <a ng-click="settings.showAdvancedOptions[currentDesignType.id] = true">Show advanced options</a>
     </div>

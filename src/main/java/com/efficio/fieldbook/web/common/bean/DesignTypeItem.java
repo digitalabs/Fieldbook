@@ -2,6 +2,17 @@
 package com.efficio.fieldbook.web.common.bean;
 
 public class DesignTypeItem {
+	
+	// Constants for well known (e.g. BreedingView) design types.
+	public static final DesignTypeItem RANDOMIZED_COMPLETE_BLOCK = new DesignTypeItem(0, "Randomized Complete Block Design",
+			"randomizedCompleteBlockParams.html", false, 0, 0, false);
+
+	public static final DesignTypeItem RESOLVABLE_INCOMPLETE_BLOCK = new DesignTypeItem(1, "Resolvable Incomplete Block Design",
+			"incompleteBlockParams.html", false, 0, 0, false);
+	
+	public static final DesignTypeItem ROW_COL = new DesignTypeItem(2, "Row-and-Column", "rowAndColumnParams.html", false, 0, 0, false);
+	
+	public static final DesignTypeItem CUSTOM_IMPORT = new DesignTypeItem(3, "Other Design", null, false, 0, 0, false);
 
 	private Integer id;
 	private String name;
@@ -9,7 +20,6 @@ public class DesignTypeItem {
 	// this is an html file that contains the specific fields under design type
 	private String params;
 	private Boolean isPreset;
-	private Boolean withResolvable;
 	private Integer repNo;
 	private Integer totalNoOfEntries;
 	private Boolean isDisabled;
@@ -23,14 +33,12 @@ public class DesignTypeItem {
 		this.id = id;
 	}
 
-	public DesignTypeItem(final Integer id, final String name, final String params, final Boolean isPreset, final Boolean withResolvable,
+	public DesignTypeItem(final Integer id, final String name, final String params, final Boolean isPreset,
 			final Integer noOfReps, final Integer noOfEntries, final Boolean isDisabled) {
-		super();
 		this.id = id;
 		this.name = name;
 		this.params = params;
 		this.isPreset = isPreset;
-		this.withResolvable = withResolvable;
 		this.repNo = noOfReps;
 		this.totalNoOfEntries = noOfEntries;
 		this.isDisabled = isDisabled;
@@ -71,14 +79,6 @@ public class DesignTypeItem {
 
 	public void setIsPreset(final Boolean isPreset) {
 		this.isPreset = isPreset;
-	}
-
-	public Boolean getWithResolvable() {
-		return this.withResolvable;
-	}
-
-	public void setWithResolvable(final Boolean withResolvable) {
-		this.withResolvable = withResolvable;
 	}
 
 	public Integer getRepNo() {

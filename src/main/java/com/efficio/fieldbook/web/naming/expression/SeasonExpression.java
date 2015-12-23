@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
-public class SeasonExpression implements Expression {
+public class SeasonExpression extends BaseExpression {
 
 	public static final String KEY = "[SEASON]";
 
@@ -20,9 +20,8 @@ public class SeasonExpression implements Expression {
 
 	@Override
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
-		for (StringBuilder value : values) {
-			int startIndex = value.toString().toUpperCase().indexOf(SeasonExpression.KEY);
-			int endIndex = startIndex + SeasonExpression.KEY.length();
+		for (StringBuilder container : values) {
+
 
 			String newValue = source.getSeason();
 			// If a season value is not specified for a Nursery, then default to the current year-month
@@ -30,7 +29,8 @@ public class SeasonExpression implements Expression {
 				SimpleDateFormat formatter = new SimpleDateFormat("YYYYMM");
 				newValue = formatter.format(new Date());
 			}
-			value.replace(startIndex, endIndex, newValue);
+
+            this.replaceExpressionWithValue(container, newValue);
 		}
 	}
 

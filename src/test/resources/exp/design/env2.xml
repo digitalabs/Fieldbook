@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Templates>
+	<Template name="ResolvableIncompleteBlock">
+		<Parameter name="seed" value="137987722" />
+		<Parameter name="blocksize" value="2" />
+		<Parameter name="ntreatments" value="10" />
+		<Parameter name="nreplicates" value="2" />
+		<Parameter name="treatmentfactor" value="ENTRY_NO" />
+		<Parameter name="initialtreatnum" value="5" />
+		<Parameter name="replicatefactor" value="REP_NO" />
+		<Parameter name="blockfactor" value="BLOCK_NO" />
+		<Parameter name="plotfactor" value="PLOT_NO" />
+		<Parameter name="initialplotnum" value="6" />
+		<Parameter name="nblatin" value="0" />
+		<Parameter name="timelimit" value="0.1" />
+		<Parameter name="outputfile" value="1450137987722-bv.csv" />
+	</Template>
+</Templates>

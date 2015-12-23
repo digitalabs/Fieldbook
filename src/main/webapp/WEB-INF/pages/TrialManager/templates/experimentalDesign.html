@@ -30,12 +30,6 @@
 										th:attr="tooltip=#{trial.experimental.design.incomplete.block.design.tooltip}"></span>
 								</div>
 							</div>
-							<div ng-show="currentDesignType.withResolvable &amp;&amp; false">
-								<label class="checkbox-inline"> <input type="checkbox"
-									ng-model="data.isResolvable" id="inlineCheckbox2" value="option2" />
-									<span>Design will be resolvable</span>
-								</label>
-							</div>
 						</div>
 					</div>
 					<div class="col-md-12 add-bottom-padding">
@@ -100,19 +94,14 @@
 </form>
 
 <script type="text/javascript" th:inline="javascript">
-    var plotNoMaxLimitExceeded = /*[[#{germplasm.list.plot.no.should.not.exceed.five.digits}]]*/ '',
-            plotNoNonNumericValueNotSupported = /*[[#{germplasm.list.plot.no.non.numeric.value.is.not.supported}]]*/ '';
+    var plotNoShouldBeInRange = /*[[#{plot.number.should.be.in.range}]]*/ '';
 
     function validateAndSetPlotNo() {
         var customMessage = '';
         var plotNo = $.trim($("#txtStartingPlotNo").val());
         if(plotNo != '') {
-            if (validatePlotNo(plotNo)) {
-                if (validatePlotNoAsMaxDigits(plotNo)) {
-                    customMessage = plotNoMaxLimitExceeded;
-                }
-            } else {
-                customMessage = plotNoNonNumericValueNotSupported;
+            if (!validateEntryAndPlotNo(plotNo)) {
+                customMessage = plotNoShouldBeInRange;
             }
 
             if (customMessage != '') {
@@ -125,18 +114,11 @@
         }
     }
 
-    // Validate plot number if it is non-numeric
-    function validatePlotNo(inputNo) {
-        var validNo = /^\d+$/;
-        if (inputNo.match(validNo)) {
-            return true;
-        }
-        return false;
-    }
+    // Validate Germplasm entry number and plot number if it is non-numeric
+    function validateEntryAndPlotNo(inputNo) {
+        var validNo = '^(?=.*[1-9].*)[0-9]{1,5}$';
 
-    // Validate plot number if it exceeds 5 digits
-    function validatePlotNoAsMaxDigits(inputNo) {
-        if (inputNo.length > 5) {
+        if (inputNo.match(validNo)) {
             return true;
         }
         return false;

@@ -18,8 +18,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.service.pedigree.PedigreeFactory;
-import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
@@ -41,11 +39,11 @@ import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
-import com.efficio.fieldbook.web.importdesign.constant.BreedingViewDesignType;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -65,7 +63,7 @@ public class ExpDesignController extends BaseTrialController {
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 	@Resource
-	private CrossExpansionProperties crossExpansionProperties;
+	private FieldbookProperties fieldbookProperties;
 	@Resource
 	private ContextUtil contextUtil;
 	@Resource
@@ -78,25 +76,20 @@ public class ExpDesignController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveDesignTypes", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	public String retrieveDesignTypes() {
+	public List<DesignTypeItem> retrieveDesignTypes() {
 		final List<DesignTypeItem> designTypes = new ArrayList<DesignTypeItem>();
 
-		int index = 0;
+		designTypes.add(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK);
+		designTypes.add(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK);
+		designTypes.add(DesignTypeItem.ROW_COL);
+		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
 
-		for (final BreedingViewDesignType designType : BreedingViewDesignType.values()) {
-			designTypes.add(new DesignTypeItem(index, designType.getName(), designType.getParams(), false, designType.withResolvable(), 0,
-					0, false));
-			index++;
+		if (this.fieldbookProperties.getPresetDesignEnabledCrops().contains(this.contextUtil.getProjectInContext().getCropType().getCropName())) {
+			// There are four (0-3) fixed designe types, so the preset designs get id 4 and onwards. 
+			designTypes.addAll(this.generatePresetDesignTypes(4));
 		}
 
-		designTypes.add(new DesignTypeItem(index++, "Other Design", null, false, false, 0, 0, false));
-
-		if (PedigreeFactory.isCimmytWheat(this.crossExpansionProperties.getProfile(), this.contextUtil.getProjectInContext().getCropType()
-				.getCropName())) {
-			designTypes.addAll(this.generatePresetDesignTypes(index));
-		}
-
-		return this.convertObjectToJson(designTypes);
+		return designTypes;
 	}
 
 	private List<DesignTypeItem> generatePresetDesignTypes(int index) {
@@ -107,16 +100,27 @@ public class ExpDesignController extends BaseTrialController {
 			final String templateFileName = designTemplateFile.getName();
 
 			if (this.isValidPresetDesignTemplate(templateFileName)) {
-				final int noOfreps = this.getNoOfReps(templateFileName);
-				final int totalNoOfEntries = this.getTotalNoOfEntries(templateFileName);
-				final String templateName = this.getTemplateName(templateFileName);
-				designTypeItems.add(new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, false, noOfreps,
-						totalNoOfEntries, false));
+				designTypeItems.add(this.generatePresetDesignTypeItem(templateFileName, index));
 				index++;
 			}
 		}
 
 		return designTypeItems;
+	}
+
+	/**
+	 * Generates a design type item from template file name
+	 * 
+	 * @param templateFileName
+	 * @param index
+	 * @return
+	 */
+	DesignTypeItem generatePresetDesignTypeItem(final String templateFileName, final int index) {
+		final int noOfreps = this.getNoOfReps(templateFileName);
+		final int totalNoOfEntries = this.getTotalNoOfEntries(templateFileName);
+		final String templateName = this.getTemplateName(templateFileName);
+		return new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, noOfreps, totalNoOfEntries,
+				false);
 	}
 
 	/***
@@ -125,7 +129,7 @@ public class ExpDesignController extends BaseTrialController {
 	 * @param templateFileName
 	 * @return
 	 */
-	private String getTemplateName(final String templateFileName) {
+	String getTemplateName(final String templateFileName) {
 		return templateFileName.substring(0, templateFileName.indexOf(".csv"));
 	}
 
@@ -135,17 +139,29 @@ public class ExpDesignController extends BaseTrialController {
 	 * @param fileName
 	 * @return
 	 */
-	private boolean isValidPresetDesignTemplate(final String fileName) {
+	boolean isValidPresetDesignTemplate(final String fileName) {
 		return fileName.matches("E[0-9]+-Rep[0-9]+-Block[0-9]+-[0-9]+Ind.csv");
 	}
 
-	private int getTotalNoOfEntries(final String name) {
+	/**
+	 * Retrieves the no of entries from the design preset template name
+	 * 
+	 * @param name - preset template filename
+	 * @return
+	 */
+	int getTotalNoOfEntries(final String name) {
 		final int start = name.indexOf("E") + 1;
 		final int end = name.indexOf("-Rep");
 		return Integer.valueOf(name.substring(start, end));
 	}
 
-	private int getNoOfReps(final String name) {
+	/**
+	 * Retrieves the no of replications from the design preset template name
+	 * 
+	 * @param name - preset template filename
+	 * @return
+	 */
+	int getNoOfReps(final String name) {
 		final int start = name.indexOf("-Rep") + 4;
 		final int end = name.indexOf("-Block");
 		return Integer.valueOf(name.substring(start, end));
@@ -340,10 +356,6 @@ public class ExpDesignController extends BaseTrialController {
 			return this.resolvableRowColumnDesign;
 		}
 		return null;
-	}
-
-	public void setCrossExpansionProperties(final CrossExpansionProperties crossExpansionProperties) {
-		this.crossExpansionProperties = crossExpansionProperties;
 	}
 
 	@Override

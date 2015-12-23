@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -30,6 +31,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.efficio.fieldbook.web.common.bean.DesignTypeItem;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
@@ -146,9 +148,6 @@ public abstract class BaseTrialController extends SettingsController {
 		if (!isUsePrevious && xpDesignVariable != null) {
 			ExpDesignParameterUi data = new ExpDesignParameterUi();
 
-			// as per discussion, resolvable is always set to true currently
-			data.setIsResolvable(true);
-
 			// default values
 			data.setDesignType(0);
 			data.setUseLatenized(false);
@@ -189,7 +188,12 @@ public abstract class BaseTrialController extends SettingsController {
 
 			// Set first plot number from observations
 			if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
-				data.setStartingPlotNo(trialWorkbook.getObservations().get(0).getDataList().get(6).getValue());
+				List<MeasurementData> datas = trialWorkbook.getObservations().get(0).getDataList();
+				for(MeasurementData md : datas){
+					if(Objects.equals(md.getLabel(), TermId.PLOT_NO.toString())){
+						data.setStartingPlotNo(md.getValue());
+					}
+				}
 			}
 
 			String designTypeString = xpDesignVariable.getExperimentalDesign() == null ? null
@@ -198,22 +202,22 @@ public abstract class BaseTrialController extends SettingsController {
 				Integer designTypeTermID = Integer.parseInt(designTypeString);
 
 				if (TermId.RANDOMIZED_COMPLETE_BLOCK.getId() == designTypeTermID) {
-					data.setDesignType(0);
+					data.setDesignType(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId());
 					data.setUseLatenized(false);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId() == designTypeTermID) {
-					data.setDesignType(1);
+					data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
 					data.setUseLatenized(true);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId() == designTypeTermID) {
-					data.setDesignType(1);
+					data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
 					data.setUseLatenized(false);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId() == designTypeTermID) {
-					data.setDesignType(2);
+					data.setDesignType(DesignTypeItem.ROW_COL.getId());
 					data.setUseLatenized(true);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId() == designTypeTermID) {
-					data.setDesignType(2);
+					data.setDesignType(DesignTypeItem.ROW_COL.getId());
 					data.setUseLatenized(false);
 				} else if (TermId.OTHER_DESIGN.getId() == designTypeTermID) {
-					data.setDesignType(3);
+					data.setDesignType(DesignTypeItem.CUSTOM_IMPORT.getId());
 				} else if (TermId.ALPHA_LATTICE_E30_REP2.getId() == designTypeTermID) {
 					data.setDesignType(4);
 				} else if (TermId.ALPHA_LATTICE_E30_REP3.getId() == designTypeTermID) {

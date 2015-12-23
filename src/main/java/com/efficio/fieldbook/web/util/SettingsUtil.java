@@ -11,8 +11,17 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -95,7 +104,8 @@ public class SettingsUtil {
 	 * @param programUUID
 	 * @return the standard variable
 	 */
-	private static StandardVariable getStandardVariable(final int id, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
+	private static StandardVariable getStandardVariable(final int id,
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 
 		return fieldbookMiddlewareService.getStandardVariable(id, programUUID);
 	}
@@ -150,7 +160,7 @@ public class SettingsUtil {
 					new Condition(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
 							variable.getMethod(), variable.getRole(), variable.getDataType(), DateUtil.convertToDBDateFormat(
 									variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(),
-									variable.getMinRange(), variable.getMaxRange());
+							variable.getMinRange(), variable.getMaxRange());
 			condition.setOperation(variable.getOperation());
 			condition.setId(variable.getCvTermId());
 			conditions.add(condition);
@@ -178,9 +188,9 @@ public class SettingsUtil {
 					new Variate(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
 							variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
 							settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
-            if(settingDetail.getVariableType() != null){
-                variate.setVariableType(settingDetail.getVariableType().getName());
-            }
+			if (settingDetail.getVariableType() != null) {
+				variate.setVariableType(settingDetail.getVariableType().getName());
+			}
 			variate.setOperation(variable.getOperation());
 			variate.setId(variable.getCvTermId());
 			variateList.add(variate);
@@ -252,7 +262,7 @@ public class SettingsUtil {
 					new Constant(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
 							variable.getMethod(), variable.getRole(), variable.getDataType(), DateUtil.convertToDBDateFormat(
 									variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(),
-									variable.getMinRange(), variable.getMaxRange(), isTrial);
+							variable.getMinRange(), variable.getMaxRange(), isTrial);
 			constant.setOperation(variable.getOperation());
 			constant.setId(variable.getCvTermId());
 			constants.add(constant);
@@ -642,8 +652,7 @@ public class SettingsUtil {
 
 					if (userSelection != null) {
 						final StandardVariable standardVariable =
-								SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService,
-										programUUID);
+								SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 						variable.setPSMRFromStandardVariable(standardVariable, condition.getRole());
 						final Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(condition.getValue());
 
@@ -759,8 +768,7 @@ public class SettingsUtil {
 					variable.setCvTermId(stdVar);
 
 					final StandardVariable standardVariable =
-							SettingsUtil
-							.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
+							SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 
 					final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
 
@@ -772,9 +780,9 @@ public class SettingsUtil {
 					settingDetail.setPossibleValuesToJson(possibleValues);
 					final List<ValueReference> possibleValuesFavorite =
 							SettingsUtil.getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
-                    settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 
-					if(Objects.equals(VariableType.getByName(variate.getVariableType()), VariableType.SELECTION_METHOD)){
+					if (Objects.equals(VariableType.getByName(variate.getVariableType()), VariableType.SELECTION_METHOD)) {
 						selectionVariates.add(settingDetail);
 					} else {
 						baselineTraitsList.add(settingDetail);
@@ -816,8 +824,7 @@ public class SettingsUtil {
 					nurseryConditions.add(settingDetail);
 					if (userSelection != null) {
 						final StandardVariable standardVariable =
-								SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService,
-										programUUID);
+								SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 						variable.setPSMRFromStandardVariable(standardVariable, constant.getRole());
 						final Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(constant.getValue());
 						if (enumerationByDescription != null) {
@@ -916,8 +923,7 @@ public class SettingsUtil {
 						studyLevelConditions.add(settingDetail);
 						if (userSelection != null) {
 							final StandardVariable standardVariable =
-									SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService,
-											programUUID);
+									SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 							variable.setPSMRFromStandardVariable(standardVariable, condition.getRole());
 						}
 					}
@@ -1000,8 +1006,7 @@ public class SettingsUtil {
 
 						if (userSelection != null) {
 							final StandardVariable standardVariable =
-									SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService,
-											programUUID);
+									SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 							variable.setPSMRFromStandardVariable(standardVariable, factor.getRole());
 						}
 					}
@@ -1259,8 +1264,8 @@ public class SettingsUtil {
 						new Variate(mvar.getName(), mvar.getDescription(), mvar.getProperty(), mvar.getScale(), mvar.getMethod(),
 								PhenotypicType.VARIATE.toString(), mvar.getDataType(), mvar.getDataTypeId(), mvar.getPossibleValues(),
 								mvar.getMinRange(), mvar.getMaxRange());
-                variate.setVariableType(mvar.getVariableType().getName());
-                variate.setId(mvar.getTermId());
+				variate.setVariableType(mvar.getVariableType().getName());
+				variate.setId(mvar.getTermId());
 				variates.add(variate);
 			}
 		}
@@ -1426,10 +1431,10 @@ public class SettingsUtil {
 				new MeasurementVariable(variate.getName(), variate.getDescription(), variate.getScale(), variate.getMethod(),
 						variate.getProperty(), variate.getDatatype(), null, PhenotypicType.TRIAL_DESIGN.getLabelList().get(0),
 						variate.getMinRange(), variate.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(variate.getRole()));
-        if(variate.getVariableType() != null){
-        	mvar.setVariableType(VariableType.getByName(variate.getVariableType()));
-        }
-        mvar.setOperation(variate.getOperation());
+		if (variate.getVariableType() != null) {
+			mvar.setVariableType(VariableType.getByName(variate.getVariableType()));
+		}
+		mvar.setOperation(variate.getOperation());
 		mvar.setTermId(variate.getId());
 		mvar.setFactor(false);
 		mvar.setDataTypeId(variate.getDataTypeId());
@@ -1459,11 +1464,12 @@ public class SettingsUtil {
 
 	public static StudyDetails convertWorkbookToStudyDetails(final Workbook workbook,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID,final Properties appConstantsProperties) {
+			final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID,
+			final Properties appConstantsProperties) {
 
 		final StudyDetails studyDetails =
 				SettingsUtil.convertWorkbookStudyLevelVariablesToStudyDetails(workbook, fieldbookMiddlewareService, fieldbookService,
-						userSelection, workbook.getStudyDetails().getId().toString(), programUUID,appConstantsProperties);
+						userSelection, workbook.getStudyDetails().getId().toString(), programUUID, appConstantsProperties);
 
 		if (workbook.getTrialDatasetId() != null) {
 			studyDetails.setNumberOfEnvironments(Long.valueOf(fieldbookMiddlewareService.countObservations(workbook.getTrialDatasetId()))
@@ -1496,7 +1502,8 @@ public class SettingsUtil {
 
 	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final String projectId, final String programUUID, final Properties appConstantsProperties) {
+			final FieldbookService fieldbookService, final UserSelection userSelection, final String projectId, final String programUUID,
+			final Properties appConstantsProperties) {
 
 		final StudyDetails details = new StudyDetails();
 		details.setId(workbook.getStudyDetails().getId());
@@ -1522,7 +1529,7 @@ public class SettingsUtil {
 			}
 			basicDetails =
 					SettingsUtil.convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService, fieldbookService,
-							userSelection, workbook, programUUID,appConstantsProperties);
+							userSelection, workbook, programUUID, appConstantsProperties);
 			managementDetails =
 					SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection,
 							fieldbookMiddlewareService, fieldbookService, programUUID);
@@ -1572,7 +1579,7 @@ public class SettingsUtil {
 			final String id = String.valueOf(condition.getTermId());
 			final String role = condition.getRole().name();
 			if (!SettingsUtil.isIdInFieldListForHiding(userSelection, id)
-					// do not show breeding method id if code exists
+			// do not show breeding method id if code exists
 					&& !SettingsUtil.breedingCodeExists(condition.getTermId(), variableMap)) {
 				// do not name if code or id exists
 
@@ -1634,7 +1641,8 @@ public class SettingsUtil {
 	private static List<SettingDetail> convertWorkbookToSettingDetails(final List<String> fields,
 			final List<MeasurementVariable> conditions,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final Workbook workbook, final String programUUID, final Properties appConstantsProperties) {
+			final FieldbookService fieldbookService, final UserSelection userSelection, final Workbook workbook, final String programUUID,
+			final Properties appConstantsProperties) {
 
 		final List<SettingDetail> details = new ArrayList<SettingDetail>();
 		int index = fields != null ? fields.size() : 0;
@@ -1645,9 +1653,10 @@ public class SettingsUtil {
 			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyDetails().getId(), studyName);
 		}
 
-		List<String> labelFieldsWithPairedVariable = new ArrayList<>(fields);
+		final List<String> labelFieldsWithPairedVariable = new ArrayList<>(fields);
 		labelFieldsWithPairedVariable.add(AppConstants.SPFLD_PLOT_COUNT.getString());
-		Map<String,String> variableAppConstantLabels = getVariableAppConstantLabels(labelFieldsWithPairedVariable,appConstantsProperties);
+		final Map<String, String> variableAppConstantLabels =
+				SettingsUtil.getVariableAppConstantLabels(labelFieldsWithPairedVariable, appConstantsProperties);
 
 		for (final String strFieldId : fields) {
 			if (StringUtils.isEmpty(strFieldId) || conditions == null) {
@@ -1657,7 +1666,8 @@ public class SettingsUtil {
 			boolean found = false;
 			String label = variableAppConstantLabels.get(strFieldId);
 
-			// label field is a UI construct for the Settings sections of the fieldbook UI (a label field and its value which can be a textfield, number or dropdown)
+			// label field is a UI construct for the Settings sections of the fieldbook UI (a label field and its value which can be a
+			// textfield, number or dropdown)
 			// usually a label field contains the ontology measurement variable name and its value of a study.
 			// special field is a label field that contains additional logic for determining its proper label and value
 			// see SettingsUtil.getSpecialFieldValue()
@@ -1713,11 +1723,11 @@ public class SettingsUtil {
 	}
 
 	protected static Map<String, String> getVariableAppConstantLabels(final List<String> labels, final Properties appConstantsProperties) {
-		final Map<String,String> variableLabels = new HashMap<>();
+		final Map<String, String> variableLabels = new HashMap<>();
 
 		for (final String label : labels) {
 			final String value = appConstantsProperties.getProperty(label.toUpperCase() + "_LABEL");
-			variableLabels.put(label,value != null ? value : "");
+			variableLabels.put(label, value != null ? value : "");
 		}
 
 		return variableLabels;
@@ -1869,7 +1879,7 @@ public class SettingsUtil {
 		for (final MeasurementData data : mrow.getDataList()) {
 			if (data.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
 					&& ontologyService.getProperty(data.getMeasurementVariable().getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP
-					.getId() && isResetAll || !isResetAll
+							.getId() && isResetAll || !isResetAll
 					&& data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
 				indeces.add(index);
 			}
@@ -2119,7 +2129,7 @@ public class SettingsUtil {
 								stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(), value,
 								PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0), stdvar.getConstraints() != null ? stdvar
 										.getConstraints().getMinValue() : null, stdvar.getConstraints() != null ? stdvar.getConstraints()
-												.getMaxValue() : null, PhenotypicType.TRIAL_ENVIRONMENT);
+										.getMaxValue() : null, PhenotypicType.TRIAL_ENVIRONMENT);
 				mvar.setOperation(Operation.ADD);
 				mvar.setDataTypeId(stdvar.getDataType().getId());
 				workbook.getConditions().add(mvar);
@@ -2300,18 +2310,18 @@ public class SettingsUtil {
 				param.setFileName(var.getValue());
 			}
 		}
-		updateDesignTypeIfIncompleteBlockAndFileNameIsSet(param);
+		SettingsUtil.updateDesignTypeIfIncompleteBlockAndFileNameIsSet(param);
 
 		return param;
 	}
 
-	private static void updateDesignTypeIfIncompleteBlockAndFileNameIsSet(ExpDesignParameterUi param) {
+	private static void updateDesignTypeIfIncompleteBlockAndFileNameIsSet(final ExpDesignParameterUi param) {
 		if (new Integer(1).equals(param.getDesignType()) && param.getFileName() != null) {
-			param.setDesignType(getPresetDesignTypeBasedOnFileName(param.getFileName()));
+			param.setDesignType(SettingsUtil.getPresetDesignTypeBasedOnFileName(param.getFileName()));
 		}
 	}
 
-	public static int getPresetDesignTypeBasedOnFileName(String fileName) {
+	public static int getPresetDesignTypeBasedOnFileName(final String fileName) {
 		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
 		// currently the UI follows this sequence for the presets: 4, 5, 6
 		// (this can be changed in the future so that constants are used)
@@ -2495,8 +2505,10 @@ public class SettingsUtil {
 					// only EXPERIMENTAL DESIGN then
 					// set the role as PhenotypicType.TRIAL_DESIGN
 					if (settingDetail.getVariable().getVariableTypes() != null
-							&& !hasVariableType(VariableType.GERMPLASM_DESCRIPTOR, settingDetail.getVariable().getVariableTypes())
-							&& hasVariableType(VariableType.EXPERIMENTAL_DESIGN, settingDetail.getVariable().getVariableTypes())) {
+							&& !SettingsUtil.hasVariableType(VariableType.GERMPLASM_DESCRIPTOR, settingDetail.getVariable()
+									.getVariableTypes())
+							&& SettingsUtil.hasVariableType(VariableType.EXPERIMENTAL_DESIGN, settingDetail.getVariable()
+									.getVariableTypes())) {
 						settingDetail.setRole(VariableType.EXPERIMENTAL_DESIGN.getRole());
 					} else {
 						settingDetail.setRole(VariableType.GERMPLASM_DESCRIPTOR.getRole());

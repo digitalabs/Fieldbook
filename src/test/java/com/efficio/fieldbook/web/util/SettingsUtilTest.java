@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -74,7 +75,7 @@ public class SettingsUtilTest {
 				new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N",
 						TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0));
 
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, PROGRAM_UUID);
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, SettingsUtilTest.PROGRAM_UUID);
 		Debug.println(0, workbook);
 
 		final Dataset newDataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
@@ -144,7 +145,7 @@ public class SettingsUtilTest {
 		final List<String> labels = new ArrayList<>(Arrays.asList(new String[] {"abc", "def"}));
 
 		final Properties appConfigProp = Mockito.mock(Properties.class);
-		Mockito.when(appConfigProp.getProperty(Mockito.any(String.class))).thenReturn("any value");
+		Mockito.when(appConfigProp.getProperty(Matchers.any(String.class))).thenReturn("any value");
 		final ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 
 		SettingsUtil.getVariableAppConstantLabels(labels, appConfigProp);
@@ -200,7 +201,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertToExpDesignParamsUi() {
 
-		List<MeasurementVariable> expDesigns = new ArrayList<>();
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
 
 		expDesigns.add(this.createMeasurementVariable(TermId.BLOCK_SIZE.getId(), "1"));
 		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_COLS_IN_REPS.getId(), "2"));
@@ -212,7 +213,7 @@ public class SettingsUtilTest {
 		expDesigns.add(this.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "8"));
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "9"));
 
-		ExpDesignParameterUi result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+		final ExpDesignParameterUi result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
 
 		Assert.assertEquals("1", result.getBlockSize());
 		Assert.assertEquals("2", result.getColsPerReplications());
@@ -229,7 +230,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertToExpDesignParamsUiRandomizedBlockDesign() {
 
-		List<MeasurementVariable> expDesigns = new ArrayList<>();
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
 				String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId())));
 
@@ -242,7 +243,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertToExpDesignParamsUiResolvableIncompleteBlock() {
 
-		List<MeasurementVariable> expDesigns = new ArrayList<>();
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
 				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
 
@@ -255,7 +256,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertToExpDesignParamsUiResolvableIncompleteRowColumn() {
 
-		List<MeasurementVariable> expDesigns = new ArrayList<>();
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
 				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId())));
 
@@ -268,7 +269,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertToExpDesignParamsUiOtherDesign() {
 
-		List<MeasurementVariable> expDesigns = new ArrayList<>();
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns
 				.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), String.valueOf(TermId.OTHER_DESIGN.getId())));
 
@@ -281,7 +282,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertToExpDesignParamsUiAlphaLatticeEntry30Rep2() {
 
-		List<MeasurementVariable> expDesigns = new ArrayList<>();
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
 				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E30-Rep2-Block6-5Ind.csv"));
@@ -295,7 +296,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertToExpDesignParamsUiAlphaLatticeEntry30Rep3() {
 
-		List<MeasurementVariable> expDesigns = new ArrayList<>();
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
 				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E30-Rep3-Block6-5Ind.csv"));
@@ -309,7 +310,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertToExpDesignParamsUiAlphaLatticeEntry50Rep2() {
 
-		List<MeasurementVariable> expDesigns = new ArrayList<>();
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
 				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E50-Rep2-Block5-10Ind.csv"));
@@ -323,7 +324,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertToExpDesignParamsUiRepsInSingleColumn() {
 
-		List<MeasurementVariable> expDesigns = new ArrayList<>();
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns.add(this.createMeasurementVariable(TermId.REPLICATIONS_MAP.getId(), String.valueOf(TermId.REPS_IN_SINGLE_COL.getId())));
 
 		ExpDesignParameterUi result;
@@ -335,7 +336,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertToExpDesignParamsUiRepsInSingleRow() {
 
-		List<MeasurementVariable> expDesigns = new ArrayList<>();
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns.add(this.createMeasurementVariable(TermId.REPLICATIONS_MAP.getId(), String.valueOf(TermId.REPS_IN_SINGLE_ROW.getId())));
 
 		ExpDesignParameterUi result;
@@ -347,7 +348,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertToExpDesignParamsUiRepsInAdjacentCol() {
 
-		List<MeasurementVariable> expDesigns = new ArrayList<>();
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns
 				.add(this.createMeasurementVariable(TermId.REPLICATIONS_MAP.getId(), String.valueOf(TermId.REPS_IN_ADJACENT_COLS.getId())));
 
@@ -360,7 +361,7 @@ public class SettingsUtilTest {
 	@Test
 	public void testGetExperimentalDesignValue() {
 
-		ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
+		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
 
 		expDesignParameterUi.setBlockSize("1");
 		expDesignParameterUi.setColsPerReplications("2");
@@ -487,8 +488,8 @@ public class SettingsUtilTest {
 		final StandardVariable standardVariable = new StandardVariable();
 		standardVariable.setVariableTypes(null);
 
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CATEGORICAL_VARIATE.getId(), PROGRAM_UUID)).thenReturn(
-				standardVariable);
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CATEGORICAL_VARIATE.getId(), SettingsUtilTest.PROGRAM_UUID))
+				.thenReturn(standardVariable);
 
 		for (final VariableType varType : VariableType.values()) {
 			final SettingDetail settingDetail = new SettingDetail();
@@ -502,7 +503,7 @@ public class SettingsUtilTest {
 			detailList.add(settingDetail);
 
 			SettingsUtil.setSettingDetailRole(varType.getId(), detailList, this.userSelection, this.fieldbookMiddlewareService,
-					PROGRAM_UUID);
+					SettingsUtilTest.PROGRAM_UUID);
 			Assert.assertEquals("Should have the correct phenotypic type role as per the variable type", varType.getRole(),
 					settingDetail.getRole());
 
@@ -522,7 +523,7 @@ public class SettingsUtilTest {
 		// for mode, we use any that is not a germplasm descriptor
 		final VariableType studyDetailMode = VariableType.STUDY_DETAIL;
 		SettingsUtil.setSettingDetailRole(studyDetailMode.getId().intValue(), newDetails, this.userSelection,
-				this.fieldbookMiddlewareService, PROGRAM_UUID);
+				this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
 		Assert.assertEquals(
 				"Since we had a settingDetail that is a trial instance factor, the detail's role should be converted to Trial Environment",
 				PhenotypicType.TRIAL_ENVIRONMENT, detail.getRole());
@@ -539,13 +540,14 @@ public class SettingsUtilTest {
 		final UserSelection userSelection = new UserSelection();
 
 		final List<Variate> baselineVariates =
-				SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, userSelection, this.fieldbookMiddlewareService, PROGRAM_UUID);
+				SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, userSelection, this.fieldbookMiddlewareService,
+						SettingsUtilTest.PROGRAM_UUID);
 
 		Assert.assertEquals(baselineTraits.size(), baselineVariates.size());
 	}
 
-	protected MeasurementVariable createMeasurementVariable(int termId, String value) {
-		MeasurementVariable measurementVariable = new MeasurementVariable();
+	protected MeasurementVariable createMeasurementVariable(final int termId, final String value) {
+		final MeasurementVariable measurementVariable = new MeasurementVariable();
 		measurementVariable.setTermId(termId);
 		measurementVariable.setValue(value);
 		return measurementVariable;

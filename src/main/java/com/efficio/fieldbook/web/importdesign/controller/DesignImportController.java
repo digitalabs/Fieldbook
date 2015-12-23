@@ -174,7 +174,7 @@ public class DesignImportController extends SettingsController {
 
 	/**
 	 * This makes the design revert to default design where for every measurement rows, the entry for PLOT_NO must be equal to ENTRY_NO
-	 * 
+	 *
 	 * @param studyId
 	 * @param studyType
 	 * @return
@@ -475,8 +475,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem)
-			throws DesignValidationException {
+			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 
@@ -534,7 +533,7 @@ public class DesignImportController extends SettingsController {
 	/**
 	 * Resets the Check list and deletes all Check Variables previously saved in Nursery. The system will automatically reset and override
 	 * the Check List after importing a Custom Design.
-	 * 
+	 *
 	 * @param workbook
 	 * @param userSelection
 	 */
@@ -936,10 +935,10 @@ public class DesignImportController extends SettingsController {
 	}
 
 	/**
-	 * 
+	 *
 	 * If a variable(s) is expected to have a pair ID variable (e.g. LOCATION_NAME has LOCATION_NAME_ID pair), the pair ID should be created
 	 * and added to the trial variables in order for the system to properly save the Trial.
-	 * 
+	 *
 	 * @param environmentData
 	 * @param designImportData
 	 * @param trialVariables
@@ -1064,7 +1063,7 @@ public class DesignImportController extends SettingsController {
 	/**
 	 * If a variable(s) is expected to have a pair ID variable (e.g. LOCATION_NAME has LOCATION_NAME_ID pair), the pair ID should be created
 	 * and added to setting details list in order for the system to properly save the Trial.
-	 * 
+	 *
 	 * @param environmentData
 	 * @param designImportData
 	 * @param newDetails
@@ -1296,7 +1295,7 @@ public class DesignImportController extends SettingsController {
 
 	/**
 	 * Create check variables to be deleted.
-	 * 
+	 *
 	 * @param studyLevelConditions
 	 */
 	protected void addCheckVariablesToDeleted(final List<SettingDetail> studyLevelConditions) {

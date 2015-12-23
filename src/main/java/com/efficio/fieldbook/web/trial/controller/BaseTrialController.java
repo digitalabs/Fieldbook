@@ -31,6 +31,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.efficio.fieldbook.web.common.bean.DesignTypeItem;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
@@ -201,22 +202,22 @@ public abstract class BaseTrialController extends SettingsController {
 				Integer designTypeTermID = Integer.parseInt(designTypeString);
 
 				if (TermId.RANDOMIZED_COMPLETE_BLOCK.getId() == designTypeTermID) {
-					data.setDesignType(0);
+					data.setDesignType(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId());
 					data.setUseLatenized(false);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId() == designTypeTermID) {
-					data.setDesignType(1);
+					data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
 					data.setUseLatenized(true);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId() == designTypeTermID) {
-					data.setDesignType(1);
+					data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
 					data.setUseLatenized(false);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId() == designTypeTermID) {
-					data.setDesignType(2);
+					data.setDesignType(DesignTypeItem.ROW_COL.getId());
 					data.setUseLatenized(true);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId() == designTypeTermID) {
-					data.setDesignType(2);
+					data.setDesignType(DesignTypeItem.ROW_COL.getId());
 					data.setUseLatenized(false);
 				} else if (TermId.OTHER_DESIGN.getId() == designTypeTermID) {
-					data.setDesignType(3);
+					data.setDesignType(DesignTypeItem.CUSTOM_IMPORT.getId());
 				} else if (TermId.ALPHA_LATTICE_E30_REP2.getId() == designTypeTermID) {
 					data.setDesignType(4);
 				} else if (TermId.ALPHA_LATTICE_E30_REP3.getId() == designTypeTermID) {

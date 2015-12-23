@@ -131,8 +131,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return returnVal;
 	}
 
-	protected TabInfo prepareExperimentalDesignTabInfo(final Workbook trialWorkbook, final boolean isUsePrevious)
-			throws MiddlewareQueryException {
+	protected TabInfo prepareExperimentalDesignTabInfo(final Workbook trialWorkbook, final boolean isUsePrevious) {
 		final TabInfo tabInfo = new TabInfo();
 		final ExperimentalDesignVariable xpDesignVariable = trialWorkbook.getExperimentalDesignVariables();
 		// currently, the saved experimental design information is not loaded up
@@ -227,8 +226,7 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 	}
 
-	protected TabInfo prepareGermplasmTabInfo(final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious)
-			throws MiddlewareException {
+	protected TabInfo prepareGermplasmTabInfo(final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious) {
 		final List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 		final List<Integer> requiredIDList = this.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
 
@@ -294,8 +292,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return false;
 	}
 
-	protected TabInfo prepareTreatmentFactorsInfo(final List<TreatmentVariable> treatmentVariables, final boolean isUsePrevious)
-			throws MiddlewareException {
+	protected TabInfo prepareTreatmentFactorsInfo(final List<TreatmentVariable> treatmentVariables, final boolean isUsePrevious) {
 		final Map<Integer, SettingDetail> levelDetails = new HashMap<Integer, SettingDetail>();
 		final Map<String, TreatmentFactorData> currentData = new HashMap<String, TreatmentFactorData>();
 		final Map<String, List<SettingDetail>> treatmentFactorPairs = new HashMap<String, List<SettingDetail>>();
@@ -346,8 +343,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
-	protected TabInfo prepareMeasurementsTabInfo(final List<MeasurementVariable> variatesList, final boolean isUsePrevious)
-			throws MiddlewareException {
+	protected TabInfo prepareMeasurementsTabInfo(final List<MeasurementVariable> variatesList, final boolean isUsePrevious) {
 
 		final List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 
@@ -373,7 +369,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
-	protected TabInfo prepareEnvironmentsTabInfo(final Workbook workbook, final boolean isUsePrevious) throws MiddlewareException {
+	protected TabInfo prepareEnvironmentsTabInfo(final Workbook workbook, final boolean isUsePrevious) {
 		final TabInfo info = new TabInfo();
 		final Map settingMap = new HashMap();
 		final List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
@@ -531,8 +527,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return output;
 	}
 
-	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final boolean isUsePrevious, final int trialID)
-			throws MiddlewareException {
+	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final boolean isUsePrevious, final int trialID) {
 		final Map<String, String> basicDetails = new HashMap<String, String>();
 		final List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
@@ -596,8 +591,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 	}
 
-	protected TabInfo prepareTrialSettingsTabInfo(final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious)
-			throws MiddlewareException {
+	protected TabInfo prepareTrialSettingsTabInfo(final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious) {
 		final TabInfo info = new TabInfo();
 		final Map<String, String> trialValues = new HashMap<String, String>();
 		final List<SettingDetail> details = new ArrayList<SettingDetail>();
@@ -649,7 +643,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
-	protected TabInfo prepareExperimentalDesignSpecialData() throws MiddlewareException {
+	protected TabInfo prepareExperimentalDesignSpecialData() {
 		final TabInfo info = new TabInfo();
 		final ExpDesignData data = new ExpDesignData();
 		final List<ExpDesignDataDetail> detailList = new ArrayList<ExpDesignDataDetail>();

@@ -10,7 +10,7 @@
 		.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 		.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 		.controller('ExperimentalDesignCtrl', ['$scope', '$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService', '$http',
-			'EXP_DESIGN_MSGS', '_', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _) {
+			'EXP_DESIGN_MSGS', '_', '$q','Messages', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages) {
 
 				
 				$scope.applicationData = TrialManagerDataService.applicationData;
@@ -197,20 +197,55 @@
 						});
 					}
 				};
+				
+				$scope.showConfirmResetDesign = function() {
+
+					var deferred = $q.defer();
+
+					bootbox.dialog({
+						title: Messages.DESIGN_IMPORT_PRESET_DESIGN_CHANGE_DESIGN,
+						message: Messages.DESIGN_IMPORT_CHANGE_DESIGN_DESCRIPTION_TRIAL,
+						closeButton: false,
+						onEscape: false,
+						buttons: {
+							yes: {
+								label: Messages.YES,
+								className: 'btn-primary',
+								callback: function() {
+									deferred.resolve(true);
+								}
+							},
+							no: {
+								label: Messages.NO,
+								className: 'btn-default',
+								callback: function() {
+									deferred.reject(false);
+								}
+							}
+						}
+					});
+					
+					return deferred.promise;
+				}
 
 				$scope.resetExperimentalDesign = function() {
 
-					// the following reset the data used for the experimental design, allowing the user to select another design again
-					$scope.applicationData.hasGeneratedDesignPreset = false;
-					$scope.applicationData.isGeneratedOwnDesign = false;
-					$scope.currentDesignTypeId = null;
-					$scope.data.designType = null;
+					$scope.showConfirmResetDesign().then(function(result){
+						// the following reset the data used for the experimental design, allowing the user to select another design again
+						$scope.applicationData.hasGeneratedDesignPreset = false;
+						$scope.applicationData.isGeneratedOwnDesign = false;
+						$scope.currentDesignTypeId = null;
+						$scope.data.designType = null;
 
-					// the following prevents the user from saving before re-generating the design, to avoid having invalid measurement data
-					if (TrialManagerDataService.trialMeasurement.count > 0) {
-						TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
-					}
+						// the following prevents the user from saving before re-generating the design, to avoid having invalid measurement data
+						if (TrialManagerDataService.trialMeasurement.count > 0) {
+							TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
+						}
+						
 
+					});
+
+					
 				};
 				
 				$scope.toggleDesignView = function() {

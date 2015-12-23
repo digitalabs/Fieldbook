@@ -108,7 +108,6 @@
 						totalGermplasmListCount: $scope.totalGermplasmEntryListCount,
 						designType: null,
 						'replicationsCount': null,
-						isResolvable: true,
 						'blockSize': null,
 						'useLatenized': false,
 						'nblatin': null,

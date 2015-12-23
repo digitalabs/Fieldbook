@@ -39,7 +39,6 @@ import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
-import com.efficio.fieldbook.web.importdesign.constant.BreedingViewDesignType;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
@@ -80,18 +79,14 @@ public class ExpDesignController extends BaseTrialController {
 	public List<DesignTypeItem> retrieveDesignTypes() {
 		final List<DesignTypeItem> designTypes = new ArrayList<DesignTypeItem>();
 
-		int index = 0;
-
-		for (final BreedingViewDesignType designType : BreedingViewDesignType.values()) {
-			designTypes.add(new DesignTypeItem(index, designType.getName(), designType.getParams(), false, designType.withResolvable(), 0,
-					0, false));
-			index++;
-		}
-
-		designTypes.add(new DesignTypeItem(index++, "Other Design", null, false, false, 0, 0, false));
+		designTypes.add(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK);
+		designTypes.add(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK);
+		designTypes.add(DesignTypeItem.ROW_COL);
+		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
 
 		if (this.fieldbookProperties.getPresetDesignEnabledCrops().contains(this.contextUtil.getProjectInContext().getCropType().getCropName())) {
-			designTypes.addAll(this.generatePresetDesignTypes(index));
+			// There are four (0-3) fixed designe types, so the preset designs get id 4 and onwards. 
+			designTypes.addAll(this.generatePresetDesignTypes(4));
 		}
 
 		return designTypes;
@@ -124,7 +119,7 @@ public class ExpDesignController extends BaseTrialController {
 		final int noOfreps = this.getNoOfReps(templateFileName);
 		final int totalNoOfEntries = this.getTotalNoOfEntries(templateFileName);
 		final String templateName = this.getTemplateName(templateFileName);
-		return new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, false, noOfreps, totalNoOfEntries,
+		return new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, noOfreps, totalNoOfEntries,
 				false);
 	}
 

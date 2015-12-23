@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.util;
 
 import java.util.*;
+import java.io.File;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -41,6 +42,7 @@ import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
 import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.util.ResourceFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
@@ -2192,7 +2194,8 @@ public class SettingsUtil {
 				if (param.getDesignType() != null) {
 					if (param.getDesignType().equals(0)) {
 						return String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId());
-					} else if (param.getDesignType().equals(1)) {
+					} else if (param.getDesignType().equals(1) || param.getDesignType().equals(4) || param.getDesignType().equals(5)
+							|| param.getDesignType().equals(6)) {
 						if (param.getUseLatenized() != null && param.getUseLatenized()) {
 							return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId());
 						} else {
@@ -2206,12 +2209,6 @@ public class SettingsUtil {
 						}
 					} else if (param.getDesignType().equals(3)) {
 						return String.valueOf(TermId.OTHER_DESIGN.getId());
-					} else if (param.getDesignType().equals(4)) {
-						return String.valueOf(TermId.ALPHA_LATTICE_E30_REP2.getId());
-					} else if (param.getDesignType().equals(5)) {
-						return String.valueOf(TermId.ALPHA_LATTICE_E30_REP3.getId());
-					} else if (param.getDesignType().equals(6)) {
-						return String.valueOf(TermId.ALPHA_LATTICE_E50_REP2.getId());
 					}
 				}
 				break;
@@ -2275,12 +2272,6 @@ public class SettingsUtil {
 						param.setDesignType(2);
 					} else if (String.valueOf(TermId.OTHER_DESIGN.getId()).equals(var.getValue())) {
 						param.setDesignType(3);
-					} else if (String.valueOf(TermId.ALPHA_LATTICE_E30_REP2.getId()).equals(var.getValue())) {
-						param.setDesignType(4);
-					} else if (String.valueOf(TermId.ALPHA_LATTICE_E30_REP3.getId()).equals(var.getValue())) {
-						param.setDesignType(5);
-					} else if (String.valueOf(TermId.ALPHA_LATTICE_E50_REP2.getId()).equals(var.getValue())) {
-						param.setDesignType(6);
 					}
 					if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())
 							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
@@ -2309,7 +2300,30 @@ public class SettingsUtil {
 				param.setFileName(var.getValue());
 			}
 		}
+		updateDesignTypeIfIncompleteBlockAndFileNameIsSet(param);
+
 		return param;
+	}
+
+	private static void updateDesignTypeIfIncompleteBlockAndFileNameIsSet(ExpDesignParameterUi param) {
+		if (new Integer(1).equals(param.getDesignType()) && param.getFileName() != null) {
+			param.setDesignType(getPresetDesignTypeBasedOnFileName(param.getFileName()));
+		}
+	}
+
+	public static int getPresetDesignTypeBasedOnFileName(String fileName) {
+		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
+		// currently the UI follows this sequence for the presets: 4, 5, 6
+		// (this can be changed in the future so that constants are used)
+		int presetDesignType = 4;
+		for (final File designTemplateFile : presetTemplates) {
+			final String templateFileName = designTemplateFile.getName();
+			if (templateFileName.equals(fileName)) {
+				return presetDesignType;
+			}
+			presetDesignType++;
+		}
+		return presetDesignType;
 	}
 
 	/**

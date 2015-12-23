@@ -283,7 +283,8 @@ public class SettingsUtilTest {
 
 		List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
-				String.valueOf(TermId.ALPHA_LATTICE_E30_REP2.getId())));
+				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E30-Rep2-Block6-5Ind.csv"));
 
 		ExpDesignParameterUi result;
 		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
@@ -296,7 +297,8 @@ public class SettingsUtilTest {
 
 		List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
-				String.valueOf(TermId.ALPHA_LATTICE_E30_REP3.getId())));
+				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E30-Rep3-Block6-5Ind.csv"));
 
 		ExpDesignParameterUi result;
 		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
@@ -309,7 +311,8 @@ public class SettingsUtilTest {
 
 		List<MeasurementVariable> expDesigns = new ArrayList<>();
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
-				String.valueOf(TermId.ALPHA_LATTICE_E50_REP2.getId())));
+				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E50-Rep2-Block5-10Ind.csv"));
 
 		ExpDesignParameterUi result;
 		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
@@ -405,16 +408,17 @@ public class SettingsUtilTest {
 		Assert.assertEquals(String.valueOf(TermId.OTHER_DESIGN.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
+		expDesignParameterUi.setUseLatenized(false);
 		expDesignParameterUi.setDesignType(4);
-		Assert.assertEquals(String.valueOf(TermId.ALPHA_LATTICE_E30_REP2.getId()),
+		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
 		expDesignParameterUi.setDesignType(5);
-		Assert.assertEquals(String.valueOf(TermId.ALPHA_LATTICE_E30_REP3.getId()),
+		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
 		expDesignParameterUi.setDesignType(6);
-		Assert.assertEquals(String.valueOf(TermId.ALPHA_LATTICE_E50_REP2.getId()),
+		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
 		expDesignParameterUi.setReplicationsArrangement(1);

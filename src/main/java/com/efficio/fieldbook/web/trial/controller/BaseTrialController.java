@@ -186,6 +186,8 @@ public abstract class BaseTrialController extends SettingsController {
 			data.setReplicationsCount(this.getExperimentalDesignData(xpDesignVariable
 					.getNumberOfReplicates()));
 
+			data.setFileName(this.getExperimentalDesignData(xpDesignVariable.getExperimentalDesignSource()));
+
 			// Set first plot number from observations
 			if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
 				List<MeasurementData> datas = trialWorkbook.getObservations().get(0).getDataList();
@@ -208,7 +210,7 @@ public abstract class BaseTrialController extends SettingsController {
 					data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
 					data.setUseLatenized(true);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId() == designTypeTermID) {
-					data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
+					setCorrectUIDesignTypeOfResolvableIncompleteBlock(data);
 					data.setUseLatenized(false);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId() == designTypeTermID) {
 					data.setDesignType(DesignTypeItem.ROW_COL.getId());
@@ -216,14 +218,6 @@ public abstract class BaseTrialController extends SettingsController {
 				} else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId() == designTypeTermID) {
 					data.setDesignType(DesignTypeItem.ROW_COL.getId());
 					data.setUseLatenized(false);
-				} else if (TermId.OTHER_DESIGN.getId() == designTypeTermID) {
-					data.setDesignType(DesignTypeItem.CUSTOM_IMPORT.getId());
-				} else if (TermId.ALPHA_LATTICE_E30_REP2.getId() == designTypeTermID) {
-					data.setDesignType(4);
-				} else if (TermId.ALPHA_LATTICE_E30_REP3.getId() == designTypeTermID) {
-					data.setDesignType(5);
-				} else if (TermId.ALPHA_LATTICE_E50_REP2.getId() == designTypeTermID) {
-					data.setDesignType(6);
 				}
 			}
 
@@ -231,6 +225,14 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		return tabInfo;
+	}
+
+	private void setCorrectUIDesignTypeOfResolvableIncompleteBlock(ExpDesignParameterUi data) {
+		if (data.getFileName() != null) {
+			data.setDesignType(SettingsUtil.getPresetDesignTypeBasedOnFileName(data.getFileName()));
+		} else {
+			data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
+		}
 	}
 
 	protected String getExperimentalDesignData(MeasurementVariable var) {

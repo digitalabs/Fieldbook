@@ -24,6 +24,8 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.exception.ApiRequestValidationException;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -119,6 +121,8 @@ public class ImportGermplasmListController extends SettingsController {
 	protected static final String CHECK_OPTIONS = "checkOptions";
 
 	protected static final String POSITION = "position";
+
+	protected static final Integer MAX_ENTRY_PLOT_NUMBER_LIMIT = 99999;
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListController.class);
@@ -232,7 +236,7 @@ public class ImportGermplasmListController extends SettingsController {
 	@RequestMapping(value = {"/next", "/submitAll"}, method = RequestMethod.POST)
 	@Transactional
 	public String nextScreen(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final BindingResult result,
-			final Model model, final HttpServletRequest req) {
+			final Model model, final HttpServletRequest req) throws BVDesignException {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
 
@@ -268,6 +272,28 @@ public class ImportGermplasmListController extends SettingsController {
 		}
 
 		if (isNursery && !hasTemporaryWorkbook) {
+
+			Integer startingEntryNumber = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
+
+			if(startingEntryNumber != null){
+				Integer totalExpectedEntryNumber = startingEntryNumber + this.userSelection.getImportedGermplasmMainInfo()
+						.getImportedGermplasmList().getImportedGermplasms().size();
+
+				if(totalExpectedEntryNumber > ImportGermplasmListController.MAX_ENTRY_PLOT_NUMBER_LIMIT){
+					throw new ApiRequestValidationException("entry.number.should.be.in.range");
+				}
+			}
+
+			Integer totalExpectedNumber = this.computeTotalExpectedChecks(form);
+			Integer plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), null);
+
+			if(plotNo != null){
+				Integer totalMeasurement = totalExpectedNumber + plotNo;
+
+				if(totalMeasurement > ImportGermplasmListController.MAX_ENTRY_PLOT_NUMBER_LIMIT){
+					throw new ApiRequestValidationException("plot.number.should.be.in.range");
+				}
+			}
 
 			this.processImportedGermplasmAndChecks(this.userSelection, form);
 
@@ -1600,6 +1626,29 @@ public class ImportGermplasmListController extends SettingsController {
 		final ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
 		return expDesignVar != null && expDesignVar.getExperimentalDesign() != null
 				&& !StringUtil.isNullOrEmpty(expDesignVar.getExperimentalDesign().getValue());
+
+	}
+
+	private Integer computeTotalExpectedChecks(ImportGermplasmListForm form){
+
+		int totalGermplasmCount = this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().size();
+		Integer checkInterval = null, startCheckFrom = null;
+
+		for(SettingDetail settingDetail : form.getCheckVariables()){
+			if(Objects.equals(settingDetail.getVariable().getCvTermId(), TermId.CHECK_START.getId())){
+				startCheckFrom = org.generationcp.middleware.util.StringUtil.parseInt(settingDetail.getValue(), null);
+			}
+			if(Objects.equals(settingDetail.getVariable().getCvTermId(), TermId.CHECK_INTERVAL.getId())){
+				checkInterval = org.generationcp.middleware.util.StringUtil.parseInt(settingDetail.getValue(), null);
+			}
+		}
+
+		if(checkInterval != null && startCheckFrom != null){
+			Integer totalCount = ((totalGermplasmCount - startCheckFrom) / checkInterval);
+			return totalCount + totalGermplasmCount + 1;
+		}
+
+		return totalGermplasmCount;
 
 	}
 }

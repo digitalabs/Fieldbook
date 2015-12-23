@@ -1822,15 +1822,15 @@ function submitGermplasmAndCheck() {
 		selectedCheckListDataTable.getDataTable().fnDraw();
 		serializedData += '&' + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 	}
-	serializedData += '&columnOrders=' + (BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table'));
+
+    serializedData += '&columnOrders=' + (BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table'));
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/GermplasmList/submitAll',
 		type: 'POST',
 		data: serializedData,
 		cache: false,
 		success: function(dataResponse) {
-			refreshStudyAfterSave(dataResponse);
-
+		    refreshStudyAfterSave(dataResponse);
 		}
 	});
 }

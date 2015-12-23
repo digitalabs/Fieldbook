@@ -416,7 +416,7 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
-					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT, 0);
+					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -446,18 +446,16 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			DesignImportData designImportData = null;
-			int replicationsCount = 0;
 			if (selectedDesignType != null) {
 				designImportData =
 						this.parser.parseFile(ResourceFinder.locateFile(
 								AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString().concat(selectedDesignType.getTemplateName()))
 								.getFile());
-				replicationsCount = selectedDesignType.getRepNo();
 			}
 
 			this.performAutomap(designImportData);
 
-			this.generateDesign(environmentData, designImportData, StudyType.T, true, selectedDesignType, replicationsCount);
+			this.generateDesign(environmentData, designImportData, StudyType.T, true, selectedDesignType);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -477,7 +475,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem, final int replicationsCount)
+			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem)
 			throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
@@ -519,7 +517,7 @@ public class DesignImportController extends SettingsController {
 
 		this.addVariates(workbook, designImportData);
 
-		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeItem, replicationsCount);
+		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeItem);
 
 		// Only for Trial
 		this.populateTrialLevelVariableListIfNecessary(workbook);
@@ -690,18 +688,16 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void addExperimentDesign(final Workbook workbook, final Set<MeasurementVariable> experimentalDesignMeasurementVariables,
-			final DesignTypeItem designTypeItem, final int replicationsCount) {
+			final DesignTypeItem designTypeItem) {
 
 		final ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 		designParam.setDesignType(designTypeItem.getId());
-		if (replicationsCount != 0) {
-			designParam.setReplicationsCount(Integer.toString(replicationsCount));
-		}
 
 		final List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 
 		if (designTypeItem != null && designTypeItem.getRepNo() > 0) {
+			designParam.setReplicationsCount(Integer.toString(designTypeItem.getRepNo()));
 			expDesignTermIds.add(TermId.NUMBER_OF_REPLICATES.getId());
 		}
 

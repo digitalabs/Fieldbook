@@ -147,9 +147,6 @@ public abstract class BaseTrialController extends SettingsController {
 		if (!isUsePrevious && xpDesignVariable != null) {
 			ExpDesignParameterUi data = new ExpDesignParameterUi();
 
-			// as per discussion, resolvable is always set to true currently
-			data.setIsResolvable(true);
-
 			// default values
 			data.setDesignType(0);
 			data.setUseLatenized(false);

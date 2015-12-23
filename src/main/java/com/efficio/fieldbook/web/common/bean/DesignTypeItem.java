@@ -9,7 +9,6 @@ public class DesignTypeItem {
 	// this is an html file that contains the specific fields under design type
 	private String params;
 	private Boolean isPreset;
-	private Boolean withResolvable;
 	private Integer repNo;
 	private Integer totalNoOfEntries;
 	private Boolean isDisabled;
@@ -23,14 +22,12 @@ public class DesignTypeItem {
 		this.id = id;
 	}
 
-	public DesignTypeItem(final Integer id, final String name, final String params, final Boolean isPreset, final Boolean withResolvable,
+	public DesignTypeItem(final Integer id, final String name, final String params, final Boolean isPreset,
 			final Integer noOfReps, final Integer noOfEntries, final Boolean isDisabled) {
-		super();
 		this.id = id;
 		this.name = name;
 		this.params = params;
 		this.isPreset = isPreset;
-		this.withResolvable = withResolvable;
 		this.repNo = noOfReps;
 		this.totalNoOfEntries = noOfEntries;
 		this.isDisabled = isDisabled;
@@ -71,14 +68,6 @@ public class DesignTypeItem {
 
 	public void setIsPreset(final Boolean isPreset) {
 		this.isPreset = isPreset;
-	}
-
-	public Boolean getWithResolvable() {
-		return this.withResolvable;
-	}
-
-	public void setWithResolvable(final Boolean withResolvable) {
-		this.withResolvable = withResolvable;
 	}
 
 	public Integer getRepNo() {

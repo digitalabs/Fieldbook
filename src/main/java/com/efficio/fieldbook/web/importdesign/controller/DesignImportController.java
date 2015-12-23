@@ -869,9 +869,9 @@ public class DesignImportController extends SettingsController {
 		trialVariables.addAll(workbook.getConstants());
 
 		for (final MeasurementVariable trialCondition : workbook.getTrialConditions()) {
-			if (trialCondition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
-				trialVariables.add(trialCondition);
-			} else if (trialCondition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()) {
+			if (trialCondition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()
+					|| trialCondition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
+					|| trialCondition.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
 				trialVariables.add(trialCondition);
 			}
 		}

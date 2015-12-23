@@ -233,10 +233,18 @@ public class WorkbookDataUtil {
 		
 		variable = 
 				new MeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXPT_DESIGN", "Experimental design - assigned (type)",
-						"Type of EXPT_DESIGN", "Assigned", "Experimental design", "Categorical", "10121", null);
+						"Type of EXPT_DESIGN", "Assigned", "Experimental design", "Categorical",
+						Integer.toString(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()), null);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		conditions.add(variable);
 		
+		variable =
+				new MeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "EXPT_DESIGN_SOURCE",
+						"Source of the experimental design.", "Text", "Assigned", "Experimental design", WorkbookDataUtil.CHAR,
+						"E30-Rep2-Block6-5Ind.csv", null);
+		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		conditions.add(variable);
+
 		return conditions;
 	}
 

@@ -2244,6 +2244,8 @@ public class SettingsUtil {
 				return param.getNclatin();
 			case NO_OF_CROWS_LATINIZE:
 				return param.getNrlatin();
+			case EXPT_DESIGN_SOURCE:
+				return param.getFileName();
 			default:
 		}
 		return "";
@@ -2303,6 +2305,8 @@ public class SettingsUtil {
 				}
 			} else if (var.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()) {
 				param.setReplicationsCount(var.getValue());
+			} else if (var.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
+				param.setFileName(var.getValue());
 			}
 		}
 		return param;

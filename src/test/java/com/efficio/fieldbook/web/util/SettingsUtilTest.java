@@ -210,6 +210,7 @@ public class SettingsUtilTest {
 		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_CROWS_LATINIZE.getId(), "6"));
 		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_REPS_IN_COLS.getId(), "7"));
 		expDesigns.add(this.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "8"));
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "9"));
 
 		ExpDesignParameterUi result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
 
@@ -221,6 +222,7 @@ public class SettingsUtilTest {
 		Assert.assertEquals("6", result.getNrlatin());
 		Assert.assertEquals("7", result.getReplatinGroups());
 		Assert.assertEquals("8", result.getReplicationsCount());
+		Assert.assertEquals("9", result.getFileName());
 
 	}
 

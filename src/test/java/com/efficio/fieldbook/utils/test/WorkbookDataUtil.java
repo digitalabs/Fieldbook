@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
+ *
+ *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
  *******************************************************************************/
 
 package com.efficio.fieldbook.utils.test;
@@ -135,27 +135,28 @@ public class WorkbookDataUtil {
 	private static final Integer LRPLCE = 1;
 
 	public static Workbook getTestWorkbook(final int noOfObservations, final StudyType studyType) {
-		return createTestWorkbook(noOfObservations, studyType);
+		return WorkbookDataUtil.createTestWorkbook(noOfObservations, studyType);
 	}
 
 	public static Workbook getTestWorkbookForTrial(final int noOfObservations, final int noOfInstance) {
-		return createTestWorkbook(noOfObservations, StudyType.T, noOfInstance);
+		return WorkbookDataUtil.createTestWorkbook(noOfObservations, StudyType.T, noOfInstance);
 	}
 
 	private static Workbook createTestWorkbook(final int noOfObservations, final StudyType studyType) {
-		return createTestWorkbook(noOfObservations, studyType, 2);
+		return WorkbookDataUtil.createTestWorkbook(noOfObservations, studyType, 2);
 	}
 
 	private static Workbook createTestWorkbook(final int noOfObservations, final StudyType studyType, final int noOfInstance) {
-		Workbook workbook = new Workbook();
+		final Workbook workbook = new Workbook();
 
-		workbook.setStudyDetails(createStudyDetails(studyType));
-		workbook.setConditions(createConditions());
-		workbook.setFactors(createFactors());
-		workbook.setConstants(createConstants());
-		workbook.setVariates(createVariates());
-		workbook.setObservations(createObservations(noOfObservations, studyType.equals(StudyType.N) ? 1 : noOfInstance, workbook));
-		workbook.setTrialObservations(createTrialObservations(studyType.equals(StudyType.N) ? 1 : noOfInstance, workbook));
+		workbook.setStudyDetails(WorkbookDataUtil.createStudyDetails(studyType));
+		workbook.setConditions(WorkbookDataUtil.createConditions());
+		workbook.setFactors(WorkbookDataUtil.createFactors());
+		workbook.setConstants(WorkbookDataUtil.createConstants());
+		workbook.setVariates(WorkbookDataUtil.createVariates());
+		workbook.setObservations(WorkbookDataUtil.createObservations(noOfObservations, studyType.equals(StudyType.N) ? 1 : noOfInstance,
+				workbook));
+		workbook.setTrialObservations(WorkbookDataUtil.createTrialObservations(studyType.equals(StudyType.N) ? 1 : noOfInstance, workbook));
 		workbook.setMeasurementDatesetId(2);
 		workbook.setTrialDatasetId(3);
 		return workbook;
@@ -224,23 +225,30 @@ public class WorkbookDataUtil {
 						WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		conditions.add(variable);
-		
-		variable = 
-				new MeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "NREP", "Number of replications in an experiment",
-						"Number", "Assigned", "ED - nrep", "Numeric", "2", null);
+
+		variable =
+				new MeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "NREP", "Number of replications in an experiment", "Number",
+						"Assigned", "ED - nrep", "Numeric", "2", null);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		conditions.add(variable);
-		
-		variable = 
+
+		variable =
 				new MeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXPT_DESIGN", "Experimental design - assigned (type)",
-						"Type of EXPT_DESIGN", "Assigned", "Experimental design", "Categorical", "10121", null);
+						"Type of EXPT_DESIGN", "Assigned", "Experimental design", "Categorical",
+						Integer.toString(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()), null);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		conditions.add(variable);
-		
+
+		variable =
+				new MeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "EXPT_DESIGN_SOURCE", "Source of the experimental design.",
+						"Text", "Assigned", "Experimental design", WorkbookDataUtil.CHAR, "E30-Rep2-Block6-5Ind.csv", null);
+		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		conditions.add(variable);
+
 		return conditions;
 	}
 
-	public static void addCheckConditions(Workbook workbook) {
+	public static void addCheckConditions(final Workbook workbook) {
 		MeasurementVariable variable =
 				new MeasurementVariable(TermId.CHECK_START.getId(), "CHECK_START", "CHECK_START", WorkbookDataUtil.DBID,
 						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
@@ -573,7 +581,7 @@ public class WorkbookDataUtil {
 	}
 
 	public static MeasurementRow createTrialObservationWithoutSite() {
-		Workbook workbook = createTestWorkbook(2, StudyType.T);
+		final Workbook workbook = WorkbookDataUtil.createTestWorkbook(2, StudyType.T);
 
 		WorkbookDataUtil.createStudyDetails(StudyType.T);
 		WorkbookDataUtil.createConditions();
@@ -601,7 +609,7 @@ public class WorkbookDataUtil {
 		return row;
 	}
 
-	public static List<Integer> getTrialInstances(Workbook workbook) {
+	public static List<Integer> getTrialInstances(final Workbook workbook) {
 		final List<Integer> instances = new ArrayList<Integer>();
 		for (final MeasurementRow row : workbook.getTrialObservations()) {
 			if (row.getDataList() != null) {

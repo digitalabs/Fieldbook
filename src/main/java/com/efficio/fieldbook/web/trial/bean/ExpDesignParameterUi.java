@@ -28,6 +28,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private boolean hasMeasurementData;
 	private String startingPlotNo;
 	private String startingEntryNo;
+	private String fileName;
 	/*
 	 * 1 - single col 2 - single row 3 - adjacent
 	 */
@@ -37,7 +38,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.noOfEnvironments;
 	}
 
-	public void setNoOfEnvironments(String noOfEnvironments) {
+	public void setNoOfEnvironments(final String noOfEnvironments) {
 		this.noOfEnvironments = noOfEnvironments;
 	}
 
@@ -45,7 +46,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.designType;
 	}
 
-	public void setDesignType(Integer designType) {
+	public void setDesignType(final Integer designType) {
 		this.designType = designType;
 	}
 
@@ -53,7 +54,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.replicationsCount;
 	}
 
-	public void setReplicationsCount(String replicationsCount) {
+	public void setReplicationsCount(final String replicationsCount) {
 		this.replicationsCount = replicationsCount;
 	}
 
@@ -61,7 +62,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.useLatenized;
 	}
 
-	public void setUseLatenized(Boolean useLatenized) {
+	public void setUseLatenized(final Boolean useLatenized) {
 		this.useLatenized = useLatenized;
 	}
 
@@ -69,7 +70,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.blockSize;
 	}
 
-	public void setBlockSize(String blockSize) {
+	public void setBlockSize(final String blockSize) {
 		this.blockSize = blockSize;
 	}
 
@@ -77,7 +78,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.rowsPerReplications;
 	}
 
-	public void setRowsPerReplications(String rowsPerReplications) {
+	public void setRowsPerReplications(final String rowsPerReplications) {
 		this.rowsPerReplications = rowsPerReplications;
 	}
 
@@ -85,7 +86,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.colsPerReplications;
 	}
 
-	public void setColsPerReplications(String colsPerReplications) {
+	public void setColsPerReplications(final String colsPerReplications) {
 		this.colsPerReplications = colsPerReplications;
 	}
 
@@ -93,7 +94,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.treatmentFactors;
 	}
 
-	public void setTreatmentFactors(Map treatmentFactors) {
+	public void setTreatmentFactors(final Map treatmentFactors) {
 		this.treatmentFactors = treatmentFactors;
 	}
 
@@ -101,7 +102,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.treatmentFactorsData;
 	}
 
-	public void setTreatmentFactorsData(Map treatmentFactorsData) {
+	public void setTreatmentFactorsData(final Map treatmentFactorsData) {
 		this.treatmentFactorsData = treatmentFactorsData;
 	}
 
@@ -109,7 +110,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.totalGermplasmListCount;
 	}
 
-	public void setTotalGermplasmListCount(String totalGermplasmListCount) {
+	public void setTotalGermplasmListCount(final String totalGermplasmListCount) {
 		this.totalGermplasmListCount = totalGermplasmListCount;
 	}
 
@@ -117,7 +118,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.nclatin;
 	}
 
-	public void setNclatin(String nclatin) {
+	public void setNclatin(final String nclatin) {
 		this.nclatin = nclatin;
 	}
 
@@ -125,7 +126,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.nrlatin;
 	}
 
-	public void setNrlatin(String nrlatin) {
+	public void setNrlatin(final String nrlatin) {
 		this.nrlatin = nrlatin;
 	}
 
@@ -133,7 +134,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.nblatin;
 	}
 
-	public void setNblatin(String nblatin) {
+	public void setNblatin(final String nblatin) {
 		this.nblatin = nblatin;
 	}
 
@@ -141,7 +142,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.replatinGroups;
 	}
 
-	public void setReplatinGroups(String replatinGroups) {
+	public void setReplatinGroups(final String replatinGroups) {
 		this.replatinGroups = replatinGroups;
 	}
 
@@ -149,7 +150,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.replicationsArrangement;
 	}
 
-	public void setReplicationsArrangement(Integer replicationsArrangement) {
+	public void setReplicationsArrangement(final Integer replicationsArrangement) {
 		this.replicationsArrangement = replicationsArrangement;
 	}
 
@@ -157,7 +158,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.noOfEnvironmentsToAdd;
 	}
 
-	public void setNoOfEnvironmentsToAdd(String noOfEnvironmentsToAdd) {
+	public void setNoOfEnvironmentsToAdd(final String noOfEnvironmentsToAdd) {
 		this.noOfEnvironmentsToAdd = noOfEnvironmentsToAdd;
 	}
 
@@ -165,23 +166,31 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.hasMeasurementData;
 	}
 
-	public void setHasMeasurementData(boolean hasMeasurementData) {
+	public void setHasMeasurementData(final boolean hasMeasurementData) {
 		this.hasMeasurementData = hasMeasurementData;
 	}
 
 	public String getStartingPlotNo() {
-		return startingPlotNo;
+		return this.startingPlotNo;
 	}
 
-	public void setStartingPlotNo(String startingPlotNo) {
+	public void setStartingPlotNo(final String startingPlotNo) {
 		this.startingPlotNo = startingPlotNo;
 	}
 
 	public String getStartingEntryNo() {
-		return startingEntryNo;
+		return this.startingEntryNo;
 	}
 
-	public void setStartingEntryNo(String startingEntryNo) {
+	public void setStartingEntryNo(final String startingEntryNo) {
 		this.startingEntryNo = startingEntryNo;
+	}
+
+	public String getFileName() {
+		return this.fileName;
+	}
+
+	public void setFileName(final String fileName) {
+		this.fileName = fileName;
 	}
 }

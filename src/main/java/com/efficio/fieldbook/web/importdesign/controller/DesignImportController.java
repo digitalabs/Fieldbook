@@ -174,7 +174,7 @@ public class DesignImportController extends SettingsController {
 
 	/**
 	 * This makes the design revert to default design where for every measurement rows, the entry for PLOT_NO must be equal to ENTRY_NO
-	 * 
+	 *
 	 * @param studyId
 	 * @param studyType
 	 * @return
@@ -416,7 +416,7 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
-					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT, 0);
+					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -446,18 +446,16 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			DesignImportData designImportData = null;
-			int replicationsCount = 0;
 			if (selectedDesignType != null) {
 				designImportData =
 						this.parser.parseFile(ResourceFinder.locateFile(
 								AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString().concat(selectedDesignType.getTemplateName()))
 								.getFile());
-				replicationsCount = selectedDesignType.getRepNo();
 			}
 
 			this.performAutomap(designImportData);
 
-			this.generateDesign(environmentData, designImportData, StudyType.T, true, selectedDesignType, replicationsCount);
+			this.generateDesign(environmentData, designImportData, StudyType.T, true, selectedDesignType);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -477,8 +475,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem, final int replicationsCount)
-			throws DesignValidationException {
+			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 
@@ -519,7 +516,7 @@ public class DesignImportController extends SettingsController {
 
 		this.addVariates(workbook, designImportData);
 
-		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeItem, replicationsCount);
+		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeItem);
 
 		// Only for Trial
 		this.populateTrialLevelVariableListIfNecessary(workbook);
@@ -536,7 +533,7 @@ public class DesignImportController extends SettingsController {
 	/**
 	 * Resets the Check list and deletes all Check Variables previously saved in Nursery. The system will automatically reset and override
 	 * the Check List after importing a Custom Design.
-	 * 
+	 *
 	 * @param workbook
 	 * @param userSelection
 	 */
@@ -690,19 +687,22 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void addExperimentDesign(final Workbook workbook, final Set<MeasurementVariable> experimentalDesignMeasurementVariables,
-			final DesignTypeItem designTypeItem, final int replicationsCount) {
+			final DesignTypeItem designTypeItem) {
 
 		final ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 		designParam.setDesignType(designTypeItem.getId());
-		if (replicationsCount != 0) {
-			designParam.setReplicationsCount(Integer.toString(replicationsCount));
-		}
 
 		final List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 
 		if (designTypeItem != null && designTypeItem.getRepNo() > 0) {
+			designParam.setReplicationsCount(Integer.toString(designTypeItem.getRepNo()));
 			expDesignTermIds.add(TermId.NUMBER_OF_REPLICATES.getId());
+		}
+
+		if (designTypeItem != null && designTypeItem.getTemplateName() != null) {
+			designParam.setFileName(designTypeItem.getTemplateName());
+			expDesignTermIds.add(TermId.EXPT_DESIGN_SOURCE.getId());
 		}
 
 		this.userSelection.setExpDesignParams(designParam);
@@ -868,9 +868,9 @@ public class DesignImportController extends SettingsController {
 		trialVariables.addAll(workbook.getConstants());
 
 		for (final MeasurementVariable trialCondition : workbook.getTrialConditions()) {
-			if (trialCondition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
-				trialVariables.add(trialCondition);
-			} else if (trialCondition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()) {
+			if (trialCondition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()
+					|| trialCondition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
+					|| trialCondition.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
 				trialVariables.add(trialCondition);
 			}
 		}
@@ -935,10 +935,10 @@ public class DesignImportController extends SettingsController {
 	}
 
 	/**
-	 * 
+	 *
 	 * If a variable(s) is expected to have a pair ID variable (e.g. LOCATION_NAME has LOCATION_NAME_ID pair), the pair ID should be created
 	 * and added to the trial variables in order for the system to properly save the Trial.
-	 * 
+	 *
 	 * @param environmentData
 	 * @param designImportData
 	 * @param trialVariables
@@ -1063,7 +1063,7 @@ public class DesignImportController extends SettingsController {
 	/**
 	 * If a variable(s) is expected to have a pair ID variable (e.g. LOCATION_NAME has LOCATION_NAME_ID pair), the pair ID should be created
 	 * and added to setting details list in order for the system to properly save the Trial.
-	 * 
+	 *
 	 * @param environmentData
 	 * @param designImportData
 	 * @param newDetails
@@ -1295,7 +1295,7 @@ public class DesignImportController extends SettingsController {
 
 	/**
 	 * Create check variables to be deleted.
-	 * 
+	 *
 	 * @param studyLevelConditions
 	 */
 	protected void addCheckVariablesToDeleted(final List<SettingDetail> studyLevelConditions) {

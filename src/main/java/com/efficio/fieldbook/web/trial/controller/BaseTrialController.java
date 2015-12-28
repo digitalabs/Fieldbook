@@ -201,6 +201,9 @@ public abstract class BaseTrialController extends SettingsController {
 				} else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId() == designTypeTermID) {
 					data.setDesignType(DesignTypeItem.ROW_COL.getId());
 					data.setUseLatenized(false);
+				} else if (TermId.OTHER_DESIGN.getId() == designTypeTermID) {
+					data.setDesignType(DesignTypeItem.CUSTOM_IMPORT.getId());
+					data.setUseLatenized(false);
 				}
 			}
 

@@ -629,14 +629,14 @@ public class WorkbookDataUtil {
 		return 0;
 	}
 
-	public static void addOrUpdateExperimentalDesignVariables(Workbook workbook, String exptDesignFactorValue,
-			String exptDesignSourceValue, String nRepValue, String rMapValue) {
+	public static void addOrUpdateExperimentalDesignVariables(final Workbook workbook, final String exptDesignFactorValue,
+			final String exptDesignSourceValue, final String nRepValue, final String rMapValue) {
 		if (workbook.getExperimentalDesignVariables() == null) {
 			workbook.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>());
 		}
-		for (Integer termId : WorkbookBuilder.EXPERIMENTAL_DESIGN_VARIABLES) {
+		for (final Integer termId : WorkbookBuilder.EXPERIMENTAL_DESIGN_VARIABLES) {
 			String termValue = null;
-			if(termId == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
+			if (termId == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
 				termValue = exptDesignFactorValue;
 			} else if (termId == TermId.EXPT_DESIGN_SOURCE.getId()) {
 				if (exptDesignSourceValue != null) {
@@ -653,14 +653,14 @@ public class WorkbookDataUtil {
 			} else {
 				termValue = "3";
 			}
-			MeasurementVariable variable = WorkbookDataUtil.createMeasurementVariableWithIdAndData(termId, termValue);
+			final MeasurementVariable variable = WorkbookDataUtil.createMeasurementVariableWithIdAndData(termId, termValue);
 			WorkbookDataUtil.addOrUpdateVariable(variable, workbook.getConditions());
 			WorkbookDataUtil.addOrUpdateVariable(variable, workbook.getExperimentalDesignVariables().getVariables());
 		}
 	}
 
-	private static void addOrUpdateVariable(MeasurementVariable variable, List<MeasurementVariable> list) {
-		int indexOfVariable = list.indexOf(variable);
+	private static void addOrUpdateVariable(final MeasurementVariable variable, final List<MeasurementVariable> list) {
+		final int indexOfVariable = list.indexOf(variable);
 		if (indexOfVariable >= 0) {
 			list.get(indexOfVariable).setValue(variable.getValue());
 		} else {
@@ -668,8 +668,8 @@ public class WorkbookDataUtil {
 		}
 	}
 
-	public static MeasurementVariable createMeasurementVariableWithIdAndData(int termId, String value) {
-		MeasurementVariable measurementVariable = new MeasurementVariable();
+	public static MeasurementVariable createMeasurementVariableWithIdAndData(final int termId, final String value) {
+		final MeasurementVariable measurementVariable = new MeasurementVariable();
 		measurementVariable.setTermId(termId);
 		measurementVariable.setValue(value);
 		return measurementVariable;

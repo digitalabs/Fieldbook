@@ -17,6 +17,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
@@ -45,7 +46,10 @@ import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.DesignTypeItem;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.SessionUtility;
 
@@ -470,5 +474,233 @@ public class OpenTrialControllerTest {
 		stdVar.setDataType(new Term(dataTypeId, dataType, ""));
 		stdVar.setPhenotypicType(PhenotypicType.getPhenotypicTypeForLabel(label));
 		return stdVar;
+	}
+
+	@Test
+	public void testPrepareExperimentalDesignTabInfo_RCBD() {
+		String exptDesignSourceValue = null;
+		String nRepValue = "3";
+		String rMapValue = null;
+		Integer replicationsArrangement = null;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, new Integer(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()).toString(),
+				exptDesignSourceValue, nRepValue, rMapValue);
+		TabInfo tabInfo = openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
+		ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
+		Assert.assertEquals("Design type should be RCBD", DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId().intValue(), data.getDesignType()
+				.intValue());
+		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
+		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
+		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
+				data.getReplicationsArrangement());
+		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareExperimentalDesignTabInfo_RCBDWithRMap() {
+		String exptDesignSourceValue = null;
+		String nRepValue = "3";
+		String rMapValue = new Integer(TermId.REPS_IN_SINGLE_COL.getId()).toString();
+		Integer replicationsArrangement = 1;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, new Integer(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()).toString(),
+				exptDesignSourceValue, nRepValue, rMapValue);
+		TabInfo tabInfo = openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
+		ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
+		Assert.assertEquals("Design type should be RCBD", DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId().intValue(), data.getDesignType()
+				.intValue());
+		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
+		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
+		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
+		Assert.assertEquals("Replications map should be " + replicationsArrangement, replicationsArrangement,
+				data.getReplicationsArrangement());
+		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareExperimentalDesignTabInfo_RIBD() {
+		String exptDesignSourceValue = null;
+		String nRepValue = "5";
+		String rMapValue = null;
+		Integer replicationsArrangement = null;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
+				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
+		TabInfo tabInfo = openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
+		ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
+		Assert.assertEquals("Design type should be RIBD", DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId().intValue(), data
+				.getDesignType()
+				.intValue());
+		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
+		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
+		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
+		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
+				data.getReplicationsArrangement());
+		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareExperimentalDesignTabInfo_RIBDL() {
+		String exptDesignSourceValue = null;
+		String nRepValue = "3";
+		String rMapValue = null;
+		Integer replicationsArrangement = null;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
+				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
+		TabInfo tabInfo = openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
+		ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
+		Assert.assertEquals("Design type should be RIBDL", DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId().intValue(), data
+				.getDesignType().intValue());
+		Assert.assertTrue("Design type should be latinized", data.getUseLatenized());
+		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
+		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
+		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
+				data.getReplicationsArrangement());
+		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareExperimentalDesignTabInfo_E30Rep2Block65Ind() {
+		String exptDesignSourceValue = "E30-Rep2-Block6-5Ind.csv";
+		String nRepValue = "2";
+		String rMapValue = null;
+		Integer replicationsArrangement = null;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
+				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
+		TabInfo tabInfo = openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
+		ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
+		Assert.assertEquals("Design type should be Alpha Lattice using preset E30-Rep2-Block6-5Ind", 4, data.getDesignType()
+				.intValue());
+		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
+		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
+		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
+		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
+				data.getReplicationsArrangement());
+		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareExperimentalDesignTabInfo_E30Rep3Block65Ind() {
+		String exptDesignSourceValue = "E30-Rep3-Block6-5Ind.csv";
+		String nRepValue = "3";
+		String rMapValue = null;
+		Integer replicationsArrangement = null;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
+				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
+		TabInfo tabInfo = openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
+		ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
+		Assert.assertEquals("Design type should be Alpha Lattice using preset E30-Rep3-Block6-5Ind", 5, data.getDesignType().intValue());
+		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
+		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
+		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
+		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
+				data.getReplicationsArrangement());
+		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareExperimentalDesignTabInfo_E50Rep2Block510Ind() {
+		String exptDesignSourceValue = "E50-Rep2-Block5-10Ind.csv";
+		String nRepValue = "2";
+		String rMapValue = null;
+		Integer replicationsArrangement = null;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
+				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
+		TabInfo tabInfo = openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
+		ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
+		Assert.assertEquals("Design type should be Alpha Lattice using preset E50-Rep2-Block5-10Ind", 6, data.getDesignType().intValue());
+		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
+		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
+		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
+		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
+				data.getReplicationsArrangement());
+		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareExperimentalDesignTabInfo_RRCD() {
+		String exptDesignSourceValue = null;
+		String nRepValue = "5";
+		String rMapValue = null;
+		Integer replicationsArrangement = null;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
+				new Integer(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
+		TabInfo tabInfo = openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
+		ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
+		Assert.assertEquals("Design type should be RRCD", DesignTypeItem.ROW_COL.getId().intValue(), data
+				.getDesignType().intValue());
+		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
+		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
+		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
+		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
+				data.getReplicationsArrangement());
+		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareExperimentalDesignTabInfo_RRCDL() {
+		String exptDesignSourceValue = null;
+		String nRepValue = "3";
+		String rMapValue = null;
+		Integer replicationsArrangement = null;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
+				new Integer(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
+		TabInfo tabInfo = openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
+		ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
+		Assert.assertEquals("Design type should be RRCDL", DesignTypeItem.ROW_COL.getId().intValue(), data
+				.getDesignType().intValue());
+		Assert.assertTrue("Design type should be latinized", data.getUseLatenized());
+		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
+		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
+		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
+				data.getReplicationsArrangement());
+		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareExperimentalDesignTabInfo_OtherDesign() {
+		String exptDesignSourceValue = "Other design.csv";
+		String nRepValue = "2";
+		String rMapValue = null;
+		Integer replicationsArrangement = null;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, new Integer(TermId.OTHER_DESIGN.getId()).toString(),
+				exptDesignSourceValue, nRepValue, rMapValue);
+		TabInfo tabInfo = openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
+		ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
+		Assert.assertEquals("Design type should be Other Design", DesignTypeItem.CUSTOM_IMPORT.getId().intValue(), data.getDesignType()
+				.intValue());
+		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
+		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
+		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
+		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
+				data.getReplicationsArrangement());
+		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareExperimentalDesignTabInfo_UnknownDesign() {
+		String exptDesignSourceValue = null;
+		String nRepValue = null;
+		String rMapValue = null;
+		Integer replicationsArrangement = null;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, "12345",
+				exptDesignSourceValue, nRepValue, rMapValue);
+		TabInfo tabInfo = openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
+		ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
+		Assert.assertEquals("Design type should be unknown", 0, data.getDesignType().intValue());
+		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
+		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
+		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
+		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
+				data.getReplicationsArrangement());
+		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
 	}
 }

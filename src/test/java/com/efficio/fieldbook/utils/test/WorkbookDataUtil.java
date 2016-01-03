@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.operation.builder.WorkbookBuilder;
 import org.generationcp.middleware.pojos.Location;
 
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -626,6 +627,52 @@ public class WorkbookDataUtil {
 			}
 		}
 		return 0;
+	}
+
+	public static void addOrUpdateExperimentalDesignVariables(final Workbook workbook, final String exptDesignFactorValue,
+			final String exptDesignSourceValue, final String nRepValue, final String rMapValue) {
+		if (workbook.getExperimentalDesignVariables() == null) {
+			workbook.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>());
+		}
+		for (final Integer termId : WorkbookBuilder.EXPERIMENTAL_DESIGN_VARIABLES) {
+			String termValue = null;
+			if (termId == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
+				termValue = exptDesignFactorValue;
+			} else if (termId == TermId.EXPT_DESIGN_SOURCE.getId()) {
+				if (exptDesignSourceValue != null) {
+					termValue = exptDesignSourceValue;
+				}
+			} else if (termId == TermId.NUMBER_OF_REPLICATES.getId()) {
+				if (nRepValue != null) {
+					termValue = nRepValue;
+				}
+			} else if (termId == TermId.REPLICATIONS_MAP.getId()) {
+				if (rMapValue != null) {
+					termValue = rMapValue;
+				}
+			} else {
+				termValue = "3";
+			}
+			final MeasurementVariable variable = WorkbookDataUtil.createMeasurementVariableWithIdAndData(termId, termValue);
+			WorkbookDataUtil.addOrUpdateVariable(variable, workbook.getConditions());
+			WorkbookDataUtil.addOrUpdateVariable(variable, workbook.getExperimentalDesignVariables().getVariables());
+		}
+	}
+
+	private static void addOrUpdateVariable(final MeasurementVariable variable, final List<MeasurementVariable> list) {
+		final int indexOfVariable = list.indexOf(variable);
+		if (indexOfVariable >= 0) {
+			list.get(indexOfVariable).setValue(variable.getValue());
+		} else {
+			list.add(variable);
+		}
+	}
+
+	public static MeasurementVariable createMeasurementVariableWithIdAndData(final int termId, final String value) {
+		final MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setTermId(termId);
+		measurementVariable.setValue(value);
+		return measurementVariable;
 	}
 
 }

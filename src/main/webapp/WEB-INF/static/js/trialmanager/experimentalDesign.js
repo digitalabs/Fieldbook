@@ -92,7 +92,7 @@
 						if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
 							$scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
 						}
-						
+
 						$scope.applicationData.hasGeneratedDesignPreset = $scope.designTypes[$scope.data.designType].isPreset && $scope.studyID != null;
 					}
 
@@ -274,7 +274,7 @@
 				};
 				
 				$scope.isPreset = function() {
-					return ($scope.designTypes[$scope.data.designType].isPreset && !$scope.applicationData.unappliedChangesAvailable) || $scope.applicationData.hasGeneratedDesignPreset;
+					return ($scope.data.designType != null && $scope.designTypes[$scope.data.designType].isPreset && !$scope.applicationData.unappliedChangesAvailable) || $scope.applicationData.hasGeneratedDesignPreset;
 				};
 				
 				$scope.isImportedDesign = function() {

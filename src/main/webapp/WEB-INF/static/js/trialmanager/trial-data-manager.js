@@ -276,26 +276,6 @@
 					return GenerateExpDesignService.save(data).$promise;
 				},
 
-				refreshMeasurementTableAfterDeletingEnvironment: function() {
-					var noOfEnvironments = service.currentData.environments.noOfEnvironments;
-					var data = service.currentData.experimentalDesign;
-					//update the no of environments in experimental design tab
-					data.noOfEnvironments = noOfEnvironments;
-
-					service.generateExpDesign(data).then(
-						function(response) {
-							if (response.valid === true) {
-								service.clearUnappliedChangesFlag();
-								service.applicationData.unsavedGeneratedDesign = true;
-								$('#chooseGermplasmAndChecks').data('replace', '1');
-								$('body').data('expDesignShowPreview', '1');
-							} else {
-								showErrorMessage('', response.message);
-							}
-						}
-					);
-				},
-
 				isOpenTrial: function() {
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;

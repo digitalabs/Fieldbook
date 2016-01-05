@@ -225,6 +225,27 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				TrialManagerDataService.indicateUnappliedChangesAvailable();
 			};
 
+			// on click generate design button
+			$scope.refreshMeasurementTableAfterDeletingEnvironment = function() {
+				var noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;
+				var data = TrialManagerDataService.currentData.experimentalDesign;
+				//update the no of environments in experimental design tab
+				data.noOfEnvironments = noOfEnvironments;
+
+				TrialManagerDataService.generateExpDesign(data).then(
+					function(response) {
+						if (response.valid === true) {
+							TrialManagerDataService.clearUnappliedChangesFlag();
+							TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+							$('#chooseGermplasmAndChecks').data('replace', '1');
+							$('body').data('expDesignShowPreview', '1');
+						} else {
+							showErrorMessage('', response.message);
+						}
+					}
+				);
+			};
+
 			$scope.$watch('data.noOfEnvironments', function(newVal, oldVal) {
 
 				if (newVal < oldVal) {
@@ -238,7 +259,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 					if ((TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement) ||
 							(!TrialManagerDataService.isOpenTrial() &&
 								TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined)) {
-						TrialManagerDataService.refreshMeasurementTableAfterDeletingEnvironment();
+						$scope.refreshMeasurementTableAfterDeletingEnvironment();
 					} else if (TrialManagerDataService.isOpenTrial() && TrialManagerDataService.trialMeasurement.hasMeasurement) {
 						// trigger the showMeasurementsPreview in the background
 						loadInitialMeasurements();

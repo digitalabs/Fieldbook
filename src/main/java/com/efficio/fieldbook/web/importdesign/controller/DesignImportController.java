@@ -235,6 +235,13 @@ public class DesignImportController extends SettingsController {
 		return mappingData;
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/getMappingSummary", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public Map<PhenotypicType,Map<Integer,DesignHeaderItem>> getMappingSummary() {
+		return userSelection.getDesignImportData().getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
+	}
+
+
 	@RequestMapping(value = "/showDetails", method = RequestMethod.GET)
 	public String showDetails(final Model model) {
 

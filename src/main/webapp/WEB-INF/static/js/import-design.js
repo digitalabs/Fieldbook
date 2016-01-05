@@ -209,7 +209,12 @@ var ImportDesign = (function() {
 				data: JSON.stringify(environmentData),
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8'
-			}).done(ImportDesign.updateEnvironmentAndMeasurements);
+			}).done(function(resp) {
+				ImportDesign.updateEnvironmentAndMeasurements(resp);
+
+				angular.element('#mainApp').scope().$broadcast('designImportGenerated');
+
+			});
 		},
 
 		updateEnvironmentAndMeasurements: function(resp) {

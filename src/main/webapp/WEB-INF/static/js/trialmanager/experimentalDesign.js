@@ -20,6 +20,7 @@
 				
 				$scope.designTypes = TrialManagerDataService.applicationData.designTypes;
 				$scope.designTypeView = [];
+				$scope.importDesignMappedData = null;
 
 				$scope.generateDesignView = function(){
 					// BV design
@@ -54,20 +55,26 @@
 					return $scope.data.designType;
 				}, function(newValue) {
 					// If Design Type is Preset Design
-	
-					if(newValue >= 4){
+					$scope.currentDesignType = $scope.designTypes[newValue];
+
+					if (!$scope.currentDesignType) {
+						return;
+					}
+
+					if($scope.currentDesignType.isPreset){
 						$scope.designDetailSummary.heading = 'DETAILS OF EXPERIMENTAL DESIGN';
 						$scope.designDetailSummary.designTemplateLabel = 'Design based on design template:';
 						$scope.designDetailSummary.designType = 'Alpha Lattice';
 						
 					// If Design Type is Imported Design
-					} else if(newValue === 3){
+					} else if($scope.currentDesignType.name === 'Other Design') {
+						// get fileName from designImportSrc
 						$scope.designDetailSummary.heading = 'DETAILS OF IMPORTED EXPERIMENTAL DESIGN';
 						$scope.designDetailSummary.designTemplateLabel = 'Imported design file name:';
 						$scope.designDetailSummary.designType = 'Other Design';
 					}
 				});
-				
+
 				// TODO : re run computeLocalData after loading of previous trial as template
 				$scope.computeLocalData = function() {
 					$scope.settings = TrialManagerDataService.specialSettings.experimentalDesign;
@@ -220,7 +227,14 @@
 						});
 					}
 				};
-				
+
+				// Register designImportGenerated handler that will activate when an importDesign is generated
+				$scope.$on('designImportGenerated',function() {
+					$http.get('/Fieldbook/DesignImport/getMappingSummary').success(function(data) {
+						$scope.importDesignMappedData = data;
+					});
+				});
+
 				$scope.showConfirmResetDesign = function() {
 
 					var deferred = $q.defer();

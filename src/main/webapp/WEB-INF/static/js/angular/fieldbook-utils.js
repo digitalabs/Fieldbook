@@ -82,6 +82,28 @@
 		})
 		.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
 		.constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
+		.directive('ontologySummaryTable', ['_', function(_) {
+			return {
+				restrict: 'E',
+				scope: {
+					heading: '@',
+					propertyTitle: '@',
+					valueTitle: '@',
+					variableType: '@',
+					data: '='
+				},
+				templateUrl: '/Fieldbook/static/angular-templates/ontologySummaryTable.html',
+				compile: function() {
+					return {
+						pre: function(scope) {
+							if (_.isEmpty(scope.data)) {
+								scope.data = null;
+							}
+						}
+					};
+				}
+			};
+		}])
 		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', function(TrialManagerDataService, $filter, _) {
 			return {
 				restrict: 'E',

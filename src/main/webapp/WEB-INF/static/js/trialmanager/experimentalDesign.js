@@ -9,48 +9,46 @@
 	angular.module('manageTrialApp')
 		.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 		.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
-		.controller('ExperimentalDesignCtrl', ['$scope', '$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService', '$http',
-			'EXP_DESIGN_MSGS', '_', '$q','Messages', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages) {
+		.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService', '$http',
+			'EXP_DESIGN_MSGS', '_', '$q', 'Messages', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages) {
 
-				
 				$scope.applicationData = TrialManagerDataService.applicationData;
 				$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
 
 				$scope.Math = Math;
-				
+
 				$scope.designTypes = TrialManagerDataService.applicationData.designTypes;
 				$scope.designTypeView = [];
-				$scope.importDesignMappedData = null;
 
-				$scope.generateDesignView = function(){
+				$scope.generateDesignView = function() {
 					// BV design
-                    $.each($scope.designTypes, function(index, designType){
-                    	if(!designType.isPreset && designType.name != 'Other Design'){
-                    		$scope.designTypeView.push(designType);
-                    	}
-                    });
-                   
-                    // separator
-                    if($scope.designTypes.length  > 4){
-                    	$scope.designTypeView.push({id:	null, name: '----------------------------------------------', isDisabled: true });
-                    }
-                    
-                    // Preset
-                    $.each($scope.designTypes, function(index, designType){
-                    	if(designType.isPreset && designType.name != 'Other Design'){
-                    		$scope.designTypeView.push(designType);
-                    	}
-                    });
+					$.each($scope.designTypes, function(index, designType) {
+						if (!designType.isPreset && designType.name != 'Other Design') {
+							$scope.designTypeView.push(designType);
+						}
+					});
+
+					// separator
+					if ($scope.designTypes.length  > 4) {
+						$scope.designTypeView.push({id:	null, name: '----------------------------------------------', isDisabled: true });
+					}
+
+					// Preset
+					$.each($scope.designTypes, function(index, designType) {
+						if (designType.isPreset && designType.name != 'Other Design') {
+							$scope.designTypeView.push(designType);
+						}
+					});
 				};
 
 				$scope.generateDesignView();
-				
+
 				$scope.designDetailSummary = {
-					heading : '',
+					heading: '',
 					designTemplateLabel: '',
-					designType : ''
+					designType: ''
 				};
-				
+
 				$scope.$watch(function() {
 					return $scope.data.designType;
 				}, function(newValue) {
@@ -61,13 +59,13 @@
 						return;
 					}
 
-					if($scope.currentDesignType.isPreset){
+					if ($scope.currentDesignType.isPreset) {
 						$scope.designDetailSummary.heading = 'DETAILS OF EXPERIMENTAL DESIGN';
 						$scope.designDetailSummary.designTemplateLabel = 'Design based on design template:';
 						$scope.designDetailSummary.designType = 'Alpha Lattice';
-						
+
 					// If Design Type is Imported Design
-					} else if($scope.currentDesignType.name === 'Other Design') {
+					} else if ($scope.currentDesignType.name === 'Other Design') {
 						// get fileName from designImportSrc
 						$scope.designDetailSummary.heading = 'DETAILS OF IMPORTED EXPERIMENTAL DESIGN';
 						$scope.designDetailSummary.designTemplateLabel = 'Imported design file name:';
@@ -138,19 +136,19 @@
 					angular.copy({
 						totalGermplasmListCount: $scope.totalGermplasmEntryListCount,
 						designType: null,
-						'replicationsCount': null,
-						'blockSize': null,
-						'useLatenized': false,
-						'nblatin': null,
-						'replicationsArrangement': null,
-						'rowsPerReplications': null,
-						'colsPerReplications': null,
-						'nrlatin': null,
-						'nclatin': null,
-						'replatinGroups': '',
-                        'startingPlotNo': '',
-                        'startingEntryNo' : '',
-						'hasMeasurementData': TrialManagerDataService.trialMeasurement.hasMeasurement
+						replicationsCount: null,
+						blockSize: null,
+						useLatenized: false,
+						nblatin: null,
+						replicationsArrangement: null,
+						rowsPerReplications: null,
+						colsPerReplications: null,
+						nrlatin: null,
+						nclatin: null,
+						replatinGroups: '',
+						startingPlotNo: '',
+						startingEntryNo: '',
+						hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement
 					}, $scope.data);
 				}
 
@@ -168,8 +166,8 @@
 						$scope.currentDesignType = $scope.designTypes[newId];
 						$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 						$scope.data.designType = $scope.currentDesignType.id;
-						
-						if($scope.designTypes[newId].isPreset){
+
+						if ($scope.designTypes[newId].isPreset) {
 							showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
 						}
 					} else {
@@ -178,12 +176,12 @@
 						$scope.currentParams = '';
 					}
 				};
-				
-				$scope.toggleIsPresetWithGeneratedDesign = function(){
+
+				$scope.toggleIsPresetWithGeneratedDesign = function() {
 					$scope.applicationData.hasGeneratedDesignPreset =  $scope.applicationData.unsavedGeneratedDesign && $scope.designTypes[$scope.data.designType].isPreset;
 				};
-				
-				$scope.updateAfterGeneratingDesignSuccessfully = function(){
+
+				$scope.updateAfterGeneratingDesignSuccessfully = function() {
 					//we show the preview
 					showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
 					TrialManagerDataService.clearUnappliedChangesFlag();
@@ -196,20 +194,20 @@
 				// on click generate design button
 				$scope.generateDesign = function() {
 					if (!$scope.doValidate()) {
-                        return;
-                    }
+						return;
+					}
 
-                    var entryNo = $('#tableForGermplasm tr:first-child td:last-child').html();
+					var entryNo = $('#tableForGermplasm tr:first-child td:last-child').html();
 					var data = angular.copy($scope.data);
-                    data.startingEntryNo = entryNo;
+					data.startingEntryNo = entryNo;
 
 					// transform ordered has of treatment factors if existing to just the map
 					if (data && data.treatmentFactors) {
 						data.treatmentFactors = $scope.data.treatmentFactors.vals();
 					}
-					
+
 					// non-preset design type
-					if(!$scope.designTypes[$scope.data.designType].isPreset){
+					if (!$scope.designTypes[$scope.data.designType].isPreset) {
 						TrialManagerDataService.generateExpDesign(data).then(
 							function(response) {
 								if (response.valid === true) {
@@ -222,16 +220,16 @@
 					} else {
 						TrialManagerDataService.generatePresetExpDesign($scope.data.designType).then(function() {
 							$scope.updateAfterGeneratingDesignSuccessfully();
-						},function(data) {
+						}, function(data) {
 							showErrorMessage('', data.error[0]);
 						});
 					}
 				};
 
 				// Register designImportGenerated handler that will activate when an importDesign is generated
-				$scope.$on('designImportGenerated',function() {
+				$scope.$on('designImportGenerated', function() {
 					$http.get('/Fieldbook/DesignImport/getMappingSummary').success(function(data) {
-						$scope.importDesignMappedData = data;
+						$scope.applicationData.importDesignMappedData = data;
 					});
 				});
 
@@ -261,13 +259,13 @@
 							}
 						}
 					});
-					
+
 					return deferred.promise;
 				}
 
 				$scope.resetExperimentalDesign = function() {
 
-					$scope.showConfirmResetDesign().then(function(result){
+					$scope.showConfirmResetDesign().then(function(result) {
 						// the following reset the data used for the experimental design, allowing the user to select another design again
 						$scope.applicationData.hasGeneratedDesignPreset = false;
 						$scope.applicationData.isGeneratedOwnDesign = false;
@@ -280,26 +278,26 @@
 						}
 					});
 				};
-				
+
 				$scope.toggleDesignView = function() {
-					return !$scope.applicationData.unappliedChangesAvailable 
-								&& (($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType === 3)
-										|| $scope.applicationData.hasGeneratedDesignPreset);
+					return !$scope.applicationData.unappliedChangesAvailable &&
+								(($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType === 3) ||
+										$scope.applicationData.hasGeneratedDesignPreset);
 				};
-				
+
 				$scope.isPreset = function() {
 					return ($scope.data.designType != null && $scope.designTypes[$scope.data.designType].isPreset && !$scope.applicationData.unappliedChangesAvailable) || $scope.applicationData.hasGeneratedDesignPreset;
 				};
-				
+
 				$scope.isImportedDesign = function() {
 					return $scope.data.designType != null && $scope.designTypes[$scope.data.designType].name === 'Other Design';
 				};
-				
+
 				$scope.isBVDesign = function() {
 					var selectedDesignType = $scope.designTypes[$scope.data.designType];
-					return $scope.data.designType != null && !selectedDesignType.isPreset && selectedDesignType.name != 'Other Design'; 
+					return $scope.data.designType != null && !selectedDesignType.isPreset && selectedDesignType.name != 'Other Design';
 				};
-				
+
 				$scope.doValidate = function() {
 
 					switch ($scope.currentDesignType.id) {
@@ -317,7 +315,7 @@
 
 							var isValidTreatmentVars = TrialManagerDataService.validateAllTreatmentFactorLabels({});
 							if (!!isValidTreatmentVars && isValidTreatmentVars.hasError) {
-								showErrorMessage(isValidTreatmentVars.customHeader,isValidTreatmentVars.customMessage);
+								showErrorMessage(isValidTreatmentVars.customHeader, isValidTreatmentVars.customMessage);
 								return false;
 							}
 
@@ -465,12 +463,12 @@
 						case 6:
 						{
 							var actualNoOfGermplasmListEntries = $scope.currentDesignType.totalNoOfEntries;
-							if($scope.totalGermplasmEntryListCount > 0 && $scope.totalGermplasmEntryListCount !== actualNoOfGermplasmListEntries){
+							if ($scope.totalGermplasmEntryListCount > 0 && $scope.totalGermplasmEntryListCount !== actualNoOfGermplasmListEntries) {
 								showErrorMessage('page-message', EXP_DESIGN_MSGS[28]);
 								return false;
 							}
 							break;
-						} 
+						}
 					}
 
 					if ($scope.totalGermplasmEntryListCount <= 0) {
@@ -501,5 +499,5 @@
 			};
 		}]);
 
-		}
-	)();
+}
+)();

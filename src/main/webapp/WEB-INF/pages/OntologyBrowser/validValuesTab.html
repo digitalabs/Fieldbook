@@ -1,13 +1,14 @@
+
 <div xmlns:th="http://www.thymeleaf.org">
 
 	<form id="usageTabForm" class="form-horizontal" th:object="${variableDetails}">
 
 		<div th:if="*{variable.scale.dataType.name != null AND #strings.startsWith(variable.scale.dataType.name,'Numeric')}">
 
-            <div style="margin-left: 3%"><b>Variable Expected Range</b></div>
+            <div class="ontology-variable-range"  th:text="#{ontology.browser.validValuesTab.variableExpectedRange}">Variable Expected Range</div>
 
             <div th:if="*{variable.minValue == null AND variable.maxValue == null}">
-                <div class="col-xs-12 col-md-12" style="margin-left: 5%;" th:text="#{ontology.browser.validValuesTab.noMinMaxValue}">This numeric variable has no mininum and maximum value constraint</div>
+                <div class="ontology-no-range col-xs-12 col-md-12"  th:text="#{ontology.browser.validValuesTab.noMinMaxValue}">This numeric variable has no mininum and maximum value constraint</div>
             </div>
 
             <div th:unless="*{variable.minValue == null AND variable.maxValue == null}" >
@@ -24,17 +25,17 @@
                 </div>
             </div>
 
-            <label style="margin-left: 3%; margin-top: 10px;"><b>Variable Scale Range</b></label>
+            <label class="ontology-scale-range"  th:text="#{ontology.browser.validValuesTab.variableScaleRange}">Variable Scale Range</label>
 
             <div class="form-group">
-                <label class="col-xs-4 col-lg-3 control-label " ><b>Scale Name:</b></label>
+                <label class=" col-xs-4 col-lg-3 control-label label-bold" th:text="#{ontology.browser.validValuesTab.scaleName} + ':'"><b>Scale Name :</b></label>
                 <div class="col-xs-8 col-lg-3">
                     <p class="form-control-static" th:text="*{variable.scale.name}"></p>
                 </div>
             </div>
 
             <div th:if="*{variable.scale.minValue == null AND variable.scale.maxValue == null}">
-                <div class="col-xs-12 col-md-12" style="margin-left: 5%;" th:text="#{ontology.browser.validValuesTab.noMinMaxValue}">This numeric variable has no mininum and maximum value constraint</div>
+                <div class="ontology-no-range col-xs-12 col-md-12"  th:text="#{ontology.browser.validValuesTab.noMinMaxValue}">This numeric variable has no mininum and maximum value constraint</div>
             </div>
 
 

@@ -12,7 +12,7 @@ public class DesignTypeItem {
 	
 	public static final DesignTypeItem ROW_COL = new DesignTypeItem(2, "Row-and-Column", "rowAndColumnParams.html", false, 0, 0, false);
 	
-	public static final DesignTypeItem CUSTOM_IMPORT = new DesignTypeItem(3, "Other Design", null, false, 0, 0, false);
+	public static final DesignTypeItem CUSTOM_IMPORT = new DesignTypeItem(3, "Custom Import Design", null, false, 0, 0, false);
 
 	private Integer id;
 	private String name;

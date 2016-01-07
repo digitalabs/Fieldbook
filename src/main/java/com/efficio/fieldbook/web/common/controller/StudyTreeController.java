@@ -79,7 +79,7 @@ public class StudyTreeController {
 		return "[]";
 	}
 
-	private List<TreeNode> getChildNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException {
+	private List<TreeNode> getChildNodes(String parentKey, boolean isNursery, boolean isFolderOnly) {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		if (parentKey != null && !"".equals(parentKey)) {
 			try {
@@ -100,7 +100,7 @@ public class StudyTreeController {
 		return childNodes;
 	}
 
-	private List<TreeNode> getChildrenTreeNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException {
+	private List<TreeNode> getChildrenTreeNodes(String parentKey, boolean isNursery, boolean isFolderOnly) {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		int parentId = Integer.valueOf(parentKey);
 		List<Reference> folders =
@@ -291,7 +291,7 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/moveStudyFolder", method = RequestMethod.POST)
-	public Map<String, Object> moveStudyFolder(HttpServletRequest req) throws MiddlewareQueryException {
+	public Map<String, Object> moveStudyFolder(HttpServletRequest req) {
 		String sourceId = req.getParameter("sourceId");
 		String targetId = req.getParameter("targetId");
 		String isStudy = req.getParameter("isStudy");
@@ -306,7 +306,7 @@ public class StudyTreeController {
 		return resultsMap;
 	}
 
-	protected String getCurrentProgramUUID() throws MiddlewareQueryException {
+	protected String getCurrentProgramUUID() {
 		return this.contextUtil.getCurrentProgramUUID();
 	}
 

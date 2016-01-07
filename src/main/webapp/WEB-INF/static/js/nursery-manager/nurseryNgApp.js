@@ -1,12 +1,13 @@
 /**
- * Created by cyrus on 01/07/2016.
+ * Main Entry point for Nursery's Angular code
  */
+/*global angular*/
 (function() {
 	'use strict';
 
 	var nurseryNgApp = angular.module('nurseryNgApp', ['designImportApp', 'leafnode-utils', 'ngLodash', 'ngResource']);
 
-	nurseryNgApp.controller('experimentalDesignCtrl', ['$scope', '$http', '_', function($scope, $http, _) {
+	nurseryNgApp.controller('experimentalDesignCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.applicationData = {
 			importDesignMappedData: null
 		};
@@ -19,6 +20,5 @@
 		});
 
 	}]);
-
 
 })();

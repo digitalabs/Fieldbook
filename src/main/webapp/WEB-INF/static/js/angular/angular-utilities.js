@@ -219,6 +219,10 @@
 					data: '='
 				},
 				templateUrl: '/Fieldbook/static/angular-templates/ontologySummaryTable.html',
+
+				// isolated scope values becomes an empty object when passed a null value
+				// this compile function will just make scope.data back to null if it has no properties;
+
 				compile: function() {
 					return {
 						pre: function(scope) {

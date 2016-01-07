@@ -24,7 +24,7 @@
 				$scope.generateDesignView = function(){
 					// BV design
                     $.each($scope.designTypes, function(index, designType){
-                    	if(!designType.isPreset && designType.name != 'Other Design'){
+                    	if(!designType.isPreset && designType.name != 'Custom Import Design'){
                     		$scope.designTypeView.push(designType);
                     	}
                     });
@@ -36,7 +36,7 @@
                     
                     // Preset
                     $.each($scope.designTypes, function(index, designType){
-                    	if(designType.isPreset && designType.name != 'Other Design'){
+                    	if(designType.isPreset && designType.name != 'Custom Import Design'){
                     		$scope.designTypeView.push(designType);
                     	}
                     });

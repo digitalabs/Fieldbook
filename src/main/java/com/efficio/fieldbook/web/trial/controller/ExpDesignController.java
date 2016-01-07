@@ -18,6 +18,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
@@ -64,8 +65,7 @@ public class ExpDesignController extends BaseTrialController {
 	private ResourceBundleMessageSource messageSource;
 	@Resource
 	private FieldbookProperties fieldbookProperties;
-	@Resource
-	private ContextUtil contextUtil;
+
 	@Resource
 	private DesignImportService designImportService;
 
@@ -358,9 +358,7 @@ public class ExpDesignController extends BaseTrialController {
 		return null;
 	}
 
-	@Override
-	public void setContextUtil(final ContextUtil contextUtil) {
-		this.contextUtil = contextUtil;
+	void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
+		this.fieldbookProperties = fieldbookProperties;
 	}
-
 }

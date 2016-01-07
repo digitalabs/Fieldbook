@@ -2194,7 +2194,6 @@ public class SettingsUtil {
 		}
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	public static String getExperimentalDesignValue(final ExpDesignParameterUi param, final TermId termId) {
 		switch (termId) {
 			case EXPERIMENT_DESIGN_FACTOR:

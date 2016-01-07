@@ -82,28 +82,6 @@
 		})
 		.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
 		.constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
-		.directive('ontologySummaryTable', ['_', function(_) {
-			return {
-				restrict: 'E',
-				scope: {
-					heading: '@',
-					propertyTitle: '@',
-					valueTitle: '@',
-					variableType: '@',
-					data: '='
-				},
-				templateUrl: '/Fieldbook/static/angular-templates/ontologySummaryTable.html',
-				compile: function() {
-					return {
-						pre: function(scope) {
-							if (_.isEmpty(scope.data)) {
-								scope.data = null;
-							}
-						}
-					};
-				}
-			};
-		}])
 		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', function(TrialManagerDataService, $filter, _) {
 			return {
 				restrict: 'E',
@@ -484,60 +462,6 @@
 				$(element).placeholder();
 			};
 		})
-
-		.directive('sectionContainer', ['$parse', function($parse) {
-			return {
-				restrict: 'E',
-				scope: {
-					heading: '@',
-					reminder: '@',
-					helpTooltip: '@',
-					icon: '@',
-					iconImg: '@',
-					iconSize: '@',
-					modelData: '=',
-					variableType: '@',
-					showReminder: '=',
-					enableUpdate: '=',
-					onUpdate: '&',
-					callback: '&',
-					hideVariable: '=',
-					useExactProperties: '@',
-					collapsible: '=',
-					actionButtonDirection: '@'
-				},
-				transclude: true,
-				templateUrl: '/Fieldbook/static/angular-templates/sectionContainer.html',
-				link: function(scope, elem, attrs) {
-					scope.addVariable = $parse(attrs.addVariable)();
-
-					attrs.$observe('helpTooltip', function(value) {
-						if (value) {
-							scope.hasHelpTooltip = true;
-						}
-					});
-
-				},
-				controller: ['$scope', '$attrs', function($scope, $attrs) {
-					$scope.toggleCollapse = false;
-					$scope.toggleSection = $attrs.startCollapsed && $attrs.startCollapsed === 'true';
-					$scope.doCollapse = function() {
-						if ($scope.collapsible) {
-							$scope.toggleSection = !$scope.toggleSection;
-						}
-					};
-
-					$scope.doClick = function() {
-						$scope.onUpdate({});
-					};
-
-					$scope.onAdd = function(result) {
-						$scope.callback({ result: result });
-					};
-				}]
-
-			};
-		}])
 
 		.directive('truncateAndTooltip', ['$compile', function($compile) {
 			return {

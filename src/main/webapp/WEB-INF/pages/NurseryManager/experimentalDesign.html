@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" ng-controller="experimentalDesignCtrl">
 	<div class="col-md-12">
 	<label class="control-label"><strong class="sub-content-heading">Experimental Design</strong></label>
 	</div>
@@ -9,5 +9,9 @@
 			 class="btn btn-info pull-right chs-add-variable" th:text="#{design.import.change}">Change</a>
 		</div>
 	</div>
-	
+
+	<div class="col-md-12">
+		<div id="experimental-design-imported-design" th:include="Common/importedDesignColumnsSummary"></div>
+	</div>
+
 </div>

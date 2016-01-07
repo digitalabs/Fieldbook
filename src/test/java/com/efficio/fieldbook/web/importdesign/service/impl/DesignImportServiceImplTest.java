@@ -187,7 +187,7 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false);
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false, null, null);
 
 		Assert.assertEquals("The first trial instance has only 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES,
 				measurements.size());
@@ -207,7 +207,7 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false);
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false, null, null);
 
 		Assert.assertEquals("Only the first trial has observations so the measurement count should be 6", 6, measurements.size());
 
@@ -222,7 +222,7 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false);
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false, null, null);
 
 		Assert.assertEquals("The first trial instance has only 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES,
 				measurements.size());
@@ -242,7 +242,7 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, false, true);
+				this.service.generateDesign(workbook, this.designImportData, environmentData, false, true, null, null);
 
 		Assert.assertEquals("The 3 trial instances should have 18 observations", 18, measurements.size());
 

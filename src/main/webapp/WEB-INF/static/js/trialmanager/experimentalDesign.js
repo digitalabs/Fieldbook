@@ -170,6 +170,7 @@
 
                     var entryNo = $('#tableForGermplasm tr:first-child td:last-child').html();
 					var data = angular.copy($scope.data);
+					TrialManagerDataService.currentData.experimentalDesign.startingEntryNo = entryNo;
                     data.startingEntryNo = entryNo;
 
 					// transform ordered has of treatment factors if existing to just the map

@@ -1,14 +1,16 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 import javax.annotation.Resource;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -16,7 +18,9 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +40,11 @@ import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -56,6 +63,11 @@ public class ExpDesignController extends BaseTrialController {
 	private ResolvableRowColumnDesignService resolvableRowColumnDesign;
 	@Resource
 	private ResourceBundleMessageSource messageSource;
+	@Resource
+	private FieldbookProperties fieldbookProperties;
+
+	@Resource
+	private DesignImportService designImportService;
 
 	@Override
 	public String getContentName() {
@@ -63,42 +75,135 @@ public class ExpDesignController extends BaseTrialController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/retrieveDesignTypes", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public List<DesignTypeItem> retrieveDesignTypes() {
+		final List<DesignTypeItem> designTypes = new ArrayList<DesignTypeItem>();
+
+		designTypes.add(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK);
+		designTypes.add(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK);
+		designTypes.add(DesignTypeItem.ROW_COL);
+		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
+
+		if (this.fieldbookProperties.getPresetDesignEnabledCrops().contains(this.contextUtil.getProjectInContext().getCropType().getCropName())) {
+			// There are four (0-3) fixed designe types, so the preset designs get id 4 and onwards. 
+			designTypes.addAll(this.generatePresetDesignTypes(4));
+		}
+
+		return designTypes;
+	}
+
+	private List<DesignTypeItem> generatePresetDesignTypes(int index) {
+		final List<DesignTypeItem> designTypeItems = new ArrayList<DesignTypeItem>();
+		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
+
+		for (final File designTemplateFile : presetTemplates) {
+			final String templateFileName = designTemplateFile.getName();
+
+			if (this.isValidPresetDesignTemplate(templateFileName)) {
+				designTypeItems.add(this.generatePresetDesignTypeItem(templateFileName, index));
+				index++;
+			}
+		}
+
+		return designTypeItems;
+	}
+
+	/**
+	 * Generates a design type item from template file name
+	 * 
+	 * @param templateFileName
+	 * @param index
+	 * @return
+	 */
+	DesignTypeItem generatePresetDesignTypeItem(final String templateFileName, final int index) {
+		final int noOfreps = this.getNoOfReps(templateFileName);
+		final int totalNoOfEntries = this.getTotalNoOfEntries(templateFileName);
+		final String templateName = this.getTemplateName(templateFileName);
+		return new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, noOfreps, totalNoOfEntries,
+				false);
+	}
+
+	/***
+	 * Removed the .csv extension from the filename
+	 * 
+	 * @param templateFileName
+	 * @return
+	 */
+	String getTemplateName(final String templateFileName) {
+		return templateFileName.substring(0, templateFileName.indexOf(".csv"));
+	}
+
+	/**
+	 * Checks if the filename follows the expected preset template filename i.e. E30-Rep2-Block6-5Ind.csv
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	boolean isValidPresetDesignTemplate(final String fileName) {
+		return fileName.matches("E[0-9]+-Rep[0-9]+-Block[0-9]+-[0-9]+Ind.csv");
+	}
+
+	/**
+	 * Retrieves the no of entries from the design preset template name
+	 * 
+	 * @param name - preset template filename
+	 * @return
+	 */
+	int getTotalNoOfEntries(final String name) {
+		final int start = name.indexOf("E") + 1;
+		final int end = name.indexOf("-Rep");
+		return Integer.valueOf(name.substring(start, end));
+	}
+
+	/**
+	 * Retrieves the no of replications from the design preset template name
+	 * 
+	 * @param name - preset template filename
+	 * @return
+	 */
+	int getNoOfReps(final String name) {
+		final int start = name.indexOf("-Rep") + 4;
+		final int end = name.indexOf("-Block");
+		return Integer.valueOf(name.substring(start, end));
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/generate", method = RequestMethod.POST)
-	public ExpDesignValidationOutput showMeasurements(Model model, @RequestBody ExpDesignParameterUi expDesign) {
+	public ExpDesignValidationOutput showMeasurements(final Model model, @RequestBody final ExpDesignParameterUi expDesign) {
 		/*
 		 * 0 - Resolvable Complete Block Design 1 - Resolvable Incomplete Block Design 2 - Resolvable Row Col
 		 */
 		// we do the conversion
-		List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
-		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
+		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
+		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		// transfer over data from user input into the list of setting details stored in the session
-		List<SettingDetail> combinedList = new ArrayList<>();
+		final List<SettingDetail> combinedList = new ArrayList<>();
 		combinedList.addAll(basicDetails);
 
 		if (studyLevelConditions != null) {
 			combinedList.addAll(studyLevelConditions);
 		}
 
-		String name = "";
+		final String name = "";
 
-		Dataset dataset =
+		final Dataset dataset =
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
 						this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection,
 						this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
-						this.userSelection.getNurseryConditions(), false, contextUtil.getCurrentProgramUUID());
+						this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID());
 
-		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, contextUtil.getCurrentProgramUUID());
-		StudyDetails details = new StudyDetails();
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.contextUtil.getCurrentProgramUUID());
+		final StudyDetails details = new StudyDetails();
 		details.setStudyType(StudyType.T);
 		workbook.setStudyDetails(details);
 		this.userSelection.setTemporaryWorkbook(workbook);
 
-		int designType = expDesign.getDesignType();
-		List<ImportedGermplasm> germplasmList =
+		final int designType = expDesign.getDesignType();
+		final List<ImportedGermplasm> germplasmList =
 				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 
 		ExpDesignValidationOutput expParameterOutput = new ExpDesignValidationOutput(true, "");
-		Locale locale = LocaleContextHolder.getLocale();
+		final Locale locale = LocaleContextHolder.getLocale();
 		try {
 
 			// we validate here if there is gerplasm
@@ -107,7 +212,7 @@ public class ExpDesignController extends BaseTrialController {
 						new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.generate.no.germplasm", null,
 								locale));
 			} else {
-				ExperimentDesignService designService = this.getExpDesignService(designType);
+				final ExperimentDesignService designService = this.getExpDesignService(designType);
 				if (designService != null) {
 					// we call the validation
 					expParameterOutput = designService.validate(expDesign, germplasmList);
@@ -127,14 +232,14 @@ public class ExpDesignController extends BaseTrialController {
 
 						this.userSelection.setStartingEntryNo(StringUtil.parseInt(expDesign.getStartingEntryNo(), null));
 
-						if(this.userSelection.getStartingEntryNo() != null){
+						if (this.userSelection.getStartingEntryNo() != null) {
 							Integer entryNo = this.userSelection.getStartingEntryNo();
-							for(ImportedGermplasm g : germplasmList) {
+							for (final ImportedGermplasm g : germplasmList) {
 								g.setEntryId(entryNo++);
 							}
 						}
 
-						List<MeasurementRow> measurementRows =
+						final List<MeasurementRow> measurementRows =
 								designService.generateDesign(germplasmList, expDesign, workbook.getConditions(), workbook.getFactors(),
 										workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
 
@@ -144,13 +249,13 @@ public class ExpDesignController extends BaseTrialController {
 						workbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection,
 								expDesign.isHasMeasurementData()));
 						// should have at least 1 record
-						List<MeasurementVariable> currentNewFactors = new ArrayList<>();
-						List<MeasurementVariable> oldFactors = workbook.getFactors();
-						List<MeasurementVariable> deletedFactors = new ArrayList<>();
+						final List<MeasurementVariable> currentNewFactors = new ArrayList<>();
+						final List<MeasurementVariable> oldFactors = workbook.getFactors();
+						final List<MeasurementVariable> deletedFactors = new ArrayList<>();
 						if (measurementRows != null && !measurementRows.isEmpty()) {
-							List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
-							MeasurementRow dataRow = measurementRows.get(0);
-							for (MeasurementData measurementData : dataRow.getDataList()) {
+							final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
+							final MeasurementRow dataRow = measurementRows.get(0);
+							for (final MeasurementData measurementData : dataRow.getDataList()) {
 								measurementDatasetVariables.add(measurementData.getMeasurementVariable());
 								if (measurementData.getMeasurementVariable() != null && measurementData.getMeasurementVariable().isFactor()) {
 									currentNewFactors.add(measurementData.getMeasurementVariable());
@@ -158,7 +263,7 @@ public class ExpDesignController extends BaseTrialController {
 							}
 							workbook.setMeasurementDatasetVariables(measurementDatasetVariables);
 						}
-						for (MeasurementVariable var : oldFactors) {
+						for (final MeasurementVariable var : oldFactors) {
 							// we do the cleanup of old variables
 							if (WorkbookUtil.getMeasurementVariable(currentNewFactors, var.getTermId()) == null) {
 								// we remove it
@@ -166,7 +271,7 @@ public class ExpDesignController extends BaseTrialController {
 							}
 						}
 						if (oldFactors != null) {
-							for (MeasurementVariable var : deletedFactors) {
+							for (final MeasurementVariable var : deletedFactors) {
 								oldFactors.remove(var);
 							}
 						}
@@ -174,10 +279,10 @@ public class ExpDesignController extends BaseTrialController {
 					}
 				}
 			}
-		} catch (BVDesignException e) {
+		} catch (final BVDesignException e) {
 			// this should catch when the BV design is not successful
 			expParameterOutput = new ExpDesignValidationOutput(false, this.messageSource.getMessage(e.getBvErrorCode(), null, locale));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ExpDesignController.LOG.error(e.getMessage(), e);
 			expParameterOutput =
 					new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.invalid.generic.error", null,
@@ -187,8 +292,8 @@ public class ExpDesignController extends BaseTrialController {
 		return expParameterOutput;
 	}
 
-	protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(List<MeasurementRow> measurementRows,
-			UserSelection userSelection, boolean hasMeasurementData) {
+	protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(final List<MeasurementRow> measurementRows,
+			final UserSelection userSelection, final boolean hasMeasurementData) {
 		Workbook workbook = null;
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null) {
 			workbook = userSelection.getTemporaryWorkbook();
@@ -196,7 +301,7 @@ public class ExpDesignController extends BaseTrialController {
 			workbook = userSelection.getWorkbook();
 		}
 		if (workbook != null && workbook.getObservations() != null && hasMeasurementData) {
-			List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
+			final List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
 			observations.addAll(workbook.getObservations());
 			observations.addAll(measurementRows);
 			return observations;
@@ -204,7 +309,7 @@ public class ExpDesignController extends BaseTrialController {
 		return measurementRows;
 	}
 
-	protected String countNewEnvironments(String noOfEnvironments, UserSelection userSelection, boolean hasMeasurementData) {
+	protected String countNewEnvironments(final String noOfEnvironments, final UserSelection userSelection, final boolean hasMeasurementData) {
 		Workbook workbook = null;
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null) {
 			workbook = userSelection.getTemporaryWorkbook();
@@ -218,12 +323,12 @@ public class ExpDesignController extends BaseTrialController {
 		return noOfEnvironments;
 	}
 
-	private int getMaxInstanceNo(List<MeasurementRow> observations) {
+	private int getMaxInstanceNo(final List<MeasurementRow> observations) {
 		int maxTrialInstanceNo = 0;
 
-		for (MeasurementRow row : observations) {
+		for (final MeasurementRow row : observations) {
 			if (row.getDataList() != null) {
-				int trialNo = this.getTrialInstanceNo(row.getDataList());
+				final int trialNo = this.getTrialInstanceNo(row.getDataList());
 				if (maxTrialInstanceNo < trialNo) {
 					maxTrialInstanceNo = trialNo;
 				}
@@ -233,8 +338,8 @@ public class ExpDesignController extends BaseTrialController {
 		return maxTrialInstanceNo;
 	}
 
-	private int getTrialInstanceNo(List<MeasurementData> dataList) {
-		for (MeasurementData data : dataList) {
+	private int getTrialInstanceNo(final List<MeasurementData> dataList) {
+		for (final MeasurementData data : dataList) {
 			if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				return Integer.valueOf(data.getValue());
 			}
@@ -242,7 +347,7 @@ public class ExpDesignController extends BaseTrialController {
 		return 0;
 	}
 
-	private ExperimentDesignService getExpDesignService(int designType) {
+	private ExperimentDesignService getExpDesignService(final int designType) {
 		if (designType == 0) {
 			return this.randomizeCompleteBlockDesign;
 		} else if (designType == 1) {
@@ -251,5 +356,9 @@ public class ExpDesignController extends BaseTrialController {
 			return this.resolvableRowColumnDesign;
 		}
 		return null;
+	}
+
+	void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
+		this.fieldbookProperties = fieldbookProperties;
 	}
 }

@@ -101,6 +101,10 @@ function reviewLandingSetup() {
 		if (blockSize > 0) {
 			var blockCount = entrySize / blockSize;
 			$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-number-of-blocks').text(blockCount);
+		} else {
+			$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #row-review-number-of-blocks').hide();
 		}
+	} else {
+		$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #row-review-number-of-blocks').hide();
 	}
 }

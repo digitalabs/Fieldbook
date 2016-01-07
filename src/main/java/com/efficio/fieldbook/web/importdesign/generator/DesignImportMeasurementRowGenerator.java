@@ -29,7 +29,7 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 public class DesignImportMeasurementRowGenerator {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(DesignImportMeasurementRowGenerator.class);
 
 	private Workbook workbook;
@@ -63,7 +63,7 @@ public class DesignImportMeasurementRowGenerator {
 	}
 
 	public MeasurementRow createMeasurementRow(final List<String> rowValues) {
-		
+
 		LOG.debug("Design Import - Creating Measurement Row");
 		final MeasurementRow measurement = new MeasurementRow();
 
@@ -74,7 +74,7 @@ public class DesignImportMeasurementRowGenerator {
 				.getColumnIndex()))) {
 			return null;
 		}
-		
+
 		LOG.debug("Design Import - Creating Data List");
 		final List<MeasurementData> dataList = this.createMeasurementRowDataList(rowValues);
 		measurement.setDataList(dataList);
@@ -87,13 +87,13 @@ public class DesignImportMeasurementRowGenerator {
 		final List<MeasurementData> dataList = new ArrayList<>();
 
 		this.addTrialEnvironmentVariablesToDataList(rowValues, dataList);
-		LOG.debug("Added Environment Variables to MeasurementDataList : size=" + dataList.size() );
-		
+		LOG.debug("Added Environment Variables to MeasurementDataList : size=" + dataList.size());
+
 		this.addGermplasmVariablesToDataList(rowValues, dataList);
-		LOG.debug("Added Germplasm Variables to MeasurementDataList : size=" + dataList.size() );
+		LOG.debug("Added Germplasm Variables to MeasurementDataList : size=" + dataList.size());
 
 		this.addTrialDesignAndVariatesToDataList(rowValues, dataList);
-		LOG.debug("Added TrialDesign and Variates to MeasurementDataList : size=" + dataList.size() );
+		LOG.debug("Added TrialDesign and Variates to MeasurementDataList : size=" + dataList.size());
 
 		return dataList;
 	}
@@ -110,7 +110,7 @@ public class DesignImportMeasurementRowGenerator {
 			final String value = rowValues.get(headerItem.getColumnIndex());
 			dataList.add(this.createMeasurementData(headerItem.getVariable(), value));
 		}
-		
+
 	}
 
 	private void addTrialEnvironmentVariablesToDataList(final List<String> rowValues, final List<MeasurementData> dataList) {

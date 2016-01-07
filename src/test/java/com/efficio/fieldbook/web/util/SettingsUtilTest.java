@@ -3,24 +3,20 @@ package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
-import com.efficio.fieldbook.web.common.bean.UserSelection;
 import junit.framework.Assert;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.dms.VariableConstraints;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
@@ -29,13 +25,16 @@ import org.generationcp.middleware.util.Debug;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 
 public class SettingsUtilTest {
 
@@ -47,24 +46,18 @@ public class SettingsUtilTest {
 
 	private static final String PROGRAM_UUID = "123456789";
 
-	// Test data
-	private static final Integer variableId = 8040;
-	private static final String variableName = "PM_KEY";
-	private static final String variableDescription = "Project management key ";
 	private static final Term property = new Term(2002, "User", "Database user");
 	private static final Term scale = new Term(6000, "DBCV", "Controlled vocabulary from a database");
 	private static final Term method = new Term(4030, "Assigned", "Term, name or id assigned");
-	private static final Term dataType = new Term(DataType.NUMERIC_VARIABLE.getId(), DataType.NUMERIC_VARIABLE.getName(), "Numeric Variable Description");
-	private static final String cropOntologyId = "CO:1010";
-	private static final Double minValue = 100.00;
-	private static final Double maxValue = 200.00;
+	private static final Term dataType = new Term(DataType.NUMERIC_VARIABLE.getId(), DataType.NUMERIC_VARIABLE.getName(),
+			"Numeric Variable Description");
 
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 	}
 
-	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
+	@Ignore(value = "BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testConvertXmlDatasetToWorkbookAndBack() {
 		final Dataset dataset = new Dataset();
@@ -82,7 +75,7 @@ public class SettingsUtilTest {
 				new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N",
 						TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0));
 
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, PROGRAM_UUID);
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, SettingsUtilTest.PROGRAM_UUID);
 		Debug.println(0, workbook);
 
 		final Dataset newDataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
@@ -149,19 +142,17 @@ public class SettingsUtilTest {
 
 	@Test
 	public void testGetVariableAppConstantLabels() throws Exception {
-		final List<String> labels = new ArrayList<>( Arrays.asList(new String[] {"abc", "def"}) );
+		final List<String> labels = new ArrayList<>(Arrays.asList(new String[] {"abc", "def"}));
 
 		final Properties appConfigProp = Mockito.mock(Properties.class);
-		Mockito.when(appConfigProp.getProperty(Mockito.any(String.class))).thenReturn("any value");
+		Mockito.when(appConfigProp.getProperty(Matchers.any(String.class))).thenReturn("any value");
 		final ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 
-		SettingsUtil.getVariableAppConstantLabels(labels,appConfigProp);
+		SettingsUtil.getVariableAppConstantLabels(labels, appConfigProp);
 
 		Mockito.verify(appConfigProp, Mockito.times(labels.size())).getProperty(argument.capture());
 		Assert.assertTrue(argument.getValue().contains("LABEL"));
 	}
-
-
 
 	@Test
 	public void testGetCodeValueInvalid() {
@@ -205,6 +196,243 @@ public class SettingsUtilTest {
 		Assert.assertEquals("1st Id should be 1", new Integer(1), variableIds.get(0));
 		Assert.assertEquals("2nd Id should be 2", new Integer(2), variableIds.get(1));
 		Assert.assertEquals("3rd Id should be 3", new Integer(3), variableIds.get(2));
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUi() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+
+		expDesigns.add(this.createMeasurementVariable(TermId.BLOCK_SIZE.getId(), "1"));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_COLS_IN_REPS.getId(), "2"));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_ROWS_IN_REPS.getId(), "3"));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_CBLKS_LATINIZE.getId(), "4"));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_CCOLS_LATINIZE.getId(), "5"));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_CROWS_LATINIZE.getId(), "6"));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_REPS_IN_COLS.getId(), "7"));
+		expDesigns.add(this.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "8"));
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "9"));
+
+		final ExpDesignParameterUi result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+
+		Assert.assertEquals("1", result.getBlockSize());
+		Assert.assertEquals("2", result.getColsPerReplications());
+		Assert.assertEquals("3", result.getRowsPerReplications());
+		Assert.assertEquals("4", result.getNblatin());
+		Assert.assertEquals("5", result.getNclatin());
+		Assert.assertEquals("6", result.getNrlatin());
+		Assert.assertEquals("7", result.getReplatinGroups());
+		Assert.assertEquals("8", result.getReplicationsCount());
+		Assert.assertEquals("9", result.getFileName());
+
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUiRandomizedBlockDesign() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
+				String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId())));
+
+		ExpDesignParameterUi result;
+		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+		Assert.assertEquals(0, result.getDesignType().intValue());
+
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUiResolvableIncompleteBlock() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
+				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
+
+		ExpDesignParameterUi result;
+		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+		Assert.assertEquals(1, result.getDesignType().intValue());
+
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUiResolvableIncompleteRowColumn() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
+				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId())));
+
+		ExpDesignParameterUi result;
+		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+		Assert.assertEquals(2, result.getDesignType().intValue());
+
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUiOtherDesign() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+		expDesigns
+				.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), String.valueOf(TermId.OTHER_DESIGN.getId())));
+
+		ExpDesignParameterUi result;
+		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+		Assert.assertEquals(3, result.getDesignType().intValue());
+
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUiAlphaLatticeEntry30Rep2() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
+				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E30-Rep2-Block6-5Ind.csv"));
+
+		ExpDesignParameterUi result;
+		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+		Assert.assertEquals(4, result.getDesignType().intValue());
+
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUiAlphaLatticeEntry30Rep3() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
+				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E30-Rep3-Block6-5Ind.csv"));
+
+		ExpDesignParameterUi result;
+		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+		Assert.assertEquals(5, result.getDesignType().intValue());
+
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUiAlphaLatticeEntry50Rep2() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
+				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E50-Rep2-Block5-10Ind.csv"));
+
+		ExpDesignParameterUi result;
+		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+		Assert.assertEquals(6, result.getDesignType().intValue());
+
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUiRepsInSingleColumn() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+		expDesigns.add(this.createMeasurementVariable(TermId.REPLICATIONS_MAP.getId(), String.valueOf(TermId.REPS_IN_SINGLE_COL.getId())));
+
+		ExpDesignParameterUi result;
+		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+		Assert.assertEquals(1, result.getReplicationsArrangement().intValue());
+
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUiRepsInSingleRow() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+		expDesigns.add(this.createMeasurementVariable(TermId.REPLICATIONS_MAP.getId(), String.valueOf(TermId.REPS_IN_SINGLE_ROW.getId())));
+
+		ExpDesignParameterUi result;
+		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+		Assert.assertEquals(2, result.getReplicationsArrangement().intValue());
+
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUiRepsInAdjacentCol() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+		expDesigns
+				.add(this.createMeasurementVariable(TermId.REPLICATIONS_MAP.getId(), String.valueOf(TermId.REPS_IN_ADJACENT_COLS.getId())));
+
+		ExpDesignParameterUi result;
+		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+		Assert.assertEquals(3, result.getReplicationsArrangement().intValue());
+
+	}
+
+	@Test
+	public void testGetExperimentalDesignValue() {
+
+		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
+
+		expDesignParameterUi.setBlockSize("1");
+		expDesignParameterUi.setColsPerReplications("2");
+		expDesignParameterUi.setRowsPerReplications("3");
+		expDesignParameterUi.setNblatin("4");
+		expDesignParameterUi.setNclatin("5");
+		expDesignParameterUi.setNrlatin("6");
+		expDesignParameterUi.setReplatinGroups("7");
+		expDesignParameterUi.setReplicationsCount("8");
+
+		Assert.assertEquals("1", SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.BLOCK_SIZE));
+		Assert.assertEquals("2", SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.NO_OF_COLS_IN_REPS));
+		Assert.assertEquals("3", SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.NO_OF_ROWS_IN_REPS));
+		Assert.assertEquals("4", SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.NO_OF_CBLKS_LATINIZE));
+		Assert.assertEquals("5", SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.NO_OF_CCOLS_LATINIZE));
+		Assert.assertEquals("6", SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.NO_OF_CROWS_LATINIZE));
+		Assert.assertEquals("7", SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.NO_OF_REPS_IN_COLS));
+		Assert.assertEquals("8", SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.NUMBER_OF_REPLICATES));
+
+		expDesignParameterUi.setDesignType(0);
+		Assert.assertEquals(String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
+
+		expDesignParameterUi.setDesignType(1);
+		expDesignParameterUi.setUseLatenized(false);
+		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
+
+		expDesignParameterUi.setDesignType(1);
+		expDesignParameterUi.setUseLatenized(true);
+		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
+
+		expDesignParameterUi.setDesignType(2);
+		expDesignParameterUi.setUseLatenized(false);
+		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
+
+		expDesignParameterUi.setDesignType(2);
+		expDesignParameterUi.setUseLatenized(true);
+		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
+
+		expDesignParameterUi.setDesignType(3);
+		Assert.assertEquals(String.valueOf(TermId.OTHER_DESIGN.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
+
+		expDesignParameterUi.setUseLatenized(false);
+		expDesignParameterUi.setDesignType(4);
+		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
+
+		expDesignParameterUi.setDesignType(5);
+		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
+
+		expDesignParameterUi.setDesignType(6);
+		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
+
+		expDesignParameterUi.setReplicationsArrangement(1);
+		Assert.assertEquals(String.valueOf(TermId.REPS_IN_SINGLE_COL.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.REPLICATIONS_MAP));
+
+		expDesignParameterUi.setReplicationsArrangement(2);
+		Assert.assertEquals(String.valueOf(TermId.REPS_IN_SINGLE_ROW.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.REPLICATIONS_MAP));
+
+		expDesignParameterUi.setReplicationsArrangement(3);
+		Assert.assertEquals(String.valueOf(TermId.REPS_IN_ADJACENT_COLS.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.REPLICATIONS_MAP));
 	}
 
 	private List<Integer> settingsUtilParseVariableIds(final String variableIds) {
@@ -255,14 +483,15 @@ public class SettingsUtilTest {
 	}
 
 	@Test
-	public void testSetSettingDetailRoleForDefaultVartypes(){
+	public void testSetSettingDetailRoleForDefaultVartypes() {
 		// Create a standardVaraible as pre-req
 		final StandardVariable standardVariable = new StandardVariable();
 		standardVariable.setVariableTypes(null);
 
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CATEGORICAL_VARIATE.getId(), PROGRAM_UUID)).thenReturn(standardVariable);
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CATEGORICAL_VARIATE.getId(), SettingsUtilTest.PROGRAM_UUID))
+				.thenReturn(standardVariable);
 
-		for(final VariableType varType : VariableType.values()){
+		for (final VariableType varType : VariableType.values()) {
 			final SettingDetail settingDetail = new SettingDetail();
 			final SettingVariable settingVariable = new SettingVariable();
 			settingVariable.setCvTermId(TermId.CATEGORICAL_VARIATE.getId());
@@ -273,8 +502,10 @@ public class SettingsUtilTest {
 			// use any setting variable that is not a trial instance factor
 			detailList.add(settingDetail);
 
-			SettingsUtil.setSettingDetailRole(varType.getId(), detailList, userSelection, fieldbookMiddlewareService,PROGRAM_UUID);
-			Assert.assertEquals("Should have the correct phenotypic type role as per the variable type", varType.getRole(),settingDetail.getRole());
+			SettingsUtil.setSettingDetailRole(varType.getId(), detailList, this.userSelection, this.fieldbookMiddlewareService,
+					SettingsUtilTest.PROGRAM_UUID);
+			Assert.assertEquals("Should have the correct phenotypic type role as per the variable type", varType.getRole(),
+					settingDetail.getRole());
 
 		}
 	}
@@ -291,8 +522,11 @@ public class SettingsUtilTest {
 
 		// for mode, we use any that is not a germplasm descriptor
 		final VariableType studyDetailMode = VariableType.STUDY_DETAIL;
-		SettingsUtil.setSettingDetailRole(studyDetailMode.getId().intValue(),newDetails,userSelection,fieldbookMiddlewareService,PROGRAM_UUID);
-		Assert.assertEquals("Since we had a settingDetail that is a trial instance factor, the detail's role should be converted to Trial Environment",PhenotypicType.TRIAL_ENVIRONMENT, detail.getRole());
+		SettingsUtil.setSettingDetailRole(studyDetailMode.getId().intValue(), newDetails, this.userSelection,
+				this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
+		Assert.assertEquals(
+				"Since we had a settingDetail that is a trial instance factor, the detail's role should be converted to Trial Environment",
+				PhenotypicType.TRIAL_ENVIRONMENT, detail.getRole());
 
 	}
 
@@ -300,76 +534,22 @@ public class SettingsUtilTest {
 	 * Test for check if given baseline traits empty or null then empty variate list should be returned.
 	 */
 	@Test
-	public void testConvertBaselineTraitsToVariatesWithEmptyBaselineTraits(){
+	public void testConvertBaselineTraitsToVariatesWithEmptyBaselineTraits() {
 		final List<SettingDetail> baselineTraits = new ArrayList<>();
 
 		final UserSelection userSelection = new UserSelection();
 
 		final List<Variate> baselineVariates =
-				SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, userSelection, fieldbookMiddlewareService, PROGRAM_UUID);
+				SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, userSelection, this.fieldbookMiddlewareService,
+						SettingsUtilTest.PROGRAM_UUID);
 
 		Assert.assertEquals(baselineTraits.size(), baselineVariates.size());
 	}
 
-	/**
-	 * create SettingDetail instance with variable data, possible values.
-	 * @return setting details instance.
-	 */
-	private SettingDetail createTestDataForSettingDetails(){
-
-		final SettingDetail settingDetail = new SettingDetail();
-
-		final SettingVariable settingVariable = new SettingVariable();
-		settingVariable.setCvTermId(variableId);
-		settingVariable.setName(variableName);
-		settingVariable.setDescription(variableDescription);
-		settingVariable.setProperty(property.getName());
-		settingVariable.setScale(scale.getName());
-		settingVariable.setMethod(method.getName());
-		settingVariable.setDataType(dataType.getName());
-		settingVariable.setCropOntologyId(cropOntologyId);
-		settingVariable.setDataTypeId(DataType.NUMERIC_VARIABLE.getId());
-		settingVariable.setMinRange(minValue);
-		settingVariable.setMaxRange(maxValue);
-		settingVariable.setOperation(Operation.LIKE);
-		final Set<VariableType> variableTypes = new HashSet<>();
-		variableTypes.add(VariableType.STUDY_DETAIL);
-		settingVariable.setVariableTypes(variableTypes);
-
-		settingDetail.setVariable(settingVariable);
-		final ValueReference possibleValue = new ValueReference("Key", "Name", "Description");
-		final List<ValueReference> possibleValues = new ArrayList<>();
-		possibleValues.add(possibleValue);
-		settingDetail.setPossibleValues(possibleValues);
-
-		final ValueReference possibleValueFav = new ValueReference("Key Fav", "Name Fav", "Description Fav");
-		final List<ValueReference> possibleValuesFav = new ArrayList<>();
-		possibleValuesFav.add(possibleValueFav);
-		settingDetail.setPossibleValuesFavorite(possibleValuesFav);
-
-		settingDetail.setValue("Setting Detail Value");
-		settingDetail.setRole(PhenotypicType.STUDY);
-		settingDetail.setVariableType(VariableType.STUDY_DETAIL);
-
-		return settingDetail;
-	}
-
-	/**
-	 * Create standard variable instance.
-	 * @return standard variable instance.
-	 */
-	private StandardVariable createStandardVariable(){
-		final StandardVariable stdVariable = new StandardVariable();
-		stdVariable.setId(variableId);
-		stdVariable.setName(variableName);
-		stdVariable.setDescription(variableDescription);
-		stdVariable.setProperty(property);
-		stdVariable.setMethod(method);
-		stdVariable.setScale(scale);
-		stdVariable.setDataType(dataType);
-		stdVariable.setIsA(new Term(1050, "Study condition", "Study condition class"));
-		stdVariable.setConstraints(new VariableConstraints(minValue, maxValue));
-		stdVariable.setCropOntologyId(cropOntologyId);
-		return stdVariable;
+	protected MeasurementVariable createMeasurementVariable(final int termId, final String value) {
+		final MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setTermId(termId);
+		measurementVariable.setValue(value);
+		return measurementVariable;
 	}
 }

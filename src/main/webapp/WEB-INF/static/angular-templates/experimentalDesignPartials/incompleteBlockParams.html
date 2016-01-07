@@ -1,4 +1,4 @@
-<div class="add_top_padding" ng-show="data.isResolvable">
+<div class="add_top_padding">
     <label class=" control-label"><strong>Number of replications:</strong></label>
     <span><input class="form-control" input-type="number" name="replicationsCount" valid-number="" min-val="2" max-val="12" ng-model="data.replicationsCount" style="width: 100px" ng-disabled="measurementDetails.hasMeasurement" /></span>
 </div>
@@ -7,7 +7,7 @@
     <span class=""><input name="blockSize" min-val="2" ng-model="data.blockSize" input-type="number" valid-number="" class="form-control" style="width: 100px" ng-disabled="measurementDetails.hasMeasurement" /></span>
 </div>
 
-<div ng-show="data.isResolvable &amp;&amp; !hideFeatures">
+<div ng-show="!hideFeatures">
 
     <div ng-hide="settings.showAdvancedOptions[currentDesignType.id]" class="add_top_padding">
         <a ng-click="settings.showAdvancedOptions[currentDesignType.id] = true">Show advanced options</a>

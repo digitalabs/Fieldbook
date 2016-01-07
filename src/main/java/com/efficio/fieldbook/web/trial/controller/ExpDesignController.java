@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -95,7 +96,7 @@ public class ExpDesignController extends BaseTrialController {
 	private List<DesignTypeItem> generatePresetDesignTypes(int index) {
 		final List<DesignTypeItem> designTypeItems = new ArrayList<DesignTypeItem>();
 		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
-
+		Collections.sort(presetTemplates);
 		for (final File designTemplateFile : presetTemplates) {
 			final String templateFileName = designTemplateFile.getName();
 

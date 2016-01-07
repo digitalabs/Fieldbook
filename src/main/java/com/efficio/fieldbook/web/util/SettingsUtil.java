@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -2321,6 +2322,7 @@ public class SettingsUtil {
 		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
 		// currently the UI follows this sequence for the presets: 4, 5, 6
 		// (this can be changed in the future so that constants are used)
+		Collections.sort(presetTemplates);
 		int presetDesignType = 4;
 		for (final File designTemplateFile : presetTemplates) {
 			final String templateFileName = designTemplateFile.getName();

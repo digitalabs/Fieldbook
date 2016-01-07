@@ -1,6 +1,8 @@
 
 package com.efficio.fieldbook.web.common.bean;
 
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
+
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 
 public class GeneratePresetDesignInput {

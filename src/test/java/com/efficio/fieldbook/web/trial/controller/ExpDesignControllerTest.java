@@ -1,7 +1,10 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
+import java.util.List;
+
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.util.CrossExpansionProperties;
@@ -15,11 +18,12 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.efficio.fieldbook.web.common.bean.DesignTypeItem;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.google.common.collect.Sets;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExpDesignControllerTest {
@@ -44,6 +48,8 @@ public class ExpDesignControllerTest {
 
 	@Mock
 	private DesignImportService designImportService;
+	
+	private FieldbookProperties fieldbookProperties = new FieldbookProperties();
 
 	@InjectMocks
 	ExpDesignController expDesignController;
@@ -51,9 +57,10 @@ public class ExpDesignControllerTest {
 	@Before()
 	public void init() {
 		Mockito.doReturn("CIMMYT").when(this.crossExpansionProperties).getProfile();
-		final Project project = Mockito.mock(Project.class);
+		final Project project = new Project();
+		project.setCropType(new CropType("maize"));
 		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
-		Mockito.doReturn(new CropType("WHEAT")).when(project).getCropType();
+		this.expDesignController.setFieldbookProperties(this.fieldbookProperties);
 	}
 
 	@Test
@@ -112,6 +119,7 @@ public class ExpDesignControllerTest {
 
 	@Test
 	public void testRetrieveDesignTypes() {
-		this.expDesignController.retrieveDesignTypes();
+		final List<DesignTypeItem> designTypes = this.expDesignController.retrieveDesignTypes();
+		Assert.assertEquals("4 core design types are expected to be returned.", 4, designTypes.size());
 	}
 }

@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -17,6 +18,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
@@ -31,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.common.bean.DesignTypeItem;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
@@ -64,8 +65,7 @@ public class ExpDesignController extends BaseTrialController {
 	private ResourceBundleMessageSource messageSource;
 	@Resource
 	private FieldbookProperties fieldbookProperties;
-	@Resource
-	private ContextUtil contextUtil;
+
 	@Resource
 	private DesignImportService designImportService;
 
@@ -358,9 +358,7 @@ public class ExpDesignController extends BaseTrialController {
 		return null;
 	}
 
-	@Override
-	public void setContextUtil(final ContextUtil contextUtil) {
-		this.contextUtil = contextUtil;
+	void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
+		this.fieldbookProperties = fieldbookProperties;
 	}
-
 }

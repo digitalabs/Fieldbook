@@ -13,9 +13,7 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -45,12 +43,6 @@ public class SettingsUtilTest {
 	private UserSelection userSelection;
 
 	private static final String PROGRAM_UUID = "123456789";
-
-	private static final Term property = new Term(2002, "User", "Database user");
-	private static final Term scale = new Term(6000, "DBCV", "Controlled vocabulary from a database");
-	private static final Term method = new Term(4030, "Assigned", "Term, name or id assigned");
-	private static final Term dataType = new Term(DataType.NUMERIC_VARIABLE.getId(), DataType.NUMERIC_VARIABLE.getName(),
-			"Numeric Variable Description");
 
 	@Before
 	public void setUp() {

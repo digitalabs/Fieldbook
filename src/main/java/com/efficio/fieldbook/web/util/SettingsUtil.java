@@ -767,9 +767,6 @@ public class SettingsUtil {
 					}
 					variable.setCvTermId(stdVar);
 
-					final StandardVariable standardVariable =
-							SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
-
 					final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
 
 					final SettingDetail settingDetail = new SettingDetail(variable, possibleValues, null, true);

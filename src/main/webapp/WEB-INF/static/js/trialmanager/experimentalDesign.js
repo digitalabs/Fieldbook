@@ -282,7 +282,7 @@
 
 				$scope.toggleDesignView = function() {
 					return !$scope.applicationData.unappliedChangesAvailable &&
-								(($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType === 3) ||
+								(($scope.applicationData.isGeneratedOwnDesign || $scope.designTypes[$scope.data.designType].name === 'Custom Import Design') ||
 										$scope.applicationData.hasGeneratedDesignPreset);
 				};
 
@@ -291,12 +291,12 @@
 				};
 
 				$scope.isImportedDesign = function() {
-					return $scope.data.designType != null && $scope.designTypes[$scope.data.designType].name === 'Other Design';
+					return $scope.data.designType != null && $scope.designTypes[$scope.data.designType].name === 'Custom Import Design';
 				};
 
 				$scope.isBVDesign = function() {
 					var selectedDesignType = $scope.designTypes[$scope.data.designType];
-					return $scope.data.designType != null && !selectedDesignType.isPreset && selectedDesignType.name != 'Other Design';
+					return $scope.data.designType != null && !selectedDesignType.isPreset && selectedDesignType.name !== 'Custom Import Design';
 				};
 
 				$scope.doValidate = function() {

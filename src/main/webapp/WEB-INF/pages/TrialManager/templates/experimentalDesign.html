@@ -1,96 +1,81 @@
 <form name="expDesignForm" novalidate="" ng-submit="generateDesign()"
 	ng-cloak="">
 
-	<div id="experimental-design-choose-design" ng-hide="toggleDesignView()">
+	<div id="experimental-design-choose-design">
 		<section-container icon="bms-exp-design" heading="Experimental Design">
-			<section-container name="content" heading="CHOOSE A DESIGN TYPE">
+			<section-container name="content" heading="{{ toggleDesignView() ? 'DETAILS OF IMPORTED EXPERIMENTAL DESIGN' : 'CHOOSE A DESIGN TYPE'}}">
 				<div class="row" name="content">
-					<div class="col-md-12">
-						<label class="control-label"
-							style="vertical-align: top; position: relative; top: 6px;"><strong
-							th:text="#{trial.experimental.design.select}">Select the
+					<div ng-hide="toggleDesignView()">
+						<div class="col-md-12">
+							<label class="control-label"
+								   style="vertical-align: top; position: relative; top: 6px;"><strong
+									th:text="#{trial.experimental.design.select}">Select the
 								design type you would like to use for this trial:</strong></label>
-			
-						<div style="display: inline-block">
-							<div style="width: 350px !important;">
-								<div class="col-xs-10">
-									<select ui-select2="{minimumResultsForSearch : -1}"
-										ng-model="currentDesignTypeId"
-										ng-change="onSwitchDesignTypes(currentDesignTypeId)"
-										ng-disabled="measurementDetails.hasMeasurement">
-										<option value="">Please Choose</option>
-										<option value="{{item.id}}"
-											ng-repeat="item in designTypeView" ng-disabled="item.isDisabled">
-											{{item.name}}</option>
-									</select>
-								</div>
-								<div class="col-xs-2 add-top-padding-small">
+
+							<div style="display: inline-block">
+								<div style="width: 350px !important;">
+									<div class="col-xs-10">
+										<select ui-select2="{minimumResultsForSearch : -1}"
+												ng-model="currentDesignTypeId"
+												ng-change="onSwitchDesignTypes(currentDesignTypeId)"
+												ng-disabled="measurementDetails.hasMeasurement">
+											<option value="">Please Choose</option>
+											<option value="{{item.id}}"
+													ng-repeat="item in designTypeView" ng-disabled="item.isDisabled">
+												{{item.name}}</option>
+										</select>
+									</div>
+									<div class="col-xs-2 add-top-padding-small">
 									<span class="bms-fa-question-circle help-tooltip-nursery"
-										tooltip-placement="right" tooltip-append-to-body="true"
-										th:attr="tooltip=#{trial.experimental.design.incomplete.block.design.tooltip}"></span>
+										  tooltip-placement="right" tooltip-append-to-body="true"
+										  th:attr="tooltip=#{trial.experimental.design.incomplete.block.design.tooltip}"></span>
+									</div>
 								</div>
 							</div>
 						</div>
+						<div class="col-md-12 add-bottom-padding">
+							<label class="control-label">Or <a class="import-design"
+															   onclick="ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());">import</a>
+								an experimental design.
+							</label>
+						</div>
 					</div>
-					<div class="col-md-12 add-bottom-padding">
-						<label class="control-label">Or <a class="import-design"
-							onclick="ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());">import</a>
-							an experimental design.
-						</label>
+					<div ng-show="toggleDesignView()">
+						<div class="col-md-8">
+							<div class="add-bottom-padding"
+								 ng-show="data.noOfEnvironments &gt;= 0">
+								<b th:text="#{review.trial.design.source}"></b>
+								<span>{{currentDesignType.templateName}}</span>
+								<span class="pull-right">
+									<a ng-hide="!isPreset() || data.hasMeasurementData" href="" ng-click="resetExperimentalDesign()"
+									   class="btn btn-info chs-add-variable" >Change</a>
+									<a ng-hide="!isImportedDesign() || data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
+									   class="btn btn-info chs-add-variable" th:text="#{design.import.change}">Change</a>
+								</span>
+							</div>
+						</div>
+						<div class="col-md-8">
+							<div class="add-bottom-padding"
+								 ng-show="data.noOfEnvironments &gt;= 0">
+								<b th:text="#{review.trial.design.type}"></b>
+								<span>{{currentDesignType.name}}</span>
+							</div>
+						</div>
 					</div>
 
-	                <div ng-hide="toggleDesignView()" style="margin-bottom: 25px; margin-top: 25px; margin-left:12px;">
-	                    <section-container heading="SPECIFY PLOT NUMBERING">
-	                        <div name="content">
-	                            <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
-	                            <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" />
-	                            <input type="hidden" id="txtStartingEntryNo" ng-model="data.startingEntryNo" />
-	                        </div>
-	                    </section-container>
-	                </div>
+					<div class="col-md-12" >
+						<section-container heading="SPECIFY PLOT NUMBERING" ng-hide="isImportedDesign()" ng-disabled="toggleDesignView()">
+							<div name="content">
+								<label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
+								<input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" />
+								<input type="hidden" id="txtStartingEntryNo" ng-model="data.startingEntryNo" />
+							</div>
+						</section-container>
+					</div>
+
 				</div>
 			</section-container> 
 		</section-container>
-	</div>
-	
-	<!-- This section is displayed when the design type is Other Type or Alpha Lattice (Design Presets) -->
-	<div id="experimental-design-detail-summary" class="add-bottom-padding" ng-show="toggleDesignView()">
-		<section-container icon="bms-exp-design" heading="Experimental Design">
-			<section-container name="content" heading="{{designDetailSummary.heading}}">
-				<div class="row" name="content">
-            		<div class="col-md-8">
-            			<div class="add-bottom-padding"
-							ng-show="data.noOfEnvironments &gt;= 0">
-							<b>{{designDetailSummary.designTemplateLabel}}</b>
-							<span>{{currentDesignType.name}}</span>
-							&nbsp;&nbsp;&nbsp;
-                            <span class="pull-right">
-                                <a ng-hide="!isPreset() || data.hasMeasurementData" href="" ng-click="resetExperimentalDesign()"
-									class="btn btn-info chs-add-variable" >Change</a>
-                                <a ng-hide="!isImportedDesign() || data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
-                                   class="btn btn-info chs-add-variable" th:text="#{design.import.change}">Change</a>
-                            </span>
-
-						</div>
-					</div>
-					<div class="col-md-8">
-            			<div class="add-bottom-padding"
-							ng-show="data.noOfEnvironments &gt;= 0">
-							<b th:text="#{review.trial.design.type}"></b>
-							<span>{{designDetailSummary.designType}}</span>
-						</div>
-					</div>
-				</div>
-			</section-container>
-		</section-container>
-		<section-container heading="SPECIFY PLOT NUMBERING">
-           <div name="content">
-               <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
-               <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-disabled="true" ng-model="data.startingPlotNo" />
-               <input type="hidden" id="txtStartingEntryNo" ng-model="data.startingEntryNo" />
-           </div>
-		</section-container>
-            
 	</div>
 
 	<!-- summary view for experimental design -->

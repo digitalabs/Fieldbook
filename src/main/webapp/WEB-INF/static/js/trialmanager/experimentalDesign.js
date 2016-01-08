@@ -69,7 +69,7 @@
 							$scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
 						}
 						
-						$scope.applicationData.hasGeneratedDesignPreset = TrialManagerDataService.applicationData.hasGeneratedDesignPreset || ($scope.designTypes[$scope.data.designType].isPreset && $scope.studyID != null);
+						$scope.applicationData.hasGeneratedDesignPreset = TrialManagerDataService.applicationData.hasGeneratedDesignPreset || ($scope.designTypes[$scope.data.designType].isPreset && $scope.studyID != null && !TrialManagerDataService.applicationData.unappliedChangesAvailable);
 					}
 
 					$scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;

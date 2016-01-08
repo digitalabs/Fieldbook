@@ -310,6 +310,9 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			};
 			$scope.refreshEnvironmentsAndExperimentalDesign = function() {
 				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, timestamp: new Date()});
+
+				//enable the user to regenerate preset design when the user adds new environment
+				TrialManagerDataService.applicationData.hasGeneratedDesignPreset = false;
 			};
 
 			$scope.displayMeasurementOnlyActions = function() {

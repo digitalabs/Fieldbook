@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- *
+ * 
  * Generation Challenge Programme (GCP)
- *
- *
+ * 
+ * 
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
+ * 
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.util;
@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -99,7 +100,7 @@ public class SettingsUtil {
 
 	/**
 	 * Get standard variable.
-	 *
+	 * 
 	 * @param id the id
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param programUUID
@@ -113,7 +114,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert pojo to xml dataset.
-	 *
+	 * 
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param name the name
 	 * @param nurseryLevelConditions the nursery level conditions
@@ -345,7 +346,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert pojo to xml dataset.
-	 *
+	 * 
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param name the name
 	 * @param studyLevelConditions the nursery level conditions
@@ -428,7 +429,7 @@ public class SettingsUtil {
 
 	/**
 	 * Gets the field possible vales.
-	 *
+	 * 
 	 * @param fieldbookService the fieldbook service
 	 * @param standardVariableId the standard variable id
 	 * @return the field possible vales
@@ -446,7 +447,7 @@ public class SettingsUtil {
 
 	/**
 	 * Gets the field possible values favorite.
-	 *
+	 * 
 	 * @param fieldbookService the fieldbook service
 	 * @param standardVariableId the standard variable id
 	 * @param programUUID the project id
@@ -466,7 +467,7 @@ public class SettingsUtil {
 
 	/**
 	 * Checks if is setting variable deletable.
-	 *
+	 * 
 	 * @param standardVariableId the standard variable id
 	 * @param requiredFields the required fields
 	 * @return true, if is setting variable deletable
@@ -485,7 +486,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert xml dataset to pojo.
-	 *
+	 * 
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param fieldbookService the fieldbook service
 	 * @param dataset the dataset
@@ -576,7 +577,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert xml nursery dataset to pojo.
-	 *
+	 * 
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param fieldbookService the fieldbook service
 	 * @param dataset the dataset
@@ -768,8 +769,7 @@ public class SettingsUtil {
 					}
 					variable.setCvTermId(stdVar);
 
-					final StandardVariable standardVariable =
-							SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
+					SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 
 					final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
 
@@ -864,7 +864,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert xml trial dataset to pojo.
-	 *
+	 * 
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param fieldbookService the fieldbook service
 	 * @param dataset the dataset
@@ -1054,7 +1054,7 @@ public class SettingsUtil {
 
 	/**
 	 * In hide variable fields.
-	 *
+	 * 
 	 * @param stdVarId the std var id
 	 * @param variableList the variable list
 	 * @return true, if successful
@@ -1077,7 +1077,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert xml dataset to workbook.
-	 *
+	 * 
 	 * @param dataset the dataset
 	 * @return the workbook
 	 */
@@ -1120,7 +1120,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert workbook to xml dataset.
-	 *
+	 * 
 	 * @param workbook the workbook
 	 * @return the dataset
 	 */
@@ -1167,7 +1167,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert measurement variables to conditions.
-	 *
+	 * 
 	 * @param mlist the mlist
 	 * @return the list
 	 */
@@ -1208,7 +1208,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert measurement variables to factors.
-	 *
+	 * 
 	 * @param mlist the mlist
 	 * @return the list
 	 */
@@ -1252,7 +1252,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert measurement variables to variates.
-	 *
+	 * 
 	 * @param mlist the mlist
 	 * @return the list
 	 */
@@ -1276,7 +1276,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert conditions to measurement variables.
-	 *
+	 * 
 	 * @param conditions the conditions
 	 * @return the list
 	 */
@@ -1302,7 +1302,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert condition to measurement variable.
-	 *
+	 * 
 	 * @param condition the condition
 	 * @return the measurement variable
 	 */
@@ -1345,7 +1345,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert factors to measurement variables.
-	 *
+	 * 
 	 * @param factors the factors
 	 * @return the list
 	 */
@@ -1361,7 +1361,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert factor to measurement variable.
-	 *
+	 * 
 	 * @param factor the factor
 	 * @return the measurement variable
 	 */
@@ -1406,7 +1406,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert variates to measurement variables.
-	 *
+	 * 
 	 * @param variates the variates
 	 * @return the list
 	 */
@@ -1422,7 +1422,7 @@ public class SettingsUtil {
 
 	/**
 	 * Convert variate to measurement variable.
-	 *
+	 * 
 	 * @param variate the variate
 	 * @return the measurement variable
 	 */
@@ -2012,7 +2012,7 @@ public class SettingsUtil {
 
 	/**
 	 * Adds the deleted settings list.
-	 *
+	 * 
 	 * @param previousFormList the form list
 	 * @param deletedList the deleted list
 	 * @param previousSessionList the session list
@@ -2044,7 +2044,7 @@ public class SettingsUtil {
 
 	/**
 	 * Removes the basic details variables.
-	 *
+	 * 
 	 * @param nurseryLevelConditions the nursery level conditions
 	 */
 	public static void removeBasicDetailsVariables(final List<SettingDetail> nurseryLevelConditions) {
@@ -2058,7 +2058,7 @@ public class SettingsUtil {
 
 	/**
 	 * In fixed nursery list.
-	 *
+	 * 
 	 * @param propertyId the property id
 	 * @return true, if successful
 	 */
@@ -2274,15 +2274,15 @@ public class SettingsUtil {
 			} else if (var.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
 				if (var.getValue() != null) {
 					if (String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()).equals(var.getValue())) {
-						param.setDesignType(0);
+						param.setDesignType(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId());
 					} else if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).equals(var.getValue())
 							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())) {
-						param.setDesignType(1);
+						param.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
 					} else if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()).equals(var.getValue())
 							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
-						param.setDesignType(2);
+						param.setDesignType(DesignTypeItem.ROW_COL.getId());
 					} else if (String.valueOf(TermId.OTHER_DESIGN.getId()).equals(var.getValue())) {
-						param.setDesignType(3);
+						param.setDesignType(DesignTypeItem.CUSTOM_IMPORT.getId());
 					}
 					if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())
 							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
@@ -2317,7 +2317,7 @@ public class SettingsUtil {
 	}
 
 	private static void updateDesignTypeIfIncompleteBlockAndFileNameIsSet(final ExpDesignParameterUi param) {
-		if (new Integer(1).equals(param.getDesignType()) && param.getFileName() != null) {
+		if (DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId().equals(param.getDesignType()) && param.getFileName() != null) {
 			param.setDesignType(SettingsUtil.getPresetDesignTypeBasedOnFileName(param.getFileName()));
 		}
 	}
@@ -2327,7 +2327,7 @@ public class SettingsUtil {
 		// currently the UI follows this sequence for the presets: 4, 5, 6
 		// (this can be changed in the future so that constants are used)
 		Collections.sort(presetTemplates);
-		int presetDesignType = 4;
+		int presetDesignType = DesignTypeItem.CUSTOM_IMPORT.getId() + 1;
 		for (final File designTemplateFile : presetTemplates) {
 			final String templateFileName = designTemplateFile.getName();
 			if (templateFileName.equals(fileName)) {
@@ -2340,7 +2340,7 @@ public class SettingsUtil {
 
 	/**
 	 * Gets the setting detail value.
-	 *
+	 * 
 	 * @param details the details
 	 * @param termId the term id
 	 * @return the setting detail value

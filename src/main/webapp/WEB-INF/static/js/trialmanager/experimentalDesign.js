@@ -22,24 +22,24 @@
 
 				$scope.generateDesignView = function() {
 					// BV design
-					$.each($scope.designTypes, function(index, designType) {
-						if (!designType.isPreset && designType.name != 'Other Design') {
-							$scope.designTypeView.push(designType);
-						}
-					});
-
-					// separator
-					if ($scope.designTypes.length  > 4) {
-						$scope.designTypeView.push({id:	null, name: '----------------------------------------------', isDisabled: true });
-					}
-
-					// Preset
-					$.each($scope.designTypes, function(index, designType) {
-						if (designType.isPreset && designType.name != 'Other Design') {
-							$scope.designTypeView.push(designType);
-						}
-					});
-				};
+                    $.each($scope.designTypes, function(index, designType){
+                    	if(!designType.isPreset && designType.name != 'Custom Import Design'){
+                    		$scope.designTypeView.push(designType);
+                    	}
+                    });
+                   
+                    // separator
+                    if($scope.designTypes.length  > 4){
+                    	$scope.designTypeView.push({id:	null, name: '----------------------------------------------', isDisabled: true });
+                    }
+                    
+                    // Preset
+                    $.each($scope.designTypes, function(index, designType){
+                    	if(designType.isPreset && designType.name != 'Custom Import Design'){
+                    		$scope.designTypeView.push(designType);
+                    	}
+                    });
+				}
 
 				$scope.generateDesignView();
 
@@ -199,7 +199,8 @@
 
 					var entryNo = $('#tableForGermplasm tr:first-child td:last-child').html();
 					var data = angular.copy($scope.data);
-					data.startingEntryNo = entryNo;
+					TrialManagerDataService.currentData.experimentalDesign.startingEntryNo = entryNo;
+                    data.startingEntryNo = entryNo;
 
 					// transform ordered has of treatment factors if existing to just the map
 					if (data && data.treatmentFactors) {

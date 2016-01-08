@@ -46,15 +46,15 @@
 						</label>
 					</div>
 
-                <div ng-hide="toggleDesignView()" style="margin-bottom: 25px; margin-top: 25px; margin-left:12px;">
-                    <section-container heading="SPECIFY PLOT NUMBERING">
-                        <div name="content">
-                            <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
-                            <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" />
-                            <input type="hidden" id="txtStartingEntryNo" ng-model="data.startingEntryNo" />
-                        </div>
-                    </section-container>
-                </div>
+	                <div ng-hide="toggleDesignView()" style="margin-bottom: 25px; margin-top: 25px; margin-left:12px;">
+	                    <section-container heading="SPECIFY PLOT NUMBERING">
+	                        <div name="content">
+	                            <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
+	                            <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" />
+	                            <input type="hidden" id="txtStartingEntryNo" ng-model="data.startingEntryNo" />
+	                        </div>
+	                    </section-container>
+	                </div>
 				</div>
 			</section-container> 
 		</section-container>

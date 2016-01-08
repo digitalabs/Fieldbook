@@ -2316,7 +2316,7 @@ public class SettingsUtil {
 	}
 
 	private static void updateDesignTypeIfIncompleteBlockAndFileNameIsSet(final ExpDesignParameterUi param) {
-		if (new Integer(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId()).equals(param.getDesignType()) && param.getFileName() != null) {
+		if (DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId().equals(param.getDesignType()) && param.getFileName() != null) {
 			param.setDesignType(SettingsUtil.getPresetDesignTypeBasedOnFileName(param.getFileName()));
 		}
 	}

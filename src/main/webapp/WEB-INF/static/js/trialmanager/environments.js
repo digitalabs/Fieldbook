@@ -46,8 +46,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				columns: ':gt(0):not(.ng-hide)'
 			}];
 
-			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp').withButtons($scope.isLocation ?
-			$scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice());
+			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp')
+				.withButtons($scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice())
+				.withOption('scrollX', true)
+				.withOption('scrollCollapse', true)
+				.withFixedColumns({
+					leftColumns: 2
+				});
 
 			$scope.dtOptions.drawCallback =  function() {
 				var api = $(this).DataTable();
@@ -222,11 +227,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				}
 				// we need to assign the TrialInstanceNumber and set it equal to index when new environments were added to the list
 				for (var i = 0; i <  $scope.data.environments.length; i++) {
-                	var environment = $scope.data.environments[i];
-                	if (!environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]) {
-                		environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = i + 1;
-                	}
-                }
+					var environment = $scope.data.environments[i];
+					if (!environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]) {
+						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = i + 1;
+					}
+				}
 				TrialManagerDataService.indicateUnappliedChangesAvailable();
 			};
 

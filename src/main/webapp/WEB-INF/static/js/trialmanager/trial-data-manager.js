@@ -234,7 +234,9 @@
 					unsavedTraitsAvailable: false,
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
-					germplasmListSelected: GERMPLASM_LIST_SIZE > 0
+                    hasGeneratedDesignPreset: false,
+					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
+					designTypes: []
 				},
 
 				specialSettings: {
@@ -275,7 +277,75 @@
 				generateExpDesign: function(data) {
 					return GenerateExpDesignService.save(data).$promise;
 				},
+                
+                updateAfterGeneratingDesignSuccessfully : function(){
+					service.clearUnappliedChangesFlag();
+					service.applicationData.unsavedGeneratedDesign = true;
+					$('#chooseGermplasmAndChecks').data('replace', '1');
+					$('body').data('expDesignShowPreview', '1');
+				},
+			
+				retrieveDesignType: function(){
+					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function (designTypes) {
+	                   service.applicationData.designTypes = designTypes; 
+	                });
+				},
+                
+                generatePresetExpDesign: function(designType) {
+                	var deferred = $q.defer();
+                	
+					var environmentData = angular.copy(service.currentData.environments);
 
+					_.each(environmentData.environments, function(data, key) {
+						_.each(data.managementDetailValues, function(value, key) {
+							if (value && value.id) {
+								data.managementDetailValues[key] = value.id;
+							}
+						});
+					});
+					
+					var data = {
+						environmentData : environmentData,
+						selectedDesignType : angular.copy(service.applicationData.designTypes[designType])
+					};
+
+					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data)).then(function(resp){
+						if (!resp.data.isSuccess) {
+							deferred.reject(resp.data);
+							return;
+						}
+						service.updateCurrentData('environments', environmentData);
+						
+						deferred.resolve(true);
+					});
+					
+					return deferred.promise;
+                },
+
+                    
+                    if (service.currentData.experimentalDesign.designType >= 4){
+                    	service.generatePresetExpDesign(service.currentData.experimentalDesign.designType).then(function(){
+                    		service.updateAfterGeneratingDesignSuccessfully();
+                    		service.applicationData.hasGeneratedDesignPreset = true;
+                    	});
+                    }else{
+                    	
+                    	  service.generateExpDesign(data).then(
+                                  function (response) {
+                                      if (response.valid === true) {
+                                          service.clearUnappliedChangesFlag();
+                                          service.applicationData.unsavedGeneratedDesign = true;
+                                          $('#chooseGermplasmAndChecks').data('replace', '1');
+                                          $('body').data('expDesignShowPreview', '1');
+                                      } else {
+                                          showErrorMessage('', response.message);
+                                      }
+                                  }
+                              );
+                    	
+                    }
+                    
+                  
 				isOpenTrial: function() {
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
@@ -784,6 +854,8 @@
 				}
 			};
 
+			service.retrieveDesignType();
+			
 			// store the initial values on some service properties so that we can revert to it later
 			$localStorage.serviceBackup = {
 				settings: angular.copy(service.settings),

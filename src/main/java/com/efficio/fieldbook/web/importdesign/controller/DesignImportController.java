@@ -484,6 +484,16 @@ public class DesignImportController extends SettingsController {
 
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/getCustomImportDesignTypeDetails", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public Map<String,Object> getCustomImportDesignTypeDetails() {
+		Map<String,Object> output = new HashMap<>();
+		output.put("name",DesignTypeItem.CUSTOM_IMPORT.getName());
+		output.put("templateName",DesignTypeItem.CUSTOM_IMPORT.getTemplateName());
+
+		return output;
+	}
+
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
 			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem, final Integer startingEntryNo,
 			final Integer startingPlotNo) throws DesignValidationException {

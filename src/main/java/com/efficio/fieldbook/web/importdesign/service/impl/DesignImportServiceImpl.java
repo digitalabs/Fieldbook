@@ -45,6 +45,10 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 
 public class DesignImportServiceImpl implements DesignImportService {
 
+	private static final int DEFAULT_STARTING_PLOT_NO = 1;
+
+	private static final int DEFAULT_STARTING_ENTRY_NO = 1;
+
 	@Resource
 	private UserSelection userSelection;
 
@@ -159,8 +163,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 			final int trialInstanceNo, final Integer startingEntryNo, final Integer startingPlotNo) {
 		// row counter starts at index = 1 because zero index is the header
 		int rowCounter = 1;
-		int entryNoCounter = (startingEntryNo != null) ? startingEntryNo : 0;
-		int plotNoCounter = (startingPlotNo != null) ? startingPlotNo : 0;
+		final int entryNoDelta = (startingEntryNo != null) ? startingEntryNo - DEFAULT_STARTING_ENTRY_NO : 0;
+		final int plotNoDelta = (startingPlotNo != null) ? startingPlotNo - DEFAULT_STARTING_PLOT_NO : 0;
 
 		while (rowCounter <= csvData.size() - 1) {
 			final MeasurementRow measurementRow = measurementRowGenerator.createMeasurementRow(csvData.get(rowCounter));
@@ -169,14 +173,14 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 			measurementDataMap.get(TermId.TRIAL_INSTANCE_FACTOR.getId()).setValue(String.valueOf(trialInstanceNo));
 
-			if (entryNoCounter != 0) {
-				measurementDataMap.get(TermId.ENTRY_NO.getId()).setValue(String.valueOf(entryNoCounter));
-				entryNoCounter++;
+			if (entryNoDelta != 0) {
+				final Integer prevEntryNo = Integer.valueOf(measurementDataMap.get(TermId.ENTRY_NO.getId()).getValue().toString());
+				measurementDataMap.get(TermId.ENTRY_NO.getId()).setValue(String.valueOf(prevEntryNo + entryNoDelta));
 			}
 
-			if (plotNoCounter != 0) {
-				measurementDataMap.get(TermId.PLOT_NO.getId()).setValue(String.valueOf(plotNoCounter));
-				plotNoCounter++;
+			if (plotNoDelta != 0) {
+				final Integer prevPlotNo = Integer.valueOf(measurementDataMap.get(TermId.PLOT_NO.getId()).getValue().toString());
+				measurementDataMap.get(TermId.PLOT_NO.getId()).setValue(String.valueOf(prevPlotNo + plotNoDelta));
 			}
 
 			if (measurementRow != null) {

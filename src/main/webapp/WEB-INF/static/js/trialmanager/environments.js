@@ -48,7 +48,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 
 			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp')
 				.withButtons($scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice())
-				.withOption('scrollX', '600px')
+				.withOption('scrollX', true)
 				.withOption('scrollCollapse', true)
 				.withFixedColumns({
 					leftColumns: 2

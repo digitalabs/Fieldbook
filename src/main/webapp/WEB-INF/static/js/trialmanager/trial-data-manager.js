@@ -322,30 +322,6 @@
 					return deferred.promise;
                 },
 
-                    
-                    if (service.currentData.experimentalDesign.designType >= 4){
-                    	service.generatePresetExpDesign(service.currentData.experimentalDesign.designType).then(function(){
-                    		service.updateAfterGeneratingDesignSuccessfully();
-                    		service.applicationData.hasGeneratedDesignPreset = true;
-                    	});
-                    }else{
-                    	
-                    	  service.generateExpDesign(data).then(
-                                  function (response) {
-                                      if (response.valid === true) {
-                                          service.clearUnappliedChangesFlag();
-                                          service.applicationData.unsavedGeneratedDesign = true;
-                                          $('#chooseGermplasmAndChecks').data('replace', '1');
-                                          $('body').data('expDesignShowPreview', '1');
-                                      } else {
-                                          showErrorMessage('', response.message);
-                                      }
-                                  }
-                              );
-                    	
-                    }
-                    
-                  
 				isOpenTrial: function() {
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;

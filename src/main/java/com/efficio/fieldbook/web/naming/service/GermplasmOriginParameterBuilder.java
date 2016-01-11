@@ -7,7 +7,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 
 public interface GermplasmOriginParameterBuilder {
 
-	GermplasmOriginGenerationParameters build(Workbook workbook, String plotNumber);
+	GermplasmOriginGenerationParameters build(Workbook workbook, String plotNumber, String plantOrEarNumber);
 	
 	GermplasmOriginGenerationParameters build(Workbook workbook, ImportedCrosses cross);
 }

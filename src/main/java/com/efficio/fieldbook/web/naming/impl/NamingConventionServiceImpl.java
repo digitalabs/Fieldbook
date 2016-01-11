@@ -26,8 +26,6 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.TimerWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -52,7 +50,6 @@ import com.efficio.fieldbook.web.util.AppConstants;
 @Transactional
 public class NamingConventionServiceImpl implements NamingConventionService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(NamingConventionServiceImpl.class);
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
@@ -164,10 +161,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook) {
+			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int plantOrEarNumber) {
 		// GCP-7652 use the entry number of the originial : index
-		// Current place where source is assigned.
-		final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber());
+		final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber(), String.valueOf(plantOrEarNumber));
 		String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
@@ -197,6 +193,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		germplasm.setNames(names);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final boolean isCheckForDuplicateName,
 			Workbook workbook) throws RuleException {
@@ -220,8 +217,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					row.getChangeDetail().setIndex(index - 1);
 				}
 
+				// One plot may result in multiple plants/ears selected depending on selection method.
+				int plantOrEarNumber = 1;
 				for (final String name : names) {
-					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook);
+					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, plantOrEarNumber);
+					plantOrEarNumber++;
 				}
 			}
 		}

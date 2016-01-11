@@ -159,9 +159,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int plantOrEarNumber) {
+			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber) {
 		// GCP-7652 use the entry number of the originial : index
-		final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber(), String.valueOf(plantOrEarNumber));
+		final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber(), String.valueOf(selectionNumber));
 		String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
@@ -216,10 +216,10 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 				}
 
 				// One plot may result in multiple plants/ears selected depending on selection method.
-				int plantOrEarNumber = 1;
+				int selectionNumber = 1;
 				for (final String name : names) {
-					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, plantOrEarNumber);
-					plantOrEarNumber++;
+					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber);
+					selectionNumber++;
 				}
 			}
 		}

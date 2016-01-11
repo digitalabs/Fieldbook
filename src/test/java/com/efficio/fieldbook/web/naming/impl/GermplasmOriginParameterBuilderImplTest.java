@@ -84,8 +84,8 @@ public class GermplasmOriginParameterBuilderImplTest {
 						Matchers.eq(TermId.SEASON_VAR.getId()), Matchers.eq(true), Matchers.eq(false))).thenReturn(seasonVariable);
 
 		final String plotNumber = "1";
-		final String plantOrEarNumber = "2"; 
-		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, plotNumber, plantOrEarNumber);
+		final String selectionNumber = "2"; 
+		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, plotNumber, selectionNumber);
 		Assert.assertNotNull(parameters);
 		Assert.assertEquals(testProject.getCropType().getCropName(), parameters.getCrop());
 		Assert.assertEquals(studyNameMV.getValue(), parameters.getStudyName());
@@ -93,7 +93,7 @@ public class GermplasmOriginParameterBuilderImplTest {
 		Assert.assertEquals(locationMV.getValue(), parameters.getLocation());
 		Assert.assertEquals(seasonCategory.getDefinition(), parameters.getSeason());
 		Assert.assertEquals(plotNumber, parameters.getPlotNumber());
-		Assert.assertEquals(plantOrEarNumber, parameters.getPlantOrEarNumber());
+		Assert.assertEquals(selectionNumber, parameters.getSelectionNumber());
 	}
 	
 	@Test

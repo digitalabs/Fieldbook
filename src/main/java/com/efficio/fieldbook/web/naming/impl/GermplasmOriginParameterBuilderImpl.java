@@ -33,7 +33,7 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 	private static final Logger LOG = LoggerFactory.getLogger(GermplasmOriginParameterBuilderImpl.class);
 
 	@Override
-	public GermplasmOriginGenerationParameters build(Workbook workbook, String plotNumber, String plantOrEarNumber) {
+	public GermplasmOriginGenerationParameters build(Workbook workbook, String plotNumber, String selectionNumber) {
 		final GermplasmOriginGenerationParameters originGenerationParameters = new GermplasmOriginGenerationParameters();
 		originGenerationParameters.setCrop(this.contextUtil.getProjectInContext().getCropType().getCropName());
 		originGenerationParameters.setStudyName(workbook.getStudyName());
@@ -74,7 +74,7 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 			originGenerationParameters.setSeason(currentYearAndMonth);
 		}
 		originGenerationParameters.setPlotNumber(plotNumber);
-		originGenerationParameters.setPlantOrEarNumber(plantOrEarNumber);
+		originGenerationParameters.setSelectionNumber(selectionNumber);
 		return originGenerationParameters;
 	}
 

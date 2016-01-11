@@ -26,7 +26,6 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.TimerWatch;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +34,6 @@ import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
 import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
 import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
@@ -244,23 +242,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		context.setMessageSource(this.messageSource);
 
 		return context;
-	}
-
-	// 1. RootNameGeneratorRule
-	// FIXME : breedingMethodNameType NOT USED : hard coded 1 in the 'Expression'
-	protected String getGermplasmRootName(final Integer breedingMethodSnameType, final AdvancingSource row) {
-
-		final RootNameExpression expression = new RootNameExpression();
-		final List<StringBuilder> builders = new ArrayList<StringBuilder>();
-		builders.add(new StringBuilder());
-		expression.apply(builders, row);
-		final String name = builders.get(0).toString();
-		if (name.length() == 0) {
-			throw new MiddlewareQueryException(this.messageSource.getMessage("error.advancing.nursery.no.root.name.found",
-					new Object[] {row.getGermplasm().getEntryId()}, LocaleContextHolder.getLocale()));
-		}
-		return name;
-
 	}
 
 	void setMessageSource(final ResourceBundleMessageSource messageSource) {

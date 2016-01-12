@@ -60,6 +60,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				//temporary fix in buttons disappear bug,
 				//see https://github.com/l-lin/angular-datatables/issues/502#issuecomment-161166246
 				if (api) {
+					// remove old set of buttons before recreating them
+					if (api.buttons()) {
+						api.buttons().remove();
+					}
 					new $.fn.dataTable.Buttons(api, {
 						buttons: $scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice()
 					});

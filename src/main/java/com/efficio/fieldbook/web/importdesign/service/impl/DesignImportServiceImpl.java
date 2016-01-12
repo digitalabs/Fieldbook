@@ -158,9 +158,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 	 * @param startingPlotNo
 	 * @param startingEntryNo
 	 */
-	protected void createPresetMeasurementRowsPerInstance(final Map<Integer, List<String>> csvData,
-			final List<MeasurementRow> measurements, final DesignImportMeasurementRowGenerator measurementRowGenerator,
-			final int trialInstanceNo, final Integer startingEntryNo, final Integer startingPlotNo) {
+	void createPresetMeasurementRowsPerInstance(final Map<Integer, List<String>> csvData, final List<MeasurementRow> measurements,
+			final DesignImportMeasurementRowGenerator measurementRowGenerator, final int trialInstanceNo, final Integer startingEntryNo,
+			final Integer startingPlotNo) {
 		// row counter starts at index = 1 because zero index is the header
 		int rowCounter = 1;
 
@@ -194,7 +194,14 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 	}
 
-	private Map<String, Integer> getStartingEntryAndPlotNoFromCSV(final Map<Integer, List<String>> csvData,
+	/**
+	 * Returns a map that contains the starting plot no and starting entry no from CSV rows
+	 * 
+	 * @param csvData
+	 * @param map
+	 * @return
+	 */
+	Map<String, Integer> getStartingEntryAndPlotNoFromCSV(final Map<Integer, List<String>> csvData,
 			final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map) {
 		final Map<String, Integer> startingNoFromCSV = new HashMap<String, Integer>();
 
@@ -229,7 +236,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return startingNoFromCSV;
 	}
 
-	private Map<Integer, MeasurementData> getMeasurementDataMap(final List<MeasurementData> dataList) {
+	Map<Integer, MeasurementData> getMeasurementDataMap(final List<MeasurementData> dataList) {
 		final Map<Integer, MeasurementData> measurementDataMap = new HashMap<Integer, MeasurementData>();
 		for (final MeasurementData measurementData : dataList) {
 			measurementDataMap.put(measurementData.getMeasurementVariable().getTermId(), measurementData);

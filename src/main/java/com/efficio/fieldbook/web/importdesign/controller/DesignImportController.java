@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.generationcp.commons.breedingview.xml.DesignType;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -152,7 +153,7 @@ public class DesignImportController extends SettingsController {
 			this.initializeTemporaryWorkbook(studyType);
 
 			final DesignImportData designImportData = this.parser.parseFile(form.getFile());
-
+			designImportData.setImportFileName(form.getFile().getOriginalFilename());
 			this.performAutomap(designImportData);
 
 			this.userSelection.setDesignImportData(designImportData);
@@ -488,8 +489,20 @@ public class DesignImportController extends SettingsController {
 	@RequestMapping(value = "/getCustomImportDesignTypeDetails", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public Map<String,Object> getCustomImportDesignTypeDetails() {
 		Map<String,Object> output = new HashMap<>();
-		output.put("name",DesignTypeItem.CUSTOM_IMPORT.getName());
-		output.put("templateName",DesignTypeItem.CUSTOM_IMPORT.getTemplateName());
+
+		// defaults
+		output.put("name", DesignTypeItem.CUSTOM_IMPORT.getName());
+		String filename = (userSelection.getDesignImportData() != null) ? userSelection.getDesignImportData().getImportFileName() : DesignTypeItem.CUSTOM_IMPORT.getName();
+
+		// unsaved but has import design
+		final Workbook workbook = userSelection.getWorkbook();
+		if (workbook != null && workbook.getExperimentalDesignVariables() != null) {
+			// existing design (if saved)
+			MeasurementVariable expDesignSource = workbook.getExperimentalDesignVariables().getExperimentalDesignSource();
+			output.put("templateName", expDesignSource.getValue() != null && !expDesignSource.getValue().isEmpty() ? expDesignSource.getValue() : filename);
+		} else if (filename != null) {
+			output.put("templateName", filename);
+		}
 
 		return output;
 	}
@@ -725,6 +738,11 @@ public class DesignImportController extends SettingsController {
 
 		if (designTypeItem != null && designTypeItem.getTemplateName() != null) {
 			designParam.setFileName(designTypeItem.getTemplateName());
+
+			if (designTypeItem.getName().equals(DesignTypeItem.CUSTOM_IMPORT.getName())) {
+				designParam.setFileName(userSelection.getDesignImportData().getImportFileName());
+			}
+
 			expDesignTermIds.add(TermId.EXPT_DESIGN_SOURCE.getId());
 		}
 

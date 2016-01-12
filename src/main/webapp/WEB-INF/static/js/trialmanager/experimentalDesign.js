@@ -22,23 +22,23 @@
 
 				$scope.generateDesignView = function() {
 					// BV design
-                    $.each($scope.designTypes, function(index, designType){
-                    	if(!designType.isPreset && designType.name != 'Custom Import Design'){
-                    		$scope.designTypeView.push(designType);
-                    	}
-                    });
-                   
-                    // separator
-                    if($scope.designTypes.length  > 4){
-                    	$scope.designTypeView.push({id:	null, name: '----------------------------------------------', isDisabled: true });
-                    }
-                    
-                    // Preset
-                    $.each($scope.designTypes, function(index, designType){
-                    	if(designType.isPreset && designType.name != 'Custom Import Design'){
-                    		$scope.designTypeView.push(designType);
-                    	}
-                    });
+					$.each($scope.designTypes, function(index, designType) {
+						if (!designType.isPreset && designType.name != 'Custom Import Design') {
+							$scope.designTypeView.push(designType);
+						}
+					});
+
+					// separator
+					if ($scope.designTypes.length  > 4) {
+						$scope.designTypeView.push({id:	null, name: '----------------------------------------------', isDisabled: true });
+					}
+
+					// Preset
+					$.each($scope.designTypes, function(index, designType) {
+						if (designType.isPreset && designType.name != 'Custom Import Design') {
+							$scope.designTypeView.push(designType);
+						}
+					});
 				}
 
 				$scope.generateDesignView();
@@ -200,7 +200,7 @@
 					var entryNo = $('#tableForGermplasm tr:first-child td:last-child').html();
 					var data = angular.copy($scope.data);
 					TrialManagerDataService.currentData.experimentalDesign.startingEntryNo = entryNo;
-                    data.startingEntryNo = entryNo;
+					data.startingEntryNo = entryNo;
 
 					// transform ordered has of treatment factors if existing to just the map
 					if (data && data.treatmentFactors) {
@@ -229,10 +229,21 @@
 
 				// Register designImportGenerated handler that will activate when an importDesign is generated
 				$scope.$on('designImportGenerated', function() {
-					$http.get('/Fieldbook/DesignImport/getMappingSummary').success(function(data) {
-						$scope.applicationData.importDesignMappedData = data;
+					var summaryPromise = $http.get('/Fieldbook/DesignImport/getMappingSummary');
+					var designTypeDetailsPromise = $http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails');
+
+					$q.all([summaryPromise, designTypeDetailsPromise]).then(function(results) {
+						$scope.applicationData.importDesignMappedData = results[0].data;
+						$scope.currentDesignType.templateName = results[1].data.templateName;
 					});
 				});
+
+				if ($scope.currentDesignType !== null) {
+					$http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails').then(function(result) {
+						$scope.currentDesignType.templateName = result.templateName;
+					})
+				}
+
 
 				$scope.showConfirmResetDesign = function() {
 
@@ -281,6 +292,10 @@
 				};
 
 				$scope.toggleDesignView = function() {
+					if ($scope.data.designType === null) {
+						return false;
+					}
+
 					return !$scope.applicationData.unappliedChangesAvailable &&
 								(($scope.applicationData.isGeneratedOwnDesign || $scope.designTypes[$scope.data.designType].name === 'Custom Import Design') ||
 										$scope.applicationData.hasGeneratedDesignPreset);

@@ -25,6 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,8 +47,9 @@ public class StudyTreeController {
 	public static final String URL = "/StudyTreeManager";
 	public static final String LOCAL = "LOCAL";
 	private static final String HAS_OBSERVATIONS = "hasObservations";
-	private static final String IS_SUCCESS = "isSuccess";
-	private static final String MESSAGE = "message";
+	public static final String IS_SUCCESS = "isSuccess";
+	public static final String MESSAGE = "message";
+	public static final String NEW_FOLDER_ID = "newFolderId";
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -60,6 +65,9 @@ public class StudyTreeController {
 
 	@Autowired
 	private HttpServletRequest request;
+
+	@Autowired
+	private PlatformTransactionManager transactionManager;
 
 	@ResponseBody
 	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
@@ -218,31 +226,50 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/addStudyFolder", method = RequestMethod.POST)
-	public Map<String, Object> addStudyFolder(HttpServletRequest req) {
-		String parentKey = req.getParameter("parentFolderId");
-		String folderName = req.getParameter("folderName");
-		Map<String, Object> resultsMap = new HashMap<String, Object>();
-		Locale locale = LocaleContextHolder.getLocale();
+	public Map<String, Object> addStudyFolder(final HttpServletRequest req) {
+
+		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+
 		try {
-			if (folderName.equalsIgnoreCase(AppConstants.NURSERIES.getString())
-					|| folderName.equalsIgnoreCase(AppConstants.TRIALS.getString())) {
-				throw new MiddlewareQueryException(this.messageSource.getMessage("folder.name.not.unique", null, locale));
-			}
-			Integer parentFolderId = Integer.parseInt(parentKey);
-			if (this.studyDataManager.isStudy(parentFolderId)) {
-				DmsProject project = this.studyDataManager.getParentFolder(parentFolderId);
-				if (project == null) {
-					throw new MiddlewareQueryException("Parent folder cannot be null");
+
+			final TransactionTemplate transactionTemplate = new TransactionTemplate(this.transactionManager);
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus status) {
+
+					final String parentKey = req.getParameter("parentFolderId");
+					final String folderName = req.getParameter("folderName");
+					final Locale locale = LocaleContextHolder.getLocale();
+
+					if (folderName.equalsIgnoreCase(AppConstants.NURSERIES.getString())
+							|| folderName.equalsIgnoreCase(AppConstants.TRIALS.getString())) {
+						throw new MiddlewareQueryException(StudyTreeController.this.messageSource.getMessage("folder.name.not.unique",
+								null, locale));
+					}
+					Integer parentFolderId = Integer.parseInt(parentKey);
+					if (StudyTreeController.this.studyDataManager.isStudy(parentFolderId)) {
+						DmsProject project = StudyTreeController.this.studyDataManager.getParentFolder(parentFolderId);
+						if (project == null) {
+							throw new MiddlewareQueryException("Parent folder cannot be null");
+						}
+						parentFolderId = project.getProjectId();
+					}
+					int newFolderId =
+							StudyTreeController.this.studyDataManager.addSubFolder(parentFolderId, folderName, folderName,
+									StudyTreeController.this.getCurrentProgramUUID());
+					resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
+					resultsMap.put(StudyTreeController.NEW_FOLDER_ID, Integer.toString(newFolderId));
+
 				}
-				parentFolderId = project.getProjectId();
-			}
-			int newFolderId = this.studyDataManager.addSubFolder(parentFolderId, folderName, folderName, this.getCurrentProgramUUID());
-			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
-			resultsMap.put("newFolderId", Integer.toString(newFolderId));
+			});
+
 		} catch (Exception e) {
+
 			StudyTreeController.LOG.error(e.getMessage(), e);
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
 			resultsMap.put(StudyTreeController.MESSAGE, e.getMessage());
+
 		}
 		return resultsMap;
 

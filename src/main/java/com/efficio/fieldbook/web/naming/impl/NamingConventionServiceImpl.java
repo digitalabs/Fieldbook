@@ -161,8 +161,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
 			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber) {
 		// GCP-7652 use the entry number of the originial : index
-		final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber(), String.valueOf(selectionNumber));
-		String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
+		String selNum = source.isBulk() ? String.valueOf(source.getPlantsSelected()) : String.valueOf(selectionNumber); 
+		final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber(), String.valueOf(selNum));
+		final String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
 						, source.getGermplasm().getCross(), seedSourceOriginString,

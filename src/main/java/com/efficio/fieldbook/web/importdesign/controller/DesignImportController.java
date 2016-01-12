@@ -499,7 +499,7 @@ public class DesignImportController extends SettingsController {
 		if (workbook != null && workbook.getExperimentalDesignVariables() != null) {
 			// existing design (if saved)
 			MeasurementVariable expDesignSource = workbook.getExperimentalDesignVariables().getExperimentalDesignSource();
-			output.put("templateName", expDesignSource.getValue() != null && !expDesignSource.getValue().isEmpty() ? expDesignSource.getValue() : filename);
+			output.put("templateName", expDesignSource != null && expDesignSource.getValue() != null && !expDesignSource.getValue().isEmpty() ? expDesignSource.getValue() : filename);
 		} else if (filename != null) {
 			output.put("templateName", filename);
 		}

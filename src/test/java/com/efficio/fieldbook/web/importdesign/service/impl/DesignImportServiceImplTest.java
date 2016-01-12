@@ -418,6 +418,23 @@ public class DesignImportServiceImplTest {
 		}
 	}
 
+	@Test
+	public void testGetStartingEntryAndPlotNoFromCSV() {
+
+		final Map<Integer, List<String>> csvData = this.designImportData.getCsvData();
+		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map =
+				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
+
+		final int expectedStartingEntryNo = 1;
+		final int expectedStartingPlotNo = 1;
+
+		final Map<String, Integer> startingNoMap = this.service.getStartingEntryAndPlotNoFromCSV(csvData, map);
+		Assert.assertEquals("Expecting that the starting entry no is equal to " + expectedStartingEntryNo + " but returned "
+				+ startingNoMap.get("startingEntryNo").intValue(), expectedStartingEntryNo, startingNoMap.get("startingEntryNo").intValue());
+		Assert.assertEquals("Expecting that the starting plot no is equal to " + expectedStartingPlotNo + " but returned "
+				+ startingNoMap.get("startingPlotNo").intValue(), expectedStartingPlotNo, startingNoMap.get("startingPlotNo").intValue());
+	}
+
 	private DesignImportMeasurementRowGenerator generateMeasurementRowGenerator() {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(6, 3);
 		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId =

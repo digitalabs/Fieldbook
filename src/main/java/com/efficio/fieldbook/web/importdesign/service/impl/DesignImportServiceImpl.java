@@ -194,7 +194,14 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 	}
 
-	private Map<String, Integer> getStartingEntryAndPlotNoFromCSV(final Map<Integer, List<String>> csvData,
+	/**
+	 * Returns a map that contains the starting plot no and starting entry no from CSV rows
+	 * 
+	 * @param csvData
+	 * @param map
+	 * @return
+	 */
+	Map<String, Integer> getStartingEntryAndPlotNoFromCSV(final Map<Integer, List<String>> csvData,
 			final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map) {
 		final Map<String, Integer> startingNoFromCSV = new HashMap<String, Integer>();
 

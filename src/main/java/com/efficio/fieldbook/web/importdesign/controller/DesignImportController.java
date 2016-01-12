@@ -492,7 +492,7 @@ public class DesignImportController extends SettingsController {
 
 		// defaults
 		output.put("name", DesignTypeItem.CUSTOM_IMPORT.getName());
-		String filename = (userSelection.getDesignImportData() != null) ? userSelection.getDesignImportData().getImportFileName() : DesignTypeItem.CUSTOM_IMPORT.getName();
+		String filename = (userSelection.getDesignImportData() != null) ? userSelection.getDesignImportData().getImportFileName() : DesignTypeItem.CUSTOM_IMPORT.getTemplateName();
 
 		// unsaved but has import design
 		final Workbook workbook = userSelection.getWorkbook();

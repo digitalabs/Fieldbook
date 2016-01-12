@@ -174,7 +174,7 @@ public class DesignImportController extends SettingsController {
 
 	/**
 	 * This makes the design revert to default design where for every measurement rows, the entry for PLOT_NO must be equal to ENTRY_NO
-	 *
+	 * 
 	 * @param studyId
 	 * @param studyType
 	 * @return
@@ -263,7 +263,8 @@ public class DesignImportController extends SettingsController {
 		List<MeasurementRow> measurementRows = new ArrayList<>();
 
 		try {
-			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false, false);
+			measurementRows =
+					this.designImportService.generateDesign(workbook, designImportData, environmentData, false, false, null, null);
 		} catch (final DesignValidationException e) {
 			DesignImportController.LOG.error(e.getMessage(), e);
 		}
@@ -416,7 +417,7 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
-					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT);
+					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT, null, null);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -440,6 +441,8 @@ public class DesignImportController extends SettingsController {
 
 		final DesignTypeItem selectedDesignType = generateDesignInput.getSelectedDesignType();
 		final EnvironmentData environmentData = generateDesignInput.getEnvironmentData();
+		final Integer startingEntryNo = generateDesignInput.getStartingEntryNo();
+		final Integer startingPlotNo = generateDesignInput.getStartingPlotNo();
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
@@ -455,7 +458,7 @@ public class DesignImportController extends SettingsController {
 
 			this.performAutomap(designImportData);
 
-			this.generateDesign(environmentData, designImportData, StudyType.T, true, selectedDesignType);
+			this.generateDesign(environmentData, designImportData, StudyType.T, true, selectedDesignType, startingEntryNo, startingPlotNo);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -475,7 +478,8 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem) throws DesignValidationException {
+			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem, final Integer startingEntryNo,
+			final Integer startingPlotNo) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 
@@ -492,7 +496,9 @@ public class DesignImportController extends SettingsController {
 		Set<StandardVariable> expDesignVariables;
 		Set<MeasurementVariable> experimentalDesignMeasurementVariables;
 
-		measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false, isPreset);
+		measurementRows =
+				this.designImportService.generateDesign(workbook, designImportData, environmentData, false, isPreset, startingEntryNo,
+						startingPlotNo);
 
 		workbook.setObservations(measurementRows);
 
@@ -533,7 +539,7 @@ public class DesignImportController extends SettingsController {
 	/**
 	 * Resets the Check list and deletes all Check Variables previously saved in Nursery. The system will automatically reset and override
 	 * the Check List after importing a Custom Design.
-	 *
+	 * 
 	 * @param workbook
 	 * @param userSelection
 	 */
@@ -935,10 +941,10 @@ public class DesignImportController extends SettingsController {
 	}
 
 	/**
-	 *
+	 * 
 	 * If a variable(s) is expected to have a pair ID variable (e.g. LOCATION_NAME has LOCATION_NAME_ID pair), the pair ID should be created
 	 * and added to the trial variables in order for the system to properly save the Trial.
-	 *
+	 * 
 	 * @param environmentData
 	 * @param designImportData
 	 * @param trialVariables
@@ -1063,7 +1069,7 @@ public class DesignImportController extends SettingsController {
 	/**
 	 * If a variable(s) is expected to have a pair ID variable (e.g. LOCATION_NAME has LOCATION_NAME_ID pair), the pair ID should be created
 	 * and added to setting details list in order for the system to properly save the Trial.
-	 *
+	 * 
 	 * @param environmentData
 	 * @param designImportData
 	 * @param newDetails
@@ -1295,7 +1301,7 @@ public class DesignImportController extends SettingsController {
 
 	/**
 	 * Create check variables to be deleted.
-	 *
+	 * 
 	 * @param studyLevelConditions
 	 */
 	protected void addCheckVariablesToDeleted(final List<SettingDetail> studyLevelConditions) {

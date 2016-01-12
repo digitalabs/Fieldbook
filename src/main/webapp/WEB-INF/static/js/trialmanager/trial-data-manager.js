@@ -306,7 +306,9 @@
 					
 					var data = {
 						environmentData : environmentData,
-						selectedDesignType : angular.copy(service.applicationData.designTypes[designType])
+						selectedDesignType : angular.copy(service.applicationData.designTypes[designType]),
+						startingEntryNo : service.currentData.experimentalDesign.startingEntryNo,
+						startingPlotNo : service.currentData.experimentalDesign.startingPlotNo
 					};
 
 					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data)).then(function(resp){

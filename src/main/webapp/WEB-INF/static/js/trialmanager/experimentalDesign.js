@@ -24,7 +24,7 @@
 				$scope.generateDesignView = function(){
 					// BV design
                     $.each($scope.designTypes, function(index, designType){
-                    	if(!designType.isPreset && designType.name != 'Other Design'){
+                    	if(!designType.isPreset && designType.name != 'Custom Import Design'){
                     		$scope.designTypeView.push(designType);
                     	}
                     });
@@ -36,7 +36,7 @@
                     
                     // Preset
                     $.each($scope.designTypes, function(index, designType){
-                    	if(designType.isPreset && designType.name != 'Other Design'){
+                    	if(designType.isPreset && designType.name != 'Custom Import Design'){
                     		$scope.designTypeView.push(designType);
                     	}
                     });
@@ -69,7 +69,7 @@
 							$scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
 						}
 						
-						$scope.applicationData.hasGeneratedDesignPreset = $scope.designTypes[$scope.data.designType].isPreset && $scope.studyID != null;
+						$scope.applicationData.hasGeneratedDesignPreset = TrialManagerDataService.applicationData.hasGeneratedDesignPreset || ($scope.designTypes[$scope.data.designType].isPreset && $scope.studyID != null);
 					}
 
 					$scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
@@ -170,6 +170,7 @@
 
                     var entryNo = $('#tableForGermplasm tr:first-child td:last-child').html();
 					var data = angular.copy($scope.data);
+					TrialManagerDataService.currentData.experimentalDesign.startingEntryNo = entryNo;
                     data.startingEntryNo = entryNo;
 
 					// transform ordered has of treatment factors if existing to just the map

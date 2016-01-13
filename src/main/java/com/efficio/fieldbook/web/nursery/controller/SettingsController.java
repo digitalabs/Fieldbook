@@ -980,4 +980,27 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		model.addAttribute("plotLevelDetailType", VariableType.GERMPLASM_DESCRIPTOR.getId().intValue());
 		model.addAttribute("nurseryConditionsType", VariableType.NURSERY_CONDITION.getId().intValue());
 	}
+
+	/**
+	 * Filter variables with variable type 'Analysis' in the workbook
+	 */
+	protected void filterAnalysisVariable(Workbook workbook) {
+		this.filterAnalysisVariable(workbook.getConditions());
+		this.filterAnalysisVariable(workbook.getConstants());
+		this.filterAnalysisVariable(workbook.getFactors());
+		this.filterAnalysisVariable(workbook.getVariates());
+	}
+
+	/**
+	 * Filter variables with variable type 'Analysis' in the list of measurement variables
+	 */
+	private void filterAnalysisVariable(List<MeasurementVariable> measurementVariables) {
+		Iterator<MeasurementVariable> measurementVariablesIterator = measurementVariables.iterator();
+		while (measurementVariablesIterator.hasNext()) {
+			MeasurementVariable measurementVariable = measurementVariablesIterator.next();
+			if (measurementVariable != null && VariableType.ANALYSIS == measurementVariable.getVariableType()) {
+				measurementVariablesIterator.remove();
+			}
+		}
+	}
 }

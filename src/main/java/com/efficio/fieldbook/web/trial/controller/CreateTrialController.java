@@ -136,6 +136,8 @@ public class CreateTrialController extends BaseTrialController {
 		try {
 			if (trialID != null && trialID != 0) {
 				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(trialID);
+				this.filterAnalysisVariable(trialWorkbook);
+
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
 
 				tabDetails.put("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), true));

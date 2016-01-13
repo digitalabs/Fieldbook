@@ -90,7 +90,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		final AdvancingSourceList list = this.createAdvancingSourceList(info, workbook, breedingMethodMap, breedingMethodCodeMap);
 		this.updatePlantsSelectedIfNecessary(list, info);
-		final List<ImportedGermplasm> importedGermplasmList = this.generateGermplasmList(list, info.isCheckAdvanceLinesUnique(), workbook);
+		final List<ImportedGermplasm> importedGermplasmList = this.generateGermplasmList(list, info, workbook);
 
 		final List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
 		for (final AdvancingSource source : list.getRows()) {
@@ -159,10 +159,22 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber) {
-		// GCP-7652 use the entry number of the originial : index
-		String selNum = source.isBulk() ? String.valueOf(source.getPlantsSelected()) : String.valueOf(selectionNumber); 
-		final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber(), String.valueOf(selNum));
+			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingNursery advancingParameters) {
+		
+		String selectionNumberToApply = null;
+		boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
+		if (source.isBulk()) {
+			if (allPlotsSelected) {
+				selectionNumberToApply = null;
+			} else {
+				selectionNumberToApply = String.valueOf(source.getPlantsSelected());
+			}
+		} else {
+			selectionNumberToApply = String.valueOf(selectionNumber);
+		}
+
+		final GermplasmOriginGenerationParameters parameters =
+				this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber(), selectionNumberToApply);
 		final String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
@@ -194,7 +206,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final boolean isCheckForDuplicateName,
+	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final AdvancingNursery advancingParameters,
 			Workbook workbook) throws RuleException {
 
 		final List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
@@ -206,7 +218,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 
 				final List<String> names;
-				final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, isCheckForDuplicateName);
+				final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, advancingParameters.isCheckAdvanceLinesUnique());
 				names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
 				// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
@@ -219,7 +231,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 				// One plot may result in multiple plants/ears selected depending on selection method.
 				int selectionNumber = 1;
 				for (final String name : names) {
-					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber);
+					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber, advancingParameters);
 					selectionNumber++;
 				}
 			}

@@ -29,6 +29,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.google.common.collect.Lists;
@@ -139,7 +140,9 @@ public class NamingConventionServiceImplTest {
 		Mockito.when(this.germplasmOriginGenerationService.generateOriginString(Mockito.any(GermplasmOriginGenerationParameters.class)))
 		.thenReturn(testPlotCode);
 
-		List<ImportedGermplasm> igList = this.namingConventionService.generateGermplasmList(rows, false, null);
+		AdvancingNursery advancingParameters = new AdvancingNursery();
+		advancingParameters.setCheckAdvanceLinesUnique(false);
+		List<ImportedGermplasm> igList = this.namingConventionService.generateGermplasmList(rows, advancingParameters, null);
 		Assert.assertNotNull(igList);
 		Assert.assertFalse(igList.isEmpty());
 		Assert.assertEquals(1, igList.size());

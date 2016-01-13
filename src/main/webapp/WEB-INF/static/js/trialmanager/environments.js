@@ -257,8 +257,14 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 						// trigger the showMeasurementsPreview in the background
 						loadInitialMeasurements();
 					}
+
+					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
 				} else if (oldVal < newVal) {
 					$scope.addNewEnvironments(newVal - oldVal);
+
+					if(newVal !== 1){
+						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
+					}
 				}
 			});
 

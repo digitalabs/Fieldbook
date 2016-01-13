@@ -235,6 +235,7 @@
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
                     hasGeneratedDesignPreset: false,
+                    hasNewEnvironmentAdded : false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
 					designTypes: []
 				},
@@ -308,7 +309,8 @@
 						environmentData : environmentData,
 						selectedDesignType : angular.copy(service.applicationData.designTypes[designType]),
 						startingEntryNo : service.currentData.experimentalDesign.startingEntryNo,
-						startingPlotNo : service.currentData.experimentalDesign.startingPlotNo
+						startingPlotNo : service.currentData.experimentalDesign.startingPlotNo,
+						hasNewEnvironmentAdded : service.applicationData.hasNewEnvironmentAdded
 					};
 
 					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data)).then(function(resp){

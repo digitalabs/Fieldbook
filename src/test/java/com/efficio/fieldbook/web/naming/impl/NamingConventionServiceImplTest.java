@@ -88,8 +88,8 @@ public class NamingConventionServiceImplTest {
 		rows.setRows(new ArrayList<AdvancingSource>());
 
 		// Set up Advancing sources
-		AdvancingSource as1 = new AdvancingSource();
-		as1.setNames(new ArrayList<Name>());
+		AdvancingSource advancingSource = new AdvancingSource();
+		advancingSource.setNames(new ArrayList<Name>());
 
 		// Germplasm
 		ImportedGermplasm ig = new ImportedGermplasm();
@@ -101,19 +101,19 @@ public class NamingConventionServiceImplTest {
 		ig.setGpid1(0);
 		ig.setGpid2(0);
 		ig.setGnpgs(-1);
-		as1.setGermplasm(ig);
+		advancingSource.setGermplasm(ig);
 
 		// Names
-		Name name1 = new Name(133);
-		name1.setGermplasmId(133);
-		name1.setTypeId(6);
-		name1.setNstat(1);
-		name1.setUserId(3);
-		name1.setNval("BARRA DE ORO DULCE");
-		name1.setLocationId(9);
-		name1.setNdate(19860501);
-		name1.setReferenceId(1);
-		as1.getNames().add(name1);
+		Name sourceGermplasmName = new Name(133);
+		sourceGermplasmName.setGermplasmId(133);
+		sourceGermplasmName.setTypeId(6);
+		sourceGermplasmName.setNstat(1);
+		sourceGermplasmName.setUserId(3);
+		sourceGermplasmName.setNval("BARRA DE ORO DULCE");
+		sourceGermplasmName.setLocationId(9);
+		sourceGermplasmName.setNdate(19860501);
+		sourceGermplasmName.setReferenceId(1);
+		advancingSource.getNames().add(sourceGermplasmName);
 
 		Method breedingMethod =
 				new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490,
@@ -123,50 +123,71 @@ public class NamingConventionServiceImplTest {
 		breedingMethod.setPrefix("B");
 		breedingMethod.setCount("");
 
-		as1.setBreedingMethod(breedingMethod);
-		as1.setPlantsSelected(1);
-		as1.setBulk(false);
-		as1.setCheck(false);
-		as1.setNurseryName("Test One");
-		as1.setSeason("201412");
-		as1.setCurrentMaxSequence(0);
-		rows.getRows().add(as1);
+		advancingSource.setBreedingMethod(breedingMethod);
+		advancingSource.setPlantsSelected(1);
+		advancingSource.setBulk(false);
+		advancingSource.setCheck(false);
+		advancingSource.setNurseryName("Test One");
+		advancingSource.setSeason("201412");
+		advancingSource.setCurrentMaxSequence(0);
+		rows.getRows().add(advancingSource);
 
 		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(Mockito.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
-		final String ruleGeneratedName = name1.getNval() + "-B";
-		Mockito.when(this.rulesService.runRules(Mockito.any(RuleExecutionContext.class))).thenReturn(
-				Lists.newArrayList(ruleGeneratedName));
+		final String ruleGeneratedName1 = sourceGermplasmName.getNval() + "-B1";
+		final String ruleGeneratedName2 = sourceGermplasmName.getNval() + "-B2";
+		Mockito.when(this.rulesService.runRules(Mockito.any(RuleExecutionContext.class))).thenReturn(Lists.newArrayList(ruleGeneratedName1, ruleGeneratedName2));
 		final String testPlotCode = "NurseryName:Plot#";
-		Mockito.when(this.germplasmOriginGenerationService.generateOriginString(Mockito.any(GermplasmOriginGenerationParameters.class)))
-		.thenReturn(testPlotCode);
+		Mockito.when(this.germplasmOriginGenerationService.generateOriginString(Mockito.any(GermplasmOriginGenerationParameters.class))).thenReturn(testPlotCode);
 
 		AdvancingNursery advancingParameters = new AdvancingNursery();
 		advancingParameters.setCheckAdvanceLinesUnique(false);
 		List<ImportedGermplasm> igList = this.namingConventionService.generateGermplasmList(rows, advancingParameters, null);
 		Assert.assertNotNull(igList);
 		Assert.assertFalse(igList.isEmpty());
-		Assert.assertEquals(1, igList.size());
+		Assert.assertEquals(2, igList.size());
 
-		// germplasm
-		ImportedGermplasm resultIG = igList.get(0);
-		Assert.assertEquals(new Integer(1), resultIG.getEntryId());
-		Assert.assertEquals(ruleGeneratedName, resultIG.getDesig());
-		Assert.assertNull(resultIG.getGid());
-		Assert.assertEquals(ig.getCross(), resultIG.getCross());
-		Assert.assertEquals(testPlotCode, resultIG.getSource());
-		Assert.assertEquals("E0001", resultIG.getEntryCode());
-		Assert.assertEquals(new Integer(40), resultIG.getBreedingMethodId());
-		Assert.assertEquals(new Integer(133), resultIG.getGpid1());
-		Assert.assertEquals(new Integer(133), resultIG.getGpid2());
+		// germplasm1
+		ImportedGermplasm advanceResult1 = igList.get(0);
+		Assert.assertEquals(new Integer(1), advanceResult1.getEntryId());
+		Assert.assertEquals(ruleGeneratedName1, advanceResult1.getDesig());
+		Assert.assertNull(advanceResult1.getGid());
+		Assert.assertEquals(ig.getCross(), advanceResult1.getCross());
+		Assert.assertEquals(testPlotCode, advanceResult1.getSource());
+		Assert.assertEquals("E0001", advanceResult1.getEntryCode());
+		Assert.assertEquals(new Integer(40), advanceResult1.getBreedingMethodId());
+		Assert.assertEquals(new Integer(133), advanceResult1.getGpid1());
+		Assert.assertEquals(new Integer(133), advanceResult1.getGpid2());
 
-		// names
-		Assert.assertEquals(new Integer(-1), resultIG.getGnpgs());
-		Assert.assertEquals(1, resultIG.getNames().size());
-		Name resultName = resultIG.getNames().get(0);
-		Assert.assertNull(resultName.getNid());
-		Assert.assertEquals(new Integer(133), resultName.getGermplasmId());
-		Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName.getTypeId().intValue());
-		Assert.assertEquals(new Integer(1), resultName.getNstat());
-		Assert.assertEquals(ruleGeneratedName, resultName.getNval());
+		// germplasm1 names
+		Assert.assertEquals(new Integer(-1), advanceResult1.getGnpgs());
+		Assert.assertEquals(1, advanceResult1.getNames().size());
+		Name resultName1 = advanceResult1.getNames().get(0);
+		Assert.assertNull(resultName1.getNid());
+		Assert.assertEquals(new Integer(133), resultName1.getGermplasmId());
+		Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName1.getTypeId().intValue());
+		Assert.assertEquals(new Integer(1), resultName1.getNstat());
+		Assert.assertEquals(ruleGeneratedName1, resultName1.getNval());
+		
+		// germplasm2
+		ImportedGermplasm advanceResult2 = igList.get(1);
+		Assert.assertEquals(new Integer(2), advanceResult2.getEntryId());
+		Assert.assertEquals(ruleGeneratedName2, advanceResult2.getDesig());
+		Assert.assertNull(advanceResult2.getGid());
+		Assert.assertEquals(ig.getCross(), advanceResult2.getCross());
+		Assert.assertEquals(testPlotCode, advanceResult2.getSource());
+		Assert.assertEquals("E0002", advanceResult2.getEntryCode());
+		Assert.assertEquals(new Integer(40), advanceResult2.getBreedingMethodId());
+		Assert.assertEquals(new Integer(133), advanceResult2.getGpid1());
+		Assert.assertEquals(new Integer(133), advanceResult2.getGpid2());
+
+		// germplasm2 names
+		Assert.assertEquals(new Integer(-1), advanceResult2.getGnpgs());
+		Assert.assertEquals(1, advanceResult2.getNames().size());
+		Name resultName2 = advanceResult2.getNames().get(0);
+		Assert.assertNull(resultName2.getNid());
+		Assert.assertEquals(new Integer(133), resultName2.getGermplasmId());
+		Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName2.getTypeId().intValue());
+		Assert.assertEquals(new Integer(1), resultName2.getNstat());
+		Assert.assertEquals(ruleGeneratedName2, resultName2.getNval());
 	}
 }

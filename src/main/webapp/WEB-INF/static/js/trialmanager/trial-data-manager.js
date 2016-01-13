@@ -555,6 +555,11 @@
 					$('body').data('service.trialMeasurement.count', newCountValue);
 				},
 
+				updateStartingEntryNoCount: function(newCountValue) {
+					service.currentData.experimentalDesign.startingEntryNo = newCountValue;
+					$('body').data('service.currentData.experimentalDesign.startingEntryNo', newCountValue);
+				},
+
 				onUpdateSettings: function(key, updateFunction) {
 					if (!settingRegistry[key]) {
 						settingRegistry[key] = [];

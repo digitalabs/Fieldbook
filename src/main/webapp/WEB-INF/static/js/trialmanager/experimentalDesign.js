@@ -168,10 +168,8 @@
                         return;
                     }
 
-                    var entryNo = $('#tableForGermplasm tr:first-child td:last-child').html();
 					var data = angular.copy($scope.data);
-					TrialManagerDataService.currentData.experimentalDesign.startingEntryNo = entryNo;
-                    data.startingEntryNo = entryNo;
+                    data.startingEntryNo = TrialManagerDataService.currentData.experimentalDesign.startingEntryNo;
 
 					// transform ordered has of treatment factors if existing to just the map
 					if (data && data.treatmentFactors) {

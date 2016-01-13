@@ -138,8 +138,8 @@ function validateAndSetEntryNo() {
                 showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
                         'To update the Measurements table, please save the Nursery', 10000);
             } else {
-                $("#tableForGermplasm tbody tr").each(function (index, value) {
-                    $(this).find('td:eq(3)').text(entryNo++);
+                $('#tableForGermplasm tbody tr').each(function (index, value) {
+                    $(this).find('td:eq(0)').text(entryNo++);
                 });
                 setUnappliedChangesAvailable();
                 showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
@@ -190,6 +190,7 @@ function validateAndSetPlotNo() {
 function setUnappliedChangesAvailable() {
     var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
     trialManager.setUnappliedChangesAvailable();
+    trialManager.updateStartingEntryNoCount($.trim($('#txtStartingEntryNo').val()));
 }
 //]]>
 </script>

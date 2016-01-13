@@ -69,8 +69,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Override
 	public List<MeasurementRow> generateDesign(final Workbook workbook, final DesignImportData designImportData,
-			final EnvironmentData environmentData, final boolean isPreview, final boolean isPreset, final Integer startingEntryNo,
-			final Integer startingPlotNo) throws DesignValidationException {
+			final EnvironmentData environmentData, final boolean isPreview, final boolean isPreset,
+			final Map<String, Integer> additionalParams) throws DesignValidationException {
 
 		final Set<String> generatedTrialInstancesFromUI = this.extractTrialInstancesFromEnvironmentData(environmentData);
 
@@ -89,7 +89,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 		final Map<Integer, StandardVariable> germplasmStandardVariables =
 				this.convertToStandardVariables(workbook.getGermplasmFactors(), PhenotypicType.GERMPLASM);
 
-		final List<MeasurementRow> measurements = new ArrayList<>();
 		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId =
 				designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 
@@ -98,8 +97,10 @@ public class DesignImportServiceImpl implements DesignImportService {
 				new DesignImportMeasurementRowGenerator(this.fieldbookService, workbook, mappedHeadersWithStdVarId, importedGermplasm,
 						germplasmStandardVariables, generatedTrialInstancesFromUI, isPreview, availableCheckTypes);
 
-		this.createMeasurementRows(environmentData, isPreset, csvData, measurements, measurementRowGenerator, startingEntryNo,
-				startingPlotNo);
+		final List<MeasurementRow> measurements = new ArrayList<>();
+
+		this.createMeasurementRows(environmentData.getNoOfEnvironments(), isPreset, csvData, measurements, measurementRowGenerator,
+				additionalParams);
 
 		// add factor data to the list of measurement row
 		measurementRowGenerator.addFactorsToMeasurementRows(measurements);
@@ -107,31 +108,46 @@ public class DesignImportServiceImpl implements DesignImportService {
 		// add trait data to the list of measurement row
 		measurementRowGenerator.addVariatesToMeasurementRows(measurements, this.userSelection, this.ontologyService, this.contextUtil);
 
+		// if there is added environments
+		if (additionalParams.get("noOfAddedEnvironments") != null && additionalParams.get("noOfAddedEnvironments") > 0) {
+			final List<MeasurementRow> measurementsForNewEnvironment = new ArrayList<>();
+			measurementsForNewEnvironment.addAll(measurements);
+			measurements.clear();
+			measurements.addAll(this.userSelection.getWorkbook().getObservations());
+			measurements.addAll(measurementsForNewEnvironment);
+		}
+
 		return measurements;
 	}
 
 	/**
 	 * Creates measurement rows based on the data from the uploaded design file.
 	 * 
-	 * @param environmentData
+	 * @param noOfEnvironments
 	 * @param isPreset
 	 * @param csvData
 	 * @param measurements
 	 * @param measurementRowGenerator
-	 * @param startingPlotNo
-	 * @param startingEntryNo
+	 * @param additionalParams that contains startingPlotNo, startingEntryNo, noOfAddedEnvironments
+	 * @param
 	 */
-	protected void createMeasurementRows(final EnvironmentData environmentData, final boolean isPreset,
-			final Map<Integer, List<String>> csvData, final List<MeasurementRow> measurements,
-			final DesignImportMeasurementRowGenerator measurementRowGenerator, final Integer startingEntryNo, final Integer startingPlotNo) {
+	protected void createMeasurementRows(final Integer noOfEnvironments, final boolean isPreset, final Map<Integer, List<String>> csvData,
+			final List<MeasurementRow> measurements, final DesignImportMeasurementRowGenerator measurementRowGenerator,
+			final Map<String, Integer> additionalParams) {
+
+		final Integer startingEntryNo = additionalParams.get("startingEntryNo");
+		final Integer startingPlotNo = additionalParams.get("startingPlotNo");
+		final Integer noOfAddedEnvironment =
+				additionalParams.get("noOfAddedEnvironments") != null ? additionalParams.get("noOfAddedEnvironments") : 0;
 
 		if (isPreset) {
-			for (int trialInstanceNo = 1; trialInstanceNo <= environmentData.getNoOfEnvironments(); trialInstanceNo++) {
 
+			final int startingTrialInstanceNo = noOfAddedEnvironment > 0 ? noOfEnvironments - noOfAddedEnvironment + 1 : 1;
+			for (int trialInstanceNo = startingTrialInstanceNo; trialInstanceNo <= noOfEnvironments; trialInstanceNo++) {
 				this.createPresetMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo,
 						startingEntryNo, startingPlotNo);
-
 			}
+
 		} else {
 
 			// row counter starts at index = 1 because zero index is the header

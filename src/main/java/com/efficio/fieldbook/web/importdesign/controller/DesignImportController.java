@@ -263,8 +263,7 @@ public class DesignImportController extends SettingsController {
 		List<MeasurementRow> measurementRows = new ArrayList<>();
 
 		try {
-			measurementRows =
-					this.designImportService.generateDesign(workbook, designImportData, environmentData, false, false, null, null);
+			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false, false, null);
 		} catch (final DesignValidationException e) {
 			DesignImportController.LOG.error(e.getMessage(), e);
 		}
@@ -417,7 +416,7 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
-					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT, null, null);
+					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT, null);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -458,7 +457,18 @@ public class DesignImportController extends SettingsController {
 
 			this.performAutomap(designImportData);
 
-			this.generateDesign(environmentData, designImportData, StudyType.T, true, selectedDesignType, startingEntryNo, startingPlotNo);
+			// populate parameters
+			final Map<String, Integer> additionalParams = new HashMap<String, Integer>();
+			additionalParams.put("startingEntryNo", startingEntryNo);
+			additionalParams.put("startingPlotNo", startingPlotNo);
+			if (generateDesignInput.getHasNewEnvironmentAdded()) {
+				final Workbook workbook = this.userSelection.getWorkbook();
+				this.userSelection.setTemporaryWorkbook(workbook);
+				additionalParams.put("noOfAddedEnvironments", environmentData.getNoOfEnvironments()
+						- workbook.getTrialObservations().size());
+			}
+
+			this.generateDesign(environmentData, designImportData, StudyType.T, true, selectedDesignType, additionalParams);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -478,8 +488,8 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem, final Integer startingEntryNo,
-			final Integer startingPlotNo) throws DesignValidationException {
+			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem,
+			final Map<String, Integer> additionalParams) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 
@@ -497,8 +507,7 @@ public class DesignImportController extends SettingsController {
 		Set<MeasurementVariable> experimentalDesignMeasurementVariables;
 
 		measurementRows =
-				this.designImportService.generateDesign(workbook, designImportData, environmentData, false, isPreset, startingEntryNo,
-						startingPlotNo);
+				this.designImportService.generateDesign(workbook, designImportData, environmentData, false, isPreset, additionalParams);
 
 		workbook.setObservations(measurementRows);
 

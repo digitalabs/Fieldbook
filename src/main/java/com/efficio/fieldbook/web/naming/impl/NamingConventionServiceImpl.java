@@ -229,7 +229,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 				}
 
 				// One plot may result in multiple plants/ears selected depending on selection method.
-				int selectionNumber = 1;
+				int selectionNumber = row.getCurrentMaxSequence() + 1;
 				for (final String name : names) {
 					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber, advancingParameters);
 					selectionNumber++;

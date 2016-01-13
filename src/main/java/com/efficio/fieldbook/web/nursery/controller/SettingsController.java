@@ -361,8 +361,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 							stdVar.getMethod().getName(), role, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
 							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints()
 									.getMinValue() : null,
-									stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
-											.getMaxValue() : null);
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
+									.getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
@@ -433,8 +433,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 							.getName(), stdVar.getMethod().getName(), null, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
 							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints()
 									.getMinValue() : null,
-									stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
-											.getMaxValue() : null);
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
+									.getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
@@ -450,7 +450,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the standard variable
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected StandardVariable getStandardVariable(int id) {
+	protected StandardVariable getStandardVariable(final int id) {
 		return this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
 	}
 
@@ -785,7 +785,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	private void addSettingDetail(final List<SettingDetail> removedConditions, final Map<String, SettingDetail> removedConditionsMap,
 			final Map<String, MeasurementVariable> studyConditionMap, final String id, final String value, final String userId)
-					throws MiddlewareException {
+			throws MiddlewareException {
 		if (removedConditionsMap.get(id) == null) {
 			removedConditions.add(this.createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName(), null));
 		}
@@ -921,7 +921,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				newSetting = this.createSettingDetail(variableId, "", "");
 				newSetting.getVariable().setOperation(Operation.UPDATE);
 			} catch (final MiddlewareQueryException e) {
-				LOG.error(e.getMessage(), e);
+				SettingsController.LOG.error(e.getMessage(), e);
 			}
 		} else if (newSetting == null) {
 			return;
@@ -965,7 +965,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	public void setFieldbookService(FieldbookService fieldbookService) {
+	public void setFieldbookService(final FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
 	}
 
@@ -973,7 +973,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * These model attributes are used in UI JS code e.g. in createNursery.html and editNursery.html to identify various sections on screen
 	 * where variables appear.
 	 */
-	protected void addVariableSectionIdentifiers(Model model) {
+	protected void addVariableSectionIdentifiers(final Model model) {
 		model.addAttribute("baselineTraitsSegment", VariableType.TRAIT.getId().intValue());
 		model.addAttribute("selectionVariatesSegment", VariableType.SELECTION_METHOD.getId().intValue());
 		model.addAttribute("studyLevelDetailType", VariableType.STUDY_DETAIL.getId().intValue());
@@ -984,7 +984,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	/**
 	 * Filter variables with variable type 'Analysis' in the workbook
 	 */
-	protected void filterAnalysisVariable(Workbook workbook) {
+	protected void filterAnalysisVariable(final Workbook workbook) {
 		this.filterAnalysisVariable(workbook.getConditions());
 		this.filterAnalysisVariable(workbook.getConstants());
 		this.filterAnalysisVariable(workbook.getFactors());
@@ -994,10 +994,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	/**
 	 * Filter variables with variable type 'Analysis' in the list of measurement variables
 	 */
-	private void filterAnalysisVariable(List<MeasurementVariable> measurementVariables) {
-		Iterator<MeasurementVariable> measurementVariablesIterator = measurementVariables.iterator();
+	private void filterAnalysisVariable(final List<MeasurementVariable> measurementVariables) {
+		final Iterator<MeasurementVariable> measurementVariablesIterator = measurementVariables.iterator();
 		while (measurementVariablesIterator.hasNext()) {
-			MeasurementVariable measurementVariable = measurementVariablesIterator.next();
+			final MeasurementVariable measurementVariable = measurementVariablesIterator.next();
 			if (measurementVariable != null && VariableType.ANALYSIS == measurementVariable.getVariableType()) {
 				measurementVariablesIterator.remove();
 			}

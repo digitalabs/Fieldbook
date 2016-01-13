@@ -15,6 +15,8 @@ public class GeneratePresetDesignInput {
 	public GeneratePresetDesignInput() {
 		this.environmentData = new EnvironmentData();
 		this.selectedDesignType = new DesignTypeItem();
+		this.startingEntryNo = 1;
+		this.startingPlotNo = 1;
 	}
 
 	public GeneratePresetDesignInput(final EnvironmentData environmentData, final DesignTypeItem selectedDesignType,

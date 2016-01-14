@@ -26,9 +26,6 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.TimerWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +34,6 @@ import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
 import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
 import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
@@ -52,7 +48,6 @@ import com.efficio.fieldbook.web.util.AppConstants;
 @Transactional
 public class NamingConventionServiceImpl implements NamingConventionService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(NamingConventionServiceImpl.class);
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
@@ -95,7 +90,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		final AdvancingSourceList list = this.createAdvancingSourceList(info, workbook, breedingMethodMap, breedingMethodCodeMap);
 		this.updatePlantsSelectedIfNecessary(list, info);
-		final List<ImportedGermplasm> importedGermplasmList = this.generateGermplasmList(list, info.isCheckAdvanceLinesUnique(), workbook);
+		final List<ImportedGermplasm> importedGermplasmList = this.generateGermplasmList(list, info, workbook);
 
 		final List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
 		for (final AdvancingSource source : list.getRows()) {
@@ -164,11 +159,23 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook) {
-		// GCP-7652 use the entry number of the originial : index
-		// Current place where source is assigned.
-		final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber());
-		String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
+			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingNursery advancingParameters) {
+		
+		String selectionNumberToApply = null;
+		boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
+		if (source.isBulk()) {
+			if (allPlotsSelected) {
+				selectionNumberToApply = null;
+			} else {
+				selectionNumberToApply = String.valueOf(source.getPlantsSelected());
+			}
+		} else {
+			selectionNumberToApply = String.valueOf(selectionNumber);
+		}
+
+		final GermplasmOriginGenerationParameters parameters =
+				this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber(), selectionNumberToApply);
+		final String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
 						, source.getGermplasm().getCross(), seedSourceOriginString,
@@ -197,8 +204,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		germplasm.setNames(names);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final boolean isCheckForDuplicateName,
+	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final AdvancingNursery advancingParameters,
 			Workbook workbook) throws RuleException {
 
 		final List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
@@ -210,7 +218,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 
 				final List<String> names;
-				final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, isCheckForDuplicateName);
+				final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, advancingParameters.isCheckAdvanceLinesUnique());
 				names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
 				// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
@@ -220,8 +228,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					row.getChangeDetail().setIndex(index - 1);
 				}
 
+				// One plot may result in multiple plants/ears selected depending on selection method.
+				int selectionNumber = row.getCurrentMaxSequence() + 1;
 				for (final String name : names) {
-					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook);
+					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber, advancingParameters);
+					selectionNumber++;
 				}
 			}
 		}
@@ -244,23 +255,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		context.setMessageSource(this.messageSource);
 
 		return context;
-	}
-
-	// 1. RootNameGeneratorRule
-	// FIXME : breedingMethodNameType NOT USED : hard coded 1 in the 'Expression'
-	protected String getGermplasmRootName(final Integer breedingMethodSnameType, final AdvancingSource row) {
-
-		final RootNameExpression expression = new RootNameExpression();
-		final List<StringBuilder> builders = new ArrayList<StringBuilder>();
-		builders.add(new StringBuilder());
-		expression.apply(builders, row);
-		final String name = builders.get(0).toString();
-		if (name.length() == 0) {
-			throw new MiddlewareQueryException(this.messageSource.getMessage("error.advancing.nursery.no.root.name.found",
-					new Object[] {row.getGermplasm().getEntryId()}, LocaleContextHolder.getLocale()));
-		}
-		return name;
-
 	}
 
 	void setMessageSource(final ResourceBundleMessageSource messageSource) {

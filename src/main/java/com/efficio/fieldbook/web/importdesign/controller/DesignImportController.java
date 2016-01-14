@@ -80,6 +80,10 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 @RequestMapping(DesignImportController.URL)
 public class DesignImportController extends SettingsController {
 
+	private static final int DEFAULT_STARTING_PLOT_NO = 1;
+
+	private static final int DEFAULT_STARTING_ENTRY_NO = 1;
+
 	private static final String UNMAPPED_HEADERS = "unmappedHeaders";
 
 	private static final String SUCCESS = "success";
@@ -263,7 +267,9 @@ public class DesignImportController extends SettingsController {
 		List<MeasurementRow> measurementRows = new ArrayList<>();
 
 		try {
-			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false, false, null);
+			measurementRows =
+					this.designImportService.generateDesign(workbook, designImportData, environmentData, false, false,
+							this.generateAdditionalParams(DEFAULT_STARTING_ENTRY_NO, DEFAULT_STARTING_PLOT_NO));
 		} catch (final DesignValidationException e) {
 			DesignImportController.LOG.error(e.getMessage(), e);
 		}
@@ -416,7 +422,8 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
-					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT, null);
+					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT,
+					this.generateAdditionalParams(DEFAULT_STARTING_ENTRY_NO, DEFAULT_STARTING_PLOT_NO));
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -432,6 +439,20 @@ public class DesignImportController extends SettingsController {
 		}
 
 		return resultsMap;
+	}
+
+	/***
+	 * Generates a map of parameters used in generating measurement
+	 * 
+	 * @param startingEntryNo
+	 * @param startingPlotNo
+	 * @return
+	 */
+	private Map<String, Integer> generateAdditionalParams(final Integer startingEntryNo, final Integer startingPlotNo) {
+		final Map<String, Integer> additionalParams = new HashMap<String, Integer>();
+		additionalParams.put("startingEntryNo", startingEntryNo);
+		additionalParams.put("startingPlotNo", startingPlotNo);
+		return additionalParams;
 	}
 
 	@ResponseBody
@@ -458,9 +479,7 @@ public class DesignImportController extends SettingsController {
 			this.performAutomap(designImportData);
 
 			// populate parameters
-			final Map<String, Integer> additionalParams = new HashMap<String, Integer>();
-			additionalParams.put("startingEntryNo", startingEntryNo);
-			additionalParams.put("startingPlotNo", startingPlotNo);
+			final Map<String, Integer> additionalParams = this.generateAdditionalParams(startingEntryNo, startingPlotNo);
 			if (generateDesignInput.getHasNewEnvironmentAdded()) {
 				final Workbook workbook = this.userSelection.getWorkbook();
 				this.userSelection.setTemporaryWorkbook(workbook);

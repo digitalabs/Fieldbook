@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -48,6 +47,8 @@ import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -171,15 +172,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 			data.setFileName(this.getExperimentalDesignData(xpDesignVariable.getExperimentalDesignSource()));
 
-			// Set first plot number from observations
-			if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
-				final List<MeasurementData> datas = trialWorkbook.getObservations().get(0).getDataList();
-				for (final MeasurementData md : datas) {
-					if (Objects.equals(md.getLabel(), TermId.PLOT_NO.toString())) {
-						data.setStartingPlotNo(md.getValue());
-					}
-				}
-			}
+			this.setStartingEntryNoAndPlotNoFromObservations(trialWorkbook, data);
 
 			final String designTypeString =
 					xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
@@ -211,6 +204,38 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		return tabInfo;
+	}
+
+	private void setStartingEntryNoAndPlotNoFromObservations(final Workbook trialWorkbook, final ExpDesignParameterUi data) {
+		// Set starting entry and plot number from observations
+		Integer startingEntryNo = 0;
+		Integer startingPlotNo = 0;
+		if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
+
+			final List<MeasurementRow> measurementRows = trialWorkbook.getObservations();
+			for (final MeasurementRow measurementRow : measurementRows) {
+
+				final Map<Integer, MeasurementData> dataMap =
+						Maps.uniqueIndex(measurementRow.getDataList(), new Function<MeasurementData, Integer>() {
+
+							@Override
+							public Integer apply(final MeasurementData from) {
+								return from.getMeasurementVariable().getTermId();
+							}
+						});
+
+				final Integer currentEntryNo = Integer.valueOf(dataMap.get(TermId.ENTRY_NO.getId()).getValue());
+				if (currentEntryNo < startingEntryNo || startingEntryNo == 0) {
+					startingEntryNo = currentEntryNo;
+				}
+				final Integer currentPlotNo = Integer.valueOf(dataMap.get(TermId.PLOT_NO.getId()).getValue());
+				if (currentPlotNo < startingPlotNo || startingPlotNo == 0) {
+					startingPlotNo = currentPlotNo;
+				}
+			}
+		}
+		data.setStartingEntryNo(startingEntryNo.toString());
+		data.setStartingPlotNo(startingPlotNo.toString());
 	}
 
 	private void setCorrectUIDesignTypeOfResolvableIncompleteBlock(final ExpDesignParameterUi data) {

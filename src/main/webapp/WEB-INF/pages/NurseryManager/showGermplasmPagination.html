@@ -138,9 +138,12 @@ function validateAndSetEntryNo() {
                 showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
                         'To update the Measurements table, please save the Nursery', 10000);
             } else {
-                $('#tableForGermplasm tbody tr').each(function (index, value) {
-                    $(this).find('td:eq(0)').text(entryNo++);
+            	
+            	var entryNoColIndx = isOpenTrial()? 0 : 3;
+            	$('#tableForGermplasm tbody tr').each(function (index, value) {
+                    $(this).find('td:eq('+entryNoColIndx+')').text(entryNo++);
                 });
+                
                 setUnappliedChangesAvailable();
                 showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
                         'To update the Measurements table, please review your settings and regenerate ' +

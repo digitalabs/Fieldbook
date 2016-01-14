@@ -39,7 +39,7 @@ public class SelectionTraitExpressionDataProcessorTest {
         String testCategoricalValueID = "1";
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(testCategoricalValueID))).thenReturn(categoricalValue);
 
-        String output = unitUnderTest.extractValue(testCategoricalValueID, DataType.CATEGORICAL_VARIABLE.getName(), TEST_TERM_ID);
+        String output = unitUnderTest.extractValue(testCategoricalValueID, TEST_TERM_ID);
 
         Assert.assertEquals("Unable to properly extract the value of a categorical value given the categorical value ID", categoricalValue, output);
     }
@@ -50,7 +50,7 @@ public class SelectionTraitExpressionDataProcessorTest {
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(categoricalValue))).thenReturn(null);
 
-        String output = unitUnderTest.extractValue(categoricalValue, DataType.CATEGORICAL_VARIABLE.getName(), TEST_TERM_ID);
+        String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID);
 
         Assert.assertEquals("Unable to properly return the value of a numeric out of bounds value for a categorical variable", categoricalValue, output);
     }
@@ -59,7 +59,7 @@ public class SelectionTraitExpressionDataProcessorTest {
     public void testExtractCategoricalValueOutOfBoundsNonNumeric() {
         String categoricalValue = "OK";
 
-        String output = unitUnderTest.extractValue(categoricalValue, DataType.CATEGORICAL_VARIABLE.getName(), TEST_TERM_ID);
+        String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID);
 
         Assert.assertEquals("Unable to properly return the value of a non numeric out of bounds value for a categorical variable", categoricalValue, output);
     }

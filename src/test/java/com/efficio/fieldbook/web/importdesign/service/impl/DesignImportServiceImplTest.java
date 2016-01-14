@@ -191,7 +191,8 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false, null, null);
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false,
+						this.createAdditionalParamsMap(1, 1));
 
 		Assert.assertEquals("The first trial instance has only 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES,
 				measurements.size());
@@ -211,10 +212,18 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false, null, null);
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false,
+						this.createAdditionalParamsMap(1, 1));
 
 		Assert.assertEquals("Only the first trial has observations so the measurement count should be 6", 6, measurements.size());
 
+	}
+
+	private Map<String, Integer> createAdditionalParamsMap(final Integer startingEntryNo, final Integer startingPlotNo) {
+		final Map<String, Integer> additionalParams = new HashMap<String, Integer>();
+		additionalParams.put("startingEntryNo", startingEntryNo);
+		additionalParams.put("startingPlotNo", startingPlotNo);
+		return additionalParams;
 	}
 
 	@Test
@@ -226,7 +235,8 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false, null, null);
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false,
+						this.createAdditionalParamsMap(1, 1));
 
 		Assert.assertEquals("The first trial instance has only 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES,
 				measurements.size());
@@ -246,7 +256,8 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, false, true, null, null);
+				this.service.generateDesign(workbook, this.designImportData, environmentData, false, true,
+						this.createAdditionalParamsMap(1, 1));
 
 		Assert.assertEquals("The 3 trial instances should have 18 observations", 18, measurements.size());
 

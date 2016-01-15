@@ -247,7 +247,7 @@
 				};
 				
 				$scope.isPreset = function() {
-					return ($scope.designTypes[$scope.data.designType].isPreset && !$scope.applicationData.unappliedChangesAvailable) || $scope.applicationData.hasGeneratedDesignPreset;
+					return $scope.designTypes[$scope.data.designType].isPreset || $scope.applicationData.hasGeneratedDesignPreset;
 				};
 				
 				$scope.isNonPreset = function() {

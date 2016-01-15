@@ -55,7 +55,7 @@
 						$scope.data.designType = $scope.designTypes[0].id;
 					}
 
-					if ($scope.data.designType != null) {
+					if ($scope.data.designType != null && $scope.data.designType != '') {
 						$scope.currentDesignType = $scope.designTypes[$scope.data.designType];
 
 						if ($scope.currentDesignType.params !== null) {

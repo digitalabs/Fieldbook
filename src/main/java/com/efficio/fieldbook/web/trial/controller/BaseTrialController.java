@@ -233,6 +233,12 @@ public abstract class BaseTrialController extends SettingsController {
 					startingPlotNo = currentPlotNo;
 				}
 			}
+		} else {
+			// set the default starting entry no
+			startingEntryNo = 1;
+
+			// set the default starting plot no
+			startingPlotNo = 1;
 		}
 		data.setStartingEntryNo(startingEntryNo.toString());
 		data.setStartingPlotNo(startingPlotNo.toString());

@@ -65,7 +65,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 						buttons: $scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice()
 					});
 
-					$(this).parent().find('.dt-buttons').replaceWith(api.buttons().container());
+					$(this).parents('.dataTables_wrapper').find('.dt-buttons').replaceWith(api.buttons().container());
 				}
 			};
 

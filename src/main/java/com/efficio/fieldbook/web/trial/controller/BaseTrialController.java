@@ -141,7 +141,7 @@ public abstract class BaseTrialController extends SettingsController {
 			final ExpDesignParameterUi data = new ExpDesignParameterUi();
 
 			// default values
-			data.setDesignType(0);
+			data.setDesignType(null);
 			data.setUseLatenized(false);
 
 			data.setBlockSize(this.getExperimentalDesignData(xpDesignVariable.getBlockSize()));

@@ -57,7 +57,6 @@
 
 					if ($scope.data.designType != null) {
 						$scope.currentDesignType = $scope.designTypes[$scope.data.designType];
-						$scope.currentDesignTypeId = $scope.currentDesignType.id;
 
 						if ($scope.currentDesignType.params !== null) {
 							$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
@@ -65,8 +64,8 @@
 							$scope.currentParams = null;
 						}
 
-						if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
-							$scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
+						if (!$scope.settings.showAdvancedOptions[$scope.data.designType]) {
+							$scope.settings.showAdvancedOptions[$scope.data.designType] = $scope.data.useLatenized;
 						}
 						
 						$scope.applicationData.hasGeneratedDesignPreset = TrialManagerDataService.applicationData.hasGeneratedDesignPreset || 
@@ -140,14 +139,17 @@
 						$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 						$scope.data.designType = $scope.currentDesignType.id;
 						
+
 						if($scope.designTypes[newId].isPreset){
 							showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
 						}
 					} else {
 						$scope.currentDesignType = null;
-						$scope.data.designType = null;
+						$scope.data.designType = '';
 						$scope.currentParams = '';
 					}
+
+					$scope.applicationData.hasGeneratedDesignPreset = false;
 				};
 				
 				$scope.toggleIsPresetWithGeneratedDesign = function(){
@@ -234,8 +236,8 @@
 						// the following reset the data used for the experimental design, allowing the user to select another design again
 						$scope.applicationData.hasGeneratedDesignPreset = false;
 						$scope.applicationData.isGeneratedOwnDesign = false;
-						$scope.currentDesignTypeId = '';
-						$scope.data.designType = null;
+						$scope.currentDesignType = null;
+						$scope.data.designType = '';
 
 						// the following prevents the user from saving before re-generating the design, to avoid having invalid measurement data
 						if (TrialManagerDataService.trialMeasurement.count > 0) {
@@ -245,7 +247,7 @@
 				};
 				
 				$scope.toggleDesignView = function() {
-					return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType == 3);
+					return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || $scope.designTypes[$scope.data.designType].name === 'Custom Import Design');
 				};
 				
 				$scope.isPreset = function() {

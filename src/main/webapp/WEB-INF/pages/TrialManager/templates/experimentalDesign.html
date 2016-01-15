@@ -22,8 +22,8 @@
 							<div style="width: 350px !important;">
 								<div class="col-xs-10">
 									<select ui-select2="{minimumResultsForSearch : -1}"
-										ng-model="currentDesignTypeId"
-										ng-change="onSwitchDesignTypes(currentDesignTypeId)"
+										ng-model="data.designType"
+										ng-change="onSwitchDesignTypes(data.designType)"
 										ng-disabled="measurementDetails.hasMeasurement">
 										<option value="">Please Choose</option>
 										<option value="{{item.id}}"

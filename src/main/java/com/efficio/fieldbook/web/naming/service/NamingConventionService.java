@@ -41,7 +41,7 @@ public interface NamingConventionService {
 	 */
 	AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws RuleException, MiddlewareQueryException, FieldbookException;
 
-	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, boolean checkForUniqueness, Workbook workbook)
+	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, AdvancingNursery advancingParameters, Workbook workbook)
 			throws RuleException;
 
 }

@@ -26,7 +26,7 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 			return primaryList;
 		}
 
-		List<ImportedGermplasm> newList = new ArrayList<ImportedGermplasm>();
+		List<ImportedGermplasm> newList = new ArrayList<>();
 
 		int primaryEntry = 1;
 		int newEntry = 1;
@@ -50,8 +50,6 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 				List<ImportedGermplasm> checks = this.generateChecksToInsert(checkList, checkIndex, manner, newEntry);
 				checkIndex++;
 				newEntry += checks.size();
-				intervalEntry += checks.size();
-
 				newList.addAll(checks);
 			}
 			ImportedGermplasm primaryNewGermplasm = primaryGermplasm.copy();

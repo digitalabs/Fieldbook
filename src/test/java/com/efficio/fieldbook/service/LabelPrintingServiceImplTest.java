@@ -245,18 +245,6 @@ public class LabelPrintingServiceImplTest {
 	}
 
 	@Test
-	public void testEncodeBardcodeInEnglishCharacters() {
-		final BitMatrix bitMatrix = this.labelPrintingServiceImpl.encodeBarcode("Test", 100, 200);
-		Assert.assertNotNull("Bit Matrix Barcode should be not null since characters are in English ASCII", bitMatrix);
-	}
-
-	@Test
-	public void testEncodeBardcodeInNonEnglishCharacters() {
-		final BitMatrix bitMatrix = this.labelPrintingServiceImpl.encodeBarcode("乙七九", 100, 200);
-		Assert.assertNull("Bit Matrix Barcode should be null since parameter is non-english ascii", bitMatrix);
-	}
-
-	@Test
 	public void testPopulateValuesFromMeasurementNoData() {
 
 		final Map<Integer, String> values = new HashMap<>();
@@ -426,14 +414,7 @@ public class LabelPrintingServiceImplTest {
 		}
 	}
 	
-	@Test
-	public void testTruncateBarcodeLabelForCode(){
-		String barcodeLabelForCode = "Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Year : 2015";
-		barcodeLabelForCode = this.labelPrintingServiceImpl.truncateBarcodeLabelForCode(barcodeLabelForCode);
-		
-		String truncatedBarcodeLabelForCode = "Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Nursery Name : SUPER VERY ";
-		Assert.assertEquals("Barcode Label For Code's value should be " + barcodeLabelForCode, truncatedBarcodeLabelForCode, barcodeLabelForCode);
-	}
+
 	
 	private void setExperimentId(final Workbook workbook) {
 		int i = 1;

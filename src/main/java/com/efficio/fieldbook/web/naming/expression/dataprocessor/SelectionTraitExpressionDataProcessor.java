@@ -1,8 +1,10 @@
+
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -18,50 +20,53 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Component
-public class SelectionTraitExpressionDataProcessor implements ExpressionDataProcessor{
+public class SelectionTraitExpressionDataProcessor implements ExpressionDataProcessor {
 
-    public static final String SELECTION_TRAIT_PROPERTY = "Selection Criteria";
+	public static final String SELECTION_TRAIT_PROPERTY = "Selection Criteria";
+	public static final String ALTERNATE_CATEGORICAL_TYPE_VALUE = "C";
 
-    @Resource
-    private OntologyVariableDataManager ontologyVariableDataManager;
+	@Resource
+	private OntologyVariableDataManager ontologyVariableDataManager;
 
-    @Resource
-    private ContextUtil contextUtil;
+	@Resource
+	private ContextUtil contextUtil;
 
-    @Override
-    public void processEnvironmentLevelData(AdvancingSource source, Workbook workbook, AdvancingNursery nurseryInfo, Study study) {
-        for (MeasurementVariable condition : workbook.getConditions()) {
-            if (condition.getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
-                source.setSelectionTraitValue(extractVariableValue(condition));
-            }
-        }
-    }
+	@Override
+	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingNursery nurseryInfo,
+			final Study study) {
+		for (final MeasurementVariable condition : workbook.getConditions()) {
+			if (condition.getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
+				source.setSelectionTraitValue(extractValue(condition.getValue(), condition.getTermId()));
+			}
+		}
+	}
 
-    @Override
-    public void processPlotLevelData(AdvancingSource source, MeasurementRow row) {
-        List<MeasurementData> rowData = row.getDataList();
+	@Override
+	public void processPlotLevelData(final AdvancingSource source, final MeasurementRow row) {
+		final List<MeasurementData> rowData = row.getDataList();
 
-        for (MeasurementData measurementData : rowData) {
-            if (measurementData.getMeasurementVariable().getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
-                source.setSelectionTraitValue(extractDataValue(measurementData));
-            }
-        }
-    }
+		for (final MeasurementData measurementData : rowData) {
+			if (measurementData.getMeasurementVariable().getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
+				source.setSelectionTraitValue(extractValue(measurementData.getValue(), measurementData.getMeasurementVariable().getTermId()));
+			}
+		}
+	}
 
-    protected String extractVariableValue(MeasurementVariable variable) {
-        if (variable.getDataType().equalsIgnoreCase(DataType.CATEGORICAL_VARIABLE.getName())) {
-            return this.ontologyVariableDataManager.retrieveVariableCategoricalValue(contextUtil.getCurrentProgramUUID(), variable.getTermId(), Integer.parseInt(variable.getValue()));
-        } else {
-            return variable.getValue();
-        }
-    }
+	protected String extractValue(final String value, final Integer variableTermID) {
+		if (!StringUtils.isNumeric(value)) {
+			// this case happens when a character value is provided as an out of bounds value
+			return value;
+		}
 
-    protected String extractDataValue(MeasurementData measurementData) {
-        if (measurementData.getMeasurementVariable().getDataType().equalsIgnoreCase(DataType.CATEGORICAL_VARIABLE.getName())) {
-            return this.ontologyVariableDataManager.retrieveVariableCategoricalValue(contextUtil.getCurrentProgramUUID(),
-                    measurementData.getMeasurementVariable().getTermId(), Integer.parseInt(measurementData.getValue()));
-        } else {
-            return measurementData.getValue();
-        }
-    }
+		final String categoricalValue =
+				this.ontologyVariableDataManager.retrieveVariableCategoricalValue(contextUtil.getCurrentProgramUUID(), variableTermID,
+						Integer.parseInt(value));
+
+		if (categoricalValue == null) {
+			// this case happens when a numeric value is provided as an out of bounds value
+			return value;
+		} else {
+			return categoricalValue;
+		}
+	}
 }

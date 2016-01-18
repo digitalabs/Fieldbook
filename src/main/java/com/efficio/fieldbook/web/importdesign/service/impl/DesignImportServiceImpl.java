@@ -20,6 +20,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -44,6 +45,10 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 
 public class DesignImportServiceImpl implements DesignImportService {
 
+	private static final String STARTING_PLOT_NO = "startingPlotNo";
+
+	private static final String STARTING_ENTRY_NO = "startingEntryNo";
+
 	@Resource
 	private UserSelection userSelection;
 
@@ -64,7 +69,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Override
 	public List<MeasurementRow> generateDesign(final Workbook workbook, final DesignImportData designImportData,
-			final EnvironmentData environmentData, final boolean isPreview, final boolean isPreset) throws DesignValidationException {
+			final EnvironmentData environmentData, final boolean isPreview, final boolean isPreset, final Integer startingEntryNo,
+			final Integer startingPlotNo) throws DesignValidationException {
 
 		final Set<String> generatedTrialInstancesFromUI = this.extractTrialInstancesFromEnvironmentData(environmentData);
 
@@ -92,7 +98,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 				new DesignImportMeasurementRowGenerator(this.fieldbookService, workbook, mappedHeadersWithStdVarId, importedGermplasm,
 						germplasmStandardVariables, generatedTrialInstancesFromUI, isPreview, availableCheckTypes);
 
-		this.createMeasurementRows(environmentData, isPreset, csvData, measurements, measurementRowGenerator);
+		this.createMeasurementRows(environmentData, isPreset, csvData, measurements, measurementRowGenerator, startingEntryNo,
+				startingPlotNo);
 
 		// add factor data to the list of measurement row
 		measurementRowGenerator.addFactorsToMeasurementRows(measurements);
@@ -111,15 +118,18 @@ public class DesignImportServiceImpl implements DesignImportService {
 	 * @param csvData
 	 * @param measurements
 	 * @param measurementRowGenerator
+	 * @param startingPlotNo
+	 * @param startingEntryNo
 	 */
 	protected void createMeasurementRows(final EnvironmentData environmentData, final boolean isPreset,
 			final Map<Integer, List<String>> csvData, final List<MeasurementRow> measurements,
-			final DesignImportMeasurementRowGenerator measurementRowGenerator) {
+			final DesignImportMeasurementRowGenerator measurementRowGenerator, final Integer startingEntryNo, final Integer startingPlotNo) {
 
 		if (isPreset) {
 			for (int trialInstanceNo = 1; trialInstanceNo <= environmentData.getNoOfEnvironments(); trialInstanceNo++) {
 
-				this.createPresetMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo);
+				this.createPresetMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo,
+						startingEntryNo, startingPlotNo);
 
 			}
 		} else {
@@ -145,21 +155,93 @@ public class DesignImportServiceImpl implements DesignImportService {
 	 * @param measurements
 	 * @param measurementRowGenerator
 	 * @param trialInstanceNo
+	 * @param startingPlotNo
+	 * @param startingEntryNo
 	 */
-	protected void createPresetMeasurementRowsPerInstance(final Map<Integer, List<String>> csvData,
-			final List<MeasurementRow> measurements, final DesignImportMeasurementRowGenerator measurementRowGenerator,
-			final int trialInstanceNo) {
+	void createPresetMeasurementRowsPerInstance(final Map<Integer, List<String>> csvData, final List<MeasurementRow> measurements,
+			final DesignImportMeasurementRowGenerator measurementRowGenerator, final int trialInstanceNo, final Integer startingEntryNo,
+			final Integer startingPlotNo) {
 		// row counter starts at index = 1 because zero index is the header
 		int rowCounter = 1;
 
+		final Map<String, Integer> startingNoFromCSV =
+				this.getStartingEntryAndPlotNoFromCSV(csvData, measurementRowGenerator.getMappedHeaders());
+		final int entryNoDelta = (startingEntryNo != null) ? startingEntryNo - startingNoFromCSV.get(STARTING_ENTRY_NO) : 0;
+		final int plotNoDelta = (startingPlotNo != null) ? startingPlotNo - startingNoFromCSV.get(STARTING_PLOT_NO) : 0;
+
 		while (rowCounter <= csvData.size() - 1) {
 			final MeasurementRow measurementRow = measurementRowGenerator.createMeasurementRow(csvData.get(rowCounter));
-			measurementRow.getDataList().get(0).setValue(String.valueOf(trialInstanceNo));
+
+			final Map<Integer, MeasurementData> measurementDataMap = this.getMeasurementDataMap(measurementRow.getDataList());
+
+			measurementDataMap.get(TermId.TRIAL_INSTANCE_FACTOR.getId()).setValue(String.valueOf(trialInstanceNo));
+
+			if (entryNoDelta != 0) {
+				final Integer prevEntryNo = Integer.valueOf(measurementDataMap.get(TermId.ENTRY_NO.getId()).getValue().toString());
+				measurementDataMap.get(TermId.ENTRY_NO.getId()).setValue(String.valueOf(prevEntryNo + entryNoDelta));
+			}
+
+			if (plotNoDelta != 0) {
+				final Integer prevPlotNo = Integer.valueOf(measurementDataMap.get(TermId.PLOT_NO.getId()).getValue().toString());
+				measurementDataMap.get(TermId.PLOT_NO.getId()).setValue(String.valueOf(prevPlotNo + plotNoDelta));
+			}
+
 			if (measurementRow != null) {
 				measurements.add(measurementRow);
 			}
+
 			rowCounter++;
 		}
+	}
+
+	/**
+	 * Returns a map that contains the starting plot no and starting entry no from CSV rows
+	 * 
+	 * @param csvData
+	 * @param map
+	 * @return
+	 */
+	Map<String, Integer> getStartingEntryAndPlotNoFromCSV(final Map<Integer, List<String>> csvData,
+			final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map) {
+		final Map<String, Integer> startingNoFromCSV = new HashMap<String, Integer>();
+
+		final Integer entryNoIndx = map.get(PhenotypicType.GERMPLASM).get(TermId.ENTRY_NO.getId()).getColumnIndex();
+		final Integer plotNoIndx = map.get(PhenotypicType.TRIAL_DESIGN).get(TermId.PLOT_NO.getId()).getColumnIndex();
+
+		Integer startingEntryNoCSV = 0;
+		Integer startingPlotNoCSV = 0;
+
+		// row counter starts at index = 1 because zero index is the header
+		int rowCounter = 1;
+		while (rowCounter <= csvData.size() - 1) {
+
+			final List<String> rowEntries = csvData.get(rowCounter);
+
+			final Integer currentEntryNo = Integer.valueOf(rowEntries.get(entryNoIndx).toString());
+			if (startingEntryNoCSV == 0 || startingEntryNoCSV > currentEntryNo) {
+				startingEntryNoCSV = currentEntryNo;
+			}
+
+			final Integer currentPlotNo = Integer.valueOf(rowEntries.get(plotNoIndx).toString());
+			if (startingPlotNoCSV == 0 || startingPlotNoCSV > currentPlotNo) {
+				startingPlotNoCSV = currentPlotNo;
+			}
+
+			rowCounter++;
+		}
+
+		startingNoFromCSV.put(STARTING_ENTRY_NO, startingEntryNoCSV);
+		startingNoFromCSV.put(STARTING_PLOT_NO, startingPlotNoCSV);
+
+		return startingNoFromCSV;
+	}
+
+	Map<Integer, MeasurementData> getMeasurementDataMap(final List<MeasurementData> dataList) {
+		final Map<Integer, MeasurementData> measurementDataMap = new HashMap<Integer, MeasurementData>();
+		for (final MeasurementData measurementData : dataList) {
+			measurementDataMap.put(measurementData.getMeasurementVariable().getTermId(), measurementData);
+		}
+		return measurementDataMap;
 	}
 
 	/**

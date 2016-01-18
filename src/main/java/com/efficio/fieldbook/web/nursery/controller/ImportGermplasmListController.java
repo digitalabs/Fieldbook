@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.exception.ApiRequestValidationException;
+import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -280,7 +280,7 @@ public class ImportGermplasmListController extends SettingsController {
 						.getImportedGermplasmList().getImportedGermplasms().size();
 
 				if(totalExpectedEntryNumber > ImportGermplasmListController.MAX_ENTRY_PLOT_NUMBER_LIMIT){
-					throw new ApiRequestValidationException("entry.number.should.be.in.range");
+					throw new FieldbookRequestValidationException("entry.number.should.be.in.range");
 				}
 			}
 
@@ -291,7 +291,7 @@ public class ImportGermplasmListController extends SettingsController {
 				Integer totalMeasurement = totalExpectedNumber + plotNo;
 
 				if(totalMeasurement > ImportGermplasmListController.MAX_ENTRY_PLOT_NUMBER_LIMIT){
-					throw new ApiRequestValidationException("plot.number.should.be.in.range");
+					throw new FieldbookRequestValidationException("plot.number.should.be.in.range");
 				}
 			}
 

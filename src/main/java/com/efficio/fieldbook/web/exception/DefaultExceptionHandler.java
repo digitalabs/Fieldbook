@@ -34,10 +34,10 @@ public class DefaultExceptionHandler {
 	}
 
 	@RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-	@ExceptionHandler(ApiRequestValidationException.class)
+	@ExceptionHandler(FieldbookRequestValidationException.class)
 	@ResponseStatus(value = NOT_ACCEPTABLE)
 	@ResponseBody
-	public String handleValidationException(ApiRequestValidationException ex) {
+	public String handleValidationException(FieldbookRequestValidationException ex) {
 		LOG.error("Error in service validation", ex.getErrorCode());
 		String message = this.messageSource.getMessage(ex.getErrorCode(), null, LocaleContextHolder.getLocale());
 		return message;

@@ -1,7 +1,3 @@
-/**
- * Created by cyrus on 7/2/14.
- */
-
 /* global angular */
 (function() {
 	'use strict';
@@ -44,7 +40,7 @@
 					var deferred = $q.defer();
 
 					$http.post('/Fieldbook/manageSettings/hasMeasurementData/' + variableType, variableIds, {cache: false})
-						.success(function(data, status, headers, config) {
+						.success(function(data) {
 							if ('true' === data) {
 								var modalInstance = $uibModal.open({
 									templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
@@ -81,7 +77,7 @@
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
 				});
 
-				$scope.$on('onDeleteEnvironment',function(event, deletedEnvironmentIndex) {
+				$scope.$on('onDeleteEnvironment', function(event, deletedEnvironmentIndex) {
 					reloadMeasurementPage(deletedEnvironmentIndex);
 					$scope.updateOccurred = true;
 				});
@@ -95,9 +91,6 @@
 				});
 
 				/* Controller Utility functions */
-				var DELAY = 1500; // 1.5 secs
-				var reloadOnDebounce = debounce(reloadMeasurementPage, DELAY, false);
-
 				function reloadMeasurementPage(deletedEnvironmentIndex) {
 					deletedEnvironmentIndex = typeof deletedEnvironmentIndex === 'undefined' ? 0 : deletedEnvironmentIndex;
 
@@ -115,9 +108,12 @@
 						TrialManagerDataService.reloadMeasurementAjax(dataParam).success(function(data) {
 							$measurementContainer.html(data);
 							$body.data('needToSave', '1');
-							$body.data('columnReordered', columnsOrder.length != 0 ? '1' : '0');
+							$body.data('columnReordered', columnsOrder.length !== 0 ? '1' : '0');
 						});
 					}
-				};
+				}
+				var DELAY = 1500; // 1.5 secs
+				var reloadOnDebounce = debounce(reloadMeasurementPage, DELAY, false);
+
 			}]);
-		})();
+})();

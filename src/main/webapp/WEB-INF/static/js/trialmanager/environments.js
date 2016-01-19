@@ -168,12 +168,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				$scope.data.environments.splice(index, 1);
 				$scope.updateTrialInstanceNo($scope.data.environments, index);
 				$scope.data.noOfEnvironments -= 1;
-				TrialManagerDataService.deletedEnvironment = index + 1;
 
 				//update the no of environments in experimental design tab
 				if (TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
 					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
 				}
+
+				TrialManagerDataService.deleteEnvironment(index - 1);
 			};
 
 			$scope.updateTrialInstanceNo = function(environments, index) {

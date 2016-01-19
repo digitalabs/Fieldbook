@@ -7,11 +7,11 @@
 		'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-		'TrialSettingsManager', '_', '$localStorage',
+		'TrialSettingsManager', '_', '$localStorage','$rootScope',
 		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage) {
+					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage,$rootScope) {
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
 			var extractData = function(initialData, initializeProperty) {
@@ -328,8 +328,28 @@
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
+				deleteEnvironment: function(index) {
+					var deleteMeasurementPossible = index !== 0 && service.trialMeasurement.hasMeasurement;
+					// this scenario only covered the update of measurement table
+					// when the user delete an environment for a existing trial with measurement data
+					if (deleteMeasurementPossible) {
+						service.applicationData.unsavedTraitsAvailable = true;
+						$rootScope.$broadcast('onDeleteEnvironment',index);
+					}
+				},
+				reloadMeasurementAjax: function(data) {
+					// preprocess service objects before the ajax call
+					service.clearUnappliedChangesFlag();
+					service.applicationData.unsavedGeneratedDesign = true;
 
-				deletedEnvironment: 0,
+					return $http({
+						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
+						method: 'POST',
+						headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+						data: data,
+						transformResponse: undefined
+					});
+				},
 				indicateUnappliedChangesAvailable: function() {
 					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
 						service.applicationData.unappliedChangesAvailable = true;

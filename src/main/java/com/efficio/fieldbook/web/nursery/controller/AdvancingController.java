@@ -11,23 +11,14 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.*;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.constant.ColumnLabels;
@@ -42,7 +33,6 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -54,26 +44,15 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.TableHeader;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping(AdvancingController.URL)
@@ -213,100 +192,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	@ModelAttribute("projectID")
 	public String getProgramID() {
 		return this.getCurrentProjectId();
-	}
-
-	/**
-	 * Gets the breeding methods.
-	 *
-	 * @return the breeding methods
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/getBreedingMethods", method = RequestMethod.GET)
-	public Map<String, String> getBreedingMethods() {
-		Map<String, String> result = new HashMap<>();
-
-		try {
-			List<Method> breedingMethods = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
-			List<Integer> methodIds = this.fieldbookMiddlewareService.getFavoriteProjectMethods(this.getCurrentProject().getUniqueID());
-			List<Method> favoriteMethods = this.fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);
-			List<Method> allNonGenerativeMethods = this.fieldbookMiddlewareService.getAllBreedingMethods(true);
-
-			result.put(AdvancingController.SUCCESS, "1");
-			result.put("allMethods", this.convertMethodsToJson(breedingMethods));
-			result.put("favoriteMethods", this.convertMethodsToJson(favoriteMethods));
-			result.put("allNonGenerativeMethods", this.convertMethodsToJson(allNonGenerativeMethods));
-			result.put("favoriteNonGenerativeMethods", this.convertMethodsToJson(favoriteMethods));
-		} catch (MiddlewareQueryException e) {
-			AdvancingController.LOG.error(e.getMessage(), e);
-			result.put(AdvancingController.SUCCESS, "-1");
-			result.put("errorMessage", e.getMessage());
-		}
-
-		return result;
-	}
-
-	/**
-	 * Gets the locations.
-	 *
-	 * @return the locations
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/getLocations", method = RequestMethod.GET)
-	public Map<String, String> getLocations() {
-		Map<String, String> result = new HashMap<>();
-
-		try {
-			List<Integer> locationsIds =
-					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
-			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
-			List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocations();
-			List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
-			result.put(AdvancingController.SUCCESS, "1");
-			result.put("favoriteLocations", this.convertFaveLocationToJson(faveLocations));
-			result.put("allBreedingLocations", this.convertFaveLocationToJson(allBreedingLocations));
-			result.put("allSeedStorageLocations", this.convertFaveLocationToJson(allSeedStorageLocations));
-		} catch (MiddlewareQueryException e) {
-			AdvancingController.LOG.error(e.getMessage(), e);
-			result.put(AdvancingController.SUCCESS, "-1");
-		}
-
-		return result;
-	}
-
-	/**
-	 * Convert favorite location to json.
-	 *
-	 * @param locations the locations
-	 * @return the string
-	 */
-	private String convertFaveLocationToJson(List<Location> locations) {
-		if (locations != null) {
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				return mapper.writeValueAsString(locations);
-			} catch (Exception e) {
-				AdvancingController.LOG.error(e.getMessage(), e);
-			}
-		}
-		return "";
-	}
-
-	/**
-	 * Convert methods to json.
-	 *
-	 * @param breedingMethods the breeding methods
-	 * @return the string
-	 */
-	private String convertMethodsToJson(List<Method> breedingMethods) {
-		if (breedingMethods != null) {
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				return mapper.writeValueAsString(breedingMethods);
-			} catch (Exception e) {
-				AdvancingController.LOG.error(e.getMessage(), e);
-			}
-		}
-		return "";
 	}
 
 	/**

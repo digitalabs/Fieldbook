@@ -1865,7 +1865,7 @@ function recreateMethodCombo() {
 	}
 
 	$.ajax({
-		url: '/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods',
+		url: '/Fieldbook/breedingMethod/getBreedingMethods',
 		type: 'GET',
 		cache: false,
 		data: '',
@@ -1878,8 +1878,8 @@ function recreateMethodCombo() {
 				} else if (selectedMethodAll != null) {
 
 					//recreate the select2 combos to get updated list of methods
-					recreateMethodComboAfterClose('methodIdAll', $.parseJSON(data.allNonGenerativeMethods));
-					recreateMethodComboAfterClose('methodIdFavorite', $.parseJSON(data.favoriteNonGenerativeMethods));
+					recreateMethodComboAfterClose('methodIdAll', data.allNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteNonGenerativeMethods);
 					showCorrectMethodCombo();
 					//set previously selected value of method
 					if ($('#showFavoriteMethod').prop('checked')) {
@@ -1918,10 +1918,10 @@ function refreshImportMethodCombo(data) {
 	}
 	if ($('#importFavoriteMethod').is(':checked')) {
 
-		initializePossibleValuesCombo($.parseJSON(data.favoriteMethods),
+		initializePossibleValuesCombo(data.favoriteMethods,
 				'#importMethodId', false, selectedValue);
 	} else {
-		initializePossibleValuesCombo($.parseJSON(data.allMethods),
+		initializePossibleValuesCombo(data.allMethods,
 				'#importMethodId', false, selectedValue);
 	}
 	replacePossibleJsonValues(data.favoriteMethods, data.allMethods, 'Method');
@@ -1933,10 +1933,10 @@ function refreshImportLocationCombo(data) {
 		selectedValue = $('#importLocationId').select2('data').id;
 	}
 	if ($('#importFavoriteLocation').is(':checked')) {
-		initializePossibleValuesCombo($.parseJSON(data.favoriteLocations),
+		initializePossibleValuesCombo(data.favoriteLocations,
 				'#importLocationId', true, selectedValue);
 	} else {
-		initializePossibleValuesCombo($.parseJSON(data.allBreedingLocations),
+		initializePossibleValuesCombo(data.allBreedingLocations,
 				'#importLocationId', true, selectedValue);
 	}
 	replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, 'Location');
@@ -1988,7 +1988,7 @@ function recreateLocationCombo() {
 
 	if (inventoryPopup || advancePopup || fieldmapScreen || createGermplasm || hasCreateGermplasm || createGermplasmOpened) {
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/advance/nursery/getLocations',
+			url: '/Fieldbook/locations/getLocations',
 			type: 'GET',
 			cache: false,
 			data: '',
@@ -1999,22 +1999,22 @@ function recreateLocationCombo() {
 						refreshImportLocationCombo(data);
 						refreshLocationComboInSettings(data);
 					} else if (inventoryPopup) {
-						recreateLocationComboAfterClose('inventoryLocationIdAll', $.parseJSON(data.allSeedStorageLocations));
-						recreateLocationComboAfterClose('inventoryLocationIdFavorite', $.parseJSON(data.favoriteLocations));
+						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allSeedStorageLocations);
+						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations);
 						showCorrectLocationInventoryCombo();
 						// set previously selected value of location
 						if ($('#showFavoriteLocationInventory').prop('checked')) {
-							setComboValues(generateGenericLocationSuggestions($.parseJSON(data.favoriteLocations)), $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
+							setComboValues(generateGenericLocationSuggestions(data.favoriteLocations), $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
 						} else {
-							setComboValues(generateGenericLocationSuggestions($.parseJSON(data.allSeedStorageLocations)), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
+							setComboValues(generateGenericLocationSuggestions(data.allSeedStorageLocations), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
 						}
 						refreshLocationComboInSettings(data);
 					} else if (advancePopup === true
 						|| selectedLocationAll != null) {
 						// recreate the select2 combos to get updated list
 						// of locations
-						recreateLocationComboAfterClose('harvestLocationIdAll', $.parseJSON(data.allBreedingLocations));
-						recreateLocationComboAfterClose('harvestLocationIdFavorite', $.parseJSON(data.favoriteLocations));
+						recreateLocationComboAfterClose('harvestLocationIdAll', data.allBreedingLocations);
+						recreateLocationComboAfterClose('harvestLocationIdFavorite', data.favoriteLocations);
 						showCorrectLocationCombo();
 						// set previously selected value of location
 						if ($('#showFavoriteLocation').prop('checked')) {
@@ -2026,8 +2026,8 @@ function recreateLocationCombo() {
 
 					} else if (fieldmapScreen === true) {
 						//recreate the select2 combos to get updated list of locations
-						recreateLocationComboAfterClose('fieldLocationIdAll', $.parseJSON(data.allBreedingLocations));
-						recreateLocationComboAfterClose('fieldLocationIdFavorite', $.parseJSON(data.favoriteLocations));
+						recreateLocationComboAfterClose('fieldLocationIdAll', data.allBreedingLocations);
+						recreateLocationComboAfterClose('fieldLocationIdFavorite', data.favoriteLocations);
 						showCorrectLocationCombo();
 						//set previously selected value of location
 						if ($('#showFavoriteLocation').prop('checked')) {
@@ -2056,18 +2056,9 @@ function refreshMethodComboInSettings(data) {
 	//get index of breeding method row
 	var index = getBreedingMethodRowIndex(), selectedVal = null;
 	if (index > -1) {
-		var pleaseChoose = '{"mid":0,"mname":"Please Choose","mdesc":"Please Choose"}';
-		if ($.parseJSON(data.favoriteNonGenerativeMethods).length == 0) {
-			data.favoriteNonGenerativeMethods = '[' + pleaseChoose + ']';
-		} else {
-			data.favoriteNonGenerativeMethods = '[' + pleaseChoose + ',' + data.favoriteNonGenerativeMethods.substring(1);
-		}
-
-		if ($.parseJSON(data.allNonGenerativeMethods).length == 0) {
-			data.allNonGenerativeMethods = '[' + pleaseChoose + ']';
-		} else {
-			data.allNonGenerativeMethods = '[' + pleaseChoose + ', ' + data.allNonGenerativeMethods.substring(1);
-		}
+		var pleaseChoose = {"mid":0, "mname":"Please Choose", "mdesc":"Please Choose"};
+        data.favoriteNonGenerativeMethods.unshift(pleaseChoose);
+        data.allNonGenerativeMethods.unshift(pleaseChoose);
 
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data')) {
 			selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
@@ -2079,10 +2070,10 @@ function refreshMethodComboInSettings(data) {
 
 		//update values of combo
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
-			initializePossibleValuesCombo($.parseJSON(data.favoriteNonGenerativeMethods),
+			initializePossibleValuesCombo(data.favoriteNonGenerativeMethods,
 					'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		} else {
-			initializePossibleValuesCombo($.parseJSON(data.allNonGenerativeMethods),
+			initializePossibleValuesCombo(data.allNonGenerativeMethods,
 					'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		}
 
@@ -2101,9 +2092,9 @@ function refreshLocationComboInSettings(data) {
 
 		// update values in combo
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
-			initializePossibleValuesCombo($.parseJSON(data.favoriteLocations), '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+			initializePossibleValuesCombo(data.favoriteLocations, '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		} else {
-			initializePossibleValuesCombo($.parseJSON(data.allBreedingLocations), '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
+			initializePossibleValuesCombo(data.allBreedingLocations, '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
 		}
 
 		replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, index);

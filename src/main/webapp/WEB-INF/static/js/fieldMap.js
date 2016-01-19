@@ -442,7 +442,7 @@ function isDeletedPlotAtStartCoord(id) {
 function recreatePopupLocationCombo() {
 	'use strict';
 	$.ajax(
-	{ url: '/Fieldbook/NurseryManager/advance/nursery/getLocations',
+	{ url: '/Fieldbook/locations/getLocations',
 		type: 'GET',
 		cache: false,
 		data: '',
@@ -451,7 +451,7 @@ function recreatePopupLocationCombo() {
 				//recreate the select2 combos to get updated list of locations
 				//we check if the favorite is check then we use favorite locations
 
-				var popuplocationSuggestions =  $.parseJSON($('#showFavoriteLocation').is(':checked') ? data.favoriteLocations : data.allBreedingLocations);
+				var popuplocationSuggestions =  $('#showFavoriteLocation').is(':checked') ? data.favoriteLocations : data.allBreedingLocations;
 				var popuplocationSuggestions_obj = [];
 				var defaultData = null;
 				var currentLocId = $('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val();

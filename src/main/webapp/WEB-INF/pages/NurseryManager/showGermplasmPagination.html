@@ -107,16 +107,15 @@ function validateAndSetEntryNo() {
             showInvalidInputMessage(customMessage);
             $("#txtStartingEntryNo").val('');
         } else {
+            var dataTableIdentifier = '.germplasm-list-items';
+            var entryNoColIndex = findEntryColIndex(dataTableIdentifier);
+            var lowestEntryNo = findLowestEntryNo(dataTableIdentifier, entryNoColIndex);
+            var diff = entryNo - lowestEntryNo;
+            updateEntryNo(dataTableIdentifier, entryNoColIndex, diff);
             if (isNursery()) {
-                $("#tableForGermplasm tbody tr").each(function (index, value) {
-                    $(this).find('td:eq(1)').text(entryNo++);
-                });
                 showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
                         'To update the Measurements table, please save the Nursery', 10000);
             } else {
-                $("#tableForGermplasm tbody tr").each(function (index, value) {
-                    $(this).find('td:eq(3)').text(entryNo++);
-                });
                 setUnappliedChangesAvailable();
                 showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
                         'To update the Measurements table, please review your settings and regenerate ' +
@@ -127,6 +126,41 @@ function validateAndSetEntryNo() {
         // Set starting entry number back to blank if starting entry number is only white spaces
         $("#txtStartingEntryNo").val('');
     }
+}
+
+function findEntryColIndex(dataTableIdentifier) {
+    var entryNoColNum = 0;
+    $("table" + dataTableIdentifier + " thead tr th").each(function (index, value) {
+        var colName = $(this).data("colName");
+        if(colName === '8230-key' || colName === 'entry') {
+            entryNoColNum = $(this).data("columnIndex");
+        }
+    });
+    return entryNoColNum;
+}
+
+function findLowestEntryNo(dataTableIdentifier, entryNoColIndex) {
+    var lowestEntryNo = 0;
+    var dataTable = $(dataTableIdentifier).dataTable();
+    $("table" + dataTableIdentifier + " tbody tr").each(function (index, value) {
+        var cell = dataTable.api().cell(index, entryNoColIndex);
+        var currentEntryNo = cell.data();
+        if(lowestEntryNo === 0 || currentEntryNo < lowestEntryNo) {
+            lowestEntryNo = parseInt(currentEntryNo);
+            console.log("lowestEntryNo is now =" + lowestEntryNo);
+        }
+    });
+    return lowestEntryNo;
+}
+
+function updateEntryNo(dataTableIdentifier, entryNoColIndex, numToAddToEntryNo) {
+    var dataTable = $(dataTableIdentifier).dataTable();
+    $("table" + dataTableIdentifier + " tbody tr").each(function (index, value) {
+        var cell = dataTable.api().cell(index, entryNoColIndex);
+        var currentEntryNo = cell.data();
+        var newEntryNo = parseInt(currentEntryNo) + numToAddToEntryNo;
+        cell.data(newEntryNo).draw();
+    });
 }
 
 // Validate Germplasm entry number and plot number if it is non-numeric

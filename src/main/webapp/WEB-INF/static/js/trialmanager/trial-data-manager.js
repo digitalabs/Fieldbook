@@ -236,7 +236,8 @@
 					isGeneratedOwnDesign: false,
                     hasGeneratedDesignPreset: false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
-					designTypes: []
+					designTypes: [],
+					deleteEnvironmentCallback : function() {}
 				},
 
 				specialSettings: {
@@ -329,13 +330,17 @@
 						service.currentData.basicDetails.studyID !== 0;
 				},
 				deleteEnvironment: function(index) {
+					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0 && service.trialMeasurement.hasMeasurement;
 					// this scenario only covered the update of measurement table
 					// when the user delete an environment for a existing trial with measurement data
 					if (deleteMeasurementPossible) {
 						service.applicationData.unsavedTraitsAvailable = true;
-						$rootScope.$broadcast('onDeleteEnvironment',index);
+
+						$rootScope.$broadcast('onDeleteEnvironment',{ deletedEnvironmentIndex : index, deferred : refreshMeasurementDeferred });
 					}
+
+					return refreshMeasurementDeferred.promise;
 				},
 				reloadMeasurementAjax: function(data) {
 					return $http({

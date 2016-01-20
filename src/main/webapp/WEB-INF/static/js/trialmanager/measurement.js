@@ -80,13 +80,16 @@
 					debounce(reloadMeasurementPage, DELAY, false)();
 				});
 
-				$scope.$on('onDeleteEnvironment', function(event, deletedEnvironmentIndex) {
+				$scope.$on('onDeleteEnvironment', function(event, result) {
+					// result object contains deletedEnvironmentIndex and result.deferred object that need to be resolved after the reload
 					$scope.updateOccurred = true;
 					TrialManagerDataService.clearUnappliedChangesFlag();
 					TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 
 					debounce(function() {
-						reloadMeasurementPage(deletedEnvironmentIndex);
+						reloadMeasurementPage(result.deletedEnvironmentIndex).then(function() {
+							result.deferred.resolve();
+						});
 					}, DELAY, false)();
 				});
 
@@ -112,7 +115,7 @@
 							'&deletedEnvironment=' + deletedEnvironmentIndex + addedData;
 
 						//we reload
-						TrialManagerDataService.reloadMeasurementAjax(dataParam).success(function(data) {
+						return TrialManagerDataService.reloadMeasurementAjax(dataParam).success(function(data) {
 							$measurementContainer.html(data);
 							$body.data('needToSave', '1');
 							$body.data('columnReordered', columnsOrder.length !== 0 ? '1' : '0');

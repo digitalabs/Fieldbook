@@ -338,10 +338,6 @@
 					}
 				},
 				reloadMeasurementAjax: function(data) {
-					// preprocess service objects before the ajax call
-					service.clearUnappliedChangesFlag();
-					service.applicationData.unsavedGeneratedDesign = true;
-
 					return $http({
 						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
 						method: 'POST',

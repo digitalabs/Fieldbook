@@ -5,6 +5,8 @@
 	angular.module('manageTrialApp').controller('MeasurementsCtrl',
 		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http',
 			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http) {
+				var DELAY = 1500; // 1.5 secs
+
 				$scope.settings = TrialManagerDataService.settings.measurements;
 
 				$scope.isHideDelete = false;
@@ -24,11 +26,13 @@
 					return TrialManagerDataService.isGeneratedOwnDesign;
 				}, function(newValue) {
 					if (newValue === true) {
-						// update the measurement tab
-						reloadMeasurementPage();
-
-						TrialManagerDataService.isGeneratedOwnDesign = false;
 						$scope.updateOccurred = true;
+						TrialManagerDataService.clearUnappliedChangesFlag();
+						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+						TrialManagerDataService.isGeneratedOwnDesign = false;
+
+						debounce(reloadMeasurementPage, DELAY, false)();
+
 					}
 
 				}
@@ -71,23 +75,26 @@
 				/* Event Handlers */
 				$scope.$on('deleteOccurred', function() {
 					$scope.updateOccurred = true;
-
-					reloadOnDebounce();
-
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
+
+					debounce(reloadMeasurementPage, DELAY, false)();
 				});
 
 				$scope.$on('onDeleteEnvironment', function(event, deletedEnvironmentIndex) {
-					reloadMeasurementPage(deletedEnvironmentIndex);
 					$scope.updateOccurred = true;
+					TrialManagerDataService.clearUnappliedChangesFlag();
+					TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+
+					debounce(function() {
+						reloadMeasurementPage(deletedEnvironmentIndex);
+					}, DELAY, false)();
 				});
 
 				$scope.$on('variableAdded', function() {
 					$scope.updateOccurred = true;
-
-					reloadOnDebounce();
-
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
+
+					debounce(reloadMeasurementPage, DELAY, false)();
 				});
 
 				/* Controller Utility functions */
@@ -112,8 +119,5 @@
 						});
 					}
 				}
-				var DELAY = 1500; // 1.5 secs
-				var reloadOnDebounce = debounce(reloadMeasurementPage, DELAY, false);
-
 			}]);
 })();

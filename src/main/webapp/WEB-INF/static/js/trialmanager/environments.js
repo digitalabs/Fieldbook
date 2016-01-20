@@ -6,8 +6,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder', 'LOCATION_ID',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID) {
+	'$http', 'DTOptionsBuilder', 'LOCATION_ID','$timeout',
+		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID,$timeout) {
 
 			$scope.TRIAL_INSTANCE_NO_INDEX = 8170;
 
@@ -174,7 +174,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
 				}
 
-				TrialManagerDataService.deleteEnvironment(index - 1);
+				TrialManagerDataService.deleteEnvironment(index + 1);
 			};
 
 			$scope.updateTrialInstanceNo = function(environments, index) {

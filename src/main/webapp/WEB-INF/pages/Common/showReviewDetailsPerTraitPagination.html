@@ -74,6 +74,7 @@ function generateDataForProcessing() {
 			success: function(data) {
 				if (data.success === '1') {
 					reloadMeasurementTable();
+					$('body').removeClass('modal-open');
 					$('#reviewDetailsOutOfBoundsDataModal').modal('hide');
 				} else {
 					showErrorMessage('', data.errorMessage);

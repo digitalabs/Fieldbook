@@ -3698,7 +3698,12 @@ function displayDetailsOutOfBoundsData() {
 			success: function(html) {
 				$('#reviewOutOfBoundsDataModal').modal('hide');
 				$('#reviewDetailsOutOfBoundsDataModalBody').html(html);
-				$('#reviewDetailsOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
+				$('#reviewDetailsOutOfBoundsDataModal').one('shown.bs.modal', function() {
+					$('body').addClass('modal-open');
+				}).modal({
+					backdrop: 'static',
+					keyboard: true
+				});
 			}
 		});
 	}

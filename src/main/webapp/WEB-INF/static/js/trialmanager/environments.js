@@ -6,14 +6,19 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', '$q',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, $q) {
+	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout',
+		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout) {
 
 			$scope.TRIAL_INSTANCE_NO_INDEX = 8170;
 
-			$scope.data = {};
+			$scope.data = TrialManagerDataService.currentData.environments;
 			$scope.nested = {};
 			$scope.nested.dtInstance = {};
+			$scope.isHideDelete = false;
+			$scope.temp = {
+				settingMap: {},
+				noOfEnvironments: $scope.data.noOfEnvironments
+			};
 
 			$scope.settings = TrialManagerDataService.settings.environments;
 			if (Object.keys($scope.settings).length === 0) {
@@ -82,18 +87,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				openManageLocations();
 			};
 
-			$scope.data = TrialManagerDataService.currentData.environments;
-			$scope.isHideDelete = false;
 
 			TrialManagerDataService.onUpdateData('environments', function() {
 				$scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;
 			});
 
-			$scope.temp = {
-				settingMap: {},
-				noOfEnvironments: $scope.data.noOfEnvironments
-			};
-
+			/* Scope Functions */
 			$scope.shouldDisableEnvironmentCountUpdate = function() {
 				return TrialManagerDataService.trialMeasurement.hasMeasurement;
 			};
@@ -133,30 +132,20 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				if (!TrialManagerDataService.isOpenTrial() ||
 						(TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement)) {
 					// For New Trial and Existing Trial w/o measurement data
-					$scope.confirmDeleteEnvironment(index);
+					confirmDeleteEnvironment(index);
 
 				} else if (TrialManagerDataService.trialMeasurement.hasMeasurement) {
 					// For Existing Trial with measurement data
 					var environmentNo = index + 1;
-					$scope.hasMeasurementDataOnEnvironment(environmentNo).success(function(data) {
+					hasMeasurementDataOnEnvironment(environmentNo).success(function(data) {
 						if (true === data) {
 							var warningMessage = 'This environment cannot be removed because it contains measurement data.';
 							showAlertMessage('', warningMessage);
 						} else {
-							$scope.confirmDeleteEnvironment(index);
+							confirmDeleteEnvironment(index);
 						}
 					});
 				}
-			};
-
-			$scope.confirmDeleteEnvironment = function(index) {
-				// Existing Trial with measurement data
-				var modalInstance = $scope.getModalInstance();
-				modalInstance.result.then(function(shouldContinue) {
-					if (shouldContinue) {
-						updateDeletedEnvironment(index);
-					}
-				});
 			};
 
 			$scope.updateTrialInstanceNo = function(environments, index) {
@@ -168,13 +157,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = trialInstanceNo;
 					}
 				}
-			};
-
-			$scope.hasMeasurementDataOnEnvironment = function(environmentNo) {
-				var variableIds = TrialManagerDataService.settings.measurements.keys();
-				return $http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' + environmentNo,
-					variableIds, {cache: false});
-
 			};
 
 			$scope.addVariable = true;
@@ -199,7 +181,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				return $scope.temp.settingMap[targetKey];
 			};
 
-			// watchers
+			/* Watchers */
 			$scope.$watch('data.noOfEnvironments', function(newVal, oldVal) {
 
 				if (newVal < oldVal) {
@@ -231,7 +213,22 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				updateEnvironmentVariables('trialConditionDetails', newVal.length > oldVal.length);
 			}, true);
 
-			/* Controller functions */
+			/* Controller Utility functions */
+			function confirmDeleteEnvironment(index) {
+				// Existing Trial with measurement data
+				var modalInstance = $scope.getModalInstance();
+				modalInstance.result.then(function(shouldContinue) {
+					if (shouldContinue) {
+						updateDeletedEnvironment(index);
+					}
+				});
+			}
+
+			function hasMeasurementDataOnEnvironment(environmentNo) {
+				var variableIds = TrialManagerDataService.settings.measurements.keys();
+				return $http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' + environmentNo,
+					variableIds, {cache: false});
+			}
 
 			// on click generate design button
 			function refreshMeasurementTableAfterDeletingEnvironment() {

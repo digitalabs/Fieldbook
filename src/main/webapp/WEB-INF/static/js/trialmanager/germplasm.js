@@ -30,7 +30,7 @@
     TrialManagerDataService.trialMeasurement.count);
 
     $('#imported-germplasm-list').bind("germplasmListIsUpdated", function() {
-        TrialManagerDataService.indicateUnappliedChangesAvailable();  
+        TrialManagerDataService.indicateUnappliedChangesAvailable(true);  
     });
 
     $scope.updateOccurred = false;

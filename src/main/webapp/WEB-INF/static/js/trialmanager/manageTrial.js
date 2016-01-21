@@ -309,14 +309,21 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				noOfEnvironments: 0
 			};
 			$scope.refreshEnvironmentsAndExperimentalDesign = function() {
-				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, timestamp: new Date()});
+				var currentDesignType = TrialManagerDataService.currentData.experimentalDesign.designType;
+				var showIndicateUnappliedChangesWarning = true;
+				if(currentDesignType === 3){
+					showAlertMessage('', addEnvironmentsImportDesignMessage, 5000);
+					showIndicateUnappliedChangesWarning = false;
+				}
+				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, displayWarningMessage: showIndicateUnappliedChangesWarning, timestamp: new Date()});
 
 				TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 				
 				//enable the user to regenerate preset design when the user adds new environment
 				TrialManagerDataService.applicationData.hasGeneratedDesignPreset = false;
-			};
+				
 
+			};
 			$scope.displayMeasurementOnlyActions = function() {
 				return TrialManagerDataService.trialMeasurement.count &&
 					TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&

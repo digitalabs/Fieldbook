@@ -218,7 +218,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				return $scope.temp.settingMap[targetKey];
 			};
 
-			$scope.addNewEnvironments = function(noOfEnvironments) {
+			$scope.addNewEnvironments = function(noOfEnvironments, displayWarningMessage) {
 				for (var ctr = 0; ctr < noOfEnvironments; ctr++) {
 					$scope.data.environments.push({
 						managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
@@ -233,7 +233,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = i + 1;
 					}
 				}
-				TrialManagerDataService.indicateUnappliedChangesAvailable();
+				TrialManagerDataService.indicateUnappliedChangesAvailable(displayWarningMessage);
 			};
 
 			$scope.$watch('data.noOfEnvironments', function(newVal, oldVal) {
@@ -310,7 +310,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments);
 				$scope.temp.noOfEnvironments += addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
-				$scope.addNewEnvironments(addtlNumOfEnvironments);
+				$scope.addNewEnvironments(addtlNumOfEnvironments,$stateParams.displayWarningMessage);
 			}
 		}]).factory('DTLoadingTemplate', function() {
 			return {

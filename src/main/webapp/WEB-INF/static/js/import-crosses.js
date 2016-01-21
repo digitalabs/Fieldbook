@@ -5,7 +5,9 @@ var ImportCrosses = {
 		preservePlotDuplicates: false,
 		showPopup : function(){
 			$('#fileupload-import-crosses').val('');
-			$('.import-crosses-section .modal').modal({ backdrop: 'static', keyboard: true });
+			$('.import-crosses-section .modal').one('shown.bs.modal', function() {
+				$('body').addClass('modal-open');
+			}).modal({ backdrop: 'static', keyboard: true });
 			$('.import-crosses-section .modal .fileupload-exists').click();
 			ImportCrosses.showFavoriteMethodsOnly = true;
 			ImportCrosses.showFavoriteLocationsOnly = true;
@@ -118,7 +120,9 @@ var ImportCrosses = {
 				//show the confirmation now
 				$('#duplicate-crosses-modal input[type=checkbox]').prop('checked',ImportCrosses.preservePlotDuplicates);
 				
-				$('#duplicate-crosses-modal').modal({ backdrop: 'static', keyboard: true });
+				$('#duplicate-crosses-modal').one('shown.bs.modal', function() {
+					$('body').addClass('modal-open');
+				}).modal({ backdrop: 'static', keyboard: true });
 				
 				$('#continue-duplicate-crosses').off('click');
 				$('#continue-duplicate-crosses').on('click', function() {
@@ -133,7 +137,9 @@ var ImportCrosses = {
 		},
 		showImportSettingsPopup : function() {
 			var crossSettingsPopupModal = $('#crossSettingsModal');
-			crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
+			crossSettingsPopupModal.one('shown.bs.modal', function() {
+				$('body').addClass('modal-open');
+			}).modal({ backdrop: 'static', keyboard: true });
 
 			BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox', ImportCrosses.showFavoriteMethodsOnly);
 			LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox', ImportCrosses.showFavoriteLoationsOnly);
@@ -537,7 +543,9 @@ var ImportCrosses = {
 					cache: false,
 					success: function(html) {
 						$('#saveGermplasmRightSection').html(html);
-						$('#saveListTreeModal').modal({
+						$('#saveListTreeModal').one('shown.bs.modal', function() {
+							$('body').addClass('modal-open');
+						}).modal({
 							show: true,
 							keyboard: true,
 							backdrop: 'static'

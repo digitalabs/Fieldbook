@@ -2412,7 +2412,7 @@ public class SettingsUtil {
 
 	public static void addNewSettingDetails(final int mode, final List<SettingDetail> newDetails, final UserSelection userSelection)
 			throws Exception {
-		SettingsUtil.setSettingDetailRole(mode, newDetails, userSelection, null, null);
+		SettingsUtil.setSettingDetailRoleAndVariableType(mode, newDetails, null, null);
 
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			if (userSelection.getStudyLevelConditions() == null) {
@@ -2480,7 +2480,7 @@ public class SettingsUtil {
 
 	}
 
-	public static void setSettingDetailRole(final int mode, final List<SettingDetail> newDetails, final UserSelection userSelection,
+	public static void setSettingDetailRoleAndVariableType(final int mode, final List<SettingDetail> newDetails,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 
 		if (newDetails != null) {
@@ -2512,11 +2512,14 @@ public class SettingsUtil {
 							&& SettingsUtil.hasVariableType(VariableType.EXPERIMENTAL_DESIGN, settingDetail.getVariable()
 									.getVariableTypes())) {
 						settingDetail.setRole(VariableType.EXPERIMENTAL_DESIGN.getRole());
+						settingDetail.setVariableType(VariableType.EXPERIMENTAL_DESIGN);
 					} else {
 						settingDetail.setRole(VariableType.GERMPLASM_DESCRIPTOR.getRole());
+						settingDetail.setVariableType(VariableType.GERMPLASM_DESCRIPTOR);
 					}
 				} else {
 					settingDetail.setRole(VariableType.getById(Integer.valueOf(mode)).getRole());
+					settingDetail.setVariableType(VariableType.getById(Integer.valueOf(mode)));
 				}
 			}
 		}

@@ -494,8 +494,7 @@ public class SettingsUtilTest {
 			// use any setting variable that is not a trial instance factor
 			detailList.add(settingDetail);
 
-			SettingsUtil.setSettingDetailRole(varType.getId(), detailList, this.userSelection, this.fieldbookMiddlewareService,
-					SettingsUtilTest.PROGRAM_UUID);
+			SettingsUtil.setSettingDetailRoleAndVariableType(varType.getId(), detailList, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
 			Assert.assertEquals("Should have the correct phenotypic type role as per the variable type", varType.getRole(),
 					settingDetail.getRole());
 
@@ -514,8 +513,8 @@ public class SettingsUtilTest {
 
 		// for mode, we use any that is not a germplasm descriptor
 		final VariableType studyDetailMode = VariableType.STUDY_DETAIL;
-		SettingsUtil.setSettingDetailRole(studyDetailMode.getId().intValue(), newDetails, this.userSelection,
-				this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
+		SettingsUtil.setSettingDetailRoleAndVariableType(studyDetailMode.getId().intValue(), newDetails, this.fieldbookMiddlewareService,
+				SettingsUtilTest.PROGRAM_UUID);
 		Assert.assertEquals(
 				"Since we had a settingDetail that is a trial instance factor, the detail's role should be converted to Trial Environment",
 				PhenotypicType.TRIAL_ENVIRONMENT, detail.getRole());

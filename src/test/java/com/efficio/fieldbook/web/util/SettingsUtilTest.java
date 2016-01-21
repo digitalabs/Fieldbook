@@ -3,8 +3,10 @@ package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -536,6 +538,76 @@ public class SettingsUtilTest {
 						SettingsUtilTest.PROGRAM_UUID);
 
 		Assert.assertEquals(baselineTraits.size(), baselineVariates.size());
+	}
+
+	/**
+	 * Test to verify Role and Variable Type as STUDY_DETAIL
+	 */
+	@Test
+	public void testSetSettingDetailRoleAndVariableTypeForStudyDetailVariableType() {
+		final List<SettingDetail> newDetails = new ArrayList<>();
+		final SettingDetail detail = new SettingDetail();
+		final SettingVariable variable = new SettingVariable();
+		variable.setCvTermId(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
+		detail.setVariable(variable);
+		newDetails.add(detail);
+
+		final VariableType studyDetailMode = VariableType.STUDY_DETAIL;
+		SettingsUtil.setSettingDetailRoleAndVariableType(studyDetailMode.getId(), newDetails, this.fieldbookMiddlewareService,
+				SettingsUtilTest.PROGRAM_UUID);
+
+		Assert.assertEquals("Invalid Role", VariableType.STUDY_DETAIL.getRole(), detail.getRole());
+		Assert.assertEquals("Invalid Variable Type", VariableType.STUDY_DETAIL, detail.getVariableType());
+	}
+
+	/**
+	 * Test to verify Role and Variable Type as GERMPLASM_DESCRIPTOR
+	 */
+	@Test
+	public void testSetSettingDetailRoleAndVariableTypeForGermplasmDescriptorVariableType() {
+		final List<SettingDetail> newDetails = new ArrayList<>();
+		final SettingDetail detail = new SettingDetail();
+		final SettingVariable variable = new SettingVariable();
+		variable.setCvTermId(TermId.GERMPLASM_SOURCE.getId());
+
+		// Set Variable types as GERMPLASM_DESCRIPTOR as we are checking for GERMPLASM_DESCRIPTOR
+		Set<VariableType> variableTypeSet = new HashSet<>();
+		variableTypeSet.add(VariableType.GERMPLASM_DESCRIPTOR);
+		variable.setVariableTypes(variableTypeSet);
+		detail.setVariable(variable);
+		newDetails.add(detail);
+
+		final VariableType germplasmDescriptorMode = VariableType.GERMPLASM_DESCRIPTOR;
+		SettingsUtil.setSettingDetailRoleAndVariableType(germplasmDescriptorMode.getId(), newDetails, this.fieldbookMiddlewareService,
+				SettingsUtilTest.PROGRAM_UUID);
+
+		Assert.assertEquals("Invalid Role", VariableType.GERMPLASM_DESCRIPTOR.getRole(), detail.getRole());
+		Assert.assertEquals("Invalid Variable Type", VariableType.GERMPLASM_DESCRIPTOR, detail.getVariableType());
+	}
+
+	/**
+	 * Test to verify Role and Variable Type as EXPERIMENTAL_DESIGN
+	 */
+	@Test
+	public void testSetSettingDetailRoleAndVariableTypeForExperimentalDesignVariableType() {
+		final List<SettingDetail> newDetails = new ArrayList<>();
+		final SettingDetail detail = new SettingDetail();
+		final SettingVariable variable = new SettingVariable();
+		variable.setCvTermId(TermId.GERMPLASM_SOURCE.getId());
+
+		// Set Variable type as EXPERIMENTAL_DESIGN as we are checking for EXPERIMENTAL_DESIGN
+		Set<VariableType> variableTypeSet = new HashSet<>();
+		variableTypeSet.add(VariableType.EXPERIMENTAL_DESIGN);
+		variable.setVariableTypes(variableTypeSet);
+		detail.setVariable(variable);
+		newDetails.add(detail);
+
+		final VariableType germplasmDescriptorMode = VariableType.GERMPLASM_DESCRIPTOR;
+		SettingsUtil.setSettingDetailRoleAndVariableType(germplasmDescriptorMode.getId(), newDetails, this.fieldbookMiddlewareService,
+				SettingsUtilTest.PROGRAM_UUID);
+
+		Assert.assertEquals("Invalid Role", VariableType.EXPERIMENTAL_DESIGN.getRole(), detail.getRole());
+		Assert.assertEquals("Invalid Variable Type", VariableType.EXPERIMENTAL_DESIGN, detail.getVariableType());
 	}
 
 	protected MeasurementVariable createMeasurementVariable(final int termId, final String value) {

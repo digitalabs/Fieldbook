@@ -100,7 +100,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	/**
 	 * The Constant BATCH_SIZE.
 	 */
-	public static final int BATCH_SIZE = 50;
+	public static final int BATCH_SIZE = 500;
 
 	/**
 	 * The germplasm list manager.

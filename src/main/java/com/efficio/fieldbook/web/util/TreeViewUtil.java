@@ -315,9 +315,14 @@ public class TreeViewUtil {
 		treeTableNode.setType(TreeViewUtil.getTypeString(germplasmList.getType(), germplasmListManager));
 		treeTableNode.setOwner(TreeViewUtil.getOwnerListName(germplasmList.getUserId(), userDataManager));
 
-		treeTableNode.setIsFolder(germplasmList.getType() != null && "FOLDER".equals(germplasmList.getType()) ? "1" : "0");
-		int noOfEntries = germplasmList.getListData().size();
-		treeTableNode.setNoOfEntries(noOfEntries == 0 ? "" : String.valueOf(noOfEntries));
+		treeTableNode.setIsFolder(germplasmList.isFolder() ? "1" : "0");
+		
+		if (!germplasmList.isFolder()) {
+			// Do not use germplasmList.getListData().size() here as we dont want to end up loading entire list data just to get count.
+			// Keep germplasmList.getListData() lazy loaded. Use the count query.
+			long noOfEntries = germplasmListManager.countGermplasmListDataByListId(germplasmList.getId());
+			treeTableNode.setNoOfEntries(noOfEntries == 0 ? "" : String.valueOf(noOfEntries));
+		}	
 		treeTableNode.setParentId(TreeViewUtil.getParentId(germplasmList));
 		return treeTableNode;
 	}

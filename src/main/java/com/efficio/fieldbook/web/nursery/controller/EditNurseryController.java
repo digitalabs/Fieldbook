@@ -484,8 +484,8 @@ public class EditNurseryController extends SettingsController {
 			final List<SettingDetail> baselineTraits) {
 		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.STUDY_DETAIL.getId(), studyLevelVariables, this.fieldbookMiddlewareService,
 				this.contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.GERMPLASM_DESCRIPTOR.getId(), form.getPlotLevelVariables(), this.fieldbookMiddlewareService,
-				this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.GERMPLASM_DESCRIPTOR.getId(),
+				form.getPlotLevelVariables(), this.fieldbookMiddlewareService, this.contextUtil.getCurrentProgramUUID());
 		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.TRAIT.getId(), form.getNurseryConditions(), this.fieldbookMiddlewareService,
 				this.contextUtil.getCurrentProgramUUID());
 		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.TRAIT.getId(), baselineTraits, this.fieldbookMiddlewareService,

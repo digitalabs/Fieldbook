@@ -494,7 +494,8 @@ public class SettingsUtilTest {
 			// use any setting variable that is not a trial instance factor
 			detailList.add(settingDetail);
 
-			SettingsUtil.setSettingDetailRoleAndVariableType(varType.getId(), detailList, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
+			SettingsUtil.setSettingDetailRoleAndVariableType(varType.getId(), detailList, this.fieldbookMiddlewareService,
+					SettingsUtilTest.PROGRAM_UUID);
 			Assert.assertEquals("Should have the correct phenotypic type role as per the variable type", varType.getRole(),
 					settingDetail.getRole());
 

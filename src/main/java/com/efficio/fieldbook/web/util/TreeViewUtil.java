@@ -212,8 +212,11 @@ public class TreeViewUtil {
 			UserDataManager userDataManager, GermplasmListManager germplasmListManager) {
 		List<TreeTableNode> treeTableNodes = new ArrayList<TreeTableNode>();
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
+			
+			List<UserDefinedField> listTypes = germplasmListManager.getGermplasmListTypes();
+			
 			for (GermplasmList germplasmList : germplasmLists) {
-				TreeTableNode node = TreeViewUtil.convertGermplasmListToTreeTableNode(germplasmList, userDataManager, germplasmListManager);
+				TreeTableNode node = TreeViewUtil.convertGermplasmListToTreeTableNode(germplasmList, userDataManager, germplasmListManager, listTypes);
 				if (node != null) {
 					treeTableNodes.add(node);
 				}
@@ -306,13 +309,13 @@ public class TreeViewUtil {
 	 * @return the tree node
 	 */
 	private static TreeTableNode convertGermplasmListToTreeTableNode(GermplasmList germplasmList, UserDataManager userDataManager,
-			GermplasmListManager germplasmListManager) {
+			GermplasmListManager germplasmListManager, List<UserDefinedField> listTypes) {
 		TreeTableNode treeTableNode = new TreeTableNode();
 
 		treeTableNode.setId(germplasmList.getId().toString());
 		treeTableNode.setName(germplasmList.getName());
 		treeTableNode.setDescription(TreeViewUtil.getDescriptionForDisplay(germplasmList));
-		treeTableNode.setType(TreeViewUtil.getTypeString(germplasmList.getType(), germplasmListManager));
+		treeTableNode.setType(TreeViewUtil.getTypeString(germplasmList.getType(), listTypes));
 		treeTableNode.setOwner(TreeViewUtil.getOwnerListName(germplasmList.getUserId(), userDataManager));
 
 		treeTableNode.setIsFolder(germplasmList.isFolder() ? "1" : "0");
@@ -335,13 +338,12 @@ public class TreeViewUtil {
 		return String.valueOf(parentId);
 	}
 
-	private static String getTypeString(String typeCode, GermplasmListManager germplasmListManager) {
+	private static String getTypeString(String typeCode, List<UserDefinedField> listTypes) {
 		String type = "Germplasm List";
 		if (typeCode == null) {
 			return type;
 		}
 		try {
-			List<UserDefinedField> listTypes = germplasmListManager.getGermplasmListTypes();
 			for (UserDefinedField listType : listTypes) {
 				if (typeCode.equals(listType.getFcode())) {
 					return listType.getFname();

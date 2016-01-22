@@ -292,7 +292,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	@Test
 	public void testCheckIfUniqueUsingTheRootFolderAsAnInput() throws MiddlewareQueryException {
 		try {
-			this.controller.checkIfUnique(GermplasmTreeControllerTestIT.ROOT_FOLDER_NAME);
+			this.controller.checkIfUnique(GermplasmTreeControllerTestIT.ROOT_FOLDER_NAME, PROGRAM_UUID);
 		} catch (MiddlewareException e) {
 			Assert.assertEquals(GermplasmTreeControllerTestIT.NAME_NOT_UNIQUE, e.getMessage());
 		}
@@ -307,7 +307,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 				.thenReturn(GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA);
 		ReflectionTestUtils.setField(this.controller, "germplasmListManager", germplasmListManager, GermplasmListManager.class);
 		try {
-			this.controller.checkIfUnique(folderName);
+			this.controller.checkIfUnique(folderName, PROGRAM_UUID);
 		} catch (MiddlewareException e) {
 			Assert.assertEquals(GermplasmTreeControllerTestIT.NAME_NOT_UNIQUE, e.getMessage());
 		}

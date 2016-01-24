@@ -346,28 +346,35 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
-	protected TabInfo prepareMeasurementsTabInfo(final List<MeasurementVariable> variatesList, final boolean isUsePrevious) {
+	protected TabInfo prepareMeasurementVariableTabInfo(final List<MeasurementVariable> variatesList, VariableType variableType, final boolean isUsePrevious) {
 
 		final List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 
 		for (final MeasurementVariable var : variatesList) {
-			final SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(), VariableType.TRAIT.getRole().name());
+			if(var.getVariableType() == variableType) {
 
-			if (!isUsePrevious) {
-				detail.getVariable().setOperation(Operation.UPDATE);
-			} else {
-				detail.getVariable().setOperation(Operation.ADD);
+				final SettingDetail detail = this.createSettingDetail(var.getTermId(), variableType);
+
+				if (!isUsePrevious) {
+					detail.getVariable().setOperation(Operation.UPDATE);
+				} else {
+					detail.getVariable().setOperation(Operation.ADD);
+				}
+
+				detail.setDeletable(true);
+
+				detailList.add(detail);
 			}
+		}
 
-			detail.setDeletable(true);
-
-			detailList.add(detail);
+		if(variableType == VariableType.TRAIT){
+			this.userSelection.setBaselineTraitsList(detailList);
+		} else if (variableType == VariableType.SELECTION_METHOD){
+			this.userSelection.setSelectionVariates(detailList);
 		}
 
 		final TabInfo info = new TabInfo();
 		info.setSettings(detailList);
-
-		this.userSelection.setBaselineTraitsList(detailList);
 
 		return info;
 	}
@@ -596,8 +603,8 @@ public abstract class BaseTrialController extends SettingsController {
 
 	protected TabInfo prepareTrialSettingsTabInfo(final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious) {
 		final TabInfo info = new TabInfo();
-		final Map<String, String> trialValues = new HashMap<String, String>();
-		final List<SettingDetail> details = new ArrayList<SettingDetail>();
+		final Map<String, String> trialValues = new HashMap<>();
+		final List<SettingDetail> details = new ArrayList<>();
 
 		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
 		final List<Integer> basicDetailIDList = this.buildVariableIDList(AppConstants.HIDE_TRIAL_FIELDS.getString());

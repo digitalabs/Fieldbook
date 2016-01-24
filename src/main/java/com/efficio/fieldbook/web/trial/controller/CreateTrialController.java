@@ -142,7 +142,9 @@ public class CreateTrialController extends BaseTrialController {
 				tabDetails.put(CreateTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, true));
 				tabDetails.put(CreateTrialController.TRIAL_SETTINGS_DATA_TAB,
 						this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
-				tabDetails.put("measurementsData", this.prepareMeasurementsTabInfo(trialWorkbook.getVariates(), true));
+				tabDetails.put("measurementsData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, true));
+				tabDetails.put("selectionVariableData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
+
 				this.fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(),
 						trialWorkbook.getMeasurementDatesetId());
 				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));

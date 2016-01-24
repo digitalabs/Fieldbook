@@ -25,6 +25,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.StudyDataManager;
@@ -251,15 +252,17 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, false));
 		model.addAttribute("trialSettingsData", this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
-		model.addAttribute("measurementsData", this.prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
-		model.addAttribute("experimentalDesignData",
-				this.prepareExperimentalDesignTabInfo(trialWorkbook, false));
+		model.addAttribute("measurementsData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));
+		model.addAttribute("selectionVariableData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
+		model.addAttribute("experimentalDesignData", this.prepareExperimentalDesignTabInfo(trialWorkbook, false));
+
 		model.addAttribute(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(
 				trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+
 		model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());
 		model.addAttribute("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
 
-		// so that we can reuse the same age being use for nursery
+		// so that we can reuse the same page being use for nursery
 		model.addAttribute("createNurseryForm", form);
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
 		model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
@@ -284,18 +287,17 @@ public class OpenTrialController extends BaseTrialController {
 			throws MiddlewareQueryException {
 
 		this.processEnvironmentData(data.getEnvironments());
-		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
-		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
-		// transfer over data from user input into the list of setting details stored in the session
-		this.populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
 
-		final List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
+		final List<SettingDetail> basicDetails = userSelection.getBasicDetails();
+
+		final List<SettingDetail> combinedList = new ArrayList<>();
 		combinedList.addAll(basicDetails);
+		combinedList.addAll(studyLevelConditions);
 
-		if (studyLevelConditions != null) {
-			this.populateSettingData(studyLevelConditions, data.getTrialSettings().getUserInput());
-			combinedList.addAll(studyLevelConditions);
-		}
+		// transfer over data from user input into the list of setting details stored in the session
+		this.populateSettingData(this.userSelection.getBasicDetails(), data.getBasicDetails().getBasicDetails());
+		this.populateSettingData(this.userSelection.getStudyLevelConditions(), data.getTrialSettings().getUserInput());
 
 		if (this.userSelection.getPlotsLevelList() == null) {
 			this.userSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
@@ -313,6 +315,7 @@ public class OpenTrialController extends BaseTrialController {
 			this.userSelection.setTreatmentFactors(new ArrayList<SettingDetail>());
 		}
 
+		//TODO: add deleted selection variates
 		// include deleted list if measurements are available
 		SettingsUtil.addDeletedSettingsList(combinedList, this.userSelection.getDeletedStudyLevelConditions(),
 				this.userSelection.getStudyLevelConditions());
@@ -332,10 +335,14 @@ public class OpenTrialController extends BaseTrialController {
 		final int trialDatasetId = this.userSelection.getWorkbook().getTrialDatasetId();
 		final int measurementDatasetId = this.userSelection.getWorkbook().getMeasurementDatesetId();
 
-		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
-				this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection,
-				this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
-				data.getTreatmentFactors().getCurrentData(), null, this.userSelection.getNurseryConditions(), false,
+		//Combining variates to baseline traits.
+		this.userSelection.getBaselineTraitsList().addAll(this.userSelection.getSelectionVariates());
+
+		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService,
+				name,
+				this.userSelection,
+				data.getTreatmentFactors().getCurrentData(),
+				false,
 				this.contextUtil.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
@@ -354,13 +361,12 @@ public class OpenTrialController extends BaseTrialController {
 					this.userSelection.getTemporaryWorkbook().getTrialObservations());
 
 			if (replace == 1) {
-				for (final MeasurementVariable mvar : this.userSelection.getWorkbook().getConditions()) {
-
-					if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
-						mvar.setOperation(Operation.UPDATE);
+				for (final MeasurementVariable measurementVariable : this.userSelection.getWorkbook().getConditions()) {
+					if (measurementVariable.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
+						measurementVariable.setOperation(Operation.UPDATE);
 						break;
 					} else {
-						mvar.setOperation(Operation.ADD);
+						measurementVariable.setOperation(Operation.ADD);
 						break;
 					}
 				}
@@ -385,7 +391,7 @@ public class OpenTrialController extends BaseTrialController {
 
 		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(data.getEnvironments().getEnvironments()));
 
-		final Map<String, Object> returnVal = new HashMap<String, Object>();
+		final Map<String, Object> returnVal = new HashMap<>();
 		returnVal.put(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(workbook, false));
 		returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, false);
 		returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, 0);
@@ -437,7 +443,9 @@ public class OpenTrialController extends BaseTrialController {
 		returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(
 				trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
 		returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());
-		returnVal.put("measurementsData", this.prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
+		returnVal.put("measurementsData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));
+		returnVal.put("selectionVariableData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
+
 		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, id);
 		this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false);
 		this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false);

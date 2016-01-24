@@ -10,6 +10,8 @@
 		$scope.data = TrialManagerDataService.currentData.trialSettings;
 		$scope.addVariable = true;
 
+        $scope.managementDetails =TrialManagerDataService.settings.trialSettings;
+
         $scope.managementDetailOptions = {
 			selectAll: false
 		};

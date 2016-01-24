@@ -34,10 +34,14 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.Property;
+import org.generationcp.middleware.domain.ontology.Scale;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -98,6 +102,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	@Resource
 	protected OntologyService ontologyService;
+
+	@Resource
+	protected OntologyVariableDataManager variableDataManager;
 
 	/**
 	 * Checks if the measurement table has user input data for a particular variable id
@@ -390,6 +397,63 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			svar.setCvTermId(stdVar.getId());
 			return new SettingDetail(svar, null, null, false);
 		}
+	}
+
+	/**
+	 * Creates the setting detail.
+	 *
+	 * @param id the id
+	 * @return the setting detail
+	 * @throws MiddlewareQueryException the middleware query exception
+	 */
+	protected SettingDetail createSettingDetail(final int id, final VariableType variableType) throws MiddlewareException {
+
+		Variable variable = this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, false, false);
+
+		Property property = variable.getProperty();
+		Scale scale = variable.getScale();
+		org.generationcp.middleware.domain.ontology.Method method = variable.getMethod();
+
+		Double minValue = variable.getMinValue() == null ? null : Double.parseDouble(variable.getMinValue());
+		Double maxValue = variable.getMaxValue() == null ? null : Double.parseDouble(variable.getMaxValue());
+
+		final SettingVariable settingVariable = new SettingVariable(variable.getName(), variable.getDefinition(),
+				variable.getProperty().getName(), scale.getName(), method.getName(),
+				variableType.getRole().name(),
+				scale.getDataType().getName(), scale.getDataType().getId(),
+				minValue, maxValue);
+
+		//NOTE: Using variable type which is used in project properties
+		settingVariable.setVariableTypes(Collections.singleton(variableType));
+
+		settingVariable.setCvTermId(variable.getId());
+		settingVariable.setCropOntologyId(property.getCropOntologyId());
+
+		if(property.getClasses().size() > 0){
+			settingVariable.setTraitClass(property.getClasses().iterator().next());
+		}
+
+		settingVariable.setOperation(Operation.ADD);
+		final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
+
+		final SettingDetail settingDetail = new SettingDetail(settingVariable, possibleValues, null, false);
+		settingDetail.setRole(variableType.getRole());
+		settingDetail.setVariableType(variableType);
+
+		if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
+			settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
+		} else if (id == TermId.STUDY_UID.getId()) {
+			settingDetail.setValue(this.getCurrentIbdbUserId().toString());
+		} else if (id == TermId.STUDY_UPDATE.getId()) {
+			settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
+		}
+
+		settingDetail.setPossibleValuesToJson(possibleValues);
+		final List<ValueReference> possibleValuesFavorite =
+				this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID());
+		settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
+		settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+		return settingDetail;
 	}
 
 	/**

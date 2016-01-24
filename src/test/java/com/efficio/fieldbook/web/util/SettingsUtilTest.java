@@ -534,8 +534,7 @@ public class SettingsUtilTest {
 		final UserSelection userSelection = new UserSelection();
 
 		final List<Variate> baselineVariates =
-				SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, userSelection, this.fieldbookMiddlewareService,
-						SettingsUtilTest.PROGRAM_UUID);
+				SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
 
 		Assert.assertEquals(baselineTraits.size(), baselineVariates.size());
 	}

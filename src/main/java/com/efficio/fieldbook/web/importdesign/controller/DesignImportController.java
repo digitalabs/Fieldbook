@@ -44,6 +44,7 @@ import org.generationcp.middleware.util.ResourceFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -148,6 +149,13 @@ public class DesignImportController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = "/import/{studyType}", method = RequestMethod.POST, produces = "text/plain")
 	public String importFile(@ModelAttribute("importDesignForm") final ImportDesignForm form, @PathVariable final String studyType) {
+		return this.importFile(form, studyType, 0);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/import/{studyType}/{noOfEnvironments}", method = RequestMethod.POST, produces = "text/plain")
+	public String importFile(@ModelAttribute("importDesignForm") final ImportDesignForm form, @PathVariable final String studyType,
+			@PathVariable final Integer noOfEnvironments) {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
@@ -158,6 +166,14 @@ public class DesignImportController extends SettingsController {
 			final DesignImportData designImportData = this.parser.parseFile(form.getFile());
 
 			this.performAutomap(designImportData);
+
+			if (noOfEnvironments > 0) {
+				this.validateImportFileForNewlyAddedEnvironments(
+						designImportData.getCsvData(),
+						designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT)
+								.get(TermId.TRIAL_INSTANCE_FACTOR.getId()).getColumnIndex(), noOfEnvironments);
+
+			}
 
 			this.userSelection.setDesignImportData(designImportData);
 
@@ -174,6 +190,35 @@ public class DesignImportController extends SettingsController {
 
 		// we return string instead of json to fix IE issue rel. DataTable
 		return this.convertObjectToJson(resultsMap);
+	}
+
+	/**
+	 * 
+	 * @param csvData
+	 * @param trialInstanceNoIndx
+	 * @param expectedNoOfEnvironments
+	 * @throws FileParsingException
+	 */
+	public void validateImportFileForNewlyAddedEnvironments(final Map<Integer, List<String>> csvData, final int trialInstanceNoIndx,
+			final int expectedNoOfEnvironments) throws FileParsingException {
+		int noOfEnvironmentCSV = 1;
+		for (int rowCounter = 1; rowCounter < csvData.size(); rowCounter++) {
+			final Integer trialInstanceNo =
+					(csvData.get(rowCounter).get(trialInstanceNoIndx).trim().length() > 0) ? Integer.valueOf(csvData.get(rowCounter)
+							.get(trialInstanceNoIndx).trim()) : 0;
+			if (trialInstanceNo > noOfEnvironmentCSV) {
+				noOfEnvironmentCSV = trialInstanceNo;
+			}
+
+			if (noOfEnvironmentCSV == expectedNoOfEnvironments) {
+				break;
+			}
+		}
+
+		if (expectedNoOfEnvironments != noOfEnvironmentCSV) {
+			throw new FileParsingException(this.messageSource.getMessage("design.import.error.mismatch.count.of.added.environments",
+					new Object[] {}, LocaleContextHolder.getLocale()));
+		}
 	}
 
 	/**

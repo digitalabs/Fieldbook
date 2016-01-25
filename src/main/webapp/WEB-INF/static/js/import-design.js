@@ -314,8 +314,16 @@ var ImportDesign = (function() {
 				$('#importDesignUploadForm').attr('action',
 						'/Fieldbook/DesignImport/import/N');
 			} else {
-				$('#importDesignUploadForm').attr('action',
-						'/Fieldbook/DesignImport/import/T');
+				var TrialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
+				var hasNewEnvironmentAdded = TrialManagerDataService.applicationData.hasNewEnvironmentAdded;
+				var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
+
+				var actionURL = '/Fieldbook/DesignImport/import/T';
+				if(hasNewEnvironmentAdded){
+					actionURL += '/' + noOfEnvironments;
+				}
+
+				$('#importDesignUploadForm').attr('action',actionURL);
 			}
 
 			ImportDesign.submitImport($('#importDesignUploadForm')).done(

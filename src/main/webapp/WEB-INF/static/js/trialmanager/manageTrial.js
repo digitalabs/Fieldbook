@@ -311,11 +311,14 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			$scope.refreshEnvironmentsAndExperimentalDesign = function() {
 				var currentDesignType = TrialManagerDataService.currentData.experimentalDesign.designType;
 				var showIndicateUnappliedChangesWarning = true;
-				if(currentDesignType === 3){
-					showAlertMessage('', addEnvironmentsImportDesignMessage, 5000);
+				if(TrialManagerDataService.applicationData.designTypes[currentDesignType].name === 'Custom Import Design'){
+					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd = $scope.temp.noOfEnvironments;
 					showIndicateUnappliedChangesWarning = false;
-				}
-				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, displayWarningMessage: showIndicateUnappliedChangesWarning, timestamp: new Date()});
+					ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());
+					showAlertMessage('', addEnvironmentsImportDesignMessage, 5000);
+				} 
+
+				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, displayWarningMessage: showIndicateUnappliedChangesWarning, timestamp: new Date()});	
 
 				TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 				

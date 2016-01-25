@@ -376,7 +376,6 @@ public class SettingsUtil {
 		dataset.setFactors(factors);
 
 		final List<SettingDetail> variates = new ArrayList<>(userSelection.getBaselineTraitsList());
-		variates.addAll(userSelection.getSelectionVariates());
 
 		dataset.setVariates(SettingsUtil.convertBaselineTraitsToVariates(variates, fieldbookMiddlewareService, programUUID));
 

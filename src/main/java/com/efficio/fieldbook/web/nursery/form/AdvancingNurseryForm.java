@@ -114,7 +114,7 @@ public class AdvancingNurseryForm {
 
 	private String harvestYear;
 
-	private String harvestMonth;
+    private String harvestMonth;
 
 	private Long uniqueId;
 
@@ -128,7 +128,65 @@ public class AdvancingNurseryForm {
 
 	private String checkAdvanceLinesUnique;
 
-	/**
+    /* Selected Locations for Advance Trial */
+    private List<String> locations;
+
+    /* Selected Replications for Advance Trial */
+    private String replications;
+
+    /*Selected All Replication for Advance Trial*/
+    private String replicationAll;
+
+    /**
+     * Gets locations selected for Advance Trial
+     * @return
+     */
+    public List<String> getLocations() {
+        return locations;
+    }
+
+    /**
+     * Set Locations selected for Advance Trial
+     * @param locations
+     */
+    public void setLocations(List<String> locations) {
+        this.locations = locations;
+    }
+
+    /**
+     * Gets comma seperated String of Reps selected
+     * @return
+     */
+    public String getReplications() {
+        return replications;
+    }
+
+    /**
+     * Set the Selected Replications
+     * @param replications
+     */
+    public void setReplications(String replications) {
+        this.replications = replications;
+    }
+
+    /**
+     * Gets the Select All Replication
+     * @return
+     */
+    public String getReplicationAll() {
+        return replicationAll;
+    }
+
+    /**
+     * Set the Select All Replication
+     * @param replicationAll
+     */
+    public void setReplicationAll(String replicationAll) {
+        this.replicationAll = replicationAll;
+    }
+
+
+    /**
 	 * Gets the method id all.
 	 *
 	 * @return the method id all
@@ -812,7 +870,7 @@ public class AdvancingNurseryForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -856,6 +914,12 @@ public class AdvancingNurseryForm {
 		builder.append(this.entries);
 		builder.append(", germplasmList=");
 		builder.append(this.germplasmList);
+        builder.append(", locations=");
+        builder.append(this.locations);
+        builder.append(", replications=");
+        builder.append(this.replications);
+        builder.append(", replicationAll=");
+        builder.append(this.replicationAll);
 		builder.append("]");
 		return builder.toString();
 	}

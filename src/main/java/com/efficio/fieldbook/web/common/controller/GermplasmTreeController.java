@@ -625,8 +625,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	private List<TreeTableNode> getGermplasmFolderChildrenNode(final String id, String programUUID) {
-		return TreeViewUtil.convertGermplasmListToTreeTableNodes(this.getGermplasmListChildren(id, programUUID), this.userDataManager,
-				this.germplasmListManager);
+		return TreeViewUtil.convertGermplasmListToTreeTableNodes(this.getGermplasmListChildren(id, programUUID), this.germplasmListManager);
 	}
 
 	/**

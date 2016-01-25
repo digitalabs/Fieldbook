@@ -233,7 +233,7 @@ public class CreateTrialController extends BaseTrialController {
 		// transfer over data from user input into the list of setting details stored in the session
 		this.populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
 
-		final List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> combinedList = new ArrayList<>();
 		combinedList.addAll(basicDetails);
 
 		if (studyLevelConditions != null) {
@@ -243,12 +243,23 @@ public class CreateTrialController extends BaseTrialController {
 
 		final String name = data.getBasicDetails().getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId()));
 
-		final Dataset dataset =
-				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection
-						.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection, this.userSelection
-						.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
-						data.getTreatmentFactors().getCurrentData(), null, this.userSelection.getNurseryConditions(), false,
-						this.contextUtil.getCurrentProgramUUID());
+		if(this.userSelection.getStudyLevelConditions() == null) {
+			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
+		}
+
+		if (this.userSelection.getBaselineTraitsList() == null) {
+			this.userSelection.setBaselineTraitsList(new ArrayList<SettingDetail>());
+		}
+
+		//Combining variates to baseline traits
+		this.userSelection.getBaselineTraitsList().addAll(this.userSelection.getSelectionVariates());
+
+		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService,
+				name,
+				this.userSelection,
+				data.getTreatmentFactors().getCurrentData(),
+				false,
+				this.contextUtil.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 		final Workbook workbook =

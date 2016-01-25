@@ -561,7 +561,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 			dom: 'R<t><"fbk-page-div"p>',
 			iDisplayLength: 100,
 			fnDrawCallback: function(oSettings) {
-				makeDraggable(true);
+				makeGermplasmListDraggable(true);
 			},
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 				$(nRow).data('entry', aData.entry);
@@ -911,7 +911,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 			dom: 'R<t><"fbk-page-div"p>',
 			iDisplayLength: 100,
 			fnDrawCallback: function(oSettings) {
-				makeDraggable(true);
+				makeGermplasmListDraggable(true);
 			},
 
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {

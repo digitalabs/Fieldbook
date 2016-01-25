@@ -69,16 +69,27 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			})
 
 			.state('environment', {
-				templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
-				params: ['addtlNumOfEnvironments', 'timestamp'],
-				views: {
-					environment: {
-						controller: 'EnvironmentCtrl',
-						templateUrl: '/Fieldbook/TrialManager/createTrial/environment'
-					}
-				},
-				deepStateRedirect: true, sticky: true
-			})
+                templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
+                params: ['addtlNumOfEnvironments', 'timestamp'],
+                views: {
+                    environment: {
+                        controller: 'EnvironmentCtrl',
+                        templateUrl: '/Fieldbook/TrialManager/createTrial/environment'
+                    }
+                },
+                deepStateRedirect: true, sticky: true
+            })
+            .state('selectEnviornment', {
+                templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
+                views: {
+                    selectEnviornment: {
+                        controller: 'SelectEnvironmentModalCtrl',
+                        templateUrl: '/Fieldbook/NurseryManager/advance/nursery/selectEnviornment'
+                    }
+                },
+                deepStateRedirect: true, sticky: true
+
+            })
 
 			.state('experimentalDesign', {
 				url: '/experimentalDesign',
@@ -193,7 +204,6 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 					name: 'Measurements',
 					state: 'editMeasurements'
 				}
-
 			];
 
 			$scope.isOpenTrial = TrialManagerDataService.isOpenTrial;
@@ -281,12 +291,17 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
 						TrialManagerDataService.updateCurrentData('trialSettings',
 							TrialManagerDataService.extractData(data.trialSettingsData));
-						TrialManagerDataService.updateCurrentData('environments', environmentData);
+                        TrialManagerDataService.updateCurrentData('environments', environmentData);
 						TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(
 							data.treatmentFactorsData));
 
+                        //Added-selectionVariates
 						TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
 							data.trialSettingsData));
+
+                        TrialManagerDataService.updateSettings('selectionVariable', TrialManagerDataService.extractSettings(
+                            data.selectionVariableData));
+
 						TrialManagerDataService.updateSettings('environments', environmentSettings);
 						TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
 						TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(

@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
@@ -52,6 +53,9 @@ public abstract class AbstractBaseFieldbookController {
 
 	@Resource
 	private PaginationListSelection paginationListSelection;
+
+	@Resource
+	protected OntologyVariableDataManager variableDataManager;
 
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
@@ -172,8 +176,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Convert favorite location to json.
-	 * 
-	 * @param locations the locations
+	 * @param objectList list of objects
 	 * @return the string
 	 */
 	protected String convertObjectToJson(final Object objectList) {
@@ -200,4 +203,7 @@ public abstract class AbstractBaseFieldbookController {
 		this.contextUtil = contextUtil;
 	}
 
+	public void setVariableDataManager(OntologyVariableDataManager variableDataManager) {
+		this.variableDataManager = variableDataManager;
+	}
 }

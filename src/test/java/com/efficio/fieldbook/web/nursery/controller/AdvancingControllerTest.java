@@ -40,10 +40,7 @@ import org.springframework.ui.Model;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdvancingControllerTest {
@@ -300,7 +297,9 @@ public class AdvancingControllerTest {
         AdvancingNurseryForm form = new AdvancingNurseryForm();
         Model model = new ExtendedModelMap();
 
-        String returnTemplatePage = this.advancingController.show(form,model,this.request,this.session,212);
+        Map<String,String> pathVariableMap = new HashMap<String,String>();
+        pathVariableMap.put("nurseryId","212");
+        String returnTemplatePage = this.advancingController.show(form,model,this.request,this.session,pathVariableMap);
 
         Assert.assertEquals("NurseryManager/advanceNurseryModal",returnTemplatePage);
         Map<String,Object> modelMap = model.asMap();

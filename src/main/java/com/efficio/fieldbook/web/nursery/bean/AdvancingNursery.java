@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.generationcp.middleware.domain.dms.Study;
 
@@ -57,6 +58,67 @@ public class AdvancingNursery implements Serializable {
 	private Integer plotVariateId;
 
 	private boolean isCheckAdvanceLinesUnique;
+
+    private List<String> locationsIds;
+
+    private List<String> replicationIds;
+
+    private boolean allReplication;
+
+    /**
+     * Gets All Replication selected for Trial Advancing
+     *
+     * @return boolean indicating All Replication selected for Trial Advancing
+     */
+    public boolean isAllReplication() {
+        return allReplication;
+    }
+
+    /**
+     * Sets All Replication selected for Trial Advancing
+     *
+     * @param allReplication All Replication selected for Trial Advancing
+     */
+    public void setAllReplication(boolean allReplication) {
+        this.allReplication = allReplication;
+    }
+
+    /**
+     * Gets the Locations selected for Trial Advancing
+     *
+     * @return Locations Ids selected
+     */
+    public List<String> getLocationsIds() {
+        return locationsIds;
+    }
+
+    /**
+     * Sets the Locations selected for Trial Advancing
+     *
+     * @param locationsIds Locations selected for Trial Advancing
+     */
+    public void setLocationsIds(List<String> locationsIds) {
+        this.locationsIds = locationsIds;
+    }
+
+    /**
+     * Gets the Replications selected for Trial Advancing
+     *
+     * @return Replications selected for Trial Advancing
+     */
+    public List<String> getReplicationIds() {
+        return replicationIds;
+    }
+
+    /**
+     * Sets Replication selected for Trial Advancing.
+     *
+     * @param replicationIds Replication selected for Trial Advancing.
+     */
+    public void setReplicationIds(List<String> replicationIds) {
+        this.replicationIds = replicationIds;
+    }
+
 
 	public Study getStudy() {
 		return this.study;
@@ -281,8 +343,12 @@ public class AdvancingNursery implements Serializable {
 		builder.append(this.harvestLocationId);
 		builder.append(", harvestLocationAbbreviation=");
 		builder.append(this.harvestLocationAbbreviation);
-		builder.append(", breedingMethodId=");
-		builder.append(this.breedingMethodId);
+		builder.append(", locationsIds=");
+		builder.append(this.locationsIds);
+        builder.append(", replicationIds=");
+        builder.append(this.replicationIds);
+        builder.append(", allReplication=");
+        builder.append(this.allReplication);
 		builder.append("]");
 		return builder.toString();
 	}

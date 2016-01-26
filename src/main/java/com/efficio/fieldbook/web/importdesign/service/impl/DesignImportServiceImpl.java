@@ -45,6 +45,8 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 
 public class DesignImportServiceImpl implements DesignImportService {
 
+	private static final String NO_OF_ADDED_ENVIRONMENTS = "noOfAddedEnvironments";
+
 	private static final String STARTING_PLOT_NO = "startingPlotNo";
 
 	private static final String STARTING_ENTRY_NO = "startingEntryNo";
@@ -109,7 +111,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		measurementRowGenerator.addVariatesToMeasurementRows(measurements, this.userSelection, this.ontologyService, this.contextUtil);
 
 		// if there is added environments
-		if (additionalParams.get("noOfAddedEnvironments") != null && additionalParams.get("noOfAddedEnvironments") > 0) {
+		if (additionalParams.get(NO_OF_ADDED_ENVIRONMENTS) != null && additionalParams.get(NO_OF_ADDED_ENVIRONMENTS) > 0) {
 			final List<MeasurementRow> measurementsForNewEnvironment = new ArrayList<>();
 			measurementsForNewEnvironment.addAll(measurements);
 			measurements.clear();
@@ -138,7 +140,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		final Integer startingEntryNo = additionalParams.get("startingEntryNo");
 		final Integer startingPlotNo = additionalParams.get("startingPlotNo");
 		final Integer noOfAddedEnvironment =
-				additionalParams.get("noOfAddedEnvironments") != null ? additionalParams.get("noOfAddedEnvironments") : 0;
+				additionalParams.get(NO_OF_ADDED_ENVIRONMENTS) != null ? additionalParams.get(NO_OF_ADDED_ENVIRONMENTS) : 0;
 
 		if (isPreset) {
 

@@ -77,6 +77,12 @@
 
 							</li>
 
+                            <li  ng-show="displayGermplasmOnlyActions()">
+
+                                <a href="javascript: advanceTrial();" id="advance-trial-link" th:text="#{trial.trialdetails.action.advance.trial}">Advance Trial</a>
+
+                            </li>
+
 							<li id="review-out-of-bounds-data-list" style="display:none;">
 								<a href="javascript: reviewOutOfBoundsData();" id="review-out-of-bounds-data-link"
 								   th:text="#{nursery.nurserydetails.action.review.out.of.bounds.data}">Review out of bounds data</a>
@@ -233,6 +239,12 @@
 
 	</form>
 </div>
+
+<!-- Modal Div for Advance Trial -->
+<div id="advance-nursery-modal-div"></div>
+<div id="review-advance-nursery-modal-div"></div>
+<div id="advance-trial-locations-modal-div"></div>
+
 <div class="form-group" id="create-trial">
 	<div th:include="/Common/includes/studyTree"></div>
 </div>
@@ -340,7 +352,17 @@
 </div>
 
 <div class="row">
+      <div class="col-xs-12 col-md-12">
+            <div id="select-enviornments" th:include="/TrialManager/templates/selectEnviornmentModal"></div>
+        </div>
+    </div>
+
+<div class="row">
 	<div th:include="/Common/exportGermplasmList"></div>
+</div>
+
+<div class="row">
+    <div th:include="/Common/includes/saveList"></div>
 </div>
 
 <form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
@@ -360,6 +382,7 @@
 <script type="text/javascript" th:src="@{/static/js/trialmanager/trial-settings-manager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/trial-data-manager.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentModal.js}"></script>
 
 
 <!-- constants here -->

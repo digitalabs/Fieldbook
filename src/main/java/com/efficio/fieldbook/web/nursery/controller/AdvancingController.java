@@ -498,9 +498,4 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		}
 		return this.messageSource.getMessage("nursery.advance.nursery.empty.method.error", new String[] {name}, locale);
 	}
-
-	public void setOntologyDataManager(OntologyDataManager ontologyDataManager) {
-		this.ontologyDataManager = ontologyDataManager;
-	}
-
 }

@@ -193,7 +193,7 @@ function showPage(paginationUrl, pageNum, sectionDiv) {
 			}
 
 			if (sectionDiv === 'imported-germplasm-list') {
-				makeDraggable(makeDraggableBool);
+				makeGermplasmListDraggable(makeDraggableBool);
 
 				// Highlight
 				if (itemsIndexAdded && itemsIndexAdded.length > 0) {
@@ -1001,46 +1001,83 @@ function deleteNurseryInEdit() {
 	});
 }
 
-function advanceNursery(tableName) {
-	'use strict';
+/* ADVANCING TRIAL SPECIFIC FUNCTIONS */
 
-	var count = 0,
-		idVal = $('#createNurseryMainForm #studyId').val();
+function advanceTrial(){
+    'use strict';
+    var idVal = $('#studyId').val();
+    $('#advanceNurseryModal').modal('hide');
+    $('#selectEnviornmentModal').modal({ backdrop: 'static', keyboard: true });
+}
 
-	if ($('.import-study-data').data('data-import') === '1') {
-		showErrorMessage('', needSaveImportDataError);
-		return;
-	}
+function trialSelectEnviornmentContinue(locationIds){
+    'use strict';
+    var idVal = $('#studyId').val();
+    $('#selectEnviornmentModal').modal('hide');
+    advanceStudy(idVal,locationIds);
 
-	count++;
-	if (count !== 1) {
-		showMessage(advanceStudyError);
-		return;
-	}
+}
 
-	var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
+/* END ADVANCING TRIAL SPECIFIC FUNCTIONS */
 
-	if (tableName == 'nursery-table') {
-		if (idVal != null) {
 
-			$.ajax({
-				url: advanceStudyHref + '/' + encodeURIComponent(idVal),
-				type: 'GET',
-				aysnc: false,
-				success: function(html) {
-					$('#advance-nursery-modal-div').html(html);
-					$('#advanceNurseryModal').modal({ backdrop: 'static', keyboard: true });
+/* ADVANCING NURSERY SPECIFIC FUNCTIONS */
 
-					$('#advanceNurseryModal select').not('.fbk-harvest-year').each(function() {
-						$(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
-					});
-					$('#advanceNurseryModal select.fbk-harvest-year').each(function() {
-						$(this).select2({minimumResultsForSearch: -1});
-					});
-				}
-			});
-		}
-	}
+function advanceNursery(){
+    var idVal = $('#createNurseryMainForm #studyId').val();
+    advanceStudy(idVal);
+}
+
+/* END ADVANCING NURSERY SPECIFIC FUNCTIONS */
+
+
+/*
+ * Section for Advancing Study (Common for Trial and Nursery)
+ * @param studyId Nursery or Trial study Id
+ * @param locationIds Location will be passed for Advance Trial only
+ */
+function advanceStudy(studyId, locationIds){
+    'use strict';
+    var count = 0,
+        idVal = studyId;
+
+    if ($('.import-study-data').data('data-import') === '1') {
+        showErrorMessage('', needSaveImportDataError);
+        return;
+    }
+
+    count++;
+    if (count !== 1) {
+        showMessage(advanceStudyError);
+        return;
+    }
+
+    var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
+    advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
+
+    if(!isNursery() || locationIds !== undefined){
+        advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(locationIds.join(","));
+    }
+
+
+    if (idVal != null) {
+        $.ajax({
+            url: advanceStudyHref,
+            type: 'GET',
+            aysnc: false,
+            success: function(html) {
+                $('#advance-nursery-modal-div').html(html);
+                $('#advanceNurseryModal').modal({ backdrop: 'static', keyboard: true });
+
+                $('#advanceNurseryModal select').not('.fbk-harvest-year').each(function() {
+                    $(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
+                });
+                $('#advanceNurseryModal select.fbk-harvest-year').each(function() {
+                    $(this).select2({minimumResultsForSearch: -1});
+                });
+            }
+        });
+    }
 }
 function showInvalidInputMessage(message) {
 	'use strict';
@@ -2955,6 +2992,61 @@ function isNursery() {
 	}
 }
 
+function makeGermplasmListDraggable(isDraggable) {
+    'use strict';
+    isDraggable = isDraggable
+        && (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1
+        || ($('#studyId').length === 0 && isNursery()))
+        || $('#studyId').length > 0 && isNursery() && measurementRowCount === 0);
+    if (isDraggable) {
+        $('.germplasm-list-items tbody  tr').draggable({
+
+            helper: function(/*event, ui*/) {
+                var width = $(this)[0].offsetWidth,
+                    selected = $('.germplasm-list-items tr.germplasmSelectedRow'),
+                    container;
+
+                if (selected.length === 0) {
+                    selected = $(this).addClass('germplasmSelectedRow');
+                }
+
+                container = $('<table style="width:' + width + 'px; background-color:green;" />').attr('id', 'draggingContainer');
+                container.append(selected.clone().removeClass('germplasmSelectedRow'));
+
+                return container;
+            },
+
+            revert: 'invalid',
+
+            start: function (/*event, ui*/) {
+                var selected = $('.germplasm-list-items tr.germplasmSelectedRow');
+            },
+
+            stop: function (/*event, ui*/) {
+                var selected = $('.germplasm-list-items tr.germplasmSelectedRow');
+                $(selected).css('opacity', '1');
+            },
+
+            zIndex : 9999,
+
+            appendTo : '#chooseGermplasmAndChecks'
+        });
+
+        $('.germplasm-list-items tbody tr').off('click').on('click', function (){
+            $(this).toggleClass('germplasmSelectedRow');
+        });
+
+    } else {
+        if ($('.germplasm-list-items .ui-draggable').length !== 0) {
+            $('.germplasm-list-items tbody  tr').draggable('destroy');
+        }
+        $('.germplasm-list-items tbody tr').off('click');
+    }
+
+    // Change background of selected rows
+    $('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
+}
+
 function isOpenTrial() {
 	'use strict';
 	var trialStatus = $('body').data('trialStatus');
@@ -3261,7 +3353,7 @@ function showGermplasmDetailsSection() {
 	$('#chooseGermplasmAndChecks').data('replace', '1');
 	if (isNursery()) {
 		//enable drag and drop
-		makeDraggable(true);
+		makeGermplasmListDraggable(true);
 		makeCheckDraggable(true);
 		if ($('.check-germplasm-list-items tbody tr').length > 0) {
 			//show clear button and specify checks section
@@ -3401,7 +3493,7 @@ function displaySelectedGermplasmDetails() {
 			if (isNursery()) {
 				itemsIndexAdded = [];
 				setSpinnerMaxValue();
-				makeDraggable(false);
+				makeGermplasmListDraggable(false);
 				lastDraggedPrimaryList = $('#lastDraggedPrimaryList').val();
 			} else {
 				$(document).trigger('germplasmListUpdated');

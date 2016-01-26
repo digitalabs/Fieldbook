@@ -102,8 +102,6 @@ public class AdvancingNurseryForm {
 	/** The nursery id. */
 	private String nurseryId;
 
-	private int cropType;
-
 	private Integer methodVariateId;
 
 	private Integer lineVariateId;
@@ -651,14 +649,6 @@ public class AdvancingNurseryForm {
 	 */
 	public String getLocationUrl() {
 		return this.locationUrl;
-	}
-
-	public int getCropType() {
-		return this.cropType;
-	}
-
-	public void setCropType(int cropType) {
-		this.cropType = cropType;
 	}
 
 	/**

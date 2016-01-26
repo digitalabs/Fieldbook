@@ -11,7 +11,6 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -37,7 +36,6 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,10 +81,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	/** The fieldbook middleware service. */
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
-	/** The workbench data manager. */
-	@Resource
-	private WorkbenchService workbenchService;
 
 	@Resource
 	private UserSelection userSelection;
@@ -136,13 +130,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
         Integer studyId = Integer.valueOf(pathVariablesMap.get("nurseryId"));
         form.setNurseryId(Integer.toString(studyId));
-
-		Project project = this.workbenchService.getProjectById(Long.valueOf(this.getCurrentProjectId()));
-		if (AppConstants.CROP_MAIZE.getString().equalsIgnoreCase(project.getCropType().getCropName())) {
-			form.setCropType(2);
-		} else if (AppConstants.CROP_WHEAT.getString().equalsIgnoreCase(project.getCropType().getCropName())) {
-			form.setCropType(1);
-		}
 
 		form.setMethodVariates(this.filterVariablesByProperty(this.userSelection.getSelectionVariates(),
 				AppConstants.PROPERTY_BREEDING_METHOD.getString()));

@@ -81,12 +81,14 @@ public class AdvancingSourceListFactory {
                 AdvancingSource source = environmentLevel.copy();
                 
 				source.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
-				if (source.getTrialInstanceNumber() != null && !advanceInfo.getLocationsIds().contains(source.getTrialInstanceNumber())) {
+				if (source.getTrialInstanceNumber() != null && advanceInfo.getLocationsIds() != null
+						&& !advanceInfo.getLocationsIds().contains(source.getTrialInstanceNumber())) {
 					continue;
 				}
-                
+
 				source.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
-				if (source.getReplicationNumber() != null && !advanceInfo.getReplicationIds().contains(source.getReplicationNumber())) {
+				if (source.getReplicationNumber() != null && advanceInfo.getReplicationIds() != null
+						&& !advanceInfo.getReplicationIds().contains(source.getReplicationNumber())) {
 					continue;
 				}
 

@@ -203,12 +203,6 @@
 		<property name="maxUploadSize" value="10000000" />
 	</bean>
 
-
-	<bean id="advancingNursery" class="com.efficio.fieldbook.web.nursery.bean.AdvancingNursery"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-
 	<bean id="userSelection" class="com.efficio.fieldbook.web.common.bean.UserSelection"
 		scope="session">
 		<aop:scoped-proxy />

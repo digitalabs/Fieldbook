@@ -80,10 +80,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	private static final String MESSAGE = "message";
 
-	/** The user selection. */
-	@Resource
-	private AdvancingNursery advancingNursery;
-
 	/** The fieldbook middleware service. */
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -135,16 +131,12 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		form.setLineSelected("1");
 		form.setAllPlotsChoice("1");
         form.setReplicationAll("ALL");
+        form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
+        form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
 
-        Integer nurseryId=Integer.valueOf(pathVariablesMap.get("nurseryId"));
-        String locations = pathVariablesMap.get("locations");
+        Integer studyId = Integer.valueOf(pathVariablesMap.get("nurseryId"));
+        form.setNurseryId(Integer.toString(studyId));
 
-		Study study = this.fieldbookMiddlewareService.getStudy(nurseryId);
-		form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
-
-		this.advancingNursery.setStudy(study);
-		form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
-		form.setNurseryId(Integer.toString(nurseryId));
 		Project project = this.workbenchService.getProjectById(Long.valueOf(this.getCurrentProjectId()));
 		if (AppConstants.CROP_MAIZE.getString().equalsIgnoreCase(project.getCropType().getCropName())) {
 			form.setCropType(2);
@@ -164,10 +156,11 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		String currentYear = sdf.format(currentDate);
 		form.setHarvestYear(currentYear);
 		form.setHarvestMonth(sdfMonth.format(currentDate));
-
-        if(locations != null){
-            form.setLocations(Arrays.asList(StringUtils.split(locations,',')));
-        }
+		
+		String locations = pathVariablesMap.get("locations");
+		if (locations != null) {
+			form.setLocations(Arrays.asList(StringUtils.split(locations, ',')));
+		}
 
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
 		model.addAttribute("monthChoices", this.generateMonthChoices());
@@ -218,28 +211,32 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	@RequestMapping(method = RequestMethod.POST)
 	public Map<String, Object> postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, BindingResult result,
 			Model model) {
+		
 		Map<String, Object> results = new HashMap<>();
-		this.advancingNursery.setMethodChoice(form.getMethodChoice());
-		this.advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
-		this.advancingNursery.setLineChoice(form.getLineChoice());
-		this.advancingNursery.setLineSelected(form.getLineSelected() != null ? form.getLineSelected().trim() : null);
-		this.advancingNursery.setHarvestDate(form.getHarvestDate());
-		this.advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
-		this.advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form
-				.getHarvestLocationAbbreviation() : "");
-		this.advancingNursery.setAllPlotsChoice(form.getAllPlotsChoice());
-		this.advancingNursery.setLineVariateId(form.getLineVariateId());
-		this.advancingNursery.setPlotVariateId(form.getPlotVariateId());
-		this.advancingNursery.setMethodVariateId(form.getMethodVariateId());
-		this.advancingNursery.setCheckAdvanceLinesUnique(form.getCheckAdvanceLinesUnique() != null
-				&& "1".equalsIgnoreCase(form.getCheckAdvanceLinesUnique()));
-        this.advancingNursery.setAllReplication(form.getReplicationAll() != null ? true : false);
-        this.advancingNursery.setReplicationIds(form.getReplications() != null ? Arrays.asList(StringUtils.split(form.getReplications(),',')) : null);
-        this.advancingNursery.setLocationsIds(form.getLocations());
+		AdvancingNursery advancingNursery = new AdvancingNursery();
+		
+		Study study = this.fieldbookMiddlewareService.getStudy(Integer.valueOf(form.getNurseryId()));
+		advancingNursery.setStudy(study);	
+		advancingNursery.setMethodChoice(form.getMethodChoice());
+		advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
+		advancingNursery.setLineChoice(form.getLineChoice());
+		advancingNursery.setLineSelected(form.getLineSelected() != null ? form.getLineSelected().trim() : null);
+		advancingNursery.setHarvestDate(form.getHarvestDate());
+		advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
+		advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "");
+		advancingNursery.setAllPlotsChoice(form.getAllPlotsChoice());
+		advancingNursery.setLineVariateId(form.getLineVariateId());
+		advancingNursery.setPlotVariateId(form.getPlotVariateId());
+		advancingNursery.setMethodVariateId(form.getMethodVariateId());
+		advancingNursery.setCheckAdvanceLinesUnique(form.getCheckAdvanceLinesUnique() != null && "1".equalsIgnoreCase(form.getCheckAdvanceLinesUnique()));
+        advancingNursery.setAllReplication(form.getReplicationAll() != null ? true : false);
+        advancingNursery.setReplicationIds(form.getReplications() != null ? Arrays.asList(StringUtils.split(form.getReplications(),',')) : null);
+        advancingNursery.setLocationsIds(form.getLocations());
+        
 		try {
 
-			if (this.advancingNursery.getMethodChoice() != null && !this.advancingNursery.getMethodChoice().isEmpty()) {
-				Method method = this.fieldbookMiddlewareService.getMethodById(Integer.valueOf(this.advancingNursery.getBreedingMethodId()));
+			if (advancingNursery.getMethodChoice() != null && !advancingNursery.getMethodChoice().isEmpty()) {
+				Method method = this.fieldbookMiddlewareService.getMethodById(Integer.valueOf(advancingNursery.getBreedingMethodId()));
 				if ("GEN".equals(method.getMtype())) {
 					form.setErrorInAdvance(this.messageSource.getMessage("nursery.save.advance.error.row.list.empty.generative.method",
 							new String[] {}, LocaleContextHolder.getLocale()));
@@ -253,7 +250,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 				}
 			}
 
-			AdvanceResult advanceResult = this.fieldbookService.advanceNursery(this.advancingNursery, this.userSelection.getWorkbook());
+			AdvanceResult advanceResult = this.fieldbookService.advanceNursery(advancingNursery, this.userSelection.getWorkbook());
 			List<ImportedGermplasm> importedGermplasmList = advanceResult.getAdvanceList();
 			long id = DateUtil.getCurrentDate().getTime();
 			this.getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);

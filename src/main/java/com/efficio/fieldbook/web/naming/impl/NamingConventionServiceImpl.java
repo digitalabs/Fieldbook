@@ -107,15 +107,17 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	private AdvancingSourceList createAdvancingSourceList(final AdvancingNursery advanceInfo, Workbook workbook,
-			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws MiddlewareQueryException, FieldbookException {
+			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
-		final int nurseryId = advanceInfo.getStudy().getId();
+		final Study study = advanceInfo.getStudy();
 		if (workbook == null) {
-			workbook = this.fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+			if (study.getType().equals("N")) {
+				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(study.getId());
+			} else if (study.getType().equals("T")) {
+				workbook = this.fieldbookMiddlewareService.getTrialDataSet(study.getId());
+			}
 		}
-		final Study nursery = advanceInfo.getStudy();
-
-		return this.advancingSourceListFactory.createAdvancingSourceList(workbook, advanceInfo, nursery, breedingMethodMap, breedingMethodCodeMap);
+		return this.advancingSourceListFactory.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 	}
 
 	private void updatePlantsSelectedIfNecessary(final AdvancingSourceList list, final AdvancingNursery info) {

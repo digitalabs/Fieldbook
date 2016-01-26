@@ -103,9 +103,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	@Resource
 	protected OntologyService ontologyService;
 
-	@Resource
-	protected OntologyVariableDataManager variableDataManager;
-
 	/**
 	 * Checks if the measurement table has user input data for a particular variable id
 	 *

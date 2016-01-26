@@ -79,17 +79,6 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                 },
                 deepStateRedirect: true, sticky: true
             })
-            .state('selectEnviornment', {
-                templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
-                views: {
-                    selectEnviornment: {
-                        controller: 'SelectEnvironmentModalCtrl',
-                        templateUrl: '/Fieldbook/NurseryManager/advance/nursery/selectEnviornment'
-                    }
-                },
-                deepStateRedirect: true, sticky: true
-
-            })
 
 			.state('experimentalDesign', {
 				url: '/experimentalDesign',

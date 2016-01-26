@@ -5,6 +5,7 @@
 		<input type="hidden" th:field="*{defaultMethodId}"/>
 		<input type="hidden" th:field="*{nurseryId}"/>
 		<input type="hidden" th:field="*{harvestDate}"/>
+        <input type="hidden" th:field="*{locations}"/>
 
 		<div class="modal fade" id="advanceNurseryModal" role="dialog" aria-labelledby="advanceNurseryModal" aria-hidden="true">
 			<div class="modal-dialog modal-large">
@@ -135,6 +136,37 @@
 							</div>
 						</div>
 
+                        <div id="reps-section">
+                            <div class="row form-group">
+                                <label class="control-label col-xs-12 add_top_padding" ><strong class="sub-content-heading" th:text="#{advancing.nursery.reps}">REPS</strong> </label>
+                            </div>
+                            <div class="row form-group">
+                                <label class="control-label col-xs-6">
+                                    <input type="checkbox"   th:field="*{replications}" value="1"/>
+                                    <span>1</span>
+                                </label>
+                                <label class="control-label col-xs-6">
+                                    <input type="checkbox" th:field="*{replications}" value="2" />
+                                    <span>2</span>
+                                </label>
+                                <label class="control-label col-xs-6">
+                                    <input type="checkbox" th:field="*{replications}" value="3" />
+                                    <span>3</span>
+                                </label>
+                                <label class="control-label col-xs-6">
+                                    <input type="checkbox" th:field="*{replications}"  value="4"/>
+                                    <span>4</span>
+                                </label>
+                                <label class="control-label col-xs-6">
+                                    <input type="checkbox" class="selectAllReps" th:field="*{replicationAll}" value="ALL" />
+                                    <span class="label-bold" th:text="#{advancing.trial.select.all}">Select All</span>
+                                </label>
+
+                            </div>
+
+
+                        </div>
+
 						<div> <!-- harvest details -->
 							<div class="row form-group">
 								<label class="control-label col-xs-12 add_top_padding" ><strong class="sub-content-heading" th:text="#{advancing.nursery.harvest.information}">Harvest Details</strong> </label>
@@ -193,9 +225,12 @@
 						</div>
 					</div> <!-- Modal Body -->
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
+						<button id="nurseryModalCancel" type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
 							Cancel
 						</button>
+                        <button id="nurseryModalBack" type="button" class="btn btn-default" onclick="javascript: advanceTrial();" aria-hidden="true" th:text="#{common.form.back.text}">
+                            Back
+                        </button>
 						<button type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript: callAdvanceNursery();" th:text="#{common.form.finish.text}">
 							Finish
 						</button>
@@ -394,6 +429,26 @@ $(function() {
 		setTimeout(openManageLocations, 500);
 	});
 	advNurseryModalElm.data('open', '0');
+
+    if(!isNursery()){
+        $("#nurseryModalCancel").hide();
+        $("#reps-section").show();
+
+    }
+    else{
+        $("#reps-section").hide();
+        $("#nurseryModalBack").hide();
+    }
+
+    // Select All Replication checkbox when click on select All
+    $('.selectAllReps').on('click',function(){
+
+        if($(this).is(':checked')){
+            $(this).closest('div').find('input[type="checkbox"]').prop('checked','checked');
+        }else{
+            $(this).closest('div').find('input[type="checkbox"]').prop('checked','');
+        }
+    });
 
 });
 //]]>

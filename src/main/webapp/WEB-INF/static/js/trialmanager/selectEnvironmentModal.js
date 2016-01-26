@@ -20,15 +20,33 @@
 
         //NOTE: Continue action for navigate from Locations to Advance Study Modal
         $scope.trialSelectEnviornmentContinue = function(){
-
+            var isLocationSelected = false;
             var selectedLocationIds=[];
+
             angular.forEach($scope.locationIds,function(id){
-                if(id != undefined){
-                    selectedLocationIds.push(id);
+                if(id != undefined && !isLocationSelected){
+                    isLocationSelected = true;
                 }
             });
 
-            trialSelectEnviornmentContinue(selectedLocationIds);
+            if(!isLocationSelected){
+                var selectOneLocationErrorMessagge = 'Please select at least one location for Advancing Trial';
+                showErrorMessage('', selectOneLocationErrorMessagge);
+            }
+            else{
+                angular.forEach($scope.locationIds,function(id){
+                    if(id != undefined){
+                        selectedLocationIds.push(id);
+                    }
+                });
+
+                trialSelectEnviornmentContinue(selectedLocationIds);
+            }
+
+
+
+
+
         };
 
         $scope.doSelectAll = function() {

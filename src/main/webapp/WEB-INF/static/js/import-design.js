@@ -302,6 +302,19 @@ var ImportDesign = (function() {
 
 		cancelDesignImport : function() {
 			$.get('/Fieldbook/DesignImport/cancelImportDesign');
+
+			if (!isNursery()) {
+				var angularElem = angular.element('#mainApp');
+				var TrialManagerDataService = angularElem.injector().get('TrialManagerDataService');
+				
+				if(TrialManagerDataService.applicationData.hasNewEnvironmentAdded){
+					TrialManagerDataService.currentData.environments.noOfEnvironments-=TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd;
+					angularElem.scope().$state.go('environment', {});;
+					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
+					TrialManagerDataService.applicationData.unappliedChangesAvailable = false;	
+					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd = 0;
+				}
+			}
 		},
 
 		doSubmitImport : function() {

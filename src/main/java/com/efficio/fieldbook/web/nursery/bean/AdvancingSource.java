@@ -42,7 +42,7 @@ public class AdvancingSource {
 	private String prefix;
 	private String suffix;
 	private Integer rootNameType;
-	private Integer locationId;
+	private Integer harvestLocationId;
 	private String plotNumber;
     private String selectionTraitValue;
 
@@ -309,12 +309,12 @@ public class AdvancingSource {
 				+ this.plotNumber + "]";
 	}
 
-	public Integer getLocationId() {
-		return this.locationId;
+	public Integer getHarvestLocationId() {
+		return this.harvestLocationId;
 	}
 
-	public void setLocationId(Integer locationId) {
-		this.locationId = locationId;
+	public void setHarvestLocationId(Integer harvestLocationId) {
+		this.harvestLocationId = harvestLocationId;
 	}
 
     public String getSelectionTraitValue() {
@@ -336,7 +336,7 @@ public class AdvancingSource {
         source.setPrefix(this.prefix);
         source.setSuffix(this.suffix);
         source.setRootNameType(this.rootNameType);
-        source.setLocationId(this.locationId);
+        source.setHarvestLocationId(this.harvestLocationId);
         source.setSelectionTraitValue(this.selectionTraitValue);
 
         return source;

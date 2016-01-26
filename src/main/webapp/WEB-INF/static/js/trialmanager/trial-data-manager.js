@@ -333,12 +333,12 @@
 					data.noOfEnvironments = noOfEnvironments;
 
                     
-                    if (service.currentData.experimentalDesign.designType >= 4){
+                    if (service.currentData.experimentalDesign.designType != null && service.applicationData.designTypes[service.currentData.experimentalDesign.designType].isPreset){
                     	service.generatePresetExpDesign(service.currentData.experimentalDesign.designType).then(function(){
                     		service.updateAfterGeneratingDesignSuccessfully();
                     		service.applicationData.hasGeneratedDesignPreset = true;
                     	});
-                    }else{
+                    } else if (service.currentData.experimentalDesign.designType != null && service.applicationData.designTypes[service.currentData.experimentalDesign.designType].name !== 'Custom Import Design'){
                     	
                     	  service.generateExpDesign(data).then(
                                   function (response) {

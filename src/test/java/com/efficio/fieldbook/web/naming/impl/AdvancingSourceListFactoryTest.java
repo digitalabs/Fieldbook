@@ -9,7 +9,9 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import junit.framework.Assert;
+
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -17,6 +19,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
@@ -140,6 +143,9 @@ public class AdvancingSourceListFactoryTest {
         Assert.assertEquals(30,source.getBreedingMethod().getMid().intValue());
         Assert.assertEquals("Breeding Method",source.getBreedingMethod().getMname());
         Assert.assertEquals("prefix",source.getBreedingMethod().getPrefix());
+        
+        Assert.assertEquals("envNumber1",source.getTrialInstanceNumber());
+        Assert.assertEquals("replicationNumber2",source.getReplicationNumber());
 
         Assert.assertTrue(source.isCheck());
         Assert.assertEquals("plotNumber14",source.getPlotNumber());
@@ -193,6 +199,20 @@ public class AdvancingSourceListFactoryTest {
         measurementVariable15.setTermId(3);
         measurementData15.setMeasurementVariable(measurementVariable15);
         rowData1.add(measurementData15);
+        
+        MeasurementData measurementData16 = new MeasurementData();
+        measurementData16.setValue("envNumber1");
+        MeasurementVariable measurementVariable16 = new MeasurementVariable();
+        measurementVariable16.setTermId(TermId.TRIAL_INSTANCE_FACTOR.getId());
+        measurementData16.setMeasurementVariable(measurementVariable16);
+        rowData1.add(measurementData16);
+        
+        MeasurementData measurementData17 = new MeasurementData();
+        measurementData17.setValue("replicationNumber2");
+        MeasurementVariable measurementVariable17 = new MeasurementVariable();
+        measurementVariable17.setTermId(TermId.REP_NO.getId());
+        measurementData17.setMeasurementVariable(measurementVariable17);
+        rowData1.add(measurementData17);
 
         row1.setDataList(rowData1);
 

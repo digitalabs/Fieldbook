@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.Study;
@@ -122,6 +123,9 @@ public class AdvancingSourceListFactory {
 				if (plotNumberData != null) {
 					source.setPlotNumber(plotNumberData.getValue());
 				}
+				
+				source.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
+				source.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
 				
 				Method breedingMethod = breedingMethodMap.get(methodId);
 				Integer plantsSelected = null;

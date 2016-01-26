@@ -1067,7 +1067,11 @@ function advanceStudy(studyId, locationIds){
             aysnc: false,
             success: function(html) {
                 $('#advance-nursery-modal-div').html(html);
-                $('#advanceNurseryModal').modal({ backdrop: 'static', keyboard: true });
+                $('#advanceNurseryModal')
+                	.one('shown.bs.modal', function() {
+                		$('body').addClass('modal-open');
+                	})
+                .modal({ backdrop: 'static', keyboard: true });
 
                 $('#advanceNurseryModal select').not('.fbk-harvest-year').each(function() {
                     $(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});

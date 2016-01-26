@@ -19,8 +19,9 @@ import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.bouncycastle.util.Strings;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -50,6 +51,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -77,8 +79,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	private static final String LIST_SIZE = "listSize";
 
 	private static final String MESSAGE = "message";
-
-	private static final String SUCCESS = "success";
 
 	/** The user selection. */
 	@Resource
@@ -166,7 +166,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		form.setHarvestMonth(sdfMonth.format(currentDate));
 
         if(locations != null){
-            form.setLocations(Arrays.asList(Strings.split(locations,',')));
+            form.setLocations(Arrays.asList(StringUtils.split(locations,',')));
         }
 
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
@@ -234,7 +234,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		this.advancingNursery.setCheckAdvanceLinesUnique(form.getCheckAdvanceLinesUnique() != null
 				&& "1".equalsIgnoreCase(form.getCheckAdvanceLinesUnique()));
         this.advancingNursery.setAllReplication(form.getReplicationAll() != null ? true : false);
-        this.advancingNursery.setReplicationIds(form.getReplications() != null ? Arrays.asList(Strings.split(form.getReplications(),',')) : null);
+        this.advancingNursery.setReplicationIds(form.getReplications() != null ? Arrays.asList(StringUtils.split(form.getReplications(),',')) : null);
         this.advancingNursery.setLocationsIds(form.getLocations());
 		try {
 

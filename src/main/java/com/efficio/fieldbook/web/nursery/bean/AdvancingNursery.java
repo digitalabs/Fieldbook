@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.generationcp.middleware.domain.dms.Study;
@@ -59,9 +60,11 @@ public class AdvancingNursery implements Serializable {
 
 	private boolean isCheckAdvanceLinesUnique;
 
-    private List<String> locationsIds;
+	//TODO rename this to Set<String> selectedEnvironmnets = new HashSet<>();
+    private List<String> locationsIds = new ArrayList<>();
 
-    private List<String> replicationIds;
+    //TODO rename this to Set<String> selectedReplications = new HashSet<>();
+    private List<String> replicationIds = new ArrayList<>();
 
     private boolean allReplication;
 

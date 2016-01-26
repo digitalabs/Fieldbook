@@ -38,6 +38,10 @@ import java.util.Map;
 
 public class AdvancingSourceListFactoryTest {
 
+	private static final String REPLICATION_NUMBER = "replicationNumber2";
+
+	private static final String ENV_NUMBER = "envNumber1";
+
 	@Mock
 	ContextUtil contextUtil;
 
@@ -61,6 +65,7 @@ public class AdvancingSourceListFactoryTest {
 		MockitoAnnotations.initMocks(this);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
     public void testCreateAdvancingSourceListSuccess() throws FieldbookException {
         ExpressionDataProcessor expressionDataProcessor = Mockito.mock(ExpressionDataProcessor.class);
@@ -117,10 +122,12 @@ public class AdvancingSourceListFactoryTest {
         breedingMethodMap.put(13,bulkMethod);
         Map<String, Method > breedingMethodCodeMap = Maps.newConcurrentMap();
 
-
+        advanceInfo.setLocationsIds(Lists.newArrayList(ENV_NUMBER));
+        advanceInfo.setReplicationIds(Lists.newArrayList(REPLICATION_NUMBER));
+        
         AdvancingSourceList advancingSourceList = factory.createAdvancingSourceList(workBook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 
-        Assert.assertEquals(1,advancingSourceList.getRows().size());
+        Assert.assertEquals("Expected number of advancing source rows were not generated.", 1, advancingSourceList.getRows().size());
         AdvancingSource source = advancingSourceList.getRows().get(0);
 
         Assert.assertNotNull(source);
@@ -144,8 +151,8 @@ public class AdvancingSourceListFactoryTest {
         Assert.assertEquals("Breeding Method",source.getBreedingMethod().getMname());
         Assert.assertEquals("prefix",source.getBreedingMethod().getPrefix());
         
-        Assert.assertEquals("envNumber1",source.getTrialInstanceNumber());
-        Assert.assertEquals("replicationNumber2",source.getReplicationNumber());
+        Assert.assertEquals(ENV_NUMBER,source.getTrialInstanceNumber());
+        Assert.assertEquals(REPLICATION_NUMBER,source.getReplicationNumber());
 
         Assert.assertTrue(source.isCheck());
         Assert.assertEquals("plotNumber14",source.getPlotNumber());
@@ -172,7 +179,7 @@ public class AdvancingSourceListFactoryTest {
         measurementData12.setMeasurementVariable(measurementVariable12);
         rowData1.add(measurementData12);
 
-       MeasurementData measurementData13 = new MeasurementData();
+        MeasurementData measurementData13 = new MeasurementData();
         measurementData13.setcValueId("13");
         MeasurementVariable measurementVariable13 = new MeasurementVariable();
         measurementVariable13.setTermId(8255);
@@ -180,9 +187,7 @@ public class AdvancingSourceListFactoryTest {
         possibleVaues13.add(new ValueReference(13,"valueReference13"));
         measurementVariable13.setPossibleValues(possibleVaues13);
         measurementData13.setMeasurementVariable(measurementVariable13);
-
         rowData1.add(measurementData13);
-
 
         MeasurementData measurementData14 = new MeasurementData();
         measurementData14.setcValueId("13");
@@ -201,14 +206,14 @@ public class AdvancingSourceListFactoryTest {
         rowData1.add(measurementData15);
         
         MeasurementData measurementData16 = new MeasurementData();
-        measurementData16.setValue("envNumber1");
+        measurementData16.setValue(ENV_NUMBER);
         MeasurementVariable measurementVariable16 = new MeasurementVariable();
         measurementVariable16.setTermId(TermId.TRIAL_INSTANCE_FACTOR.getId());
         measurementData16.setMeasurementVariable(measurementVariable16);
         rowData1.add(measurementData16);
         
         MeasurementData measurementData17 = new MeasurementData();
-        measurementData17.setValue("replicationNumber2");
+        measurementData17.setValue(REPLICATION_NUMBER);
         MeasurementVariable measurementVariable17 = new MeasurementVariable();
         measurementVariable17.setTermId(TermId.REP_NO.getId());
         measurementData17.setMeasurementVariable(measurementVariable17);

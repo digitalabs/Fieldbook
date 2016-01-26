@@ -79,6 +79,16 @@ public class AdvancingSourceListFactory {
 		if (workbook != null && workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
 			for (MeasurementRow row : workbook.getObservations()) {
                 AdvancingSource source = environmentLevel.copy();
+                
+				source.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
+				if (source.getTrialInstanceNumber() != null && !advanceInfo.getLocationsIds().contains(source.getTrialInstanceNumber())) {
+					continue;
+				}
+                
+				source.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
+				if (source.getReplicationNumber() != null && !advanceInfo.getReplicationIds().contains(source.getReplicationNumber())) {
+					continue;
+				}
 
 				Integer methodId = null;
 				if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {
@@ -123,9 +133,6 @@ public class AdvancingSourceListFactory {
 				if (plotNumberData != null) {
 					source.setPlotNumber(plotNumberData.getValue());
 				}
-				
-				source.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
-				source.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
 				
 				Method breedingMethod = breedingMethodMap.get(methodId);
 				Integer plantsSelected = null;

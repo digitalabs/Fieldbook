@@ -466,6 +466,10 @@
 		<property name="germplasmOriginNurseriesDefault" value="${germplasm.origin.nurseries.default}"/>
 		<property name="germplasmOriginNurseriesWheat" value="${germplasm.origin.nurseries.wheat}"/>
 		<property name="germplasmOriginNurseriesMaize" value="${germplasm.origin.nurseries.maize}"/>
+		
+		<property name="germplasmOriginTrialsDefault" value="${germplasm.origin.trials.default}"/>
+		<property name="germplasmOriginTrialsWheat" value="${germplasm.origin.trials.wheat}"/>
+		<property name="germplasmOriginTrialsMaize" value="${germplasm.origin.trials.maize}"/>
 	</bean>
 	
 	<bean id="germplasmOriginGenerationService" class="org.generationcp.commons.service.impl.GermplasmOriginGenerationServiceImpl">

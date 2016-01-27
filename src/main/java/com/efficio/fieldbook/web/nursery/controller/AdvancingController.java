@@ -18,6 +18,7 @@ import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.google.common.collect.Sets;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -124,7 +125,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		form.setLineChoice("1");
 		form.setLineSelected("1");
 		form.setAllPlotsChoice("1");
-        form.setReplicationAll("ALL");
         form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
         form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
 
@@ -146,7 +146,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		
 		String locations = pathVariablesMap.get("locations");
 		if (locations != null) {
-			form.setLocations(Arrays.asList(StringUtils.split(locations, ',')));
+			form.setSelectedTrialInstances(new HashSet<>(Arrays.asList(StringUtils.split(locations, ','))));
 		}
 
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
@@ -216,8 +216,8 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		advancingNursery.setPlotVariateId(form.getPlotVariateId());
 		advancingNursery.setMethodVariateId(form.getMethodVariateId());
 		advancingNursery.setCheckAdvanceLinesUnique(form.getCheckAdvanceLinesUnique() != null && "1".equalsIgnoreCase(form.getCheckAdvanceLinesUnique()));
-        advancingNursery.setSelectedReplications(form.getReplications() != null ? new HashSet<>(Arrays.asList(StringUtils.split(form.getReplications(), ','))) : null);
-        advancingNursery.setSelectedTrialInstances(new HashSet<>(form.getLocations()));
+        advancingNursery.setSelectedReplications(form.getSelectedReplications());
+        advancingNursery.setSelectedTrialInstances(form.getSelectedTrialInstances());
         
 		try {
 

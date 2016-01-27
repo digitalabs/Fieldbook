@@ -3,11 +3,14 @@ package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import junit.framework.Assert;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -15,13 +18,20 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Method;
+import org.generationcp.middleware.domain.ontology.Property;
+import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
+import org.generationcp.middleware.pojos.workbench.settings.Constant;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.util.Debug;
+import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -614,5 +624,149 @@ public class SettingsUtilTest {
 		measurementVariable.setTermId(termId);
 		measurementVariable.setValue(value);
 		return measurementVariable;
+	}
+
+	/**
+	 * Test to verify convertPojoToXmlDataSet method works properly or not
+	 */
+	@Test
+	public void testConvertPojoToXmlDataSet() {
+		String dataSetName = "January Trial";
+
+		List<SettingDetail> studyLevelConditions = new ArrayList<>();
+
+		List<SettingDetail> basicDetails = this.createSettingDetailVariables();
+		basicDetails.get(0).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
+		basicDetails.get(1).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
+		basicDetails.get(2).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
+		basicDetails.get(3).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
+		basicDetails.get(4).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
+		basicDetails.get(5).setRole(VariableType.SELECTION_METHOD.getRole());
+
+		Map<String, TreatmentFactorData> treatmentFactorItems = new HashMap<>();
+
+		StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setName("Standard Variable");
+		standardVariable.setMethod(this.createMethod());
+		standardVariable.setProperty(this.createProperty());
+		standardVariable.setScale(this.createScale());
+
+		DataType dataType = DataType.getById(TermId.NUMERIC_VARIABLE.getId());
+		standardVariable.setDataType(new Term(dataType.getId(), dataType.getName(), dataType.getName()));
+
+		SettingDetail settingDetail = new SettingDetail();
+		settingDetail.setVariable(basicDetails.get(5).getVariable());
+		settingDetail.setRole(VariableType.SELECTION_METHOD.getRole());
+		settingDetail.setVariableType(VariableType.SELECTION_METHOD);
+
+		List<SettingDetail> variatesList = new ArrayList<>();
+		variatesList.add(settingDetail);
+
+		List<ValueReference> valueReferenceList = new ArrayList<>();
+		Variate variate = new Variate("BM_CODE_VTE", "Breeding method observed on each plot (CODE)", this.createProperty().getName(), this.createScale().getName(),
+				this.createMethod().getName(), VariableType.SELECTION_METHOD.getRole().name(), "N", DataType.NUMERIC_VARIABLE.getId(), valueReferenceList, 50.00, 500.00);
+		variate.setVariableType("Selection Method");
+
+		Mockito.when(this.userSelection.getStudyLevelConditions()).thenReturn(studyLevelConditions);
+		Mockito.when(this.userSelection.getBasicDetails()).thenReturn(basicDetails);
+		Mockito.when(this.userSelection.getBaselineTraitsList()).thenReturn(variatesList);
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Mockito.anyInt(), Mockito.any(String.class))).thenReturn(standardVariable);
+		Mockito.when(this.userSelection.getPlotsLevelList()).thenReturn(basicDetails);
+		Mockito.when(this.userSelection.getNurseryConditions()).thenReturn(basicDetails);
+
+		Dataset dataSet = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, dataSetName, this.userSelection, treatmentFactorItems,
+						SettingsUtilTest.PROGRAM_UUID);
+
+		Assert.assertEquals("DataSet Name", dataSetName, dataSet.getName());
+		Assert.assertEquals("DataSet Trial Level Factor", 0, dataSet.getTrialLevelFactor().size());
+		Assert.assertEquals("DataSet Treatment Factor", 0, dataSet.getTreatmentFactors().size());
+
+		int i = 0;
+		for (Condition condition : dataSet.getConditions()) {
+			Assert.assertEquals("DataSet Condition Name", condition.getName(), basicDetails.get(i).getVariable().getName());
+			Assert.assertEquals("Property", condition.getProperty(), basicDetails.get(i).getVariable().getProperty());
+			Assert.assertEquals("Scale", condition.getScale(), basicDetails.get(i).getVariable().getScale());
+			Assert.assertEquals("Method", condition.getMethod(), basicDetails.get(i).getVariable().getMethod());
+			Assert.assertEquals("Data Type", condition.getDatatype(), basicDetails.get(i).getVariable().getDataType());
+			i++;
+		}
+
+		for (Variate dataSetVariate : dataSet.getVariates()) {
+			Assert.assertEquals("Variate Name", variate.getName(), dataSetVariate.getName());
+			Assert.assertEquals("Variate Property", variate.getProperty(), dataSetVariate.getProperty());
+			Assert.assertEquals("Variate Scale", variate.getScale(), dataSetVariate.getScale());
+			Assert.assertEquals("Variate DataType", variate.getDatatype(), dataSetVariate.getDatatype());
+			Assert.assertEquals("Variate Role", variate.getRole(), dataSetVariate.getRole());
+			Assert.assertEquals("Variate Variable Type", variate.getVariableType(), dataSetVariate.getVariableType());
+		}
+
+		i = 0;
+		for (Factor factor : dataSet.getFactors()) {
+			Assert.assertEquals("Factor Name", basicDetails.get(i).getVariable().getName(), factor.getName());
+			Assert.assertEquals("Factor Property", basicDetails.get(i).getVariable().getProperty(), factor.getProperty());
+			Assert.assertEquals("Factor Scale", basicDetails.get(i).getVariable().getScale(), factor.getScale());
+			Assert.assertEquals("Factor Method", basicDetails.get(i).getVariable().getMethod(), factor.getMethod());
+			Assert.assertEquals("Factor Data Type", "Numeric", factor.getDatatype());
+			Assert.assertEquals("Factor Role",  basicDetails.get(i).getVariable().getRole(), factor.getRole());
+			i++;
+		}
+
+		i = 0;
+		for (Constant constant : dataSet.getConstants()) {
+			Assert.assertEquals("Constant Name", basicDetails.get(i).getVariable().getName(), constant.getName());
+			Assert.assertEquals("Constant Property", basicDetails.get(i).getVariable().getProperty(), constant.getProperty());
+			Assert.assertEquals("Constant Scale", basicDetails.get(i).getVariable().getScale(), constant.getScale());
+			Assert.assertEquals("Constant Method", basicDetails.get(i).getVariable().getMethod(), constant.getMethod());
+			Assert.assertEquals("Constant Data Type", basicDetails.get(i).getVariable().getDataType(), constant.getDatatype());
+			Assert.assertEquals("Constant Role", basicDetails.get(i).getVariable().getRole(), constant.getRole());
+			i++;
+		}
+	}
+
+	private List<SettingDetail> createSettingDetailVariables() {
+		List<SettingDetail> variables = new ArrayList<>();
+		variables.add(this.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME", "Study - assigned (DBCV)"));
+		variables.add(this.createSettingDetail(TermId.STUDY_TITLE.getId(), "STUDY_TITLE", "Study title - assigned (text)"));
+		variables.add(this.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)"));
+		variables.add(this.createSettingDetail(TermId.START_DATE.getId(), "START_DATE", "Start date - assigned (date)"));
+		variables.add(this.createSettingDetail(TermId.END_DATE.getId(), "END_DATE", "End date - assigned (date)"));
+		variables.add(this.createSettingDetail(TermId.BREEDING_METHOD_VARIATE_CODE.getId(), "BM_CODE_VTE", "Breeding method observed on each plot(CODE)"));
+		return variables;
+	}
+
+	private SettingDetail createSettingDetail(final int cvTermId, final String name, final String value) {
+		final SettingVariable variable = new SettingVariable();
+		variable.setCvTermId(cvTermId);
+		variable.setName(name);
+
+		return new SettingDetail(variable, null, value, false);
+	}
+
+	private Method createMethod() {
+		Method method = new Method();
+		method.setId(UnitTestDaoIDGenerator.generateId(Method.class));
+		method.setName("Method Name");
+		return method;
+	}
+
+	private Property createProperty() {
+		Property property = new Property();
+		property.setName("Property Name");
+		property.setCropOntologyId("CO:501");
+		property.addClass("Class1");
+		property.addClass("Class2");
+
+		return property;
+	}
+
+	private Scale createScale() {
+		Scale scale = new Scale();
+		scale.setId(UnitTestDaoIDGenerator.generateId(Scale.class));
+		scale.setName("Scale Name");
+		scale.setDataType(DataType.NUMERIC_VARIABLE);
+		scale.setMinValue("5");
+		scale.setMaxValue("500");
+
+		return scale;
 	}
 }

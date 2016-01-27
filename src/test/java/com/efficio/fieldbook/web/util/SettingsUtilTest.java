@@ -10,9 +10,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import junit.framework.Assert;
-
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -21,9 +25,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
-import org.generationcp.middleware.domain.ontology.Method;
-import org.generationcp.middleware.domain.ontology.Property;
-import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Constant;
@@ -31,7 +32,6 @@ import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.util.Debug;
-import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -40,11 +40,6 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 
 public class SettingsUtilTest {
 
@@ -647,9 +642,9 @@ public class SettingsUtilTest {
 
 		StandardVariable standardVariable = new StandardVariable();
 		standardVariable.setName("Standard Variable");
-		standardVariable.setMethod(this.createMethod());
-		standardVariable.setProperty(this.createProperty());
-		standardVariable.setScale(this.createScale());
+		standardVariable.setMethod(TestDataHelper.createMethod());
+		standardVariable.setProperty(TestDataHelper.createProperty());
+		standardVariable.setScale(TestDataHelper.createScale());
 
 		DataType dataType = DataType.getById(TermId.NUMERIC_VARIABLE.getId());
 		standardVariable.setDataType(new Term(dataType.getId(), dataType.getName(), dataType.getName()));
@@ -663,8 +658,8 @@ public class SettingsUtilTest {
 		variatesList.add(settingDetail);
 
 		List<ValueReference> valueReferenceList = new ArrayList<>();
-		Variate variate = new Variate("BM_CODE_VTE", "Breeding method observed on each plot (CODE)", this.createProperty().getName(), this.createScale().getName(),
-				this.createMethod().getName(), VariableType.SELECTION_METHOD.getRole().name(), "N", DataType.NUMERIC_VARIABLE.getId(), valueReferenceList, 50.00, 500.00);
+		Variate variate = new Variate("BM_CODE_VTE", "Breeding method observed on each plot (CODE)", TestDataHelper.createProperty().getName(), TestDataHelper.createScale().getName(),
+				TestDataHelper.createMethod().getName(), VariableType.SELECTION_METHOD.getRole().name(), "N", DataType.NUMERIC_VARIABLE.getId(), valueReferenceList, 50.00, 500.00);
 		variate.setVariableType("Selection Method");
 
 		Mockito.when(this.userSelection.getStudyLevelConditions()).thenReturn(studyLevelConditions);
@@ -740,33 +735,5 @@ public class SettingsUtilTest {
 		variable.setName(name);
 
 		return new SettingDetail(variable, null, value, false);
-	}
-
-	private Method createMethod() {
-		Method method = new Method();
-		method.setId(UnitTestDaoIDGenerator.generateId(Method.class));
-		method.setName("Method Name");
-		return method;
-	}
-
-	private Property createProperty() {
-		Property property = new Property();
-		property.setName("Property Name");
-		property.setCropOntologyId("CO:501");
-		property.addClass("Class1");
-		property.addClass("Class2");
-
-		return property;
-	}
-
-	private Scale createScale() {
-		Scale scale = new Scale();
-		scale.setId(UnitTestDaoIDGenerator.generateId(Scale.class));
-		scale.setName("Scale Name");
-		scale.setDataType(DataType.NUMERIC_VARIABLE);
-		scale.setMinValue("5");
-		scale.setMaxValue("500");
-
-		return scale;
 	}
 }

@@ -1010,11 +1010,11 @@ function advanceTrial(){
     $('#selectEnviornmentModal').modal({ backdrop: 'static', keyboard: true });
 }
 
-function trialSelectEnviornmentContinue(locationIds){
+function trialSelectEnviornmentContinue(trialInstances){
     'use strict';
     var idVal = $('#studyId').val();
     $('#selectEnviornmentModal').modal('hide');
-    advanceStudy(idVal,locationIds);
+    advanceStudy(idVal,trialInstances);
 
 }
 
@@ -1036,7 +1036,7 @@ function advanceNursery(){
  * @param studyId Nursery or Trial study Id
  * @param locationIds Location will be passed for Advance Trial only
  */
-function advanceStudy(studyId, locationIds){
+function advanceStudy(studyId, trialInstances){
     'use strict';
     var count = 0,
         idVal = studyId;
@@ -1055,10 +1055,9 @@ function advanceStudy(studyId, locationIds){
     var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
     advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
 
-    if(!isNursery() || locationIds !== undefined){
-        advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(locationIds.join(","));
+    if(!isNursery() || trialInstances !== undefined){
+        advanceStudyHref = advanceStudyHref + '?selectedTrialInstances=' + encodeURIComponent(trialInstances.join(","));
     }
-
 
     if (idVal != null) {
         $.ajax({

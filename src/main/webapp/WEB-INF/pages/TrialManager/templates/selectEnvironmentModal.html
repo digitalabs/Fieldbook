@@ -36,8 +36,9 @@
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="environment in data.environments" ng-class="{even : $even, odd : $odd}" >
-                                        <td><input type="checkbox" name="location" ng-model="locationIds[$index]"  ng-checked="environment.Selected" ng-true-value="{{$index + 1}}" ng-false-value="{{undefined}}"/></td>
-                                        <td >{{ environment.managementDetailValues[TRIAL_LOCATION_NO_INDEX] }}</td>
+                                        <td><input type="checkbox" name="location" ng-model="trialInstances[$index]"  ng-checked="environment.Selected" ng-true-value="{{$index + 1}}" ng-false-value="{{undefined}}"/></td>
+
+                                        <td>{{ environment.managementDetailValues[TRIAL_LOCATION_NO_INDEX] }}</td>
 
                                     </tr>
                                     </tbody>

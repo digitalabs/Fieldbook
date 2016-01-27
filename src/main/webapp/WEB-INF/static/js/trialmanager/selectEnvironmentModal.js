@@ -16,31 +16,31 @@
 
         $scope.data = TrialManagerDataService.currentData.environments;
 
-        $scope.locationIds = [];
+        $scope.trialInstances = [];
 
         //NOTE: Continue action for navigate from Locations to Advance Study Modal
         $scope.trialSelectEnviornmentContinue = function(){
-            var isLocationSelected = false;
-            var selectedLocationIds=[];
+            var isTrialInstanceSelected = false;
+            var selectedTrialInstances=[];
 
-            angular.forEach($scope.locationIds,function(id){
-                if(id != undefined && !isLocationSelected){
-                    isLocationSelected = true;
+            angular.forEach($scope.trialInstances,function(id){
+                if(id != undefined && !isTrialInstanceSelected){
+                    isTrialInstanceSelected = true;
                 }
             });
 
-            if(!isLocationSelected){
+            if(!isTrialInstanceSelected){
                 var selectOneLocationErrorMessagge = 'Please select at least one location for Advancing Trial';
                 showErrorMessage('', selectOneLocationErrorMessagge);
             }
             else{
-                angular.forEach($scope.locationIds,function(id){
+                angular.forEach($scope.trialInstances,function(id){
                     if(id != undefined){
-                        selectedLocationIds.push(id);
+                        selectedTrialInstances.push(id);
                     }
                 });
 
-                trialSelectEnviornmentContinue(selectedLocationIds);
+                trialSelectEnviornmentContinue(selectedTrialInstances);
             }
 
 

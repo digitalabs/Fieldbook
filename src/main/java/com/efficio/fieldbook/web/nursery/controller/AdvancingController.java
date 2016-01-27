@@ -114,13 +114,14 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
-	 * @param pathVariablesMap pathVariableMap containing nurseryId and locations(Optional)
+	 * @param nurseryId the nursery id
+     * @param selectedTrialInstances Set of Trial Instances(Optional)
 	 * @return the string
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	@RequestMapping(value = {"/{nurseryId}","/{nurseryId}/{locations}"}, method = RequestMethod.GET)
+	@RequestMapping(value = "/{nurseryId}", method = RequestMethod.GET)
 	public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model, HttpServletRequest req,
-			HttpSession session, @PathVariable Map<String, String> pathVariablesMap) throws MiddlewareException {
+			HttpSession session, @PathVariable int nurseryId , @RequestParam(required = false) Set<String> selectedTrialInstances) throws MiddlewareException {
     	form.setMethodChoice("1");
 		form.setLineChoice("1");
 		form.setLineSelected("1");
@@ -128,8 +129,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
         form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
         form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
 
-        Integer studyId = Integer.valueOf(pathVariablesMap.get("nurseryId"));
-        form.setNurseryId(Integer.toString(studyId));
+        form.setNurseryId(Integer.toString(nurseryId));
 
 		form.setMethodVariates(this.filterVariablesByProperty(this.userSelection.getSelectionVariates(),
 				AppConstants.PROPERTY_BREEDING_METHOD.getString()));
@@ -144,10 +144,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		form.setHarvestYear(currentYear);
 		form.setHarvestMonth(sdfMonth.format(currentDate));
 		
-		String locations = pathVariablesMap.get("locations");
-		if (locations != null) {
-			form.setSelectedTrialInstances(new HashSet<>(Arrays.asList(StringUtils.split(locations, ','))));
-		}
+        form.setSelectedTrialInstances(selectedTrialInstances);
 
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
 		model.addAttribute("monthChoices", this.generateMonthChoices());

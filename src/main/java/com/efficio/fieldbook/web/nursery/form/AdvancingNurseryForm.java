@@ -12,7 +12,9 @@
 package com.efficio.fieldbook.web.nursery.form;
 
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 
@@ -126,65 +128,34 @@ public class AdvancingNurseryForm {
 
 	private String checkAdvanceLinesUnique;
 
-    /* Selected Locations for Advance Trial */
-    private List<String> locations;
+	private Set<String> selectedTrialInstances;
 
-    /* Selected Replications for Advance Trial */
-    private String replications;
+    private Set<String> selectedReplications;
 
-    /*Selected All Replication for Advance Trial*/
-    private String replicationAll;
+    
+	public Set<String> getSelectedTrialInstances() {
+		return this.selectedTrialInstances;
+	}
 
-    /**
-     * Gets locations selected for Advance Trial
-     * @return
-     */
-    public List<String> getLocations() {
-        return locations;
-    }
+	
+	
+	public void setSelectedTrialInstances(Set<String> selectedTrialInstances) {
+		this.selectedTrialInstances = selectedTrialInstances;
+	}
 
-    /**
-     * Set Locations selected for Advance Trial
-     * @param locations
-     */
-    public void setLocations(List<String> locations) {
-        this.locations = locations;
-    }
+	
+	
+	public Set<String> getSelectedReplications() {
+		return this.selectedReplications;
+	}
 
-    /**
-     * Gets comma seperated String of Reps selected
-     * @return
-     */
-    public String getReplications() {
-        return replications;
-    }
+	
 
-    /**
-     * Set the Selected Replications
-     * @param replications
-     */
-    public void setReplications(String replications) {
-        this.replications = replications;
-    }
+	public void setSelectedReplications(Set<String> selectedReplications) {
+		this.selectedReplications = selectedReplications;
+	}
 
-    /**
-     * Gets the Select All Replication
-     * @return
-     */
-    public String getReplicationAll() {
-        return replicationAll;
-    }
-
-    /**
-     * Set the Select All Replication
-     * @param replicationAll
-     */
-    public void setReplicationAll(String replicationAll) {
-        this.replicationAll = replicationAll;
-    }
-
-
-    /**
+	/**
 	 * Gets the method id all.
 	 *
 	 * @return the method id all
@@ -858,59 +829,8 @@ public class AdvancingNurseryForm {
 		this.checkAdvanceLinesUnique = checkAdvanceLinesUnique;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("AdvancingNurseryForm [methodChoice=");
-		builder.append(this.methodChoice);
-		builder.append(", lineChoice=");
-		builder.append(this.lineChoice);
-		builder.append(", lineSelected=");
-		builder.append(this.lineSelected);
-		builder.append(", harvestDate=");
-		builder.append(this.harvestDate);
-		builder.append(", harvestLocation=");
-		builder.append(this.harvestLocation);
-		builder.append(", harvestLocationIdAll=");
-		builder.append(this.harvestLocationIdAll);
-		builder.append(", harvestLocationIdFavorite=");
-		builder.append(this.harvestLocationIdFavorite);
-		builder.append(", harvestLocationId=");
-		builder.append(this.harvestLocationId);
-		builder.append(", harvestLocationName=");
-		builder.append(this.harvestLocationName);
-		builder.append(", harvestLocationAbbreviation=");
-		builder.append(this.harvestLocationAbbreviation);
-		builder.append(", defaultMethodId=");
-		builder.append(this.defaultMethodId);
-		builder.append(", breedingMethodId=");
-		builder.append(this.advanceBreedingMethodId);
-		builder.append(", methodIdAll=");
-		builder.append(this.methodIdAll);
-		builder.append(", methodIdFavorite=");
-		builder.append(this.methodIdFavorite);
-		builder.append(", projectId=");
-		builder.append(this.projectId);
-		builder.append(", nurseryAdvanceName=");
-		builder.append(this.nurseryAdvanceName);
-		builder.append(", nurseryAdvanceDescription=");
-		builder.append(this.nurseryAdvanceDescription);
-		builder.append(", entries=");
-		builder.append(this.entries);
-		builder.append(", germplasmList=");
-		builder.append(this.germplasmList);
-        builder.append(", locations=");
-        builder.append(this.locations);
-        builder.append(", replications=");
-        builder.append(this.replications);
-        builder.append(", replicationAll=");
-        builder.append(this.replicationAll);
-		builder.append("]");
-		return builder.toString();
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

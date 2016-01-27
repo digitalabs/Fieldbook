@@ -297,9 +297,7 @@ public class AdvancingControllerTest {
         AdvancingNurseryForm form = new AdvancingNurseryForm();
         Model model = new ExtendedModelMap();
 
-        Map<String,String> pathVariableMap = new HashMap<String,String>();
-        pathVariableMap.put("nurseryId","212");
-        String returnTemplatePage = this.advancingController.show(form,model,this.request,this.session,pathVariableMap);
+        String returnTemplatePage = this.advancingController.show(form,model,this.request,this.session,212,null);
 
         Assert.assertEquals("NurseryManager/advanceNurseryModal",returnTemplatePage);
         Map<String,Object> modelMap = model.asMap();

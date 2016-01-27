@@ -18,6 +18,7 @@ import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.google.common.collect.Sets;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -113,23 +114,22 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
-	 * @param pathVariablesMap pathVariableMap containing nurseryId and locations(Optional)
+	 * @param nurseryId the nursery id
+     * @param selectedTrialInstances Set of Trial Instances(Optional)
 	 * @return the string
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	@RequestMapping(value = {"/{nurseryId}","/{nurseryId}/{locations}"}, method = RequestMethod.GET)
+	@RequestMapping(value = "/{nurseryId}", method = RequestMethod.GET)
 	public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model, HttpServletRequest req,
-			HttpSession session, @PathVariable Map<String, String> pathVariablesMap) throws MiddlewareException {
+			HttpSession session, @PathVariable int nurseryId , @RequestParam(required = false) Set<String> selectedTrialInstances) throws MiddlewareException {
     	form.setMethodChoice("1");
 		form.setLineChoice("1");
 		form.setLineSelected("1");
 		form.setAllPlotsChoice("1");
-        form.setReplicationAll("ALL");
         form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
         form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
 
-        Integer studyId = Integer.valueOf(pathVariablesMap.get("nurseryId"));
-        form.setNurseryId(Integer.toString(studyId));
+        form.setNurseryId(Integer.toString(nurseryId));
 
 		form.setMethodVariates(this.filterVariablesByProperty(this.userSelection.getSelectionVariates(),
 				AppConstants.PROPERTY_BREEDING_METHOD.getString()));
@@ -144,10 +144,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		form.setHarvestYear(currentYear);
 		form.setHarvestMonth(sdfMonth.format(currentDate));
 		
-		String locations = pathVariablesMap.get("locations");
-		if (locations != null) {
-			form.setLocations(Arrays.asList(StringUtils.split(locations, ',')));
-		}
+        form.setSelectedTrialInstances(selectedTrialInstances);
 
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
 		model.addAttribute("monthChoices", this.generateMonthChoices());
@@ -216,8 +213,8 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		advancingNursery.setPlotVariateId(form.getPlotVariateId());
 		advancingNursery.setMethodVariateId(form.getMethodVariateId());
 		advancingNursery.setCheckAdvanceLinesUnique(form.getCheckAdvanceLinesUnique() != null && "1".equalsIgnoreCase(form.getCheckAdvanceLinesUnique()));
-        advancingNursery.setSelectedReplications(form.getReplications() != null ? new HashSet<>(Arrays.asList(StringUtils.split(form.getReplications(), ','))) : null);
-        advancingNursery.setSelectedTrialInstances(new HashSet<>(form.getLocations()));
+        advancingNursery.setSelectedReplications(form.getSelectedReplications());
+        advancingNursery.setSelectedTrialInstances(form.getSelectedTrialInstances());
         
 		try {
 

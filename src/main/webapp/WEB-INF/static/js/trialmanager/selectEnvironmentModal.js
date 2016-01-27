@@ -12,40 +12,46 @@
             $scope.settings.trialConditionDetails = [];
         }
 
-        $scope.TRIAL_LOCATION_NO_INDEX = 8180;
+        $scope.TRIAL_LOCATION_NAME_INDEX = 8180;
+        $scope.TRIAL_LOCATION_ABBR_INDEX = 8189;
+        $scope.TRIAL_INSTANCE_INDEX = 8170;
+        $scope.PREFERENCED_LOCATION_VARIABLE=8170;
 
         $scope.data = TrialManagerDataService.currentData.environments;
 
-        $scope.locationIds = [];
+        $scope.trialInstances = [];
+
+        if($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null){
+            $scope.PREFERENCED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
+        }
+        else if($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null){
+            $scope.PREFERENCED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
+        }
 
         //NOTE: Continue action for navigate from Locations to Advance Study Modal
-        $scope.trialSelectEnviornmentContinue = function(){
-            var isLocationSelected = false;
-            var selectedLocationIds=[];
+        $scope.trialSelectEnvironmentContinue = function(){
+            var isTrialInstanceSelected = false;
+            var selectedTrialInstances=[];
 
-            angular.forEach($scope.locationIds,function(id){
-                if(id != undefined && !isLocationSelected){
-                    isLocationSelected = true;
+            angular.forEach($scope.trialInstances,function(id){
+                if(id != undefined && !isTrialInstanceSelected){
+                    isTrialInstanceSelected = true;
                 }
             });
 
-            if(!isLocationSelected){
+            if(!isTrialInstanceSelected){
                 var selectOneLocationErrorMessagge = 'Please select at least one location for Advancing Trial';
                 showErrorMessage('', selectOneLocationErrorMessagge);
             }
             else{
-                angular.forEach($scope.locationIds,function(id){
+                angular.forEach($scope.trialInstances,function(id){
                     if(id != undefined){
-                        selectedLocationIds.push(id);
+                        selectedTrialInstances.push(id);
                     }
                 });
 
-                trialSelectEnviornmentContinue(selectedLocationIds);
+                trialSelectEnviornmentContinue(selectedTrialInstances);
             }
-
-
-
-
 
         };
 

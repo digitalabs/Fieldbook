@@ -29,16 +29,14 @@
                                 <table class="table table-curved table-condensed fbk-table-with-check fbk-datatable-environments" width="100%">
                                     <thead>
                                     <tr>
-
                                         <th></th>
-                                        <th>Location Name</th>
+                                        <th>{{settings.managementDetails.val(PREFERENCED_LOCATION_VARIABLE).variable.name}}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="environment in data.environments" ng-class="{even : $even, odd : $odd}" >
-                                        <td><input type="checkbox" name="location" ng-model="locationIds[$index]"  ng-checked="environment.Selected" ng-true-value="{{$index + 1}}" ng-false-value="{{undefined}}"/></td>
-                                        <td >{{ environment.managementDetailValues[TRIAL_LOCATION_NO_INDEX] }}</td>
-
+                                    <tr ng-repeat="environment in data.environments" ng-class="{even : $even, odd : $odd}">
+                                        <td><input type="checkbox" name="location" ng-model="trialInstances[$index]"  ng-checked="environment.Selected" ng-true-value="{{environment.managementDetailValues[TRIAL_INSTANCE_INDEX]}}" ng-false-value="{{undefined}}"/></td>
+                                        <td>{{ environment.managementDetailValues[PREFERENCED_LOCATION_VARIABLE] }}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -56,7 +54,7 @@
 						<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
 							Cancel
 						</button>
-						<button type="button" class="btn btn-primary" aria-hidden="true" ng-click="trialSelectEnviornmentContinue()" th:text="#{common.form.continue.text}">
+						<button type="button" class="btn btn-primary" aria-hidden="true" ng-click="trialSelectEnvironmentContinue()" th:text="#{common.form.continue.text}">
 							Continue
 						</button>
 					</div>
@@ -68,6 +66,11 @@
 <div layout:fragment="page-script">
 
 <script type='text/javascript' th:inline="javascript">
-
+    if($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null){
+        $scope.PREFERENCED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
+    }
+    else if($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null){
+        $scope.PREFERENCED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
+    }
 </script>
 </div>

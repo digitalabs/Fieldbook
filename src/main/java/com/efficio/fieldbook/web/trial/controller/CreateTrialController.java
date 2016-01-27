@@ -258,7 +258,6 @@ public class CreateTrialController extends BaseTrialController {
 				name,
 				this.userSelection,
 				data.getTreatmentFactors().getCurrentData(),
-				false,
 				this.contextUtil.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());

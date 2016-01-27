@@ -356,7 +356,6 @@ public class SettingsUtil {
 			final String name,
 			final UserSelection userSelection,
 			final Map<String, TreatmentFactorData> treatmentFactorItems,
-			final boolean fromNursery,
 			final String programUUID) {
 
 

@@ -13,8 +13,11 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.generationcp.middleware.domain.dms.Study;
 
 /**
@@ -60,68 +63,25 @@ public class AdvancingNursery implements Serializable {
 
 	private boolean isCheckAdvanceLinesUnique;
 
-	//TODO rename this to Set<String> selectedEnvironmnets = new HashSet<>();
-    private List<String> locationsIds = new ArrayList<>();
+	private Set<String> selectedTrialInstances;
 
-    //TODO rename this to Set<String> selectedReplications = new HashSet<>();
-    private List<String> replicationIds = new ArrayList<>();
+    private Set<String> selectedReplications;
 
-    private boolean allReplication;
+	public Set<String> getSelectedTrialInstances() {
+		return this.selectedTrialInstances;
+	}
 
-    /**
-     * Gets All Replication selected for Trial Advancing
-     *
-     * @return boolean indicating All Replication selected for Trial Advancing
-     */
-    public boolean isAllReplication() {
-        return allReplication;
-    }
+	public void setSelectedTrialInstances(Set<String> selectedTrialInstances) {
+		this.selectedTrialInstances = selectedTrialInstances;
+	}
 
-    /**
-     * Sets All Replication selected for Trial Advancing
-     *
-     * @param allReplication All Replication selected for Trial Advancing
-     */
-    public void setAllReplication(boolean allReplication) {
-        this.allReplication = allReplication;
-    }
-
-    /**
-     * Gets the Locations selected for Trial Advancing
-     *
-     * @return Locations Ids selected
-     */
-    public List<String> getLocationsIds() {
-        return locationsIds;
-    }
-
-    /**
-     * Sets the Locations selected for Trial Advancing
-     *
-     * @param locationsIds Locations selected for Trial Advancing
-     */
-    public void setLocationsIds(List<String> locationsIds) {
-        this.locationsIds = locationsIds;
-    }
-
-    /**
-     * Gets the Replications selected for Trial Advancing
-     *
-     * @return Replications selected for Trial Advancing
-     */
-    public List<String> getReplicationIds() {
-        return replicationIds;
-    }
-
-    /**
-     * Sets Replication selected for Trial Advancing.
-     *
-     * @param replicationIds Replication selected for Trial Advancing.
-     */
-    public void setReplicationIds(List<String> replicationIds) {
-        this.replicationIds = replicationIds;
-    }
-
+	public Set<String> getSelectedReplications() {
+		return this.selectedReplications;
+	}
+	
+	public void setSelectedReplications(Set<String> selectedReplications) {
+		this.selectedReplications = selectedReplications;
+	}
 
 	public Study getStudy() {
 		return this.study;
@@ -331,28 +291,6 @@ public class AdvancingNursery implements Serializable {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("AdvancingNursery [study=");
-		builder.append(this.study);
-		builder.append(", methodChoice=");
-		builder.append(this.methodChoice);
-		builder.append(", lineChoice=");
-		builder.append(this.lineChoice);
-		builder.append(", lineSelected=");
-		builder.append(this.lineSelected);
-		builder.append(", harvestDate=");
-		builder.append(this.harvestDate);
-		builder.append(", harvestLocationId=");
-		builder.append(this.harvestLocationId);
-		builder.append(", harvestLocationAbbreviation=");
-		builder.append(this.harvestLocationAbbreviation);
-		builder.append(", locationsIds=");
-		builder.append(this.locationsIds);
-        builder.append(", replicationIds=");
-        builder.append(this.replicationIds);
-        builder.append(", allReplication=");
-        builder.append(this.allReplication);
-		builder.append("]");
-		return builder.toString();
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

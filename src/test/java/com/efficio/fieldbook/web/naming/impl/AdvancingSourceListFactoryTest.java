@@ -9,6 +9,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import junit.framework.Assert;
 
@@ -122,8 +123,8 @@ public class AdvancingSourceListFactoryTest {
         breedingMethodMap.put(13,bulkMethod);
         Map<String, Method > breedingMethodCodeMap = Maps.newConcurrentMap();
 
-        advanceInfo.setLocationsIds(Lists.newArrayList(ENV_NUMBER));
-        advanceInfo.setReplicationIds(Lists.newArrayList(REPLICATION_NUMBER));
+        advanceInfo.setSelectedTrialInstances(Sets.newHashSet(ENV_NUMBER));
+        advanceInfo.setSelectedReplications(Sets.newHashSet(REPLICATION_NUMBER));
         
         AdvancingSourceList advancingSourceList = factory.createAdvancingSourceList(workBook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 

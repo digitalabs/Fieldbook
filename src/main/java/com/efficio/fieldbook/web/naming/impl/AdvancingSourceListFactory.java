@@ -80,15 +80,17 @@ public class AdvancingSourceListFactory {
 			for (MeasurementRow row : workbook.getObservations()) {
                 AdvancingSource source = environmentLevel.copy();
                 
+                // Only advance entries for selected trial instances (environments) 
 				source.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
-				if (source.getTrialInstanceNumber() != null && advanceInfo.getLocationsIds() != null
-						&& !advanceInfo.getLocationsIds().contains(source.getTrialInstanceNumber())) {
+				if (source.getTrialInstanceNumber() != null && advanceInfo.getSelectedTrialInstances() != null
+						&& !advanceInfo.getSelectedTrialInstances().contains(source.getTrialInstanceNumber())) {
 					continue;
 				}
 
+				// Only advance entries for selected replications within an environment
 				source.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
-				if (source.getReplicationNumber() != null && advanceInfo.getReplicationIds() != null
-						&& !advanceInfo.getReplicationIds().contains(source.getReplicationNumber())) {
+				if (source.getReplicationNumber() != null && advanceInfo.getSelectedReplications() != null
+						&& !advanceInfo.getSelectedReplications().contains(source.getReplicationNumber())) {
 					continue;
 				}
 

@@ -216,9 +216,8 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		advancingNursery.setPlotVariateId(form.getPlotVariateId());
 		advancingNursery.setMethodVariateId(form.getMethodVariateId());
 		advancingNursery.setCheckAdvanceLinesUnique(form.getCheckAdvanceLinesUnique() != null && "1".equalsIgnoreCase(form.getCheckAdvanceLinesUnique()));
-        advancingNursery.setAllReplication(form.getReplicationAll() != null ? true : false);
-        advancingNursery.setReplicationIds(form.getReplications() != null ? Arrays.asList(StringUtils.split(form.getReplications(),',')) : null);
-        advancingNursery.setLocationsIds(form.getLocations());
+        advancingNursery.setSelectedReplications(form.getReplications() != null ? new HashSet<>(Arrays.asList(StringUtils.split(form.getReplications(), ','))) : null);
+        advancingNursery.setSelectedTrialInstances(new HashSet<>(form.getLocations()));
         
 		try {
 

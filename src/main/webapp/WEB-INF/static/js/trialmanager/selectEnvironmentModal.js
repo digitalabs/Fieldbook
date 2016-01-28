@@ -21,6 +21,8 @@
 
         $scope.trialInstances = [];
 
+        $scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.replicationsCount;
+
         if($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null){
             $scope.PREFERENCED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
         }
@@ -50,24 +52,24 @@
                     }
                 });
 
-                trialSelectEnviornmentContinue(selectedTrialInstances);
+                trialSelectEnviornmentContinue(selectedTrialInstances,$scope.noOfReplications);
             }
 
         };
 
         $scope.doSelectAll = function() {
-            $scope.locationIds = [];
+            $scope.trialInstances = [];
             if ($scope.selectAll) {
                 $scope.selectAll = true;
 
             } else {
                 $scope.selectAll = false;
-                $scope.locationIds = [];
+                $scope.trialInstances = [];
             }
             angular.forEach($scope.data.environments, function(env) {
                 env.Selected = $scope.selectAll;
                 if($scope.selectAll){
-                    $scope.locationIds.push(env.locationId);
+                    $scope.trialInstances.push(env.managementDetailValues[$scope.PREFERENCED_LOCATION_VARIABLE]);
                 }
             });
 

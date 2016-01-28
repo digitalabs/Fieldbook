@@ -43,35 +43,52 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 		originGenerationParameters.setStudyName(workbook.getStudyName());
 		originGenerationParameters.setStudyType(workbook.getStudyDetails().getStudyType());
 		deriveLocation(workbook, originGenerationParameters, advancingSource.getTrialInstanceNumber());
-		deriveSeason(workbook, originGenerationParameters);
+		deriveSeason(workbook, originGenerationParameters, advancingSource.getTrialInstanceNumber());
 		originGenerationParameters.setPlotNumber(advancingSource.getPlotNumber());
 		originGenerationParameters.setSelectionNumber(selectionNumber);
 		return originGenerationParameters;
 	}
 
-	private void deriveSeason(Workbook workbook, final GermplasmOriginGenerationParameters originGenerationParameters) {
+	void deriveSeason(Workbook workbook, final GermplasmOriginGenerationParameters originGenerationParameters,
+			String trialInstanceNumber) {
 
-		// To populate SEASON placeholder we look for Crop_season_Code(8371) variable in general settings.
-		MeasurementVariable seasonVariable = workbook.findConditionById(TermId.SEASON_VAR.getId());
-		if (seasonVariable != null && StringUtils.isNotBlank(seasonVariable.getValue())) {
-			Variable variable =
-					this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), seasonVariable.getTermId(), true,
-							false);
-			for (TermSummary seasonOption : variable.getScale().getCategories()) {
-				// Sometimes the categorical value of season in Workbook is an ID string, sometimes the actual Value/Definition string.
-				// Right now, only the super natural elements in the Workbook and Fieldbook universe know why.
-				// So we deal with it anyway.
-				if (seasonVariable.getValue().equals(seasonOption.getId().toString()) 
-						|| seasonVariable.getValue().equals(seasonOption.getDefinition())) {
-					originGenerationParameters.setSeason(seasonOption.getDefinition());
-					break;
+		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
+			// To populate SEASON placeholder in Nurseries, we look for Crop_season_Code(8371) variable in general settings.
+			MeasurementVariable seasonVariable = workbook.findConditionById(TermId.SEASON_VAR.getId());
+			if (seasonVariable != null && StringUtils.isNotBlank(seasonVariable.getValue())) {
+				Variable variable =
+						this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), seasonVariable.getTermId(),
+								true, false);
+				for (TermSummary seasonOption : variable.getScale().getCategories()) {
+					// Sometimes the categorical value of season in Workbook is an ID string, sometimes the actual Value/Definition string.
+					// Right now, only the super natural elements in the Workbook and Fieldbook universe know why.
+					// So we deal with it anyway.
+					if (seasonVariable.getValue().equals(seasonOption.getId().toString())
+							|| seasonVariable.getValue().equals(seasonOption.getDefinition())) {
+						originGenerationParameters.setSeason(seasonOption.getDefinition());
+						break;
+					}
 				}
 			}
-		} else {
+		} else if (workbook.getStudyDetails().getStudyType() == StudyType.T) {
+			// For trials, we look for Crop_season_Code(8371) variable at trial instance/environment level.
+			MeasurementRow trialInstanceObservations = workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(trialInstanceNumber));
+			if (trialInstanceObservations != null) {
+				for (MeasurementData trialInstanceMeasurement : trialInstanceObservations.getDataList()) {
+					if (trialInstanceMeasurement.getMeasurementVariable().getTermId() == TermId.SEASON_VAR.getId()) {
+						originGenerationParameters.setSeason(trialInstanceMeasurement.getValue());
+						break;
+					}
+				}
+			}
+		}
+
+		if (originGenerationParameters.getSeason() == null) {
 			// Default the season to current year and month.
 			SimpleDateFormat formatter = new SimpleDateFormat("YYYYMM");
 			String currentYearAndMonth = formatter.format(new java.util.Date());
-			LOG.debug("No Crop_season_Code(8371) variable or if present a value, was found in study: {}. Defaulting [SEASON] with: {}.",
+			LOG.debug(
+					"No Crop_season_Code(8371) variable was found or it is present but no value is set, in study: {}. Defaulting [SEASON] with: {}.",
 					workbook.getStudyDetails().getStudyName(), currentYearAndMonth);
 			originGenerationParameters.setSeason(currentYearAndMonth);
 		}
@@ -113,7 +130,7 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 		parameters.setStudyType(workbook.getStudyDetails().getStudyType());
 		// Cross scenario is currently only for Nurseries, hard coding instance number to 1 is fine until that is not the case.
 		deriveLocation(workbook, parameters, "1");
-		deriveSeason(workbook, parameters);
+		deriveSeason(workbook, parameters, "1");
 		parameters.setMaleStudyName(cross.getMaleStudyName());
 		parameters.setFemaleStudyName(cross.getFemaleStudyName());
 		parameters.setMalePlotNumber(cross.getMalePlotNo());

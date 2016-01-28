@@ -18,7 +18,7 @@ if (typeof (BMS.Fieldbook) === 'undefined') {
 		}
 	});
  };
- 
+
 BMS.Fieldbook.MeasurementsTable = {
 	getColumnOrdering: function(tableName, forceGet) {
 		var orderedColumns = [];
@@ -249,7 +249,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			language: {
 				search: '<span class="mdt-filtering-label">Search:</span>'
 			},
-			dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
+			dom: 'R<"mdt-header"rli<"mdt-filtering">r>tp',
 			// For column visibility
 			colVis: {
 				exclude: [0],
@@ -1057,7 +1057,14 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 			table;
 
 		$(tableIdentifier + ' thead tr th').each(function() {
-			columns.push({data: $(this).html()});
+			// The undefined data upsets the datatable library and it gives a warning message -
+			// "DataTables warning: table id={id} - Requested unknown parameter '{parameter}' for row {row-index}, column{column-index}`"
+			// See http://datatables.net/manual/tech-notes/4
+			// we need to set the {{defaultContent}} option so that nulls and undefined values were shown as empty string
+			columns.push({
+				data: $(this).html(),
+				defaultContent: ''
+			});
 			if ($(this).data('term-id') == '8240') {
 				// For GID
 				columnsDef.push({

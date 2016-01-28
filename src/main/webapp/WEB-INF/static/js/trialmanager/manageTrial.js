@@ -9,7 +9,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
-		'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage']);
+		'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
+		'showSettingFormElementNew']);
 
 	// HTTP INTERCEPTOR CONFIGURATION START
 	// The following block defines an interceptor that hooks into AJAX operations initiated by Angular to start / stop the spinner operation
@@ -225,7 +226,15 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				TrialManagerDataService.trialMeasurement = angular.copy($localStorage.serviceBackup.trialMeasurement);
 
 				// perform other cleanup tasks
-				$http.get('/Fieldbook/TrialManager/createTrial/clearSettings');
+				$http({
+					url: '/Fieldbook/TrialManager/createTrial/clearSettings',
+					method: 'GET',
+					transformResponse: undefined
+				}).then(function(response) {
+					if (response.data !== 'success' || response.status !== 200) {
+						showErrorMessage('', 'Your trial settings could not be cleared at the moment. Please try again later.');
+					}
+				});
 
 				var measurementDiv = $('#measurementsDiv');
 				if (measurementDiv.length !== 0) {
@@ -374,17 +383,17 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			};
 		});
 
-	manageTrialApp.controller('ConfirmModalController', function($scope, $modalInstance, MODAL_TITLE, MODAL_TEXT, CONFIRM_BUTTON_LABEL) {
+	manageTrialApp.controller('ConfirmModalController', function($scope, $uibModalInstance, MODAL_TITLE, MODAL_TEXT, CONFIRM_BUTTON_LABEL) {
 			$scope.title = MODAL_TITLE;
 			$scope.text = MODAL_TEXT;
 			$scope.confirmButtonLabel = CONFIRM_BUTTON_LABEL;
 
 			$scope.confirm = function() {
-				$modalInstance.close(true);
+				$uibModalInstance.close(true);
 			};
 
 			$scope.cancel = function() {
-				$modalInstance.close(false);
+				$uibModalInstance.close(false);
 			};
 		});
 

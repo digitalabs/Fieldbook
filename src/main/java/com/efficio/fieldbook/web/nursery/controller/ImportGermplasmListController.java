@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
+ *
+ *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.nursery.controller;
@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -79,7 +80,7 @@ import com.hazelcast.util.StringUtil;
 
 /**
  * This controller handles the 2nd step in the nursery manager process.
- * 
+ *
  * @author Daniel Jao
  */
 @Controller
@@ -171,7 +172,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName ()
 	 */
 	@Override
@@ -181,12 +182,12 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection ()
 	 */
 	/**
 	 * Gets the user selection.
-	 * 
+	 *
 	 * @return the user selection
 	 */
 	public UserSelection getUserSelection() {
@@ -195,7 +196,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Show the main import page.
-	 * 
+	 *
 	 * @param form the form
 	 * @param model the model
 	 * @return the string
@@ -220,7 +221,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Goes to the Next screen. Added validation if a germplasm list was properly uploaded
-	 * 
+	 *
 	 * @param form the form
 	 * @param result the result
 	 * @param model the model
@@ -259,15 +260,21 @@ public class ImportGermplasmListController extends SettingsController {
 
 		}
 
+		this.assignAndIncrementEntryNumberAndPlotNumber(form);
+
+		//NOTE: clearing measurements if germplasm list is null
+		if(this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null){
+			this.userSelection.getMeasurementRowList().clear();
+		}
+
 		if (isNursery && !hasTemporaryWorkbook) {
 
 			this.processImportedGermplasmAndChecks(this.userSelection, form);
 
 		} else if (!hasTemporaryWorkbook) {
-
+			// this section of code is only called for existing trial without temporary workbook. No need for reset of measurement row list
+			// here
 			isDeleteObservations = true;
-			this.userSelection.setMeasurementRowList(null);
-
 		}
 
 		this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());
@@ -290,6 +297,76 @@ public class ImportGermplasmListController extends SettingsController {
 		return Integer.toString(studyId);
 	}
 
+	//NOTE: BMS-1929 Setting custom entry and plot number in user selection as well as updating entry number in imported germplasm list
+	void assignAndIncrementEntryNumberAndPlotNumber(final ImportGermplasmListForm form) {
+		if (userSelection.getImportedGermplasmMainInfo() != null) {
+
+			//Taking entryNumber as null if not supplied
+			Integer entryNo = null;
+			if (form.getStartingEntryNo() != null) {
+				entryNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
+			}
+
+			Integer plotNo = 1;
+			if (form.getStartingPlotNo() != null) {
+				plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), 1);
+			}
+
+			this.userSelection.setStartingEntryNo(entryNo);
+
+			// Setting plot number in user selection as it will be used later
+			this.userSelection.setStartingPlotNo(plotNo);
+
+			// Skip applying entry number as it is null. So no change in list
+			if(entryNo == null){
+				return;
+			}
+
+			final ImportedGermplasmMainInfo importedGermplasmMainInfo = this.userSelection.getImportedGermplasmMainInfo();
+
+
+			// This will be used when updating the checks. Essentially the first entry number. This can be done using a get(0) on the list but this is safer.
+			Integer minOriginalEntryNumber = null;
+			if(importedGermplasmMainInfo != null && importedGermplasmMainInfo.getImportedGermplasmList() != null){
+				for (ImportedGermplasm g : importedGermplasmMainInfo.getImportedGermplasmList().getImportedGermplasms()) {
+					minOriginalEntryNumber = getMinimumEntryNumber(minOriginalEntryNumber, g);
+					g.setEntryId(entryNo++);
+				}
+			}
+
+			// This part of the code is only relevant when crating checks from an existing list.
+
+			// First calculate the number that needs to be added to existing check numbers.
+			final Integer differenceToAppendToChecks;
+			if(minOriginalEntryNumber == null) {
+				differenceToAppendToChecks = userSelection.getStartingEntryNo();
+			} else {
+				differenceToAppendToChecks = userSelection.getStartingEntryNo() - minOriginalEntryNumber;
+			}
+
+
+			final ImportedGermplasmMainInfo importedCheckGermplasmMainInfo = userSelection.getImportedCheckGermplasmMainInfo();
+			final List<ImportedGermplasm> checkList;
+			if(importedCheckGermplasmMainInfo != null
+					&& importedCheckGermplasmMainInfo.getImportedGermplasmList() != null
+					&& (checkList = importedCheckGermplasmMainInfo.getImportedGermplasmList().getImportedGermplasms()) != null) {
+				for (ImportedGermplasm importedGermplasm : checkList) {
+					importedGermplasm.setEntryId(importedGermplasm.getEntryId()+differenceToAppendToChecks);
+				}
+			}
+
+		}
+	}
+
+
+	private Integer getMinimumEntryNumber(final Integer currentMinimumEntryNumber, final ImportedGermplasm currentGermplasm) {
+		final Integer currentEntryId = currentGermplasm.getEntryId();
+		if(currentMinimumEntryNumber == null || currentMinimumEntryNumber > currentGermplasm.getEntryId()) {
+			return currentEntryId;
+		}
+		return currentMinimumEntryNumber;
+	}
+
 	private int getIntervalValue(final ImportGermplasmListForm form) {
 		final String interval = SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_INTERVAL.getId());
 		if (interval != null && !"".equals(interval)) {
@@ -301,35 +378,30 @@ public class ImportGermplasmListController extends SettingsController {
 	/**
 	 * List data project data is the germplasm list that is attached to a nursery or a trial This method is saving the germplasm for this
 	 * nursery/trial
-	 * 
+	 *
 	 * @param isNursery
 	 * @param studyId
 	 * @throws MiddlewareQueryException
 	 */
 	private void saveListDataProject(final boolean isNursery, final int studyId) {
 
-		if (this.getUserSelection().getImportedGermplasmMainInfo() != null
-				&& this.getUserSelection().getImportedGermplasmMainInfo().getListId() != null) {
+		final ImportedGermplasmMainInfo germplasmMainInfo = this.getUserSelection().getImportedGermplasmMainInfo();
+
+		if (germplasmMainInfo != null && germplasmMainInfo.getListId() != null) {
 			// we save the list
 			// we need to create a new germplasm list
-			final Integer listId = this.getUserSelection().getImportedGermplasmMainInfo().getListId();
-			List<ImportedGermplasm> importedGermplasmList;
+			final Integer listId = germplasmMainInfo.getListId();
+			List<ImportedGermplasm> projectGermplasmList;
 
-			if (isNursery) {
-				if (this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms() != null) {
-					importedGermplasmList =
-							this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-									.getOriginalImportedGermplasms();
-				} else {
-					importedGermplasmList =
-							this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
-				}
+			final ImportedGermplasmList importedGermplasmList = germplasmMainInfo.getImportedGermplasmList();
+
+			if (isNursery && importedGermplasmList.getOriginalImportedGermplasms() != null) {
+				projectGermplasmList = importedGermplasmList.getOriginalImportedGermplasms();
 			} else {
-				importedGermplasmList =
-						this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+				projectGermplasmList = importedGermplasmList.getImportedGermplasms();
 			}
 
-			final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(importedGermplasmList);
+			final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(projectGermplasmList);
 			this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, isNursery ? GermplasmListType.NURSERY
 					: GermplasmListType.TRIAL, listId, listDataProject, this.getCurrentIbdbUserId());
 		} else {
@@ -337,6 +409,7 @@ public class ImportGermplasmListController extends SettingsController {
 			this.fieldbookMiddlewareService
 					.deleteListDataProjects(studyId, isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL);
 		}
+
 		if (this.getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
 			if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null) {
 				// came from a list
@@ -371,7 +444,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Display germplasm details.
-	 * 
+	 *
 	 * @param listId the list id
 	 * @param form the form
 	 * @param model the model
@@ -392,6 +465,13 @@ public class ImportGermplasmListController extends SettingsController {
 			final String defaultTestCheckId =
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
+			// Set first entry number from the list
+			form.setStartingEntryNo(list.get(0).getEntryId().toString());
+
+			if(this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()){
+				form.setStartingPlotNo(userSelection.getMeasurementRowList().get(0).getDataList().get(3).getValue());
+			}
+
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 			boolean isNursery = false;
@@ -495,6 +575,15 @@ public class ImportGermplasmListController extends SettingsController {
 			final String defaultTestCheckId =
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
+			// Set first entry number from the list
+			if (list.size() != 0) {
+				form.setStartingEntryNo(list.get(0).getEntryId().toString());
+			}
+
+			if(this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()){
+				form.setStartingPlotNo(userSelection.getMeasurementRowList().get(0).getDataList().get(3).getValue());
+			}
+
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 
@@ -748,7 +837,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Display check germplasm details.
-	 * 
+	 *
 	 * @param listId the list id
 	 * @param form the form
 	 * @param model the model
@@ -794,7 +883,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Display check germplasm details.
-	 * 
+	 *
 	 * @param type
 	 * @param form
 	 * @param model
@@ -851,7 +940,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Delete check germplasm details.
-	 * 
+	 *
 	 * @param gid the gid
 	 * @param model the model
 	 * @return the string
@@ -885,7 +974,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Adds the check germplasm details.
-	 * 
+	 *
 	 * @param entryId the entry id
 	 * @param form the form
 	 * @param model the model
@@ -954,7 +1043,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Reset check germplasm details.
-	 * 
+	 *
 	 * @param model the model
 	 * @return the string
 	 */
@@ -1039,7 +1128,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Reset check germplasm details.
-	 * 
+	 *
 	 * @param model the model
 	 * @return the string
 	 */
@@ -1067,7 +1156,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Gets the paginated list.
-	 * 
+	 *
 	 * @param pageNum the page num
 	 * @param form the form
 	 * @param model the model
@@ -1092,7 +1181,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Gets the check paginated list.
-	 * 
+	 *
 	 * @param pageNum the page num
 	 * @param previewPageNum the preview page num
 	 * @param form the form
@@ -1126,7 +1215,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Transform germplasm list data to imported germplasm.
-	 * 
+	 *
 	 * @param data the data
 	 * @param defaultCheckId the default check id
 	 * @return the list
@@ -1156,7 +1245,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Gets the all check types.
-	 * 
+	 *
 	 * @return the all check types
 	 */
 	@ResponseBody
@@ -1179,7 +1268,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Adds the update check type.
-	 * 
+	 *
 	 * @param operation the operation
 	 * @param form the form
 	 * @param local the local
@@ -1237,7 +1326,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Delete check type.
-	 * 
+	 *
 	 * @param form the form
 	 * @param local the local
 	 * @return the map
@@ -1280,7 +1369,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Gets the check type list.
-	 * 
+	 *
 	 * @return the check type list
 	 */
 	@ModelAttribute("checkTypes")
@@ -1302,7 +1391,7 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param userSelection
 	 */
 	protected void updateObservationsFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
@@ -1321,7 +1410,7 @@ public class ImportGermplasmListController extends SettingsController {
 	/**
 	 * This will copy the factors, variates and experimental design variable generated from importing a Custom Design to the Workbook that
 	 * will be saved.
-	 * 
+	 *
 	 * @param userSelection
 	 */
 	protected void addVariablesFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
@@ -1345,7 +1434,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Updates the Check value and Check ID of Imported Germplasm based on the Selected Checks from ImportGermplasmListForm
-	 * 
+	 *
 	 * @param userSelection
 	 * @param form
 	 */
@@ -1399,7 +1488,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			this.mergePrimaryAndCheckGermplasmList(userSelection, form);
 
-			// his would validate and add CHECK factor if necessary
+			// This would validate and add CHECK factor if necessary
 			this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), userSelection
 					.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
 
@@ -1416,7 +1505,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * Copies the Germplasm List and Check list from userSelection to ImportGermplasmListForm
-	 * 
+	 *
 	 * @param userSelection
 	 * @param form
 	 */
@@ -1447,7 +1536,7 @@ public class ImportGermplasmListController extends SettingsController {
 	/**
 	 * This will merge the selected Germplasm List and Check list into one Imported Germplasm list. This is necessary for generation of
 	 * Observation with checks.
-	 * 
+	 *
 	 * @param userSelection
 	 * @param form
 	 */
@@ -1482,7 +1571,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * This will remove the Experimental Design Factor in workbook.
-	 * 
+	 *
 	 * @param conditions
 	 */
 	protected void addExperimentFactorToBeDeleted(final List<MeasurementVariable> conditions) {

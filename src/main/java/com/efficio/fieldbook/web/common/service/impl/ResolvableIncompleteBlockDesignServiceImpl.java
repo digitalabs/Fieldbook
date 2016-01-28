@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -19,7 +20,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
@@ -108,10 +110,17 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 				}
 			}
 
+			Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
+			Integer entryNo = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
+
+			if(!Objects.equals(stdvarTreatment.getId(), TermId.ENTRY_NO.getId())){
+				entryNo = null;
+			}
+
 			MainDesign mainDesign =
 					ExpDesignUtil.createResolvableIncompleteBlockDesign(blockSize, Integer.toString(nTreatments), replicates,
-							stdvarTreatment.getName(), stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(),
-							parameter.getNblatin(), parameter.getReplatinGroups(), "", parameter.getUseLatenized());
+							stdvarTreatment.getName(), stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(), plotNo,
+							entryNo, parameter.getNblatin(), parameter.getReplatinGroups(), "", parameter.getUseLatenized());
 
 			measurementRowList =
 					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
@@ -160,31 +169,57 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 					output =
 							new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 									"experiment.design.block.size.should.be.a.number", null, locale));
+					return output;
 				} else if (!NumberUtils.isNumber(expDesignParameter.getReplicationsCount())) {
 					output =
 							new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 									"experiment.design.replication.count.should.be.a.number", null, locale));
-				} else {
+					return output;
+				}
+				else if (expDesignParameter.getStartingPlotNo() != null && !NumberUtils.isNumber(expDesignParameter.getStartingPlotNo())) {
+					output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+							"experiment.design.plot.number.should.be.a.number", null, locale));
+					return output;
+				}
+				else if (expDesignParameter.getStartingEntryNo() != null && !NumberUtils.isNumber(expDesignParameter.getStartingEntryNo())) {
+					output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+							"experiment.design.entry.number.should.be.a.number", null, locale));
+					return output;
+				}
+				else {
 					int blockSize = Integer.valueOf(expDesignParameter.getBlockSize());
 					int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
 					int treatmentSize = germplasmList.size();
 					int blockLevel = treatmentSize / blockSize;
+					final Integer entryNumber = StringUtil.parseInt(expDesignParameter.getStartingEntryNo(), null);
+					final Integer plotNumber = StringUtil.parseInt(expDesignParameter.getStartingPlotNo(), null);
 
-					if (replicationCount <= 1 || replicationCount >= 13) {
+					if(Objects.equals(entryNumber, 0)){
+						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+								"entry.number.should.be.in.range", null, locale));
+					} else if(Objects.equals(plotNumber, 0)){
+						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+								"plot.number.should.be.in.range", null, locale));
+					} else if (replicationCount <= 1 || replicationCount >= 13) {
 						output =
 								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.replication.count.resolvable.error", null, locale));
-					} else if (blockSize <= 1) {
-						output =
-								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+					}
+					else if (entryNumber != null && (treatmentSize + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO) {
+
+						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+								"entry.number.should.be.in.range", null, locale));
+					}else if (entryNumber != null && plotNumber != null && (((treatmentSize * replicationCount) + plotNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
+						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+								"plot.number.should.be.in.range", null, locale));
+					}else if (blockSize <= 1) {
+						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.block.size.should.be.a.greater.than.1", null, locale));
 					} else if (blockLevel == 1) {
-						output =
-								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.block.level.should.be.greater.than.one", null, locale));
 					} else if (treatmentSize % blockSize != 0) {
-						output =
-								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.block.size.not.a.factor.of.treatment.size", null, locale));
 					} else if (expDesignParameter.getUseLatenized() != null && expDesignParameter.getUseLatenized().booleanValue()) {
 						// we add validation for latinize
@@ -242,5 +277,35 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 		} else {
 			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.BLOCK_SIZE.getId());
 		}
+	}
+
+	
+	void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	
+	void setWorkbenchService(WorkbenchService workbenchService) {
+		this.workbenchService = workbenchService;
+	}
+
+	
+	void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
+		this.fieldbookProperties = fieldbookProperties;
+	}
+
+	
+	void setMessageSource(ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
+	
+	void setFieldbookService(FieldbookService fieldbookService) {
+		this.fieldbookService = fieldbookService;
+	}
+
+	
+	void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 }

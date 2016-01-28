@@ -43,7 +43,9 @@ var ImportCrosses = {
 		},
 		openCrossesList : function() {
 			'use strict';
-			$('#openCrossesListModal').modal({ backdrop: 'static', keyboard: true });
+			$('#openCrossesListModal').one('shown.bs.modal', function() {
+				$('body').addClass('modal-open');
+			}).modal({ backdrop: 'static', keyboard: true });
 
 			ImportCrosses.getImportedCrossesTable().done(function(response) {
 				setTimeout(function() {
@@ -53,7 +55,7 @@ var ImportCrosses = {
 
 			$('#openCrossListNextButton').off('click');
 			$('#openCrossListNextButton').on('click', function() {
-				$('#openCrossesListModal').modal('hide');								
+				$('#openCrossesListModal').modal('hide');
 				setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
 			});
 
@@ -66,7 +68,9 @@ var ImportCrosses = {
 
 		goBackToPage: function(hiddenModalSelector,shownModalSelector) {
 			$(hiddenModalSelector).modal('hide');
-			$(shownModalSelector).modal({ backdrop: 'static', keyboard: true });
+			$(shownModalSelector).one('shown.bs.modal', function() {
+				$('body').addClass('modal-open');
+			}).modal({ backdrop: 'static', keyboard: true });
 		},
 
 		getImportedCrossesTable : function(){
@@ -135,7 +139,7 @@ var ImportCrosses = {
 			LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox', ImportCrosses.showFavoriteLoationsOnly);
 			ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 			ImportCrosses.updateSampleParentageDesignation();
-
+			
 			$('.cross-import-name-setting').off('change');
 			$('.cross-import-name-setting').on('change', ImportCrosses.updateDisplayedSequenceNameValue);
 
@@ -154,7 +158,15 @@ var ImportCrosses = {
 				ImportCrosses.goBackToPage('#crossSettingsModal','#openCrossesListModal');
 			});
 		},
-
+		
+		validateStartingSequenceNumber : function(value) {
+			if(value != null && value != '' && (value.indexOf('.') >= 0 || !isInt(value))){
+				createErrorNotification(invalidInputMsgHeader, invalidStartingNumberErrorMsg);
+				return false;
+			}
+			return true;
+		},
+		
 		updateSampleParentageDesignation : function() {
 			var value = $('#parentageDesignationSeparator').val();
 			$('#sampleParentageDesignation').text('ABC-123' + value + 'DEF-456');
@@ -205,7 +217,8 @@ var ImportCrosses = {
 			$('#crossSuffix').val(setting.crossSuffix);
 			$('input:radio[name=hasPrefixSpace][value=' + setting.hasPrefixSpace + ']').prop('checked', true);
 			$('input:radio[name=hasSuffixSpace][value=' + setting.hasSuffixSpace + ']').prop('checked', true);
-			$('#sequenceNumberDigits').val(setting.sequenceNumberDigits);
+			$('input:radio[name=hasParentageDesignationName][value=' + setting.hasParentageDesignationName + ']').prop('checked', true);
+			$('#sequenceNumberDigits').select2('val', setting.sequenceNumberDigits);
 			$('#parentageDesignationSeparator').val(setting.parentageDesignationSeparator);
 			$('#startingSequenceNumber').val(setting.startingSequenceNumber);
 			$('#locationDropdown').select2('val', setting.locationID);
@@ -318,24 +331,26 @@ var ImportCrosses = {
 				showErrorMessage('', 'Separator for parentage designation is required');
 			}
 
-			if (!importSettings.additionalDetailsSetting.harvestLocationId || importSettings.additionalDetailsSetting.harvestLocationId === '') {
-				valid = false;
-				showErrorMessage('', 'Harvest location is required');
+			if(!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)){
+				return false;
 			}
 
 			return valid;
 		},
 
 		updateDisplayedSequenceNameValue : function() {
-			ImportCrosses.retrieveNextNameInSequence().done(function(data){
-				if (data.success === '1') {
-					$('#importNextSequenceName').text(data.sequenceValue);
-				} else {
+			var value = $('#startingSequenceNumber').val();
+			if (ImportCrosses.validateStartingSequenceNumber(value)){
+				ImportCrosses.retrieveNextNameInSequence().done(function(data){
+					if (data.success === '1') {
+						$('#importNextSequenceName').text(data.sequenceValue);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					}
+				}).fail(function() {
 					showErrorMessage('', ajaxGenericErrorMsg);
-				}
-			}).fail(function() {
-				showErrorMessage('', ajaxGenericErrorMsg);
-			});
+				});
+			}
 		},
 
 		retrieveNextNameInSequence : function() {
@@ -528,8 +543,8 @@ var ImportCrosses = {
 							backdrop: 'static'
 						});
 						$('#saveListTreeModal').data('is-save-crosses', '1');
-						
-						TreePersist.preLoadGermplasmTreeState(false, '#germplasmFolderTree');
+
+						TreePersist.preLoadGermplasmTreeState(false, '#germplasmFolderTree', true);
 						
 						//we preselect the program lists
 						if(germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null) {

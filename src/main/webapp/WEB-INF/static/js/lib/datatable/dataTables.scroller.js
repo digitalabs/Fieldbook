@@ -1,15 +1,15 @@
-/*! Scroller 1.2.1
- * 2011-2014 SpryMedia Ltd - datatables.net/license
+/*! Scroller 1.4.0
+ * ©2011-2015 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     Scroller
  * @description Virtual rendering for DataTables
- * @version     1.2.1
+ * @version     1.4.0
  * @file        dataTables.scroller.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2011-2014 SpryMedia Ltd.
+ * @copyright   Copyright 2011-2015 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
@@ -21,11 +21,35 @@
  * For details please refer to: http://www.datatables.net
  */
 
-(function(window, document, undefined){
+(function( factory ){
+	if ( typeof define === 'function' && define.amd ) {
+		// AMD
+		define( ['jquery', 'datatables.net'], function ( $ ) {
+			return factory( $, window, document );
+		} );
+	}
+	else if ( typeof exports === 'object' ) {
+		// CommonJS
+		module.exports = function (root, $) {
+			if ( ! root ) {
+				root = window;
+			}
 
+			if ( ! $ || ! $.fn.dataTable ) {
+				$ = require('datatables.net')(root, $).$;
+			}
 
-var factory = function( $, DataTable ) {
-"use strict";
+			return factory( $, root, root.document );
+		};
+	}
+	else {
+		// Browser
+		factory( jQuery, window, document );
+	}
+}(function( $, window, document, undefined ) {
+'use strict';
+var DataTable = $.fn.dataTable;
+
 
 /**
  * Scroller is a virtual rendering plug-in for DataTables which allows large
@@ -48,7 +72,7 @@ var factory = function( $, DataTable ) {
  * Key features include:
  *   <ul class="limit_length">
  *     <li>Speed! The aim of Scroller for DataTables is to make rendering large data sets fast</li>
- *     <li>Full compatibility with deferred rendering in DataTables 1.9 for maximum speed</li>
+ *     <li>Full compatibility with deferred rendering in DataTables for maximum speed</li>
  *     <li>Display millions of rows</li>
  *     <li>Integration with state saving in DataTables (scrolling position is saved)</li>
  *     <li>Easy to use</li>
@@ -57,34 +81,32 @@ var factory = function( $, DataTable ) {
  *  @class
  *  @constructor
  *  @global
- *  @param {object} oDT DataTables settings object
- *  @param {object} [oOpts={}] Configuration object for FixedColumns. Options 
+ *  @param {object} dt DataTables settings object or API instance
+ *  @param {object} [opts={}] Configuration object for FixedColumns. Options 
  *    are defined by {@link Scroller.defaults}
  *
  *  @requires jQuery 1.7+
- *  @requires DataTables 1.9.0+
+ *  @requires DataTables 1.10.0+
  *
  *  @example
  *    $(document).ready(function() {
- *        $('#example').dataTable( {
- *            "sScrollY": "200px",
- *            "sAjaxSource": "media/dataset/large.txt",
- *            "sDom": "frtiS",
- *            "bDeferRender": true
+ *        $('#example').DataTable( {
+ *            "scrollY": "200px",
+ *            "ajax": "media/dataset/large.txt",
+ *            "dom": "frtiS",
+ *            "deferRender": true
  *        } );
  *    } );
  */
-var Scroller = function ( oDTSettings, oOpts ) {
+var Scroller = function ( dt, opts ) {
 	/* Sanity check - you just know it will happen */
-	if ( ! this instanceof Scroller )
-	{
+	if ( ! (this instanceof Scroller) ) {
 		alert( "Scroller warning: Scroller must be initialised with the 'new' keyword." );
 		return;
 	}
 
-	if ( typeof oOpts == 'undefined' )
-	{
-		oOpts = {};
+	if ( opts === undefined ) {
+		opts = {};
 	}
 
 	/**
@@ -99,7 +121,7 @@ var Scroller = function ( oDTSettings, oOpts ) {
 		 *  @type     object
 		 *  @default  Passed in as first parameter to constructor
 		 */
-		"dt": oDTSettings,
+		"dt": $.fn.dataTable.Api( dt ).settings()[0],
 
 		/**
 		 * Pixel location of the top of the drawn table in the viewport
@@ -126,7 +148,7 @@ var Scroller = function ( oDTSettings, oOpts ) {
 
 		/**
 		 * Pixel location of the boundary for when the next data set should be loaded and drawn
-		 * when scrolling down the way. Note that this is actually caluated as the offset from
+		 * when scrolling down the way. Note that this is actually calculated as the offset from
 		 * the top.
 		 *  @type     int
 		 *  @default  0
@@ -187,12 +209,13 @@ var Scroller = function ( oDTSettings, oOpts ) {
 		},
 
 		topRowFloat: 0,
-		scrollDrawDiff: null
+		scrollDrawDiff: null,
+		loaderVisible: false
 	};
 
 	// @todo The defaults should extend a `c` property and the internal settings
 	// only held in the `s` property. At the moment they are mixed
-	this.s = $.extend( this.s, Scroller.oDefaults, oOpts );
+	this.s = $.extend( this.s, Scroller.oDefaults, opts );
 
 	// Workaround for row height being read from height object (see above comment)
 	this.s.heights.row = this.s.rowHeight;
@@ -204,12 +227,18 @@ var Scroller = function ( oDTSettings, oOpts ) {
 	 *
 	 */
 	this.dom = {
-		"force": document.createElement('div'),
+		"force":    document.createElement('div'),
 		"scroller": null,
-		"table": null
+		"table":    null,
+		"loader":   null
 	};
 
-	/* Attach the instance to the DataTables instance so it can be accessed */
+	// Attach the instance to the DataTables instance so it can be accessed in
+	// future. Don't initialise Scroller twice on the same table
+	if ( this.s.dt.oScroller ) {
+		return;
+	}
+
 	this.s.dt.oScroller = this;
 
 	/* Let's do it */
@@ -218,7 +247,7 @@ var Scroller = function ( oDTSettings, oOpts ) {
 
 
 
-Scroller.prototype = /** @lends Scroller.prototype */{
+$.extend( Scroller.prototype, {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * Public methods
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -302,7 +331,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 	/**
 	 * Calculate the row number that will be found at the given pixel position (y-scroll)
 	 *  @param {int} iRow Row index to scroll to
-	 *  @param {bool} [bAnimate=true] Animate the transision or not
+	 *  @param {bool} [bAnimate=true] Animate the transition or not
 	 *  @returns {void}
 	 *  @example
 	 *    $(document).ready(function() {
@@ -354,7 +383,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 				// the final scroll event fired
 				setTimeout( function () {
 					that.s.ani = false;
-				}, 0 );
+				}, 25 );
 			} );
 		}
 		else
@@ -370,7 +399,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 	 * rendering. This can be particularly useful if the table is initially
 	 * drawn in a hidden element - for example in a tab.
 	 *  @param {bool} [bRedraw=true] Redraw the table automatically after the recalculation, with
-	 *    the new dimentions forming the basis for the draw.
+	 *    the new dimensions forming the basis for the draw.
 	 *  @returns {void}
 	 *  @example
 	 *    $(document).ready(function() {
@@ -406,9 +435,9 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 		this.s.viewportRows = parseInt( heights.viewport / heights.row, 10 )+1;
 		this.s.dt._iDisplayLength = this.s.viewportRows * this.s.displayBuffer;
 
-		if ( typeof bRedraw == 'undefined' || bRedraw )
+		if ( bRedraw === undefined || bRedraw )
 		{
-			this.s.dt.oInstance.fnDraw();
+			this.s.dt.oInstance.fnDraw( false );
 		}
 	},
 
@@ -436,7 +465,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 		/* Insert a div element that we can use to force the DT scrolling container to
 		 * the height that would be required if the whole table was being displayed
 		 */
-		this.dom.force.style.position = "absolute";
+		this.dom.force.style.position = "relative";
 		this.dom.force.style.top = "0px";
 		this.dom.force.style.left = "0px";
 		this.dom.force.style.width = "1px";
@@ -456,9 +485,12 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 		// Add a 'loading' indicator
 		if ( this.s.loadingIndicator )
 		{
+			this.dom.loader = $('<div class="dataTables_processing DTS_Loading">'+this.s.dt.oLanguage.sLoadingRecords+'</div>')
+				.css('display', 'none');
+
 			$(this.dom.scroller.parentNode)
 				.css('position', 'relative')
-				.append('<div class="DTS_Loading">'+this.s.dt.oLanguage.sLoadingRecords+'</div>');
+				.append( this.dom.loader );
 		}
 
 		/* Initial size calculations */
@@ -468,12 +500,19 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 		}
 		this.fnMeasure( false );
 
-		/* Scrolling callback to see if a page change is needed */
-		$(this.dom.scroller).on( 'scroll.DTS', function () {
+		/* Scrolling callback to see if a page change is needed - use a throttled
+		 * function for the save save callback so we aren't hitting it on every
+		 * scroll
+		 */
+		this.s.ingnoreScroll = true;
+		this.s.stateSaveThrottle = this.s.dt.oApi._fnThrottle( function () {
+			that.s.dt.oApi._fnSaveState( that.s.dt );
+		}, 500 );
+		$(this.dom.scroller).on( 'scroll.DTS', function (e) {
 			that._fnScroll.call( that );
 		} );
 
-		/* In iOS we catch the touchstart event incase the user tries to scroll
+		/* In iOS we catch the touchstart event in case the user tries to scroll
 		 * while the display is already scrolling
 		 */
 		$(this.dom.scroller).on('touchstart.DTS', function () {
@@ -492,6 +531,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 
 		/* On resize, update the information element, since the number of rows shown might change */
 		$(window).on( 'resize.DTS', function () {
+			that.fnMeasure( false );
 			that._fnInfo();
 		} );
 
@@ -504,11 +544,21 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 			 */
 			if(initialStateSave && that.s.dt.oLoadedState){
 				oData.iScroller = that.s.dt.oLoadedState.iScroller;
+				oData.iScrollerTopRow = that.s.dt.oLoadedState.iScrollerTopRow;
 				initialStateSave = false;
 			} else {
 				oData.iScroller = that.dom.scroller.scrollTop;
+				oData.iScrollerTopRow = that.s.topRowFloat;
 			}
 		}, "Scroller_State" );
+
+		if ( this.s.dt.oLoadedState ) {
+			this.s.topRowFloat = this.s.dt.oLoadedState.iScrollerTopRow || 0;
+		}
+
+		$(this.s.dt.nTable).on( 'init.dt', function () {
+			that.fnMeasure();
+		} );
 
 		/* Destructor */
 		this.s.dt.aoDestroyCallback.push( {
@@ -518,6 +568,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 				$(that.dom.scroller).off('touchstart.DTS scroll.DTS');
 				$(that.s.dt.nTableWrapper).removeClass('DTS');
 				$('div.DTS_Loading', that.dom.scroller.parentNode).remove();
+				$(that.s.dt.nTable).off( 'init.dt' );
 
 				that.dom.table.style.position = "";
 				that.dom.table.style.top = "";
@@ -545,6 +596,10 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 			iTopRow;
 
 		if ( this.s.skip ) {
+			return;
+		}
+
+		if ( this.s.ingnoreScroll ) {
 			return;
 		}
 
@@ -612,9 +667,6 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 					}
 
 					that.s.dt._iDisplayStart = iTopRow;
-					if ( that.s.dt.oApi._fnCalculateEnd ) { // Removed in 1.10
-						that.s.dt.oApi._fnCalculateEnd( that.s.dt );
-					}
 					that.s.dt.oApi._fnDraw( that.s.dt );
 				};
 
@@ -628,10 +680,16 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 				else {
 					draw();
 				}
+
+				if ( this.dom.loader && ! this.s.loaderVisible ) {
+					this.dom.loader.css( 'display', 'block' );
+					this.s.loaderVisible = true;
+				}
 			}
 		}
 
 		this.s.lastScrollTop = iScrollTop;
+		this.s.stateSaveThrottle();
 	},
 
 
@@ -653,14 +711,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 		// If the virtual and physical height match, then we use a linear
 		// transform between the two, allowing the scrollbar to be linear
 		if ( heights.virtual === heights.scroll ) {
-			coeff = (heights.virtual-heights.viewport) / (heights.scroll-heights.viewport);
-
-			if ( dir === 'virtualToPhysical' ) {
-				return val / coeff;
-			}
-			else if ( dir === 'physicalToVirtual' ) {
-				return val * coeff;
-			}
+			return val;
 		}
 
 		// Otherwise, we want a non-linear scrollbar to take account of the
@@ -770,20 +821,15 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 
 		this.s.skip = false;
 
-		// Because of the order of the DT callbacks, the info update will
-		// take precidence over the one we want here. So a 'thread' break is
-		// needed
-		setTimeout( function () {
-			that._fnInfo.call( that );
-		}, 0 );
-
 		// Restore the scrolling position that was saved by DataTable's state
 		// saving Note that this is done on the second draw when data is Ajax
 		// sourced, and the first draw when DOM soured
 		if ( this.s.dt.oFeatures.bStateSave && this.s.dt.oLoadedState !== null &&
 			 typeof this.s.dt.oLoadedState.iScroller != 'undefined' )
 		{
-			var ajaxSourced = this.s.dt.sAjaxSource || that.s.dt.ajax ?
+			// A quirk of DataTables is that the draw callback will occur on an
+			// empty set if Ajax sourced, but not if server-side processing.
+			var ajaxSourced = (this.s.dt.sAjaxSource || that.s.dt.ajax) && ! this.s.dt.oFeatures.bServerSide ?
 				true :
 				false;
 
@@ -793,8 +839,30 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 				setTimeout( function () {
 					$(that.dom.scroller).scrollTop( that.s.dt.oLoadedState.iScroller );
 					that.s.redrawTop = that.s.dt.oLoadedState.iScroller - (heights.viewport/2);
+
+					// In order to prevent layout thrashing we need another
+					// small delay
+					setTimeout( function () {
+						that.s.ingnoreScroll = false;
+					}, 0 );
 				}, 0 );
 			}
+		}
+		else {
+			that.s.ingnoreScroll = false;
+		}
+
+		// Because of the order of the DT callbacks, the info update will
+		// take precedence over the one we want here. So a 'thread' break is
+		// needed
+		setTimeout( function () {
+			that._fnInfo.call( that );
+		}, 0 );
+
+		// Hide the loading indicator
+		if ( this.dom.loader && this.s.loaderVisible ) {
+			this.dom.loader.css( 'display', 'none' );
+			this.s.loaderVisible = false;
 		}
 	},
 
@@ -822,7 +890,11 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 			heights.scroll = max;
 		}
 
-		this.dom.force.style.height = heights.scroll+"px";
+		// Minimum height so there is always a row visible (the 'no rows found'
+		// if reduced to zero filtering)
+		this.dom.force.style.height = heights.scroll > this.s.heights.row ?
+			heights.scroll+'px' :
+			this.s.heights.row+'px';
 	},
 
 
@@ -836,13 +908,14 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 	 */
 	"_fnCalcRowHeight": function ()
 	{
-		var origTable = this.s.dt.nTable;
+		var dt = this.s.dt;
+		var origTable = dt.nTable;
 		var nTable = origTable.cloneNode( false );
 		var tbody = $('<tbody/>').appendTo( nTable );
 		var container = $(
-			'<div class="'+this.s.dt.oClasses.sWrapper+' DTS">'+
-				'<div class="'+this.s.dt.oClasses.sScrollWrapper+'">'+
-					'<div class="'+this.s.dt.oClasses.sScrollBody+'"></div>'+
+			'<div class="'+dt.oClasses.sWrapper+' DTS">'+
+				'<div class="'+dt.oClasses.sScrollWrapper+'">'+
+					'<div class="'+dt.oClasses.sScrollBody+'"></div>'+
 				'</div>'+
 			'</div>'
 		);
@@ -854,10 +927,12 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 			tbody.append( '<tr><td>&nbsp;</td></tr>' );
 		}
 
-		$('div.'+this.s.dt.oClasses.sScrollBody, container).append( nTable );
+		$('div.'+dt.oClasses.sScrollBody, container).append( nTable );
 
-		container.appendTo( this.s.dt.nHolding );
+		// If initialised using `dom`, use the holding element as the insert point
+		container.appendTo( this.s.dt.nHolding || origTable.parentNode );
 		this.s.heights.row = $('tr', tbody).eq(1).outerHeight();
+
 		container.remove();
 	},
 
@@ -878,6 +953,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 
 		var
 			dt = this.s.dt,
+			language = dt.oLanguage,
 			iScrollTop = this.dom.scroller.scrollTop,
 			iStart = Math.floor( this.fnPixelsToRow(iScrollTop, false, this.s.ani)+1 ),
 			iMax = dt.fnRecordsTotal(),
@@ -894,34 +970,45 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 			   dt.fnRecordsDisplay() == dt.fnRecordsTotal() )
 		{
 			/* Empty record set */
-			sOut = dt.oLanguage.sInfoEmpty+ dt.oLanguage.sInfoPostFix;
+			sOut = language.sInfoEmpty+ language.sInfoPostFix;
 		}
 		else if ( dt.fnRecordsDisplay() === 0 )
 		{
-			/* Rmpty record set after filtering */
-			sOut = dt.oLanguage.sInfoEmpty +' '+
-				dt.oLanguage.sInfoFiltered.replace('_MAX_', sMax)+
-					dt.oLanguage.sInfoPostFix;
+			/* Empty record set after filtering */
+			sOut = language.sInfoEmpty +' '+
+				language.sInfoFiltered.replace('_MAX_', sMax)+
+					language.sInfoPostFix;
 		}
 		else if ( dt.fnRecordsDisplay() == dt.fnRecordsTotal() )
 		{
 			/* Normal record set */
-			sOut = dt.oLanguage.sInfo.
+			sOut = language.sInfo.
 					replace('_START_', sStart).
 					replace('_END_',   sEnd).
+					replace('_MAX_',   sMax).
 					replace('_TOTAL_', sTotal)+
-				dt.oLanguage.sInfoPostFix;
+				language.sInfoPostFix;
 		}
 		else
 		{
 			/* Record set after filtering */
-			sOut = dt.oLanguage.sInfo.
+			sOut = language.sInfo.
 					replace('_START_', sStart).
 					replace('_END_',   sEnd).
+					replace('_MAX_',   sMax).
 					replace('_TOTAL_', sTotal) +' '+
-				dt.oLanguage.sInfoFiltered.replace('_MAX_',
-					dt.fnFormatNumber(dt.fnRecordsTotal()))+
-				dt.oLanguage.sInfoPostFix;
+				language.sInfoFiltered.replace(
+					'_MAX_',
+					dt.fnFormatNumber(dt.fnRecordsTotal())
+				)+
+				language.sInfoPostFix;
+		}
+
+		var callback = language.fnInfoCallback;
+		if ( callback ) {
+			sOut = callback.call( dt.oInstance,
+				dt, iStart, iEnd, iMax, iTotal, sOut
+			);
 		}
 
 		var n = dt.aanFeatures.i;
@@ -933,7 +1020,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 			}
 		}
 	}
-};
+} );
 
 
 
@@ -1086,7 +1173,7 @@ Scroller.oDefaults = Scroller.defaults;
  *  @name      Scroller.version
  *  @static
  */
-Scroller.version = "1.2.1";
+Scroller.version = "1.4.0";
 
 
 
@@ -1094,19 +1181,17 @@ Scroller.version = "1.2.1";
  * Initialisation
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*
- * Register a new feature with DataTables
- */
+// Legacy `dom` parameter initialisation support
 if ( typeof $.fn.dataTable == "function" &&
      typeof $.fn.dataTableExt.fnVersionCheck == "function" &&
-     $.fn.dataTableExt.fnVersionCheck('1.9.0') )
+     $.fn.dataTableExt.fnVersionCheck('1.10.0') )
 {
 	$.fn.dataTableExt.aoFeatures.push( {
 		"fnInit": function( oDTSettings ) {
 			var init = oDTSettings.oInit;
 			var opts = init.scroller || init.oScroller || {};
-			var oScroller = new Scroller( oDTSettings, opts );
-			return oScroller.dom.wrapper;
+			
+			new Scroller( oDTSettings, opts );
 		},
 		"cFeature": "S",
 		"sFeature": "Scroller"
@@ -1114,8 +1199,27 @@ if ( typeof $.fn.dataTable == "function" &&
 }
 else
 {
-	alert( "Warning: Scroller requires DataTables 1.9.0 or greater - www.datatables.net/download");
+	alert( "Warning: Scroller requires DataTables 1.10.0 or greater - www.datatables.net/download");
 }
+
+// Attach a listener to the document which listens for DataTables initialisation
+// events so we can automatically initialise
+$(document).on( 'preInit.dt.dtscroller', function (e, settings) {
+	if ( e.namespace !== 'dt' ) {
+		return;
+	}
+
+	var init = settings.oInit.scroller;
+	var defaults = DataTable.defaults.scroller;
+
+	if ( init || defaults ) {
+		var opts = $.extend( {}, init, defaults );
+
+		if ( init !== false ) {
+			new Scroller( settings, opts  );
+		}
+	}
+} );
 
 
 // Attach Scroller to DataTables so it can be accessed as an 'extra'
@@ -1124,62 +1228,70 @@ $.fn.DataTable.Scroller = Scroller;
 
 
 // DataTables 1.10 API method aliases
-if ( $.fn.dataTable.Api ) {
-	var Api = $.fn.dataTable.Api;
+var Api = $.fn.dataTable.Api;
 
-	Api.register( 'scroller().rowToPixels()', function ( rowIdx, intParse, virtual ) {
-		var ctx = this.context;
+Api.register( 'scroller()', function () {
+	return this;
+} );
 
-		if ( ctx.length && ctx[0].oScroller ) {
-			return ctx[0].oScroller.fnRowToPixels( rowIdx, intParse, virtual );
+// Undocumented and deprecated - is it actually useful at all?
+Api.register( 'scroller().rowToPixels()', function ( rowIdx, intParse, virtual ) {
+	var ctx = this.context;
+
+	if ( ctx.length && ctx[0].oScroller ) {
+		return ctx[0].oScroller.fnRowToPixels( rowIdx, intParse, virtual );
+	}
+	// undefined
+} );
+
+// Undocumented and deprecated - is it actually useful at all?
+Api.register( 'scroller().pixelsToRow()', function ( pixels, intParse, virtual ) {
+	var ctx = this.context;
+
+	if ( ctx.length && ctx[0].oScroller ) {
+		return ctx[0].oScroller.fnPixelsToRow( pixels, intParse, virtual );
+	}
+	// undefined
+} );
+
+// Undocumented and deprecated - use `row().scrollTo()` instead
+Api.register( 'scroller().scrollToRow()', function ( row, ani ) {
+	this.iterator( 'table', function ( ctx ) {
+		if ( ctx.oScroller ) {
+			ctx.oScroller.fnScrollToRow( row, ani );
 		}
-		// undefined
 	} );
 
-	Api.register( 'scroller().pixelsToRow()', function ( pixels, intParse, virtual ) {
-		var ctx = this.context;
+	return this;
+} );
 
-		if ( ctx.length && ctx[0].oScroller ) {
-			return ctx[0].oScroller.fnPixelsToRow( pixels, intParse, virtual );
+Api.register( 'row().scrollTo()', function ( ani ) {
+	var that = this;
+
+	this.iterator( 'row', function ( ctx, rowIdx ) {
+		if ( ctx.oScroller ) {
+			var displayIdx = that
+				.rows( { order: 'applied', search: 'applied' } )
+				.indexes()
+				.indexOf( rowIdx );
+
+			ctx.oScroller.fnScrollToRow( displayIdx, ani );
 		}
-		// undefined
 	} );
 
-	Api.register( 'scroller().scrollToRow()', function ( row, ani ) {
-		this.iterator( 'table', function ( ctx ) {
-			if ( ctx.oScroller ) {
-				ctx.oScroller.fnScrollToRow( row, ani );
-			}
-		} );
+	return this;
+} );
 
-		return this;
+Api.register( 'scroller.measure()', function ( redraw ) {
+	this.iterator( 'table', function ( ctx ) {
+		if ( ctx.oScroller ) {
+			ctx.oScroller.fnMeasure( redraw );
+		}
 	} );
 
-	Api.register( 'scroller().measure()', function ( redraw ) {
-		this.iterator( 'table', function ( ctx ) {
-			if ( ctx.oScroller ) {
-				ctx.oScroller.fnMeasure( redraw );
-			}
-		} );
-
-		return this;
-	} );
-}
+	return this;
+} );
 
 
 return Scroller;
-}; // /factory
-
-
-// Define as an AMD module if possible
-if ( typeof define === 'function' && define.amd ) {
-	define( 'datatables-scroller', ['jquery', 'datatables'], factory );
-}
-else if ( jQuery && !jQuery.fn.dataTable.Scroller ) {
-	// Otherwise simply initialise as normal, stopping multiple evaluation
-	factory( jQuery, jQuery.fn.dataTable );
-}
-
-
-})(window, document);
-
+}));

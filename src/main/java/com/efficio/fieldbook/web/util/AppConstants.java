@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- *
+ * 
  * Generation Challenge Programme (GCP)
- *
- *
+ * 
+ * 
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
+ * 
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.util;
@@ -118,19 +118,20 @@ public enum AppConstants {
 
 	, ADVANCE_ZIP_DEFAULT_FILENAME
 
-	, FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS;
+	, FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS
+
+	, DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER;
 
 	private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);
 
 	private static Properties configFile = new Properties();
 
-
-	private static final String PROPERTY_FILE = "appconstants.properties";
+	public static final String PROPERTY_FILE = "appconstants.properties";
 
 	static {
 		try {
 			configFile.load(AppConstants.class.getClassLoader().getResourceAsStream(AppConstants.PROPERTY_FILE));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			AppConstants.LOG.error("Error accessing property file: " + AppConstants.PROPERTY_FILE, e);
 		}
 
@@ -138,7 +139,7 @@ public enum AppConstants {
 
 	public int getInt() {
 		int appConstant = -1;
-		String value = this.getString().trim();
+		final String value = this.getString().trim();
 		if (value != null) {
 			appConstant = Integer.valueOf(value);
 		}
@@ -146,11 +147,11 @@ public enum AppConstants {
 	}
 
 	public boolean isInt() {
-		String value = this.getString().trim();
+		final String value = this.getString().trim();
 		if (value != null) {
 			try {
 				Integer.valueOf(value);
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				return false;
 			}
 		}
@@ -161,30 +162,30 @@ public enum AppConstants {
 		String value = null;
 		try {
 			value = configFile.getProperty(this.toString());
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			AppConstants.LOG.error("Value not numeric.", e);
 		}
 		return value;
 	}
 
-	public static String getString(String labelKey) {
-		Properties configFile = new Properties();
+	public static String getString(final String labelKey) {
+		final Properties configFile = new Properties();
 		String value = null;
 		try {
 			value = configFile.getProperty(labelKey);
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			AppConstants.LOG.error("Value not numeric.", e);
 		}
 		return value;
 	}
 
 	public Map<String, String> getMapOfValues() {
-		String constantValue = this.getString();
-		Map<String, String> map = new HashMap<String, String>();
-		String[] pairs = constantValue.split(",");
+		final String constantValue = this.getString();
+		final Map<String, String> map = new HashMap<String, String>();
+		final String[] pairs = constantValue.split(",");
 		if (pairs != null) {
-			for (String pair : pairs) {
-				String[] separated = pair.split("\\|");
+			for (final String pair : pairs) {
+				final String[] separated = pair.split("\\|");
 				if (separated != null && separated.length == 2) {
 					map.put(separated[0], separated[1]);
 				}
@@ -194,7 +195,7 @@ public enum AppConstants {
 	}
 
 	public List<String> getList() {
-		String[] arr = this.getString().split(",");
+		final String[] arr = this.getString().split(",");
 		if (arr != null) {
 			return Arrays.asList(arr);
 		}
@@ -202,10 +203,10 @@ public enum AppConstants {
 	}
 
 	public List<Integer> getIntegerList() {
-		List<Integer> list = new ArrayList<Integer>();
-		String[] arr = this.getString().split(",");
+		final List<Integer> list = new ArrayList<Integer>();
+		final String[] arr = this.getString().split(",");
 		if (arr != null) {
-			for (String rec : arr) {
+			for (final String rec : arr) {
 				if (NumberUtils.isNumber(rec)) {
 					list.add(Integer.valueOf(rec));
 				}

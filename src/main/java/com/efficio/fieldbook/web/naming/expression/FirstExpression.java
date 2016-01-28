@@ -12,7 +12,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
  */
 
 @Component
-public class FirstExpression implements Expression {
+public class FirstExpression extends BaseExpression {
 
 	public static final String KEY = "[FIRST]";
 
@@ -42,10 +42,7 @@ public class FirstExpression implements Expression {
 				}
 			}
 
-			int startIndex = value.toString().toUpperCase().indexOf(FirstExpression.KEY);
-			int endIndex = startIndex + FirstExpression.KEY.length();
-
-			value.replace(startIndex, endIndex, "");
+			this.replaceExpressionWithValue(value, "");
 		}
 	}
 

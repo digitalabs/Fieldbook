@@ -349,6 +349,7 @@
 
 <!-- Design import map headers -->
 <div th:include="DesignImport/mapHeaders"></div>
+<div th:include="DesignImport/changeDesign"></div>
 
 <!-- MAIN jS -->
 <script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
@@ -409,6 +410,9 @@ var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required
 var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '';
 var startDateId = '';
 var endDateId = '';
+// Message for validating entry number
+var entryNoShouldBeInRange = /*[[#{entry.number.should.be.in.range}]]*/ '';
+var plotNoShouldBeInRange = /*[[#{plot.number.should.be.in.range}]]*/ '';
 var ajaxGenericErrorMsg = /*[[#{ajax.generic.exception.error.message}]]*/ '';
 var modalConfirmationTitle = /*[[#{common.form.confirmation.text}]]*/ '',
 	environmentModalConfirmationText = /*[[#{trial.change.environment.confirmation}]]*/ '',

@@ -1,201 +1,124 @@
-/*******************************************************************************
- * Copyright (c) 2013, All Rights Reserved.
- *
- * Generation Challenge Programme (GCP)
- *
- *
- * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
- * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
- *******************************************************************************/
 
 package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import junit.framework.Assert;
-
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 
-public class ExpDesignControllerTest extends AbstractBaseIntegrationTest {
+@RunWith(MockitoJUnitRunner.class)
+public class ExpDesignControllerTest {
 
-	private static final int NO_OF_OBSERVATIONS = 10;
-	private static final String ENVIRONMENTS = "3";
+	@Mock
+	private RandomizeCompleteBlockDesignService randomizeCompleteBlockDesign;
 
-	@Resource
+	@Mock
+	private ResolvableIncompleteBlockDesignService resolveIncompleteBlockDesign;
+
+	@Mock
+	private ResolvableRowColumnDesignService resolvableRowColumnDesign;
+
+	@Mock
+	private ResourceBundleMessageSource messageSource;
+
+	@Mock
+	private CrossExpansionProperties crossExpansionProperties;
+
+	@Mock
+	private ContextUtil contextUtil;
+
+	@Mock
+	private DesignImportService designImportService;
+	
+	private FieldbookProperties fieldbookProperties = new FieldbookProperties();
+
+	@InjectMocks
 	ExpDesignController expDesignController;
 
-	@Resource
-	UserSelection userSelection;
-
-	@Test
-	public void testCombineNewlyGeneratedMeasurementsWithNoExistingWorkbook() {
-		this.userSelection.setTemporaryWorkbook(null);
-		this.userSelection.setWorkbook(null);
-		List<MeasurementRow> measurementRows = WorkbookDataUtil.createNewObservations(ExpDesignControllerTest.NO_OF_OBSERVATIONS);
-		List<MeasurementRow> combinedMeasurementRows =
-				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection, true);
-
-		Assert.assertEquals("Expected " + measurementRows.size() + " but got " + combinedMeasurementRows.size() + " instead.",
-				measurementRows.size(), combinedMeasurementRows.size());
+	@Before()
+	public void init() {
+		Mockito.doReturn("CIMMYT").when(this.crossExpansionProperties).getProfile();
+		final Project project = new Project();
+		project.setCropType(new CropType("maize"));
+		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
+		this.expDesignController.setFieldbookProperties(this.fieldbookProperties);
 	}
 
 	@Test
-	public void testCombineNewlyGeneratedMeasurementsWithNullObservations() {
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
-		workbook.setObservations(null);
+	public void testIsValidPresetDesignTemplate() {
+		String fileName = "E30-Rep3-Block6-5Ind.csv";
+		Assert.assertTrue("Expecting to return true when the filename is valid.",
+				this.expDesignController.isValidPresetDesignTemplate(fileName));
 
-		this.userSelection.setTemporaryWorkbook(null);
-		this.userSelection.setWorkbook(workbook);
+		fileName = "E30-Rep3-Block6-5Ind";
+		Assert.assertFalse("Expecting to return false when the filename does not ends with .csv.",
+				this.expDesignController.isValidPresetDesignTemplate(fileName));
 
-		List<MeasurementRow> measurementRows = WorkbookDataUtil.createNewObservations(ExpDesignControllerTest.NO_OF_OBSERVATIONS);
-		List<MeasurementRow> combinedMeasurementRows =
-				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection, true);
+		fileName = "Rep3-Block6-5Ind.csv";
+		Assert.assertFalse("Expecting to return false when the filename does not starts with E[\\d]+",
+				this.expDesignController.isValidPresetDesignTemplate(fileName));
 
-		Assert.assertEquals("Expected " + measurementRows.size() + " but got " + combinedMeasurementRows.size() + " instead.",
-				measurementRows.size(), combinedMeasurementRows.size());
+		fileName = "E30-Block6-5Ind.csv";
+		Assert.assertFalse("Expecting to return false when the filename does not contains -Rep[\\d]+",
+				this.expDesignController.isValidPresetDesignTemplate(fileName));
+
 	}
 
 	@Test
-	public void testCombineNewlyGeneratedMeasurementsWithExisting() {
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
-		List<MeasurementRow> measurementRows = WorkbookDataUtil.createNewObservations(ExpDesignControllerTest.NO_OF_OBSERVATIONS);
-
-		this.userSelection.setTemporaryWorkbook(null);
-		this.userSelection.setWorkbook(workbook);
-
-		List<MeasurementRow> combinedMeasurementRows =
-				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection, true);
-
-		Assert.assertEquals("Expected " + (measurementRows.size() + workbook.getObservations().size()) + " but got "
-				+ combinedMeasurementRows.size() + " instead.", measurementRows.size() + workbook.getObservations().size(),
-				combinedMeasurementRows.size());
+	public void testGetTemplateName() {
+		final String templateName = "templateFileName.csv";
+		Assert.assertFalse("Expecting that the template name does not ends with .csv",
+				this.expDesignController.getTemplateName(templateName).endsWith(".csv"));
 	}
 
 	@Test
-	public void testCombineNewlyGeneratedMeasurementsWithExistingTempWorkbook() {
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
-		List<MeasurementRow> measurementRows = WorkbookDataUtil.createNewObservations(ExpDesignControllerTest.NO_OF_OBSERVATIONS);
-
-		this.userSelection.setTemporaryWorkbook(workbook);
-		this.userSelection.setWorkbook(null);
-
-		List<MeasurementRow> combinedMeasurementRows =
-				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection, true);
-
-		Assert.assertEquals("Expected " + (measurementRows.size() + workbook.getObservations().size()) + " but got "
-				+ combinedMeasurementRows.size() + " instead.", measurementRows.size() + workbook.getObservations().size(),
-				combinedMeasurementRows.size());
+	public void testGetTotalNoOfEntries() {
+		final String fileName = "E30-Rep3-Block6-5Ind.csv";
+		final int actualNoOfEntries = this.expDesignController.getTotalNoOfEntries(fileName);
+		Assert.assertEquals("Expecting that the return no of entries is 30 but returned " + actualNoOfEntries, 30, actualNoOfEntries);
 	}
 
 	@Test
-	public void testCombineNewlyGeneratedMeasurementsWithoutMeasurementData() {
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
-
-		List<MeasurementRow> measurementRows = WorkbookDataUtil.createNewObservations(ExpDesignControllerTest.NO_OF_OBSERVATIONS);
-
-		this.userSelection.setTemporaryWorkbook(null);
-		this.userSelection.setWorkbook(workbook);
-
-		List<MeasurementRow> combinedMeasurementRows =
-				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection, false);
-
-		Assert.assertEquals("Expected " + measurementRows.size() + " but got " + combinedMeasurementRows.size() + " instead.",
-				measurementRows.size(), combinedMeasurementRows.size());
+	public void testGetNoOfReps() {
+		final String fileName = "E30-Rep3-Block6-5Ind.csv";
+		final int actualNoOfReps = this.expDesignController.getNoOfReps(fileName);
+		Assert.assertEquals("Expecting that the return no of replication is 3 but returned " + actualNoOfReps, 3, actualNoOfReps);
 	}
 
 	@Test
-	public void testCountNewEnvironmentsWithNullWorkbook() {
-		this.userSelection.setTemporaryWorkbook(null);
-		this.userSelection.setWorkbook(null);
+	public void testGeneratePresetDesignTypeItem() {
+		final String fileName = "E30-Rep3-Block6-5Ind.csv";
 
-		String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTest.ENVIRONMENTS, this.userSelection, true);
+		final DesignTypeItem designTypeItem = this.expDesignController.generatePresetDesignTypeItem(fileName, 1);
 
-		Assert.assertEquals("Expected " + ExpDesignControllerTest.ENVIRONMENTS + " but got " + noOfNewEnvironments + " instead.",
-				ExpDesignControllerTest.ENVIRONMENTS, noOfNewEnvironments);
+		Assert.assertEquals(1, designTypeItem.getId().intValue());
+		Assert.assertEquals(3, designTypeItem.getRepNo().intValue());
+		Assert.assertEquals(30, designTypeItem.getTotalNoOfEntries().intValue());
+		Assert.assertEquals(fileName, designTypeItem.getTemplateName());
+		Assert.assertEquals(fileName.substring(0, fileName.indexOf(".csv")), designTypeItem.getName());
 	}
 
 	@Test
-	public void testCountNewEnvironmentsWithNoObservationsInTempWorkbook() {
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
-		workbook.setObservations(null);
-
-		this.userSelection.setTemporaryWorkbook(workbook);
-		this.userSelection.setWorkbook(null);
-
-		String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTest.ENVIRONMENTS, this.userSelection, true);
-
-		Assert.assertEquals("Expected " + ExpDesignControllerTest.ENVIRONMENTS + " but got " + noOfNewEnvironments + " instead.",
-				ExpDesignControllerTest.ENVIRONMENTS, noOfNewEnvironments);
-	}
-
-	@Test
-	public void testCountNewEnvironmentsWithNoObservations() {
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
-		workbook.setObservations(null);
-
-		this.userSelection.setTemporaryWorkbook(null);
-		this.userSelection.setWorkbook(workbook);
-
-		String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTest.ENVIRONMENTS, this.userSelection, true);
-
-		Assert.assertEquals("Expected " + ExpDesignControllerTest.ENVIRONMENTS + " but got " + noOfNewEnvironments + " instead.",
-				ExpDesignControllerTest.ENVIRONMENTS, noOfNewEnvironments);
-	}
-
-	@Test
-	public void testCountNewEnvironments() {
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
-
-		this.userSelection.setTemporaryWorkbook(null);
-		this.userSelection.setWorkbook(workbook);
-
-		String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTest.ENVIRONMENTS, this.userSelection, true);
-
-		Assert.assertEquals("Expected " + (Integer.parseInt(ExpDesignControllerTest.ENVIRONMENTS) - workbook.getTrialObservations().size())
-				+ " but got " + noOfNewEnvironments + " instead.", Integer.parseInt(ExpDesignControllerTest.ENVIRONMENTS)
-				- workbook.getTrialObservations().size(), Integer.parseInt(noOfNewEnvironments));
-	}
-
-	@Test
-	public void testCountNewEnvironmentsWithExistingTempWorkbook() {
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
-
-		this.userSelection.setTemporaryWorkbook(workbook);
-		this.userSelection.setWorkbook(null);
-
-		String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTest.ENVIRONMENTS, this.userSelection, true);
-
-		Assert.assertEquals("Expected " + (Integer.parseInt(ExpDesignControllerTest.ENVIRONMENTS) - workbook.getTrialObservations().size())
-				+ " but got " + noOfNewEnvironments + " instead.", Integer.parseInt(ExpDesignControllerTest.ENVIRONMENTS)
-				- workbook.getTrialObservations().size(), Integer.parseInt(noOfNewEnvironments));
-	}
-
-	@Test
-	public void testCountNewEnvironmentsWithoutMeasurementData() {
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
-
-		this.userSelection.setTemporaryWorkbook(null);
-		this.userSelection.setWorkbook(workbook);
-
-		String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTest.ENVIRONMENTS, this.userSelection, false);
-
-		Assert.assertEquals("Expected " + ExpDesignControllerTest.ENVIRONMENTS + " but got " + noOfNewEnvironments + " instead.",
-				ExpDesignControllerTest.ENVIRONMENTS, noOfNewEnvironments);
+	public void testRetrieveDesignTypes() {
+		final List<DesignTypeItem> designTypes = this.expDesignController.retrieveDesignTypes();
+		Assert.assertEquals("4 core design types are expected to be returned.", 4, designTypes.size());
 	}
 }

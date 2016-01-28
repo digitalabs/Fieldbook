@@ -52,7 +52,7 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 
 		Map<String, Object> resultsMap = new HashMap<>();
 
-		// 1. PARSE the file into an ImportCrosses List REF: deprecated: CrossingManagerUploader.java
+		// 1. PARSE the file into an ImportCrosses List 
 		ImportedCrossesList parseResults = null;
 		try {
 			parseResults = this.crossingService.parseFile(form.getFile());
@@ -62,7 +62,6 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 			resultsMap.put("isSuccess", 1);
 		} catch (FileParsingException e) {
 			resultsMap.put("isSuccess", 0);
-
 			// error messages is still in .prop format,
 			resultsMap.put("error", new String[] {e.getMessage()});
 		}

@@ -6,15 +6,12 @@ import java.util.List;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public abstract class NumberSequenceExpression implements Expression {
+public abstract class NumberSequenceExpression extends BaseExpression {
 
 	protected void applyNumberSequence(List<StringBuilder> values, AdvancingSource source) {
 		if (source.isForceUniqueNameGeneration()) {
-			for (StringBuilder value : values) {
-				int startIndex = value.toString().toUpperCase().indexOf(this.getExpressionKey());
-				int endIndex = startIndex + this.getExpressionKey().length();
-
-				value.replace(startIndex, endIndex, "(" + Integer.toString(source.getCurrentMaxSequence() + 1) + ")");
+			for (StringBuilder container : values) {
+				this.replaceExpressionWithValue(container, "(" + Integer.toString(source.getCurrentMaxSequence() + 1) + ")");
 
 			}
 
@@ -22,16 +19,12 @@ public abstract class NumberSequenceExpression implements Expression {
 		}
 
 		if (source.isBulk()) {
-			for (StringBuilder value : values) {
-				int startIndex = value.toString().toUpperCase().indexOf(this.getExpressionKey());
-				int endIndex = startIndex + this.getExpressionKey().length();
-
+			for (StringBuilder container : values) {
 				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 1) {
-
-					Integer newValue = source.getPlantsSelected();
-					value.replace(startIndex, endIndex, newValue != null ? newValue.toString() : "");
+                    Integer newValue = source.getPlantsSelected();
+					this.replaceExpressionWithValue(container, newValue != null ? newValue.toString() : "");
 				} else {
-					value.replace(startIndex, endIndex, "");
+					this.replaceExpressionWithValue(container, "");
 				}
 			}
 		} else {
@@ -43,18 +36,16 @@ public abstract class NumberSequenceExpression implements Expression {
 			}
 
 			for (StringBuilder value : values) {
-				int startIndex = value.toString().toUpperCase().indexOf(this.getExpressionKey());
-				int endIndex = startIndex + this.getExpressionKey().length();
-
 				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 0) {
 
 					for (int i = startCount; i < startCount + source.getPlantsSelected(); i++) {
 						StringBuilder newName = new StringBuilder(value);
-						newName.replace(startIndex, endIndex, String.valueOf(i));
+                        this.replaceExpressionWithValue(newName, String.valueOf(i));
 						newNames.add(newName);
 					}
 				} else {
-					newNames.add(value.replace(startIndex, endIndex, ""));
+                    this.replaceExpressionWithValue(value, "");
+					newNames.add(value);
 				}
 			}
 

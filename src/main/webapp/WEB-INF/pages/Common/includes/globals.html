@@ -79,6 +79,7 @@
 	importStocklistSuccessOverwriteDataWarningToSaveMessage = /*[[#{import.stocklist.success.overwrite.data.warning}]]*/ '',
 	importSaveDataWarningMessage = /*[[#{study.import.save.data.warning}]]*/ '',
 	ajaxGenericErrorMsg = /*[[#{ajax.generic.exception.error.message}]]*/ '',
+	invalidStartingNumberErrorMsg = /*[[#{study.import.crosses.error.invalid.starting.number}]]*/ '',
 	needSaveImportDataError = /*[[#{nursery.advance.error.need.save.import.data}]]*/ '',
 	importDateRequired = /*[[#{nursery.import.date.required}]]*/ '',
 	importLocationRequired = /*[[#{nursery.import.location.required}]]*/ '',
@@ -92,6 +93,7 @@
 	measurementWarningNeedGenExpDesign = /*[[#{experiment.design.measurements.warning}]]*/ '',
 	unpairedTreatmentFactor = /*[[#{treatment.factor.invalid.unpaired}]]*/ '',
 	invalidTreatmentFactorPair = /*[[#{treatment.factor.invalid.usedpair}]]*/ '',
+	unsavedTreatmentFactor = /*[[#{treatment.factor.invalid.unsaved}]]*/ '',
 	measurementsTraitsChangeWarning = /*[[#{trial.measurement.traits.changes.warning}]]*/ '',
 	modalConfirmationTitle = /*[[#{common.form.confirmation.text}]]*/ '',
 	environmentModalConfirmationText = /*[[#{trial.change.environment.confirmation}]]*/ '',
@@ -163,7 +165,8 @@
 		24: invalidTreatmentFactorPair,
 		25: unpairedTreatmentFactor,
 		26: /*[[#{experiment.design.no.germplasm.list}]]*/'',
-		27: /*[[#{experiment.design.nblatin.should.be.greater.than.zero}]]*/ ''
+		27: /*[[#{experiment.design.nblatin.should.be.greater.than.zero}]]*/ '',
+		28: /*[[#{experiment.design.no.of.entries.does.not.match}]]*/ ''
 	},
 	plotNoTermId = /*[[${T(org.generationcp.middleware.domain.oms.TermId).PLOT_NO.getId()}]]*/ '',
 	gidTermId = /*[[${T(org.generationcp.middleware.domain.oms.TermId).GID.getId()}]]*/ '',
@@ -186,6 +189,8 @@
 	stockIdGenerationPrefixError = /*[[#{stock.generate.id.breeder.identifier.error.numbers.found}]]*/ '';
 	$.experimentDesignMessages = {};
 	$.experimentDesignMessages.experimentDesignGeneratedSuccessfully = /*[[#{experiment.design.generated.successfully}]]*/ '';
+	$.fieldbookMessages = {};
+	$.fieldbookMessages.nurseryManageSettingsManageLocation = /*[[#{nursery.managesettings.manage.location}]]*/ '';
 	/* jshint ignore:end */
 	//]]>
 </script>

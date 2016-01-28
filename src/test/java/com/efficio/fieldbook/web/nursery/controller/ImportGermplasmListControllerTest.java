@@ -1,22 +1,31 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
+ *
+ *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.nursery.controller;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.google.common.collect.Lists;
+import com.mchange.util.AssertException;
+
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -26,6 +35,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -34,6 +44,9 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.service.api.DataImportService;
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,6 +106,12 @@ public class ImportGermplasmListControllerTest {
 
 	@Mock
 	private ImportGermplasmFileService importGermplasmFileService;
+
+	@Mock
+	private DataImportService dataImportService;
+
+	@Mock
+	private WorkbenchService workbenchService;
 
 	private UserSelection userSelection;
 
@@ -521,6 +540,80 @@ public class ImportGermplasmListControllerTest {
 
 	}
 
+	/**
+	 * Test to verify nextScreen() works and performs steps as expected.
+	 */
+	@Test
+	public void testNextScreen() {
+		ImportGermplasmListForm form = new ImportGermplasmListForm();
+		form.setStartingEntryNo("801");
+		Workbook workbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.N);
+
+		workbook.setStudyDetails(studyDetails);
+
+		workbook.setFactors(Lists.<MeasurementVariable>newArrayList());
+
+		this.userSelection.setTemporaryWorkbook(workbook);
+		this.userSelection.setWorkbook(workbook);
+		ImportedGermplasmMainInfo importedGermplasmMainInfo = new ImportedGermplasmMainInfo();
+		importedGermplasmMainInfo.setListId(4);
+
+		ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+		importedGermplasmMainInfo.setImportedGermplasmList(importedGermplasmList);
+		ArrayList<ImportedGermplasm> germplasmList = new ArrayList<ImportedGermplasm>();
+		ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+		importedGermplasm.setGid("1");
+		importedGermplasm.setEntryId(1);
+		importedGermplasm.setEntryCode("2");
+		importedGermplasm.setDesig("(CML454 X CML451)-B-4-1-112");
+		importedGermplasm.setCheckId(1);
+		importedGermplasm.setSource("Source");
+		importedGermplasm.setGroupName("Group Name");
+		germplasmList.add(importedGermplasm);
+
+		importedGermplasmList.setImportedGermplasms(germplasmList);
+
+		this.userSelection.setImportedGermplasmMainInfo(importedGermplasmMainInfo);
+
+		this.importGermplasmListController.setUserSelection(this.userSelection);
+
+		Mockito.doNothing().when(this.fieldbookService).createIdCodeNameVariablePairs(Mockito.isA(Workbook.class), Mockito.isA(String.class));
+		Mockito.doNothing().when(this.fieldbookService).createIdNameVariablePairs(Mockito.isA(Workbook.class), Mockito.anyList(), Mockito.isA(String.class), Mockito.anyBoolean());
+
+		Project project = new Project();
+		project.setUniqueID("123");
+		project.setUserId(1);
+		project.setProjectId(Long.parseLong("123"));
+		Mockito.when(this.importGermplasmListController.getCurrentProject()).thenReturn(project);
+
+		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Mockito.isA(Long.class), Mockito.isA(Integer.class))).thenReturn(1);
+		Integer studyIdInSaveDataset = 3;
+
+		Mockito.when(this.dataImportService.saveDataset(workbook, true, true, project.getUniqueID())).thenReturn(studyIdInSaveDataset);
+		Mockito.doNothing().when(this.fieldbookService).saveStudyImportedCrosses(Mockito.anyList(), Mockito.isA(Integer.class));
+
+		List<ListDataProject> listDataProjects = new ArrayList<>();
+		ListDataProject listDataProject = new ListDataProject();
+		listDataProjects.add(listDataProject);
+
+		Mockito.when(this.fieldbookMiddlewareService.saveOrUpdateListDataProject(3, GermplasmListType.NURSERY, 4, listDataProjects, 7)).thenReturn(3);
+
+		Mockito.doNothing().when(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
+
+		String studyIdInNextScreen = this.importGermplasmListController.nextScreen(form, null, null, null);
+
+		Mockito.verify(this.fieldbookService).createIdCodeNameVariablePairs(Mockito.isA(Workbook.class), Mockito.isA(String.class));
+		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Mockito.isA(Workbook.class), Mockito.anyList(), Mockito.isA(String.class), Mockito.anyBoolean());
+		Mockito.verify(this.workbenchService).getCurrentIbdbUserId(Mockito.isA(Long.class), Mockito.isA(Integer.class));
+		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID());
+		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(Mockito.anyList(), Mockito.isA(Integer.class));
+		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
+
+		Assert.assertEquals("Expecting studyIdInSaveDataset returned from nextScreen", "3", studyIdInNextScreen);
+	}
+
 	private List<ListDataProject> createListDataProject() {
 		List<ListDataProject> list = new ArrayList<>();
 		for (int x = 1; x <= 5; x++) {
@@ -672,6 +765,52 @@ public class ImportGermplasmListControllerTest {
 		stdVar.setName(name);
 
 		return stdVar;
+	}
+
+	@Test
+	public void testCheckNumbersUpdatedAppropriately() throws Exception {
+		//Unchanged check entry number if there are no new start entry number
+		checkNumberTest(1, 5, 1, 1, null);
+		checkNumberTest(0, 0, 3, 3, null);
+
+		// Since the entry number starts at 100 we expect the check id to be bumped to 100 too
+		checkNumberTest(1, 5, 1, 100, "100");
+
+		// Since the entry number starts at 50 and our choosen check id is 52 we expect the check id to be bumped to 52 too
+		checkNumberTest(1, 5, 3, 52, "50");
+
+
+	}
+
+	private void checkNumberTest(final int startEntryNumberForTestList, final int numberOfItemsInGermplasmList,
+			final int checkNumberInCheckList,
+			final int expectedGermplasmCheckEntryNumber, final String startEntryNumber) {
+		final UserSelection userSelection = new UserSelection();
+		userSelection.setImportedGermplasmMainInfo(getGermplasmMainInfo(startEntryNumberForTestList, 5));
+		userSelection.setImportedCheckGermplasmMainInfo(getGermplasmMainInfo(checkNumberInCheckList, 1));
+
+		final ImportGermplasmListController importGermplasmListController = new ImportGermplasmListController();
+		importGermplasmListController.setUserSelection(userSelection);
+
+		final ImportGermplasmListForm form = new ImportGermplasmListForm();
+		form.setStartingEntryNo(startEntryNumber);
+		form.setStartingPlotNo("100");
+		importGermplasmListController.assignAndIncrementEntryNumberAndPlotNumber(form);
+
+		assertEquals("We exepect this to ", userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
+				new Integer(expectedGermplasmCheckEntryNumber));
+	}
+
+	private ImportedGermplasmMainInfo getGermplasmMainInfo(final int startingEntryId, final int number) {
+		final ImportedGermplasmMainInfo importedGermplasmMainInfo = new ImportedGermplasmMainInfo();
+		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
+		for (int i = 0; i <  number; i++) {
+			germplasmList.add(new ImportedGermplasm(i+startingEntryId, "desig", "check"));
+		}
+		importedGermplasmList.setImportedGermplasms(germplasmList);
+		importedGermplasmMainInfo.setImportedGermplasmList(importedGermplasmList);
+		return importedGermplasmMainInfo;
 	}
 
 }

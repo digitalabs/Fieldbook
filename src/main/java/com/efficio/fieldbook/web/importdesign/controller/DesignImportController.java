@@ -5,7 +5,6 @@ package com.efficio.fieldbook.web.importdesign.controller;
  * Created by cyrus on 5/8/15.
  */
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,29 +16,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -56,6 +40,7 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.util.ResourceFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -67,6 +52,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.GeneratePresetDesignInput;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.common.form.ImportDesignForm;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
 /**
  * The Class DesignImportController.
@@ -96,6 +101,8 @@ public class DesignImportController extends SettingsController {
 	public static final String URL = "/DesignImport";
 
 	public static final String REVIEW_DETAILS_PAGINATION_TEMPLATE = "/DesignImport/reviewDetailsPagination";
+
+	public static final String DESIGN_TEMPLATE_FOLDER = "DesignPresets";
 
 	@Resource
 	private DesignImportParser parser;
@@ -166,25 +173,38 @@ public class DesignImportController extends SettingsController {
 	}
 
 	/**
-	 * For now this method is only applicable in Nursery. Added the studyType as a parameter for future implementation.
+	 * This makes the design revert to default design where for every measurement rows, the entry for PLOT_NO must be equal to ENTRY_NO
 	 * 
 	 * @param studyId
 	 * @param studyType
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/import/change/{studyId}/{studyType}", method = RequestMethod.POST,
+	@RequestMapping(value = "/import/change/{studyId}/{isNursery}", method = RequestMethod.POST,
 			produces = "application/json; charset=utf-8")
-	public String changeDesign(@PathVariable final Integer studyId, @PathVariable final String studyType) {
+	public String changeDesign(@PathVariable final Integer studyId, @PathVariable final Boolean isNursery) {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
-		// reset
-		this.cancelImportDesign();
+		if (isNursery) {
+			// reset
+			this.cancelImportDesign();
+			this.userSelection.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>());
+			this.userSelection.setExpDesignParams(null);
+			this.userSelection.setExpDesignVariables(new ArrayList<Integer>());
 
-		this.userSelection.setExperimentalDesignVariables(null);
-		this.userSelection.setExpDesignParams(null);
-		this.userSelection.setExpDesignVariables(null);
+			resultsMap.put(DesignImportController.SUCCESS,
+					this.messageSource.getMessage("design.import.change.design.success.message.nursery", null, Locale.ENGLISH));
+		} else {
+			// For Trial
+
+			if (this.userSelection.getTemporaryWorkbook() != null) {
+				WorkbookUtil.resetObservationToDefaultDesign(this.userSelection.getTemporaryWorkbook().getObservations());
+			}
+
+			resultsMap.put(DesignImportController.SUCCESS,
+					this.messageSource.getMessage("design.import.change.design.success.message.trial", null, Locale.ENGLISH));
+		}
 
 		// handling for existing study
 		if (studyId != null && studyId != 0) {
@@ -192,8 +212,6 @@ public class DesignImportController extends SettingsController {
 		}
 
 		resultsMap.put(DesignImportController.IS_SUCCESS, 1);
-		resultsMap.put(DesignImportController.SUCCESS,
-				this.messageSource.getMessage("design.import.change.design.success.message", null, Locale.ENGLISH));
 
 		// we return string instead of json to fix IE issue rel. DataTable
 		return this.convertObjectToJson(resultsMap);
@@ -245,7 +263,8 @@ public class DesignImportController extends SettingsController {
 		List<MeasurementRow> measurementRows = new ArrayList<>();
 
 		try {
-			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false);
+			measurementRows =
+					this.designImportService.generateDesign(workbook, designImportData, environmentData, false, false, null, null);
 		} catch (final DesignValidationException e) {
 			DesignImportController.LOG.error(e.getMessage(), e);
 		}
@@ -306,18 +325,20 @@ public class DesignImportController extends SettingsController {
 			boolean hasExistingDesign = false;
 
 			if (this.userSelection.getWorkbook() != null) {
-				hasConflict = this.userSelection.getWorkbook().getMeasurementDatasetVariables() != null && this.hasConflict(this.designImportService.getMeasurementVariablesFromDataFile(
-						this.userSelection.getTemporaryWorkbook(), this.userSelection.getDesignImportData()), new HashSet<>(
-						this.userSelection.getWorkbook().getMeasurementDatasetVariables()));
+				hasConflict =
+						this.userSelection.getWorkbook().getMeasurementDatasetVariables() != null
+								&& this.hasConflict(
+										this.designImportService.getMeasurementVariablesFromDataFile(
+												this.userSelection.getTemporaryWorkbook(), this.userSelection.getDesignImportData()),
+										new HashSet<>(this.userSelection.getWorkbook().getMeasurementDatasetVariables()));
 				hasChecksSelected = this.hasCheckVariables(this.userSelection.getWorkbook().getConditions());
 				hasExistingDesign = this.userSelection.getWorkbook().hasExistingExperimentalDesign();
 			}
 
-
 			resultsMap.put(DesignImportController.SUCCESS, Boolean.TRUE);
 			resultsMap.put("hasConflict", hasConflict);
 			resultsMap.put("hasChecksSelected", hasChecksSelected);
-			resultsMap.put("hasExistingDesign",hasExistingDesign);
+			resultsMap.put("hasExistingDesign", hasExistingDesign);
 
 		} catch (final DesignValidationException e) {
 
@@ -393,61 +414,10 @@ public class DesignImportController extends SettingsController {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
-		this.processEnvironmentData(environmentData);
-
 		try {
 
-			this.checkTheDeletedSettingDetails(this.userSelection, this.userSelection.getDesignImportData());
-
-			this.initializeTemporaryWorkbook(this.userSelection.getTemporaryWorkbook().getStudyDetails().getStudyType().name());
-
-			final Workbook workbook = this.userSelection.getTemporaryWorkbook();
-			final DesignImportData designImportData = this.userSelection.getDesignImportData();
-
-			this.removeExperimentDesignVariables(workbook.getFactors());
-
-			List<MeasurementRow> measurementRows;
-			Set<MeasurementVariable> measurementVariables;
-			Set<StandardVariable> expDesignVariables;
-			Set<MeasurementVariable> experimentalDesignMeasurementVariables;
-
-			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false);
-
-			workbook.setObservations(measurementRows);
-
-			measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData, false);
-
-			workbook.setMeasurementDatasetVariables(new ArrayList<>(measurementVariables));
-
-			expDesignVariables = this.designImportService.getDesignRequiredStandardVariables(workbook, designImportData);
-
-			workbook.setExpDesignVariables(new ArrayList<>(expDesignVariables));
-
-			experimentalDesignMeasurementVariables =
-					this.designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
-
-			this.userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
-
-			// Only for Trial
-			this.addFactorsIfNecessary(workbook, designImportData);
-
-			// Only for Nursery
-			this.addConditionsIfNecessary(workbook, designImportData);
-
-			this.addVariates(workbook, designImportData);
-
-			this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables);
-
-			// Only for Trial
-			this.populateTrialLevelVariableListIfNecessary(workbook);
-
-			// Only for Nursery
-			this.populateStudyLevelVariableListIfNecessary(workbook, environmentData, designImportData);
-
-			this.createTrialObservations(environmentData, workbook, designImportData);
-
-			// Only for Nursery
-			this.resetCheckList(workbook, this.userSelection);
+			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
+					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT, null, null);
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -463,6 +433,107 @@ public class DesignImportController extends SettingsController {
 		}
 
 		return resultsMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/generatePresetMeasurements", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+	public Map<String, Object> generatePresetMeasurements(@RequestBody final GeneratePresetDesignInput generateDesignInput) {
+
+		final DesignTypeItem selectedDesignType = generateDesignInput.getSelectedDesignType();
+		final EnvironmentData environmentData = generateDesignInput.getEnvironmentData();
+		final Integer startingEntryNo = generateDesignInput.getStartingEntryNo();
+		final Integer startingPlotNo = generateDesignInput.getStartingPlotNo();
+
+		final Map<String, Object> resultsMap = new HashMap<>();
+
+		try {
+
+			DesignImportData designImportData = null;
+			if (selectedDesignType != null) {
+				designImportData =
+						this.parser.parseFile(ResourceFinder.locateFile(
+								AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString().concat(selectedDesignType.getTemplateName()))
+								.getFile());
+			}
+
+			this.performAutomap(designImportData);
+
+			this.generateDesign(environmentData, designImportData, StudyType.T, true, selectedDesignType, startingEntryNo, startingPlotNo);
+
+			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
+			resultsMap.put("environmentData", environmentData);
+			resultsMap.put("environmentSettings", this.userSelection.getTrialLevelVariableList());
+
+		} catch (final Exception e) {
+
+			DesignImportController.LOG.error(e.getMessage(), e);
+
+			resultsMap.put(DesignImportController.IS_SUCCESS, 0);
+			// error messages is still in .prop format,
+			resultsMap.put(DesignImportController.ERROR, new String[] {e.getMessage()});
+		}
+
+		return resultsMap;
+
+	}
+
+	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
+			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem, final Integer startingEntryNo,
+			final Integer startingPlotNo) throws DesignValidationException {
+
+		this.processEnvironmentData(environmentData);
+
+		this.checkTheDeletedSettingDetails(this.userSelection, designImportData);
+
+		this.initializeTemporaryWorkbook(studyType.name());
+
+		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
+
+		this.removeExperimentDesignVariables(workbook.getFactors());
+
+		List<MeasurementRow> measurementRows;
+		Set<MeasurementVariable> measurementVariables;
+		Set<StandardVariable> expDesignVariables;
+		Set<MeasurementVariable> experimentalDesignMeasurementVariables;
+
+		measurementRows =
+				this.designImportService.generateDesign(workbook, designImportData, environmentData, false, isPreset, startingEntryNo,
+						startingPlotNo);
+
+		workbook.setObservations(measurementRows);
+
+		measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData, false);
+
+		workbook.setMeasurementDatasetVariables(new ArrayList<>(measurementVariables));
+
+		expDesignVariables = this.designImportService.getDesignRequiredStandardVariables(workbook, designImportData);
+
+		workbook.setExpDesignVariables(new ArrayList<>(expDesignVariables));
+
+		experimentalDesignMeasurementVariables = this.designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
+
+		this.userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
+
+		// Only for Trial
+		this.addFactorsIfNecessary(workbook, designImportData);
+
+		// Only for Nursery
+		this.addConditionsIfNecessary(workbook, designImportData);
+
+		this.addVariates(workbook, designImportData);
+
+		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeItem);
+
+		// Only for Trial
+		this.populateTrialLevelVariableListIfNecessary(workbook);
+
+		// Only for Nursery
+		this.populateStudyLevelVariableListIfNecessary(workbook, environmentData, designImportData);
+
+		this.createTrialObservations(environmentData, workbook, designImportData);
+
+		// Only for Nursery
+		this.resetCheckList(workbook, this.userSelection);
 	}
 
 	/**
@@ -621,28 +692,40 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void addExperimentDesign(final Workbook workbook, final Set<MeasurementVariable> experimentalDesignMeasurementVariables) {
+	protected void addExperimentDesign(final Workbook workbook, final Set<MeasurementVariable> experimentalDesignMeasurementVariables,
+			final DesignTypeItem designTypeItem) {
 
 		final ExpDesignParameterUi designParam = new ExpDesignParameterUi();
-		designParam.setDesignType(3);
+		designParam.setDesignType(designTypeItem.getId());
 
 		final List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 
+		if (designTypeItem != null && designTypeItem.getRepNo() > 0) {
+			designParam.setReplicationsCount(Integer.toString(designTypeItem.getRepNo()));
+			expDesignTermIds.add(TermId.NUMBER_OF_REPLICATES.getId());
+		}
+
+		if (designTypeItem != null && designTypeItem.getTemplateName() != null) {
+			designParam.setFileName(designTypeItem.getTemplateName());
+			expDesignTermIds.add(TermId.EXPT_DESIGN_SOURCE.getId());
+		}
+
 		this.userSelection.setExpDesignParams(designParam);
 		this.userSelection.setExpDesignVariables(expDesignTermIds);
 
-		final TermId termId = TermId.getById(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
-
-		SettingsUtil.addTrialCondition(termId, designParam, workbook, this.fieldbookMiddlewareService, this.getCurrentProject()
-				.getUniqueID());
+		for (final Integer ontologyId : expDesignTermIds) {
+			final TermId termId = TermId.getById(ontologyId);
+			SettingsUtil.addTrialCondition(termId, designParam, workbook, this.fieldbookMiddlewareService, this.getCurrentProject()
+					.getUniqueID());
+		}
 
 		workbook.getFactors().addAll(experimentalDesignMeasurementVariables);
 
 		final ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
 		if (expDesignVar != null && expDesignVar.getExperimentalDesign() != null) {
 			for (final MeasurementVariable mvar : workbook.getConditions()) {
-				if (mvar.getTermId() == termId.getId()) {
+				if (expDesignTermIds.contains(mvar.getTermId())) {
 					mvar.setOperation(Operation.UPDATE);
 				}
 			}
@@ -791,7 +874,9 @@ public class DesignImportController extends SettingsController {
 		trialVariables.addAll(workbook.getConstants());
 
 		for (final MeasurementVariable trialCondition : workbook.getTrialConditions()) {
-			if (trialCondition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
+			if (trialCondition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()
+					|| trialCondition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
+					|| trialCondition.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
 				trialVariables.add(trialCondition);
 			}
 		}
@@ -917,7 +1002,7 @@ public class DesignImportController extends SettingsController {
 
 						this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 
-						MeasurementVariable measurementVariable =
+						final MeasurementVariable measurementVariable =
 								this.createMeasurementVariableFromStandardVariable(
 										standardVariableName + AppConstants.ID_SUFFIX.getString(), Integer.valueOf(termId),
 										PhenotypicType.TRIAL_ENVIRONMENT);
@@ -946,7 +1031,7 @@ public class DesignImportController extends SettingsController {
 						settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 						this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 
-						MeasurementVariable measurementVariable =
+						final MeasurementVariable measurementVariable =
 								this.createMeasurementVariableFromStandardVariable(
 										standardVariableName + AppConstants.ID_SUFFIX.getString(), Integer.valueOf(termId),
 										PhenotypicType.TRIAL_ENVIRONMENT);
@@ -961,7 +1046,7 @@ public class DesignImportController extends SettingsController {
 
 				} else {
 
-					MeasurementVariable measurementVariable =
+					final MeasurementVariable measurementVariable =
 							this.createMeasurementVariableFromStandardVariable(standardVariableName,
 									Integer.valueOf(managementDetail.getKey()), PhenotypicType.TRIAL_ENVIRONMENT);
 
@@ -1169,8 +1254,8 @@ public class DesignImportController extends SettingsController {
 		return "";
 	}
 
-	protected MeasurementVariable createMeasurementVariableFromStandardVariable(String localName, final int termId,
-			PhenotypicType phenotypicType) {
+	protected MeasurementVariable createMeasurementVariableFromStandardVariable(final String localName, final int termId,
+			final PhenotypicType phenotypicType) {
 
 		MeasurementVariable measurementVariable = null;
 
@@ -1196,9 +1281,10 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void populateTheValueOfCategoricalVariable(int termid, String name, Map<String, String> managementDetailValues) {
+	protected void populateTheValueOfCategoricalVariable(final int termid, final String name,
+			final Map<String, String> managementDetailValues) {
 
-		List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(termid);
+		final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(termid);
 
 		if (possibleValues != null && !possibleValues.isEmpty()) {
 
@@ -1244,7 +1330,7 @@ public class DesignImportController extends SettingsController {
 	protected boolean hasCheckVariables(final List<MeasurementVariable> conditions) {
 		if (conditions != null && !conditions.isEmpty()) {
 
-			List<Integer> checkTermIds = new ArrayList<>();
+			final List<Integer> checkTermIds = new ArrayList<>();
 
 			// Extract first the termIds of the check variables
 			final StringTokenizer tokenizer = new StringTokenizer(AppConstants.CHECK_VARIABLES.getString(), ",");

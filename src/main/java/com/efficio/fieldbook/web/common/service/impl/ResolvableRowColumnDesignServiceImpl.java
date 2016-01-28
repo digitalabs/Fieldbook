@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -19,7 +20,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
@@ -111,10 +113,19 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 					}
 				}
 			}
+
+			Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
+
+			Integer entryNo = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
+
+			if(!Objects.equals(stdvarTreatment.getId(), TermId.ENTRY_NO.getId())){
+				entryNo = null;
+			}
+
 			MainDesign mainDesign =
 					ExpDesignUtil.createResolvableRowColDesign(Integer.toString(nTreatments), replicates, rows, cols,
 							stdvarTreatment.getName(), stdvarRep.getName(), stdvarRows.getName(), stdvarCols.getName(),
-							stdvarPlot.getName(), parameter.getNrlatin(), parameter.getNclatin(), parameter.getReplatinGroups(), "",
+							stdvarPlot.getName(), plotNo, entryNo, parameter.getNrlatin(), parameter.getNclatin(), parameter.getReplatinGroups(), "",
 							parameter.getUseLatenized());
 
 			measurementRowList =
@@ -170,24 +181,54 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 					output =
 							new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 									"experiment.design.rows.per.replication.should.be.a.number", null, locale));
+					return output;
 				} else if (!NumberUtils.isNumber(expDesignParameter.getColsPerReplications())) {
 					output =
 							new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 									"experiment.design.cols.per.replication.should.be.a.number", null, locale));
+					return output;
 				} else if (!NumberUtils.isNumber(expDesignParameter.getReplicationsCount())) {
 					output =
 							new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 									"experiment.design.replication.count.should.be.a.number", null, locale));
-				} else {
+					return output;
+				}else if (expDesignParameter.getStartingPlotNo() != null && !NumberUtils.isNumber(expDesignParameter.getStartingPlotNo())) {
+					output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+							"experiment.design.plot.number.should.be.a.number", null, locale));
+					return output;
+				} else if (expDesignParameter.getStartingEntryNo() != null && !NumberUtils.isNumber(expDesignParameter.getStartingEntryNo())) {
+					output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+							"experiment.design.entry.number.should.be.a.number", null, locale));
+					return output;
+				}
+				else {
+
 					int rowsPerReplication = Integer.valueOf(expDesignParameter.getRowsPerReplications());
 					int colsPerReplication = Integer.valueOf(expDesignParameter.getColsPerReplications());
 					int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
+					final Integer entryNumber = StringUtil.parseInt(expDesignParameter.getStartingEntryNo(), null);
+					final Integer plotNumber = StringUtil.parseInt(expDesignParameter.getStartingPlotNo(), null);
+					final Integer germplasmCount = germplasmList.size();
 
-					if (replicationCount <= 1 || replicationCount >= 13) {
+					if(Objects.equals(entryNumber, 0)){
+						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+								"entry.number.should.be.in.range", null, locale));
+					} else if(Objects.equals(plotNumber, 0)){
+						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+								"plot.number.should.be.in.range", null, locale));
+					} else if (replicationCount <= 1 || replicationCount >= 13) {
 						output =
 								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.replication.count.resolvable.error", null, locale));
-					} else if (size != rowsPerReplication * colsPerReplication) {
+					}else if (entryNumber != null && (germplasmCount + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO) {
+
+						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+								"experiment.design.entry.number.should.not.exceed", null, locale));
+					}else if (entryNumber != null && plotNumber != null && (((germplasmCount * replicationCount) + plotNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
+						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+								"experiment.design.plot.number.should.not.exceed", null, locale));
+					}
+					else if (size != rowsPerReplication * colsPerReplication) {
 						output =
 								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.resolvable.incorrect.row.and.col.product.to.germplasm.size", null, locale));

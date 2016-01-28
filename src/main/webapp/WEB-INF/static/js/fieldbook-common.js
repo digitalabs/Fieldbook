@@ -3237,13 +3237,34 @@ function displayEditFactorsAndGermplasmSection() {
 		}
 	}
 }
+
+// Function to enable/disable & show/hide controls as per Clear list button's visibility
+function toggleControlsForGermplasmListManagement(value) {
+    if(value) {
+        $('#imported-germplasm-list-reset-button').show();
+        $('#txtStartingEntryNo').prop('title', '');
+        $('#txtStartingPlotNo').prop('title', '');
+    } else {
+        $('#imported-germplasm-list-reset-button').hide();
+        if (isNursery()) {
+            $('#txtStartingEntryNo').prop('title', 'Click Replace button to edit entry number');
+            $('#txtStartingPlotNo').prop('title', 'Click Replace button to edit plot number');
+        } else {
+            $('#txtStartingEntryNo').prop('title', 'Click Modify List button to edit entry number');
+        }
+    }
+
+    $('#txtStartingEntryNo').prop('disabled', !value);
+    $('#txtStartingPlotNo').prop('disabled', !value);
+}
+
 function showGermplasmDetailsSection() {
 	'use strict';
 	$('.observation-exists-notif').hide();
 	$('.overwrite-germplasm-list').hide();
 	$('.browse-import-link').show();
 	if ($('.germplasm-list-items tbody tr').length > 0) {
-		$('#imported-germplasm-list-reset-button').show();
+        toggleControlsForGermplasmListManagement(true);
 	}
 	//flag to determine if existing measurements should be deleted
 	$('#chooseGermplasmAndChecks').data('replace', '1');
@@ -3397,10 +3418,12 @@ function displaySelectedGermplasmDetails() {
 			listId = $('#lastDraggedPrimaryList').val();
 			if (listId === '') {
 				$('.view-header').hide();
+                // Hide Numbering section if germplasm list is not available
+                $('#specify-numbering-section').hide();
 			} else {
 				$('.view-header').show();
 			}
-			$('#imported-germplasm-list-reset-button').hide();
+            toggleControlsForGermplasmListManagement(false);
 		}
 	});
 }
@@ -3675,7 +3698,12 @@ function displayDetailsOutOfBoundsData() {
 			success: function(html) {
 				$('#reviewOutOfBoundsDataModal').modal('hide');
 				$('#reviewDetailsOutOfBoundsDataModalBody').html(html);
-				$('#reviewDetailsOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
+				$('#reviewDetailsOutOfBoundsDataModal').one('shown.bs.modal', function() {
+					$('body').addClass('modal-open');
+				}).modal({
+					backdrop: 'static',
+					keyboard: true
+				});
 			}
 		});
 	}

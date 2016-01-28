@@ -1739,6 +1739,18 @@ function validatePlantsSelected() {
 function callAdvanceNursery() {
 	var lines = $('#lineSelected').val();
 
+    if(!isNursery()){
+        var selectedReps = [];
+        $('#replications input:checked').each(function() {
+            selectedReps.push($(this).val());
+        });
+
+        if(selectedReps.length == 0){
+            showErrorMessage('page-advance-modal-message', noReplicationSelectedError);
+            return false;
+        }
+    }
+
 	if (!lines.match(/^\s*(\+|-)?\d+\s*$/)) {
 		showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
 		return false;

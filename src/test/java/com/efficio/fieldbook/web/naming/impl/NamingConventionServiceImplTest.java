@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import junit.framework.Assert;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -18,7 +15,9 @@ import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.service.GermplasmOriginGenerationService;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -33,8 +32,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.google.common.collect.Lists;
@@ -212,6 +214,9 @@ public class NamingConventionServiceImplTest {
         Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Mockito.anyBoolean())).thenReturn(methodList);
 
         Workbook workbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.N);
+
         Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(Mockito.anyInt())).thenReturn(workbook);
         AdvancingSourceList rows = new AdvancingSourceList();
         rows.setRows(new ArrayList<AdvancingSource>());
@@ -273,7 +278,7 @@ public class NamingConventionServiceImplTest {
         study.setId(2345);
         info.setStudy(study);
 
-        AdvanceResult advanceResult = namingConventionService.advanceNursery(info,null);
+		AdvanceResult advanceResult = namingConventionService.advanceNursery(info, workbook);
 
         Assert.assertNotNull(advanceResult);
         Assert.assertNotNull(advanceResult.getChangeDetails());

@@ -176,7 +176,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 
 		final GermplasmOriginGenerationParameters parameters =
-				this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber(), selectionNumberToApply);
+				this.germplasmOriginParameterBuilder.build(workbook, source, selectionNumberToApply);
 		final String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */

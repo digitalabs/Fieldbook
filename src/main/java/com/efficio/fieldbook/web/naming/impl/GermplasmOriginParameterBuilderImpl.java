@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Service
 public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParameterBuilder {
@@ -33,21 +34,19 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 	private static final Logger LOG = LoggerFactory.getLogger(GermplasmOriginParameterBuilderImpl.class);
 
 	@Override
-	public GermplasmOriginGenerationParameters build(Workbook workbook, String plotNumber, String selectionNumber) {
+	public GermplasmOriginGenerationParameters build(Workbook workbook, AdvancingSource advancingSource, String selectionNumber) {
 		final GermplasmOriginGenerationParameters originGenerationParameters = new GermplasmOriginGenerationParameters();
 		originGenerationParameters.setCrop(this.contextUtil.getProjectInContext().getCropType().getCropName());
 		originGenerationParameters.setStudyName(workbook.getStudyName());
 		originGenerationParameters.setStudyType(workbook.getStudyDetails().getStudyType());
+		deriveLocation(workbook, originGenerationParameters);
+		deriveSeason(workbook, originGenerationParameters);
+		originGenerationParameters.setPlotNumber(advancingSource.getPlotNumber());
+		originGenerationParameters.setSelectionNumber(selectionNumber);
+		return originGenerationParameters;
+	}
 
-		// To populate LOCATION placeholder we look for LOCATION_ABBR(8189) variable in general settings.
-		MeasurementVariable locationAbbrVariable = workbook.findConditionById(TermId.LOCATION_ABBR.getId());
-		if (locationAbbrVariable != null) {
-			originGenerationParameters.setLocation(locationAbbrVariable.getValue());
-		} else {
-			LOG.debug("No LOCATION_ABBR(8189) variable or if present a value, was found in study: {}. Defaulting [LOCATION] to be null/empty.",
-					workbook.getStudyDetails().getStudyName());
-			originGenerationParameters.setLocation(null);
-		}
+	private void deriveSeason(Workbook workbook, final GermplasmOriginGenerationParameters originGenerationParameters) {
 
 		// To populate SEASON placeholder we look for Crop_season_Code(8371) variable in general settings.
 		MeasurementVariable seasonVariable = workbook.findConditionById(TermId.SEASON_VAR.getId());
@@ -73,14 +72,28 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 					workbook.getStudyDetails().getStudyName(), currentYearAndMonth);
 			originGenerationParameters.setSeason(currentYearAndMonth);
 		}
-		originGenerationParameters.setPlotNumber(plotNumber);
-		originGenerationParameters.setSelectionNumber(selectionNumber);
-		return originGenerationParameters;
+	}
+
+	private void deriveLocation(Workbook workbook, final GermplasmOriginGenerationParameters originGenerationParameters) {
+		// To populate LOCATION placeholder we look for LOCATION_ABBR(8189) variable in general settings.
+		MeasurementVariable locationAbbrVariable = workbook.findConditionById(TermId.LOCATION_ABBR.getId());
+		if (locationAbbrVariable != null) {
+			originGenerationParameters.setLocation(locationAbbrVariable.getValue());
+		} else {
+			LOG.debug("No LOCATION_ABBR(8189) variable or if present a value, was found in study: {}. Defaulting [LOCATION] to be null/empty.",
+					workbook.getStudyDetails().getStudyName());
+			originGenerationParameters.setLocation(null);
+		}
 	}
 
 	@Override
 	public GermplasmOriginGenerationParameters build(Workbook workbook, ImportedCrosses cross) {
-		GermplasmOriginGenerationParameters parameters = this.build(workbook, (String) null, null);
+		final GermplasmOriginGenerationParameters parameters = new GermplasmOriginGenerationParameters();
+		parameters.setCrop(this.contextUtil.getProjectInContext().getCropType().getCropName());
+		parameters.setStudyName(workbook.getStudyName());
+		parameters.setStudyType(workbook.getStudyDetails().getStudyType());
+		deriveLocation(workbook, parameters);
+		deriveSeason(workbook, parameters);
 		parameters.setMaleStudyName(cross.getMaleStudyName());
 		parameters.setFemaleStudyName(cross.getFemaleStudyName());
 		parameters.setMalePlotNumber(cross.getMalePlotNo());

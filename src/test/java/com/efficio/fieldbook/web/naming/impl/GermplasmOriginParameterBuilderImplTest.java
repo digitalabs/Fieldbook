@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.google.common.collect.Lists;
 
 public class GermplasmOriginParameterBuilderImplTest {
@@ -84,8 +85,10 @@ public class GermplasmOriginParameterBuilderImplTest {
 						Matchers.eq(TermId.SEASON_VAR.getId()), Matchers.eq(true), Matchers.eq(false))).thenReturn(seasonVariable);
 
 		final String plotNumber = "1";
+		final AdvancingSource advancingSource = new AdvancingSource();
+		advancingSource.setPlotNumber(plotNumber);
 		final String selectionNumber = "2"; 
-		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, plotNumber, selectionNumber);
+		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, advancingSource, selectionNumber);
 		Assert.assertNotNull(parameters);
 		Assert.assertEquals(testProject.getCropType().getCropName(), parameters.getCrop());
 		Assert.assertEquals(studyNameMV.getValue(), parameters.getStudyName());
@@ -177,7 +180,7 @@ public class GermplasmOriginParameterBuilderImplTest {
 		testProject.setCropType(new CropType("maize"));
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
 
-		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, "1", "2");
+		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, new AdvancingSource(), "2");
 		Assert.assertNull("Expected null location value being set when LOCATION_ABBR variable is missing.", parameters.getLocation());
 	}
 
@@ -208,7 +211,7 @@ public class GermplasmOriginParameterBuilderImplTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(testProject.getUniqueID());
 
-		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, "1", "2");
+		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, new AdvancingSource(), "2");
 		Assert.assertNull("Expected null location value being set when LOCATION_ABBR variable is present but there is no value set.",
 				parameters.getLocation());
 	}
@@ -239,7 +242,7 @@ public class GermplasmOriginParameterBuilderImplTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(testProject.getUniqueID());
 
-		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, "1", "2");
+		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, new AdvancingSource(), "2");
 
 		SimpleDateFormat formatter = new SimpleDateFormat("YYYYMM");
 		String currentYearAndMonth = formatter.format(new java.util.Date());
@@ -280,7 +283,7 @@ public class GermplasmOriginParameterBuilderImplTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(testProject.getUniqueID());
 
-		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, "1", "2");
+		final GermplasmOriginGenerationParameters parameters = this.builder.build(workbook, new AdvancingSource(), "2");
 		SimpleDateFormat formatter = new SimpleDateFormat("YYYYMM");
 		String currentYearAndMonth = formatter.format(new java.util.Date());
 

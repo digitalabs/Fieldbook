@@ -9,8 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.domain.ontology.Variable;
@@ -39,7 +42,7 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 		originGenerationParameters.setCrop(this.contextUtil.getProjectInContext().getCropType().getCropName());
 		originGenerationParameters.setStudyName(workbook.getStudyName());
 		originGenerationParameters.setStudyType(workbook.getStudyDetails().getStudyType());
-		deriveLocation(workbook, originGenerationParameters);
+		deriveLocation(workbook, originGenerationParameters, advancingSource.getTrialInstanceNumber());
 		deriveSeason(workbook, originGenerationParameters);
 		originGenerationParameters.setPlotNumber(advancingSource.getPlotNumber());
 		originGenerationParameters.setSelectionNumber(selectionNumber);
@@ -74,15 +77,31 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 		}
 	}
 
-	private void deriveLocation(Workbook workbook, final GermplasmOriginGenerationParameters originGenerationParameters) {
-		// To populate LOCATION placeholder we look for LOCATION_ABBR(8189) variable in general settings.
-		MeasurementVariable locationAbbrVariable = workbook.findConditionById(TermId.LOCATION_ABBR.getId());
-		if (locationAbbrVariable != null) {
-			originGenerationParameters.setLocation(locationAbbrVariable.getValue());
-		} else {
-			LOG.debug("No LOCATION_ABBR(8189) variable or if present a value, was found in study: {}. Defaulting [LOCATION] to be null/empty.",
+	void deriveLocation(Workbook workbook, final GermplasmOriginGenerationParameters originGenerationParameters,
+			String trialInstanceNumber) {
+		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
+			// For Nurseris, to populate LOCATION placeholder we look for LOCATION_ABBR(8189) variable in general settings.
+			MeasurementVariable locationAbbrVariable = workbook.findConditionById(TermId.LOCATION_ABBR.getId());
+			if (locationAbbrVariable != null) {
+				originGenerationParameters.setLocation(locationAbbrVariable.getValue());
+			}
+		} else if (workbook.getStudyDetails().getStudyType() == StudyType.T) {
+			// For trials, we look for LOCATION_ABBR(8189) variable at trial instance/environment level.
+			MeasurementRow trialInstanceObservations = workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(trialInstanceNumber));
+			if (trialInstanceObservations != null) {
+				for (MeasurementData trialInstanceMeasurement : trialInstanceObservations.getDataList()) {
+					if (trialInstanceMeasurement.getMeasurementVariable().getTermId() == TermId.LOCATION_ABBR.getId()) {
+						originGenerationParameters.setLocation(trialInstanceMeasurement.getValue());
+						break;
+					}
+				}
+			}
+		}
+
+		if (originGenerationParameters.getLocation() == null) {
+			LOG.debug(
+					"No LOCATION_ABBR(8189) variable was found or it is present but no value is set, in study: {}. [LOCATION] will be defaulted to be null/empty.",
 					workbook.getStudyDetails().getStudyName());
-			originGenerationParameters.setLocation(null);
 		}
 	}
 
@@ -92,7 +111,8 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 		parameters.setCrop(this.contextUtil.getProjectInContext().getCropType().getCropName());
 		parameters.setStudyName(workbook.getStudyName());
 		parameters.setStudyType(workbook.getStudyDetails().getStudyType());
-		deriveLocation(workbook, parameters);
+		// Cross scenario is currently only for Nurseries, hard coding instance number to 1 is fine until that is not the case.
+		deriveLocation(workbook, parameters, "1");
 		deriveSeason(workbook, parameters);
 		parameters.setMaleStudyName(cross.getMaleStudyName());
 		parameters.setFemaleStudyName(cross.getFemaleStudyName());

@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -291,5 +293,54 @@ public class GermplasmOriginParameterBuilderImplTest {
 				"Expected current year and month being set as Season when Crop_season_Code variable is present but value is missing.",
 				currentYearAndMonth, parameters.getSeason());
 
+	}
+
+	@Test
+	public void testDeriveLocationForNurseries() {
+		// Setup Nursery workbook
+		Workbook workbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.N);
+		workbook.setStudyDetails(studyDetails);
+
+		MeasurementVariable locationMV = new MeasurementVariable();
+		locationMV.setTermId(TermId.LOCATION_ABBR.getId());
+		locationMV.setValue("MEX");
+
+		workbook.setConditions(Lists.newArrayList(locationMV));
+
+		GermplasmOriginGenerationParameters parameters = new GermplasmOriginGenerationParameters();
+		this.builder.deriveLocation(workbook, parameters, "1");
+		Assert.assertEquals(locationMV.getValue(), parameters.getLocation());
+	}
+
+	@Test
+	public void testDeriveLocationForTrials() {
+		// Setup Trial workbook
+		Workbook workbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.T);
+		workbook.setStudyDetails(studyDetails);
+
+		MeasurementVariable locationAbbrMV = new MeasurementVariable();
+		locationAbbrMV.setTermId(TermId.LOCATION_ABBR.getId());
+		MeasurementData locationAbbrMD = new MeasurementData();
+		locationAbbrMD.setValue("MEX");
+		locationAbbrMD.setMeasurementVariable(locationAbbrMV);
+
+		MeasurementVariable instanceNumberMV = new MeasurementVariable();
+		instanceNumberMV.setTermId(TermId.TRIAL_INSTANCE_FACTOR.getId());
+		MeasurementData instanceNumberMD = new MeasurementData();
+		instanceNumberMD.setValue("1");
+		instanceNumberMD.setMeasurementVariable(instanceNumberMV);
+
+		MeasurementRow trialInstanceObservation = new MeasurementRow();
+		trialInstanceObservation.setDataList(Lists.newArrayList(instanceNumberMD, locationAbbrMD));
+
+		workbook.setTrialObservations(Lists.newArrayList(trialInstanceObservation));
+
+		GermplasmOriginGenerationParameters parameters = new GermplasmOriginGenerationParameters();
+		this.builder.deriveLocation(workbook, parameters, instanceNumberMD.getValue());
+		Assert.assertEquals(locationAbbrMD.getValue(), parameters.getLocation());
 	}
 }

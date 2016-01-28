@@ -288,6 +288,22 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals("Should return [1, 2]", "[\"1\",\"2\"]", returnData);
 	}
 
+	@Test
+	public void testAddGermplasmFolder() {
+		final HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+		final String parentID = "1";
+		final String folderName = "NewFolder";
+		final int listId = 10;
+		Mockito.doReturn(parentID).when(req).getParameter("parentFolderId");
+		Mockito.doReturn(folderName).when(req).getParameter("folderName");
+		Mockito.doReturn(listId).when(this.germplasmListManager).addGermplasmList(Mockito.any(GermplasmList.class));
+
+		final Map<String, Object> resultsMap = this.controller.addGermplasmFolder(req);
+		Assert.assertTrue("Expecting that Germplasm Folder is added successfully.", resultsMap.get(GermplasmTreeController.IS_SUCCESS)
+				.equals("1"));
+		Assert.assertTrue("Expecting that Germplasm Folder is added has id " + listId, resultsMap.get("id").equals(listId));
+	}
+
 	private CrossSetting createCrossSetting() {
 		final CrossSetting crossSetting = new CrossSetting();
 

@@ -126,11 +126,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private static final String HAS_CHILDREN = "Folder has children";
 	private static final String FOLDER = "FOLDER";
 
-	private static final String IS_SUCCESS = "isSuccess";
+	static final String IS_SUCCESS = "isSuccess";
 
 	private static final String MESSAGE = "message";
 
-	private static final String DATE_FORMAT = "yyyyMMdd";
+	static final String DATE_FORMAT = "yyyyMMdd";
 
 	@Resource
 	private ResourceBundleMessageSource messageSource;
@@ -808,7 +808,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			}
 
-			newList.setDescription("(NEW FOLDER) " + folderName);
+			newList.setDescription(folderName);
 			newList.setProgramUUID(programUUID);
 			final Integer germplasmListFolderId = this.germplasmListManager.addGermplasmList(newList);
 			resultsMap.put("id", germplasmListFolderId);

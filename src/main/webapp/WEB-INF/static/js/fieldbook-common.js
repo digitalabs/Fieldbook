@@ -1010,11 +1010,11 @@ function advanceTrial(){
     $('#selectEnviornmentModal').modal({ backdrop: 'static', keyboard: true });
 }
 
-function trialSelectEnviornmentContinue(trialInstances){
+function trialSelectEnviornmentContinue(trialInstances,noOfReplications){
     'use strict';
     var idVal = $('#studyId').val();
     $('#selectEnviornmentModal').modal('hide');
-    advanceStudy(idVal,trialInstances);
+    advanceStudy(idVal,trialInstances,noOfReplications);
 
 }
 
@@ -1036,7 +1036,7 @@ function advanceNursery(){
  * @param studyId Nursery or Trial study Id
  * @param locationIds Location will be passed for Advance Trial only
  */
-function advanceStudy(studyId, trialInstances){
+function advanceStudy(studyId, trialInstances,noOfReplications){
     'use strict';
     var count = 0,
         idVal = studyId;
@@ -1057,6 +1057,7 @@ function advanceStudy(studyId, trialInstances){
 
     if(!isNursery() || trialInstances !== undefined){
         advanceStudyHref = advanceStudyHref + '?selectedTrialInstances=' + encodeURIComponent(trialInstances.join(","));
+        advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
     }
 
     if (idVal != null) {

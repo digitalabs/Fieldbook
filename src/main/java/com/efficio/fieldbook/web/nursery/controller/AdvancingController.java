@@ -18,9 +18,8 @@ import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.google.common.collect.Sets;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.constant.ColumnLabels;
@@ -121,14 +120,14 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 */
 	@RequestMapping(value = "/{nurseryId}", method = RequestMethod.GET)
 	public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model, HttpServletRequest req,
-			HttpSession session, @PathVariable int nurseryId , @RequestParam(required = false) Set<String> selectedTrialInstances) throws MiddlewareException {
+			HttpSession session, @PathVariable int nurseryId , @RequestParam(required = false) Set<String> selectedTrialInstances,@RequestParam(required = false) String noOfReplications) throws MiddlewareException {
     	form.setMethodChoice("1");
 		form.setLineChoice("1");
 		form.setLineSelected("1");
 		form.setAllPlotsChoice("1");
         form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
         form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
-
+        form.setSelectedReplications(Sets.newHashSet("1"));
         form.setNurseryId(Integer.toString(nurseryId));
 
 		form.setMethodVariates(this.filterVariablesByProperty(this.userSelection.getSelectionVariates(),
@@ -148,10 +147,22 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
 		model.addAttribute("monthChoices", this.generateMonthChoices());
+        model.addAttribute("replicationsChoices",this.generateReplicationChoice(noOfReplications));
 
 		return super.showAjaxPage(model, AdvancingController.MODAL_URL);
 	}
 
+    private List<String> generateReplicationChoice(String noOfReplications){
+        List<String> replicationChoices = new ArrayList<String>();
+        if(noOfReplications != null){
+            int replicationCount = Integer.valueOf(noOfReplications);
+            for(int i=1; i<=replicationCount; i++){
+                replicationChoices.add(i+"");
+            }
+        }
+
+        return replicationChoices;
+    }
 	public List<ChoiceKeyVal> generateYearChoices(int currentYear) {
 		List<ChoiceKeyVal> yearList = new ArrayList<ChoiceKeyVal>();
 		int startYear = currentYear - AppConstants.ADVANCING_YEAR_RANGE.getInt();

@@ -544,8 +544,5 @@
 
     <bean id="userTreeStateService" class="org.generationcp.commons.service.impl.UserTreeStateServiceImpl"/>
     
-    <bean id="resourceFinder" class="org.generationcp.middleware.util.ResourceFinder"
-		scope="request">
-		<aop:scoped-proxy />
-	</bean>
+    <bean id="resourceFinder" class="org.generationcp.middleware.util.ResourceFinder"/>
 </beans>

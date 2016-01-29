@@ -142,15 +142,13 @@
                             </div>
                             <div class="row form-group">
 
-                                <div id="replications" class="col-xs-6" th:each="repIndex: ${replicationsChoices}"  >
+                                <div id="replications" class="col-xs-2" th:each="repIndex: ${replicationsChoices}"  >
                                         <input type="checkbox" class="replication" th:field="*{selectedReplications}" th:value="${repIndex}" />
                                         <span class="label-bold" th:text="${repIndex}"></span>
                                 </div>
+                                <input type="checkbox" id="selectAllReps" />
+                                <span class="label-bold" th:text="#{advancing.trial.select.all}">Select All</span>
 
-                                <div class="col-xs-6">
-                                    <input type="checkbox" id="selectAllReps" />
-                                    <span class="label-bold" th:text="#{advancing.trial.select.all}">Select All</span>
-                                </div>
                             </div>
                         </div>
 
@@ -217,11 +215,9 @@
                             </div>
 
                             <div class="row form-group">
-                                <div class="row col-xs-8">
-                                    <div class="col-xs-10" style="padding-left: 5%">
-                                        <div id="location-details-section" class="row form-group">
-                                    </div>
-                                </div>
+                               <div class="col-xs-10" style="padding-left: 5%">
+                                   <div id="location-details-section" class="row form-group">
+                               </div>
                             </div>
                         </div>
                         </div>

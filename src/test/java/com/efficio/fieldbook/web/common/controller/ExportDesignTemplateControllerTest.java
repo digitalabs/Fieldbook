@@ -50,7 +50,7 @@ public class ExportDesignTemplateControllerTest {
 	@Test
 	public void testExportDesignTemplateSuccess() throws FileNotFoundException, UnsupportedEncodingException{
 		File designTemplateFile = new File(ResourceFinder.locateFile(ExportDesignTemplateControllerTest.DESIGN_TEMPLATE ).getFile());
-		Mockito.when(resourceFinder.locateFileWrapper(Matchers.anyString())).thenReturn(ResourceFinder.locateFile(ExportDesignTemplateControllerTest.DESIGN_TEMPLATE ));
+		Mockito.when(resourceFinder.locate(Matchers.anyString())).thenReturn(ResourceFinder.locateFile(ExportDesignTemplateControllerTest.DESIGN_TEMPLATE ));
 		Map<String, Object> results = this.exportDesignTemplateController.exportDesignTemplate(this.resp, this.req);
 		
 		Assert.assertEquals("The absolute path should be " + designTemplateFile.getAbsolutePath(), designTemplateFile.getAbsolutePath(), results.get(ExportDesignTemplateControllerTest.OUTPUT_FILENAME));
@@ -58,7 +58,7 @@ public class ExportDesignTemplateControllerTest {
 	
 	@Test
 	public void testExportDesignTemplateFileNotFound() throws FileNotFoundException, UnsupportedEncodingException{
-		Mockito.when(resourceFinder.locateFileWrapper(Matchers.anyString())).thenThrow(new FileNotFoundException());
+		Mockito.when(resourceFinder.locate(Matchers.anyString())).thenThrow(new FileNotFoundException());
 		Mockito.when(this.messageSource.getMessage("common.error.file.not.found", null, Locale.ENGLISH)).thenReturn("File Not Found");
 		Map<String, Object> results = this.exportDesignTemplateController.exportDesignTemplate(this.resp, this.req);
 		

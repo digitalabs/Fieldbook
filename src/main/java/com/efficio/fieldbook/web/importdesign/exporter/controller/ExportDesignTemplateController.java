@@ -45,7 +45,7 @@ public class ExportDesignTemplateController  extends AbstractBaseFieldbookContro
 		File designTemplateFile;
 		final Map<String, Object> results = new HashMap<String, Object>();
 		try {
-			designTemplateFile = new File(resourceFinder.locateFileWrapper(ExportDesignTemplateController.DESIGN_TEMPLATE).getFile());
+			designTemplateFile = new File(resourceFinder.locate(ExportDesignTemplateController.DESIGN_TEMPLATE).getFile());
 			results.put(OUTPUT_FILENAME, designTemplateFile.getAbsolutePath());
 			results.put(ExportDesignTemplateController.IS_SUCCESS, 1);
 		} catch (FileNotFoundException e) {

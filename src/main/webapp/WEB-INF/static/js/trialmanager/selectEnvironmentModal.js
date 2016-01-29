@@ -34,7 +34,7 @@
         $scope.trialSelectEnvironmentContinue = function(){
             var isTrialInstanceSelected = false;
             var selectedTrialInstances=[];
-
+            var selectedLocationDetails = [];
             angular.forEach($scope.trialInstances,function(id){
                 if(id != undefined && !isTrialInstanceSelected){
                     isTrialInstanceSelected = true;
@@ -46,19 +46,33 @@
                 showErrorMessage('', selectOneLocationErrorMessagge);
             }
             else{
-                angular.forEach($scope.trialInstances,function(id){
-                    if(id != undefined){
-                        selectedTrialInstances.push(id);
+                selectedLocationDetails.push($scope.settings.managementDetails.val($scope.PREFERENCED_LOCATION_VARIABLE).variable.name);
+
+                angular.forEach($scope.trialInstances,function(trialInstanceNumber,idx){
+                    if(trialInstanceNumber != undefined){
+                        selectedTrialInstances.push(trialInstanceNumber);
+
+                        angular.forEach($scope.data.environments, function(env,position) {
+                            if(position==idx){
+                                selectedLocationDetails.push(env.managementDetailValues[$scope.PREFERENCED_LOCATION_VARIABLE]);
+                            }
+                        });
+
                     }
                 });
 
-                trialSelectEnviornmentContinue(selectedTrialInstances,$scope.noOfReplications);
+                var isTrialInstanceNumberUsed = false;
+                if($scope.PREFERENCED_LOCATION_VARIABLE == 8170){
+                    isTrialInstanceNumberUsed = true;
+                }
+                trialSelectEnviornmentContinue(selectedTrialInstances,$scope.noOfReplications,selectedLocationDetails,isTrialInstanceNumberUsed);
             }
 
         };
 
         $scope.doSelectAll = function() {
             $scope.trialInstances = [];
+            $scope.trialInstancesName = [];
             if ($scope.selectAll) {
                 $scope.selectAll = true;
 

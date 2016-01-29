@@ -1010,12 +1010,29 @@ function advanceTrial(){
     $('#selectEnviornmentModal').modal({ backdrop: 'static', keyboard: true });
 }
 
-function trialSelectEnviornmentContinue(trialInstances,noOfReplications){
+function trialSelectEnviornmentContinue(trialInstances,noOfReplications,selectedLocations,isTrialInstanceNumberUsed){
     'use strict';
     var idVal = $('#studyId').val();
     $('#selectEnviornmentModal').modal('hide');
-    advanceStudy(idVal,trialInstances,noOfReplications);
+    var locationDetailHtml = generateLocationDetailTable(selectedLocations,isTrialInstanceNumberUsed);
+    advanceStudy(idVal,trialInstances,noOfReplications,locationDetailHtml);
 
+}
+
+function generateLocationDetailTable(selectedLocations,isTrialInstanceNumberUsed) {
+    var result = "<table class='table table-curved table-condensed'>";
+    if(isTrialInstanceNumberUsed){
+        result += "<caption>Update Location Name or Location Abbr in Environement Details.</caption>";
+    }
+    result += "<thead><tr><th>"+selectedLocations[0]+"</th></tr></thead>";
+
+    for(var i=1; i<selectedLocations.length; i++) {
+        result += "<tbody><tr>";
+        result += "<td>"+selectedLocations[i]+"</td>";
+        result += "</tr></tbody>";
+    }
+    result += "</table>";
+    return result;
 }
 
 /* END ADVANCING TRIAL SPECIFIC FUNCTIONS */
@@ -1036,7 +1053,7 @@ function advanceNursery(){
  * @param studyId Nursery or Trial study Id
  * @param locationIds Location will be passed for Advance Trial only
  */
-function advanceStudy(studyId, trialInstances,noOfReplications){
+function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtml){
     'use strict';
     var count = 0,
         idVal = studyId;
@@ -1079,6 +1096,11 @@ function advanceStudy(studyId, trialInstances,noOfReplications){
                 $('#advanceNurseryModal select.fbk-harvest-year').each(function() {
                     $(this).select2({minimumResultsForSearch: -1});
                 });
+
+                if(!isNursery()){
+                    $('#location-details-section').append(locationDetailHtml);
+                }
+
             }
         });
     }

@@ -2859,7 +2859,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 								}
 								query.callback(data);
 							},
-							dro0pdownCssClass: 's2-nosearch-icon'
+							dropdownCssClass: 's2-nosearch-icon'
 						})
 				.on(
 						'change',

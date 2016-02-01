@@ -1814,11 +1814,18 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
 		type: 'GET',
 		cache: false,
 		success: function(html) {
-			$('#advance-list' + id).html(html);
-			//we just show the button
-			$('.export-advance-list-action-button').removeClass('fbk-hide');
-			$('#advance-list' + id + '-li').addClass('advance-germplasm-items');
-			$('#advance-list' + id + '-li').data('advance-germplasm-list-id', advancedGermplasmListId);
+            if (isNursery()) {
+                $('#advance-list' + id).html(html);
+                //we just show the button
+                $('.export-advance-list-action-button').removeClass('fbk-hide');
+                $('#advance-list' + id + '-li').addClass('advance-germplasm-items');
+                $('#advance-list' + id + '-li').data('advance-germplasm-list-id', advancedGermplasmListId);
+            } else {
+                var element = angular.element(document.getElementById("mainApp")).scope();
+                element.$apply(function (){
+                    element.addAdvanceTabData(id, html, listName);
+                });
+            }
 		}
 	});
 }

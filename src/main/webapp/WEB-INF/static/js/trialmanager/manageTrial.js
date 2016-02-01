@@ -41,6 +41,11 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 		};
 	});
 
+    // Added to prevent Unsecured HTML error
+    manageTrialApp.config(function($sceProvider) {
+        $sceProvider.enabled(false);
+    });
+
 	manageTrialApp.config(['$httpProvider', function($httpProvider) {
 		$httpProvider.interceptors.push('spinnerHttpInterceptor');
 	}]);
@@ -194,7 +199,10 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 					state: 'editMeasurements'
 				}
 			];
-
+            $scope.tabSelected = 'trialSettings';
+            $scope.isSettingsTab = true;
+            $scope.advanceTabs = [];
+            $scope.advanceTrialTabs = [];
 			$scope.isOpenTrial = TrialManagerDataService.isOpenTrial;
 
 			$scope.isChoosePreviousTrial = false;
@@ -331,6 +339,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			};
 
 			$scope.performFunctionOnTabChange = function(targetState) {
+                $scope.isSettingsTab = true;
+                $scope.tabSelected = targetState;
 				if (targetState === 'editMeasurements') {
 					if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
 						$timeout(function() {
@@ -359,6 +369,34 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 					}
 				}
 			};
+
+            $scope.addAdvanceTabData = function(tabId, tabData, listName) {
+                $scope.advanceTrialTabs.push({
+                    name: listName,
+                    state: 'advance-list'+tabId+'-li'
+                });
+
+                $scope.advanceTabs.push({
+                    name: 'advance-list'+tabId+'-li',
+                    data: tabData
+                });
+                $scope.tabSelected = 'advance-list'+tabId+'-li';
+                $scope.isSettingsTab = false;
+            };
+
+            $scope.tabChange = function(selectedTab) {
+                $scope.tabSelected = selectedTab;
+                $scope.isSettingsTab = false;
+            };
+
+            $scope.closeAdvanceListTab = function(item) {
+                var index = $scope.advanceTrialTabs.indexOf(item);
+                $scope.advanceTrialTabs.splice(index, 1);
+                $scope.advanceTabs.splice(index, 1);
+                $scope.tabSelected = 'trialSettings';
+                $scope.isSettingsTab = true;
+             };
+
 			$('body').on('DO_AUTO_SAVE', function() {
 				TrialManagerDataService.saveCurrentData();
 			});

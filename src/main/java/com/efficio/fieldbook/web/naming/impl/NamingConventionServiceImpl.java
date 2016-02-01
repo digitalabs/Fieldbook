@@ -189,6 +189,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		this.assignNames(germplasm, source);
 
+		germplasm.setTrialInstanceNumber(source.getTrialInstanceNumber());
+		germplasm.setReplicationNumber(source.getReplicationNumber());
+
 		list.add(germplasm);
 	}
 

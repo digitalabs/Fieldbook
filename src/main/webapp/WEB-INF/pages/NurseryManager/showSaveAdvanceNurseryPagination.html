@@ -14,11 +14,13 @@
             	<td class="fbk-review-advance-check-box">
             		<input type="checkbox" class="reviewAdvancingListGid" th:attr="data-entry=${gid.get('entry')}" name="reviewAdvancingListGid" id="reviewAdvancingListGid"/> 
            		</td>
-               <td th:text="${gid.get('entry')}">.1</td> 
-               <td th:text="${gid.get('desig')}"></td>
-               <td th:text="${gid.get('parentage')}">.2</td>
-               <td th:text="${gid.get('gid')}"></td>
-               <td th:text="${gid.get('source')}">.2</td>                                   				       
+               <td th:text="${gid.get('entry')}">entry</td> 
+               <td th:text="${gid.get('desig')}">desig</td>
+               <td th:text="${gid.get('parentage')}">parentage</td>
+               <td th:text="${gid.get('gid')}">gid</td>
+               <td th:text="${gid.get('source')}">source</td>
+               <td th:text="${gid.get('trialInstanceNumber')}">trialInstanceNumber</td>
+               <td th:text="${gid.get('replicationNumber')}">replicationNumber</td>                                   				       
              </tr>             
            </tbody>		
 	</table>

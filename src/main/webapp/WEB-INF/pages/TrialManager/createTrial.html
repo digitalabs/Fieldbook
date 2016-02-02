@@ -275,7 +275,7 @@
     </li>
     <li ng-repeat="tab in advanceTrialTabs"  ng-class="{active: tabSelected===tab.state}" ng-click="tabChange(tab.state)"
         ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
-        <a href="#tab.name">{{tab.name}}
+        <a href="#tab.name">Advance List: [{{tab.name}}]
             <i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab(' + tab +')"></i>
         </a>
     </li>

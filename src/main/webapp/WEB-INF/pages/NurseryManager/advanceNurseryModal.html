@@ -373,7 +373,9 @@ $(function() {
 	initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
 
 	var inputStudyLevelMethodElm = $('input.study-level-method');
-	if (inputStudyLevelMethodElm !== null && inputStudyLevelMethodElm.val() !== '' && inputStudyLevelMethodElm.val() !== '0') {
+
+	if (inputStudyLevelMethodElm !== null && inputStudyLevelMethodElm.val() !== '' && inputStudyLevelMethodElm.val() !== '0'
+            && inputStudyLevelMethodElm.val() !== undefined) {
 		oldMethodSelected = inputStudyLevelMethodElm.val();
 		$('input.advance-fav-method-checkbox').prop('checked', $('input.study-level-method-checkbox').is(':checked'));
 	}

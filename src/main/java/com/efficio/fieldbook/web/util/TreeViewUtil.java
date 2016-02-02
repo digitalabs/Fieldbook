@@ -217,7 +217,7 @@ public class TreeViewUtil {
 			for (GermplasmList germplasmList : germplasmLists) {
 				TreeTableNode node =
 						TreeViewUtil.convertGermplasmListToTreeTableNode(germplasmList, listTypes,
-								allListMetaData.get(germplasmList.getId()));
+								allListMetaData.get(Long.valueOf(germplasmList.getId())));
 				if (node != null) {
 					treeTableNodes.add(node);
 				}

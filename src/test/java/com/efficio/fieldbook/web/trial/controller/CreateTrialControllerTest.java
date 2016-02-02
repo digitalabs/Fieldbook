@@ -1,10 +1,17 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
@@ -15,6 +22,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 
 public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
@@ -26,7 +35,7 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 	private FieldbookService fieldbookMiddlewareService;
 
 	@Test
-	public void testUseExistingTrial() throws Exception {
+	public void testUseExistingTrialWithError() throws Exception {
 		this.fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
 		this.controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
 		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(1)).thenThrow(
@@ -38,6 +47,83 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 
 		CreateTrialForm form = (CreateTrialForm) tabDetails.get("createTrialForm");
 		Assert.assertTrue("Expecting error but did not get one", form.isHasError());
+	}
+	
+	@Test
+	public void testUseExistingTrial() throws Exception {
+		this.fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		this.controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
+		this.mockContextUtil();
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
+		WorkbookTestDataInitializer.setTrialObservations(workbook);
+		Mockito.doReturn(workbook).when(this.fieldbookMiddlewareService).getTrialDataSet(1);
+		this.mockStandardVariables(workbook.getAllVariables());
+
+		Map<String, Object> tabDetails = this.controller.getExistingTrialDetails(1);
+		boolean analysisVariableFound = false;
+		for (final String tab : tabDetails.keySet()) {
+			Object tabDetail = tabDetails.get(tab);
+			if (tabDetail instanceof TabInfo) {
+				final TabInfo tabInfo = (TabInfo) tabDetail;
+				final List<SettingDetail> detailList = getSettingDetails(tabInfo);
+				if(detailList == null) {
+					continue;
+				}
+				for (SettingDetail settingDetail : detailList) {
+					Integer termId = settingDetail.getVariable().getCvTermId();
+					if (WorkbookTestDataInitializer.PLANT_HEIGHT_MEAN_ID == termId
+							|| WorkbookTestDataInitializer.PLANT_HEIGHT_UNIT_ERRORS_ID == termId) {
+						analysisVariableFound = true;
+					}
+				}
+			}
+		}
+		Assert.assertFalse("Analysis variables should not be found", analysisVariableFound);
+	}
+
+	private void mockContextUtil() {
+		final ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
+		this.controller.setContextUtil(contextUtil);
+		Mockito.doReturn(PROGRAM_UUID).when(contextUtil).getCurrentProgramUUID();
+	}
+
+	private void mockStandardVariables(List<MeasurementVariable> allVariables) {
+		for (MeasurementVariable measurementVariable : allVariables) {
+			Mockito.doReturn(this.createStandardVariable(measurementVariable.getTermId())).when(this.fieldbookMiddlewareService)
+					.getStandardVariable(measurementVariable.getTermId(), this.PROGRAM_UUID);
+		}
+	}
+
+	private StandardVariable createStandardVariable(Integer id) {
+		StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setId(id);
+		return standardVariable;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<SettingDetail> getSettingDetails(TabInfo tabInfo) {
+		List<SettingDetail> detailList = new ArrayList<>();
+		if (tabInfo.getSettings() != null && !tabInfo.getSettings().isEmpty()) {
+			return tabInfo.getSettings();
+		}
+		if (tabInfo.getSettingMap() != null && !tabInfo.getSettingMap().isEmpty() && tabInfo.getSettingMap().values() != null
+				&& !tabInfo.getSettingMap().values().isEmpty()) {
+			if (tabInfo.getSettingMap().containsKey("managementDetails")) {
+				detailList.addAll((List<SettingDetail>) tabInfo.getSettingMap().get("managementDetails"));
+			} else if (tabInfo.getSettingMap().containsKey("trialConditionDetails")) {
+				detailList.addAll((List<SettingDetail>) tabInfo.getSettingMap().get("trialConditionDetails"));
+			} else if (tabInfo.getSettingMap().containsKey("details")) {
+				detailList.addAll((List<SettingDetail>) tabInfo.getSettingMap().get("details"));
+			} else if (tabInfo.getSettingMap().containsKey("treatmentLevelPairs")) {
+				Map<String, List<SettingDetail>> treatmentFactorPairs =
+						(Map<String, List<SettingDetail>>) tabInfo.getSettingMap().get("details");
+				for (List<SettingDetail> settingDetails : treatmentFactorPairs.values()) {
+					detailList.addAll(settingDetails);
+				}
+			}
+		}
+			
+		return detailList;
 	}
 
 	@Test

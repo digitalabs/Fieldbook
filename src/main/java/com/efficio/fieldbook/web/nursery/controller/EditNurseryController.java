@@ -25,12 +25,14 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -246,6 +248,7 @@ public class EditNurseryController extends SettingsController {
 
 	private void setUpFormAttributes(final CreateNurseryForm form, final Workbook workbook, final int nurseryId) {
 		form.setStudyId(nurseryId);
+		form.setGemplasmListId(this.getGemplasmListId(nurseryId));
 		form.setBasicDetails(this.userSelection.getBasicDetails());
 		form.setStudyLevelVariables(this.userSelection.getStudyLevelConditions());
 		form.setBaselineTraitVariables(this.userSelection.getBaselineTraitsList());
@@ -816,6 +819,27 @@ public class EditNurseryController extends SettingsController {
 	@ModelAttribute("programLocationURL")
 	public String getProgramLocation() {
 		return this.fieldbookProperties.getProgramLocationsUrl();
+	}
+
+	public Integer getGemplasmListId(final int studyId) {
+		if (this.userSelection.getImportedAdvancedGermplasmList() == null) {
+			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+
+			final List<GermplasmList> germplasmLists =
+					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
+
+			if (germplasmLists != null && !germplasmLists.isEmpty()) {
+				final GermplasmList germplasmList = germplasmLists.get(0);
+
+				if (germplasmList != null) {
+					// BMS-1419, set the id to the original list's id
+					mainInfo.setListId(germplasmList.getListRef() != null ? germplasmList.getListRef() : germplasmList.getId());
+				}
+			}
+			this.userSelection.setImportedGermplasmMainInfo(mainInfo);
+		}
+
+		return this.userSelection.getImportedGermplasmMainInfo() != null ? this.userSelection.getImportedGermplasmMainInfo().getListId() : -1;
 	}
 
 	@ModelAttribute("programMethodURL")

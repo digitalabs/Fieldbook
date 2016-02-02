@@ -839,7 +839,10 @@ public class EditNurseryController extends SettingsController {
 			this.userSelection.setImportedGermplasmMainInfo(mainInfo);
 		}
 
-		return this.userSelection.getImportedGermplasmMainInfo() != null ? this.userSelection.getImportedGermplasmMainInfo().getListId() : -1;
+		return this.userSelection.getImportedGermplasmMainInfo() != null &&
+				this.userSelection.getImportedGermplasmMainInfo().getListId() != null ?
+				this.userSelection.getImportedGermplasmMainInfo().getListId()
+				: -1;
 	}
 
 	@ModelAttribute("programMethodURL")

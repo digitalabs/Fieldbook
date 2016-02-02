@@ -384,6 +384,12 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                 $scope.isSettingsTab = false;
             };
 
+            $scope.advancedTrialList=TrialManagerDataService.settings.advancedList;
+
+            angular.forEach($scope.advancedTrialList,function(value){
+                displayAdvanceList('', value.id, value.name, false, '');
+            });
+
             $scope.tabChange = function(selectedTab) {
                 $scope.tabSelected = selectedTab;
                 $scope.isSettingsTab = false;

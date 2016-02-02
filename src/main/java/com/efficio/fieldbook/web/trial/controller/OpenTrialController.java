@@ -264,9 +264,14 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("createNurseryForm", form);
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
 		model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
+        model.addAttribute("advancedList", this.getAdvancedList(trialId));
 
 		model.addAttribute("germplasmListSize", 0);
 	}
+
+    private List<GermplasmList> getAdvancedList(final Integer trialId) {
+        return this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.ADVANCED);
+    }
 
 	protected void clearSessionData(final HttpSession session) {
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.USER_SELECTION_SESSION_NAME,

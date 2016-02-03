@@ -232,7 +232,7 @@
 			<div class="form-group add_top_padding" th:if="*{gemplasmListId > -1}">
 				<div class="col-md-12">
 					<a
-							th:href="@{~/BreedingManager/main/cross-__*{gemplasmListId}__(nurseryid=*{studyId})}"
+							th:href="@{~/BreedingManager/main/createcrosses(nurseryid=*{studyId},germplasmlistid=*{gemplasmListId})}"
 					   th:text="#{nursery.managesettings.create.nursery.createcrosses.label}">.Create Crosses</a>
 				</div>
 			</div>

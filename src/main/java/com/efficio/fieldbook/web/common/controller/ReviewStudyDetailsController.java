@@ -84,7 +84,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@RequestMapping(value = "/show/{studyType}/{id}", method = RequestMethod.GET)
 	public String show(@PathVariable final String studyType, @PathVariable final int id,
-			@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form, final Model model) throws MiddlewareQueryException {
+			@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form, final Model model) {
 
 		final boolean isNursery = studyType != null && StudyType.N.getName().equalsIgnoreCase(studyType);
 		final Workbook workbook;
@@ -138,7 +138,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@ResponseBody
 	@RequestMapping(value = "/datasets/{nurseryId}")
-	public List<DatasetReference> loadDatasets(@PathVariable final int nurseryId) throws MiddlewareQueryException {
+	public List<DatasetReference> loadDatasets(@PathVariable final int nurseryId) {
 		return this.fieldbookMiddlewareService.getDatasetReferences(nurseryId);
 	}
 

@@ -83,11 +83,11 @@ public abstract class AbstractBaseFieldbookController {
 		return "0";
 	}
 
-	public Project getCurrentProject() throws MiddlewareQueryException {
+	public Project getCurrentProject() {
 		return this.contextUtil.getProjectInContext();
 	}
 
-	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {
+	public Integer getCurrentIbdbUserId() {
 		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
 				this.contextUtil.getCurrentWorkbenchUserId());
 

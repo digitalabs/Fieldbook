@@ -92,9 +92,10 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		try {
 			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
 			workbook.getStudyDetails().setId(id);
+			this.filterAnalysisVariable(workbook);
 			details =
 					SettingsUtil.convertWorkbookToStudyDetails(workbook, this.fieldbookMiddlewareService, this.fieldbookService,
-							this.userSelection, contextUtil.getCurrentProgramUUID(),appConstantsProperties);
+							this.userSelection, this.contextUtil.getCurrentProgramUUID(), this.appConstantsProperties);
 			this.rearrangeDetails(details);
 			this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
 			if (workbook.getMeasurementDatesetId() != null) {
@@ -172,6 +173,11 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	protected void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	@Override
+	public void setContextUtil(final ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 
 }

@@ -50,15 +50,15 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	@Test
 	public void testShowReviewNurserySummaryWithError() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get(ReviewStudyDetailsController.URL + "/show/N/1"))
-		.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
-		.andExpect(MockMvcResultMatchers.model().attributeExists("nurseryDetails"));
+				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.model().attributeExists("nurseryDetails"));
 	}
 
 	@Test
 	public void testShowReviewTrialSummaryWithError() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get(ReviewStudyDetailsController.URL + "/show/T/1"))
-		.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
-		.andExpect(MockMvcResultMatchers.model().attributeExists("trialDetails"));
+				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.model().attributeExists("trialDetails"));
 	}
 
 	@Test

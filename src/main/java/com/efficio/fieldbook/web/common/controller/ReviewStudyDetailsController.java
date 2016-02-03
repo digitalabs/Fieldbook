@@ -51,6 +51,8 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	private static final Logger LOG = LoggerFactory.getLogger(ReviewStudyDetailsController.class);
 
+	private static final int COLS = 3;
+
 	@Resource
 	private UserSelection userSelection;
 
@@ -149,18 +151,17 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	private List<SettingDetail> rearrangeSettingDetails(final List<SettingDetail> list) {
 		final List<SettingDetail> newList = new ArrayList<SettingDetail>();
-		final int COLS = 3;
 
 		if (list != null && !list.isEmpty()) {
-			final int rows = Double.valueOf(Math.ceil(list.size() / (double) COLS)).intValue();
-			final int extra = list.size() % COLS;
+			final int rows = Double.valueOf(Math.ceil(list.size() / (double) ReviewStudyDetailsController.COLS)).intValue();
+			final int extra = list.size() % ReviewStudyDetailsController.COLS;
 			for (int i = 0; i < list.size(); i++) {
 				int delta = 0;
-				final int currentColumn = i % COLS;
+				final int currentColumn = i % ReviewStudyDetailsController.COLS;
 				if (currentColumn > extra && extra > 0) {
 					delta = currentColumn - extra;
 				}
-				final int computedIndex = currentColumn * rows + i / COLS - delta;
+				final int computedIndex = currentColumn * rows + i / ReviewStudyDetailsController.COLS - delta;
 				if (computedIndex < list.size()) {
 					newList.add(list.get(computedIndex));
 				} else {

@@ -239,18 +239,18 @@ public class OpenTrialControllerTest {
 			Assert.assertTrue("Controller does not properly set into the model the data for measurement row count",
 					model.containsAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT));
 
-			Assert.assertFalse("Analysis variables should not be displayed.", hasAnalysisVariables(model));
+			Assert.assertFalse("Analysis variables should not be displayed.", this.hasAnalysisVariables(model));
 
 		} catch (final MiddlewareException e) {
 			this.handleUnexpectedException(e);
 		}
 	}
 
-	private boolean hasAnalysisVariables(Model model) {
+	private boolean hasAnalysisVariables(final Model model) {
 		final List<SettingDetail> settingDetails = this.getSettingDetailsPossiblyWithAnalysisVariables(model);
 		boolean analysisVariableFound = false;
-		for (SettingDetail settingDetail : settingDetails) {
-			Integer termId = settingDetail.getVariable().getCvTermId();
+		for (final SettingDetail settingDetail : settingDetails) {
+			final Integer termId = settingDetail.getVariable().getCvTermId();
 			if (WorkbookTestDataInitializer.PLANT_HEIGHT_MEAN_ID == termId
 					|| WorkbookTestDataInitializer.PLANT_HEIGHT_UNIT_ERRORS_ID == termId) {
 				analysisVariableFound = true;
@@ -260,10 +260,10 @@ public class OpenTrialControllerTest {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<SettingDetail> getSettingDetailsPossiblyWithAnalysisVariables(Model model) {
+	private List<SettingDetail> getSettingDetailsPossiblyWithAnalysisVariables(final Model model) {
 		final List<SettingDetail> settingDetails = new ArrayList<>();
 
-		Map<String, Object> modelMap = model.asMap();
+		final Map<String, Object> modelMap = model.asMap();
 
 		final TabInfo experimentsDataTabInfo = (TabInfo) modelMap.get(OpenTrialController.ENVIRONMENT_DATA_TAB);
 		final List<SettingDetail> managementDetailList =
@@ -279,15 +279,15 @@ public class OpenTrialControllerTest {
 		return settingDetails;
 	}
 
-	private void mockStandardVariables(List<MeasurementVariable> allVariables) {
-		for (MeasurementVariable measurementVariable : allVariables) {
+	private void mockStandardVariables(final List<MeasurementVariable> allVariables) {
+		for (final MeasurementVariable measurementVariable : allVariables) {
 			Mockito.doReturn(this.createStandardVariable(measurementVariable.getTermId())).when(this.fieldbookMiddlewareService)
-					.getStandardVariable(measurementVariable.getTermId(), PROGRAM_UUID);
+					.getStandardVariable(measurementVariable.getTermId(), OpenTrialControllerTest.PROGRAM_UUID);
 		}
 	}
 
-	private StandardVariable createStandardVariable(Integer id) {
-		StandardVariable standardVariable = new StandardVariable();
+	private StandardVariable createStandardVariable(final Integer id) {
+		final StandardVariable standardVariable = new StandardVariable();
 		standardVariable.setId(id);
 		return standardVariable;
 	}

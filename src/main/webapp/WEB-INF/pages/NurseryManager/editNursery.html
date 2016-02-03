@@ -122,9 +122,10 @@
 										   th:text="#{nursery.nurserydetails.action.close.nursery}">Close Nursery</a>
 									</li>
 									<li th:if="${createNurseryForm.measurementRowList.size() != 0}">
-
 										<a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link" th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
-
+									</li>
+									<li>
+										<a href="javascript: void(0)" onclick="exportDesignTemplate()" class="export-design-template-link" th:text="#{nursery.nurserydetails.action.export.design.template}">Export Design Template</a>
 									</li>
 								</ul>
 							</div>

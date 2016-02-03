@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.google.common.collect.Lists;
 import com.mchange.util.AssertException;
 
@@ -544,7 +545,7 @@ public class ImportGermplasmListControllerTest {
 	 * Test to verify nextScreen() works and performs steps as expected.
 	 */
 	@Test
-	public void testNextScreen() {
+	public void testNextScreen() throws BVDesignException {
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
 		form.setStartingEntryNo("801");
 		Workbook workbook = new Workbook();

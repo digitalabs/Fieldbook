@@ -6,9 +6,14 @@ $(function() {
 		SpinnerManager.addActive();
 	}).ajaxStop(function() {
 		SpinnerManager.resolveActive();
-	}).ajaxError(function() {
-		showErrorMessage('', ajaxGenericErrorMsg);
-		SpinnerManager.resolveActive();
+	}).ajaxError(function(xhr, error) {
+        if(error.status == 500) {
+            showErrorMessage('', ajaxGenericErrorMsg);
+        } else {
+            showErrorMessage('INVALID INPUT', error.responseText);
+        }
+
+        SpinnerManager.resolveActive();
 	});
 
 	if (typeof convertToSelect2 === 'undefined' || convertToSelect2) {

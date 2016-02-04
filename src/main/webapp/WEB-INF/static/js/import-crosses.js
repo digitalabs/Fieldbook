@@ -169,7 +169,7 @@ var ImportCrosses = {
 		
 		updateSampleParentageDesignation : function() {
 			var value = $('#parentageDesignationSeparator').val();
-			$('#sampleParentageDesignation').text('ABC-123' + value + 'DEF-456');
+			$('#sampleParentageDesignation').text('FEMALE-123' + value + 'MALE-456');
 		},
 
 		processImportSettingsDropdown : function(dropdownID, useSettingsCheckboxID) {

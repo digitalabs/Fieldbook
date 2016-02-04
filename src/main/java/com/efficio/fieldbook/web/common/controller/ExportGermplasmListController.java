@@ -128,7 +128,9 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		}
 
 		if (list != null) {
-			listName = list.getName();
+
+			// sanitize the list name to remove illegal characters for Windows filename.
+			listName = list.getName().replaceAll("[^a-zA-Z0-9.-]", "_");
 
 			if (exportType == 1) {
 

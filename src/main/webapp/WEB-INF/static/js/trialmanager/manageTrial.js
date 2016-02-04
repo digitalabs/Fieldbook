@@ -373,7 +373,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
             $scope.addAdvanceTabData = function(tabId, tabData, listName) {
                 $scope.advanceTrialTabs.push({
                     name: listName,
-                    state: 'advance-list'+tabId+'-li'
+                    state: 'advance-list'+tabId+'-li',
+                    id: tabId
                 });
 
                 $scope.advanceTabs.push({

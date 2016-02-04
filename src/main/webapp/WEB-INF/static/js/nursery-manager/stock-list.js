@@ -80,7 +80,8 @@ if (typeof StockIDFunctions === 'undefined') {
 								StockIDFunctions.disableGenerateStockListButton(listId);
 								$('#stock-tab-pane' + listId).addClass('active');
 								$('#stock-list' + listId + '-li').addClass('active');
-								$('.nav-tabs').tabdrop('layout');
+                                // FIXME: To be done to bifurcate context of Nursery and Trial
+								//$('.nav-tabs').tabdrop('layout');
 							});
 
 						} else {

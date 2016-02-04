@@ -138,6 +138,8 @@
 	</div>
 </div>
 
+<script type="text/javascript" th:src="@{/static/js/nursery-manager/stock-list.js}"></script>
+
 <div class="row">&nbsp;</div>
 <div class="row col-xs-12 col-md-12" id="inventory-germplasm-list">
 	<div th:if="*{listType == 'CROSSES' || listType == 'ADVANCED'}" th:include="/Common/includes/listPagination"></div>

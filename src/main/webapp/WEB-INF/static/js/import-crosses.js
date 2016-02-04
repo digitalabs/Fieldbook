@@ -101,6 +101,7 @@ var ImportCrosses = {
 
 			return deferred.promise();
 		},
+
 		displayCrossesGermplasmDetails: function (listId) {
 			'use strict';
 			$.ajax({
@@ -291,10 +292,13 @@ var ImportCrosses = {
 
 			if (ImportCrosses.isCrossImportSettingsValid(settingData)) {
 				var targetURL;
+				var settingsForSaving;
 				if ($('#presetName').val().trim() !== '') {
 					targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
+					settingsForSaving = true;
 				} else {
 					targetURL = ImportCrosses.CROSSES_URL + '/submit';
+					settingsForSaving = false;
 				}
 
 				$.ajax({
@@ -311,7 +315,15 @@ var ImportCrosses = {
 							showErrorMessage('', 'Import failed');
 						} else {
 							$('#crossSettingsModal').modal('hide');
+
 							ImportCrosses.openSaveListModal();
+
+							if (settingsForSaving) {
+								// as per UI requirements, we also display a success message regarding the saving of the settings
+								// if an error in the settings saving has occurred, program flow would have continued in the data.success === '0' branch
+								// hence, we can safely assume that settings have been properly saved at this point
+								showSuccessfulMessage('', 'Crossing settings have been saved successfully');
+							}
 						}
 					}
 				});

@@ -17,6 +17,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,15 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
-	@Test
-	public void testUseExistingTrialWithError() throws Exception {
+	@Before
+	public void setUp() {
 		this.fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
 		this.controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
+		this.mockContextUtil();
+	}
+
+	@Test
+	public void testUseExistingTrialWithError() throws Exception {
 		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(1)).thenThrow(
 				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
 
@@ -51,9 +57,6 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 	
 	@Test
 	public void testUseExistingTrial() throws Exception {
-		this.fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		this.controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-		this.mockContextUtil();
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 		Mockito.doReturn(workbook).when(this.fieldbookMiddlewareService).getTrialDataSet(1);

@@ -269,10 +269,6 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("germplasmListSize", 0);
 	}
 
-    private List<GermplasmList> getAdvancedList(final Integer trialId) {
-        return this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.ADVANCED);
-    }
-
 	protected void clearSessionData(final HttpSession session) {
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.USER_SELECTION_SESSION_NAME,
 				SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});

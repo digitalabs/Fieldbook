@@ -7,9 +7,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
@@ -23,31 +38,17 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -513,6 +514,17 @@ public abstract class BaseTrialController extends SettingsController {
 		this.userSelection.setNurseryConditions(trialConditionsList);
 
 		return info;
+	}
+
+	protected List<AdvanceList> getAdvancedList(final Integer trialId) {
+		List<GermplasmList> germplasmList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.ADVANCED);
+		List<AdvanceList> advanceList = new ArrayList<>();
+
+		for(GermplasmList g : germplasmList){
+			advanceList.add(new AdvanceList(g.getId(), g.getName()));
+		}
+
+		return advanceList;
 	}
 
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {

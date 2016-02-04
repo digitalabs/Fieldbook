@@ -12,6 +12,7 @@ import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
@@ -26,6 +27,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Variable;
@@ -36,6 +38,7 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
@@ -779,5 +782,23 @@ public class OpenTrialControllerTest {
 		measurementVariable.setVariableType(VariableType.SELECTION_METHOD);
 		measurementVariable.setRole(VariableType.SELECTION_METHOD.getRole());
 		return measurementVariable;
+	}
+
+	@Test
+	public void testGetAdvancedList() {
+		GermplasmList germplasm = new GermplasmList();
+		germplasm.setId(501);
+		germplasm.setName("Advance Trial List");
+
+		List<GermplasmList> germplasmList = new ArrayList<>();
+		germplasmList.add(germplasm);
+
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Mockito.anyInt(), Mockito.any(GermplasmListType.class))).thenReturn(germplasmList);
+
+		List<AdvanceList> advancedList = this.openTrialController.getAdvancedList(germplasm.getId());
+
+		Assert.assertEquals("Advance List size", 1, advancedList.size());
+		Assert.assertEquals("Advance List Id: ", germplasm.getId(), advancedList.get(0).getId());
+		Assert.assertEquals("Advance List Name: ", germplasm.getName(), advancedList.get(0).getName());
 	}
 }

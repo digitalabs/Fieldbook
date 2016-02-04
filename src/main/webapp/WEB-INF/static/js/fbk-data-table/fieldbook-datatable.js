@@ -48,7 +48,7 @@ BMS.Fieldbook.MeasurementsTable = {
 };
 
 BMS.Fieldbook.MeasurementsDataTable = (function($) {
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new MeasurementsDataTable.
 	 *
@@ -329,7 +329,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 })(jQuery);
 
 BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new ReviewDetailsOutOfBoundsDataTable.
 	 *
@@ -422,7 +422,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 })(jQuery);
 
 BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new PreviewCrossesDataTable.
 	 *
@@ -506,7 +506,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 
 BMS.Fieldbook.GermplasmListDataTable = (function($) {
 
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new MeasurementsDataTable.
 	 *
@@ -756,7 +756,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 
 BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new MeasurementsDataTable.
 	 *
@@ -889,7 +889,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 
 BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new AdvancedGermplasmListDataTable.
 	 *
@@ -942,7 +942,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
 BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new AdvancedGermplasmListDataTable.
 	 *
@@ -1116,7 +1116,7 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 })(jQuery);
 
 BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new PreviewDesignMeasurementsDataTable.
 	 *

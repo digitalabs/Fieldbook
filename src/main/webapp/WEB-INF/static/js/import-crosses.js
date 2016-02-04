@@ -322,7 +322,7 @@ var ImportCrosses = {
 								// as per UI requirements, we also display a success message regarding the saving of the settings
 								// if an error in the settings saving has occurred, program flow would have continued in the data.success === '0' branch
 								// hence, we can safely assume that settings have been properly saved at this point
-								showSuccessfulMessage('', 'Crossing settings have been saved successfully');
+								showSuccessfulMessage('', crossingSettingsSaved);
 							}
 						}
 					}

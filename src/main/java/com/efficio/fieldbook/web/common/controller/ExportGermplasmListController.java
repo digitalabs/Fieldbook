@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -128,7 +129,9 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		}
 
 		if (list != null) {
-			listName = list.getName();
+
+			// sanitize the list name to remove illegal characters for Windows filename.
+			listName = FileUtils.sanitizeFileName(list.getName());
 
 			if (exportType == 1) {
 

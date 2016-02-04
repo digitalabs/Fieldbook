@@ -523,10 +523,10 @@ LabelPrinting = {
 
 		}
 		var data = $safeId('#userLabelPrinting.filename').val();
-		var isValid = /[:\\\\/*?|<>]*$/i.test(data);
+		var isValid = /^[^\\\/\:\*\?\"\<\>\|\.]+(\.[^\\\/\:\*\?\"\<\>\|\.]+)+$/.test(data);
 
 		if (!isValid) {
-			showInvalidInputMessage(filenameErrorCharacter);
+			showInvalidInputMessage(filenameIsInvalid);
 			moveToTopScreen();
 			return false;
 		}

@@ -2919,10 +2919,12 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 								// return the array that matches
 								data.results = $.grep(data.results, function(
 										item, index) {
-									return ($.fn.select2.defaults.matcher(
-											query.term, item.text));
+									if (item.text.toUpperCase().indexOf(query.term.toUpperCase()) === 0) {
+										return true;
+									}
+									return false;
 								});
-								if (data.results.length === 0) {
+								if (data.results.length === 0 || data.results[0].text.toUpperCase() != query.term.toUpperCase()) {
 									data.results.unshift({
 										id: query.term,
 										text: query.term

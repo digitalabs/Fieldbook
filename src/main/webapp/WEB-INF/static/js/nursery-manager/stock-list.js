@@ -433,7 +433,6 @@ if (typeof StockIDFunctions === 'undefined') {
 				type: 'POST',
 				cache: false,
 				success: function(resp) {
-                    debugger;
 					if (resp.hasError) {
 						showErrorMessage('', resp.errorMessage);
 					} else {

@@ -25,7 +25,11 @@ import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +43,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,6 +58,8 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.util.CrossesListUtil;
 import com.efficio.fieldbook.web.util.DuplicatesUtil;
 
 /**
@@ -61,7 +68,7 @@ import com.efficio.fieldbook.web.util.DuplicatesUtil;
 
 @Controller
 @RequestMapping(CrossingSettingsController.URL)
-public class CrossingSettingsController extends AbstractBaseFieldbookController {
+public class CrossingSettingsController extends SettingsController {
 
 	public static final String URL = "/crosses";
 	public static final int YEAR_INTERVAL = 30;
@@ -99,6 +106,15 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@Resource
 	private MessageSource messageSource;
+
+	@Resource
+	private CrossesListUtil crossesListUtil;
+
+	/**
+	 * The germplasm list manager.
+	 */
+	@Resource
+	private GermplasmListManager germplasmListManager;
 
 	@Override
 	public String getContentName() {
@@ -240,8 +256,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			CrossingSettingsController.LOG.debug(e.getMessage(), e);
 
 			out.put(CrossingSettingsController.IS_SUCCESS, Boolean.FALSE);
-			out.put("errorMessage",
-					this.messageSource.getMessage(e.getMessage(), new String[] {}, "cannot export a crossing template",
+			out.put("errorMessage", this.messageSource.getMessage(e.getMessage(), new String[] {}, "cannot export a crossing template",
 							LocaleContextHolder.getLocale()));
 		}
 
@@ -310,27 +325,41 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		}
 
 		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
-			masterList.add(this.generateDatatableDataMap(cross));
+			masterList.add(crossesListUtil.generateDatatableDataMapWithDups(cross));
 		}
 
 		return masterList;
 	}
 
-	protected Map<String, Object> generateDatatableDataMap(final ImportedCrosses importedCrosses) {
+	@ResponseBody
+	@RequestMapping(value = "/getImportedCrossesList/{createdCrossesListId}", method = RequestMethod.GET)
+	public List<Map<String, Object>> getImportedCrossesList(@PathVariable final String createdCrossesListId) {
 
-		final Map<String, Object> dataMap = new HashMap<>();
+		final List<Map<String, Object>> masterList = new ArrayList<>();
+		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
 
-		dataMap.put("ENTRY", importedCrosses.getEntryId());
-		dataMap.put("PARENTAGE", importedCrosses.getCross());
-		dataMap.put("ENTRY CODE", importedCrosses.getEntryCode());
-		dataMap.put("FEMALE PARENT", importedCrosses.getFemaleDesig());
-		dataMap.put("FGID", importedCrosses.getFemaleGid());
-		dataMap.put("MALE PARENT", importedCrosses.getMaleDesig());
-		dataMap.put("MGID", importedCrosses.getMaleGid());
-		dataMap.put("SOURCE", importedCrosses.getSource());
-		dataMap.put("DUPLICATE", importedCrosses.getDuplicate());
-		return dataMap;
+		//TODO Insert get list crosses list
+		final GermplasmList crossesList = fieldbookMiddlewareService.getGermplasmListById(crossesListId);
+		final List<GermplasmListData> listDataList = germplasmListManager.getGermplasmListDataByListId(crossesListId);
 
+
+		//TODO fix imported crosses list
+		// process female + male parent entries, will throw middleware query exception if no study valid or null
+		/*ListDataProject femaleListData = this.getCrossingListProjectData(femaleNursery, Integer.valueOf(femalePlotNo), programUUID);
+		ListDataProject maleListData = this.getCrossingListProjectData(maleNursery, Integer.valueOf(malePlotNo), programUUID);
+
+		ImportedCrosses importedCrosses =
+				new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery, femalePlotNo, malePlotNo, this.currentRow);
+		// Show sounrce as "Pending" in initial dialogue.
+		// Source (Plot Code) string is generated later in the proces and will be displayed in the final list generated.
+		importedCrosses.setSource("Pending");
+		importedCrosses.setOptionalFields(breedingMethod, crossingDate, seedsHarvested, notes);*/
+		// this would set the correct cross string depending if the use is cimmyt wheat
+
+		for (final GermplasmListData listData : listDataList) {
+			masterList.add(crossesListUtil.generateDatatableDataMapWithDups(listData));
+		}
+		return masterList;
 	}
 
 	protected void saveCrossSetting(final CrossSetting setting, final String programUUID) throws MiddlewareQueryException, JAXBException {

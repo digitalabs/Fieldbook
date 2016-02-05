@@ -1,8 +1,7 @@
 
-package com.efficio.fieldbook.web.common.controller;
+package com.efficio.fieldbook.web.util;
 
 import java.util.Map;
-
 import junit.framework.Assert;
 
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -16,26 +15,26 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class ImportCrossesControllerTest {
+public class CrossesListUtilTest {
 
 	@Mock
 	private OntologyDataManager ontologyDataManager;
 	@Mock
 	private ImportedCrosses importedCrosses;
 
-	private ImportCrossesController importCrossesController;
+	private CrossesListUtil crossesListUtil;
 
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
-		this.importCrossesController = Mockito.spy(new ImportCrossesController());
-		this.importCrossesController.setOntologyDataManager(this.ontologyDataManager);
+		this.crossesListUtil = new CrossesListUtil();
+		this.crossesListUtil.setOntologyDataManager(this.ontologyDataManager);
 	}
 
 	@Test
 	public void testGenerateDatatableDataMap_returnsTheValueFromOntology() throws MiddlewareQueryException {
-		String dummyString = "DUMMY STRING";
+		final String dummyString = "DUMMY STRING";
 		Mockito.when(this.importedCrosses.getEntryId()).thenReturn(Integer.MIN_VALUE);
 		Mockito.when(this.importedCrosses.getCross()).thenReturn(dummyString);
 		Mockito.when(this.importedCrosses.getEntryCode()).thenReturn(dummyString);
@@ -45,7 +44,7 @@ public class ImportCrossesControllerTest {
 		Mockito.when(this.importedCrosses.getMaleGid()).thenReturn(dummyString);
 		Mockito.when(this.importedCrosses.getSource()).thenReturn(dummyString);
 
-		Term fromOntology = new Term();
+		final Term fromOntology = new Term();
 		fromOntology.setName("Ontology Name");
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(fromOntology);
@@ -56,16 +55,16 @@ public class ImportCrossesControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.MGID.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
 
-		Map<String, Object> tableHeaderList = this.importCrossesController.generateDatatableDataMap(this.importedCrosses);
+		final Map<String, Object> tableHeaderList = this.crossesListUtil.generateDatatableDataMap(this.importedCrosses);
 
-		for (Map.Entry<String, Object> tableHeader : tableHeaderList.entrySet()) {
+		for (final Map.Entry<String, Object> tableHeader : tableHeaderList.entrySet()) {
 			Assert.assertEquals("Expecting name from ontology but didn't.", fromOntology.getName(), tableHeader.getKey());
 		}
 	}
 
 	@Test
 	public void testGenerateDatatableDataMap_returnsTheValueFromColumLabelDefaultName() throws MiddlewareQueryException {
-		String dummyString = "DUMMY STRING";
+		final String dummyString = "DUMMY STRING";
 		Mockito.when(this.importedCrosses.getEntryId()).thenReturn(Integer.MIN_VALUE);
 		Mockito.when(this.importedCrosses.getCross()).thenReturn(dummyString);
 		Mockito.when(this.importedCrosses.getEntryCode()).thenReturn(dummyString);
@@ -75,7 +74,7 @@ public class ImportCrossesControllerTest {
 		Mockito.when(this.importedCrosses.getMaleGid()).thenReturn(dummyString);
 		Mockito.when(this.importedCrosses.getSource()).thenReturn(dummyString);
 
-		Term fromOntology = new Term();
+		final Term fromOntology = new Term();
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_CODE.getId())).thenReturn(fromOntology);
@@ -85,7 +84,7 @@ public class ImportCrossesControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.MGID.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
 
-		Map<String, Object> tableHeaderList = this.importCrossesController.generateDatatableDataMap(this.importedCrosses);
+		final Map<String, Object> tableHeaderList = this.crossesListUtil.generateDatatableDataMap(this.importedCrosses);
 
 		Assert.assertTrue("Expecting to have a column name ENTRY_ID.", this.hasColumnHeader(tableHeaderList, "ENTRY_ID"));
 		Assert.assertTrue("Expecting to have a column name PARENTAGE.", this.hasColumnHeader(tableHeaderList, "PARENTAGE"));
@@ -98,8 +97,8 @@ public class ImportCrossesControllerTest {
 
 	}
 
-	private boolean hasColumnHeader(Map<String, Object> tableHeaderList, String columnName) {
-		for (Map.Entry<String, Object> tableHeader : tableHeaderList.entrySet()) {
+	private boolean hasColumnHeader(final Map<String, Object> tableHeaderList, final String columnName) {
+		for (final Map.Entry<String, Object> tableHeader : tableHeaderList.entrySet()) {
 			if (tableHeader.getKey().equals(columnName)) {
 				return true;
 			}

@@ -273,10 +273,10 @@
         ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
         <a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
     </li>
-    <li ng-repeat="tab in advanceTrialTabs track by $index"  ng-class="{active: tabSelected===tab.state}" ng-click="tabChange(tab.state)"
+    <li ng-repeat="tab in advanceTrialTabs | orderObjectBy : 'id'  track by $index"  ng-class="{active: tabSelected===tab.state}" ng-click="tabChange(tab.state)"
         ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
         <a href="#tab.name" tab-data='{{tab.id}}'>{{tab.displayName}}
-            <i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab($index)"></i>
+            <i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab(tab.state)"></i>
         </a>
     </li>
 </ul>

@@ -417,6 +417,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
             angular.forEach($scope.advancedTrialList,function(value){
                 displayAdvanceList('', value.id, value.name, false, '');
+                StockIDFunctions.displayStockList(value.id);
             });
 
             $scope.tabChange = function(selectedTab) {
@@ -424,7 +425,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                 $scope.isSettingsTab = false;
             };
 
-            $scope.closeAdvanceListTab = function (index){
+            $scope.closeAdvanceListTab = function (tab){
+                var index= $scope.findIndexByKeyValue($scope.advanceTrialTabs, 'state', tab);
                 $scope.advanceTrialTabs.splice(index, 1);
                 $scope.advanceTabs.splice(index, 1);
                 $scope.tabSelected = 'trialSettings';
@@ -437,6 +439,14 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			$('body').on('REFRESH_AFTER_IMPORT_SAVE', function() {
 				$scope.refreshTabAfterImport();
 			});
+            $scope.findIndexByKeyValue = function(arraytosearch, key, valuetosearch) {
+                for (var i = 0; i < arraytosearch.length; i++) {
+                    if (arraytosearch[i][key] == valuetosearch) {
+                        return i;
+                    }
+                }
+                return null;
+            }
 		}]);
 
 	manageTrialApp.filter('filterMeasurementState', function() {
@@ -472,6 +482,20 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				$uibModalInstance.close(false);
 			};
 		});
+
+    manageTrialApp.filter('orderObjectBy', function() {
+        return function(items, field, reverse) {
+            var filtered = [];
+            angular.forEach(items, function(item) {
+                filtered.push(item);
+            });
+            filtered.sort(function (a, b) {
+                return (a[field] > b[field] ? 1 : -1);
+            });
+            if(reverse) filtered.reverse();
+            return filtered;
+        };
+    });
 
 	// README IMPORTANT: Code unmanaged by angular should go here
 	document.onInitManageTrial = function() {

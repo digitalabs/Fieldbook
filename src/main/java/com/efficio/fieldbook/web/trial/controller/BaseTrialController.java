@@ -527,6 +527,17 @@ public abstract class BaseTrialController extends SettingsController {
 		return advanceList;
 	}
 
+	protected List<AdvanceList> getStockList(final Integer trialId) {
+		List<GermplasmList> germplasmList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CROSSES);
+		List<AdvanceList> stockList = new ArrayList<>();
+
+		for(GermplasmList g : germplasmList){
+			stockList.add(new AdvanceList(g.getId(), g.getName()));
+		}
+
+		return stockList;
+	}
+
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {
 		final List<SettingDetail> output = new ArrayList<SettingDetail>();
 

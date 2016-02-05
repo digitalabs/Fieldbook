@@ -273,10 +273,10 @@
         ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
         <a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
     </li>
-    <li ng-repeat="tab in advanceTrialTabs"  ng-class="{active: tabSelected===tab.state}" ng-click="tabChange(tab.state)"
+    <li ng-repeat="tab in advanceTrialTabs track by $index"  ng-class="{active: tabSelected===tab.state}" ng-click="tabChange(tab.state)"
         ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
-        <a href="#tab.name" tab-data='{{tab.id}}'>Advance List: [{{tab.name}}]
-            <i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab(' + tab +')"></i>
+        <a href="#tab.name" tab-data='{{tab.id}}'>{{tab.displayName}}
+            <i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab($index)"></i>
         </a>
     </li>
 </ul>
@@ -290,7 +290,7 @@
         <div class="col-xs-12" ui-view="environment" ng-show="tabSelected==='environment'"></div>
         <div class="col-xs-12" ui-view="createMeasurements" ng-show="tabSelected==='createMeasurements'"></div>
         <div class="col-xs-12" ui-view="editMeasurements" ng-show="tabSelected==='editMeasurements'"></div>
-        <div class="col-xs-12" ng-repeat="advancetab in advanceTabs" id="#advancetab.name" ng-show="tabSelected===advancetab.name">
+        <div class="col-xs-12" ng-repeat="advancetab in advanceTabs track by $index" id="#advancetab.name" ng-show="tabSelected===advancetab.name">
             <div ng-bind-html="advancetab.data"></div>
         </div>
 	</div>

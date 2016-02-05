@@ -371,17 +371,45 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			};
 
             $scope.addAdvanceTabData = function(tabId, tabData, listName) {
-                $scope.advanceTrialTabs.push({
-                    name: listName,
-                    state: 'advance-list'+tabId+'-li',
-                    id: tabId
-                });
+                var isSwap = false;
+                var tempAdvanceTrialTab = $scope.advanceTrialTabs;
+                var tempAdvanceTabs = $scope.advanceTabs;
+                angular.forEach($scope.advanceTrialTabs, function (value, index) {
+                    if (!isSwap) {
+                        if (value.id == tabId) {
 
-                $scope.advanceTabs.push({
-                    name: 'advance-list'+tabId+'-li',
-                    data: tabData
+                            $scope.advanceTrialTabs.splice(index+1,0, {
+                                name: listName,
+                                state: 'stock-list' + tabId + '-li',
+                                id: tabId,
+                                displayName: "Stock List:[" + $scope.advanceTrialTabs[index].name + "]"
+                            });
+
+                            $scope.advanceTabs.splice(index+1,0,{name: 'stock-list' + tabId + '-li',
+                                data: tabData
+                            });
+                            isSwap = true;
+                            $scope.tabSelected = 'stock-list' + tabId + '-li';
+                        }
+                    }
                 });
-                $scope.tabSelected = 'advance-list'+tabId+'-li';
+                $scope.advanceTrialTabs = tempAdvanceTrialTab;
+                $scope.advanceTabs = tempAdvanceTabs;
+                if (!isSwap) {
+                    $scope.advanceTrialTabs.push({
+                        name: listName,
+                        state: 'advance-list' + tabId + '-li',
+                        id: tabId,
+                        displayName: "Advance List: [" + listName + "]"
+                    });
+
+                    $scope.advanceTabs.push({
+                        name: 'advance-list' + tabId + '-li',
+                        data: tabData
+                    });
+                    $scope.tabSelected = 'advance-list' + tabId + '-li';
+                }
+
                 $scope.isSettingsTab = false;
             };
 
@@ -396,8 +424,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                 $scope.isSettingsTab = false;
             };
 
-            $scope.closeAdvanceListTab = function(item) {
-                var index = $scope.advanceTrialTabs.indexOf(item);
+            $scope.closeAdvanceListTab = function (index){
                 $scope.advanceTrialTabs.splice(index, 1);
                 $scope.advanceTabs.splice(index, 1);
                 $scope.tabSelected = 'trialSettings';

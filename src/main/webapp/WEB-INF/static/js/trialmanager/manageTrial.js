@@ -398,6 +398,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 							});
 							isSwap = true;
 							$scope.tabSelected = 'stock-list' + tabId + '-li';
+                            $("#listActionButton"+tabId).addClass('disabled');
 						}
 					}
 				});

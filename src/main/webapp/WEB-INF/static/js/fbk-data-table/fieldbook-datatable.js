@@ -167,100 +167,108 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				});
 			}
 		});
-		table = $(tableIdentifier).DataTable({
-			data: dataList,
-			columns: columns,
-			scrollY: '500px',
-			scrollX: '100%',
-			scrollCollapse: true,
-			columnDefs: columnsDef,
-			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
-			bAutoWidth: true,
-			iDisplayLength: 100,
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-				var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
-				// Assuming ID is in last column
-				$(nRow).attr('id', aData.experimentId);
-				$(nRow).data('row-index', this.fnGetPosition(nRow));
-				$(nRow).attr('title', toolTip);
-				$('td', nRow).attr('nowrap', 'nowrap');
+		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
+			table = $(tableIdentifier).DataTable();
+			table.clear();
+			table.rows.add(dataList).draw();
+		} else {
+			table = $(tableIdentifier).DataTable({
+				data: dataList,
+				columns: columns,
+				retrieve: true,
+				scrollY: '500px',
+				scrollX: '100%',
+				scrollCollapse: true,
+				columnDefs: columnsDef,
+				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+				bAutoWidth: true,
+				iDisplayLength: 100,
+				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-				$(nRow).find('.accepted-value, .invalid-value, .numeric-variable').each(function() {
+					var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
+					// Assuming ID is in last column
+					$(nRow).attr('id', aData.experimentId);
+					$(nRow).data('row-index', this.fnGetPosition(nRow));
+					$(nRow).attr('title', toolTip);
+					$('td', nRow).attr('nowrap', 'nowrap');
 
-					var termId = $(this).data('term-id');
-					var cellData = $(this).text();
-					if (termId != undefined) {
-						var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
-						var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
-						if (dataTypeId == '1110') {
-							var minVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('min-range'));
-							var maxVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));
-							var isVariates =  $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").hasClass('variates');
-							if (isVariates) {
-								$(this).removeClass('accepted-value');
-								$(this).removeClass('invalid-value');
-								if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellData) || parseFloat(cellData) > parseFloat(maxVal))) {
-									if (cellData !== 'missing') {
+					$(nRow).find('.accepted-value, .invalid-value, .numeric-variable').each(function() {
 
-										if ($(this).find("input[type='hidden']").val() === 'true') {
-											$(this).addClass('accepted-value');
-										} else {
-											$(this).addClass('invalid-value');
+						var termId = $(this).data('term-id');
+						var cellData = $(this).text();
+						if (termId != undefined) {
+							var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
+							var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
+							if (dataTypeId == '1110') {
+								var minVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('min-range'));
+								var maxVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));
+								var isVariates =  $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").hasClass('variates');
+								if (isVariates) {
+									$(this).removeClass('accepted-value');
+									$(this).removeClass('invalid-value');
+									if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellData) || parseFloat(cellData) > parseFloat(maxVal))) {
+										if (cellData !== 'missing') {
+
+											if ($(this).find("input[type='hidden']").val() === 'true') {
+												$(this).addClass('accepted-value');
+											} else {
+												$(this).addClass('invalid-value');
+											}
 										}
 									}
 								}
-							}
-						}else if (possibleValues != undefined) {
-							var values = possibleValues.split('|');
+							}else if (possibleValues != undefined) {
+								var values = possibleValues.split('|');
 
-							$(this).removeClass('accepted-value');
-							$(this).removeClass('invalid-value');
+								$(this).removeClass('accepted-value');
+								$(this).removeClass('invalid-value');
 
-							if (cellData !== '' && cellData !== 'missing') {
-								if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
-									if ($(this).data('is-accepted') === '1') {
-										$(this).addClass('accepted-value');
-									}else if ($(this).data('is-accepted') === '0') {
-										$(this).removeClass('invalid-value').removeClass('accepted-value');
+								if (cellData !== '' && cellData !== 'missing') {
+									if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
+										if ($(this).data('is-accepted') === '1') {
+											$(this).addClass('accepted-value');
+										}else if ($(this).data('is-accepted') === '0') {
+											$(this).removeClass('invalid-value').removeClass('accepted-value');
+										} else {
+											$(this).addClass('invalid-value');
+										}
+										$(this).data('term-id', $(this).data('term-id'));
 									} else {
-										$(this).addClass('invalid-value');
+										$(this).addClass('accepted-value');
 									}
-									$(this).data('term-id', $(this).data('term-id'));
-								} else {
-									$(this).addClass('accepted-value');
 								}
 							}
 						}
+					});
+					return nRow;
+				},
+				fnInitComplete: function(oSettings, json) {
+					$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
+					oSettings.oInstance.fnAdjustColumnSizing();
+					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+					if (this.$('.invalid-value').length !== 0) {
+						$('#review-out-of-bounds-data-list').show();
+					} else {
+						$('#review-out-of-bounds-data-list').hide();
 					}
-				});
-				return nRow;
-			},
-			fnInitComplete: function(oSettings, json) {
-				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
-				oSettings.oInstance.fnAdjustColumnSizing();
-				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-				if (this.$('.invalid-value').length !== 0) {
-					$('#review-out-of-bounds-data-list').show();
-				} else {
-					$('#review-out-of-bounds-data-list').hide();
+				},
+				language: {
+					search: '<span class="mdt-filtering-label">Search:</span>'
+				},
+				dom: 'R<"mdt-header"rli<"mdt-filtering">r>tp',
+				// For column visibility
+				colVis: {
+					exclude: [0],
+					restore: 'Restore',
+					showAll: 'Show all'
+				},
+				// Problem with reordering plugin and fixed column for column re-ordering
+				colReorder: {
+					fixedColumns: 1
 				}
-			},
-			language: {
-				search: '<span class="mdt-filtering-label">Search:</span>'
-			},
-			dom: 'R<"mdt-header"rli<"mdt-filtering">r>tp',
-			// For column visibility
-			colVis: {
-				exclude: [0],
-				restore: 'Restore',
-				showAll: 'Show all'
-			},
-			// Problem with reordering plugin and fixed column for column re-ordering
-			colReorder: {
-				fixedColumns: 1
-			}
-		});
+			});
+		}
 
 		if ($('#studyId').val() != '') {
 			// Activate an inline edit on click of a table cell
@@ -375,41 +383,49 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 				});
 			}
 		});
-		table = $(tableIdentifier).DataTable({
-			data: dataList,
-			columns: columns,
-			scrollY: '400px',
-			scrollX: '100%',
-			scrollCollapse: true,
-			columnDefs: columnsDef,
-			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
-			bAutoWidth: true,
-			iDisplayLength: 100,
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-				// Assuming ID is in last column
-				$(nRow).attr('id', aData.experimentId);
-				$(nRow).data('row-index', this.fnGetPosition(nRow));
+		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
+			table = $(tableIdentifier).DataTable();
+			table.clear();
+			table.rows.add(dataList).draw();
+		} else {
+			table = $(tableIdentifier).DataTable({
+				data: dataList,
+				columns: columns,
+				retrieve: true,
+				scrollY: '400px',
+				scrollX: '100%',
+				scrollCollapse: true,
+				columnDefs: columnsDef,
+				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+				bAutoWidth: true,
+				iDisplayLength: 100,
+				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-				$('td', nRow).attr('nowrap', 'nowrap');
-				$('td', nRow).attr('nowrap', 'nowrap');
+					// Assuming ID is in last column
+					$(nRow).attr('id', aData.experimentId);
+					$(nRow).data('row-index', this.fnGetPosition(nRow));
 
-				return nRow;
-			},
-			fnInitComplete: function(oSettings, json) {
-				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
-				oSettings.oInstance.fnAdjustColumnSizing();
-				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-			},
-			language: {
-				search: '<span class="mdt-filtering-label">Search:</span>'
-			},
-			dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
-			// Problem with reordering plugin and fixed column for column re-ordering
-			colReorder: {
-				fixedColumns: 1
-			}
-		});
+					$('td', nRow).attr('nowrap', 'nowrap');
+					$('td', nRow).attr('nowrap', 'nowrap');
+
+					return nRow;
+				},
+				fnInitComplete: function(oSettings, json) {
+					$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
+					oSettings.oInstance.fnAdjustColumnSizing();
+					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+				},
+				language: {
+					search: '<span class="mdt-filtering-label">Search:</span>'
+				},
+				dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
+				// Problem with reordering plugin and fixed column for column re-ordering
+				colReorder: {
+					fixedColumns: 1
+				}
+			});
+		}
 
 		$(tableIdentifier).dataTable().bind('sort', function() {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
@@ -459,41 +475,50 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				});
 			}
 		});
-		table = $(tableIdentifier).DataTable({
-			data: dataList,
-			columns: columns,
-			scrollY: '400px',
-			scrollX: '100%',
-			scrollCollapse: true,
-			columnDefs: columnsDef,
-			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
-			bAutoWidth: true,
-			iDisplayLength: 100,
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-				// Assuming ID is in last column
-				$(nRow).attr('id', aData.experimentId);
-				$(nRow).data('row-index', this.fnGetPosition(nRow));
+		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
+			table = $(tableIdentifier).DataTable();
+			table.clear();
+			table.rows.add(dataList).draw();
+		} else {
+			table = $(tableIdentifier).DataTable({
+				data: dataList,
+				columns: columns,
+				retrieve: true,
+				scrollY: '400px',
+				scrollX: '100%',
+				scrollCollapse: true,
+				columnDefs: columnsDef,
+				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+				bAutoWidth: true,
+				iDisplayLength: 100,
+				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-				$('td', nRow).attr('nowrap', 'nowrap');
-				$('td', nRow).attr('nowrap', 'nowrap');
+					// Assuming ID is in last column
+					$(nRow).attr('id', aData.experimentId);
+					$(nRow).data('row-index', this.fnGetPosition(nRow));
 
-				return nRow;
-			},
-			fnInitComplete: function(oSettings, json) {
-				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
-				oSettings.oInstance.fnAdjustColumnSizing();
-				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-			},
-			language: {
-				search: '<span class="mdt-filtering-label">Search:</span>'
-			},
-			dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
-			// Problem with reordering plugin and fixed column for column re-ordering
-			colReorder: {
-				fixedColumns: 1
-			}
-		});
+					$('td', nRow).attr('nowrap', 'nowrap');
+					$('td', nRow).attr('nowrap', 'nowrap');
+
+					return nRow;
+				},
+				fnInitComplete: function(oSettings, json) {
+					$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
+					oSettings.oInstance.fnAdjustColumnSizing();
+					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+				},
+				language: {
+					search: '<span class="mdt-filtering-label">Search:</span>'
+				},
+				dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
+				// Problem with reordering plugin and fixed column for column re-ordering
+				colReorder: {
+					fixedColumns: 1
+				}
+			});
+		}
+
 		$(tableIdentifier).dataTable().bind('sort', function() {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 		});
@@ -568,22 +593,23 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 				$(nRow).data('gid', aData.gid);
 				$(nRow).data('index', aData.position);
 
-				$(nRow).addClass('draggable primaryRow');
-				$('td', nRow).attr('nowrap', 'nowrap');
-				return nRow;
-			},
-			fnInitComplete: function(oSettings, json) {
+					$(nRow).addClass('draggable primaryRow');
+					$('td', nRow).attr('nowrap', 'nowrap');
+					return nRow;
+				},
+				fnInitComplete: function(oSettings, json) {
 
-				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
-				if (totalPages === 1) {
-					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+					var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
+					if (totalPages === 1) {
+						$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+					}
+					$(parentDiv).removeClass('fbk-hide-opacity');
+					oSettings.oInstance.fnAdjustColumnSizing();
+					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+					oSettings.oInstance.fnAdjustColumnSizing();
 				}
-				$(parentDiv).removeClass('fbk-hide-opacity');
-				oSettings.oInstance.fnAdjustColumnSizing();
-				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-				oSettings.oInstance.fnAdjustColumnSizing();
-			}
-		});
+			});
+		}
 
 		GermplasmListDataTable.prototype.getDataTable = function() {
 			return this.germplasmDataTable;
@@ -657,43 +683,51 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 				});
 			}
 		});
-		this.table = $(tableIdentifier).dataTable({
-			data: dataList,
-			columns: columns,
-			columnDefs: columnsDef,
-			scrollY: '500px',
-			scrollX: '100%',
-			scrollCollapse: true,
-			order: defaultOrdering,
-			// Problem with reordering plugin and fixed column for column re-ordering
-			colReorder: {
-				fixedColumns: 1
-			},
-			dom: 'R<t><"fbk-page-div"p>',
-			iDisplayLength: 100,
-			fnDrawCallback: function(oSettings) {
 
-			},
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-				$(nRow).data('entry', aData.entry);
-				$(nRow).data('gid', aData.gid);
-				$(nRow).data('index', aData.position);
+		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
+			this.table = $(tableIdentifier).DataTable();
+			this.table.clear();
+			this.table.rows.add(dataList).draw();
+		} else {
+			this.table = $(tableIdentifier).dataTable({
+				data: dataList,
+				columns: columns,
+				columnDefs: columnsDef,
+				retrieve: true,
+				scrollY: '500px',
+				scrollX: '100%',
+				scrollCollapse: true,
+				order: defaultOrdering,
+				// Problem with reordering plugin and fixed column for column re-ordering
+				colReorder: {
+					fixedColumns: 1
+				},
+				dom: 'R<t><"fbk-page-div"p>',
+				iDisplayLength: 100,
+				fnDrawCallback: function(oSettings) {
 
-				$(nRow).addClass('primaryRow');
-				$('td', nRow).attr('nowrap', 'nowrap');
-				return nRow;
-			},
-			fnInitComplete: function(oSettings, json) {
-				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
-				if (totalPages === 1) {
-					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+				},
+				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+					$(nRow).data('entry', aData.entry);
+					$(nRow).data('gid', aData.gid);
+					$(nRow).data('index', aData.position);
+
+					$(nRow).addClass('primaryRow');
+					$('td', nRow).attr('nowrap', 'nowrap');
+					return nRow;
+				},
+				fnInitComplete: function(oSettings, json) {
+					var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
+					if (totalPages === 1) {
+						$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+					}
+					$(parentDiv).removeClass('fbk-hide-opacity');
+					oSettings.oInstance.fnAdjustColumnSizing();
+					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+					oSettings.oInstance.fnAdjustColumnSizing();
 				}
-				$(parentDiv).removeClass('fbk-hide-opacity');
-				oSettings.oInstance.fnAdjustColumnSizing();
-				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-				oSettings.oInstance.fnAdjustColumnSizing();
-			}
-		});
+			});
+		}
 
 		TrialGermplasmListDataTable.prototype.getDataTable = function() {
 			return this.table;
@@ -824,40 +858,48 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				});
 			}
 		});
-		this.checkDataTable = $(tableIdentifier).dataTable({
-			data: dataList,
-			columns: columns,
-			columnDefs: columnsDef,
-			scrollY: '500px',
-			scrollX: '100%',
-			bSort: false,
-			scrollCollapse: true,
-			dom: 'R<t><"fbk-page-div"p>',
-			iDisplayLength: 100,
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-				$(nRow).addClass('checkRow');
-				$(nRow).data('entry', aData.entry);
-				$(nRow).data('gid', aData.gid);
-				$(nRow).data('index', aData.index);
 
-				$('td', nRow).attr('nowrap', 'nowrap');
-				setTimeout(function() {makeCheckDraggable(makeCheckDraggableBool);}, 300);
-				return nRow;
-			},
-			fnInitComplete: function(oSettings, json) {
+		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
+			this.checkDataTable = $(tableIdentifier).DataTable();
+			this.checkDataTable.clear();
+			this.checkDataTable.rows.add(dataList).draw();
+		} else {
+			this.checkDataTable = $(tableIdentifier).dataTable({
+				data: dataList,
+				columns: columns,
+				columnDefs: columnsDef,
+				retrieve: true,
+				scrollY: '500px',
+				scrollX: '100%',
+				bSort: false,
+				scrollCollapse: true,
+				dom: 'R<t><"fbk-page-div"p>',
+				iDisplayLength: 100,
+				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+					$(nRow).addClass('checkRow');
+					$(nRow).data('entry', aData.entry);
+					$(nRow).data('gid', aData.gid);
+					$(nRow).data('index', aData.index);
 
-				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
-				if (totalPages === 1) {
-					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+					$('td', nRow).attr('nowrap', 'nowrap');
+					setTimeout(function() {makeCheckDraggable(makeCheckDraggableBool);}, 300);
+					return nRow;
+				},
+				fnInitComplete: function(oSettings, json) {
+
+					var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
+					if (totalPages === 1) {
+						$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+					}
+					setTimeout(function() {oSettings.oInstance.fnAdjustColumnSizing();}, 1);
+					//hide delete icon for read only view
+					if ($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 0 && measurementRowCount > 0) {
+						oSettings.oInstance.$('.delete-check').hide();
+					}
+
 				}
-				setTimeout(function() {oSettings.oInstance.fnAdjustColumnSizing();}, 1);
-				//hide delete icon for read only view
-				if ($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 0 && measurementRowCount > 0) {
-					oSettings.oInstance.$('.delete-check').hide();
-				}
-
-			}
-		});
+			});
+		}
 		$(parentDiv + ' div.dataTables_scrollBody').scroll(
 				function() {
 					$(parentDiv + ' .popover').remove();
@@ -904,33 +946,40 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
 		var germplasmDataTable;
 
-		this.germplasmDataTable = $(tableIdentifier).dataTable({
-			scrollY: '500px',
-			scrollX: '100%',
-			scrollCollapse: true,
-			dom: 'R<t><"fbk-page-div"p>',
-			iDisplayLength: 100,
-			fnDrawCallback: function(oSettings) {
-				makeGermplasmListDraggable(true);
-			},
+		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
+			this.germplasmDataTable = $(tableIdentifier).DataTable();
+			this.germplasmDataTable.clear();
+			this.germplasmDataTable.rows.add(dataList).draw();
+		} else {
+			this.germplasmDataTable = $(tableIdentifier).dataTable({
+				retrieve: true,
+				scrollY: '500px',
+				scrollX: '100%',
+				scrollCollapse: true,
+				dom: 'R<t><"fbk-page-div"p>',
+				iDisplayLength: 100,
+				fnDrawCallback: function(oSettings) {
+					makeGermplasmListDraggable(true);
+				},
 
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-				$(nRow).data('entry', aData.entry);
-				$(nRow).data('gid', aData.gid);
-				$('td', nRow).attr('nowrap', 'nowrap');
-				return nRow;
-			},
-			fnInitComplete: function(oSettings, json) {
-				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
-				if (totalPages === 1) {
-					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+					$(nRow).data('entry', aData.entry);
+					$(nRow).data('gid', aData.gid);
+					$('td', nRow).attr('nowrap', 'nowrap');
+					return nRow;
+				},
+				fnInitComplete: function(oSettings, json) {
+					var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
+					if (totalPages === 1) {
+						$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+					}
+					$(parentDiv).removeClass('fbk-hide-opacity');
+					oSettings.oInstance.fnAdjustColumnSizing();
+					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+					oSettings.oInstance.fnAdjustColumnSizing();
 				}
-				$(parentDiv).removeClass('fbk-hide-opacity');
-				oSettings.oInstance.fnAdjustColumnSizing();
-				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-				oSettings.oInstance.fnAdjustColumnSizing();
-			}
-		});
+			});
+		}
 
 		AdvancedGermplasmListDataTable.prototype.getDataTable = function()
 		{
@@ -993,41 +1042,49 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 				});
 			}
 		});
-		this.germplasmDataTable = $(tableIdentifier).dataTable({
-			autoWidth: tableAutoWidth,
-			scrollY: '500px',
-			scrollX: '100%',
-			scrollCollapse: true,
-			aoColumns: aoColumnsDef,
-			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
-			dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
 
-			iDisplayLength: 100,
-			fnDrawCallback: function(oSettings) {
-				$(parentDiv + ' #selectAllAdvance').prop('checked', false);
-				$(parentDiv + ' #selectAllAdvance').change();
-				$(parentDiv + ' input.advancingListGid:checked').parent().parent().addClass('selected');
-				$(parentDiv + ' .numberOfAdvanceSelected').html($(parentDiv + ' tr.primaryRow.selected').length);
-			},
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-				$(nRow).data('entry', aData.entry);
-				$(nRow).data('gid', aData.gid);
-				$('td', nRow).attr('nowrap', 'nowrap');
-				return nRow;
-			},
-			fnInitComplete: function(oSettings, json) {
-				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
-				if (totalPages === 1) {
-					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
+			this.germplasmDataTable = $(tableIdentifier).DataTable();
+			this.germplasmDataTable.clear();
+			this.germplasmDataTable.rows.add(dataList).draw();
+		} else {
+			this.germplasmDataTable = $(tableIdentifier).dataTable({
+				autoWidth: tableAutoWidth,
+				retrieve: true,
+				scrollY: '500px',
+				scrollX: '100%',
+				scrollCollapse: true,
+				aoColumns: aoColumnsDef,
+				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+				dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
+
+				iDisplayLength: 100,
+				fnDrawCallback: function(oSettings) {
+					$(parentDiv + ' #selectAllAdvance').prop('checked', false);
+					$(parentDiv + ' #selectAllAdvance').change();
+					$(parentDiv + ' input.advancingListGid:checked').parent().parent().addClass('selected');
+					$(parentDiv + ' .numberOfAdvanceSelected').html($(parentDiv + ' tr.primaryRow.selected').length);
+				},
+				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+					$(nRow).data('entry', aData.entry);
+					$(nRow).data('gid', aData.gid);
+					$('td', nRow).attr('nowrap', 'nowrap');
+					return nRow;
+				},
+				fnInitComplete: function(oSettings, json) {
+					var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
+					if (totalPages === 1) {
+						$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+					}
+					BMS.Fieldbook.checkPagination(parentDiv);
+					$(parentDiv).removeClass('fbk-hide-opacity');
+					oSettings.oInstance.fnAdjustColumnSizing();
+					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize, tableIdentifier);
+					$(parentDiv + ' .dataTables_length select').select2({minimumResultsForSearch: 10});
+					oSettings.oInstance.fnAdjustColumnSizing();
 				}
-				BMS.Fieldbook.checkPagination(parentDiv);
-				$(parentDiv).removeClass('fbk-hide-opacity');
-				oSettings.oInstance.fnAdjustColumnSizing();
-				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize, tableIdentifier);
-				$(parentDiv + ' .dataTables_length select').select2({minimumResultsForSearch: 10});
-				oSettings.oInstance.fnAdjustColumnSizing();
-			}
-		});
+			});
+		}
 
 		FinalAdvancedGermplasmListDataTable.prototype.getDataTable = function()
 		{
@@ -1104,31 +1161,39 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 			}
 
 		});
-		table = $(tableIdentifier).DataTable({
-			data: dataList,
-			columns: columns,
-			scrollY: '600px',
-			scrollX: '100%',
-			scrollCollapse: true,
-			columnDefs: columnsDef,
-			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
-			bAutoWidth: true,
-			iDisplayLength: 100,
-			dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
-			// For column visibility
-			colVis: {
-				exclude: [0],
-				restore: 'Restore',
-				showAll: 'Show all'
-			},
-			// Problem with reordering plugin and fixed column for column re-ordering
-			colReorder: {
-				fixedColumns: 1
-			},
-			fnInitComplete: function(oSettings, json) {
-				oSettings.oInstance.fnAdjustColumnSizing();
-			}
-		});
+
+		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
+			table = $(tableIdentifier).DataTable();
+			table.clear();
+			table.rows.add(dataList).draw();
+		} else {
+			table = $(tableIdentifier).DataTable({
+				data: dataList,
+				columns: columns,
+				retrieve: true,
+				scrollY: '600px',
+				scrollX: '100%',
+				scrollCollapse: true,
+				columnDefs: columnsDef,
+				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+				bAutoWidth: true,
+				iDisplayLength: 100,
+				dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
+				// For column visibility
+				colVis: {
+					exclude: [0],
+					restore: 'Restore',
+					showAll: 'Show all'
+				},
+				// Problem with reordering plugin and fixed column for column re-ordering
+				colReorder: {
+					fixedColumns: 1
+				},
+				fnInitComplete: function(oSettings, json) {
+					oSettings.oInstance.fnAdjustColumnSizing();
+				}
+			});
+		}
 	};
 	return dataTableConstructor;
 

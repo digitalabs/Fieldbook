@@ -6,9 +6,14 @@ $(function() {
 		SpinnerManager.addActive();
 	}).ajaxStop(function() {
 		SpinnerManager.resolveActive();
-	}).ajaxError(function() {
-		showErrorMessage('', ajaxGenericErrorMsg);
-		SpinnerManager.resolveActive();
+	}).ajaxError(function(xhr, error) {
+        if(error.status == 500) {
+            showErrorMessage('', ajaxGenericErrorMsg);
+        } else {
+            showErrorMessage('INVALID INPUT', error.responseText);
+        }
+
+        SpinnerManager.resolveActive();
 	});
 
 	if (typeof convertToSelect2 === 'undefined' || convertToSelect2) {
@@ -3864,4 +3869,22 @@ function proceedToReviewOutOfBoundsDataAction() {
 	} else if (action === '3') {
 		markAllCellAsMissing();
 	}
+}
+
+function exportDesignTemplate() {
+	$.ajax({
+		url: '/Fieldbook/DesignTemplate/export',
+		type: 'GET',
+		cache: false,
+		success: function(result) {
+			if(result.isSuccess === 1){
+				$.fileDownload('/Fieldbook/crosses/download/file', {
+			    	httpMethod: 'POST',
+			        data: result
+			    });
+			} else {
+				showErrorMessage('page-review-out-of-bounds-data-message-modal', result.errorMessage);
+			}
+		}
+	});
 }

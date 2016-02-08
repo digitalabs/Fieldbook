@@ -94,6 +94,7 @@ public class EditNurseryController extends SettingsController {
 	 * The Constant LOG.
 	 */
 	public static final Logger LOG = LoggerFactory.getLogger(EditNurseryController.class);
+	public static final int NO_LIST_ID = -1;
 	/**
 	 * The ontology service.
 	 */
@@ -842,7 +843,7 @@ public class EditNurseryController extends SettingsController {
 		return this.userSelection.getImportedGermplasmMainInfo() != null &&
 				this.userSelection.getImportedGermplasmMainInfo().getListId() != null ?
 				this.userSelection.getImportedGermplasmMainInfo().getListId()
-				: -1;
+				: NO_LIST_ID;
 	}
 
 	@ModelAttribute("programMethodURL")

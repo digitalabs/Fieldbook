@@ -377,6 +377,14 @@
     <div th:include="Stock/generateStockIDModal"></div>
 </div>
 
+<div class="row">
+	<div th:include="/Common/includes/exportStockList"></div>
+</div>
+
+<div class="row">
+	<div id="export-advance" th:include="/Common/includes/exportAdvanceList"></div>
+</div>
+
 <div class="row" id="addLotsModalDiv"></div>
 
 <form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">

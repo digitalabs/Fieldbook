@@ -31,12 +31,17 @@ function isCurrentTabIdentifierAdvanced() {
 }
 function getCurrentAdvanceTabTempIdentifier() {
 	var listDivIdentifier  = '';
+    if(isNursery()){
         if ($('#create-nursery-tab-headers .tabdrop').hasClass('active')) {
             //means the active is in the tab drop
             listDivIdentifier = $('#create-nursery-tab-headers .tabdrop li.active .fbk-close-tab').attr('id');
         } else {
             listDivIdentifier = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
         }
+    }else {
+        listDivIdentifier = $('#manage-trial-tab-headers .active').children('a').attr('tab-data');
+    }
+
 	return listDivIdentifier;
 }
 function getCurrentAdvanceTabListIdentifier() {

@@ -201,7 +201,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			];
             $scope.tabSelected = 'trialSettings';
             $scope.isSettingsTab = true;
-            $scope.advanceTabs = [];
+            $scope.advanceTabsData = [];
             $scope.advanceTrialTabs = [];
 			$scope.isOpenTrial = TrialManagerDataService.isOpenTrial;
 
@@ -370,48 +370,54 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				}
 			};
 
-            $scope.addAdvanceTabData = function(tabId, tabData, listName) {
-                var isSwap = false;
-                var tempAdvanceTrialTab = $scope.advanceTrialTabs;
-                var tempAdvanceTabs = $scope.advanceTabs;
-                angular.forEach($scope.advanceTrialTabs, function (value, index) {
-                    if (!isSwap) {
-                        if (value.id == tabId) {
+			$scope.addAdvanceTabData = function (tabId, tabData, listName) {
+				var isSwap = false;
+				var isUpdate = false;
+				angular.forEach($scope.advanceTrialTabs, function (value, index) {
+					if (value.name == listName && value.id == tabId) {
+						isUpdate = true;
+						$scope.advanceTabsData[index].data = tabData;
+						return;
+					}
+				}
+				);
+				angular.forEach($scope.advanceTrialTabs, function (value, index) {
+					if (!isSwap && !isUpdate) {
+						if (value.id == tabId) {
+							$scope.advanceTrialTabs.splice(index + 1, 0, {
+								name: listName,
+								state: 'stock-list' + tabId + '-li',
+								id: tabId,
+								displayName: "Stock List:[" + $scope.advanceTrialTabs[index].name + "]"
+							});
 
-                            $scope.advanceTrialTabs.splice(index+1,0, {
-                                name: listName,
-                                state: 'stock-list' + tabId + '-li',
-                                id: tabId,
-                                displayName: "Stock List:[" + $scope.advanceTrialTabs[index].name + "]"
-                            });
+							$scope.advanceTabsData.splice(index + 1, 0, {
+								name: 'stock-list' + tabId + '-li',
+								data: tabData,
+								id: 'stock-tab-pane' + tabId
+							});
+							isSwap = true;
+							$scope.tabSelected = 'stock-list' + tabId + '-li';
+						}
+					}
+				});
+				if (!isSwap && !isUpdate) {
+					$scope.advanceTrialTabs.push({
+						name: listName,
+						state: 'advance-list' + tabId + '-li',
+						id: tabId,
+						displayName: "Advance List: [" + listName + "]"
+					});
+					$scope.advanceTabsData.push({
+						name: 'advance-list' + tabId + '-li',
+						data: tabData,
+						id: 'advance-list' + tabId + '-li'
+					});
+					$scope.tabSelected = 'advance-list' + tabId + '-li';
+				}
 
-                            $scope.advanceTabs.splice(index+1,0,{name: 'stock-list' + tabId + '-li',
-                                data: tabData
-                            });
-                            isSwap = true;
-                            $scope.tabSelected = 'stock-list' + tabId + '-li';
-                        }
-                    }
-                });
-                $scope.advanceTrialTabs = tempAdvanceTrialTab;
-                $scope.advanceTabs = tempAdvanceTabs;
-                if (!isSwap) {
-                    $scope.advanceTrialTabs.push({
-                        name: listName,
-                        state: 'advance-list' + tabId + '-li',
-                        id: tabId,
-                        displayName: "Advance List: [" + listName + "]"
-                    });
-
-                    $scope.advanceTabs.push({
-                        name: 'advance-list' + tabId + '-li',
-                        data: tabData
-                    });
-                    $scope.tabSelected = 'advance-list' + tabId + '-li';
-                }
-
-                $scope.isSettingsTab = false;
-            };
+				$scope.isSettingsTab = false;
+			};
 
             $scope.advancedTrialList=TrialManagerDataService.settings.advancedList;
 
@@ -428,7 +434,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
             $scope.closeAdvanceListTab = function (tab){
                 var index= $scope.findIndexByKeyValue($scope.advanceTrialTabs, 'state', tab);
                 $scope.advanceTrialTabs.splice(index, 1);
-                $scope.advanceTabs.splice(index, 1);
+                $scope.advanceTabsData.splice(index, 1);
                 $scope.tabSelected = 'trialSettings';
                 $scope.isSettingsTab = true;
              };

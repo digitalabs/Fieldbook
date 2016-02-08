@@ -1161,7 +1161,10 @@ a.fbk-edit-experiment{
 .mdt-header .dataTables_length,
 .dataTables_wrapper .dataTables_length,
 .fbk-datatable-panel-top > .dataTables_info,
-.mdt-header .dataTables_info {
+.mdt-header .dataTables_info,
+.dataTables_scrollHeadInner,
+.dataTables_scrollHead,
+.dataTables_scrollBody {
     float: left;
 }
 

@@ -178,12 +178,12 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 				}
 				else if (expDesignParameter.getStartingPlotNo() != null && !NumberUtils.isNumber(expDesignParameter.getStartingPlotNo())) {
 					output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-							"experiment.design.plot.number.should.be.a.number", null, locale));
+							"plot.number.should.be.in.range", null, locale));
 					return output;
 				}
 				else if (expDesignParameter.getStartingEntryNo() != null && !NumberUtils.isNumber(expDesignParameter.getStartingEntryNo())) {
 					output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-							"experiment.design.entry.number.should.be.a.number", null, locale));
+							"entry.number.should.be.in.range", null, locale));
 					return output;
 				}
 				else {

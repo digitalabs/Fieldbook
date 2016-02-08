@@ -147,7 +147,6 @@ function findLowestEntryNo(dataTableIdentifier, entryNoColIndex) {
         var currentEntryNo = cell.data();
         if(lowestEntryNo === 0 || currentEntryNo < lowestEntryNo) {
             lowestEntryNo = parseInt(currentEntryNo);
-            console.log("lowestEntryNo is now =" + lowestEntryNo);
         }
     });
     return lowestEntryNo;

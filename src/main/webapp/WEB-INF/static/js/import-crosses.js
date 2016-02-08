@@ -43,7 +43,9 @@ var ImportCrosses = {
 		},
 		openCrossesList : function() {
 			'use strict';
-			$('#openCrossesListModal').modal({ backdrop: 'static', keyboard: true });
+			$('#openCrossesListModal').one('shown.bs.modal', function() {
+				$('body').addClass('modal-open');
+			}).modal({ backdrop: 'static', keyboard: true });
 
 			ImportCrosses.getImportedCrossesTable().done(function(response) {
 				setTimeout(function() {
@@ -53,7 +55,7 @@ var ImportCrosses = {
 
 			$('#openCrossListNextButton').off('click');
 			$('#openCrossListNextButton').on('click', function() {
-				$('#openCrossesListModal').modal('hide');								
+				$('#openCrossesListModal').modal('hide');
 				setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
 			});
 
@@ -66,7 +68,9 @@ var ImportCrosses = {
 
 		goBackToPage: function(hiddenModalSelector,shownModalSelector) {
 			$(hiddenModalSelector).modal('hide');
-			$(shownModalSelector).modal({ backdrop: 'static', keyboard: true });
+			$(shownModalSelector).one('shown.bs.modal', function() {
+				$('body').addClass('modal-open');
+			}).modal({ backdrop: 'static', keyboard: true });
 		},
 
 		getImportedCrossesTable : function(){

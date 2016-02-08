@@ -114,20 +114,24 @@ if (typeof StockIDFunctions === 'undefined') {
 				cache: false,
 				success: function(html) {
 					if (html && html.length > 0) {
+						if(isNursery()){
 						$('#advance-list' + listId + '-li').after(html);
-						$('#advance-list' + listId).data('has-stock', 'true');
-						$('#stock-list-anchor' + listId).on('shown.bs.tab', function() {
-							if ($(this).data('has-loaded') !== '1') {
-								$(this).data('has-loaded', '1');
-								StockIDFunctions.displayStockList($(this).data('list-id'));
-							}
-						});
+							$('#advance-list' + listId).data('has-stock', 'true');
+							$('#stock-list-anchor' + listId).on('shown.bs.tab', function() {
+								if ($(this).data('has-loaded') !== '1') {
+									$(this).data('has-loaded', '1');
+									StockIDFunctions.displayStockList($(this).data('list-id'));
+								}
+							});
+
+						}
+
 					}
 				}
 			});
 		},
 
-		displayStockList: function(listId) {
+		displayStockList: function(listId,isPageLoading) {
 			'use strict';
 
 			var url = '/Fieldbook/germplasm/list/stock/' + listId;
@@ -146,7 +150,7 @@ if (typeof StockIDFunctions === 'undefined') {
                     } else {
                         var element = angular.element(document.getElementById("mainApp")).scope();
                         element.$apply(function (){
-                            element.addAdvanceTabData(listId, html, 'stock-list');
+                            element.addAdvanceTabData(listId, html, 'stock-list', isPageLoading);
                         });
                     }
 				}

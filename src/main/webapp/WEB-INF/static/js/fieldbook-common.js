@@ -1799,7 +1799,7 @@ function closeAdvanceListTab(uniqueId) {
 	}, 100);
 }
 
-function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, advancedGermplasmListId) {
+function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, advancedGermplasmListId,isPageLoading) {
 	'use script';
 	var id = advancedGermplasmListId ? advancedGermplasmListId : germplasmListId;
 	var url = '/Fieldbook/germplasm/list/advance/' + id;
@@ -1823,7 +1823,8 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
             } else {
                 var element = angular.element(document.getElementById("mainApp")).scope();
                 element.$apply(function (){
-                    element.addAdvanceTabData(id, html, listName);
+                    element.addAdvanceTabData(id, html, listName,isPageLoading);
+					StockIDFunctions.displayStockList(id,isPageLoading);
                 });
             }
 		}

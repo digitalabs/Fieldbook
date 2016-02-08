@@ -370,7 +370,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				}
 			};
 
-			$scope.addAdvanceTabData = function (tabId, tabData, listName) {
+			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
 				var isSwap = false;
 				var isUpdate = false;
 				angular.forEach($scope.advanceTrialTabs, function (value, index) {
@@ -397,7 +397,9 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 								id: 'stock-tab-pane' + tabId
 							});
 							isSwap = true;
-							$scope.tabSelected = 'stock-list' + tabId + '-li';
+                            if(isPageLoading!=true) {
+                                $scope.tabSelected = 'stock-list' + tabId + '-li';
+                            }
                             $("#listActionButton"+tabId).addClass('disabled');
 						}
 					}
@@ -414,18 +416,21 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 						data: tabData,
 						id: 'advance-list' + tabId + '-li'
 					});
-					$scope.tabSelected = 'advance-list' + tabId + '-li';
+                    if(isPageLoading!=true){
+                        $scope.tabSelected = 'advance-list' + tabId + '-li';
+                        $scope.isSettingsTab = false;
+                    }
 				}
 
-				$scope.isSettingsTab = false;
 			};
 
             $scope.advancedTrialList=TrialManagerDataService.settings.advancedList;
 
             angular.forEach($scope.advancedTrialList,function(value){
-                displayAdvanceList('', value.id, value.name, false, '');
-                StockIDFunctions.displayStockList(value.id);
-            });
+                displayAdvanceList('', value.id, value.name, false, '', true);
+			});
+
+
 
             $scope.tabChange = function(selectedTab) {
                 $scope.tabSelected = selectedTab;

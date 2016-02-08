@@ -129,10 +129,12 @@ function validateAndSetEntryNo() {
 
 function findEntryColIndex(dataTableIdentifier) {
     var entryNoColNum = 0;
-    $("table" + dataTableIdentifier + " thead tr th").each(function (index, value) {
-        var colName = $(this).data("colName");
-        if(colName === '8230-key' || colName === 'entry') {
-            entryNoColNum = $(this).data("columnIndex");
+    var dataTable = $(dataTableIdentifier).dataTable();
+    dataTable.api().columns().every( function (index, value) {
+    	var colHeader = dataTable.api().column(index).header();
+    	var colName = colHeader.attributes["data-col-name"].nodeValue;
+    	if(colName === '8230-key' || colName === 'entry') {
+    		entryNoColNum = colHeader.attributes["data-column-index"].nodeValue;
         }
     });
     return entryNoColNum;
@@ -141,24 +143,28 @@ function findEntryColIndex(dataTableIdentifier) {
 function findLowestEntryNo(dataTableIdentifier, entryNoColIndex) {
     var lowestEntryNo = 0;
     var dataTable = $(dataTableIdentifier).dataTable();
-    $("table" + dataTableIdentifier + " tbody tr").each(function (index, value) {
+    var numberOfRows = dataTable.api().rows().data().length;
+    var index;
+    for(index = 0; index < numberOfRows; index++) {
         var cell = dataTable.api().cell(index, entryNoColIndex);
         var currentEntryNo = cell.data();
         if(lowestEntryNo === 0 || currentEntryNo < lowestEntryNo) {
             lowestEntryNo = parseInt(currentEntryNo);
         }
-    });
+    };
     return lowestEntryNo;
 }
 
 function updateEntryNo(dataTableIdentifier, entryNoColIndex, numToAddToEntryNo) {
     var dataTable = $(dataTableIdentifier).dataTable();
-    $("table" + dataTableIdentifier + " tbody tr").each(function (index, value) {
+    var numberOfRows = dataTable.api().rows().data().length;
+    var index;
+    for(index = 0; index < numberOfRows; index++) {
         var cell = dataTable.api().cell(index, entryNoColIndex);
         var currentEntryNo = cell.data();
         var newEntryNo = parseInt(currentEntryNo) + numToAddToEntryNo;
         cell.data(newEntryNo).draw();
-    });
+    };
 }
 
 // Validate Germplasm entry number and plot number if it is non-numeric

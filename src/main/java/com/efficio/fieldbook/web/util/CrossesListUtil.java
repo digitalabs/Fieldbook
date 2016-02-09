@@ -3,26 +3,28 @@ package com.efficio.fieldbook.web.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.efficio.fieldbook.web.common.service.CrossingService;
 
 @Component
 public class CrossesListUtil {
 
+	public static final String ENTRY = "ENTRY";
+	public static final String PARENTAGE = "PARENTAGE";
+	public static final String ENTRY_CODE = "ENTRY CODE";
+	public static final String FEMALE_PARENT = "FEMALE PARENT";
+	public static final String FGID = "FGID";
+	public static final String MALE_PARENT = "MALE PARENT";
+	public static final String MGID = "MGID";
+	public static final String SOURCE = "SOURCE";
+	public static final String DUPLICATE = "DUPLICATE";
+
 	@Autowired
 	private OntologyDataManager ontologyDataManager;
-
-	@Resource
-	private CrossingService crossingService;
 
 	public static final String DEFAULT_SEPARATOR = "/";
 
@@ -44,20 +46,20 @@ public class CrossesListUtil {
 
 	public Map<String, Object> generateDatatableDataMapWithDups(final GermplasmListData crossesData) {
 		final Map<String, Object> dataMap = new HashMap<>();
-		dataMap.put("ENTRY", crossesData.getEntryId());
-		dataMap.put("PARENTAGE", crossesData.getFemaleParent() + DEFAULT_SEPARATOR + crossesData.getMaleParent());
-		dataMap.put("ENTRY CODE", crossesData.getEntryCode());
-		dataMap.put("FEMALE PARENT", crossesData.getFemaleParent());
-		dataMap.put("FGID", crossesData.getFgid());
-		dataMap.put("MALE PARENT", crossesData.getMaleParent());
-		dataMap.put("MGID", crossesData.getMgid());
-		dataMap.put("SOURCE", crossesData.getSeedSource());
-		dataMap.put("DUPLICATE", "");
+		dataMap.put(ENTRY, crossesData.getEntryId());
+		dataMap.put(PARENTAGE, crossesData.getFemaleParent() + DEFAULT_SEPARATOR + crossesData.getMaleParent());
+		dataMap.put(ENTRY_CODE, crossesData.getEntryCode());
+		dataMap.put(FEMALE_PARENT, crossesData.getFemaleParent());
+		dataMap.put(FGID, crossesData.getFgid());
+		dataMap.put(MALE_PARENT, crossesData.getMaleParent());
+		dataMap.put(MGID, crossesData.getMgid());
+		dataMap.put(SOURCE, crossesData.getSeedSource());
+		dataMap.put(DUPLICATE, "");
 		return dataMap;
 	}
 
 	public ImportedCrosses convertGermplasmListData2ImportedCrosses(final GermplasmListData crossesData) {
-		ImportedCrosses importedCrosses = new ImportedCrosses();
+		final ImportedCrosses importedCrosses = new ImportedCrosses();
 		importedCrosses.setEntryId(crossesData.getEntryId());
 		importedCrosses.setCross(crossesData.getFemaleParent() + DEFAULT_SEPARATOR + crossesData.getMaleParent());
 		importedCrosses.setEntryCode(crossesData.getEntryCode());
@@ -73,15 +75,15 @@ public class CrossesListUtil {
 
 		final Map<String, Object> dataMap = new HashMap<>();
 
-		dataMap.put("ENTRY", importedCrosses.getEntryId());
-		dataMap.put("PARENTAGE", importedCrosses.getCross());
-		dataMap.put("ENTRY CODE", importedCrosses.getEntryCode());
-		dataMap.put("FEMALE PARENT", importedCrosses.getFemaleDesig());
-		dataMap.put("FGID", importedCrosses.getFemaleGid());
-		dataMap.put("MALE PARENT", importedCrosses.getMaleDesig());
-		dataMap.put("MGID", importedCrosses.getMaleGid());
-		dataMap.put("SOURCE", importedCrosses.getSource());
-		dataMap.put("DUPLICATE", importedCrosses.getDuplicate());
+		dataMap.put(ENTRY, importedCrosses.getEntryId());
+		dataMap.put(PARENTAGE, importedCrosses.getCross());
+		dataMap.put(ENTRY_CODE, importedCrosses.getEntryCode());
+		dataMap.put(FEMALE_PARENT, importedCrosses.getFemaleDesig());
+		dataMap.put(FGID, importedCrosses.getFemaleGid());
+		dataMap.put(MALE_PARENT, importedCrosses.getMaleDesig());
+		dataMap.put(MGID, importedCrosses.getMaleGid());
+		dataMap.put(SOURCE, importedCrosses.getSource());
+		dataMap.put(DUPLICATE, importedCrosses.getDuplicate());
 		return dataMap;
 
 	}

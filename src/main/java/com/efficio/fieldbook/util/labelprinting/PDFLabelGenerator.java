@@ -320,7 +320,7 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
 
         for (final Integer selectedFieldID : selectedFieldIDs) {
             if (i == rowNumber) {
-                buffer.append(this.getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID, labelHeaders, true));
+                buffer.append(this.getValueFromSpecifiedColumn(moreFieldInfo, fieldMapLabel, selectedFieldID, labelHeaders, true));
                 break;
             }
             i++;

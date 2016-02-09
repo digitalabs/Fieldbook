@@ -116,7 +116,7 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
                     moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
 
                     for (final Integer selectedFieldID : selectedFieldIDs) {
-                        final String leftText = this.getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID,
+                        final String leftText = this.getValueFromSpecifiedColumn(moreFieldInfo, fieldMapLabel, selectedFieldID,
                                 fieldMapTrialInstanceInfo.getLabelHeaders(), false);
                         final Cell summaryCell = row.createCell(columnIndex++);
                         summaryCell.setCellValue(leftText);
@@ -144,7 +144,7 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
         if (includeHeader) {
             int currentIndex = columnIndex;
             for (final Integer selectedFieldID : selectedFieldIDs) {
-                final String headerName = this.getHeader(selectedFieldID, labelHeaders);
+                final String headerName = this.getColumnHeader(selectedFieldID, labelHeaders);
                 final Cell summaryCell = row.createCell(currentIndex++);
                 summaryCell.setCellValue(headerName);
                 summaryCell.setCellStyle(labelStyle);

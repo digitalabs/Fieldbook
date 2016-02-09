@@ -85,7 +85,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
         final List<ExportColumnHeader> columnHeaders = new ArrayList<>();
 
         for (final Integer selectedFieldID : selectedFieldIDs) {
-            final String headerName = this.getHeader(selectedFieldID, labelHeaders);
+            final String headerName = this.getColumnHeader(selectedFieldID, labelHeaders);
             final ExportColumnHeader columnHeader = new ExportColumnHeader(selectedFieldID, headerName, true);
             columnHeaders.add(columnHeader);
         }
@@ -101,7 +101,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
 
             try {
 
-                final String value = this.getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID, labelHeaders, false);
+                final String value = this.getValueFromSpecifiedColumn(moreFieldInfo, fieldMapLabel, selectedFieldID, labelHeaders, false);
                 final ExportColumnValue columnValue = new ExportColumnValue(selectedFieldID, value);
                 rowMap.put(selectedFieldID, columnValue);
             } catch (final NumberFormatException e) {

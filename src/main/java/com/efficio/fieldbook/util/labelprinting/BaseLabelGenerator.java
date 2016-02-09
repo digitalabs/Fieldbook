@@ -55,20 +55,20 @@ public abstract class BaseLabelGenerator {
     }
 
     /**
-     * Gets the specific info.
+     * Returns the value of each field of the label data, based on the column required. 
      *
-     * @param moreFieldInfo the more field info
+     * @param moreFieldInfo further information relating to the field
      * @param fieldMapLabel the field map label
      * @param headerID the barcode label
-     * @return the specific info
+     * @return the value requested
      */
-    protected String getSpecificInfo(final Map<String, String> moreFieldInfo, final FieldMapLabel fieldMapLabel, final Integer headerID,
+    protected String getValueFromSpecifiedColumn(final Map<String, String> moreFieldInfo, final FieldMapLabel fieldMapLabel, final Integer headerID,
                                    final Map<Integer, String> labelHeaders, final boolean includeHeaderLabel) {
         final StringBuilder buffer = new StringBuilder();
 
         try {
 
-            final String headerName = this.getHeader(headerID, labelHeaders);
+            final String headerName = this.getColumnHeader(headerID, labelHeaders);
 
             if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
                 buffer.append(fieldMapLabel.getEntryNumber());
@@ -134,12 +134,12 @@ public abstract class BaseLabelGenerator {
     }
 
     /**
-     * Gets the header.
+     * Gets the column header from the imported data
      *
      * @param headerID the header id
      * @return the header
      */
-    protected String getHeader(final Integer headerID, final Map<Integer, String> labelHeaders) {
+    protected String getColumnHeader(final Integer headerID, final Map<Integer, String> labelHeaders) {
         final Locale locale = LocaleContextHolder.getLocale();
 
         final StringBuilder buffer = new StringBuilder();
@@ -241,7 +241,7 @@ public abstract class BaseLabelGenerator {
                 buffer.append(this.delimiter);
             }
 
-            buffer.append(this.getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID, labelHeaders, includeLabel));
+            buffer.append(this.getValueFromSpecifiedColumn(moreFieldInfo, fieldMapLabel, selectedFieldID, labelHeaders, includeLabel));
         }
 
         return buffer.toString();

@@ -608,8 +608,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
 					oSettings.oInstance.fnAdjustColumnSizing();
 				}
-			});
-		}
+		});
 
 		GermplasmListDataTable.prototype.getDataTable = function() {
 			return this.germplasmDataTable;

@@ -55,7 +55,20 @@ public class CrossesListUtil {
 		dataMap.put("SOURCE", crossesData.getSeedSource());
 		dataMap.put("DUPLICATE", "");
 		return dataMap;
+	}
 
+	public ImportedCrosses convertGermplasmListData2ImportedCrosses(final GermplasmListData crossesData) {
+		ImportedCrosses importedCrosses = new ImportedCrosses();
+		importedCrosses.setEntryId(crossesData.getEntryId());
+		//TODO Fix getting parentage from Crossing Service
+		importedCrosses.setCross(crossesData.getFemaleParent() + "/" + crossesData.getMaleParent());
+		importedCrosses.setEntryCode(crossesData.getEntryCode());
+		importedCrosses.setFemaleDesig(crossesData.getFemaleParent());
+		importedCrosses.setFemaleGid(String.valueOf(crossesData.getFgid()));
+		importedCrosses.setMaleDesig(crossesData.getMaleParent());
+		importedCrosses.setMaleGid(String.valueOf(crossesData.getMgid()));
+		importedCrosses.setSource(crossesData.getSeedSource());
+		return importedCrosses;
 	}
 
 	public Map<String, Object> generateDatatableDataMapWithDups(final ImportedCrosses importedCrosses) {

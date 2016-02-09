@@ -340,25 +340,17 @@ public class CrossingSettingsController extends SettingsController {
 
 		//TODO Insert get list crosses list
 		final GermplasmList crossesList = fieldbookMiddlewareService.getGermplasmListById(crossesListId);
-		final List<GermplasmListData> listDataList = germplasmListManager.getGermplasmListDataByListId(crossesListId);
+		final List<GermplasmListData> germplasmListDataList = germplasmListManager.retrieveListDataWithParents(crossesListId);
 
+		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
+		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 
-		//TODO fix imported crosses list
-		// process female + male parent entries, will throw middleware query exception if no study valid or null
-		/*ListDataProject femaleListData = this.getCrossingListProjectData(femaleNursery, Integer.valueOf(femalePlotNo), programUUID);
-		ListDataProject maleListData = this.getCrossingListProjectData(maleNursery, Integer.valueOf(malePlotNo), programUUID);
-
-		ImportedCrosses importedCrosses =
-				new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery, femalePlotNo, malePlotNo, this.currentRow);
-		// Show sounrce as "Pending" in initial dialogue.
-		// Source (Plot Code) string is generated later in the proces and will be displayed in the final list generated.
-		importedCrosses.setSource("Pending");
-		importedCrosses.setOptionalFields(breedingMethod, crossingDate, seedsHarvested, notes);*/
-		// this would set the correct cross string depending if the use is cimmyt wheat
-
-		for (final GermplasmListData listData : listDataList) {
+		for (final GermplasmListData listData : germplasmListDataList) {
 			masterList.add(crossesListUtil.generateDatatableDataMapWithDups(listData));
+			importedCrosses.add(crossesListUtil.convertGermplasmListData2ImportedCrosses(listData));
 		}
+		importedCrossesList.setImportedGermplasms(importedCrosses);
+		this.userSelection.setimportedCrossesList(importedCrossesList);
 		return masterList;
 	}
 

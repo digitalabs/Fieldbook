@@ -3329,7 +3329,7 @@ function displayStudyGermplasmSection(hasData, observationCount) {
 		$('.observation-exists-notif').hide();
 		$('.overwrite-germplasm-list').show();
 		$('.browse-import-link').hide();
-	else {
+	} else {
 		$('.observation-exists-notif').hide();
 		$('.overwrite-germplasm-list').hide();
 	}

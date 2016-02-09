@@ -9,6 +9,24 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 	'$http', 'DTOptionsBuilder', 'LOCATION_ID',
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID) {
 
+			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
+			var populateDatatableWithDefaultValues = function() {
+				$scope.data = TrialManagerDataService.currentData.environments;
+
+				if (!$scope.data.environments) {
+					$scope.data.environments = [];
+				}
+				if ($scope.data.environments.length === 0) {
+					$scope.data.environments.push({});
+				}
+				if (!$scope.data.environments[0].managementDetailValues) {
+					$scope.data.environments[0].managementDetailValues = {};
+				}
+				if (!$scope.data.environments[0].managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]) {
+					$scope.data.environments[0].managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = 1;
+				}
+			};
+
 			$scope.TRIAL_INSTANCE_NO_INDEX = 8170;
 
 			$scope.data = {};
@@ -49,10 +67,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp')
 				.withButtons($scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice())
 				.withOption('scrollX', true)
-				.withOption('scrollCollapse', true)
-				.withFixedColumns({
-					leftColumns: 2
-				});
+				.withOption('scrollCollapse', true);
 
 			$scope.dtOptions.drawCallback =  function() {
 				var api = $(this).DataTable();
@@ -68,7 +83,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 						buttons: $scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice()
 					});
 
-					$(this).parent().find('.dt-buttons').replaceWith(api.buttons().container());
+					$(this).parents('.dataTables_wrapper').find('.dt-buttons').replaceWith(api.buttons().container());
 				}
 			};
 
@@ -85,7 +100,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				openManageLocations();
 			};
 
-			$scope.data = TrialManagerDataService.currentData.environments;
+			//prepopulate the datatable
+			populateDatatableWithDefaultValues();
+
 			$scope.isHideDelete = false;
 
 			TrialManagerDataService.onUpdateData('environments', function() {

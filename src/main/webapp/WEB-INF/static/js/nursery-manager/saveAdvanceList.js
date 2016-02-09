@@ -1,6 +1,6 @@
 /*globals displayGermplasmListTree, changeBrowseGermplasmButtonBehavior, additionalLazyLoadUrl, displayAdvanceList,saveGermplasmReviewError*/
 /*globals $,showErrorMessage, showInvalidInputMessage, getDisplayedTreeName,ImportCrosses,listShouldNotBeEmptyError,getJquerySafeId,validateAllDates */
-/*globals listParentFolderRequired, listNameRequired, listDescriptionRequired */
+/*globals listParentFolderRequired, listNameRequired */
 /*globals listDateRequired, listTypeRequired, moveToTopScreen */
 /*globals TreePersist, showSuccessfulMessage, console, germplasmEntrySelectError */
 /*exported saveGermplasmList, openSaveListModal*/
@@ -62,10 +62,6 @@ var SaveAdvanceList = {};
 		}
 		if($('#listName').val() === ''){
 			showInvalidInputMessage(listNameRequired);
-			return false;
-		}
-		if($('#listDescription').val() === ''){
-			showInvalidInputMessage(listDescriptionRequired);
 			return false;
 		}
 		if($('#listType').val() === ''){

@@ -25,10 +25,8 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.pojos.User;
+import org.generationcp.middleware.pojos.GermplasmListMetadata;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -209,11 +207,17 @@ public class TreeViewUtil {
 	 * @return the list
 	 */
 	public static List<TreeTableNode> convertGermplasmListToTreeTableNodes(List<GermplasmList> germplasmLists,
-			UserDataManager userDataManager, GermplasmListManager germplasmListManager) {
+			GermplasmListManager germplasmListManager) {
 		List<TreeTableNode> treeTableNodes = new ArrayList<TreeTableNode>();
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
+			
+			List<UserDefinedField> listTypes = germplasmListManager.getGermplasmListTypes();
+			Map<Integer, GermplasmListMetadata> allListMetaData = germplasmListManager.getAllGermplasmListMetadata();
+			
 			for (GermplasmList germplasmList : germplasmLists) {
-				TreeTableNode node = TreeViewUtil.convertGermplasmListToTreeTableNode(germplasmList, userDataManager, germplasmListManager);
+				TreeTableNode node =
+						TreeViewUtil.convertGermplasmListToTreeTableNode(germplasmList, listTypes,
+								allListMetaData.get(germplasmList.getId()));
 				if (node != null) {
 					treeTableNodes.add(node);
 				}
@@ -305,18 +309,17 @@ public class TreeViewUtil {
 	 * @param germplasmList the germplasm list
 	 * @return the tree node
 	 */
-	private static TreeTableNode convertGermplasmListToTreeTableNode(GermplasmList germplasmList, UserDataManager userDataManager,
-			GermplasmListManager germplasmListManager) {
+	private static TreeTableNode convertGermplasmListToTreeTableNode(GermplasmList germplasmList, List<UserDefinedField> listTypes, GermplasmListMetadata listMetaData) {
 		TreeTableNode treeTableNode = new TreeTableNode();
 
 		treeTableNode.setId(germplasmList.getId().toString());
 		treeTableNode.setName(germplasmList.getName());
 		treeTableNode.setDescription(TreeViewUtil.getDescriptionForDisplay(germplasmList));
-		treeTableNode.setType(TreeViewUtil.getTypeString(germplasmList.getType(), germplasmListManager));
-		treeTableNode.setOwner(TreeViewUtil.getOwnerListName(germplasmList.getUserId(), userDataManager));
+		treeTableNode.setType(TreeViewUtil.getTypeString(germplasmList.getType(), listTypes));
+		treeTableNode.setOwner(listMetaData != null ? listMetaData.getOwnerName() : "");
 
-		treeTableNode.setIsFolder(germplasmList.getType() != null && "FOLDER".equals(germplasmList.getType()) ? "1" : "0");
-		int noOfEntries = germplasmList.getListData().size();
+		treeTableNode.setIsFolder(germplasmList.isFolder() ? "1" : "0");
+		long noOfEntries = listMetaData != null ? listMetaData.getNumberOfEntries() : 0;
 		treeTableNode.setNoOfEntries(noOfEntries == 0 ? "" : String.valueOf(noOfEntries));
 		treeTableNode.setParentId(TreeViewUtil.getParentId(germplasmList));
 		return treeTableNode;
@@ -330,13 +333,12 @@ public class TreeViewUtil {
 		return String.valueOf(parentId);
 	}
 
-	private static String getTypeString(String typeCode, GermplasmListManager germplasmListManager) {
+	private static String getTypeString(String typeCode, List<UserDefinedField> listTypes) {
 		String type = "Germplasm List";
 		if (typeCode == null) {
 			return type;
 		}
 		try {
-			List<UserDefinedField> listTypes = germplasmListManager.getGermplasmListTypes();
 			for (UserDefinedField listType : listTypes) {
 				if (typeCode.equals(listType.getFcode())) {
 					return listType.getFname();
@@ -347,27 +349,6 @@ public class TreeViewUtil {
 			return "";
 		}
 		return type;
-	}
-
-	private static String getOwnerListName(Integer userId, UserDataManager userDataManager) {
-		try {
-			User user = userDataManager.getUserById(userId);
-			if (user != null) {
-				int personId = user.getPersonid();
-				Person p = userDataManager.getPersonById(personId);
-
-				if (p != null) {
-					return p.getFirstName() + " " + p.getMiddleName() + " " + p.getLastName();
-				} else {
-					return user.getName();
-				}
-			} else {
-				return "";
-			}
-		} catch (MiddlewareQueryException ex) {
-			TreeViewUtil.LOG.error("Error with getting list owner name of user with id: " + userId, ex);
-			return "";
-		}
 	}
 
 	/**

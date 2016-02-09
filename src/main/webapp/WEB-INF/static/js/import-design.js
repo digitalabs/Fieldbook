@@ -139,6 +139,7 @@ var ImportDesign = (function() {
 			return ImportDesign.showReviewDesignData().then(function(html) {
 				$('#reviewDesignModal').one('shown.bs.modal', function() {
 					$('#divDesignMeasurements').html(html);
+					$('body').addClass('modal-open');
 				}).modal({
 					backdrop : 'static',
 					keyboard : true
@@ -221,6 +222,7 @@ var ImportDesign = (function() {
 
 			var $body = $('body');
 
+			$body.removeClass('modal-open');
 			$('#chooseGermplasmAndChecks').data('replace', '1');
 			$body.data('expDesignShowPreview', '1');
 			$body.data('needGenerateExperimentalDesign', '0');

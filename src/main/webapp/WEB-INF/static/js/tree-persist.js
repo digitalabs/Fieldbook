@@ -116,6 +116,16 @@ var TreePersist = {
 
 		TreePersist.retrievePreviousTreeState(listType, isSaveList).done(function(expandedNodes) {
 			var dynatree = $(containerSection).dynatree('getTree');
+			var shouldActivateNode = false;
+
+			if (isSaveList) {
+				// tree state retrieval used when saving lists provides an additional marker key at the front to indicate status
+				shouldActivateNode = expandedNodes[0] === 'SAVED';
+
+				// remove the marker key to continue normal tree state processing
+				expandedNodes = expandedNodes.slice(1, expandedNodes.length);
+			}
+
 			TreePersist.traverseNodes(expandedNodes, listType, function(key) {
 				var germplasmFocusNode = dynatree.getNodeByKey(key);
 				if (germplasmFocusNode !== null) {
@@ -128,6 +138,10 @@ var TreePersist = {
 					node.select(false);
 					node.deactivate();
 				});
+
+				if (shouldActivateNode) {
+					dynatree.getNodeByKey(expandedNodes[expandedNodes.length - 1]).activate();
+				}
 			}, 50);
 
 		});

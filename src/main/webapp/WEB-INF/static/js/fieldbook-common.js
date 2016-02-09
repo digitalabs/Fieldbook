@@ -1828,8 +1828,9 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
             } else {
                 var element = angular.element(document.getElementById("mainApp")).scope();
                 element.$apply(function (){
-                    element.addAdvanceTabData(id, html, listName,isPageLoading);
-					StockIDFunctions.displayStockList(id,isPageLoading);
+                    element.addAdvanceTabData(id, html, listName, isPageLoading);
+                    // Display Stock List if it is generated
+                    StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
                 });
             }
 		}

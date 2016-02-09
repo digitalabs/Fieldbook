@@ -373,6 +373,9 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
 				var isSwap = false;
 				var isUpdate = false;
+                if(isPageLoading === undefined) {
+                    isPageLoading = false;
+                }
 				angular.forEach($scope.advanceTrialTabs, function (value, index) {
 					if (value.name == listName && value.id == tabId) {
 						isUpdate = true;

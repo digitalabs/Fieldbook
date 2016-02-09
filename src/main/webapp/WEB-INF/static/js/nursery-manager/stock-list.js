@@ -123,9 +123,10 @@ if (typeof StockIDFunctions === 'undefined') {
 									StockIDFunctions.displayStockList($(this).data('list-id'));
 								}
 							});
-
-						}
-
+						} else {
+                            // Display already generated Stock List
+                            StockIDFunctions.displayStockList(listId, true);
+                        }
 					}
 				}
 			});

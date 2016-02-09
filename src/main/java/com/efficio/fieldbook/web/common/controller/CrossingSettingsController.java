@@ -27,9 +27,7 @@ import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +49,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
@@ -325,7 +322,7 @@ public class CrossingSettingsController extends SettingsController {
 		}
 
 		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
-			masterList.add(crossesListUtil.generateDatatableDataMapWithDups(cross));
+			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(cross));
 		}
 
 		return masterList;
@@ -338,16 +335,14 @@ public class CrossingSettingsController extends SettingsController {
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
 
-		//TODO Insert get list crosses list
-		final GermplasmList crossesList = fieldbookMiddlewareService.getGermplasmListById(crossesListId);
-		final List<GermplasmListData> germplasmListDataList = germplasmListManager.retrieveListDataWithParents(crossesListId);
+		final List<GermplasmListData> germplasmListDataList = this.germplasmListManager.retrieveListDataWithParents(crossesListId);
 
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 
 		for (final GermplasmListData listData : germplasmListDataList) {
-			masterList.add(crossesListUtil.generateDatatableDataMapWithDups(listData));
-			importedCrosses.add(crossesListUtil.convertGermplasmListData2ImportedCrosses(listData));
+			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(listData));
+			importedCrosses.add(this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData));
 		}
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 		this.userSelection.setimportedCrossesList(importedCrossesList);

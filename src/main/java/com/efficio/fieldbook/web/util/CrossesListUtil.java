@@ -24,6 +24,8 @@ public class CrossesListUtil {
 	@Resource
 	private CrossingService crossingService;
 
+	public static final String DEFAULT_SEPARATOR = "/";
+
 	public Map<String, Object> generateDatatableDataMap(final ImportedCrosses importedCrosses) {
 
 		final Map<String, Object> dataMap = new HashMap<>();
@@ -41,12 +43,9 @@ public class CrossesListUtil {
 	}
 
 	public Map<String, Object> generateDatatableDataMapWithDups(final GermplasmListData crossesData) {
-
 		final Map<String, Object> dataMap = new HashMap<>();
-
 		dataMap.put("ENTRY", crossesData.getEntryId());
-		//TODO Fix getting parentage from Crossing Service
-		dataMap.put("PARENTAGE", crossesData.getFemaleParent() + "/" + crossesData.getMaleParent());
+		dataMap.put("PARENTAGE", crossesData.getFemaleParent() + DEFAULT_SEPARATOR + crossesData.getMaleParent());
 		dataMap.put("ENTRY CODE", crossesData.getEntryCode());
 		dataMap.put("FEMALE PARENT", crossesData.getFemaleParent());
 		dataMap.put("FGID", crossesData.getFgid());
@@ -60,8 +59,7 @@ public class CrossesListUtil {
 	public ImportedCrosses convertGermplasmListData2ImportedCrosses(final GermplasmListData crossesData) {
 		ImportedCrosses importedCrosses = new ImportedCrosses();
 		importedCrosses.setEntryId(crossesData.getEntryId());
-		//TODO Fix getting parentage from Crossing Service
-		importedCrosses.setCross(crossesData.getFemaleParent() + "/" + crossesData.getMaleParent());
+		importedCrosses.setCross(crossesData.getFemaleParent() + DEFAULT_SEPARATOR + crossesData.getMaleParent());
 		importedCrosses.setEntryCode(crossesData.getEntryCode());
 		importedCrosses.setFemaleDesig(crossesData.getFemaleParent());
 		importedCrosses.setFemaleGid(String.valueOf(crossesData.getFgid()));

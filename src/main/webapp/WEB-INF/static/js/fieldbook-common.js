@@ -3325,19 +3325,26 @@ function displayStudyGermplasmSection(hasData, observationCount) {
 		if (isNursery()) {
 			disableCheckVariables(true);
 		}
-	} else {
+	} else if (countGermplasms() > 0) {
+		$('.observation-exists-notif').hide();
+		$('.overwrite-germplasm-list').show();
+		$('.browse-import-link').hide();
+	else {
 		$('.observation-exists-notif').hide();
 		$('.overwrite-germplasm-list').hide();
 	}
 }
 
-function disableCheckVariables(isDisabled) {
+function countGermplasms() {
+	var totalGermplasms = parseInt($('#totalGermplasms').val());
+	return totalGermplasms ? totalGermplasms : 0;
+}
 
+function disableCheckVariables(isDisabled) {
 	$('#' + getJquerySafeId('checkVariables2.value')).select2('destroy');
 	$('#' + getJquerySafeId('checkVariables2.value')).prop('disabled', isDisabled);
 	$('#' + getJquerySafeId('checkVariables2.value')).select2();
 	$('#specifyCheckSection').find('input,select').prop('disabled', isDisabled);
-
 }
 
 function showMeasurementsPreview() {

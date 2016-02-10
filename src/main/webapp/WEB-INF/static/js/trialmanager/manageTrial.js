@@ -296,9 +296,6 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 						TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
 							data.trialSettingsData));
 
-                        TrialManagerDataService.updateSettings('selectionVariable', TrialManagerDataService.extractSettings(
-                            data.selectionVariableData));
-
 						TrialManagerDataService.updateSettings('environments', environmentSettings);
 						TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
 						TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(

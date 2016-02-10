@@ -273,27 +273,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 		if (isNursery && !hasTemporaryWorkbook) {
 
-			Integer startingEntryNumber = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
-
-			if(startingEntryNumber != null){
-				Integer totalExpectedEntryNumber = startingEntryNumber + this.userSelection.getImportedGermplasmMainInfo()
-						.getImportedGermplasmList().getImportedGermplasms().size();
-
-				if(totalExpectedEntryNumber > ImportGermplasmListController.MAX_ENTRY_PLOT_NUMBER_LIMIT){
-					throw new FieldbookRequestValidationException("entry.number.should.be.in.range");
-				}
-			}
-
-			Integer totalExpectedNumber = this.computeTotalExpectedChecks(form);
-			Integer plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), null);
-
-			if(plotNo != null){
-				Integer totalMeasurement = totalExpectedNumber + plotNo;
-
-				if(totalMeasurement > ImportGermplasmListController.MAX_ENTRY_PLOT_NUMBER_LIMIT){
-					throw new FieldbookRequestValidationException("plot.number.should.be.in.range");
-				}
-			}
+			validateEntryAndPlotNo(form);
 
 			this.processImportedGermplasmAndChecks(this.userSelection, form);
 
@@ -321,6 +301,40 @@ public class ImportGermplasmListController extends SettingsController {
 				this.userSelection.getWorkbook());
 
 		return Integer.toString(studyId);
+	}
+
+	/**
+	 * Setting Entry Number and plot number to user selection and increment user given entry number in germplasm list.
+	 * Clearing Measurements list if germplasm sheet is not uploaded.
+	 * @param form
+	 */
+	protected void validateEntryAndPlotNo(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form) {
+		// if we have no germplasm list available for the nursery, skip this validation flow
+		if (null == this.getUserSelection().getImportedGermplasmMainInfo()) {
+			return;
+		}
+		
+		Integer startingEntryNumber = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
+
+		if(startingEntryNumber != null){
+			Integer totalExpectedEntryNumber = startingEntryNumber + this.userSelection.getImportedGermplasmMainInfo()
+					.getImportedGermplasmList().getImportedGermplasms().size();
+
+			if(totalExpectedEntryNumber > ImportGermplasmListController.MAX_ENTRY_PLOT_NUMBER_LIMIT){
+				throw new FieldbookRequestValidationException("entry.number.should.be.in.range");
+			}
+		}
+
+		Integer totalExpectedNumber = this.computeTotalExpectedChecks(form);
+		Integer plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), null);
+
+		if(plotNo != null){
+			Integer totalMeasurement = totalExpectedNumber + plotNo;
+
+			if(totalMeasurement > ImportGermplasmListController.MAX_ENTRY_PLOT_NUMBER_LIMIT){
+				throw new FieldbookRequestValidationException("plot.number.should.be.in.range");
+			}
+		}
 	}
 
 	//NOTE: BMS-1929 Setting custom entry and plot number in user selection as well as updating entry number in imported germplasm list
@@ -1629,7 +1643,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	}
 
-	private Integer computeTotalExpectedChecks(ImportGermplasmListForm form){
+	protected Integer computeTotalExpectedChecks(ImportGermplasmListForm form){
 
 		int totalGermplasmCount = this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().size();
 		Integer checkInterval = null, startCheckFrom = null;

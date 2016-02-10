@@ -11,11 +11,12 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.jasperreports.engine.JRException;
 
+import org.generationcp.commons.constant.ToolEnum;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.CustomReportType;
+import org.generationcp.commons.reports.service.JasperReportService;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.commons.util.CustomReportTypeUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -24,7 +25,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.reports.BuildReportException;
 import org.generationcp.middleware.reports.Reporter;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -121,6 +121,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private GermplasmExportService germplasmExportService;
+
+	@Resource
+	private JasperReportService jasperReportService;
 
 	@Override
 	public String getContentName() {
@@ -431,7 +434,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), true,
 					this.ontologyService);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// generic exception handling block needs to be added here so that the calling AJAX function receives proper notification that
 			// the operation was a failure
 
@@ -441,7 +444,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		return super.convertObjectToJson(results);
 	}
-
 
 	/***
 	 * Return the list of headers's term id, otherwise null
@@ -576,35 +578,22 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/custom/nursery/reports", method = RequestMethod.GET)
 	public List<CustomReportType> getCustomNurseryReports() {
-		return this.getCustomReportTypes(ToolSection.FB_NURSE_MGR_CUSTOM_REPORT.name());
+		return this.jasperReportService.getCustomReportTypes(ToolSection.FB_NURSE_MGR_CUSTOM_REPORT.name(),
+				ToolEnum.FIELDBOOK_WEB.getToolName());
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/custom/trial/reports", method = RequestMethod.GET)
 	public List<CustomReportType> getCustomTrialReports() {
-		return this.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
-	}
-
-	protected List<CustomReportType> getCustomReportTypes(final String toolSection) {
-		final List<CustomReportType> customReportTypes = new ArrayList<CustomReportType>();
-
-		final List<StandardPreset> standardPresetList =
-				this.workbenchService.getStandardPresetByCrop(this.workbenchService.getFieldbookWebTool().getToolId().intValue(),
-						this.contextUtil.getProjectInContext().getCropType().getCropName().toLowerCase(), toolSection);
-		// we need to convert the standard preset for custom report type to custom report type pojo
-		for (int index = 0; index < standardPresetList.size(); index++) {
-			customReportTypes.addAll(CustomReportTypeUtil.readReportConfiguration(standardPresetList.get(index),
-					this.crossExpansionProperties.getProfile()));
-		}
-
-		return customReportTypes;
+		return this.jasperReportService.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name(),
+				ToolEnum.FIELDBOOK_WEB.getToolName());
 	}
 
 	protected File exportAdvanceListItems(final String exportType, final String advancedListIds, final StudyDetails studyDetails) {
 		if (AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(exportType)
 				|| AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString().equalsIgnoreCase(exportType)) {
 			return this.exportAdvanceListService.exportAdvanceGermplasmList(advancedListIds, studyDetails.getStudyName(),
-					germplasmExportService, exportType);
+					this.germplasmExportService, exportType);
 		}
 		return null;
 	}
@@ -625,7 +614,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		String outputFilename = null;
 
-		final File file = this.exportAdvanceListService.exportStockList(Integer.valueOf(stockIds), germplasmExportService);
+		final File file = this.exportAdvanceListService.exportStockList(Integer.valueOf(stockIds), this.germplasmExportService);
 
 		outputFilename = file.getAbsolutePath();
 		final String contentType = ExportStudyController.APPLICATION_VND_MS_EXCEL;
@@ -680,6 +669,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		this.crossExpansionProperties = crossExpansionProperties;
 	}
 
+	@Override
 	public void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}

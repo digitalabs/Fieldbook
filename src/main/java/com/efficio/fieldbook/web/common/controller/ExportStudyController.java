@@ -1,8 +1,20 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -36,13 +48,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.service.*;
+import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
+import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
+import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
+import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
@@ -196,7 +220,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		try {
 
 			rep =
-					this.reportService.getStreamReport(reportCode, Integer.parseInt(studyId), contextUtil.getProjectInContext()
+					this.reportService.getStreamReport(reportCode, Integer.parseInt(studyId), this.contextUtil.getProjectInContext()
 							.getProjectName(), baos);
 
 			fileName = rep.getFileName();
@@ -578,15 +602,17 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/custom/nursery/reports", method = RequestMethod.GET)
 	public List<CustomReportType> getCustomNurseryReports() {
-		return this.jasperReportService.getCustomReportTypes(ToolSection.FB_NURSE_MGR_CUSTOM_REPORT.name(),
-				ToolEnum.FIELDBOOK_WEB.getToolName());
+		return this.getCustomReportTypes(ToolSection.FB_NURSE_MGR_CUSTOM_REPORT.name());
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/custom/trial/reports", method = RequestMethod.GET)
 	public List<CustomReportType> getCustomTrialReports() {
-		return this.jasperReportService.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name(),
-				ToolEnum.FIELDBOOK_WEB.getToolName());
+		return this.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
+	}
+
+	public List<CustomReportType> getCustomReportTypes(final String name) {
+		return this.jasperReportService.getCustomReportTypes(name, ToolEnum.FIELDBOOK_WEB.getToolName());
 	}
 
 	protected File exportAdvanceListItems(final String exportType, final String advancedListIds, final StudyDetails studyDetails) {

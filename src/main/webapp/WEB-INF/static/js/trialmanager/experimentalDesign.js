@@ -297,7 +297,8 @@
 
 				$scope.toggleDesignView = function() {
 					return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign 
-						|| ($scope.data.designType != null && $scope.designTypes[$scope.data.designType].name === 'Custom Import Design'));
+						|| ($scope.data.designType != null && $scope.designTypes[$scope.data.designType].name === 'Custom Import Design')
+						|| $scope.applicationData.hasGeneratedDesignPreset);
 				};
 
 				$scope.isImportedDesign = function() {

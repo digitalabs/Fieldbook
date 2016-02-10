@@ -121,6 +121,8 @@ if (typeof StockIDFunctions === 'undefined') {
 								if ($(this).data('has-loaded') !== '1') {
 									$(this).data('has-loaded', '1');
 									StockIDFunctions.displayStockList($(this).data('list-id'));
+                                    $('.nav-tabs').tabdrop({align: 'left'});
+                                    $('.nav-tabs').tabdrop('layout');
 								}
 							});
 						} else {
@@ -150,7 +152,8 @@ if (typeof StockIDFunctions === 'undefined') {
                         $('#stock-list' + listId + '-li').data('advance-germplasm-list-id', listId);
                     } else {
                         var element = angular.element(document.getElementById("mainApp")).scope();
-                        element.$apply(function (){
+                        // To apply scope safely
+                        element.safeApply(function (){
                             element.addAdvanceTabData(listId, html, 'stock-list', isPageLoading);
                         });
                     }

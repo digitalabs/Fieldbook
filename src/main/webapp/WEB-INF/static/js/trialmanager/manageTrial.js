@@ -253,6 +253,17 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				}
 			};
 
+            // To apply scope safely
+            $scope.safeApply = function(fn) {
+                var phase = this.$root.$$phase;
+                if(phase == '$apply' || phase == '$digest') {
+                    if(fn && (typeof(fn) === 'function')) {
+                        fn();
+                    }
+                } else {
+                    this.$apply(fn);
+                }
+            };
 			$scope.data = TrialManagerDataService.currentData.basicDetails;
 
 			$scope.saveCurrentTrialData = TrialManagerDataService.saveCurrentData;

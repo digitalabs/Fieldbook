@@ -1825,13 +1825,16 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
                 $('.export-advance-list-action-button').removeClass('fbk-hide');
                 $('#advance-list' + id + '-li').addClass('advance-germplasm-items');
                 $('#advance-list' + id + '-li').data('advance-germplasm-list-id', advancedGermplasmListId);
+                $('.nav-tabs').tabdrop({align: 'left'});
+                $('.nav-tabs').tabdrop('layout');
             } else {
                 var element = angular.element(document.getElementById("mainApp")).scope();
-                element.$apply(function (){
+                // To apply scope safely
+                element.safeApply(function (){
                     element.addAdvanceTabData(id, html, listName, isPageLoading);
-                    // Display Stock List if it is generated
-                    StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
                 });
+                // Display Stock List if it is generated
+                StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
             }
 		}
 	});

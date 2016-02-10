@@ -156,7 +156,84 @@
 				}
 			};
 		}
-	])
+	]).directive('sectionContainer', ['$parse', function($parse) {
+			return {
+				restrict: 'E',
+				scope: {
+					heading: '@',
+					reminder: '@',
+					helpTooltip: '@',
+					icon: '@',
+					iconImg: '@',
+					iconSize: '@',
+					modelData: '=',
+					variableType: '@',
+					showReminder: '=',
+					enableUpdate: '=',
+					onUpdate: '&',
+					callback: '&',
+					hideVariable: '=',
+					useExactProperties: '@',
+					collapsible: '=',
+					actionButtonDirection: '@'
+				},
+				transclude: true,
+				templateUrl: '/Fieldbook/static/angular-templates/sectionContainer.html',
+				link: function(scope, elem, attrs) {
+					scope.addVariable = $parse(attrs.addVariable)();
+
+					attrs.$observe('helpTooltip', function(value) {
+						if (value) {
+							scope.hasHelpTooltip = true;
+						}
+					});
+
+				},
+				controller: ['$scope', '$attrs', function($scope, $attrs) {
+					$scope.toggleCollapse = false;
+					$scope.toggleSection = $attrs.startCollapsed && $attrs.startCollapsed === 'true';
+					$scope.doCollapse = function() {
+						if ($scope.collapsible) {
+							$scope.toggleSection = !$scope.toggleSection;
+						}
+					};
+
+					$scope.doClick = function() {
+						$scope.onUpdate({});
+					};
+
+					$scope.onAdd = function(result) {
+						$scope.callback({ result: result });
+					};
+				}]
+
+			};
+		}]).directive('ontologySummaryTable', ['_', function(_) {
+			return {
+				restrict: 'E',
+				scope: {
+					heading: '@',
+					propertyTitle: '@',
+					valueTitle: '@',
+					variableType: '@',
+					data: '='
+				},
+				templateUrl: '/Fieldbook/static/angular-templates/ontologySummaryTable.html',
+
+				// isolated scope values becomes an empty object when passed a null value
+				// this compile function will just make scope.data back to null if it has no properties;
+
+				compile: function() {
+					return {
+						pre: function(scope) {
+							if (_.isEmpty(scope.data)) {
+								scope.data = null;
+							}
+						}
+					};
+				}
+			};
+		}])
 
 		// USAGE: Returns a function, that, as long as it continues to be invoked, will not
 		// be triggered. The function will be called after it stops being called for

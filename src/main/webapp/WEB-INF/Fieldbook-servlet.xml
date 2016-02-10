@@ -483,6 +483,11 @@
 		<aop:scoped-proxy />
 	</bean>
 	
+	<bean id="jasperReportService" class="org.generationcp.commons.reports.service.impl.JasperReportServiceImpl"
+		scope="request">
+		<aop:scoped-proxy />
+	</bean>
+	
 	<bean id="pedigreeService" factory-bean="managerFactory"
 		factory-method="getPedigreeService" scope="request">
 		<aop:scoped-proxy />
@@ -543,4 +548,6 @@
 	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" scope="prototype"/>
 
     <bean id="userTreeStateService" class="org.generationcp.commons.service.impl.UserTreeStateServiceImpl"/>
+    
+    <bean id="resourceFinder" class="org.generationcp.middleware.util.ResourceFinder"/>
 </beans>

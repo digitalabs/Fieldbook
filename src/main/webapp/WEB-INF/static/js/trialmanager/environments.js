@@ -9,6 +9,24 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout',
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout) {
 
+			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
+			var populateDatatableWithDefaultValues = function() {
+				$scope.data = TrialManagerDataService.currentData.environments;
+
+				if (!$scope.data.environments) {
+					$scope.data.environments = [];
+				}
+				if ($scope.data.environments.length === 0) {
+					$scope.data.environments.push({});
+				}
+				if (!$scope.data.environments[0].managementDetailValues) {
+					$scope.data.environments[0].managementDetailValues = {};
+				}
+				if (!$scope.data.environments[0].managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]) {
+					$scope.data.environments[0].managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = 1;
+				}
+			};
+
 			$scope.TRIAL_INSTANCE_NO_INDEX = 8170;
 
 			$scope.data = TrialManagerDataService.currentData.environments;
@@ -87,6 +105,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				openManageLocations();
 			};
 
+			//prepopulate the datatable
+			populateDatatableWithDefaultValues();
 
 			TrialManagerDataService.onUpdateData('environments', function() {
 				$scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;

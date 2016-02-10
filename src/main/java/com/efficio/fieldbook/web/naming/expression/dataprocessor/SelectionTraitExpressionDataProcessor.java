@@ -17,13 +17,13 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class SelectionTraitExpressionDataProcessor implements ExpressionDataProcessor {
 
 	public static final String SELECTION_TRAIT_PROPERTY = "Selection Criteria";
-	public static final String ALTERNATE_CATEGORICAL_TYPE_VALUE = "C";
 
 	@Resource
 	private OntologyVariableDataManager ontologyVariableDataManager;
@@ -34,7 +34,10 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 	@Override
 	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingNursery nurseryInfo,
 			final Study study) {
-		for (final MeasurementVariable condition : workbook.getConditions()) {
+        // management details / study details are stored within the workbook conditions. nursery conditions are stored in the workbook constants
+        List<MeasurementVariable> possibleEnvironmentSources = new ArrayList<>(workbook.getConditions());
+        possibleEnvironmentSources.addAll(workbook.getConstants());
+		for (final MeasurementVariable condition : possibleEnvironmentSources) {
 			if (condition.getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
 				source.setSelectionTraitValue(extractValue(condition.getValue(), condition.getTermId()));
 			}

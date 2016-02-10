@@ -6,9 +6,14 @@ $(function() {
 		SpinnerManager.addActive();
 	}).ajaxStop(function() {
 		SpinnerManager.resolveActive();
-	}).ajaxError(function() {
-		showErrorMessage('', ajaxGenericErrorMsg);
-		SpinnerManager.resolveActive();
+	}).ajaxError(function(xhr, error) {
+        if(error.status == 500) {
+            showErrorMessage('', ajaxGenericErrorMsg);
+        } else {
+            showErrorMessage('INVALID INPUT', error.responseText);
+        }
+
+        SpinnerManager.resolveActive();
 	});
 
 	if (typeof convertToSelect2 === 'undefined' || convertToSelect2) {
@@ -2846,10 +2851,12 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 								// return the array that matches
 								data.results = $.grep(data.results, function(
 										item, index) {
-									return ($.fn.select2.defaults.matcher(
-											query.term, item.text));
+									if (item.text.toUpperCase().indexOf(query.term.toUpperCase()) === 0) {
+										return true;
+									}
+									return false;
 								});
-								if (data.results.length === 0) {
+								if (data.results.length === 0 || data.results[0].text.toUpperCase() != query.term.toUpperCase()) {
 									data.results.unshift({
 										id: query.term,
 										text: query.term
@@ -3318,19 +3325,26 @@ function displayStudyGermplasmSection(hasData, observationCount) {
 		if (isNursery()) {
 			disableCheckVariables(true);
 		}
+	} else if (countGermplasms() > 0) {
+		$('.observation-exists-notif').hide();
+		$('.overwrite-germplasm-list').show();
+		$('.browse-import-link').hide();
 	} else {
 		$('.observation-exists-notif').hide();
 		$('.overwrite-germplasm-list').hide();
 	}
 }
 
-function disableCheckVariables(isDisabled) {
+function countGermplasms() {
+	var totalGermplasms = parseInt($('#totalGermplasms').val());
+	return totalGermplasms ? totalGermplasms : 0;
+}
 
+function disableCheckVariables(isDisabled) {
 	$('#' + getJquerySafeId('checkVariables2.value')).select2('destroy');
 	$('#' + getJquerySafeId('checkVariables2.value')).prop('disabled', isDisabled);
 	$('#' + getJquerySafeId('checkVariables2.value')).select2();
 	$('#specifyCheckSection').find('input,select').prop('disabled', isDisabled);
-
 }
 
 function showMeasurementsPreview() {
@@ -3733,4 +3747,22 @@ function proceedToReviewOutOfBoundsDataAction() {
 	} else if (action === '3') {
 		markAllCellAsMissing();
 	}
+}
+
+function exportDesignTemplate() {
+	$.ajax({
+		url: '/Fieldbook/DesignTemplate/export',
+		type: 'GET',
+		cache: false,
+		success: function(result) {
+			if(result.isSuccess === 1){
+				$.fileDownload('/Fieldbook/crosses/download/file', {
+			    	httpMethod: 'POST',
+			        data: result
+			    });
+			} else {
+				showErrorMessage('page-review-out-of-bounds-data-message-modal', result.errorMessage);
+			}
+		}
+	});
 }

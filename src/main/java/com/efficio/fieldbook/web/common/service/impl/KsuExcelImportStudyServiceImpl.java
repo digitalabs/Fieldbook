@@ -31,6 +31,7 @@ import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
+import com.efficio.fieldbook.web.util.ImportStudyUtil;
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil.KsuRequiredColumnEnum;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -52,10 +53,10 @@ public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl 
 
 			this.validate(xlsBook);
 
-			String trialInstanceNumber = this.getTrialInstanceNo(workbook, xlsBook.getSheetName(0));
+			String trialInstanceNumber = ImportStudyUtil.getTrialInstanceNo(workbook, xlsBook.getSheetName(0));
 
 			Map<String, MeasurementRow> rowsMap =
-					this.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
+					ImportStudyUtil.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
 
 			Set<ChangeType> modes = new HashSet<ChangeType>();
 			List<GermplasmChangeDetail> changeDetailsList = new ArrayList<GermplasmChangeDetail>();
@@ -77,32 +78,6 @@ public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl 
 			WorkbookUtil.resetWorkbookObservations(workbook);
 			throw e;
 		}
-	}
-
-	protected String getTrialInstanceNo(Workbook workbook, String filename) throws WorkbookParserException {
-		String trialInstanceNumber = workbook != null && workbook.isNursery() ? "1" : this.getTrialInstanceNoFromFileName(filename);
-		if (trialInstanceNumber == null || "".equalsIgnoreCase(trialInstanceNumber)) {
-			throw new WorkbookParserException("error.workbook.import.missing.trial.instance");
-		}
-		return trialInstanceNumber;
-	}
-
-	protected String getTrialInstanceNoFromFileName(String filename) throws WorkbookParserException {
-		String trialInstanceNumber = "";
-
-		String pattern = "(.+)[-](\\d+)";
-		Pattern r = Pattern.compile(pattern);
-		Matcher m = r.matcher(filename);
-
-		if (m.find()) {
-			trialInstanceNumber = m.group(m.groupCount());
-		}
-
-		if (!NumberUtils.isNumber(trialInstanceNumber)) {
-			throw new WorkbookParserException("error.workbook.import.missing.trial.instance");
-		}
-
-		return trialInstanceNumber;
 	}
 
 	protected void validate(org.apache.poi.ss.usermodel.Workbook xlsBook) throws WorkbookParserException {
@@ -150,9 +125,9 @@ public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl 
 		String plotLabel = null, entryLabel = null;
 		for (MeasurementVariable variable : variables) {
 			if (variable.getTermId() == TermId.PLOT_NO.getId() || variable.getTermId() == TermId.PLOT_NNO.getId()) {
-				plotLabel = this.getLabelFromKsuRequiredColumn(variable);
+				plotLabel = KsuFieldbookUtil.getLabelFromKsuRequiredColumn(variable);
 			} else if (variable.getTermId() == TermId.ENTRY_NO.getId()) {
-				entryLabel = this.getLabelFromKsuRequiredColumn(variable);
+				entryLabel = KsuFieldbookUtil.getLabelFromKsuRequiredColumn(variable);
 			}
 		}
 		if (plotLabel != null && entryLabel != null) {
@@ -165,19 +140,5 @@ public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl 
 			return indexes;
 		}
 		return null;
-	}
-
-	protected String getLabelFromKsuRequiredColumn(MeasurementVariable variable) {
-		String label = "";
-
-		if (KsuRequiredColumnEnum.get(variable.getTermId()) != null) {
-			label = KsuRequiredColumnEnum.get(variable.getTermId()).getLabel();
-		}
-
-		if (label.trim().length() > 0) {
-			return label;
-		}
-
-		return variable.getName();
 	}
 }

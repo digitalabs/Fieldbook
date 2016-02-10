@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.csvreader.CsvWriter;
+import com.efficio.fieldbook.web.util.KsuFieldbookUtil.KsuRequiredColumnEnum;
 
 public class KsuFieldbookUtil {
 
@@ -155,31 +156,13 @@ public class KsuFieldbookUtil {
 	}
 
 	public static boolean isValidHeaderNames(String[] headerNames) {
-		Map<String, Boolean> requiredColumns = new HashMap<String, Boolean>();
-
-		for (String headerName : headerNames) {
-			if (KsuFieldbookUtil.isARequiredColumn(headerName)) {
-				requiredColumns.put(headerName, true);
-			}
-		}
-
-		// check if all required columns are present
-		Integer numberOfRequiredColumnPreset = 0;
-		for (Boolean isPresent : requiredColumns.values()) {
-			if (isPresent) {
-				numberOfRequiredColumnPreset++;
-			}
-		}
-		return numberOfRequiredColumnPreset == 4;
-	}
-
-	protected static boolean isARequiredColumn(String headerName) {
+		List<String> rowHeadersList = Arrays.asList(headerNames);
 		for (KsuRequiredColumnEnum column : KsuRequiredColumnEnum.values()) {
-			if (column.getLabel().equalsIgnoreCase(headerName)) {
-				return true;
+		 	if (!rowHeadersList.contains(column.getLabel().trim())) {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	/**
@@ -295,5 +278,19 @@ public class KsuFieldbookUtil {
 		}
 
 		return data;
+	}
+	
+	public static String getLabelFromKsuRequiredColumn(MeasurementVariable variable) {
+		String label = "";
+
+		if (KsuRequiredColumnEnum.get(variable.getTermId()) != null) {
+			label = KsuRequiredColumnEnum.get(variable.getTermId()).getLabel();
+		}
+
+		if (label.trim().length() > 0) {
+			return label;
+		}
+
+		return variable.getName();
 	}
 }

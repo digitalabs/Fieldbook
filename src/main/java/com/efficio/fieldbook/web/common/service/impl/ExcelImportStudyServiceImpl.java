@@ -62,6 +62,7 @@ import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.ImportStudyUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -123,7 +124,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			this.importDescriptionSheetToWorkbook(workbook, trialInstanceNumber, descriptionWorkbook, trialObservations, originalValueMap);
 
 			final Map<String, MeasurementRow> rowsMap =
-					this.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
+					ImportStudyUtil.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
 			final List<GermplasmChangeDetail> changeDetailsList = new ArrayList<GermplasmChangeDetail>();
 			this.importDataToWorkbook(modes, xlsBook.getSheetAt(1), rowsMap, trialInstanceNumber, changeDetailsList, workbook);
 			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
@@ -816,26 +817,6 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			return WorkbookUtil.filterObservationsByTrialInstance(observations, trialInstanceNumber);
 		}
 		return new ArrayList<MeasurementRow>();
-	}
-
-	protected Map<String, MeasurementRow> createMeasurementRowsMap(final List<MeasurementRow> observations, final String instanceNumber,
-			final boolean isNursery) {
-		final Map<String, MeasurementRow> map = new HashMap<String, MeasurementRow>();
-		List<MeasurementRow> newObservations = new ArrayList<MeasurementRow>();
-		if (!isNursery) {
-			if (instanceNumber != null && !"".equalsIgnoreCase(instanceNumber)) {
-				newObservations = WorkbookUtil.filterObservationsByTrialInstance(observations, instanceNumber);
-			}
-		} else {
-			newObservations = observations;
-		}
-
-		if (newObservations != null && !newObservations.isEmpty()) {
-			for (final MeasurementRow row : newObservations) {
-				map.put(row.getKeyIdentifier(), row);
-			}
-		}
-		return map;
 	}
 
 	protected String getColumnIndexesFromXlsSheet(final Sheet observationSheet, final List<MeasurementVariable> variables,

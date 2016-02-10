@@ -6,14 +6,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
-import com.efficio.fieldbook.web.common.service.KsuCsvImportStudyService;
+import com.efficio.fieldbook.web.common.service.CsvImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.ImportStudyUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -29,43 +26,41 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service
 @Transactional
-public class KsuCsvImportStudyServiceImpl implements KsuCsvImportStudyService {
+public class CsvImportStudyServiceImpl implements CsvImportStudyService{
+	
 	@Resource
 	protected FieldbookService fieldbookMiddlewareService;
 
 	@Resource
-	protected OntologyService ontologyService;
-
+	private OntologyService ontologyService;
+	
 	@Resource
-	protected ValidationService validationService;
+	private ValidationService validationService;
 	
 	@Resource
 	protected AutowireCapableBeanFactory beanFactory;
 	
 	@Override
 	public ImportResult importWorkbook(final Workbook workbook, String filename, String originalFilename) throws WorkbookParserException {
-
 		final String trialInstanceNo = ImportStudyUtil.getTrialInstanceNo(workbook,originalFilename);
 		final Map<String,MeasurementRow> rowsMap = ImportStudyUtil.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNo, workbook.isNursery());
-
+		
 		try {
-			KsuCsvWorkbookParser ksuCsvWorkbookParser = new KsuCsvWorkbookParser(workbook, trialInstanceNo, rowsMap);
+			CsvWorkbookParser csvWorkbookParser = new CsvWorkbookParser(workbook, trialInstanceNo, rowsMap);
 			
-			beanFactory.autowireBean(ksuCsvWorkbookParser);
+			beanFactory.autowireBean(csvWorkbookParser);
 			
-			ksuCsvWorkbookParser.parseFile(filename);
+			csvWorkbookParser.parseFile(filename);
 
 			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
 
 			this.validationService.validateObservationValues(workbook, trialInstanceNo);
 
-			return new ImportResult(new HashSet<ChangeType>(), new ArrayList<GermplasmChangeDetail>());
-
-		} catch (FileParsingException e) {
+			return new ImportResult(new HashSet<ChangeType>(), new ArrayList<GermplasmChangeDetail>());		
+		} catch (Exception e) {
 			WorkbookUtil.resetWorkbookObservations(workbook);
 			throw new WorkbookParserException(e.getMessage(),e);
 		}
-
 	}
-
+	
 }

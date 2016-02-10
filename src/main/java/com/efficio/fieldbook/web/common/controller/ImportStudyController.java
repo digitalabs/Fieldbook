@@ -58,6 +58,7 @@ import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.common.service.CsvImportStudyService;
 import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
@@ -104,6 +105,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private KsuCsvImportStudyService ksuCsvImportStudyService;
+	
+	@Resource
+	private CsvImportStudyService csvImportStudyService;
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -229,6 +233,10 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 					importResult =
 							this.ksuCsvImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
 									file.getOriginalFilename());
+				} else if (AppConstants.IMPORT_NURSERY_CSV.getInt() == importType) {
+					importResult =
+							this.csvImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
+									file.getOriginalFilename());
 				}
 
 			} catch (final WorkbookParserException e) {
@@ -247,7 +255,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 			result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
 		} else {
 			if (AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType
-					|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType || AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
+					|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType || AppConstants.IMPORT_KSU_CSV.getInt() == importType
+					|| AppConstants.IMPORT_NURSERY_CSV.getInt() == importType) {
 				final boolean isCSVFile = file.getOriginalFilename().contains(".csv");
 				if (!isCSVFile) {
 					result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());

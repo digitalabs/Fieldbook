@@ -103,7 +103,7 @@
 										&& $scope.studyID != null && TrialManagerDataService.trialMeasurement.count > 0;
 						}
 
-						if ($scope.currentDesignType !== null) {
+						if ($scope.currentDesignType !== null && $scope.currentDesignType.name === 'Custom Import Design') {
 							$http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails').then(function(result) {
 								$scope.currentDesignType.templateName = result.data.templateName;
 							})

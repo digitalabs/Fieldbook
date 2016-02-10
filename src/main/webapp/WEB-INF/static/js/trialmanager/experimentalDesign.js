@@ -102,6 +102,12 @@
 							$scope.applicationData.hasGeneratedDesignPreset = $scope.designTypes[$scope.data.designType].isPreset 
 										&& $scope.studyID != null && TrialManagerDataService.trialMeasurement.count > 0;
 						}
+
+						if ($scope.currentDesignType !== null) {
+							$http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails').then(function(result) {
+								$scope.currentDesignType.templateName = result.data.templateName;
+							})
+						}
 					}
 
 					$scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
@@ -112,6 +118,8 @@
 					$scope.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors.currentData;
 
 					$scope.data.hasMeasurementData = TrialManagerDataService.trialMeasurement.hasMeasurement;
+
+
 
 				};
 
@@ -241,13 +249,6 @@
 					});
 				});
 
-				if ($scope.currentDesignType !== null) {
-					$http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails').then(function(result) {
-						$scope.currentDesignType.templateName = result.templateName;
-					})
-				}
-
-
 				$scope.showConfirmResetDesign = function() {
 
 					var deferred = $q.defer();
@@ -297,10 +298,6 @@
 				$scope.toggleDesignView = function() {
 					return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign 
 						|| ($scope.data.designType != null && $scope.designTypes[$scope.data.designType].name === 'Custom Import Design'));
-				};
-
-				$scope.isPreset = function() {
-					return $scope.designTypes[$scope.data.designType].isPreset || $scope.applicationData.hasGeneratedDesignPreset;
 				};
 
 				$scope.isImportedDesign = function() {

@@ -642,7 +642,9 @@
 								return true;
 							} else if (key === 'treatmentFactors') {
 								settingsArray.push(value.details);
-							} else {
+							} else if (key === 'advancedList'){
+                                return true;
+                            } else {
 								if (value) {
 									settingsArray.push(value);
 								}

@@ -233,7 +233,35 @@
 					};
 				}
 			};
-		}])
+		}]).directive('showDetailsModal', function() {
+			return {
+				scope: {
+					showDetailsModal: '=',
+					variableType: '@'
+				},
+
+				link: function(scope, elem) {
+					elem.css({ cursor: 'pointer' });
+					elem.on('click', function() {
+						showBaselineTraitDetailsModal(scope.showDetailsModal, scope.variableType);
+					});
+				}
+			};
+		})
+
+		// CONSTANTS SECTION
+		.constant('VARIABLE_TYPES', {
+			ANALYSIS: 1801,
+			TRIAL_CONDITION: 1802,
+			NURSERY_CONDITION: 1803,
+			GERMPLASM_DESCRIPTOR: 1804,
+			STUDY_DETAIL: 1805,
+			ENVIRONMENT_DETAIL: 1806,
+			SELECTION_METHOD: 1807,
+			TRAIT: 1808,
+			TREATMENT_FACTOR: 1809,
+			EXPERIMENTAL_DESIGN: 1810
+		})
 
 		// USAGE: Returns a function, that, as long as it continues to be invoked, will not
 		// be triggered. The function will be called after it stops being called for

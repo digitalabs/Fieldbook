@@ -68,18 +68,6 @@
 	})();
 
 	angular.module('fieldbook-utils', ['ui.select2'])
-		.constant('VARIABLE_TYPES', {
-			ANALYSIS: 1801,
-			TRIAL_CONDITION: 1802,
-			NURSERY_CONDITION: 1803,
-			GERMPLASM_DESCRIPTOR: 1804,
-			STUDY_DETAIL: 1805,
-			ENVIRONMENT_DETAIL: 1806,
-			SELECTION_METHOD: 1807,
-			TRAIT: 1808,
-			TREATMENT_FACTOR: 1809,
-			EXPERIMENTAL_DESIGN: 1810
-		})
 		.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
 		.constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
 		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', function(TrialManagerDataService, $filter, _) {
@@ -139,21 +127,6 @@
 				}
 			};
 		}])
-		.directive('showDetailsModal', function() {
-			return {
-				scope: {
-					showDetailsModal: '=',
-					variableType: '@'
-				},
-
-				link: function(scope, elem) {
-					elem.css({ cursor: 'pointer' });
-					elem.on('click', function() {
-						showBaselineTraitDetailsModal(scope.showDetailsModal, scope.variableType);
-					});
-				}
-			};
-		})
 		.directive('validNumber', function() {
 
 			return {

@@ -7,7 +7,9 @@
 
 	var nurseryNgApp = angular.module('nurseryNgApp', ['designImportApp', 'leafnode-utils', 'ngLodash', 'ngResource']);
 
-	nurseryNgApp.controller('experimentalDesignCtrl', ['$scope', '$http', function($scope, $http) {
+	nurseryNgApp.controller('experimentalDesignCtrl', ['$scope', '$http',  'VARIABLE_TYPES', function($scope, $http, VARIABLE_TYPES) {
+		$scope.VARIABLE_TYPES = VARIABLE_TYPES;
+
 		$scope.applicationData = {
 			importDesignMappedData: null
 		};

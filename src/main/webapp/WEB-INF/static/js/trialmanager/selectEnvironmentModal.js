@@ -83,7 +83,7 @@
             angular.forEach($scope.data.environments, function(env) {
                 env.Selected = $scope.selectAll;
                 if($scope.selectAll){
-                    $scope.trialInstances.push(env.managementDetailValues[$scope.PREFERENCED_LOCATION_VARIABLE]);
+                    $scope.trialInstances.push(env.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX]);
                 }
             });
 

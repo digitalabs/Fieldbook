@@ -75,6 +75,8 @@
 
 				// TODO : re run computeLocalData after loading of previous trial as template
 				$scope.computeLocalData = function() {
+					$scope.data.designType = TrialManagerDataService.currentData.experimentalDesign.designType;
+
 					$scope.settings = TrialManagerDataService.specialSettings.experimentalDesign;
 					$scope.settings.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
 
@@ -177,6 +179,7 @@
 						$scope.currentDesignType = $scope.designTypes[newId];
 						$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 						$scope.data.designType = $scope.currentDesignType.id;
+						TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
 
 						if ($scope.designTypes[newId].isPreset) {
 							showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
@@ -297,17 +300,23 @@
 
 				$scope.toggleDesignView = function() {
 					return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign 
-						|| ($scope.data.designType != null && $scope.designTypes[$scope.data.designType].name === 'Custom Import Design')
+						|| ($scope.data.designType != null 
+							&& $scope.data.designType !== ''
+							&& $scope.designTypes[$scope.data.designType].name === 'Custom Import Design')
 						|| $scope.applicationData.hasGeneratedDesignPreset);
 				};
 
 				$scope.isImportedDesign = function() {
-					return $scope.data.designType != null && $scope.designTypes[$scope.data.designType].name === 'Custom Import Design';
+					return $scope.data.designType != null 
+								&& $scope.data.designType !== ''
+								&& $scope.designTypes[$scope.data.designType].name === 'Custom Import Design';
 				};
 
 				$scope.isBVDesign = function() {
 					var selectedDesignType = $scope.designTypes[$scope.data.designType];
-					return $scope.data.designType != null && !selectedDesignType.isPreset && selectedDesignType.name !== 'Custom Import Design';
+					return $scope.data.designType != null 
+								&& $scope.data.designType !== ''
+								&& !selectedDesignType.isPreset && selectedDesignType.name !== 'Custom Import Design';
 				};
 
 				$scope.doValidate = function() {

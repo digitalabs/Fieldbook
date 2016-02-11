@@ -64,8 +64,7 @@ public class TreeViewUtilTest {
 	public void testConvertGermplasmListToTreeTableNodes() {
 		List<GermplasmList> germplasmLists = new ArrayList<GermplasmList>(TreeViewUtilTest.GERMPLASM_LIST_TEST_DATA);
 		List<TreeTableNode> treeTableNodes =
-				TreeViewUtil.convertGermplasmListToTreeTableNodes(germplasmLists, TreeViewUtilTest.userDataManager,
-						TreeViewUtilTest.germplasmListManager);
+				TreeViewUtil.convertGermplasmListToTreeTableNodes(germplasmLists, TreeViewUtilTest.germplasmListManager);
 
 		Assert.assertTrue("The list should not be null", treeTableNodes != null);
 		Assert.assertTrue("The list should not be empty", !treeTableNodes.isEmpty());
@@ -156,7 +155,7 @@ public class TreeViewUtilTest {
 	public void testConvertGermplasmListToTreeTableNodes_NullList() {
 		List<TreeTableNode> treeTableNodes =
 				TreeViewUtil.convertGermplasmListToTreeTableNodes(TreeViewUtilTest.NULL_GERMPLASM_LIST_TEST_DATA,
-						TreeViewUtilTest.userDataManager, TreeViewUtilTest.germplasmListManager);
+						TreeViewUtilTest.germplasmListManager);
 		Assert.assertTrue("The list should be empty", treeTableNodes.isEmpty());
 	}
 
@@ -164,7 +163,7 @@ public class TreeViewUtilTest {
 	public void testConvertGermplasmListToTreeTableNodes_EmptyList() {
 		List<TreeTableNode> treeTableNodes =
 				TreeViewUtil.convertGermplasmListToTreeTableNodes(TreeViewUtilTest.EMPTY_GERMPLASM_LIST_TEST_DATA,
-						TreeViewUtilTest.userDataManager, TreeViewUtilTest.germplasmListManager);
+						TreeViewUtilTest.germplasmListManager);
 		Assert.assertTrue("The list should be empty", treeTableNodes.isEmpty());
 	}
 }

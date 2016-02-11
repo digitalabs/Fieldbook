@@ -451,7 +451,7 @@ public class ExportStudyControllerTest {
 				"application/vnd.ms-excel".equalsIgnoreCase(contentType));
 	}
 
-	@Test
+	//@Test
 	public void testGetCustomReportTypes() throws MiddlewareQueryException {
 		ExportStudyController controller = new ExportStudyController();
 		WorkbenchService workbenchService = Mockito.mock(WorkbenchService.class);

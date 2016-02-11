@@ -33,8 +33,13 @@ public class GroupCountExpressionTest extends TestExpression {
 
 	@Test
 	public void testPoundCountWithItems() {
-        testCountExpression("CML451 / ABC1234-#-#-#", "#*[COUNT]", "CML451 / ABC1234-###");
+        testCountExpression("CML451 / ABC1234-#-#-#", "#*[COUNT]", "CML451 / ABC1234-#*3");
 	}
+
+    @Test
+    public void testCountTwoItemsGroup() {
+        testCountExpression("CML451 / ABC1234-#-#", "#*[COUNT]", "CML451 / ABC1234-#*2");
+    }
 
     protected void testCountExpression(String sourceName, String countExpression, String expectedValue) {
         AdvancingSource source = this.createAdvancingSourceTestData(sourceName, "-", null, null, null, false);

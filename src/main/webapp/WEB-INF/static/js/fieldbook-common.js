@@ -1027,7 +1027,7 @@ function trialSelectEnviornmentContinue(trialInstances,noOfReplications,selected
 function generateLocationDetailTable(selectedLocations,isTrialInstanceNumberUsed) {
     var result = "<table class='table table-curved table-condensed'>";
     if(isTrialInstanceNumberUsed){
-        result += "<caption>Update Location Name or Location Abbr in Environement Details.</caption>";
+        result += "<caption>Update Location Name or Location Abbr in Environment Details.</caption>";
     }
     result += "<thead><tr><th>"+selectedLocations[0]+"</th></tr></thead>";
 

@@ -17,7 +17,6 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -51,6 +50,8 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	private static final Logger LOG = LoggerFactory.getLogger(ReviewStudyDetailsController.class);
 
+	private static final int COLS = 3;
+
 	@Resource
 	private UserSelection userSelection;
 
@@ -62,9 +63,6 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
-
-	@Resource
-	private ContextUtil contextUtil;
 
 	@Resource
 	private Properties appConstantsProperties;
@@ -84,7 +82,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@RequestMapping(value = "/show/{studyType}/{id}", method = RequestMethod.GET)
 	public String show(@PathVariable final String studyType, @PathVariable final int id,
-			@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form, final Model model) throws MiddlewareQueryException {
+			@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form, final Model model) {
 
 		final boolean isNursery = studyType != null && StudyType.N.getName().equalsIgnoreCase(studyType);
 		final Workbook workbook;
@@ -92,9 +90,10 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		try {
 			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
 			workbook.getStudyDetails().setId(id);
+			this.filterAnalysisVariable(workbook);
 			details =
 					SettingsUtil.convertWorkbookToStudyDetails(workbook, this.fieldbookMiddlewareService, this.fieldbookService,
-							this.userSelection, contextUtil.getCurrentProgramUUID(),appConstantsProperties);
+							this.userSelection, this.contextUtil.getCurrentProgramUUID(), this.appConstantsProperties);
 			this.rearrangeDetails(details);
 			this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
 			if (workbook.getMeasurementDatesetId() != null) {
@@ -137,7 +136,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@ResponseBody
 	@RequestMapping(value = "/datasets/{nurseryId}")
-	public List<DatasetReference> loadDatasets(@PathVariable final int nurseryId) throws MiddlewareQueryException {
+	public List<DatasetReference> loadDatasets(@PathVariable final int nurseryId) {
 		return this.fieldbookMiddlewareService.getDatasetReferences(nurseryId);
 	}
 
@@ -148,18 +147,17 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	private List<SettingDetail> rearrangeSettingDetails(final List<SettingDetail> list) {
 		final List<SettingDetail> newList = new ArrayList<SettingDetail>();
-		final int COLS = 3;
 
 		if (list != null && !list.isEmpty()) {
-			final int rows = Double.valueOf(Math.ceil(list.size() / (double) COLS)).intValue();
-			final int extra = list.size() % COLS;
+			final int rows = Double.valueOf(Math.ceil(list.size() / (double) ReviewStudyDetailsController.COLS)).intValue();
+			final int extra = list.size() % ReviewStudyDetailsController.COLS;
 			for (int i = 0; i < list.size(); i++) {
 				int delta = 0;
-				final int currentColumn = i % COLS;
+				final int currentColumn = i % ReviewStudyDetailsController.COLS;
 				if (currentColumn > extra && extra > 0) {
 					delta = currentColumn - extra;
 				}
-				final int computedIndex = currentColumn * rows + i / COLS - delta;
+				final int computedIndex = currentColumn * rows + i / ReviewStudyDetailsController.COLS - delta;
 				if (computedIndex < list.size()) {
 					newList.add(list.get(computedIndex));
 				} else {

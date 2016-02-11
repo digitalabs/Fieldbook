@@ -11,10 +11,16 @@
 
 package com.efficio.fieldbook.web;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -81,11 +87,11 @@ public abstract class AbstractBaseFieldbookController {
 		return "0";
 	}
 
-	public Project getCurrentProject() throws MiddlewareQueryException {
+	public Project getCurrentProject() {
 		return this.contextUtil.getProjectInContext();
 	}
 
-	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {
+	public Integer getCurrentIbdbUserId() {
 		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
 				this.contextUtil.getCurrentWorkbenchUserId());
 
@@ -203,7 +209,4 @@ public abstract class AbstractBaseFieldbookController {
 		this.contextUtil = contextUtil;
 	}
 
-	public void setVariableDataManager(OntologyVariableDataManager variableDataManager) {
-		this.variableDataManager = variableDataManager;
-	}
 }

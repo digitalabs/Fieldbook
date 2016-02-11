@@ -138,8 +138,10 @@ public class EditNurseryController extends SettingsController {
 	public String useExistingNursery(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form2, @PathVariable final int nurseryId,
 			@RequestParam(required = false) final String isAjax, final Model model, final HttpServletRequest request,
-			final RedirectAttributes redirectAttributes)
-					throws MiddlewareQueryException {
+			final RedirectAttributes redirectAttributes, @RequestParam(value = "crosseslistid", required = false) final String
+			crossesListId) throws MiddlewareQueryException {
+
+		model.addAttribute("createdCrossesListId", crossesListId);
 
 		final String contextParams = this.retrieveContextInfo(request);
 

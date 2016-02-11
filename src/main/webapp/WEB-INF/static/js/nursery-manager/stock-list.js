@@ -350,10 +350,14 @@ if (typeof StockIDFunctions === 'undefined') {
 			'use strict';
 			var ids = [],
 				listDivIdentifier  = getCurrentAdvanceTabTempIdentifier(),
-				sectionContainerDiv = 'stock-tab-pane' + listDivIdentifier;
-			$('#' + sectionContainerDiv + ' .stockListEntryId:checked').each(function() {
-				ids.push($(this).data('entryid'));
-			});
+				inventoryTableId = '#inventory-table' + listDivIdentifier;
+			
+			var oTable = $(inventoryTableId).dataTable();
+			var nodes = oTable.api().rows( ':has(input.stockListEntryId:checked)' ).nodes();
+			$(nodes).each(function(i, node){
+					ids.push($('input.stockListEntryId:checked', node).data('entryid'));
+			}); 
+			
 			return ids;
 		},
 
@@ -366,12 +370,12 @@ if (typeof StockIDFunctions === 'undefined') {
 				return;
 			}
 
-			var entryIdList = entryIds.join();
-
 			$.ajax({
-				url: '/Fieldbook/stock/ajax/' + getCurrentAdvanceTabTempIdentifier() + '/' + entryIdList,
-				type: 'GET',
+				url: '/Fieldbook/stock/ajax/' + getCurrentAdvanceTabTempIdentifier(),
+				type: 'POST',
+				data: JSON.stringify(entryIds),
 				cache: false,
+				contentType: "application/json; charset=utf-8",
 				success: function(data) {
 					$('#addLotsModalDiv').html(data);
 					$('#comments').val('');

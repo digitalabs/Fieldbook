@@ -11,7 +11,7 @@
 
 	 <!-- case 2: advanced view of the importedGermplasm -->
 	 <div  class="advance-nursery-list-table" th:if="*{germplasmList != null and not #lists.isEmpty(germplasmList)}">
-		 <table id="inventory-table" th:if="*{not #lists.isEmpty(germplasmList)}"
+		 <table th:id="'inventory-table' + *{listId}" th:if="*{not #lists.isEmpty(germplasmList)}" 
 		 class="table-curved table-condensed final-advance-list">
 		   <thead>
 			<tr>
@@ -88,48 +88,59 @@ var InventoryPage = {
 		}
 
 		var sectionContainerDiv = 'stock-content-pane' + listDivIdentifier;
+		var inventoryTableId = 'inventory-table' + listDivIdentifier;
 
 		$('#' + getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').on('change', function(event) {
+			
 			//select all the checkbox in the section container div
 			//needed set time out since chrme is not able to rnder properly the checkbox if its checked or not
 			setTimeout(function() {
+				
 				var isChecked = $('#' + getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').prop('checked');
-				$('#' + getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').removeClass('selected');
-				$('#' + getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').removeClass('manual-selected');
+				$('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('selected');
+				$('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('manual-selected');
 				$('#' + getJquerySafeId(sectionContainerDiv) + ' input.stockListEntryId').prop('checked', isChecked);
 
 				if (isChecked) {
-					$('#' + getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('selected');
-					$('#' + getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('manual-selected');
+					$('#' + getJquerySafeId(inventoryTableId) + ' tr').addClass('selected');
+					$('#' + getJquerySafeId(inventoryTableId) + ' tr').addClass('manual-selected');
 				}
-				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#' + getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+				
+				var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
+				
+				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
+				
 			}, 10);
 
 		});
 
-		$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').tableSelect({
+		$('#' + getJquerySafeId(inventoryTableId)).tableSelect({
 			onClick: function(row) {
+	
 				//we clear all check
-				if ($('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click') === '1') {
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '0');
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').addClass('selected');
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected) input.stockListEntryId:checked').parent().parent().addClass('selected');
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.stockListEntryId:not(:checked)').parent().parent().removeClass('selected');
+				if ($('#' + getJquerySafeId(inventoryTableId)).data('check-click') === '1') {
+					$('#' + getJquerySafeId(inventoryTableId)).data('check-click', '0');
+					$('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected').addClass('selected');
+					$('#' + getJquerySafeId(inventoryTableId) + ' tr:not(.manual-selected) input.stockListEntryId:checked').parent().parent().addClass('selected');
+					$('#' + getJquerySafeId(inventoryTableId) + ' tr.selected input.stockListEntryId:not(:checked)').parent().parent().removeClass('selected');
 				} else {
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table input.stockListEntryId').prop('checked', false);
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').removeClass('manual-selected');
+					$('#' + getJquerySafeId(inventoryTableId) + ' input.stockListEntryId').prop('checked', false);
+					$('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected').removeClass('manual-selected');
 					if ($(row).hasClass('selected')) {
 						$(row).find('input.stockListEntryId').prop('checked', true);
 					} else {
 						$(row).find('input.stockListEntryId').prop('checked', false);
 					}
 				}
-				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#' + getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+				
+				var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
+				
+				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
 			},
 			onCtrl: function(row) {
 
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.stockListEntryId').prop('checked', true);
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.selected) input.stockListEntryId').prop('checked', false);
+				$('#' + getJquerySafeId(inventoryTableId) + ' tr.selected input.stockListEntryId').prop('checked', true);
+				$('#' + getJquerySafeId(inventoryTableId) + ' tr:not(.selected) input.stockListEntryId').prop('checked', false);
 				if ($(row).hasClass('manual-selected') || $(row).hasClass('selected')) {
 					$(row).find('input.stockListEntryId').prop('checked', true);
 					$(row).addClass('selected');
@@ -137,26 +148,32 @@ var InventoryPage = {
 					$(row).find('input.stockListEntryId').prop('checked', false);
 					$(row).removeClass('selected');
 				}
-				if ($('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click') === '1') {
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '0');
+				if ($('#' + getJquerySafeId(inventoryTableId)).data('check-click') === '1') {
+					$('#' + getJquerySafeId(inventoryTableId)).data('check-click', '0');
 					if ($(row).hasClass('selected') && $(row).hasClass('manual-selected') === false) {
 						$(row).find('input.stockListEntryId').prop('checked', false);
 						$(row).removeClass('selected');
 					}
 				}
-				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#' + getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+				
+				var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
+				
+				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
 			},
 			onShift: function() {
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected-dummy').addClass('selected');
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.stockListEntryId').prop('checked', true);
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.selected) input.stockListEntryId').prop('checked', false);
-				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('tr.primaryRow.selected').length);
+				$('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected-dummy').addClass('selected');
+				$('#' + getJquerySafeId(inventoryTableId) + ' tr.selected input.stockListEntryId').prop('checked', true);
+				$('#' + getJquerySafeId(inventoryTableId) + ' tr:not(.selected) input.stockListEntryId').prop('checked', false);
+				
+				var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
+				
+				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
 			}
 
 		});
 
-		$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table input.stockListEntryId').on('click', function() {
-			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '1');
+		$('#' + getJquerySafeId(inventoryTableId) + ' input.stockListEntryId').on('click', function() {
+			$('#' + getJquerySafeId(inventoryTableId)).data('check-click', '1');
 			if ($(this).is(':checked')) {
 				//we highlight
 				$(this).parent().parent().addClass('selected');
@@ -165,13 +182,16 @@ var InventoryPage = {
 				$(this).parent().parent().removeClass('selected');
 				$(this).parent().parent().removeClass('manual-selected');
 			}
-			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected input.stockListEntryId').prop('checked', true);
-			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').addClass('selected');
-			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected)').remove('selected');
-			$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#' + getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+			$('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected input.stockListEntryId').prop('checked', true);
+			$('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected').addClass('selected');
+			$('#' + getJquerySafeId(inventoryTableId) + ' tr:not(.manual-selected)').remove('selected');
+			
+			var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
+			
+			$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
 		});
 
-		new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#' + sectionContainerDiv + ' .final-advance-list', '#' + sectionContainerDiv, null, false);
+		new BMS.Fieldbook.StockListDataTable('#' + getJquerySafeId(inventoryTableId), '#' + getJquerySafeId(sectionContainerDiv), null, false);
 		$('#' + sectionContainerDiv + ' .main-inventory').css('opacity', 1);
 	}
 };

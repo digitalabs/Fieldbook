@@ -48,7 +48,7 @@ BMS.Fieldbook.MeasurementsTable = {
 };
 
 BMS.Fieldbook.MeasurementsDataTable = (function($) {
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new MeasurementsDataTable.
 	 *
@@ -337,7 +337,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 })(jQuery);
 
 BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new ReviewDetailsOutOfBoundsDataTable.
 	 *
@@ -438,7 +438,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 })(jQuery);
 
 BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new PreviewCrossesDataTable.
 	 *
@@ -455,9 +455,13 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 			table;
 
 		$(tableIdentifier + ' thead tr th').each(function() {
-			columns.push({data: $(this).html()});
+			columns.push({
+				data: $(this).html(),
+				defaultContent: '',
+			});
 			if ($(this).html() === 'DUPLICATE') {
 				columnsDef.push({
+					defaultContent: '',
 					targets: columns.length - 1,
 					createdCell: function(td, cellData, rowData, row, col) {
 
@@ -531,7 +535,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 
 BMS.Fieldbook.GermplasmListDataTable = (function($) {
 
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new MeasurementsDataTable.
 	 *
@@ -796,7 +800,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 
 BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new MeasurementsDataTable.
 	 *
@@ -937,7 +941,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 
 BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new AdvancedGermplasmListDataTable.
 	 *
@@ -997,7 +1001,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
 BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new AdvancedGermplasmListDataTable.
 	 *
@@ -1102,8 +1106,84 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 
 })(jQuery);
 
+BMS.Fieldbook.StockListDataTable = (function($) {
+
+	/**
+	 * Creates a new StockListDataTable.
+	 *
+	 * @constructor
+	 * @alias module:fieldbook-datatable
+	 * @param {string} tableIdentifier the id of the table container
+	 * @param {string} parentDiv parentdiv of that contains the table
+	 * @param {dataList} json representation of the data to be displayed
+	 */
+	var dataTableConstructor = function StockListDataTable(tableIdentifier, parentDiv, dataList, tableAutoWidth) {
+		'use strict';
+
+		var columns = [],
+		aoColumnsDef = [],
+		stockTable;
+
+		$(tableIdentifier + ' thead tr th').each(function(index) {
+			columns.push({data: $(this).data('col-name')});
+			if (index === 0) {
+				aoColumnsDef.push({bSortable: false});
+			} else {
+				aoColumnsDef.push(null);
+			}
+
+
+		});
+		this.stockTable = $(tableIdentifier).dataTable({
+			autoWidth: tableAutoWidth,
+			scrollY: '500px',
+			scrollX: '100%',
+			scrollCollapse: true,
+			aoColumns: aoColumnsDef,
+			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+			dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
+
+			iDisplayLength: 100,
+			fnDrawCallback: function(oSettings) {
+				
+				var selectedRowCount = 0;
+				$(oSettings.oInstance.fnGetNodes()).each(function(i, row){
+						if ($('input.stockListEntryId:checked', row).length !== 0){
+							$(row).addClass('selected');
+							selectedRowCount++;
+						}
+					}
+				);
+				
+				$(parentDiv + ' .numberOfAdvanceSelected').html(selectedRowCount);
+			},
+			fnInitComplete: function(oSettings, json) {
+				
+				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
+				if (totalPages === 1) {
+					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+				}
+				BMS.Fieldbook.checkPagination(parentDiv);
+				$(parentDiv).removeClass('fbk-hide-opacity');
+				oSettings.oInstance.fnAdjustColumnSizing();
+				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize, tableIdentifier);
+				$(parentDiv + ' .dataTables_length select').select2({minimumResultsForSearch: 10});
+				oSettings.oInstance.fnAdjustColumnSizing();
+			}
+		});
+
+		StockListDataTable.prototype.getDataTable = function()
+		{
+			return this.stockTable;
+		};
+	};
+
+	return dataTableConstructor;
+
+})(jQuery);
+
 BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
-	// FIXME Refactor to remove some of this code from the constructor function
+	
 	/**
 	 * Creates a new PreviewDesignMeasurementsDataTable.
 	 *

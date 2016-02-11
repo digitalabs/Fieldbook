@@ -159,7 +159,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 					// For Existing Trial with measurement data
 					var environmentNo = index + 1;
 					$scope.hasMeasurementDataOnEnvironment(environmentNo).success(function(data) {
-						if ('true' === data) {
+						if (true === data) {
 							var warningMessage = 'This environment cannot be removed because it contains measurement data.';
 							showAlertMessage('', warningMessage);
 						} else {

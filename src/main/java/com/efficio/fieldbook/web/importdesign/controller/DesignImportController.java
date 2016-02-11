@@ -19,7 +19,6 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.generationcp.commons.breedingview.xml.DesignType;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -242,10 +241,9 @@ public class DesignImportController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getMappingSummary", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	public Map<PhenotypicType,Map<Integer,DesignHeaderItem>> getMappingSummary() {
-		return userSelection.getDesignImportData().getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
+	public Map<PhenotypicType, Map<Integer, DesignHeaderItem>> getMappingSummary() {
+		return this.userSelection.getDesignImportData().getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 	}
-
 
 	@RequestMapping(value = "/showDetails", method = RequestMethod.GET)
 	public String showDetails(final Model model) {
@@ -516,19 +514,22 @@ public class DesignImportController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getCustomImportDesignTypeDetails", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	public Map<String,Object> getCustomImportDesignTypeDetails() {
-		Map<String,Object> output = new HashMap<>();
+	public Map<String, Object> getCustomImportDesignTypeDetails() {
+		final Map<String, Object> output = new HashMap<>();
 
 		// defaults
 		output.put("name", DesignTypeItem.CUSTOM_IMPORT.getName());
-		String filename = (userSelection.getDesignImportData() != null) ? userSelection.getDesignImportData().getImportFileName() : DesignTypeItem.CUSTOM_IMPORT.getTemplateName();
+		final String filename =
+				(this.userSelection.getDesignImportData() != null) ? this.userSelection.getDesignImportData().getImportFileName()
+						: DesignTypeItem.CUSTOM_IMPORT.getTemplateName();
 
 		// unsaved but has import design
-		final Workbook workbook = userSelection.getWorkbook();
+		final Workbook workbook = this.userSelection.getWorkbook();
 		if (workbook != null && workbook.getExperimentalDesignVariables() != null) {
 			// existing design (if saved)
-			MeasurementVariable expDesignSource = workbook.getExperimentalDesignVariables().getExperimentalDesignSource();
-			output.put("templateName", expDesignSource != null && expDesignSource.getValue() != null && !expDesignSource.getValue().isEmpty() ? expDesignSource.getValue() : filename);
+			final MeasurementVariable expDesignSource = workbook.getExperimentalDesignVariables().getExperimentalDesignSource();
+			output.put("templateName", expDesignSource != null && expDesignSource.getValue() != null
+					&& !expDesignSource.getValue().isEmpty() ? expDesignSource.getValue() : filename);
 		} else if (filename != null) {
 			output.put("templateName", filename);
 		}
@@ -768,7 +769,7 @@ public class DesignImportController extends SettingsController {
 			designParam.setFileName(designTypeItem.getTemplateName());
 
 			if (designTypeItem.getName().equals(DesignTypeItem.CUSTOM_IMPORT.getName())) {
-				designParam.setFileName(userSelection.getDesignImportData().getImportFileName());
+				designParam.setFileName(this.userSelection.getDesignImportData().getImportFileName());
 			}
 
 			expDesignTermIds.add(TermId.EXPT_DESIGN_SOURCE.getId());

@@ -583,6 +583,10 @@ public class DesignImportController extends SettingsController {
 
 		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeItem);
 
+		if (additionalParams.containsKey("noOfAddedEnvironments")) {
+			this.updateTrialConditionVariables(workbook.getConditions());
+		}
+
 		// Only for Trial
 		this.populateTrialLevelVariableListIfNecessary(workbook);
 
@@ -593,6 +597,22 @@ public class DesignImportController extends SettingsController {
 
 		// Only for Nursery
 		this.resetCheckList(workbook, this.userSelection);
+	}
+
+	/**
+	 * Make sure that the following variables under experimental design will not be added twice when adding new environment NREP,
+	 * EXP_DESIGN, EXP_DESIGN_SOURCE
+	 * 
+	 * @param conditions
+	 */
+	private void updateTrialConditionVariables(final List<MeasurementVariable> conditions) {
+		for (final MeasurementVariable condition : conditions) {
+			if (condition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
+					|| condition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()
+					|| condition.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
+				condition.setOperation(Operation.UPDATE);
+			}
+		}
 	}
 
 	/**

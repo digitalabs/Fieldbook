@@ -11,10 +11,16 @@
 
 package com.efficio.fieldbook.web;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
@@ -77,11 +83,11 @@ public abstract class AbstractBaseFieldbookController {
 		return "0";
 	}
 
-	public Project getCurrentProject() throws MiddlewareQueryException {
+	public Project getCurrentProject() {
 		return this.contextUtil.getProjectInContext();
 	}
 
-	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {
+	public Integer getCurrentIbdbUserId() {
 		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
 				this.contextUtil.getCurrentWorkbenchUserId());
 
@@ -198,6 +204,29 @@ public abstract class AbstractBaseFieldbookController {
 
 	public void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
+	}
+
+	/**
+	 * Filter variables with variable type 'Analysis' in the workbook
+	 */
+	protected void filterAnalysisVariable(final Workbook workbook) {
+		this.filterAnalysisVariable(workbook.getConditions());
+		this.filterAnalysisVariable(workbook.getConstants());
+		this.filterAnalysisVariable(workbook.getFactors());
+		this.filterAnalysisVariable(workbook.getVariates());
+	}
+
+	/**
+	 * Filter variables with variable type 'Analysis' in the list of measurement variables
+	 */
+	private void filterAnalysisVariable(final List<MeasurementVariable> measurementVariables) {
+		final Iterator<MeasurementVariable> measurementVariablesIterator = measurementVariables.iterator();
+		while (measurementVariablesIterator.hasNext()) {
+			final MeasurementVariable measurementVariable = measurementVariablesIterator.next();
+			if (measurementVariable != null && VariableType.ANALYSIS == measurementVariable.getVariableType()) {
+				measurementVariablesIterator.remove();
+			}
+		}
 	}
 
 }

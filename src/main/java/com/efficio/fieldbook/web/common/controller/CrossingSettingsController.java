@@ -386,4 +386,7 @@ public class CrossingSettingsController extends SettingsController {
 		return this.contextUtil.getCurrentProgramUUID();
 	}
 
+	public void setCrossesListUtil(final CrossesListUtil crossesListUtil) {
+		this.crossesListUtil = crossesListUtil;
+	}
 }

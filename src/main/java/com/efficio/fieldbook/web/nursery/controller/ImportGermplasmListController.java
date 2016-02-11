@@ -325,7 +325,7 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 		}
 
-		Integer totalExpectedNumber = this.computeTotalExpectedChecks(form);
+		Integer totalExpectedNumber = this.computeTotalExpectedWithChecks(form);
 		Integer plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), null);
 
 		if(plotNo != null){
@@ -1643,24 +1643,26 @@ public class ImportGermplasmListController extends SettingsController {
 
 	}
 
-	protected Integer computeTotalExpectedChecks(ImportGermplasmListForm form){
+	protected Integer computeTotalExpectedWithChecks(ImportGermplasmListForm form){
 
 		int totalGermplasmCount = this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().size();
 		Integer checkInterval = null, startCheckFrom = null;
 
-		for(SettingDetail settingDetail : form.getCheckVariables()){
-			if(Objects.equals(settingDetail.getVariable().getCvTermId(), TermId.CHECK_START.getId())){
-				startCheckFrom = org.generationcp.middleware.util.StringUtil.parseInt(settingDetail.getValue(), null);
-			}
-			if(Objects.equals(settingDetail.getVariable().getCvTermId(), TermId.CHECK_INTERVAL.getId())){
-				checkInterval = org.generationcp.middleware.util.StringUtil.parseInt(settingDetail.getValue(), null);
-			}
-		}
+        if ( form.getCheckVariables() != null) {
+            for (SettingDetail settingDetail : form.getCheckVariables()) {
+                if (Objects.equals(settingDetail.getVariable().getCvTermId(), TermId.CHECK_START.getId())) {
+                    startCheckFrom = org.generationcp.middleware.util.StringUtil.parseInt(settingDetail.getValue(), null);
+                }
+                if (Objects.equals(settingDetail.getVariable().getCvTermId(), TermId.CHECK_INTERVAL.getId())) {
+                    checkInterval = org.generationcp.middleware.util.StringUtil.parseInt(settingDetail.getValue(), null);
+                }
+            }
 
-		if(checkInterval != null && startCheckFrom != null){
-			Integer totalCount = ((totalGermplasmCount - startCheckFrom) / checkInterval);
-			return totalCount + totalGermplasmCount + 1;
-		}
+            if (checkInterval != null && startCheckFrom != null) {
+                Integer totalCount = ((totalGermplasmCount - startCheckFrom) / checkInterval);
+                return totalCount + totalGermplasmCount + 1;
+            }
+        }
 
 		return totalGermplasmCount;
 

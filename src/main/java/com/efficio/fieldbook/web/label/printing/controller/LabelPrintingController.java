@@ -156,7 +156,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		boolean hasFieldMap = false;
 		try {
 			study = this.fieldbookMiddlewareService.getStudy(id);
-			List<Integer> ids = new ArrayList<Integer>();
+			List<Integer> ids = new ArrayList<>();
 			ids.add(id);
 			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
 
@@ -205,7 +205,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		boolean hasFieldMap = false;
 		try {
 			study = this.fieldbookMiddlewareService.getStudy(id);
-			List<Integer> ids = new ArrayList<Integer>();
+			List<Integer> ids = new ArrayList<>();
 			ids.add(id);
 			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
 			for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
@@ -293,7 +293,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			boolean hasFieldMap = false;
 			try {
 				study = this.fieldbookMiddlewareService.getStudy(stockList.getProjectId());
-				List<Integer> ids = new ArrayList<Integer>();
+				List<Integer> ids = new ArrayList<>();
 				ids.add(stockList.getProjectId());
 				fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
 				for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
@@ -479,7 +479,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 	protected Map<String, Object> generateLabels(List<StudyTrialInstanceInfo> trialInstances, boolean isCustomReport) {
-		Map<String, Object> results = new HashMap<String, Object>();
+		Map<String, Object> results = new HashMap<>();
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			String fileName = "";
@@ -499,14 +499,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 			} else if (this.userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
 				this.getFileNameAndSetFileLocations(".pdf");
-				fileName = this.labelPrintingService.generatePDFLabels(trialInstances, this.userLabelPrinting, baos);
 			} else if (this.userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
 				this.getFileNameAndSetFileLocations(".xls");
-				fileName = this.labelPrintingService.generateXlSLabels(trialInstances, this.userLabelPrinting, baos);
 			} else {
 				this.getFileNameAndSetFileLocations(".csv");
-				fileName = this.labelPrintingService.generateCSVLabels(trialInstances, this.userLabelPrinting, baos);
 			}
+
+            fileName = this.labelPrintingService.generateLabels(this.userLabelPrinting.getGenerateType(), trialInstances, this.userLabelPrinting, baos);
+
 			results.put(LabelPrintingController.IS_SUCCESS, 1);
 			results.put("fileName", fileName);
 		} catch (IOException | MiddlewareException | JRException | BuildReportException e) {
@@ -517,8 +517,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
 			results.put(LabelPrintingController.IS_SUCCESS, 0);
 			Locale locale = LocaleContextHolder.getLocale();
-			results.put(AppConstants.MESSAGE.getString(),
-					this.messageSource.getMessage(e.getErrorCode(), new String[] {e.getLabelError()}, locale));
+
+            if (e.getErrorCode() != null) {
+                results.put(AppConstants.MESSAGE.getString(),
+                        this.messageSource.getMessage(e.getErrorCode(), new String[] {e.getLabelError()}, locale));
+            } else if (e.getCause() != null) {
+                results.put(AppConstants.MESSAGE.getString(), e.getCause().getMessage());
+            }
+
 		}
 		return results;
 	}
@@ -540,7 +546,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/custom/reports", method = RequestMethod.GET)
 	public List<CustomReportType> getLabelPrintingCustomReports() {
-		List<CustomReportType> customReportTypes = new ArrayList<CustomReportType>();
+		List<CustomReportType> customReportTypes = new ArrayList<>();
 		try {
 			if (this.userLabelPrinting.getStudyId() != null) {
 				List<StandardPreset> standardPresetList =
@@ -775,7 +781,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 */
 	private List<StudyTrialInstanceInfo> generateTrialInstancesFromSelectedFieldMaps(List<FieldMapInfo> fieldMapInfoList,
 			LabelPrintingForm form) {
-		List<StudyTrialInstanceInfo> trialInstances = new ArrayList<StudyTrialInstanceInfo>();
+		List<StudyTrialInstanceInfo> trialInstances = new ArrayList<>();
 		String[] fieldMapOrder = form.getUserLabelPrinting().getOrder().split(",");
 		for (String fieldmap : fieldMapOrder) {
 			String[] fieldMapGroup = fieldmap.split("\\|");

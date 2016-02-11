@@ -15,7 +15,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 public class GroupCountExpression extends BaseExpression {
 
 	public static final String KEY = "[COUNT]";
-    public static final Integer MINIMUM_BULK_COUNT = 3;
+    public static final Integer MINIMUM_BULK_COUNT = 2;
 	public static final String BULK_COUNT_PREFIX = "B*";
 	public static final String POUND_COUNT_PREFIX = "#*";
     public static final String SEPARATOR = "-";
@@ -34,7 +34,7 @@ public class GroupCountExpression extends BaseExpression {
 			String targetCountExpression = this.getTargetCountExpression(countPrefix);
 			CountResultBean result = this.countContinuousExpressionOccurrence(targetCountExpression, valueWithoutProcessCode);
             currentValue = this.cleanupString(new StringBuilder(valueWithoutProcessCode), result);
-			if (result.getCount() > MINIMUM_BULK_COUNT) {
+			if (result.getCount() >= MINIMUM_BULK_COUNT) {
 
 				currentValue = currentValue + targetCountExpression + "*" + String.valueOf(result.getCount());
 				value.delete(0, value.length());

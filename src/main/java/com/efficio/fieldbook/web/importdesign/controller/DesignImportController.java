@@ -486,8 +486,8 @@ public class DesignImportController extends SettingsController {
 
 			// populate parameters
 			final Map<String, Integer> additionalParams = this.generateAdditionalParams(startingEntryNo, startingPlotNo);
-			if (generateDesignInput.getHasNewEnvironmentAdded()) {
-				final Workbook workbook = this.userSelection.getWorkbook();
+			final Workbook workbook = this.userSelection.getWorkbook();
+			if (generateDesignInput.getHasNewEnvironmentAdded() && workbook != null) {
 				this.userSelection.setTemporaryWorkbook(workbook);
 				additionalParams.put("noOfAddedEnvironments", environmentData.getNoOfEnvironments()
 						- workbook.getTrialObservations().size());

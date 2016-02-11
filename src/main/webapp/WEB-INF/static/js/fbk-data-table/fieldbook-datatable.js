@@ -455,9 +455,13 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 			table;
 
 		$(tableIdentifier + ' thead tr th').each(function() {
-			columns.push({data: $(this).html()});
+			columns.push({
+				data: $(this).html(),
+				defaultContent: '',
+			});
 			if ($(this).html() === 'DUPLICATE') {
 				columnsDef.push({
+					defaultContent: '',
 					targets: columns.length - 1,
 					createdCell: function(td, cellData, rowData, row, col) {
 

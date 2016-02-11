@@ -160,12 +160,11 @@ public class EditNurseryControllerTest {
 				this.standardVariable);
 		Mockito.when(this.workBenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(project);
 		Mockito.when(this.workBenchDataManager.getWorkbenchRuntimeData()).thenReturn(this.workbenchRD);
-		Mockito.when(this.fieldbookProperties.getProgramBreedingMethodsUrl()).thenReturn(Matchers.anyString());
 
 		// test
 		final String out =
 				this.editNurseryController.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm,
-						EditNurseryControllerTest.NURSERY_ID, "context-info", this.model, this.request, this.redirectAttributes);
+						EditNurseryControllerTest.NURSERY_ID, "context-info", this.model, this.request, this.redirectAttributes, "");
 
 		Mockito.verify(this.fieldbookMiddlewareService).getNurseryDataSet(Matchers.anyInt());
 		Assert.assertEquals("Should return the URL of the base_template", AbstractBaseFieldbookController.BASE_TEMPLATE_NAME, out);
@@ -185,7 +184,7 @@ public class EditNurseryControllerTest {
 
 		final String out =
 				this.editNurseryController.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm,
-						EditNurseryControllerTest.NURSERY_ID, "context-info", this.model, this.request, this.redirectAttributes);
+						EditNurseryControllerTest.NURSERY_ID, "context-info", this.model, this.request, this.redirectAttributes, "");
 		Assert.assertEquals("should redirect to manage nurseries page", "redirect:" + ManageNurseriesController.URL, out);
 
 		// assert that we should have produced a redirectErrorMessage

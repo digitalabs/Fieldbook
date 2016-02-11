@@ -33,7 +33,13 @@ function checkMethod() {
 		if ($('#methodVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();
-			showErrorMessage('page-advance-modal-message', noMethodVariatesError);
+            if(isNursery()){
+                showErrorMessage('page-advance-modal-message', noMethodVariatesError);
+            }
+            else{
+                showErrorMessage('page-advance-modal-message', noMethodVariatesErrorTrial);
+            }
+
 		} else {
 			displaySectionsPerMethodVariateValues();
 		}
@@ -121,7 +127,13 @@ function lineMethod() {
 		if ($('#lineVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=lineChoice]').prop('checked', true);
 			$('input[type=checkbox][name=lineChoice]').change();
-			showErrorMessage('page-advance-modal-message', noLineVariatesError);
+            if(isNursery()){
+                showErrorMessage('page-advance-modal-message', noLineVariatesError);
+            }
+            else{
+                showErrorMessage('page-advance-modal-message', noLineVariatesErrorTrial);
+            }
+
 		}
 	}
 }
@@ -1716,7 +1728,12 @@ function plotMethod() {
 			$('input[type=checkbox][name=allPlotsChoice]')
 					.prop('checked', true);
 			$('input[type=checkbox][name=allPlotsChoice]').change();
-			showErrorMessage('page-advance-modal-message', noPlotVariatesError);
+            if(isNursery()){
+                showErrorMessage('page-advance-modal-message', noPlotVariatesError);
+            }
+            else{
+                showErrorMessage('page-advance-modal-message', noLineVariatesErrorTrial);
+            }
 		}
 	}
 }

@@ -1727,16 +1727,30 @@ function validatePlantsSelected() {
 				if (isMixed) {
 					if (data == 0) {
 						var param = $('lineVariateId').select2('data').text + ' and/or ' + $('#plotVariateId').select2('data').text;
-						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
-						showErrorMessage('page-advance-modal-message', newMessage);
+                        if(isNursery){
+                            var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+                        else{
+                            var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+
 						valid = false;
 					}
 				} else if (isBulk) {
 					choice = !$('#plot-variates-section').is(':visible');
 					if (choice == false && data == '0') {
 						var param = $('#plotVariateId').select2('data').text;
-						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
-						showErrorMessage('page-advance-modal-message', newMessage);
+                        if(isNursery()){
+                            var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+                        else{
+                            var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+
 						valid = false;
 					}
 				} else {
@@ -1744,8 +1758,15 @@ function validatePlantsSelected() {
 					lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
 					if (lineSameForAll == false && choice == false && data == '0') {
 						var param = $('#lineVariateId').select2('data').text;
-						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
-						showErrorMessage('page-advance-modal-message', newMessage);
+                        if(isNursery()){
+                            var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+                        else{
+                            var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+
 						valid = false;
 					}
 				}
@@ -1852,8 +1873,15 @@ function validateBreedingMethod() {
 			async: false,
 			success: function(data) {
 				if (data == 0) {
-					var newMessage = noMethodValueError.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
-					showErrorMessage('page-advance-modal-message', newMessage);
+                    if(isNursery()){
+                        var newMessage = noMethodValueError.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
+                        showErrorMessage('page-advance-modal-message', newMessage);
+                    }
+                    else{
+                        var newMessage = noMethodValueErrorTrial.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
+                        showErrorMessage('page-advance-modal-message', newMessage);
+                    }
+
 					valid = false;
 				}
 			},

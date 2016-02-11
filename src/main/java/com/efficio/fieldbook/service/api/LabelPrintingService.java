@@ -46,33 +46,8 @@ public interface LabelPrintingService {
 	 * @return the string
 	 * @throws LabelPrintingException the label printing exception
 	 */
-	String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
+	String generateLabels(String labelType, List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
 					throws LabelPrintingException;
-
-	/**
-	 * Generate xl s labels.
-	 *
-	 * @param trialInstances the trial instances
-	 * @param userLabelPrinting the user label printing
-	 * @param baos the baos
-	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	String generateXlSLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
-					throws MiddlewareQueryException;
-
-	/**
-	 * Generate csv labels.
-	 *
-	 * @param trialInstances the trial instances
-	 * @param userLabelPrinting the user label printing
-	 * @param baos the baos
-	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	String generateCSVLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
-					throws IOException;
-
 	/**
 	 * Gets the available label fields for FieldMap.
 	 *
@@ -166,7 +141,7 @@ public interface LabelPrintingService {
 	 */
 	void saveOrUpdateLabelPrintingPresetConfig(String settingsName, String xmlConfig, Integer programId) throws MiddlewareQueryException;
 
-	public void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields,
+	void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields,
 			boolean isTrial, boolean isStockList);
 
 	void deleteProgramPreset(Integer programPresetId) throws MiddlewareQueryException;
@@ -185,5 +160,5 @@ public interface LabelPrintingService {
 	 * @return
 	 * @throws MiddlewareQueryException
 	 */
-	public Map<String, InventoryDetails> getInventoryDetailsMap(GermplasmList stockList);
+    Map<String, InventoryDetails> getInventoryDetailsMap(GermplasmList stockList);
 }

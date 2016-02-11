@@ -17,7 +17,6 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -64,9 +63,6 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
-
-	@Resource
-	private ContextUtil contextUtil;
 
 	@Resource
 	private Properties appConstantsProperties;
@@ -174,11 +170,6 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	protected void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
-	}
-
-	@Override
-	public void setContextUtil(final ContextUtil contextUtil) {
-		this.contextUtil = contextUtil;
 	}
 
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
+ *
+ *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.trial.controller;
@@ -96,21 +96,19 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	@ModelAttribute("measurementDataExisting")
-	public Boolean getMeasurementDataExisting() throws MiddlewareQueryException {
+	public Boolean getMeasurementDataExisting() {
 		return false;
 	}
 
 	/**
 	 * Show.
-	 * 
+	 *
 	 * @param model the model
 	 * @param session the session
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String show(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model, final HttpSession session)
-			throws MiddlewareException {
+	public String show(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model, final HttpSession session) {
 
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.USER_SELECTION_SESSION_NAME,
 				SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
@@ -129,13 +127,14 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/useExistingTrial", method = RequestMethod.GET)
-	public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "trialID") final Integer trialID)
-			throws MiddlewareQueryException {
+	public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "trialID") final Integer trialID) {
 		final Map<String, Object> tabDetails = new HashMap<String, Object>();
 		CreateTrialForm form = new CreateTrialForm();
 		try {
 			if (trialID != null && trialID != 0) {
 				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(trialID);
+				this.filterAnalysisVariable(trialWorkbook);
+
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
 
 				tabDetails.put("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), true));
@@ -223,7 +222,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public String submit(@RequestBody final TrialData data) throws MiddlewareException {
+	public String submit(@RequestBody final TrialData data) {
 		this.processEnvironmentData(data.getEnvironments());
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
@@ -303,7 +302,7 @@ public class CreateTrialController extends BaseTrialController {
 		return info;
 	}
 
-	protected TabInfo prepareEnvironmentsTabInfo(final boolean isClearSettings) throws MiddlewareException {
+	protected TabInfo prepareEnvironmentsTabInfo(final boolean isClearSettings) {
 		final TabInfo info = new TabInfo();
 		final EnvironmentData data = new EnvironmentData();
 		final int noOfEnvironments = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
@@ -340,7 +339,7 @@ public class CreateTrialController extends BaseTrialController {
 		return info;
 	}
 
-	protected TabInfo prepareBasicDetailsTabInfo() throws MiddlewareException {
+	protected TabInfo prepareBasicDetailsTabInfo() {
 		final Map<String, String> basicDetails = new HashMap<String, String>();
 		final List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
@@ -378,7 +377,7 @@ public class CreateTrialController extends BaseTrialController {
 		return info;
 	}
 
-	private List<SettingDetail> addUserIdIfNecessary(final List<SettingDetail> basicDetails) throws MiddlewareException {
+	private List<SettingDetail> addUserIdIfNecessary(final List<SettingDetail> basicDetails) {
 		boolean found = false;
 		List<SettingDetail> detailList = basicDetails;
 		if (basicDetails == null) {
@@ -425,7 +424,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/refresh/settings/tab", method = RequestMethod.GET)
-	public Map<String, TabInfo> refreshSettingsTab() throws MiddlewareException {
+	public Map<String, TabInfo> refreshSettingsTab() {
 		final Map<String, TabInfo> tabDetails = new HashMap<String, TabInfo>();
 
 		final Workbook trialWorkbook = this.userSelection.getWorkbook();

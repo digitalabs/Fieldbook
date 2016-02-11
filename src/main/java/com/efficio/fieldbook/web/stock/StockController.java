@@ -17,6 +17,7 @@ import com.efficio.fieldbook.web.common.service.ImportInventoryService;
 import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
 import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
 import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
+import com.google.common.base.Joiner;
 import org.generationcp.commons.exceptions.StockException;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
@@ -51,15 +52,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.ImportStockForm;
-import com.efficio.fieldbook.web.common.service.ImportInventoryService;
-import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
-import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
-import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 4/24/2015 Time: 4:38 PM

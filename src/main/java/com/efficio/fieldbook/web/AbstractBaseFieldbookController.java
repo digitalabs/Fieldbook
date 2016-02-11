@@ -14,8 +14,10 @@ package com.efficio.fieldbook.web;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -29,10 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import javax.annotation.Resource;
 
 /**
  * Base controller encapsulaitng common functionality between all the Fieldbook controllers.
@@ -207,6 +206,33 @@ public abstract class AbstractBaseFieldbookController {
 
 	public void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
+	}
+
+	/**
+	 * Filter variables with variable type 'Analysis' in the workbook
+	 */
+	protected void filterAnalysisVariable(final Workbook workbook) {
+		this.filterAnalysisVariable(workbook.getConditions());
+		this.filterAnalysisVariable(workbook.getConstants());
+		this.filterAnalysisVariable(workbook.getFactors());
+		this.filterAnalysisVariable(workbook.getVariates());
+	}
+
+	/**
+	 * Filter variables with variable type 'Analysis' in the list of measurement variables
+	 */
+	private void filterAnalysisVariable(final List<MeasurementVariable> measurementVariables) {
+		final Iterator<MeasurementVariable> measurementVariablesIterator = measurementVariables.iterator();
+		while (measurementVariablesIterator.hasNext()) {
+			final MeasurementVariable measurementVariable = measurementVariablesIterator.next();
+			if (measurementVariable != null && VariableType.ANALYSIS == measurementVariable.getVariableType()) {
+				measurementVariablesIterator.remove();
+			}
+		}
+	}
+
+	public void setVariableDataManager(OntologyVariableDataManager variableDataManager) {
+		this.variableDataManager = variableDataManager;
 	}
 
 }

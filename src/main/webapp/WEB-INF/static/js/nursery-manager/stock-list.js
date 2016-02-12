@@ -103,7 +103,7 @@ if (typeof StockIDFunctions === 'undefined') {
 			}
 		},
 
-		generateStockListTabIfNecessary: function(listId) {
+		generateStockListTabIfNecessary: function(listId, isPageLoading) {
 			'use strict';
 
 			var url = '/Fieldbook/stock/generateStockTabIfNecessary/' + listId;
@@ -127,7 +127,7 @@ if (typeof StockIDFunctions === 'undefined') {
 							});
 						} else {
                             // Display already generated Stock List
-                            StockIDFunctions.displayStockList(listId, true);
+                            StockIDFunctions.displayStockList(listId,isPageLoading);
                         }
 					}
 				}
@@ -347,18 +347,16 @@ if (typeof StockIDFunctions === 'undefined') {
 		},
 
 		getSelectedInventoryEntryIds: function() {
-			'use strict';
-			var ids = [],
-				listDivIdentifier  = getCurrentAdvanceTabTempIdentifier(),
-				inventoryTableId = '#inventory-table' + listDivIdentifier;
-			
-			var oTable = $(inventoryTableId).dataTable();
-			var nodes = oTable.api().rows( ':has(input.stockListEntryId:checked)' ).nodes();
-			$(nodes).each(function(i, node){
-					ids.push($('input.stockListEntryId:checked', node).data('entryid'));
-			}); 
-			
-			return ids;
+            'use strict';
+            var ids = [],
+                listDivIdentifier  = getCurrentAdvanceTabTempIdentifier(),
+                inventoryTableId = '#inventory-table' + listDivIdentifier;
+                var oTable = $(inventoryTableId).dataTable();
+                var nodes = oTable.api().rows(':has(input.stockListEntryId:checked)').nodes();
+                $(nodes).each(function (i, node) {
+                    ids.push($('input.stockListEntryId:checked', node).data('entryid'));
+                });
+            return ids;
 		},
 
 		showUpdateInventoryModal: function(listId) {

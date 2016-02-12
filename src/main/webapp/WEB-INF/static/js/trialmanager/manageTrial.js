@@ -392,6 +392,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 					}
 				}
 				);
+
+                $scope.stockListTabs = [];
 				angular.forEach($scope.advanceTrialTabs, function (value, index) {
 					if (!isSwap && !isUpdate) {
 						if (value.id == tabId) {
@@ -405,7 +407,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 							$scope.advanceTabsData.splice(index + 1, 0, {
 								name: 'stock-list' + tabId + '-li',
 								data: tabData,
-								id: 'stock-tab-pane' + tabId
+                                id: 'stock-content-pane' + tabId
 							});
 							isSwap = true;
                             if(isPageLoading!=true) {
@@ -446,6 +448,15 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
             $scope.tabChange = function(selectedTab) {
                 $scope.tabSelected = selectedTab;
                 $scope.isSettingsTab = false;
+
+                // Load selected stock list inventory page setup function single time
+                if ($scope.stockListTabs.indexOf(selectedTab) === -1) {
+                    var isStock = selectedTab.split('-');
+                    if (isStock[0] === "stock") {
+                        $scope.stockListTabs.push(selectedTab);
+                        setTimeout(InventoryPage.setupPage, 100);
+                    }
+                }
             };
 
             $scope.closeAdvanceListTab = function (tab){

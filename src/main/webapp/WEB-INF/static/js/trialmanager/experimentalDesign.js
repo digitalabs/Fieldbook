@@ -406,11 +406,16 @@
 							TrialManagerDataService.specialSettings.experimentalDesign.data = $scope.data;
 					}
 
+					// update measurement data from session
+					$scope.data.hasMeasurementData = TrialManagerDataService.trialMeasurement.hasMeasurement;
+
 					$scope.data.noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments ?
 						TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
 
 					$scope.data.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
 					$scope.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors.currentData;
+
+					$scope.data.designType = TrialManagerDataService.currentData.experimentalDesign.designType;
 
 					$scope.settings = TrialManagerDataService.specialSettings.experimentalDesign;
 					$scope.settings.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;

@@ -397,7 +397,7 @@
 							nrlatin: null,
 							nclatin: null,
 							replatinGroups: '',
-							startingPlotNo: '',
+							startingPlotNo: 1,
 							startingEntryNo: '',
 							hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement
 						}, $scope.data);

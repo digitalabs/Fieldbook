@@ -40,7 +40,7 @@
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
         <section-container icon="bms-variates" add-variable="true" hide-variable="addVariable" model-data="selectionVariables" variable-type="1807"
-                           th:attr="heading=#{nursery.create.nursery.selection.variates},help-tooltip=#{trial.managesettings.settings.tooltip}">
+                           th:attr="heading=#{nursery.create.nursery.selection.variates},help-tooltip=#{trial.managesettings.selection.tooltip}">
             <div name="content" class="">
                 <table style="table-layout: fixed;" class="my-class table table-curved table-condensed selection-variate-table" id="selectionVariablesSettings">
                     <thead>
@@ -65,7 +65,7 @@
                         <td width="45%" ng-class="{even : $even, odd : $odd}">
                             <a href="javascript: void(0);">
                                 <span style="word-wrap: break-word" class="control-label nursery-level-label
-                                 var-names" show-details-modal="key" variable-type="{{VARIABLE_TYPES.SELECTION_METHOD}}">{{selectionVariables.val(key).variable.name}}</span>:
+                                 var-names" show-details-modal="key" variable-type="{{VARIABLE_TYPES.SELECTION_METHOD}}">{{selectionVariables.val(key).variable.name}}</span>
                             </a>
                         </td>
                         <td width="50%" ng-class="{even : $even, odd : $odd}" >{{selectionVariables.val(key).variable.description}}</td>

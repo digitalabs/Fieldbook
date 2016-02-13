@@ -264,23 +264,27 @@ public class ImportGermplasmListController extends SettingsController {
 
 		}
 
-		this.assignAndIncrementEntryNumberAndPlotNumber(form);
+		// if we have no germplasm list available for the nursery, skip this validation flow
+		if (null != this.getUserSelection().getImportedGermplasmMainInfo()
+				&& null != this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()) {
+			this.assignAndIncrementEntryNumberAndPlotNumber(form);
 
-		//NOTE: clearing measurements if germplasm list is null
-		if(this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null){
-			this.userSelection.getMeasurementRowList().clear();
-		}
+			//NOTE: clearing measurements if germplasm list is null
+			if(this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null){
+				this.userSelection.getMeasurementRowList().clear();
+			}
 
-		if (isNursery && !hasTemporaryWorkbook) {
+			if (isNursery && !hasTemporaryWorkbook) {
 
-			validateEntryAndPlotNo(form);
+				this.validateEntryAndPlotNo(form);
 
-			this.processImportedGermplasmAndChecks(this.userSelection, form);
+				this.processImportedGermplasmAndChecks(this.userSelection, form);
 
-		} else if (!hasTemporaryWorkbook) {
-			// this section of code is only called for existing trial without temporary workbook. No need for reset of measurement row list
-			// here
-			isDeleteObservations = true;
+			} else if (!hasTemporaryWorkbook) {
+				// this section of code is only called for existing trial without temporary workbook. No need for reset of measurement row list
+				// here
+				isDeleteObservations = true;
+			}
 		}
 
 		this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());
@@ -309,10 +313,6 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param form
 	 */
 	protected void validateEntryAndPlotNo(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form) {
-		// if we have no germplasm list available for the nursery, skip this validation flow
-		if (null == this.getUserSelection().getImportedGermplasmMainInfo()) {
-			return;
-		}
 
 		Integer startingEntryNumber = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
 

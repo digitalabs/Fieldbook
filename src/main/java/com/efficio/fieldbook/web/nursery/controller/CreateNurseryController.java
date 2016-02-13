@@ -338,6 +338,7 @@ public class CreateNurseryController extends SettingsController {
 		if (form.getSelectionVariatesVariables() != null) {
 			for (final SettingDetail settingDetail : form.getSelectionVariatesVariables()) {
 				settingDetail.setVariableType(VariableType.SELECTION_METHOD);
+				settingDetail.setRole(VariableType.SELECTION_METHOD.getRole());
 			}
 		}
 

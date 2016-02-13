@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.junit.Assert;
@@ -19,9 +22,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
-
-import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LabelPrintingServiceTest {
@@ -183,7 +183,7 @@ public class LabelPrintingServiceTest {
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(),
+				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(), StudyType.N,
 						LabelPrintingServiceTest.DUMMY_NURSERY_ID);
 
 		this.verifyLabelListContainsList(retrieved, nurserySettingLabels,

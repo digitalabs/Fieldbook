@@ -111,6 +111,8 @@ public class UserLabelPrinting implements Serializable {
 
 	private boolean isStockList;
 
+	private boolean isTrial;
+
 	private GermplasmList stockList;
 
 	private Map<String, InventoryDetails> inventoryDetailsMap;
@@ -590,6 +592,14 @@ public class UserLabelPrinting implements Serializable {
 
 	public void setIsStockList(boolean isStockList) {
 		this.isStockList = isStockList;
+	}
+
+	public boolean isTrial() {
+		return isTrial;
+	}
+
+	public void setIsTrial(boolean trial) {
+		isTrial = trial;
 	}
 
 	public GermplasmList getStockList() {

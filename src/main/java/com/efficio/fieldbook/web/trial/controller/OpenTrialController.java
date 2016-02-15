@@ -353,12 +353,11 @@ public class OpenTrialController extends BaseTrialController {
 					.getTemporaryWorkbook().getTrialObservations());
 
 			if (replace == 1) {
-				for (final MeasurementVariable mvar : this.userSelection.getWorkbook().getConditions()) {
-
-					if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
+				for (final MeasurementVariable mvar : workbook.getConditions()) {
+					if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()
+							|| mvar.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
+							|| mvar.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
 						mvar.setOperation(Operation.UPDATE);
-					} else {
-						mvar.setOperation(Operation.ADD);
 					}
 				}
 			}

@@ -4,7 +4,6 @@
 
 	<input type="hidden" th:field="*{totalGermplasms}"/>
 	<input type="hidden" th:field="*{lastDraggedPrimaryList}"/>
-	<input type="hidden" th:field="*{germplasmListId}" />
 
 	<!-- case 1: no data means no table -->
 	<div th:if="*{importedGermplasm == null or #lists.isEmpty(importedGermplasm)}">

@@ -168,7 +168,10 @@
                         return;
                     }
 
-                    var entryNo = $('#tableForGermplasm tr:first-child td:last-child').html();
+                    var dataTableIdentifier = '.germplasm-list-items';
+                    var entryNoColIndex = findEntryColIndex(dataTableIdentifier);
+                    var entryNo = findLowestEntryNo(dataTableIdentifier, entryNoColIndex);
+
 					var data = angular.copy($scope.data);
 					TrialManagerDataService.currentData.experimentalDesign.startingEntryNo = entryNo;
                     data.startingEntryNo = entryNo;

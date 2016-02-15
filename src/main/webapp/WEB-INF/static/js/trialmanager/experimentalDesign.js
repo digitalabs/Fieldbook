@@ -37,7 +37,7 @@
 								$scope.designTypeView.push(designType);
 							}
 						});
-					}
+					};
 
 					$scope.generateDesignView();
 
@@ -83,7 +83,7 @@
 							if ($scope.currentDesignType !== null && $scope.currentDesignType.name === 'Custom Import Design') {
 								$http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails').then(function(result) {
 									$scope.currentDesignType.templateName = result.data.templateName;
-								})
+								});
 							}
 						}
 
@@ -253,7 +253,7 @@
 						});
 
 						return deferred.promise;
-					}
+					};
 
 					$scope.resetExperimentalDesign = function() {
 

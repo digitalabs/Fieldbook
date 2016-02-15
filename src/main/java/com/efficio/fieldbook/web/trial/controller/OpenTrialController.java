@@ -467,7 +467,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	/**
 	 * Reset session variables after save.
-	 *
+	 * 
 	 * @param form the form
 	 * @param model the model
 	 * @return the string
@@ -485,7 +485,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	/**
 	 * Reset session variables after save.
-	 *
+	 * 
 	 * @param form the form
 	 * @param model the model
 	 * @return the string

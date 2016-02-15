@@ -338,22 +338,19 @@
 							service.applicationData.hasGeneratedDesignPreset = true;
 						});
 					}else {
-
 						service.generateExpDesign(data).then(
-                                  function(response) {
-	if (response.valid === true) {
-		service.clearUnappliedChangesFlag();
-		service.applicationData.unsavedGeneratedDesign = true;
-		$('#chooseGermplasmAndChecks').data('replace', '1');
-		$('body').data('expDesignShowPreview', '1');
-	} else {
-		showErrorMessage('', response.message);
-	}
-                                  }
-                              );
-
+                              function(response) {
+									if (response.valid === true) {
+										service.clearUnappliedChangesFlag();
+										service.applicationData.unsavedGeneratedDesign = true;
+										$('#chooseGermplasmAndChecks').data('replace', '1');
+										$('body').data('expDesignShowPreview', '1');
+									} else {
+										showErrorMessage('', response.message);
+									}
+                              }
+                          );
 					}
-
 				},
 
 				isOpenTrial: function() {

@@ -54,6 +54,7 @@ import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementR
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
+@SuppressWarnings("deprecation")
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportServiceImplTest {
 
@@ -392,8 +393,8 @@ public class DesignImportServiceImplTest {
 		final int trialInstanceNo = 1;
 		final Integer startingEntryNo = 2;
 		final Integer startingPlotNo = 3;
-		this.service.createPresetMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo,
-				startingEntryNo, startingPlotNo);
+		this.service
+				.createPresetMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, startingPlotNo);
 
 		Assert.assertEquals("The number of measurement rows from the csv file must be equal to the number of measurements row generated.",
 				csvData.size() - 1, measurements.size());
@@ -485,6 +486,7 @@ public class DesignImportServiceImplTest {
 		Mockito.doReturn(scale).when(this.ontologyScaleDataManager).getScaleById(1, false);
 	}
 
+	@SuppressWarnings({"unchecked"})
 	private void initializeOntologyService() {
 
 		Mockito.doReturn(

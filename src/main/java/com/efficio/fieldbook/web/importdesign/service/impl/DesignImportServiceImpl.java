@@ -123,7 +123,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return measurements;
 	}
 
-	private List<ImportedGermplasm> retrieveImportedGermplasm(final Integer studyId, final Integer startingEntryNo) {
+	List<ImportedGermplasm> retrieveImportedGermplasm(final Integer studyId, final Integer startingEntryNo) {
 
 		final List<ImportedGermplasm> importedGermplasm =
 				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();

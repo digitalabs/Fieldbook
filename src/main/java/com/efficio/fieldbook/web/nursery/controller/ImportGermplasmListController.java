@@ -140,6 +140,8 @@ public class ImportGermplasmListController extends SettingsController {
 	/** The Constant CHECK_PAGINATION_TEMPLATE. */
 	public static final String CHECK_PAGINATION_TEMPLATE = "/NurseryManager/showCheckGermplasmPagination";
 
+	public static final int NO_ID = -1;
+
 	/** The germplasm list manager. */
 	@Resource
 	private GermplasmListManager germplasmListManager;
@@ -215,6 +217,7 @@ public class ImportGermplasmListController extends SettingsController {
 			// this would be use to display the imported germplasm info
 			form.setImportedGermplasm(this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
 					.getImportedGermplasms());
+			form.setGermplasmListId(this.getUserSelection().getImportedGermplasmMainInfo().getListId());
 
 			form.changePage(1);
 			this.userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
@@ -580,11 +583,10 @@ public class ImportGermplasmListController extends SettingsController {
 
 		try {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-
 			mainInfo.setAdvanceImportType(true);
-			form.setImportedGermplasmMainInfo(mainInfo);
+			final Integer studyIdFromWorkbook = this.userSelection.getWorkbook().getStudyDetails().getId();
+			final int studyId = studyIdFromWorkbook == null ? NO_ID : studyIdFromWorkbook;
 
-			final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 			List<ImportedGermplasm> list = new ArrayList<>();
 
 			boolean isNursery = false;
@@ -621,7 +623,7 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 
 			if(this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()){
-				form.setStartingPlotNo(userSelection.getMeasurementRowList().get(0).getDataList().get(3).getValue());
+				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getDataList().get(3).getValue());
 			}
 
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
@@ -679,6 +681,11 @@ public class ImportGermplasmListController extends SettingsController {
 			model.addAttribute(ImportGermplasmListController.TYPE2, type);
 			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST,
 					this.getGermplasmTableHeader(type, this.userSelection.getPlotsLevelList()));
+
+			// setting the form
+			form.setImportedGermplasmMainInfo(mainInfo);
+			form.setStudyId(studyId);
+			form.setGermplasmListId(mainInfo.getListId() == null ? NO_ID : mainInfo.getListId());
 		} catch (final Exception e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}

@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,6 +181,20 @@ public abstract class BaseTrialController extends SettingsController {
 						data.setStartingPlotNo(md.getValue());
 					}
 				}
+			}
+
+			// Get all entry numbers from workbook, sort it and get first element from entry numbers list
+			List<Integer> entryNumberList = new ArrayList<>();
+			for(MeasurementRow measurementRow : trialWorkbook.getObservations()) {
+				MeasurementData measurementData = measurementRow.getDataList().get(4);
+				if (Objects.equals(measurementData.getLabel(), TermId.ENTRY_NO.toString())) {
+					entryNumberList.add(Integer.parseInt(measurementData.getValue()));
+				}
+			}
+
+			if(entryNumberList.size() != 0) {
+				Collections.sort(entryNumberList);
+				data.setStartingEntryNo(String.valueOf(entryNumberList.get(0)));
 			}
 
 			final String designTypeString =

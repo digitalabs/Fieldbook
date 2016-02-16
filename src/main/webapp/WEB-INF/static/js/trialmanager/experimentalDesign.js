@@ -168,13 +168,14 @@
                         return;
                     }
 
-                    var dataTableIdentifier = '.germplasm-list-items';
-                    var entryNoColIndex = findEntryColIndex(dataTableIdentifier);
-                    var entryNo = findLowestEntryNo(dataTableIdentifier, entryNoColIndex);
-
 					var data = angular.copy($scope.data);
-					TrialManagerDataService.currentData.experimentalDesign.startingEntryNo = entryNo;
-                    data.startingEntryNo = entryNo;
+
+                    if($('.germplasm-list-items').html() != null) {
+                        var dataTableIdentifier = '.germplasm-list-items';
+                        var entryNoColIndex = findEntryColIndex(dataTableIdentifier);
+                        var entryNo = findLowestEntryNo(dataTableIdentifier, entryNoColIndex);
+                        data.startingEntryNo = entryNo;
+                    }
 
 					// transform ordered has of treatment factors if existing to just the map
 					if (data && data.treatmentFactors) {

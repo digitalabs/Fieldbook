@@ -351,17 +351,10 @@ public class OpenTrialController extends BaseTrialController {
 
 			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook, this.userSelection
 					.getTemporaryWorkbook().getTrialObservations());
-
-			if (replace == 1) {
-				for (final MeasurementVariable mvar : workbook.getConditions()) {
-					if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()
-							|| mvar.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
-							|| mvar.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
-						mvar.setOperation(Operation.UPDATE);
-					}
-				}
-			}
 		}
+
+		// update the operation for experiment design variables : EXP_DESIGN, EXP_DESIGN_SOURCE, NREP
+		this.assignOperationOnExpDesignVariables(workbook.getConditions());
 
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
 		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
@@ -421,6 +414,15 @@ public class OpenTrialController extends BaseTrialController {
 			}
 		} else {
 			return returnVal;
+		}
+	}
+
+	void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
+		for (final MeasurementVariable mvar : conditions) {
+			if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId() || mvar.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
+					|| mvar.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
+				mvar.setOperation(Operation.UPDATE);
+			}
 		}
 	}
 

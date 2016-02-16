@@ -584,8 +584,7 @@ public class ImportGermplasmListController extends SettingsController {
 		try {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 			mainInfo.setAdvanceImportType(true);
-			final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId() == null ? NO_ID :
-					this.userSelection.getWorkbook().getStudyDetails().getId();
+			final Integer studyIdFromWorkbook = this.userSelection.getWorkbook().getStudyDetails().getId();
 
 			List<ImportedGermplasm> list = new ArrayList<>();
 
@@ -600,7 +599,8 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 
 			final List<GermplasmList> germplasmLists =
-					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, germplasmListType);
+					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyIdFromWorkbook == null ? NO_ID :
+							studyIdFromWorkbook, germplasmListType);
 
 			if (germplasmLists != null && !germplasmLists.isEmpty()) {
 				final GermplasmList germplasmList = germplasmLists.get(0);

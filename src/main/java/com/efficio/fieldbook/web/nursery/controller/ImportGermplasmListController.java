@@ -267,23 +267,27 @@ public class ImportGermplasmListController extends SettingsController {
 
 		}
 
-		this.assignAndIncrementEntryNumberAndPlotNumber(form);
+		// if we have no germplasm list available for the nursery, skip this validation flow
+		if (null != this.getUserSelection().getImportedGermplasmMainInfo()
+				&& null != this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()) {
+			this.assignAndIncrementEntryNumberAndPlotNumber(form);
 
-		//NOTE: clearing measurements if germplasm list is null
-		if(this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null){
-			this.userSelection.getMeasurementRowList().clear();
-		}
+			//NOTE: clearing measurements if germplasm list is null
+			if(this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null){
+				this.userSelection.getMeasurementRowList().clear();
+			}
 
-		if (isNursery && !hasTemporaryWorkbook) {
+			if (isNursery && !hasTemporaryWorkbook) {
 
-			validateEntryAndPlotNo(form);
+				this.validateEntryAndPlotNo(form);
 
-			this.processImportedGermplasmAndChecks(this.userSelection, form);
+				this.processImportedGermplasmAndChecks(this.userSelection, form);
 
-		} else if (!hasTemporaryWorkbook) {
-			// this section of code is only called for existing trial without temporary workbook. No need for reset of measurement row list
-			// here
-			isDeleteObservations = true;
+			} else if (!hasTemporaryWorkbook) {
+				// this section of code is only called for existing trial without temporary workbook. No need for reset of measurement row list
+				// here
+				isDeleteObservations = true;
+			}
 		}
 
 		this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());
@@ -312,11 +316,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param form
 	 */
 	protected void validateEntryAndPlotNo(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form) {
-		// if we have no germplasm list available for the nursery, skip this validation flow
-		if (null == this.getUserSelection().getImportedGermplasmMainInfo()) {
-			return;
-		}
-		
+
 		Integer startingEntryNumber = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
 
 		if(startingEntryNumber != null){
@@ -466,7 +466,7 @@ public class ImportGermplasmListController extends SettingsController {
 			} else if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null
 					&& this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null
 					&& !this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
-							.isEmpty()) {
+					.isEmpty()) {
 				final List<ListDataProject> listDataProject =
 						ListDataProjectUtil.createListDataProject(this.getUserSelection().getImportedCheckGermplasmMainInfo()
 								.getImportedGermplasmList().getImportedGermplasms());
@@ -773,7 +773,7 @@ public class ImportGermplasmListController extends SettingsController {
 				if (factorDetail != null
 						&& factorDetail.getVariable() != null
 						&& !SettingsUtil.inHideVariableFields(factorDetail.getVariable().getCvTermId(),
-								AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString())) {
+						AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString())) {
 					tableHeaderList.add(new TableHeader(factorDetail.getVariable().getName(), factorDetail.getVariable().getCvTermId()
 							+ AppConstants.TABLE_HEADER_KEY_SUFFIX.getString()));
 				}
@@ -1122,7 +1122,7 @@ public class ImportGermplasmListController extends SettingsController {
 	@RequestMapping(value = "/edit/check/{index}/{dataTableIndex}/{type}", method = RequestMethod.GET)
 	public String editCheck(@ModelAttribute("updatedGermplasmCheckForm") final UpdateGermplasmCheckForm form, final Model model,
 			@PathVariable final int index, @PathVariable final int dataTableIndex, @PathVariable final String type, @RequestParam(
-					value = "currentVal") final String currentVal) {
+			value = "currentVal") final String currentVal) {
 
 		try {
 			ImportedGermplasm importedCheckGermplasm = null;
@@ -1634,7 +1634,7 @@ public class ImportGermplasmListController extends SettingsController {
 		final MeasurementVariable var =
 				new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(),
 						stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType()
-								.getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
+						.getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
 		var.setRole(role);
 		var.setDataTypeId(stdvar.getDataType().getId());
 		var.setFactor(false);

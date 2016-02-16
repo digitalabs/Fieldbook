@@ -139,7 +139,7 @@
 
     						$scope.updateLocationValues = function() {
     							if (!$scope.variableDefinition.locationUpdated) {
-    								$http.get('/Fieldbook/NurseryManager/advance/nursery/getLocations').then(function(returnVal) {
+    								$http.get('/Fieldbook/locations/getLocations').then(function(returnVal) {
     									if (returnVal.data.success === '1') {
     										$scope.variableDefinition.locationUpdated = true;
     										// clear and copy of array is performed so as to preserve previous reference
@@ -148,10 +148,10 @@
     										$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
 
     										$scope.variableDefinition.possibleValues.push.apply($scope.variableDefinition.possibleValues,
-    											$scope.convertLocationsToPossibleValues($.parseJSON(returnVal.data.allBreedingLocations)));
+    											$scope.convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
     										$scope.variableDefinition.possibleValuesFavorite.push.apply(
     											$scope.variableDefinition.possibleValuesFavorite,
-    											$scope.convertLocationsToPossibleValues($.parseJSON(returnVal.data.favoriteLocations)));
+    											$scope.convertLocationsToPossibleValues(returnVal.data.favoriteLocations));
     										$scope.updateDropdownValues();
     									}
     								});

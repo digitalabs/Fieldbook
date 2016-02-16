@@ -234,8 +234,8 @@
 					unsavedTraitsAvailable: false,
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
-                    hasGeneratedDesignPreset: false,
-                    hasNewEnvironmentAdded : false,
+					hasGeneratedDesignPreset: false,
+					hasNewEnvironmentAdded: false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
 					designTypes: []
 				},
@@ -332,24 +332,23 @@
 					//update the no of environments in experimental design tab
 					data.noOfEnvironments = noOfEnvironments;
 
-                    if (service.currentData.experimentalDesign.designType != null && service.applicationData.designTypes[service.currentData.experimentalDesign.designType].isPreset){
+					if (service.currentData.experimentalDesign.designType != null && service.applicationData.designTypes[service.currentData.experimentalDesign.designType].isPreset) {
 						service.generatePresetExpDesign(service.currentData.experimentalDesign.designType).then(function() {
 							service.updateAfterGeneratingDesignSuccessfully();
 							service.applicationData.hasGeneratedDesignPreset = true;
 						});
-                    } else if (service.currentData.experimentalDesign.designType != null && service.applicationData.designTypes[service.currentData.experimentalDesign.designType].name !== 'Custom Import Design'){
-						service.generateExpDesign(data).then(
-                              function(response) {
-									if (response.valid === true) {
-										service.clearUnappliedChangesFlag();
-										service.applicationData.unsavedGeneratedDesign = true;
-										$('#chooseGermplasmAndChecks').data('replace', '1');
-										$('body').data('expDesignShowPreview', '1');
-									} else {
-										showErrorMessage('', response.message);
-									}
-                              }
-                          );
+					} else if (service.currentData.experimentalDesign.designType != null &&
+						service.applicationData.designTypes[service.currentData.experimentalDesign.designType].name !== 'Custom Import Design') {
+						service.generateExpDesign(data).then(function(response) {
+							if (response.valid === true) {
+								service.clearUnappliedChangesFlag();
+								service.applicationData.unsavedGeneratedDesign = true;
+								$('#chooseGermplasmAndChecks').data('replace', '1');
+								$('body').data('expDesignShowPreview', '1');
+							} else {
+								showErrorMessage('', response.message);
+							}
+						});
 					}
 				},
 
@@ -362,13 +361,13 @@
 				indicateUnappliedChangesAvailable: function(displayWarningMessage) {
 					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
 						service.applicationData.unappliedChangesAvailable = true;
-						
-						if(displayWarningMessage){
+
+						if (displayWarningMessage) {
 							showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
 							'To update the Measurements table, please review your settings and regenerate ' +
-							'the Experimental Design on the next tab', 10000);	
+							'the Experimental Design on the next tab', 10000);
 						}
-						
+
 						$('body').data('needGenerateExperimentalDesign', '1');
 					}
 				},

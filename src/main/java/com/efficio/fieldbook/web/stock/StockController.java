@@ -31,6 +31,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -52,6 +53,7 @@ import com.efficio.fieldbook.web.common.service.ImportInventoryService;
 import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
 import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
 import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
+import com.google.common.base.Joiner;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 4/24/2015 Time: 4:38 PM
@@ -395,13 +397,11 @@ public class StockController extends AbstractBaseFieldbookController {
 		return result;
 	}
 
-	@RequestMapping(value = "/ajax/{listId}/{entryIdList}", method = RequestMethod.GET)
-	public String showAjax(@ModelAttribute("seedStoreForm")
-	SeedStoreForm form, @PathVariable
-	Integer listId, @PathVariable
-	String entryIdList, Model model, HttpSession session) {
+	@RequestMapping(value = "/ajax/{listId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form, @PathVariable Integer listId,
+			@RequestBody Integer[] entryIdList, Model model, HttpSession session) {
 		form.setListId(listId);
-		form.setEntryIdList(entryIdList);
+		form.setEntryIdList(Joiner.on(",").join(entryIdList));
 		return super.showAjaxPage(model, "Inventory/addLotsModal");
 	}
 

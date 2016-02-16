@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.google.common.collect.Lists;
 import com.mchange.util.AssertException;
 
@@ -544,7 +545,7 @@ public class ImportGermplasmListControllerTest {
 	 * Test to verify nextScreen() works and performs steps as expected.
 	 */
 	@Test
-	public void testNextScreen() {
+	public void testNextScreen() throws BVDesignException {
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
 		form.setStartingEntryNo("801");
 		Workbook workbook = new Workbook();
@@ -613,6 +614,22 @@ public class ImportGermplasmListControllerTest {
 
 		Assert.assertEquals("Expecting studyIdInSaveDataset returned from nextScreen", "3", studyIdInNextScreen);
 	}
+
+	@Test
+	public void testValidateEntryAndPlotNoEmptyList() throws Exception {
+		// create a stub of importGermplasmListController that we can test
+		ImportGermplasmListController controllerToTest = Mockito.mock(ImportGermplasmListController.class);
+		ImportGermplasmListForm form = new ImportGermplasmListForm();
+
+		Mockito.when(controllerToTest.getUserSelection()).thenReturn(this.userSelection);
+		Mockito.doCallRealMethod().when(controllerToTest).validateEntryAndPlotNo(form);
+
+		controllerToTest.validateEntryAndPlotNo(form);
+
+		// validateEntryAndPlotNo should not process if theres no imported germplasm in the study
+		Mockito.verify(controllerToTest,Mockito.times(0)).computeTotalExpectedChecks(form);
+	}
+
 
 	private List<ListDataProject> createListDataProject() {
 		List<ListDataProject> list = new ArrayList<>();

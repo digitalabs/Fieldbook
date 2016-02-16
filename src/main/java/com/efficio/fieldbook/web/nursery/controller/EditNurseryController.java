@@ -25,12 +25,14 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -135,8 +137,10 @@ public class EditNurseryController extends SettingsController {
 	public String useExistingNursery(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form2, @PathVariable final int nurseryId,
 			@RequestParam(required = false) final String isAjax, final Model model, final HttpServletRequest request,
-			final RedirectAttributes redirectAttributes)
-					throws MiddlewareQueryException {
+			final RedirectAttributes redirectAttributes, @RequestParam(value = "crosseslistid", required = false) final String
+			crossesListId) throws MiddlewareQueryException {
+
+		model.addAttribute("createdCrossesListId", crossesListId);
 
 		final String contextParams = this.retrieveContextInfo(request);
 

@@ -164,7 +164,7 @@ public class DesignImportController extends SettingsController {
 			this.initializeTemporaryWorkbook(studyType);
 
 			final DesignImportData designImportData = this.parser.parseFile(form.getFile());
-
+			designImportData.setImportFileName(form.getFile().getOriginalFilename());
 			this.performAutomap(designImportData);
 
 			if (noOfEnvironments > 0) {
@@ -282,6 +282,12 @@ public class DesignImportController extends SettingsController {
 				this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.VARIATE));
 
 		return mappingData;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getMappingSummary", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public Map<PhenotypicType, Map<Integer, DesignHeaderItem>> getMappingSummary() {
+		return this.userSelection.getDesignImportData().getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 	}
 
 	@RequestMapping(value = "/showDetails", method = RequestMethod.GET)
@@ -525,8 +531,8 @@ public class DesignImportController extends SettingsController {
 
 			// populate parameters
 			final Map<String, Integer> additionalParams = this.generateAdditionalParams(startingEntryNo, startingPlotNo);
-			if (generateDesignInput.getHasNewEnvironmentAdded()) {
-				final Workbook workbook = this.userSelection.getWorkbook();
+			final Workbook workbook = this.userSelection.getWorkbook();
+			if (generateDesignInput.getHasNewEnvironmentAdded() && workbook != null) {
 				this.userSelection.setTemporaryWorkbook(workbook);
 				additionalParams.put("noOfAddedEnvironments", environmentData.getNoOfEnvironments()
 						- workbook.getTrialObservations().size());
@@ -549,6 +555,31 @@ public class DesignImportController extends SettingsController {
 
 		return resultsMap;
 
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getCustomImportDesignTypeDetails", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public Map<String, Object> getCustomImportDesignTypeDetails() {
+		final Map<String, Object> output = new HashMap<>();
+
+		// defaults
+		output.put("name", DesignTypeItem.CUSTOM_IMPORT.getName());
+		final String filename =
+				(this.userSelection.getDesignImportData() != null) ? this.userSelection.getDesignImportData().getImportFileName()
+						: DesignTypeItem.CUSTOM_IMPORT.getTemplateName();
+
+		// unsaved but has import design
+		final Workbook workbook = this.userSelection.getWorkbook();
+		if (workbook != null && workbook.getExperimentalDesignVariables() != null) {
+			// existing design (if saved)
+			final MeasurementVariable expDesignSource = workbook.getExperimentalDesignVariables().getExperimentalDesignSource();
+			output.put("templateName", expDesignSource != null && expDesignSource.getValue() != null
+					&& !expDesignSource.getValue().isEmpty() ? expDesignSource.getValue() : filename);
+		} else if (filename != null) {
+			output.put("templateName", filename);
+		}
+
+		return output;
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
@@ -597,6 +628,10 @@ public class DesignImportController extends SettingsController {
 
 		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeItem);
 
+		if (additionalParams.containsKey("noOfAddedEnvironments")) {
+			this.updateTrialConditionVariables(workbook.getConditions());
+		}
+
 		// Only for Trial
 		this.populateTrialLevelVariableListIfNecessary(workbook);
 
@@ -607,6 +642,22 @@ public class DesignImportController extends SettingsController {
 
 		// Only for Nursery
 		this.resetCheckList(workbook, this.userSelection);
+	}
+
+	/**
+	 * Make sure that the following variables under experimental design will not be added twice when adding new environment NREP,
+	 * EXP_DESIGN, EXP_DESIGN_SOURCE
+	 * 
+	 * @param conditions
+	 */
+	private void updateTrialConditionVariables(final List<MeasurementVariable> conditions) {
+		for (final MeasurementVariable condition : conditions) {
+			if (condition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
+					|| condition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()
+					|| condition.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
+				condition.setOperation(Operation.UPDATE);
+			}
+		}
 	}
 
 	/**
@@ -781,6 +832,11 @@ public class DesignImportController extends SettingsController {
 
 		if (designTypeItem != null && designTypeItem.getTemplateName() != null) {
 			designParam.setFileName(designTypeItem.getTemplateName());
+
+			if (designTypeItem.getName().equals(DesignTypeItem.CUSTOM_IMPORT.getName())) {
+				designParam.setFileName(this.userSelection.getDesignImportData().getImportFileName());
+			}
+
 			expDesignTermIds.add(TermId.EXPT_DESIGN_SOURCE.getId());
 		}
 

@@ -653,7 +653,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 			dataResults.put("name", germplasmList.getName());
 			dataResults.put("description", germplasmList.getDescription());
-			dataResults.put("type", this.getTypeString(germplasmList.getType()));
+			final GermplasmList parentGermplasmList = this.fieldbookMiddlewareService.getGermplasmListById(germplasmList.getListRef());
+			dataResults.put("type", this.getTypeString(parentGermplasmList.getType()));
 
 			String statusValue = "Unlocked List";
 			if (germplasmList.getStatus() >= 100) {

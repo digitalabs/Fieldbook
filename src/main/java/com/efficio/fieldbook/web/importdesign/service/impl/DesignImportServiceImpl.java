@@ -85,7 +85,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 
 		final List<ImportedGermplasm> importedGermplasm =
-				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+				this.retrieveImportedGermplasm(workbook.getStudyDetails().getId(), Integer.valueOf(additionalParams.get("startingEntryNo")));
 
 		final Map<Integer, List<String>> csvData = designImportData.getCsvData();
 		final Map<Integer, StandardVariable> germplasmStandardVariables =
@@ -111,7 +111,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 		measurementRowGenerator.addVariatesToMeasurementRows(measurements, this.userSelection, this.ontologyService, this.contextUtil);
 
 		// if there is added environments
-		if (additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) != null && additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) > 0) {
+		if (additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) != null
+				&& additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) > 0) {
 			final List<MeasurementRow> measurementsForNewEnvironment = new ArrayList<>();
 			measurementsForNewEnvironment.addAll(measurements);
 			measurements.clear();
@@ -120,6 +121,27 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 
 		return measurements;
+	}
+
+	private List<ImportedGermplasm> retrieveImportedGermplasm(final Integer studyId, final Integer startingEntryNo) {
+
+		final List<ImportedGermplasm> importedGermplasm =
+				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+		// update the entry no based on the starting entry no
+		if (studyId == null) {
+			Integer minimumEntryNo = 0;
+			for (final ImportedGermplasm entry : importedGermplasm) {
+				final Integer entryNo = entry.getEntryId();
+				minimumEntryNo = (minimumEntryNo == 0 || entryNo < minimumEntryNo) ? entryNo : minimumEntryNo;
+			}
+
+			final Integer entryNoDelta = startingEntryNo - minimumEntryNo;
+			for (final ImportedGermplasm entry : importedGermplasm) {
+				final Integer prevEntryNo = entry.getEntryId();
+				entry.setEntryId(prevEntryNo + entryNoDelta);
+			}
+		}
+		return importedGermplasm;
 	}
 
 	/**

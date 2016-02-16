@@ -94,7 +94,6 @@ public class EditNurseryController extends SettingsController {
 	 * The Constant LOG.
 	 */
 	public static final Logger LOG = LoggerFactory.getLogger(EditNurseryController.class);
-	public static final int NO_LIST_ID = -1;
 	/**
 	 * The ontology service.
 	 */
@@ -251,7 +250,6 @@ public class EditNurseryController extends SettingsController {
 
 	private void setUpFormAttributes(final CreateNurseryForm form, final Workbook workbook, final int nurseryId) {
 		form.setStudyId(nurseryId);
-		form.setGemplasmListId(this.getGemplasmListId(nurseryId));
 		form.setBasicDetails(this.userSelection.getBasicDetails());
 		form.setStudyLevelVariables(this.userSelection.getStudyLevelConditions());
 		form.setBaselineTraitVariables(this.userSelection.getBaselineTraitsList());
@@ -812,30 +810,6 @@ public class EditNurseryController extends SettingsController {
 	@ModelAttribute("programLocationURL")
 	public String getProgramLocation() {
 		return this.fieldbookProperties.getProgramLocationsUrl();
-	}
-
-	public Integer getGemplasmListId(final int studyId) {
-		if (this.userSelection.getImportedAdvancedGermplasmList() == null) {
-			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-
-			final List<GermplasmList> germplasmLists =
-					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
-
-			if (germplasmLists != null && !germplasmLists.isEmpty()) {
-				final GermplasmList germplasmList = germplasmLists.get(0);
-
-				if (germplasmList != null) {
-					// BMS-1419, set the id to the original list's id
-					mainInfo.setListId(germplasmList.getListRef() != null ? germplasmList.getListRef() : germplasmList.getId());
-				}
-			}
-			this.userSelection.setImportedGermplasmMainInfo(mainInfo);
-		}
-
-		return this.userSelection.getImportedGermplasmMainInfo() != null &&
-				this.userSelection.getImportedGermplasmMainInfo().getListId() != null ?
-				this.userSelection.getImportedGermplasmMainInfo().getListId()
-				: NO_LIST_ID;
 	}
 
 	@ModelAttribute("programMethodURL")

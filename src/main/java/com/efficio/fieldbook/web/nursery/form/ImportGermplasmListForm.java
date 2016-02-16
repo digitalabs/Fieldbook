@@ -107,6 +107,9 @@ public class ImportGermplasmListForm {
 	private String startingEntryNo;
 	private String startingPlotNo;
 
+	private Integer germplasmListId;
+	private Integer studyId;
+
 	/**
 	 * Gets the selected check.
 	 *
@@ -651,5 +654,21 @@ public class ImportGermplasmListForm {
 
 	public void setStartingPlotNo(String startingPlotNo) {
 		this.startingPlotNo = startingPlotNo;
+	}
+
+	public Integer getGermplasmListId() {
+		return this.germplasmListId;
+	}
+
+	public void setGermplasmListId(final Integer germplasmListId) {
+		this.germplasmListId = germplasmListId;
+	}
+
+	public Integer getStudyId() {
+		return this.studyId;
+	}
+
+	public void setStudyId(Integer studyId) {
+		this.studyId = studyId;
 	}
 }

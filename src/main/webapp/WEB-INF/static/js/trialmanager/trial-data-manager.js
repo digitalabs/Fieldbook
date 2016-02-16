@@ -370,9 +370,6 @@
 						}
 						
 						$('body').data('needGenerateExperimentalDesign', '1');
-                        if (service.currentData.experimentalDesign.designType != null 
-                        	&& service.applicationData.designTypes[service.currentData.experimentalDesign.designType].name === 'Custom Import Design'
-                        	&& !service.applicationData.hasNewEnvironmentAdded) {
 					}
 				},
 

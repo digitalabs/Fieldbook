@@ -46,7 +46,7 @@
 
 	<br/>
 
-    <div class="rowForNumberingAndChecks">
+    <div class="rowForNumberingAndChecks row col-xs-12 col-md-12">
         <div id="specify-numbering-section"> <img th:src="@{/static/img/review-list-details.png}" />
             <!-- Section for Specify Numbering -->
             <label class="control-label"><strong id="specifynumbering" class="sub-content-heading" th:text="#{germplasm.list.specify.numbering}">Specify Numbering</strong></label>
@@ -69,7 +69,7 @@
         </div>
     </div>
 
-	<div id="cpecify-crosses-section" th:if="${type == 'N'}">
+	<div id="cpecify-crosses-section" class="row col-xs-12 col-md-12" th:if="${type == 'N'}">
 		<img th:src="@{/static/img/review-crosses.png}" />
         <label class="control-label"><strong id="cpefifyCrossesLabel" class="sub-content-heading"
 												 th:text="#{germplasm.list.specify.crosses}">Specify Crosses</strong></label>

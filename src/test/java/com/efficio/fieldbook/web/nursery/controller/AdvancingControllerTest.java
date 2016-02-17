@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import junit.framework.Assert;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -110,7 +111,7 @@ public class AdvancingControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
 
 		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedNurseryTableHeader();
-		Assert.assertEquals("Expecting to return 5 columns but returned " + tableHeaderList.size(), 5, tableHeaderList.size());
+		Assert.assertEquals("Expecting to return 7 columns but returned " + tableHeaderList.size(), 7, tableHeaderList.size());
 
 		Assert.assertTrue("Expecting to have a column name ENTRY_ID.", this.hasColumnHeader(tableHeaderList, "ENTRY_ID"));
 		Assert.assertTrue("Expecting to have a column name DESIGNATION.", this.hasColumnHeader(tableHeaderList, "DESIGNATION"));
@@ -137,9 +138,11 @@ public class AdvancingControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.GID.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.TRIAL_INSTANCE_FACTOR.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.REP_NO.getId())).thenReturn(fromOntology);
 
 		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedNurseryTableHeader();
-		Assert.assertEquals("Expecting to return 5 columns but returned " + tableHeaderList.size(), 5, tableHeaderList.size());
+		Assert.assertEquals("Expecting to return 7 columns but returned " + tableHeaderList.size(), 7, tableHeaderList.size());
 
 		for (TableHeader tableHeader : tableHeaderList) {
 			Assert.assertEquals("Expecting name from ontology but didn't.", fromOntology.getName(), tableHeader.getColumnName());

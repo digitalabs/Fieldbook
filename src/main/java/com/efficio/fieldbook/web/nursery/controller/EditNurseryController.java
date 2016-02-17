@@ -89,6 +89,7 @@ public class EditNurseryController extends SettingsController {
 	public static final String ERROR = "-1";
 	public static final String NO_MEASUREMENT = "0";
 	public static final String SUCCESS = "1";
+	public static final int NO_LIST_ID = -1;
 
 	/**
 	 * The Constant LOG.
@@ -254,6 +255,7 @@ public class EditNurseryController extends SettingsController {
 		form.setStudyLevelVariables(this.userSelection.getStudyLevelConditions());
 		form.setBaselineTraitVariables(this.userSelection.getBaselineTraitsList());
 		form.setSelectionVariatesVariables(this.userSelection.getSelectionVariates());
+		form.setGermplasmListId(this.getGermplasmListId(nurseryId));
 
 		form.setNurseryConditions(this.userSelection.getNurseryConditions());
 		form.setLoadSettings(EditNurseryController.SUCCESS);
@@ -820,6 +822,30 @@ public class EditNurseryController extends SettingsController {
 	@ModelAttribute("projectID")
 	public String getProgramID() {
 		return this.getCurrentProjectId();
+	}
+
+	public Integer getGermplasmListId(final int studyId) {
+		if (this.userSelection.getImportedAdvancedGermplasmList() == null) {
+			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+
+			final List<GermplasmList> germplasmLists =
+					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
+
+			if (germplasmLists != null && !germplasmLists.isEmpty()) {
+				final GermplasmList germplasmList = germplasmLists.get(0);
+
+				if (germplasmList != null) {
+					// BMS-1419, set the id to the original list's id
+					mainInfo.setListId(germplasmList.getListRef() != null ? germplasmList.getListRef() : germplasmList.getId());
+				}
+			}
+			this.userSelection.setImportedGermplasmMainInfo(mainInfo);
+		}
+
+		return this.userSelection.getImportedGermplasmMainInfo() != null
+				&& this.userSelection.getImportedGermplasmMainInfo().getListId() != null ?
+				this.userSelection.getImportedGermplasmMainInfo().getListId() :
+				NO_LIST_ID;
 	}
 
 	private void addStudyLevelVariablesFromUserSelectionIfNecessary(final List<SettingDetail> studyLevelVariables,

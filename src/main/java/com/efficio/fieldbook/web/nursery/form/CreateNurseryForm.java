@@ -201,6 +201,7 @@ public class CreateNurseryForm {
 	private String errorMessage;
 
 	private String columnOrders;
+	private Integer germplasmListId;
 
 	/**
 	 * Gets the project id.
@@ -1278,4 +1279,11 @@ public class CreateNurseryForm {
 		this.experimentTypeId = experimentTypeId;
 	}
 
+	public void setGermplasmListId(Integer germplasmListId) {
+		this.germplasmListId = germplasmListId;
+	}
+
+	public Integer getGermplasmListId() {
+		return germplasmListId;
+	}
 }

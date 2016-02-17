@@ -2,14 +2,30 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
@@ -23,32 +39,20 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
@@ -140,7 +144,7 @@ public abstract class BaseTrialController extends SettingsController {
 			final ExpDesignParameterUi data = new ExpDesignParameterUi();
 
 			// default values
-			data.setDesignType(0);
+			data.setDesignType(null);
 			data.setUseLatenized(false);
 
 			data.setBlockSize(this.getExperimentalDesignData(xpDesignVariable.getBlockSize()));
@@ -171,14 +175,20 @@ public abstract class BaseTrialController extends SettingsController {
 
 			data.setFileName(this.getExperimentalDesignData(xpDesignVariable.getExperimentalDesignSource()));
 
-			// Set first plot number from observations
-			if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
-				final List<MeasurementData> datas = trialWorkbook.getObservations().get(0).getDataList();
-				for (final MeasurementData md : datas) {
-					if (Objects.equals(md.getLabel(), TermId.PLOT_NO.toString())) {
-						data.setStartingPlotNo(md.getValue());
-					}
+			this.setStartingEntryNoAndPlotNoFromObservations(trialWorkbook, data);
+
+			// Get all entry numbers from workbook, sort it and get first element from entry numbers list
+			List<Integer> entryNumberList = new ArrayList<>();
+			for(MeasurementRow measurementRow : trialWorkbook.getObservations()) {
+				MeasurementData measurementData = measurementRow.getDataList().get(4);
+				if (Objects.equals(measurementData.getLabel(), TermId.ENTRY_NO.toString())) {
+					entryNumberList.add(Integer.parseInt(measurementData.getValue()));
 				}
+			}
+
+			if(entryNumberList.size() != 0) {
+				Collections.sort(entryNumberList);
+				data.setStartingEntryNo(String.valueOf(entryNumberList.get(0)));
 			}
 
 			final String designTypeString =
@@ -211,6 +221,44 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		return tabInfo;
+	}
+
+	private void setStartingEntryNoAndPlotNoFromObservations(final Workbook trialWorkbook, final ExpDesignParameterUi data) {
+		// Set starting entry and plot number from observations
+		Integer startingEntryNo = 0;
+		Integer startingPlotNo = 0;
+		if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
+
+			final List<MeasurementRow> measurementRows = trialWorkbook.getObservations();
+			for (final MeasurementRow measurementRow : measurementRows) {
+
+				final Map<Integer, MeasurementData> dataMap =
+						Maps.uniqueIndex(measurementRow.getDataList(), new Function<MeasurementData, Integer>() {
+
+							@Override
+							public Integer apply(final MeasurementData from) {
+								return from.getMeasurementVariable().getTermId();
+							}
+						});
+
+				final Integer currentEntryNo = Integer.valueOf(dataMap.get(TermId.ENTRY_NO.getId()).getValue());
+				if (currentEntryNo < startingEntryNo || startingEntryNo == 0) {
+					startingEntryNo = currentEntryNo;
+				}
+				final Integer currentPlotNo = Integer.valueOf(dataMap.get(TermId.PLOT_NO.getId()).getValue());
+				if (currentPlotNo < startingPlotNo || startingPlotNo == 0) {
+					startingPlotNo = currentPlotNo;
+				}
+			}
+		} else {
+			// set the default starting entry no
+			startingEntryNo = 1;
+
+			// set the default starting plot no
+			startingPlotNo = 1;
+		}
+		data.setStartingEntryNo(startingEntryNo.toString());
+		data.setStartingPlotNo(startingPlotNo.toString());
 	}
 
 	private void setCorrectUIDesignTypeOfResolvableIncompleteBlock(final ExpDesignParameterUi data) {
@@ -346,28 +394,35 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
-	protected TabInfo prepareMeasurementsTabInfo(final List<MeasurementVariable> variatesList, final boolean isUsePrevious) {
+	protected TabInfo prepareMeasurementVariableTabInfo(final List<MeasurementVariable> variatesList, VariableType variableType, final boolean isUsePrevious) {
 
 		final List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 
 		for (final MeasurementVariable var : variatesList) {
-			final SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(), VariableType.TRAIT.getRole().name());
+			if(var.getVariableType() == variableType) {
 
-			if (!isUsePrevious) {
-				detail.getVariable().setOperation(Operation.UPDATE);
-			} else {
-				detail.getVariable().setOperation(Operation.ADD);
+				final SettingDetail detail = this.createSettingDetail(var.getTermId(), variableType);
+
+				if (!isUsePrevious) {
+					detail.getVariable().setOperation(Operation.UPDATE);
+				} else {
+					detail.getVariable().setOperation(Operation.ADD);
+				}
+
+				detail.setDeletable(true);
+
+				detailList.add(detail);
 			}
+		}
 
-			detail.setDeletable(true);
-
-			detailList.add(detail);
+		if(variableType == VariableType.TRAIT){
+			this.userSelection.setBaselineTraitsList(detailList);
+		} else if (variableType == VariableType.SELECTION_METHOD){
+			this.userSelection.setSelectionVariates(detailList);
 		}
 
 		final TabInfo info = new TabInfo();
 		info.setSettings(detailList);
-
-		this.userSelection.setBaselineTraitsList(detailList);
 
 		return info;
 	}
@@ -508,6 +563,17 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
+	protected List<AdvanceList> getAdvancedList(final Integer trialId) {
+		List<GermplasmList> germplasmList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.ADVANCED);
+		List<AdvanceList> advanceList = new ArrayList<>();
+
+		for(GermplasmList g : germplasmList){
+			advanceList.add(new AdvanceList(g.getId(), g.getName()));
+		}
+
+		return advanceList;
+	}
+
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {
 		final List<SettingDetail> output = new ArrayList<SettingDetail>();
 
@@ -596,8 +662,8 @@ public abstract class BaseTrialController extends SettingsController {
 
 	protected TabInfo prepareTrialSettingsTabInfo(final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious) {
 		final TabInfo info = new TabInfo();
-		final Map<String, String> trialValues = new HashMap<String, String>();
-		final List<SettingDetail> details = new ArrayList<SettingDetail>();
+		final Map<String, String> trialValues = new HashMap<>();
+		final List<SettingDetail> details = new ArrayList<>();
 
 		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
 		final List<Integer> basicDetailIDList = this.buildVariableIDList(AppConstants.HIDE_TRIAL_FIELDS.getString());

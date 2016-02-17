@@ -1,4 +1,4 @@
-<section th:remove="tag" xmlns:th="http://www.thymeleaf.org">
+<section ng-cloak="" ng-app="nurseryNgApp" id="mainApp" xmlns:th="http://www.thymeleaf.org">
 
 	<div class="row col-xs-12 col-md-12">
 		<div class="page-header edit-nursery-page-identifier">
@@ -14,7 +14,6 @@
 	<div class="row">
 		<form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
 			<input type="hidden" th:field="*{studyId}" />
-			<input type="hidden" th:field="*{gemplasmListId}" />
 			<input type="hidden" th:field="*{experimentTypeId}" />
 			<input type="hidden" th:field="*{measurementDataExisting}" />
 			<div class="row add-top-bottom-padding">
@@ -229,14 +228,6 @@
 				</div>
 
 			</div>
-
-			<div class="form-group add_top_padding" th:if="*{gemplasmListId > -1}">
-				<div class="col-md-12">
-					<a
-							th:href="@{~/BreedingManager/main/createcrosses(nurseryid=*{studyId},germplasmlistid=*{gemplasmListId})}"
-					   th:text="#{nursery.managesettings.create.nursery.createcrosses.label}">.Create Crosses</a>
-				</div>
-			</div>
 		</form>
 	</div>
 	<ul id="create-nursery-tab-headers" class="nav nav-tabs row" role="tablist">
@@ -434,7 +425,7 @@
 
 	<div th:include="/NurseryManager/includes/variableSelectionModal"></div>
 
-	<div th:include="DesignImport/mapHeaders" ng-app="designImportApp"></div>
+	<div th:include="DesignImport/mapHeaders"></div>
 
 	<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>

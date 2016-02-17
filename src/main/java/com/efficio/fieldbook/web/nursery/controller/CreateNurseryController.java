@@ -338,6 +338,7 @@ public class CreateNurseryController extends SettingsController {
 		if (form.getSelectionVariatesVariables() != null) {
 			for (final SettingDetail settingDetail : form.getSelectionVariatesVariables()) {
 				settingDetail.setVariableType(VariableType.SELECTION_METHOD);
+				settingDetail.setRole(VariableType.SELECTION_METHOD.getRole());
 			}
 		}
 
@@ -349,13 +350,13 @@ public class CreateNurseryController extends SettingsController {
 			this.userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
 		}
 		// added code to set the role for the variables add
-		SettingsUtil.setSettingDetailRole(VariableType.STUDY_DETAIL.getId(), studyLevelVariables, this.userSelection,
+		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.STUDY_DETAIL.getId(), studyLevelVariables, this.fieldbookMiddlewareService,
+				this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.GERMPLASM_DESCRIPTOR.getId(), form.getPlotLevelVariables(),
 				this.fieldbookMiddlewareService, this.contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.GERMPLASM_DESCRIPTOR.getId(), form.getPlotLevelVariables(), this.userSelection,
-				this.fieldbookMiddlewareService, this.contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), form.getNurseryConditions(), this.userSelection,
-				this.fieldbookMiddlewareService, this.contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), baselineTraits, this.userSelection, this.fieldbookMiddlewareService,
+		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.TRAIT.getId(), form.getNurseryConditions(),this.fieldbookMiddlewareService,
+				this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.TRAIT.getId(), baselineTraits, this.fieldbookMiddlewareService,
 				this.contextUtil.getCurrentProgramUUID());
 
 		final Dataset dataset =

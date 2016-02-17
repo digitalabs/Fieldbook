@@ -580,28 +580,22 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 			}
 		});
 
-		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
-			this.germplasmDataTable = $(tableIdentifier).DataTable();
-			this.germplasmDataTable.clear();
-			this.germplasmDataTable.rows.add(dataList).draw();
-		} else {
-			this.germplasmDataTable = $(tableIdentifier).dataTable({
-				data: dataList,
-				columns: columns,
-				columnDefs: columnsDef,
-				retrieve: true,
-				scrollY: '500px',
-				scrollX: '100%',
-				scrollCollapse: true,
-				dom: 'R<t><"fbk-page-div"p>',
-				iDisplayLength: 100,
-				fnDrawCallback: function(oSettings) {
-					makeDraggable(true);
-				},
-				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-					$(nRow).data('entry', aData.entry);
-					$(nRow).data('gid', aData.gid);
-					$(nRow).data('index', aData.position);
+		this.germplasmDataTable = $(tableIdentifier).dataTable({
+			data: dataList,
+			columns: columns,
+			columnDefs: columnsDef,
+			scrollY: '500px',
+			scrollX: '100%',
+			scrollCollapse: true,
+			dom: 'R<t><"fbk-page-div"p>',
+			iDisplayLength: 100,
+			fnDrawCallback: function(oSettings) {
+				makeGermplasmListDraggable(true);
+			},
+			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+				$(nRow).data('entry', aData.entry);
+				$(nRow).data('gid', aData.gid);
+				$(nRow).data('index', aData.position);
 
 					$(nRow).addClass('draggable primaryRow');
 					$('td', nRow).attr('nowrap', 'nowrap');
@@ -618,8 +612,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
 					oSettings.oInstance.fnAdjustColumnSizing();
 				}
-			});
-		}
+		});
 
 		GermplasmListDataTable.prototype.getDataTable = function() {
 			return this.germplasmDataTable;
@@ -969,7 +962,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 				dom: 'R<t><"fbk-page-div"p>',
 				iDisplayLength: 100,
 				fnDrawCallback: function(oSettings) {
-					makeDraggable(true);
+					makeGermplasmListDraggable(true);
 				},
 
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {

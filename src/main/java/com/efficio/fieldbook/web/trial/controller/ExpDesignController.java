@@ -183,11 +183,21 @@ public class ExpDesignController extends BaseTrialController {
 			combinedList.addAll(studyLevelConditions);
 		}
 
+		final List<SettingDetail> variatesList = new ArrayList<>();
+
+		if (this.userSelection.getBaselineTraitsList() != null) {
+			variatesList.addAll(this.userSelection.getBaselineTraitsList());
+		}
+
+		if (this.userSelection.getSelectionVariates() != null) {
+			variatesList.addAll(this.userSelection.getSelectionVariates());
+		}
+
 		final String name = "";
 
 		final Dataset dataset =
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
-						this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection,
+						this.userSelection.getPlotsLevelList(), variatesList , this.userSelection,
 						this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
 						this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID());
 

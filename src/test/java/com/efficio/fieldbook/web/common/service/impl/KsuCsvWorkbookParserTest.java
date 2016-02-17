@@ -1,12 +1,17 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.generationcp.commons.parsing.FileParsingException;
-import org.generationcp.commons.service.FileService;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -17,11 +22,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.context.MessageSource;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KsuCsvWorkbookParserTest {
@@ -32,44 +32,26 @@ public class KsuCsvWorkbookParserTest {
 			{"ENTRY_TYPE", "GID", "DESIGNATION", "ENTRY_NO", "REP_NO", "plot", "MONTH_OBS", "DAY_OBS", "GW100_g", "TGW_g"};
 
 	@Mock
-	private KsuCsvImportStudyServiceImpl ksuCsvImportStudyService;
-
-	@Mock
-	private Workbook workbook;
-
-	@Mock
 	private Map<String, MeasurementRow> rowsMap;
-
-	@Mock
-	private FileService fileService;
-
-	@Mock
-	private MessageSource messageSource;
 
 	@Mock
 	private Map<Integer, List<String>> csvMap;
 
 	@InjectMocks
-	private KsuCsvWorkbookParser parser = spy(new KsuCsvWorkbookParser(ksuCsvImportStudyService, workbook, testTrialInstanceNo, rowsMap));
+	private KsuCsvWorkbookParser parser;
 
+	private Workbook workbook;
+	
 	@Before
 	public void setUp() throws Exception {
+		this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		this.parser = new KsuCsvWorkbookParser(workbook, testTrialInstanceNo, rowsMap);
 		when(csvMap.get(0)).thenReturn(Arrays.asList(rowHeaders));
-		when(ksuCsvImportStudyService.isValidHeaderNames(rowHeaders)).thenReturn(true);
-	}
-
-	@Test
-	public void testParseCsvMap() throws Exception {
-		doNothing().when(parser).importDataToWorkbook(eq(csvMap), eq(workbook), eq(testTrialInstanceNo), eq(rowsMap));
-
-		parser.parseCsvMap(csvMap);
-
-		verify(parser, times(1)).importDataToWorkbook(eq(csvMap), eq(workbook), eq(testTrialInstanceNo), eq(rowsMap));
 	}
 
 	@Test(expected = FileParsingException.class)
 	public void testParseCsvMapInvalidHeader() throws Exception {
-		when(ksuCsvImportStudyService.isValidHeaderNames(rowHeaders)).thenReturn(false);
+		when(csvMap.get(0)).thenReturn(Arrays.asList("PLOT_NO", "GID", "DESIGNATION", "ENTRY_NO"));
 		parser.parseCsvMap(csvMap);
 	}
 
@@ -79,7 +61,6 @@ public class KsuCsvWorkbookParserTest {
 		List<MeasurementVariable> measurementVariables = Arrays.asList(mock(MeasurementVariable.class), mock(MeasurementVariable.class));
 		when(measurementVariables.get(0).getTermId()).thenReturn(TermId.PLOT_NO.getId());
 		when(measurementVariables.get(1).getTermId()).thenReturn(TermId.ENTRY_NO.getId());
-		when(ksuCsvImportStudyService.getLabelFromKsuRequiredColumn(any(MeasurementVariable.class))).thenCallRealMethod();
 
 		List<Integer> indexes = parser.getColumnIndexesFromObservation(csvMap, measurementVariables, testTrialInstanceNo);
 

@@ -1,13 +1,14 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.naming.impl.AdvancingSourceListFactory;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.domain.ontology.Scale;
@@ -21,8 +22,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SeasonExpressionDataProcessorTest {
@@ -72,9 +74,12 @@ public class SeasonExpressionDataProcessorTest {
 			conditions.add(createConditionFixture(seasonTerms[i], special));
 			Workbook workbook = new Workbook();
 			workbook.setConditions(conditions);
-      AdvancingSource source = new AdvancingSource();
+			StudyDetails studyDetails = new StudyDetails();
+			studyDetails.setStudyType(StudyType.N);
+			workbook.setStudyDetails(studyDetails);
+			AdvancingSource source = new AdvancingSource();
 			unitUnderTest.processEnvironmentLevelData(source, workbook, new AdvancingNursery(), new Study());
-      String season = source.getSeason();
+			String season = source.getSeason();
 			Assert.assertNotNull(season);
 			Assert.assertNotSame("", season);
 			if (i == 0) {
@@ -108,7 +113,6 @@ public class SeasonExpressionDataProcessorTest {
      */
     @Test(expected = FieldbookException.class)
     public void testSeasonFail() throws FieldbookException {
-        AdvancingSourceListFactory factory = new AdvancingSourceListFactory();
         String season = "";
 
         // Test Exception Case
@@ -120,6 +124,9 @@ public class SeasonExpressionDataProcessorTest {
         conditions.add(mv);
         Workbook workbook = new Workbook();
         workbook.setConditions(conditions);
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.N);
+		workbook.setStudyDetails(studyDetails);
         AdvancingSource source = new AdvancingSource();
         unitUnderTest.processEnvironmentLevelData(source, workbook, new AdvancingNursery(), new Study());
         season = source.getSeason();

@@ -4,30 +4,30 @@
 
         <section-container icon="bms-mgt-details"
                            th:attr="heading=#{trial.managesettings.settings},reminder=#{section.reminder.to.add.records},help-tooltip=#{trial.managesettings.settings.tooltip}"
-                           show-reminder="settings.keys().length &lt;= 0" add-variable="true" hide-variable="addVariable"
-                           model-data="settings" variable-type="1805">
+                           show-reminder="managementDetails.keys().length &lt;= 0" add-variable="true" hide-variable="addVariable"
+                           model-data="managementDetails" variable-type="1805">
             <div name="content">
-                <div class="row form-group" ng-repeat="key in filteredKeys = ( settings.keys() | removeHiddenVariableFilter: settings.vals() ) track by key">
+                <div class="row form-group" ng-repeat="key in filteredKeys = ( managementDetails.keys() | removeHiddenVariableFilter: managementDetails.vals() ) track by key">
                     <div class="col-xs-5 1st">
 
                         <label class="fbk-selectall-chk">
-                            <input type="checkbox" ng-model="settings.val(key).isChecked"/>
+                            <input type="checkbox" ng-model="managementDetails.val(key).isChecked"/>
                         </label>
                         <a href="javascript: void(0);">
                         <span style="word-wrap: break-word" class="control-label nursery-level-label
-                                label-bold var-names" show-details-modal="key" variable-type="{{VARIABLE_TYPES.STUDY_DETAIL}}">{{settings.val(key).variable.name}}</span>:
+                                label-bold var-names" show-details-modal="key" variable-type="{{VARIABLE_TYPES.STUDY_DETAIL}}">{{managementDetails.val(key).variable.name}}</span>:
 
                     </a></div>
                     <div class="col-xs-7 2nd" style="padding-right: 0">
-                        <show-setting-form-element settings="settings" targetkey="{{key}}"
+                        <show-setting-form-element settings="managementDetails" targetkey="{{key}}"
                                                    valuecontainer="data.userInput"></show-setting-form-element>
                     </div>
                 </div>
 
-                <div class="row form-group" ng-show="(settings.keys() | removeHiddenAndDeletablesVariableFilter: settings.vals() ).length &gt; 0">
+                <div class="row form-group" ng-show="(managementDetails.keys() | removeHiddenAndDeletablesVariableFilter: managementDetails.vals() ).length &gt; 0">
                     <div class="col-md-12">
-                        <label class="fbk-selectall-chk"><input type="checkbox" ng-model="options.selectAll" ng-change="doSelectAll()"/> Select All</label>
-                        <a class="fbk-remove-link" href="javascript: void(0);" ng-click="removeSettings()" >Remove</a>
+                        <label class="fbk-selectall-chk"><input type="checkbox" ng-model="managementDetailsOptions.selectAll" ng-change="doSelectAll(managementDetails, managementDetailsOptions)"/> Select All</label>
+                        <a class="fbk-remove-link" href="javascript: void(0);" ng-click="removeSettings(VARIABLE_TYPES.STUDY_DETAIL, managementDetails, managementDetailsOptions)" >Remove</a>
                     </div>
                 </div>
 
@@ -35,5 +35,51 @@
             </div>
         </section-container>
 
+    </div>
+
+    <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
+
+        <section-container icon="bms-variates" add-variable="true" hide-variable="addVariable" model-data="selectionVariables" variable-type="1807"
+                           th:attr="heading=#{nursery.create.nursery.selection.variates},help-tooltip=#{trial.managesettings.selection.tooltip}">
+            <div name="content" class="">
+                <table style="table-layout: fixed;" class="my-class table table-curved table-condensed selection-variate-table" id="selectionVariablesSettings">
+                    <thead>
+                    <tr >
+                        <th class="fbk-delete-link"></th>
+                        <th width="45%" >Name</th>
+                        <th width="50%" >Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="dummy-row" ng-hide="selectionVariables.keys().length &gt; 0">
+                        <td class="even dummy-col">&nbsp;</td>
+                        <td class="even">&nbsp;</td>
+                        <td class="even">&nbsp;</td>
+                    </tr>
+                    <tr ng-repeat="key in filteredKeys = (selectionVariables.keys() | removeHiddenVariableFilter: selectionVariables.vals() ) track by key" >
+                        <td style="text-align: center" ng-class="{even : $even, odd : $odd}">
+                            <input class="remove-indv-btn" type="checkbox"
+                                   ng-model="selectionVariables.val(key).isChecked"/>
+                            <input class="cvTermIds" type="hidden" ng-model="selectionVariables.val(key).variable.cvTermId" />
+                        </td>
+                        <td width="45%" ng-class="{even : $even, odd : $odd}">
+                            <a href="javascript: void(0);">
+                                <span style="word-wrap: break-word" class="control-label nursery-level-label
+                                 var-names" show-details-modal="key" variable-type="{{VARIABLE_TYPES.SELECTION_METHOD}}">{{selectionVariables.val(key).variable.name}}</span>
+                            </a>
+                        </td>
+                        <td width="50%" ng-class="{even : $even, odd : $odd}" >{{selectionVariables.val(key).variable.description}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="row form-group" ng-show="((selectionVariables.keys() | removeHiddenAndDeletablesVariableFilter: selectionVariables.vals()).length &gt; 0)">
+                    <div class="col-md-12">
+                        <label class="fbk-selectall-chk"><input type="checkbox" ng-model="selectionVariablesOptions.selectAll" ng-change="doSelectAll(selectionVariables, selectionVariablesOptions)"/> Select All</label>
+                        <a class="fbk-remove-link" href="javascript: void(0);" ng-click="removeSettings(VARIABLE_TYPES.SELECTION_METHOD, selectionVariables, selectionVariablesOptions)" >Remove</a>
+                    </div>
+                </div>
+            </div>
+        </section-container>
     </div>
 </div>

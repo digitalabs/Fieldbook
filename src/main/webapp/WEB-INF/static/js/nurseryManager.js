@@ -33,7 +33,13 @@ function checkMethod() {
 		if ($('#methodVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();
-			showErrorMessage('page-advance-modal-message', noMethodVariatesError);
+            if(isNursery()){
+                showErrorMessage('page-advance-modal-message', noMethodVariatesError);
+            }
+            else{
+                showErrorMessage('page-advance-modal-message', noMethodVariatesErrorTrial);
+            }
+
 		} else {
 			displaySectionsPerMethodVariateValues();
 		}
@@ -121,7 +127,13 @@ function lineMethod() {
 		if ($('#lineVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=lineChoice]').prop('checked', true);
 			$('input[type=checkbox][name=lineChoice]').change();
-			showErrorMessage('page-advance-modal-message', noLineVariatesError);
+            if(isNursery()){
+                showErrorMessage('page-advance-modal-message', noLineVariatesError);
+            }
+            else{
+                showErrorMessage('page-advance-modal-message', noLineVariatesErrorTrial);
+            }
+
 		}
 	}
 }
@@ -1648,7 +1660,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 	var selectedMethodFavorite = $('#methodIdFavorite').val();
 
 	$.ajax({
-		url: '/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods',
+		url: '/Fieldbook/breedingMethod/getBreedingMethods',
 		type: 'GET',
 		cache: false,
 		data: '',
@@ -1658,10 +1670,8 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 				if (selectedMethodAll != null) {
 					// recreate the select2 combos to get updated list of
 					// methods
-					recreateMethodComboAfterClose('methodIdAll', $
-							.parseJSON(data.allNonGenerativeMethods));
-					recreateMethodComboAfterClose('methodIdFavorite', $
-							.parseJSON(data.favoriteNonGenerativeMethods));
+					recreateMethodComboAfterClose('methodIdAll', data.allNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteNonGenerativeMethods);
 					showCorrectMethodCombo();
 					// set previously selected value of method
 					if ($('#showFavoriteMethod').prop('checked')) {
@@ -1692,8 +1702,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 								+ getJquerySafeId(comboName), false,
 								selectedVal);
 					} else {
-						initializePossibleValuesCombo($
-								.parseJSON(data.allNonGenerativeMethods), '#'
+						initializePossibleValuesCombo(data.allNonGenerativeMethods, '#'
 								+ getJquerySafeId(comboName), false,
 								selectedVal);
 					}
@@ -1719,7 +1728,12 @@ function plotMethod() {
 			$('input[type=checkbox][name=allPlotsChoice]')
 					.prop('checked', true);
 			$('input[type=checkbox][name=allPlotsChoice]').change();
-			showErrorMessage('page-advance-modal-message', noPlotVariatesError);
+            if(isNursery()){
+                showErrorMessage('page-advance-modal-message', noPlotVariatesError);
+            }
+            else{
+                showErrorMessage('page-advance-modal-message', noLineVariatesErrorTrial);
+            }
 		}
 	}
 }

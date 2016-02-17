@@ -5,9 +5,14 @@
 			<div class="modal-content">					
 				<div class="modal-body">
 					<div class="row form-group">
-						<div class="col-xs-11 col-md-11">					
+						<div class="col-xs-11 col-md-11" id="reviewNurseryModalHeader">
 							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{nursery.nurserydetails.action.advance}"></label>
 						</div>
+
+                        <div class="col-xs-11 col-md-11" id="reviewTrialModalHeader">
+							<label class="modal-title fbk-modal-title" th:text="#{trial.trialdetails.action.advance.trial}"></label>
+						</div>
+
 						<div class="col-xs-1 col-md-1">
 							<button  id="closeReviewAdvanceNurseryModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
 						</div>										
@@ -81,5 +86,14 @@
 <div layout:fragment="page-script">
     <script type="text/javascript" th:inline="javascript">
         var warningMessage = /*[[#{nursery.advancelist.updateinventory.error.message}]]*/;
+
+        if(!isNursery()){
+            $("#reviewNurseryModalHeader").hide();
+            $("#reviewTrialModalHeader").show();
+        }
+        else{
+            $("#reviewTrialModalHeader").hide();
+            $("#reviewNurseryModalHeader").show();
+        }
     </script>
 </div>

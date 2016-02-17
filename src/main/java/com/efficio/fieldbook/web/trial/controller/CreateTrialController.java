@@ -15,10 +15,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -38,21 +51,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class CreateTrialController.
@@ -141,7 +139,9 @@ public class CreateTrialController extends BaseTrialController {
 				tabDetails.put(CreateTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, true));
 				tabDetails.put(CreateTrialController.TRIAL_SETTINGS_DATA_TAB,
 						this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
-				tabDetails.put("measurementsData", this.prepareMeasurementsTabInfo(trialWorkbook.getVariates(), true));
+				tabDetails.put("measurementsData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, true));
+				tabDetails.put("selectionVariableData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
+
 				this.fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(),
 						trialWorkbook.getMeasurementDatesetId());
 				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
@@ -230,7 +230,7 @@ public class CreateTrialController extends BaseTrialController {
 		// transfer over data from user input into the list of setting details stored in the session
 		this.populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
 
-		final List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> combinedList = new ArrayList<>();
 		combinedList.addAll(basicDetails);
 
 		if (studyLevelConditions != null) {
@@ -240,12 +240,26 @@ public class CreateTrialController extends BaseTrialController {
 
 		final String name = data.getBasicDetails().getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId()));
 
-		final Dataset dataset =
-				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection
-						.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection, this.userSelection
-						.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
-						data.getTreatmentFactors().getCurrentData(), null, this.userSelection.getNurseryConditions(), false,
-						this.contextUtil.getCurrentProgramUUID());
+		if(this.userSelection.getStudyLevelConditions() == null) {
+			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
+		}
+
+		if (this.userSelection.getBaselineTraitsList() == null) {
+			this.userSelection.setBaselineTraitsList(new ArrayList<SettingDetail>());
+		}
+
+		if (this.userSelection.getSelectionVariates() == null) {
+			this.userSelection.setSelectionVariates(new ArrayList<SettingDetail>());
+		}
+
+		//Combining variates to baseline traits
+		this.userSelection.getBaselineTraitsList().addAll(this.userSelection.getSelectionVariates());
+
+		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService,
+				name,
+				this.userSelection,
+				data.getTreatmentFactors().getCurrentData(),
+				this.contextUtil.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 		final Workbook workbook =

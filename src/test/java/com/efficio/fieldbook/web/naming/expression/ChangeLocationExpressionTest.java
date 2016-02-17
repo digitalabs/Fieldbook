@@ -45,7 +45,7 @@ public class ChangeLocationExpressionTest {
         List<StringBuilder> input = constructExpressionInput();
 
         AdvancingSource source = new AdvancingSource();
-        source.setLocationId(ORIGINAL_LOCATION_ID);
+        source.setHarvestLocationId(ORIGINAL_LOCATION_ID);
         ImportedGermplasm importedGermplasm = mock(ImportedGermplasm.class);
         when(importedGermplasm.getGid()).thenReturn(Integer.toString(TEST_GID));
         source.setGermplasm(importedGermplasm);
@@ -63,7 +63,7 @@ public class ChangeLocationExpressionTest {
         List<StringBuilder> input = constructExpressionInput();
 
         AdvancingSource source = new AdvancingSource();
-        source.setLocationId(ORIGINAL_LOCATION_ID + 1);
+        source.setHarvestLocationId(ORIGINAL_LOCATION_ID + 1);
         ImportedGermplasm importedGermplasm = mock(ImportedGermplasm.class);
         when(importedGermplasm.getGid()).thenReturn(Integer.toString(TEST_GID));
         source.setGermplasm(importedGermplasm);

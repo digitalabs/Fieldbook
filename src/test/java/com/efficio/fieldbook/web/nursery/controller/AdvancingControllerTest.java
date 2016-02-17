@@ -111,7 +111,7 @@ public class AdvancingControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
 
 		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedNurseryTableHeader();
-		Assert.assertEquals("Expecting to return 5 columns but returned " + tableHeaderList.size(), 7, tableHeaderList.size());
+		Assert.assertEquals("Expecting to return 7 columns but returned " + tableHeaderList.size(), 7, tableHeaderList.size());
 
 		Assert.assertTrue("Expecting to have a column name ENTRY_ID.", this.hasColumnHeader(tableHeaderList, "ENTRY_ID"));
 		Assert.assertTrue("Expecting to have a column name DESIGNATION.", this.hasColumnHeader(tableHeaderList, "DESIGNATION"));
@@ -142,7 +142,7 @@ public class AdvancingControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.REP_NO.getId())).thenReturn(fromOntology);
 
 		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedNurseryTableHeader();
-		Assert.assertEquals("Expecting to return 5 columns but returned " + tableHeaderList.size(), 7, tableHeaderList.size());
+		Assert.assertEquals("Expecting to return 7 columns but returned " + tableHeaderList.size(), 7, tableHeaderList.size());
 
 		for (TableHeader tableHeader : tableHeaderList) {
 			Assert.assertEquals("Expecting name from ontology but didn't.", fromOntology.getName(), tableHeader.getColumnName());

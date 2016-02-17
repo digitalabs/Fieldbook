@@ -90,10 +90,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY = "label.printing.available.fields.location";
 	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY = "label.printing.available.fields.block.name";
 
-	public static final Integer[] BASE_LABEL_PRINTING_FIELD_IDS = new Integer[] {AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt(),
-			AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(),
-			AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()};
-
 	public static final Integer[] BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS =
 			new Integer[] {AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(),
 					AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};

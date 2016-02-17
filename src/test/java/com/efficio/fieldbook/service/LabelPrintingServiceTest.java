@@ -7,6 +7,8 @@ import java.util.Locale;
 
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
+import com.efficio.fieldbook.web.util.AppConstants;
+
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -57,6 +59,10 @@ public class LabelPrintingServiceTest {
 
 	public static final int DUMMY_TRIAL_ID = 10;
 	public static final int DUMMY_NURSERY_ID = 11;
+
+	public static final Integer[] BASE_LABEL_PRINTING_FIELD_IDS = new Integer[] {
+		AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(),
+		AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()};
 
 	@Before
 	public void setUp() throws Exception {
@@ -246,7 +252,7 @@ public class LabelPrintingServiceTest {
 	}
 
 	protected void verifyBaseLabelFieldsPresent(final List<LabelFields> forVerification) {
-		for (final Integer baseLabelPrintingFieldId : LabelPrintingServiceImpl.BASE_LABEL_PRINTING_FIELD_IDS) {
+		for (final Integer baseLabelPrintingFieldId : LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_IDS) {
 			boolean found = false;
 
 			for (final LabelFields labelFields : forVerification) {

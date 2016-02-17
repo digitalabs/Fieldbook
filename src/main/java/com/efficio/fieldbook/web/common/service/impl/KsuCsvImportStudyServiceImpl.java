@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @Service
 @Transactional
 public class KsuCsvImportStudyServiceImpl implements KsuCsvImportStudyService {
+
 	@Resource
 	protected FieldbookService fieldbookMiddlewareService;
 
@@ -34,32 +36,35 @@ public class KsuCsvImportStudyServiceImpl implements KsuCsvImportStudyService {
 
 	@Resource
 	protected ValidationService validationService;
-	
+
 	@Resource
 	protected AutowireCapableBeanFactory beanFactory;
-	
-	@Override
-	public ImportResult importWorkbook(final Workbook workbook, String filename, String originalFilename) throws WorkbookParserException {
 
-		final String trialInstanceNo = ImportStudyUtil.getTrialInstanceNo(workbook,originalFilename);
-		final Map<String,MeasurementRow> rowsMap = ImportStudyUtil.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNo, workbook.isNursery());
+	@Override
+	public ImportResult importWorkbook(final Workbook workbook, final String filename, final String originalFilename)
+			throws WorkbookParserException {
+
+		final String trialInstanceNo = ImportStudyUtil.getTrialInstanceNo(workbook, originalFilename);
+		final Map<String, MeasurementRow> rowsMap =
+				ImportStudyUtil.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNo, workbook.isNursery());
 
 		try {
-			KsuCsvWorkbookParser ksuCsvWorkbookParser = new KsuCsvWorkbookParser(workbook, trialInstanceNo, rowsMap);
-			
-			beanFactory.autowireBean(ksuCsvWorkbookParser);
-			
+			final KsuCsvWorkbookParser ksuCsvWorkbookParser = new KsuCsvWorkbookParser(workbook, trialInstanceNo, rowsMap);
+
+			this.beanFactory.autowireBean(ksuCsvWorkbookParser);
+
 			ksuCsvWorkbookParser.parseFile(filename);
 
-			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
+			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), true,
+					this.ontologyService);
 
 			this.validationService.validateObservationValues(workbook, trialInstanceNo);
 
 			return new ImportResult(ksuCsvWorkbookParser.getModes(), new ArrayList<GermplasmChangeDetail>());
 
-		} catch (FileParsingException e) {
+		} catch (final FileParsingException e) {
 			WorkbookUtil.resetWorkbookObservations(workbook);
-			throw new WorkbookParserException(e.getMessage(),e);
+			throw new WorkbookParserException(e.getMessage(), e);
 		}
 
 	}

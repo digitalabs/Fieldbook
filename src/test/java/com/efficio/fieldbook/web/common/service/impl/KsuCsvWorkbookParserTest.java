@@ -1,9 +1,5 @@
-package com.efficio.fieldbook.web.common.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,11 +12,13 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,33 +39,35 @@ public class KsuCsvWorkbookParserTest {
 	private KsuCsvWorkbookParser parser;
 
 	private Workbook workbook;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
-		this.parser = new KsuCsvWorkbookParser(workbook, testTrialInstanceNo, rowsMap);
-		when(csvMap.get(0)).thenReturn(Arrays.asList(rowHeaders));
+		this.parser = new KsuCsvWorkbookParser(this.workbook, this.testTrialInstanceNo, this.rowsMap);
+		Mockito.when(this.csvMap.get(0)).thenReturn(Arrays.asList(this.rowHeaders));
 	}
 
 	@Test(expected = FileParsingException.class)
 	public void testParseCsvMapInvalidHeader() throws Exception {
-		when(csvMap.get(0)).thenReturn(Arrays.asList("PLOT_NO", "GID", "DESIGNATION", "ENTRY_NO"));
-		parser.parseCsvMap(csvMap);
+		Mockito.when(this.csvMap.get(0)).thenReturn(Arrays.asList("PLOT_NO", "GID", "DESIGNATION", "ENTRY_NO"));
+		this.parser.parseCsvMap(this.csvMap);
 	}
 
 	@Test
 	public void testGetColumnIndexesFromObservation() throws Exception {
 		// setup list of measurement variables
-		List<MeasurementVariable> measurementVariables = Arrays.asList(mock(MeasurementVariable.class), mock(MeasurementVariable.class));
-		when(measurementVariables.get(0).getTermId()).thenReturn(TermId.PLOT_NO.getId());
-		when(measurementVariables.get(1).getTermId()).thenReturn(TermId.ENTRY_NO.getId());
+		final List<MeasurementVariable> measurementVariables =
+				Arrays.asList(Mockito.mock(MeasurementVariable.class), Mockito.mock(MeasurementVariable.class));
+		Mockito.when(measurementVariables.get(0).getTermId()).thenReturn(TermId.PLOT_NO.getId());
+		Mockito.when(measurementVariables.get(1).getTermId()).thenReturn(TermId.ENTRY_NO.getId());
 
-		List<Integer> indexes = parser.getColumnIndexesFromObservation(csvMap, measurementVariables, testTrialInstanceNo);
+		final List<Integer> indexes =
+				this.parser.getColumnIndexesFromObservation(this.csvMap, measurementVariables, this.testTrialInstanceNo);
 
-		assertTrue(indexes.size() == 3);
-		assertEquals(NumberUtils.createInteger(testTrialInstanceNo), indexes.get(0));
-		assertEquals("plot", rowHeaders[indexes.get(1)]);
-		assertEquals("ENTRY_NO", rowHeaders[indexes.get(2)]);
+		Assert.assertTrue(indexes.size() == 3);
+		Assert.assertEquals(NumberUtils.createInteger(this.testTrialInstanceNo), indexes.get(0));
+		Assert.assertEquals("plot", this.rowHeaders[indexes.get(1)]);
+		Assert.assertEquals("ENTRY_NO", this.rowHeaders[indexes.get(2)]);
 
 	}
 

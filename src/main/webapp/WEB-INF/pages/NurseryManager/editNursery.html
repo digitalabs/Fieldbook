@@ -81,6 +81,10 @@
 										<a href="javascript: void(0)" class="import-crosses"
 										   th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
 									</li>
+									<li id="create-new-crosses" th:if="*{germplasmListId > -1}">
+										<a th:href="@{~/BreedingManager/main/createcrosses(nurseryid=*{studyId},germplasmlistid=*{germplasmListId})}" class="create-new-crosses"
+										   th:text="#{nursery.nurserydetails.action.create.new.crosses}">Create new Crosses</a>
+									</li>
 									<li>
 										<a href="javascript: void(0)" onclick="ImportCrosses.downloadCrosses()"  class="export-crosses-action"
 										   th:text="#{nursery.nurserydetails.action.export.crosses}">Export Crosses</a>

@@ -1127,10 +1127,10 @@ public class SettingsUtil {
 		workbook.setFactors(SettingsUtil.convertFactorsToMeasurementVariables(studyDataSet.getFactors()));
 		workbook.setVariates(SettingsUtil.convertVariatesToMeasurementVariables(studyDataSet.getVariates()));
 		workbook.getConditions().addAll(SettingsUtil.convertFactorsToMeasurementVariables(studyDataSet.getTrialLevelFactor()));
+		workbook.setConstants(SettingsUtil.convertConstantsToMeasurementVariables(studyDataSet.getConstants()));
 
 		if (!isNursery) {
 
-			workbook.setConstants(SettingsUtil.convertConstantsToMeasurementVariables(studyDataSet.getConstants()));
 			if (workbook.getTreatmentFactors() == null) {
 				workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
 			}

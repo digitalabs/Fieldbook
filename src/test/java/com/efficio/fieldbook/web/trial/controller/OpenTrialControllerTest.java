@@ -784,7 +784,7 @@ public class OpenTrialControllerTest {
 		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, "12345", exptDesignSourceValue, nRepValue, rMapValue);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be unknown", 0, data.getDesignType().intValue());
+		Assert.assertNull("Design type should be unknown", data.getDesignType());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());

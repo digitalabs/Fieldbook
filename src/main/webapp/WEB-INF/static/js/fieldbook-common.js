@@ -1,3 +1,5 @@
+var isAdvanceListGenerated = false;
+
 $(function() {
 	'use strict';
 

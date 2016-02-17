@@ -16,6 +16,8 @@
         displaySelectedGermplasmDetails();
     }
 
+    TrialManagerDataService.updateStartingEntryNoCount((parseInt($('#txtStartingEntryNo').val())) ? parseInt($('#txtStartingEntryNo').val()) : 1);
+
     $scope.labels = {};
     $scope.labels.germplasmFactors = {
         label: 'Temp label here',

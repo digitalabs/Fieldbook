@@ -51,6 +51,8 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
@@ -142,7 +144,7 @@ public abstract class BaseTrialController extends SettingsController {
 			final ExpDesignParameterUi data = new ExpDesignParameterUi();
 
 			// default values
-			data.setDesignType(0);
+			data.setDesignType(null);
 			data.setUseLatenized(false);
 
 			data.setBlockSize(this.getExperimentalDesignData(xpDesignVariable.getBlockSize()));
@@ -173,15 +175,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 			data.setFileName(this.getExperimentalDesignData(xpDesignVariable.getExperimentalDesignSource()));
 
-			// Set first plot number from observations
-			if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
-				final List<MeasurementData> datas = trialWorkbook.getObservations().get(0).getDataList();
-				for (final MeasurementData md : datas) {
-					if (Objects.equals(md.getLabel(), TermId.PLOT_NO.toString())) {
-						data.setStartingPlotNo(md.getValue());
-					}
-				}
-			}
+			this.setStartingEntryNoAndPlotNoFromObservations(trialWorkbook, data);
 
 			// Get all entry numbers from workbook, sort it and get first element from entry numbers list
 			List<Integer> entryNumberList = new ArrayList<>();
@@ -227,6 +221,44 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		return tabInfo;
+	}
+
+	private void setStartingEntryNoAndPlotNoFromObservations(final Workbook trialWorkbook, final ExpDesignParameterUi data) {
+		// Set starting entry and plot number from observations
+		Integer startingEntryNo = 0;
+		Integer startingPlotNo = 0;
+		if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
+
+			final List<MeasurementRow> measurementRows = trialWorkbook.getObservations();
+			for (final MeasurementRow measurementRow : measurementRows) {
+
+				final Map<Integer, MeasurementData> dataMap =
+						Maps.uniqueIndex(measurementRow.getDataList(), new Function<MeasurementData, Integer>() {
+
+							@Override
+							public Integer apply(final MeasurementData from) {
+								return from.getMeasurementVariable().getTermId();
+							}
+						});
+
+				final Integer currentEntryNo = Integer.valueOf(dataMap.get(TermId.ENTRY_NO.getId()).getValue());
+				if (currentEntryNo < startingEntryNo || startingEntryNo == 0) {
+					startingEntryNo = currentEntryNo;
+				}
+				final Integer currentPlotNo = Integer.valueOf(dataMap.get(TermId.PLOT_NO.getId()).getValue());
+				if (currentPlotNo < startingPlotNo || startingPlotNo == 0) {
+					startingPlotNo = currentPlotNo;
+				}
+			}
+		} else {
+			// set the default starting entry no
+			startingEntryNo = 1;
+
+			// set the default starting plot no
+			startingPlotNo = 1;
+		}
+		data.setStartingEntryNo(startingEntryNo.toString());
+		data.setStartingPlotNo(startingPlotNo.toString());
 	}
 
 	private void setCorrectUIDesignTypeOfResolvableIncompleteBlock(final ExpDesignParameterUi data) {

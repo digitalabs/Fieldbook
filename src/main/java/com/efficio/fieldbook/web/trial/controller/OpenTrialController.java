@@ -357,18 +357,10 @@ public class OpenTrialController extends BaseTrialController {
 
 			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook, this.userSelection
 					.getTemporaryWorkbook().getTrialObservations());
-
-			if (replace == 1) {
-				for (final MeasurementVariable mvar : this.userSelection.getWorkbook().getConditions()) {
-
-					if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
-						mvar.setOperation(Operation.UPDATE);
-					} else {
-						mvar.setOperation(Operation.ADD);
-					}
-				}
-			}
 		}
+
+		// update the operation for experiment design variables : EXP_DESIGN, EXP_DESIGN_SOURCE, NREP
+		this.assignOperationOnExpDesignVariables(workbook.getConditions());
 
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
 		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
@@ -431,6 +423,15 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
+	void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
+		for (final MeasurementVariable mvar : conditions) {
+			if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId() || mvar.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
+					|| mvar.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
+				mvar.setOperation(Operation.UPDATE);
+			}
+		}
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "/updateSavedTrial", method = RequestMethod.GET)
 	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") final int id) {
@@ -475,7 +476,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	/**
 	 * Reset session variables after save.
-	 *
+	 * 
 	 * @param form the form
 	 * @param model the model
 	 * @return the string
@@ -493,7 +494,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	/**
 	 * Reset session variables after save.
-	 *
+	 * 
 	 * @param form the form
 	 * @param model the model
 	 * @return the string

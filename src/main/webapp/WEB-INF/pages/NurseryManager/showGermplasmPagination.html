@@ -104,10 +104,11 @@ $(document).ready(function() {
 
 });
 
+
 function validateAndSetEntryNo() {
     var customMessage = '';
-    var entryNo = $.trim($("#txtStartingEntryNo").val());
-    var numberOfEntries = parseInt($.trim($("#numberOfEntries").text()));
+    var entryNo = $.trim($('#txtStartingEntryNo').val());
+    var numberOfEntries = parseInt($.trim($('#numberOfEntries').text()));
     if (entryNo != '') {
         if (!validateEntryAndPlotNo(entryNo)) {
             customMessage = entryNoShouldBeInRange;
@@ -115,7 +116,7 @@ function validateAndSetEntryNo() {
 
         if (customMessage != '') {
             showInvalidInputMessage(customMessage);
-            $("#txtStartingEntryNo").val('');
+            $('#txtStartingEntryNo').val('');
         } else {
             var dataTableIdentifier = '.germplasm-list-items';
             var entryNoColIndex = findEntryColIndex(dataTableIdentifier);
@@ -134,7 +135,7 @@ function validateAndSetEntryNo() {
         }
     } else {
         // Set starting entry number back to blank if starting entry number is only white spaces
-        $("#txtStartingEntryNo").val('');
+        $('#txtStartingEntryNo').val('');
     }
 }
 
@@ -188,7 +189,7 @@ function validateEntryAndPlotNo(inputNo) {
 
 function validateAndSetPlotNo() {
     var customMessage = '';
-    var plotNo = $.trim($("#txtStartingPlotNo").val());
+    var plotNo = $.trim($('#txtStartingPlotNo').val());
     if(plotNo != '') {
         if (!validateEntryAndPlotNo(plotNo)) {
            customMessage = plotNoShouldBeInRange;
@@ -196,7 +197,7 @@ function validateAndSetPlotNo() {
 
         if (customMessage != '') {
             showInvalidInputMessage(customMessage);
-            $("#txtStartingPlotNo").val('');
+            $('#txtStartingPlotNo').val('');
         } else {
             if (isNursery()) {
                 showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
@@ -208,13 +209,14 @@ function validateAndSetPlotNo() {
         }
     } else {
         // Set starting plot number back to blank if starting plot number is only white spaces
-        $("#txtStartingPlotNo").val('');
+        $('#txtStartingPlotNo').val('');
     }
 }
 
 function setUnappliedChangesAvailable() {
     var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
     trialManager.setUnappliedChangesAvailable();
+    trialManager.updateStartingEntryNoCount($.trim($('#txtStartingEntryNo').val()));
 }
 //]]>
 </script>

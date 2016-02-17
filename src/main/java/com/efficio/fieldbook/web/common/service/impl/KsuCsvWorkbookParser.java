@@ -3,13 +3,10 @@ package com.efficio.fieldbook.web.common.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.service.api.FieldbookService;
 
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 
@@ -18,10 +15,8 @@ public class KsuCsvWorkbookParser extends AbstractCsvWorkbookParser<KsuCsvWorkbo
 	private String trialInstanceNo;
 	private Map<String, MeasurementRow> rowsMap;
 	
-	@Resource
-	private FieldbookService fieldbookMiddlewareService;
-	
 	public KsuCsvWorkbookParser(Workbook workbook, String trialInstanceNo,	Map<String, MeasurementRow> rowsMap) {
+		super();
 		this.workbook = workbook;
 		this.trialInstanceNo = trialInstanceNo;
 		this.rowsMap = rowsMap;
@@ -40,11 +35,6 @@ public class KsuCsvWorkbookParser extends AbstractCsvWorkbookParser<KsuCsvWorkbo
 		this.importDataToWorkbook(csvMap, workbook, trialInstanceNo, rowsMap);
 
 		return this;
-	}
-	
-	@Override
-	public  List<Integer> getGermplasmIdsByName(String newDesig){
-		return this.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
 	}
 	
 	@Override

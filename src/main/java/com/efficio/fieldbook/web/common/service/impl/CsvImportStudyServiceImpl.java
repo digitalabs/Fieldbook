@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.service.CsvImportStudyService;
@@ -55,12 +53,10 @@ public class CsvImportStudyServiceImpl implements CsvImportStudyService{
 			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
 
 			this.validationService.validateObservationValues(workbook, trialInstanceNo);
-
-			return new ImportResult(new HashSet<ChangeType>(), new ArrayList<GermplasmChangeDetail>());		
+			return new ImportResult(csvWorkbookParser.getModes(), new ArrayList<GermplasmChangeDetail>());		
 		} catch (Exception e) {
 			WorkbookUtil.resetWorkbookObservations(workbook);
 			throw new WorkbookParserException(e.getMessage(),e);
 		}
 	}
-	
 }

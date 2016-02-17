@@ -6,23 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.service.api.FieldbookService;
-import org.springframework.transaction.annotation.Transactional;
 
 public class CsvWorkbookParser extends AbstractCsvWorkbookParser<CsvWorkbookParser>{
 	private Workbook workbook;
 	private String trialInstanceNo;
 	private Map<String, MeasurementRow> rowsMap;
-	
-	@Resource
-	private FieldbookService fieldbookMiddlewareService;
 	
 	public enum CsvRequiredColumnEnum {
 		ENTRY_NO(TermId.ENTRY_NO.getId(), "ENTRY_NO"), PLOT_NO(TermId.PLOT_NO.getId(), "PLOT_NO"), GID(TermId.GID.getId(),
@@ -58,6 +51,7 @@ public class CsvWorkbookParser extends AbstractCsvWorkbookParser<CsvWorkbookPars
 	}
 	
 	public CsvWorkbookParser(Workbook workbook, String trialInstanceNo, Map<String, MeasurementRow> rowsMap) {
+		super();
 		this.workbook = workbook;
 		this.trialInstanceNo = trialInstanceNo;
 		this.rowsMap = rowsMap;
@@ -65,6 +59,7 @@ public class CsvWorkbookParser extends AbstractCsvWorkbookParser<CsvWorkbookPars
 	
 	@Override
 	public	CsvWorkbookParser parseCsvMap(Map<Integer, List<String>> csvMap) throws FileParsingException {
+		
 		// validate headers
 		String[] rowHeaders = csvMap.get(0).toArray(new String[csvMap.get(0).size()]);
 
@@ -76,11 +71,6 @@ public class CsvWorkbookParser extends AbstractCsvWorkbookParser<CsvWorkbookPars
 		this.importDataToWorkbook(csvMap, workbook, trialInstanceNo, rowsMap);
 
 		return this;
-	}
-	
-	@Override
-	public  List<Integer> getGermplasmIdsByName(String newDesig){
-		return this.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
 	}
 	
 	@Override
@@ -98,7 +88,7 @@ public class CsvWorkbookParser extends AbstractCsvWorkbookParser<CsvWorkbookPars
 		return variable.getName();
 	}
 
-	public boolean isValidHeaderNames(String[] rowHeaders) {
+	boolean isValidHeaderNames(String[] rowHeaders) {
 		List<String> rowHeadersList = Arrays.asList(rowHeaders);
 		
 		for (CsvRequiredColumnEnum column : CsvRequiredColumnEnum.values()) {

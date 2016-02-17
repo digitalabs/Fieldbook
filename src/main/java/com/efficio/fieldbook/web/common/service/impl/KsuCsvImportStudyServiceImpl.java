@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -12,13 +11,10 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.service.KsuCsvImportStudyService;
@@ -59,7 +55,7 @@ public class KsuCsvImportStudyServiceImpl implements KsuCsvImportStudyService {
 
 			this.validationService.validateObservationValues(workbook, trialInstanceNo);
 
-			return new ImportResult(new HashSet<ChangeType>(), new ArrayList<GermplasmChangeDetail>());
+			return new ImportResult(ksuCsvWorkbookParser.getModes(), new ArrayList<GermplasmChangeDetail>());
 
 		} catch (FileParsingException e) {
 			WorkbookUtil.resetWorkbookObservations(workbook);

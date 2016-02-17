@@ -2,36 +2,57 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.AbstractCsvFileParser;
 import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.service.api.FieldbookService;
 
+import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 
 abstract class AbstractCsvWorkbookParser<T> extends AbstractCsvFileParser<T> {
-
+	
+	@Resource
+	private FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private OntologyDataManager ontologyDataManager;
+	
+	@Resource
+	private ContextUtil contextUtil;
+	
+	private HashSet<ChangeType> modes;
+	
 	public AbstractCsvWorkbookParser() {
+		 modes = new HashSet<ChangeType>();
 	}
 
 	@Override
 	public	abstract T parseCsvMap(Map<Integer, List<String>> csvMap) throws FileParsingException;
 
-	public abstract List<Integer> getGermplasmIdsByName(String newDesig);
-	
 	public abstract String getLabelFromRequiredColumn(MeasurementVariable variable);
 	
 	protected void importDataToWorkbook(Map<Integer, List<String>> csvMap, Workbook workbook, String trialInstanceNo, Map<String, MeasurementRow> rowsMap)
 			throws FileParsingException {
+		csvMap = this.renameHeadersIfPossibleAndCheckForAddedTraits(csvMap, workbook);
 		List<MeasurementVariable> variablesFactors = workbook.getFactors();
 
 		// setup factor map
@@ -87,6 +108,30 @@ abstract class AbstractCsvWorkbookParser<T> extends AbstractCsvFileParser<T> {
 		}
 	}
 
+	Map<Integer, List<String>> renameHeadersIfPossibleAndCheckForAddedTraits(Map<Integer, List<String>> csvMap, Workbook workbook) {
+		List<String> measurementHeaders = this.getMeasurementHeaders(workbook);
+		List<String> headers = csvMap.get(0);
+		for(int i=0; i<headers.size(); i++){
+			String header = headers.get(i);
+			if(!header.equals(KsuFieldbookUtil.PLOT) && !measurementHeaders.contains(header)){
+				Set<StandardVariable> standardVariables = this.ontologyDataManager.findStandardVariablesByNameOrSynonym(header, contextUtil.getCurrentProgramUUID());
+				Boolean found = false;
+				for(StandardVariable standardVariable: standardVariables){
+					if(measurementHeaders.contains(standardVariable.getName())){
+						headers.set(i, standardVariable.getName());
+						found = true;
+						break;
+					}
+				}
+				if(!found){
+					this.modes.add(ChangeType.ADDED_TRAITS);
+				}
+			}
+		}
+		csvMap.put(0, headers);
+		return csvMap;
+	}
+
 	protected List<Integer> getColumnIndexesFromObservation(Map<Integer, List<String>> csvMap, List<MeasurementVariable> variables, String trialInstanceNumber)
 			throws FileParsingException {
 		String plotLabel = null, entryLabel = null;
@@ -131,7 +176,7 @@ abstract class AbstractCsvWorkbookParser<T> extends AbstractCsvFileParser<T> {
 		return "";
 	}
 
-	private String getKeyIdentifierFromRow(List<String> row, List<Integer> indexes) throws FileParsingException {
+	String getKeyIdentifierFromRow(List<String> row, List<Integer> indexes) throws FileParsingException {
 		String plot = row.get(indexes.get(1));
 		String entry = row.get(indexes.get(2));
 
@@ -140,7 +185,7 @@ abstract class AbstractCsvWorkbookParser<T> extends AbstractCsvFileParser<T> {
 		} else if (entry == null || StringUtils.isEmpty(entry)) {
 			throw new FileParsingException("error.workbook.import.entry.no.empty.cell");
 		}
-
+		
 		return indexes.get(0) + "-" + (int)Float.parseFloat(plot) + "-" + (int)Float.parseFloat(entry);
 	}
 
@@ -158,17 +203,7 @@ abstract class AbstractCsvWorkbookParser<T> extends AbstractCsvFileParser<T> {
 					String tempVal = "";
 
 					if (NumberUtils.isNumber(cell)) {
-						double doubleVal = Double.valueOf(cell);
-						double intVal = Double.valueOf(cell).intValue();
-						boolean getDoubleVal = false;
-						if (doubleVal - intVal > 0) {
-							getDoubleVal = true;
-						}
-
-						tempVal = String.valueOf(Double.valueOf(cell).intValue());
-						if (getDoubleVal) {
-							tempVal = String.valueOf(Double.valueOf(cell));
-						}
+						tempVal = this.getRealNumericValue(cell);
 						csvValue = ExportImportStudyUtil
 								.getCategoricalIdCellValue(tempVal, wData.getMeasurementVariable().getPossibleValues(), true);
 					} else {
@@ -208,7 +243,8 @@ abstract class AbstractCsvWorkbookParser<T> extends AbstractCsvFileParser<T> {
 		}
 	}
 
-	private String getRealNumericValue(String cell) {
+	String getRealNumericValue(String cell) {
+		//to remove trailing zeroes
 		String realValue = "";
 
 		if (NumberUtils.isNumber(cell)) {
@@ -223,5 +259,32 @@ abstract class AbstractCsvWorkbookParser<T> extends AbstractCsvFileParser<T> {
 		}
 
 		return realValue;
+	}
+	
+	public  List<Integer> getGermplasmIdsByName(String newDesig){
+		return this.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
+	}
+	
+	HashSet<ChangeType> getModes(){
+		return modes;
+	}
+
+	private List<String> getMeasurementHeaders(Workbook workbook) {
+		List<String> headers = new ArrayList<String>();
+		
+		List<MeasurementVariable> measurementDatasetVariablesView = workbook.getMeasurementDatasetVariablesView();
+		for(MeasurementVariable mvar: measurementDatasetVariablesView){
+			headers.add(mvar.getName());
+		}
+		return headers;
+	}
+	
+	/*For test purposes*/
+	void setOntologyDataManager(OntologyDataManager ontologyDataManager){
+		this.ontologyDataManager = ontologyDataManager;
+	}
+	
+	void setContextUtil(ContextUtil contextUtil){
+		this.contextUtil = contextUtil;
 	}
 }

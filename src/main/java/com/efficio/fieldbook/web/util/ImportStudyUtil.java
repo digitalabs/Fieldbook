@@ -9,11 +9,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
-
-import com.efficio.fieldbook.web.util.KsuFieldbookUtil.KsuRequiredColumnEnum;
 
 public class ImportStudyUtil {
 	
@@ -61,19 +58,5 @@ public class ImportStudyUtil {
 		}
 
 		return trialInstanceNumber;
-	}
-	
-	public static String getLabelFromKsuRequiredColumn(MeasurementVariable variable) {
-		String label = "";
-
-		if (KsuRequiredColumnEnum.get(variable.getTermId()) != null) {
-			label = KsuRequiredColumnEnum.get(variable.getTermId()).getLabel();
-		}
-
-		if (label.trim().length() > 0) {
-			return label;
-		}
-
-		return variable.getName();
 	}
 }

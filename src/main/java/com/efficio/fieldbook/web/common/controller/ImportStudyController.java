@@ -174,15 +174,21 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				String reminderConfirmation = "";
 				if (importResult.getModes() != null && !importResult.getModes().isEmpty()) {
 					for (final ChangeType mode : importResult.getModes()) {
-						String message = this.messageSource.getMessage(mode.getMessageCode(), null, locale);
-						if (mode == ChangeType.ADDED_TRAITS) {
-							message +=
-									StringUtils.join(WorkbookUtil.getAddedTraits(userSelection.getWorkbook().getVariates(), userSelection
-											.getWorkbook().getObservations()), ", ");
+						if(importType != AppConstants.IMPORT_NURSERY_CSV.getInt() && importType != AppConstants.IMPORT_KSU_CSV.getInt()){
+							String message = this.messageSource.getMessage(mode.getMessageCode(), null, locale);
+							if (mode == ChangeType.ADDED_TRAITS) {
+								message +=
+											StringUtils.join(WorkbookUtil.getAddedTraits(userSelection.getWorkbook().getVariates(), userSelection
+													.getWorkbook().getObservations()), ", ");
+								
+								
+							}
+							detailErrorMessage.add(message);
+							reminderConfirmation = this.messageSource.getMessage("confirmation.import.text", null, locale);
+						} else if (mode == ChangeType.ADDED_TRAITS){
+							reminderConfirmation = this.messageSource.getMessage("confirmation.import.text.traits.added", null, locale);
 						}
-						detailErrorMessage.add(message);
 					}
-					reminderConfirmation = this.messageSource.getMessage("confirmation.import.text", null, locale);
 				}
 				resultsMap.put("message", reminderConfirmation);
 				resultsMap.put("confirmMessage", this.messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));

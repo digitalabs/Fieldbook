@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.common.service.impl;
+package com.efficio.fieldbook.web.study.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,25 +29,31 @@ import org.springframework.transaction.annotation.Transactional;
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
-import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
 import com.efficio.fieldbook.web.util.ImportStudyUtil;
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
+import javax.annotation.Resource;
+
 @Service
 @Transactional
-public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl implements KsuExcelImportStudyService {
+public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl implements ImportStudyService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(KsuExcelImportStudyServiceImpl.class);
 
+    @Resource
+    private OntologyService ontologyService;
+
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
+
 	@Override
-	public ImportResult importWorkbook(final Workbook workbook, final String filename, final OntologyService ontologyService,
-			final FieldbookService fieldbookMiddlewareService) throws WorkbookParserException {
+	public ImportResult importWorkbook(final Workbook workbook, final String currentFile, final String originalFilename) throws WorkbookParserException {
 
 		try {
 			// read the file
-			final org.apache.poi.ss.usermodel.Workbook xlsBook = this.parseFile(filename);
+			final org.apache.poi.ss.usermodel.Workbook xlsBook = this.parseFile(currentFile);
 
 			this.validate(xlsBook);
 

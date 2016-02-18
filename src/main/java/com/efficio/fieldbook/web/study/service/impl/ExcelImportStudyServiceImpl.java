@@ -9,7 +9,7 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.common.service.impl;
+package com.efficio.fieldbook.web.study.service.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,7 +58,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
-import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
+import com.efficio.fieldbook.web.study.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.ImportStudyUtil;
@@ -100,17 +100,19 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	@Resource
 	private ContextUtil contextUtil;
 
+    @Resource
+    private OntologyService ontologyService;
+
 	@Override
-	public ImportResult importWorkbook(final Workbook workbook, final String filename, final OntologyService ontologyService,
-			final FieldbookService fieldbookMiddlewareService) throws WorkbookParserException {
+	public ImportResult importWorkbook(final Workbook workbook, final String currentFile, String originalFilename) throws WorkbookParserException {
 
 		try {
-			final org.apache.poi.ss.usermodel.Workbook xlsBook = this.parseFile(filename);
+			final org.apache.poi.ss.usermodel.Workbook xlsBook = this.parseFile(currentFile);
 
 			this.validate(xlsBook, workbook);
 
 			final WorkbookParser parser = new WorkbookParser();
-			final Workbook descriptionWorkbook = parser.parseFile(new File(filename), false, false);
+			final Workbook descriptionWorkbook = parser.parseFile(new File(currentFile), false, false);
 			this.copyConditionsAndConstants(workbook);
 
 			final Set<ChangeType> modes = new HashSet<>();

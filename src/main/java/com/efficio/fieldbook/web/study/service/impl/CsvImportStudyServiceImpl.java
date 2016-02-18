@@ -1,10 +1,12 @@
-package com.efficio.fieldbook.web.common.service.impl;
+package com.efficio.fieldbook.web.study.service.impl;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.study.CsvWorkbookParser;
+import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
@@ -16,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
-import com.efficio.fieldbook.web.common.service.CsvImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.ImportStudyUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -24,7 +25,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service
 @Transactional
-public class CsvImportStudyServiceImpl implements CsvImportStudyService{
+public class CsvImportStudyServiceImpl implements ImportStudyService{
 	
 	@Resource
 	protected FieldbookService fieldbookMiddlewareService;

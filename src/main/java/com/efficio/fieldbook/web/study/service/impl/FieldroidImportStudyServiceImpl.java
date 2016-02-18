@@ -9,49 +9,54 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.common.service.impl;
+package com.efficio.fieldbook.web.study.service.impl;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
-import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
+
+import javax.annotation.Resource;
 
 @Service
 @Transactional
-public class DataKaptureImportStudyServiceImpl implements DataKaptureImportStudyService {
+public class FieldroidImportStudyServiceImpl implements ImportStudyService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DataKaptureImportStudyServiceImpl.class);
+    @Resource
+    private OntologyService ontologyService;
+
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
 
 	@Override
-	public ImportResult importWorkbook(Workbook workbook, String filename, OntologyService ontologyService,
-			FieldbookService fieldbookMiddlewareService) throws WorkbookParserException {
+	public ImportResult importWorkbook(final Workbook workbook, final String currentFile, String originalFilename) throws WorkbookParserException {
 
-		try {
-			CSVOziel csv = new CSVOziel(workbook, workbook.getObservations(), workbook.getTrialObservations(), true);
+		final File file = new File(currentFile);
+		final CSVOziel csv = new CSVOziel(workbook, workbook.getObservations(), workbook.getTrialObservations());
 
-			File file = new File(filename);
-			csv.readDATACapture(file, ontologyService, fieldbookMiddlewareService);
-			Set<ChangeType> modes = new HashSet<ChangeType>();
-			return new ImportResult(modes, new ArrayList<GermplasmChangeDetail>());
+		this.validate(csv, file, workbook);
 
-		} catch (Exception e) {
-			DataKaptureImportStudyServiceImpl.LOG.error(e.getMessage());
-			throw new WorkbookParserException(e.getMessage());
+		csv.readDATAnew(file, ontologyService, fieldbookMiddlewareService);
+		final Set<ChangeType> modes = new HashSet<ChangeType>();
+		return new ImportResult(modes, new ArrayList<GermplasmChangeDetail>());
+	}
+
+	private void validate(final CSVOziel csv, final File file, final Workbook workbook) throws WorkbookParserException {
+		if (!csv.isValid(file)) {
+			throw new WorkbookParserException("error.workbook.import.invalidFieldroidFile");
 		}
 	}
 

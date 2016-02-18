@@ -3927,3 +3927,10 @@ function exportDesignTemplate() {
 		}
 	});
 }
+
+function setSpinnerMaxValue() {
+	'use strict';
+	if ($('#' + getJquerySafeId('checkVariables0.value')).val() === null || $('#' + getJquerySafeId('checkVariables0.value')).val() === '') {
+		$('#' + getJquerySafeId('checkVariables0.value')).val(1);
+	}
+}

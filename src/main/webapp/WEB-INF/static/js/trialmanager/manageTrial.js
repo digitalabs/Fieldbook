@@ -41,6 +41,11 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 		};
 	});
 
+    // Added to prevent Unsecured HTML error
+    manageTrialApp.config(function($sceProvider) {
+        $sceProvider.enabled(false);
+    });
+
 	manageTrialApp.config(['$httpProvider', function($httpProvider) {
 		$httpProvider.interceptors.push('spinnerHttpInterceptor');
 	}]);
@@ -69,16 +74,16 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			})
 
 			.state('environment', {
-				templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
-				params: ['addtlNumOfEnvironments', 'timestamp'],
-				views: {
-					environment: {
-						controller: 'EnvironmentCtrl',
-						templateUrl: '/Fieldbook/TrialManager/createTrial/environment'
-					}
-				},
-				deepStateRedirect: true, sticky: true
-			})
+                templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
+                params: ['addtlNumOfEnvironments', 'timestamp'],
+                views: {
+                    environment: {
+                        controller: 'EnvironmentCtrl',
+                        templateUrl: '/Fieldbook/TrialManager/createTrial/environment'
+                    }
+                },
+                deepStateRedirect: true, sticky: true
+            })
 
 			.state('experimentalDesign', {
 				url: '/experimentalDesign',
@@ -193,9 +198,11 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 					name: 'Measurements',
 					state: 'editMeasurements'
 				}
-
 			];
-
+            $scope.tabSelected = 'trialSettings';
+            $scope.isSettingsTab = true;
+            $scope.advanceTabsData = [];
+            $scope.advanceTrialTabs = [];
 			$scope.isOpenTrial = TrialManagerDataService.isOpenTrial;
 
 			$scope.isChoosePreviousTrial = false;
@@ -246,6 +253,17 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				}
 			};
 
+            // To apply scope safely
+            $scope.safeApply = function(fn) {
+                var phase = this.$root.$$phase;
+                if(phase == '$apply' || phase == '$digest') {
+                    if(fn && (typeof(fn) === 'function')) {
+                        fn();
+                    }
+                } else {
+                    this.$apply(fn);
+                }
+            };
 			$scope.data = TrialManagerDataService.currentData.basicDetails;
 
 			$scope.saveCurrentTrialData = TrialManagerDataService.saveCurrentData;
@@ -281,12 +299,14 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
 						TrialManagerDataService.updateCurrentData('trialSettings',
 							TrialManagerDataService.extractData(data.trialSettingsData));
-						TrialManagerDataService.updateCurrentData('environments', environmentData);
+                        TrialManagerDataService.updateCurrentData('environments', environmentData);
 						TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(
 							data.treatmentFactorsData));
 
+                        //Added-selectionVariates
 						TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
 							data.trialSettingsData));
+
 						TrialManagerDataService.updateSettings('environments', environmentSettings);
 						TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
 						TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
@@ -342,6 +362,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			};
 
 			$scope.performFunctionOnTabChange = function(targetState) {
+                $scope.isSettingsTab = true;
+                $scope.tabSelected = targetState;
 				if (targetState === 'editMeasurements') {
 					if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
 						$timeout(function() {
@@ -370,12 +392,110 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 					}
 				}
 			};
+
+			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
+				var isSwap = false;
+				var isUpdate = false;
+                if(isPageLoading === undefined) {
+                    isPageLoading = false;
+                }
+				angular.forEach($scope.advanceTrialTabs, function (value, index) {
+					if (value.name == listName && value.id == tabId) {
+						isUpdate = true;
+						$scope.advanceTabsData[index].data = tabData;
+						return;
+					}
+				}
+				);
+
+                $scope.stockListTabs = [];
+				angular.forEach($scope.advanceTrialTabs, function (value, index) {
+					if (!isSwap && !isUpdate) {
+						if (value.id == tabId) {
+							$scope.advanceTrialTabs.splice(index + 1, 0, {
+								name: listName,
+								state: 'stock-list' + tabId + '-li',
+								id: tabId,
+								displayName: "Stock List:[" + $scope.advanceTrialTabs[index].name + "]"
+							});
+
+							$scope.advanceTabsData.splice(index + 1, 0, {
+								name: 'stock-list' + tabId + '-li',
+								data: tabData,
+                                id: 'stock-content-pane' + tabId
+							});
+							isSwap = true;
+                            if(isPageLoading!=true) {
+                                $scope.tabSelected = 'stock-list' + tabId + '-li';
+                            }
+                            $("#listActionButton"+tabId).addClass('disabled');
+						}
+					}
+				});
+				if (!isSwap && !isUpdate) {
+					$scope.advanceTrialTabs.push({
+						name: listName,
+						state: 'advance-list' + tabId + '-li',
+						id: tabId,
+						displayName: "Advance List: [" + listName + "]"
+					});
+					$scope.advanceTabsData.push({
+						name: 'advance-list' + tabId + '-li',
+						data: tabData,
+						id: 'advance-list' + tabId + '-li'
+					});
+                    if(isPageLoading!=true){
+                        $scope.tabSelected = 'advance-list' + tabId + '-li';
+                        $scope.isSettingsTab = false;
+                    }
+				}
+
+			};
+
+            $scope.advancedTrialList=TrialManagerDataService.settings.advancedList;
+
+            angular.forEach($scope.advancedTrialList,function(value){
+                displayAdvanceList('', value.id, value.name, false, '', true);
+			});
+
+
+
+            $scope.tabChange = function(selectedTab) {
+                $scope.tabSelected = selectedTab;
+                $scope.isSettingsTab = false;
+
+                // Load selected stock list inventory page setup function single time
+                if ($scope.stockListTabs.indexOf(selectedTab) === -1) {
+                    var isStock = selectedTab.split('-');
+                    if (isStock[0] === "stock") {
+                        $scope.stockListTabs.push(selectedTab);
+                        setTimeout(InventoryPage.setupPage, 100);
+                    }
+                }
+            };
+
+            $scope.closeAdvanceListTab = function (tab){
+                var index= $scope.findIndexByKeyValue($scope.advanceTrialTabs, 'state', tab);
+                $scope.advanceTrialTabs.splice(index, 1);
+                $scope.advanceTabsData.splice(index, 1);
+                $scope.tabSelected = 'trialSettings';
+                $scope.isSettingsTab = true;
+             };
+
 			$('body').on('DO_AUTO_SAVE', function() {
 				TrialManagerDataService.saveCurrentData();
 			});
 			$('body').on('REFRESH_AFTER_IMPORT_SAVE', function() {
 				$scope.refreshTabAfterImport();
 			});
+            $scope.findIndexByKeyValue = function(arraytosearch, key, valuetosearch) {
+                for (var i = 0; i < arraytosearch.length; i++) {
+                    if (arraytosearch[i][key] == valuetosearch) {
+                        return i;
+                    }
+                }
+                return null;
+            }
 		}]);
 
 	manageTrialApp.filter('filterMeasurementState', function() {
@@ -411,6 +531,20 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				$uibModalInstance.close(false);
 			};
 		});
+
+    manageTrialApp.filter('orderObjectBy', function() {
+        return function(items, field, reverse) {
+            var filtered = [];
+            angular.forEach(items, function(item) {
+                filtered.push(item);
+            });
+            filtered.sort(function (a, b) {
+                return (a[field] > b[field] ? 1 : -1);
+            });
+            if(reverse) filtered.reverse();
+            return filtered;
+        };
+    });
 
 	// README IMPORTANT: Code unmanaged by angular should go here
 	document.onInitManageTrial = function() {

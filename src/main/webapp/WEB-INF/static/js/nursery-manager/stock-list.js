@@ -80,7 +80,8 @@ if (typeof StockIDFunctions === 'undefined') {
 								StockIDFunctions.disableGenerateStockListButton(listId);
 								$('#stock-tab-pane' + listId).addClass('active');
 								$('#stock-list' + listId + '-li').addClass('active');
-								$('.nav-tabs').tabdrop('layout');
+                                // FIXME: To be done to bifurcate context of Nursery and Trial
+								//$('.nav-tabs').tabdrop('layout');
 							});
 
 						} else {
@@ -102,7 +103,7 @@ if (typeof StockIDFunctions === 'undefined') {
 			}
 		},
 
-		generateStockListTabIfNecessary: function(listId) {
+		generateStockListTabIfNecessary: function(listId, isPageLoading) {
 			'use strict';
 
 			var url = '/Fieldbook/stock/generateStockTabIfNecessary/' + listId;
@@ -113,20 +114,27 @@ if (typeof StockIDFunctions === 'undefined') {
 				cache: false,
 				success: function(html) {
 					if (html && html.length > 0) {
+						if(isNursery()){
 						$('#advance-list' + listId + '-li').after(html);
-						$('#advance-list' + listId).data('has-stock', 'true');
-						$('#stock-list-anchor' + listId).on('shown.bs.tab', function() {
-							if ($(this).data('has-loaded') !== '1') {
-								$(this).data('has-loaded', '1');
-								StockIDFunctions.displayStockList($(this).data('list-id'));
-							}
-						});
+							$('#advance-list' + listId).data('has-stock', 'true');
+							$('#stock-list-anchor' + listId).on('shown.bs.tab', function() {
+								if ($(this).data('has-loaded') !== '1') {
+									$(this).data('has-loaded', '1');
+									StockIDFunctions.displayStockList($(this).data('list-id'));
+                                    $('.nav-tabs').tabdrop({align: 'left'});
+                                    $('.nav-tabs').tabdrop('layout');
+								}
+							});
+						} else {
+                            // Display already generated Stock List
+                            StockIDFunctions.displayStockList(listId,isPageLoading);
+                        }
 					}
 				}
 			});
 		},
 
-		displayStockList: function(listId) {
+		displayStockList: function(listId,isPageLoading) {
 			'use strict';
 
 			var url = '/Fieldbook/germplasm/list/stock/' + listId;
@@ -136,11 +144,19 @@ if (typeof StockIDFunctions === 'undefined') {
 				type: 'GET',
 				cache: false,
 				success: function(html) {
-					$('#stock-content-pane' + listId).html(html);
-					//we just show the button
-					$('.export-advance-list-action-button').removeClass('fbk-hide');
-					$('#stock-list' + listId + '-li').addClass('advance-germplasm-items');
-					$('#stock-list' + listId + '-li').data('advance-germplasm-list-id', listId);
+                    if(isNursery()) {
+                        $('#stock-content-pane' + listId).html(html);
+                        //we just show the button
+                        $('.export-advance-list-action-button').removeClass('fbk-hide');
+                        $('#stock-list' + listId + '-li').addClass('advance-germplasm-items');
+                        $('#stock-list' + listId + '-li').data('advance-germplasm-list-id', listId);
+                    } else {
+                        var element = angular.element(document.getElementById("mainApp")).scope();
+                        // To apply scope safely
+                        element.safeApply(function (){
+                            element.addAdvanceTabData(listId, html, 'stock-list', isPageLoading);
+                        });
+                    }
 				}
 			});
 		},
@@ -264,7 +280,7 @@ if (typeof StockIDFunctions === 'undefined') {
 
 		createLabels: function(stockId) {
 			'use strict';
-			var url =  $("#stock-tab-pane" + stockId + " #label-printing-url").attr('href') + "/" + stockId;
+			var url =  $("#stock-content-pane" + stockId + " #label-printing-url").attr('href') + "/" + stockId;
 			location.href = url;
 		},
 
@@ -331,18 +347,16 @@ if (typeof StockIDFunctions === 'undefined') {
 		},
 
 		getSelectedInventoryEntryIds: function() {
-			'use strict';
-			var ids = [],
-				listDivIdentifier  = getCurrentAdvanceTabTempIdentifier(),
-				inventoryTableId = '#inventory-table' + listDivIdentifier;
-			
-			var oTable = $(inventoryTableId).dataTable();
-			var nodes = oTable.api().rows( ':has(input.stockListEntryId:checked)' ).nodes();
-			$(nodes).each(function(i, node){
-					ids.push($('input.stockListEntryId:checked', node).data('entryid'));
-			}); 
-			
-			return ids;
+            'use strict';
+            var ids = [],
+                listDivIdentifier  = getCurrentAdvanceTabTempIdentifier(),
+                inventoryTableId = '#inventory-table' + listDivIdentifier;
+                var oTable = $(inventoryTableId).dataTable();
+                var nodes = oTable.api().rows(':has(input.stockListEntryId:checked)').nodes();
+                $(nodes).each(function (i, node) {
+                    ids.push($('input.stockListEntryId:checked', node).data('entryid'));
+                });
+            return ids;
 		},
 
 		showUpdateInventoryModal: function(listId) {

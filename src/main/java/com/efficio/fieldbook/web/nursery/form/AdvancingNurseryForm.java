@@ -12,7 +12,9 @@
 package com.efficio.fieldbook.web.nursery.form;
 
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 
@@ -102,8 +104,6 @@ public class AdvancingNurseryForm {
 	/** The nursery id. */
 	private String nurseryId;
 
-	private int cropType;
-
 	private Integer methodVariateId;
 
 	private Integer lineVariateId;
@@ -114,7 +114,7 @@ public class AdvancingNurseryForm {
 
 	private String harvestYear;
 
-	private String harvestMonth;
+    private String harvestMonth;
 
 	private Long uniqueId;
 
@@ -127,6 +127,33 @@ public class AdvancingNurseryForm {
 	private String errorInAdvance;
 
 	private String checkAdvanceLinesUnique;
+
+	private Set<String> selectedTrialInstances;
+
+    private Set<String> selectedReplications;
+
+    
+	public Set<String> getSelectedTrialInstances() {
+		return this.selectedTrialInstances;
+	}
+
+	
+	
+	public void setSelectedTrialInstances(Set<String> selectedTrialInstances) {
+		this.selectedTrialInstances = selectedTrialInstances;
+	}
+
+	
+	
+	public Set<String> getSelectedReplications() {
+		return this.selectedReplications;
+	}
+
+	
+
+	public void setSelectedReplications(Set<String> selectedReplications) {
+		this.selectedReplications = selectedReplications;
+	}
 
 	/**
 	 * Gets the method id all.
@@ -595,14 +622,6 @@ public class AdvancingNurseryForm {
 		return this.locationUrl;
 	}
 
-	public int getCropType() {
-		return this.cropType;
-	}
-
-	public void setCropType(int cropType) {
-		this.cropType = cropType;
-	}
-
 	/**
 	 * Sets the location url.
 	 *
@@ -810,53 +829,8 @@ public class AdvancingNurseryForm {
 		this.checkAdvanceLinesUnique = checkAdvanceLinesUnique;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("AdvancingNurseryForm [methodChoice=");
-		builder.append(this.methodChoice);
-		builder.append(", lineChoice=");
-		builder.append(this.lineChoice);
-		builder.append(", lineSelected=");
-		builder.append(this.lineSelected);
-		builder.append(", harvestDate=");
-		builder.append(this.harvestDate);
-		builder.append(", harvestLocation=");
-		builder.append(this.harvestLocation);
-		builder.append(", harvestLocationIdAll=");
-		builder.append(this.harvestLocationIdAll);
-		builder.append(", harvestLocationIdFavorite=");
-		builder.append(this.harvestLocationIdFavorite);
-		builder.append(", harvestLocationId=");
-		builder.append(this.harvestLocationId);
-		builder.append(", harvestLocationName=");
-		builder.append(this.harvestLocationName);
-		builder.append(", harvestLocationAbbreviation=");
-		builder.append(this.harvestLocationAbbreviation);
-		builder.append(", defaultMethodId=");
-		builder.append(this.defaultMethodId);
-		builder.append(", breedingMethodId=");
-		builder.append(this.advanceBreedingMethodId);
-		builder.append(", methodIdAll=");
-		builder.append(this.methodIdAll);
-		builder.append(", methodIdFavorite=");
-		builder.append(this.methodIdFavorite);
-		builder.append(", projectId=");
-		builder.append(this.projectId);
-		builder.append(", nurseryAdvanceName=");
-		builder.append(this.nurseryAdvanceName);
-		builder.append(", nurseryAdvanceDescription=");
-		builder.append(this.nurseryAdvanceDescription);
-		builder.append(", entries=");
-		builder.append(this.entries);
-		builder.append(", germplasmList=");
-		builder.append(this.germplasmList);
-		builder.append("]");
-		return builder.toString();
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

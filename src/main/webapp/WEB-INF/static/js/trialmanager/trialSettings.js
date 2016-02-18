@@ -1,7 +1,3 @@
-/**
- * Created by cyrus on 7/2/14.
- */
-
 /*global angular*/
 
 (function() {
@@ -11,36 +7,44 @@
 
 	manageTrialApp.controller('TrialSettingsCtrl', ['$scope', 'TrialManagerDataService', '_', '$filter','VARIABLE_TYPES', function($scope, TrialManagerDataService, _, $filter,VARIABLE_TYPES) {
 
-		$scope.settings = TrialManagerDataService.settings.trialSettings;
 		$scope.data = TrialManagerDataService.currentData.trialSettings;
 		$scope.addVariable = true;
 
-		$scope.options = {
+        $scope.managementDetails =TrialManagerDataService.settings.trialSettings;
+
+        $scope.managementDetailOptions = {
 			selectAll: false
 		};
 
-		$scope.doSelectAll = function() {
-			var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(), $scope.settings.vals());
+        $scope.selectionVariables =TrialManagerDataService.settings.selectionVariables;
+
+        $scope.selectionVariablesOptions = {
+            selectAll: false
+        };
+
+		$scope.doSelectAll = function(variables, options) {
+
+			var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')(variables.keys(), variables.vals());
 
 			_.each(filteredVariables, function(cvTermID) {
-				$scope.settings.val(cvTermID).isChecked = $scope.options.selectAll;
+                variables.val(cvTermID).isChecked = options.selectAll;
 			});
 
 		};
 
-		$scope.removeSettings = function() {
-			TrialManagerDataService.removeSettings(VARIABLE_TYPES.STUDY_DETAIL, $scope.settings).then(function(data) {
+		$scope.removeSettings = function(variableType, variables, options) {
+			TrialManagerDataService.removeSettings(variableType, variables).then(function(data) {
 				_(data).each(function(ids) {
 					delete $scope.data.userInput[ids];
 				});
 
-				$scope.options.selectAll = false;
+				options.selectAll = false;
 			});
 
 		};
 
 		$scope.managementDetailsSize = function() {
-			return $scope.settings.length();
+			return $scope.managementDetails.length();
 		};
 
 	}]);

@@ -65,13 +65,17 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			table;
 
 		$(tableIdentifier + ' thead tr th').each(function() {
-			columns.push({data: $(this).html()});
+			columns.push({
+				data: $(this).html(),
+				defaultContent: ''
+			});
 			if ($(this).data('term-data-type-id') == '1110') {
 				var minVal = ($(this).data('min-range'));
 				var maxVal = ($(this).data('max-range'));
 				var termId = $(this).data('term-id');
 				var isVariates = $(this).hasClass('variates');
 				columnsDef.push({
+					defaultContent: '',
 					targets: columns.length - 1,
 					createdCell: function(td, cellData, rowData, row, col) {
 						if (isVariates) {
@@ -105,6 +109,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				var termId = $(this).data('term-id');
 				var isVariates = $(this).hasClass('variates');
 				columnsDef.push({
+					defaultContent: '',
 					targets: columns.length - 1,
 					createdCell: function(td, cellData, rowData, row, col) {
 						if (isVariates) {
@@ -134,6 +139,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			if ($(this).data('term-id') == '8240') {
 				// For GID
 				columnsDef.push({
+					defaultContent: '',
 					targets: columns.length - 1,
 					data: $(this).html(),
 					width: '100px',
@@ -146,6 +152,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			} else if ($(this).data('term-id') == '8250') {
 				// For designation
 				columnsDef.push({
+					defaultContent: '',
 					targets: columns.length - 1,
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
@@ -157,6 +164,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			} else if ($(this).data('term-id') == 'Action') {
 				// For designation
 				columnsDef.push({
+					defaultContent: '',
 					targets: columns.length - 1,
 					data: $(this).html(),
 					width: '50px',

@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.common.service.impl;
+package com.efficio.fieldbook.web.study;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -272,7 +272,7 @@ abstract class AbstractCsvWorkbookParser<T> extends AbstractCsvFileParser<T> {
 		return this.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
 	}
 
-	HashSet<ChangeType> getModes() {
+	public HashSet<ChangeType> getModes() {
 		return this.modes;
 	}
 

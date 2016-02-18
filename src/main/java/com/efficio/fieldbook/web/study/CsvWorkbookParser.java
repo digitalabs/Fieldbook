@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.common.service.impl;
+package com.efficio.fieldbook.web.study;
 
 import java.util.Arrays;
 import java.util.EnumSet;

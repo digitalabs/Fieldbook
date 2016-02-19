@@ -3517,8 +3517,10 @@ function showMeasurementsPreview() {
 		data: '',
 		cache: false,
 		success: function(html) {
-			$(domElemId).html(html);
-			$('body').data('expDesignShowPreview', '0');
+            setTimeout(function(){
+                $(domElemId).html(html);
+                $('body').data('expDesignShowPreview', '0');
+            }, 300);
 		}
 	});
 }

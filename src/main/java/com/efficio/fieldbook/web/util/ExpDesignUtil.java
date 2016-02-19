@@ -146,12 +146,11 @@ public class ExpDesignUtil {
 	public static MainDesign createResolvableIncompleteBlockDesign(final String blockSize, final String nTreatments,
 			final String nReplicates, final String treatmentFactor, final String replicateFactor, final String blockFactor,
 			final String plotFactor, final Integer initialPlotNumber, final Integer initialEntryNumber, final String nBlatin,
-			final String replatingGroups, final String outputfile, final boolean useLatinize) {
+			final String replatingGroups, final String outputfile, final Boolean useLatinize) {
 
 		final String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
 		final String plotNumberStrValue = (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
-
 		final List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.SEED_PARAM, "", null));
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.BLOCKSIZE_PARAM, blockSize, null));

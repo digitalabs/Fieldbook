@@ -71,6 +71,8 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 		final String replicates = parameter.getReplicationsCount();
 		final int environments = Integer.valueOf(parameter.getNoOfEnvironments());
 		final int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
+		final Boolean useLatinized = (parameter.getUseLatenized() != null) ? parameter.getUseLatenized() : false;
+
 		// we need to add the 4 vars
 		try {
 
@@ -92,7 +94,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 				}
 			}
 
-			if (parameter.getUseLatenized() != null && parameter.getUseLatenized().booleanValue()) {
+			if (useLatinized != null && useLatinized.booleanValue()) {
 				if (parameter.getReplicationsArrangement() != null) {
 					if (parameter.getReplicationsArrangement().intValue() == 1) {
 						// column
@@ -121,7 +123,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 			final MainDesign mainDesign =
 					ExpDesignUtil.createResolvableIncompleteBlockDesign(blockSize, Integer.toString(nTreatments), replicates,
 							stdvarTreatment.getName(), stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(), plotNo, entryNo,
-							parameter.getNblatin(), parameter.getReplatinGroups(), "", parameter.getUseLatenized());
+							parameter.getNblatin(), parameter.getReplatinGroups(), "", useLatinized);
 
 			measurementRowList =
 					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,

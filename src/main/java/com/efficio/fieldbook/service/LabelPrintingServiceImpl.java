@@ -145,15 +145,33 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
     private final static Comparator<FieldMapLabel> ENTRY_NUMBER_ASC_COMPARATOR = new Comparator<FieldMapLabel>() {
         @Override
-        public int compare(FieldMapLabel o1, FieldMapLabel o2) {
-            Object entryNumber1 = o1.getUserFields().get(TermId.ENTRY_NO.getId());
-            Object entryNumber2 = o2.getUserFields().get(TermId.ENTRY_NO.getId());
+        public int compare(final FieldMapLabel o1, final FieldMapLabel o2) {
+            Object plotNumber1 = o1.getPlotNo();
+            if (plotNumber1 == null) {
+                plotNumber1 = o1.getUserFields().get(TermId.PLOT_NO.getId());
+            }
 
-            if (entryNumber1 != null && entryNumber2 != null) {
-                return Integer.compare(Integer.parseInt(entryNumber1.toString()), Integer.parseInt(entryNumber2.toString()));
-            } else if (entryNumber1 == null && entryNumber2 == null) {
+            Object plotNumber2 = o2.getPlotNo();
+            if (plotNumber2 == null){
+                plotNumber2 = o2.getUserFields().get(TermId.PLOT_NO.getId());
+            }
+
+            final Object entryNumber1 = o1.getUserFields().get(TermId.ENTRY_NO.getId());
+            final Object entryNumber2 = o2.getUserFields().get(TermId.ENTRY_NO.getId());
+
+            if(plotNumber1 != null || plotNumber2 != null) {
+                return compareTermValues(plotNumber1, plotNumber2);
+            } else {
+                return compareTermValues(entryNumber1,entryNumber2);
+            }
+        }
+
+        protected int compareTermValues(final Object term1, final Object term2) {
+            if (term1 != null && term2 != null) {
+                return Integer.compare(Integer.parseInt(term1.toString()), Integer.parseInt(term2.toString()));
+            } else if (term1 == null && term2 == null) {
                 return 0;
-            } else if (entryNumber2 == null) {
+            } else if (term2 == null) {
                 return 1;
             } else {
                 return -1;
@@ -171,8 +189,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
         return labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting, baos);
     }
 
-    protected void sortTrialInstanceLabels(List<StudyTrialInstanceInfo> trialInstances) {
-        for (StudyTrialInstanceInfo trialInstance : trialInstances) {
+    protected void sortTrialInstanceLabels(final List<StudyTrialInstanceInfo> trialInstances) {
+        for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
             Collections.sort( trialInstance.getTrialInstance().getFieldMapLabels(), ENTRY_NUMBER_ASC_COMPARATOR );
         }
     }

@@ -399,6 +399,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				);
 
                 $scope.stockListTabs = [];
+                $scope.advanceListTabs = [];
 				angular.forEach($scope.advanceTrialTabs, function (value, index) {
 					if (!isSwap && !isUpdate) {
 						if (value.id == tabId) {
@@ -462,6 +463,14 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                         setTimeout(InventoryPage.setupPage, 100);
                     }
                 }
+                if ($scope.advanceListTabs.indexOf(selectedTab) === -1) {
+                    var isAdvance = selectedTab.split('-');
+                    if (isAdvance[0] === "advance") {
+                        $scope.advanceListTabs.push(selectedTab);
+                        setTimeout(ListPage.setupPage(selectedTab.split('advance-list')[1]),300);
+                    }
+                }
+
             };
 
             $scope.closeAdvanceListTab = function (tab){

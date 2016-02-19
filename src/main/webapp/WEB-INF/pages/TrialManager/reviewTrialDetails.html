@@ -67,46 +67,42 @@
 		</div>
 		<br/>
 
-		<div class="col-xs-12 col-md-12">
-			<label  class="control-label section-toggle toggle-icon" data-target=".managementDetails">
-				<span class="bms-mgt-details fbk-trial-summary-icons"></span>
-                <img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
-				<img style="margin-left: -7px; display:none;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-				<strong class="sub-content-heading" th:text="#{fb.study.settings}">SETTINGS</strong>
-			</label>
-		</div>
-		<div class="col-md-12 sectionContainer collapse in managementDetails">
-            <div class="col-md-6 add_top_padding">
-                <div>
-                    <label class="control-label">
-                        <span class="bms-mgt-details fbk-trial-summary-icons"></span>
-                        <strong class="sub-content-heading" th:text="#{fb.study.trialsettings}">TRIAL SETTINGS</strong>
-                    </label>
-                </div>
-                <div th:each="managementDetail, rowStat : *{managementDetails}" th:remove="tag">
-                    <div  th:class="
+        <div class="col-xs-12 col-md-12">
+            <label class="control-label section-toggle toggle-icon" data-target=".trialSettings">
+                <span class="bms-mgt-details fbk-trial-summary-icons"></span>
+                <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}"/>
+                <img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}"/>
+                <strong class="sub-content-heading" th:text="#{fb.study.trialsettings}">TRIAL SETTINGS</strong>
+            </label>
+        </div>
+        <div class="collapse col-md-12 trialSettings sectionContainer">
+            <div th:each="managementDetail, rowStat : *{managementDetails}">
+                <div th:class="
                         (${rowStat.last and rowStat.size mod 3 ne 0} ?
                                 'col-sm-6 ' +
                                 'col-md-' + ${4*(4-(rowStat.size % 3))}
                             : 'col-sm-6 col-md-4') + ' nursery-details-variable'">
 
-                        <strong th:text="${managementDetail.variable.name} + ':'" class="">:</strong>
-                        <span th:text="${managementDetail.value}" class="div-select-val "></span>
-                    </div>
-                </div>
-                <div th:if="*{managementDetails == null or #lists.isEmpty(managementDetails)}">
-                    <div class="col-xs-12 col-md-12" th:text="#{no.available.trial.settings}">No Trial Settings</div>
+                    <strong th:text="${managementDetail.variable.name} + ':'" class="">:</strong>
+                    <span th:text="${managementDetail.value}" class="div-select-val"></span>
                 </div>
             </div>
+            <div th:if="*{managementDetails == null or #lists.isEmpty(managementDetails)}">
+                <div class="col-md-6 add_top_padding"  th:text="#{no.available.trial.settings}">No Trial Settings</div>
+            </div>
+        </div>
 
-            <div class="col-md-6 add_top_padding">
-                <div>
-                    <label class="control-label">
-                        <span class="bms-mgt-details fbk-trial-summary-icons"></span>
-                        <strong class="sub-content-heading" th:text="#{nursery.nurserydetails.variates}">SELECTION</strong>
-                    </label>
-                </div>
-                <div th:if="*{selectionVariateDetails != null and not #lists.isEmpty(selectionVariateDetails)}">
+        <div class="col-xs-12 col-md-12">
+            <label class="control-label section-toggle toggle-icon" data-target=".selection">
+                <span class="bms-variates fbk-trial-summary-icons"></span>
+                <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+                <img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+                <strong class="sub-content-heading" th:text="#{nursery.nurserydetails.variates}">SELECTION</strong>
+            </label>
+        </div>
+        <div class="collapse selection col-md-12 sectionContainer">
+            <div th:if="*{selectionVariateDetails != null and not #lists.isEmpty(selectionVariateDetails)}">
+                <div class="col-md-6">
                     <table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table"
                            id="selectionSettingDetails">
                         <thead>
@@ -128,13 +124,13 @@
                         </tbody>
                     </table>
                 </div>
-                <div th:if="*{environmentManagementDetails == null or #lists.isEmpty(environmentManagementDetails)}">
-                    <div class="add_top_padding" th:text="#{no.available.trial.selection}">No available trial selections</div>
-                </div>
+                <div class="col-md-6"></div>
             </div>
-
-		</div>
-		<br/>
+            <div th:if="*{environmentManagementDetails == null or #lists.isEmpty(environmentManagementDetails)}">
+                <div class="col-md-6 add_top_padding" th:text="#{no.available.trial.selection}">No available trial selections</div>
+            </div>
+		    <br/>
+        </div>
 
 		<div class="col-xs-12 col-md-12">
 			<label  class="control-label section-toggle toggle-icon" data-target=".germplasmDescriptors">

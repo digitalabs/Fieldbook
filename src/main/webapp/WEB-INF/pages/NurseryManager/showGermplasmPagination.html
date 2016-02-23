@@ -46,7 +46,7 @@
 
 	<br/>
 
-    <div class="rowForNumberingAndChecks">
+    <div class="rowForNumberingAndChecks row col-xs-12 col-md-12">
         <div id="specify-numbering-section"> <img th:src="@{/static/img/review-list-details.png}" />
             <!-- Section for Specify Numbering -->
             <label class="control-label"><strong id="specifynumbering" class="sub-content-heading" th:text="#{germplasm.list.specify.numbering}">Specify Numbering</strong></label>
@@ -68,6 +68,17 @@
             </div>
         </div>
     </div>
+
+	<div id="cpecify-crosses-section" class="row col-xs-12 col-md-12" th:if="${type == 'N'}">
+		<img th:src="@{/static/img/review-crosses.png}" />
+        <label class="control-label"><strong id="cpefifyCrossesLabel" class="sub-content-heading"
+												 th:text="#{germplasm.list.specify.crosses}">Specify Crosses</strong></label>
+        <div th:if="*{germplasmListId > -1}">
+            <a th:href="@{~/BreedingManager/main/createcrosses(nurseryid=*{studyId},germplasmlistid=*{germplasmListId})}"
+               th:text="#{nursery.managesettings.create.nursery.createcrosses.label} + ' ' ">.Create</a>
+            <label class="control-label" th:text="#{germplasm.list.create.new.crosses}">. new crosses</label>
+        </div>
+	</div>
 </form>
 
 </div>
@@ -93,10 +104,11 @@ $(document).ready(function() {
 
 });
 
+
 function validateAndSetEntryNo() {
     var customMessage = '';
-    var entryNo = $.trim($("#txtStartingEntryNo").val());
-    var numberOfEntries = parseInt($.trim($("#numberOfEntries").text()));
+    var entryNo = $.trim($('#txtStartingEntryNo').val());
+    var numberOfEntries = parseInt($.trim($('#numberOfEntries').text()));
     if (entryNo != '') {
         if (!validateEntryAndPlotNo(entryNo)) {
             customMessage = entryNoShouldBeInRange;
@@ -104,7 +116,7 @@ function validateAndSetEntryNo() {
 
         if (customMessage != '') {
             showInvalidInputMessage(customMessage);
-            $("#txtStartingEntryNo").val('');
+            $('#txtStartingEntryNo').val('');
         } else {
             var dataTableIdentifier = '.germplasm-list-items';
             var entryNoColIndex = findEntryColIndex(dataTableIdentifier);
@@ -123,7 +135,7 @@ function validateAndSetEntryNo() {
         }
     } else {
         // Set starting entry number back to blank if starting entry number is only white spaces
-        $("#txtStartingEntryNo").val('');
+        $('#txtStartingEntryNo').val('');
     }
 }
 
@@ -177,7 +189,7 @@ function validateEntryAndPlotNo(inputNo) {
 
 function validateAndSetPlotNo() {
     var customMessage = '';
-    var plotNo = $.trim($("#txtStartingPlotNo").val());
+    var plotNo = $.trim($('#txtStartingPlotNo').val());
     if(plotNo != '') {
         if (!validateEntryAndPlotNo(plotNo)) {
            customMessage = plotNoShouldBeInRange;
@@ -185,7 +197,7 @@ function validateAndSetPlotNo() {
 
         if (customMessage != '') {
             showInvalidInputMessage(customMessage);
-            $("#txtStartingPlotNo").val('');
+            $('#txtStartingPlotNo').val('');
         } else {
             if (isNursery()) {
                 showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
@@ -197,13 +209,14 @@ function validateAndSetPlotNo() {
         }
     } else {
         // Set starting plot number back to blank if starting plot number is only white spaces
-        $("#txtStartingPlotNo").val('');
+        $('#txtStartingPlotNo').val('');
     }
 }
 
 function setUnappliedChangesAvailable() {
     var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
     trialManager.setUnappliedChangesAvailable();
+    trialManager.updateStartingEntryNoCount($.trim($('#txtStartingEntryNo').val()));
 }
 //]]>
 </script>

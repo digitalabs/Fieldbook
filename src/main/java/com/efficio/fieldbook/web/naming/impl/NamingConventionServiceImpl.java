@@ -107,15 +107,17 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	private AdvancingSourceList createAdvancingSourceList(final AdvancingNursery advanceInfo, Workbook workbook,
-			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws MiddlewareQueryException, FieldbookException {
+			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
-		final int nurseryId = advanceInfo.getStudy().getId();
+		final Study study = advanceInfo.getStudy();
 		if (workbook == null) {
-			workbook = this.fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+			if (study.getType().equals("N")) {
+				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(study.getId());
+			} else if (study.getType().equals("T")) {
+				workbook = this.fieldbookMiddlewareService.getTrialDataSet(study.getId());
+			}
 		}
-		final Study nursery = advanceInfo.getStudy();
-
-		return this.advancingSourceListFactory.createAdvancingSourceList(workbook, advanceInfo, nursery, breedingMethodMap, breedingMethodCodeMap);
+		return this.advancingSourceListFactory.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 	}
 
 	private void updatePlantsSelectedIfNecessary(final AdvancingSourceList list, final AdvancingNursery info) {
@@ -172,20 +174,33 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		} else {
 			selectionNumberToApply = String.valueOf(selectionNumber);
 		}
-
+		
+		// set the seed source string for the new Germplasm
 		final GermplasmOriginGenerationParameters parameters =
-				this.germplasmOriginParameterBuilder.build(workbook, source.getPlotNumber(), selectionNumberToApply);
+				this.germplasmOriginParameterBuilder.build(workbook, source, selectionNumberToApply);
 		final String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
 						, source.getGermplasm().getCross(), seedSourceOriginString,
 						FieldbookUtil.generateEntryCode(index), null /* check */
 						, breedingMethod.getMid());
-
+		
+		// assign parentage etc for the new Germplasm
 		this.assignGermplasmAttributes(germplasm, Integer.valueOf(source.getGermplasm().getGid()), source.getGermplasm().getGnpgs(), source
 				.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(), source.getSourceMethod(), breedingMethod);
+		
+		// assign grouping based on parentage
+
+		// check to see if a group ID (MGID) exists in the parent for this Germplasm, and set
+		// newly created germplasm if part of a group ( > 0 )
+		if(source.getGermplasm().getMgid() != null && source.getGermplasm().getMgid() > 0){
+			germplasm.setMgid(source.getGermplasm().getMgid());
+		}
 
 		this.assignNames(germplasm, source);
+
+		germplasm.setTrialInstanceNumber(source.getTrialInstanceNumber());
+		germplasm.setReplicationNumber(source.getReplicationNumber());
 
 		list.add(germplasm);
 	}

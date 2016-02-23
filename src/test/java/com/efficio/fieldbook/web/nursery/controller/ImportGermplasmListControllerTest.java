@@ -626,8 +626,8 @@ public class ImportGermplasmListControllerTest {
 
 		controllerToTest.validateEntryAndPlotNo(form);
 
-		// validateEntryAndPlotNo should not process if theres no imported germplasm in the study
-		Mockito.verify(controllerToTest,Mockito.times(0)).computeTotalExpectedChecks(form);
+		// validateEntryAndPlotNo should process as Germplasm list null check logic moved to nextScreen
+		Mockito.verify(controllerToTest,Mockito.times(1)).computeTotalExpectedChecks(form);
 	}
 
 

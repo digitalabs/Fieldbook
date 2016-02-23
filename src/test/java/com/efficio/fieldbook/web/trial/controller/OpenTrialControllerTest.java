@@ -18,17 +18,24 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +57,8 @@ import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
@@ -67,6 +76,7 @@ public class OpenTrialControllerTest {
 	private static final int IBDB_USER_ID = 1;
 	private static final String PROGRAM_UUID = "68f0d114-5b5b-11e5-885d-feff819cdc9f";
 	public static final String TEST_TRIAL_NAME = "dummyTrial";
+	private static final int BM_CODE_VTE = 8252;
 
 	@Mock
 	private HttpServletRequest httpRequest;
@@ -106,6 +116,9 @@ public class OpenTrialControllerTest {
 
 	@Mock
 	private ContextUtil contextUtil;
+
+	@Mock
+	private OntologyVariableDataManager variableDataManager;
 
 	@InjectMocks
 	private OpenTrialController openTrialController;
@@ -283,6 +296,15 @@ public class OpenTrialControllerTest {
 		for (final MeasurementVariable measurementVariable : allVariables) {
 			Mockito.doReturn(this.createStandardVariable(measurementVariable.getTermId())).when(this.fieldbookMiddlewareService)
 					.getStandardVariable(measurementVariable.getTermId(), OpenTrialControllerTest.PROGRAM_UUID);
+			final Variable variable = new Variable();
+			variable.setId(measurementVariable.getTermId());
+			variable.setName(measurementVariable.getName());
+			variable.setMethod(TestDataHelper.createMethod());
+			variable.setProperty(TestDataHelper.createProperty());
+			variable.setScale(TestDataHelper.createScale());
+
+			Mockito.when(this.variableDataManager.getVariable(Mockito.eq(PROGRAM_UUID), Mockito.eq(measurementVariable.getTermId()), Mockito.anyBoolean(),
+					Mockito.anyBoolean())).thenReturn(variable);;
 		}
 	}
 
@@ -762,12 +784,70 @@ public class OpenTrialControllerTest {
 		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, "12345", exptDesignSourceValue, nRepValue, rMapValue);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be unknown", 0, data.getDesignType().intValue());
+		Assert.assertNull("Design type should be unknown", data.getDesignType());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
 		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
 				data.getReplicationsArrangement());
 		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareMeasurementVariableTabInfo() {
+		List<MeasurementVariable> variatesList = this.createVariates();
+
+		Variable variable = new Variable();
+		variable.setId(UnitTestDaoIDGenerator.generateId(Variable.class));
+		variable.setName("Variable Name");
+		variable.setMethod(TestDataHelper.createMethod());
+		variable.setProperty(TestDataHelper.createProperty());
+		variable.setScale(TestDataHelper.createScale());
+
+		Mockito.when(this.variableDataManager.getVariable(Mockito.any(String.class), Mockito.any(Integer.class), Mockito.anyBoolean(),
+				Mockito.anyBoolean())).thenReturn(variable);
+
+		TabInfo tabInfo = this.openTrialController.prepareMeasurementVariableTabInfo(variatesList, VariableType.SELECTION_METHOD, false);
+
+		Assert.assertEquals("Operation", Operation.UPDATE, tabInfo.getSettings().get(0).getVariable().getOperation());
+		Assert.assertEquals("Deletable", true, tabInfo.getSettings().get(0).isDeletable());
+	}
+
+	private List<MeasurementVariable> createVariates() {
+		List<MeasurementVariable> variables = new ArrayList<>();
+		variables.add(this.createMeasurementVariable(BM_CODE_VTE, "BM_CODE_VTE", "Breeding Method", "BMETH_CODE", "Observed", "VARIATE"));
+		return variables;
+	}
+
+	private MeasurementVariable createMeasurementVariable(final int termId, final String name, final String property, final String scale,
+			final String method, final String label) {
+		final MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setTermId(termId);
+		measurementVariable.setName(name);
+		measurementVariable.setLabel(label);
+		measurementVariable.setProperty(property);
+		measurementVariable.setScale(scale);
+		measurementVariable.setMethod(method);
+		measurementVariable.setVariableType(VariableType.SELECTION_METHOD);
+		measurementVariable.setRole(VariableType.SELECTION_METHOD.getRole());
+		return measurementVariable;
+	}
+
+	@Test
+	public void testGetAdvancedList() {
+		GermplasmList germplasm = new GermplasmList();
+		germplasm.setId(501);
+		germplasm.setName("Advance Trial List");
+
+		List<GermplasmList> germplasmList = new ArrayList<>();
+		germplasmList.add(germplasm);
+
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Mockito.anyInt(), Mockito.any(GermplasmListType.class))).thenReturn(germplasmList);
+
+		List<AdvanceList> advancedList = this.openTrialController.getAdvancedList(germplasm.getId());
+
+		Assert.assertEquals("Advance List size", 1, advancedList.size());
+		Assert.assertEquals("Advance List Id: ", germplasm.getId(), advancedList.get(0).getId());
+		Assert.assertEquals("Advance List Name: ", germplasm.getName(), advancedList.get(0).getName());
 	}
 }

@@ -3,19 +3,31 @@ package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import junit.framework.Assert;
-
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
+import org.generationcp.middleware.pojos.workbench.settings.Constant;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
@@ -28,11 +40,6 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 
 public class SettingsUtilTest {
 
@@ -494,7 +501,7 @@ public class SettingsUtilTest {
 			// use any setting variable that is not a trial instance factor
 			detailList.add(settingDetail);
 
-			SettingsUtil.setSettingDetailRole(varType.getId(), detailList, this.userSelection, this.fieldbookMiddlewareService,
+			SettingsUtil.setSettingDetailRoleAndVariableType(varType.getId(), detailList, this.fieldbookMiddlewareService,
 					SettingsUtilTest.PROGRAM_UUID);
 			Assert.assertEquals("Should have the correct phenotypic type role as per the variable type", varType.getRole(),
 					settingDetail.getRole());
@@ -514,8 +521,8 @@ public class SettingsUtilTest {
 
 		// for mode, we use any that is not a germplasm descriptor
 		final VariableType studyDetailMode = VariableType.STUDY_DETAIL;
-		SettingsUtil.setSettingDetailRole(studyDetailMode.getId().intValue(), newDetails, this.userSelection,
-				this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
+		SettingsUtil.setSettingDetailRoleAndVariableType(studyDetailMode.getId().intValue(), newDetails, this.fieldbookMiddlewareService,
+				SettingsUtilTest.PROGRAM_UUID);
 		Assert.assertEquals(
 				"Since we had a settingDetail that is a trial instance factor, the detail's role should be converted to Trial Environment",
 				PhenotypicType.TRIAL_ENVIRONMENT, detail.getRole());
@@ -532,10 +539,79 @@ public class SettingsUtilTest {
 		final UserSelection userSelection = new UserSelection();
 
 		final List<Variate> baselineVariates =
-				SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, userSelection, this.fieldbookMiddlewareService,
-						SettingsUtilTest.PROGRAM_UUID);
+				SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
 
 		Assert.assertEquals(baselineTraits.size(), baselineVariates.size());
+	}
+
+	/**
+	 * Test to verify Role and Variable Type as STUDY_DETAIL
+	 */
+	@Test
+	public void testSetSettingDetailRoleAndVariableTypeForStudyDetailVariableType() {
+		final List<SettingDetail> newDetails = new ArrayList<>();
+		final SettingDetail detail = new SettingDetail();
+		final SettingVariable variable = new SettingVariable();
+		variable.setCvTermId(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
+		detail.setVariable(variable);
+		newDetails.add(detail);
+
+		final VariableType studyDetailMode = VariableType.STUDY_DETAIL;
+		SettingsUtil.setSettingDetailRoleAndVariableType(studyDetailMode.getId(), newDetails, this.fieldbookMiddlewareService,
+				SettingsUtilTest.PROGRAM_UUID);
+
+		Assert.assertEquals("Invalid Role", VariableType.STUDY_DETAIL.getRole(), detail.getRole());
+		Assert.assertEquals("Invalid Variable Type", VariableType.STUDY_DETAIL, detail.getVariableType());
+	}
+
+	/**
+	 * Test to verify Role and Variable Type as GERMPLASM_DESCRIPTOR
+	 */
+	@Test
+	public void testSetSettingDetailRoleAndVariableTypeForGermplasmDescriptorVariableType() {
+		final List<SettingDetail> newDetails = new ArrayList<>();
+		final SettingDetail detail = new SettingDetail();
+		final SettingVariable variable = new SettingVariable();
+		variable.setCvTermId(TermId.GERMPLASM_SOURCE.getId());
+
+		// Set Variable types as GERMPLASM_DESCRIPTOR as we are checking for GERMPLASM_DESCRIPTOR
+		Set<VariableType> variableTypeSet = new HashSet<>();
+		variableTypeSet.add(VariableType.GERMPLASM_DESCRIPTOR);
+		variable.setVariableTypes(variableTypeSet);
+		detail.setVariable(variable);
+		newDetails.add(detail);
+
+		final VariableType germplasmDescriptorMode = VariableType.GERMPLASM_DESCRIPTOR;
+		SettingsUtil.setSettingDetailRoleAndVariableType(germplasmDescriptorMode.getId(), newDetails, this.fieldbookMiddlewareService,
+				SettingsUtilTest.PROGRAM_UUID);
+
+		Assert.assertEquals("Invalid Role", VariableType.GERMPLASM_DESCRIPTOR.getRole(), detail.getRole());
+		Assert.assertEquals("Invalid Variable Type", VariableType.GERMPLASM_DESCRIPTOR, detail.getVariableType());
+	}
+
+	/**
+	 * Test to verify Role and Variable Type as EXPERIMENTAL_DESIGN
+	 */
+	@Test
+	public void testSetSettingDetailRoleAndVariableTypeForExperimentalDesignVariableType() {
+		final List<SettingDetail> newDetails = new ArrayList<>();
+		final SettingDetail detail = new SettingDetail();
+		final SettingVariable variable = new SettingVariable();
+		variable.setCvTermId(TermId.GERMPLASM_SOURCE.getId());
+
+		// Set Variable type as EXPERIMENTAL_DESIGN as we are checking for EXPERIMENTAL_DESIGN
+		Set<VariableType> variableTypeSet = new HashSet<>();
+		variableTypeSet.add(VariableType.EXPERIMENTAL_DESIGN);
+		variable.setVariableTypes(variableTypeSet);
+		detail.setVariable(variable);
+		newDetails.add(detail);
+
+		final VariableType germplasmDescriptorMode = VariableType.GERMPLASM_DESCRIPTOR;
+		SettingsUtil.setSettingDetailRoleAndVariableType(germplasmDescriptorMode.getId(), newDetails, this.fieldbookMiddlewareService,
+				SettingsUtilTest.PROGRAM_UUID);
+
+		Assert.assertEquals("Invalid Role", VariableType.EXPERIMENTAL_DESIGN.getRole(), detail.getRole());
+		Assert.assertEquals("Invalid Variable Type", VariableType.EXPERIMENTAL_DESIGN, detail.getVariableType());
 	}
 
 	protected MeasurementVariable createMeasurementVariable(final int termId, final String value) {
@@ -543,5 +619,121 @@ public class SettingsUtilTest {
 		measurementVariable.setTermId(termId);
 		measurementVariable.setValue(value);
 		return measurementVariable;
+	}
+
+	/**
+	 * Test to verify convertPojoToXmlDataSet method works properly or not
+	 */
+	@Test
+	public void testConvertPojoToXmlDataSet() {
+		String dataSetName = "January Trial";
+
+		List<SettingDetail> studyLevelConditions = new ArrayList<>();
+
+		List<SettingDetail> basicDetails = this.createSettingDetailVariables();
+		basicDetails.get(0).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
+		basicDetails.get(1).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
+		basicDetails.get(2).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
+		basicDetails.get(3).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
+		basicDetails.get(4).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
+		basicDetails.get(5).setRole(VariableType.SELECTION_METHOD.getRole());
+
+		Map<String, TreatmentFactorData> treatmentFactorItems = new HashMap<>();
+
+		StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setName("Standard Variable");
+		standardVariable.setMethod(TestDataHelper.createMethod());
+		standardVariable.setProperty(TestDataHelper.createProperty());
+		standardVariable.setScale(TestDataHelper.createScale());
+
+		DataType dataType = DataType.getById(TermId.NUMERIC_VARIABLE.getId());
+		standardVariable.setDataType(new Term(dataType.getId(), dataType.getName(), dataType.getName()));
+
+		SettingDetail settingDetail = new SettingDetail();
+		settingDetail.setVariable(basicDetails.get(5).getVariable());
+		settingDetail.setRole(VariableType.SELECTION_METHOD.getRole());
+		settingDetail.setVariableType(VariableType.SELECTION_METHOD);
+
+		List<SettingDetail> variatesList = new ArrayList<>();
+		variatesList.add(settingDetail);
+
+		List<ValueReference> valueReferenceList = new ArrayList<>();
+		Variate variate = new Variate("BM_CODE_VTE", "Breeding method observed on each plot (CODE)", TestDataHelper.createProperty().getName(), TestDataHelper.createScale().getName(),
+				TestDataHelper.createMethod().getName(), VariableType.SELECTION_METHOD.getRole().name(), "N", DataType.NUMERIC_VARIABLE.getId(), valueReferenceList, 50.00, 500.00);
+		variate.setVariableType("Selection Method");
+
+		Mockito.when(this.userSelection.getStudyLevelConditions()).thenReturn(studyLevelConditions);
+		Mockito.when(this.userSelection.getBasicDetails()).thenReturn(basicDetails);
+		Mockito.when(this.userSelection.getBaselineTraitsList()).thenReturn(variatesList);
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Mockito.anyInt(), Mockito.any(String.class))).thenReturn(standardVariable);
+		Mockito.when(this.userSelection.getPlotsLevelList()).thenReturn(basicDetails);
+		Mockito.when(this.userSelection.getNurseryConditions()).thenReturn(basicDetails);
+
+		Dataset dataSet = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, dataSetName, this.userSelection, treatmentFactorItems,
+						SettingsUtilTest.PROGRAM_UUID);
+
+		Assert.assertEquals("DataSet Name", dataSetName, dataSet.getName());
+		Assert.assertEquals("DataSet Trial Level Factor", 0, dataSet.getTrialLevelFactor().size());
+		Assert.assertEquals("DataSet Treatment Factor", 0, dataSet.getTreatmentFactors().size());
+
+		int i = 0;
+		for (Condition condition : dataSet.getConditions()) {
+			Assert.assertEquals("DataSet Condition Name", condition.getName(), basicDetails.get(i).getVariable().getName());
+			Assert.assertEquals("Property", condition.getProperty(), basicDetails.get(i).getVariable().getProperty());
+			Assert.assertEquals("Scale", condition.getScale(), basicDetails.get(i).getVariable().getScale());
+			Assert.assertEquals("Method", condition.getMethod(), basicDetails.get(i).getVariable().getMethod());
+			Assert.assertEquals("Data Type", condition.getDatatype(), basicDetails.get(i).getVariable().getDataType());
+			i++;
+		}
+
+		for (Variate dataSetVariate : dataSet.getVariates()) {
+			Assert.assertEquals("Variate Name", variate.getName(), dataSetVariate.getName());
+			Assert.assertEquals("Variate Property", variate.getProperty(), dataSetVariate.getProperty());
+			Assert.assertEquals("Variate Scale", variate.getScale(), dataSetVariate.getScale());
+			Assert.assertEquals("Variate DataType", variate.getDatatype(), dataSetVariate.getDatatype());
+			Assert.assertEquals("Variate Role", variate.getRole(), dataSetVariate.getRole());
+			Assert.assertEquals("Variate Variable Type", variate.getVariableType(), dataSetVariate.getVariableType());
+		}
+
+		i = 0;
+		for (Factor factor : dataSet.getFactors()) {
+			Assert.assertEquals("Factor Name", basicDetails.get(i).getVariable().getName(), factor.getName());
+			Assert.assertEquals("Factor Property", basicDetails.get(i).getVariable().getProperty(), factor.getProperty());
+			Assert.assertEquals("Factor Scale", basicDetails.get(i).getVariable().getScale(), factor.getScale());
+			Assert.assertEquals("Factor Method", basicDetails.get(i).getVariable().getMethod(), factor.getMethod());
+			Assert.assertEquals("Factor Data Type", "Numeric", factor.getDatatype());
+			Assert.assertEquals("Factor Role",  basicDetails.get(i).getVariable().getRole(), factor.getRole());
+			i++;
+		}
+
+		i = 0;
+		for (Constant constant : dataSet.getConstants()) {
+			Assert.assertEquals("Constant Name", basicDetails.get(i).getVariable().getName(), constant.getName());
+			Assert.assertEquals("Constant Property", basicDetails.get(i).getVariable().getProperty(), constant.getProperty());
+			Assert.assertEquals("Constant Scale", basicDetails.get(i).getVariable().getScale(), constant.getScale());
+			Assert.assertEquals("Constant Method", basicDetails.get(i).getVariable().getMethod(), constant.getMethod());
+			Assert.assertEquals("Constant Data Type", basicDetails.get(i).getVariable().getDataType(), constant.getDatatype());
+			Assert.assertEquals("Constant Role", basicDetails.get(i).getVariable().getRole(), constant.getRole());
+			i++;
+		}
+	}
+
+	private List<SettingDetail> createSettingDetailVariables() {
+		List<SettingDetail> variables = new ArrayList<>();
+		variables.add(this.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME", "Study - assigned (DBCV)"));
+		variables.add(this.createSettingDetail(TermId.STUDY_TITLE.getId(), "STUDY_TITLE", "Study title - assigned (text)"));
+		variables.add(this.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)"));
+		variables.add(this.createSettingDetail(TermId.START_DATE.getId(), "START_DATE", "Start date - assigned (date)"));
+		variables.add(this.createSettingDetail(TermId.END_DATE.getId(), "END_DATE", "End date - assigned (date)"));
+		variables.add(this.createSettingDetail(TermId.BREEDING_METHOD_VARIATE_CODE.getId(), "BM_CODE_VTE", "Breeding method observed on each plot(CODE)"));
+		return variables;
+	}
+
+	private SettingDetail createSettingDetail(final int cvTermId, final String name, final String value) {
+		final SettingVariable variable = new SettingVariable();
+		variable.setCvTermId(cvTermId);
+		variable.setName(name);
+
+		return new SettingDetail(variable, null, value, false);
 	}
 }

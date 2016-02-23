@@ -89,12 +89,12 @@ public class EditNurseryController extends SettingsController {
 	public static final String ERROR = "-1";
 	public static final String NO_MEASUREMENT = "0";
 	public static final String SUCCESS = "1";
+	public static final int NO_LIST_ID = -1;
 
 	/**
 	 * The Constant LOG.
 	 */
 	public static final Logger LOG = LoggerFactory.getLogger(EditNurseryController.class);
-	public static final int NO_LIST_ID = -1;
 	/**
 	 * The ontology service.
 	 */
@@ -251,11 +251,11 @@ public class EditNurseryController extends SettingsController {
 
 	private void setUpFormAttributes(final CreateNurseryForm form, final Workbook workbook, final int nurseryId) {
 		form.setStudyId(nurseryId);
-		form.setGemplasmListId(this.getGemplasmListId(nurseryId));
 		form.setBasicDetails(this.userSelection.getBasicDetails());
 		form.setStudyLevelVariables(this.userSelection.getStudyLevelConditions());
 		form.setBaselineTraitVariables(this.userSelection.getBaselineTraitsList());
 		form.setSelectionVariatesVariables(this.userSelection.getSelectionVariates());
+		form.setGermplasmListId(this.getGermplasmListId(nurseryId));
 
 		form.setNurseryConditions(this.userSelection.getNurseryConditions());
 		form.setLoadSettings(EditNurseryController.SUCCESS);
@@ -410,8 +410,12 @@ public class EditNurseryController extends SettingsController {
 		// retain measurement dataset id
 		final int measurementDatasetId = this.userSelection.getWorkbook().getMeasurementDatesetId();
 
-		// added code to set the role for the variables add
-		this.setSettingDetailRoleForVariables(form, studyLevelVariables, baselineTraits);
+		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.STUDY_DETAIL.getId(), studyLevelVariables, this.fieldbookMiddlewareService,
+				this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.GERMPLASM_DESCRIPTOR.getId(),
+				form.getPlotLevelVariables(), this.fieldbookMiddlewareService, this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRoleAndVariableType(VariableType.TRAIT.getId(), form.getNurseryConditions(), this.fieldbookMiddlewareService,
+				this.contextUtil.getCurrentProgramUUID());
 
 		final Dataset dataset =
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables,
@@ -486,22 +490,6 @@ public class EditNurseryController extends SettingsController {
 		return workbook;
 	}
 
-	private void setSettingDetailRoleForVariables(final CreateNurseryForm form, final List<SettingDetail> studyLevelVariables,
-			final List<SettingDetail> baselineTraits) {
-		SettingsUtil.setSettingDetailRole(VariableType.STUDY_DETAIL.getId(), studyLevelVariables,
-				this.userSelection, this.fieldbookMiddlewareService,
-				this.contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.GERMPLASM_DESCRIPTOR.getId(),
-				form.getPlotLevelVariables(), this.userSelection, this.fieldbookMiddlewareService,
-				this.contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), form.getNurseryConditions(),
-				this.userSelection, this.fieldbookMiddlewareService,
-				this.contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), baselineTraits,
-				this.userSelection, this.fieldbookMiddlewareService,
-				this.contextUtil.getCurrentProgramUUID());
-	}
-
 	private void includeDeletedList(final CreateNurseryForm form, final List<SettingDetail> studyLevelVariables,
 			final List<SettingDetail> baselineTraits) {
 		SettingsUtil.addDeletedSettingsList(studyLevelVariables, this.userSelection.getDeletedStudyLevelConditions(),
@@ -546,6 +534,7 @@ public class EditNurseryController extends SettingsController {
 			//NOTE: Setting variable type as TRAIT for Trait Variable List
 			for(SettingDetail selectionDetail : form.getBaselineTraitVariables()){
 				selectionDetail.setVariableType(VariableType.TRAIT);
+				selectionDetail.setRole(VariableType.TRAIT.getRole());
 			}
 		}
 	}
@@ -555,6 +544,7 @@ public class EditNurseryController extends SettingsController {
 			//NOTE: Setting variable type as SELECTION_METHOD for Trait Variable List
 			for(SettingDetail selectionDetail : form.getSelectionVariatesVariables()){
 				selectionDetail.setVariableType(VariableType.SELECTION_METHOD);
+				selectionDetail.setRole(VariableType.SELECTION_METHOD.getRole());
 			}
 		}
 	}
@@ -824,7 +814,17 @@ public class EditNurseryController extends SettingsController {
 		return this.fieldbookProperties.getProgramLocationsUrl();
 	}
 
-	public Integer getGemplasmListId(final int studyId) {
+	@ModelAttribute("programMethodURL")
+	public String getProgramMethod() {
+		return this.fieldbookProperties.getProgramBreedingMethodsUrl();
+	}
+
+	@ModelAttribute("projectID")
+	public String getProgramID() {
+		return this.getCurrentProjectId();
+	}
+
+	public Integer getGermplasmListId(final int studyId) {
 		if (this.userSelection.getImportedAdvancedGermplasmList() == null) {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 
@@ -842,20 +842,10 @@ public class EditNurseryController extends SettingsController {
 			this.userSelection.setImportedGermplasmMainInfo(mainInfo);
 		}
 
-		return this.userSelection.getImportedGermplasmMainInfo() != null &&
-				this.userSelection.getImportedGermplasmMainInfo().getListId() != null ?
-				this.userSelection.getImportedGermplasmMainInfo().getListId()
-				: NO_LIST_ID;
-	}
-
-	@ModelAttribute("programMethodURL")
-	public String getProgramMethod() {
-		return this.fieldbookProperties.getProgramBreedingMethodsUrl();
-	}
-
-	@ModelAttribute("projectID")
-	public String getProgramID() {
-		return this.getCurrentProjectId();
+		return this.userSelection.getImportedGermplasmMainInfo() != null
+				&& this.userSelection.getImportedGermplasmMainInfo().getListId() != null ?
+				this.userSelection.getImportedGermplasmMainInfo().getListId() :
+				NO_LIST_ID;
 	}
 
 	private void addStudyLevelVariablesFromUserSelectionIfNecessary(final List<SettingDetail> studyLevelVariables,

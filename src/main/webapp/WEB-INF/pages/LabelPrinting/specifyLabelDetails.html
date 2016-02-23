@@ -91,7 +91,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>
 			</div>
 		</div>
-		<div class="col-xs-6 col-md-6" th:if="*{userLabelPrinting.isStockList()}">
+		<div class="col-xs-6 col-md-6" th:if="(*{userLabelPrinting.isStockList()} and *{!userLabelPrinting.isTrial()})">
 			<div class="col-xs-12 col-md-12">
 				<label class="control-label"><strong class="sub-content-heading"  th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</strong></label>
 			</div>
@@ -112,7 +112,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				<span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}"></span>
 			</div>
 		</div>
-		<div class="col-xs-6 col-md-6" th:if="*{!userLabelPrinting.isStockList()} and *{!#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
+		<div class="col-xs-6 col-md-6" th:if="(*{!userLabelPrinting.isStockList()} or *{userLabelPrinting.isTrial()}) and *{!#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
 			<div class="col-xs-12 col-md-12">
 				<label class="control-label"><strong class="sub-content-heading"  th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</strong></label>
 			</div>

@@ -153,6 +153,7 @@
 							$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 							$scope.data.designType = $scope.currentDesignType.id;
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
+							$scope.applicationData.unappliedChangesAvailable = true;
 
 							if ($scope.designTypes[newId].isPreset) {
 								showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);

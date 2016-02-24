@@ -423,18 +423,17 @@ public class DesignImportController extends SettingsController {
 	@RequestMapping(value = "/generate", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	public Map<String, Object> generateMeasurements(@RequestBody final GeneratePresetDesignInput generateDesignInput) {
 
-		final DesignTypeItem selectedDesignType = generateDesignInput.getSelectedDesignType();
 		final EnvironmentData environmentData = generateDesignInput.getEnvironmentData();
 		final Integer startingEntryNo = generateDesignInput.getStartingEntryNo();
 		final Integer startingPlotNo = generateDesignInput.getStartingPlotNo();
-		
+
 		final Map<String, Object> resultsMap = new HashMap<>();
 
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
 					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT,
-					this.generateAdditionalParams(DEFAULT_STARTING_ENTRY_NO, DEFAULT_STARTING_PLOT_NO));
+					this.generateAdditionalParams(startingEntryNo, startingPlotNo));
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);

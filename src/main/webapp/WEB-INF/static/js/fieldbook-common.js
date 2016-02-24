@@ -1906,7 +1906,7 @@ function showBaselineTraitDetailsModal(id) {
 
 	if (id !== '') {
 		$.ajax({
-			url: '/Fieldbook/manageSettings/settings/details/' + id,
+			url: '/Fieldbook/manageSettings/settings/details/' + 1808 + '/' + id,
 			type: 'GET',
 			cache: false,
 			success: function(html) {

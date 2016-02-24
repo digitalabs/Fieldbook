@@ -393,7 +393,7 @@ public class DesignImportServiceImplTest {
 		final int trialInstanceNo = 1;
 		final Integer startingPlotNo = 3;
 		this.service
-				.createPresetMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, startingPlotNo);
+				.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, startingPlotNo);
 
 		Assert.assertEquals("The number of measurement rows from the csv file must be equal to the number of measurements row generated.",
 				csvData.size() - 1, measurements.size());

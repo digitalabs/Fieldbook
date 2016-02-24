@@ -18,9 +18,12 @@ function validateEnterFieldPage() {
 		return false;
 	}
 
-	if ($('#' + getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val() == '' ||
-		!isInt($('#' + getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) ||
-		parseInt($('#' + getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) < 1) {
+	var numberOfRowsInBlock = $('#' + getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val();
+
+	if (numberOfRowsInBlock == '' ||
+		!isInt(numberOfRowsInBlock) ||
+		parseInt(numberOfRowsInBlock) < 1 ||
+		numberOfRowsInBlock.length > 9) {
 		showInvalidInputMessage(msgRowsInBlock);
 		return false;
 	}
@@ -30,7 +33,7 @@ function validateEnterFieldPage() {
 	if (numberOfRangesInBlock == '' ||
 	!isInt(numberOfRangesInBlock) ||
 		parseInt(numberOfRangesInBlock) < 1 ||
-		parseInt(numberOfRangesInBlock) > 9) {
+		numberOfRangesInBlock.length > 9) {
 		showInvalidInputMessage(msgRangesInBlock);
 		return false;
 	}

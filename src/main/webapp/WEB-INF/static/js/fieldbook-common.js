@@ -1901,29 +1901,6 @@ function validateBreedingMethod() {
 	return valid;
 }
 
-function showBaselineTraitDetailsModal(id) {
-	'use strict';
-
-	if (id !== '') {
-		$.ajax({
-			url: '/Fieldbook/manageSettings/settings/details/' + 1808 + '/' + id,
-			type: 'GET',
-			cache: false,
-			success: function(html) {
-				$('.variable-details-section').empty().append(html);
-				if ($('#selectedStdVarId').length != 0) {
-					$('#selectedStdVarId').val(id);
-				}
-				$('#variableDetailsModal').modal('toggle');
-				if ($('#variableDetailsModal')) {
-					var variableName = $('#ontology-tabs').data('selectedvariablename');
-					$('#variableDetailsModal .modal-title').html(variableDetailsHeader + ' ' + variableName);
-				}
-			}
-		});
-	}
-}
-
 function showBaselineTraitDetailsModal(id, variableTypeId) {
 	'use strict';
 

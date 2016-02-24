@@ -29,10 +29,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -171,8 +168,8 @@ public class StudyTreeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/has/observations/{studyId}/{studyName}", method = RequestMethod.GET)
-	public Map<String, String> hasObservations(@PathVariable int studyId, @PathVariable String studyName) {
+	@RequestMapping(value = "/has/observations/{studyId}", method = RequestMethod.POST)
+	public Map<String, String> hasObservations(@PathVariable int studyId, @RequestParam String studyName) {
 		Map<String, String> dataResults = new HashMap<String, String>();
 
 		int datasetId;

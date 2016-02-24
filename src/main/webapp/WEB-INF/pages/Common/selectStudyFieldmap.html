@@ -111,9 +111,11 @@ function addStudyInFieldMap(id, name) {
 		showAlertMessage('', isNursery() ? nurseryAlreadyAdded : trialAlreadyAdded);
 	} else {
 		$.ajax({
-			url: '/Fieldbook/StudyTreeManager/has/observations/' + id + '/' + name,
-			type: 'GET',
-			data: '',
+			url: '/Fieldbook/StudyTreeManager/has/observations/' + id,
+			type: 'POST',
+			data: {
+                studyName : name
+            },
 			cache: false,
 			success: function(data) {
 				if (data.hasObservations === '0') {

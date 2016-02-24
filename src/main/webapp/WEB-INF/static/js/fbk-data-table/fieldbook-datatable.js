@@ -175,108 +175,103 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				});
 			}
 		});
+		
+		table = $(tableIdentifier).DataTable({
+			destroy: true,
+			data: dataList,
+			columns: columns,
+			scrollY: '500px',
+			scrollX: '100%',
+			scrollCollapse: true,
+			columnDefs: columnsDef,
+			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+			bAutoWidth: true,
+			iDisplayLength: 100,
+			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
-			table = $(tableIdentifier).DataTable();
-			table.clear();
-			table.rows.add(dataList).draw();
-		} else {
-			table = $(tableIdentifier).DataTable({
-				data: dataList,
-				columns: columns,
-				retrieve: true,
-				scrollY: '500px',
-				scrollX: '100%',
-				scrollCollapse: true,
-				columnDefs: columnsDef,
-				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
-				bAutoWidth: true,
-				iDisplayLength: 100,
-				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+				var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
+				// Assuming ID is in last column
+				$(nRow).attr('id', aData.experimentId);
+				$(nRow).data('row-index', this.fnGetPosition(nRow));
+				$(nRow).attr('title', toolTip);
+				$('td', nRow).attr('nowrap', 'nowrap');
 
-					var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
-					// Assuming ID is in last column
-					$(nRow).attr('id', aData.experimentId);
-					$(nRow).data('row-index', this.fnGetPosition(nRow));
-					$(nRow).attr('title', toolTip);
-					$('td', nRow).attr('nowrap', 'nowrap');
+				$(nRow).find('.accepted-value, .invalid-value, .numeric-variable').each(function() {
 
-					$(nRow).find('.accepted-value, .invalid-value, .numeric-variable').each(function() {
-
-						var termId = $(this).data('term-id');
-						var cellData = $(this).text();
-						if (termId != undefined) {
-							var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
-							var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
-							if (dataTypeId == '1110') {
-								var minVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('min-range'));
-								var maxVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));
-								var isVariates =  $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").hasClass('variates');
-								if (isVariates) {
-									$(this).removeClass('accepted-value');
-									$(this).removeClass('invalid-value');
-									if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellData) || parseFloat(cellData) > parseFloat(maxVal))) {
-										if (cellData !== 'missing') {
-
-											if ($(this).find("input[type='hidden']").val() === 'true') {
-												$(this).addClass('accepted-value');
-											} else {
-												$(this).addClass('invalid-value');
-											}
-										}
-									}
-								}
-							}else if (possibleValues != undefined) {
-								var values = possibleValues.split('|');
-
+					var termId = $(this).data('term-id');
+					var cellData = $(this).text();
+					if (termId != undefined) {
+						var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
+						var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
+						if (dataTypeId == '1110') {
+							var minVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('min-range'));
+							var maxVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));
+							var isVariates =  $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").hasClass('variates');
+							if (isVariates) {
 								$(this).removeClass('accepted-value');
 								$(this).removeClass('invalid-value');
+								if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellData) || parseFloat(cellData) > parseFloat(maxVal))) {
+									if (cellData !== 'missing') {
 
-								if (cellData !== '' && cellData !== 'missing') {
-									if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
-										if ($(this).data('is-accepted') === '1') {
+										if ($(this).find("input[type='hidden']").val() === 'true') {
 											$(this).addClass('accepted-value');
-										}else if ($(this).data('is-accepted') === '0') {
-											$(this).removeClass('invalid-value').removeClass('accepted-value');
 										} else {
 											$(this).addClass('invalid-value');
 										}
-										$(this).data('term-id', $(this).data('term-id'));
-									} else {
-										$(this).addClass('accepted-value');
 									}
 								}
 							}
+						}else if (possibleValues != undefined) {
+							var values = possibleValues.split('|');
+
+							$(this).removeClass('accepted-value');
+							$(this).removeClass('invalid-value');
+
+							if (cellData !== '' && cellData !== 'missing') {
+								if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
+									if ($(this).data('is-accepted') === '1') {
+										$(this).addClass('accepted-value');
+									}else if ($(this).data('is-accepted') === '0') {
+										$(this).removeClass('invalid-value').removeClass('accepted-value');
+									} else {
+										$(this).addClass('invalid-value');
+									}
+									$(this).data('term-id', $(this).data('term-id'));
+								} else {
+									$(this).addClass('accepted-value');
+								}
+							}
 						}
-					});
-					return nRow;
-				},
-				fnInitComplete: function(oSettings, json) {
-					$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
-					oSettings.oInstance.fnAdjustColumnSizing();
-					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-					if (this.$('.invalid-value').length !== 0) {
-						$('#review-out-of-bounds-data-list').show();
-					} else {
-						$('#review-out-of-bounds-data-list').hide();
 					}
-				},
-				language: {
-					search: '<span class="mdt-filtering-label">Search:</span>'
-				},
-				dom: 'R<"mdt-header"rli<"mdt-filtering">r>tp',
-				// For column visibility
-				colVis: {
-					exclude: [0],
-					restore: 'Restore',
-					showAll: 'Show all'
-				},
-				// Problem with reordering plugin and fixed column for column re-ordering
-				colReorder: {
-					fixedColumns: 1
+				});
+				return nRow;
+			},
+			fnInitComplete: function(oSettings, json) {
+				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
+				oSettings.oInstance.fnAdjustColumnSizing();
+				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+				if (this.$('.invalid-value').length !== 0) {
+					$('#review-out-of-bounds-data-list').show();
+				} else {
+					$('#review-out-of-bounds-data-list').hide();
 				}
-			});
-		}
+			},
+			language: {
+				search: '<span class="mdt-filtering-label">Search:</span>'
+			},
+			dom: 'R<"mdt-header"rli<"mdt-filtering">r>tp',
+			// For column visibility
+			colVis: {
+				exclude: [0],
+				restore: 'Restore',
+				showAll: 'Show all'
+			},
+			// Problem with reordering plugin and fixed column for column re-ordering
+			colReorder: {
+				fixedColumns: 1
+			}
+		});
+		
 
 		if ($('#studyId').val() != '') {
 			// Activate an inline edit on click of a table cell

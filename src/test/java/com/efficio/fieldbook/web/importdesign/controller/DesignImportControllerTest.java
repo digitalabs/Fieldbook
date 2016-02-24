@@ -662,8 +662,10 @@ public class DesignImportControllerTest {
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
+		final GeneratePresetDesignInput input =
+				new GeneratePresetDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
 
-		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(environmentData);
+		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
 		Assert.assertEquals(1, resultsMap.get(DesignImportController.IS_SUCCESS));
 
@@ -682,7 +684,9 @@ public class DesignImportControllerTest {
 						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(environmentData);
+		final GeneratePresetDesignInput input =
+				new GeneratePresetDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
+		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
 		Assert.assertTrue(resultsMap.containsKey(DesignImportController.ERROR));

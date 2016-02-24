@@ -321,6 +321,9 @@ public class DesignImportController extends SettingsController {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 		try {
+
+			this.designImportValidator.validateMappedHeaders(mappedHeaders);
+
 			this.updateDesignMapping(mappedHeaders);
 
 			this.designImportValidator.validateDesignData(this.userSelection.getDesignImportData());
@@ -520,7 +523,7 @@ public class DesignImportController extends SettingsController {
 		// defaults
 		output.put("name", DesignTypeItem.CUSTOM_IMPORT.getName());
 		final String filename =
-				(this.userSelection.getDesignImportData() != null) ? this.userSelection.getDesignImportData().getImportFileName()
+				this.userSelection.getDesignImportData() != null ? this.userSelection.getDesignImportData().getImportFileName()
 						: DesignTypeItem.CUSTOM_IMPORT.getTemplateName();
 
 		// unsaved but has import design

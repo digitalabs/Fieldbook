@@ -1441,7 +1441,7 @@ function validateCreateNursery() {
 	}else if (duplicateType = hasDuplicateNursery()) {
 		hasError = true;
 		if(duplicateType === 'study') {
-			customMessage = nurseryNameAlreadyExistsNewNursery;
+			customMessage = studyNameAlreadyExistsNewNursery;
 		} else {
 			customMessage = folderNameAlreadyExistsNewNursery;
 		}

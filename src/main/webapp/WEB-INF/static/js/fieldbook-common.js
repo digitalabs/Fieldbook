@@ -1052,8 +1052,13 @@ function generateLocationDetailTable(selectedLocations,isTrialInstanceNumberUsed
 /* ADVANCING NURSERY SPECIFIC FUNCTIONS */
 
 function advanceNursery(){
-    var idVal = $('#createNurseryMainForm #studyId').val();
-    advanceStudy(idVal);
+	var hashGermplasmList = $('#totalGermplasms').val() !== '0';
+	if(!hashGermplasmList){
+		showErrorMessage('', nurseryHasNoGermplasmList);
+	} else{
+		var idVal = $('#createNurseryMainForm #studyId').val();
+    	advanceStudy(idVal);	
+	}
 }
 
 /* END ADVANCING NURSERY SPECIFIC FUNCTIONS */
@@ -1899,29 +1904,6 @@ function validateBreedingMethod() {
 		});
 	}
 	return valid;
-}
-
-function showBaselineTraitDetailsModal(id) {
-	'use strict';
-
-	if (id !== '') {
-		$.ajax({
-			url: '/Fieldbook/manageSettings/settings/details/' + 1808 + '/' + id,
-			type: 'GET',
-			cache: false,
-			success: function(html) {
-				$('.variable-details-section').empty().append(html);
-				if ($('#selectedStdVarId').length != 0) {
-					$('#selectedStdVarId').val(id);
-				}
-				$('#variableDetailsModal').modal('toggle');
-				if ($('#variableDetailsModal')) {
-					var variableName = $('#ontology-tabs').data('selectedvariablename');
-					$('#variableDetailsModal .modal-title').html(variableDetailsHeader + ' ' + variableName);
-				}
-			}
-		});
-	}
 }
 
 function showBaselineTraitDetailsModal(id, variableTypeId) {

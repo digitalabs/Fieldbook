@@ -674,7 +674,7 @@
 					} else if (!isEdit && (duplicateType = hasDuplicate(service.currentData.basicDetails.basicDetails[8005])) !== null) {
 						hasError = true;
 						if(duplicateType === 'study') {
-							customMessage = trialNameAlreadyExistsNewTrial;
+							customMessage = studyNameAlreadyExistsNewTrial;
 						} else {
 							customMessage = folderNameAlreadyExistsNewTrial;
 						}

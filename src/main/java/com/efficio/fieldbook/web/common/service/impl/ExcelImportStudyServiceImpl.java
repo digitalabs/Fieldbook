@@ -919,15 +919,17 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	}
 
 	private MeasurementVariable getMeasurementVariable(final Row row) throws MiddlewareException {
-		final String property = row.getCell(ExcelImportStudyServiceImpl.COLUMN_PROPERTY).getStringCellValue();
-		final String scale = row.getCell(ExcelImportStudyServiceImpl.COLUMN_SCALE).getStringCellValue();
-		final String method = row.getCell(ExcelImportStudyServiceImpl.COLUMN_METHOD).getStringCellValue();
-		final MeasurementVariable mvar =
-				this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(property, scale, method,
-						PhenotypicType.VARIATE, this.contextUtil.getCurrentProgramUUID());
-		if (mvar != null) {
-			mvar.setName(row.getCell(ExcelImportStudyServiceImpl.COLUMN_NAME).getStringCellValue());
-			mvar.setDescription(row.getCell(ExcelImportStudyServiceImpl.COLUMN_DESCRIPTION).getStringCellValue());
+		MeasurementVariable mvar = null;
+		if(row.getCell(ExcelImportStudyServiceImpl.COLUMN_PROPERTY) != null && row.getCell(ExcelImportStudyServiceImpl.COLUMN_SCALE) != null && row.getCell(ExcelImportStudyServiceImpl.COLUMN_METHOD) != null){
+			final String property = row.getCell(ExcelImportStudyServiceImpl.COLUMN_PROPERTY).getStringCellValue();
+			final String scale = row.getCell(ExcelImportStudyServiceImpl.COLUMN_SCALE).getStringCellValue();
+			final String method = row.getCell(ExcelImportStudyServiceImpl.COLUMN_METHOD).getStringCellValue();
+			mvar = this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(property, scale, method,
+							PhenotypicType.VARIATE, this.contextUtil.getCurrentProgramUUID());
+			if (mvar != null) {
+				mvar.setName(row.getCell(ExcelImportStudyServiceImpl.COLUMN_NAME).getStringCellValue());
+				mvar.setDescription(row.getCell(ExcelImportStudyServiceImpl.COLUMN_DESCRIPTION).getStringCellValue());
+			}
 		}
 		return mvar;
 	}

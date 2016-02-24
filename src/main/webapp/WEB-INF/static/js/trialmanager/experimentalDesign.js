@@ -186,14 +186,17 @@
 							return;
 						}
 
-						var data = angular.copy($scope.data);
-						data.startingEntryNo = TrialManagerDataService.currentData.experimentalDesign.startingEntryNo;
+						var environmentData = angular.copy($scope.data);
+						environmentData.startingEntryNo = TrialManagerDataService.currentData.experimentalDesign.startingEntryNo;
 
 						// transform ordered has of treatment factors if existing to just the map
-						if (data && data.treatmentFactors) {
-							data.treatmentFactors = $scope.data.treatmentFactors.vals();
+						if (environmentData && environmentData.treatmentFactors) {
+							environmentData.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
-
+						
+						var data = TrialManagerDataService.retrieveGenerateDesignInput($scope.data.designType);
+						data.environmentData = environmentData;
+						
 						// non-preset design type
 						if (!$scope.designTypes[$scope.data.designType].isPreset) {
 							TrialManagerDataService.generateExpDesign(data).then(

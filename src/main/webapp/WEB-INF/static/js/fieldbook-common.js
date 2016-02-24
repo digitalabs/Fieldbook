@@ -89,13 +89,17 @@ $(function() {
 
 });
 
-function isStudyNameUnique(studyName, studyId) {
+/**
+ * Return null if it has no duplicate.
+ * Return the type of duplicate if it has (study or folder)
+ * */
+function hasDuplicate(studyName, studyId) {
 	'use strict';
 	if (!studyId) {
 		studyId = 0;
 	}
 
-	var isUnique = true;
+	var duplicateType = null;
 	$.ajax({
 		url: '/Fieldbook/StudyTreeManager/isNameUnique',
 		type: 'POST',
@@ -103,14 +107,16 @@ function isStudyNameUnique(studyName, studyId) {
 		cache: false,
 		async: false,
 		success: function(data) {
-			if (data.isSuccess == 1) {
-				isUnique = true;
-			} else {
-				isUnique = false;
+			if (data.isSuccess === '1') {
+				duplicateType = null;
+			} else if(data.isStudy === '1'){
+				duplicateType = "study";
+			} else if(data.isStudy === '0'){
+				duplicateType = "folder";
 			}
 		}
 	});
-	return isUnique;
+	return duplicateType;
 }
 
 function validateStartEndDateBasic(startDate, endDate) {

@@ -67,7 +67,8 @@ import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+import com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser;
+import com.efficio.fieldbook.web.util.parsing.DesignImportExcelParser;
 
 /**
  * Created by cyrus on 5/28/15.
@@ -117,7 +118,10 @@ public class DesignImportControllerTest {
 	private DesignImportServiceImpl designImportService;
 
 	@Mock
-	private DesignImportParser designImportParser;
+	private DesignImportCsvParser designImportCsvParser;
+
+	@Mock
+	private DesignImportExcelParser designImportExcelParser;
 
 	@Mock
 	private ContextUtil contextUtil;
@@ -141,7 +145,7 @@ public class DesignImportControllerTest {
 		Mockito.when(this.httpRequest.getSession(Matchers.anyBoolean())).thenReturn(this.httpSession);
 		Mockito.when(this.workbenchDataManager.getProjectById(1L)).thenReturn(this.project);
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
-		Mockito.when(this.designImportParser.parseFile(this.multiPartFile)).thenReturn(data);
+		Mockito.when(this.designImportCsvParser.parseFile(this.multiPartFile)).thenReturn(data);
 
 		Mockito.doReturn(data).when(this.userSelection).getDesignImportData();
 
@@ -266,15 +270,15 @@ public class DesignImportControllerTest {
 	@Test
 	public void testImportFile() throws Exception {
 
-		final ImportDesignForm form = Mockito.mock(ImportDesignForm.class);
-		Mockito.when(form.getFile()).thenReturn(this.multiPartFile);
-
+		final ImportDesignForm form = new ImportDesignForm();
+		form.setFile(this.multiPartFile);
+		form.setFileType(DesignImportController.FILE_TYPE_ID_CSV);
 		final String resultsMap = this.designImportController.importFile(form, "N");
 
 		Mockito.verify(this.userSelection).setDesignImportData(Matchers.any(DesignImportData.class));
 
 		// verify we store the filename to design import data
-		Assert.assertEquals("",TEST_IMPORT_FILE_NAME_CSV,this.userSelection.getDesignImportData().getImportFileName());
+		Assert.assertEquals("", TEST_IMPORT_FILE_NAME_CSV, this.userSelection.getDesignImportData().getImportFileName());
 
 		Assert.assertTrue(resultsMap.contains("{\"isSuccess\":1}"));
 	}
@@ -282,9 +286,10 @@ public class DesignImportControllerTest {
 	@Test
 	public void testImportFileFail() throws Exception {
 
-		final ImportDesignForm form = Mockito.mock(ImportDesignForm.class);
-		Mockito.when(form.getFile()).thenReturn(this.multiPartFile);
-		Mockito.when(this.designImportParser.parseFile(this.multiPartFile)).thenThrow(
+		final ImportDesignForm form = new ImportDesignForm();
+		form.setFile(this.multiPartFile);
+		form.setFileType(DesignImportController.FILE_TYPE_ID_CSV);
+		Mockito.when(this.designImportCsvParser.parseFile(this.multiPartFile)).thenThrow(
 				new FileParsingException("force file parse exception"));
 
 		final String resultsMap = this.designImportController.importFile(form, "N");
@@ -699,7 +704,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
-		Mockito.doReturn(designImportData).when(this.designImportParser).parseFile(Mockito.anyString());
+		Mockito.doReturn(designImportData).when(this.designImportCsvParser).parseFile(Mockito.anyString());
 		Mockito.doReturn(designImportData.getMappedHeaders()).when(this.designImportService)
 				.categorizeHeadersByPhenotype(Matchers.anyList());
 
@@ -725,7 +730,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 		Mockito.doReturn(categorizedHeadersMap).when(this.designImportService).categorizeHeadersByPhenotype(Matchers.anyList());
-		Mockito.doThrow(FileParsingException.class).when(this.designImportParser).parseFile(Mockito.anyString());
+		Mockito.doThrow(FileParsingException.class).when(this.designImportCsvParser).parseFile(Mockito.anyString());
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
@@ -1143,7 +1148,8 @@ public class DesignImportControllerTest {
 		Mockito.when(this.userSelection.getDesignImportData()).thenReturn(null);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
 
-		Assert.assertEquals("Show default custom import template name",DesignTypeItem.CUSTOM_IMPORT.getTemplateName(),this.designImportController.getCustomImportDesignTypeDetails().get("templateName"));
+		Assert.assertEquals("Show default custom import template name", DesignTypeItem.CUSTOM_IMPORT.getTemplateName(),
+				this.designImportController.getCustomImportDesignTypeDetails().get("templateName"));
 	}
 
 	@Test
@@ -1155,8 +1161,8 @@ public class DesignImportControllerTest {
 		Mockito.when(this.userSelection.getDesignImportData()).thenReturn(designImportData);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
 
-		Assert.assertEquals("show imported template file name",
-				TEST_IMPORT_FILE_NAME_CSV,this.designImportController.getCustomImportDesignTypeDetails().get("templateName"));
+		Assert.assertEquals("show imported template file name", TEST_IMPORT_FILE_NAME_CSV, this.designImportController
+				.getCustomImportDesignTypeDetails().get("templateName"));
 	}
 
 	@Test
@@ -1168,14 +1174,14 @@ public class DesignImportControllerTest {
 		final List<MeasurementVariable> expDesignVariableList = new ArrayList<>();
 		expDesignVariableList.add(expDesignSource);
 
-		final ExperimentalDesignVariable expDesignVariables = new ExperimentalDesignVariable(expDesignVariableList);
+		new ExperimentalDesignVariable(expDesignVariableList);
 		workbook.setExperimentalDesignVariables(expDesignVariableList);
 
 		// case 3: show filename retrieved from EXP_DESIGN_SOURCE
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 
-		Assert.assertEquals("Show saved custom import file name",
-				TEST_IMPORT_FILE_NAME_CSV,this.designImportController.getCustomImportDesignTypeDetails().get("templateName"));
+		Assert.assertEquals("Show saved custom import file name", TEST_IMPORT_FILE_NAME_CSV, this.designImportController
+				.getCustomImportDesignTypeDetails().get("templateName"));
 	}
 
 	/**

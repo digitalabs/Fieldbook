@@ -52,7 +52,7 @@ import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitialize
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+import com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser;
 
 @SuppressWarnings("deprecation")
 @RunWith(MockitoJUnitRunner.class)
@@ -65,7 +65,7 @@ public class DesignImportServiceImplTest {
 	private static final String PROGRAM_UUID = "789c6438-5a94-11e5-885d-feff819cdc9f";
 
 	@Mock
-	private DesignImportParser designImportParser;
+	private DesignImportCsvParser designImportParser;
 
 	@Mock
 	private FieldbookService fieldbookService;
@@ -331,7 +331,7 @@ public class DesignImportServiceImplTest {
 						.get(PhenotypicType.TRIAL_ENVIRONMENT), "design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
 		final Map<String, Map<Integer, List<String>>> result =
-				this.service.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getCsvData());
+				this.service.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getRowDataMap());
 
 		Assert.assertEquals("The total number of trial instances in file is 3", 3, result.size());
 		Assert.assertEquals("Each trial instance in file has 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, result
@@ -387,7 +387,7 @@ public class DesignImportServiceImplTest {
 
 	@Test
 	public void testCreatePresetMeasurementRowsPerInstance() {
-		final Map<Integer, List<String>> csvData = this.designImportData.getCsvData();
+		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
 		final List<MeasurementRow> measurements = new ArrayList<MeasurementRow>();
 		final DesignImportMeasurementRowGenerator measurementRowGenerator = this.generateMeasurementRowGenerator();
 		final int trialInstanceNo = 1;
@@ -424,7 +424,7 @@ public class DesignImportServiceImplTest {
 	@Test
 	public void testGetStartingEntryAndPlotNoFromCSV() {
 
-		final Map<Integer, List<String>> csvData = this.designImportData.getCsvData();
+		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
 		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map =
 				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 

@@ -274,7 +274,7 @@ public class DesignImportControllerTest {
 		Mockito.verify(this.userSelection).setDesignImportData(Matchers.any(DesignImportData.class));
 
 		// verify we store the filename to design import data
-		Assert.assertEquals("",TEST_IMPORT_FILE_NAME_CSV,this.userSelection.getDesignImportData().getImportFileName());
+		Assert.assertEquals("", TEST_IMPORT_FILE_NAME_CSV, this.userSelection.getDesignImportData().getImportFileName());
 
 		Assert.assertTrue(resultsMap.contains("{\"isSuccess\":1}"));
 	}
@@ -1143,7 +1143,8 @@ public class DesignImportControllerTest {
 		Mockito.when(this.userSelection.getDesignImportData()).thenReturn(null);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
 
-		Assert.assertEquals("Show default custom import template name",DesignTypeItem.CUSTOM_IMPORT.getTemplateName(),this.designImportController.getCustomImportDesignTypeDetails().get("templateName"));
+		Assert.assertEquals("Show default custom import template name", DesignTypeItem.CUSTOM_IMPORT.getTemplateName(),
+				this.designImportController.getCustomImportDesignTypeDetails().get("templateName"));
 	}
 
 	@Test
@@ -1155,8 +1156,8 @@ public class DesignImportControllerTest {
 		Mockito.when(this.userSelection.getDesignImportData()).thenReturn(designImportData);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
 
-		Assert.assertEquals("show imported template file name",
-				TEST_IMPORT_FILE_NAME_CSV,this.designImportController.getCustomImportDesignTypeDetails().get("templateName"));
+		Assert.assertEquals("show imported template file name", TEST_IMPORT_FILE_NAME_CSV, this.designImportController
+				.getCustomImportDesignTypeDetails().get("templateName"));
 	}
 
 	@Test
@@ -1168,14 +1169,14 @@ public class DesignImportControllerTest {
 		final List<MeasurementVariable> expDesignVariableList = new ArrayList<>();
 		expDesignVariableList.add(expDesignSource);
 
-		final ExperimentalDesignVariable expDesignVariables = new ExperimentalDesignVariable(expDesignVariableList);
+		new ExperimentalDesignVariable(expDesignVariableList);
 		workbook.setExperimentalDesignVariables(expDesignVariableList);
 
 		// case 3: show filename retrieved from EXP_DESIGN_SOURCE
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 
-		Assert.assertEquals("Show saved custom import file name",
-				TEST_IMPORT_FILE_NAME_CSV,this.designImportController.getCustomImportDesignTypeDetails().get("templateName"));
+		Assert.assertEquals("Show saved custom import file name", TEST_IMPORT_FILE_NAME_CSV, this.designImportController
+				.getCustomImportDesignTypeDetails().get("templateName"));
 	}
 
 	/**

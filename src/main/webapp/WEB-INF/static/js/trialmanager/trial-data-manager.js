@@ -659,6 +659,7 @@
 					var hasError = false, name = '', customMessage = '', errorCode = 0;
 					var creationDate = service.currentData.basicDetails.basicDetails[8050];
 					var completionDate = service.currentData.basicDetails.basicDetails[8060];
+					var duplicateType = null;
 					if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
 						hasError = true;
 						name = $('#folderLabel').text();
@@ -670,9 +671,13 @@
 					} else if ($.trim(service.currentData.basicDetails.basicDetails[8007]) === '') {
 						hasError = true;
 						name = 'Description';
-					} else if (!isEdit && isStudyNameUnique(service.currentData.basicDetails.basicDetails[8005]) === false) {
+					} else if (!isEdit && (duplicateType = hasDuplicate(service.currentData.basicDetails.basicDetails[8005])) !== null) {
 						hasError = true;
-						customMessage = 'Name should be unique';
+						if(duplicateType === 'study') {
+							customMessage = trialNameAlreadyExistsNewTrial;
+						} else {
+							customMessage = folderNameAlreadyExistsNewTrial;
+						}
 					} else if (creationDate === '') {
 						// validate creation date
 						hasError = true;

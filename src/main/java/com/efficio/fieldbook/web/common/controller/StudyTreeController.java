@@ -48,6 +48,7 @@ public class StudyTreeController {
 	public static final String LOCAL = "LOCAL";
 	private static final String HAS_OBSERVATIONS = "hasObservations";
 	public static final String IS_SUCCESS = "isSuccess";
+	public static final String IS_STUDY = "isStudy";
 	public static final String MESSAGE = "message";
 	public static final String NEW_FOLDER_ID = "newFolderId";
 
@@ -209,7 +210,12 @@ public class StudyTreeController {
 				// meaning there is no study
 				resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 			} else if (studyIdInt.intValue() == 0 && studyIdDb != 0) {
-				// meaning new
+				boolean isStudy = studyDataManager.isStudy(studyIdDb);
+				if (isStudy) {
+					resultsMap.put(StudyTreeController.IS_STUDY, "1");
+				} else {
+					resultsMap.put(StudyTreeController.IS_STUDY, "0");
+				}
 				resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
 			} else if (studyIdInt.intValue() == studyIdDb) {
 				resultsMap.put(StudyTreeController.IS_SUCCESS, "1");

@@ -36,6 +36,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.util.HtmlUtils;
 
 public class StudyTreeControllerTest {
 
@@ -44,6 +45,14 @@ public class StudyTreeControllerTest {
 	private static final String PARENT_FOLDER_ID = "1";
 
 	private static final String FOLDER_NAME = "FOLDER 1";
+
+	private static final String STUDY_ID = "0";
+
+	private static final String STUDY_NAME = "STUDY NAME";
+
+	private static final String UNIQUE_ID = "1234567890";
+
+	private static final Integer STUDY_ID_WITH_SAME_NAME = 3;
 
 	private Project selectedProject;
 
@@ -164,5 +173,43 @@ public class StudyTreeControllerTest {
 
 		Assert.assertEquals("0", result.get(StudyTreeController.IS_SUCCESS));
 		Assert.assertEquals("Folder name is not unique", result.get(StudyTreeController.MESSAGE));
+	}
+
+	@Test
+	public void testIsNameUniqueTrue() {
+		Mockito.when(this.request.getParameter("studyId")).thenReturn(STUDY_ID);
+		Mockito.when(this.request.getParameter("name")).thenReturn(STUDY_NAME);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(UNIQUE_ID);
+		Mockito.when(this.fieldbookMiddlewareService.getProjectIdByNameAndProgramUUID(HtmlUtils.htmlEscape(STUDY_NAME),UNIQUE_ID)).thenReturn(null);
+		Map<String, Object> resultsMap = this.controller.isNameUnique(this.request);
+		Assert.assertEquals("1", resultsMap.get(StudyTreeController.IS_SUCCESS));
+	}
+
+	@Test
+	public void testIsNameUniqueFalseWithDuplicateStudy() {
+		boolean isDuplicateAStudy = true;
+		Mockito.when(this.request.getParameter("studyId")).thenReturn(STUDY_ID);
+		Mockito.when(this.request.getParameter("name")).thenReturn(STUDY_NAME);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(UNIQUE_ID);
+		Mockito.when(this.fieldbookMiddlewareService.getProjectIdByNameAndProgramUUID(HtmlUtils.htmlEscape(STUDY_NAME), UNIQUE_ID))
+				.thenReturn(STUDY_ID_WITH_SAME_NAME);
+		Mockito.when(this.studyDataManager.isStudy(STUDY_ID_WITH_SAME_NAME)).thenReturn(isDuplicateAStudy);
+		Map<String, Object> resultsMap = this.controller.isNameUnique(this.request);
+		Assert.assertEquals("0", resultsMap.get(StudyTreeController.IS_SUCCESS));
+		Assert.assertEquals("1", resultsMap.get(StudyTreeController.IS_STUDY));
+	}
+
+	@Test
+	public void testIsNameUniqueFalseWithDuplicateFolder() {
+		boolean isDuplicateAStudy = false;
+		Mockito.when(this.request.getParameter("studyId")).thenReturn(STUDY_ID);
+		Mockito.when(this.request.getParameter("name")).thenReturn(STUDY_NAME);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(UNIQUE_ID);
+		Mockito.when(this.fieldbookMiddlewareService.getProjectIdByNameAndProgramUUID(HtmlUtils.htmlEscape(STUDY_NAME), UNIQUE_ID))
+				.thenReturn(STUDY_ID_WITH_SAME_NAME);
+		Mockito.when(this.studyDataManager.isStudy(STUDY_ID_WITH_SAME_NAME)).thenReturn(isDuplicateAStudy);
+		Map<String, Object> resultsMap = this.controller.isNameUnique(this.request);
+		Assert.assertEquals("0", resultsMap.get(StudyTreeController.IS_SUCCESS));
+		Assert.assertEquals("0", resultsMap.get(StudyTreeController.IS_STUDY));
 	}
 }

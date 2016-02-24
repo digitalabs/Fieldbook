@@ -24,12 +24,17 @@ function validateEnterFieldPage() {
 		showInvalidInputMessage(msgRowsInBlock);
 		return false;
 	}
-	if ($('#' + getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val() == '' ||
-	!isInt($('#' + getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val()) ||
-		parseInt($('#' + getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val()) < 1) {
+
+	var numberOfRangesInBlock = $('#' + getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val();
+
+	if (numberOfRangesInBlock == '' ||
+	!isInt(numberOfRangesInBlock) ||
+		parseInt(numberOfRangesInBlock) < 1 ||
+		parseInt(numberOfRangesInBlock) > 9) {
 		showInvalidInputMessage(msgRangesInBlock);
 		return false;
 	}
+
 	if (parseInt($('#' + getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) %
 			parseInt($('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data').id) != 0) {
 		//we need to check

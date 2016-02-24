@@ -21,7 +21,6 @@ import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -1173,7 +1172,6 @@ public class DesignImportControllerTest {
 		final List<MeasurementVariable> expDesignVariableList = new ArrayList<>();
 		expDesignVariableList.add(expDesignSource);
 
-		new ExperimentalDesignVariable(expDesignVariableList);
 		workbook.setExperimentalDesignVariables(expDesignVariableList);
 
 		// case 3: show filename retrieved from EXP_DESIGN_SOURCE

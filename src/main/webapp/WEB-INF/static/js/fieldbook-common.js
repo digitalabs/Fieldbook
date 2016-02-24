@@ -1052,8 +1052,13 @@ function generateLocationDetailTable(selectedLocations,isTrialInstanceNumberUsed
 /* ADVANCING NURSERY SPECIFIC FUNCTIONS */
 
 function advanceNursery(){
-    var idVal = $('#createNurseryMainForm #studyId').val();
-    advanceStudy(idVal);
+	var hashGermplasmList = $('#totalGermplasms').val() !== '0';
+	if(!hashGermplasmList){
+		showErrorMessage('', nurseryHasNoGermplasmList);
+	} else{
+		var idVal = $('#createNurseryMainForm #studyId').val();
+    	advanceStudy(idVal);	
+	}
 }
 
 /* END ADVANCING NURSERY SPECIFIC FUNCTIONS */

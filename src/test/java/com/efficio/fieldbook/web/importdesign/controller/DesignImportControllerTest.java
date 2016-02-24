@@ -67,8 +67,7 @@ import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser;
-import com.efficio.fieldbook.web.util.parsing.DesignImportExcelParser;
+import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
 /**
  * Created by cyrus on 5/28/15.
@@ -118,10 +117,7 @@ public class DesignImportControllerTest {
 	private DesignImportServiceImpl designImportService;
 
 	@Mock
-	private DesignImportCsvParser designImportCsvParser;
-
-	@Mock
-	private DesignImportExcelParser designImportExcelParser;
+	private DesignImportParser designImportParser;
 
 	@Mock
 	private ContextUtil contextUtil;
@@ -145,7 +141,7 @@ public class DesignImportControllerTest {
 		Mockito.when(this.httpRequest.getSession(Matchers.anyBoolean())).thenReturn(this.httpSession);
 		Mockito.when(this.workbenchDataManager.getProjectById(1L)).thenReturn(this.project);
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
-		Mockito.when(this.designImportCsvParser.parseFile(this.multiPartFile)).thenReturn(data);
+		Mockito.when(this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_CSV, this.multiPartFile)).thenReturn(data);
 
 		Mockito.doReturn(data).when(this.userSelection).getDesignImportData();
 
@@ -289,7 +285,7 @@ public class DesignImportControllerTest {
 		final ImportDesignForm form = new ImportDesignForm();
 		form.setFile(this.multiPartFile);
 		form.setFileType(DesignImportController.FILE_TYPE_ID_CSV);
-		Mockito.when(this.designImportCsvParser.parseFile(this.multiPartFile)).thenThrow(
+		Mockito.when(this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_CSV, this.multiPartFile)).thenThrow(
 				new FileParsingException("force file parse exception"));
 
 		final String resultsMap = this.designImportController.importFile(form, "N");
@@ -704,7 +700,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
-		Mockito.doReturn(designImportData).when(this.designImportCsvParser).parseFile(Mockito.anyString());
+		Mockito.doReturn(designImportData).when(this.designImportParser).parseFile(Mockito.anyInt(), Mockito.anyString());
 		Mockito.doReturn(designImportData.getMappedHeaders()).when(this.designImportService)
 				.categorizeHeadersByPhenotype(Matchers.anyList());
 
@@ -730,7 +726,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 		Mockito.doReturn(categorizedHeadersMap).when(this.designImportService).categorizeHeadersByPhenotype(Matchers.anyList());
-		Mockito.doThrow(FileParsingException.class).when(this.designImportCsvParser).parseFile(Mockito.anyString());
+		Mockito.doThrow(FileParsingException.class).when(this.designImportParser).parseFile(Mockito.anyInt(), Mockito.anyString());
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 

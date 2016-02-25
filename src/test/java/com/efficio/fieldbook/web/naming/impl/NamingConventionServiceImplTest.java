@@ -14,7 +14,11 @@ import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.service.GermplasmOriginGenerationService;
+import org.generationcp.middleware.domain.dms.DMSVariableType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.dms.Variable;
+import org.generationcp.middleware.domain.dms.VariableList;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -217,23 +221,22 @@ public class NamingConventionServiceImplTest {
 		StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyType(StudyType.N);
 
-        Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(Mockito.anyInt())).thenReturn(workbook);
         AdvancingSourceList rows = new AdvancingSourceList();
         rows.setRows(new ArrayList<AdvancingSource>());
 
-        AdvancingSource as1 = new AdvancingSource();
-        as1.setNames(new ArrayList<Name>());
+        AdvancingSource advancingSource = new AdvancingSource();
+		advancingSource.setNames(new ArrayList<Name>());
 
-        ImportedGermplasm ig = new ImportedGermplasm();
-        ig.setEntryId(1);
-        ig.setDesig("BARRA DE ORO DULCE");
-        ig.setGid("133");
-        ig.setCross("BARRA DE ORO DULCE");
-        ig.setBreedingMethodId(31);
-        ig.setGpid1(0);
-        ig.setGpid2(0);
-        ig.setGnpgs(-1);
-        as1.setGermplasm(ig);
+        ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+        importedGermplasm.setEntryId(1);
+        importedGermplasm.setDesig("BARRA DE ORO DULCE");
+        importedGermplasm.setGid("133");
+        importedGermplasm.setCross("BARRA DE ORO DULCE");
+        importedGermplasm.setBreedingMethodId(31);
+        importedGermplasm.setGpid1(0);
+        importedGermplasm.setGpid2(0);
+        importedGermplasm.setGnpgs(-1);
+		advancingSource.setGermplasm(importedGermplasm);
 
         Name name1 = new Name(133);
         name1.setGermplasmId(133);
@@ -244,17 +247,17 @@ public class NamingConventionServiceImplTest {
         name1.setLocationId(9);
         name1.setNdate(19860501);
         name1.setReferenceId(1);
-        as1.getNames().add(name1);
+		advancingSource.getNames().add(name1);
 
 
-        as1.setBreedingMethod(breedingMethod);
-        as1.setPlantsSelected(1);
-        as1.setBulk(false);
-        as1.setCheck(false);
-        as1.setNurseryName("Test One");
-        as1.setSeason("201412");
-        as1.setCurrentMaxSequence(0);
-        rows.getRows().add(as1);
+		advancingSource.setBreedingMethod(breedingMethod);
+		advancingSource.setPlantsSelected(1);
+		advancingSource.setBulk(false);
+		advancingSource.setCheck(false);
+		advancingSource.setNurseryName("Test One");
+		advancingSource.setSeason("201412");
+		advancingSource.setCurrentMaxSequence(0);
+        rows.getRows().add(advancingSource);
 
         Mockito.when(this.advancingSourceListFactory.createAdvancingSourceList(Mockito.isA(Workbook.class),Mockito.isA(AdvancingNursery.class),Mockito.isA(Study.class),Mockito.isA(Map.class),Mockito.isA(Map.class)))
                 .thenReturn(rows);
@@ -291,9 +294,10 @@ public class NamingConventionServiceImplTest {
         Assert.assertEquals(new Integer(1), resultIG.getEntryId());
         Assert.assertEquals(ruleGeneratedName, resultIG.getDesig());
         Assert.assertNull(resultIG.getGid());
-        Assert.assertEquals(ig.getCross(), resultIG.getCross());
+        Assert.assertEquals(importedGermplasm.getCross(), resultIG.getCross());
         Assert.assertEquals(testPlotCode, resultIG.getSource());
         Assert.assertEquals("E0001", resultIG.getEntryCode());
+		Assert.assertNull(resultIG.getCheck());
         Assert.assertEquals(new Integer(40), resultIG.getBreedingMethodId());
         Assert.assertEquals(new Integer(133), resultIG.getGpid1());
         Assert.assertEquals(new Integer(133), resultIG.getGpid2());
@@ -306,6 +310,137 @@ public class NamingConventionServiceImplTest {
         Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName.getTypeId().intValue());
         Assert.assertEquals(new Integer(1), resultName.getNstat());
         Assert.assertEquals(ruleGeneratedName, resultName.getNval());
+		Assert.assertNull(resultIG.getMgid());
+		Assert.assertNull(resultIG.getTrialInstanceNumber());
+		Assert.assertNull(resultIG.getReplicationNumber());
 
     }
+
+	@Test
+	public void testAdvanceStudyForTrialSuccess() throws MiddlewareQueryException, RuleException, FieldbookException {
+		Method breedingMethod =
+				new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490,
+						1, 0, 19980708, "");
+		breedingMethod.setSnametype(5);
+		breedingMethod.setSeparator("-");
+		breedingMethod.setPrefix("B");
+		breedingMethod.setCount("");
+
+		final List<Method> methodList = Lists.newArrayList();
+		methodList.add(breedingMethod);
+
+		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Mockito.anyBoolean())).thenReturn(methodList);
+
+		Workbook workbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.T);
+
+		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(Mockito.anyInt())).thenReturn(workbook);
+		AdvancingSourceList rows = new AdvancingSourceList();
+		rows.setRows(new ArrayList<AdvancingSource>());
+
+		AdvancingSource advancingSource = new AdvancingSource();
+		advancingSource.setNames(new ArrayList<Name>());
+
+		ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+		importedGermplasm.setEntryId(1);
+		importedGermplasm.setDesig("BARRA DE ORO DULCE");
+		importedGermplasm.setGid("133");
+		importedGermplasm.setCross("BARRA DE ORO DULCE");
+		importedGermplasm.setBreedingMethodId(31);
+		importedGermplasm.setGpid1(0);
+		importedGermplasm.setGpid2(0);
+		importedGermplasm.setGnpgs(-1);
+		advancingSource.setGermplasm(importedGermplasm);
+
+		Name name = new Name(133);
+		name.setGermplasmId(133);
+		name.setTypeId(6);
+		name.setNstat(1);
+		name.setUserId(3);
+		name.setNval("BARRA DE ORO DULCE");
+		name.setLocationId(9);
+		name.setNdate(19860501);
+		name.setReferenceId(1);
+		advancingSource.getNames().add(name);
+
+
+		advancingSource.setBreedingMethod(breedingMethod);
+		advancingSource.setPlantsSelected(1);
+		advancingSource.setBulk(false);
+		advancingSource.setCheck(false);
+		advancingSource.setNurseryName("Test One");
+		advancingSource.setSeason("201412");
+		advancingSource.setCurrentMaxSequence(0);
+		advancingSource.setReplicationNumber("2");
+		advancingSource.setTrialInstanceNumber("1");
+		rows.getRows().add(advancingSource);
+
+		Mockito.when(this.advancingSourceListFactory.createAdvancingSourceList(Mockito.isA(Workbook.class),Mockito.isA(AdvancingNursery.class),Mockito.isA(Study.class),Mockito.isA(Map.class),Mockito.isA(Map.class)))
+				.thenReturn(rows);
+
+		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(Mockito.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
+		final String ruleGeneratedName = name.getNval() + "-B";
+		Mockito.when(this.rulesService.runRules(Mockito.any(RuleExecutionContext.class))).thenReturn(
+				Lists.newArrayList(ruleGeneratedName));
+		final String testPlotCode = "TrialName:Plot#";
+		Mockito.when(this.germplasmOriginGenerationService.generateOriginString(Mockito.any(GermplasmOriginGenerationParameters.class)))
+				.thenReturn(testPlotCode);
+
+		AdvancingNursery info = new AdvancingNursery();
+		info.setMethodChoice("1");
+		info.setLineChoice("1");
+		info.setAllPlotsChoice("1");
+		info.setCheckAdvanceLinesUnique(true);
+
+		Study study = new Study();
+		study.setId(2345);
+		VariableList conditionVariableList = new VariableList();
+		List<Variable> variables = Lists.newArrayList();
+		Variable var = new Variable();
+		var.setValue("T");
+		DMSVariableType dmsVariableType = new DMSVariableType();
+		StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setId(8070);
+		dmsVariableType.setStandardVariable(standardVariable);
+		var.setVariableType(dmsVariableType);
+		variables.add(var);
+		conditionVariableList.setVariables(variables);
+		study.setConditions(conditionVariableList);
+		info.setStudy(study);
+
+		AdvanceResult advanceResult = namingConventionService.advanceNursery(info, null);
+
+		Assert.assertNotNull(advanceResult);
+		Assert.assertNotNull(advanceResult.getChangeDetails());
+		Assert.assertEquals(0,advanceResult.getChangeDetails().size());
+
+		Assert.assertNotNull(advanceResult.getAdvanceList());
+		Assert.assertEquals(1, advanceResult.getAdvanceList().size());
+
+		ImportedGermplasm resultIG = advanceResult.getAdvanceList().get(0);
+		Assert.assertEquals(new Integer(1), resultIG.getEntryId());
+		Assert.assertEquals(ruleGeneratedName, resultIG.getDesig());
+		Assert.assertNull(resultIG.getGid());
+		Assert.assertEquals(importedGermplasm.getCross(), resultIG.getCross());
+		Assert.assertEquals(testPlotCode, resultIG.getSource());
+		Assert.assertEquals("E0001", resultIG.getEntryCode());
+		Assert.assertNull(resultIG.getCheck());
+		Assert.assertEquals(new Integer(40), resultIG.getBreedingMethodId());
+		Assert.assertEquals(new Integer(133), resultIG.getGpid1());
+		Assert.assertEquals(new Integer(133), resultIG.getGpid2());
+
+		Assert.assertEquals(new Integer(-1), resultIG.getGnpgs());
+		Assert.assertEquals(1, resultIG.getNames().size());
+		Name resultName = resultIG.getNames().get(0);
+		Assert.assertNull(resultName.getNid());
+		Assert.assertEquals(new Integer(133), resultName.getGermplasmId());
+		Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName.getTypeId().intValue());
+		Assert.assertEquals(new Integer(1), resultName.getNstat());
+		Assert.assertEquals(ruleGeneratedName, resultName.getNval());
+		Assert.assertNull(resultIG.getMgid());
+		Assert.assertEquals("1", resultIG.getTrialInstanceNumber());
+		Assert.assertEquals("2", resultIG.getReplicationNumber());
+
+	}
 }

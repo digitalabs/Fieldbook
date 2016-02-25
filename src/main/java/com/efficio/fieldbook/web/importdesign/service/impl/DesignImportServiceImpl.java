@@ -47,10 +47,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	private static final String ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS = "noOfAddedEnvironments";
 
-	private static final String STARTING_PLOT_NO = "startingPlotNo";
-
-	private static final String STARTING_ENTRY_NO = "startingEntryNo";
-
 	@Resource
 	private UserSelection userSelection;
 
@@ -164,10 +160,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 				additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) != null ? additionalParams
 						.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) : 0;
 
-		final Map<String, Integer> startingNoFromCSV =
-				this.getStartingEntryAndPlotNoFromCSV(csvData, measurementRowGenerator.getMappedHeaders());
-
-		final int plotNoDelta = (startingPlotNo != null) ? startingPlotNo - startingNoFromCSV.get(STARTING_PLOT_NO) : 0;
+		final Integer startingPlotNoFromCSV = this.getStartingPlotNoFromCSV(csvData, measurementRowGenerator.getMappedHeaders());
+		final int plotNoDelta = (startingPlotNo != null) ? startingPlotNo - startingPlotNoFromCSV : 0;
 
 		if (isPreset) {
 			final int startingTrialInstanceNo = noOfAddedEnvironment > 0 ? noOfEnvironments - noOfAddedEnvironment + 1 : 1;
@@ -219,20 +213,16 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	/**
-	 * Returns a map that contains the starting plot no and starting entry no from CSV rows
+	 * Returns the value of the starting plot no from CSV rows
 	 * 
 	 * @param csvData
 	 * @param map
 	 * @return
 	 */
-	Map<String, Integer> getStartingEntryAndPlotNoFromCSV(final Map<Integer, List<String>> csvData,
-			final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map) {
-		final Map<String, Integer> startingNoFromCSV = new HashMap<String, Integer>();
+	Integer getStartingPlotNoFromCSV(final Map<Integer, List<String>> csvData, final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map) {
 
-		final Integer entryNoIndx = map.get(PhenotypicType.GERMPLASM).get(TermId.ENTRY_NO.getId()).getColumnIndex();
 		final Integer plotNoIndx = map.get(PhenotypicType.TRIAL_DESIGN).get(TermId.PLOT_NO.getId()).getColumnIndex();
 
-		Integer startingEntryNoCSV = 0;
 		Integer startingPlotNoCSV = 0;
 
 		// row counter starts at index = 1 because zero index is the header
@@ -240,11 +230,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 		while (rowCounter <= csvData.size() - 1) {
 
 			final List<String> rowEntries = csvData.get(rowCounter);
-
-			final Integer currentEntryNo = Integer.valueOf(rowEntries.get(entryNoIndx).toString());
-			if (startingEntryNoCSV == 0 || startingEntryNoCSV > currentEntryNo) {
-				startingEntryNoCSV = currentEntryNo;
-			}
 
 			final Integer currentPlotNo = Integer.valueOf(rowEntries.get(plotNoIndx).toString());
 			if (startingPlotNoCSV == 0 || startingPlotNoCSV > currentPlotNo) {
@@ -254,10 +239,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 			rowCounter++;
 		}
 
-		startingNoFromCSV.put(STARTING_ENTRY_NO, startingEntryNoCSV);
-		startingNoFromCSV.put(STARTING_PLOT_NO, startingPlotNoCSV);
-
-		return startingNoFromCSV;
+		return startingPlotNoCSV;
 	}
 
 	Map<Integer, MeasurementData> getMeasurementDataMap(final List<MeasurementData> dataList) {

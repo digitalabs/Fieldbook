@@ -431,7 +431,7 @@ public class DesignImportServiceImplTest {
 		final int expectedStartingEntryNo = 1;
 		final int expectedStartingPlotNo = 1;
 
-		final Map<String, Integer> startingNoMap = this.service.getStartingEntryAndPlotNoFromCSV(csvData, map);
+		final Map<String, Integer> startingNoMap = this.service.getStartingPlotNoFromCSV(csvData, map);
 		Assert.assertEquals("Expecting that the starting entry no is equal to " + expectedStartingEntryNo + " but returned "
 				+ startingNoMap.get("startingEntryNo").intValue(), expectedStartingEntryNo, startingNoMap.get("startingEntryNo").intValue());
 		Assert.assertEquals("Expecting that the starting plot no is equal to " + expectedStartingPlotNo + " but returned "

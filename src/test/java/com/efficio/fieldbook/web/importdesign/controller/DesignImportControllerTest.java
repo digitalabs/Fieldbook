@@ -54,7 +54,7 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.GeneratePresetDesignInput;
+import com.efficio.fieldbook.web.common.bean.GenerateDesignInput;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
@@ -661,8 +661,8 @@ public class DesignImportControllerTest {
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final GeneratePresetDesignInput input =
-				new GeneratePresetDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
+		final GenerateDesignInput input =
+				new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
 
 		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
@@ -683,8 +683,8 @@ public class DesignImportControllerTest {
 						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final GeneratePresetDesignInput input =
-				new GeneratePresetDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
+		final GenerateDesignInput input =
+				new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
 		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
@@ -708,8 +708,8 @@ public class DesignImportControllerTest {
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
-		final GeneratePresetDesignInput input =
-				new GeneratePresetDesignInput(environmentData, new DesignTypeItem(4, "E30-Rep2-Block6-5Ind",
+		final GenerateDesignInput input =
+				new GenerateDesignInput(environmentData, new DesignTypeItem(4, "E30-Rep2-Block6-5Ind",
 						"predefinedDesignTemplateParams.html", true, 2, 30, false), null, null, false);
 		final Map<String, Object> resultsMap = this.designImportController.generatePresetMeasurements(input);
 
@@ -732,7 +732,7 @@ public class DesignImportControllerTest {
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
-		final GeneratePresetDesignInput input = new GeneratePresetDesignInput(environmentData, new DesignTypeItem(5), null, null, false);
+		final GenerateDesignInput input = new GenerateDesignInput(environmentData, new DesignTypeItem(5), null, null, false);
 		final Map<String, Object> resultsMap = this.designImportController.generatePresetMeasurements(input);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));

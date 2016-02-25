@@ -5,7 +5,7 @@ import org.generationcp.middleware.domain.dms.DesignTypeItem;
 
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 
-public class GeneratePresetDesignInput {
+public class GenerateDesignInput {
 
 	private EnvironmentData environmentData;
 	private DesignTypeItem selectedDesignType;
@@ -13,7 +13,7 @@ public class GeneratePresetDesignInput {
 	private Integer startingPlotNo;
 	private Boolean hasNewEnvironmentAdded;
 
-	public GeneratePresetDesignInput() {
+	public GenerateDesignInput() {
 		this.environmentData = new EnvironmentData();
 		this.selectedDesignType = new DesignTypeItem();
 		this.startingEntryNo = 1;
@@ -21,7 +21,7 @@ public class GeneratePresetDesignInput {
 		this.hasNewEnvironmentAdded = false;
 	}
 
-	public GeneratePresetDesignInput(final EnvironmentData environmentData, final DesignTypeItem selectedDesignType,
+	public GenerateDesignInput(final EnvironmentData environmentData, final DesignTypeItem selectedDesignType,
 			final Integer startingEntryNo, final Integer startingPlotNo, final Boolean hasNewEnvironmentAdded) {
 		super();
 		this.environmentData = environmentData;

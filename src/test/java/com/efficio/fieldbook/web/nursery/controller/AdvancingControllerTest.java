@@ -3,17 +3,31 @@ package com.efficio.fieldbook.web.nursery.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.TableHeader;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.google.common.collect.Lists;
 import junit.framework.Assert;
-
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -43,21 +57,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.TableHeader;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdvancingControllerTest {
@@ -521,7 +520,6 @@ public class AdvancingControllerTest {
 
         Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
         String methodType = this.advancingController.checkMethodTypeMode(12);
-        System.out.println(methodType);
         Assert.assertTrue(methodType.contains("The nursery has no methods defined under"));
     }
 
@@ -553,4 +551,83 @@ public class AdvancingControllerTest {
         observations.add(row1);
         return observations;
     }
+
+	@Test
+	public void testShowAdvanceTrialGetSuccess(){
+		Study trialStudy = new Study();
+		Mockito.when(this.fieldbookMiddlewareService.getStudy(Mockito.anyInt())).thenReturn(trialStudy);
+
+		Mockito.when(this.fieldbookProperties.getProgramBreedingMethodsUrl()).thenReturn("breedingMethodUrl");
+
+		Project testProject = new Project();
+		testProject.setProjectId(1L);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
+
+		Project project = new Project();
+		CropType cropType = new CropType();
+		cropType.setCropName("maize");
+		project.setCropType(cropType);
+		Mockito.when(this.workbenchService.getProjectById(Mockito.anyLong())).thenReturn(project);
+
+
+		List<SettingDetail> selectionVariates = Lists.newArrayList();
+		SettingDetail settingDetail = new SettingDetail();
+		SettingVariable settingVariable = new SettingVariable();
+		settingVariable.setProperty("Breeding method");
+		settingVariable.setCvTermId(10);
+		settingVariable.setName("SettingVariable");
+
+		settingDetail.setVariable(settingVariable);
+		selectionVariates.add(settingDetail);
+		Mockito.when(this.userSelection.getSelectionVariates()).thenReturn(selectionVariates);
+
+		AdvancingNurseryForm form = new AdvancingNurseryForm();
+		Model model = new ExtendedModelMap();
+
+		Set<String> selectedTrialInstances = new HashSet<>();
+		selectedTrialInstances.add("1");
+		selectedTrialInstances.add("2");
+		selectedTrialInstances.add("3");
+
+		String returnTemplatePage = this.advancingController.show(form, model, this.request, this.session, 212, selectedTrialInstances, "2");
+
+		Assert.assertEquals("1", form.getMethodChoice());
+		Assert.assertEquals("1", form.getLineChoice());
+		Assert.assertEquals("1", form.getLineSelected());
+		Assert.assertEquals("1", form.getAllPlotsChoice());
+		Assert.assertEquals("205", form.getDefaultMethodId());
+		Assert.assertEquals("breedingMethodUrl", form.getBreedingMethodUrl());
+		Assert.assertEquals(1, form.getMethodVariates().size());
+		Assert.assertEquals(10, form.getMethodVariates().get(0).getId().intValue());
+		Assert.assertEquals("SettingVariable", form.getMethodVariates().get(0).getName());
+		Assert.assertEquals(0 , form.getLineVariates().size());
+		Assert.assertEquals(0, form.getPlotVariates().size());
+		String currentYear = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
+		int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+
+		Assert.assertEquals(currentYear , form.getHarvestYear());
+		Assert.assertEquals(currentMonth , Integer.valueOf(form.getHarvestMonth()).intValue());
+		Assert.assertEquals(3, form.getSelectedTrialInstances().size());
+
+		Map<String,Object> modelMap = model.asMap();
+		Assert.assertEquals(21, ((List<ChoiceKeyVal>)modelMap.get("yearChoices")).size());
+		Assert.assertEquals(12, ((List<ChoiceKeyVal>)modelMap.get("monthChoices")).size());
+		Assert.assertEquals(2, ((List<ChoiceKeyVal>)modelMap.get("replicationsChoices")).size());
+		Assert.assertEquals("NurseryManager/advanceNurseryModal",returnTemplatePage);
+	}
+
+	@Test
+	public void testCheckMethodTypeModeLineWithNoObservationsReturnsNoMethodErrorMessage(){
+		Workbook workBook = new Workbook();
+		MeasurementVariable measurementVariable = new MeasurementVariable("variateName", "variateDescription", "variateScale", "variateMethod", "variateProperty", "variateDataType",
+				"variateValue", "variateLabel");
+		measurementVariable.setTermId(11);
+		List<MeasurementVariable> variatesList = Lists.newArrayList(measurementVariable);
+		workBook.setVariates(variatesList);
+
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
+		Mockito.when(this.messageSource.getMessage(Mockito.isA(String.class),Mockito.any(Object[].class),Mockito.isA(Locale.class))).thenReturn("The nursery has no methods defined under");
+		String methodType = this.advancingController.checkMethodTypeMode(11);
+		Assert.assertTrue(methodType.contains("The nursery has no methods defined under"));
+	}
 }

@@ -1088,7 +1088,10 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize, tableIdentifier);
 					$(parentDiv + ' .dataTables_length select').select2({minimumResultsForSearch: 10});
 					oSettings.oInstance.fnAdjustColumnSizing();
-				}
+
+                    $(tableIdentifier).parent().css('width','');
+                    $(tableIdentifier).css('width','');
+                }
 			});
 		}
 

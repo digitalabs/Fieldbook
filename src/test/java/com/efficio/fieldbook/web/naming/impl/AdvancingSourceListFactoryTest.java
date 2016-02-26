@@ -34,7 +34,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.generationcp.commons.parsing.AbstractCsvFileParser;
+import org.generationcp.commons.parsing.AbstractCsvFileProcessor;
 import org.generationcp.commons.parsing.FileParsingException;
 
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 
-public class DesignImportParser extends AbstractCsvFileParser<DesignImportData> {
+public class DesignImportParser extends AbstractCsvFileProcessor<DesignImportData> {
 
 	@Override
 	public DesignImportData parseCsvMap(Map<Integer, List<String>> csvMap) throws FileParsingException {

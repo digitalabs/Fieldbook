@@ -3927,3 +3927,11 @@ function exportDesignTemplate() {
 		}
 	});
 }
+
+function switchCategoricalView(showCategoricalDescriptionView) {
+	if (typeof showCategoricalDescriptionView === 'undefined') {
+		showCategoricalDescriptionView = null;
+	}
+
+	return $.get('/Fieldbook/Common/addOrRemoveTraits/setCategoricalDisplayType', {showCategoricalDescriptionView: showCategoricalDescriptionView});
+}

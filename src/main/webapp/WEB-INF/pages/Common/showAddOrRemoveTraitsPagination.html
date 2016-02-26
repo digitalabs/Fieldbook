@@ -65,13 +65,16 @@
 //<![CDATA[
 jQuery().ready(function() {
 	'use strict';
+
+	var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
+
 	$.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax',
 		type: 'GET',
 		data: '',
 		cache: false,
 		success: function(response) {
-			new  BMS.Fieldbook.MeasurementsDataTable('#measurement-table', response);
+			new BMS.Fieldbook.MeasurementsDataTable('#measurement-table', response, isCategoricalDisplay);
 		}
 	});
 

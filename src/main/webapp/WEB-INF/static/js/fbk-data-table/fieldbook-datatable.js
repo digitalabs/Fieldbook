@@ -57,7 +57,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 	 * @param {string} tableIdentifier the id of the table container
 	 * @param {string} ajaxUrl the URL from which to retrieve table data
 	 */
-	var dataTableConstructor = function MeasurementsDataTable(tableIdentifier, dataList) {
+	var dataTableConstructor = function MeasurementsDataTable(tableIdentifier, dataList, isCategoricalDescriptionView) {
 		'use strict';
 
 		var columns = [],
@@ -130,7 +130,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					},
 					render: function(data, type, full, meta) {
 						if (data !== undefined) {
-							return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
+							//TODO: use knowledge from session.isCategoricalDisplayView to render correct data
+							// data[0] = name, data[1] = description, data[2] = accepted value
+							return (isCategoricalDescriptionView ? data[1] : data[0]) + '<input type="hidden" value="' + data[2] + '" />';
 						}
 					}
 				});
@@ -145,7 +147,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -157,7 +159,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -565,7 +567,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -576,7 +578,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -646,7 +648,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 					data: $(this).data('col-name'),
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -657,7 +659,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 					data: $(this).data('col-name'),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -822,7 +824,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -1031,7 +1033,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -1042,7 +1044,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -1212,7 +1214,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -1223,7 +1225,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
 					}
 				});

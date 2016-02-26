@@ -65,7 +65,7 @@
 
 					$http.post('/Fieldbook/manageSettings/hasMeasurementData/' + variableType, variableIds, {cache: false})
 						.success(function(data, status, headers, config) {
-							if ('true' === data) {
+							if ('true' === data || true === data) {
 								var modalInstance = $uibModal.open({
 									templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
 									controller: 'ConfirmModalController',

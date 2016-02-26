@@ -11,12 +11,11 @@
 
 package com.efficio.fieldbook.web.study.service;
 
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 
 public interface ImportStudyService {
 
-	ImportResult importWorkbook(Workbook workbook, String currentFile, String originalFileName) throws WorkbookParserException;
+	ImportResult importWorkbook() throws WorkbookParserException;
 }

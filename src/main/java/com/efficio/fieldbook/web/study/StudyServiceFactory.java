@@ -8,46 +8,46 @@ import com.efficio.fieldbook.web.study.service.impl.ExcelImportStudyServiceImpl;
 import com.efficio.fieldbook.web.study.service.impl.FieldroidImportStudyServiceImpl;
 import com.efficio.fieldbook.web.study.service.impl.KsuCsvImportStudyServiceImpl;
 import com.efficio.fieldbook.web.study.service.impl.KsuExcelImportStudyServiceImpl;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import javax.annotation.Resource;
 
 public class StudyServiceFactory {
 
-	@Resource
-	private CsvImportStudyServiceImpl csvImportStudyService;
+    @Resource
+    protected AutowireCapableBeanFactory beanFactory;
 
-	@Resource
-	private DataKaptureImportStudyServiceImpl dataKaptureImportStudyService;
-
-	@Resource
-	private ExcelImportStudyServiceImpl excelImportStudyService;
-
-	@Resource
-	private FieldroidImportStudyServiceImpl fieldroidImportStudyService;
-
-	@Resource
-	private KsuCsvImportStudyServiceImpl ksuCsvImportStudyService;
-
-	@Resource
-	private KsuExcelImportStudyServiceImpl ksuExcelImportStudyService;
-
-	public ImportStudyService retrieveStudyImporter(final ImportStudyType importStudyType) {
+	public ImportStudyService createStudyImporter(final ImportStudyType importStudyType, final Workbook workbook, final String currentFile, final String originalFileName) {
+        ImportStudyService studyService = null;
 		switch (importStudyType) {
 			case IMPORT_DATAKAPTURE:
-				return dataKaptureImportStudyService;
+				studyService =  new DataKaptureImportStudyServiceImpl(workbook, currentFile, originalFileName);
+                break;
 			case IMPORT_KSU_CSV:
-				return ksuCsvImportStudyService;
+				studyService = new KsuCsvImportStudyServiceImpl(workbook, currentFile, originalFileName);
+                break;
             case IMPORT_KSU_EXCEL:
-                return ksuExcelImportStudyService;
+                studyService = new KsuExcelImportStudyServiceImpl(workbook, currentFile, originalFileName);
+                break;
             case IMPORT_NURSERY_CSV:
-                return csvImportStudyService;
+                studyService = new CsvImportStudyServiceImpl(workbook, currentFile, originalFileName);
+                break;
             case IMPORT_NURSERY_EXCEL:
-                return excelImportStudyService;
+                studyService = new ExcelImportStudyServiceImpl(workbook, currentFile, originalFileName);
+                break;
             case IMPORT_NURSERY_FIELDLOG_FIELDROID:
-                return fieldroidImportStudyService;
+                studyService = new FieldroidImportStudyServiceImpl(workbook, currentFile, originalFileName);
+                break;
             default :
-                return null;
+
 		}
+
+        if (studyService != null) {
+            beanFactory.autowireBeanProperties(studyService, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false);
+        }
+
+        return studyService;
 	}
 
 }

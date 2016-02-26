@@ -1,63 +1,96 @@
 package com.efficio.fieldbook.web.study.service.impl;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
-import com.efficio.fieldbook.web.study.CsvWorkbookParser;
-import com.efficio.fieldbook.web.study.service.ImportStudyService;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
-import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.ImportResult;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.util.ImportStudyUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.efficio.fieldbook.web.study.service.ImportStudyService;
 
 @Service
 @Transactional
-public class CsvImportStudyServiceImpl implements ImportStudyService{
-	
-	@Resource
-	protected FieldbookService fieldbookMiddlewareService;
-
-	@Resource
-	private OntologyService ontologyService;
-	
-	@Resource
-	private ValidationService validationService;
+public class CsvImportStudyServiceImpl  extends AbstractCSVImportStudyService implements ImportStudyService{
 	
 	@Resource
 	protected AutowireCapableBeanFactory beanFactory;
-	
-	@Override
-	public ImportResult importWorkbook(final Workbook workbook, String filename, String originalFilename) throws WorkbookParserException {
-		final String trialInstanceNo = ImportStudyUtil.getTrialInstanceNo(workbook,originalFilename);
-		final Map<String,MeasurementRow> rowsMap = ImportStudyUtil.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNo, workbook.isNursery());
-		
-		try {
-			CsvWorkbookParser csvWorkbookParser = new CsvWorkbookParser(workbook, trialInstanceNo, rowsMap);
-			
-			beanFactory.autowireBean(csvWorkbookParser);
-			
-			csvWorkbookParser.parseFile(filename);
 
-			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
+    public enum CsvRequiredColumnEnum {
+        ENTRY_NO(TermId.ENTRY_NO.getId(), "ENTRY_NO"), PLOT_NO(TermId.PLOT_NO.getId(), "PLOT_NO"), GID(TermId.GID.getId(),
+                "GID"), DESIGNATION(TermId.DESIG.getId(), "DESIGNATION");
 
-			this.validationService.validateObservationValues(workbook, trialInstanceNo);
-			return new ImportResult(csvWorkbookParser.getModes(), new ArrayList<GermplasmChangeDetail>());		
-		} catch (Exception e) {
-			WorkbookUtil.resetWorkbookObservations(workbook);
-			throw new WorkbookParserException(e.getMessage(),e);
-		}
-	}
+        private final Integer id;
+        private final String label;
+
+        private static final Map<Integer, CsvRequiredColumnEnum> LOOK_UP = new HashMap<>();
+
+        static {
+            for (final CsvRequiredColumnEnum cl : EnumSet.allOf(CsvRequiredColumnEnum.class)) {
+                CsvRequiredColumnEnum.LOOK_UP.put(cl.getId(), cl);
+            }
+        }
+
+        CsvRequiredColumnEnum(final Integer id, final String label) {
+            this.id = id;
+            this.label = label;
+        }
+
+        public Integer getId() {
+            return this.id;
+        }
+
+        public String getLabel() {
+            return this.label;
+        }
+
+        public static CsvRequiredColumnEnum get(final Integer id) {
+            return CsvRequiredColumnEnum.LOOK_UP.get(id);
+        }
+    }
+
+    public CsvImportStudyServiceImpl(Workbook workbook, String currentFile, String originalFileName) {
+        super(workbook, currentFile, originalFileName);
+    }
+
+    @Override
+    protected String getLabelFromRequiredColumn(MeasurementVariable variable) {
+        String label = "";
+
+        if (CsvRequiredColumnEnum.get(variable.getTermId()) != null) {
+            label = CsvRequiredColumnEnum.get(variable.getTermId()).getLabel();
+        }
+
+        if (label.trim().length() > 0) {
+            return label;
+        }
+
+        return variable.getName();
+    }
+
+    @Override
+    void validateObservationColumns() throws WorkbookParserException {
+        // validate headers
+        final String[] rowHeaders = parsedData.get(0).toArray(new String[parsedData.get(0).size()]);
+
+        if (!this.isValidHeaderNames(rowHeaders)) {
+            throw new WorkbookParserException("error.workbook.import.requiredColumnsMissing");
+        }
+    }
+
+    boolean isValidHeaderNames(final String[] rowHeaders) {
+        final List<String> rowHeadersList = Arrays.asList(rowHeaders);
+
+        for (final CsvRequiredColumnEnum column : CsvRequiredColumnEnum.values()) {
+            if (!rowHeadersList.contains(column.getLabel().trim())) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

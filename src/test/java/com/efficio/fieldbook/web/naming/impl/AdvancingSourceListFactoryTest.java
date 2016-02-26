@@ -34,6 +34,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -160,6 +161,114 @@ public class AdvancingSourceListFactoryTest {
 
     }
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testCreateAdvancingSourceListSuccessWithBreedingMethodVariateText() throws FieldbookException {
+		ExpressionDataProcessor expressionDataProcessor = Mockito.mock(ExpressionDataProcessor.class);
+		Mockito.when(dataProcessorFactory.retrieveExecutorProcessor()).thenReturn(expressionDataProcessor);
+
+		Mockito.doNothing().when(expressionDataProcessor).processEnvironmentLevelData(Mockito.isA(AdvancingSource.class),Mockito.isA(Workbook.class),
+				Mockito.isA(AdvancingNursery.class),Mockito.isNull(Study.class));
+
+		List<Germplasm> germplasmList = Lists.newArrayList();
+		Germplasm germplasm = new Germplasm();
+		germplasm.setGid(13);
+		germplasm.setGpid1(401);
+		germplasm.setGpid2(402);
+		germplasm.setGnpgs(403);
+		germplasm.setMethodId(13);
+
+		germplasmList.add(germplasm);
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasms(Mockito.isA(List.class))).thenReturn(germplasmList);
+
+		Map<Integer,List<Name>> names = Maps.newHashMap();
+		List<Name> nameList = Lists.newArrayList();
+		Name name = new Name();
+		name.setNid(32);
+		name.setNval("nVal");
+		name.setTypeId(23);
+		name.setNstat(11);
+
+		nameList.add(name);
+		names.put(13, nameList);
+
+		Mockito.when(this.fieldbookMiddlewareService.getNamesByGids(Mockito.isA(List.class))).thenReturn(names);
+
+		Workbook workBook = new Workbook();
+		workBook.setObservations(generateMeasurementRows());
+
+		AdvancingNursery advanceNurseryInfo = new AdvancingNursery();
+		advanceNurseryInfo.setMethodVariateId(8261);
+		advanceNurseryInfo.setLineVariateId(2);
+		advanceNurseryInfo.setPlotVariateId(3);
+
+		Study study = null;
+
+		Map<Integer, Method > breedingMethodMap = Maps.newConcurrentMap();
+		Method bulkMethod = new Method();
+		bulkMethod.setGeneq(1490);
+		bulkMethod.setCount("1");
+		bulkMethod.setIsnew(true);
+		bulkMethod.setMcode("methodCode");
+		bulkMethod.setMdesc("methodDesc");
+		bulkMethod.setMgrp("methodGrp");
+		bulkMethod.setMid(31);
+		bulkMethod.setMname("Breeding Method");
+		bulkMethod.setPrefix("prefix");
+
+		breedingMethodMap.put(100,bulkMethod);
+
+		Map<String, Method > breedingMethodCodeMap = Maps.newConcurrentMap();
+		Method methodVariateText = new Method();
+		methodVariateText.setGeneq(1500);
+		methodVariateText.setMcode("methodTextCode");
+		methodVariateText.setMid(100);
+		methodVariateText.setMname("BreedingMethodVariateText");
+		methodVariateText.setPrefix("prefix");
+		breedingMethodCodeMap.put("methodTextCode", methodVariateText);
+
+		advanceNurseryInfo.setSelectedTrialInstances(Sets.newHashSet(ENV_NUMBER));
+		advanceNurseryInfo.setSelectedReplications(Sets.newHashSet(REPLICATION_NUMBER));
+
+		AdvancingSourceList advancingSourceList = factory.createAdvancingSourceList(workBook, advanceNurseryInfo, study, breedingMethodMap, breedingMethodCodeMap);
+
+		Assert.assertEquals("Expected number of advancing source rows were not generated.", 1, advancingSourceList.getRows().size());
+		AdvancingSource source = advancingSourceList.getRows().get(0);
+
+		Assert.assertNotNull(source);
+		Assert.assertEquals("13", source.getGermplasm().getGid());
+		Assert.assertEquals(13, source.getGermplasm().getBreedingMethodId().intValue());
+		Assert.assertEquals(401, source.getGermplasm().getGpid1().intValue());
+		Assert.assertEquals(402, source.getGermplasm().getGpid2().intValue());
+		Assert.assertEquals(403, source.getGermplasm().getGnpgs().intValue());
+		Assert.assertEquals(32, source.getNames().get(0).getNid().intValue());
+		Assert.assertEquals("nVal", source.getNames().get(0).getNval());
+		Assert.assertEquals(11, source.getNames().get(0).getNstat().intValue());
+		Assert.assertEquals(15, source.getPlantsSelected().intValue());
+
+		Assert.assertEquals(1490, source.getBreedingMethod().getGeneq().intValue());
+		Assert.assertEquals("1", source.getBreedingMethod().getCount());
+		Assert.assertTrue(source.getBreedingMethod().getIsnew());
+		Assert.assertEquals("methodCode", source.getBreedingMethod().getMcode());
+		Assert.assertEquals("methodDesc", source.getBreedingMethod().getMdesc());
+		Assert.assertEquals("methodGrp", source.getBreedingMethod().getMgrp());
+		Assert.assertEquals(31, source.getBreedingMethod().getMid().intValue());
+		Assert.assertEquals("Breeding Method", source.getBreedingMethod().getMname());
+		Assert.assertEquals("prefix", source.getBreedingMethod().getPrefix());
+
+		Assert.assertTrue(source.isBulk());
+		Assert.assertTrue(source.isCheck());
+		Assert.assertNull(source.getChangeDetail());
+		Assert.assertNull(source.getHarvestLocationId());
+		Assert.assertEquals(ENV_NUMBER,source.getTrialInstanceNumber());
+		Assert.assertEquals(REPLICATION_NUMBER,source.getReplicationNumber());
+		Assert.assertEquals("plotNumber14",source.getPlotNumber());
+		Assert.assertNull(source.getSelectionTraitValue());
+		Assert.assertFalse(source.isForceUniqueNameGeneration());
+
+	}
+
+
     private List<MeasurementRow> generateMeasurementRows(){
         List<MeasurementRow> observations = Lists.newArrayList();
         MeasurementRow row1 = new MeasurementRow();
@@ -219,6 +328,13 @@ public class AdvancingSourceListFactoryTest {
         measurementVariable17.setTermId(TermId.REP_NO.getId());
         measurementData17.setMeasurementVariable(measurementVariable17);
         rowData1.add(measurementData17);
+
+		MeasurementData measurementData18 = new MeasurementData();
+		measurementData18.setValue("BreedingMethodVariateText");
+		MeasurementVariable measurementVariable18 = new MeasurementVariable();
+		measurementVariable18.setTermId(TermId.BREEDING_METHOD_VARIATE_TEXT.getId());
+		measurementData18.setMeasurementVariable(measurementVariable18);
+		rowData1.add(measurementData18);
 
         row1.setDataList(rowData1);
 

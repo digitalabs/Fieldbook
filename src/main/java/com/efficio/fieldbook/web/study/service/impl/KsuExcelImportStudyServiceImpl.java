@@ -1,105 +1,55 @@
 
 package com.efficio.fieldbook.web.study.service.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
-import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
-import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.ImportResult;
-import com.efficio.fieldbook.web.util.ImportStudyUtil;
+import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-
-import javax.annotation.Resource;
 
 @Service
 @Transactional
-public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl implements ImportStudyService {
+public class KsuExcelImportStudyServiceImpl extends AbstractExcelImportStudyService implements ImportStudyService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(KsuExcelImportStudyServiceImpl.class);
+    public KsuExcelImportStudyServiceImpl(final Workbook workbook, final String currentFile, final String originalFileName){
+        super(workbook, currentFile, originalFileName);
+    }
 
-    @Resource
-    private OntologyService ontologyService;
+    @Override
+    protected void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes) {
+        // TODO added trait checking / header renaming
+    }
 
-    @Resource
-    private FieldbookService fieldbookMiddlewareService;
+    @Override
+    void validateObservationColumns() throws WorkbookParserException {
+        final Sheet observationSheet = parsedData.getSheetAt(0);
+        final String[] headerNames = this.getColumnHeaders(observationSheet);
+        if (!this.isValidHeaderNames(headerNames)) {
+            throw new WorkbookParserException("error.workbook.import.requiredColumnsMissing");
+        }
+    }
 
-	@Override
-	public ImportResult importWorkbook(final Workbook workbook, final String currentFile, final String originalFilename) throws WorkbookParserException {
+    @Override
+    void validateImportMetadata() throws WorkbookParserException {
+        this.validateNumberOfSheets(parsedData);
+    }
 
-		try {
-			// read the file
-			final org.apache.poi.ss.usermodel.Workbook xlsBook = this.parseFile(currentFile);
-
-			this.validate(xlsBook);
-
-			final String trialInstanceNumber = ImportStudyUtil.getTrialInstanceNo(workbook, xlsBook.getSheetName(0));
-
-			final Map<String, MeasurementRow> rowsMap =
-					ImportStudyUtil.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
-
-			final Set<ChangeType> modes = new HashSet<ChangeType>();
-			final List<GermplasmChangeDetail> changeDetailsList = new ArrayList<GermplasmChangeDetail>();
-			this.importDataToWorkbook(modes, xlsBook.getSheetAt(0), rowsMap, trialInstanceNumber, changeDetailsList, workbook);
-
-			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
-
-			this.validationService.validateObservationValues(workbook, trialInstanceNumber);
-
-			return new ImportResult(new HashSet<ChangeType>(), new ArrayList<GermplasmChangeDetail>());
-
-		} catch (final IOException e) {
-			throw new WorkbookParserException(e.getMessage(), e);
-		} catch (final MiddlewareQueryException e) {
-			KsuExcelImportStudyServiceImpl.LOG.error(e.getMessage(), e);
-			WorkbookUtil.resetWorkbookObservations(workbook);
-			return new ImportResult(e.getMessage());
-		} catch (final WorkbookParserException e) {
-			WorkbookUtil.resetWorkbookObservations(workbook);
-			throw e;
-		}
-	}
-
-	protected void validate(final org.apache.poi.ss.usermodel.Workbook xlsBook) throws WorkbookParserException {
-
-		this.validateNumberOfSheets(xlsBook);
-
-		final Sheet observationSheet = xlsBook.getSheetAt(0);
-		final String[] headerNames = this.getColumnHeaders(observationSheet);
-		if (!this.isValidHeaderNames(headerNames)) {
-			throw new WorkbookParserException("error.workbook.import.requiredColumnsMissing");
-		}
-	}
-
-	protected boolean isValidHeaderNames(final String[] headerNames) {
+    protected boolean isValidHeaderNames(final String[] headerNames) {
 		return KsuFieldbookUtil.isValidHeaderNames(headerNames);
 	}
 
-	@Override
 	protected void validateNumberOfSheets(final org.apache.poi.ss.usermodel.Workbook xlsBook) throws WorkbookParserException {
 		if (xlsBook.getNumberOfSheets() != 1) {
 			throw new WorkbookParserException("error.workbook.import.invalidNumberOfSheets");

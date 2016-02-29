@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -291,73 +292,62 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/stock/{id}", method = RequestMethod.GET)
-	public String showStockListLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model,
-			HttpServletRequest req, HttpSession session, @PathVariable int id, Locale locale) {
+	public String showStockListLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, HttpSession session, @PathVariable int id, Locale locale) {
 
-		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
-				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+		SessionUtility.clearSessionData(session,
+                new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
+                        SessionUtility.FIELDMAP_SESSION_NAME,
+                        SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 
 		// retrieve the stock list
-		GermplasmList stockList = null;
+		GermplasmList stockList = this.germplasmListManager.getGermplasmListById(id);
 
-		boolean isTrial = this.userSelection.isTrial();
+        Study study = this.fieldbookMiddlewareService.getStudy(stockList.getProjectId());
+        List<Integer> ids = new ArrayList<>();
+        ids.add(stockList.getProjectId());
 
-		try {
-			stockList = this.germplasmListManager.getGermplasmListById(id);
-		} catch (MiddlewareQueryException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-		}
+        boolean isTrial = Objects.equals(study.getType(), "T");
 
-		if (stockList != null) {
-			Study study = null;
-			List<FieldMapInfo> fieldMapInfoList = null;
-			FieldMapInfo fieldMapInfo = null;
-			boolean hasFieldMap = false;
-			try {
-				study = this.fieldbookMiddlewareService.getStudy(stockList.getProjectId());
-				List<Integer> ids = new ArrayList<>();
-				ids.add(stockList.getProjectId());
+        List<FieldMapInfo> fieldMapInfoList;
 
-				if(isTrial){
-					fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
-				}else {
-					fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
-				}
+        if(isTrial){
+            fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
+        }else {
+            fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
+        }
 
-				for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
-					fieldMapInfo = fieldMapInfoDetail;
-					fieldMapInfo.getDatasets().get(0).getTrialInstances().get(0).setStockList(stockList);
-					hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
-				}
-			} catch (MiddlewareException e) {
-				LabelPrintingController.LOG.error(e.getMessage(), e);
-			}
-			this.userLabelPrinting.setStudy(study);
-			this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
-			this.userLabelPrinting.setBarcodeNeeded("0");
-			this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
-			this.userLabelPrinting.setNumberOfLabelPerRow("3");
-			this.userLabelPrinting.setIsStockList(true);
-			this.userLabelPrinting.setStockList(stockList);
-			this.userLabelPrinting.setInventoryDetailsMap(this.labelPrintingService.getInventoryDetailsMap(stockList));
-			this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
-			form.setUserLabelPrinting(this.userLabelPrinting);
-			StudyType studyType = isTrial ? StudyType.T : StudyType.N;
-			model.addAttribute(
-					LabelPrintingController.AVAILABLE_FIELDS,
-					this.labelPrintingService.getAvailableLabelFieldsForStockList(
-							this.labelPrintingService.getStockListType(stockList.getType()), locale, studyType, stockList.getProjectId()));
+        FieldMapInfo fieldMapInfo = null;
+        for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
+            fieldMapInfo = fieldMapInfoDetail;
+            fieldMapInfo.getDatasets().get(0).getTrialInstances().get(0).setStockList(stockList);
+            this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
+        }
 
-			if(isTrial){
-				form.setIsTrial(true);
-				this.userLabelPrinting.setIsTrial(true);
-			}else {
-				form.setIsTrial(false);
-				this.userLabelPrinting.setIsTrial(false);
-			}
+        this.userLabelPrinting.setStudy(study);
+        this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
+        this.userLabelPrinting.setBarcodeNeeded("0");
+        this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
+        this.userLabelPrinting.setNumberOfLabelPerRow("3");
+        this.userLabelPrinting.setIsStockList(true);
+        this.userLabelPrinting.setStockList(stockList);
+        this.userLabelPrinting.setInventoryDetailsMap(this.labelPrintingService.getInventoryDetailsMap(stockList));
+        this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
+        form.setUserLabelPrinting(this.userLabelPrinting);
+        StudyType studyType = isTrial ? StudyType.T : StudyType.N;
+        model.addAttribute(
+                LabelPrintingController.AVAILABLE_FIELDS,
+                this.labelPrintingService.getAvailableLabelFieldsForStockList(
+                        this.labelPrintingService.getStockListType(stockList.getType()), locale, studyType, stockList.getProjectId()));
 
-			form.setIsStockList(true);
-		}
+        if(isTrial){
+            form.setIsTrial(true);
+            this.userLabelPrinting.setIsTrial(true);
+        }else {
+            form.setIsTrial(false);
+            this.userLabelPrinting.setIsTrial(false);
+        }
+
+        form.setIsStockList(true);
 
 		return super.show(model);
 	}

@@ -607,6 +607,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		suffix = null == suffix ? "" : suffix;
 
+		// generate measurement row data from dataList (existing / generated data)
 		for (MeasurementData data : row.getDataList()) {
 			if (data.isCategorical()) {
 				CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
@@ -619,6 +620,8 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 				dataMap.put(data.getMeasurementVariable().getName(), data.getDisplayValue());
 			}
 		}
+
+		// generate measurmenet row data from newly added traits (no data yet)
 		UserSelection userSelection = this.getUserSelection(false);
 		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
 				&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {

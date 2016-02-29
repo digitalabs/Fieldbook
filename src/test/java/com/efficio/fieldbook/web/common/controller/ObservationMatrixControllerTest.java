@@ -338,7 +338,7 @@ public class ObservationMatrixControllerTest {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> dataMap = (Map<String, Object>) results.get("data");
 
-		Assert.assertTrue("The Accepted flag should be true", (boolean) ((Object[]) dataMap.get("TestVarName2"))[1]);
+		Assert.assertTrue("The Accepted flag should be true", (boolean) ((Object[]) dataMap.get("TestVarName2"))[2]);
 
 	}
 

@@ -306,11 +306,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         List<Integer> ids = new ArrayList<>();
         ids.add(stockList.getProjectId());
 
-        boolean isTrial = Objects.equals(study.getType(), "T");
-
         List<FieldMapInfo> fieldMapInfoList;
 
-        if(isTrial){
+        if(Objects.equals(study.getType(), StudyType.T)){
             fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
         }else {
             fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
@@ -333,13 +331,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         this.userLabelPrinting.setInventoryDetailsMap(this.labelPrintingService.getInventoryDetailsMap(stockList));
         this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
         form.setUserLabelPrinting(this.userLabelPrinting);
-        StudyType studyType = isTrial ? StudyType.T : StudyType.N;
         model.addAttribute(
                 LabelPrintingController.AVAILABLE_FIELDS,
                 this.labelPrintingService.getAvailableLabelFieldsForStockList(
-                        this.labelPrintingService.getStockListType(stockList.getType()), locale, studyType, stockList.getProjectId()));
+                        this.labelPrintingService.getStockListType(stockList.getType()), locale, study.getType(), stockList.getProjectId()));
 
-        if(isTrial){
+        if(Objects.equals(study.getType(), StudyType.T)) {
             form.setIsTrial(true);
             this.userLabelPrinting.setIsTrial(true);
         }else {

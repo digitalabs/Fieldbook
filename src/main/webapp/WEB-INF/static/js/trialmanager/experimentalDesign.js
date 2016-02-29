@@ -118,7 +118,8 @@
 
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 
-					if (!$scope.data || Object.keys($scope.data).length === 0) {
+					// the property "startingEntryNo" is at least part of the data object here when the germplasm tab is loaded first
+					if (!$scope.data || Object.keys($scope.data).length <= 1) {
 						angular.copy({
 							totalGermplasmListCount: $scope.totalGermplasmEntryListCount,
 							designType: null,

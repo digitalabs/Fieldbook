@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.CategoricalDisplayValue;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -608,9 +609,10 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		for (MeasurementData data : row.getDataList()) {
 			if (data.isCategorical()) {
-				String[] categoricalDisplayValue = data.getDisplayValueForCategoricalData();
+				CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
 				dataMap.put(data.getMeasurementVariable().getName(),
-						new Object[] {categoricalDisplayValue[0] + suffix, categoricalDisplayValue[1] + suffix, data.isAccepted()});
+						new Object[] {categoricalDisplayValue.getName() + suffix, categoricalDisplayValue.getDescription() + suffix, data.isAccepted()});
+
 			} else if (data.isNumeric()) {
 				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() + suffix, data.isAccepted()});
 			} else {
@@ -622,7 +624,11 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 				&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {
 			for (MeasurementVariable var : userSelection.getMeasurementDatasetVariable()) {
 				if (!dataMap.containsKey(var.getName())) {
-					dataMap.put(var.getName(), "");
+					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
+						dataMap.put(var.getName(), new Object[] {"", "", true});
+					} else {
+						dataMap.put(var.getName(), "");
+					}
 				}
 			}
 		}

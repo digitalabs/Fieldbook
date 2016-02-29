@@ -57,7 +57,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 	 * @param {string} tableIdentifier the id of the table container
 	 * @param {string} ajaxUrl the URL from which to retrieve table data
 	 */
-	var dataTableConstructor = function MeasurementsDataTable(tableIdentifier, dataList, isCategoricalDescriptionView) {
+	var dataTableConstructor = function MeasurementsDataTable(tableIdentifier, dataList) {
 		'use strict';
 
 		var columns = [],
@@ -113,8 +113,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					targets: columns.length - 1,
 					createdCell: function(td, cellData, rowData, row, col) {
 						if (isVariates) {
-							var cellText = $(td).text();
-							if ($.inArray(cellText, possibleValues) === -1) {
+							if ($.inArray(cellData[1], possibleValues) === -1) {
 								$(td).removeClass('accepted-value');
 								$(td).removeClass('invalid-value');
 								if ($(td).text() !== 'missing') {
@@ -132,7 +131,13 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						if (data !== undefined) {
 							//TODO: use knowledge from session.isCategoricalDisplayView to render correct data
 							// data[0] = name, data[1] = description, data[2] = accepted value
-							return (isCategoricalDescriptionView ? data[1] : data[0]) + '<input type="hidden" value="' + data[2] + '" />';
+							var showDescription = window.isCategoricalDescriptionView ? 'style="display:none"' : '';
+							var showName = !window.isCategoricalDescriptionView ? 'style="display:none"' : '';
+
+							var categoricalNameDom = '<span class="fbk-measurement-categorical-name" '+ showName  + '>' + data[1] + '</span>';
+							var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" '+ showDescription  + '>' + data[0] + '</span>';
+
+							return (isVariates ? categoricalNameDom + categoricalDescDom : data[1]) + '<input type="hidden" value="' + data[2] + '" />';
 						}
 					}
 				});

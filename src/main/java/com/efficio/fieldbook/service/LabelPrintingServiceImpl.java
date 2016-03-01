@@ -209,13 +209,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		for (final FieldMapTrialInstanceInfo instanceInfo : trialFieldMap) {
 			params.setInstanceInfo(instanceInfo);
-
-			if (isStockList) {
+			if (isStockList && instanceInfo.getStockList() != null) {
 				params.setStockList(instanceInfo.getStockList());
 				params.setIsStockList(true);
 				params.setInventoryDetailsMap(this.getInventoryDetailsMap(params.getStockList()));
 			}
-
+			
 			if (isTrial) {
 				params.setInstanceMeasurements(measurementData.get(instanceInfo.getTrialInstanceNo()));
 				params.setEnvironmentData(environmentData.get(instanceInfo.getTrialInstanceNo()));

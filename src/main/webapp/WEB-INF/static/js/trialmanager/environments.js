@@ -40,23 +40,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				$scope.settings.trialConditionDetails = [];
 			}
 
-			$scope.isLocation = $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
-
-			$scope.buttonsTopWithLocation = [{
-				//TODO disable?
-				text: $.fieldbookMessages.nurseryManageSettingsManageLocation,
-				className: 'fbk-buttons-no-border fbk-buttons-link',
-				action: function() {
-					$scope.initiateManageLocationModal();
-				}
-			},
-			{
-				extend:'colvis',
-				className: 'fbk-buttons-no-border fbk-colvis-button',
-				text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>',
-				columns: ':gt(0):not(.ng-hide)'
-			}];
-
 			$scope.buttonsTop = [{
 				extend:'colvis',
 				className: 'fbk-buttons-no-border fbk-colvis-button',
@@ -94,11 +77,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 			$scope.$on('deleteOccurred', function() {
 				$scope.nested.dtInstance.rerender();
 			});
-
-			$scope.initiateManageLocationModal = function() {
-				//TODO $scope.variableDefinition.locationUpdated = false;
-				openManageLocations();
-			};
 
 			//prepopulate the datatable
 			populateDatatableWithDefaultValues();

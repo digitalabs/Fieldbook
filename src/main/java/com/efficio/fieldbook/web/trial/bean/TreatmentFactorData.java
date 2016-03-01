@@ -15,8 +15,6 @@ public class TreatmentFactorData {
 	private List<String> labels;
 	private Integer variableId;
 
-	public static final String PAIR_VARIABLE_ID_KEY = "variableId";
-
 	public TreatmentFactorData() {
 		this.labels = new ArrayList<String>();
 	}

@@ -29,9 +29,6 @@ public class Name implements Serializable {
 	/** The Constant ENGLISH. */
 	public static final String ENGLISH = "english";
 
-	/** The Constant CHINESE. */
-	public static final String CHINESE = "chinese";
-
 	/** The names. */
 	private Map<String, String> names = new LinkedHashMap<String, String>();
 

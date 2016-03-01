@@ -37,7 +37,6 @@ public class SeedStoreManagerController extends SeedInventoryTableDisplayingCont
 
 	/** The Constant URL. */
 	public static final String URL = "/SeedStoreManager";
-	public static final String PAGINATION_TEMPLATE = "/Inventory/seedInventoryPagination";
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;

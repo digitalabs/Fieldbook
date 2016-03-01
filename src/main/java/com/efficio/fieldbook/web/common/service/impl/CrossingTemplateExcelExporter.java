@@ -39,7 +39,6 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 public class CrossingTemplateExcelExporter {
 
 	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s.xls";
-	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
 
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;

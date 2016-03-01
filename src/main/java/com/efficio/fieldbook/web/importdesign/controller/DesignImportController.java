@@ -106,8 +106,6 @@ public class DesignImportController extends SettingsController {
 
 	public static final String REVIEW_DETAILS_PAGINATION_TEMPLATE = "/DesignImport/reviewDetailsPagination";
 
-	public static final String DESIGN_TEMPLATE_FOLDER = "DesignPresets";
-
 	@Resource
 	private DesignImportParser parser;
 

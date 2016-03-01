@@ -177,6 +177,12 @@
 
     							return possibleValues;
     						};
+    						
+    						$scope.initiateManageLocationModal = function() {
+    							//TODO $scope.variableDefinition.locationUpdated = false;
+    							openManageLocations();
+    						};
+
 
     						$(document).off('location-update');
     						$(document).on('location-update', $scope.updateLocationValues);

@@ -94,22 +94,20 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 				}
 			}
 
-			if (useLatinized != null && useLatinized.booleanValue()) {
-				if (parameter.getReplicationsArrangement() != null) {
-					if (parameter.getReplicationsArrangement().intValue() == 1) {
-						// column
-						parameter.setReplatinGroups(parameter.getReplicationsCount());
-					} else if (parameter.getReplicationsArrangement().intValue() == 2) {
-						// rows
-						String rowReplatingGroup = "";
-						for (int i = 0; i < Integer.parseInt(parameter.getReplicationsCount()); i++) {
-							if (rowReplatingGroup != null && !rowReplatingGroup.equalsIgnoreCase("")) {
-								rowReplatingGroup += ",";
-							}
-							rowReplatingGroup += "1";
+			if (useLatinized != null && useLatinized.booleanValue() && parameter.getReplicationsArrangement() != null) {
+				if (parameter.getReplicationsArrangement().intValue() == 1) {
+					// column
+					parameter.setReplatinGroups(parameter.getReplicationsCount());
+				} else if (parameter.getReplicationsArrangement().intValue() == 2) {
+					// rows
+					String rowReplatingGroup = "";
+					for (int i = 0; i < Integer.parseInt(parameter.getReplicationsCount()); i++) {
+						if (rowReplatingGroup != null && !rowReplatingGroup.equalsIgnoreCase("")) {
+							rowReplatingGroup += ",";
 						}
-						parameter.setReplatinGroups(rowReplatingGroup);
+						rowReplatingGroup += "1";
 					}
+					parameter.setReplatinGroups(rowReplatingGroup);
 				}
 			}
 

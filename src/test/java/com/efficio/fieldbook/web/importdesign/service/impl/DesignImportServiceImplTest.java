@@ -392,8 +392,7 @@ public class DesignImportServiceImplTest {
 		final DesignImportMeasurementRowGenerator measurementRowGenerator = this.generateMeasurementRowGenerator();
 		final int trialInstanceNo = 1;
 		final Integer startingPlotNo = 3;
-		this.service
-				.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, startingPlotNo);
+		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, startingPlotNo);
 
 		Assert.assertEquals("The number of measurement rows from the csv file must be equal to the number of measurements row generated.",
 				csvData.size() - 1, measurements.size());
@@ -422,20 +421,18 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testGetStartingEntryAndPlotNoFromCSV() {
+	public void testGetStartingPlotNoFromCSV() {
 
 		final Map<Integer, List<String>> csvData = this.designImportData.getCsvData();
 		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map =
 				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 
-		final int expectedStartingEntryNo = 1;
 		final int expectedStartingPlotNo = 1;
 
-		final Map<String, Integer> startingNoMap = this.service.getStartingPlotNoFromCSV(csvData, map);
-		Assert.assertEquals("Expecting that the starting entry no is equal to " + expectedStartingEntryNo + " but returned "
-				+ startingNoMap.get("startingEntryNo").intValue(), expectedStartingEntryNo, startingNoMap.get("startingEntryNo").intValue());
-		Assert.assertEquals("Expecting that the starting plot no is equal to " + expectedStartingPlotNo + " but returned "
-				+ startingNoMap.get("startingPlotNo").intValue(), expectedStartingPlotNo, startingNoMap.get("startingPlotNo").intValue());
+		final Integer startingPlotNo = this.service.getStartingPlotNoFromCSV(csvData, map);
+		Assert.assertEquals(
+				"Expecting that the starting plot no is equal to " + expectedStartingPlotNo + " but returned " + startingPlotNo.intValue(),
+				expectedStartingPlotNo, startingPlotNo.intValue());
 	}
 
 	@Test

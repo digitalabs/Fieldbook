@@ -1,19 +1,15 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import junit.framework.Assert;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.efficio.fieldbook.web.util.KsuFieldbookUtil.KsuRequiredColumnEnum;
+import junit.framework.Assert;
 
 public class KsuExcelImportStudyServiceImplTest {
 
@@ -22,28 +18,6 @@ public class KsuExcelImportStudyServiceImplTest {
 	@Before
 	public void setUp() {
 		this.ksuExcelImportStudy = Mockito.spy(new KsuExcelImportStudyServiceImpl());
-	}
-
-	@Test
-	public void testGetLabelFromKsuRequiredColumn_ReturnsLabelFromKsuRequiredColumnEnum() {
-		MeasurementVariable variable = new MeasurementVariable();
-		variable.setTermId(TermId.ENTRY_NO.getId());
-
-		String returnedLabel = this.ksuExcelImportStudy.getLabelFromKsuRequiredColumn(variable);
-		String expectedLabel = KsuRequiredColumnEnum.get(variable.getTermId()).getLabel();
-
-		Assert.assertEquals("Expecting to returned label from the ksuRequiredColumnEnum but didn't.", expectedLabel, returnedLabel);
-	}
-
-	@Test
-	public void testGetLabelFromKsuRequiredColumn_ReturnsLabelFromVariableName() {
-		MeasurementVariable variable = new MeasurementVariable();
-		variable.setTermId(TermId.CROSS.getId());
-		String expectedLabel = "Sample Label";
-		variable.setName(expectedLabel);
-
-		String returnedLabel = this.ksuExcelImportStudy.getLabelFromKsuRequiredColumn(variable);
-		Assert.assertEquals("Expecting to returned label from the variable name but didn't.", expectedLabel, returnedLabel);
 	}
 
 	@Test
@@ -119,31 +93,12 @@ public class KsuExcelImportStudyServiceImplTest {
 			Mockito.doNothing().when(this.ksuExcelImportStudy).validateNumberOfSheets(xlsBook);
 			Mockito.doReturn(observationSheet).when(xlsBook).getSheetAt(0);
 
-			String[] headerNames = {"Plot", "Entry_no", "GID", "Designation"};
+			String[] headerNames = {"plot", "ENTRY_NO", "GID", "DESIGNATION"};
 			Mockito.doReturn(headerNames).when(this.ksuExcelImportStudy).getColumnHeaders(observationSheet);
 
 			this.ksuExcelImportStudy.validate(xlsBook);
 		} catch (WorkbookParserException e) {
 			Assert.fail("Expecting to not return an exception for valid headers but didn't.");
-		}
-	}
-
-	@Test
-	public void testGetTrialInstanceNoFromFileName_ReturnsAnExceptionForFileNameWithoutTrialInstanceNo() {
-		try {
-			this.ksuExcelImportStudy.getTrialInstanceNoFromFileName("SampleFile.xls");
-			Assert.fail("Expecting to return an exception for filename without trial instance no but didn't.");
-		} catch (WorkbookParserException e) {
-			Assert.assertEquals("error.workbook.import.missing.trial.instance", e.getMessage());
-		}
-	}
-
-	@Test
-	public void testGetTrialInstanceNoFromFileName_ReturnsNoExceptionForFileNameWithTrialInstanceNo() {
-		try {
-			this.ksuExcelImportStudy.getTrialInstanceNoFromFileName("2015.03.17_Trial 001-1.xls");
-		} catch (WorkbookParserException e) {
-			Assert.fail("Expecting to not return an exception for filename with trial instance no but didn't.");
 		}
 	}
 }

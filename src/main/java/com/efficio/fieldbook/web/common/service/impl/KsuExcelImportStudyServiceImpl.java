@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -31,8 +29,8 @@ import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
+import com.efficio.fieldbook.web.util.ImportStudyUtil;
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
-import com.efficio.fieldbook.web.util.KsuFieldbookUtil.KsuRequiredColumnEnum;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -43,22 +41,22 @@ public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl 
 	private static final Logger LOG = LoggerFactory.getLogger(KsuExcelImportStudyServiceImpl.class);
 
 	@Override
-	public ImportResult importWorkbook(Workbook workbook, String filename, OntologyService ontologyService,
-			FieldbookService fieldbookMiddlewareService) throws WorkbookParserException {
+	public ImportResult importWorkbook(final Workbook workbook, final String filename, final OntologyService ontologyService,
+			final FieldbookService fieldbookMiddlewareService) throws WorkbookParserException {
 
 		try {
 			// read the file
-			org.apache.poi.ss.usermodel.Workbook xlsBook = this.parseFile(filename);
+			final org.apache.poi.ss.usermodel.Workbook xlsBook = this.parseFile(filename);
 
 			this.validate(xlsBook);
 
-			String trialInstanceNumber = this.getTrialInstanceNo(workbook, xlsBook.getSheetName(0));
+			final String trialInstanceNumber = ImportStudyUtil.getTrialInstanceNo(workbook, xlsBook.getSheetName(0));
 
-			Map<String, MeasurementRow> rowsMap =
-					this.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
+			final Map<String, MeasurementRow> rowsMap =
+					ImportStudyUtil.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
 
-			Set<ChangeType> modes = new HashSet<ChangeType>();
-			List<GermplasmChangeDetail> changeDetailsList = new ArrayList<GermplasmChangeDetail>();
+			final Set<ChangeType> modes = new HashSet<ChangeType>();
+			final List<GermplasmChangeDetail> changeDetailsList = new ArrayList<GermplasmChangeDetail>();
 			this.importDataToWorkbook(modes, xlsBook.getSheetAt(0), rowsMap, trialInstanceNumber, changeDetailsList, workbook);
 
 			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
@@ -67,73 +65,47 @@ public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl 
 
 			return new ImportResult(new HashSet<ChangeType>(), new ArrayList<GermplasmChangeDetail>());
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new WorkbookParserException(e.getMessage(), e);
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			KsuExcelImportStudyServiceImpl.LOG.error(e.getMessage(), e);
 			WorkbookUtil.resetWorkbookObservations(workbook);
 			return new ImportResult(e.getMessage());
-		} catch (WorkbookParserException e) {
+		} catch (final WorkbookParserException e) {
 			WorkbookUtil.resetWorkbookObservations(workbook);
 			throw e;
 		}
 	}
 
-	protected String getTrialInstanceNo(Workbook workbook, String filename) throws WorkbookParserException {
-		String trialInstanceNumber = workbook != null && workbook.isNursery() ? "1" : this.getTrialInstanceNoFromFileName(filename);
-		if (trialInstanceNumber == null || "".equalsIgnoreCase(trialInstanceNumber)) {
-			throw new WorkbookParserException("error.workbook.import.missing.trial.instance");
-		}
-		return trialInstanceNumber;
-	}
-
-	protected String getTrialInstanceNoFromFileName(String filename) throws WorkbookParserException {
-		String trialInstanceNumber = "";
-
-		String pattern = "(.+)[-](\\d+)";
-		Pattern r = Pattern.compile(pattern);
-		Matcher m = r.matcher(filename);
-
-		if (m.find()) {
-			trialInstanceNumber = m.group(m.groupCount());
-		}
-
-		if (!NumberUtils.isNumber(trialInstanceNumber)) {
-			throw new WorkbookParserException("error.workbook.import.missing.trial.instance");
-		}
-
-		return trialInstanceNumber;
-	}
-
-	protected void validate(org.apache.poi.ss.usermodel.Workbook xlsBook) throws WorkbookParserException {
+	protected void validate(final org.apache.poi.ss.usermodel.Workbook xlsBook) throws WorkbookParserException {
 
 		this.validateNumberOfSheets(xlsBook);
 
-		Sheet observationSheet = xlsBook.getSheetAt(0);
-		String[] headerNames = this.getColumnHeaders(observationSheet);
+		final Sheet observationSheet = xlsBook.getSheetAt(0);
+		final String[] headerNames = this.getColumnHeaders(observationSheet);
 		if (!this.isValidHeaderNames(headerNames)) {
 			throw new WorkbookParserException("error.workbook.import.requiredColumnsMissing");
 		}
 	}
 
-	protected boolean isValidHeaderNames(String[] headerNames) {
+	protected boolean isValidHeaderNames(final String[] headerNames) {
 		return KsuFieldbookUtil.isValidHeaderNames(headerNames);
 	}
 
 	@Override
-	protected void validateNumberOfSheets(org.apache.poi.ss.usermodel.Workbook xlsBook) throws WorkbookParserException {
+	protected void validateNumberOfSheets(final org.apache.poi.ss.usermodel.Workbook xlsBook) throws WorkbookParserException {
 		if (xlsBook.getNumberOfSheets() != 1) {
 			throw new WorkbookParserException("error.workbook.import.invalidNumberOfSheets");
 		}
 	}
 
-	protected String[] getColumnHeaders(Sheet sheet) throws WorkbookParserException {
-		Row row = sheet.getRow(0);
-		int noOfColumnHeaders = row.getLastCellNum();
+	protected String[] getColumnHeaders(final Sheet sheet) throws WorkbookParserException {
+		final Row row = sheet.getRow(0);
+		final int noOfColumnHeaders = row.getLastCellNum();
 
-		String[] headerNames = new String[noOfColumnHeaders];
+		final String[] headerNames = new String[noOfColumnHeaders];
 		for (int i = 0; i < noOfColumnHeaders; i++) {
-			Cell cell = row.getCell(i);
+			final Cell cell = row.getCell(i);
 			if (cell == null) {
 				throw new WorkbookParserException("error.workbook.import.missing.columns.import.file");
 			}
@@ -145,19 +117,19 @@ public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl 
 	}
 
 	@Override
-	protected String getColumnIndexesFromXlsSheet(Sheet observationSheet, List<MeasurementVariable> variables, String trialInstanceNumber)
-			throws WorkbookParserException {
+	protected String getColumnIndexesFromXlsSheet(final Sheet observationSheet, final List<MeasurementVariable> variables,
+			final String trialInstanceNumber) throws WorkbookParserException {
 		String plotLabel = null, entryLabel = null;
-		for (MeasurementVariable variable : variables) {
+		for (final MeasurementVariable variable : variables) {
 			if (variable.getTermId() == TermId.PLOT_NO.getId() || variable.getTermId() == TermId.PLOT_NNO.getId()) {
-				plotLabel = this.getLabelFromKsuRequiredColumn(variable);
+				plotLabel = KsuFieldbookUtil.getLabelFromKsuRequiredColumn(variable);
 			} else if (variable.getTermId() == TermId.ENTRY_NO.getId()) {
-				entryLabel = this.getLabelFromKsuRequiredColumn(variable);
+				entryLabel = KsuFieldbookUtil.getLabelFromKsuRequiredColumn(variable);
 			}
 		}
 		if (plotLabel != null && entryLabel != null) {
-			String indexes = this.findColumns(observationSheet, trialInstanceNumber, plotLabel, entryLabel);
-			for (String index : indexes.split(",")) {
+			final String indexes = this.findColumns(observationSheet, trialInstanceNumber, plotLabel, entryLabel);
+			for (final String index : indexes.split(",")) {
 				if (!NumberUtils.isNumber(index) || "-1".equalsIgnoreCase(index)) {
 					return null;
 				}
@@ -165,19 +137,5 @@ public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl 
 			return indexes;
 		}
 		return null;
-	}
-
-	protected String getLabelFromKsuRequiredColumn(MeasurementVariable variable) {
-		String label = "";
-
-		if (KsuRequiredColumnEnum.get(variable.getTermId()) != null) {
-			label = KsuRequiredColumnEnum.get(variable.getTermId()).getLabel();
-		}
-
-		if (label.trim().length() > 0) {
-			return label;
-		}
-
-		return variable.getName();
 	}
 }

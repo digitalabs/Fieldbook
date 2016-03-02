@@ -1,17 +1,8 @@
-
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import junit.framework.Assert;
-
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -26,8 +17,13 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.ExtendedModelMap;
 
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class ObservationMatrixControllerTest {
 
@@ -56,8 +52,8 @@ public class ObservationMatrixControllerTest {
 		this.observationMatrixController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
-			Assert.assertEquals("The origRow's measurement value must be equal to the valueRow's measurement value", origRow.getDataList()
-					.get(x).getValue(), valueRow.getDataList().get(x).getValue());
+			Assert.assertEquals("The origRow's measurement value must be equal to the valueRow's measurement value",
+					origRow.getDataList().get(x).getValue(), valueRow.getDataList().get(x).getValue());
 		}
 
 	}
@@ -89,8 +85,8 @@ public class ObservationMatrixControllerTest {
 		this.observationMatrixController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
-			Assert.assertEquals("The origRow's measurement value must be equal to the valueRow's measurement value", origRow.getDataList()
-					.get(x).getValue(), valueRow.getDataList().get(x).getValue());
+			Assert.assertEquals("The origRow's measurement value must be equal to the valueRow's measurement value",
+					origRow.getDataList().get(x).getValue(), valueRow.getDataList().get(x).getValue());
 		}
 
 	}
@@ -131,8 +127,8 @@ public class ObservationMatrixControllerTest {
 		this.observationMatrixController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
-			Assert.assertEquals("The origRow's measurement value must be equal to the valueRow's measurement value", origRow.getDataList()
-					.get(x).getValue(), valueRow.getDataList().get(x).getValue());
+			Assert.assertEquals("The origRow's measurement value must be equal to the valueRow's measurement value",
+					origRow.getDataList().get(x).getValue(), valueRow.getDataList().get(x).getValue());
 		}
 
 	}
@@ -215,12 +211,13 @@ public class ObservationMatrixControllerTest {
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		MeasurementRow row = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000,"TestVarName1","1st",TermId.CHARACTER_VARIABLE));
+		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName1", "1st", TermId.CHARACTER_VARIABLE));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		row = new MeasurementRow();
 		dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(termId,"TestVarName2","2nd",TermId.CHARACTER_VARIABLE));
+		dataList.add(
+				this.measurementDataTestDataInitializer.createMeasurementData(termId, "TestVarName2", "2nd", TermId.CHARACTER_VARIABLE));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
@@ -230,8 +227,8 @@ public class ObservationMatrixControllerTest {
 		MeasurementData data = (MeasurementData) model.get("measurementData");
 		Assert.assertEquals("Should be able to return a copy of the measurement data, so the value should be the same", "2nd",
 				data.getValue());
-		Assert.assertEquals("Should be able to return a copy of the measurement data, so the id should be the same", termId, data
-				.getMeasurementVariable().getTermId());
+		Assert.assertEquals("Should be able to return a copy of the measurement data, so the id should be the same", termId,
+				data.getMeasurementVariable().getTermId());
 	}
 
 	@Test
@@ -242,13 +239,14 @@ public class ObservationMatrixControllerTest {
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		MeasurementRow row = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000,"TestVarName1","1st",TermId.CHARACTER_VARIABLE));
+		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName1", "1st", TermId.CHARACTER_VARIABLE));
 		row.setDataList(dataList);
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		row = new MeasurementRow();
 		dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(termId,"TestVarName2","2nd",TermId.CHARACTER_VARIABLE));
+		dataList.add(
+				this.measurementDataTestDataInitializer.createMeasurementData(termId, "TestVarName2", "2nd", TermId.CHARACTER_VARIABLE));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
@@ -278,13 +276,14 @@ public class ObservationMatrixControllerTest {
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		MeasurementRow row = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000,"TestVarName2","1st",TermId.CHARACTER_VARIABLE));
+		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName2", "1st", TermId.CHARACTER_VARIABLE));
 
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		row = new MeasurementRow();
 		dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(termId,"TestVarName2","2nd",TermId.CHARACTER_VARIABLE));
+		dataList.add(
+				this.measurementDataTestDataInitializer.createMeasurementData(termId, "TestVarName2", "2nd", TermId.CHARACTER_VARIABLE));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
@@ -313,13 +312,14 @@ public class ObservationMatrixControllerTest {
 		List<MeasurementRow> measurementRowList = new ArrayList<>();
 		MeasurementRow row = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000,"TestVarName1","1st",TermId.CHARACTER_VARIABLE));
+		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName1", "1st", TermId.CHARACTER_VARIABLE));
 
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		row = new MeasurementRow();
 		dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createCategoricalMeasurementData(termId,"TestVarName2","2nd",new ArrayList<ValueReference>()));
+		dataList.add(this.measurementDataTestDataInitializer
+				.createCategoricalMeasurementData(termId, "TestVarName2", "2nd", new ArrayList<ValueReference>()));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
@@ -349,12 +349,12 @@ public class ObservationMatrixControllerTest {
 		List<MeasurementRow> measurementRowList = new ArrayList<>();
 		MeasurementRow row = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000,"TestVarName1","1st",TermId.CHARACTER_VARIABLE));
+		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName1", "1st", TermId.CHARACTER_VARIABLE));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		row = new MeasurementRow();
 		dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(termId,"TestVarName2","1",TermId.NUMERIC_VARIABLE));
+		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(termId, "TestVarName2", "1", TermId.NUMERIC_VARIABLE));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
@@ -384,16 +384,18 @@ public class ObservationMatrixControllerTest {
 		List<MeasurementRow> measurementRowList = new ArrayList<>();
 		MeasurementRow row = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000,"TestVarName1","1st",TermId.CHARACTER_VARIABLE));
+		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName1", "1st", TermId.CHARACTER_VARIABLE));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		row = new MeasurementRow();
 		dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createCategoricalMeasurementData(termId,"TestVarName2","2nd",new ArrayList<ValueReference>()));
+		dataList.add(this.measurementDataTestDataInitializer
+				.createCategoricalMeasurementData(termId, "TestVarName2", "2nd", new ArrayList<ValueReference>()));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createCategoricalMeasurementData(termId,"TestVarName3","3rd",new ArrayList<ValueReference>()));
+		dataList.add(this.measurementDataTestDataInitializer
+				.createCategoricalMeasurementData(termId, "TestVarName3", "3rd", new ArrayList<ValueReference>()));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 
@@ -406,9 +408,8 @@ public class ObservationMatrixControllerTest {
 		for (MeasurementRow measurementRow : userSelection.getMeasurementRowList()) {
 			if (measurementRow != null && measurementRow.getMeasurementVariables() != null) {
 				for (MeasurementData var : measurementRow.getDataList()) {
-					if (var != null
-							&& !StringUtils.isEmpty(var.getValue())
-							&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var
+					if (var != null && !StringUtils.isEmpty(var.getValue()) && (
+							var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var
 									.getMeasurementVariable().getPossibleValues().isEmpty())) {
 						Assert.assertTrue(var.isAccepted());
 						Assert.assertTrue(var.isCustomCategoricalValue());
@@ -429,16 +430,18 @@ public class ObservationMatrixControllerTest {
 		List<MeasurementRow> measurementRowList = new ArrayList<>();
 		MeasurementRow row = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000,"TestVarName1","1st",TermId.CHARACTER_VARIABLE));
+		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName1", "1st", TermId.CHARACTER_VARIABLE));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		row = new MeasurementRow();
 		dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createCategoricalMeasurementData(termId,"TestVarName2","2nd",new ArrayList<ValueReference>()));
+		dataList.add(this.measurementDataTestDataInitializer
+				.createCategoricalMeasurementData(termId, "TestVarName2", "2nd", new ArrayList<ValueReference>()));
 		row.setDataList(dataList);
 		measurementRowList.add(row);
 		dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createCategoricalMeasurementData(termId,"TestVarName3","3rd",new ArrayList<ValueReference>()));
+		dataList.add(this.measurementDataTestDataInitializer
+				.createCategoricalMeasurementData(termId, "TestVarName3", "3rd", new ArrayList<ValueReference>()));
 
 		row.setDataList(dataList);
 		measurementRowList.add(row);
@@ -453,13 +456,12 @@ public class ObservationMatrixControllerTest {
 			if (measurementRow != null && measurementRow.getMeasurementVariables() != null) {
 				for (MeasurementData var : measurementRow.getDataList()) {
 					if (var != null) {
-						if (var != null
-								&& !StringUtils.isEmpty(var.getValue())
-								&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var
+						if (var != null && !StringUtils.isEmpty(var.getValue()) && (
+								var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var
 										.getMeasurementVariable().getPossibleValues().isEmpty())) {
 							Assert.assertTrue(var.isAccepted());
-							if (this.observationMatrixController.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var
-									.getMeasurementVariable().getPossibleValues())) {
+							if (this.observationMatrixController.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(),
+									var.getMeasurementVariable().getPossibleValues())) {
 								Assert.assertEquals(ObservationMatrixController.MISSING_VALUE, var.getValue());
 							} else {
 								Assert.assertFalse("0".equals(var.getValue()));
@@ -514,7 +516,7 @@ public class ObservationMatrixControllerTest {
 		Assert.assertFalse("Should return false since 21 is not out of range",
 				this.observationMatrixController.isNumericalValueOutOfBounds("21", var));
 	}
-	
+
 	@Test
 	public void testSetCategoricalDisplayType() throws Exception {
 		// default case, api call does not include a value for showCategoricalDescriptionView, since the
@@ -522,9 +524,9 @@ public class ObservationMatrixControllerTest {
 		HttpSession session = Mockito.mock(HttpSession.class);
 		Mockito.when(session.getAttribute("isCategoricalDescriptionView")).thenReturn(Boolean.FALSE);
 
-		Boolean result = this.observationMatrixController.setCategoricalDisplayType(null,session);
-		Mockito.verify(session,Mockito.times(1)).setAttribute("isCategoricalDescriptionView",Boolean.TRUE);
-		Assert.assertTrue("should be true",result);
+		Boolean result = this.observationMatrixController.setCategoricalDisplayType(null, session);
+		Mockito.verify(session, Mockito.times(1)).setAttribute("isCategoricalDescriptionView", Boolean.TRUE);
+		Assert.assertTrue("should be true", result);
 	}
 
 	@Test
@@ -534,8 +536,8 @@ public class ObservationMatrixControllerTest {
 		HttpSession session = Mockito.mock(HttpSession.class);
 		Mockito.when(session.getAttribute("isCategoricalDescriptionView")).thenReturn(Boolean.FALSE);
 
-		Boolean result = this.observationMatrixController.setCategoricalDisplayType(Boolean.FALSE,session);
-		Mockito.verify(session,Mockito.times(1)).setAttribute("isCategoricalDescriptionView",Boolean.FALSE);
-		Assert.assertFalse("should be false",result);
+		Boolean result = this.observationMatrixController.setCategoricalDisplayType(Boolean.FALSE, session);
+		Mockito.verify(session, Mockito.times(1)).setAttribute("isCategoricalDescriptionView", Boolean.FALSE);
+		Assert.assertFalse("should be false", result);
 	}
 }

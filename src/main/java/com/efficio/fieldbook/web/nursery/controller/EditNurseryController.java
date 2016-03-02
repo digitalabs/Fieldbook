@@ -72,6 +72,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping(EditNurseryController.URL)
+@SessionAttributes("isCategoricalDescriptionView")
 public class EditNurseryController extends SettingsController {
 
 	/**

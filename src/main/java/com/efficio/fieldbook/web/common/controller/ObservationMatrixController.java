@@ -481,8 +481,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			isCategoricalDescriptionView = showCategoricalDescriptionView;
 		} else {
 			isCategoricalDescriptionView ^= Boolean.TRUE;
-			session.setAttribute("isCategoricalDescriptionView", isCategoricalDescriptionView);
 		}
+
+		session.setAttribute("isCategoricalDescriptionView", isCategoricalDescriptionView);
 
 		return isCategoricalDescriptionView;
 	}

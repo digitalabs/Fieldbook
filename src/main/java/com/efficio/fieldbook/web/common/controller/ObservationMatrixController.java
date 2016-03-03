@@ -622,7 +622,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			}
 		}
 
-		// generate measurmenet row data from newly added traits (no data yet)
+		// generate measurement row data from newly added traits (no data yet)
 		UserSelection userSelection = this.getUserSelection(false);
 		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
 				&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {

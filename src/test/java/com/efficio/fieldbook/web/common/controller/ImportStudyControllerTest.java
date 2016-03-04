@@ -38,10 +38,7 @@ import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
-import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
-import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
+import com.efficio.fieldbook.web.study.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.lowagie.text.pdf.codec.Base64.InputStream;
 
@@ -65,13 +62,7 @@ public class ImportStudyControllerTest {
 	@Mock
 	private FileService fileService;
 	@Mock
-	private FieldroidImportStudyService fieldroidImportStudyService;
-	@Mock
 	private ExcelImportStudyService excelImportStudyService;
-	@Mock
-	private DataKaptureImportStudyService dataKaptureImportStudyService;
-	@Mock
-	private KsuExcelImportStudyService ksuExcelImportStudyService;
 	@Mock
 	private InputStream inputStream;
 	@Mock

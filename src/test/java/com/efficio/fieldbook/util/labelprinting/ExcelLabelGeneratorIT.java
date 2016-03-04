@@ -1,0 +1,119 @@
+package com.efficio.fieldbook.util.labelprinting;
+
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.utils.test.ExcelImportUtil;
+import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.util.AppConstants;
+import junit.framework.Assert;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+
+import javax.annotation.Resource;
+import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.Locale;
+
+public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ExcelLabelGeneratorIT.class);
+
+    private static final int[] FIELD_MAP_LABELS = {AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
+
+    private static final String PLOT_COORDINATES = "Plot Coordinates";
+
+    @Resource
+    private MessageSource messageSource;
+
+    @Resource
+    protected FieldbookService fieldbookService;
+
+    @Resource
+    private ExcelLabelGenerator unitUnderTest;
+
+	@Test
+	public void testFieldmapFieldsInGeneratedXls() throws Exception {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+		UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
+		String labels = "";
+		String fileName = "";
+
+		fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, baos);
+		org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
+
+		Sheet sheet = xlsBook.getSheetAt(0);
+
+		for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+			Row row = sheet.getRow(i);
+			if (row != null) {
+				for (int j = 0; j <= row.getLastCellNum(); j++) {
+					Cell cell = row.getCell(j);
+
+					if (cell != null && cell.getStringCellValue() != null) {
+						labels = labels + " " + cell.getStringCellValue();
+					}
+				}
+			}
+		}
+
+		Assert.assertTrue(this.areFieldsinGeneratedLabels(labels, false));
+	}
+
+    private boolean areFieldsinGeneratedLabels(String labels, boolean isPdf) {
+        boolean areFieldsInLabels = true;
+        Locale locale = new Locale("en", "US");
+
+        for (int label : FIELD_MAP_LABELS) {
+            String fieldName = "";
+            if (label == AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
+                fieldName = this.messageSource.getMessage("label.printing.available.fields.block.name", null, locale);
+            } else if (label == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
+                fieldName = this.messageSource.getMessage("label.printing.available.fields.field.name", null, locale);
+            } else if (label == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
+                fieldName = PLOT_COORDINATES;
+            }
+
+            String[] field = labels.split(fieldName);
+            if (field.length <= 1) {
+                areFieldsInLabels = false;
+                break;
+            }
+        }
+
+        return areFieldsInLabels;
+    }
+
+    @Test
+    public void testGenerationOfXlsLabels() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+        UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
+        String fileName = "";
+        try {
+            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, baos);
+            org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
+
+            Assert.assertNotNull("Expected a new workbook file was created but found none.", xlsBook);
+
+            Sheet sheet = xlsBook.getSheetAt(0);
+
+            Assert.assertNotNull("Expecting an xls file with 1 sheet but found none.", sheet);
+
+            Assert.assertTrue("Expected at least one row but got 0", sheet.getLastRowNum() > 0);
+        } catch (MiddlewareQueryException e) {
+            Assert.fail("Encountered error while exporting to xls.");
+        } catch (Exception e) {
+            Assert.fail("Excountered error while reading xls file.");
+        }
+    }
+}

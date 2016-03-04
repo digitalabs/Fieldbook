@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.web.study.CsvWorkbookProcessor;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementTestDataInitializer;
@@ -29,7 +30,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
-import com.efficio.fieldbook.web.util.ImportStudyUtil;
 
 import junit.framework.Assert;
 
@@ -61,7 +61,7 @@ public class CsvWorkbookParserTest {
 	private OntologyDataManager ontologyDataManager;
 
 	@InjectMocks
-	private CsvWorkbookParser csvWorkbookParser;
+	private CsvWorkbookProcessor csvWorkbookParser;
 
 	private Workbook workbook;
 
@@ -71,7 +71,7 @@ public class CsvWorkbookParserTest {
 	public void setUp() {
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(1, StudyType.N);
 		this.rowsMap = ImportStudyUtil.createMeasurementRowsMap(this.workbook.getObservations(), "1", this.workbook.isNursery());
-		this.csvWorkbookParser = new CsvWorkbookParser(this.workbook, "1", this.rowsMap);
+		this.csvWorkbookParser = new CsvWorkbookProcessor(this.workbook, "1", this.rowsMap);
 		this.csvWorkbookParser.setContextUtil(this.contextUtil);
 		this.csvWorkbookParser.setOntologyDataManager(this.ontologyDataManager);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn("1");

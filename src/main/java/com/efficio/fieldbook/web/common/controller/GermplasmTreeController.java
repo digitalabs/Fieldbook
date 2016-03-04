@@ -433,6 +433,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final Integer gnpgs = importedGermplasm.getGnpgs();
 			final Integer gpid1 = importedGermplasm.getGpid1();
 			final Integer gpid2 = importedGermplasm.getGpid2();
+			Integer mgid = (importedGermplasm.getMgid() == null)? 0 : importedGermplasm.getMgid();
 
 			final List<Name> names = importedGermplasm.getNames();
 			Name preferredName = names.get(0);
@@ -455,6 +456,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final Integer trueGdate = harvestDate != null && !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate;
 			final Germplasm germplasm =
 					new Germplasm(gid, methodId, gnpgs, gpid1, gpid2, currentUserID, lgid, locationId, trueGdate, preferredName);
+			germplasm.setMgid(mgid);
 
 			germplasms.add(new ImmutablePair<Germplasm, List<Name>>(germplasm, names));
 
@@ -637,8 +639,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	private List<TreeTableNode> getGermplasmFolderChildrenNode(final String id, final String programUUID) {
-		return TreeViewUtil.convertGermplasmListToTreeTableNodes(this.getGermplasmListChildren(id, programUUID), this.userDataManager,
-				this.germplasmListManager);
+		return TreeViewUtil.convertGermplasmListToTreeTableNodes(this.getGermplasmListChildren(id, programUUID), this.germplasmListManager);
 	}
 
 	/**
@@ -654,7 +655,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 			dataResults.put("name", germplasmList.getName());
 			dataResults.put("description", germplasmList.getDescription());
-			dataResults.put("type", this.getTypeString(germplasmList.getType()));
+			final GermplasmList parentGermplasmList = this.fieldbookMiddlewareService.getGermplasmListById(germplasmList.getListRef());
+			dataResults.put("type", this.getTypeString(parentGermplasmList.getType()));
 
 			String statusValue = "Unlocked List";
 			if (germplasmList.getStatus() >= 100) {

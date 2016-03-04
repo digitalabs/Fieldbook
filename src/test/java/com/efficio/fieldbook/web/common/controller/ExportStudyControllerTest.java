@@ -451,33 +451,6 @@ public class ExportStudyControllerTest {
 				"application/vnd.ms-excel".equalsIgnoreCase(contentType));
 	}
 
-	@Test
-	public void testGetCustomReportTypes() throws MiddlewareQueryException {
-		ExportStudyController controller = new ExportStudyController();
-		WorkbenchService workbenchService = Mockito.mock(WorkbenchService.class);
-		controller.setWorkbenchService(workbenchService);
-		CrossExpansionProperties crossExpansionProperties = new CrossExpansionProperties();
-		crossExpansionProperties.setProfile("Cimmyt");
-		controller.setCrossExpansionProperties(crossExpansionProperties);
-		List<StandardPreset> standardPresets = new ArrayList<StandardPreset>();
-		StandardPreset preset = new StandardPreset();
-		preset.setConfiguration("<reports><profile>cimmyt</profile><report><code>WLBL05</code><name>labels without design, wheat</name></report><report><code>WLBL21</code><name>labels with design, wheat</name></report></reports>");
-		standardPresets.add(preset);
-		Mockito.when(workbenchService.getStandardPresetByCrop(Matchers.anyInt(), Matchers.anyString(), Matchers.anyString())).thenReturn(
-				standardPresets);
-		Tool fbTool = new Tool();
-		fbTool.setToolId(new Long(1));
-		Mockito.when(workbenchService.getFieldbookWebTool()).thenReturn(fbTool);
-		ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
-		Project project = new Project();
-		CropType cropType = new CropType();
-		cropType.setCropName("Test");
-		project.setCropType(cropType);
-		Mockito.when(contextUtil.getProjectInContext()).thenReturn(project);
-		controller.setContextUtil(contextUtil);
-		List<CustomReportType> presets = controller.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
-		Assert.assertEquals("Should return 2 presets since there is a study", 2, presets.size());
-	}
 
 	private String getTrialInstanceString(List<Integer> instances) {
 		String trialInstances = "";

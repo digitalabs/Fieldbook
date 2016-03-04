@@ -11,19 +11,24 @@ public class GeneratePresetDesignInput {
 	private DesignTypeItem selectedDesignType;
 	private Integer startingEntryNo;
 	private Integer startingPlotNo;
+	private Boolean hasNewEnvironmentAdded;
 
 	public GeneratePresetDesignInput() {
 		this.environmentData = new EnvironmentData();
 		this.selectedDesignType = new DesignTypeItem();
+		this.startingEntryNo = 1;
+		this.startingPlotNo = 1;
+		this.hasNewEnvironmentAdded = false;
 	}
 
 	public GeneratePresetDesignInput(final EnvironmentData environmentData, final DesignTypeItem selectedDesignType,
-			final Integer startingEntryNo, final Integer startingPlotNo) {
+			final Integer startingEntryNo, final Integer startingPlotNo, final Boolean hasNewEnvironmentAdded) {
 		super();
 		this.environmentData = environmentData;
 		this.selectedDesignType = selectedDesignType;
 		this.startingEntryNo = startingEntryNo;
 		this.startingPlotNo = startingPlotNo;
+		this.hasNewEnvironmentAdded = hasNewEnvironmentAdded;
 	}
 
 	public EnvironmentData getEnvironmentData() {
@@ -56,5 +61,13 @@ public class GeneratePresetDesignInput {
 
 	public void setStartingPlotNo(final Integer startingPlotNo) {
 		this.startingPlotNo = startingPlotNo;
+	}
+
+	public Boolean getHasNewEnvironmentAdded() {
+		return this.hasNewEnvironmentAdded;
+	}
+
+	public void setHasNewEnvironmentAdded(final Boolean hasNewEnvironmentAdded) {
+		this.hasNewEnvironmentAdded = hasNewEnvironmentAdded;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.web.study.KsuCsvWorkbookProcessor;
 import org.apache.commons.lang.math.NumberUtils;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
@@ -36,14 +37,14 @@ public class KsuCsvWorkbookParserTest {
 	private Map<Integer, List<String>> csvMap;
 
 	@InjectMocks
-	private KsuCsvWorkbookParser parser;
+	private KsuCsvWorkbookProcessor parser;
 
 	private Workbook workbook;
 
 	@Before
 	public void setUp() throws Exception {
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
-		this.parser = new KsuCsvWorkbookParser(this.workbook, this.testTrialInstanceNo, this.rowsMap);
+		this.parser = new KsuCsvWorkbookProcessor(this.workbook, this.testTrialInstanceNo, this.rowsMap);
 		Mockito.when(this.csvMap.get(0)).thenReturn(Arrays.asList(this.rowHeaders));
 	}
 

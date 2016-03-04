@@ -12,54 +12,52 @@
 package com.efficio.fieldbook.web.study.service.impl;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
-import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.efficio.fieldbook.web.common.bean.ChangeType;
-import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
-
-import javax.annotation.Resource;
+import com.efficio.fieldbook.web.study.service.ImportStudyService;
 
 @Service
 @Transactional
-public class DataKaptureImportStudyServiceImpl implements ImportStudyService {
+public class DataKaptureImportStudyServiceImpl extends AbstractImportStudyService<CSVOziel> implements ImportStudyService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DataKaptureImportStudyServiceImpl.class);
 
-    @Resource
-    private OntologyService ontologyService;
+    public DataKaptureImportStudyServiceImpl(final Workbook workbook, final String currentFile, final String originalFileName) {
+        super(workbook, currentFile, originalFileName);
+    }
 
-    @Resource
-    private FieldbookService fieldbookMiddlewareService;
+    @Override
+    protected void detectAddedTraitsAndPerformRename(final Set modes) {
+        // TODO add added trait checking
+    }
 
-	@Override
-	public ImportResult importWorkbook(Workbook workbook, String currentFile, String originalFilename) throws WorkbookParserException {
+    @Override
+    void validateObservationColumns() throws WorkbookParserException {
+        // TODO self contained within the CSVOziel class
+    }
 
-		try {
-			CSVOziel csv = new CSVOziel(workbook, workbook.getObservations(), workbook.getTrialObservations(), true);
+    @Override
+    void validateImportMetadata() throws WorkbookParserException {
+        // TODO self contained within the CSVOziel class
+    }
 
-			File file = new File(currentFile);
-			csv.readDATACapture(file, ontologyService, fieldbookMiddlewareService);
-			Set<ChangeType> modes = new HashSet<ChangeType>();
-			return new ImportResult(modes, new ArrayList<GermplasmChangeDetail>());
+    @Override
+    protected CSVOziel parseObservationData() throws IOException {
+        return new CSVOziel(workbook, workbook.getObservations(), workbook.getTrialObservations(), true);
+    }
 
-		} catch (Exception e) {
-			DataKaptureImportStudyServiceImpl.LOG.error(e.getMessage());
-			throw new WorkbookParserException(e.getMessage());
-		}
-	}
+    @Override
+    protected void performStudyDataImport(final Set modes, final CSVOziel parsedData, final Map rowsMap, final String trialInstanceNumber, final List changeDetailsList, final Workbook workbook) throws WorkbookParserException {
+        final File file = new File(currentFile);
+        parsedData.readDATACapture(file, ontologyService, fieldbookMiddlewareService);
+    }
 
 }

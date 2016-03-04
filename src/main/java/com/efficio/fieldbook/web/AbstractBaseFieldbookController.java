@@ -11,21 +11,27 @@
 
 package com.efficio.fieldbook.web;
 
-import javax.annotation.Resource;
+import java.util.Iterator;
+import java.util.List;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import javax.annotation.Resource;
 
 /**
  * Base controller encapsulaitng common functionality between all the Fieldbook controllers.
@@ -53,6 +59,9 @@ public abstract class AbstractBaseFieldbookController {
 	@Resource
 	private PaginationListSelection paginationListSelection;
 
+	@Resource
+	protected OntologyVariableDataManager variableDataManager;
+
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
 	 * 
@@ -77,11 +86,11 @@ public abstract class AbstractBaseFieldbookController {
 		return "0";
 	}
 
-	public Project getCurrentProject() throws MiddlewareQueryException {
+	public Project getCurrentProject() {
 		return this.contextUtil.getProjectInContext();
 	}
 
-	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {
+	public Integer getCurrentIbdbUserId() {
 		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
 				this.contextUtil.getCurrentWorkbenchUserId());
 
@@ -172,8 +181,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Convert favorite location to json.
-	 * 
-	 * @param locations the locations
+	 * @param objectList list of objects
 	 * @return the string
 	 */
 	protected String convertObjectToJson(final Object objectList) {
@@ -198,6 +206,33 @@ public abstract class AbstractBaseFieldbookController {
 
 	public void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
+	}
+
+	/**
+	 * Filter variables with variable type 'Analysis' in the workbook
+	 */
+	protected void filterAnalysisVariable(final Workbook workbook) {
+		this.filterAnalysisVariable(workbook.getConditions());
+		this.filterAnalysisVariable(workbook.getConstants());
+		this.filterAnalysisVariable(workbook.getFactors());
+		this.filterAnalysisVariable(workbook.getVariates());
+	}
+
+	/**
+	 * Filter variables with variable type 'Analysis' in the list of measurement variables
+	 */
+	private void filterAnalysisVariable(final List<MeasurementVariable> measurementVariables) {
+		final Iterator<MeasurementVariable> measurementVariablesIterator = measurementVariables.iterator();
+		while (measurementVariablesIterator.hasNext()) {
+			final MeasurementVariable measurementVariable = measurementVariablesIterator.next();
+			if (measurementVariable != null && VariableType.ANALYSIS == measurementVariable.getVariableType()) {
+				measurementVariablesIterator.remove();
+			}
+		}
+	}
+
+	public void setVariableDataManager(OntologyVariableDataManager variableDataManager) {
+		this.variableDataManager = variableDataManager;
 	}
 
 }

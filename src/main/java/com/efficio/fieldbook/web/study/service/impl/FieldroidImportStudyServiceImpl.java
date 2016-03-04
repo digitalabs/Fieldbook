@@ -12,52 +12,59 @@
 package com.efficio.fieldbook.web.study.service.impl;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import com.efficio.fieldbook.web.study.service.ImportStudyService;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
-import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
-
-import javax.annotation.Resource;
+import com.efficio.fieldbook.web.study.service.ImportStudyService;
 
 @Service
 @Transactional
-public class FieldroidImportStudyServiceImpl implements ImportStudyService {
+public class FieldroidImportStudyServiceImpl extends AbstractImportStudyService<CSVOziel> implements ImportStudyService {
 
-    @Resource
-    private OntologyService ontologyService;
-
-    @Resource
-    private FieldbookService fieldbookMiddlewareService;
-
-	@Override
-	public ImportResult importWorkbook(final Workbook workbook, final String currentFile, String originalFilename) throws WorkbookParserException {
-
-		final File file = new File(currentFile);
-		final CSVOziel csv = new CSVOziel(workbook, workbook.getObservations(), workbook.getTrialObservations());
-
-		this.validate(csv, file, workbook);
-
-		csv.readDATAnew(file, ontologyService, fieldbookMiddlewareService);
-		final Set<ChangeType> modes = new HashSet<ChangeType>();
-		return new ImportResult(modes, new ArrayList<GermplasmChangeDetail>());
+	public FieldroidImportStudyServiceImpl(Workbook workbook, String currentFile, String originalFileName) {
+		super(workbook, currentFile, originalFileName);
 	}
 
-	private void validate(final CSVOziel csv, final File file, final Workbook workbook) throws WorkbookParserException {
-		if (!csv.isValid(file)) {
+	@Override
+	protected void detectAddedTraitsAndPerformRename(Set modes) {
+		// TODO requires added trait checking
+	}
+
+	@Override
+	void validateObservationColumns() throws WorkbookParserException {
+		// intentionally left blank. validation self contained in CSVOziel class
+	}
+
+	@Override
+	void validateImportMetadata() throws WorkbookParserException {
+		if (!parsedData.isValid(new File(currentFile))) {
 			throw new WorkbookParserException("error.workbook.import.invalidFieldroidFile");
 		}
+	}
+
+	@Override
+	protected CSVOziel parseObservationData() throws IOException {
+
+		return new CSVOziel(workbook, workbook.getObservations(), workbook.getTrialObservations());
+
+	}
+
+	@Override
+	protected void performStudyDataImport(Set<ChangeType> modes, CSVOziel parsedData, Map<String, MeasurementRow> rowsMap,
+			String trialInstanceNumber, List<GermplasmChangeDetail> changeDetailsList, Workbook workbook) throws WorkbookParserException {
+		final File file = new File(currentFile);
+		parsedData.readDATAnew(file, ontologyService, fieldbookMiddlewareService);
 	}
 
 }

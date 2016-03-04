@@ -77,6 +77,12 @@
 
 							</li>
 
+                            <li ng-show="hasMeasurementData()">
+
+                                <a href="javascript: advanceTrial();" id="advance-trial-link" th:text="#{trial.trialdetails.action.advance.trial}">Advance Trial</a>
+
+                            </li>
+
 							<li id="review-out-of-bounds-data-list" style="display:none;">
 								<a href="javascript: reviewOutOfBoundsData();" id="review-out-of-bounds-data-link"
 								   th:text="#{nursery.nurserydetails.action.review.out.of.bounds.data}">Review out of bounds data</a>
@@ -236,6 +242,12 @@
 
 	</form>
 </div>
+
+<!-- Modal Div for Advance Trial -->
+<div id="advance-nursery-modal-div"></div>
+<div id="review-advance-nursery-modal-div"></div>
+<div id="advance-trial-locations-modal-div"></div>
+
 <div class="form-group" id="create-trial">
 	<div th:include="/Common/includes/studyTree"></div>
 </div>
@@ -259,23 +271,31 @@
 </div>
 
 
-<!-- tab + content -->
 <ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
-	<li ng-repeat="tab in trialTabs"  ng-class="{active: $state.includes(tab.state)}"
-		ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
-		<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
-	</li>
+    <li ng-repeat="tab in trialTabs"  ng-class="{active: tabSelected===tab.state}"
+        ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
+        <a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
+    </li>
+    <li ng-repeat="tab in advanceTrialTabs | orderObjectBy : 'id'  track by $index"  ng-class="{active: tabSelected===tab.state}" ng-click="tabChange(tab.state)"
+        ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
+        <a href="#tab.name" tab-data='{{tab.id}}'>{{tab.displayName}}
+            <i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab(tab.state)"></i>
+        </a>
+    </li>
 </ul>
 
 
 <!-- CURRENT TAB CONTENT -->
-<div class="row fb-tabs" id="manage-trial-tabs" style="padding-top: 15px;">
+<div class="row fb-tabs"  id="manage-trial-tabs" style="padding-top: 15px;">
 	<div class="info">
-		<div class="col-xs-12" ui-view=""></div>
-		<div class="col-xs-12" ui-view="germplasm" ng-show="$state.includes('germplasm')"></div>
-		<div class="col-xs-12" ui-view="environment" ng-show="$state.includes('environment')"></div>
-		<div class="col-xs-12" ui-view="createMeasurements" ng-show="$state.includes('createMeasurements')"></div>
-		<div class="col-xs-12" ui-view="editMeasurements" ng-show="$state.includes('editMeasurements')"></div>
+		<div class="col-xs-12" ui-view="" ng-show="isSettingsTab"></div>
+        <div class="col-xs-12" ui-view="germplasm" ng-show="tabSelected==='germplasm'"></div>
+        <div class="col-xs-12" ui-view="environment" ng-show="tabSelected==='environment'"></div>
+        <div class="col-xs-12" ui-view="createMeasurements" ng-show="tabSelected==='createMeasurements'"></div>
+        <div class="col-xs-12" ui-view="editMeasurements" ng-show="tabSelected==='editMeasurements'"></div>
+        <div class="col-xs-12" ng-repeat="advancetab in advanceTabsData track by $index" id="{{advancetab.id}}" ng-show="tabSelected===advancetab.name">
+            <div ng-bind-html="advancetab.data"></div>
+        </div>
 	</div>
 </div>
 
@@ -343,8 +363,38 @@
 </div>
 
 <div class="row">
+      <div class="col-xs-12 col-md-12">
+            <div id="select-enviornments" th:include="/TrialManager/templates/selectEnvironmentModal"></div>
+        </div>
+    </div>
+
+<div class="row">
 	<div th:include="/Common/exportGermplasmList"></div>
 </div>
+
+<div class="row">
+    <div th:include="/Common/includes/saveList"></div>
+</div>
+
+<div class="row">
+    <div th:include="Stock/generateStockIDModal"></div>
+</div>
+
+<div class="row">
+	<div th:include="/Common/includes/exportStockList"></div>
+</div>
+
+<div class="row">
+    <div id="import-germplasm" th:include="/NurseryManager/includes/importGermplasmListDetailsModal"></div>
+</div>
+
+<div class="row">
+	<div id="export-advance" th:include="/Common/includes/exportAdvanceList"></div>
+</div>
+
+<div id="import-study" th:include="/Common/includes/importStockList"></div>
+
+<div class="row" id="addLotsModalDiv"></div>
 
 <form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
 	<input type="hidden" th:field="*{measurementDataExisting}"/>
@@ -363,6 +413,7 @@
 <script type="text/javascript" th:src="@{/static/js/trialmanager/trial-settings-manager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/trial-data-manager.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentModal.js}"></script>
 
 
 <!-- constants here -->
@@ -443,6 +494,11 @@ var translations = {
 		label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
 		placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
 	},
+    /* SELECTION VARIATES */
+    1807: {
+        label: /*[[#{trial.managesettings.add.selection.variates}]]*/ '',
+        placeholder: /*[[#{trial.reminder.add.selection.variates}]]*/ ''
+    },
 	/*TREATMENT FACTORS*/
 	1809: {
 		label: /*[[#{trial.managesettings.add.treatmentfactor}]]*/ '',
@@ -465,6 +521,8 @@ var translations = {
 	).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
 	).constant('BREEDING_METHOD_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
 	).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
+	).constant('SELECTION_VARIABLE_INITIAL_DATA', /*[[${selectionVariableData}]]*/ ''
+    ).constant('ADVANCE_LIST_DATA', /*[[${advancedList}]]*/ ''
 	).constant('ENVIRONMENTS_INITIAL_DATA', /*[[${environmentData}]]*/ ''
 	).constant('GERMPLASM_INITIAL_DATA', /*[[${germplasmData}]]*/ ''
 	).constant('GERMPLASM_LIST_SIZE',/*[[${germplasmListSize}]]*/ ''
@@ -496,5 +554,6 @@ var translations = {
 <script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-tabdrop.js}"></script>
 
 </div>

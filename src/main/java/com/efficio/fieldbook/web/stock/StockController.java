@@ -6,10 +6,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.ImportStockForm;
+import com.efficio.fieldbook.web.common.service.ImportInventoryService;
+import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
+import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
+import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
+import com.google.common.base.Joiner;
 import org.generationcp.commons.exceptions.StockException;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
@@ -31,6 +39,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -43,15 +52,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.ImportStockForm;
-import com.efficio.fieldbook.web.common.service.ImportInventoryService;
-import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
-import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
-import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 4/24/2015 Time: 4:38 PM
@@ -174,8 +174,7 @@ public class StockController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/generateStockTabIfNecessary/{listId}", method = RequestMethod.GET)
-	public String generateStockTabIfNecessary(@PathVariable
-	Integer listId, Model model) {
+	public String generateStockTabIfNecessary(@PathVariable Integer listId, Model model) {
 
 		try {
 			boolean transactionsExist = this.inventoryDataManager.transactionsExistForListProjectDataListID(listId);
@@ -395,13 +394,11 @@ public class StockController extends AbstractBaseFieldbookController {
 		return result;
 	}
 
-	@RequestMapping(value = "/ajax/{listId}/{entryIdList}", method = RequestMethod.GET)
-	public String showAjax(@ModelAttribute("seedStoreForm")
-	SeedStoreForm form, @PathVariable
-	Integer listId, @PathVariable
-	String entryIdList, Model model, HttpSession session) {
+	@RequestMapping(value = "/ajax/{listId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form, @PathVariable Integer listId,
+			@RequestBody Integer[] entryIdList, Model model, HttpSession session) {
 		form.setListId(listId);
-		form.setEntryIdList(entryIdList);
+		form.setEntryIdList(Joiner.on(",").join(entryIdList));
 		return super.showAjaxPage(model, "Inventory/addLotsModal");
 	}
 

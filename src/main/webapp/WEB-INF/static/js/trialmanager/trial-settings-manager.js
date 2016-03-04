@@ -257,6 +257,10 @@ window.TrialSettingsManager = (function() {
 				// Remove variables and properties as necessary
 				exclusions = exclusions.concat(_performExclusions(selectionExclusions, selectedVariables, filteredProperties));
 				break;
+            case 1807:
+                // Remove variables and properties as necessary
+                exclusions = exclusions.concat(_performExclusions(selectionExclusions, selectedVariables, filteredProperties));
+                break;
 			default:
 				break;
 		}

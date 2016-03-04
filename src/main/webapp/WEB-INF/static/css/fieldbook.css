@@ -1994,3 +1994,6 @@ input.review-select-all{
 .ontology-no-range {
     margin-left: 5%;
 }
+#manage-trial-tabs #germplasm-list-pagination {
+    opacity: 1 !important;
+}

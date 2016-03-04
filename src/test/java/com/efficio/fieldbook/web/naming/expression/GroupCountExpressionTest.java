@@ -1,4 +1,3 @@
-
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ public class GroupCountExpressionTest extends TestExpression {
 
 	@Test
 	public void testBulkingInName() {
-        testCountExpression("CML451 / ABC1234-B-B-B-B", "B*[COUNT]", "CML451 / ABC1234-B*4");
+        testCountExpression("CML451 / ABC1234-B-B-B-B", "B*[COUNT]", "CML451 / ABC1234-B*5");
 	}
 
 	@Test
@@ -33,16 +32,34 @@ public class GroupCountExpressionTest extends TestExpression {
 
 	@Test
 	public void testPoundCountWithItems() {
-        testCountExpression("CML451 / ABC1234-#-#-#", "#*[COUNT]", "CML451 / ABC1234-#*3");
+        testCountExpression("CML451 / ABC1234-#-#-#", "#*[COUNT]", "CML451 / ABC1234-#*4");
 	}
 
     @Test
     public void testCountTwoItemsGroup() {
-        testCountExpression("CML451 / ABC1234-#-#", "#*[COUNT]", "CML451 / ABC1234-#*2");
+        testCountExpression("CML451 / ABC1234-#-#", "#*[COUNT]", "CML451 / ABC1234-#*3");
+    }
+
+    @Test
+    public void testGroupCounting() {
+        GroupCountExpression.CountResultBean bean = this.dut.countContinuousExpressionOccurrence("-B","WM14AST0001L-B-3-1-1-2-B*3");
+        Assert.assertEquals(3, bean.getCount());
+    }
+
+    @Test
+    public void testAggregateGroupCountingFirst() {
+        GroupCountExpression.CountResultBean bean = this.dut.countContinuousExpressionOccurrence("-B","WM14AST0001L-B-3-1-1-2-B-B*3");
+        Assert.assertEquals(4, bean.getCount());
+    }
+
+    @Test
+    public void testAggregateGroupCountingLast() {
+        GroupCountExpression.CountResultBean bean = this.dut.countContinuousExpressionOccurrence("-B","WM14AST0001L-B-3-1-1-2-B*3-B");
+        Assert.assertEquals(4, bean.getCount());
     }
 
     protected void testCountExpression(String sourceName, String countExpression, String expectedValue) {
-        AdvancingSource source = this.createAdvancingSourceTestData(sourceName, "-", null, null, null, false);
+        AdvancingSource source = this.createAdvancingSourceTestData(sourceName, "-", null, null, null, true);
         List<StringBuilder> values = new ArrayList<>();
         values.add(new StringBuilder(source.getRootName() + countExpression));
 

@@ -14,24 +14,24 @@ package com.efficio.fieldbook.web;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import javax.annotation.Resource;
 
 /**
  * Base controller encapsulaitng common functionality between all the Fieldbook controllers.
@@ -58,6 +58,9 @@ public abstract class AbstractBaseFieldbookController {
 
 	@Resource
 	private PaginationListSelection paginationListSelection;
+
+	@Resource
+	protected OntologyVariableDataManager variableDataManager;
 
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
@@ -178,8 +181,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Convert favorite location to json.
-	 * 
-	 * @param locations the locations
+	 * @param objectList list of objects
 	 * @return the string
 	 */
 	protected String convertObjectToJson(final Object objectList) {
@@ -227,6 +229,10 @@ public abstract class AbstractBaseFieldbookController {
 				measurementVariablesIterator.remove();
 			}
 		}
+	}
+
+	public void setVariableDataManager(OntologyVariableDataManager variableDataManager) {
+		this.variableDataManager = variableDataManager;
 	}
 
 }

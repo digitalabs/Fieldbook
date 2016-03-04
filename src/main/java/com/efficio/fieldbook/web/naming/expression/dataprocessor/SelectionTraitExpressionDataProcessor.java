@@ -1,9 +1,12 @@
 
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Resource;
+
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
@@ -11,14 +14,8 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class SelectionTraitExpressionDataProcessor implements ExpressionDataProcessor {
@@ -36,7 +33,9 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 			final Study study) {
         // management details / study details are stored within the workbook conditions. nursery conditions are stored in the workbook constants
         List<MeasurementVariable> possibleEnvironmentSources = new ArrayList<>(workbook.getConditions());
-        possibleEnvironmentSources.addAll(workbook.getConstants());
+		if (workbook.getConstants() != null) {
+			possibleEnvironmentSources.addAll(workbook.getConstants());
+		}
 		for (final MeasurementVariable condition : possibleEnvironmentSources) {
 			if (condition.getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
 				source.setSelectionTraitValue(extractValue(condition.getValue(), condition.getTermId()));

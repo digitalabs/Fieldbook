@@ -1,6 +1,10 @@
 package com.efficio.fieldbook.web.study.service.impl;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -9,12 +13,10 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.study.service.ImportStudyService;
 
-@Service
 @Transactional
 public class CsvImportStudyServiceImpl  extends AbstractCSVImportStudyService implements ImportStudyService{
 	
@@ -54,12 +56,12 @@ public class CsvImportStudyServiceImpl  extends AbstractCSVImportStudyService im
         }
     }
 
-    public CsvImportStudyServiceImpl(Workbook workbook, String currentFile, String originalFileName) {
+    public CsvImportStudyServiceImpl(final Workbook workbook, final String currentFile, final String originalFileName) {
         super(workbook, currentFile, originalFileName);
     }
 
     @Override
-    protected String getLabelFromRequiredColumn(MeasurementVariable variable) {
+    protected String getLabelFromRequiredColumn(final MeasurementVariable variable) {
         String label = "";
 
         if (CsvRequiredColumnEnum.get(variable.getTermId()) != null) {

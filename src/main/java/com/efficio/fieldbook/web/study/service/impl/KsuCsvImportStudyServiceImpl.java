@@ -4,13 +4,11 @@ package com.efficio.fieldbook.web.study.service.impl;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 
-@Service
 @Transactional
 public class KsuCsvImportStudyServiceImpl extends AbstractCSVImportStudyService implements ImportStudyService {
 

@@ -20,7 +20,6 @@ import java.util.Set;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
@@ -28,7 +27,6 @@ import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 import com.efficio.fieldbook.web.study.service.ImportStudyService;
 
-@Service
 @Transactional
 public class FieldroidImportStudyServiceImpl extends AbstractImportStudyService<CSVOziel> implements ImportStudyService {
 

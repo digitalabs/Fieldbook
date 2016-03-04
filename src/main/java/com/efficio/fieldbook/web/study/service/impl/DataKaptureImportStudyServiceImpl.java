@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 import com.efficio.fieldbook.web.study.service.ImportStudyService;
 
-@Service
 @Transactional
 public class DataKaptureImportStudyServiceImpl extends AbstractImportStudyService<CSVOziel> implements ImportStudyService {
 

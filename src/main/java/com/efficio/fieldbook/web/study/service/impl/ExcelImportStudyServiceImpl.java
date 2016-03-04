@@ -20,6 +20,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -40,17 +41,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
-import com.efficio.fieldbook.web.study.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
-@Service
 @Transactional
-public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService implements ExcelImportStudyService {
+public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService implements ImportStudyService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExcelImportStudyServiceImpl.class);
 

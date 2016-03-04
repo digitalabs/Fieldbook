@@ -1,4 +1,4 @@
-<section xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+<section ng-cloak="" ng-app="nurseryNgApp" id="mainApp" xmlns:th="http://www.thymeleaf.org">
 
 <div class="row col-xs-12 col-md-12" >
 	<div class="page-header">
@@ -253,7 +253,7 @@
 
 <div th:include="/NurseryManager/includes/variableSelectionModal"></div>
 
-<div th:include="DesignImport/mapHeaders" ng-app="designImportApp"></div>
+<div th:include="DesignImport/mapHeaders"></div>
 
 <div th:include="DesignImport/reviewDetails"></div>
 

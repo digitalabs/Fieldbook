@@ -198,7 +198,7 @@ function showPage(paginationUrl, pageNum, sectionDiv) {
 			}
 
 			if (sectionDiv === 'imported-germplasm-list') {
-				makeDraggable(makeDraggableBool);
+				makeGermplasmListDraggable(makeDraggableBool);
 
 				// Highlight
 				if (itemsIndexAdded && itemsIndexAdded.length > 0) {
@@ -1006,46 +1006,109 @@ function deleteNurseryInEdit() {
 	});
 }
 
-function advanceNursery(tableName) {
-	'use strict';
+/* ADVANCING TRIAL SPECIFIC FUNCTIONS */
 
-	var count = 0,
-		idVal = $('#createNurseryMainForm #studyId').val();
+function advanceTrial(){
+    'use strict';
+    var idVal = $('#studyId').val();
+    $('#advanceNurseryModal').modal('hide');
+    $('#selectEnviornmentModal').modal({ backdrop: 'static', keyboard: true });
+}
 
-	if ($('.import-study-data').data('data-import') === '1') {
-		showErrorMessage('', needSaveImportDataError);
-		return;
-	}
+function trialSelectEnviornmentContinue(trialInstances,noOfReplications,selectedLocations,isTrialInstanceNumberUsed){
+    'use strict';
+    var idVal = $('#studyId').val();
+    $('#selectEnviornmentModal').modal('hide');
+    var locationDetailHtml = generateLocationDetailTable(selectedLocations,isTrialInstanceNumberUsed);
+    advanceStudy(idVal,trialInstances,noOfReplications,locationDetailHtml);
 
-	count++;
-	if (count !== 1) {
-		showMessage(advanceStudyError);
-		return;
-	}
+}
 
-	var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
+function generateLocationDetailTable(selectedLocations,isTrialInstanceNumberUsed) {
+    var result = "<table class='table table-curved table-condensed'>";
+    if(isTrialInstanceNumberUsed){
+        result += "<caption>Update Location Name or Location Abbr in Environment Details.</caption>";
+    }
+    result += "<thead><tr><th>"+selectedLocations[0]+"</th></tr></thead>";
 
-	if (tableName == 'nursery-table') {
-		if (idVal != null) {
+    for(var i=1; i<selectedLocations.length; i++) {
+        result += "<tbody><tr>";
+        result += "<td>"+selectedLocations[i]+"</td>";
+        result += "</tr></tbody>";
+    }
+    result += "</table>";
+    return result;
+}
 
-			$.ajax({
-				url: advanceStudyHref + '/' + encodeURIComponent(idVal),
-				type: 'GET',
-				aysnc: false,
-				success: function(html) {
-					$('#advance-nursery-modal-div').html(html);
-					$('#advanceNurseryModal').modal({ backdrop: 'static', keyboard: true });
+/* END ADVANCING TRIAL SPECIFIC FUNCTIONS */
 
-					$('#advanceNurseryModal select').not('.fbk-harvest-year').each(function() {
-						$(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
-					});
-					$('#advanceNurseryModal select.fbk-harvest-year').each(function() {
-						$(this).select2({minimumResultsForSearch: -1});
-					});
-				}
-			});
-		}
-	}
+
+/* ADVANCING NURSERY SPECIFIC FUNCTIONS */
+
+function advanceNursery(){
+    var idVal = $('#createNurseryMainForm #studyId').val();
+    advanceStudy(idVal);
+}
+
+/* END ADVANCING NURSERY SPECIFIC FUNCTIONS */
+
+
+/*
+ * Section for Advancing Study (Common for Trial and Nursery)
+ * @param studyId Nursery or Trial study Id
+ * @param locationIds Location will be passed for Advance Trial only
+ */
+function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtml){
+    'use strict';
+    var count = 0,
+        idVal = studyId;
+
+    if ($('.import-study-data').data('data-import') === '1') {
+        showErrorMessage('', needSaveImportDataError);
+        return;
+    }
+
+    count++;
+    if (count !== 1) {
+        showMessage(advanceStudyError);
+        return;
+    }
+
+    var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
+    advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
+
+    if(!isNursery() || trialInstances !== undefined){
+        advanceStudyHref = advanceStudyHref + '?selectedTrialInstances=' + encodeURIComponent(trialInstances.join(","));
+        advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
+    }
+
+    if (idVal != null) {
+        $.ajax({
+            url: advanceStudyHref,
+            type: 'GET',
+            aysnc: false,
+            success: function(html) {
+                $('#advance-nursery-modal-div').html(html);
+                $('#advanceNurseryModal')
+                	.one('shown.bs.modal', function() {
+                		$('body').addClass('modal-open');
+                	})
+                .modal({ backdrop: 'static', keyboard: true });
+
+                $('#advanceNurseryModal select').not('.fbk-harvest-year').each(function() {
+                    $(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
+                });
+                $('#advanceNurseryModal select.fbk-harvest-year').each(function() {
+                    $(this).select2({minimumResultsForSearch: -1});
+                });
+
+                if(!isNursery()){
+                    $('#location-details-section').append(locationDetailHtml);
+                }
+
+            }
+        });
+    }
 }
 function showInvalidInputMessage(message) {
 	'use strict';
@@ -1664,16 +1727,30 @@ function validatePlantsSelected() {
 				if (isMixed) {
 					if (data == 0) {
 						var param = $('lineVariateId').select2('data').text + ' and/or ' + $('#plotVariateId').select2('data').text;
-						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
-						showErrorMessage('page-advance-modal-message', newMessage);
+                        if(isNursery){
+                            var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+                        else{
+                            var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+
 						valid = false;
 					}
 				} else if (isBulk) {
 					choice = !$('#plot-variates-section').is(':visible');
 					if (choice == false && data == '0') {
 						var param = $('#plotVariateId').select2('data').text;
-						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
-						showErrorMessage('page-advance-modal-message', newMessage);
+                        if(isNursery()){
+                            var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+                        else{
+                            var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+
 						valid = false;
 					}
 				} else {
@@ -1681,8 +1758,15 @@ function validatePlantsSelected() {
 					lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
 					if (lineSameForAll == false && choice == false && data == '0') {
 						var param = $('#lineVariateId').select2('data').text;
-						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
-						showErrorMessage('page-advance-modal-message', newMessage);
+                        if(isNursery()){
+                            var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+                        else{
+                            var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
+                            showErrorMessage('page-advance-modal-message', newMessage);
+                        }
+
 						valid = false;
 					}
 				}
@@ -1702,6 +1786,18 @@ function validatePlantsSelected() {
 
 function callAdvanceNursery() {
 	var lines = $('#lineSelected').val();
+
+    if(!isNursery()){
+        var selectedReps = [];
+        $('#replications input:checked').each(function() {
+            selectedReps.push($(this).val());
+        });
+
+        if(selectedReps.length == 0){
+            showErrorMessage('page-advance-modal-message', noReplicationSelectedError);
+            return false;
+        }
+    }
 
 	if (!lines.match(/^\s*(\+|-)?\d+\s*$/)) {
 		showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
@@ -1729,7 +1825,7 @@ function closeAdvanceListTab(uniqueId) {
 	}, 100);
 }
 
-function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, advancedGermplasmListId) {
+function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, advancedGermplasmListId,isPageLoading) {
 	'use script';
 	var id = advancedGermplasmListId ? advancedGermplasmListId : germplasmListId;
 	var url = '/Fieldbook/germplasm/list/advance/' + id;
@@ -1744,11 +1840,23 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
 		type: 'GET',
 		cache: false,
 		success: function(html) {
-			$('#advance-list' + id).html(html);
-			//we just show the button
-			$('.export-advance-list-action-button').removeClass('fbk-hide');
-			$('#advance-list' + id + '-li').addClass('advance-germplasm-items');
-			$('#advance-list' + id + '-li').data('advance-germplasm-list-id', advancedGermplasmListId);
+            if (isNursery()) {
+                $('#advance-list' + id).html(html);
+                //we just show the button
+                $('.export-advance-list-action-button').removeClass('fbk-hide');
+                $('#advance-list' + id + '-li').addClass('advance-germplasm-items');
+                $('#advance-list' + id + '-li').data('advance-germplasm-list-id', advancedGermplasmListId);
+                $('.nav-tabs').tabdrop({align: 'left'});
+                $('.nav-tabs').tabdrop('layout');
+            } else {
+                var element = angular.element(document.getElementById("mainApp")).scope();
+                // To apply scope safely
+                element.safeApply(function (){
+                    element.addAdvanceTabData(id, html, listName, isPageLoading);
+                });
+                // Display Stock List if it is generated
+                StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
+            }
 		}
 	});
 }
@@ -1765,8 +1873,15 @@ function validateBreedingMethod() {
 			async: false,
 			success: function(data) {
 				if (data == 0) {
-					var newMessage = noMethodValueError.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
-					showErrorMessage('page-advance-modal-message', newMessage);
+                    if(isNursery()){
+                        var newMessage = noMethodValueError.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
+                        showErrorMessage('page-advance-modal-message', newMessage);
+                    }
+                    else{
+                        var newMessage = noMethodValueErrorTrial.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
+                        showErrorMessage('page-advance-modal-message', newMessage);
+                    }
+
 					valid = false;
 				}
 			},
@@ -1870,7 +1985,7 @@ function recreateMethodCombo() {
 	}
 
 	$.ajax({
-		url: '/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods',
+		url: '/Fieldbook/breedingMethod/getBreedingMethods',
 		type: 'GET',
 		cache: false,
 		data: '',
@@ -1883,8 +1998,8 @@ function recreateMethodCombo() {
 				} else if (selectedMethodAll != null) {
 
 					//recreate the select2 combos to get updated list of methods
-					recreateMethodComboAfterClose('methodIdAll', $.parseJSON(data.allNonGenerativeMethods));
-					recreateMethodComboAfterClose('methodIdFavorite', $.parseJSON(data.favoriteNonGenerativeMethods));
+					recreateMethodComboAfterClose('methodIdAll', data.allNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteNonGenerativeMethods);
 					showCorrectMethodCombo();
 					//set previously selected value of method
 					if ($('#showFavoriteMethod').prop('checked')) {
@@ -1923,10 +2038,10 @@ function refreshImportMethodCombo(data) {
 	}
 	if ($('#importFavoriteMethod').is(':checked')) {
 
-		initializePossibleValuesCombo($.parseJSON(data.favoriteMethods),
+		initializePossibleValuesCombo(data.favoriteMethods,
 				'#importMethodId', false, selectedValue);
 	} else {
-		initializePossibleValuesCombo($.parseJSON(data.allMethods),
+		initializePossibleValuesCombo(data.allMethods,
 				'#importMethodId', false, selectedValue);
 	}
 	replacePossibleJsonValues(data.favoriteMethods, data.allMethods, 'Method');
@@ -1938,10 +2053,10 @@ function refreshImportLocationCombo(data) {
 		selectedValue = $('#importLocationId').select2('data').id;
 	}
 	if ($('#importFavoriteLocation').is(':checked')) {
-		initializePossibleValuesCombo($.parseJSON(data.favoriteLocations),
+		initializePossibleValuesCombo(data.favoriteLocations,
 				'#importLocationId', true, selectedValue);
 	} else {
-		initializePossibleValuesCombo($.parseJSON(data.allBreedingLocations),
+		initializePossibleValuesCombo(data.allBreedingLocations,
 				'#importLocationId', true, selectedValue);
 	}
 	replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, 'Location');
@@ -1993,7 +2108,7 @@ function recreateLocationCombo() {
 
 	if (inventoryPopup || advancePopup || fieldmapScreen || createGermplasm || hasCreateGermplasm || createGermplasmOpened) {
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/advance/nursery/getLocations',
+			url: '/Fieldbook/locations/getLocations',
 			type: 'GET',
 			cache: false,
 			data: '',
@@ -2004,22 +2119,22 @@ function recreateLocationCombo() {
 						refreshImportLocationCombo(data);
 						refreshLocationComboInSettings(data);
 					} else if (inventoryPopup) {
-						recreateLocationComboAfterClose('inventoryLocationIdAll', $.parseJSON(data.allSeedStorageLocations));
-						recreateLocationComboAfterClose('inventoryLocationIdFavorite', $.parseJSON(data.favoriteLocations));
+						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allSeedStorageLocations);
+						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations);
 						showCorrectLocationInventoryCombo();
 						// set previously selected value of location
 						if ($('#showFavoriteLocationInventory').prop('checked')) {
-							setComboValues(generateGenericLocationSuggestions($.parseJSON(data.favoriteLocations)), $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
+							setComboValues(generateGenericLocationSuggestions(data.favoriteLocations), $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
 						} else {
-							setComboValues(generateGenericLocationSuggestions($.parseJSON(data.allSeedStorageLocations)), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
+							setComboValues(generateGenericLocationSuggestions(data.allSeedStorageLocations), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
 						}
 						refreshLocationComboInSettings(data);
 					} else if (advancePopup === true
 						|| selectedLocationAll != null) {
 						// recreate the select2 combos to get updated list
 						// of locations
-						recreateLocationComboAfterClose('harvestLocationIdAll', $.parseJSON(data.allBreedingLocations));
-						recreateLocationComboAfterClose('harvestLocationIdFavorite', $.parseJSON(data.favoriteLocations));
+						recreateLocationComboAfterClose('harvestLocationIdAll', data.allBreedingLocations);
+						recreateLocationComboAfterClose('harvestLocationIdFavorite', data.favoriteLocations);
 						showCorrectLocationCombo();
 						// set previously selected value of location
 						if ($('#showFavoriteLocation').prop('checked')) {
@@ -2031,8 +2146,8 @@ function recreateLocationCombo() {
 
 					} else if (fieldmapScreen === true) {
 						//recreate the select2 combos to get updated list of locations
-						recreateLocationComboAfterClose('fieldLocationIdAll', $.parseJSON(data.allBreedingLocations));
-						recreateLocationComboAfterClose('fieldLocationIdFavorite', $.parseJSON(data.favoriteLocations));
+						recreateLocationComboAfterClose('fieldLocationIdAll', data.allBreedingLocations);
+						recreateLocationComboAfterClose('fieldLocationIdFavorite', data.favoriteLocations);
 						showCorrectLocationCombo();
 						//set previously selected value of location
 						if ($('#showFavoriteLocation').prop('checked')) {
@@ -2061,18 +2176,9 @@ function refreshMethodComboInSettings(data) {
 	//get index of breeding method row
 	var index = getBreedingMethodRowIndex(), selectedVal = null;
 	if (index > -1) {
-		var pleaseChoose = '{"mid":0,"mname":"Please Choose","mdesc":"Please Choose"}';
-		if ($.parseJSON(data.favoriteNonGenerativeMethods).length == 0) {
-			data.favoriteNonGenerativeMethods = '[' + pleaseChoose + ']';
-		} else {
-			data.favoriteNonGenerativeMethods = '[' + pleaseChoose + ',' + data.favoriteNonGenerativeMethods.substring(1);
-		}
-
-		if ($.parseJSON(data.allNonGenerativeMethods).length == 0) {
-			data.allNonGenerativeMethods = '[' + pleaseChoose + ']';
-		} else {
-			data.allNonGenerativeMethods = '[' + pleaseChoose + ', ' + data.allNonGenerativeMethods.substring(1);
-		}
+		var pleaseChoose = {"mid":0, "mname":"Please Choose", "mdesc":"Please Choose"};
+        data.favoriteNonGenerativeMethods.unshift(pleaseChoose);
+        data.allNonGenerativeMethods.unshift(pleaseChoose);
 
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data')) {
 			selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
@@ -2084,10 +2190,10 @@ function refreshMethodComboInSettings(data) {
 
 		//update values of combo
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
-			initializePossibleValuesCombo($.parseJSON(data.favoriteNonGenerativeMethods),
+			initializePossibleValuesCombo(data.favoriteNonGenerativeMethods,
 					'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		} else {
-			initializePossibleValuesCombo($.parseJSON(data.allNonGenerativeMethods),
+			initializePossibleValuesCombo(data.allNonGenerativeMethods,
 					'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		}
 
@@ -2106,9 +2212,9 @@ function refreshLocationComboInSettings(data) {
 
 		// update values in combo
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
-			initializePossibleValuesCombo($.parseJSON(data.favoriteLocations), '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+			initializePossibleValuesCombo(data.favoriteLocations, '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		} else {
-			initializePossibleValuesCombo($.parseJSON(data.allBreedingLocations), '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
+			initializePossibleValuesCombo(data.allBreedingLocations, '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
 		}
 
 		replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, index);
@@ -2971,6 +3077,61 @@ function isNursery() {
 	}
 }
 
+function makeGermplasmListDraggable(isDraggable) {
+    'use strict';
+    isDraggable = isDraggable
+        && (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1
+        || ($('#studyId').length === 0 && isNursery()))
+        || $('#studyId').length > 0 && isNursery() && measurementRowCount === 0);
+    if (isDraggable) {
+        $('.germplasm-list-items tbody  tr').draggable({
+
+            helper: function(/*event, ui*/) {
+                var width = $(this)[0].offsetWidth,
+                    selected = $('.germplasm-list-items tr.germplasmSelectedRow'),
+                    container;
+
+                if (selected.length === 0) {
+                    selected = $(this).addClass('germplasmSelectedRow');
+                }
+
+                container = $('<table style="width:' + width + 'px; background-color:green;" />').attr('id', 'draggingContainer');
+                container.append(selected.clone().removeClass('germplasmSelectedRow'));
+
+                return container;
+            },
+
+            revert: 'invalid',
+
+            start: function (/*event, ui*/) {
+                var selected = $('.germplasm-list-items tr.germplasmSelectedRow');
+            },
+
+            stop: function (/*event, ui*/) {
+                var selected = $('.germplasm-list-items tr.germplasmSelectedRow');
+                $(selected).css('opacity', '1');
+            },
+
+            zIndex : 9999,
+
+            appendTo : '#chooseGermplasmAndChecks'
+        });
+
+        $('.germplasm-list-items tbody tr').off('click').on('click', function (){
+            $(this).toggleClass('germplasmSelectedRow');
+        });
+
+    } else {
+        if ($('.germplasm-list-items .ui-draggable').length !== 0) {
+            $('.germplasm-list-items tbody  tr').draggable('destroy');
+        }
+        $('.germplasm-list-items tbody tr').off('click');
+    }
+
+    // Change background of selected rows
+    $('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
+}
+
 function isOpenTrial() {
 	'use strict';
 	var trialStatus = $('body').data('trialStatus');
@@ -3277,7 +3438,7 @@ function showGermplasmDetailsSection() {
 	$('#chooseGermplasmAndChecks').data('replace', '1');
 	if (isNursery()) {
 		//enable drag and drop
-		makeDraggable(true);
+		makeGermplasmListDraggable(true);
 		makeCheckDraggable(true);
 		if ($('.check-germplasm-list-items tbody tr').length > 0) {
 			//show clear button and specify checks section
@@ -3325,19 +3486,26 @@ function displayStudyGermplasmSection(hasData, observationCount) {
 		if (isNursery()) {
 			disableCheckVariables(true);
 		}
+	} else if (countGermplasms() > 0) {
+		$('.observation-exists-notif').hide();
+		$('.overwrite-germplasm-list').show();
+		$('.browse-import-link').hide();
 	} else {
 		$('.observation-exists-notif').hide();
 		$('.overwrite-germplasm-list').hide();
 	}
 }
 
-function disableCheckVariables(isDisabled) {
+function countGermplasms() {
+	var totalGermplasms = parseInt($('#totalGermplasms').val());
+	return totalGermplasms ? totalGermplasms : 0;
+}
 
+function disableCheckVariables(isDisabled) {
 	$('#' + getJquerySafeId('checkVariables2.value')).select2('destroy');
 	$('#' + getJquerySafeId('checkVariables2.value')).prop('disabled', isDisabled);
 	$('#' + getJquerySafeId('checkVariables2.value')).select2();
 	$('#specifyCheckSection').find('input,select').prop('disabled', isDisabled);
-
 }
 
 function showMeasurementsPreview() {
@@ -3417,7 +3585,7 @@ function displaySelectedGermplasmDetails() {
 			if (isNursery()) {
 				itemsIndexAdded = [];
 				setSpinnerMaxValue();
-				makeDraggable(false);
+				makeGermplasmListDraggable(false);
 				lastDraggedPrimaryList = $('#lastDraggedPrimaryList').val();
 			} else {
 				$(document).trigger('germplasmListUpdated');

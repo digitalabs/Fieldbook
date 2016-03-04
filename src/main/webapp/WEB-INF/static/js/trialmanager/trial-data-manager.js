@@ -4,11 +4,11 @@
 (function() {
 	'use strict';
 	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
-		'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
+            'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
 		'TrialSettingsManager', '_', '$localStorage',
-		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
+		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA , ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
 					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage) {
@@ -149,7 +149,7 @@
 				var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 
 				var serializedData = $form.serializeArray();
-				serializedData[serializedData.length] = {'name': 'columnOrders', 'value': (JSON.stringify(columnsOrder))};
+				serializedData[serializedData.length] = {name: 'columnOrders', value: (JSON.stringify(columnsOrder))};
 
 				var d = $q.defer();
 
@@ -205,7 +205,7 @@
 			};
 
 			var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
-				{id: '@id'}, {'get': {method: 'get', isArray: true}});
+				{id: '@id'}, {get: {method: 'get', isArray: true}});
 			var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
 
 			var service = {
@@ -221,11 +221,13 @@
 				// what I get is an instance of OrderedHash containing an array of keys with the map
 				settings: {
 					trialSettings: extractSettings(TRIAL_SETTINGS_INITIAL_DATA),
+                    selectionVariables: extractSettings(SELECTION_VARIABLE_INITIAL_DATA),
 					environments: extractSettings(ENVIRONMENTS_INITIAL_DATA),
 					germplasm: extractSettings(GERMPLASM_INITIAL_DATA),
 					treatmentFactors: extractTreatmentFactorSettings(TREATMENT_FACTORS_INITIAL_DATA),
 					measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
-					basicDetails: extractSettings(BASIC_DETAILS_DATA)
+					basicDetails: extractSettings(BASIC_DETAILS_DATA),
+                    advancedList: ADVANCE_LIST_DATA
 				},
 				applicationData: {
 					unappliedChangesAvailable: false,
@@ -235,6 +237,7 @@
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
                     hasGeneratedDesignPreset: false,
+                    hasNewEnvironmentAdded : false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
 					designTypes: []
 				},
@@ -277,23 +280,23 @@
 				generateExpDesign: function(data) {
 					return GenerateExpDesignService.save(data).$promise;
 				},
-                
-                updateAfterGeneratingDesignSuccessfully : function(){
+
+				updateAfterGeneratingDesignSuccessfully: function() {
 					service.clearUnappliedChangesFlag();
 					service.applicationData.unsavedGeneratedDesign = true;
 					$('#chooseGermplasmAndChecks').data('replace', '1');
 					$('body').data('expDesignShowPreview', '1');
 				},
-			
-				retrieveDesignType: function(){
-					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function (designTypes) {
-	                   service.applicationData.designTypes = designTypes; 
-	                });
+
+				retrieveDesignType: function() {
+					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function(designTypes) {
+						service.applicationData.designTypes = designTypes;
+					});
 				},
-                
-                generatePresetExpDesign: function(designType) {
-                	var deferred = $q.defer();
-                	
+
+				generatePresetExpDesign: function(designType) {
+					var deferred = $q.defer();
+
 					var environmentData = angular.copy(service.currentData.environments);
 
 					_.each(environmentData.environments, function(data, key) {
@@ -303,26 +306,27 @@
 							}
 						});
 					});
-					
+
 					var data = {
-						environmentData : environmentData,
-						selectedDesignType : angular.copy(service.applicationData.designTypes[designType]),
-						startingEntryNo : service.currentData.experimentalDesign.startingEntryNo,
-						startingPlotNo : service.currentData.experimentalDesign.startingPlotNo
+						environmentData: environmentData,
+						selectedDesignType: angular.copy(service.applicationData.designTypes[designType]),
+						startingEntryNo: service.currentData.experimentalDesign.startingEntryNo,
+						startingPlotNo: service.currentData.experimentalDesign.startingPlotNo,
+						hasNewEnvironmentAdded: service.applicationData.hasNewEnvironmentAdded
 					};
 
-					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data)).then(function(resp){
+					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data)).then(function(resp) {
 						if (!resp.data.isSuccess) {
 							deferred.reject(resp.data);
 							return;
 						}
 						service.updateCurrentData('environments', environmentData);
-						
+
 						deferred.resolve(true);
 					});
-					
+
 					return deferred.promise;
-                },
+				},
 
 				refreshMeasurementTableAfterDeletingEnvironment: function() {
 					var noOfEnvironments = service.currentData.environments.noOfEnvironments;
@@ -330,30 +334,25 @@
 					//update the no of environments in experimental design tab
 					data.noOfEnvironments = noOfEnvironments;
 
-                    
-                    if (service.currentData.experimentalDesign.designType >= 4){
-                    	service.generatePresetExpDesign(service.currentData.experimentalDesign.designType).then(function(){
-                    		service.updateAfterGeneratingDesignSuccessfully();
-                    		service.applicationData.hasGeneratedDesignPreset = true;
-                    	});
-                    }else{
-                    	
-                    	  service.generateExpDesign(data).then(
-                                  function (response) {
-                                      if (response.valid === true) {
-                                          service.clearUnappliedChangesFlag();
-                                          service.applicationData.unsavedGeneratedDesign = true;
-                                          $('#chooseGermplasmAndChecks').data('replace', '1');
-                                          $('body').data('expDesignShowPreview', '1');
-                                      } else {
-                                          showErrorMessage('', response.message);
-                                      }
-                                  }
-                              );
-                    	
-                    }
-                    
-                  
+					if (service.currentData.experimentalDesign.designType >= 4) {
+						service.generatePresetExpDesign(service.currentData.experimentalDesign.designType).then(function() {
+							service.updateAfterGeneratingDesignSuccessfully();
+							service.applicationData.hasGeneratedDesignPreset = true;
+						});
+					}else {
+						service.generateExpDesign(data).then(
+                              function(response) {
+									if (response.valid === true) {
+										service.clearUnappliedChangesFlag();
+										service.applicationData.unsavedGeneratedDesign = true;
+										$('#chooseGermplasmAndChecks').data('replace', '1');
+										$('body').data('expDesignShowPreview', '1');
+									} else {
+										showErrorMessage('', response.message);
+									}
+                              }
+                          );
+					}
 				},
 
 				isOpenTrial: function() {
@@ -369,26 +368,19 @@
 							'To update the Measurements table, please review your settings and regenerate ' +
 							'the Experimental Design on the next tab', 10000);
 						$('body').data('needGenerateExperimentalDesign', '1');
+					}
+				},
 
-                        if (service.currentData.experimentalDesign.designType === 3) {
-                            service.currentData.experimentalDesign.designType = null;
-                        }
-                    }
-                },
+				// set unappliedChangesAvailable to true if Entry Number is updated
+				setUnappliedChangesAvailable: function() {
+					service.applicationData.unappliedChangesAvailable = true;
+				},
 
-                // set unappliedChangesAvailable to true if Entry Number is updated
-                setUnappliedChangesAvailable: function() {
-                    service.applicationData.unappliedChangesAvailable = true;
-                },
-
-                indicateUnsavedTreatmentFactorsAvailable: function () {
-                	if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
-                        service.applicationData.unsavedTreatmentFactorsAvailable = true;
-                        if (service.currentData.experimentalDesign.designType === 3) {
-                            service.currentData.experimentalDesign.designType = null;
-                        }
-                    }
-                },
+				indicateUnsavedTreatmentFactorsAvailable: function() {
+					if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
+						service.applicationData.unsavedTreatmentFactorsAvailable = true;
+					}
+				},
 
 				clearUnappliedChangesFlag: function() {
 					service.applicationData.unappliedChangesAvailable = false;
@@ -555,6 +547,11 @@
 					$('body').data('service.trialMeasurement.count', newCountValue);
 				},
 
+				updateStartingEntryNoCount: function(newCountValue) {
+					service.currentData.experimentalDesign.startingEntryNo = newCountValue;
+					$('body').data('service.currentData.experimentalDesign.startingEntryNo', newCountValue);
+				},
+
 				onUpdateSettings: function(key, updateFunction) {
 					if (!settingRegistry[key]) {
 						settingRegistry[key] = [];
@@ -640,7 +637,9 @@
 								return true;
 							} else if (key === 'treatmentFactors') {
 								settingsArray.push(value.details);
-							} else {
+							} else if (key === 'advancedList'){
+                                return true;
+                            } else {
 								if (value) {
 									settingsArray.push(value);
 								}
@@ -734,12 +733,12 @@
 
 				},
 
-                validateAllVariablesInput: function () {
-                    var results = {
-                        hasError: false,
-                        customMessage: '',
-                        customHeader: 'Invalid Input '
-                    };
+				validateAllVariablesInput: function() {
+					var results = {
+						hasError: false,
+						customMessage: '',
+						customHeader: 'Invalid Input '
+					};
 
 					// perform validation on all settings.currentData, (min / max) if any
 					// Validate all Trial Settings
@@ -865,7 +864,7 @@
 			};
 
 			service.retrieveDesignType();
-			
+
 			// store the initial values on some service properties so that we can revert to it later
 			$localStorage.serviceBackup = {
 				settings: angular.copy(service.settings),

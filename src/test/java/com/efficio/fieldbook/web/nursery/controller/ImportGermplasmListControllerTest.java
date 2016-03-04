@@ -615,6 +615,22 @@ public class ImportGermplasmListControllerTest {
 		Assert.assertEquals("Expecting studyIdInSaveDataset returned from nextScreen", "3", studyIdInNextScreen);
 	}
 
+	@Test
+	public void testValidateEntryAndPlotNoEmptyList() throws Exception {
+		// create a stub of importGermplasmListController that we can test
+		ImportGermplasmListController controllerToTest = Mockito.mock(ImportGermplasmListController.class);
+		ImportGermplasmListForm form = new ImportGermplasmListForm();
+
+		Mockito.when(controllerToTest.getUserSelection()).thenReturn(this.userSelection);
+		Mockito.doCallRealMethod().when(controllerToTest).validateEntryAndPlotNo(form);
+
+		controllerToTest.validateEntryAndPlotNo(form);
+
+		// validateEntryAndPlotNo should process as Germplasm list null check logic moved to nextScreen
+		Mockito.verify(controllerToTest,Mockito.times(1)).computeTotalExpectedChecks(form);
+	}
+
+
 	private List<ListDataProject> createListDataProject() {
 		List<ListDataProject> list = new ArrayList<>();
 		for (int x = 1; x <= 5; x++) {

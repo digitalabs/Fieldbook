@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.Study;
@@ -78,6 +79,20 @@ public class AdvancingSourceListFactory {
 		if (workbook != null && workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
 			for (MeasurementRow row : workbook.getObservations()) {
                 AdvancingSource source = environmentLevel.copy();
+                
+                // Only advance entries for selected trial instances (environments) 
+				source.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
+				if (source.getTrialInstanceNumber() != null && advanceInfo.getSelectedTrialInstances() != null
+						&& !advanceInfo.getSelectedTrialInstances().contains(source.getTrialInstanceNumber())) {
+					continue;
+				}
+
+				// Only advance entries for selected replications within an environment
+				source.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
+				if (source.getReplicationNumber() != null && advanceInfo.getSelectedReplications() != null
+						&& !advanceInfo.getSelectedReplications().contains(source.getReplicationNumber())) {
+					continue;
+				}
 
 				Integer methodId = null;
 				if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {
@@ -224,6 +239,7 @@ public class AdvancingSourceListFactory {
 					source.getGermplasm().setGpid1(germplasm.getGpid1());
 					source.getGermplasm().setGpid2(germplasm.getGpid2());
 					source.getGermplasm().setGnpgs(germplasm.getGnpgs());
+					source.getGermplasm().setMgid(germplasm.getMgid());
 					Method sourceMethod = breedingMethodMap.get(germplasm.getMethodId());
 					if (sourceMethod != null) {
 						source.setSourceMethod(sourceMethod);

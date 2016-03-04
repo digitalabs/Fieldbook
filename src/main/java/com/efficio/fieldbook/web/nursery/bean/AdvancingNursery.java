@@ -12,7 +12,9 @@
 package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.generationcp.middleware.domain.dms.Study;
 
 /**
@@ -57,6 +59,26 @@ public class AdvancingNursery implements Serializable {
 	private Integer plotVariateId;
 
 	private boolean isCheckAdvanceLinesUnique;
+
+	private Set<String> selectedTrialInstances;
+
+    private Set<String> selectedReplications;
+
+	public Set<String> getSelectedTrialInstances() {
+		return this.selectedTrialInstances;
+	}
+
+	public void setSelectedTrialInstances(Set<String> selectedTrialInstances) {
+		this.selectedTrialInstances = selectedTrialInstances;
+	}
+
+	public Set<String> getSelectedReplications() {
+		return this.selectedReplications;
+	}
+	
+	public void setSelectedReplications(Set<String> selectedReplications) {
+		this.selectedReplications = selectedReplications;
+	}
 
 	public Study getStudy() {
 		return this.study;
@@ -266,24 +288,6 @@ public class AdvancingNursery implements Serializable {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("AdvancingNursery [study=");
-		builder.append(this.study);
-		builder.append(", methodChoice=");
-		builder.append(this.methodChoice);
-		builder.append(", lineChoice=");
-		builder.append(this.lineChoice);
-		builder.append(", lineSelected=");
-		builder.append(this.lineSelected);
-		builder.append(", harvestDate=");
-		builder.append(this.harvestDate);
-		builder.append(", harvestLocationId=");
-		builder.append(this.harvestLocationId);
-		builder.append(", harvestLocationAbbreviation=");
-		builder.append(this.harvestLocationAbbreviation);
-		builder.append(", breedingMethodId=");
-		builder.append(this.breedingMethodId);
-		builder.append("]");
-		return builder.toString();
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

@@ -68,18 +68,6 @@
 	})();
 
 	angular.module('fieldbook-utils', ['ui.select2'])
-		.constant('VARIABLE_TYPES', {
-			ANALYSIS: 1801,
-			TRIAL_CONDITION: 1802,
-			NURSERY_CONDITION: 1803,
-			GERMPLASM_DESCRIPTOR: 1804,
-			STUDY_DETAIL: 1805,
-			ENVIRONMENT_DETAIL: 1806,
-			SELECTION_METHOD: 1807,
-			TRAIT: 1808,
-			TREATMENT_FACTOR: 1809,
-			EXPERIMENTAL_DESIGN: 1810
-		})
 		.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
 		.constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
 		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', function(TrialManagerDataService, $filter, _) {
@@ -139,21 +127,6 @@
 				}
 			};
 		}])
-		.directive('showDetailsModal', function() {
-			return {
-				scope: {
-					showDetailsModal: '=',
-					variableType: '@'
-				},
-
-				link: function(scope, elem) {
-					elem.css({ cursor: 'pointer' });
-					elem.on('click', function() {
-						showBaselineTraitDetailsModal(scope.showDetailsModal, scope.variableType);
-					});
-				}
-			};
-		})
 		.directive('validNumber', function() {
 
 			return {
@@ -406,7 +379,7 @@
 
 						$scope.updateLocationValues = function() {
 							if (!$scope.variableDefinition.locationUpdated) {
-								$http.get('/Fieldbook/NurseryManager/advance/nursery/getLocations').then(function(returnVal) {
+								$http.get('/Fieldbook/locations/getLocations').then(function(returnVal) {
 									if (returnVal.data.success === '1') {
 										$scope.variableDefinition.locationUpdated = true;
 										// clear and copy of array is performed so as to preserve previous reference
@@ -415,10 +388,10 @@
 										$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
 
 										$scope.variableDefinition.possibleValues.push.apply($scope.variableDefinition.possibleValues,
-											$scope.convertLocationsToPossibleValues($.parseJSON(returnVal.data.allBreedingLocations)));
+											$scope.convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
 										$scope.variableDefinition.possibleValuesFavorite.push.apply(
 											$scope.variableDefinition.possibleValuesFavorite,
-											$scope.convertLocationsToPossibleValues($.parseJSON(returnVal.data.favoriteLocations)));
+											$scope.convertLocationsToPossibleValues(returnVal.data.favoriteLocations));
 										$scope.updateDropdownValues();
 									}
 								});
@@ -462,60 +435,6 @@
 				$(element).placeholder();
 			};
 		})
-
-		.directive('sectionContainer', ['$parse', function($parse) {
-			return {
-				restrict: 'E',
-				scope: {
-					heading: '@',
-					reminder: '@',
-					helpTooltip: '@',
-					icon: '@',
-					iconImg: '@',
-					iconSize: '@',
-					modelData: '=',
-					variableType: '@',
-					showReminder: '=',
-					enableUpdate: '=',
-					onUpdate: '&',
-					callback: '&',
-					hideVariable: '=',
-					useExactProperties: '@',
-					collapsible: '=',
-					actionButtonDirection: '@'
-				},
-				transclude: true,
-				templateUrl: '/Fieldbook/static/angular-templates/sectionContainer.html',
-				link: function(scope, elem, attrs) {
-					scope.addVariable = $parse(attrs.addVariable)();
-
-					attrs.$observe('helpTooltip', function(value) {
-						if (value) {
-							scope.hasHelpTooltip = true;
-						}
-					});
-
-				},
-				controller: ['$scope', '$attrs', function($scope, $attrs) {
-					$scope.toggleCollapse = false;
-					$scope.toggleSection = $attrs.startCollapsed && $attrs.startCollapsed === 'true';
-					$scope.doCollapse = function() {
-						if ($scope.collapsible) {
-							$scope.toggleSection = !$scope.toggleSection;
-						}
-					};
-
-					$scope.doClick = function() {
-						$scope.onUpdate({});
-					};
-
-					$scope.onAdd = function(result) {
-						$scope.callback({ result: result });
-					};
-				}]
-
-			};
-		}])
 
 		.directive('truncateAndTooltip', ['$compile', function($compile) {
 			return {

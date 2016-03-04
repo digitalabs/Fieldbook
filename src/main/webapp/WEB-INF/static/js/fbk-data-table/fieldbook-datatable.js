@@ -113,13 +113,31 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					targets: columns.length - 1,
 					createdCell: function(td, cellData, rowData, row, col) {
 						if (isVariates) {
-							// since currentValue contains both name and description, we need to retrieve
-							// only the description by splitting the first occurrence of the separator
-							var currentValue = cellData[1].substring(cellData[1].indexOf('=') + 1).trim();
+							// cellData[0] : categorical name
+							// cellData[1] : categorical display description
+
+							// current measurementData has no value thus no need to check if out-of-bounds
+							if (cellData[1] === '') {
+								return;
+							}
 
 							// look for that description in the list of possible values
 							var found = $.grep(possibleValues, function(value, i) {
-								return value.indexOf(currentValue) !== -1;
+								if (value === cellData[1]) {
+									// this is the case where a=x format is retrieved directly from ontology DB
+
+									return true;
+								} else if (value !== '' && value.indexOf('=') === -1) {
+									// this is the case where categorical ref values (possibleValues) retrieved is not in a=x format
+
+									// since currentValue contains both name and description, we need to retrieve
+									// only the description by splitting from the first occurrence of the separator
+									var currentValue = cellData[1].substring(cellData[1].indexOf('=') + 1).trim();
+
+									return value === currentValue;
+								}
+
+								return false;
 							}).length;
 
 							// if not found we may change its class as accepted (blue) or invalid (red)

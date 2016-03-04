@@ -143,21 +143,25 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		super();
 	}
 
-    private final static Comparator<FieldMapLabel> ENTRY_NUMBER_ASC_COMPARATOR = new Comparator<FieldMapLabel>() {
+    /**
+     * This comparator first checks for the existence of a plot number variable to perform comparison.
+     * If that is not available, then values for entry number are used. Comparison is done in ascending order
+     */
+    private final static Comparator<FieldMapLabel> PLOT_NUMBER_ENTRY_NUMBER_ASC_COMPARATOR = new Comparator<FieldMapLabel>() {
         @Override
-        public int compare(final FieldMapLabel o1, final FieldMapLabel o2) {
-            Object plotNumber1 = o1.getPlotNo();
+        public int compare(final FieldMapLabel mapLabel1, final FieldMapLabel mapLabel2) {
+            Object plotNumber1 = mapLabel1.getPlotNo();
             if (plotNumber1 == null) {
-                plotNumber1 = o1.getUserFields().get(TermId.PLOT_NO.getId());
+                plotNumber1 = mapLabel1.getUserFields().get(TermId.PLOT_NO.getId());
             }
 
-            Object plotNumber2 = o2.getPlotNo();
+            Object plotNumber2 = mapLabel2.getPlotNo();
             if (plotNumber2 == null){
-                plotNumber2 = o2.getUserFields().get(TermId.PLOT_NO.getId());
+                plotNumber2 = mapLabel2.getUserFields().get(TermId.PLOT_NO.getId());
             }
 
-            final Object entryNumber1 = o1.getUserFields().get(TermId.ENTRY_NO.getId());
-            final Object entryNumber2 = o2.getUserFields().get(TermId.ENTRY_NO.getId());
+            final Object entryNumber1 = mapLabel1.getUserFields().get(TermId.ENTRY_NO.getId());
+            final Object entryNumber2 = mapLabel2.getUserFields().get(TermId.ENTRY_NO.getId());
 
             if(plotNumber1 != null || plotNumber2 != null) {
                 return compareTermValues(plotNumber1, plotNumber2);
@@ -191,7 +195,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
     protected void sortTrialInstanceLabels(final List<StudyTrialInstanceInfo> trialInstances) {
         for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
-            Collections.sort( trialInstance.getTrialInstance().getFieldMapLabels(), ENTRY_NUMBER_ASC_COMPARATOR );
+            Collections.sort( trialInstance.getTrialInstance().getFieldMapLabels(), PLOT_NUMBER_ENTRY_NUMBER_ASC_COMPARATOR);
         }
     }
 

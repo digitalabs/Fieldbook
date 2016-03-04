@@ -472,6 +472,16 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		return masterList;
 	}
 
+	/**
+	 * We maintain the state of categorical description view in session to support the ff scenario:
+	 * 1. When user does a browser refresh, the state of measurements view is maintained
+	 * 2. When user switches between studies (either nursery or trial) state is also maintained
+	 * 3. Generating the modal for editing whole measurement row/entry is done in the backend (see updateExperimentModal.html) , this
+	 * also helps us track which display values in the cateogrical dropdown is used
+	 * @param showCategoricalDescriptionView
+	 * @param session
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/setCategoricalDisplayType", method = RequestMethod.GET)
 	public Boolean setCategoricalDisplayType(@RequestParam Boolean showCategoricalDescriptionView, HttpSession session) {
@@ -606,12 +616,14 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		dataMap.put("GID", row.getMeasurementDataValue(TermId.GID.getId()));
 		dataMap.put("DESIGNATION", row.getMeasurementDataValue(TermId.DESIG.getId()));
 
+		// initialize suffix as empty string if its null
 		suffix = null == suffix ? "" : suffix;
 
 		// generate measurement row data from dataList (existing / generated data)
 		for (MeasurementData data : row.getDataList()) {
 			if (data.isCategorical()) {
 				CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
+
 				dataMap.put(data.getMeasurementVariable().getName(),
 						new Object[] {categoricalDisplayValue.getName() + suffix, categoricalDisplayValue.getDescription() + suffix, data.isAccepted()});
 

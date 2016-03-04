@@ -113,7 +113,18 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					targets: columns.length - 1,
 					createdCell: function(td, cellData, rowData, row, col) {
 						if (isVariates) {
-							if ($.inArray(cellData[1], possibleValues) === -1) {
+							// since currentValue contains both name and description, we need to retrieve
+							// only the description by splitting the first occurrence of the separator
+							var currentValue = cellData[1].substring(cellData[1].indexOf('=') + 1).trim();
+
+							// look for that description in the list of possible values
+							var found = $.grep(possibleValues, function(value, i) {
+								return value.indexOf(currentValue) !== -1;
+							}).length;
+
+							// if not found we may change its class as accepted (blue) or invalid (red)
+							// depending on the data
+							if (found <= 0) {
 								$(td).removeClass('accepted-value');
 								$(td).removeClass('invalid-value');
 								if ($(td).text() !== 'missing') {
@@ -129,7 +140,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					},
 					render: function(data, type, full, meta) {
 						if (data !== undefined) {
-							//TODO: use knowledge from session.isCategoricalDisplayView to render correct data
+							// Use knowledge from session.isCategoricalDisplayView to render correct data
 							// data[0] = name, data[1] = description, data[2] = accepted value
 							var showDescription = window.isCategoricalDescriptionView ? 'style="display:none"' : '';
 							var showName = !window.isCategoricalDescriptionView ? 'style="display:none"' : '';

@@ -3975,6 +3975,9 @@ function onMeasurementsObservationLoad(isCategoricalDisplay) {
 	// add event handlers
 	$('.inline-edit-confirmation').off('click').on('click', onMeasurementsInlineEditConfirmationEvent());
 	$categoricalDisplayToggleBtn.off('click').on('click', function() {
+		// process any unedited saves before updating measurement table's categorical view
+		processInlineEditInput();
+
 		switchCategoricalView();
 	});
 

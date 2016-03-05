@@ -293,10 +293,8 @@
 						service.applicationData.designTypes = designTypes;
 					});
 				},
-
-				generatePresetExpDesign: function(designType) {
-					var deferred = $q.defer();
-
+				
+				retrieveGenerateDesignInput : function(designType){
 					var environmentData = angular.copy(service.currentData.environments);
 
 					_.each(environmentData.environments, function(data, key) {
@@ -314,6 +312,14 @@
 						startingPlotNo: service.currentData.experimentalDesign.startingPlotNo,
 						hasNewEnvironmentAdded: service.applicationData.hasNewEnvironmentAdded
 					};
+					
+					return data;
+				},
+
+				generatePresetExpDesign: function(designType) {
+					var deferred = $q.defer();
+
+					var data = service.retrieveGenerateDesignInput(designType);
 
 					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data)).then(function(resp) {
 						if (!resp.data.isSuccess) {
@@ -329,17 +335,25 @@
 				},
 
 				refreshMeasurementTableAfterDeletingEnvironment: function() {
-					var noOfEnvironments = service.currentData.environments.noOfEnvironments;
-					var data = service.currentData.experimentalDesign;
-					//update the no of environments in experimental design tab
-					data.noOfEnvironments = noOfEnvironments;
-
-					if (service.currentData.experimentalDesign.designType >= 4) {
-						service.generatePresetExpDesign(service.currentData.experimentalDesign.designType).then(function() {
+					
+					var designTypeId = service.currentData.experimentalDesign.designType;
+					if (service.applicationData.designTypes[designTypeId].isPreset) {
+						service.generatePresetExpDesign(designTypeId).then(function() {
 							service.updateAfterGeneratingDesignSuccessfully();
 							service.applicationData.hasGeneratedDesignPreset = true;
 						});
 					}else {
+						
+						var noOfEnvironments = service.currentData.environments.noOfEnvironments;
+						var environmentData = service.currentData.experimentalDesign;
+						//update the no of environments in experimental design tab
+						environmentData.noOfEnvironments = noOfEnvironments;
+
+						var designTypeId = service.currentData.experimentalDesign.designType;
+						
+						var data = service.retrieveGenerateDesignInput(designTypeId);
+						data.environmentData = environmentData;
+						
 						service.generateExpDesign(data).then(
                               function(response) {
 									if (response.valid === true) {

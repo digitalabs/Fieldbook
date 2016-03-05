@@ -41,11 +41,13 @@ var ImportCrosses = {
 			}
 			return false;
 		},
-		openCrossesList : function() {
+		openCrossesList : function(createdCrossesListId) {
 			'use strict';
-			$('#openCrossesListModal').modal({ backdrop: 'static', keyboard: true });
+			$('#openCrossesListModal').one('shown.bs.modal', function() {
+				$('body').addClass('modal-open');
+			}).modal({ backdrop: 'static', keyboard: true });
 
-			ImportCrosses.getImportedCrossesTable().done(function(response) {
+			ImportCrosses.getImportedCrossesTable(createdCrossesListId).done(function(response) {
 				setTimeout(function() {
 					new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response);
 				},240);
@@ -53,7 +55,7 @@ var ImportCrosses = {
 
 			$('#openCrossListNextButton').off('click');
 			$('#openCrossListNextButton').on('click', function() {
-				$('#openCrossesListModal').modal('hide');								
+				$('#openCrossesListModal').modal('hide');
 				setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
 			});
 
@@ -66,14 +68,18 @@ var ImportCrosses = {
 
 		goBackToPage: function(hiddenModalSelector,shownModalSelector) {
 			$(hiddenModalSelector).modal('hide');
-			$(shownModalSelector).modal({ backdrop: 'static', keyboard: true });
+			$(shownModalSelector).one('shown.bs.modal', function() {
+				$('body').addClass('modal-open');
+			}).modal({ backdrop: 'static', keyboard: true });
 		},
 
-		getImportedCrossesTable : function(){
+		getImportedCrossesTable : function(createdCrossesListId){
 			'use strict';
+			var crossesURL = ImportCrosses.CROSSES_URL + '/getImportedCrossesList' + '/' + (createdCrossesListId
+				&& createdCrossesListId.length > 0 ? createdCrossesListId : '');
 			return $.ajax(
 			{
-				url: ImportCrosses.CROSSES_URL + '/getImportedCrossesList',
+				url: crossesURL,
 				type: 'GET',
 				cache: false
 			});

@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
+import com.efficio.fieldbook.web.util.AppConstants;
+
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.junit.Assert;
@@ -19,9 +24,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
-
-import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LabelPrintingServiceTest {
@@ -57,6 +59,10 @@ public class LabelPrintingServiceTest {
 
 	public static final int DUMMY_TRIAL_ID = 10;
 	public static final int DUMMY_NURSERY_ID = 11;
+
+	public static final Integer[] BASE_LABEL_PRINTING_FIELD_IDS = new Integer[] {
+		AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(),
+		AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()};
 
 	@Before
 	public void setUp() throws Exception {
@@ -183,7 +189,7 @@ public class LabelPrintingServiceTest {
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(),
+				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(), StudyType.N,
 						LabelPrintingServiceTest.DUMMY_NURSERY_ID);
 
 		this.verifyLabelListContainsList(retrieved, nurserySettingLabels,
@@ -246,7 +252,7 @@ public class LabelPrintingServiceTest {
 	}
 
 	protected void verifyBaseLabelFieldsPresent(final List<LabelFields> forVerification) {
-		for (final Integer baseLabelPrintingFieldId : LabelPrintingServiceImpl.BASE_LABEL_PRINTING_FIELD_IDS) {
+		for (final Integer baseLabelPrintingFieldId : LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_IDS) {
 			boolean found = false;
 
 			for (final LabelFields labelFields : forVerification) {

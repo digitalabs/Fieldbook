@@ -20,7 +20,7 @@ import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 public interface DesignImportService {
 
 	List<MeasurementRow> generateDesign(Workbook workbook, DesignImportData designImportData, EnvironmentData environmentData,
-			boolean isPreview, boolean isPreset, Integer startingEntryNo, Integer startingPlotNo) throws DesignValidationException;
+			boolean isPreview, boolean isPreset, Map<String, Integer> additionalParams) throws DesignValidationException;
 
 	Set<MeasurementVariable> getDesignMeasurementVariables(Workbook workbook, DesignImportData designImportData, boolean isPreview);
 

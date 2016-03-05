@@ -3,11 +3,13 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -15,21 +17,27 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -47,7 +55,10 @@ import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
@@ -65,6 +76,7 @@ public class OpenTrialControllerTest {
 	private static final int IBDB_USER_ID = 1;
 	private static final String PROGRAM_UUID = "68f0d114-5b5b-11e5-885d-feff819cdc9f";
 	public static final String TEST_TRIAL_NAME = "dummyTrial";
+	private static final int BM_CODE_VTE = 8252;
 
 	@Mock
 	private HttpServletRequest httpRequest;
@@ -105,6 +117,9 @@ public class OpenTrialControllerTest {
 	@Mock
 	private ContextUtil contextUtil;
 
+	@Mock
+	private OntologyVariableDataManager variableDataManager;
+
 	@InjectMocks
 	private OpenTrialController openTrialController;
 
@@ -131,23 +146,13 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	@Ignore(value = "This test is only failign in CI. Stack trace in comment below, please investigate and fix if you are here.")
-	//	testOpenTrialNoRedirect(com.efficio.fieldbook.web.trial.controller.OpenTrialControllerTest)  Time elapsed: 0.066 sec  <<< ERROR!
-	//	java.lang.NullPointerException
-	//		at com.efficio.fieldbook.web.nursery.controller.SettingsController.createSettingDetail(SettingsController.java:388)
-	//		at com.efficio.fieldbook.web.trial.controller.BaseTrialController.prepareGermplasmTabInfo(BaseTrialController.java:242)
-	//		at com.efficio.fieldbook.web.trial.controller.OpenTrialController.setModelAttributes(OpenTrialController.java:251)
-	//		at com.efficio.fieldbook.web.trial.controller.OpenTrialController.openTrial(OpenTrialController.java:207)
-	//		at com.efficio.fieldbook.web.trial.controller.OpenTrialControllerTest.testOpenTrialNoRedirect(OpenTrialControllerTest.java:138)
 	public void testOpenTrialNoRedirect() throws Exception {
 
-		final Workbook workbook =
-				WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
-						OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
-		// TODO: Initialize the treatment factors inside WorkbookDataUtil
-		workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
+		WorkbookTestDataInitializer.setTrialObservations(workbook);
 
 		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
+		this.mockStandardVariables(workbook.getAllVariables());
 
 		final String out =
 				this.openTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model, this.httpSession,
@@ -183,16 +188,15 @@ public class OpenTrialControllerTest {
 
 		final MockHttpSession mockSession = new MockHttpSession();
 
-		final Workbook workbook =
-				WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
-						OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
-		workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
+		WorkbookTestDataInitializer.setTrialObservations(workbook);
 
 		mockSession.setAttribute(SessionUtility.USER_SELECTION_SESSION_NAME, new UserSelection());
 		mockSession.setAttribute(SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME, new ArrayList<Integer>());
 
 		try {
 			Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(Matchers.anyInt())).thenReturn(workbook);
+			this.mockStandardVariables(workbook.getAllVariables());
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, new ExtendedModelMap(),
 					mockSession, Mockito.mock(RedirectAttributes.class));
 		} catch (final MiddlewareException e) {
@@ -210,14 +214,13 @@ public class OpenTrialControllerTest {
 
 		final Model model = new ExtendedModelMap();
 
-		final Workbook workbook =
-				WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
-						OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
-		workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
+		WorkbookTestDataInitializer.setTrialObservations(workbook);
 
 		try {
 
 			Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(Matchers.anyInt())).thenReturn(workbook);
+			this.mockStandardVariables(workbook.getAllVariables());
 
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, model, new MockHttpSession(),
 					Mockito.mock(RedirectAttributes.class));
@@ -249,9 +252,66 @@ public class OpenTrialControllerTest {
 			Assert.assertTrue("Controller does not properly set into the model the data for measurement row count",
 					model.containsAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT));
 
+			Assert.assertFalse("Analysis variables should not be displayed.", this.hasAnalysisVariables(model));
+
 		} catch (final MiddlewareException e) {
 			this.handleUnexpectedException(e);
 		}
+	}
+
+	private boolean hasAnalysisVariables(final Model model) {
+		final List<SettingDetail> settingDetails = this.getSettingDetailsPossiblyWithAnalysisVariables(model);
+		boolean analysisVariableFound = false;
+		for (final SettingDetail settingDetail : settingDetails) {
+			final Integer termId = settingDetail.getVariable().getCvTermId();
+			if (WorkbookTestDataInitializer.PLANT_HEIGHT_MEAN_ID == termId
+					|| WorkbookTestDataInitializer.PLANT_HEIGHT_UNIT_ERRORS_ID == termId) {
+				analysisVariableFound = true;
+			}
+		}
+		return analysisVariableFound;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<SettingDetail> getSettingDetailsPossiblyWithAnalysisVariables(final Model model) {
+		final List<SettingDetail> settingDetails = new ArrayList<>();
+
+		final Map<String, Object> modelMap = model.asMap();
+
+		final TabInfo experimentsDataTabInfo = (TabInfo) modelMap.get(OpenTrialController.ENVIRONMENT_DATA_TAB);
+		final List<SettingDetail> managementDetailList =
+				(List<SettingDetail>) experimentsDataTabInfo.getSettingMap().get("managementDetails");
+		final List<SettingDetail> trialConditionsList =
+				(List<SettingDetail>) experimentsDataTabInfo.getSettingMap().get("trialConditionDetails");
+		settingDetails.addAll(managementDetailList);
+		settingDetails.addAll(trialConditionsList);
+
+		final TabInfo measurementsDataTabInfo = (TabInfo) modelMap.get("measurementsData");
+		settingDetails.addAll(measurementsDataTabInfo.getSettings());
+
+		return settingDetails;
+	}
+
+	private void mockStandardVariables(final List<MeasurementVariable> allVariables) {
+		for (final MeasurementVariable measurementVariable : allVariables) {
+			Mockito.doReturn(this.createStandardVariable(measurementVariable.getTermId())).when(this.fieldbookMiddlewareService)
+					.getStandardVariable(measurementVariable.getTermId(), OpenTrialControllerTest.PROGRAM_UUID);
+			final Variable variable = new Variable();
+			variable.setId(measurementVariable.getTermId());
+			variable.setName(measurementVariable.getName());
+			variable.setMethod(TestDataHelper.createMethod());
+			variable.setProperty(TestDataHelper.createProperty());
+			variable.setScale(TestDataHelper.createScale());
+
+			Mockito.when(this.variableDataManager.getVariable(Mockito.eq(PROGRAM_UUID), Mockito.eq(measurementVariable.getTermId()), Mockito.anyBoolean(),
+					Mockito.anyBoolean())).thenReturn(variable);;
+		}
+	}
+
+	private StandardVariable createStandardVariable(final Integer id) {
+		final StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setId(id);
+		return standardVariable;
 	}
 
 	@Test
@@ -724,12 +784,70 @@ public class OpenTrialControllerTest {
 		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, "12345", exptDesignSourceValue, nRepValue, rMapValue);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be unknown", 0, data.getDesignType().intValue());
+		Assert.assertNull("Design type should be unknown", data.getDesignType());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
 		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
 				data.getReplicationsArrangement());
 		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
+	}
+
+	@Test
+	public void testPrepareMeasurementVariableTabInfo() {
+		List<MeasurementVariable> variatesList = this.createVariates();
+
+		Variable variable = new Variable();
+		variable.setId(UnitTestDaoIDGenerator.generateId(Variable.class));
+		variable.setName("Variable Name");
+		variable.setMethod(TestDataHelper.createMethod());
+		variable.setProperty(TestDataHelper.createProperty());
+		variable.setScale(TestDataHelper.createScale());
+
+		Mockito.when(this.variableDataManager.getVariable(Mockito.any(String.class), Mockito.any(Integer.class), Mockito.anyBoolean(),
+				Mockito.anyBoolean())).thenReturn(variable);
+
+		TabInfo tabInfo = this.openTrialController.prepareMeasurementVariableTabInfo(variatesList, VariableType.SELECTION_METHOD, false);
+
+		Assert.assertEquals("Operation", Operation.UPDATE, tabInfo.getSettings().get(0).getVariable().getOperation());
+		Assert.assertEquals("Deletable", true, tabInfo.getSettings().get(0).isDeletable());
+	}
+
+	private List<MeasurementVariable> createVariates() {
+		List<MeasurementVariable> variables = new ArrayList<>();
+		variables.add(this.createMeasurementVariable(BM_CODE_VTE, "BM_CODE_VTE", "Breeding Method", "BMETH_CODE", "Observed", "VARIATE"));
+		return variables;
+	}
+
+	private MeasurementVariable createMeasurementVariable(final int termId, final String name, final String property, final String scale,
+			final String method, final String label) {
+		final MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setTermId(termId);
+		measurementVariable.setName(name);
+		measurementVariable.setLabel(label);
+		measurementVariable.setProperty(property);
+		measurementVariable.setScale(scale);
+		measurementVariable.setMethod(method);
+		measurementVariable.setVariableType(VariableType.SELECTION_METHOD);
+		measurementVariable.setRole(VariableType.SELECTION_METHOD.getRole());
+		return measurementVariable;
+	}
+
+	@Test
+	public void testGetAdvancedList() {
+		GermplasmList germplasm = new GermplasmList();
+		germplasm.setId(501);
+		germplasm.setName("Advance Trial List");
+
+		List<GermplasmList> germplasmList = new ArrayList<>();
+		germplasmList.add(germplasm);
+
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Mockito.anyInt(), Mockito.any(GermplasmListType.class))).thenReturn(germplasmList);
+
+		List<AdvanceList> advancedList = this.openTrialController.getAdvancedList(germplasm.getId());
+
+		Assert.assertEquals("Advance List size", 1, advancedList.size());
+		Assert.assertEquals("Advance List Id: ", germplasm.getId(), advancedList.get(0).getId());
+		Assert.assertEquals("Advance List Name: ", germplasm.getName(), advancedList.get(0).getName());
 	}
 }

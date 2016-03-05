@@ -33,7 +33,13 @@ function checkMethod() {
 		if ($('#methodVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();
-			showErrorMessage('page-advance-modal-message', noMethodVariatesError);
+            if(isNursery()){
+                showErrorMessage('page-advance-modal-message', noMethodVariatesError);
+            }
+            else{
+                showErrorMessage('page-advance-modal-message', noMethodVariatesErrorTrial);
+            }
+
 		} else {
 			displaySectionsPerMethodVariateValues();
 		}
@@ -121,7 +127,13 @@ function lineMethod() {
 		if ($('#lineVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=lineChoice]').prop('checked', true);
 			$('input[type=checkbox][name=lineChoice]').change();
-			showErrorMessage('page-advance-modal-message', noLineVariatesError);
+            if(isNursery()){
+                showErrorMessage('page-advance-modal-message', noLineVariatesError);
+            }
+            else{
+                showErrorMessage('page-advance-modal-message', noLineVariatesErrorTrial);
+            }
+
 		}
 	}
 }
@@ -1555,6 +1567,80 @@ function validateCreateNursery() {
 	return true;
 }
 
+function validateAndSetEntryNo() {
+    var customMessage = '';
+    var entryNo = $.trim($("#txtStartingEntryNo").val());
+    var numberOfEntries = parseInt($.trim($("#numberOfEntries").text()));
+    if (entryNo != '') {
+        if (!validateEntryAndPlotNo(entryNo)) {
+            customMessage = entryNoShouldBeInRange;
+        }
+
+        if (customMessage != '') {
+            showInvalidInputMessage(customMessage);
+            $("#txtStartingEntryNo").val('');
+        } else {
+            if (isNursery()) {
+                $("#tableForGermplasm tbody tr").each(function (index, value) {
+                    $(this).find('td:eq(1)').text(entryNo++);
+                });
+                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+                    'To update the Measurements table, please save the Nursery', 10000);
+            } else {
+                $("#tableForGermplasm tbody tr").each(function (index, value) {
+                    $(this).find('td:eq(3)').text(entryNo++);
+                });
+                setUnappliedChangesAvailable();
+                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+                    'To update the Measurements table, please review your settings and regenerate ' +
+                    'the Experimental Design', 10000);
+            }
+        }
+    } else {
+        // Set starting entry number back to blank if starting entry number is only white spaces
+        $("#txtStartingEntryNo").val('');
+    }
+}
+
+// Validate Germplasm entry number and plot number if it is non-numeric
+function validateEntryAndPlotNo(inputNo) {
+    var validNo = '^(?=.*[1-9].*)[0-9]{1,5}$';
+
+    return !!inputNo.match(validNo);
+
+}
+
+function validateAndSetPlotNo() {
+    var customMessage = '';
+    var plotNo = $.trim($("#txtStartingPlotNo").val());
+    if(plotNo != '') {
+        if (!validateEntryAndPlotNo(plotNo)) {
+            customMessage = plotNoShouldBeInRange;
+        }
+
+        if (customMessage != '') {
+            showInvalidInputMessage(customMessage);
+            $("#txtStartingPlotNo").val('');
+        } else {
+            if (isNursery()) {
+                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+                    'To update the Measurements table, please save the Nursery', 10000);
+            } else {
+                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+                    'To update the Measurements table, please save the Trial', 10000);
+            }
+        }
+    } else {
+        // Set starting plot number back to blank if starting plot number is only white spaces
+        $("#txtStartingPlotNo").val('');
+    }
+}
+
+function setUnappliedChangesAvailable() {
+    var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
+    trialManager.setUnappliedChangesAvailable();
+}
+
 function nurseryValidateStartEndDateBasic() {
 	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
 	var endDate = $('#' + getJquerySafeId('basicDetails.value4')).val();
@@ -1574,7 +1660,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 	var selectedMethodFavorite = $('#methodIdFavorite').val();
 
 	$.ajax({
-		url: '/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods',
+		url: '/Fieldbook/breedingMethod/getBreedingMethods',
 		type: 'GET',
 		cache: false,
 		data: '',
@@ -1584,10 +1670,8 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 				if (selectedMethodAll != null) {
 					// recreate the select2 combos to get updated list of
 					// methods
-					recreateMethodComboAfterClose('methodIdAll', $
-							.parseJSON(data.allNonGenerativeMethods));
-					recreateMethodComboAfterClose('methodIdFavorite', $
-							.parseJSON(data.favoriteNonGenerativeMethods));
+					recreateMethodComboAfterClose('methodIdAll', data.allNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteNonGenerativeMethods);
 					showCorrectMethodCombo();
 					// set previously selected value of method
 					if ($('#showFavoriteMethod').prop('checked')) {
@@ -1618,8 +1702,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 								+ getJquerySafeId(comboName), false,
 								selectedVal);
 					} else {
-						initializePossibleValuesCombo($
-								.parseJSON(data.allNonGenerativeMethods), '#'
+						initializePossibleValuesCombo(data.allNonGenerativeMethods, '#'
 								+ getJquerySafeId(comboName), false,
 								selectedVal);
 					}
@@ -1645,7 +1728,12 @@ function plotMethod() {
 			$('input[type=checkbox][name=allPlotsChoice]')
 					.prop('checked', true);
 			$('input[type=checkbox][name=allPlotsChoice]').change();
-			showErrorMessage('page-advance-modal-message', noPlotVariatesError);
+            if(isNursery()){
+                showErrorMessage('page-advance-modal-message', noPlotVariatesError);
+            }
+            else{
+                showErrorMessage('page-advance-modal-message', noLineVariatesErrorTrial);
+            }
 		}
 	}
 }
@@ -1748,15 +1836,15 @@ function submitGermplasmAndCheck() {
 		selectedCheckListDataTable.getDataTable().fnDraw();
 		serializedData += '&' + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 	}
-	serializedData += '&columnOrders=' + (BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table'));
+
+    serializedData += '&columnOrders=' + (BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table'));
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/GermplasmList/submitAll',
 		type: 'POST',
 		data: serializedData,
 		cache: false,
 		success: function(dataResponse) {
-			refreshStudyAfterSave(dataResponse);
-
+		    refreshStudyAfterSave(dataResponse);
 		}
 	});
 }

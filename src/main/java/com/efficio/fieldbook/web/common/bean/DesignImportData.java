@@ -20,6 +20,9 @@ public class DesignImportData {
 	private Map<Integer, List<String>> csvData;
 	private Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithDesignHeaderItemsMappedToStdVarId;
 
+
+	private String importFileName;
+
 	public List<DesignHeaderItem> getUnmappedHeaders() {
 		if (this.unmappedHeaders == null) {
 			this.unmappedHeaders = new ArrayList<DesignHeaderItem>();
@@ -72,5 +75,14 @@ public class DesignImportData {
 		}
 		return this.mappedHeadersWithDesignHeaderItemsMappedToStdVarId;
 	}
+
+	public String getImportFileName() {
+		return importFileName;
+	}
+
+	public void setImportFileName(String importFileName) {
+		this.importFileName = importFileName;
+	}
+
 
 }

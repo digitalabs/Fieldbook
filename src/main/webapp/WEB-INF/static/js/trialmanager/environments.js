@@ -9,6 +9,24 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 	'$http', 'DTOptionsBuilder', 'LOCATION_ID',
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID) {
 
+			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
+			var populateDatatableWithDefaultValues = function() {
+				$scope.data = TrialManagerDataService.currentData.environments;
+
+				if (!$scope.data.environments) {
+					$scope.data.environments = [];
+				}
+				if ($scope.data.environments.length === 0) {
+					$scope.data.environments.push({});
+				}
+				if (!$scope.data.environments[0].managementDetailValues) {
+					$scope.data.environments[0].managementDetailValues = {};
+				}
+				if (!$scope.data.environments[0].managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]) {
+					$scope.data.environments[0].managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = 1;
+				}
+			};
+
 			$scope.TRIAL_INSTANCE_NO_INDEX = 8170;
 
 			$scope.data = {};
@@ -82,7 +100,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				openManageLocations();
 			};
 
-			$scope.data = TrialManagerDataService.currentData.environments;
+			//prepopulate the datatable
+			populateDatatableWithDefaultValues();
+
 			$scope.isHideDelete = false;
 
 			TrialManagerDataService.onUpdateData('environments', function() {
@@ -139,7 +159,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 					// For Existing Trial with measurement data
 					var environmentNo = index + 1;
 					$scope.hasMeasurementDataOnEnvironment(environmentNo).success(function(data) {
-						if ('true' === data) {
+						if (true === data) {
 							var warningMessage = 'This environment cannot be removed because it contains measurement data.';
 							showAlertMessage('', warningMessage);
 						} else {
@@ -254,8 +274,15 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 						// trigger the showMeasurementsPreview in the background
 						loadInitialMeasurements();
 					}
+
+					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
 				} else if (oldVal < newVal) {
 					$scope.addNewEnvironments(newVal - oldVal);
+
+					// should not be equal to 1 since the default number of environment for a trial is 1
+					if(newVal !== 1){
+						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
+					}
 				}
 			});
 

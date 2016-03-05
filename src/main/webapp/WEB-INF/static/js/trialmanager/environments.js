@@ -157,7 +157,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				} else if (TrialManagerDataService.trialMeasurement.hasMeasurement) {
 					// For Existing Trial with measurement data
 					var environmentNo = index + 1;
-					hasMeasurementDataOnEnvironment(environmentNo).success(function(data) {
+
+					$scope.hasMeasurementDataOnEnvironment(environmentNo).success(function(data) {
 						if (true === data) {
 							var warningMessage = 'This environment cannot be removed because it contains measurement data.';
 							showAlertMessage('', warningMessage);
@@ -220,8 +221,15 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 						// trigger the showMeasurementsPreview in the background
 						loadInitialMeasurements();
 					}
+
+					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
 				} else if (oldVal < newVal) {
-					addNewEnvironments(newVal - oldVal);
+					$scope.addNewEnvironments(newVal - oldVal);
+
+					// should not be equal to 1 since the default number of environment for a trial is 1
+					if(newVal !== 1){
+						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
+					}
 				}
 			});
 

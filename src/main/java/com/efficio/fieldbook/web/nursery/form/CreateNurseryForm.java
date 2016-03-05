@@ -158,8 +158,6 @@ public class CreateNurseryForm {
 	/** The study id. */
 	private Integer studyId;
 
-	private Integer gemplasmListId;
-
 	/** The trial environment values. */
 	private List<List<ValueReference>> trialEnvironmentValues;
 
@@ -203,6 +201,7 @@ public class CreateNurseryForm {
 	private String errorMessage;
 
 	private String columnOrders;
+	private Integer germplasmListId;
 
 	/**
 	 * Gets the project id.
@@ -1280,12 +1279,11 @@ public class CreateNurseryForm {
 		this.experimentTypeId = experimentTypeId;
 	}
 
-	public Integer getGemplasmListId() {
-		return this.gemplasmListId;
+	public void setGermplasmListId(Integer germplasmListId) {
+		this.germplasmListId = germplasmListId;
 	}
 
-	public void setGemplasmListId(Integer gemplasmListId) {
-		this.gemplasmListId = gemplasmListId;
+	public Integer getGermplasmListId() {
+		return germplasmListId;
 	}
-
 }

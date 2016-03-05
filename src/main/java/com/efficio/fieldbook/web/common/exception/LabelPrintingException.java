@@ -16,6 +16,10 @@ public class LabelPrintingException extends Exception {
 		this.labelError = labelError;
 	}
 
+    public LabelPrintingException(Throwable cause) {
+        super(cause);
+    }
+
 	public String getErrorCode() {
 		return this.errorCode;
 	}

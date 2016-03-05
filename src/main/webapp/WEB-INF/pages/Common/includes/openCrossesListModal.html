@@ -45,7 +45,8 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" id="goBackToImportCrossesButton"
+					<!-- The Back button is hidden if we came from Breeding Manager, we have URL parameter 'crosseslistid' in request -->
+					<button type="button" class="btn btn-default" id="goBackToImportCrossesButton" th:if="${param.crosseslistid == null}"
 						th:text="#{common.form.back.text}">Back</button>
 					<button type="button" class="btn btn-primary" id="openCrossListNextButton"
 						th:text="#{common.form.next.text}" onclick="">Next</button>

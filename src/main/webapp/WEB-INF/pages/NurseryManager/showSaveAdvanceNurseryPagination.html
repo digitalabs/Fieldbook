@@ -14,12 +14,29 @@
             	<td class="fbk-review-advance-check-box">
             		<input type="checkbox" class="reviewAdvancingListGid" th:attr="data-entry=${gid.get('entry')}" name="reviewAdvancingListGid" id="reviewAdvancingListGid"/> 
            		</td>
-               <td th:text="${gid.get('entry')}">.1</td> 
-               <td th:text="${gid.get('desig')}"></td>
-               <td th:text="${gid.get('parentage')}">.2</td>
-               <td th:text="${gid.get('gid')}"></td>
-               <td th:text="${gid.get('source')}">.2</td>                                   				       
-             </tr>             
+               <td th:text="${gid.get('entry')}">entry</td> 
+               <td th:text="${gid.get('desig')}">desig</td>
+               <td th:text="${gid.get('parentage')}">parentage</td>
+               <td th:text="${gid.get('gid')}">gid</td>
+               <td th:text="${gid.get('source')}">source</td>
+               <td th:text="${gid.get('trialInstanceNumber')}" class="trialColumns">trialInstanceNumber</td>
+               <td th:text="${gid.get('replicationNumber')}" class="trialColumns">replicationNumber</td>
+             </tr>
            </tbody>		
 	</table>
 </div>
+
+<script type="text/javascript" th:inline="javascript">
+    $(document).ready(function() {
+        'use strict';
+        if (isNursery()) {
+            $(".advance-nursery-list-table tbody tr:eq(0) td").each(function(index,value) {
+                if($(this).hasClass('trialColumns')){
+                    $('.advance-nursery-list-table thead tr:eq(0)').children("th:eq("+index+")").hide();
+                }
+            });
+            $('.trialColumns').hide();
+        }
+    });
+
+</script>

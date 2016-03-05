@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -42,9 +43,13 @@ public class AdvancingSource {
 	private String prefix;
 	private String suffix;
 	private Integer rootNameType;
-	private Integer locationId;
+	private Integer harvestLocationId;
 	private String plotNumber;
     private String selectionTraitValue;
+    
+    private String trialInstanceNumber;
+    private String replicationNumber;
+    
 
 	private boolean isForceUniqueNameGeneration;
 
@@ -301,20 +306,15 @@ public class AdvancingSource {
 
 	@Override
 	public String toString() {
-		return "AdvancingSource [germplasm=" + this.germplasm + ", names=" + this.names + ", plantsSelected=" + this.plantsSelected
-				+ ", breedingMethod=" + this.breedingMethod + ", isCheck=" + this.isCheck + ", isBulk=" + this.isBulk + ", nurseryName="
-				+ this.nurseryName + ", season=" + this.season + ", locationAbbreviation=" + this.locationAbbreviation + ", rootName="
-				+ this.rootName + ", sourceMethod=" + this.sourceMethod + ", currentMaxSequence=" + this.currentMaxSequence
-				+ ", changeDetail=" + this.changeDetail + ", prefix=" + this.prefix + ", suffix=" + this.suffix + ", plotNumber="
-				+ this.plotNumber + "]";
+		return ToStringBuilder.reflectionToString(this);
 	}
 
-	public Integer getLocationId() {
-		return this.locationId;
+	public Integer getHarvestLocationId() {
+		return this.harvestLocationId;
 	}
 
-	public void setLocationId(Integer locationId) {
-		this.locationId = locationId;
+	public void setHarvestLocationId(Integer harvestLocationId) {
+		this.harvestLocationId = harvestLocationId;
 	}
 
     public String getSelectionTraitValue() {
@@ -325,7 +325,23 @@ public class AdvancingSource {
         this.selectionTraitValue = selectionTraitValue;
     }
 
-    public AdvancingSource copy() {
+	public String getTrialInstanceNumber() {
+		return this.trialInstanceNumber;
+	}
+
+	public void setTrialInstanceNumber(String trialInstanceNumber) {
+		this.trialInstanceNumber = trialInstanceNumber;
+	}
+
+	public String getReplicationNumber() {
+		return this.replicationNumber;
+	}
+
+	public void setReplicationNumber(String replicationNumber) {
+		this.replicationNumber = replicationNumber;
+	}
+
+	public AdvancingSource copy() {
         AdvancingSource source = new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, isCheck, nurseryName, plotNumber);
         source.setSeason(this.season);
         source.setLocationAbbreviation(this.locationAbbreviation);
@@ -336,9 +352,10 @@ public class AdvancingSource {
         source.setPrefix(this.prefix);
         source.setSuffix(this.suffix);
         source.setRootNameType(this.rootNameType);
-        source.setLocationId(this.locationId);
+        source.setHarvestLocationId(this.harvestLocationId);
         source.setSelectionTraitValue(this.selectionTraitValue);
-
+        source.setTrialInstanceNumber(this.trialInstanceNumber);
+        source.setReplicationNumber(this.replicationNumber);
         return source;
     }
 }

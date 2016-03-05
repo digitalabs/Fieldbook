@@ -132,11 +132,11 @@ public class SettingsUtil {
 				baselineTraitsList, userSelection, null, null, null, nurseryConditions, null, true, programUUID);
 	}
 
-	protected static List<Condition> convertDetailsToConditions(final List<SettingDetail> details, final UserSelection userSelection,
+	protected static List<Condition> convertDetailsToConditions(final List<SettingDetail> details,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 		final List<Condition> conditions = new ArrayList<>();
 
-		if (details == null || userSelection == null) {
+		if (details == null) {
 			return conditions;
 		}
 
@@ -172,10 +172,9 @@ public class SettingsUtil {
 	}
 
 	protected static List<Variate> convertBaselineTraitsToVariates(final List<SettingDetail> baselineTraits,
-			final UserSelection userSelection, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final String programUUID) {
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 		final List<Variate> variateList = new ArrayList<>();
-		if (baselineTraits == null || baselineTraits.isEmpty() || userSelection == null) {
+		if (baselineTraits == null || baselineTraits.isEmpty()) {
 			return variateList;
 		}
 
@@ -202,11 +201,11 @@ public class SettingsUtil {
 		return variateList;
 	}
 
-	protected static List<Factor> convertDetailsToFactors(final List<SettingDetail> plotLevelDetails, final UserSelection userSelection,
+	protected static List<Factor> convertDetailsToFactors(final List<SettingDetail> plotLevelDetails,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 		final List<Factor> factors = new ArrayList<>();
 
-		if (plotLevelDetails == null || plotLevelDetails.isEmpty() || userSelection == null) {
+		if (plotLevelDetails == null || plotLevelDetails.isEmpty()) {
 			return factors;
 		}
 
@@ -243,11 +242,11 @@ public class SettingsUtil {
 	}
 
 	protected static List<Constant> convertConditionsToConstants(final List<SettingDetail> nurseryConditions,
-			final UserSelection userSelection, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final boolean isTrial, final String programUUID) {
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final boolean isTrial,
+			final String programUUID) {
 		final List<Constant> constants = new ArrayList<>();
 
-		if (nurseryConditions == null || nurseryConditions.isEmpty() | userSelection == null) {
+		if (nurseryConditions == null || nurseryConditions.isEmpty()) {
 			return constants;
 		}
 
@@ -300,7 +299,7 @@ public class SettingsUtil {
 	}
 
 	protected static List<TreatmentFactor> processTreatmentFactorItems(final List<SettingDetail> treatmentFactorDetails,
-			final Map<String, TreatmentFactorData> treatmentFactorItems, final List<Factor> factorList, final UserSelection userSelection,
+			final Map<String, TreatmentFactorData> treatmentFactorItems, final List<Factor> factorList,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 		final List<TreatmentFactor> treatmentFactors = new ArrayList<TreatmentFactor>();
 		if (treatmentFactorItems == null || treatmentFactorDetails == null) {
@@ -349,6 +348,53 @@ public class SettingsUtil {
 	 * 
 	 * @param fieldbookMiddlewareService the fieldbook middleware service
 	 * @param name the name
+	 * @param userSelection the user selection
+	 * @return the parent dataSet
+	 */
+	public static ParentDataset convertPojoToXmlDataSet(
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String name,
+			final UserSelection userSelection, final Map<String, TreatmentFactorData> treatmentFactorItems, final String programUUID) {
+
+		final List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
+		final List<SettingDetail> basicDetails = userSelection.getBasicDetails();
+
+		final List<SettingDetail> combinedList = new ArrayList<>();
+		combinedList.addAll(basicDetails);
+		combinedList.addAll(studyLevelConditions);
+
+		final Dataset dataset = new Dataset();
+		dataset.setName(name);
+		dataset.setConditions(SettingsUtil.convertDetailsToConditions(combinedList, fieldbookMiddlewareService, programUUID));
+
+		List<Factor> factors =
+				SettingsUtil.convertDetailsToFactors(userSelection.getPlotsLevelList(), fieldbookMiddlewareService, programUUID);
+
+		dataset.setFactors(factors);
+
+		final List<SettingDetail> variates = new ArrayList<>(userSelection.getBaselineTraitsList());
+
+		dataset.setVariates(SettingsUtil.convertBaselineTraitsToVariates(variates, fieldbookMiddlewareService, programUUID));
+
+		dataset.setConstants(SettingsUtil.convertConditionsToConstants(userSelection.getNurseryConditions(), fieldbookMiddlewareService,
+				false, programUUID));
+
+		dataset.setTrialLevelFactor(SettingsUtil.convertDetailsToFactors(userSelection.getTrialLevelVariableList(),
+				fieldbookMiddlewareService, programUUID));
+
+		final List<TreatmentFactor> treatmentFactors =
+				SettingsUtil.processTreatmentFactorItems(userSelection.getTreatmentFactors(), treatmentFactorItems, factors,
+						fieldbookMiddlewareService, programUUID);
+
+		dataset.setTreatmentFactors(treatmentFactors);
+
+		return dataset;
+	}
+
+	/**
+	 * Convert pojo to xml dataset.
+	 * 
+	 * @param fieldbookMiddlewareService the fieldbook middleware service
+	 * @param name the name
 	 * @param studyLevelConditions the nursery level conditions
 	 * @param plotsLevelList the plots level list
 	 * @param baselineTraitsList the baseline traits list
@@ -384,47 +430,34 @@ public class SettingsUtil {
 		}
 
 		final List<Condition> conditions =
-				SettingsUtil.convertDetailsToConditions(studyLevelConditions, userSelection, fieldbookMiddlewareService, programUUID);
-		final List<Factor> factors =
-				SettingsUtil.convertDetailsToFactors(plotsLevelList, userSelection, fieldbookMiddlewareService, programUUID);
+				SettingsUtil.convertDetailsToConditions(studyLevelConditions, fieldbookMiddlewareService, programUUID);
+		final List<Factor> factors = SettingsUtil.convertDetailsToFactors(plotsLevelList, fieldbookMiddlewareService, programUUID);
 		final List<Variate> variates =
-				SettingsUtil.convertBaselineTraitsToVariates(baselineTraitsList, userSelection, fieldbookMiddlewareService, programUUID);
+				SettingsUtil.convertBaselineTraitsToVariates(baselineTraitsList, fieldbookMiddlewareService, programUUID);
 		final List<Constant> constants =
-				SettingsUtil.convertConditionsToConstants(nurseryConditions, userSelection, fieldbookMiddlewareService, false, programUUID);
+				SettingsUtil.convertConditionsToConstants(nurseryConditions, fieldbookMiddlewareService, false, programUUID);
 		final List<Factor> trialLevelVariables =
-				SettingsUtil.convertDetailsToFactors(trialLevelVariablesList, userSelection, fieldbookMiddlewareService, programUUID);
+				SettingsUtil.convertDetailsToFactors(trialLevelVariablesList, fieldbookMiddlewareService, programUUID);
 
 		final List<TreatmentFactor> treatmentFactors =
-				SettingsUtil.processTreatmentFactorItems(treatmentFactorDetails, treatmentFactorItems, factors, userSelection,
-						fieldbookMiddlewareService, programUUID);
+				SettingsUtil.processTreatmentFactorItems(treatmentFactorDetails, treatmentFactorItems, factors, fieldbookMiddlewareService,
+						programUUID);
 
-		constants.addAll(SettingsUtil.convertConditionsToConstants(trialLevelConditions, userSelection, fieldbookMiddlewareService, true,
-				programUUID));
+		constants.addAll(SettingsUtil.convertConditionsToConstants(trialLevelConditions, fieldbookMiddlewareService, true, programUUID));
 
-		final ParentDataset realDataset;
+		final Dataset dataset = new Dataset();
+		dataset.setConditions(conditions);
+		dataset.setFactors(factors);
+		dataset.setVariates(variates);
+		dataset.setConstants(constants);
+		dataset.setName(name);
+
 		if (trialLevelVariablesList != null) {
-
-			// this is a trial dataset
-			final Dataset dataset = new Dataset(trialLevelVariables);
-			dataset.setConditions(conditions);
-			dataset.setFactors(factors);
-			dataset.setVariates(variates);
-			dataset.setConstants(constants);
-			dataset.setName(name);
 			dataset.setTrialLevelFactor(trialLevelVariables);
 			dataset.setTreatmentFactors(treatmentFactors);
-			realDataset = dataset;
-		} else {
-			final Dataset dataset = new Dataset();
-			dataset.setConditions(conditions);
-			dataset.setFactors(factors);
-			dataset.setVariates(variates);
-			dataset.setConstants(constants);
-			dataset.setName(name);
-			realDataset = dataset;
 		}
 
-		return realDataset;
+		return dataset;
 	}
 
 	/**
@@ -1088,30 +1121,27 @@ public class SettingsUtil {
 
 		final Workbook workbook = new Workbook();
 
-		if (isNursery) {
-			final Dataset nurseryDataset = (Dataset) dataset;
-			workbook.setConditions(SettingsUtil.convertConditionsToMeasurementVariables(nurseryDataset.getConditions()));
-			workbook.setFactors(SettingsUtil.convertFactorsToMeasurementVariables(nurseryDataset.getFactors()));
-			workbook.setVariates(SettingsUtil.convertVariatesToMeasurementVariables(nurseryDataset.getVariates()));
-			workbook.setConstants(SettingsUtil.convertConstantsToMeasurementVariables(nurseryDataset.getConstants()));
-		} else {
-			final Dataset trialDataset = (Dataset) dataset;
-			workbook.setConditions(SettingsUtil.convertConditionsToMeasurementVariables(trialDataset.getConditions()));
-			workbook.setFactors(SettingsUtil.convertFactorsToMeasurementVariables(trialDataset.getFactors()));
-			workbook.setVariates(SettingsUtil.convertVariatesToMeasurementVariables(trialDataset.getVariates()));
-			workbook.getConditions().addAll(SettingsUtil.convertFactorsToMeasurementVariables(trialDataset.getTrialLevelFactor()));
-			workbook.setConstants(SettingsUtil.convertConstantsToMeasurementVariables(trialDataset.getConstants()));
+		final Dataset studyDataSet = (Dataset) dataset;
+
+		workbook.setConditions(SettingsUtil.convertConditionsToMeasurementVariables(studyDataSet.getConditions()));
+		workbook.setFactors(SettingsUtil.convertFactorsToMeasurementVariables(studyDataSet.getFactors()));
+		workbook.setVariates(SettingsUtil.convertVariatesToMeasurementVariables(studyDataSet.getVariates()));
+		workbook.getConditions().addAll(SettingsUtil.convertFactorsToMeasurementVariables(studyDataSet.getTrialLevelFactor()));
+		workbook.setConstants(SettingsUtil.convertConstantsToMeasurementVariables(studyDataSet.getConstants()));
+
+		if (!isNursery) {
+
 			if (workbook.getTreatmentFactors() == null) {
 				workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
 			}
 			workbook.getTreatmentFactors().addAll(
-					SettingsUtil.convertTreatmentFactorsToTreatmentVariables(trialDataset.getTreatmentFactors()));
+					SettingsUtil.convertTreatmentFactorsToTreatmentVariables(studyDataSet.getTreatmentFactors()));
 			try {
 				SettingsUtil.setExperimentalDesignToWorkbook(param, variables, workbook, allExpDesignVariables, fieldbookMiddlewareService,
 						programUUID);
 			} catch (final MiddlewareException e) {
 				SettingsUtil.LOG.error(e.getMessage(), e);
-				// do nothing
+				// TODO: Why are we swallowing this exception?
 			}
 		}
 
@@ -2031,11 +2061,11 @@ public class SettingsUtil {
 			}
 			if (!newDeletedList.isEmpty()) {
 				if (formList == null) {
-					formList = new ArrayList<SettingDetail>();
+					formList = new ArrayList<>();
 				}
 				formList.addAll(newDeletedList);
 				if (sessionList == null) {
-					sessionList = new ArrayList<SettingDetail>();
+					sessionList = new ArrayList<>();
 				}
 				sessionList.addAll(newDeletedList);
 			}
@@ -2412,7 +2442,7 @@ public class SettingsUtil {
 
 	public static void addNewSettingDetails(final int mode, final List<SettingDetail> newDetails, final UserSelection userSelection)
 			throws Exception {
-		SettingsUtil.setSettingDetailRole(mode, newDetails, userSelection, null, null);
+		SettingsUtil.setSettingDetailRoleAndVariableType(mode, newDetails, null, null);
 
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			if (userSelection.getStudyLevelConditions() == null) {
@@ -2480,7 +2510,7 @@ public class SettingsUtil {
 
 	}
 
-	public static void setSettingDetailRole(final int mode, final List<SettingDetail> newDetails, final UserSelection userSelection,
+	public static void setSettingDetailRoleAndVariableType(final int mode, final List<SettingDetail> newDetails,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 
 		if (newDetails != null) {
@@ -2512,11 +2542,14 @@ public class SettingsUtil {
 							&& SettingsUtil.hasVariableType(VariableType.EXPERIMENTAL_DESIGN, settingDetail.getVariable()
 									.getVariableTypes())) {
 						settingDetail.setRole(VariableType.EXPERIMENTAL_DESIGN.getRole());
+						settingDetail.setVariableType(VariableType.EXPERIMENTAL_DESIGN);
 					} else {
 						settingDetail.setRole(VariableType.GERMPLASM_DESCRIPTOR.getRole());
+						settingDetail.setVariableType(VariableType.GERMPLASM_DESCRIPTOR);
 					}
 				} else {
 					settingDetail.setRole(VariableType.getById(Integer.valueOf(mode)).getRole());
+					settingDetail.setVariableType(VariableType.getById(Integer.valueOf(mode)));
 				}
 			}
 		}

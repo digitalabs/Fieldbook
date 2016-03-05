@@ -263,61 +263,6 @@
 			$('.check-germplasm-list-items tr.checkGermplasmSelectedRow').removeClass('checkGermplasmSelectedRow');
 		}
 
-		function makeDraggable(isDraggable) {
-			'use strict';
-			isDraggable = isDraggable 
-					&& (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 
-					|| ($('#studyId').length === 0 && isNursery())) 
-					|| $('#studyId').length > 0 && isNursery() && measurementRowCount === 0);
-			if (isDraggable) {
-				$('.germplasm-list-items tbody  tr').draggable({
-
-					helper: function(/*event, ui*/) {
-						var width = $(this)[0].offsetWidth,
-							selected = $('.germplasm-list-items tr.germplasmSelectedRow'),
-							container;
-
-						if (selected.length === 0) {
-							selected = $(this).addClass('germplasmSelectedRow');
-						}
-
-						container = $('<table style="width:' + width + 'px; background-color:green;" />').attr('id', 'draggingContainer');
-						container.append(selected.clone().removeClass('germplasmSelectedRow'));
-
-						return container;
-					},
-
-					revert: 'invalid',
-
-					start: function (/*event, ui*/) {
-						var selected = $('.germplasm-list-items tr.germplasmSelectedRow');
-					},
-
-					stop: function (/*event, ui*/) {
-						var selected = $('.germplasm-list-items tr.germplasmSelectedRow');
-						$(selected).css('opacity', '1');
-					},
-
-                    zIndex : 9999,
-
-                    appendTo : '#chooseGermplasmAndChecks'
-				});
-
-				$('.germplasm-list-items tbody tr').off('click').on('click', function (){
-					$(this).toggleClass('germplasmSelectedRow');
-				});
-
-			} else {
-				if ($('.germplasm-list-items .ui-draggable').length !== 0) {
-					$('.germplasm-list-items tbody  tr').draggable('destroy');
-				}
-				$('.germplasm-list-items tbody tr').off('click');
-			}
-
-			// Change background of selected rows
-			$('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
-		}		
-
 		function addCheckGermplasmList(entryNumber, gid, index) {
 			'use strict';
 			// FIXME Not sure if the following condition is relying on implicit type conversion. See other instances of this in this file
@@ -390,7 +335,7 @@
 		function hideAddCol(isHide) {
 			'use strict';
 
-			makeDraggable(!isHide);
+			makeGermplasmListDraggable(!isHide);
 			makeDraggableBool = !isHide;
 		}
 

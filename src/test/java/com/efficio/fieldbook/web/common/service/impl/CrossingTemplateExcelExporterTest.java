@@ -151,18 +151,24 @@ public class CrossingTemplateExcelExporterTest {
 		final Experiment experiment = new Experiment();
 
 		final VariableList factors = new VariableList();
-		final Variable plotVariable = new Variable();
-		plotVariable.setValue("1");
-		final StandardVariable standardVariable = new StandardVariable();
-		standardVariable.setId(TermId.PLOT_NO.getId());
-		final DMSVariableType variableType = new DMSVariableType("test", "test", standardVariable, 0);
-		plotVariable.setVariableType(variableType);
-		plotVariable.setValue("2");
-		factors.add(plotVariable);
+		factors.add(createTestVariable(TermId.PLOT_NO.getId(), "1"));
+        factors.add(createTestVariable(TermId.DESIG.getId(), "ABC"));
+        factors.add(createTestVariable(TermId.CROSS.getId(), "abc/def"));
 
 		experiment.setFactors(factors);
 		list.add(experiment);
 
 		return list;
 	}
+
+    protected Variable createTestVariable(Integer termId, String value) {
+        final Variable testVariable = new Variable();
+        testVariable.setValue(value);
+        final StandardVariable standardVariable = new StandardVariable();
+        standardVariable.setId(termId);
+        final DMSVariableType variableType = new DMSVariableType("test", "test", standardVariable, 0);
+        testVariable.setVariableType(variableType);
+
+        return testVariable;
+    }
 }

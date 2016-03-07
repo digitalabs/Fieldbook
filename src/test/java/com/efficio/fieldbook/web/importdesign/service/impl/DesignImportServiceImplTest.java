@@ -392,7 +392,9 @@ public class DesignImportServiceImplTest {
 		final DesignImportMeasurementRowGenerator measurementRowGenerator = this.generateMeasurementRowGenerator();
 		final int trialInstanceNo = 1;
 		final Integer startingPlotNo = 3;
-		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, startingPlotNo);
+		final int plotNoDelta = startingPlotNo - 1;
+
+		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, plotNoDelta);
 
 		Assert.assertEquals("The number of measurement rows from the csv file must be equal to the number of measurements row generated.",
 				csvData.size() - 1, measurements.size());
@@ -407,7 +409,6 @@ public class DesignImportServiceImplTest {
 				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_DESIGN)
 						.get(TermId.PLOT_NO.getId()).getColumnIndex();
 
-		final int plotNoDelta = startingPlotNo - 1;
 		for (int i = 0; i < measurements.size(); i++) {
 			final List<String> rowCSV = csvData.get(i + 1);
 			final int plotNoCsv = Integer.valueOf(rowCSV.get(plotNoIndxCSV));

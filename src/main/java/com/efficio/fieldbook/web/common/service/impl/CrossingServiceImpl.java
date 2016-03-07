@@ -109,82 +109,20 @@ public class CrossingServiceImpl implements CrossingService {
 	@Override
 	public void applyCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final Integer userId,
 			final Workbook workbook) throws MiddlewareQueryException {
-
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
-
-		// apply the source string here, before we save germplasm if there is no existing source
-		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-			if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource()) ||
-					importedCross.getSource().equalsIgnoreCase(ImportedCrosses.NO_SEED_SOURCE)) {
-				final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, importedCross);
-				final String generatedSource = this.germplasmOriginGenerationService.generateOriginString(parameters);
-				importedCross.setSource(generatedSource);
-			}
-		}
-
-		final List<Pair<Germplasm, Name>> germplasmPairs =
-				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
-						importedCrossesList.hasPlotDuplicate());
-
-		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
-		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
-
-		CrossingUtil.applyBreedingMethodSetting(this.germplasmDataManager, crossSetting, germplasmList);
-		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmPairs, crossingNameTypeId);
-
-		final boolean isValid = this.verifyGermplasmMethodPresent(germplasmList);
-
-		if (!isValid) {
-			throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
-					Locale.getDefault()));
-		}
-
+		final List<Pair<Germplasm, Name>> germplasmPairs = getPairs(crossSetting, importedCrossesList, userId, workbook);
 		this.save(crossSetting, importedCrossesList, germplasmPairs);
 	}
 
+	/**
+	 * @Transactional to make sure Germplasm, Name and Attribute entities updated atomically.
+	 */
 	@Override
-	public void updateCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final Integer userId,
-			final Workbook workbook) throws MiddlewareQueryException {
-
+	@Transactional
+	public void updateCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
 
-		// apply the source string here, before we save germplasm if there is no existing source
-		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-			if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource()) ||
-					importedCross.getSource().equalsIgnoreCase(ImportedCrosses.NO_SEED_SOURCE)) {
-				final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, importedCross);
-				final String generatedSource = this.germplasmOriginGenerationService.generateOriginString(parameters);
-				importedCross.setSource(generatedSource);
-			}
-		}
-
-		final List<Pair<Germplasm, Name>> germplasmPairs =
-				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
-						importedCrossesList.hasPlotDuplicate());
-
-		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
-		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
-
-		CrossingUtil.applyBreedingMethodSetting(this.germplasmDataManager, crossSetting, germplasmList);
-		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmPairs, crossingNameTypeId);
-
-		final boolean isValid = this.verifyGermplasmMethodPresent(germplasmList);
-
-		if (!isValid) {
-			throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
-					Locale.getDefault()));
-		}
-
-		this.update(crossSetting, importedCrossesList);
-	}
-
-	/**
-	 * @Transactional to make sure Germplasm, Name and Attribute entities save atomically.
-	 */
-	@Transactional
-	private void save(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
-			final List<Pair<Germplasm, Name>> germplasmPairs) {
-		final List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmPairs);
+		final List<Integer> savedGermplasmIds = this.getImpotedCrossesGidsList(importedCrossesList);
 		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
 			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
 		}
@@ -218,15 +156,47 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 
 		this.germplasmDataManager.addAttributes(attributeList);
+	}
 
+	private List<Pair<Germplasm, Name>> getPairs(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+			final Integer userId, final Workbook workbook) {
+
+		// apply the source string here, before we save germplasm if there is no existing source
+		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
+			if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource()) ||
+					importedCross.getSource().equalsIgnoreCase(ImportedCrosses.NO_SEED_SOURCE)) {
+				final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, importedCross);
+				final String generatedSource = this.germplasmOriginGenerationService.generateOriginString(parameters);
+				importedCross.setSource(generatedSource);
+			}
+		}
+
+		final List<Pair<Germplasm, Name>> germplasmPairs =
+				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
+						importedCrossesList.hasPlotDuplicate());
+
+		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
+		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
+
+		CrossingUtil.applyBreedingMethodSetting(this.germplasmDataManager, crossSetting, germplasmList);
+		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmPairs, crossingNameTypeId);
+
+		final boolean isValid = this.verifyGermplasmMethodPresent(germplasmList);
+
+		if (!isValid) {
+			throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
+					Locale.getDefault()));
+		}
+		return germplasmPairs;
 	}
 
 	/**
-	 * @Transactional to make sure Germplasm, Name and Attribute entities updated atomically.
+	 * @Transactional to make sure Germplasm, Name and Attribute entities save atomically.
 	 */
 	@Transactional
-	private void update(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
-		final List<Integer> savedGermplasmIds = this.getImpotedCrossesGidsList(importedCrossesList);
+	private void save(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+			final List<Pair<Germplasm, Name>> germplasmPairs) {
+		final List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmPairs);
 		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
 			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
 		}
@@ -329,8 +299,7 @@ public class CrossingServiceImpl implements CrossingService {
 		return true;
 	}
 
-	protected void applyCrossNameSettingToImportedCrosses(final CrossSetting setting, final List<ImportedCrosses> importedCrosses)
-			throws MiddlewareQueryException {
+	protected void applyCrossNameSettingToImportedCrosses(final CrossSetting setting, final List<ImportedCrosses> importedCrosses) {
 
 		this.processBreedingMethodProcessCodes(setting);
 

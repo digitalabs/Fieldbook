@@ -6,7 +6,6 @@ import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +17,5 @@ public interface CrossingService {
 
 	void applyCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId, Workbook workbook);
 
-	void updateCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final Integer userId,
-			final Workbook workbook);
+	void updateCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList);
 }

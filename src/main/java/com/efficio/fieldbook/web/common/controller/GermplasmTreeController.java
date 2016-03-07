@@ -262,8 +262,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
 		final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 		final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
-		this.crossingService.updateCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
-				this.userSelection.getWorkbook());
+		this.crossingService.updateCrossSetting(crossSetting, importedCrossesList);
 		this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
 		return this.fieldbookMiddlewareService.updateGermplasmList(listDataItems, germplasmList);
 	}

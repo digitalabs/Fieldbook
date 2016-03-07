@@ -192,19 +192,20 @@ public class DesignImportServiceImpl implements DesignImportService {
 		while (rowCounter <= csvData.size() - 1) {
 			final MeasurementRow measurementRow = measurementRowGenerator.createMeasurementRow(csvData.get(rowCounter));
 
-			final Map<Integer, MeasurementData> measurementDataMap = this.getMeasurementDataMap(measurementRow.getDataList());
-
-			// no need to override trialInstanceNo if it is null
-			if (trialInstanceNo != null) {
-				measurementDataMap.get(TermId.TRIAL_INSTANCE_FACTOR.getId()).setValue(String.valueOf(trialInstanceNo));
-			}
-
-			if (plotNoDelta != 0) {
-				final Integer prevPlotNo = Integer.valueOf(measurementDataMap.get(TermId.PLOT_NO.getId()).getValue().toString());
-				measurementDataMap.get(TermId.PLOT_NO.getId()).setValue(String.valueOf(prevPlotNo + plotNoDelta));
-			}
-
 			if (measurementRow != null) {
+
+				final Map<Integer, MeasurementData> measurementDataMap = this.getMeasurementDataMap(measurementRow.getDataList());
+
+				// no need to override trialInstanceNo if it is null
+				if (trialInstanceNo != null) {
+					measurementDataMap.get(TermId.TRIAL_INSTANCE_FACTOR.getId()).setValue(String.valueOf(trialInstanceNo));
+				}
+
+				if (plotNoDelta != 0) {
+					final Integer prevPlotNo = Integer.valueOf(measurementDataMap.get(TermId.PLOT_NO.getId()).getValue().toString());
+					measurementDataMap.get(TermId.PLOT_NO.getId()).setValue(String.valueOf(prevPlotNo + plotNoDelta));
+				}
+
 				measurements.add(measurementRow);
 			}
 

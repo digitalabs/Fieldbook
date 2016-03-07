@@ -115,11 +115,14 @@ public class CrossingServiceImpl implements CrossingService {
 
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
 
-		// apply the source string here, before we save germplasm
+		// apply the source string here, before we save germplasm if there is no existing source
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-			final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, importedCross);
-			final String generatedSource = this.germplasmOriginGenerationService.generateOriginString(parameters);
-			importedCross.setSource(generatedSource);
+			if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource()) ||
+					importedCross.getSource().equalsIgnoreCase(ImportedCrosses.NO_SEED_SOURCE)) {
+				final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, importedCross);
+				final String generatedSource = this.germplasmOriginGenerationService.generateOriginString(parameters);
+				importedCross.setSource(generatedSource);
+			}
 		}
 
 		final List<Pair<Germplasm, Name>> germplasmPairs =

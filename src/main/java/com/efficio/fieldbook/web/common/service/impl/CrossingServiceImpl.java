@@ -121,8 +121,20 @@ public class CrossingServiceImpl implements CrossingService {
 	@Transactional
 	public void updateCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
+		this.saveAttributes(crossSetting, importedCrossesList, this.getImpotedCrossesGidsList(importedCrossesList));
+	}
 
-		final List<Integer> savedGermplasmIds = this.getImpotedCrossesGidsList(importedCrossesList);
+	/**
+	 * @Transactional to make sure Germplasm, Name and Attribute entities save atomically.
+	 */
+	@Transactional
+	private void save(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+			final List<Pair<Germplasm, Name>> germplasmPairs) {
+		final List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmPairs);
+		this.saveAttributes(crossSetting, importedCrossesList, savedGermplasmIds);
+	}
+
+	private void saveAttributes(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, List<Integer> savedGermplasmIds) {
 		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
 			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
 		}
@@ -188,49 +200,6 @@ public class CrossingServiceImpl implements CrossingService {
 					Locale.getDefault()));
 		}
 		return germplasmPairs;
-	}
-
-	/**
-	 * @Transactional to make sure Germplasm, Name and Attribute entities save atomically.
-	 */
-	@Transactional
-	private void save(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
-			final List<Pair<Germplasm, Name>> germplasmPairs) {
-		final List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmPairs);
-		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
-			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
-		}
-
-		// We iterate through the cross list here to merge, so we will create the SeedSource attribute list
-		// at the same time (each GP is linked to a PlotCode)
-		final List<Attribute> attributeList = new ArrayList<>();
-		final Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
-		final Integer today = Integer.valueOf(DateUtil.getCurrentDateAsStringValue());
-		for (final ImportedCrosses cross : importedCrossesList.getImportedCrosses()) {
-
-			// this will do the merging and using the gid and cross from the initial duplicate
-			if (FieldbookUtil.isContinueCrossingMerge(importedCrossesList.hasPlotDuplicate(), crossSetting.isPreservePlotDuplicates(),
-					cross)) {
-				FieldbookUtil.mergeCrossesPlotDuplicateData(cross, importedCrossesList.getImportedCrosses());
-				continue;
-			}
-
-			final Integer newGid = germplasmIdIterator.next();
-			cross.setGid(newGid.toString());
-
-			// save Attribute for SeedSource as a PlotCode
-			final Attribute plotCodeAttribute = new Attribute();
-			plotCodeAttribute.setAdate(today);
-			plotCodeAttribute.setGermplasmId(newGid);
-			plotCodeAttribute.setTypeId(this.germplasmDataManager.getPlotCodeField().getFldno());
-			plotCodeAttribute.setAval(cross.getSource());
-			plotCodeAttribute.setUserId(this.contextUtil.getCurrentWorkbenchUserId());
-
-			attributeList.add(plotCodeAttribute);
-		}
-
-		this.germplasmDataManager.addAttributes(attributeList);
-
 	}
 
 	private List<Integer> getImpotedCrossesGidsList(final ImportedCrossesList importedCrossesList) {

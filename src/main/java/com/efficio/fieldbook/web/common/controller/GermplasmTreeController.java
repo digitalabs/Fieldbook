@@ -246,7 +246,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				results.put("crossesListId", listDataProjectListId);
 			} else {
 				results.put(GermplasmTreeController.IS_SUCCESS, 0);
-				results.put(GermplasmTreeController.MESSAGE, "Could not find the crosses list for update");
+				results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage("crossing.no.crossing.list", null,
+						LocaleContextHolder.getLocale()));
 			}
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
@@ -257,7 +258,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	private Integer updateGermplasmList(Integer germplasmListId, List<Pair<Germplasm, GermplasmListData>> listDataItems) {
+	private Integer updateGermplasmList(final Integer germplasmListId, final List<Pair<Germplasm, GermplasmListData>> listDataItems) {
 		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
 		final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 		final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();

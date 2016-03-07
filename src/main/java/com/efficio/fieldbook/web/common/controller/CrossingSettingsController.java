@@ -60,10 +60,6 @@ import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.util.CrossesListUtil;
 import com.efficio.fieldbook.web.util.DuplicatesUtil;
 
-/**
- * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 1/21/2015 Time: 1:49 PM
- */
-
 @Controller
 @RequestMapping(CrossingSettingsController.URL)
 public class CrossingSettingsController extends SettingsController {

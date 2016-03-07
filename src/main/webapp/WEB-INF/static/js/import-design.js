@@ -204,10 +204,21 @@ var ImportDesign = (function() {
 				});
 			});
 
+			var service = ImportDesign.getTrialManagerDataService();
+			// custom import design type id
+			var designTypeId = 3;
+			var data = isNursery()? { 	environmentData: null, 
+									  	selectedDesignType: designTypeId,
+									  	startingEntryNo: $('#txtStartingEntryNo').val(),
+									  	startingPlotNo: $('#txtStartingPlotNo').val(),
+									  	hasNewEnvironmentAdded: false
+									} : service.retrieveGenerateDesignInput(designTypeId);
+			data.environmentData = environmentData;
+
 			$.ajax({
 				type: 'POST',
 				url: '/Fieldbook/DesignImport/generate',
-				data: JSON.stringify(environmentData),
+				data: JSON.stringify(data),
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8'
 			}).done(function(resp) {

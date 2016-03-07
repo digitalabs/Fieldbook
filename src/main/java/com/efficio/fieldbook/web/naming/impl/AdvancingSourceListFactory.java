@@ -239,6 +239,7 @@ public class AdvancingSourceListFactory {
 					source.getGermplasm().setGpid1(germplasm.getGpid1());
 					source.getGermplasm().setGpid2(germplasm.getGpid2());
 					source.getGermplasm().setGnpgs(germplasm.getGnpgs());
+					source.getGermplasm().setMgid(germplasm.getMgid());
 					Method sourceMethod = breedingMethodMap.get(germplasm.getMethodId());
 					if (sourceMethod != null) {
 						source.setSourceMethod(sourceMethod);

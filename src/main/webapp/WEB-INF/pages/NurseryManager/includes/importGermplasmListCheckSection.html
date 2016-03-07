@@ -44,12 +44,6 @@ var checkTypes = /*[[${checkTypes}]]*/ null,
 	checkTypesObj = [],
 	prevStartIndex = 0;
 
-function setSpinnerMaxValue() {
-	'use strict';
-	if ($('#' + getJquerySafeId('checkVariables0.value')).val() === null || $('#' + getJquerySafeId('checkVariables0.value')).val() === '') {
-		$('#' + getJquerySafeId('checkVariables0.value')).val(1);
-	}
-}
 $(document).ready(function() {
 	'use strict';
 	$('#manageCheckTypesModal').on('hidden.bs.modal', function() {

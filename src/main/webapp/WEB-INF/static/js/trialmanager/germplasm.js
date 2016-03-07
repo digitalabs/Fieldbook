@@ -14,9 +14,10 @@
     if (TrialManagerDataService.isOpenTrial()) {
         TrialManagerDataService.updateTrialMeasurementRowCount(TrialManagerDataService.trialMeasurement.count);
         displaySelectedGermplasmDetails();
+        
+        var startingEntryNo = $('#txtStartingEntryNo').val();
+        TrialManagerDataService.updateStartingEntryNoCount((parseInt(startingEntryNo)) ? parseInt(startingEntryNo) : 1);
     }
-
-    TrialManagerDataService.updateStartingEntryNoCount((parseInt($('#txtStartingEntryNo').val())) ? parseInt($('#txtStartingEntryNo').val()) : 1);
 
     $scope.labels = {};
     $scope.labels.germplasmFactors = {

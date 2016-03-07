@@ -352,10 +352,13 @@
 		factory-method="getGermplasmListManager" scope="request">
 		<aop:scoped-proxy />
 	</bean>
+	
+	<bean id="germplasmGroupingService" factory-bean="managerFactory"
+		factory-method="getGermplasmGroupingService" scope="request">
+		<aop:scoped-proxy />
+	</bean>
 
 	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl" />
-
-
 
 	<bean id="userDataManager" factory-bean="managerFactory"
 		factory-method="getUserDataManager" scope="request">

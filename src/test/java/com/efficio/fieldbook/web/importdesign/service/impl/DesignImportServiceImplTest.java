@@ -371,20 +371,13 @@ public class DesignImportServiceImplTest {
 
 	}
 
-	@Test
-	public void testValidateIfStandardVariableExistsTrialInstanceDoNotExist() {
+	@Test(expected = DesignValidationException.class)
+	public void testValidateIfStandardVariableExistsTrialInstanceDoNotExist() throws DesignValidationException {
+		this.service.validateIfStandardVariableExists(
+				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM),
+				"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
-		try {
-
-			this.service.validateIfStandardVariableExists(this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId()
-					.get(PhenotypicType.GERMPLASM), "design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
-
-			Assert.fail("The logic should detect that the trial number exist");
-
-		} catch (final DesignValidationException e) {
-
-		}
-
+		Assert.fail("The logic should detect that the trial number exist");
 	}
 
 	@Test

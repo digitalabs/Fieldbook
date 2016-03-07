@@ -239,7 +239,8 @@
                     hasGeneratedDesignPreset: false,
                     hasNewEnvironmentAdded : false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
-					designTypes: []
+					designTypes: [],
+					deleteEnvironmentCallback : function() {}
 				},
 
 				specialSettings: {
@@ -326,7 +327,7 @@
 							deferred.reject(resp.data);
 							return;
 						}
-						service.updateCurrentData('environments', environmentData);
+						service.updateCurrentData('environments', data.environmentData);
 
 						deferred.resolve(true);
 					});
@@ -373,8 +374,28 @@
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
+				deleteEnvironment: function(index) {
+					var refreshMeasurementDeferred = $q.defer();
+					var deleteMeasurementPossible = index !== 0 && service.trialMeasurement.hasMeasurement;
+					// this scenario only covered the update of measurement table
+					// when the user delete an environment for a existing trial with measurement data
+					if (deleteMeasurementPossible) {
+						service.applicationData.unsavedTraitsAvailable = true;
 
-				deletedEnvironment: 0,
+						$rootScope.$broadcast('onDeleteEnvironment',{ deletedEnvironmentIndex : index, deferred : refreshMeasurementDeferred });
+					}
+
+					return refreshMeasurementDeferred.promise;
+				},
+				reloadMeasurementAjax: function(data) {
+					return $http({
+						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
+						method: 'POST',
+						headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+						data: data,
+						transformResponse: undefined
+					});
+				},
 				indicateUnappliedChangesAvailable: function() {
 					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
 						service.applicationData.unappliedChangesAvailable = true;
@@ -382,19 +403,26 @@
 							'To update the Measurements table, please review your settings and regenerate ' +
 							'the Experimental Design on the next tab', 10000);
 						$('body').data('needGenerateExperimentalDesign', '1');
-					}
-				},
 
-				// set unappliedChangesAvailable to true if Entry Number is updated
-				setUnappliedChangesAvailable: function() {
-					service.applicationData.unappliedChangesAvailable = true;
-				},
+                        if (service.currentData.experimentalDesign.designType === 3) {
+                            service.currentData.experimentalDesign.designType = null;
+                        }
+                    }
+                },
 
-				indicateUnsavedTreatmentFactorsAvailable: function() {
-					if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
-						service.applicationData.unsavedTreatmentFactorsAvailable = true;
-					}
-				},
+                // set unappliedChangesAvailable to true if Entry Number is updated
+                setUnappliedChangesAvailable: function() {
+                    service.applicationData.unappliedChangesAvailable = true;
+                },
+
+                indicateUnsavedTreatmentFactorsAvailable: function () {
+                	if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
+                        service.applicationData.unsavedTreatmentFactorsAvailable = true;
+                        if (service.currentData.experimentalDesign.designType === 3) {
+                            service.currentData.experimentalDesign.designType = null;
+                        }
+                    }
+                },
 
 				clearUnappliedChangesFlag: function() {
 					service.applicationData.unappliedChangesAvailable = false;

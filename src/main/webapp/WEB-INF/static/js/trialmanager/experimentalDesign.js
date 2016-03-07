@@ -118,7 +118,8 @@
 
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 
-					if (!$scope.data || Object.keys($scope.data).length === 0) {
+					// the property "startingEntryNo" is at least part of the data object here when the germplasm tab is loaded first
+					if (!$scope.data || Object.keys($scope.data).length <= 1) {
 						angular.copy({
 							totalGermplasmListCount: $scope.totalGermplasmEntryListCount,
 							designType: null,
@@ -133,7 +134,7 @@
 							nclatin: null,
 							replatinGroups: '',
 							startingPlotNo: 1,
-							startingEntryNo: '',
+							startingEntryNo: '1',
 							hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement
 						}, $scope.data);
 					}
@@ -194,12 +195,9 @@
 							environmentData.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
 						
-						var data = TrialManagerDataService.retrieveGenerateDesignInput($scope.data.designType);
-						data.environmentData = environmentData;
-						
 						// non-preset design type
 						if (!$scope.designTypes[$scope.data.designType].isPreset) {
-							TrialManagerDataService.generateExpDesign(data).then(
+							TrialManagerDataService.generateExpDesign(environmentData).then(
 								function(response) {
 									if (response.valid === true) {
 										$scope.updateAfterGeneratingDesignSuccessfully();

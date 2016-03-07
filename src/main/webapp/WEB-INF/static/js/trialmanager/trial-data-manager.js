@@ -7,16 +7,11 @@
             'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-<<<<<<< HEAD
-		'TrialSettingsManager', '_', '$localStorage','$rootScope',
-		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
-=======
 		'TrialSettingsManager', '_', '$localStorage',
 		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA , ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
->>>>>>> master
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage,$rootScope) {
+					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage) {
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
 			var extractData = function(initialData, initializeProperty) {
@@ -332,7 +327,7 @@
 							deferred.reject(resp.data);
 							return;
 						}
-						service.updateCurrentData('environments', environmentData);
+						service.updateCurrentData('environments', data.environmentData);
 
 						deferred.resolve(true);
 					});
@@ -340,8 +335,6 @@
 					return deferred.promise;
 				},
 
-<<<<<<< HEAD
-=======
 				refreshMeasurementTableAfterDeletingEnvironment: function() {
 					
 					var designTypeId = service.currentData.experimentalDesign.designType;
@@ -377,7 +370,6 @@
 					}
 				},
 
->>>>>>> master
 				isOpenTrial: function() {
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
@@ -411,19 +403,26 @@
 							'To update the Measurements table, please review your settings and regenerate ' +
 							'the Experimental Design on the next tab', 10000);
 						$('body').data('needGenerateExperimentalDesign', '1');
-					}
-				},
 
-				// set unappliedChangesAvailable to true if Entry Number is updated
-				setUnappliedChangesAvailable: function() {
-					service.applicationData.unappliedChangesAvailable = true;
-				},
+                        if (service.currentData.experimentalDesign.designType === 3) {
+                            service.currentData.experimentalDesign.designType = null;
+                        }
+                    }
+                },
 
-				indicateUnsavedTreatmentFactorsAvailable: function() {
-					if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
-						service.applicationData.unsavedTreatmentFactorsAvailable = true;
-					}
-				},
+                // set unappliedChangesAvailable to true if Entry Number is updated
+                setUnappliedChangesAvailable: function() {
+                    service.applicationData.unappliedChangesAvailable = true;
+                },
+
+                indicateUnsavedTreatmentFactorsAvailable: function () {
+                	if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
+                        service.applicationData.unsavedTreatmentFactorsAvailable = true;
+                        if (service.currentData.experimentalDesign.designType === 3) {
+                            service.currentData.experimentalDesign.designType = null;
+                        }
+                    }
+                },
 
 				clearUnappliedChangesFlag: function() {
 					service.applicationData.unappliedChangesAvailable = false;

@@ -224,7 +224,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
 				} else if (oldVal < newVal) {
-					$scope.addNewEnvironments(newVal - oldVal);
+					addNewEnvironments(newVal - oldVal);
 
 					// should not be equal to 1 since the default number of environment for a trial is 1
 					if(newVal !== 1){

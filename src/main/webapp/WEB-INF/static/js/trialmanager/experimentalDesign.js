@@ -195,12 +195,9 @@
 							environmentData.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
 						
-						var data = TrialManagerDataService.retrieveGenerateDesignInput($scope.data.designType);
-						data.environmentData = environmentData;
-						
 						// non-preset design type
 						if (!$scope.designTypes[$scope.data.designType].isPreset) {
-							TrialManagerDataService.generateExpDesign(data).then(
+							TrialManagerDataService.generateExpDesign(environmentData).then(
 								function(response) {
 									if (response.valid === true) {
 										$scope.updateAfterGeneratingDesignSuccessfully();

@@ -8,14 +8,9 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
-import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.GermplasmListData;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -60,7 +55,7 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 		try {
 			parseResults = this.crossingService.parseFile(form.getFile());
 
-			this.studySelection.setimportedCrossesList(parseResults);
+			this.studySelection.setImportedCrossesList(parseResults);
 
 			resultsMap.put("isSuccess", 1);
 		} catch (FileParsingException e) {

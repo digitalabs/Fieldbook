@@ -56,9 +56,6 @@ import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 
-/**
- * Created by cyrus on 1/23/15.
- */
 public class CrossingServiceImpl implements CrossingService {
 
 	public static final Integer GERMPLASM_GNPGS = 2;
@@ -145,6 +142,42 @@ public class CrossingServiceImpl implements CrossingService {
 		this.save(crossSetting, importedCrossesList, germplasmPairs);
 	}
 
+	@Override
+	public void updateCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final Integer userId,
+			final Workbook workbook) throws MiddlewareQueryException {
+
+		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
+
+		// apply the source string here, before we save germplasm if there is no existing source
+		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
+			if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource()) ||
+					importedCross.getSource().equalsIgnoreCase(ImportedCrosses.NO_SEED_SOURCE)) {
+				final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, importedCross);
+				final String generatedSource = this.germplasmOriginGenerationService.generateOriginString(parameters);
+				importedCross.setSource(generatedSource);
+			}
+		}
+
+		final List<Pair<Germplasm, Name>> germplasmPairs =
+				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
+						importedCrossesList.hasPlotDuplicate());
+
+		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
+		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
+
+		CrossingUtil.applyBreedingMethodSetting(this.germplasmDataManager, crossSetting, germplasmList);
+		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmPairs, crossingNameTypeId);
+
+		final boolean isValid = this.verifyGermplasmMethodPresent(germplasmList);
+
+		if (!isValid) {
+			throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
+					Locale.getDefault()));
+		}
+
+		this.update(crossSetting, importedCrossesList);
+	}
+
 	/**
 	 * @Transactional to make sure Germplasm, Name and Attribute entities save atomically.
 	 */
@@ -186,6 +219,64 @@ public class CrossingServiceImpl implements CrossingService {
 
 		this.germplasmDataManager.addAttributes(attributeList);
 
+	}
+
+	/**
+	 * @Transactional to make sure Germplasm, Name and Attribute entities updated atomically.
+	 */
+	@Transactional
+	private void update(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
+		final List<Integer> savedGermplasmIds = this.getImpotedCrossesGidsList(importedCrossesList);
+		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
+			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
+		}
+
+		// We iterate through the cross list here to merge, so we will create the SeedSource attribute list
+		// at the same time (each GP is linked to a PlotCode)
+		final List<Attribute> attributeList = new ArrayList<>();
+		final Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
+		final Integer today = Integer.valueOf(DateUtil.getCurrentDateAsStringValue());
+		for (final ImportedCrosses cross : importedCrossesList.getImportedCrosses()) {
+
+			// this will do the merging and using the gid and cross from the initial duplicate
+			if (FieldbookUtil.isContinueCrossingMerge(importedCrossesList.hasPlotDuplicate(), crossSetting.isPreservePlotDuplicates(),
+					cross)) {
+				FieldbookUtil.mergeCrossesPlotDuplicateData(cross, importedCrossesList.getImportedCrosses());
+				continue;
+			}
+
+			final Integer newGid = germplasmIdIterator.next();
+			cross.setGid(newGid.toString());
+
+			// save Attribute for SeedSource as a PlotCode
+			final Attribute plotCodeAttribute = new Attribute();
+			plotCodeAttribute.setAdate(today);
+			plotCodeAttribute.setGermplasmId(newGid);
+			plotCodeAttribute.setTypeId(this.germplasmDataManager.getPlotCodeField().getFldno());
+			plotCodeAttribute.setAval(cross.getSource());
+			plotCodeAttribute.setUserId(this.contextUtil.getCurrentWorkbenchUserId());
+
+			attributeList.add(plotCodeAttribute);
+		}
+
+		this.germplasmDataManager.addAttributes(attributeList);
+
+	}
+
+	private List<Integer> getImpotedCrossesGidsList(final ImportedCrossesList importedCrossesList) {
+		final List<Integer> gids = new ArrayList<>();
+
+		if (importedCrossesList == null || importedCrossesList.getImportedCrosses() == null) {
+			return gids;
+		}
+
+		for (final ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()){
+			Integer gid = importedCrosses.getGid() != null ? Integer.parseInt(importedCrosses.getGid()) : null;
+			if (gid != null) {
+				gids.add(gid);
+			}
+		}
+		return gids;
 	}
 
 	protected List<Germplasm> extractGermplasmList(final List<Pair<Germplasm, Name>> germplasmPairs) {

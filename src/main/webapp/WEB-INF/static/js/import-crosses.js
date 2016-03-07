@@ -152,6 +152,7 @@ var ImportCrosses = {
 			ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
 
 			$('#settingsNextButton').click(ImportCrosses.submitCrossImportSettings);
+			$('#settingsNextButtonUpdateList').click(ImportCrosses.submitCrossImportSettingsAndUpdateCrossesList);
 
 			$('#goBackToOpenCrossesButton').off('click');
 			$('#goBackToOpenCrossesButton').on('click', function() {
@@ -320,6 +321,39 @@ var ImportCrosses = {
 			}
 
 		},
+
+		submitCrossImportSettingsAndUpdateCrossesList : function() {
+        			var settingData = ImportCrosses.constructSettingsObjectFromForm();
+
+        			if (ImportCrosses.isCrossImportSettingsValid(settingData)) {
+        				var targetURL;
+        				if ($('#presetName').val().trim() !== '') {
+        					targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
+        				} else {
+        					targetURL = ImportCrosses.CROSSES_URL + '/submit';
+        				}
+
+        				$.ajax({
+        					headers: {
+        						'Accept': 'application/json',
+        						'Content-Type': 'application/json'
+        					},
+        					url: targetURL,
+        					type: 'POST',
+        					cache: false,
+        					data: JSON.stringify(settingData),
+        					success: function (data) {
+        						if (data.success == '0') {
+        							showErrorMessage('', 'Import failed');
+        						} else {
+        							$('#crossSettingsModal').modal('hide');
+        							SaveAdvanceList.updateGermplasmList();
+        						}
+        					}
+        				});
+        			}
+
+        		},
 
 		isCrossImportSettingsValid : function(importSettings) {
 			var valid = true;

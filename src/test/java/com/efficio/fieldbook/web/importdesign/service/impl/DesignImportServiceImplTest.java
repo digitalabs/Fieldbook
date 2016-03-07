@@ -58,6 +58,8 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportServiceImplTest {
 
+	private static final int STARTING_PLOT_NO_FROM_CSV = 1;
+
 	private static final int CHALK_PCT_TERMID = 22768;
 
 	private static final int GYLD_TERMID = 18000;
@@ -179,7 +181,7 @@ public class DesignImportServiceImplTest {
 
 	}
 
-	//@Test
+	@Test
 	public void testGenerateDesignForOneInstanceOnly() throws DesignValidationException {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
@@ -227,7 +229,7 @@ public class DesignImportServiceImplTest {
 		return additionalParams;
 	}
 
-	//@Test
+	@Test
 	public void testGenerateDesignForNursery() throws DesignValidationException {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
@@ -392,7 +394,8 @@ public class DesignImportServiceImplTest {
 		final DesignImportMeasurementRowGenerator measurementRowGenerator = this.generateMeasurementRowGenerator();
 		final int trialInstanceNo = 1;
 		final Integer startingPlotNo = 3;
-		final int plotNoDelta = startingPlotNo - 1;
+		// The delta that will be used to adjust the value of each plot no from the measurement rows
+		final int plotNoDelta = startingPlotNo - STARTING_PLOT_NO_FROM_CSV;
 
 		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, plotNoDelta);
 
@@ -409,9 +412,6 @@ public class DesignImportServiceImplTest {
 				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_DESIGN)
 						.get(TermId.PLOT_NO.getId()).getColumnIndex();
 
-		// Please outline what the methids we are testing are supposed to do
-		// final int plotNoDelta = startingPlotNo - 1;
-		final int plotNoDelta = startingPlotNo;
 		for (int i = 0; i < measurements.size(); i++) {
 			final List<String> rowCSV = csvData.get(i + 1);
 			final int plotNoCsv = Integer.valueOf(rowCSV.get(plotNoIndxCSV));

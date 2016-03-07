@@ -239,7 +239,8 @@
                     hasGeneratedDesignPreset: false,
                     hasNewEnvironmentAdded : false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
-					designTypes: []
+					designTypes: [],
+					deleteEnvironmentCallback : function() {}
 				},
 
 				specialSettings: {
@@ -293,10 +294,8 @@
 						service.applicationData.designTypes = designTypes;
 					});
 				},
-
-				generatePresetExpDesign: function(designType) {
-					var deferred = $q.defer();
-
+				
+				retrieveGenerateDesignInput : function(designType){
 					var environmentData = angular.copy(service.currentData.environments);
 
 					_.each(environmentData.environments, function(data, key) {
@@ -314,13 +313,21 @@
 						startingPlotNo: service.currentData.experimentalDesign.startingPlotNo,
 						hasNewEnvironmentAdded: service.applicationData.hasNewEnvironmentAdded
 					};
+					
+					return data;
+				},
+
+				generatePresetExpDesign: function(designType) {
+					var deferred = $q.defer();
+
+					var data = service.retrieveGenerateDesignInput(designType);
 
 					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data)).then(function(resp) {
 						if (!resp.data.isSuccess) {
 							deferred.reject(resp.data);
 							return;
 						}
-						service.updateCurrentData('environments', environmentData);
+						service.updateCurrentData('environments', data.environmentData);
 
 						deferred.resolve(true);
 					});
@@ -329,17 +336,25 @@
 				},
 
 				refreshMeasurementTableAfterDeletingEnvironment: function() {
-					var noOfEnvironments = service.currentData.environments.noOfEnvironments;
-					var data = service.currentData.experimentalDesign;
-					//update the no of environments in experimental design tab
-					data.noOfEnvironments = noOfEnvironments;
-
-					if (service.currentData.experimentalDesign.designType >= 4) {
-						service.generatePresetExpDesign(service.currentData.experimentalDesign.designType).then(function() {
+					
+					var designTypeId = service.currentData.experimentalDesign.designType;
+					if (service.applicationData.designTypes[designTypeId].isPreset) {
+						service.generatePresetExpDesign(designTypeId).then(function() {
 							service.updateAfterGeneratingDesignSuccessfully();
 							service.applicationData.hasGeneratedDesignPreset = true;
 						});
 					}else {
+						
+						var noOfEnvironments = service.currentData.environments.noOfEnvironments;
+						var environmentData = service.currentData.experimentalDesign;
+						//update the no of environments in experimental design tab
+						environmentData.noOfEnvironments = noOfEnvironments;
+
+						var designTypeId = service.currentData.experimentalDesign.designType;
+						
+						var data = service.retrieveGenerateDesignInput(designTypeId);
+						data.environmentData = environmentData;
+						
 						service.generateExpDesign(data).then(
                               function(response) {
 									if (response.valid === true) {
@@ -359,8 +374,28 @@
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
+				deleteEnvironment: function(index) {
+					var refreshMeasurementDeferred = $q.defer();
+					var deleteMeasurementPossible = index !== 0 && service.trialMeasurement.hasMeasurement;
+					// this scenario only covered the update of measurement table
+					// when the user delete an environment for a existing trial with measurement data
+					if (deleteMeasurementPossible) {
+						service.applicationData.unsavedTraitsAvailable = true;
 
-				deletedEnvironment: 0,
+						$rootScope.$broadcast('onDeleteEnvironment',{ deletedEnvironmentIndex : index, deferred : refreshMeasurementDeferred });
+					}
+
+					return refreshMeasurementDeferred.promise;
+				},
+				reloadMeasurementAjax: function(data) {
+					return $http({
+						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
+						method: 'POST',
+						headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+						data: data,
+						transformResponse: undefined
+					});
+				},
 				indicateUnappliedChangesAvailable: function() {
 					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
 						service.applicationData.unappliedChangesAvailable = true;
@@ -368,19 +403,26 @@
 							'To update the Measurements table, please review your settings and regenerate ' +
 							'the Experimental Design on the next tab', 10000);
 						$('body').data('needGenerateExperimentalDesign', '1');
-					}
-				},
 
-				// set unappliedChangesAvailable to true if Entry Number is updated
-				setUnappliedChangesAvailable: function() {
-					service.applicationData.unappliedChangesAvailable = true;
-				},
+                        if (service.currentData.experimentalDesign.designType === 3) {
+                            service.currentData.experimentalDesign.designType = null;
+                        }
+                    }
+                },
 
-				indicateUnsavedTreatmentFactorsAvailable: function() {
-					if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
-						service.applicationData.unsavedTreatmentFactorsAvailable = true;
-					}
-				},
+                // set unappliedChangesAvailable to true if Entry Number is updated
+                setUnappliedChangesAvailable: function() {
+                    service.applicationData.unappliedChangesAvailable = true;
+                },
+
+                indicateUnsavedTreatmentFactorsAvailable: function () {
+                	if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
+                        service.applicationData.unsavedTreatmentFactorsAvailable = true;
+                        if (service.currentData.experimentalDesign.designType === 3) {
+                            service.currentData.experimentalDesign.designType = null;
+                        }
+                    }
+                },
 
 				clearUnappliedChangesFlag: function() {
 					service.applicationData.unappliedChangesAvailable = false;

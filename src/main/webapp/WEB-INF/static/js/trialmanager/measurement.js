@@ -1,7 +1,3 @@
-/**
- * Created by cyrus on 7/2/14.
- */
-
 /* global angular */
 (function() {
 	'use strict';
@@ -9,9 +5,15 @@
 	angular.module('manageTrialApp').controller('MeasurementsCtrl',
 		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http',
 			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http) {
+				var DELAY = 1500; // 1.5 secs
 
 				$scope.settings = TrialManagerDataService.settings.measurements;
 
+				$scope.isHideDelete = false;
+				$scope.updateOccurred = false;
+				$scope.addVariable = true;
+
+				/* Watchers */
 				$scope.$watch(function() {
 					return TrialManagerDataService.settings.measurements;
 				}, function(newValue) {
@@ -20,51 +22,29 @@
 					}
 				});
 
-				$scope.deletedEnvironment = 0;
-
 				$scope.$watch(function() {
 					return TrialManagerDataService.isGeneratedOwnDesign;
 				}, function(newValue) {
 					if (newValue === true) {
-						// update the measurement tab
-						$scope.reloadMeasurementPage();
+						$scope.updateOccurred = true;
 						TrialManagerDataService.clearUnappliedChangesFlag();
 						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-
 						TrialManagerDataService.isGeneratedOwnDesign = false;
-						$scope.updateOccurred = true;
+
+						debounce(reloadMeasurementPage, DELAY, false)();
+
 					}
 
 				}
 
 				);
 
-				$scope.$watch(function() {
-					return TrialManagerDataService.deletedEnvironment;
-				}, function(newValue) {
-
-					// this scenario only covered the update of measurement table
-					// when the user delete an environment for a existing trial with measurement data
-
-					if (newValue !== 0 && TrialManagerDataService.trialMeasurement.hasMeasurement) {
-						$scope.deletedEnvironment = TrialManagerDataService.deletedEnvironment;
-
-						// update the measurement tab
-						$scope.reloadMeasurementPage();
-						TrialManagerDataService.clearUnappliedChangesFlag();
-						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-
-						TrialManagerDataService.deletedEnvironment = 0;
-						$scope.updateOccurred = true;
-					}
-
-				});
-
+				/* Scope functions */
 				$scope.beforeDelete = function(variableType, variableIds) {
 					var deferred = $q.defer();
 
 					$http.post('/Fieldbook/manageSettings/hasMeasurementData/' + variableType, variableIds, {cache: false})
-						.success(function(data, status, headers, config) {
+						.success(function(data) {
 							if ('true' === data) {
 								var modalInstance = $uibModal.open({
 									templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
@@ -92,51 +72,55 @@
 					return deferred.promise;
 				};
 
-				$scope.isHideDelete = false;
-
-				$scope.updateOccurred = false;
-
-				$scope.addVariable = true;
-
+				/* Event Handlers */
 				$scope.$on('deleteOccurred', function() {
 					$scope.updateOccurred = true;
-
-					$scope.reloadOnDebounce();
-
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
+
+					debounce(reloadMeasurementPage, DELAY, false)();
+				});
+
+				$scope.$on('onDeleteEnvironment', function(event, result) {
+					// result object contains deletedEnvironmentIndex and result.deferred object that need to be resolved after the reload
+					$scope.updateOccurred = true;
+					TrialManagerDataService.clearUnappliedChangesFlag();
+					TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+
+					debounce(function() {
+						reloadMeasurementPage(result.deletedEnvironmentIndex).then(function() {
+							result.deferred.resolve();
+						});
+					}, DELAY, false)();
 				});
 
 				$scope.$on('variableAdded', function() {
 					$scope.updateOccurred = true;
-
-					$scope.reloadOnDebounce();
-
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
+
+					debounce(reloadMeasurementPage, DELAY, false)();
 				});
 
-				$scope.reloadMeasurementPage = function() {
+				/* Controller Utility functions */
+				function reloadMeasurementPage(deletedEnvironmentIndex) {
+					deletedEnvironmentIndex = typeof deletedEnvironmentIndex === 'undefined' ? 0 : deletedEnvironmentIndex;
 
-					if ($('#measurement-table').length !== 0) {
-						//we reload
+					var $body = $('body');
+					var $measurementTable = $('#measurement-table');
+					var $measurementContainer = $('#measurementsDiv');
+
+					if ($measurementTable.length !== 0) {
 						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
 						var addedData = '&columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
+						var dataParam = 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys +
+							'&deletedEnvironment=' + deletedEnvironmentIndex + addedData;
 
-						$.ajax({
-							url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
-							type: 'POST',
-							data: 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys + "&deletedEnvironment=" + $scope.deletedEnvironment + addedData,
-							cache: false,
-							success: function(html) {
-								$('#measurementsDiv').html(html);
-								$('body').data('needToSave', '1');
-								$('body').data('columnReordered', columnsOrder.length != 0 ? '1' : '0');
-							}
+						//we reload
+						return TrialManagerDataService.reloadMeasurementAjax(dataParam).success(function(data) {
+							$measurementContainer.html(data);
+							$body.data('needToSave', '1');
+							$body.data('columnReordered', columnsOrder.length !== 0 ? '1' : '0');
 						});
 					}
-				};
-
-				var DELAY = 1500; // 1.5 secs
-				$scope.reloadOnDebounce = debounce($scope.reloadMeasurementPage, DELAY, false);
-
+				}
 			}]);
-		})();
+})();

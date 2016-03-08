@@ -45,10 +45,7 @@ var ImportDesign = (function() {
 		},
 
 		reloadMeasurements: function() {
-			if (isNursery()) {
-
-				// reload nursery measurements here
-			} else {
+			if (!isNursery()){
 				var angularElem = angular.element('#mainApp');
 
 				angularElem
@@ -57,7 +54,6 @@ var ImportDesign = (function() {
 								function() {
 									ImportDesign.getTrialManagerDataService().applicationData.isGeneratedOwnDesign = true;
 									ImportDesign.getTrialManagerDataService().applicationData.unsavedGeneratedDesign = true;
-									ImportDesign.getTrialManagerDataService().isGeneratedOwnDesign = true;
 								});
 			}
 		},
@@ -431,8 +427,6 @@ var ImportDesign = (function() {
 						// to enforce overwrite when the nursery is saved
 						$('#chooseGermplasmAndChecks').data('replace', '1');
 					} else {
-						angular.element('#mainApp').injector().get(
-						'TrialManagerDataService').isGeneratedOwnDesign = true;
 						ImportDesign.reloadMeasurements();
 					}
 

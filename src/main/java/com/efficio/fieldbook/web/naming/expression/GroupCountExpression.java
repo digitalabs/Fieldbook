@@ -46,13 +46,12 @@ public class GroupCountExpression extends BaseExpression {
 			} else {
 				value.delete(0, value.length());
                 value.append(currentValue);
-                value.append(SEPARATOR);
-                final String repeatingLetter = targetCountExpression.substring(targetCountExpression.length() - 1,targetCountExpression.length() );
 
                 // do while loop is used because there should be a -B or -# appended if the count is 0
                 int i = 0;
                 do {
-                    value.append(repeatingLetter);
+                    value.append(SEPARATOR);
+                    value.append(targetCountExpression);
                     i++;
                 } while (i < result.getCount());
 
@@ -74,9 +73,9 @@ public class GroupCountExpression extends BaseExpression {
 
 	protected String getTargetCountExpression(final String countPrefix) {
 		if (GroupCountExpression.BULK_COUNT_PREFIX.equals(countPrefix)) {
-			return "-B";
+			return "B";
 		} else if (GroupCountExpression.POUND_COUNT_PREFIX.equals(countPrefix)) {
-			return "-#";
+			return "#";
 		} else {
 			throw new IllegalArgumentException("Invalid count expression");
 		}

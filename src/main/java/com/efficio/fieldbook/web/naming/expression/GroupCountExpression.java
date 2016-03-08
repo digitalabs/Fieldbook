@@ -25,18 +25,25 @@ public class GroupCountExpression extends BaseExpression {
 	public void apply(final List<StringBuilder> values, final AdvancingSource source) {
 		for (final StringBuilder value : values) {
 			String currentValue = value.toString();
-			final String countPrefix = this.getCountPrefix(currentValue);
-			String valueWithoutProcessCode = currentValue.replace(countPrefix + this.getExpressionKey(), "");
 
-			final String targetCountExpression = this.getTargetCountExpression(countPrefix);
-			final CountResultBean result = this.countExpressionOccurence(targetCountExpression, valueWithoutProcessCode);
-            currentValue = this.cleanupString(new StringBuilder(valueWithoutProcessCode), result);
+            // this code handles two variants of this process code : B*[COUNT] and #*[COUNT]. Here we retrieve the "prefix" to determine which (B* or #*)
+            final String countPrefix = this.getCountPrefix(currentValue);
+
+            // we strip the B*[COUNT] or #*COUNT from the name being processed, so that it doesn't interfere with the rest of the processing
+            final String valueWithoutProcessCode = currentValue.replace(countPrefix + this.getExpressionKey(), "");
+
+            // when processing B*[COUNT], we count B's. for #*[COUNT], #. Here we determine which
+            final String targetCountExpression = this.getTargetCountExpression(countPrefix);
+            final CountResultBean result = this.countExpressionOccurence(targetCountExpression, valueWithoutProcessCode);
             int generatedCountValue = result.getCount();
 
             // if the method is a bulking method, we're expected to increment the count
             if (source.getBreedingMethod().isBulkingMethod()) {
-                 generatedCountValue = result.getCount() + 1;
+                generatedCountValue = result.getCount() + 1;
             }
+
+            // we remove the captured expression entirely so that we have a blank slate when writing the resulting count
+            currentValue = this.cleanupString(new StringBuilder(valueWithoutProcessCode), result);
 
 			if (generatedCountValue >= MINIMUM_BULK_COUNT) {
 

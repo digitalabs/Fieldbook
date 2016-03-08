@@ -28,10 +28,6 @@ public class GroupCountExpression extends BaseExpression {
 			final String countPrefix = this.getCountPrefix(currentValue);
 			String valueWithoutProcessCode = currentValue.replace(countPrefix + this.getExpressionKey(), "");
 
-			if (valueWithoutProcessCode.charAt(valueWithoutProcessCode.length() - 1) == SEPARATOR.charAt(0)) {
-				valueWithoutProcessCode = valueWithoutProcessCode.substring(0, valueWithoutProcessCode.length() - 1);
-			}
-
 			final String targetCountExpression = this.getTargetCountExpression(countPrefix);
 			final CountResultBean result = this.countExpressionOccurence(targetCountExpression, valueWithoutProcessCode);
             currentValue = this.cleanupString(new StringBuilder(valueWithoutProcessCode), result);

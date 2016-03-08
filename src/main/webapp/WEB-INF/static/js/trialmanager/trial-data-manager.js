@@ -7,11 +7,11 @@
             'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-		'TrialSettingsManager', '_', '$localStorage',
+		'TrialSettingsManager', '_', '$localStorage','$rootScope',
 		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA , ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage) {
+					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage, $rootScope) {
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
 			var extractData = function(initialData, initializeProperty) {
@@ -334,39 +334,7 @@
 
 					return deferred.promise;
 				},
-
-				refreshMeasurementTableAfterDeletingEnvironment: function() {
-					
-					var designTypeId = service.currentData.experimentalDesign.designType;
-					if (service.applicationData.designTypes[designTypeId].isPreset) {
-						service.generatePresetExpDesign(designTypeId).then(function() {
-							service.updateAfterGeneratingDesignSuccessfully();
-							service.applicationData.hasGeneratedDesignPreset = true;
-						});
-					} else if (service.currentData.experimentalDesign.designType != null &&
-						
-						var noOfEnvironments = service.currentData.environments.noOfEnvironments;
-						var environmentData = service.currentData.experimentalDesign;
-						//update the no of environments in experimental design tab
-						environmentData.noOfEnvironments = noOfEnvironments;
-
-						var designTypeId = service.currentData.experimentalDesign.designType;
-						
-						var data = service.retrieveGenerateDesignInput(designTypeId);
-						data.environmentData = environmentData;
-						
-							if (response.valid === true) {
-								service.clearUnappliedChangesFlag();
-								service.applicationData.unsavedGeneratedDesign = true;
-								$('#chooseGermplasmAndChecks').data('replace', '1');
-								$('body').data('expDesignShowPreview', '1');
-							} else {
-								showErrorMessage('', response.message);
-							}
-						});
-					}
-				},
-
+				
 				isOpenTrial: function() {
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
@@ -393,6 +361,7 @@
 						transformResponse: undefined
 					});
 				},
+				indicateUnappliedChangesAvailable: function(displayWarningMessage) {
 					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
 						service.applicationData.unappliedChangesAvailable = true;
 

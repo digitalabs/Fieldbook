@@ -19,6 +19,7 @@ public class GroupCountExpression extends BaseExpression {
 	public static final String BULK_COUNT_PREFIX = "B*";
 	public static final String POUND_COUNT_PREFIX = "#*";
     public static final String SEPARATOR = "-";
+    public static final int CAPTURED_FINAL_EXPRESSION_GROUP = 1;
 
 	@Override
 	public void apply(final List<StringBuilder> values, final AdvancingSource source) {
@@ -32,7 +33,7 @@ public class GroupCountExpression extends BaseExpression {
 			}
 
 			final String targetCountExpression = this.getTargetCountExpression(countPrefix);
-			final CountResultBean result = this.countContinuousExpressionOccurrence(targetCountExpression, valueWithoutProcessCode);
+			final CountResultBean result = this.countExpressionOccurence(targetCountExpression, valueWithoutProcessCode);
             currentValue = this.cleanupString(new StringBuilder(valueWithoutProcessCode), result);
             int generatedCountValue = result.getCount();
 
@@ -85,38 +86,34 @@ public class GroupCountExpression extends BaseExpression {
 		}
 	}
 
-	public CountResultBean countContinuousExpressionOccurrence(final String expression, final String currentValue) {
-		final Pattern pattern = Pattern.compile("((?:" + expression + "([*][1-9])?)+)$");
-		final Matcher matcher = pattern.matcher(currentValue);
+    public CountResultBean countExpressionOccurence(final String expression, final String currentValue) {
+        // our target is the final expression in a line name. However, numbers and other occurences of the expression could be in between
+        // e.g., TEST-B-1B-2BBB the final B should still be considered even though there is a 2 and other B's in between
+        final Pattern pattern = Pattern.compile("(?:-[1-9]*[0-9]*" + expression + "*(" + expression + "([*][1-9])*))$");
+        final Matcher matcher = pattern.matcher(currentValue);
 
-		String lastMatch = null;
-		int startIndex = 0;
-		int endIndex = 0;
-        int existingCount = 0;
-		if (matcher.find()) {
-            // if there is no *n instance found
-            if (matcher.groupCount() == 1) {
-                lastMatch = matcher.group();
-            } else {
-                lastMatch = matcher.group(1);
+        int startIndex = 0;
+        int endIndex = 0;
+        int count = 0;
+        if (matcher.find()) {
+            count = 1;
+            // if there is a *n instance found
+            if (matcher.groupCount() == 2) {
                 final String existingCountString = matcher.group(2);
                 if (! StringUtils.isEmpty(existingCountString)) {
-                    existingCount = Integer.parseInt(existingCountString.replace("*", ""));
+                    final int existingCount = Integer.parseInt(existingCountString.replace("*", ""));
+                    count += existingCount - 1;
                 }
+
             }
 
-			startIndex = matcher.start();
-			endIndex = matcher.end();
-		}
-
-		int count = StringUtils.countMatches(lastMatch, expression);
-        if (existingCount > 0) {
-            // we increment the count by the value of n (from -B*n) and subtract by 1 to remove double counting
-            count += existingCount - 1;
+            startIndex = matcher.start(CAPTURED_FINAL_EXPRESSION_GROUP);
+            endIndex = matcher.end(CAPTURED_FINAL_EXPRESSION_GROUP);
         }
 
-		return new CountResultBean(count, startIndex, endIndex);
-	}
+
+        return new CountResultBean(count, startIndex, endIndex);
+    }
 
 	@Override
 	public String getExpressionKey() {

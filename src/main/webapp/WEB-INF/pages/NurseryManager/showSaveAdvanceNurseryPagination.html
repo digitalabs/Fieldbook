@@ -1,6 +1,6 @@
 
 <div class="advance-nursery-list-table">
-	<table class="table-curved table-condensed advance-germplasm-items">	
+	<table class="table-curved table-condensed advance-germplasm-items" width="100%">
 		<thead>
 			<tr>
 				<th class="fbk-review-advance-check-box"> 
@@ -25,18 +25,3 @@
            </tbody>		
 	</table>
 </div>
-
-<script type="text/javascript" th:inline="javascript">
-    $(document).ready(function() {
-        'use strict';
-        if (isNursery()) {
-            $(".advance-nursery-list-table tbody tr:eq(0) td").each(function(index,value) {
-                if($(this).hasClass('trialColumns')){
-                    $('.advance-nursery-list-table thead tr:eq(0)').children("th:eq("+index+")").hide();
-                }
-            });
-            $('.trialColumns').hide();
-        }
-    });
-
-</script>

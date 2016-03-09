@@ -951,6 +951,18 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 		'use strict';
 
 		var germplasmDataTable;
+		var _columnDefs = [
+			// Column defs for trialInstanceNumber and replicationNumber (hide if current study is nursery)
+			{
+				targets: [ -1, -2 ],
+				visible: !isNursery()
+			},
+			// clumn defs for the entry checkbox selection, fix width
+			{
+				targets: [0],
+				width: '38px'
+			}
+		];
 
 		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
 			this.germplasmDataTable = $(tableIdentifier).DataTable();
@@ -958,6 +970,8 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 			this.germplasmDataTable.rows.add(dataList).draw();
 		} else {
 			this.germplasmDataTable = $(tableIdentifier).dataTable({
+				columnDefs: _columnDefs,
+				autoWidth: false,
 				retrieve: true,
 				scrollY: '500px',
 				scrollX: '100%',

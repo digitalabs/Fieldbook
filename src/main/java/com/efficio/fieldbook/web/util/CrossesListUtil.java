@@ -60,7 +60,7 @@ public class CrossesListUtil {
 
 	public ImportedCrosses convertGermplasmListData2ImportedCrosses(final GermplasmListData crossesData) {
 		final ImportedCrosses importedCrosses = new ImportedCrosses();
-		importedCrosses.setId(crossesData.getId());
+		importedCrosses.setCrossListId(crossesData.getId());
 		importedCrosses.setEntryId(crossesData.getEntryId());
 		importedCrosses.setGid(crossesData.getGid() != null ? Integer.toString(crossesData.getGid()) : null);
 		importedCrosses.setCross(crossesData.getFemaleParent() + DEFAULT_SEPARATOR + crossesData.getMaleParent());

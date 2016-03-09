@@ -214,7 +214,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				final Locale locale = LocaleContextHolder.getLocale();
 				results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage(nameUniqueError, null, locale));
 			}
-		}catch (final RuleException re) {
+		} catch (final RuleException re) {
 			GermplasmTreeController.LOG.error(re.getMessage(), re);
 			results.put(GermplasmTreeController.IS_SUCCESS, 0);
 			results.put(GermplasmTreeController.MESSAGE, "Naming of the germplasms failed. Please check the naming configuration.");
@@ -234,18 +234,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		try {
 			final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
-
 			final String crossesListId = (String)session.getAttribute("createdCrossesListId");
-
-			/*String listName = "";
-			if (this.userSelection.getImportedCrossesList() != null) {
-				listName = this.userSelection.getImportedCrossesList().getName();
-			}*/
 
 			if (crossesListId != null) {
 				final Integer germplasmListId = Integer.parseInt(crossesListId);
+				final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
 				this.updateGermplasmList(germplasmListId, listDataItems);
-				session.setAttribute("createdCrossesListId", null);
+				session.removeAttribute("createdCrossesListId");
 
 				final List<GermplasmListData> data = new ArrayList<GermplasmListData>();
 				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
@@ -254,7 +249,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				final Integer listDataProjectListId = this.saveListDataProjectList(GERMPLASM_LIST_TYPE_CROSS, germplasmListId, listDataProject);
 				results.put(GermplasmTreeController.IS_SUCCESS, 1);
 				results.put("germplasmListId", germplasmListId);
-				GermplasmList germplasmList =this.germplasmListManager.getGermplasmListById(germplasmListId);
 				results.put("listName", germplasmList.getName());
 				results.put("crossesListId", listDataProjectListId);
 			} else {
@@ -262,6 +256,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage("crossing.no.crossing.list", null,
 						LocaleContextHolder.getLocale()));
 			}
+		} catch (final RuleException re) {
+			GermplasmTreeController.LOG.error(re.getMessage(), re);
+			results.put(GermplasmTreeController.IS_SUCCESS, 0);
+			results.put(GermplasmTreeController.MESSAGE, "Naming of the germplasms failed. Please check the naming configuration.");
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
 			results.put(GermplasmTreeController.IS_SUCCESS, 0);
@@ -276,11 +274,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
 		final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 		final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
-		//this.crossingService.updateCrossSetting(crossSetting, importedCrossesList);
-		ImportedCrossesList importedCrossesListWithNamigSettings = this.applyNamingRules(crossSetting, importedCrossesList);
-		this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesListWithNamigSettings,
+		final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(crossSetting, importedCrossesList);
+		this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesListWithNamingSettings,
 				this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
-		this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesListWithNamigSettings.getImportedCrosses());
+		this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesListWithNamingSettings.getImportedCrosses());
 		return this.fieldbookMiddlewareService.updateGermplasmList(listDataItems, germplasmList);
 	}
 
@@ -324,30 +321,25 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			AdvancingSourceList list = new AdvancingSourceList();
 			List<AdvancingSource> rows= new ArrayList<>();
 
-			List<Integer> gids = new ArrayList<>();
+			final List<Integer> gids = new ArrayList<>();
 			final List<ImportedCrosses> importedCrosses = importedCrossesList.getImportedCrosses();
 			int sequenceIterator = 0;
 			for (ImportedCrosses cross : importedCrosses) {
-				// **** name logic
-				Name name = new Name();
+				final Name name = new Name();
 				name.setNstat(1);
 				name.setNval(cross.getCross());
 				List<Name> names = new ArrayList<>();
 				names.add(name);
 				cross.setNames(names);
-				// end of name logic
 				final AdvancingSource advancingSource = new AdvancingSource(cross);
 				advancingSource.setCurrentMaxSequence(sequenceIterator++);
 				rows.add(advancingSource);
 				if (cross.getGid() != null && NumberUtils.isNumber(cross.getGid())) {
 					gids.add(Integer.valueOf(cross.getGid()));
 				}
-
 			}
 
 			list.setRows(rows);
-			//TODO ????
-			//this.assignSourceGermplasms(list, breedingMethodMap);
 
 			final AdvancingNursery advancingParameters = new AdvancingNursery();
 			advancingParameters.setBreedingMethodId(Integer.toString(setting.getBreedingMethodSetting().getMethodId()));

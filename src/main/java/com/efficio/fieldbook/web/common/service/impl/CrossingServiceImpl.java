@@ -151,7 +151,6 @@ public class CrossingServiceImpl implements CrossingService {
 	@Override
 	@Transactional
 	public void updateCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
-		//this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
 		this.saveAttributes(crossSetting, importedCrossesList, this.getImportedCrossesGidsList(importedCrossesList));
 	}
 

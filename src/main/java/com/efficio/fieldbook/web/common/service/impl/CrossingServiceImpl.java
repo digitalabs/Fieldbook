@@ -121,7 +121,7 @@ public class CrossingServiceImpl implements CrossingService {
 	@Transactional
 	public void updateCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
-		this.saveAttributes(crossSetting, importedCrossesList, this.getImpotedCrossesGidsList(importedCrossesList));
+		this.saveAttributes(crossSetting, importedCrossesList, this.getImportedCrossesGidsList(importedCrossesList));
 	}
 
 	/**
@@ -183,15 +183,15 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 		}
 
-		final List<Pair<Germplasm, Name>> germplasmPairs =
+		final List<Pair<Germplasm, Name>> germplasmNamePairs =
 				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
 						importedCrossesList.hasPlotDuplicate());
 
-		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
+		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmNamePairs);
 		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
 
 		CrossingUtil.applyBreedingMethodSetting(this.germplasmDataManager, crossSetting, germplasmList);
-		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmPairs, crossingNameTypeId);
+		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmNamePairs, crossingNameTypeId);
 
 		final boolean isValid = this.verifyGermplasmMethodPresent(germplasmList);
 
@@ -199,10 +199,10 @@ public class CrossingServiceImpl implements CrossingService {
 			throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
 					Locale.getDefault()));
 		}
-		return germplasmPairs;
+		return germplasmNamePairs;
 	}
 
-	private List<Integer> getImpotedCrossesGidsList(final ImportedCrossesList importedCrossesList) {
+	private List<Integer> getImportedCrossesGidsList(final ImportedCrossesList importedCrossesList) {
 		final List<Integer> gids = new ArrayList<>();
 
 		if (importedCrossesList == null || importedCrossesList.getImportedCrosses() == null) {

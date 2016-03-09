@@ -1,6 +1,6 @@
 
 /*global angular, modalConfirmationTitle, openManageLocations,
-environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, SpinnerManager*/
+environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, showErrorMessage, SpinnerManager*/
 
 (function() {
 	'use strict';
@@ -227,7 +227,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, Spi
 					addNewEnvironments(newVal - oldVal);
 
 					// should not be equal to 1 since the default number of environment for a trial is 1
-					if(newVal !== 1){
+					if (newVal !== 1) {
 						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 					}
 				}

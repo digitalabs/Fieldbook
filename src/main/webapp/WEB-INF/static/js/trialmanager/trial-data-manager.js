@@ -7,8 +7,8 @@
             'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-		'TrialSettingsManager', '_', '$localStorage','$rootScope',
-		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA , ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
+		'TrialSettingsManager', '_', '$localStorage', '$rootScope',
+		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
 					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage, $rootScope) {
@@ -221,13 +221,13 @@
 				// what I get is an instance of OrderedHash containing an array of keys with the map
 				settings: {
 					trialSettings: extractSettings(TRIAL_SETTINGS_INITIAL_DATA),
-                    selectionVariables: extractSettings(SELECTION_VARIABLE_INITIAL_DATA),
+					selectionVariables: extractSettings(SELECTION_VARIABLE_INITIAL_DATA),
 					environments: extractSettings(ENVIRONMENTS_INITIAL_DATA),
 					germplasm: extractSettings(GERMPLASM_INITIAL_DATA),
 					treatmentFactors: extractTreatmentFactorSettings(TREATMENT_FACTORS_INITIAL_DATA),
 					measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
 					basicDetails: extractSettings(BASIC_DETAILS_DATA),
-                    advancedList: ADVANCE_LIST_DATA
+					advancedList: ADVANCE_LIST_DATA
 				},
 				applicationData: {
 					unappliedChangesAvailable: false,
@@ -236,11 +236,11 @@
 					unsavedTraitsAvailable: false,
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
-                    hasGeneratedDesignPreset: false,
-                    hasNewEnvironmentAdded : false,
+					hasGeneratedDesignPreset: false,
+					hasNewEnvironmentAdded: false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
 					designTypes: [],
-					deleteEnvironmentCallback : function() {}
+					deleteEnvironmentCallback: function() {}
 				},
 
 				specialSettings: {
@@ -294,8 +294,8 @@
 						service.applicationData.designTypes = designTypes;
 					});
 				},
-				
-				retrieveGenerateDesignInput : function(designType){
+
+				retrieveGenerateDesignInput: function(designType) {
 					var environmentData = angular.copy(service.currentData.environments);
 
 					_.each(environmentData.environments, function(data, key) {
@@ -313,7 +313,7 @@
 						startingPlotNo: service.currentData.experimentalDesign.startingPlotNo,
 						hasNewEnvironmentAdded: service.applicationData.hasNewEnvironmentAdded
 					};
-					
+
 					return data;
 				},
 
@@ -336,7 +336,7 @@
 				},
 
 				refreshMeasurementTableAfterDeletingEnvironment: function() {
-					
+
 					var designTypeId = service.currentData.experimentalDesign.designType;
 					if (service.applicationData.designTypes[designTypeId].isPreset) {
 						service.generatePresetExpDesign(designTypeId).then(function() {
@@ -344,29 +344,22 @@
 							service.applicationData.hasGeneratedDesignPreset = true;
 						});
 					}else {
-						
 						var noOfEnvironments = service.currentData.environments.noOfEnvironments;
 						var environmentData = service.currentData.experimentalDesign;
+
 						//update the no of environments in experimental design tab
 						environmentData.noOfEnvironments = noOfEnvironments;
 
-						var designTypeId = service.currentData.experimentalDesign.designType;
-						
-						var data = service.retrieveGenerateDesignInput(designTypeId);
-						data.environmentData = environmentData;
-						
-						service.generateExpDesign(data).then(
-                              function(response) {
-									if (response.valid === true) {
-										service.clearUnappliedChangesFlag();
-										service.applicationData.unsavedGeneratedDesign = true;
-										$('#chooseGermplasmAndChecks').data('replace', '1');
-										$('body').data('expDesignShowPreview', '1');
-									} else {
-										showErrorMessage('', response.message);
-									}
-                              }
-                          );
+						service.generateExpDesign(environmentData).then(function(response) {
+							if (response.valid === true) {
+								service.clearUnappliedChangesFlag();
+								service.applicationData.unsavedGeneratedDesign = true;
+								$('#chooseGermplasmAndChecks').data('replace', '1');
+								$('body').data('expDesignShowPreview', '1');
+							} else {
+								showErrorMessage('', response.message);
+							}
+						});
 					}
 				},
 
@@ -382,7 +375,7 @@
 					if (deleteMeasurementPossible) {
 						service.applicationData.unsavedTraitsAvailable = true;
 
-						$rootScope.$broadcast('onDeleteEnvironment',{ deletedEnvironmentIndex : index, deferred : refreshMeasurementDeferred });
+						$rootScope.$broadcast('onDeleteEnvironment', { deletedEnvironmentIndex: index, deferred: refreshMeasurementDeferred });
 					}
 
 					return refreshMeasurementDeferred.promise;
@@ -404,25 +397,25 @@
 							'the Experimental Design on the next tab', 10000);
 						$('body').data('needGenerateExperimentalDesign', '1');
 
-                        if (service.currentData.experimentalDesign.designType === 3) {
-                            service.currentData.experimentalDesign.designType = null;
-                        }
-                    }
-                },
+						if (service.currentData.experimentalDesign.designType === 3) {
+							service.currentData.experimentalDesign.designType = null;
+						}
+					}
+				},
 
-                // set unappliedChangesAvailable to true if Entry Number is updated
-                setUnappliedChangesAvailable: function() {
-                    service.applicationData.unappliedChangesAvailable = true;
-                },
+				// set unappliedChangesAvailable to true if Entry Number is updated
+				setUnappliedChangesAvailable: function() {
+					service.applicationData.unappliedChangesAvailable = true;
+				},
 
-                indicateUnsavedTreatmentFactorsAvailable: function () {
-                	if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
-                        service.applicationData.unsavedTreatmentFactorsAvailable = true;
-                        if (service.currentData.experimentalDesign.designType === 3) {
-                            service.currentData.experimentalDesign.designType = null;
-                        }
-                    }
-                },
+				indicateUnsavedTreatmentFactorsAvailable: function() {
+					if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
+						service.applicationData.unsavedTreatmentFactorsAvailable = true;
+						if (service.currentData.experimentalDesign.designType === 3) {
+							service.currentData.experimentalDesign.designType = null;
+						}
+					}
+				},
 
 				clearUnappliedChangesFlag: function() {
 					service.applicationData.unappliedChangesAvailable = false;
@@ -679,9 +672,9 @@
 								return true;
 							} else if (key === 'treatmentFactors') {
 								settingsArray.push(value.details);
-							} else if (key === 'advancedList'){
-                                return true;
-                            } else {
+							} else if (key === 'advancedList') {
+								return true;
+							} else {
 								if (value) {
 									settingsArray.push(value);
 								}

@@ -211,7 +211,8 @@ function showPopoverCheck(index, sectionContainer, bodyContainer) {
 						title: 'Edit Check',
 						content: data,
 						trigger: 'manual',
-						placement: 'right'
+						placement: 'right',
+						container: 'body'
 					};
 				} else {
 					popoverOptions = {
@@ -219,10 +220,11 @@ function showPopoverCheck(index, sectionContainer, bodyContainer) {
 						title: 'Edit Check',
 						content: data,
 						trigger: 'manual',
-						placement: 'left'
+						placement: 'left',
+						container: 'body'
 					};
 				}
-				$(sectionContainer + ' .popover').remove();
+				$('body .popover').remove();
 				$(sectionContainer + ' .edit-check' + index).popover('destroy');
 				$(sectionContainer + ' .edit-check' + index).popover(popoverOptions);
 				$(sectionContainer + ' .edit-check' + index).popover('show');

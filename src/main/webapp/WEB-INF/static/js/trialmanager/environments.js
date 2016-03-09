@@ -338,7 +338,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			}
 
 			function updateDeletedEnvironment(index) {
-				SpinnerManager.addActive();
+				SpinnerManager.addActiveWithCustomDelay(0);
 
 				$timeout(function() {
 					// remove 1 environment

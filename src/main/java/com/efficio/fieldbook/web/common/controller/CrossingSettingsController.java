@@ -27,6 +27,7 @@ import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.slf4j.Logger;
@@ -58,10 +59,6 @@ import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExport
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.util.CrossesListUtil;
 import com.efficio.fieldbook.web.util.DuplicatesUtil;
-
-/**
- * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 1/21/2015 Time: 1:49 PM
- */
 
 @Controller
 @RequestMapping(CrossingSettingsController.URL)
@@ -298,7 +295,7 @@ public class CrossingSettingsController extends SettingsController {
 			DuplicatesUtil.processDuplicates(parseResults);
 			// 3. Store the crosses to study selection if all validated
 
-			this.studySelection.setimportedCrossesList(parseResults);
+			this.studySelection.setImportedCrossesList(parseResults);
 
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 1);
 			resultsMap.put(CrossingSettingsController.HAS_PLOT_DUPLICATE, parseResults.hasPlotDuplicate());
@@ -336,6 +333,7 @@ public class CrossingSettingsController extends SettingsController {
 		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
 
 		final List<GermplasmListData> germplasmListDataList = this.germplasmListManager.retrieveListDataWithParents(crossesListId);
+		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(crossesListId);
 
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
@@ -345,7 +343,8 @@ public class CrossingSettingsController extends SettingsController {
 			importedCrosses.add(this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData));
 		}
 		importedCrossesList.setImportedGermplasms(importedCrosses);
-		this.userSelection.setimportedCrossesList(importedCrossesList);
+		importedCrossesList.setType(germplasmList.getType());
+		this.userSelection.setImportedCrossesList(importedCrossesList);
 		return masterList;
 	}
 

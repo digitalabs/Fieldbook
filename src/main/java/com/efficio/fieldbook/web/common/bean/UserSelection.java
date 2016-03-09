@@ -881,7 +881,7 @@ public class UserSelection implements Serializable {
 		return this.importedCrossesList;
 	}
 
-	public void setimportedCrossesList(ImportedCrossesList importedCrossesList) {
+	public void setImportedCrossesList(ImportedCrossesList importedCrossesList) {
 		this.importedCrossesList = importedCrossesList;
 	}
 

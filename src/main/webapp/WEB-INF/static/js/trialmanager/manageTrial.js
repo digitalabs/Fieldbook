@@ -338,6 +338,12 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				TrialManagerDataService.applicationData.hasGeneratedDesignPreset = false;
 			};
 
+			$scope.loadMeasurementsTabInBackground = function() {
+				if (isOpenTrial()) {
+					$state.go('editMeasurements');
+				}
+			};
+
 			$scope.displayMeasurementOnlyActions = function() {
 				return TrialManagerDataService.trialMeasurement.count &&
 					TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&

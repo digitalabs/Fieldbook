@@ -9,6 +9,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout',
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout) {
 
+			// if environments tab is triggered, we preload the measurements tab
+			$scope.loadMeasurementsTabInBackground();
+
 			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
 			var populateDatatableWithDefaultValues = function() {
 				$scope.data = TrialManagerDataService.currentData.environments;
@@ -217,9 +220,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 							(!TrialManagerDataService.isOpenTrial() &&
 								TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined)) {
 						refreshMeasurementTableAfterDeletingEnvironment();
-					} else if (TrialManagerDataService.isOpenTrial() && TrialManagerDataService.trialMeasurement.hasMeasurement) {
-						// trigger the showMeasurementsPreview in the background
-						loadInitialMeasurements();
 					}
 
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;

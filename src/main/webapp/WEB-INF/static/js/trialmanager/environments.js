@@ -1,6 +1,6 @@
 
 /*global angular, modalConfirmationTitle, openManageLocations,
-environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loadInitialMeasurements, SpinnerManager*/
+environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, SpinnerManager*/
 
 (function() {
 	'use strict';

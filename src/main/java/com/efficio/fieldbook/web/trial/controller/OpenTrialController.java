@@ -492,23 +492,6 @@ public class OpenTrialController extends BaseTrialController {
 		return this.loadMeasurementDataPage(false, form, workbook, workbook.getMeasurementDatasetVariablesView(), model, "");
 	}
 
-	/**
-	 * Reset session variables after save.
-	 * 
-	 * @param form the form
-	 * @param model the model
-	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	@RequestMapping(value = "/load/measurement", method = RequestMethod.GET)
-	public String loadMeasurement(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
-		final Workbook workbook = this.userSelection.getWorkbook();
-		final List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariablesView();
-		form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(),
-				SettingsUtil.buildVariates(workbook.getVariates())));
-		return this.loadMeasurementDataPage(false, form, workbook, measurementDatasetVariables, model, "");
-	}
-
 	@RequestMapping(value = "/load/preview/measurement", method = RequestMethod.GET)
 	public String loadPreviewMeasurement(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();

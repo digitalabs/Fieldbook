@@ -1233,6 +1233,11 @@ a.fbk-edit-experiment{
 .modal-backdrop.in {
     opacity: 0.5;
 }
+
+.advance-nursery-list-table table {
+    width: 100%;
+}
+
 .advance-nursery-list-table table th, .advance-nursery-list-table table td{
     text-align: left;
     vertical-align: middle

@@ -957,7 +957,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 				targets: [ -1, -2 ],
 				visible: !isNursery()
 			},
-			// clumn defs for the entry checkbox selection, fix width
+			// column defs for the entry checkbox selection, fix width
 			{
 				targets: [0],
 				width: '38px'

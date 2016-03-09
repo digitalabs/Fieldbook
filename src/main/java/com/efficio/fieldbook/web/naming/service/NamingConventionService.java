@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.naming.service;
 
 import java.util.List;
 
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -43,5 +44,8 @@ public interface NamingConventionService {
 
 	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, AdvancingNursery advancingParameters, Workbook workbook)
 			throws RuleException;
+
+	List<ImportedCrosses> generateCrossesList(List<ImportedCrosses> importedCrosses, AdvancingSourceList rows, AdvancingNursery
+			advancingParameters, Workbook workbook, List<Integer> gids) throws RuleException;
 
 }

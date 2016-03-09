@@ -114,13 +114,44 @@ public class CrossingServiceImpl implements CrossingService {
 		this.save(crossSetting, importedCrossesList, germplasmPairs);
 	}
 
+	@Override
+	public void applyCrossSettingWithNamingRules(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+			final Integer userId, final Workbook workbook) {
+
+		int entryIdCounter = 1;
+		// apply the source string here, before we save germplasm if there is no existing source
+		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
+			if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource()) ||
+					importedCross.getSource().equalsIgnoreCase(ImportedCrosses.NO_SEED_SOURCE)) {
+				final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, importedCross);
+				final String generatedSource = this.germplasmOriginGenerationService.generateOriginString(parameters);
+				importedCross.setSource(generatedSource);
+			}
+			importedCross.setEntryId(entryIdCounter);
+			importedCross.setEntryCode(String.valueOf(entryIdCounter++));
+		}
+
+		final List<Pair<Germplasm, Name>> germplasmPairs =
+				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
+						importedCrossesList.hasPlotDuplicate());
+
+		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
+		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
+
+		CrossingUtil.applyBreedingMethodSetting(this.germplasmDataManager, crossSetting, germplasmList);
+		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmPairs, crossingNameTypeId);
+
+		this.verifyGermplasmMethodPresent(germplasmList);
+		this.save(crossSetting, importedCrossesList, germplasmPairs);
+	}
+
 	/**
 	 * @Transactional to make sure Germplasm, Name and Attribute entities updated atomically.
 	 */
 	@Override
 	@Transactional
 	public void updateCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
-		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
+		//this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
 		this.saveAttributes(crossSetting, importedCrossesList, this.getImportedCrossesGidsList(importedCrossesList));
 	}
 
@@ -268,13 +299,12 @@ public class CrossingServiceImpl implements CrossingService {
 		this.processBreedingMethodProcessCodes(setting);
 
 		Integer nextNumberInSequence = this.getNextNumberInSequence(setting.getCrossNameSetting());
-		Integer entryIdCounter = 0;
+		Integer entryIdCounter = 1;
 
 		for (final ImportedCrosses cross : importedCrosses) {
-			entryIdCounter++;
 			cross.setEntryId(entryIdCounter);
-			cross.setEntryCode(String.valueOf(entryIdCounter));
-			cross.setDesig(this.buildDesignationNameInSequence(cross, nextNumberInSequence++, setting));
+			cross.setEntryCode(String.valueOf(entryIdCounter++));
+			//cross.setDesig(this.buildDesignationNameInSequence(cross, nextNumberInSequence++, setting));
 
 			// this would set the correct cross string depending if the use is cimmyt wheat
 			final Germplasm germplasm = new Germplasm();
@@ -492,7 +522,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	protected String buildPrefixString(final CrossNameSetting setting) {
-		final String prefix = setting.getPrefix().trim();
+		final String prefix = setting.getPrefix() != null && StringUtils.isEmpty(setting.getPrefix()) ? setting.getPrefix().trim() : "";
 		if (setting.isAddSpaceBetweenPrefixAndCode()) {
 			return prefix + " ";
 		}

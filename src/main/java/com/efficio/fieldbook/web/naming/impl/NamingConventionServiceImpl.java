@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
@@ -141,12 +142,12 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 	}
 
-	private void assignGermplasmAttributes(final ImportedGermplasm germplasm, final int sourceGid, final int sourceGnpgs,
-			final int sourceGpid1, final int sourceGpid2, final Method sourceMethod, final Method breedingMethod) {
+	private void assignGermplasmAttributes(final ImportedGermplasm germplasm, final Integer sourceGid, final Integer sourceGnpgs,
+			final Integer sourceGpid1, final Integer sourceGpid2, final Method sourceMethod, final Method breedingMethod) {
 
-		if (sourceMethod != null && sourceMethod.getMtype() != null
-				&& AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype()) || sourceGnpgs < 0 && sourceGpid1 == 0
-				&& sourceGpid2 == 0) {
+		if ((sourceMethod != null && sourceMethod.getMtype() != null
+				&& AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype())) || sourceGnpgs < 0 &&
+				(sourceGpid1 != null && sourceGpid1.equals(0)) && (sourceGpid2 != null && sourceGpid2.equals(0))) {
 
 			germplasm.setGpid1(sourceGid);
 		} else {
@@ -186,8 +187,10 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 						, breedingMethod.getMid());
 		
 		// assign parentage etc for the new Germplasm
-		this.assignGermplasmAttributes(germplasm, Integer.valueOf(source.getGermplasm().getGid()), source.getGermplasm().getGnpgs(), source
-				.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(), source.getSourceMethod(), breedingMethod);
+		final Integer sourceGid = source.getGermplasm().getGid() != null ? Integer.valueOf(source.getGermplasm().getGid()) : -1;
+		final Integer gnpgs = source.getGermplasm().getGnpgs() != null ? source.getGermplasm().getGnpgs() : -1;
+		this.assignGermplasmAttributes(germplasm, sourceGid, gnpgs, source.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(),
+				source.getSourceMethod(), breedingMethod);
 		
 		// assign grouping based on parentage
 
@@ -209,7 +212,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		final List<Name> names = new ArrayList<Name>();
 
 		final Name name = new Name();
-		name.setGermplasmId(Integer.valueOf(source.getGermplasm().getGid()));
+		final Integer germplasmId = source.getGermplasm().getGid() != null ? Integer.valueOf(source.getGermplasm().getGid()) : null;
+		name.setGermplasmId(germplasmId);
 		name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
 
 		name.setNval(germplasm.getDesig());
@@ -253,6 +257,60 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 		timer.stop();
 		return list;
+	}
+
+	@Override
+	public List<ImportedCrosses> generateCrossesList(final List<ImportedCrosses> importedCrosses, final AdvancingSourceList rows,
+			final AdvancingNursery advancingParameters, final Workbook workbook, List<Integer> gids) throws RuleException {
+
+		final List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
+		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
+		for (final Method method : methodList) {
+			breedingMethodMap.put(method.getMid(), method);
+		}
+
+		int index = 0;
+		final TimerWatch timer = new TimerWatch("cross");
+		//this.setNamesToGermplasm(rows.getRows(), gids);
+
+		for (final AdvancingSource advancingSource : rows.getRows()) {
+
+			final List<String> names;
+
+			advancingSource.setBreedingMethod(breedingMethodMap.get(Integer.valueOf(advancingParameters.getBreedingMethodId())));
+			advancingSource.setPlantsSelected(1); //TODO ???? WHAT does it mean for crossing????
+
+			final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
+			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
+
+			// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
+			// reference index
+			if (advancingSource.getChangeDetail() != null) {
+				// index - 1 is used because Java uses 0-based referencing
+				advancingSource.getChangeDetail().setIndex(index - 1);
+			}
+
+			for (final String name : names) {
+				importedCrosses.get(index++).setDesig(name);
+			}
+		}
+		timer.stop();
+		return importedCrosses;
+	}
+
+	private void setNamesToGermplasm(List<AdvancingSource> rows, List<Integer> gids) throws MiddlewareQueryException {
+		if (rows != null && !rows.isEmpty()) {
+			Map<Integer, List<Name>> map = this.fieldbookMiddlewareService.getNamesByGids(gids);
+			for (AdvancingSource row : rows) {
+				String gid = row.getGermplasm().getGid();
+				if (gid != null && NumberUtils.isNumber(gid)) {
+					List<Name> names = map.get(Integer.valueOf(gid));
+					if (names != null && !names.isEmpty()) {
+						row.setNames(names);
+					}
+				}
+			}
+		}
 	}
 
 	protected RuleExecutionContext setupNamingRuleExecutionContext(final AdvancingSource row, final boolean checkForDuplicateName) {

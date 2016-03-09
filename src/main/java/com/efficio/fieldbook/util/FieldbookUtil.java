@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.util;
 
 import java.io.IOException;
@@ -86,33 +87,27 @@ public class FieldbookUtil {
 		return false;
 	}
 
-	public static void mergeCrossesPlotDuplicateData(ImportedCrosses crosses,
-			List<ImportedCrosses> importedGermplasmList) {
+	public static void mergeCrossesPlotDuplicateData(ImportedCrosses crosses, List<ImportedCrosses> importedGermplasmList) {
 		if (FieldbookUtil.isPlotDuplicateNonFirstInstance(crosses)) {
 			// get the 1st instance of duplicate from the list
 			Integer firstInstanceDuplicate = crosses.getDuplicateEntries().iterator().next();
 			// needed to minus 1 since a list is 0 based
-			ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList
-					.get(firstInstanceDuplicate - 1);
+			ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList.get(firstInstanceDuplicate - 1);
 			crosses.setGid(firstInstanceCrossGermplasm.getGid());
 			crosses.setCross(firstInstanceCrossGermplasm.getCross());
 			crosses.setDesig(firstInstanceCrossGermplasm.getDesig());
 		}
 	}
 
-	public static boolean isContinueCrossingMerge(boolean hasPlotDuplicate,
-			boolean isPreservePlotDuplicate, ImportedCrosses cross) {
-		if (hasPlotDuplicate && !isPreservePlotDuplicate
-				&& FieldbookUtil.isPlotDuplicateNonFirstInstance(cross)) {
+	public static boolean isContinueCrossingMerge(boolean hasPlotDuplicate, boolean isPreservePlotDuplicate, ImportedCrosses cross) {
+		if (hasPlotDuplicate && !isPreservePlotDuplicate && FieldbookUtil.isPlotDuplicateNonFirstInstance(cross)) {
 			return true;
 		}
 		return false;
 	}
 
-	public static void copyDupeNotesToListDataProject(List<ListDataProject> dataProjectList,
-			List<ImportedCrosses> importedCrosses) {
-		if (dataProjectList != null && importedCrosses != null
-				&& dataProjectList.size() == importedCrosses.size()) {
+	public static void copyDupeNotesToListDataProject(List<ListDataProject> dataProjectList, List<ImportedCrosses> importedCrosses) {
+		if (dataProjectList != null && importedCrosses != null && dataProjectList.size() == importedCrosses.size()) {
 			for (int i = 0; i < dataProjectList.size(); i++) {
 				dataProjectList.get(i).setDuplicate(importedCrosses.get(i).getDuplicate());
 			}
@@ -122,8 +117,7 @@ public class FieldbookUtil {
 	public static List<Integer> getFilterForMeansAndStatisticalVars() {
 
 		List<Integer> isAIds = new ArrayList<Integer>();
-		StringTokenizer token = new StringTokenizer(
-				AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
+		StringTokenizer token = new StringTokenizer(AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
 		while (token.hasMoreTokens()) {
 			isAIds.add(Integer.valueOf(token.nextToken()));
 		}
@@ -131,8 +125,7 @@ public class FieldbookUtil {
 	}
 
 	public static boolean isFieldmapColOrRange(MeasurementVariable var) {
-		if (var.getTermId() == TermId.COLUMN_NO.getId()
-				|| var.getTermId() == TermId.RANGE_NO.getId()) {
+		if (var.getTermId() == TermId.COLUMN_NO.getId() || var.getTermId() == TermId.RANGE_NO.getId()) {
 			return true;
 		}
 		return false;

@@ -168,7 +168,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		String encodedFilename = FileUtils.encodeFilenameForDownload(SettingsUtil.cleanSheetAndFileName(filename));
 
-		// Those user agents that do not support the RFC 5987 encoding ignore ï¿½filename*ï¿½ when it occurs after ï¿½filenameï¿½.
+		// Those user agents that do not support the RFC 5987 encoding ignore “filename*” when it occurs after “filename”.
 		response.setHeader("Content-disposition", "attachment; filename=" + encodedFilename + "; filename*=UTF-8''" + encodedFilename);
 		response.setContentType(contentType);
 		response.setCharacterEncoding("UTF-8");

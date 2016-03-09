@@ -253,7 +253,8 @@ public class CrossingSettingsController extends SettingsController {
 			CrossingSettingsController.LOG.debug(e.getMessage(), e);
 
 			out.put(CrossingSettingsController.IS_SUCCESS, Boolean.FALSE);
-			out.put("errorMessage", this.messageSource.getMessage(e.getMessage(), new String[] {}, "cannot export a crossing template",
+			out.put("errorMessage",
+					this.messageSource.getMessage(e.getMessage(), new String[] {}, "cannot export a crossing template",
 							LocaleContextHolder.getLocale()));
 		}
 

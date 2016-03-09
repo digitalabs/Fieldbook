@@ -194,7 +194,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 			rowCounter++;
 
-			if (measurementRow == null) {
+			if (measurementRow.getDataList().isEmpty()) {
 				continue;
 			}
 

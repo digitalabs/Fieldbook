@@ -340,7 +340,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
 			$scope.loadMeasurementsTabInBackground = function() {
 				if (isOpenTrial()) {
-					$state.go('editMeasurements');
+					$state.go('editMeasurements',{},{ location: false });
 				}
 			};
 

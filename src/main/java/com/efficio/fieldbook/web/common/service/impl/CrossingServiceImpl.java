@@ -170,6 +170,7 @@ public class CrossingServiceImpl implements CrossingService {
 		this.germplasmDataManager.addAttributes(attributeList);
 	}
 
+	//FIXME the methods getPairs() and generateGermplasmNamePairs() should be combined into one
 	private List<Pair<Germplasm, Name>> getPairs(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final Integer userId, final Workbook workbook) {
 
@@ -193,12 +194,7 @@ public class CrossingServiceImpl implements CrossingService {
 		CrossingUtil.applyBreedingMethodSetting(this.germplasmDataManager, crossSetting, germplasmList);
 		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmNamePairs, crossingNameTypeId);
 
-		final boolean isValid = this.verifyGermplasmMethodPresent(germplasmList);
-
-		if (!isValid) {
-			throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
-					Locale.getDefault()));
-		}
+		this.verifyGermplasmMethodPresent(germplasmList);
 		return germplasmNamePairs;
 	}
 
@@ -258,14 +254,13 @@ public class CrossingServiceImpl implements CrossingService {
 		this.germplasmDataManager.addGermplasmName(parentageDesignationNames);
 	}
 
-	protected boolean verifyGermplasmMethodPresent(final List<Germplasm> germplasmList) {
+	protected void verifyGermplasmMethodPresent(final List<Germplasm> germplasmList) {
 		for (final Germplasm germplasm : germplasmList) {
 			if (germplasm.getMethodId() == null || germplasm.getMethodId() == 0) {
-				return false;
+				throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
+						Locale.getDefault()));
 			}
 		}
-
-		return true;
 	}
 
 	protected void applyCrossNameSettingToImportedCrosses(final CrossSetting setting, final List<ImportedCrosses> importedCrosses) {
@@ -362,6 +357,7 @@ public class CrossingServiceImpl implements CrossingService {
 		germplasm.setGdate(DateUtil.getCurrentDateAsIntegerValue());
 	}
 
+	//FIXME the methods getPairs() and generateGermplasmNamePairs() should be combined into one
 	protected List<Pair<Germplasm, Name>> generateGermplasmNamePairs(final CrossSetting crossSetting,
 			final List<ImportedCrosses> importedCrosses, final Integer userId, final boolean hasPlotDuplicate)
 			throws MiddlewareQueryException {

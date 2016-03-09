@@ -260,23 +260,31 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 
 			// on click generate design button
 			function refreshMeasurementTableAfterDeletingEnvironment() {
-				var noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;
-				var data = TrialManagerDataService.currentData.experimentalDesign;
-				//update the no of environments in experimental design tab
-				data.noOfEnvironments = noOfEnvironments;
+				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
+				if (TrialManagerDataService.applicationData.designTypes[designTypeId].isPreset) {
+					TrialManagerDataService.generatePresetExpDesign(designTypeId).then(function() {
+						TrialManagerDataService.updateAfterGeneratingDesignSuccessfully();
+						TrialManagerDataService.applicationData.hasGeneratedDesignPreset = true;
+					});
+				} else {
+					var noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;
+					var data = TrialManagerDataService.currentData.experimentalDesign;
+					//update the no of environments in experimental design tab
+					data.noOfEnvironments = noOfEnvironments;
 
-				TrialManagerDataService.generateExpDesign(data).then(
-					function(response) {
-						if (response.valid === true) {
-							TrialManagerDataService.clearUnappliedChangesFlag();
-							TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-							$('#chooseGermplasmAndChecks').data('replace', '1');
-							$('body').data('expDesignShowPreview', '1');
-						} else {
-							showErrorMessage('', response.message);
+					TrialManagerDataService.generateExpDesign(data).then(
+						function(response) {
+							if (response.valid === true) {
+								TrialManagerDataService.clearUnappliedChangesFlag();
+								TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+								$('#chooseGermplasmAndChecks').data('replace', '1');
+								$('body').data('expDesignShowPreview', '1');
+							} else {
+								showErrorMessage('', response.message);
+							}
 						}
-					}
-				);
+					);
+				}
 			}
 
 			function addNewEnvironments(noOfEnvironments) {

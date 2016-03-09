@@ -1,15 +1,10 @@
 package com.efficio.fieldbook.util;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -32,9 +27,6 @@ public class FieldbookUtil {
 	private static FieldbookUtil instance;
 
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
-	private static final char[] HEX_CHARS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7',
-			'8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-
 	static {
 		FieldbookUtil.instance = new FieldbookUtil();
 	}
@@ -80,36 +72,6 @@ public class FieldbookUtil {
 		if (!columnOrdersList.isEmpty()) {
 			workbook.setColumnOrderedLists(columnOrdersList);
 		}
-	}
-
-	/**
-	 * return encoded file name
-	 */
-	public static String getDownloadFileName(String filename, HttpServletRequest request) {
-		String newFilename = filename;
-		try {
-			if (request.getHeader("User-Agent").indexOf("MSIE") != -1
-					|| request.getHeader("User-Agent").indexOf("Trident") != -1) {
-				URI uri = new URI(null, null, filename, null);
-				newFilename = uri.toASCIIString();
-				return newFilename;
-			}
-			byte[] bytes = filename.getBytes("UTF-8");
-			StringBuilder buff = new StringBuilder(bytes.length << 2);
-			buff.append("=?UTF-8?Q?");
-			for (byte b : bytes) {
-				int unsignedByte = b & 0xFF;
-				buff.append('=').append(FieldbookUtil.HEX_CHARS[unsignedByte >> 4])
-						.append(FieldbookUtil.HEX_CHARS[unsignedByte & 0xF]);
-			}
-			return buff.append("?=").toString();
-
-		} catch (URISyntaxException e) {
-			FieldbookUtil.LOG.error(e.getMessage(), e);
-		} catch (UnsupportedEncodingException e) {
-			FieldbookUtil.LOG.error(e.getMessage(), e);
-		}
-		return newFilename;
 	}
 
 	public static String generateEntryCode(int index) {

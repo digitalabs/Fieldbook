@@ -410,7 +410,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		} else {
 			response.setContentType("application/vnd.ms-excel");
 		}
-		response.setHeader("Content-disposition", "attachment; filename=" + FieldbookUtil.getDownloadFileName(fileName, req));
+		response.setHeader("Content-disposition", "attachment; filename=" + FileUtils.encodeFilenameForDownload(fileName));
 		response.setCharacterEncoding("UTF-8");
 		// the selected name + current date
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());

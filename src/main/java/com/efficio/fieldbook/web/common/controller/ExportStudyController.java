@@ -166,8 +166,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final File xls = new File(outputFilename);
 		FileInputStream in;
 
-		response.setHeader("Content-disposition",
-				"attachment; filename=" + FieldbookUtil.getDownloadFileName(SettingsUtil.cleanSheetAndFileName(filename), req));
+		String encodedFilename = FileUtils.encodeFilenameForDownload(SettingsUtil.cleanSheetAndFileName(filename));
+
+		// Those user agents that do not support the RFC 5987 encoding ignore �filename*� when it occurs after �filename�.
+		response.setHeader("Content-disposition", "attachment; filename=" + encodedFilename + "; filename*=UTF-8''" + encodedFilename);
 		response.setContentType(contentType);
 		response.setCharacterEncoding("UTF-8");
 		try {

@@ -146,6 +146,10 @@ public class EditNurseryController extends SettingsController {
 		final String contextParams = this.retrieveContextInfo(request);
 
 		this.clearSessionData(request.getSession());
+
+		//store the id of the created germplasm list with crosses to update it later in the flow when all data is updated applying naming
+		// rules
+		request.getSession().setAttribute("createdCrossesListId", crossesListId);
 		try {
 			Workbook workbook = null;
 			if (nurseryId != 0) {

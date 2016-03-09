@@ -151,7 +151,8 @@ var ImportCrosses = {
 			ImportCrosses.populateHarvestMonthDropdown('harvestMonthDropdown');
 			ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
 
-			$('#settingsNextButton').click(ImportCrosses.submitCrossImportSettings);
+			$('#settingsNextButton').click(false, ImportCrosses.submitCrossImportSettings);
+			$('#settingsNextButtonUpdateList').click(true, ImportCrosses.submitCrossImportSettings);
 
 			$('#goBackToOpenCrossesButton').off('click');
 			$('#goBackToOpenCrossesButton').on('click', function() {
@@ -288,7 +289,7 @@ var ImportCrosses = {
 			});
 		},
 
-		submitCrossImportSettings : function() {
+		submitCrossImportSettings : function(isUpdateCrossesList) {
 			var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
 			if (ImportCrosses.isCrossImportSettingsValid(settingData)) {
@@ -313,7 +314,11 @@ var ImportCrosses = {
 							showErrorMessage('', 'Import failed');
 						} else {
 							$('#crossSettingsModal').modal('hide');
-							ImportCrosses.openSaveListModal();
+							if (isUpdateCrossesList) {
+								SaveAdvanceList.updateGermplasmList();
+							} else {
+								ImportCrosses.openSaveListModal();
+							}
 						}
 					}
 				});

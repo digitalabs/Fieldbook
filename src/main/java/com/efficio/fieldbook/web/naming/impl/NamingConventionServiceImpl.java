@@ -261,7 +261,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@Override
 	public List<ImportedCrosses> generateCrossesList(final List<ImportedCrosses> importedCrosses, final AdvancingSourceList rows,
-			final AdvancingNursery advancingParameters, final Workbook workbook, List<Integer> gids) throws RuleException {
+			final AdvancingNursery advancingParameters, final Workbook workbook, final List<Integer> gids) throws RuleException {
 
 		final List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
@@ -271,46 +271,22 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		int index = 0;
 		final TimerWatch timer = new TimerWatch("cross");
-		//this.setNamesToGermplasm(rows.getRows(), gids);
 
 		for (final AdvancingSource advancingSource : rows.getRows()) {
-
 			final List<String> names;
 
 			advancingSource.setBreedingMethod(breedingMethodMap.get(Integer.valueOf(advancingParameters.getBreedingMethodId())));
-			advancingSource.setPlantsSelected(1); //TODO ???? WHAT does it mean for crossing????
+			//default plants selected value to 1 for list of crosses because sequence is not working if plants selected value is not set
+			advancingSource.setPlantsSelected(1);
 
 			final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
 			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
-
-			// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
-			// reference index
-			if (advancingSource.getChangeDetail() != null) {
-				// index - 1 is used because Java uses 0-based referencing
-				advancingSource.getChangeDetail().setIndex(index - 1);
-			}
-
 			for (final String name : names) {
 				importedCrosses.get(index++).setDesig(name);
 			}
 		}
 		timer.stop();
 		return importedCrosses;
-	}
-
-	private void setNamesToGermplasm(List<AdvancingSource> rows, List<Integer> gids) throws MiddlewareQueryException {
-		if (rows != null && !rows.isEmpty()) {
-			Map<Integer, List<Name>> map = this.fieldbookMiddlewareService.getNamesByGids(gids);
-			for (AdvancingSource row : rows) {
-				String gid = row.getGermplasm().getGid();
-				if (gid != null && NumberUtils.isNumber(gid)) {
-					List<Name> names = map.get(Integer.valueOf(gid));
-					if (names != null && !names.isEmpty()) {
-						row.setNames(names);
-					}
-				}
-			}
-		}
 	}
 
 	protected RuleExecutionContext setupNamingRuleExecutionContext(final AdvancingSource row, final boolean checkForDuplicateName) {

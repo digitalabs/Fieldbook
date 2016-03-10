@@ -210,14 +210,14 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				}
 			} else {
 				results.put(GermplasmTreeController.IS_SUCCESS, 0);
-				final String nameUniqueError = "germplasm.save.list.name.unique.error";
-				final Locale locale = LocaleContextHolder.getLocale();
-				results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage(nameUniqueError, null, locale));
+				results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage("germplasm.save.list.name.unique.error", null,
+						LocaleContextHolder.getLocale()));
 			}
 		} catch (final RuleException re) {
 			GermplasmTreeController.LOG.error(re.getMessage(), re);
 			results.put(GermplasmTreeController.IS_SUCCESS, 0);
-			results.put(GermplasmTreeController.MESSAGE, "Naming of the germplasms failed. Please check the naming configuration.");
+			results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage("germplasm.naming.failed", null,
+					LocaleContextHolder.getLocale()));
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
 			results.put(GermplasmTreeController.IS_SUCCESS, 0);
@@ -259,7 +259,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		} catch (final RuleException re) {
 			GermplasmTreeController.LOG.error(re.getMessage(), re);
 			results.put(GermplasmTreeController.IS_SUCCESS, 0);
-			results.put(GermplasmTreeController.MESSAGE, "Naming of the germplasms failed. Please check the naming configuration.");
+			results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage("germplasm.naming.failed", null,
+					LocaleContextHolder.getLocale()));
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
 			results.put(GermplasmTreeController.IS_SUCCESS, 0);

@@ -26,7 +26,8 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 
 /**
  *
- * Service for Advancing Nursery.
+ * Service for Rules Based Naming.
+ * //TODO Remove advancing logic from this service
  *
  */
 public interface NamingConventionService {
@@ -45,6 +46,9 @@ public interface NamingConventionService {
 	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, AdvancingNursery advancingParameters, Workbook workbook)
 			throws RuleException;
 
+	/*
+	* Generated the names for the list of crosses based on on rules setup for the breeding methods
+	*/
 	List<ImportedCrosses> generateCrossesList(List<ImportedCrosses> importedCrosses, AdvancingSourceList rows, AdvancingNursery
 			advancingParameters, Workbook workbook, List<Integer> gids) throws RuleException;
 

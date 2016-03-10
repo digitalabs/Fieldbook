@@ -72,7 +72,7 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			// prior to continuing import, we create a copy of the current conditions and constants of the workbook, to simplify reset
 			// operation later on
 			this.copyConditionsAndConstants(workbook);
-            parsedData = this.parseObservationData();
+            parseAndLoadObservationData();
 			this.validateObservationColumns();
 			this.validateImportMetadata();
 
@@ -80,7 +80,7 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			this.detectAddedTraitsAndPerformRename(modes);
 
 			final String trialInstanceNo = this.retrieveTrialInstanceNumber();
-			List<GermplasmChangeDetail> changeDetailsList = new ArrayList<>();
+			final List<GermplasmChangeDetail> changeDetailsList = new ArrayList<>();
 
 			this.performWorkbookMetadataUpdate();
 			final Map<String, MeasurementRow> rowsMap =
@@ -114,6 +114,10 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			throw new WorkbookParserException(e.getMessage(), e);
 		}
 	}
+
+    protected void parseAndLoadObservationData() throws IOException {
+        this.parsedData = this.parseObservationData();
+    }
 
 	abstract void validateObservationColumns() throws WorkbookParserException;
 
@@ -200,7 +204,7 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 	public Map<String, MeasurementRow> createMeasurementRowsMap(final List<MeasurementRow> observations, final String instanceNumber,
 			final boolean isNursery) {
 		final Map<String, MeasurementRow> map = new HashMap<>();
-		List<MeasurementRow> newObservations;
+		final List<MeasurementRow> newObservations;
 		if (!isNursery) {
 
 			newObservations = WorkbookUtil.filterObservationsByTrialInstance(observations, instanceNumber);
@@ -246,4 +250,16 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			}
 		}
 	}
+
+    void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
+        this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+    }
+
+    public void setOntologyService(OntologyService ontologyService) {
+        this.ontologyService = ontologyService;
+    }
+
+    public void setValidationService(ValidationService validationService) {
+        this.validationService = validationService;
+    }
 }

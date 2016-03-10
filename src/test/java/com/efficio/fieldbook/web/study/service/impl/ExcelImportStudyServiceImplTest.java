@@ -4,13 +4,14 @@ package com.efficio.fieldbook.web.study.service.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.efficio.fieldbook.web.study.service.impl.ExcelImportStudyServiceImpl;
 import junit.framework.Assert;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -24,7 +25,6 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -64,7 +64,6 @@ public class ExcelImportStudyServiceImplTest {
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
 
-	@InjectMocks
 	private ExcelImportStudyServiceImpl importStudy;
 
 	@Before
@@ -80,7 +79,7 @@ public class ExcelImportStudyServiceImplTest {
 
 		this.xlsRow = Mockito.mock(Row.class);
 		this.cell = Mockito.mock(Cell.class);
-		this.workbook = new Workbook();
+		this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
 
 		this.propertyCell = Mockito.mock(Cell.class);
 		this.scaleCell = Mockito.mock(Cell.class);
@@ -94,6 +93,8 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.doReturn(LABEL).when(this.labelCell).getStringCellValue();
 
 		this.xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
+        importStudy = new ExcelImportStudyServiceImpl(workbook, "", "");
+        importStudy.setFieldbookMiddlewareService(fieldbookMiddlewareService);
 	}
 
 	@Test
@@ -433,5 +434,38 @@ public class ExcelImportStudyServiceImplTest {
 
 		return wData;
 	}
+
+    @Test
+    public void testCreateMeasurementRowsMap() {
+        final List<MeasurementRow> observations = this.workbook.getObservations();
+
+        final Map<String, MeasurementRow> measurementRowsMap = this.importStudy.createMeasurementRowsMap(observations, "1", true);
+        Assert.assertEquals("The number of measurements in the measurementRowsMap should be equal to the number of the observationss",
+                observations.size(), measurementRowsMap.size());
+    }
+
+    @Test(expected = WorkbookParserException.class)
+    public void testGetTrialInstanceNumberOfNurseryWithError() throws WorkbookParserException {
+        this.workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyType.T);
+        this.importStudy.getTrialInstanceNo(this.workbook, "filename");
+    }
+
+    @Test
+    public void testGetTrialInstanceNumberOfNurseryOfTrial() throws WorkbookParserException {
+        this.workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyType.T);
+        final String trialInstanceNumber = importStudy.getTrialInstanceNo(this.workbook, "filename-11");
+        Assert.assertEquals("The trial instance number should be 11", "11", trialInstanceNumber);
+    }
+
+    @Test
+    public void testCopyConditionsAndConstantsWorkbook() {
+        this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
+        this.importStudy.copyConditionsAndConstants(workbook);
+
+        Assert.assertNotNull("Conditions copy should not be emprt after copy operation", workbook.getImportConditionsCopy());
+        Assert.assertTrue("Unable to properly copy conditions portion of workbook", workbook.getImportConditionsCopy().size() == workbook.getConditions().size());
+    }
+
+
 
 }

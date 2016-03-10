@@ -57,7 +57,10 @@ public class GroupCountExpression extends BaseExpression {
 				// do while loop is used because there should be a -B or -# appended if the count is 0
 				int i = 0;
 				do {
-					value.append(source.getBreedingMethod().getSeparator());
+                    if (!StringUtils.isEmpty(source.getBreedingMethod().getSeparator())) {
+                        value.append(source.getBreedingMethod().getSeparator());
+                    }
+
 					value.append(targetCountExpression);
 					i++;
 				} while (i < result.getCount());

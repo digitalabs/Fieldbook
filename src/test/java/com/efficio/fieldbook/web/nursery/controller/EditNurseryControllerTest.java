@@ -141,6 +141,8 @@ public class EditNurseryControllerTest {
 		final Project testProject = new Project();
 		testProject.setProjectId(1L);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
+		Mockito.when(this.request.getSession()).thenReturn(this.session);
+		this.editNurseryController.setFieldbookService(this.fieldbookService);
 	}
 
 	@Test

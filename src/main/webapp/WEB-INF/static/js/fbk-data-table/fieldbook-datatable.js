@@ -113,8 +113,36 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					targets: columns.length - 1,
 					createdCell: function(td, cellData, rowData, row, col) {
 						if (isVariates) {
-							var cellText = $(td).text();
-							if ($.inArray(cellText, possibleValues) === -1) {
+							// cellData[0] : categorical name
+							// cellData[1] : categorical display description
+
+							// current measurementData has no value thus no need to check if out-of-bounds
+							if (cellData[1] === '') {
+								return;
+							}
+
+							// look for that description in the list of possible values
+							var found = $.grep(possibleValues, function(value, i) {
+								if (value === cellData[1]) {
+									// this is the case where a=x format is retrieved directly from ontology DB
+
+									return true;
+								} else if (value !== '' && value.indexOf('=') === -1) {
+									// this is the case where categorical ref values (possibleValues) retrieved is not in a=x format
+
+									// since currentValue contains both name and description, we need to retrieve
+									// only the description by splitting from the first occurrence of the separator
+									var currentValue = cellData[1].substring(cellData[1].indexOf('=') + 1).trim();
+
+									return value === currentValue;
+								}
+
+								return false;
+							}).length;
+
+							// if not found we may change its class as accepted (blue) or invalid (red)
+							// depending on the data
+							if (found <= 0) {
 								$(td).removeClass('accepted-value');
 								$(td).removeClass('invalid-value');
 								if ($(td).text() !== 'missing') {
@@ -130,7 +158,15 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					},
 					render: function(data, type, full, meta) {
 						if (data !== undefined) {
-							return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
+							// Use knowledge from session.isCategoricalDisplayView to render correct data
+							// data[0] = name, data[1] = description, data[2] = accepted value
+							var showDescription = window.isCategoricalDescriptionView ? 'style="display:none"' : '';
+							var showName = !window.isCategoricalDescriptionView ? 'style="display:none"' : '';
+
+							var categoricalNameDom = '<span class="fbk-measurement-categorical-name" '+ showName  + '>' + data[1] + '</span>';
+							var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" '+ showDescription  + '>' + data[0] + '</span>';
+
+							return (isVariates ? categoricalNameDom + categoricalDescDom : data[1]) + '<input type="hidden" value="' + data[2] + '" />';
 						}
 					}
 				});
@@ -145,7 +181,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -157,7 +193,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -565,7 +601,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -576,7 +612,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -646,7 +682,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 					data: $(this).data('col-name'),
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -657,7 +693,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 					data: $(this).data('col-name'),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -822,7 +858,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -1031,7 +1067,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -1042,7 +1078,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -1212,7 +1248,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -1223,7 +1259,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
 					}
 				});

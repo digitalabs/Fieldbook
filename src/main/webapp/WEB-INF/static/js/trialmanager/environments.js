@@ -5,9 +5,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 (function() {
 	'use strict';
 
-	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
+	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$state', '$stateParams',
 	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout) {
+		function($scope, TrialManagerDataService, $uibModal, $state, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout) {
 
 			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
 			var populateDatatableWithDefaultValues = function() {
@@ -355,6 +355,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 				addNewEnvironments(addtlNumOfEnvironments);
 			}
+
+            // if $stateParams and $stateParams.currentState is not null then it will change state and pass control to current state.
+            if($stateParams && $stateParams.currentState){
+                $state.go($stateParams.currentState);
+            }
+
 		}]).factory('DTLoadingTemplate', function() {
 			return {
 				html: '<span class="throbber throbber-2x"></span>'

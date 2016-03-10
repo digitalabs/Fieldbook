@@ -70,7 +70,7 @@ public class DesignImportTestDataInitializer {
 		trialDesignItems.add(createDesignHeaderItem(PhenotypicType.TRIAL_DESIGN, TermId.BLOCK_NO.getId(), "BLOCK_NO", 5, NUMERIC_VARIABLE));
 
 		final List<DesignHeaderItem> variateItems = new ArrayList<>();
-		trialDesignItems.add(createDesignHeaderItem(PhenotypicType.VARIATE, AFLAVER_5_ID, "AflavER_1_5", 6, CATEGORICAL_VARIABLE));
+		variateItems.add(createDesignHeaderItem(PhenotypicType.VARIATE, AFLAVER_5_ID, "AflavER_1_5", 6, CATEGORICAL_VARIABLE));
 
 		mappedHeaders.put(PhenotypicType.TRIAL_ENVIRONMENT, trialEvironmentItems);
 		mappedHeaders.put(PhenotypicType.GERMPLASM, germplasmItems);

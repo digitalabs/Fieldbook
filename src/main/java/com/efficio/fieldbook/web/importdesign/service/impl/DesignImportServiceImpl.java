@@ -323,6 +323,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return measurementVariables;
 	}
 
+	/**
+	 * Extracts Trial Design variables as list of StandardVariable
+	 */
 	@Override
 	public Set<StandardVariable> getDesignRequiredStandardVariables(final Workbook workbook, final DesignImportData designImportData) {
 
@@ -336,6 +339,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return standardVariables;
 	}
 
+	/**
+	 * Extracts Trial Design variables as list of MeasurementVariable
+	 */
 	@Override
 	public Set<MeasurementVariable> getDesignRequiredMeasurementVariable(final Workbook workbook, final DesignImportData designImportData) {
 

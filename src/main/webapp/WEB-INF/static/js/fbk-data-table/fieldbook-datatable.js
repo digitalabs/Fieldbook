@@ -939,7 +939,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
 	
 	/**
-	 * Creates a new AdvancedGermplasmListDataTable.
+	 * Creates a new AdvancedGermplasmListDataTable. This Datatable is the summary table view of the Advanced Germplasm list
 	 *
 	 * @constructor
 	 * @alias module:fieldbook-datatable
@@ -953,6 +953,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 		var germplasmDataTable;
 		var _columnDefs = [
 			// Column defs for trialInstanceNumber and replicationNumber (hide if current study is nursery)
+			// From Datatable API, using negative index counts from the last index of the columns (n-1)
 			{
 				targets: [ -1, -2 ],
 				visible: !isNursery()

@@ -255,11 +255,15 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
         this.fieldbookMiddlewareService = fieldbookMiddlewareService;
     }
 
-    public void setOntologyService(OntologyService ontologyService) {
+    void setOntologyService(OntologyService ontologyService) {
         this.ontologyService = ontologyService;
     }
 
-    public void setValidationService(ValidationService validationService) {
+    void setValidationService(ValidationService validationService) {
         this.validationService = validationService;
+    }
+
+    void setParsedData(T parsedData) {
+        this.parsedData = parsedData;
     }
 }

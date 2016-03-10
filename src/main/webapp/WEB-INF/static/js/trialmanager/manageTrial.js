@@ -174,7 +174,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout', '_',
-		'$localStorage', '$state', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage, $state) {
+		'$localStorage', '$state', '$location', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location) {
 			$scope.trialTabs = [
 				{   name: 'Settings',
 					state: 'trialSettings'
@@ -201,6 +201,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			];
             $scope.tabSelected = 'trialSettings';
             $scope.isSettingsTab = true;
+			$location.path('/trialSettings');
             $scope.advanceTabsData = [];
             $scope.advanceTrialTabs = [];
 			$scope.isOpenTrial = TrialManagerDataService.isOpenTrial;

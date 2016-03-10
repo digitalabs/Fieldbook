@@ -65,6 +65,11 @@ public class AdvancingSource {
 		this.plotNumber = plotNumber;
 	}
 
+	public AdvancingSource(final ImportedGermplasm germplasm) {
+		super();
+		this.germplasm = germplasm;
+	}
+
     public AdvancingSource() {
 		super();
 	}

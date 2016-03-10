@@ -47,7 +47,7 @@
 						th:field="*{updateObservation.dataList[__${rowIndex.index}__].cValueId}">
 							<option th:if="${measurementData.measurementVariable.termId != T(com.efficio.fieldbook.web.util.AppConstants).ENTRY_TYPE_ID.getInt() or isNursery == true}" value="" th:text="#{categorical.please.choose}">Please Choose</option>
 							<option th:each="refval : ${measurementData.measurementVariable.possibleValues}"
-							th:value="${refval.key}" th:text="${refval.description}"></option>
+							th:value="${refval.key}" th:text="${session.isCategoricalDescriptionView}? ${refval.displayDescription} : ${refval.name}"></option>
 							<option th:if="${measurementData.isCustomCategoricalValue}"
 							th:value="${measurementData.value}" th:text="${measurementData.value}"></option>
 						</select>

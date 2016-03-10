@@ -314,7 +314,7 @@ var ImportCrosses = {
 							showErrorMessage('', 'Import failed');
 						} else {
 							$('#crossSettingsModal').modal('hide');
-							if (isUpdateCrossesList) {
+							if (isUpdateCrossesList.data) {
 								SaveAdvanceList.updateGermplasmList();
 							} else {
 								ImportCrosses.openSaveListModal();
@@ -328,14 +328,10 @@ var ImportCrosses = {
 
 		isCrossImportSettingsValid : function(importSettings) {
 			var valid = true;
-			if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
-				valid = false;
-				showErrorMessage('', 'Cross name prefix is required');
-			}
 
-			if (!importSettings.crossNameSetting.separator || importSettings.crossNameSetting.separator === '') {
+			if (!importSettings.breedingMethodSetting.methodId || importSettings.breedingMethodSetting.methodId === '') {
 				valid = false;
-				showErrorMessage('', 'Separator for parentage designation is required');
+				showErrorMessage('', 'Breading method is required');
 			}
 
 			if(!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)){

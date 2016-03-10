@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBException;
 
 import org.generationcp.commons.constant.ToolSection;
@@ -310,8 +311,8 @@ public class CrossingSettingsController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
-	public List<Map<String, Object>> getImportedCrossesList() {
-
+	public List<Map<String, Object>> getImportedCrossesList(final HttpSession session) {
+		//session.removeAttribute("createdCrossesListId");
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 
 		if (null == this.studySelection.getImportedCrossesList()) {

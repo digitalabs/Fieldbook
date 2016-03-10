@@ -1098,6 +1098,11 @@ div.sectionContainer {
 .fbk-save-button-left-margin{
     margin-left: 50px;
 }
+
+.fbk-toggle-categorical-display {
+	padding-bottom: 0;
+}
+
 .nav-tabs li a{
     font-weight: bold;
 }
@@ -1199,7 +1204,7 @@ a.fbk-edit-experiment{
 }
 
 .mdt-header .dataTables_length,
-.dataTables_wrapper .dataTables_length,{
+.dataTables_wrapper .dataTables_length {
 	position: relative;
 	top: 5px;
 }

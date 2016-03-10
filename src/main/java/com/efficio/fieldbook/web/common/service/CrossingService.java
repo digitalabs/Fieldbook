@@ -18,4 +18,7 @@ public interface CrossingService {
 	void applyCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId, Workbook workbook);
 
 	void updateCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList);
+
+	void applyCrossSettingWithNamingRules(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId, Workbook
+			workbook);
 }

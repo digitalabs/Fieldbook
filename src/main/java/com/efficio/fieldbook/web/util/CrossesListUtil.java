@@ -53,7 +53,7 @@ public class CrossesListUtil {
 		dataMap.put(FGID, crossesData.getFgid());
 		dataMap.put(MALE_PARENT, crossesData.getMaleParent());
 		dataMap.put(MGID, crossesData.getMgid());
-		dataMap.put(SOURCE, "Pending");
+		dataMap.put(SOURCE, ImportedCrosses.SEED_SOURCE_PENDING);
 		dataMap.put(DUPLICATE, "");
 		return dataMap;
 	}
@@ -69,7 +69,7 @@ public class CrossesListUtil {
 		importedCrosses.setFemaleGid(String.valueOf(crossesData.getFgid()));
 		importedCrosses.setMaleDesig(crossesData.getMaleParent());
 		importedCrosses.setMaleGid(String.valueOf(crossesData.getMgid()));
-		importedCrosses.setSource("Pending");
+		importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
 		return importedCrosses;
 	}
 

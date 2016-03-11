@@ -295,12 +295,13 @@ public class CrossingServiceImpl implements CrossingService {
 		this.processBreedingMethodProcessCodes(setting);
 
 		Integer nextNumberInSequence = this.getNextNumberInSequence(setting.getCrossNameSetting());
-		Integer entryIdCounter = 1;
+		Integer entryIdCounter = 0;
 
 		for (final ImportedCrosses cross : importedCrosses) {
+			entryIdCounter++;
 			cross.setEntryId(entryIdCounter);
-			cross.setEntryCode(String.valueOf(entryIdCounter++));
-			//cross.setDesig(this.buildDesignationNameInSequence(cross, nextNumberInSequence++, setting));
+			cross.setEntryCode(String.valueOf(entryIdCounter));
+			cross.setDesig(this.buildDesignationNameInSequence(cross, nextNumberInSequence++, setting));
 
 			// this would set the correct cross string depending if the use is cimmyt wheat
 			final Germplasm germplasm = new Germplasm();
@@ -518,7 +519,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	protected String buildPrefixString(final CrossNameSetting setting) {
-		final String prefix = setting.getPrefix() != null && StringUtils.isEmpty(setting.getPrefix()) ? setting.getPrefix().trim() : "";
+		final String prefix = !StringUtils.isEmpty(setting.getPrefix()) ? setting.getPrefix().trim() : "";
 		if (setting.isAddSpaceBetweenPrefixAndCode()) {
 			return prefix + " ";
 		}

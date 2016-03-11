@@ -28,7 +28,6 @@ import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -39,7 +38,6 @@ import org.mockito.exceptions.verification.TooLittleActualInvocations;
 
 import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 
-@Ignore(value = "Iryna to fix soon...")
 public class CrossingServiceImplTest {
 
 	private static final int BREEDING_METHOD_ID = 1;
@@ -142,7 +140,7 @@ public class CrossingServiceImplTest {
 		
 		this.crossingService.applyCrossNameSettingToImportedCrosses(this.crossSetting, this.importedCrossesList.getImportedCrosses());
 
-		ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
+		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
 		Assert.assertEquals(null, cross1.getGid());
 		Assert.assertEquals(setting.getPrefix() + " 0000100 " + setting.getSuffix(), cross1.getDesig());
@@ -150,7 +148,7 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals((Integer) 1, cross1.getEntryId());
 		Assert.assertEquals("1", cross1.getEntryCode());
 
-		ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
+		final ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
 
 		Assert.assertEquals(null, cross2.getGid());
 		Assert.assertEquals(setting.getPrefix() + " 0000101 " + setting.getSuffix(), cross2.getDesig());

@@ -262,11 +262,10 @@
 
 
 
-	<!-- Would be passed as a parameter when call getCrossExpansion so that 
+	<!-- Would be passed as a parameter when call getCrossExpansion so that
 		user has the capability to override the settings -->
 	<bean id="crossExpansionProperties"
 		class="org.generationcp.middleware.util.CrossExpansionProperties">
-		<property name="wheatLevel" value="${wheat.generation.level}" />
 		<property name="defaultLevel" value="${default.generation.level}" />
 		<property name="profile" value="${pedigree.profile}" />
 	</bean>

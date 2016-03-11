@@ -21,7 +21,6 @@ import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -55,7 +54,7 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.GeneratePresetDesignInput;
+import com.efficio.fieldbook.web.common.bean.GenerateDesignInput;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
@@ -663,8 +662,10 @@ public class DesignImportControllerTest {
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
+		final GenerateDesignInput input =
+				new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
 
-		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(environmentData);
+		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
 		Assert.assertEquals(1, resultsMap.get(DesignImportController.IS_SUCCESS));
 
@@ -683,7 +684,9 @@ public class DesignImportControllerTest {
 						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(environmentData);
+		final GenerateDesignInput input =
+				new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
+		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
 		Assert.assertTrue(resultsMap.containsKey(DesignImportController.ERROR));
@@ -706,8 +709,8 @@ public class DesignImportControllerTest {
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
-		final GeneratePresetDesignInput input =
-				new GeneratePresetDesignInput(environmentData, new DesignTypeItem(4, "E30-Rep2-Block6-5Ind",
+		final GenerateDesignInput input =
+				new GenerateDesignInput(environmentData, new DesignTypeItem(4, "E30-Rep2-Block6-5Ind",
 						"predefinedDesignTemplateParams.html", true, 2, 30, false), null, null, false);
 		final Map<String, Object> resultsMap = this.designImportController.generatePresetMeasurements(input);
 
@@ -730,7 +733,7 @@ public class DesignImportControllerTest {
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
-		final GeneratePresetDesignInput input = new GeneratePresetDesignInput(environmentData, new DesignTypeItem(5), null, null, false);
+		final GenerateDesignInput input = new GenerateDesignInput(environmentData, new DesignTypeItem(5), null, null, false);
 		final Map<String, Object> resultsMap = this.designImportController.generatePresetMeasurements(input);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
@@ -1170,7 +1173,10 @@ public class DesignImportControllerTest {
 		final List<MeasurementVariable> expDesignVariableList = new ArrayList<>();
 		expDesignVariableList.add(expDesignSource);
 
-		new ExperimentalDesignVariable(expDesignVariableList);
+//<<<<<<< HEAD
+//		new ExperimentalDesignVariable(expDesignVariableList);
+//=======
+//>>>>>>> master
 		workbook.setExperimentalDesignVariables(expDesignVariableList);
 
 		// case 3: show filename retrieved from EXP_DESIGN_SOURCE

@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.google.common.base.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -368,6 +369,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			// Create list data items to save - Map<Germplasm,
 			// GermplasmListData>
 			final Integer entryId = importedCrosses.getEntryId();
+
 			final String entryCode = importedCrosses.getEntryCode();
 			final String seedSource = importedCrosses.getSource();
 			final String designation = importedCrosses.getDesig();
@@ -417,12 +419,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final Integer localRecordId = 0;
 
 		// Common name fields
-		final Integer nDate = gDate;
-		final Integer nRef = 0;
+        final Integer nRef = 0;
 
 		// Create germplasms to save - Map<Germplasm, List<Name>>
 		for (final ImportedGermplasm importedGermplasm : form.getGermplasmList()) {
-
 			Integer gid = null;
 
 			if (importedGermplasm.getGid() != null) {
@@ -441,7 +441,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			for (final Name name : names) {
 
 				name.setLocationId(locationId);
-				name.setNdate(nDate);
+				name.setNdate(gDate);
 				name.setUserId(currentUserID);
 				name.setReferenceId(nRef);
 
@@ -453,21 +453,37 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				}
 			}
 
-			final Integer trueGdate = harvestDate != null && !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate;
-			final Germplasm germplasm =
-					new Germplasm(gid, methodId, gnpgs, gpid1, gpid2, currentUserID, lgid, locationId, trueGdate, preferredName);
-			germplasm.setMgid(mgid);
+			final Integer trueGdate = !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate;
+			final Germplasm germplasm;
+            germplasm = new Germplasm(gid, methodId, gnpgs, gpid1, gpid2, currentUserID, lgid, locationId, trueGdate, preferredName);
 
-			germplasms.add(new ImmutablePair<Germplasm, List<Name>>(germplasm, names));
+            germplasm.setMgid(mgid);
 
-			// Create list data items to save - Map<Germplasm,
-			// GermplasmListData>
+            //Setting Instance number, plot number and replication number if available
+
+            if(!Strings.isNullOrEmpty(importedGermplasm.getTrialInstanceNumber())){
+                germplasm.setInstanceNumber(Integer.valueOf(importedGermplasm.getTrialInstanceNumber()));
+            }
+
+            if(!Strings.isNullOrEmpty(importedGermplasm.getReplicationNumber())){
+                germplasm.setReplicationNumber(Integer.valueOf(importedGermplasm.getReplicationNumber()));
+            }
+
+
+            if(!Strings.isNullOrEmpty(importedGermplasm.getPlotNumber())){
+                germplasm.setPlotNumber(Integer.valueOf(importedGermplasm.getPlotNumber()));
+            }
+
+			germplasms.add(new ImmutablePair<>(germplasm, names));
+
+			// Create list data items to save - Map<Germplasm, GermplasmListData>
 			final Integer entryId = importedGermplasm.getEntryId();
 			final String entryCode = importedGermplasm.getEntryCode();
 			final String seedSource = importedGermplasm.getSource();
 			final String designation = importedGermplasm.getDesig();
 			String groupName = importedGermplasm.getCross();
-			if (groupName == null) {
+
+            if (groupName == null) {
 				// Default value if null
 				groupName = "-";
 			}

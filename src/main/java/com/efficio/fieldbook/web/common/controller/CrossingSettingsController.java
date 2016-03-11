@@ -273,7 +273,10 @@ public class CrossingSettingsController extends SettingsController {
 			final HttpHeaders respHeaders = new HttpHeaders();
 			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			respHeaders.setContentLength(fileSystemResource.contentLength());
-			respHeaders.setContentDispositionFormData("attachment", FileUtils.encodeFilenameForDownload(fileSystemResource.getFilename()));
+			String encodedFilename = FileUtils.encodeFilenameForDownload(resource.getName());
+
+			// Those user agents (browser) that do not support the RFC 5987 encoding ignore “filename*” when it occurs after “filename”.
+			respHeaders.set("Content-Disposition", "form-data;filename=" + encodedFilename + "; filename*=UTF-8''" + encodedFilename + ";");
 
 			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 

@@ -21,6 +21,8 @@ import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 @Transactional
 public class KsuExcelImportStudyServiceImpl extends AbstractExcelImportStudyService implements ImportStudyService {
 
+    public static final int KSU_OBSERVATION_SHEET_NUMBER = 0;
+
     public KsuExcelImportStudyServiceImpl(final Workbook workbook, final String currentFile, final String originalFileName){
         super(workbook, currentFile, originalFileName);
     }
@@ -28,6 +30,12 @@ public class KsuExcelImportStudyServiceImpl extends AbstractExcelImportStudyServ
     @Override
     protected void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes) {
         // TODO added trait checking / header renaming
+    }
+
+    @Override
+    public int getObservationSheetNumber() {
+        // KSU format has their observation data on the first sheet
+        return KSU_OBSERVATION_SHEET_NUMBER;
     }
 
     @Override

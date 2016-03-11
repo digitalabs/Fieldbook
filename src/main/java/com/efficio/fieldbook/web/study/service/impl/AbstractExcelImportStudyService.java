@@ -63,6 +63,8 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 
 	}
 
+    public abstract int getObservationSheetNumber();
+
 	@Override
 	protected void performStudyDataImport(final Set<ChangeType> modes, final Workbook parsedData,
 			final Map<String, MeasurementRow> rowsMap, final String trialInstanceNumber,
@@ -71,7 +73,7 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 
 		final List<MeasurementVariable> variablesFactors = workbook.getFactors();
 		final List<MeasurementRow> observations = workbook.getObservations();
-		final Sheet observationSheet = parsedData.getSheetAt(1);
+		final Sheet observationSheet = parsedData.getSheetAt(getObservationSheetNumber());
 
 		final Map<Integer, MeasurementVariable> factorVariableMap = new HashMap<>();
 		for (final MeasurementVariable var : variablesFactors) {

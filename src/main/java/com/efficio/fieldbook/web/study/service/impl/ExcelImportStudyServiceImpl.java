@@ -58,12 +58,13 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 	private static final String TEMPLATE_SECTION_CONSTANT = "CONSTANT";
 	private static final String TEMPLATE_SECTION_VARIATE = "VARIATE";
 	private static final int COLUMN_NAME = 0;
-	private static final int COLUMN_DESCRIPTION = 1;
+    private static final int COLUMN_DESCRIPTION = 1;
 	private static final int COLUMN_PROPERTY = 2;
 	private static final int COLUMN_SCALE = 3;
 	private static final int COLUMN_METHOD = 4;
+    public static final int EXCEL_OBSERVATION_SHEET_NUMBER = 1;
 
-	@Resource
+    @Resource
 	private ResourceBundleMessageSource messageSource;
 
 	private static final String STUDY = "STUDY";
@@ -113,6 +114,11 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
         if (!wbVariates.isEmpty()) {
             modes.add(ChangeType.DELETED_TRAITS);
         }
+    }
+
+    @Override
+    public int getObservationSheetNumber() {
+        return EXCEL_OBSERVATION_SHEET_NUMBER;
     }
 
     @Override

@@ -430,7 +430,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		for (ImportedGermplasm germplasm : importedGermplasmList) {
 			Map<String, Object> dataMap = new HashMap<>();
 			dataMap.put("desig", germplasm.getDesig());
-			dataMap.put("gid", "Pending");
+			dataMap.put("gid", ImportedGermplasm.GID_PENDING);
 			dataMap.put("entry", germplasm.getEntryId());
 			dataMap.put("source", germplasm.getSource());
 			dataMap.put("parentage", germplasm.getCross());

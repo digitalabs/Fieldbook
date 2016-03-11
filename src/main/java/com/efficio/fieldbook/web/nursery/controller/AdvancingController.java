@@ -31,7 +31,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.constant.ColumnLabels;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.util.DateUtil;
@@ -431,7 +430,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		for (ImportedGermplasm germplasm : importedGermplasmList) {
 			Map<String, Object> dataMap = new HashMap<>();
 			dataMap.put("desig", germplasm.getDesig());
-			dataMap.put("gid", ImportedCrosses.SEED_SOURCE_PENDING);
+			dataMap.put("gid", ImportedGermplasm.GID_PENDING);
 			dataMap.put("entry", germplasm.getEntryId());
 			dataMap.put("source", germplasm.getSource());
 			dataMap.put("parentage", germplasm.getCross());

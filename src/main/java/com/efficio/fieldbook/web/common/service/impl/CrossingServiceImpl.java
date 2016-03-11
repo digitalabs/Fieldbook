@@ -122,6 +122,9 @@ public class CrossingServiceImpl implements CrossingService {
 		// apply the source string here, before we save germplasm if there is no existing source
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
 			final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, importedCross);
+			parameters.setMaleStudyName(workbook.getStudyName());
+			parameters.setFemaleStudyName(workbook.getStudyName());
+			parameters.setSelectionNumber(null);
 			final String generatedSource = this.germplasmOriginGenerationService.generateOriginString(parameters);
 			importedCross.setSource(generatedSource);
 			importedCross.setEntryId(entryIdCounter);
@@ -204,7 +207,7 @@ public class CrossingServiceImpl implements CrossingService {
 		// apply the source string here, before we save germplasm if there is no existing source
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
 			if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource()) ||
-					importedCross.getSource().equalsIgnoreCase(ImportedCrosses.NO_SEED_SOURCE)) {
+					importedCross.getSource().equalsIgnoreCase(ImportedCrosses.SEED_SOURCE_PENDING)) {
 				final GermplasmOriginGenerationParameters parameters = this.germplasmOriginParameterBuilder.build(workbook, importedCross);
 				final String generatedSource = this.germplasmOriginGenerationService.generateOriginString(parameters);
 				importedCross.setSource(generatedSource);

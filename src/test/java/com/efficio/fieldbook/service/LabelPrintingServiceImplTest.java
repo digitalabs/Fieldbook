@@ -91,10 +91,15 @@ public class LabelPrintingServiceImplTest {
 
 	@InjectMocks
 	LabelPrintingServiceImpl labelPrintingServiceImpl = new LabelPrintingServiceImpl();
+	
+	private GermplasmListTestDataInitializer germplasmListTestDataInitializer;
+	
+	private FieldMapTrialInstanceInfoTestDataInitializer fieldMapTrialInstanceInfoTestDataInitializer;
 
 	@Before
 	public void beforeTest() throws Exception {
-
+		this.germplasmListTestDataInitializer = new GermplasmListTestDataInitializer();
+		this.fieldMapTrialInstanceInfoTestDataInitializer = new FieldMapTrialInstanceInfoTestDataInitializer();
 		final Project project = Mockito.mock(Project.class);
 		Mockito.when(project.getCropType()).thenReturn(new CropType(LabelPrintingServiceImplTest.MAIZE_CROP_STR));
 
@@ -236,7 +241,7 @@ public class LabelPrintingServiceImplTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 		final Integer studyId = workbook.getStudyDetails().getId();
-		final List<GermplasmList> germplasmLists = GermplasmListTestDataInitializer.createGermplasmLists(1);
+		final List<GermplasmList> germplasmLists = this.germplasmListTestDataInitializer.createGermplasmLists(1);
 		final GermplasmList germplasmList = germplasmLists.get(0);
 		final Integer numOfEntries = germplasmList.getListData().size();
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY)).thenReturn(
@@ -252,7 +257,7 @@ public class LabelPrintingServiceImplTest {
 	public void testHasInventoryValues_ReturnsFalseForEntriesWithoutInventory() throws MiddlewareQueryException {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 		final Integer studyId = workbook.getStudyDetails().getId();
-		final List<GermplasmList> germplasmLists = GermplasmListTestDataInitializer.createGermplasmLists(1);
+		final List<GermplasmList> germplasmLists = this.germplasmListTestDataInitializer.createGermplasmLists(1);
 		final GermplasmList germplasmList = germplasmLists.get(0);
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY)).thenReturn(
 				germplasmLists);
@@ -391,7 +396,7 @@ public class LabelPrintingServiceImplTest {
 		final boolean isStockList = true;
 
 		final List<FieldMapTrialInstanceInfo> trialFieldMap =
-				FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList(isStockList);
+				this.fieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList(isStockList);
 		final LabelPrintingProcessingParams params = LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParams();
 
 		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params,
@@ -414,7 +419,7 @@ public class LabelPrintingServiceImplTest {
 		final boolean isStockList = true;
 
 		final List<FieldMapTrialInstanceInfo> trialFieldMap =
-				FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList(isStockList);
+				this.fieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList(isStockList);
 		final LabelPrintingProcessingParams params = LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParams();
 
 		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params,
@@ -438,7 +443,7 @@ public class LabelPrintingServiceImplTest {
 		final boolean isStockList = false;
 
 		final List<FieldMapTrialInstanceInfo> trialFieldMap =
-				FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList(isStockList);
+			this.fieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList(isStockList);
 		final LabelPrintingProcessingParams params =
 				LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParamsWithAllFieldIDs();
 

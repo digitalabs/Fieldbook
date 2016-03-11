@@ -15,14 +15,17 @@ public class FieldMapTrialInstanceInfoTestDataInitializer {
 
 	public static final String TRIAL_INSTANCE_NO_STRING = "test1";
 	public static final int NO_OF_ENTRIES = 1;
-
-	public static List<FieldMapTrialInstanceInfo> createTrialFieldMapList(final boolean isStockList) {
+	
+	GermplasmListTestDataInitializer germplasmListTestDataInitializer;
+	
+	public List<FieldMapTrialInstanceInfo> createTrialFieldMapList(final boolean isStockList) {
+		this.germplasmListTestDataInitializer = new GermplasmListTestDataInitializer();
 		final List<FieldMapTrialInstanceInfo> trialFieldMap = new ArrayList<FieldMapTrialInstanceInfo>();
 		final FieldMapTrialInstanceInfo fieldMapInfo1 = LabelPrintingDataUtil.createFieldMapThirdTrialInstanceInfo();
 
 		if (isStockList) {
-			final List<GermplasmList> germplasmLists = GermplasmListTestDataInitializer
-					.createGermplasmListsWithType(FieldMapTrialInstanceInfoTestDataInitializer.NO_OF_ENTRIES);
+			final List<GermplasmList> germplasmLists = 
+					this.germplasmListTestDataInitializer.createGermplasmListsWithType(FieldMapTrialInstanceInfoTestDataInitializer.NO_OF_ENTRIES);
 			fieldMapInfo1.setStockList(germplasmLists.get(0));
 		}
 

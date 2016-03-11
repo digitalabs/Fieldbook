@@ -411,7 +411,11 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		} else {
 			response.setContentType("application/vnd.ms-excel");
 		}
-		response.setHeader("Content-disposition", "attachment; filename=" + FileUtils.encodeFilenameForDownload(fileName));
+
+		String encodedFilename = FileUtils.encodeFilenameForDownload(fileName);
+
+		// Those user agents (browser) that do not support the RFC 5987 encoding ignore “filename*” when it occurs after “filename”.
+		response.setHeader("Content-disposition", "attachment; filename=" + encodedFilename + "; filename*=UTF-8''" + encodedFilename);
 		response.setCharacterEncoding("UTF-8");
 		// the selected name + current date
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());

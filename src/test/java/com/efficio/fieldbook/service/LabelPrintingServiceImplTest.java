@@ -292,7 +292,7 @@ public class LabelPrintingServiceImplTest {
 	}
 
 	@Test
-	public void testGenerateLabelsSortLabels() throws LabelPrintingException {
+	public void testGenerateLabelsSortLabelsEntryNumber() throws LabelPrintingException {
 		final BaseLabelGenerator labelGenerator = Mockito.mock(BaseLabelGenerator.class);
         final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
         final ByteArrayOutputStream baos = Mockito.mock(ByteArrayOutputStream.class);
@@ -310,6 +310,33 @@ public class LabelPrintingServiceImplTest {
         for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {
             Assert.assertTrue("Labels were not re-arranged from lowest to highest via entry number", fieldMapLabel.getEntryNumber() > currentEntryNumberValue);
             currentEntryNumberValue = fieldMapLabel.getEntryNumber();
+        }
+    }
+    @Test
+    public void testGenerateLabelsSortLabelsPlotNumber() throws LabelPrintingException {
+        final BaseLabelGenerator labelGenerator = Mockito.mock(BaseLabelGenerator.class);
+        final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
+        final ByteArrayOutputStream baos = Mockito.mock(ByteArrayOutputStream.class);
+        Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory)
+                .retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
+
+        final List<StudyTrialInstanceInfo> infoList = LabelPrintingServiceDataInitializer.generateStudyTrialInstanceInfoList();
+
+        // we provide plot number term values for the list
+        int i = 0;
+        for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {
+            fieldMapLabel.setPlotNo(i++);
+        }
+
+        // we randomize the arrangement of the list
+        Collections.shuffle(infoList.get(0).getTrialInstance().getFieldMapLabels());
+        this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList,
+                labelPrinting, baos);
+
+        int currentPlotNumber = -1;
+        for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {
+            Assert.assertTrue("Labels were not re-arranged from lowest to highest via entry number", fieldMapLabel.getPlotNo() > currentPlotNumber);
+            currentPlotNumber = fieldMapLabel.getPlotNo();
         }
     }
 

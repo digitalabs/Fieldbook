@@ -53,21 +53,23 @@ public class CrossesListUtil {
 		dataMap.put(FGID, crossesData.getFgid());
 		dataMap.put(MALE_PARENT, crossesData.getMaleParent());
 		dataMap.put(MGID, crossesData.getMgid());
-		dataMap.put(SOURCE, crossesData.getSeedSource());
+		dataMap.put(SOURCE, ImportedCrosses.SEED_SOURCE_PENDING);
 		dataMap.put(DUPLICATE, "");
 		return dataMap;
 	}
 
 	public ImportedCrosses convertGermplasmListData2ImportedCrosses(final GermplasmListData crossesData) {
 		final ImportedCrosses importedCrosses = new ImportedCrosses();
+		importedCrosses.setCrossListId(crossesData.getId());
 		importedCrosses.setEntryId(crossesData.getEntryId());
+		importedCrosses.setGid(crossesData.getGid() != null ? Integer.toString(crossesData.getGid()) : null);
 		importedCrosses.setCross(crossesData.getFemaleParent() + DEFAULT_SEPARATOR + crossesData.getMaleParent());
 		importedCrosses.setEntryCode(crossesData.getEntryCode());
 		importedCrosses.setFemaleDesig(crossesData.getFemaleParent());
 		importedCrosses.setFemaleGid(String.valueOf(crossesData.getFgid()));
 		importedCrosses.setMaleDesig(crossesData.getMaleParent());
 		importedCrosses.setMaleGid(String.valueOf(crossesData.getMgid()));
-		importedCrosses.setSource(crossesData.getSeedSource());
+		importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
 		return importedCrosses;
 	}
 

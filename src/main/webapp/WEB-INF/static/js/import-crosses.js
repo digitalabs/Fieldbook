@@ -151,7 +151,8 @@ var ImportCrosses = {
 			ImportCrosses.populateHarvestMonthDropdown('harvestMonthDropdown');
 			ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
 
-			$('#settingsNextButton').click(ImportCrosses.submitCrossImportSettings);
+			$('#settingsNextButton').click(false, ImportCrosses.submitCrossImportSettings);
+			$('#settingsNextButtonUpdateList').click(true, ImportCrosses.submitCrossImportSettings);
 
 			$('#goBackToOpenCrossesButton').off('click');
 			$('#goBackToOpenCrossesButton').on('click', function() {
@@ -288,7 +289,7 @@ var ImportCrosses = {
 			});
 		},
 
-		submitCrossImportSettings : function() {
+		submitCrossImportSettings : function(isUpdateCrossesList) {
 			var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
 			if (ImportCrosses.isCrossImportSettingsValid(settingData)) {
@@ -313,7 +314,11 @@ var ImportCrosses = {
 							showErrorMessage('', 'Import failed');
 						} else {
 							$('#crossSettingsModal').modal('hide');
-							ImportCrosses.openSaveListModal();
+							if (isUpdateCrossesList.data) {
+								SaveAdvanceList.updateGermplasmList();
+							} else {
+								ImportCrosses.openSaveListModal();
+							}
 						}
 					}
 				});
@@ -323,14 +328,10 @@ var ImportCrosses = {
 
 		isCrossImportSettingsValid : function(importSettings) {
 			var valid = true;
-			if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
-				valid = false;
-				showErrorMessage('', 'Cross name prefix is required');
-			}
 
-			if (!importSettings.crossNameSetting.separator || importSettings.crossNameSetting.separator === '') {
+			if (!importSettings.breedingMethodSetting.methodId || importSettings.breedingMethodSetting.methodId === '') {
 				valid = false;
-				showErrorMessage('', 'Separator for parentage designation is required');
+				showErrorMessage('', 'Breading method is required');
 			}
 
 			if(!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)){

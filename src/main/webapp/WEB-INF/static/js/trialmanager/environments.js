@@ -1,6 +1,6 @@
 
 /*global angular, modalConfirmationTitle, openManageLocations,
-environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loadInitialMeasurements, SpinnerManager*/
+environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, showErrorMessage, SpinnerManager*/
 
 (function() {
 	'use strict';
@@ -8,6 +8,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
 	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout',
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout) {
+
+			// if environments tab is triggered, we preload the measurements tab
+			$scope.loadMeasurementsTabInBackground();
 
 			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
 			var populateDatatableWithDefaultValues = function() {
@@ -158,7 +161,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 					// For Existing Trial with measurement data
 					var environmentNo = index + 1;
 
-					$scope.hasMeasurementDataOnEnvironment(environmentNo).success(function(data) {
+					hasMeasurementDataOnEnvironment(environmentNo).success(function(data) {
 						if (true === data) {
 							var warningMessage = 'This environment cannot be removed because it contains measurement data.';
 							showAlertMessage('', warningMessage);
@@ -217,9 +220,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 							(!TrialManagerDataService.isOpenTrial() &&
 								TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined)) {
 						refreshMeasurementTableAfterDeletingEnvironment();
-					} else if (TrialManagerDataService.isOpenTrial() && TrialManagerDataService.trialMeasurement.hasMeasurement) {
-						// trigger the showMeasurementsPreview in the background
-						loadInitialMeasurements();
 					}
 
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
@@ -227,7 +227,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 					addNewEnvironments(newVal - oldVal);
 
 					// should not be equal to 1 since the default number of environment for a trial is 1
-					if(newVal !== 1){
+					if (newVal !== 1) {
 						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 					}
 				}
@@ -260,23 +260,31 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 
 			// on click generate design button
 			function refreshMeasurementTableAfterDeletingEnvironment() {
-				var noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;
-				var data = TrialManagerDataService.currentData.experimentalDesign;
-				//update the no of environments in experimental design tab
-				data.noOfEnvironments = noOfEnvironments;
+				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
+				if (TrialManagerDataService.applicationData.designTypes[designTypeId].isPreset) {
+					TrialManagerDataService.generatePresetExpDesign(designTypeId).then(function() {
+						TrialManagerDataService.updateAfterGeneratingDesignSuccessfully();
+						TrialManagerDataService.applicationData.hasGeneratedDesignPreset = true;
+					});
+				} else {
+					var noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;
+					var data = TrialManagerDataService.currentData.experimentalDesign;
+					//update the no of environments in experimental design tab
+					data.noOfEnvironments = noOfEnvironments;
 
-				TrialManagerDataService.generateExpDesign(data).then(
-					function(response) {
-						if (response.valid === true) {
-							TrialManagerDataService.clearUnappliedChangesFlag();
-							TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-							$('#chooseGermplasmAndChecks').data('replace', '1');
-							$('body').data('expDesignShowPreview', '1');
-						} else {
-							showErrorMessage('', response.message);
+					TrialManagerDataService.generateExpDesign(data).then(
+						function(response) {
+							if (response.valid === true) {
+								TrialManagerDataService.clearUnappliedChangesFlag();
+								TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+								$('#chooseGermplasmAndChecks').data('replace', '1');
+								$('body').data('expDesignShowPreview', '1');
+							} else {
+								showErrorMessage('', response.message);
+							}
 						}
-					}
-				);
+					);
+				}
 			}
 
 			function addNewEnvironments(noOfEnvironments) {
@@ -330,7 +338,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, loa
 			}
 
 			function updateDeletedEnvironment(index) {
-				SpinnerManager.addActive();
+				SpinnerManager.addActiveWithCustomDelay(0);
 
 				$timeout(function() {
 					// remove 1 environment

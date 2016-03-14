@@ -70,11 +70,11 @@ public class ValidationServiceImpl implements ValidationService {
 			return true;
 		}
 		if (var.getMinRange() != null && var.getMaxRange() != null) {
-			this.validateIfValueIsMissingOrNumber(value);
+			return this.validateIfValueIsMissingOrNumber(value.trim());
 		} else if (validateDateForDB && var != null && var.getDataTypeId() != null && var.getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
 			return DateUtil.isValidDate(value);
 		} else if (StringUtils.isNotBlank(var.getDataType()) && var.getDataType().equalsIgnoreCase(ValidationServiceImpl.DATA_TYPE_NUMERIC)) {
-			this.validateIfValueIsMissingOrNumber(value.trim());
+			return this.validateIfValueIsMissingOrNumber(value.trim());
 		}
 		return true;
 	}

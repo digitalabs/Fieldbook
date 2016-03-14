@@ -83,7 +83,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		final List<ImportedGermplasm> importedGermplasm =
 				this.retrieveImportedGermplasm(workbook.getStudyDetails().getId(), Integer.valueOf(additionalParams.get("startingEntryNo")));
 
-		final Map<Integer, List<String>> csvData = designImportData.getCsvData();
+		final Map<Integer, List<String>> csvData = designImportData.getRowDataMap();
 		final Map<Integer, StandardVariable> germplasmStandardVariables =
 				this.convertToStandardVariables(workbook.getGermplasmFactors(), PhenotypicType.GERMPLASM);
 
@@ -377,7 +377,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		if (trialInstanceDesignHeaderItem != null) {
 			final Map<String, Map<Integer, List<String>>> csvMap =
-					this.groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, designImportData.getCsvData());
+					this.groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, designImportData.getRowDataMap());
 			if (noOfEnvironments == csvMap.size()) {
 				return true;
 			}
@@ -531,7 +531,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 						designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
 						"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 		final Map<String, Map<Integer, List<String>>> groupedCsvRows =
-				this.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, designImportData.getCsvData());
+				this.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, designImportData.getRowDataMap());
 
 		final Iterator<Environment> iteratorEnvironment = environmentData.getEnvironments().iterator();
 		while (iteratorEnvironment.hasNext()) {

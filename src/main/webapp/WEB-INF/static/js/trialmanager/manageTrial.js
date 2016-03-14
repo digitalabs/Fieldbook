@@ -74,9 +74,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			})
 
 			.state('environment', {
-                templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
-                params: ['addtlNumOfEnvironments', 'timestamp'],
-                views: {
+                url: '/environment?addtlNumOfEnvironments&timestamp',
+				views: {
                     environment: {
                         controller: 'EnvironmentCtrl',
                         templateUrl: '/Fieldbook/TrialManager/createTrial/environment'
@@ -330,12 +329,21 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				noOfEnvironments: 0
 			};
 			$scope.refreshEnvironmentsAndExperimentalDesign = function() {
-				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, timestamp: new Date()});
 
 				TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 				
 				//enable the user to regenerate preset design when the user adds new environment
 				TrialManagerDataService.applicationData.hasGeneratedDesignPreset = false;
+
+				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, timestamp: new Date()});
+				$scope.performFunctionOnTabChange('environment');
+
+			};
+
+			$scope.loadMeasurementsTabInBackground = function() {
+				if (isOpenTrial()) {
+					$state.go('editMeasurements',{},{ location: false });
+				}
 			};
 
 			$scope.displayMeasurementOnlyActions = function() {
@@ -385,6 +393,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			};
 
 			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
+                isAdvanceListGenerated = true;
 				var isSwap = false;
 				var isUpdate = false;
                 if(isPageLoading === undefined) {

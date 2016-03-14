@@ -16,7 +16,7 @@ public class ChangeLocationExpressionDataProcessor implements ExpressionDataProc
         String locationIdString = nurseryInfo.getHarvestLocationId();
         Integer locationId = StringUtils.isEmpty(locationIdString) ? null : Integer.valueOf(locationIdString);
 
-        source.setLocationId(locationId);
+        source.setHarvestLocationId(locationId);
     }
 
     @Override

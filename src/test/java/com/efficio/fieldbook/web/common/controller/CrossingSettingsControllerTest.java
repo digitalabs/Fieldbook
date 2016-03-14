@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.service.impl.SettingsPresetServiceImpl;
@@ -21,9 +22,13 @@ import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -41,10 +46,8 @@ import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
 import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
+import com.efficio.fieldbook.web.util.CrossesListUtil;
 
-/**
- * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 1/29/2015 Time: 4:32 PM
- */
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingSettingsControllerTest {
@@ -62,6 +65,13 @@ public class CrossingSettingsControllerTest {
 	public static final int DUMMY_TOOL_ID = 2;
 	public static final int NUMBER_OF_MONTHS = 12;
 	public static final String DUMMY_ABS_PATH = "dummy/abs/path";
+	public static final String TEST_ENTRY_CODE = "testEntryCode";
+	public static final String TEST_SEED_SOURCE = "testSeedSource";
+	public static final String TEST_MALE_PARENT = "testMaleParent";
+	public static final int ENTRY_ID = 56;
+	public static final String TEST_FEMALE_PARENT = "testFemaleParent";
+	public static final int MGID = 836;
+	public static final int FGID = 535;
 
 	@Mock
 	private WorkbenchService workbenchService;
@@ -77,12 +87,22 @@ public class CrossingSettingsControllerTest {
 	private CrossingTemplateExcelExporter crossingTemplateExcelExporter;
 	@Mock
 	private MessageSource messageSource;
+	@Mock
+	private GermplasmListManager germplasmListManager;
+
+	private CrossesListUtil crossesListUtil;
 
 	@Spy
 	private final SettingsPresetService settingsPresetService = new SettingsPresetServiceImpl();
 
 	@InjectMocks
 	private CrossingSettingsController dut;
+
+	@Before
+	public void setup(){
+		this.crossesListUtil = new CrossesListUtil();
+		this.dut.setCrossesListUtil(this.crossesListUtil);
+	}
 
 	@Test
 	public void testGenerateNextNameInSequenceSuccess() {
@@ -315,6 +335,44 @@ public class CrossingSettingsControllerTest {
 		setting.setAdditionalDetailsSetting(additionalDetailsSetting);
 
 		return setting;
+	}
+
+	@Test
+	public void testGetImportedCrossesListSuccess() throws Exception {
+
+		final ArrayList<GermplasmListData> germplasmListDatas = new ArrayList<>();
+		final GermplasmList germplasmList = new GermplasmList();
+		final GermplasmListData germplasmListData = new GermplasmListData(771, germplasmList, 45, ENTRY_ID, TEST_ENTRY_CODE, TEST_SEED_SOURCE,
+				"testDesignation", "testGroupName", 0, 5);
+		germplasmListData.setMaleParent(TEST_MALE_PARENT);
+		germplasmListData.setFgid(FGID);
+		germplasmListData.setMgid(MGID);
+		germplasmListData.setFemaleParent(TEST_FEMALE_PARENT);
+		germplasmListDatas.add(germplasmListData);
+		Mockito.when(this.germplasmListManager.retrieveListDataWithParents(80)).thenReturn(germplasmListDatas);
+		Mockito.when(this.germplasmListManager.getGermplasmListById(80)).thenReturn(germplasmList);
+
+		List<Map<String, Object>> testMasterList = this.dut.getImportedCrossesList("80");
+
+		Assert.assertEquals("The master list should contain 1 record: ", 1, testMasterList.size());
+		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.ENTRY_CODE));
+		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_ENTRY_CODE));
+		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.SOURCE));
+		Assert.assertTrue(testMasterList.get(0).containsValue(ImportedCrosses.SEED_SOURCE_PENDING));
+		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.MALE_PARENT));
+		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_MALE_PARENT));
+		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.ENTRY));
+		Assert.assertTrue(testMasterList.get(0).containsValue(ENTRY_ID));
+		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.FGID));
+		Assert.assertTrue(testMasterList.get(0).containsValue(FGID));
+		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.PARENTAGE));
+		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_FEMALE_PARENT + "/" + TEST_MALE_PARENT));
+		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.DUPLICATE));
+		Assert.assertTrue(testMasterList.get(0).containsValue(""));
+		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.MGID));
+		Assert.assertTrue(testMasterList.get(0).containsValue(MGID));
+		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.FEMALE_PARENT));
+		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_FEMALE_PARENT));
 	}
 
 }

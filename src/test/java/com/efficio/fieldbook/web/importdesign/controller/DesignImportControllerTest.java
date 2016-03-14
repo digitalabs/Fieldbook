@@ -54,7 +54,7 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.GeneratePresetDesignInput;
+import com.efficio.fieldbook.web.common.bean.GenerateDesignInput;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
@@ -77,6 +77,7 @@ public class DesignImportControllerTest {
 	private static final int GW_100G_TERMID = 9999;
 
 	private static final int COOPERATOR_TERMID = 8373;
+	public static final String TEST_IMPORT_FILE_NAME_CSV = "Test_import_file_name.csv";
 
 	@Mock
 	private HttpServletRequest httpRequest;
@@ -130,17 +131,17 @@ public class DesignImportControllerTest {
 
 	@Before
 	public void init() throws Exception {
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 
+		Mockito.when(this.multiPartFile.getOriginalFilename()).thenReturn(TEST_IMPORT_FILE_NAME_CSV);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(this.project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(this.project.getUniqueID());
 		Mockito.when(this.httpSession.getAttribute(ContextConstants.SESSION_ATTR_CONTEXT_INFO)).thenReturn(new ContextInfo(1, 1L));
 		Mockito.when(this.httpRequest.getSession(Matchers.anyBoolean())).thenReturn(this.httpSession);
 		Mockito.when(this.workbenchDataManager.getProjectById(1L)).thenReturn(this.project);
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
-		Mockito.when(this.designImportParser.parseFile(this.multiPartFile)).thenReturn(
-				DesignImportTestDataInitializer.createDesignImportData());
+		Mockito.when(this.designImportParser.parseFile(this.multiPartFile)).thenReturn(data);
 
-		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 		Mockito.doReturn(data).when(this.userSelection).getDesignImportData();
 
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(this.project);
@@ -271,6 +272,9 @@ public class DesignImportControllerTest {
 
 		Mockito.verify(this.userSelection).setDesignImportData(Matchers.any(DesignImportData.class));
 
+		// verify we store the filename to design import data
+		Assert.assertEquals("", TEST_IMPORT_FILE_NAME_CSV, this.userSelection.getDesignImportData().getImportFileName());
+
 		Assert.assertTrue(resultsMap.contains("{\"isSuccess\":1}"));
 	}
 
@@ -328,7 +332,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(workbook.getObservations())
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyInt(), Matchers.anyInt());
+						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 		;
 
 		final List<Map<String, Object>> result = this.designImportController.showDetailsData(environmentData, model, form);
@@ -348,7 +352,7 @@ public class DesignImportControllerTest {
 		Mockito.doThrow(new DesignValidationException(""))
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyInt(), Matchers.anyInt());
+						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 		;
 
 		final List<Map<String, Object>> result = this.designImportController.showDetailsData(environmentData, model, form);
@@ -657,8 +661,10 @@ public class DesignImportControllerTest {
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
+		final GenerateDesignInput input =
+				new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
 
-		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(environmentData);
+		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
 		Assert.assertEquals(1, resultsMap.get(DesignImportController.IS_SUCCESS));
 
@@ -674,10 +680,12 @@ public class DesignImportControllerTest {
 		Mockito.doThrow(new DesignValidationException(""))
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyInt(), Matchers.anyInt());
+						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(environmentData);
+		final GenerateDesignInput input =
+				new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
+		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
 		Assert.assertTrue(resultsMap.containsKey(DesignImportController.ERROR));
@@ -700,9 +708,9 @@ public class DesignImportControllerTest {
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
-		final GeneratePresetDesignInput input =
-				new GeneratePresetDesignInput(environmentData, new DesignTypeItem(4, "E30-Rep2-Block6-5Ind",
-						"predefinedDesignTemplateParams.html", true, 2, 30, false), null, null);
+		final GenerateDesignInput input =
+				new GenerateDesignInput(environmentData, new DesignTypeItem(4, "E30-Rep2-Block6-5Ind",
+						"predefinedDesignTemplateParams.html", true, 2, 30, false), null, null, false);
 		final Map<String, Object> resultsMap = this.designImportController.generatePresetMeasurements(input);
 
 		Assert.assertEquals(1, resultsMap.get(DesignImportController.IS_SUCCESS));
@@ -724,7 +732,7 @@ public class DesignImportControllerTest {
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
-		final GeneratePresetDesignInput input = new GeneratePresetDesignInput(environmentData, new DesignTypeItem(5), null, null);
+		final GenerateDesignInput input = new GenerateDesignInput(environmentData, new DesignTypeItem(5), null, null, false);
 		final Map<String, Object> resultsMap = this.designImportController.generatePresetMeasurements(input);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
@@ -1132,6 +1140,47 @@ public class DesignImportControllerTest {
 
 	}
 
+	@Test
+	public void testCustomImportDesignTypeDetails() throws Exception {
+		// case 1: new nursery or trial, has no imported design yet
+		Mockito.when(this.userSelection.getDesignImportData()).thenReturn(null);
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
+
+		Assert.assertEquals("Show default custom import template name", DesignTypeItem.CUSTOM_IMPORT.getTemplateName(),
+				this.designImportController.getCustomImportDesignTypeDetails().get("templateName"));
+	}
+
+	@Test
+	public void testCustomImportDesignTypeDetailsWithImportedFile() throws Exception {
+		final DesignImportData designImportData = new DesignImportData();
+		designImportData.setImportFileName(TEST_IMPORT_FILE_NAME_CSV);
+
+		// case 2: new nursery or trial with user has already imported design to be saved yet
+		Mockito.when(this.userSelection.getDesignImportData()).thenReturn(designImportData);
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
+
+		Assert.assertEquals("show imported template file name", TEST_IMPORT_FILE_NAME_CSV, this.designImportController
+				.getCustomImportDesignTypeDetails().get("templateName"));
+	}
+
+	@Test
+	public void testCustomImportDesignTypeDetailsWithExistingStudy() throws Exception {
+		final Workbook workbook = new Workbook();
+		final MeasurementVariable expDesignSource = new MeasurementVariable();
+		expDesignSource.setTermId(TermId.EXPT_DESIGN_SOURCE.getId());
+		expDesignSource.setValue(TEST_IMPORT_FILE_NAME_CSV);
+		final List<MeasurementVariable> expDesignVariableList = new ArrayList<>();
+		expDesignVariableList.add(expDesignSource);
+
+		workbook.setExperimentalDesignVariables(expDesignVariableList);
+
+		// case 3: show filename retrieved from EXP_DESIGN_SOURCE
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+
+		Assert.assertEquals("Show saved custom import file name", TEST_IMPORT_FILE_NAME_CSV, this.designImportController
+				.getCustomImportDesignTypeDetails().get("templateName"));
+	}
+
 	/**
 	 * Reusable test assertions for DesignImportController.validateAndSaveNewMapping
 	 * 
@@ -1364,7 +1413,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(new ArrayList<MeasurementRow>())
 				.when(this.designImportService)
 				.generateDesign(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyInt(), Matchers.anyInt());
+						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 		Mockito.doReturn(new HashSet<MeasurementVariable>()).when(this.designImportService)
 				.getDesignMeasurementVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.anyBoolean());
 		Mockito.doReturn(new HashSet<MeasurementVariable>()).when(this.designImportService)

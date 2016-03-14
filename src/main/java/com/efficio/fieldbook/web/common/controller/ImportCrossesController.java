@@ -8,12 +8,9 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
-import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,6 +22,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.util.CrossesListUtil;
 
 @Controller
 @RequestMapping(ImportCrossesController.URL)
@@ -38,8 +36,8 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 	@Resource
 	private CrossingService crossingService;
 
-	@Autowired
-	private OntologyDataManager ontologyDataManager;
+	@Resource
+	private CrossesListUtil crossesListUtil;
 
 	@Override
 	public String getContentName() {
@@ -57,7 +55,7 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 		try {
 			parseResults = this.crossingService.parseFile(form.getFile());
 
-			this.studySelection.setimportedCrossesList(parseResults);
+			this.studySelection.setImportedCrossesList(parseResults);
 
 			resultsMap.put("isSuccess", 1);
 		} catch (FileParsingException e) {
@@ -80,30 +78,10 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 		}
 
 		for (ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
-			masterList.add(this.generateDatatableDataMap(cross));
+			masterList.add(crossesListUtil.generateDatatableDataMap(cross));
 		}
 
 		return masterList;
-	}
-
-	protected Map<String, Object> generateDatatableDataMap(ImportedCrosses importedCrosses) {
-
-		Map<String, Object> dataMap = new HashMap<>();
-
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_ID), importedCrosses.getEntryId());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.PARENTAGE), importedCrosses.getCross());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_CODE), importedCrosses.getEntryCode());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.FEMALE_PARENT), importedCrosses.getFemaleDesig());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.FGID), importedCrosses.getFemaleGid());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.MALE_PARENT), importedCrosses.getMaleDesig());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.MGID), importedCrosses.getMaleGid());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.SEED_SOURCE), importedCrosses.getSource());
-
-		return dataMap;
-	}
-
-	protected String getTermNameFromOntology(ColumnLabels columnLabels) {
-		return columnLabels.getTermNameFromOntology(this.ontologyDataManager);
 	}
 
 	public String show(Model model, boolean isTrial) {
@@ -116,8 +94,7 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 		return isTrial ? "TrialManager/openTrial" : "NurseryManager/addOrRemoveTraits";
 	}
 
-	public void setOntologyDataManager(OntologyDataManager ontologyDataManager) {
-		this.ontologyDataManager = ontologyDataManager;
+	public void setCrossesListUtil(CrossesListUtil crossesListUtil) {
+		this.crossesListUtil = crossesListUtil;
 	}
-
 }

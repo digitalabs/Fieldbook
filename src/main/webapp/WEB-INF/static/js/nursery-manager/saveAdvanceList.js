@@ -1,6 +1,6 @@
 /*globals displayGermplasmListTree, changeBrowseGermplasmButtonBehavior, additionalLazyLoadUrl, displayAdvanceList,saveGermplasmReviewError*/
 /*globals $,showErrorMessage, showInvalidInputMessage, getDisplayedTreeName,ImportCrosses,listShouldNotBeEmptyError,getJquerySafeId,validateAllDates */
-/*globals listParentFolderRequired, listNameRequired, listDescriptionRequired */
+/*globals listParentFolderRequired, listNameRequired */
 /*globals listDateRequired, listTypeRequired, moveToTopScreen */
 /*globals TreePersist, showSuccessfulMessage, console, germplasmEntrySelectError */
 /*exported saveGermplasmList, openSaveListModal*/
@@ -53,6 +53,26 @@ var SaveAdvanceList = {};
 			}
 		);
 	};
+
+	SaveAdvanceList.updateGermplasmList = function() {
+		$.ajax({
+			url: '/Fieldbook/ListTreeManager/updateCrossesList/',
+			type: 'POST',
+			data: null,
+			cache: false,
+			success: function(data) {
+				if(data.isSuccess === 1){
+					$('#saveListTreeModal').modal('hide');
+					ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  data.listName);
+					$('#saveListTreeModal').data('is-save-crosses', '0');
+					showSuccessfulMessage('',saveListSuccessfullyMessage);
+				} else {
+					showErrorMessage('page-save-list-message-modal', data.message);
+				}
+			}
+		});
+	};
+
 	SaveAdvanceList.saveGermplasmList = function() {
 		var chosenNodeFolder = $('#'+getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 		var errorMessageDiv = 'page-save-list-message-modal';
@@ -62,10 +82,6 @@ var SaveAdvanceList = {};
 		}
 		if($('#listName').val() === ''){
 			showInvalidInputMessage(listNameRequired);
-			return false;
-		}
-		if($('#listDescription').val() === ''){
-			showInvalidInputMessage(listDescriptionRequired);
 			return false;
 		}
 		if($('#listType').val() === ''){
@@ -131,15 +147,17 @@ var SaveAdvanceList = {};
 							close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+id+'" onclick="javascript: closeAdvanceListTab(' + id +')"></i>';
 							aHtml = '<a role="tab" data-toggle="tab" id="advanceHref' + id + '" href="#advance-list' + id + '">Advance List' + close + '</a>';
 							var stockHtml = '<div id="stock-content-pane' + id + '" class="stock-list' + id + '"></div>';
-							$('#create-nursery-tab-headers').append('<li id="advance-list' + id + '-li">' + aHtml + '</li>');
-							$('#create-nursery-tabs').append('<div class="tab-pane info" id="advance-list' + id + '"></div>');
-							$('#create-nursery-tabs').append('<div class="tab-pane info" id="stock-tab-pane' + id + '">' + stockHtml + '</div>');
+
+                            if (isNursery()) {
+                                $('#create-nursery-tab-headers').append('<li id="advance-list' + id + '-li">' + aHtml + '</li>');
+                                $('#create-nursery-tabs').append('<div class="tab-pane info" id="advance-list' + id + '"></div>');
+                                $('#create-nursery-tabs').append('<div class="tab-pane info" id="stock-tab-pane' + id + '">' + stockHtml + '</div>');
+                                setTimeout(function() {
+                                    $('.nav-tabs').tabdrop('layout');
+                                }, 100);
+                            }
 							$('a#advanceHref'+id).tab('show');
-														
-							setTimeout(function() {
-								$('.nav-tabs').tabdrop('layout');
-							}, 100);
-						displayAdvanceList(data.uniqueId, data.germplasmListId, data.listName, false, data.advancedGermplasmListId);
+						    displayAdvanceList(data.uniqueId, data.germplasmListId, data.listName, false, data.advancedGermplasmListId);
 					}
 					showSuccessfulMessage('',saveListSuccessfullyMessage);
 				} else {

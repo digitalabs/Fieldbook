@@ -1,4 +1,4 @@
-<div class="row" ng-if="isPreset()" ng-hide="toggleDesignView()">
+<div class="row" ng-show="currentDesignType.isPreset">
 	<div class="col-md-12 col-sm-12">
 		<section-container heading="SUMMARY OF DESIGN DETAILS">
 		<div name="content">
@@ -6,7 +6,7 @@
 				<div ng-include="currentParams"></div>
 				<div class="add_top_padding add-bottom-padding">
 					<input type="submit" class="btn btn-info" value="Generate Design"
-						ng-hide="applicationData.hasGeneratedDesignPreset" />
+						ng-hide="!applicationData.unappliedChangesAvailable &amp;&amp; applicationData.hasGeneratedDesignPreset" />
 				</div>
 			</div>
 			<div class="col-md-6 col-sm-5">

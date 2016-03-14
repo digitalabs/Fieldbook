@@ -42,10 +42,8 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +59,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -74,6 +71,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.google.common.collect.Sets;
 
 @Controller
 @RequestMapping(AdvancingController.URL)
@@ -98,19 +96,9 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	private static final String MESSAGE = "message";
 
-	private static final String SUCCESS = "success";
-
-	/** The user selection. */
-	@Resource
-	private AdvancingNursery advancingNursery;
-
 	/** The fieldbook middleware service. */
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
-	/** The workbench data manager. */
-	@Resource
-	private WorkbenchService workbenchService;
 
 	@Resource
 	private UserSelection userSelection;
@@ -144,28 +132,21 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @param model the model
 	 * @param session the session
 	 * @param nurseryId the nursery id
+     * @param selectedTrialInstances Set of Trial Instances(Optional)
 	 * @return the string
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(value = "/{nurseryId}", method = RequestMethod.GET)
 	public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model, HttpServletRequest req,
-			HttpSession session, @PathVariable int nurseryId) throws MiddlewareException {
-		form.setMethodChoice("1");
+			HttpSession session, @PathVariable int nurseryId , @RequestParam(required = false) Set<String> selectedTrialInstances,@RequestParam(required = false) String noOfReplications) throws MiddlewareException {
+    	form.setMethodChoice("1");
 		form.setLineChoice("1");
 		form.setLineSelected("1");
 		form.setAllPlotsChoice("1");
-		Study study = this.fieldbookMiddlewareService.getStudy(nurseryId);
-		form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
-
-		this.advancingNursery.setStudy(study);
-		form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
-		form.setNurseryId(Integer.toString(nurseryId));
-		Project project = this.workbenchService.getProjectById(Long.valueOf(this.getCurrentProjectId()));
-		if (AppConstants.CROP_MAIZE.getString().equalsIgnoreCase(project.getCropType().getCropName())) {
-			form.setCropType(2);
-		} else if (AppConstants.CROP_WHEAT.getString().equalsIgnoreCase(project.getCropType().getCropName())) {
-			form.setCropType(1);
-		}
+        form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
+        form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
+        form.setSelectedReplications(Sets.newHashSet("1"));
+        form.setNurseryId(Integer.toString(nurseryId));
 
 		form.setMethodVariates(this.filterVariablesByProperty(this.userSelection.getSelectionVariates(),
 				AppConstants.PROPERTY_BREEDING_METHOD.getString()));
@@ -179,13 +160,27 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		String currentYear = sdf.format(currentDate);
 		form.setHarvestYear(currentYear);
 		form.setHarvestMonth(sdfMonth.format(currentDate));
+		
+        form.setSelectedTrialInstances(selectedTrialInstances);
 
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
 		model.addAttribute("monthChoices", this.generateMonthChoices());
+        model.addAttribute("replicationsChoices",this.generateReplicationChoice(noOfReplications));
 
 		return super.showAjaxPage(model, AdvancingController.MODAL_URL);
 	}
 
+    private List<String> generateReplicationChoice(String noOfReplications){
+        List<String> replicationChoices = new ArrayList<String>();
+        if(noOfReplications != null){
+            int replicationCount = Integer.valueOf(noOfReplications);
+            for(int i=1; i<=replicationCount; i++){
+                replicationChoices.add(i+"");
+            }
+        }
+
+        return replicationChoices;
+    }
 	public List<ChoiceKeyVal> generateYearChoices(int currentYear) {
 		List<ChoiceKeyVal> yearList = new ArrayList<ChoiceKeyVal>();
 		int startYear = currentYear - AppConstants.ADVANCING_YEAR_RANGE.getInt();
@@ -216,100 +211,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Gets the breeding methods.
-	 *
-	 * @return the breeding methods
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/getBreedingMethods", method = RequestMethod.GET)
-	public Map<String, String> getBreedingMethods() {
-		Map<String, String> result = new HashMap<>();
-
-		try {
-			List<Method> breedingMethods = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
-			List<Integer> methodIds = this.fieldbookMiddlewareService.getFavoriteProjectMethods(this.getCurrentProject().getUniqueID());
-			List<Method> favoriteMethods = this.fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);
-			List<Method> allNonGenerativeMethods = this.fieldbookMiddlewareService.getAllBreedingMethods(true);
-
-			result.put(AdvancingController.SUCCESS, "1");
-			result.put("allMethods", this.convertMethodsToJson(breedingMethods));
-			result.put("favoriteMethods", this.convertMethodsToJson(favoriteMethods));
-			result.put("allNonGenerativeMethods", this.convertMethodsToJson(allNonGenerativeMethods));
-			result.put("favoriteNonGenerativeMethods", this.convertMethodsToJson(favoriteMethods));
-		} catch (MiddlewareQueryException e) {
-			AdvancingController.LOG.error(e.getMessage(), e);
-			result.put(AdvancingController.SUCCESS, "-1");
-			result.put("errorMessage", e.getMessage());
-		}
-
-		return result;
-	}
-
-	/**
-	 * Gets the locations.
-	 *
-	 * @return the locations
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/getLocations", method = RequestMethod.GET)
-	public Map<String, String> getLocations() {
-		Map<String, String> result = new HashMap<>();
-
-		try {
-			List<Integer> locationsIds =
-					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
-			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
-			List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocations();
-			List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
-			result.put(AdvancingController.SUCCESS, "1");
-			result.put("favoriteLocations", this.convertFaveLocationToJson(faveLocations));
-			result.put("allBreedingLocations", this.convertFaveLocationToJson(allBreedingLocations));
-			result.put("allSeedStorageLocations", this.convertFaveLocationToJson(allSeedStorageLocations));
-		} catch (MiddlewareQueryException e) {
-			AdvancingController.LOG.error(e.getMessage(), e);
-			result.put(AdvancingController.SUCCESS, "-1");
-		}
-
-		return result;
-	}
-
-	/**
-	 * Convert favorite location to json.
-	 *
-	 * @param locations the locations
-	 * @return the string
-	 */
-	private String convertFaveLocationToJson(List<Location> locations) {
-		if (locations != null) {
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				return mapper.writeValueAsString(locations);
-			} catch (Exception e) {
-				AdvancingController.LOG.error(e.getMessage(), e);
-			}
-		}
-		return "";
-	}
-
-	/**
-	 * Convert methods to json.
-	 *
-	 * @param breedingMethods the breeding methods
-	 * @return the string
-	 */
-	private String convertMethodsToJson(List<Method> breedingMethods) {
-		if (breedingMethods != null) {
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				return mapper.writeValueAsString(breedingMethods);
-			} catch (Exception e) {
-				AdvancingController.LOG.error(e.getMessage(), e);
-			}
-		}
-		return "";
-	}
-
-	/**
 	 * Post advance nursery.
 	 *
 	 * @param form the form
@@ -323,26 +224,31 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	@RequestMapping(method = RequestMethod.POST)
 	public Map<String, Object> postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, BindingResult result,
 			Model model) {
+		
 		Map<String, Object> results = new HashMap<>();
-		this.advancingNursery.setMethodChoice(form.getMethodChoice());
-		this.advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
-		this.advancingNursery.setLineChoice(form.getLineChoice());
-		this.advancingNursery.setLineSelected(form.getLineSelected() != null ? form.getLineSelected().trim() : null);
-		this.advancingNursery.setHarvestDate(form.getHarvestDate());
-		this.advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
-		this.advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form
-				.getHarvestLocationAbbreviation() : "");
-		this.advancingNursery.setAllPlotsChoice(form.getAllPlotsChoice());
-		this.advancingNursery.setLineVariateId(form.getLineVariateId());
-		this.advancingNursery.setPlotVariateId(form.getPlotVariateId());
-		this.advancingNursery.setMethodVariateId(form.getMethodVariateId());
-		this.advancingNursery.setCheckAdvanceLinesUnique(form.getCheckAdvanceLinesUnique() != null
-				&& "1".equalsIgnoreCase(form.getCheckAdvanceLinesUnique()));
-
+		AdvancingNursery advancingNursery = new AdvancingNursery();
+		
+		Study study = this.fieldbookMiddlewareService.getStudy(Integer.valueOf(form.getNurseryId()));
+		advancingNursery.setStudy(study);	
+		advancingNursery.setMethodChoice(form.getMethodChoice());
+		advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
+		advancingNursery.setLineChoice(form.getLineChoice());
+		advancingNursery.setLineSelected(form.getLineSelected() != null ? form.getLineSelected().trim() : null);
+		advancingNursery.setHarvestDate(form.getHarvestDate());
+		advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
+		advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "");
+		advancingNursery.setAllPlotsChoice(form.getAllPlotsChoice());
+		advancingNursery.setLineVariateId(form.getLineVariateId());
+		advancingNursery.setPlotVariateId(form.getPlotVariateId());
+		advancingNursery.setMethodVariateId(form.getMethodVariateId());
+		advancingNursery.setCheckAdvanceLinesUnique(form.getCheckAdvanceLinesUnique() != null && "1".equalsIgnoreCase(form.getCheckAdvanceLinesUnique()));
+        advancingNursery.setSelectedReplications(form.getSelectedReplications());
+        advancingNursery.setSelectedTrialInstances(form.getSelectedTrialInstances());
+        
 		try {
 
-			if (this.advancingNursery.getMethodChoice() != null && !this.advancingNursery.getMethodChoice().isEmpty()) {
-				Method method = this.fieldbookMiddlewareService.getMethodById(Integer.valueOf(this.advancingNursery.getBreedingMethodId()));
+			if (advancingNursery.getMethodChoice() != null && !advancingNursery.getMethodChoice().isEmpty()) {
+				Method method = this.fieldbookMiddlewareService.getMethodById(Integer.valueOf(advancingNursery.getBreedingMethodId()));
 				if ("GEN".equals(method.getMtype())) {
 					form.setErrorInAdvance(this.messageSource.getMessage("nursery.save.advance.error.row.list.empty.generative.method",
 							new String[] {}, LocaleContextHolder.getLocale()));
@@ -356,7 +262,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 				}
 			}
 
-			AdvanceResult advanceResult = this.fieldbookService.advanceNursery(this.advancingNursery, this.userSelection.getWorkbook());
+			AdvanceResult advanceResult = this.fieldbookService.advanceNursery(advancingNursery, this.userSelection.getWorkbook());
 			List<ImportedGermplasm> importedGermplasmList = advanceResult.getAdvanceList();
 			long id = DateUtil.getCurrentDate().getTime();
 			this.getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
@@ -524,10 +430,12 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		for (ImportedGermplasm germplasm : importedGermplasmList) {
 			Map<String, Object> dataMap = new HashMap<>();
 			dataMap.put("desig", germplasm.getDesig());
-			dataMap.put("gid", "Pending");
+			dataMap.put("gid", ImportedGermplasm.GID_PENDING);
 			dataMap.put("entry", germplasm.getEntryId());
 			dataMap.put("source", germplasm.getSource());
 			dataMap.put("parentage", germplasm.getCross());
+			dataMap.put("trialInstanceNumber", germplasm.getTrialInstanceNumber());
+			dataMap.put("replicationNumber", germplasm.getReplicationNumber());
 			dataTableDataList.add(dataMap);
 		}
 		return dataTableDataList;
@@ -541,6 +449,9 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		tableHeaderList.add(new TableHeader(ColumnLabels.PARENTAGE.getTermNameFromOntology(this.ontologyDataManager), "parentage"));
 		tableHeaderList.add(new TableHeader(ColumnLabels.GID.getTermNameFromOntology(this.ontologyDataManager), "gid"));
 		tableHeaderList.add(new TableHeader(ColumnLabels.SEED_SOURCE.getTermNameFromOntology(this.ontologyDataManager), "source"));
+		tableHeaderList.add(new TableHeader(ColumnLabels.TRIAL_INSTANCE.getTermNameFromOntology(this.ontologyDataManager),
+				"trialInstanceNumber"));
+		tableHeaderList.add(new TableHeader(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager), "replicationNumber"));
 
 		return tableHeaderList;
 	}
@@ -617,9 +528,4 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		}
 		return this.messageSource.getMessage("nursery.advance.nursery.empty.method.error", new String[] {name}, locale);
 	}
-
-	public void setOntologyDataManager(OntologyDataManager ontologyDataManager) {
-		this.ontologyDataManager = ontologyDataManager;
-	}
-
 }

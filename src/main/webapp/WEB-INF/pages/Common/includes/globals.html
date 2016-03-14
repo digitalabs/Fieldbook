@@ -51,12 +51,12 @@
 	startingEntryRequired = /*[[#{import.germplasm.starting.entry.required}]]*/ '',
 	errorTheVariable = /*[[#{error.add.the.variable}]]*/ '',
 	errorTheVariableNurseryUnique = /*[[#{error.add.the.variable.should.be.unique.nursery}]]*/ '',
-	checkIntervalGreaterThanZeroError = /*[[#{germplasm.list.interval.greater.than.zero.error}]]*/ '',
-	intervalWholeNumberError = /*[[#{germplasm.list.interval.whole.number.error}]]*/ '',
+	checkIntervalGreaterThanZeroError = /*[[#{germplasm.list.number.of.rows.between.insertion.should.be.greater.than.zero}]]*/ '',
+	intervalWholeNumberError = /*[[#{germplasm.list.number.of.rows.between.insertion.should.be.a.whole.number}]]*/ '',
 	startIndexWholeNumberError = /*[[#{germplasm.list.start.index.whole.number.error}]]*/ '',
 	startIndexLessGermplasmError = /*[[#{germplasm.list.start.index.less.than.germplasm.error}]]*/ '',
 	selectedCheckError = /*[[#{germplasm.list.check.type.error}]]*/ '',
-	checkIntervalError = /*[[#{germplasm.list.interval.error}]]*/ '',
+	checkIntervalError = /*[[#{germplasm.list.number.of.checks.selected.must.be.less.than.number.of.rows.between.insertion}]]*/ '',
 	importRequiredFieldsError = /*[[#{nursery.import.excel.fill.up.required.fields}]]*/ '',
 	errorMsgHeader = /*[[#{common.error.header}]]*/ '',
 	warningMsgHeader = /*[[#{common.warning.header}]]*/ '',
@@ -180,7 +180,6 @@
 	invalidImportedFile = /*[[#{common.error.invalid.file}]]*/ '',
 	listParentFolderRequired = /*[[#{germplasm.save.list.folder.error}]]*/ '',
 	listNameRequired = /*[[#{germplasm.save.list.name.error}]]*/ '',
-	listDescriptionRequired = /*[[#{germplasm.save.list.description.error}]]*/ '',
 	listDateRequired = /*[[#{germplasm.save.list.date.error}]]*/ '',
 	listTypeRequired = /*[[#{germplasm.save.list.type.error}]]*/ '',
 	listNameDuplicateError = /*[[#{germplasm.save.list.name.unique.error}]]*/ '',
@@ -191,6 +190,13 @@
 	$.experimentDesignMessages.experimentDesignGeneratedSuccessfully = /*[[#{experiment.design.generated.successfully}]]*/ '';
 	$.fieldbookMessages = {};
 	$.fieldbookMessages.nurseryManageSettingsManageLocation = /*[[#{nursery.managesettings.manage.location}]]*/ '';
+
+	// Measurement observation messages
+	window.measurementObservationMessages = {
+		showCategoricalDescription : /*[[#{measurements.show.categorical.description}]]*/ '',
+		hideCategoricalDescription : /*[[#{measurements.hide.categorical.description}]]*/ ''
+	};
+
 	/* jshint ignore:end */
 	//]]>
 </script>

@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.service.impl.SettingsPresetServiceImpl;
@@ -349,6 +350,7 @@ public class CrossingSettingsControllerTest {
 		germplasmListData.setFemaleParent(TEST_FEMALE_PARENT);
 		germplasmListDatas.add(germplasmListData);
 		Mockito.when(this.germplasmListManager.retrieveListDataWithParents(80)).thenReturn(germplasmListDatas);
+		Mockito.when(this.germplasmListManager.getGermplasmListById(80)).thenReturn(germplasmList);
 
 		List<Map<String, Object>> testMasterList = this.dut.getImportedCrossesList("80");
 
@@ -356,7 +358,7 @@ public class CrossingSettingsControllerTest {
 		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.ENTRY_CODE));
 		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_ENTRY_CODE));
 		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.SOURCE));
-		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_SEED_SOURCE));
+		Assert.assertTrue(testMasterList.get(0).containsValue(ImportedCrosses.SEED_SOURCE_PENDING));
 		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.MALE_PARENT));
 		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_MALE_PARENT));
 		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.ENTRY));

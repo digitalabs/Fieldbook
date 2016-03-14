@@ -109,7 +109,7 @@ public class DesignImportValidatorTest {
 							TermId.ENTRY_NO);
 
 			final Map<String, Map<Integer, List<String>>> data =
-					this.designImportService.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getCsvData());
+					this.designImportService.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getRowDataMap());
 
 			this.designImportValidator.validateEntryNoMustBeUniquePerInstance(entryNoHeaderItem, data);
 
@@ -130,7 +130,7 @@ public class DesignImportValidatorTest {
 				DesignImportTestDataInitializer.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, this.designImportData.getMappedHeaders()
 						.get(PhenotypicType.GERMPLASM));
 
-		final Map<Integer, List<String>> csvData = this.designImportData.getCsvData();
+		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
 		csvData.get(1).set(entryNoHeaderItem.getColumnIndex(), "1");
 		csvData.get(2).set(entryNoHeaderItem.getColumnIndex(), "1");
 		csvData.get(3).set(entryNoHeaderItem.getColumnIndex(), "1");
@@ -196,7 +196,7 @@ public class DesignImportValidatorTest {
 						.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT), "Error",
 						TermId.TRIAL_INSTANCE_FACTOR);
 		final Map<String, Map<Integer, List<String>>> csvMap =
-				this.designImportService.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getCsvData());
+				this.designImportService.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getRowDataMap());
 
 		try {
 
@@ -220,7 +220,7 @@ public class DesignImportValidatorTest {
 				DesignImportTestDataInitializer.filterDesignHeaderItemsByTermId(TermId.PLOT_NO, this.designImportData.getMappedHeaders()
 						.get(PhenotypicType.TRIAL_DESIGN));
 
-		final Map<Integer, List<String>> csvData = this.designImportData.getCsvData();
+		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
 		csvData.get(0).set(plotNoHeaderItem.getColumnIndex(), "1");
 		csvData.get(1).set(plotNoHeaderItem.getColumnIndex(), "1");
 		csvData.get(2).set(plotNoHeaderItem.getColumnIndex(), "1");
@@ -246,7 +246,7 @@ public class DesignImportValidatorTest {
 		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
 		try {
-			this.designImportValidator.validateColumnValues(designImportData.getCsvData(), mappedHeaders);
+			this.designImportValidator.validateColumnValues(designImportData.getRowDataMap(), mappedHeaders);
 		} catch (final DesignValidationException e) {
 			Assert.fail("Expecting that there is no exception thrown for the validation of test design import data with no invalid values.");
 		}

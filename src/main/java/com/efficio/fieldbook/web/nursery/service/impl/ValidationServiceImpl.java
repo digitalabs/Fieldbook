@@ -19,6 +19,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -65,25 +66,26 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	public boolean isValidValue(final MeasurementVariable var, final String value, final String cValueId, final boolean validateDateForDB) {
-		if (value == null || "".equals(value.trim())) {
+		if (StringUtils.isBlank(value)) {
 			return true;
 		}
 		if (var.getMinRange() != null && var.getMaxRange() != null) {
-			if (ValidationServiceImpl.MISSING_VAL.equals(value.trim())) {
-				return true;
-			}
-			return NumberUtils.isNumber(value);
+			this.validateIfValueIsMissingOrNumber(value);
 		} else if (validateDateForDB && var != null && var.getDataTypeId() != null && var.getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
 			return DateUtil.isValidDate(value);
-		} else if (var.getDataType() != null && var.getDataType().equalsIgnoreCase(ValidationServiceImpl.DATA_TYPE_NUMERIC)) {
-			if (ValidationServiceImpl.MISSING_VAL.equals(value.trim())) {
-				return true;
-			}
-			return NumberUtils.isNumber(value.trim());
+		} else if (StringUtils.isNotBlank(var.getDataType()) && var.getDataType().equalsIgnoreCase(ValidationServiceImpl.DATA_TYPE_NUMERIC)) {
+			this.validateIfValueIsMissingOrNumber(value.trim());
 		}
 		return true;
 	}
 
+	private boolean validateIfValueIsMissingOrNumber(final String value) {
+		if (ValidationServiceImpl.MISSING_VAL.equals(value.trim())) {
+			return true;
+		}
+		return NumberUtils.isNumber(value);
+	}
+	
 	@Override
 	public void validateObservationValues(final Workbook workbook, final String instanceNumber) throws WorkbookParserException {
 		final Locale locale = LocaleContextHolder.getLocale();
@@ -161,9 +163,10 @@ public class ValidationServiceImpl implements ValidationService {
 		}
 
 		if (!methodMap.containsKey(var.getValue())) {
-			// this is an error since there is no matching method code
+			// set operation and value to null since we don't want this value to be imported
 			var.setOperation(null);
 			var.setValue(null);
+			// mark as error since there is no matching method code
 			warningMessage = this.setWarningMessage(var.getName());
 		} else {
 			var.setOperation(Operation.UPDATE);

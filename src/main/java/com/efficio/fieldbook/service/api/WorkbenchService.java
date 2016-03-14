@@ -146,10 +146,10 @@ public interface WorkbenchService {
 	Project getProjectById(Long projectId) throws MiddlewareQueryException;
 	
 	/**
-	 * Gets the project by id.
+	 * Gets the person by id.
 	 *
-	 * @param projectId the project id
-	 * @return the project by id
+	 * @param personID the person id
+	 * @return the person by id
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	Person getPersonById(int personID) throws MiddlewareQueryException;

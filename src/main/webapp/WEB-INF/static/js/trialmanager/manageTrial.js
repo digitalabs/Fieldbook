@@ -74,7 +74,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			})
 
 			.state('environment', {
-                url: '/environment?addtlNumOfEnvironments&timestamp',
+                url: '/environment?addtlNumOfEnvironments&displayWarningMessage&timestamp',
 				views: {
                     environment: {
                         controller: 'EnvironmentCtrl',

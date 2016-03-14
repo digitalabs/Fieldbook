@@ -287,7 +287,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 			}
 
-			function addNewEnvironments(noOfEnvironments) {
+			function addNewEnvironments(noOfEnvironments, displayWarningMessage) {
 				for (var ctr = 0; ctr < noOfEnvironments; ctr++) {
 					$scope.data.environments.push({
 						managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
@@ -302,7 +302,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = i + 1;
 					}
 				}
-				TrialManagerDataService.indicateUnappliedChangesAvailable();
+				TrialManagerDataService.indicateUnappliedChangesAvailable(displayWarningMessage);
 			}
 
 			function updateEnvironmentVariables(type, entriesIncreased) {
@@ -361,7 +361,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments);
 				$scope.temp.noOfEnvironments += addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
-				addNewEnvironments(addtlNumOfEnvironments);
+				addNewEnvironments(addtlNumOfEnvironments,$stateParams.displayWarningMessage);
 			}
 		}]).factory('DTLoadingTemplate', function() {
 			return {

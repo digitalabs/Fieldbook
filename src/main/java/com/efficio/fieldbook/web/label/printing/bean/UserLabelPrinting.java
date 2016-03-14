@@ -19,6 +19,7 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.pojos.GermplasmList;
 
@@ -113,9 +114,11 @@ public class UserLabelPrinting implements Serializable {
 
 	private boolean isTrial;
 
-	private GermplasmList stockList;
+	private Integer stockListId;
 
-	private Map<String, InventoryDetails> inventoryDetailsMap;
+    private String stockListTypeName;
+
+	private List<InventoryDetails> inventoryDetailsList;
 
 	/**
 	 * Gets the field map info.
@@ -602,22 +605,6 @@ public class UserLabelPrinting implements Serializable {
 		isTrial = trial;
 	}
 
-	public GermplasmList getStockList() {
-		return this.stockList;
-	}
-
-	public void setStockList(GermplasmList stockList) {
-		this.stockList = stockList;
-	}
-
-	public Map<String, InventoryDetails> getInventoryDetailsMap() {
-		return this.inventoryDetailsMap;
-	}
-
-	public void setInventoryDetailsMap(Map<String, InventoryDetails> inventoryDetailsMap) {
-		this.inventoryDetailsMap = inventoryDetailsMap;
-	}
-
 	public Integer getStudyId() {
 		return this.studyId;
 	}
@@ -626,4 +613,27 @@ public class UserLabelPrinting implements Serializable {
 		this.studyId = studyId;
 	}
 
+    public Integer getStockListId() {
+        return stockListId;
+    }
+
+    public void setStockListId(Integer stockListId) {
+        this.stockListId = stockListId;
+    }
+
+    public String getStockListTypeName() {
+        return stockListTypeName;
+    }
+
+    public void setStockListTypeName(String stockListTypeName) {
+        this.stockListTypeName = stockListTypeName;
+    }
+
+    public List<InventoryDetails> getInventoryDetailsList() {
+        return inventoryDetailsList;
+    }
+
+    public void setInventoryDetailsList(List<InventoryDetails> inventoryDetailsList) {
+        this.inventoryDetailsList = inventoryDetailsList;
+    }
 }

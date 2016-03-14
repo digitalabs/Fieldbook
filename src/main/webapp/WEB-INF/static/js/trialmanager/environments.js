@@ -207,7 +207,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			/* Watchers */
 			$scope.$watch('data.noOfEnvironments', function(newVal, oldVal) {
-
+				$scope.temp.noOfEnvironments = newVal;
 				if (newVal < oldVal) {
 					// if new environment count is less than previous value, splice array
 					while ($scope.data.environments.length > newVal) {

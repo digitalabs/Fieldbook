@@ -317,11 +317,12 @@ var ImportDesign = (function() {
 				var TrialManagerDataService = angularElem.injector().get('TrialManagerDataService');
 				
 				if(TrialManagerDataService.applicationData.hasNewEnvironmentAdded){
-					TrialManagerDataService.currentData.environments.noOfEnvironments-=TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd;
-					angularElem.scope().$state.go('environment', {});
-					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
-					TrialManagerDataService.applicationData.unappliedChangesAvailable = false;	
-					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd = 0;
+					angularElem.scope().$apply(function(){
+						TrialManagerDataService.currentData.environments.noOfEnvironments-=TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd;
+						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
+						TrialManagerDataService.applicationData.unappliedChangesAvailable = false;	
+						TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd = 0;
+					});
 				}
 			}
 		},

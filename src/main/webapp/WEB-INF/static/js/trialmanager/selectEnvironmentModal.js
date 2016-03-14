@@ -32,6 +32,13 @@
 
         //NOTE: Continue action for navigate from Locations to Advance Study Modal
         $scope.trialSelectEnvironmentContinue = function(){
+
+            // Do not go ahead for Advancing unless trial has experimental design & number of replications variables
+            if(TrialManagerDataService.currentData.experimentalDesign.designType == null || TrialManagerDataService.currentData.experimentalDesign.replicationsCount == null) {
+                showAlertMessage('', advanceListUnableToGenerateWarningMessage);
+                return;
+            }
+
             var isTrialInstanceSelected = false;
             var selectedTrialInstances=[];
             var selectedLocationDetails = [];

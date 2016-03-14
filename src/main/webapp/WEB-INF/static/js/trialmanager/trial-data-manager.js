@@ -373,10 +373,6 @@
 						}
 
 						$('body').data('needGenerateExperimentalDesign', '1');
-
-						if (service.currentData.experimentalDesign.designType === 3) {
-							service.currentData.experimentalDesign.designType = null;
-						}
 					}
 				},
 

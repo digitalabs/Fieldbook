@@ -103,7 +103,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					</thead>
 					<tr>
 						<td th:class="odd" th:text="*{userLabelPrinting.numberOfInstances}">1</td>
-						<td th:class="odd" th:text="${#maps.size(labelPrintingForm.userLabelPrinting.inventoryDetailsMap)}"></td>
+						<td th:class="odd" th:text="${#lists.size(labelPrintingForm.userLabelPrinting.inventoryDetailsList)}"></td>
 					</tr>
 				</table>
 			</div>
@@ -125,7 +125,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 						<th th:if="*{isTrial == true}" th:text="#{label.printing.labels.needed}">Labels Needed</th>
 						<th th:if="*{isTrial == false}" th:text="#{label.printing.nursery.entries.labels.count}"># of Entries / Labels Needed</th>
 					</thead>
-					<tr  th:each="trialRow, row : *{userLabelPrinting.fieldMapInfo.datasets[__0__].trialInstances}">
+					<tr  th:each="trialRow, row : *{userLabelPrinting.fieldMapInfo.datasets[0].trialInstances}">
 						<td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.trialInstanceNo}"></td>
 						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.entryCount}"></td>
 						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.repCount}"></td>

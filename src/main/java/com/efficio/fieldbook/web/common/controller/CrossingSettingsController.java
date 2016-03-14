@@ -230,7 +230,7 @@ public class CrossingSettingsController extends SettingsController {
 
 	/**
 	 * Validates if current study can perform an export
-	 * 
+	 *
 	 * @return a JSON result object
 	 */
 	@ResponseBody
@@ -273,7 +273,7 @@ public class CrossingSettingsController extends SettingsController {
 			respHeaders.setContentLength(fileSystemResource.contentLength());
 			String encodedFilename = FileUtils.encodeFilenameForDownload(resource.getName());
 
-			// Those user agents (browser) that do not support the RFC 5987 encoding ignore “filename*” when it occurs after “filename”.
+			// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
 			respHeaders.set("Content-Disposition", "form-data;filename=" + encodedFilename + "; filename*=UTF-8''" + encodedFilename + ";");
 
 			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);

@@ -11,15 +11,17 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -32,7 +34,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -54,26 +55,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class CreateNurseryController.
  */
 @Controller
 @RequestMapping(EditNurseryController.URL)
+@SessionAttributes("isCategoricalDescriptionView")
 public class EditNurseryController extends SettingsController {
 
 	/**
@@ -124,6 +123,11 @@ public class EditNurseryController extends SettingsController {
 		return "NurseryManager/editNursery";
 	}
 
+	@ModelAttribute("isCategoricalDescriptionView")
+	public Boolean initIsCategoricalDescriptionView() {
+		return Boolean.FALSE;
+	}
+
 	/**
 	 * Use existing nursery.
 	 *
@@ -146,6 +150,10 @@ public class EditNurseryController extends SettingsController {
 		final String contextParams = this.retrieveContextInfo(request);
 
 		this.clearSessionData(request.getSession());
+
+		//store the id of the created germplasm list with crosses to update it later in the flow when all data is updated applying naming
+		// rules
+		request.getSession().setAttribute("createdCrossesListId", crossesListId);
 		try {
 			Workbook workbook = null;
 			if (nurseryId != 0) {

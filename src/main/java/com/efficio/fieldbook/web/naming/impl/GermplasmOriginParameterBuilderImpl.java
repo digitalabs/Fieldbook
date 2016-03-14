@@ -123,7 +123,7 @@ public class GermplasmOriginParameterBuilderImpl implements GermplasmOriginParam
 	}
 
 	@Override
-	public GermplasmOriginGenerationParameters build(Workbook workbook, ImportedCrosses cross) {
+	public GermplasmOriginGenerationParameters build(final Workbook workbook, final ImportedCrosses cross) {
 		final GermplasmOriginGenerationParameters parameters = new GermplasmOriginGenerationParameters();
 		parameters.setCrop(this.contextUtil.getProjectInContext().getCropType().getCropName());
 		parameters.setStudyName(workbook.getStudyName());

@@ -140,7 +140,7 @@ public class DesignImportControllerTest {
 		Mockito.when(this.httpRequest.getSession(Matchers.anyBoolean())).thenReturn(this.httpSession);
 		Mockito.when(this.workbenchDataManager.getProjectById(1L)).thenReturn(this.project);
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
-		Mockito.when(this.designImportParser.parseFile(this.multiPartFile)).thenReturn(data);
+		Mockito.when(this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_CSV, this.multiPartFile)).thenReturn(data);
 
 		Mockito.doReturn(data).when(this.userSelection).getDesignImportData();
 
@@ -265,9 +265,9 @@ public class DesignImportControllerTest {
 	@Test
 	public void testImportFile() throws Exception {
 
-		final ImportDesignForm form = Mockito.mock(ImportDesignForm.class);
-		Mockito.when(form.getFile()).thenReturn(this.multiPartFile);
-
+		final ImportDesignForm form = new ImportDesignForm();
+		form.setFile(this.multiPartFile);
+		form.setFileType(DesignImportParser.FILE_TYPE_CSV);
 		final String resultsMap = this.designImportController.importFile(form, "N");
 
 		Mockito.verify(this.userSelection).setDesignImportData(Matchers.any(DesignImportData.class));
@@ -281,9 +281,10 @@ public class DesignImportControllerTest {
 	@Test
 	public void testImportFileFail() throws Exception {
 
-		final ImportDesignForm form = Mockito.mock(ImportDesignForm.class);
-		Mockito.when(form.getFile()).thenReturn(this.multiPartFile);
-		Mockito.when(this.designImportParser.parseFile(this.multiPartFile)).thenThrow(
+		final ImportDesignForm form = new ImportDesignForm();
+		form.setFile(this.multiPartFile);
+		form.setFileType(DesignImportParser.FILE_TYPE_CSV);
+		Mockito.when(this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_CSV, this.multiPartFile)).thenThrow(
 				new FileParsingException("force file parse exception"));
 
 		final String resultsMap = this.designImportController.importFile(form, "N");
@@ -661,8 +662,7 @@ public class DesignImportControllerTest {
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final GenerateDesignInput input =
-				new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
+		final GenerateDesignInput input = new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
 
 		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
@@ -683,8 +683,7 @@ public class DesignImportControllerTest {
 						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final GenerateDesignInput input =
-				new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
+		final GenerateDesignInput input = new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
 		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
@@ -702,7 +701,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
-		Mockito.doReturn(designImportData).when(this.designImportParser).parseFile(Mockito.anyString());
+		Mockito.doReturn(designImportData).when(this.designImportParser).parseFile(Mockito.anyInt(), Mockito.anyString());
 		Mockito.doReturn(designImportData.getMappedHeaders()).when(this.designImportService)
 				.categorizeHeadersByPhenotype(Matchers.anyList());
 
@@ -728,7 +727,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 		Mockito.doReturn(categorizedHeadersMap).when(this.designImportService).categorizeHeadersByPhenotype(Matchers.anyList());
-		Mockito.doThrow(FileParsingException.class).when(this.designImportParser).parseFile(Mockito.anyString());
+		Mockito.doThrow(FileParsingException.class).when(this.designImportParser).parseFile(Mockito.anyInt(), Mockito.anyString());
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 

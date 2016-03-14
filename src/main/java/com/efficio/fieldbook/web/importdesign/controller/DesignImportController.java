@@ -110,7 +110,7 @@ public class DesignImportController extends SettingsController {
 	public static final String DESIGN_TEMPLATE_FOLDER = "DesignPresets";
 
 	@Resource
-	private DesignImportParser parser;
+	private DesignImportParser designImportParser;
 
 	@Resource
 	private DesignImportService designImportService;
@@ -160,16 +160,15 @@ public class DesignImportController extends SettingsController {
 		final Map<String, Object> resultsMap = new HashMap<>();
 
 		try {
-
 			this.initializeTemporaryWorkbook(studyType);
 
-			final DesignImportData designImportData = this.parser.parseFile(form.getFile());
+			final DesignImportData designImportData = this.designImportParser.parseFile(form.getFileType(), form.getFile());
 			designImportData.setImportFileName(form.getFile().getOriginalFilename());
 			this.performAutomap(designImportData);
 
 			if (noOfEnvironments > 0) {
 				this.validateImportFileForNewlyAddedEnvironments(
-						designImportData.getCsvData(),
+						designImportData.getRowDataMap(),
 						designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT)
 								.get(TermId.TRIAL_INSTANCE_FACTOR.getId()).getColumnIndex(), noOfEnvironments);
 
@@ -526,9 +525,11 @@ public class DesignImportController extends SettingsController {
 			DesignImportData designImportData = null;
 			if (selectedDesignType != null) {
 				designImportData =
-						this.parser.parseFile(ResourceFinder.locateFile(
-								AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString().concat(selectedDesignType.getTemplateName()))
-								.getFile());
+						this.designImportParser.parseFile(
+								DesignImportParser.FILE_TYPE_CSV,
+								ResourceFinder.locateFile(
+										AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString().concat(
+												selectedDesignType.getTemplateName())).getFile());
 			}
 
 			this.performAutomap(designImportData);
@@ -569,7 +570,7 @@ public class DesignImportController extends SettingsController {
 		// defaults
 		output.put("name", DesignTypeItem.CUSTOM_IMPORT.getName());
 		final String filename =
-				(this.userSelection.getDesignImportData() != null) ? this.userSelection.getDesignImportData().getImportFileName()
+				this.userSelection.getDesignImportData() != null ? this.userSelection.getDesignImportData().getImportFileName()
 						: DesignTypeItem.CUSTOM_IMPORT.getTemplateName();
 
 		// unsaved but has import design

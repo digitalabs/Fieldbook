@@ -1,25 +1,23 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.CategoricalDisplayValue;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -36,25 +34,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(ObservationMatrixController.URL)
 public class ObservationMatrixController extends AbstractBaseFieldbookController {
 
 	public static final String MISSING_VALUE = "missing";
-	private static final String TRIAL = "TRIAL";
-	private static final Logger LOG = LoggerFactory.getLogger(ObservationMatrixController.class);
 	public static final String URL = "/Common/addOrRemoveTraits";
 	public static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
 	public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
 	public static final String EDIT_EXPERIMENT_TEMPLATE = "/Common/updateExperimentModal";
 	public static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
+	private static final String TRIAL = "TRIAL";
+	private static final Logger LOG = LoggerFactory.getLogger(ObservationMatrixController.class);
 	private static final String STATUS = "status";
 	private static final String ERROR_MESSAGE = "errorMessage";
 	private static final String INDEX = "index";
@@ -229,7 +228,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 				this.updateDates(originalRow);
 			}
 			map.put(ObservationMatrixController.SUCCESS, "1");
-			Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, null);
+			Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
 			map.put(ObservationMatrixController.DATA, dataMap);
 		} catch (MiddlewareQueryException e) {
 			ObservationMatrixController.LOG.error(e.getMessage(), e);
@@ -322,7 +321,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		}
 
 		map.put(ObservationMatrixController.SUCCESS, "1");
-		Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, null);
+		Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
 		map.put(ObservationMatrixController.DATA, dataMap);
 
 		return map;
@@ -450,7 +449,6 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	@ResponseBody
 	@RequestMapping(value = "/data/table/ajax", method = RequestMethod.GET)
 	public List<Map<String, Object>> getPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
-
 		UserSelection userSelection = this.getUserSelection(false);
 		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 
@@ -466,12 +464,38 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		for (MeasurementRow row : tempList) {
 
-			Map<String, Object> dataMap = this.generateDatatableDataMap(row, null);
+			Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
 
 			masterList.add(dataMap);
 		}
 
 		return masterList;
+	}
+
+	/**
+	 * We maintain the state of categorical description view in session to support the ff scenario:
+	 * 1. When user does a browser refresh, the state of measurements view is maintained
+	 * 2. When user switches between studies (either nursery or trial) state is also maintained
+	 * 3. Generating the modal for editing whole measurement row/entry is done in the backend (see updateExperimentModal.html) , this
+	 * also helps us track which display values in the cateogrical dropdown is used
+	 * @param showCategoricalDescriptionView
+	 * @param session
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/setCategoricalDisplayType", method = RequestMethod.GET)
+	public Boolean setCategoricalDisplayType(@RequestParam Boolean showCategoricalDescriptionView, HttpSession session) {
+		Boolean isCategoricalDescriptionView = (Boolean) session.getAttribute("isCategoricalDescriptionView");
+
+		if (null != showCategoricalDescriptionView) {
+			isCategoricalDescriptionView = showCategoricalDescriptionView;
+		} else {
+			isCategoricalDescriptionView ^= Boolean.TRUE;
+		}
+
+		session.setAttribute("isCategoricalDescriptionView", isCategoricalDescriptionView);
+
+		return isCategoricalDescriptionView;
 	}
 
 	@ResponseBody
@@ -506,7 +530,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 				}
 			}
 
-			Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, null);
+			Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
 			map.put(ObservationMatrixController.DATA, dataMap);
 		} catch (MiddlewareQueryException e) {
 			ObservationMatrixController.LOG.error(e.getMessage(), e);
@@ -518,11 +542,8 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	}
 
 	protected boolean isNumericalValueOutOfBounds(String value, MeasurementVariable var) {
-		if (var.getMinRange() != null && var.getMaxRange() != null && NumberUtils.isNumber(value)
-				&& (Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange())) {
-			return true;
-		}
-		return false;
+		return var.getMinRange() != null && var.getMaxRange() != null && NumberUtils.isNumber(value) && (
+				Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange());
 	}
 
 	protected boolean isCategoricalValueOutOfBounds(String cValueId, String value, List<ValueReference> possibleValues) {
@@ -594,26 +615,36 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
 		dataMap.put("GID", row.getMeasurementDataValue(TermId.GID.getId()));
 		dataMap.put("DESIGNATION", row.getMeasurementDataValue(TermId.DESIG.getId()));
-		for (MeasurementData data : row.getDataList()) {
-			String displayVal = data.getDisplayValue();
-			if (suffix != null) {
-				displayVal += suffix;
-			}
 
-			if (data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())
-					|| data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())) {
-				Object[] categArray = new Object[] {displayVal, data.isAccepted()};
-				dataMap.put(data.getMeasurementVariable().getName(), categArray);
+		// initialize suffix as empty string if its null
+		suffix = null == suffix ? "" : suffix;
+
+		// generate measurement row data from dataList (existing / generated data)
+		for (MeasurementData data : row.getDataList()) {
+			if (data.isCategorical()) {
+				CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
+
+				dataMap.put(data.getMeasurementVariable().getName(),
+						new Object[] {categoricalDisplayValue.getName() + suffix, categoricalDisplayValue.getDescription() + suffix, data.isAccepted()});
+
+			} else if (data.isNumeric()) {
+				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() + suffix, data.isAccepted()});
 			} else {
-				dataMap.put(data.getMeasurementVariable().getName(), displayVal);
+				dataMap.put(data.getMeasurementVariable().getName(), data.getDisplayValue());
 			}
 		}
+
+		// generate measurement row data from newly added traits (no data yet)
 		UserSelection userSelection = this.getUserSelection(false);
 		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
 				&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {
 			for (MeasurementVariable var : userSelection.getMeasurementDatasetVariable()) {
 				if (!dataMap.containsKey(var.getName())) {
-					dataMap.put(var.getName(), "");
+					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
+						dataMap.put(var.getName(), new Object[] {"", "", true});
+					} else {
+						dataMap.put(var.getName(), "");
+					}
 				}
 			}
 		}

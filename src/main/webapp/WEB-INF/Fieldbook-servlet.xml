@@ -262,11 +262,10 @@
 
 
 
-	<!-- Would be passed as a parameter when call getCrossExpansion so that 
+	<!-- Would be passed as a parameter when call getCrossExpansion so that
 		user has the capability to override the settings -->
 	<bean id="crossExpansionProperties"
 		class="org.generationcp.middleware.util.CrossExpansionProperties">
-		<property name="wheatLevel" value="${wheat.generation.level}" />
 		<property name="defaultLevel" value="${default.generation.level}" />
 		<property name="profile" value="${pedigree.profile}" />
 	</bean>
@@ -430,9 +429,21 @@
 		scope="prototype">
 		<aop:scoped-proxy />
 	</bean>
-
+	
 	<bean id="designImportParser"
 		class="com.efficio.fieldbook.web.util.parsing.DesignImportParser"
+		scope="prototype">
+		<aop:scoped-proxy />
+	</bean>
+
+	<bean id="designImportCsvParser"
+		class="com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser"
+		scope="prototype">
+		<aop:scoped-proxy />
+	</bean>
+	
+	<bean id="designImportExcelParser"
+		class="com.efficio.fieldbook.web.util.parsing.DesignImportExcelParser"
 		scope="prototype">
 		<aop:scoped-proxy />
 	</bean>

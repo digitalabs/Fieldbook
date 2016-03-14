@@ -18,6 +18,7 @@ import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.service.GermplasmOriginGenerationService;
+import org.generationcp.commons.service.GermplasmOriginParameterBuilder;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -37,7 +38,6 @@ import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
 import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
-import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
@@ -178,7 +178,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		
 		// set the seed source string for the new Germplasm
 		final GermplasmOriginGenerationParameters parameters =
-				this.germplasmOriginParameterBuilder.build(workbook, source, selectionNumberToApply);
+				this.germplasmOriginParameterBuilder.build(workbook, source.getTrialInstanceNumber(), source.getReplicationNumber(),
+						selectionNumberToApply, source.getPlotNumber());
 		final String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */

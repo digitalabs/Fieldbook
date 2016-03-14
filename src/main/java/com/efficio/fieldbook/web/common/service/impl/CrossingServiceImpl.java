@@ -22,6 +22,7 @@ import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.cross.CrossingRuleExecutionContext;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.service.GermplasmOriginGenerationService;
+import org.generationcp.commons.service.GermplasmOriginParameterBuilder;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -54,7 +55,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.efficio.fieldbook.util.ExpressionHelper;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 
 public class CrossingServiceImpl implements CrossingService {
 

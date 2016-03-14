@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -30,8 +31,8 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -59,6 +60,12 @@ public class ValidationServiceImpl implements ValidationService {
 
 	@Resource
 	private WorkbenchService workbenchService;
+	
+	@Resource
+	private WorkbenchDataManager workbenchDataManager;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override
 	public boolean isValidValue(final MeasurementVariable var, final String value, final boolean validateDateForDB) {
@@ -177,8 +184,8 @@ public class ValidationServiceImpl implements ValidationService {
 	String validatePersonId(final MeasurementVariable var) {
 		String warningMessage = "";
 		if (NumberUtils.isNumber(var.getValue())) {
-			final Person person = this.workbenchService.getPersonById(Integer.valueOf(var.getValue()));
-			if (person == null) {
+			final Integer workbenchUserId = this.workbenchDataManager.getWorkbenchUserIdByIBDBUserIdAndProjectId(Integer.parseInt(var.getValue()), this.contextUtil.getProjectInContext().getProjectId());
+			if (workbenchUserId == null) {
 				warningMessage = this.setWarningMessage(var.getName());
 			}
 		} else {

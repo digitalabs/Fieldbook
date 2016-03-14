@@ -175,7 +175,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
     @Override
 	@SuppressWarnings("unchecked")
 	public void populateUserSpecifiedLabelFields(final List<FieldMapTrialInstanceInfo> trialFieldMap, final Workbook workbook,
-			final String selectedFields, final boolean isTrial, final boolean isStockList) {
+			final String selectedFields, final boolean isTrial, final boolean isStockList, final UserLabelPrinting userLabelPrinting) {
 
 		final LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
 		params.setVariableMap(this.convertToMap(workbook.getConditions(), workbook.getFactors()));
@@ -184,12 +184,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		StudyType studyType = isTrial ? StudyType.T : StudyType.N;
 
 		if (isStockList) {
-			final GermplasmList stockList = trialFieldMap.get(0).getStockList();
 			params.setAllFieldIDs(this.convertToListInteger(this.getAvailableLabelFieldsForStockList(
-					this.getStockListType(stockList.getType()), Locale.ENGLISH, studyType, workbook.getStudyDetails().getId())));
+					this.getStockListType(userLabelPrinting.getStockListTypeName()), Locale.ENGLISH, studyType, workbook.getStudyDetails().getId())));
 		} else {
-			params.setAllFieldIDs(this.convertToListInteger(
-					this.getAvailableLabelFieldsForStudy(isTrial, true, Locale.ENGLISH, workbook.getStudyDetails().getId())));
+			params.setAllFieldIDs(this.convertToListInteger(this.getAvailableLabelFieldsForStudy(isTrial, true, Locale.ENGLISH, workbook.getStudyDetails().getId())));
 		}
 
 		Map<String, List<MeasurementRow>> measurementData = null;
@@ -200,20 +198,49 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			environmentData = this.extractEnvironmentMeasurementDataPerTrialInstance(workbook);
 		}
 
-		this.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params, measurementData, environmentData);
+		this.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params, measurementData, environmentData, userLabelPrinting);
 	}
 
 	void checkAndSetFieldMapInstanceInfo(final List<FieldMapTrialInstanceInfo> trialFieldMap, final Workbook workbook,
 			final boolean isTrial, final boolean isStockList, final LabelPrintingProcessingParams params,
-			final Map<String, List<MeasurementRow>> measurementData, final Map<String, MeasurementRow> environmentData) {
+			final Map<String, List<MeasurementRow>> measurementData, final Map<String, MeasurementRow> environmentData, UserLabelPrinting userLabelPrinting) {
 
-		for (final FieldMapTrialInstanceInfo instanceInfo : trialFieldMap) {
+        List<InventoryDetails> inventoryDetails = null;
+        Map<String, List<InventoryDetails>> trialInstanceInventoryDetailMap = new HashMap<>();
+
+        if(isStockList){
+            inventoryDetails = this.getInventoryDetails(userLabelPrinting.getStockListId());
+
+            for(InventoryDetails inventoryDetail : inventoryDetails){
+                String trialInstanceNumber = String.valueOf(inventoryDetail.getInstanceNumber());
+                if(!trialInstanceInventoryDetailMap.containsKey( trialInstanceNumber)){
+                    trialInstanceInventoryDetailMap.put(trialInstanceNumber, new ArrayList<InventoryDetails>());
+                }
+                trialInstanceInventoryDetailMap.get(trialInstanceNumber).add(inventoryDetail);
+                }
+        }
+
+
+        for (final FieldMapTrialInstanceInfo instanceInfo : trialFieldMap) {
 			params.setInstanceInfo(instanceInfo);
 
 			if (isStockList) {
-				params.setStockList(instanceInfo.getStockList());
 				params.setIsStockList(true);
-				params.setInventoryDetailsMap(this.getInventoryDetailsMap(params.getStockList()));
+                List<InventoryDetails> inventories = new ArrayList<>();
+
+                if(isTrial){
+                    inventories = trialInstanceInventoryDetailMap.get(instanceInfo.getTrialInstanceNo());
+                }
+                else{
+                    inventories = inventoryDetails;
+                }
+                Map<String, InventoryDetails> inventoriesMap = new HashMap<>();
+
+                for(InventoryDetails details : inventories) {
+                    inventoriesMap.put(details.getEntryId().toString(), details);
+                }
+
+				params.setInventoryDetailsMap(inventoriesMap);
 			}
 
 			if (isTrial) {
@@ -358,21 +385,20 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public Map<String, InventoryDetails> getInventoryDetailsMap(final GermplasmList stockList) {
-		final Map<String, InventoryDetails> inventoryDetailsMap = new HashMap<>();
-		final List<InventoryDetails> listDataProjects;
+	public List<InventoryDetails> getInventoryDetails(final int stockListId) {
+
+		List<InventoryDetails> listDataProjects = null;
 		try {
-			listDataProjects = this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockList.getId(),
-					this.getStockListType(stockList.getType()));
+			listDataProjects = this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockListId);
 
 			for (final InventoryDetails entry : listDataProjects) {
 				this.setCross(entry);
-				inventoryDetailsMap.put(entry.getEntryId().toString(), entry);
 			}
 		} catch (final MiddlewareQueryException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 		}
-		return inventoryDetailsMap;
+
+		return listDataProjects;
 	}
 
 	private void setCross(final InventoryDetails entry) {
@@ -491,7 +517,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			value = this.getValueForStockList(row.getCross());
 		} else if (termID.equals(TermId.SEED_SOURCE.getId())) {
 			value = this.getValueForStockList(row.getSource());
-		}
+		} else if (termID.equals(TermId.REP_NO.getId())) {
+            value = this.getValueForStockList(row.getReplicationNumber());
+        } else if(termID.equals(TermId.PLOT_NO.getId())) {
+            value = this.getValueForStockList(row.getPlotNumber());
+        } else if(termID.equals(TermId.TRIAL_INSTANCE_FACTOR.getId())) {
+            value = this.getValueForStockList(row.getInstanceNumber());
+        }
 		return value;
 	}
 

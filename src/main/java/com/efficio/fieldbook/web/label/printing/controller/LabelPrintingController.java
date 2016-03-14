@@ -69,6 +69,7 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -86,7 +87,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -314,21 +314,20 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
         }
 
-        FieldMapInfo fieldMapInfo = null;
         for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
-            fieldMapInfo = fieldMapInfoDetail;
-            fieldMapInfo.getDatasets().get(0).getTrialInstances().get(0).setStockList(stockList);
+            this.userLabelPrinting.setFieldMapInfo(fieldMapInfoDetail);
             this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
         }
 
+        List<InventoryDetails> inventoryDetails = this.labelPrintingService.getInventoryDetails(stockList.getId());
         this.userLabelPrinting.setStudy(study);
-        this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
         this.userLabelPrinting.setBarcodeNeeded("0");
         this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
         this.userLabelPrinting.setNumberOfLabelPerRow("3");
         this.userLabelPrinting.setIsStockList(true);
-        this.userLabelPrinting.setStockList(stockList);
-        this.userLabelPrinting.setInventoryDetailsMap(this.labelPrintingService.getInventoryDetailsMap(stockList));
+        this.userLabelPrinting.setStockListId(stockList.getId());
+        this.userLabelPrinting.setStockListTypeName(stockList.getType());
+        this.userLabelPrinting.setInventoryDetailsList(inventoryDetails);
         this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
         form.setUserLabelPrinting(this.userLabelPrinting);
         model.addAttribute(
@@ -339,6 +338,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         if(Objects.equals(study.getType(), StudyType.T)) {
             form.setIsTrial(true);
             this.userLabelPrinting.setIsTrial(true);
+            this.userLabelPrinting.setTotalNumberOfLabelToPrint(String.valueOf(inventoryDetails.size()));
+
         }else {
             form.setIsTrial(false);
             this.userLabelPrinting.setIsTrial(false);
@@ -429,15 +430,11 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * Submits the details.
 	 *
 	 * @param form the form
-	 * @param result the result
-	 * @param model the model
-	 * @param response the response
 	 * @return the string
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, BindingResult result,
-			Model model, HttpServletResponse response) {
+	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form) {
 
 		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
 		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
@@ -464,18 +461,19 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             return results;
         }
 
-		List<FieldMapInfo> fieldMapInfoList = this.userLabelPrinting.getFieldMapInfoList();
 		Workbook workbook = this.userSelection.getWorkbook();
 
 		if (workbook != null) {
 			String selectedLabelFields = this.getSelectedLabelFields(this.userLabelPrinting);
 			this.labelPrintingService.populateUserSpecifiedLabelFields(this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0)
-					.getTrialInstances(), workbook, selectedLabelFields, form.getIsTrial(), form.getIsStockList());
+					.getTrialInstances(), workbook, selectedLabelFields, form.getIsTrial(), form.getIsStockList(), this.userLabelPrinting);
 		}
 
-		List<StudyTrialInstanceInfo> trialInstances = null;
+		List<FieldMapInfo> fieldMapInfoList = this.userLabelPrinting.getFieldMapInfoList();
 
-		if (fieldMapInfoList != null) {
+        List<StudyTrialInstanceInfo> trialInstances;
+
+        if (fieldMapInfoList != null) {
 			trialInstances = this.generateTrialInstancesFromSelectedFieldMaps(fieldMapInfoList, form);
 		} else {
 			// initial implementation of BMS-186 will be for single studies

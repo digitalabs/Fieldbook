@@ -321,11 +321,12 @@ public class StockController extends AbstractBaseFieldbookController {
 			List<InventoryDetails> inventoryDetailListFromDB =
 					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
 			this.importInventoryService.validateInventoryDetails(inventoryDetailListFromDB, importedInventoryList, germplasmListType);
+			// Setting List Id & Inventory Details in user selection that will be used if user wants to discard the imported stock list
+			this.userSelection.setListId(listId);
+			this.userSelection.setInventoryDetails(this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType));
+
 			if (this.importInventoryService.hasConflict(inventoryDetailListFromDB, importedInventoryList)) {
 				result.put("hasConflict", true);
-				this.userSelection.setListId(listId);
-				this.userSelection
-						.setInventoryDetails(this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType));
 			}
 			this.importInventoryService.mergeInventoryDetails(inventoryDetailListFromDB, importedInventoryList, germplasmListType);
 			this.updateInventory(listId, inventoryDetailListFromDB);
@@ -352,9 +353,8 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/revertStockListData/data", method = RequestMethod.POST)
-	public String revertStockListData(@ModelAttribute("importStockForm")
-	ImportStockForm form) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public String revertStockListData(@ModelAttribute("importStockForm") ImportStockForm form) {
+		Map<String, Object> result = new HashMap<>();
 		Integer listId = this.userSelection.getListId();
 		List<InventoryDetails> inventoryDetailListFromDB = this.userSelection.getInventoryDetails();
 		this.updateInventory(listId, inventoryDetailListFromDB);

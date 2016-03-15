@@ -342,6 +342,8 @@ if (typeof StockIDFunctions === 'undefined') {
 					showSuccessfulMessage('', 'Import Success');
 				}
 				$('.import-stock-section .modal').modal('hide');
+                // Display Discard Imported Data button after successful import of stock list
+                $('.fbk-discard-imported-stocklist-data').removeClass('fbk-hide');
 				StockIDFunctions.displayStockList(resp.stockListId);
 			}
 		},

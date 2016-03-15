@@ -214,11 +214,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						$scope.data.environments.pop();
 					}
 
-					// if the trial has no measurement data regardless if it is saved or not,
-					// regenerate the experimental design and measurement table
-					if ((TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement) ||
-							(!TrialManagerDataService.isOpenTrial() &&
-								TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined)) {
+					// Regenerate experimental design and measurement table when the trial is not saved yet
+					if (!TrialManagerDataService.isOpenTrial() && TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
 						refreshMeasurementTableAfterDeletingEnvironment();
 					}
 

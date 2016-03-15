@@ -259,7 +259,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			function refreshMeasurementTableAfterDeletingEnvironment() {
 				// Make sure that the measurement table will only refresh if there is a selected design type for the current trial
 				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
-				if (designTypeId != null && TrialManagerDataService.applicationData.designTypes[designTypeId].isPreset) {
+				if (designTypeId !== null && TrialManagerDataService.applicationData.designTypes[designTypeId].isPreset) {
 					TrialManagerDataService.generatePresetExpDesign(designTypeId).then(function() {
 						TrialManagerDataService.updateAfterGeneratingDesignSuccessfully();
 						TrialManagerDataService.applicationData.hasGeneratedDesignPreset = true;

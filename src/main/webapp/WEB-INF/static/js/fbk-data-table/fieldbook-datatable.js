@@ -1189,7 +1189,7 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 			aoColumns: aoColumnsDef,
 			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 			dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
-
+			retrieve: true,
 			iDisplayLength: 100,
 			fnDrawCallback: function(oSettings) {
 				

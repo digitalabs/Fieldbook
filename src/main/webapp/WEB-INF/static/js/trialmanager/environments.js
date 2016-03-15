@@ -214,11 +214,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						$scope.data.environments.pop();
 					}
 
-					// if the trial has no measurement data regardless if it is saved or not,
-					// regenerate the experimental design and measurement table
-					if ((TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement) ||
+					// If the trial has no measurement data regardless if it is saved or not,
+					// regenerate the experimental design and measurement table.
+					// Also, make sure that the measurement table will only refresh if there is a selected design type for the current trial
+					var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
+					if (designTypeId != null && ((TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement) ||
 							(!TrialManagerDataService.isOpenTrial() &&
-								TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined)) {
+								TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined))) {
 						refreshMeasurementTableAfterDeletingEnvironment();
 					}
 

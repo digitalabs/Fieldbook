@@ -17,7 +17,7 @@ public class DesignImportData {
 
 	private List<DesignHeaderItem> unmappedHeaders;
 	private Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders;
-	private Map<Integer, List<String>> csvData;
+	private Map<Integer, List<String>> rowDataMap;
 	private Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithDesignHeaderItemsMappedToStdVarId;
 
 
@@ -61,12 +61,12 @@ public class DesignImportData {
 		}
 	}
 
-	public Map<Integer, List<String>> getCsvData() {
-		return this.csvData;
+	public Map<Integer, List<String>> getRowDataMap() {
+		return this.rowDataMap;
 	}
 
-	public void setCsvData(final Map<Integer, List<String>> csvData) {
-		this.csvData = csvData;
+	public void setRowDataMap(final Map<Integer, List<String>> csvData) {
+		this.rowDataMap = csvData;
 	}
 
 	public Map<PhenotypicType, Map<Integer, DesignHeaderItem>> getMappedHeadersWithDesignHeaderItemsMappedToStdVarId() {

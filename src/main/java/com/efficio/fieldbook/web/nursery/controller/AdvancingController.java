@@ -434,8 +434,11 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			dataMap.put("entry", germplasm.getEntryId());
 			dataMap.put("source", germplasm.getSource());
 			dataMap.put("parentage", germplasm.getCross());
+
+
 			dataMap.put("trialInstanceNumber", germplasm.getTrialInstanceNumber());
 			dataMap.put("replicationNumber", germplasm.getReplicationNumber());
+
 			dataTableDataList.add(dataMap);
 		}
 		return dataTableDataList;
@@ -449,6 +452,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		tableHeaderList.add(new TableHeader(ColumnLabels.PARENTAGE.getTermNameFromOntology(this.ontologyDataManager), "parentage"));
 		tableHeaderList.add(new TableHeader(ColumnLabels.GID.getTermNameFromOntology(this.ontologyDataManager), "gid"));
 		tableHeaderList.add(new TableHeader(ColumnLabels.SEED_SOURCE.getTermNameFromOntology(this.ontologyDataManager), "source"));
+
 		tableHeaderList.add(new TableHeader(ColumnLabels.TRIAL_INSTANCE.getTermNameFromOntology(this.ontologyDataManager),
 				"trialInstanceNumber"));
 		tableHeaderList.add(new TableHeader(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager), "replicationNumber"));

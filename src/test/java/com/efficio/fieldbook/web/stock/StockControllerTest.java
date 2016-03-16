@@ -2,12 +2,20 @@
 package com.efficio.fieldbook.web.stock;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.ImportStockForm;
+import com.efficio.fieldbook.web.common.service.ImportInventoryService;
 import org.apache.commons.lang3.tuple.Pair;
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.commons.service.StockService;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -30,7 +38,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by Daniel Villafuerte on 5/8/2015.
@@ -72,6 +82,15 @@ public class StockControllerTest {
 
 	@Mock
 	private GermplasmListManager germplasmListManager;
+
+	@Mock
+	private FieldbookService fieldbookMiddlewareService;
+
+	@Mock
+	private ImportInventoryService importInventoryService;
+
+	@Mock
+	private UserSelection userSelection;
 
 	@InjectMocks
 	private final StockController dut = Mockito.spy(new StockController());
@@ -246,4 +265,45 @@ public class StockControllerTest {
 		Assert.assertEquals("/NurseryManager/blank", returnVal);
 	}
 
+	@Test
+	public void testImportList() throws MiddlewareException, FieldbookException, FileParsingException {
+		Integer listId = 5;
+		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
+		ImportStockForm form = new ImportStockForm();
+		form.setStockListId(listId);
+
+		Map<String, Object> additionalParams = new HashMap<>();
+
+		MultipartFile file = new MockMultipartFile("FileName.xls", "OriginalFileName.xlsx", "application/octet-stream", new byte[0]);
+		form.setFile(file);
+
+		GermplasmList germplasmList = new GermplasmList();
+		germplasmList.setType(germplasmListType.name());
+
+		InventoryDetails inventoryDetails = new InventoryDetails();
+		List<InventoryDetails> inventoryDetailsList = new ArrayList<>();
+		inventoryDetailsList.add(inventoryDetails);
+
+		ImportedInventoryList importedInventoryList = new ImportedInventoryList();
+		importedInventoryList.setFilename(file.getName());
+		importedInventoryList.setImportedInventoryDetails(inventoryDetailsList);
+
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(listId)).thenReturn(germplasmList);
+		Mockito.when(this.importInventoryService.parseFile(form.getFile(), additionalParams)).thenReturn(importedInventoryList);
+		Mockito.when(this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType)).thenReturn(inventoryDetailsList);
+		Mockito.when(this.importInventoryService.hasConflict(Mockito.anyListOf(InventoryDetails.class), Mockito.isA(ImportedInventoryList.class))).thenReturn(Boolean.FALSE);
+
+		Mockito.doNothing().when(this.importInventoryService).validateInventoryDetails(inventoryDetailsList, importedInventoryList, germplasmListType);
+		Mockito.doNothing().when(this.importInventoryService).mergeInventoryDetails(inventoryDetailsList, importedInventoryList, germplasmListType);
+		Mockito.doNothing().when(this.inventoryDataManager).updateInventory(listId, inventoryDetailsList);
+		Mockito.doNothing().when(this.userSelection).setListId(listId);
+		Mockito.doNothing().when(this.userSelection).setInventoryDetails(inventoryDetailsList);
+
+		String result = dut.importList(form);
+
+		Assert.assertTrue("Incorrect List Id", result.contains("5"));
+		Assert.assertTrue("Has Error", result.contains("false"));
+		Assert.assertTrue("Incorrect List Type", result.contains("ADVANCED"));
+
+	}
 }

@@ -342,9 +342,9 @@
 				},
 				deleteEnvironment: function(index) {
 					var refreshMeasurementDeferred = $q.defer();
-					var deleteMeasurementPossible = index !== 0 && service.trialMeasurement.hasMeasurement;
-					// this scenario only covered the update of measurement table
-					// when the user delete an environment for a existing trial with measurement data
+					var deleteMeasurementPossible = index !== 0;
+					// this scenario cover the update of measurement table
+					// when the user delete an environment for a existing trial with or wihout measurement data
 					if (deleteMeasurementPossible) {
 						service.applicationData.unsavedTraitsAvailable = true;
 

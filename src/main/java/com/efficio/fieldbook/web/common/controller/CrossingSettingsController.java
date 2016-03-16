@@ -25,6 +25,7 @@ import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
@@ -50,7 +51,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
@@ -230,7 +230,7 @@ public class CrossingSettingsController extends SettingsController {
 
 	/**
 	 * Validates if current study can perform an export
-	 * 
+	 *
 	 * @return a JSON result object
 	 */
 	@ResponseBody
@@ -251,7 +251,8 @@ public class CrossingSettingsController extends SettingsController {
 			CrossingSettingsController.LOG.debug(e.getMessage(), e);
 
 			out.put(CrossingSettingsController.IS_SUCCESS, Boolean.FALSE);
-			out.put("errorMessage", this.messageSource.getMessage(e.getMessage(), new String[] {}, "cannot export a crossing template",
+			out.put("errorMessage",
+					this.messageSource.getMessage(e.getMessage(), new String[] {}, "cannot export a crossing template",
 							LocaleContextHolder.getLocale()));
 		}
 
@@ -270,8 +271,10 @@ public class CrossingSettingsController extends SettingsController {
 			final HttpHeaders respHeaders = new HttpHeaders();
 			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			respHeaders.setContentLength(fileSystemResource.contentLength());
-			respHeaders.setContentDispositionFormData("attachment",
-					FieldbookUtil.getDownloadFileName(fileSystemResource.getFilename(), req));
+			String encodedFilename = FileUtils.encodeFilenameForDownload(resource.getName());
+
+			// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
+			respHeaders.set("Content-Disposition", "form-data;filename=" + encodedFilename + "; filename*=UTF-8''" + encodedFilename + ";");
 
 			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 

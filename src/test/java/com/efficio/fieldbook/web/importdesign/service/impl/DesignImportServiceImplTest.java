@@ -224,7 +224,7 @@ public class DesignImportServiceImplTest {
 						this.createAdditionalParamsMap(1, 1));
 
 		// Not including the header row from the count of number of rows from the csv file
-		final int expectedNumberOfMeasurements = this.designImportData.getCsvData().size() - 1;
+		final int expectedNumberOfMeasurements = this.designImportData.getRowDataMap().size() - 1;
 		Assert.assertEquals("Expecting to return " + expectedNumberOfMeasurements + " observations for " + noOfTrialInstances
 				+ " trial instances but didn't. ", expectedNumberOfMeasurements, measurements.size());
 
@@ -298,7 +298,7 @@ public class DesignImportServiceImplTest {
 		final Set<MeasurementVariable> result = this.service.getDesignMeasurementVariables(workbook, this.designImportData, true);
 
 		// retrieve no of variables imported from the csv file
-		final int noOfVariablesFromCSVFile = this.designImportData.getCsvData().get(0).size();
+		final int noOfVariablesFromCSVFile = this.designImportData.getRowDataMap().get(0).size();
 		final int expectedNoOfVariablesUsed =
 				noOfVariablesFromCSVFile + workbook.getGermplasmFactors().size() + workbook.getVariates().size();
 		Assert.assertEquals("The total number of variables to use for generating design from workbook and csv file must be equal to "
@@ -380,7 +380,7 @@ public class DesignImportServiceImplTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
-		final int expectedNoOfMeasurementVariablesFromCSV = this.designImportData.getCsvData().get(0).size();
+		final int expectedNoOfMeasurementVariablesFromCSV = this.designImportData.getRowDataMap().get(0).size();
 		final Set<MeasurementVariable> returnValue = this.service.getMeasurementVariablesFromDataFile(workbook, this.designImportData);
 
 		Assert.assertEquals("The csv file only contains " + expectedNoOfMeasurementVariablesFromCSV + " Measurement Variables",

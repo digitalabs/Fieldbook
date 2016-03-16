@@ -14,6 +14,7 @@ import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.service.GermplasmOriginGenerationService;
+import org.generationcp.commons.service.GermplasmOriginParameterBuilder;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -34,7 +35,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;

@@ -9,6 +9,7 @@ import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
 import org.generationcp.commons.service.GermplasmOriginGenerationService;
+import org.generationcp.commons.service.GermplasmOriginParameterBuilder;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -35,8 +36,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 import org.mockito.exceptions.verification.TooLittleActualInvocations;
-
-import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 
 public class CrossingServiceImplTest {
 

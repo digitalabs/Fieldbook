@@ -59,29 +59,32 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 	public ContextUtil contextUtil;
 
 	@Override
-	public List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter,
-			List<MeasurementVariable> trialVariables, List<MeasurementVariable> factors, List<MeasurementVariable> nonTrialFactors,
-			List<MeasurementVariable> variates, List<TreatmentVariable> treatmentVariables) throws BVDesignException {
+	public List<MeasurementRow> generateDesign(final List<ImportedGermplasm> germplasmList, final ExpDesignParameterUi parameter,
+			final List<MeasurementVariable> trialVariables, final List<MeasurementVariable> factors,
+			final List<MeasurementVariable> nonTrialFactors, final List<MeasurementVariable> variates,
+			final List<TreatmentVariable> treatmentVariables) throws BVDesignException {
 
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 
-		int nTreatments = germplasmList.size();
-		String blockSize = parameter.getBlockSize();
-		String replicates = parameter.getReplicationsCount();
-		int environments = Integer.valueOf(parameter.getNoOfEnvironments());
-		int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
+		final int nTreatments = germplasmList.size();
+		final String blockSize = parameter.getBlockSize();
+		final String replicates = parameter.getReplicationsCount();
+		final int environments = Integer.valueOf(parameter.getNoOfEnvironments());
+		final int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
+		final Boolean useLatinized = (parameter.getUseLatenized() != null) ? parameter.getUseLatenized() : false;
+
 		// we need to add the 4 vars
 		try {
 
-			StandardVariable stdvarTreatment = this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),
-					contextUtil.getCurrentProgramUUID());
+			final StandardVariable stdvarTreatment =
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 			StandardVariable stdvarRep = null;
 			StandardVariable stdvarBlock = null;
 			StandardVariable stdvarPlot = null;
 
-			List<StandardVariable> reqVarList = this.getRequiredVariable();
+			final List<StandardVariable> reqVarList = this.getRequiredVariable();
 
-			for (StandardVariable var : reqVarList) {
+			for (final StandardVariable var : reqVarList) {
 				if (var.getId() == TermId.REP_NO.getId()) {
 					stdvarRep = var;
 				} else if (var.getId() == TermId.BLOCK_NO.getId()) {
@@ -91,45 +94,43 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 				}
 			}
 
-			if (parameter.getUseLatenized() != null && parameter.getUseLatenized().booleanValue()) {
-				if (parameter.getReplicationsArrangement() != null) {
-					if (parameter.getReplicationsArrangement().intValue() == 1) {
-						// column
-						parameter.setReplatinGroups(parameter.getReplicationsCount());
-					} else if (parameter.getReplicationsArrangement().intValue() == 2) {
-						// rows
-						String rowReplatingGroup = "";
-						for (int i = 0; i < Integer.parseInt(parameter.getReplicationsCount()); i++) {
-							if (rowReplatingGroup != null && !rowReplatingGroup.equalsIgnoreCase("")) {
-								rowReplatingGroup += ",";
-							}
-							rowReplatingGroup += "1";
+			if (useLatinized != null && useLatinized.booleanValue() && parameter.getReplicationsArrangement() != null) {
+				if (parameter.getReplicationsArrangement().intValue() == 1) {
+					// column
+					parameter.setReplatinGroups(parameter.getReplicationsCount());
+				} else if (parameter.getReplicationsArrangement().intValue() == 2) {
+					// rows
+					String rowReplatingGroup = "";
+					for (int i = 0; i < Integer.parseInt(parameter.getReplicationsCount()); i++) {
+						if (rowReplatingGroup != null && !rowReplatingGroup.equalsIgnoreCase("")) {
+							rowReplatingGroup += ",";
 						}
-						parameter.setReplatinGroups(rowReplatingGroup);
+						rowReplatingGroup += "1";
 					}
+					parameter.setReplatinGroups(rowReplatingGroup);
 				}
 			}
 
-			Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
+			final Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
 			Integer entryNo = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
 
-			if(!Objects.equals(stdvarTreatment.getId(), TermId.ENTRY_NO.getId())){
+			if (!Objects.equals(stdvarTreatment.getId(), TermId.ENTRY_NO.getId())) {
 				entryNo = null;
 			}
 
-			MainDesign mainDesign =
+			final MainDesign mainDesign =
 					ExpDesignUtil.createResolvableIncompleteBlockDesign(blockSize, Integer.toString(nTreatments), replicates,
-							stdvarTreatment.getName(), stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(), plotNo,
-							entryNo, parameter.getNblatin(), parameter.getReplatinGroups(), "", parameter.getUseLatenized());
+							stdvarTreatment.getName(), stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(), plotNo, entryNo,
+							parameter.getNblatin(), parameter.getReplatinGroups(), "", useLatinized);
 
 			measurementRowList =
 					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
 							variates, treatmentVariables, reqVarList, germplasmList, mainDesign, this.workbenchService,
 							this.fieldbookProperties, stdvarTreatment.getName(), null, this.fieldbookService);
 
-		} catch (BVDesignException e) {
+		} catch (final BVDesignException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ResolvableIncompleteBlockDesignServiceImpl.LOG.error(e.getMessage(), e);
 		}
 		return measurementRowList;
@@ -137,31 +138,31 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 
 	@Override
 	public List<StandardVariable> getRequiredVariable() {
-		List<StandardVariable> varList = new ArrayList<StandardVariable>();
+		final List<StandardVariable> varList = new ArrayList<StandardVariable>();
 		try {
-			StandardVariable stdvarRep = this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(),
-					contextUtil.getCurrentProgramUUID());
-			StandardVariable stdvarBlock = this.fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(),
-					contextUtil.getCurrentProgramUUID());
-			StandardVariable stdvarPlot = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(),
-					contextUtil.getCurrentProgramUUID());
+			final StandardVariable stdvarRep =
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(), this.contextUtil.getCurrentProgramUUID());
+			final StandardVariable stdvarBlock =
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(), this.contextUtil.getCurrentProgramUUID());
+			final StandardVariable stdvarPlot =
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 
 			stdvarRep.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			stdvarBlock.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			stdvarPlot.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
-			
+
 			varList.add(stdvarRep);
 			varList.add(stdvarBlock);
 			varList.add(stdvarPlot);
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			ResolvableIncompleteBlockDesignServiceImpl.LOG.error(e.getMessage(), e);
 		}
 		return varList;
 	}
 
 	@Override
-	public ExpDesignValidationOutput validate(ExpDesignParameterUi expDesignParameter, List<ImportedGermplasm> germplasmList) {
-		Locale locale = LocaleContextHolder.getLocale();
+	public ExpDesignValidationOutput validate(final ExpDesignParameterUi expDesignParameter, final List<ImportedGermplasm> germplasmList) {
+		final Locale locale = LocaleContextHolder.getLocale();
 		ExpDesignValidationOutput output = new ExpDesignValidationOutput(true, "");
 		try {
 			if (expDesignParameter != null && germplasmList != null) {
@@ -175,55 +176,63 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 							new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 									"experiment.design.replication.count.should.be.a.number", null, locale));
 					return output;
-				}
-				else if (expDesignParameter.getStartingPlotNo() != null && !NumberUtils.isNumber(expDesignParameter.getStartingPlotNo())) {
-					output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-							"plot.number.should.be.in.range", null, locale));
+				} else if (expDesignParameter.getStartingPlotNo() != null && !NumberUtils.isNumber(expDesignParameter.getStartingPlotNo())) {
+					output =
+							new ExpDesignValidationOutput(false, this.messageSource.getMessage("plot.number.should.be.in.range", null,
+									locale));
 					return output;
-				}
-				else if (expDesignParameter.getStartingEntryNo() != null && !NumberUtils.isNumber(expDesignParameter.getStartingEntryNo())) {
-					output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-							"entry.number.should.be.in.range", null, locale));
+				} else if (expDesignParameter.getStartingEntryNo() != null
+						&& !NumberUtils.isNumber(expDesignParameter.getStartingEntryNo())) {
+					output =
+							new ExpDesignValidationOutput(false, this.messageSource.getMessage("entry.number.should.be.in.range", null,
+									locale));
 					return output;
-				}
-				else {
-					int blockSize = Integer.valueOf(expDesignParameter.getBlockSize());
-					int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
-					int treatmentSize = germplasmList.size();
-					int blockLevel = treatmentSize / blockSize;
+				} else {
+					final int blockSize = Integer.valueOf(expDesignParameter.getBlockSize());
+					final int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
+					final int treatmentSize = germplasmList.size();
+					final int blockLevel = treatmentSize / blockSize;
 					final Integer entryNumber = StringUtil.parseInt(expDesignParameter.getStartingEntryNo(), null);
 					final Integer plotNumber = StringUtil.parseInt(expDesignParameter.getStartingPlotNo(), null);
 
-					if(Objects.equals(entryNumber, 0)){
-						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-								"entry.number.should.be.in.range", null, locale));
-					} else if(Objects.equals(plotNumber, 0)){
-						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-								"plot.number.should.be.in.range", null, locale));
+					if (Objects.equals(entryNumber, 0)) {
+						output =
+								new ExpDesignValidationOutput(false, this.messageSource.getMessage("entry.number.should.be.in.range", null,
+										locale));
+					} else if (Objects.equals(plotNumber, 0)) {
+						output =
+								new ExpDesignValidationOutput(false, this.messageSource.getMessage("plot.number.should.be.in.range", null,
+										locale));
 					} else if (replicationCount <= 1 || replicationCount >= 13) {
 						output =
 								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.replication.count.resolvable.error", null, locale));
-					}
-					else if (entryNumber != null && (treatmentSize + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO) {
+					} else if (entryNumber != null && (treatmentSize + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO) {
 
-						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-								"entry.number.should.be.in.range", null, locale));
-					}else if (entryNumber != null && plotNumber != null && (((treatmentSize * replicationCount) + plotNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
-						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-								"plot.number.should.be.in.range", null, locale));
-					}else if (blockSize <= 1) {
-						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+						output =
+								new ExpDesignValidationOutput(false, this.messageSource.getMessage("entry.number.should.be.in.range", null,
+										locale));
+					} else if (entryNumber != null && plotNumber != null
+							&& (((treatmentSize * replicationCount) + plotNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
+						output =
+								new ExpDesignValidationOutput(false, this.messageSource.getMessage("plot.number.should.be.in.range", null,
+										locale));
+					} else if (blockSize <= 1) {
+						output =
+								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.block.size.should.be.a.greater.than.1", null, locale));
 					} else if (blockLevel == 1) {
-						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+						output =
+								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.block.level.should.be.greater.than.one", null, locale));
 					} else if (treatmentSize % blockSize != 0) {
-						output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+						output =
+								new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 										"experiment.design.block.size.not.a.factor.of.treatment.size", null, locale));
 					} else if (expDesignParameter.getUseLatenized() != null && expDesignParameter.getUseLatenized().booleanValue()) {
 						// we add validation for latinize
-						Integer nbLatin = expDesignParameter.getNblatin() != null ? Integer.parseInt(expDesignParameter.getNblatin()) : 0;
+						final Integer nbLatin =
+								expDesignParameter.getNblatin() != null ? Integer.parseInt(expDesignParameter.getNblatin()) : 0;
 						/*
 						 * The value set for "nblatin" xml parameter cannot be value higher than or equal the block level value. To get the
 						 * block levels, we just need to divide the "ntreatments" value by the "blocksize" value. This means the BVDesign
@@ -245,7 +254,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 						} else if (expDesignParameter.getReplicationsArrangement() != null
 								&& expDesignParameter.getReplicationsArrangement().intValue() == 3) {
 							// meaning adjacent
-							StringTokenizer tokenizer = new StringTokenizer(expDesignParameter.getReplatinGroups(), ",");
+							final StringTokenizer tokenizer = new StringTokenizer(expDesignParameter.getReplatinGroups(), ",");
 							int totalReplatingGroup = 0;
 
 							while (tokenizer.hasMoreTokens()) {
@@ -260,7 +269,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			output =
 					new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.invalid.generic.error", null,
 							locale));
@@ -270,7 +279,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 	}
 
 	@Override
-	public List<Integer> getExperimentalDesignVariables(ExpDesignParameterUi params) {
+	public List<Integer> getExperimentalDesignVariables(final ExpDesignParameterUi params) {
 		if (params.getUseLatenized() != null && params.getUseLatenized()) {
 			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.BLOCK_SIZE.getId(),
 					TermId.NO_OF_CBLKS_LATINIZE.getId(), TermId.REPLICATIONS_MAP.getId(), TermId.NO_OF_REPS_IN_COLS.getId());
@@ -279,33 +288,27 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 		}
 	}
 
-	
-	void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+	void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
-	
-	void setWorkbenchService(WorkbenchService workbenchService) {
+	void setWorkbenchService(final WorkbenchService workbenchService) {
 		this.workbenchService = workbenchService;
 	}
 
-	
-	void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
+	void setFieldbookProperties(final FieldbookProperties fieldbookProperties) {
 		this.fieldbookProperties = fieldbookProperties;
 	}
 
-	
-	void setMessageSource(ResourceBundleMessageSource messageSource) {
+	void setMessageSource(final ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 
-	
-	void setFieldbookService(FieldbookService fieldbookService) {
+	void setFieldbookService(final FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
 	}
 
-	
-	void setContextUtil(ContextUtil contextUtil) {
+	void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}
 }

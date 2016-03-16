@@ -306,14 +306,13 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/import", method = RequestMethod.POST)
-	public String importList(@ModelAttribute("importStockForm")
-	ImportStockForm form) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public String importList(@ModelAttribute("importStockForm")	ImportStockForm form) {
+		Map<String, Object> result = new HashMap<>();
 		try {
 			Integer listId = form.getStockListId();
 			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			Map<String, Object> additionalParams = new HashMap<String, Object>();
+			Map<String, Object> additionalParams = new HashMap<>();
 			additionalParams.put(InventoryImportParser.HEADERS_MAP_PARAM_KEY, InventoryHeaderLabels.headers(germplasmListType));
 			additionalParams.put(InventoryImportParser.LIST_ID_PARAM_KEY, listId);
 			additionalParams.put(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY, germplasmListType);
@@ -368,9 +367,8 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/executeBulkingInstructions/{listId}", method = RequestMethod.POST)
-	public Map<String, Object> executeBulkingInstructions(@PathVariable
-	Integer listId) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public Map<String, Object> executeBulkingInstructions(@PathVariable	Integer listId) {
+		Map<String, Object> result = new HashMap<>();
 		try {
 			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
@@ -404,10 +402,9 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/update/lots", method = RequestMethod.POST)
-	public Map<String, Object> updateLots(@ModelAttribute("seedStoreForm")
-	SeedStoreForm form, Model model, Locale local) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		List<Integer> entryIdList = new ArrayList<Integer>();
+	public Map<String, Object> updateLots(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, Locale local) {
+		Map<String, Object> result = new HashMap<>();
+		List<Integer> entryIdList = new ArrayList<>();
 
 		for (String gid : form.getEntryIdList().split(",")) {
 			entryIdList.add(Integer.parseInt(gid));

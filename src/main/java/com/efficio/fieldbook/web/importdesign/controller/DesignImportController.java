@@ -56,7 +56,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.GeneratePresetDesignInput;
+import com.efficio.fieldbook.web.common.bean.GenerateDesignInput;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
@@ -84,6 +84,9 @@ public class DesignImportController extends SettingsController {
 
 	private static final int DEFAULT_STARTING_ENTRY_NO = 1;
 
+	public static final Integer FILE_TYPE_ID_CSV = 1;
+	public static final Integer FILE_TYPE_ID_EXCEL = 2;
+
 	private static final String UNMAPPED_HEADERS = "unmappedHeaders";
 
 	private static final String SUCCESS = "success";
@@ -109,7 +112,7 @@ public class DesignImportController extends SettingsController {
 	public static final String DESIGN_TEMPLATE_FOLDER = "DesignPresets";
 
 	@Resource
-	private DesignImportParser parser;
+	private DesignImportParser designImportParser;
 
 	@Resource
 	private DesignImportService designImportService;
@@ -152,10 +155,16 @@ public class DesignImportController extends SettingsController {
 		final Map<String, Object> resultsMap = new HashMap<>();
 
 		try {
-
 			this.initializeTemporaryWorkbook(studyType);
 
-			final DesignImportData designImportData = this.parser.parseFile(form.getFile());
+			DesignImportData designImportData = null;
+
+			if (form.getFileType() == FILE_TYPE_ID_CSV) {
+				designImportData = this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_CSV, form.getFile());
+			} else if (form.getFileType() == FILE_TYPE_ID_EXCEL) {
+				designImportData = this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_EXCEL, form.getFile());
+			}
+
 			designImportData.setImportFileName(form.getFile().getOriginalFilename());
 			this.performAutomap(designImportData);
 
@@ -421,7 +430,11 @@ public class DesignImportController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/generate", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-	public Map<String, Object> generateMeasurements(@RequestBody final EnvironmentData environmentData) {
+	public Map<String, Object> generateMeasurements(@RequestBody final GenerateDesignInput generateDesignInput) {
+
+		final EnvironmentData environmentData = generateDesignInput.getEnvironmentData();
+		final Integer startingEntryNo = generateDesignInput.getStartingEntryNo();
+		final Integer startingPlotNo = generateDesignInput.getStartingPlotNo();
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
@@ -429,7 +442,7 @@ public class DesignImportController extends SettingsController {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(), this.userSelection.getTemporaryWorkbook()
 					.getStudyDetails().getStudyType(), false, DesignTypeItem.CUSTOM_IMPORT,
-					this.generateAdditionalParams(DEFAULT_STARTING_ENTRY_NO, DEFAULT_STARTING_PLOT_NO));
+					this.generateAdditionalParams(startingEntryNo, startingPlotNo));
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -463,7 +476,7 @@ public class DesignImportController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/generatePresetMeasurements", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-	public Map<String, Object> generatePresetMeasurements(@RequestBody final GeneratePresetDesignInput generateDesignInput) {
+	public Map<String, Object> generatePresetMeasurements(@RequestBody final GenerateDesignInput generateDesignInput) {
 
 		final DesignTypeItem selectedDesignType = generateDesignInput.getSelectedDesignType();
 		final EnvironmentData environmentData = generateDesignInput.getEnvironmentData();
@@ -477,9 +490,11 @@ public class DesignImportController extends SettingsController {
 			DesignImportData designImportData = null;
 			if (selectedDesignType != null) {
 				designImportData =
-						this.parser.parseFile(ResourceFinder.locateFile(
-								AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString().concat(selectedDesignType.getTemplateName()))
-								.getFile());
+						this.designImportParser.parseFile(
+								DesignImportParser.FILE_TYPE_CSV,
+								ResourceFinder.locateFile(
+										AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString().concat(
+												selectedDesignType.getTemplateName())).getFile());
 			}
 
 			this.performAutomap(designImportData);
@@ -520,7 +535,7 @@ public class DesignImportController extends SettingsController {
 		// defaults
 		output.put("name", DesignTypeItem.CUSTOM_IMPORT.getName());
 		final String filename =
-				(this.userSelection.getDesignImportData() != null) ? this.userSelection.getDesignImportData().getImportFileName()
+				this.userSelection.getDesignImportData() != null ? this.userSelection.getDesignImportData().getImportFileName()
 						: DesignTypeItem.CUSTOM_IMPORT.getTemplateName();
 
 		// unsaved but has import design

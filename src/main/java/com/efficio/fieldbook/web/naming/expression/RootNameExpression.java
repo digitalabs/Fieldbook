@@ -63,6 +63,10 @@ public class RootNameExpression implements Expression {
 	}
 
 	public Name findNameUsingNameType(Integer nameType, List<Name> names) {
+		if (names == null) {
+			return null;
+		}
+
 		for (Name name : names) {
 			if (name.getTypeId() != null && name.getTypeId().equals(nameType)) {
 				return name;
@@ -73,6 +77,10 @@ public class RootNameExpression implements Expression {
 	}
 
 	public Name findPreferredName(List<Name> names) {
+		if (names == null) {
+			return null;
+		}
+
 		for (Name name : names) {
 			if (name.getNstat() != null && name.getNstat().equals(1)) {
 				return name;

@@ -45,7 +45,7 @@ public class DesignImportTestDataInitializer {
 		final DesignImportData designImportData = new DesignImportData();
 
 		designImportData.setMappedHeaders(createTestMappedHeadersForDesignImportData());
-		designImportData.setCsvData(createTestCsvDataForDesignImportData());
+		designImportData.setRowDataMap(createTestCsvDataForDesignImportData());
 
 		return designImportData;
 

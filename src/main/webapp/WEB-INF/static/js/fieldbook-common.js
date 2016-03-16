@@ -1,3 +1,5 @@
+var isAdvanceListGenerated = false;
+
 $(function() {
 	'use strict';
 
@@ -3513,21 +3515,6 @@ function showMeasurementsPreview() {
 	var domElemId = '#measurementsDiv';
 	$.ajax({
 		url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(html) {
-			$(domElemId).html(html);
-			$('body').data('expDesignShowPreview', '0');
-		}
-	});
-}
-
-function loadInitialMeasurements() {
-	'use strict';
-	var domElemId = '#measurementsDiv';
-	$.ajax({
-		url: '/Fieldbook/TrialManager/openTrial/load/measurement',
 		type: 'GET',
 		data: '',
 		cache: false,

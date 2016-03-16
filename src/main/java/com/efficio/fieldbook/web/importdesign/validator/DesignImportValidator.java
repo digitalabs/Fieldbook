@@ -45,7 +45,7 @@ public class DesignImportValidator {
 
 	public void validateDesignData(final DesignImportData designImportData) throws DesignValidationException {
 
-		final Map<Integer, List<String>> csvData = designImportData.getCsvData();
+		final Map<Integer, List<String>> csvData = designImportData.getRowDataMap();
 
 		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithDesignHeaderItemsMappedToStdVarId =
 				designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
@@ -69,7 +69,7 @@ public class DesignImportValidator {
 
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
 		this.validateIfPlotNumberIsUniquePerInstance(mappedHeaders.get(PhenotypicType.TRIAL_DESIGN), csvMap);
-		this.validateColumnValues(designImportData.getCsvData(), mappedHeaders);
+		this.validateColumnValues(designImportData.getRowDataMap(), mappedHeaders);
 	}
 
 	protected void validateEntryNoMustBeUniquePerInstance(final DesignHeaderItem entryNoHeaderItem,

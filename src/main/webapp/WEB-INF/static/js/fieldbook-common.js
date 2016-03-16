@@ -1816,7 +1816,6 @@ function showSelectedAdvanceTab(uniqueId) {
 function closeAdvanceListTab(uniqueId) {
 	'use strict';
 	$('li#advance-list' + uniqueId + '-li').remove();
-	$('.info#advance-list' + uniqueId).remove();
 	if ($('#list' + uniqueId).length === 1) {
 		$('#list' + uniqueId).remove();
 	}

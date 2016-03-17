@@ -420,7 +420,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		settingVariable.setCvTermId(variable.getId());
 		settingVariable.setCropOntologyId(property.getCropOntologyId());
 
-		if(property.getClasses().size() > 0){
+		if(!property.getClasses().isEmpty()){
 			settingVariable.setTraitClass(property.getClasses().iterator().next());
 		}
 

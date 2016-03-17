@@ -76,10 +76,10 @@ public class LabelPrintingServiceImplTest {
 	private Map<String, MeasurementRow> environmentData;
 
 	@Mock
-	WorkbenchService workbenchService;
+	private WorkbenchService workbenchService;
 
 	@Mock
-	PresetDataManager presetDataManager;
+	private PresetDataManager presetDataManager;
 
 	@Mock
 	private ContextUtil contextUtil;
@@ -94,10 +94,10 @@ public class LabelPrintingServiceImplTest {
 	private LabelGeneratorFactory labelGeneratorFactory;
 
 	@InjectMocks
-	LabelPrintingServiceImpl labelPrintingServiceImpl = new LabelPrintingServiceImpl();
-	
+	private LabelPrintingServiceImpl labelPrintingServiceImpl = new LabelPrintingServiceImpl();
+
 	private GermplasmListTestDataInitializer germplasmListTestDataInitializer;
-	
+
 	private FieldMapTrialInstanceInfoTestDataInitializer fieldMapTrialInstanceInfoTestDataInitializer;
 
 	@Before
@@ -125,19 +125,17 @@ public class LabelPrintingServiceImplTest {
 		searchResultPreset.setConfiguration(LabelPrintingServiceImplTest.PROGRAM_PRESET_CONFIG);
 		notEmptySearchResult.add(searchResultPreset);
 
-		Mockito.when(
-				this.presetDataManager.getProgramPresetFromProgramAndToolByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
-						LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23, ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(
-				notEmptySearchResult);
+		Mockito.when(this.presetDataManager.getProgramPresetFromProgramAndToolByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
+				LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23, ToolSection.FBK_LABEL_PRINTING.name()))
+				.thenReturn(notEmptySearchResult);
 
 		Mockito.when(
 				this.presetDataManager.getProgramPresetFromProgramAndToolByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
-						LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23, ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(
-				new ArrayList<ProgramPreset>());
+						LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23, ToolSection.FBK_LABEL_PRINTING.name()))
+				.thenReturn(new ArrayList<ProgramPreset>());
 
-		Mockito.when(
-				this.presetDataManager.getProgramPresetFromProgramAndTool(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23,
-						ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(notEmptySearchResult);
+		Mockito.when(this.presetDataManager.getProgramPresetFromProgramAndTool(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23,
+				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(notEmptySearchResult);
 
 		final ArrayList<StandardPreset> standardPresetSearchResults = new ArrayList<>();
 		final StandardPreset sp = new StandardPreset();
@@ -151,22 +149,19 @@ public class LabelPrintingServiceImplTest {
 		this.measurementData = MeasurementRowTestDataInitializer.createMeasurementDataMap();
 		this.environmentData = MeasurementRowTestDataInitializer.createEnvironmentDataMap();
 
-		Mockito.when(
-				this.workbenchService.getStandardPresetByCropAndPresetName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME, 23,
-						LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(
-				standardPresetSearchResults);
-		Mockito.when(
-				this.workbenchService.getStandardPresetByCropAndPresetName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME, 23,
-						LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(
-				new ArrayList<StandardPreset>());
+		Mockito.when(this.workbenchService.getStandardPresetByCropAndPresetName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME, 23,
+				LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.FBK_LABEL_PRINTING.name()))
+				.thenReturn(standardPresetSearchResults);
+		Mockito.when(this.workbenchService.getStandardPresetByCropAndPresetName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
+				23, LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.FBK_LABEL_PRINTING.name()))
+				.thenReturn(new ArrayList<StandardPreset>());
 
-		Mockito.when(
-				this.workbenchService.getStandardPresetByCrop(23, LabelPrintingServiceImplTest.MAIZE_CROP_STR,
-						ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(standardPresetSearchResults);
+		Mockito.when(this.workbenchService.getStandardPresetByCrop(23, LabelPrintingServiceImplTest.MAIZE_CROP_STR,
+				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(standardPresetSearchResults);
 
 		Mockito.when(this.workbenchService.getStandardPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID)).thenReturn(sp);
-		Mockito.when(this.presetDataManager.getProgramPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID)).thenReturn(
-				searchResultPreset);
+		Mockito.when(this.presetDataManager.getProgramPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID))
+				.thenReturn(searchResultPreset);
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID);
 	}
@@ -181,30 +176,26 @@ public class LabelPrintingServiceImplTest {
 
 	@Test
 	public void testGetLabelPrintingPresetConfig() throws Exception {
-		String config =
-				this.labelPrintingServiceImpl.getLabelPrintingPresetConfig(LabelPrintingServiceImplTest.TEST_PRESET_ID,
-						LabelPrintingPresets.STANDARD_PRESET);
+		String config = this.labelPrintingServiceImpl.getLabelPrintingPresetConfig(LabelPrintingServiceImplTest.TEST_PRESET_ID,
+				LabelPrintingPresets.STANDARD_PRESET);
 
 		Assert.assertEquals("should retrieve a standard preset config", LabelPrintingServiceImplTest.STANDARD_PRESET_CONFIG, config);
 
-		config =
-				this.labelPrintingServiceImpl.getLabelPrintingPresetConfig(LabelPrintingServiceImplTest.TEST_PRESET_ID,
-						LabelPrintingPresets.PROGRAM_PRESET);
+		config = this.labelPrintingServiceImpl.getLabelPrintingPresetConfig(LabelPrintingServiceImplTest.TEST_PRESET_ID,
+				LabelPrintingPresets.PROGRAM_PRESET);
 
 		Assert.assertEquals("should retrieve a program preset config", LabelPrintingServiceImplTest.PROGRAM_PRESET_CONFIG, config);
 	}
 
 	@Test
 	public void testGetLabelPrintingProgramPreset() throws Exception {
-		LabelPrintingPresets preset =
-				this.labelPrintingServiceImpl.getLabelPrintingPreset(LabelPrintingServiceImplTest.TEST_PRESET_ID,
-						LabelPrintingPresets.STANDARD_PRESET);
+		LabelPrintingPresets preset = this.labelPrintingServiceImpl.getLabelPrintingPreset(LabelPrintingServiceImplTest.TEST_PRESET_ID,
+				LabelPrintingPresets.STANDARD_PRESET);
 
 		Assert.assertEquals("should retrieve a standard preset", LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME, preset.getName());
 
-		preset =
-				this.labelPrintingServiceImpl.getLabelPrintingPreset(LabelPrintingServiceImplTest.TEST_PRESET_ID,
-						LabelPrintingPresets.PROGRAM_PRESET);
+		preset = this.labelPrintingServiceImpl.getLabelPrintingPreset(LabelPrintingServiceImplTest.TEST_PRESET_ID,
+				LabelPrintingPresets.PROGRAM_PRESET);
 
 		Assert.assertEquals("should retrieve a program preset", LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME, preset.getName());
 
@@ -248,10 +239,11 @@ public class LabelPrintingServiceImplTest {
 		final List<GermplasmList> germplasmLists = this.germplasmListTestDataInitializer.createGermplasmLists(1);
 		final GermplasmList germplasmList = germplasmLists.get(0);
 		final Integer numOfEntries = germplasmList.getListData().size();
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Matchers.anyInt(), Matchers.eq(GermplasmListType.NURSERY))).thenReturn(
-				germplasmLists);
-		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(Matchers.anyInt(), Matchers.anyString())).thenReturn(
-				InventoryDetailsTestDataInitializer.createInventoryDetailList(numOfEntries));
+		Mockito.when(
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Matchers.anyInt(), Matchers.eq(GermplasmListType.NURSERY)))
+				.thenReturn(germplasmLists);
+		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(Matchers.anyInt(), Matchers.anyString()))
+				.thenReturn(InventoryDetailsTestDataInitializer.createInventoryDetailList(numOfEntries));
 
 		Assert.assertTrue("Expecting to return true for germplasm list entries with inventory details.",
 				this.labelPrintingServiceImpl.hasInventoryValues(studyId, workbook.isNursery()));
@@ -263,10 +255,10 @@ public class LabelPrintingServiceImplTest {
 		final Integer studyId = workbook.getStudyDetails().getId();
 		final List<GermplasmList> germplasmLists = this.germplasmListTestDataInitializer.createGermplasmLists(1);
 		final GermplasmList germplasmList = germplasmLists.get(0);
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY)).thenReturn(
-				germplasmLists);
-		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId())).thenReturn(
-				new ArrayList<InventoryDetails>());
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY))
+				.thenReturn(germplasmLists);
+		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId()))
+				.thenReturn(new ArrayList<InventoryDetails>());
 
 		Assert.assertFalse("Expecting to return false for germplasm list entries with inventory details.",
 				this.labelPrintingServiceImpl.hasInventoryValues(studyId, workbook.isNursery()));
@@ -291,20 +283,20 @@ public class LabelPrintingServiceImplTest {
 		final LabelPrintingProcessingParams params = LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParams();
 		final MeasurementRow measurementRow = MeasurementRowTestDataInitializer.createMeasurementRow();
 
-		final Boolean hasData =
-				this.labelPrintingServiceImpl.populateValuesFromMeasurement(params, measurementRow, TermId.TRIAL_LOCATION.getId(), values,
-						true);
+		final Boolean hasData = this.labelPrintingServiceImpl.populateValuesFromMeasurement(params, measurementRow,
+				TermId.TRIAL_LOCATION.getId(), values, true);
 
 		Assert.assertTrue("Should be true", hasData);
-		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila", values.get(TermId.TRIAL_LOCATION.getId()));
+		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila",
+				values.get(TermId.TRIAL_LOCATION.getId()));
 
 	}
 
 	@Test
 	public void testGenerateLabelsSortLabelsEntryNumber() throws LabelPrintingException {
 		final BaseLabelGenerator labelGenerator = Mockito.mock(BaseLabelGenerator.class);
-        final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
-        final ByteArrayOutputStream baos = Mockito.mock(ByteArrayOutputStream.class);
+		final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
+		final ByteArrayOutputStream baos = Mockito.mock(ByteArrayOutputStream.class);
 		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory)
 				.retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
 
@@ -312,42 +304,43 @@ public class LabelPrintingServiceImplTest {
 
 		// we randomize the arrangement of the list
 		Collections.shuffle(infoList.get(0).getTrialInstance().getFieldMapLabels());
-		this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList,
-				labelPrinting, baos);
+		this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList, labelPrinting, baos);
 
-        int currentEntryNumberValue = -1;
-        for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {
-            Assert.assertTrue("Labels were not re-arranged from lowest to highest via entry number", fieldMapLabel.getEntryNumber() > currentEntryNumberValue);
-            currentEntryNumberValue = fieldMapLabel.getEntryNumber();
-        }
-    }
-    @Test
-    public void testGenerateLabelsSortLabelsPlotNumber() throws LabelPrintingException {
-        final BaseLabelGenerator labelGenerator = Mockito.mock(BaseLabelGenerator.class);
-        final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
-        final ByteArrayOutputStream baos = Mockito.mock(ByteArrayOutputStream.class);
-        Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory)
-                .retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
+		int currentEntryNumberValue = -1;
+		for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {
+			Assert.assertTrue("Labels were not re-arranged from lowest to highest via entry number",
+					fieldMapLabel.getEntryNumber() > currentEntryNumberValue);
+			currentEntryNumberValue = fieldMapLabel.getEntryNumber();
+		}
+	}
 
-        final List<StudyTrialInstanceInfo> infoList = LabelPrintingServiceDataInitializer.generateStudyTrialInstanceInfoList();
+	@Test
+	public void testGenerateLabelsSortLabelsPlotNumber() throws LabelPrintingException {
+		final BaseLabelGenerator labelGenerator = Mockito.mock(BaseLabelGenerator.class);
+		final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
+		final ByteArrayOutputStream baos = Mockito.mock(ByteArrayOutputStream.class);
+		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory)
+				.retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
 
-        // we provide plot number term values for the list
-        int i = 0;
-        for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {
-            fieldMapLabel.setPlotNo(i++);
-        }
+		final List<StudyTrialInstanceInfo> infoList = LabelPrintingServiceDataInitializer.generateStudyTrialInstanceInfoList();
 
-        // we randomize the arrangement of the list
-        Collections.shuffle(infoList.get(0).getTrialInstance().getFieldMapLabels());
-        this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList,
-                labelPrinting, baos);
+		// we provide plot number term values for the list
+		int i = 0;
+		for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {
+			fieldMapLabel.setPlotNo(i++);
+		}
 
-        int currentPlotNumber = -1;
-        for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {
-            Assert.assertTrue("Labels were not re-arranged from lowest to highest via entry number", fieldMapLabel.getPlotNo() > currentPlotNumber);
-            currentPlotNumber = fieldMapLabel.getPlotNo();
-        }
-    }
+		// we randomize the arrangement of the list
+		Collections.shuffle(infoList.get(0).getTrialInstance().getFieldMapLabels());
+		this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList, labelPrinting, baos);
+
+		int currentPlotNumber = -1;
+		for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {
+			Assert.assertTrue("Labels were not re-arranged from lowest to highest via entry number",
+					fieldMapLabel.getPlotNo() > currentPlotNumber);
+			currentPlotNumber = fieldMapLabel.getPlotNo();
+		}
+	}
 
 	@Test
 	public void testPopulateValuesForTrial() {
@@ -367,7 +360,8 @@ public class LabelPrintingServiceImplTest {
 
 		this.labelPrintingServiceImpl.populateValuesForTrial(params, workbook, testTermId, values, true);
 
-		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila", values.get(TermId.TRIAL_LOCATION.getId()));
+		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila",
+				values.get(TermId.TRIAL_LOCATION.getId()));
 	}
 
 	@Test
@@ -414,8 +408,8 @@ public class LabelPrintingServiceImplTest {
 
 		this.labelPrintingServiceImpl.processUserSpecificLabelsForInstance(params, workbook);
 
-		Assert.assertEquals(LabelPrintingServiceImplTest.NO_OF_GERMPLASM_LIST_OBSERVATION, params.getInstanceInfo().getFieldMapLabels()
-				.size());
+		Assert.assertEquals(LabelPrintingServiceImplTest.NO_OF_GERMPLASM_LIST_OBSERVATION,
+				params.getInstanceInfo().getFieldMapLabels().size());
 	}
 
 	@Test
@@ -433,8 +427,8 @@ public class LabelPrintingServiceImplTest {
 		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params,
 				this.measurementData, this.environmentData);
 		try {
-			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getGermplasmListsByProjectId(
-					LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.TRIAL);
+			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0))
+					.getGermplasmListsByProjectId(LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.TRIAL);
 		} catch (final NeverWantedButInvoked e) {
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is never invoked.");
 		}
@@ -456,8 +450,8 @@ public class LabelPrintingServiceImplTest {
 		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params,
 				this.measurementData, this.environmentData);
 		try {
-			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getGermplasmListsByProjectId(
-					LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.NURSERY);
+			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0))
+					.getGermplasmListsByProjectId(LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.NURSERY);
 		} catch (final NeverWantedButInvoked e) {
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is never invoked.");
 		}
@@ -474,7 +468,7 @@ public class LabelPrintingServiceImplTest {
 		final boolean isStockList = false;
 
 		final List<FieldMapTrialInstanceInfo> trialFieldMap =
-			this.fieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList(isStockList);
+				this.fieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList(isStockList);
 		final LabelPrintingProcessingParams params =
 				LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParamsWithAllFieldIDs();
 
@@ -482,8 +476,8 @@ public class LabelPrintingServiceImplTest {
 				this.measurementData, this.environmentData);
 
 		try {
-			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getGermplasmListsByProjectId(
-					LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.NURSERY);
+			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
+					.getGermplasmListsByProjectId(LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.NURSERY);
 		} catch (final TooLittleActualInvocations e) {
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is invoked.");
 		}

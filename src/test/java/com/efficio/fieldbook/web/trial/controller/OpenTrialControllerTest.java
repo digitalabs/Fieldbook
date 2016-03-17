@@ -303,8 +303,10 @@ public class OpenTrialControllerTest {
 			variable.setProperty(TestDataHelper.createProperty());
 			variable.setScale(TestDataHelper.createScale());
 
-			Mockito.when(this.variableDataManager.getVariable(Mockito.eq(PROGRAM_UUID), Mockito.eq(measurementVariable.getTermId()), Mockito.anyBoolean(),
-					Mockito.anyBoolean())).thenReturn(variable);;
+			Mockito.when(
+					this.variableDataManager.getVariable(Mockito.eq(PROGRAM_UUID), Mockito.eq(measurementVariable.getTermId()),
+							Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(variable);
+			;
 		}
 	}
 
@@ -795,26 +797,28 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testPrepareMeasurementVariableTabInfo() {
-		List<MeasurementVariable> variatesList = this.createVariates();
+		final List<MeasurementVariable> variatesList = this.createVariates();
 
-		Variable variable = new Variable();
+		final Variable variable = new Variable();
 		variable.setId(UnitTestDaoIDGenerator.generateId(Variable.class));
 		variable.setName("Variable Name");
 		variable.setMethod(TestDataHelper.createMethod());
 		variable.setProperty(TestDataHelper.createProperty());
 		variable.setScale(TestDataHelper.createScale());
 
-		Mockito.when(this.variableDataManager.getVariable(Mockito.any(String.class), Mockito.any(Integer.class), Mockito.anyBoolean(),
-				Mockito.anyBoolean())).thenReturn(variable);
+		Mockito.when(
+				this.variableDataManager.getVariable(Mockito.any(String.class), Mockito.any(Integer.class), Mockito.anyBoolean(),
+						Mockito.anyBoolean())).thenReturn(variable);
 
-		TabInfo tabInfo = this.openTrialController.prepareMeasurementVariableTabInfo(variatesList, VariableType.SELECTION_METHOD, false);
+		final TabInfo tabInfo =
+				this.openTrialController.prepareMeasurementVariableTabInfo(variatesList, VariableType.SELECTION_METHOD, false);
 
 		Assert.assertEquals("Operation", Operation.UPDATE, tabInfo.getSettings().get(0).getVariable().getOperation());
 		Assert.assertEquals("Deletable", true, tabInfo.getSettings().get(0).isDeletable());
 	}
 
 	private List<MeasurementVariable> createVariates() {
-		List<MeasurementVariable> variables = new ArrayList<>();
+		final List<MeasurementVariable> variables = new ArrayList<>();
 		variables.add(this.createMeasurementVariable(BM_CODE_VTE, "BM_CODE_VTE", "Breeding Method", "BMETH_CODE", "Observed", "VARIATE"));
 		return variables;
 	}
@@ -835,16 +839,17 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testGetAdvancedList() {
-		GermplasmList germplasm = new GermplasmList();
+		final GermplasmList germplasm = new GermplasmList();
 		germplasm.setId(501);
 		germplasm.setName("Advance Trial List");
 
-		List<GermplasmList> germplasmList = new ArrayList<>();
+		final List<GermplasmList> germplasmList = new ArrayList<>();
 		germplasmList.add(germplasm);
 
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Mockito.anyInt(), Mockito.any(GermplasmListType.class))).thenReturn(germplasmList);
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Mockito.anyInt(), Mockito.any(GermplasmListType.class)))
+				.thenReturn(germplasmList);
 
-		List<AdvanceList> advancedList = this.openTrialController.getAdvancedList(germplasm.getId());
+		final List<AdvanceList> advancedList = this.openTrialController.getAdvancedList(germplasm.getId());
 
 		Assert.assertEquals("Advance List size", 1, advancedList.size());
 		Assert.assertEquals("Advance List Id: ", germplasm.getId(), advancedList.get(0).getId());

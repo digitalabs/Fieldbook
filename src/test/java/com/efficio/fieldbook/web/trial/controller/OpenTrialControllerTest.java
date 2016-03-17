@@ -860,14 +860,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testAssignOperationOnExpDesignVariablesForExistingTrialWithoutExperimentalDesign() {
-		final MeasurementVariableTestDataInitializer measurementVariableInit = new MeasurementVariableTestDataInitializer();
-		final List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
-		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "10110"));
-		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "2"));
-
-		for (final MeasurementVariable var : conditions) {
-			var.setOperation(Operation.ADD);
-		}
+		final List<MeasurementVariable> conditions = this.initMeasurementVariableList();
 
 		this.openTrialController.assignOperationOnExpDesignVariables(conditions, null);
 
@@ -879,20 +872,9 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testAssignOperationOnExpDesignVariablesForExistingTrialWithExperimentalDesign() {
+		final List<MeasurementVariable> conditions = this.initMeasurementVariableList();
 
-		final MeasurementVariableTestDataInitializer measurementVariableInit = new MeasurementVariableTestDataInitializer();
-		final List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
-		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "10110"));
-		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "2"));
-
-		for (final MeasurementVariable var : conditions) {
-			var.setOperation(Operation.ADD);
-		}
-
-		final List<StandardVariable> existingExpDesignVariables = new ArrayList<StandardVariable>();
-		existingExpDesignVariables
-				.add(StandardVariableInitializer.createStdVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXP_DESIGN"));
-		existingExpDesignVariables.add(StandardVariableInitializer.createStdVariable(TermId.NUMBER_OF_REPLICATES.getId(), "NREP"));
+		final List<StandardVariable> existingExpDesignVariables = this.initExpDesignVariables();
 
 		this.openTrialController.assignOperationOnExpDesignVariables(conditions, existingExpDesignVariables);
 
@@ -900,5 +882,28 @@ public class OpenTrialControllerTest {
 			Assert.assertTrue("Expecting that the experimental variable's operation is now set to UPDATE",
 					var.getOperation().equals(Operation.UPDATE));
 		}
+	}
+
+	private List<StandardVariable> initExpDesignVariables() {
+		final List<StandardVariable> existingExpDesignVariables = new ArrayList<StandardVariable>();
+		existingExpDesignVariables
+				.add(StandardVariableInitializer.createStdVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXP_DESIGN"));
+		existingExpDesignVariables.add(StandardVariableInitializer.createStdVariable(TermId.NUMBER_OF_REPLICATES.getId(), "NREP"));
+		existingExpDesignVariables
+				.add(StandardVariableInitializer.createStdVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "EXP_DESIGN_SOURCE"));
+		return existingExpDesignVariables;
+	}
+
+	private List<MeasurementVariable> initMeasurementVariableList() {
+		final MeasurementVariableTestDataInitializer measurementVariableInit = new MeasurementVariableTestDataInitializer();
+		final List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
+		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "10110"));
+		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "SampleFile.csv"));
+		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "2"));
+
+		for (final MeasurementVariable var : conditions) {
+			var.setOperation(Operation.ADD);
+		}
+		return conditions;
 	}
 }

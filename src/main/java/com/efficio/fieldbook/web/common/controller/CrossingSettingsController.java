@@ -10,12 +10,21 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBException;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
+import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.util.CrossesListUtil;
+import com.efficio.fieldbook.web.util.DuplicatesUtil;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -49,17 +58,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
-import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.util.CrossesListUtil;
-import com.efficio.fieldbook.web.util.DuplicatesUtil;
 
 @Controller
 @RequestMapping(CrossingSettingsController.URL)
@@ -315,7 +313,6 @@ public class CrossingSettingsController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
 	public List<Map<String, Object>> getImportedCrossesList(final HttpSession session) {
-		//session.removeAttribute("createdCrossesListId");
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 
 		if (null == this.studySelection.getImportedCrossesList()) {

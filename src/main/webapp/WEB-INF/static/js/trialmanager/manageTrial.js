@@ -495,7 +495,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                     }
                 }
                 return null;
-            }
+            };
 		}]);
 
 	manageTrialApp.filter('filterMeasurementState', function() {
@@ -541,7 +541,9 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
             filtered.sort(function (a, b) {
                 return (a[field] > b[field] ? 1 : -1);
             });
-            if(reverse) filtered.reverse();
+            if(reverse) {
+                filtered.reverse();
+            }
             return filtered;
         };
     });

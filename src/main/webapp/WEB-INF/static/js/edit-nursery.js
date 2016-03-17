@@ -1,4 +1,4 @@
-var selectedTableIds = new Array();
+var selectedTableIds = [];
 
 function submitEditWorkbook() {
 	'use strict';

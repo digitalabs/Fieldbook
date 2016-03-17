@@ -18,7 +18,7 @@ var ImportCrosses = {
 		'use strict';
 
 		if ($('#fileupload-import-crosses').val() === '') {
-			showErrorMessage('', 'Please choose a file to import');
+			showErrorMessage('', $.fieldbookMessages.errorNoFileSelectedForImport);
 			return false;
 		}
 
@@ -84,7 +84,6 @@ var ImportCrosses = {
 		$('#goBackToImportCrossesButton').on('click', function() {
 			ImportCrosses.goBackToPage('#openCrossesListModal', '.import-crosses-section .modal');
 		});
-
 	},
 
 	goBackToPage: function(hiddenModalSelector, shownModalSelector) {
@@ -131,6 +130,9 @@ var ImportCrosses = {
 			cache: false,
 			success: function(html) {
 				$('.crosses-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
+			},
+			error: function() {
+				//TODO put error message
 			}
 		});
 	},
@@ -308,6 +310,7 @@ var ImportCrosses = {
 		},
 
 		retrieveAvailableImportSettings : function() {
+			//TODO Handle errors for ajax request
 			return $.ajax({
 				url: ImportCrosses.CROSSES_URL + '/retrieveSettings',
 				type: 'GET',
@@ -335,9 +338,9 @@ var ImportCrosses = {
 					type: 'POST',
 					cache: false,
 					data: JSON.stringify(settingData),
-					success: function (data) {
-						if (data.success == '0') {
-							showErrorMessage('', 'Import failed');
+					success: function(data) {
+						if (data.success === '0') {
+							showErrorMessage('', $.fieldbookMessages.errorImportFailed);
 						} else {
 							$('#crossSettingsModal').modal('hide');
 							if (isUpdateCrossesList.data) {
@@ -347,40 +350,40 @@ var ImportCrosses = {
 							}
 						}
 					},
-					error: function () {
-						showErrorMessage('', 'Import of crosses settings failed');
+					error: function() {
+						showErrorMessage('', $.fieldbookMessages.errorImportCrossesSettingsFailed);
 					}
 				});
 			}
 
 		},
 
-		isCrossImportSettingsValid : function(importSettings) {
+		isCrossImportSettingsValid: function(importSettings) {
 			var valid = true;
 
 			if (!importSettings.breedingMethodSetting.methodId || importSettings.breedingMethodSetting.methodId === '') {
 				valid = false;
-				showErrorMessage('', 'Breeding method is required');
+				showErrorMessage('', $.fieldbookMessages.errorImportMethodRequired);
 			}
 
-			if(!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)){
+			if (!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)) {
 				return false;
 			}
 
 			return valid;
 		},
 
-		updateDisplayedSequenceNameValue : function() {
+		updateDisplayedSequenceNameValue: function() {
 			var value = $('#startingSequenceNumber').val();
-			if (ImportCrosses.validateStartingSequenceNumber(value)){
-				ImportCrosses.retrieveNextNameInSequence().done(function(data){
+			if (ImportCrosses.validateStartingSequenceNumber(value)) {
+				ImportCrosses.retrieveNextNameInSequence().done(function(data) {
 					if (data.success === '1') {
 						$('#importNextSequenceName').text(data.sequenceValue);
 					} else {
-						showErrorMessage('', "Could not retrieve next name in the sequence.");
+						showErrorMessage('', $.fieldbookMessages.errorNoNextNameInSequence);
 					}
 				}).fail(function() {
-					showErrorMessage('', "Could not retrieve next name in the sequence.");
+					showErrorMessage('', $.fieldbookMessages.errorNoNextNameInSequence);
 				});
 			}
 		},
@@ -388,6 +391,7 @@ var ImportCrosses = {
 		retrieveNextNameInSequence : function() {
 			var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
+			//TODO Handle errors for ajax request
 			return $.ajax({
 				headers: {
 										'Accept': 'application/json',
@@ -407,7 +411,7 @@ var ImportCrosses = {
 			settingObject.breedingMethodSetting = {};
 			settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
 
-			if ( !settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId == '') {
+			if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
 				settingObject.breedingMethodSetting.methodId = null;
 			}
 
@@ -417,11 +421,11 @@ var ImportCrosses = {
 			settingObject.crossNameSetting.prefix = $('#crossPrefix').val();
 			settingObject.crossNameSetting.suffix = $('#crossSuffix').val();
 			settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode = $('input:radio[name=hasPrefixSpace]:checked').val() == 'true';
-			settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode= $('input:radio[name=hasSuffixSpace]:checked').val() == 'true';
+			settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode = $('input:radio[name=hasSuffixSpace]:checked').val() == 'true';
 			settingObject.crossNameSetting.numOfDigits = $('#sequenceNumberDigits').val();
 			settingObject.crossNameSetting.separator = $('#parentageDesignationSeparator').val();
 			settingObject.crossNameSetting.startNumber = $('#startingSequenceNumber').val();
-			settingObject.crossNameSetting.saveParentageDesignationAsAString= $('input:radio[name=hasParentageDesignationName]:checked').val() == 'true';
+			settingObject.crossNameSetting.saveParentageDesignationAsAString = $('input:radio[name=hasParentageDesignationName]:checked').val() == 'true';
 			settingObject.preservePlotDuplicates =  ImportCrosses.preservePlotDuplicates;
 			settingObject.isUseManualSettingsForNaming = $('#manualNamingSettings').is(':checked');
 			settingObject.additionalDetailsSetting = {};
@@ -469,6 +473,7 @@ var ImportCrosses = {
 		},
 
 		retrieveHarvestMonths : function() {
+			//TODO handle errors for ajax request
 			return $.ajax({
 				url: ImportCrosses.CROSSES_URL + '/getHarvestMonths',
 				type: 'GET',
@@ -477,6 +482,7 @@ var ImportCrosses = {
 		},
 
 		retrieveHarvestYears: function () {
+			//TODO handle errors for ajax request
 			return $.ajax({
 				url: ImportCrosses.CROSSES_URL + '/getHarvestYears',
 				type: 'GET',
@@ -486,6 +492,7 @@ var ImportCrosses = {
 
 
         exportCrosses : function() {
+        	//TODO handle errors for ajax request
             return $.ajax({
                 url: ImportCrosses.CROSSES_URL + '/export',
                 type: 'GET',
@@ -494,7 +501,7 @@ var ImportCrosses = {
         },
 
         downloadCrosses : function() {
-            ImportCrosses.exportCrosses().done(function (result) {
+            ImportCrosses.exportCrosses().done(function(result) {
                 if (result.isSuccess) {
                     var downloadUrl = ImportCrosses.CROSSES_URL + '/download/file';
 
@@ -504,18 +511,18 @@ var ImportCrosses = {
                     });
 
                 } else {
-                    createErrorNotification(crossingExportErrorHeader,result.errorMessage);
+                    createErrorNotification(crossingExportErrorHeader, result.errorMessage);
                 }
             });
         },
 
-		displayCrossesList: function (uniqueId, germplasmListId, listName, isDefault, crossesListId) {
+		displayCrossesList: function(uniqueId, germplasmListId, listName, isDefault, crossesListId) {
 			'use strict';
 			var url = '/Fieldbook/germplasm/list/crosses/' + germplasmListId;
-			if(!isDefault){
+			if (!isDefault) {
 				$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
 				url += '?isSnapshot=0';
-			}else{
+			} else {
 				url += '?isSnapshot=1';
 			}
 			$.ajax({
@@ -529,7 +536,7 @@ var ImportCrosses = {
 				}
 			});
 		},
-		displayTabCrossesList: function (germplasmListId, crossesListId, listName) {
+		displayTabCrossesList: function(germplasmListId, crossesListId, listName) {
 			'use strict';
 			var url = '/Fieldbook/germplasm/list/crosses/' + crossesListId;
 			url += '?isSnapshot=0';
@@ -561,9 +568,10 @@ var ImportCrosses = {
 				}
 			});
 		},
-		openSaveListModal: function(){
+		openSaveListModal: function() {
 			'use strict';
 			var  germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');
+			//TODO handle errors for ajax request
 			$.ajax({
 					url: '/Fieldbook/ListTreeManager/saveCrossesList/',
 					type: 'GET',
@@ -580,7 +588,7 @@ var ImportCrosses = {
 						TreePersist.preLoadGermplasmTreeState(false, '#germplasmFolderTree', true);
 
 						//we preselect the program lists
-						if(germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null) {
+						if (germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null) {
 							germplasmTreeNode.getNodeByKey('LOCAL').activate();
 						}
 					}

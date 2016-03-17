@@ -2007,3 +2007,11 @@ input.review-select-all{
 #manage-trial-tabs #germplasm-list-pagination {
     opacity: 1 !important;
 }
+
+.import-crosses-from-file #goBackToImportCrossesButton {
+    display: inline-block;
+}
+
+#goBackToImportCrossesButton {
+    display: none;
+}

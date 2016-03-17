@@ -3,6 +3,7 @@ var ImportCrosses = {
 		showFavoriteMethodsOnly: true,
 		showFavoriteLocationsOnly: true,
 		preservePlotDuplicates: false,
+		isFileCrossesImport: true,
 		showPopup : function(){
 			$('#fileupload-import-crosses').val('');
 			$('.import-crosses-section .modal').modal({ backdrop: 'static', keyboard: true });
@@ -29,6 +30,7 @@ var ImportCrosses = {
 				$('.import-crosses-section .modal').modal('hide');
 				$('#openCrossesListModal').data('hasPlotDuplicate', resp.hasPlotDuplicate);
 				// show review crosses page
+				ImportCrosses.isFileCrossesImport = true;
 				setTimeout(ImportCrosses.openCrossesList, 500);
 
 			});
@@ -43,9 +45,17 @@ var ImportCrosses = {
 		},
 		openCrossesList : function(createdCrossesListId) {
 			'use strict';
+
 			$('#openCrossesListModal').one('shown.bs.modal', function() {
 				$('body').addClass('modal-open');
 			}).modal({ backdrop: 'static', keyboard: true });
+			if (ImportCrosses.isFileCrossesImport) {
+				$('#openCrossesListModal').addClass("import-crosses-from-file");
+			}
+
+			$('#openCrossesListModal').on('hidden.bs.modal', function (e) {
+              $('#openCrossesListModal').removeClass("import-crosses-from-file");
+            })
 
 			ImportCrosses.getImportedCrossesTable(createdCrossesListId).done(function(response) {
 				setTimeout(function() {

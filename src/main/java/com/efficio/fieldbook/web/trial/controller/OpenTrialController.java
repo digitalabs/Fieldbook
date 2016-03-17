@@ -371,7 +371,10 @@ public class OpenTrialController extends BaseTrialController {
 		}
 
 		// update the operation for experiment design variables : EXP_DESIGN, EXP_DESIGN_SOURCE, NREP
-		this.assignOperationOnExpDesignVariables(workbook.getConditions());
+		// only if these variables already exists in the workbook
+		if (workbook.getExpDesignVariables() != null && !workbook.getExpDesignVariables().isEmpty()) {
+			this.assignOperationOnExpDesignVariables(workbook.getConditions());
+		}
 
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
 		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());

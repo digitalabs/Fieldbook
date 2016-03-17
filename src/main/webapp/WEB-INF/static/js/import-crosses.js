@@ -330,6 +330,9 @@ var ImportCrosses = {
 								ImportCrosses.openSaveListModal();
 							}
 						}
+					},
+					error: function () {
+						showErrorMessage('', 'Import of crosses settings failed');
 					}
 				});
 			}
@@ -358,10 +361,10 @@ var ImportCrosses = {
 					if (data.success === '1') {
 						$('#importNextSequenceName').text(data.sequenceValue);
 					} else {
-						showErrorMessage('', ajaxGenericErrorMsg);
+						showErrorMessage('', "Could not retrieve next name in the sequence.");
 					}
 				}).fail(function() {
-					showErrorMessage('', ajaxGenericErrorMsg);
+					showErrorMessage('', "Could not retrieve next name in the sequence.");
 				});
 			}
 		},

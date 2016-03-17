@@ -113,6 +113,15 @@ $(document).ready(function() {
 		$(className).slideToggle();
 	});
 
+	// handler for the manualNamingSettings display
+	$('#manualNamingSettings').on('change', function(e) {
+		if ($('#manualNamingSettings').is(':checked')) {
+        	$('#manualNamingSettingsPanel').removeClass('fbk-hide');
+        } else {
+        	$('#manualNamingSettingsPanel').addClass('fbk-hide');
+        }
+	});
+
 	if ($('#folderId').val() === '1') {
 		$('#folderNameLabel').html(programNurseriesText);
 	}

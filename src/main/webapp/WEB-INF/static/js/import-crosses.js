@@ -331,7 +331,7 @@ var ImportCrosses = {
 
 			if (!importSettings.breedingMethodSetting.methodId || importSettings.breedingMethodSetting.methodId === '') {
 				valid = false;
-				showErrorMessage('', 'Breading method is required');
+				showErrorMessage('', 'Breeding method is required');
 			}
 
 			if(!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)){

@@ -20,9 +20,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.ZipUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -42,25 +46,15 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
-import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.ZipUtil;
-
 @Service
 @Transactional
 public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(ExcelExportStudyServiceImpl.class);
 
 	private static final int PIXEL_SIZE = 250;
 

@@ -14,17 +14,16 @@ package com.efficio.fieldbook.service;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.util.FieldMapUtilityHelper;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The Class FieldMapServiceImpl.
@@ -82,8 +81,6 @@ public class FieldMapServiceImpl implements FieldMapService {
 					plot.setRange(range);
 					plot.setDatasetId(label.getDatasetId());
 					plot.setGeolocationId(label.getGeolocationId());
-					if (isSerpentine && column % 2 == 0) {
-					}
 					plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label, info.isTrial()));
 					plot.setNotStarted(false);
 					plot.setSavedAlready(isSavedAlready);
@@ -128,22 +125,6 @@ public class FieldMapServiceImpl implements FieldMapService {
 				plots[i][j] = plot;
 				plot.setNotStarted(false);
 			}
-		}
-	}
-
-	/**
-	 * Mark deleted coordinates.
-	 *
-	 * @param plots the plots
-	 * @param deletedCoordinates the deleted coordinates
-	 */
-	@SuppressWarnings("unused")
-	private void markDeletedCoordinates(Plot[][] plots, List<String> deletedCoordinates) {
-		for (String deletedIndex : deletedCoordinates) {
-			String[] columnRange = deletedIndex.split("_");
-			int column = Integer.parseInt(columnRange[0]);
-			int range = Integer.parseInt(columnRange[1]);
-			plots[column][range].setPlotDeleted(true);
 		}
 	}
 

@@ -6,9 +6,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
+import com.efficio.fieldbook.web.util.ZipUtil;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -17,23 +22,12 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
-import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
 @Transactional
 public class KsuExcelExportStudyServiceImpl implements KsuExcelExportStudyService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(KsuExcelExportStudyServiceImpl.class);
 
 	@Resource
 	private FieldbookProperties fieldbookProperties;

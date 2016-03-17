@@ -6,9 +6,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
+import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -32,21 +44,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
-import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
-import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
-import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-
 @Controller
 @RequestMapping(ExpDesignController.URL)
 public class ExpDesignController extends BaseTrialController {
@@ -64,9 +61,6 @@ public class ExpDesignController extends BaseTrialController {
 	private ResourceBundleMessageSource messageSource;
 	@Resource
 	private FieldbookProperties fieldbookProperties;
-
-	@Resource
-	private DesignImportService designImportService;
 
 	@Override
 	public String getContentName() {

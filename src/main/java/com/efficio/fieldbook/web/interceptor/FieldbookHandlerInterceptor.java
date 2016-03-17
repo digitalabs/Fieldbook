@@ -4,16 +4,11 @@ package com.efficio.fieldbook.web.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 //TODO: TX get rid of this class
 public class FieldbookHandlerInterceptor implements HandlerInterceptor {
-
-	@Autowired
-	private DynamicManagerFactoryProviderConcurrency managerFactoryProvider;
 
 	public FieldbookHandlerInterceptor() {
 

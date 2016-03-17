@@ -17,13 +17,27 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.SaveListForm;
+import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
+import com.efficio.pojos.treeview.TreeNode;
+import com.efficio.pojos.treeview.TreeTableNode;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -41,7 +55,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -63,23 +76,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.SaveListForm;
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.pojos.treeview.TreeNode;
-import com.efficio.pojos.treeview.TreeTableNode;
-import com.google.common.collect.Lists;
 
 /**
  * The Class GermplasmTreeController.
@@ -120,9 +116,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
-	@Resource
-	private UserDataManager userDataManager;
 
 	@Resource
 	private CrossingService crossingService;

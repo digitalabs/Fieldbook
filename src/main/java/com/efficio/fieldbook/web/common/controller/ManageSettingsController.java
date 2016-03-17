@@ -7,9 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -38,15 +45,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -328,41 +326,6 @@ public class ManageSettingsController extends SettingsController {
 			}
 		}
 		return operation;
-	}
-
-	/**
-	 * Gets the setting detail list.
-	 *
-	 * @param mode the mode
-	 * @return the setting detail list
-	 */
-	private List<SettingDetail> getSettingDetailList(int mode) {
-		if (mode == VariableType.STUDY_DETAIL.getId()) {
-			return this.userSelection.getStudyLevelConditions();
-		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId()) {
-			return this.userSelection.getPlotsLevelList();
-		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.NURSERY_CONDITION.getId()) {
-			List<SettingDetail> newList = new ArrayList<SettingDetail>();
-
-			if (this.userSelection.getBaselineTraitsList() != null) {
-				for (SettingDetail setting : this.userSelection.getBaselineTraitsList()) {
-					newList.add(setting);
-				}
-			}
-			if (this.userSelection.getNurseryConditions() != null) {
-				for (SettingDetail setting : this.userSelection.getNurseryConditions()) {
-					newList.add(setting);
-				}
-			}
-			return newList;
-		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
-			return this.userSelection.getSelectionVariates();
-		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
-			return this.userSelection.getTrialLevelVariableList();
-		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
-			return this.userSelection.getTreatmentFactors();
-		}
-		return new ArrayList<SettingDetail>();
 	}
 
 	@ResponseBody

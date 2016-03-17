@@ -16,9 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -39,10 +40,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-
 @Service
 @Transactional
 public class ValidationServiceImpl implements ValidationService {
@@ -57,9 +54,6 @@ public class ValidationServiceImpl implements ValidationService {
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
-	@Resource
-	private WorkbenchService workbenchService;
 	
 	@Resource
 	private WorkbenchDataManager workbenchDataManager;

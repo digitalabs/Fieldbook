@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.StandardVariableInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -854,5 +856,49 @@ public class OpenTrialControllerTest {
 		Assert.assertEquals("Advance List size", 1, advancedList.size());
 		Assert.assertEquals("Advance List Id: ", germplasm.getId(), advancedList.get(0).getId());
 		Assert.assertEquals("Advance List Name: ", germplasm.getName(), advancedList.get(0).getName());
+	}
+
+	@Test
+	public void testAssignOperationOnExpDesignVariablesForExistingTrialWithoutExperimentalDesign() {
+		final MeasurementVariableTestDataInitializer measurementVariableInit = new MeasurementVariableTestDataInitializer();
+		final List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
+		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "10110"));
+		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "2"));
+
+		for (final MeasurementVariable var : conditions) {
+			var.setOperation(Operation.ADD);
+		}
+
+		this.openTrialController.assignOperationOnExpDesignVariables(conditions, null);
+
+		for (final MeasurementVariable var : conditions) {
+			Assert.assertTrue("Expecting that the experimental variable's operation still set to ADD",
+					var.getOperation().equals(Operation.ADD));
+		}
+	}
+
+	@Test
+	public void testAssignOperationOnExpDesignVariablesForExistingTrialWithExperimentalDesign() {
+
+		final MeasurementVariableTestDataInitializer measurementVariableInit = new MeasurementVariableTestDataInitializer();
+		final List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
+		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "10110"));
+		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "2"));
+
+		for (final MeasurementVariable var : conditions) {
+			var.setOperation(Operation.ADD);
+		}
+
+		final List<StandardVariable> existingExpDesignVariables = new ArrayList<StandardVariable>();
+		existingExpDesignVariables
+				.add(StandardVariableInitializer.createStdVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXP_DESIGN"));
+		existingExpDesignVariables.add(StandardVariableInitializer.createStdVariable(TermId.NUMBER_OF_REPLICATES.getId(), "NREP"));
+
+		this.openTrialController.assignOperationOnExpDesignVariables(conditions, existingExpDesignVariables);
+
+		for (final MeasurementVariable var : conditions) {
+			Assert.assertTrue("Expecting that the experimental variable's operation is now set to UPDATE",
+					var.getOperation().equals(Operation.UPDATE));
+		}
 	}
 }

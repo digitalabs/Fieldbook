@@ -159,7 +159,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 */
 	@RequestMapping(value = "/saveList/{listIdentifier}", method = RequestMethod.GET)
 	public String saveList(@ModelAttribute("saveListForm") final SaveListForm form, @PathVariable final String listIdentifier,
-			final Model model, final HttpSession session) {
+			final Model model) {
 
 		try {
 			form.setListDate(DateUtil.getCurrentDateInUIFormat());
@@ -182,8 +182,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/saveList", method = RequestMethod.POST)
-	public Map<String, Object> savePost(@ModelAttribute("saveListForm") final SaveListForm form, final Model model,
-			final HttpSession session) {
+	public Map<String, Object> savePost(@ModelAttribute("saveListForm") final SaveListForm form, final Model model) {
 		final Map<String, Object> results = new HashMap<>();
 
 		try {
@@ -299,7 +298,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 			final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
 			ImportedCrossesList importedCrossesListWithNamigSettings = null;
-			if (crossSetting.getBreedingMethodSetting() == null ) {
+			if (crossSetting.isUseManualSettingsForNaming()) {
 				this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
 					this.userSelection.getWorkbook());
 				this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
@@ -385,7 +384,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * @return the string
 	 */
 	@RequestMapping(value = "/saveCrossesList", method = RequestMethod.GET)
-	public String saveList(@ModelAttribute("saveListForm") final SaveListForm form, final Model model, final HttpSession session) {
+	public String saveList(@ModelAttribute("saveListForm") final SaveListForm form, final Model model) {
 
 		try {
 			String listName = "";

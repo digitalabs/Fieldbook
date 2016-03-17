@@ -2008,10 +2008,14 @@ input.review-select-all{
     opacity: 1 !important;
 }
 
-.import-crosses-from-file #goBackToImportCrossesButton {
+.import-crosses-from-file #goBackToImportCrossesButton,
+.import-crosses-from-file #settingsNextButton,
+#settingsNextButtonUpdateList {
     display: inline-block;
 }
 
-#goBackToImportCrossesButton {
+#goBackToImportCrossesButton,
+#settingsNextButton,
+.import-crosses-from-file #settingsNextButtonUpdateList {
     display: none;
 }

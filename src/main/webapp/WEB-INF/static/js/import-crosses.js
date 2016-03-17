@@ -54,7 +54,10 @@ var ImportCrosses = {
 			}
 
 			$('#openCrossesListModal').on('hidden.bs.modal', function (e) {
-              $('#openCrossesListModal').removeClass("import-crosses-from-file");
+            	$('#openCrossesListModal').removeClass("import-crosses-from-file");
+            })
+            $('#crossSettingsModal').on('hidden.bs.modal', function (e) {
+            	$('#crossSettingsModal').removeClass("import-crosses-from-file");
             })
 
 			ImportCrosses.getImportedCrossesTable(createdCrossesListId).done(function(response) {
@@ -65,6 +68,9 @@ var ImportCrosses = {
 
 			$('#openCrossListNextButton').off('click');
 			$('#openCrossListNextButton').on('click', function() {
+				if (ImportCrosses.isFileCrossesImport) {
+                	$('#crossSettingsModal').addClass("import-crosses-from-file");
+                }
 				$('#openCrossesListModal').modal('hide');
 				setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
 			});
@@ -407,6 +413,7 @@ var ImportCrosses = {
 			settingObject.crossNameSetting.startNumber = $('#startingSequenceNumber').val();
 			settingObject.crossNameSetting.saveParentageDesignationAsAString= $('input:radio[name=hasParentageDesignationName]:checked').val() == 'true';
 			settingObject.preservePlotDuplicates =  ImportCrosses.preservePlotDuplicates;
+			settingObject.isUseManualSettingsForNaming = $('#manualNamingSettings').is(':checked');
 			settingObject.additionalDetailsSetting = {};
 			settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');
 			if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {

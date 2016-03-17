@@ -344,20 +344,17 @@
 
                     </div>
 
-
-
-
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" id="goBackToOpenCrossesButton"
                                 aria-hidden="true" th:text="#{common.form.back.text}">Back
                         </button>
                         <!-- We need different flows if we came from Breeding Manager (update the crosses list)
                         and if it is an XML file import (create new crosses list),
-                        we have URL parameter 'crosseslistid' in session to identify that we came from Breeding Manager -->
-                        <button type="button" class="btn btn-primary" th:if="!${session.containsKey('createdCrossesListId')}"
+                        we set ImportCrosses.isFileCrossesImport parameter to false to identify that we came from Breeding Manager -->
+                        <button type="button" class="btn btn-primary"
                                 aria-hidden="true" th:text="#{common.form.next.text}" id="settingsNextButton">Next
                         </button>
-                        <button type="button" class="btn btn-primary" th:if="${session.containsKey('createdCrossesListId')}"
+                        <button type="button" class="btn btn-primary"
                                 aria-hidden="true" th:text="#{common.form.next.text}" id="settingsNextButtonUpdateList">Next
                         </button>
                     </div>

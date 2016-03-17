@@ -170,7 +170,7 @@ public class NamingConventionServiceImplTest {
 		Assert.assertEquals(1, advanceResult1.getNames().size());
 		Name resultName1 = advanceResult1.getNames().get(0);
 		Assert.assertNull(resultName1.getNid());
-		Assert.assertEquals(new Integer(133), resultName1.getGermplasmId());
+		Assert.assertNull(resultName1.getGermplasmId());
 		Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName1.getTypeId().intValue());
 		Assert.assertEquals(new Integer(1), resultName1.getNstat());
 		Assert.assertEquals(ruleGeneratedName1, resultName1.getNval());
@@ -192,7 +192,7 @@ public class NamingConventionServiceImplTest {
 		Assert.assertEquals(1, advanceResult2.getNames().size());
 		Name resultName2 = advanceResult2.getNames().get(0);
 		Assert.assertNull(resultName2.getNid());
-		Assert.assertEquals(new Integer(133), resultName2.getGermplasmId());
+		Assert.assertNull(resultName2.getGermplasmId());
 		Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName2.getTypeId().intValue());
 		Assert.assertEquals(new Integer(1), resultName2.getNstat());
 		Assert.assertEquals(ruleGeneratedName2, resultName2.getNval());

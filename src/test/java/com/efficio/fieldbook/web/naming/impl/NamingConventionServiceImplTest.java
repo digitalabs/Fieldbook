@@ -302,7 +302,7 @@ public class NamingConventionServiceImplTest {
         Assert.assertEquals(1, resultIG.getNames().size());
         Name resultName = resultIG.getNames().get(0);
         Assert.assertNull(resultName.getNid());
-        Assert.assertEquals(new Integer(133), resultName.getGermplasmId());
+        Assert.assertNull(resultName.getGermplasmId());
         Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName.getTypeId().intValue());
         Assert.assertEquals(new Integer(1), resultName.getNstat());
         Assert.assertEquals(ruleGeneratedName, resultName.getNval());

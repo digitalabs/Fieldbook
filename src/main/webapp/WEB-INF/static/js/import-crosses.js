@@ -204,27 +204,27 @@ var ImportCrosses = {
 	},
 
 	processImportSettingsDropdown: function(dropdownID, useSettingsCheckboxID) {
+		'use strict';
+		ImportCrosses.retrieveAvailableImportSettings().done(function(settingList) {
+			ImportCrosses.createAvailableImportSettingsDropdown(dropdownID, settingList);
 
-			ImportCrosses.retrieveAvailableImportSettings().done(function(settingList) {
-				ImportCrosses.createAvailableImportSettingsDropdown(dropdownID, settingList);
-
-				$('#' + getJquerySafeId(dropdownID)).on('change', function() {
-					ImportCrosses.triggerImportSettingUpdate(settingList, dropdownID, useSettingsCheckboxID);
-					// update the displayed sequence name value so that it makes use of the possibly new settings
-					ImportCrosses.updateDisplayedSequenceNameValue();
-					ImportCrosses.updateSampleParentageDesignation();
-				});
-
-				$('#' + getJquerySafeId(useSettingsCheckboxID)).on('change', function() {
-					ImportCrosses.triggerImportSettingUpdate(settingList, dropdownID, useSettingsCheckboxID);
-
-					// update the displayed sequence name value so that it makes use of the possibly new settings
-					ImportCrosses.updateDisplayedSequenceNameValue();
-					ImportCrosses.updateSampleParentageDesignation();
-				});
-			}).fail(function() {
-				//TODO Process errors
+			$('#' + getJquerySafeId(dropdownID)).on('change', function() {
+				ImportCrosses.triggerImportSettingUpdate(settingList, dropdownID, useSettingsCheckboxID);
+				// update the displayed sequence name value so that it makes use of the possibly new settings
+				ImportCrosses.updateDisplayedSequenceNameValue();
+				ImportCrosses.updateSampleParentageDesignation();
 			});
+
+			$('#' + getJquerySafeId(useSettingsCheckboxID)).on('change', function() {
+				ImportCrosses.triggerImportSettingUpdate(settingList, dropdownID, useSettingsCheckboxID);
+
+				// update the displayed sequence name value so that it makes use of the possibly new settings
+				ImportCrosses.updateDisplayedSequenceNameValue();
+				ImportCrosses.updateSampleParentageDesignation();
+			});
+		}).fail(function() {
+			//TODO Process errors
+		});
 	},
 
 	triggerImportSettingUpdate: function(settingList, dropdownID, useSettingsCheckboxID) {
@@ -275,35 +275,35 @@ var ImportCrosses = {
 		LocationsFunctions.openLocationsModal();
 	},
 
-		createAvailableImportSettingsDropdown: function(dropdownID, settingList) {
-			var possibleValues = [];
-			$.each(settingList, function(index, setting) {
-				possibleValues.push(ImportCrosses.convertSettingToSelect2Item(setting));
-			});
+	createAvailableImportSettingsDropdown: function(dropdownID, settingList) {
+		'use strict';
+		var possibleValues = [];
+		$.each(settingList, function(index, setting) {
+			possibleValues.push(ImportCrosses.convertSettingToSelect2Item(setting));
+		});
 
-			$('#' + getJquerySafeId(dropdownID)).select2(
-				{
-					initSelection: function(element, callback) {
-						$.each(possibleValues, function(index, value) {
-							if (value.id === element.val()) {
-								callback(value);
-							}
-						});
-					},
-					query: function(query) {
-						var data = {
-							results: possibleValues
-						};
-						// return the array that matches
-						data.results = $.grep(data.results, function(item) {
-							return ($.fn.select2.defaults.matcher(query.term,
-								item.text));
-
-						});
-						query.callback(data);
+		$('#' + getJquerySafeId(dropdownID)).select2({
+			initSelection: function(element, callback) {
+				$.each(possibleValues, function(index, value) {
+					if (value.id === element.val()) {
+						callback(value);
 					}
 				});
-		},
+			},
+			query: function(query) {
+				var data = {
+					results: possibleValues
+				};
+				// return the array that matches
+				data.results = $.grep(data.results, function(item) {
+					return ($.fn.select2.defaults.matcher(query.term,
+						item.text));
+
+				});
+				query.callback(data);
+			}
+		});
+	},
 
 	convertSettingToSelect2Item: function(setting) {
 		'use strict';
@@ -369,7 +369,7 @@ var ImportCrosses = {
 		var valid = true;
 		if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
 			valid = false;
-			showErrorMessage('', 'Cross name prefix is required');
+			showErrorMessage('', $.fieldbookMessages.errorNoNamePrefix);
 		}
 
 		if (!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)) {
@@ -412,39 +412,39 @@ var ImportCrosses = {
 		});
 	},
 
-		constructSettingsObjectFromForm: function() {
-			var settingObject = {};
-			settingObject.name = $('#presetName').val();
+	constructSettingsObjectFromForm: function() {
+		'use strict';
+		var settingObject = {};
+		settingObject.name = $('#presetName').val();
 
-			settingObject.breedingMethodSetting = {};
-			settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
+		settingObject.breedingMethodSetting = {};
+		settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
 
-			if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
-				settingObject.breedingMethodSetting.methodId = null;
-			}
+		if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
+			settingObject.breedingMethodSetting.methodId = null;
+		}
 
-			settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').is(':checked');
+		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').is(':checked');
 
-			settingObject.crossNameSetting = {};
-			settingObject.crossNameSetting.prefix = $('#crossPrefix').val();
-			settingObject.crossNameSetting.suffix = $('#crossSuffix').val();
-			settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode = $('input:radio[name=hasPrefixSpace]:checked').val() == 'true';
-			settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode = $('input:radio[name=hasSuffixSpace]:checked').val() == 'true';
-			settingObject.crossNameSetting.numOfDigits = $('#sequenceNumberDigits').val();
-			settingObject.crossNameSetting.separator = $('#parentageDesignationSeparator').val();
-			settingObject.crossNameSetting.startNumber = $('#startingSequenceNumber').val();
-			settingObject.crossNameSetting.saveParentageDesignationAsAString = $('input:radio[name=hasParentageDesignationName]:checked').val() == 'true';
-			settingObject.preservePlotDuplicates =  ImportCrosses.preservePlotDuplicates;
-			settingObject.isUseManualSettingsForNaming = $('#manualNamingSettings').is(':checked');
-			settingObject.additionalDetailsSetting = {};
-			settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');
-			if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
-				settingObject.additionalDetailsSetting.harvestDate = $('#harvestYearDropdown').val() + '-' + $('#harvestMonthDropdown').val();
-			}
+		settingObject.crossNameSetting = {};
+		settingObject.crossNameSetting.prefix = $('#crossPrefix').val();
+		settingObject.crossNameSetting.suffix = $('#crossSuffix').val();
+		settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode = $('input:radio[name=hasPrefixSpace]:checked').val() == 'true';
+		settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode = $('input:radio[name=hasSuffixSpace]:checked').val() == 'true';
+		settingObject.crossNameSetting.numOfDigits = $('#sequenceNumberDigits').val();
+		settingObject.crossNameSetting.separator = $('#parentageDesignationSeparator').val();
+		settingObject.crossNameSetting.startNumber = $('#startingSequenceNumber').val();
+		settingObject.crossNameSetting.saveParentageDesignationAsAString = $('input:radio[name=hasParentageDesignationName]:checked').val() == 'true';
+		settingObject.preservePlotDuplicates =  ImportCrosses.preservePlotDuplicates;
+		settingObject.isUseManualSettingsForNaming = $('#manualNamingSettings').is(':checked');
+		settingObject.additionalDetailsSetting = {};
+		settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');
+		if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
+			settingObject.additionalDetailsSetting.harvestDate = $('#harvestYearDropdown').val() + '-' + $('#harvestMonthDropdown').val();
+		}
 
-			return settingObject;
-
-		},
+		return settingObject;
+	},
 
 	populateHarvestMonthDropdown: function(dropdownID) {
 		'use strict';
@@ -528,59 +528,66 @@ var ImportCrosses = {
 		});
 	},
 
-		displayCrossesList: function(uniqueId, germplasmListId, listName, isDefault, crossesListId) {
-			'use strict';
-			var url = '/Fieldbook/germplasm/list/crosses/' + germplasmListId;
-			if (!isDefault) {
-				$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
-				url += '?isSnapshot=0';
-			} else {
-				url += '?isSnapshot=1';
-			}
-			$.ajax({
-				url: url,
-				type: 'GET',
-				cache: false,
-				success: function(html) {
-					$('.crosses-list' + uniqueId).html(html);
-					$('.crosses-list' + uniqueId + '-li').addClass('crosses-germplasm-items');
-					$('.crosses-list' + uniqueId + '-li').data('crosses-germplasm-list-id', crossesListId);
-				}
-			});
-		},
-
-		displayTabCrossesList: function(germplasmListId, crossesListId, listName) {
-			'use strict';
-			var url = '/Fieldbook/germplasm/list/crosses/' + crossesListId;
+	displayCrossesList: function(uniqueId, germplasmListId, listName, isDefault, crossesListId) {
+		'use strict';
+		var url = '/Fieldbook/germplasm/list/crosses/' + germplasmListId;
+		if (!isDefault) {
+			$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
 			url += '?isSnapshot=0';
-			$.ajax({
-				url: url,
-				type: 'GET',
-				cache: false,
-				success: function(html) {
-					$('#saveListTreeModal').modal('hide');
-					$('#saveListTreeModal').data('is-save-crosses', '0');
-					$('#create-nursery-tabs .tab-pane.info').removeClass('active');
-					var uniqueId,
+		} else {
+			url += '?isSnapshot=1';
+		}
+		$.ajax({
+			url: url,
+			type: 'GET',
+			cache: false,
+			success: function(html) {
+				$('.crosses-list' + uniqueId).html(html);
+				$('.crosses-list' + uniqueId + '-li').addClass('crosses-germplasm-items');
+				$('.crosses-list' + uniqueId + '-li').data('crosses-germplasm-list-id', crossesListId);
+			},
+			error: function() {
+				//TODO process errors
+			}
+		});
+	},
+
+	displayTabCrossesList: function(germplasmListId, crossesListId, listName) {
+		'use strict';
+		var url = '/Fieldbook/germplasm/list/crosses/' + crossesListId;
+		url += '?isSnapshot=0';
+		$.ajax({
+			url: url,
+			type: 'GET',
+			cache: false,
+			success: function(html) {
+				$('#saveListTreeModal').modal('hide');
+				$('#saveListTreeModal').data('is-save-crosses', '0');
+				$('#create-nursery-tabs .tab-pane.info').removeClass('active');
+				var uniqueId,
 					close,
 					aHtml;
-					uniqueId = crossesListId;
-					close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
-					aHtml = '<a id="advance-list'+uniqueId+'" role="tab" class="advanceList crossesList crossesList'+uniqueId+'" data-toggle="tab" href="#advance-list' + uniqueId + '" data-list-id="' + uniqueId + '">Crosses: [' + listName + ']' + close + '</a>';
-					var stockHtml = '<div id="stock-content-pane' + uniqueId + '" class="stock-list' + uniqueId + '"></div>';
-					$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li" class="advance-germplasm-items crosses-list">' + aHtml + '</li>');
-					$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="advance-list' + uniqueId + '">' + html + '</div>');
-					$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="stock-tab-pane' + uniqueId + '">' + stockHtml + '</div>');
-					$('a#advance-list'+uniqueId).tab('show');
+				uniqueId = crossesListId;
+				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
+				aHtml = '<a id="advance-list'+uniqueId+'" role="tab" class="advanceList crossesList crossesList'+uniqueId+'" data-toggle="tab" href="#advance-list' + uniqueId + '" data-list-id="' + uniqueId + '">Crosses: [' + listName + ']' + close + '</a>';
+				var stockHtml = '<div id="stock-content-pane' + uniqueId + '" class="stock-list' + uniqueId + '"></div>';
+				$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li" class="advance-germplasm-items crosses-list">' + aHtml + '</li>');
+				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="advance-list' + uniqueId + '">' + html + '</div>');
+				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="stock-tab-pane' + uniqueId + '">' + stockHtml + '</div>');
+				$('a#advance-list'+uniqueId).tab('show');
+				$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
+				$('.nav-tabs').tabdrop('layout');
+				$('a#advance-list'+uniqueId).on('click', function() {
+					$('#create-nursery-tabs .tab-pane.info').removeClass('active');
 					$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
-					$('.nav-tabs').tabdrop('layout');
-					$('a#advance-list'+uniqueId).on('click', function(){
-						$('#create-nursery-tabs .tab-pane.info').removeClass('active');
-						$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
-					});
-				}
-			});
-		},
+				});
+			},
+			error: function() {
+				//TODO Process errors
+			}
+		});
+	},
+
 	openSaveListModal: function() {
 		'use strict';
 		var  germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');
@@ -604,6 +611,9 @@ var ImportCrosses = {
 				if (germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null) {
 					germplasmTreeNode.getNodeByKey('LOCAL').activate();
 				}
+			},
+			error: function() {
+				//TODO process errors
 			}
 		});
 	}

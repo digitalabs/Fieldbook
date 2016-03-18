@@ -213,10 +213,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		final List<Name> names = new ArrayList<Name>();
 
 		final Name name = new Name();
-		final Integer germplasmId = source.getGermplasm().getGid() != null ? Integer.valueOf(source.getGermplasm().getGid()) : null;
-		name.setGermplasmId(germplasmId);
 		name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
-
 		name.setNval(germplasm.getDesig());
 		name.setNstat(1);
 		names.add(name);

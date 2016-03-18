@@ -1,4 +1,4 @@
-/*global showErrorMessage, createErrorNotification, crossingImportErrorHeader, isInt*/
+/*global showErrorMessage, createErrorNotification, crossingImportErrorHeader, isInt, crossingExportErrorHeader, invalidImportedFile*/
 var ImportCrosses = {
 	CROSSES_URL: '/Fieldbook/crosses',
 	showFavoriteMethodsOnly: true,
@@ -57,11 +57,11 @@ var ImportCrosses = {
 			$('#openCrossesListModal').addClass('import-crosses-from-file');
 		}
 
-		$('#openCrossesListModal').on('hidden.bs.modal', function(e) {
+		$('#openCrossesListModal').on('hidden.bs.modal', function() {
 			$('#openCrossesListModal').removeClass('import-crosses-from-file');
 		});
 
-		('#crossSettingsModal').on('hidden.bs.modal', function(e) {
+		$('#crossSettingsModal').on('hidden.bs.modal', function() {
 				$('#crossSettingsModal').removeClass('import-crosses-from-file');
 			});
 
@@ -156,7 +156,7 @@ var ImportCrosses = {
 			}
 		},
 
-	showImportSettingsPopup : function() {
+	showImportSettingsPopup: function() {
 		'use strict';
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
@@ -222,56 +222,60 @@ var ImportCrosses = {
 					ImportCrosses.updateDisplayedSequenceNameValue();
 					ImportCrosses.updateSampleParentageDesignation();
 				});
-			}).fail(function(data) {
+			}).fail(function() {
+				//TODO Process errors
 			});
-		},
+	},
 
-		triggerImportSettingUpdate : function(settingList, dropdownID, useSettingsCheckboxID) {
-			if ($('#' + getJquerySafeId(useSettingsCheckboxID)).is(':checked')) {
-				var currentSelectedItem = $('#' + dropdownID).select2('val');
+	triggerImportSettingUpdate: function(settingList, dropdownID, useSettingsCheckboxID) {
+		'use strict';
+		if ($('#' + getJquerySafeId(useSettingsCheckboxID)).is(':checked')) {
+			var currentSelectedItem = $('#' + dropdownID).select2('val');
 
-				$.each(settingList, function (index, setting) {
-					if (setting.name === currentSelectedItem) {
-						ImportCrosses.updateImportSettingsFromSavedSetting(setting);
-					}
-				});
-			}
-		},
+			$.each(settingList, function(index, setting) {
+				if (setting.name === currentSelectedItem) {
+					ImportCrosses.updateImportSettingsFromSavedSetting(setting);
+				}
+			});
+		}
+	},
 
-		updateImportSettingsFromSavedSetting : function(setting) {
+	updateImportSettingsFromSavedSetting: function(setting) {
+		'use strict';
+		$('#presetName').val(setting.name);
+		$('#breedingMethodDropdown').select2('val', setting.breedingMethodID);
+		$('#useSelectedMethodCheckbox').prop('checked', !setting.basedOnStatusOfParentalLines);
 
-			$('#presetName').val(setting.name);
-			$('#breedingMethodDropdown').select2('val', setting.breedingMethodID);
-			$('#useSelectedMethodCheckbox').prop('checked', !setting.basedOnStatusOfParentalLines);
+		$('#crossPrefix').val(setting.crossPrefix);
+		$('#crossSuffix').val(setting.crossSuffix);
+		$('input:radio[name=hasPrefixSpace][value=' + setting.hasPrefixSpace + ']').prop('checked', true);
+		$('input:radio[name=hasSuffixSpace][value=' + setting.hasSuffixSpace + ']').prop('checked', true);
+		$('input:radio[name=hasParentageDesignationName][value=' + setting.hasParentageDesignationName + ']').prop('checked', true);
+		$('#sequenceNumberDigits').select2('val', setting.sequenceNumberDigits);
+		$('#parentageDesignationSeparator').val(setting.parentageDesignationSeparator);
+		$('#startingSequenceNumber').val(setting.startingSequenceNumber);
+		$('#locationDropdown').select2('val', setting.locationID);
+	},
 
-			$('#crossPrefix').val(setting.crossPrefix);
-			$('#crossSuffix').val(setting.crossSuffix);
-			$('input:radio[name=hasPrefixSpace][value=' + setting.hasPrefixSpace + ']').prop('checked', true);
-			$('input:radio[name=hasSuffixSpace][value=' + setting.hasSuffixSpace + ']').prop('checked', true);
-			$('input:radio[name=hasParentageDesignationName][value=' + setting.hasParentageDesignationName + ']').prop('checked', true);
-			$('#sequenceNumberDigits').select2('val', setting.sequenceNumberDigits);
-			$('#parentageDesignationSeparator').val(setting.parentageDesignationSeparator);
-			$('#startingSequenceNumber').val(setting.startingSequenceNumber);
-			$('#locationDropdown').select2('val', setting.locationID);
-		},
+	openBreedingMethodsModal: function() {
+		'use strict';
+		var crossSettingsPopupModal = $('#crossSettingsModal');
+		crossSettingsPopupModal.modal('hide');
+		crossSettingsPopupModal.data('open', '1');
 
-		openBreedingMethodsModal: function () {
-			var crossSettingsPopupModal = $('#crossSettingsModal');
-			crossSettingsPopupModal.modal('hide');
-			crossSettingsPopupModal.data('open', '1');
+		BreedingMethodsFunctions.openMethodsModal();
+	},
 
-			BreedingMethodsFunctions.openMethodsModal();
-		},
+	openLocationsModal: function() {
+		'use strict';
+		var crossSettingsPopupModal = $('#crossSettingsModal');
+		crossSettingsPopupModal.modal('hide');
+		crossSettingsPopupModal.data('open', '1');
 
-		openLocationsModal: function () {
-			var crossSettingsPopupModal = $('#crossSettingsModal');
-			crossSettingsPopupModal.modal('hide');
-			crossSettingsPopupModal.data('open', '1');
+		LocationsFunctions.openLocationsModal();
+	},
 
-			LocationsFunctions.openLocationsModal();
-		},
-
-		createAvailableImportSettingsDropdown : function(dropdownID, settingList) {
+		createAvailableImportSettingsDropdown: function(dropdownID, settingList) {
 			var possibleValues = [];
 			$.each(settingList, function(index, setting) {
 				possibleValues.push(ImportCrosses.convertSettingToSelect2Item(setting));
@@ -279,19 +283,19 @@ var ImportCrosses = {
 
 			$('#' + getJquerySafeId(dropdownID)).select2(
 				{
-					initSelection: function (element, callback) {
-						$.each(possibleValues, function (index, value) {
-							if (value.id == element.val()) {
+					initSelection: function(element, callback) {
+						$.each(possibleValues, function(index, value) {
+							if (value.id === element.val()) {
 								callback(value);
 							}
 						});
 					},
-					query: function (query) {
+					query: function(query) {
 						var data = {
 							results: possibleValues
 						};
 						// return the array that matches
-						data.results = $.grep(data.results, function (item) {
+						data.results = $.grep(data.results, function(item) {
 							return ($.fn.select2.defaults.matcher(query.term,
 								item.text));
 
@@ -301,44 +305,47 @@ var ImportCrosses = {
 				});
 		},
 
-		convertSettingToSelect2Item : function(setting) {
-			return {
-				'id': setting.name,
-				'text': setting.name,
-				'description': setting.name
-			};
-		},
+	convertSettingToSelect2Item: function(setting) {
+		'use strict';
+		return {
+			id: setting.name,
+			text: setting.name,
+			description: setting.name
+		};
+	},
 
-		retrieveAvailableImportSettings : function() {
-			//TODO Handle errors for ajax request
-			return $.ajax({
-				url: ImportCrosses.CROSSES_URL + '/retrieveSettings',
-				type: 'GET',
-				cache: false
-			});
-		},
+	retrieveAvailableImportSettings: function() {
+		'use strict';
+		//TODO Handle errors for ajax request
+		return $.ajax({
+			url: ImportCrosses.CROSSES_URL + '/retrieveSettings',
+			type: 'GET',
+			cache: false
+		});
+	},
 
-		submitCrossImportSettings : function(isUpdateCrossesList) {
-			var settingData = ImportCrosses.constructSettingsObjectFromForm();
+	submitCrossImportSettings: function(isUpdateCrossesList) {
+		'use strict';
+		var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
-			if (ImportCrosses.isCrossImportSettingsValid(settingData)) {
-				var targetURL;
-				if ($('#presetName').val().trim() !== '') {
-					targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
-				} else {
-					targetURL = ImportCrosses.CROSSES_URL + '/submit';
-				}
+		if (ImportCrosses.isCrossImportSettingsValid(settingData)) {
+			var targetURL;
+			if ($('#presetName').val().trim() !== '') {
+				targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
+			} else {
+				targetURL = ImportCrosses.CROSSES_URL + '/submit';
+			}
 
-				$.ajax({
-					headers: {
-						'Accept': 'application/json',
-						'Content-Type': 'application/json'
-					},
-					url: targetURL,
-					type: 'POST',
-					cache: false,
-					data: JSON.stringify(settingData),
-					success: function(data) {
+			$.ajax({
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				url: targetURL,
+				type: 'POST',
+				cache: false,
+				data: JSON.stringify(settingData),
+				success: function(data) {
 						if (data.success === '0') {
 							showErrorMessage('', $.fieldbookMessages.errorImportFailed);
 						} else {
@@ -350,61 +357,62 @@ var ImportCrosses = {
 							}
 						}
 					},
-					error: function() {
-						showErrorMessage('', $.fieldbookMessages.errorImportCrossesSettingsFailed);
-					}
-				});
-			}
-
-		},
-
-		isCrossImportSettingsValid: function(importSettings) {
-			var valid = true;
-
-			if (!importSettings.breedingMethodSetting.methodId || importSettings.breedingMethodSetting.methodId === '') {
-				valid = false;
-				showErrorMessage('', $.fieldbookMessages.errorImportMethodRequired);
-			}
-
-			if (!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)) {
-				return false;
-			}
-
-			return valid;
-		},
-
-		updateDisplayedSequenceNameValue: function() {
-			var value = $('#startingSequenceNumber').val();
-			if (ImportCrosses.validateStartingSequenceNumber(value)) {
-				ImportCrosses.retrieveNextNameInSequence().done(function(data) {
-					if (data.success === '1') {
-						$('#importNextSequenceName').text(data.sequenceValue);
-					} else {
-						showErrorMessage('', $.fieldbookMessages.errorNoNextNameInSequence);
-					}
-				}).fail(function() {
-					showErrorMessage('', $.fieldbookMessages.errorNoNextNameInSequence);
-				});
-			}
-		},
-
-		retrieveNextNameInSequence : function() {
-			var settingData = ImportCrosses.constructSettingsObjectFromForm();
-
-			//TODO Handle errors for ajax request
-			return $.ajax({
-				headers: {
-										'Accept': 'application/json',
-										'Content-Type': 'application/json'
-									},
-				'url' : ImportCrosses.CROSSES_URL + '/generateSequenceValue',
-				'type' : 'POST',
-				'data' : JSON.stringify(settingData),
-				'cache' : false
+				error: function() {
+					showErrorMessage('', $.fieldbookMessages.errorImportCrossesSettingsFailed);
+				}
 			});
-		},
+		}
+	},
 
-		constructSettingsObjectFromForm : function() {
+	isCrossImportSettingsValid: function(importSettings) {
+		'use strict';
+		var valid = true;
+		if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
+			valid = false;
+			showErrorMessage('', 'Cross name prefix is required');
+		}
+
+		if (!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)) {
+			return false;
+		}
+
+		return valid;
+	},
+
+	updateDisplayedSequenceNameValue: function() {
+		'use strict';
+		var value = $('#startingSequenceNumber').val();
+		if (ImportCrosses.validateStartingSequenceNumber(value)) {
+			ImportCrosses.retrieveNextNameInSequence().done(function(data) {
+				if (data.success === '1') {
+					$('#importNextSequenceName').text(data.sequenceValue);
+				} else {
+					showErrorMessage('', $.fieldbookMessages.errorNoNextNameInSequence);
+				}
+			}).fail(function() {
+				showErrorMessage('', $.fieldbookMessages.errorNoNextNameInSequence);
+			});
+		}
+	},
+
+	retrieveNextNameInSequence: function() {
+		'use strict';
+		var settingData = ImportCrosses.constructSettingsObjectFromForm();
+
+		//TODO Handle errors for ajax request
+		return $.ajax({
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			url: ImportCrosses.CROSSES_URL + '/generateSequenceValue',
+			type: 'POST',
+			data: JSON.stringify(settingData),
+			cache: false
+		});
+	},
+
+		constructSettingsObjectFromForm: function() {
 			var settingObject = {};
 			settingObject.name = $('#presetName').val();
 
@@ -438,83 +446,87 @@ var ImportCrosses = {
 
 		},
 
-		populateHarvestMonthDropdown : function(dropdownID) {
-			ImportCrosses.retrieveHarvestMonths().done(function(monthData) {
-				var dropdownSelect = $('#' + dropdownID);
-				dropdownSelect.empty();
-				dropdownSelect.select2({
-					placeholder : 'Month',
-					allowClear : true,
-					data : monthData,
-					minimumResultsForSearch : -1
+	populateHarvestMonthDropdown: function(dropdownID) {
+		'use strict';
+		ImportCrosses.retrieveHarvestMonths().done(function(monthData) {
+			var dropdownSelect = $('#' + dropdownID);
+			dropdownSelect.empty();
+			dropdownSelect.select2({
+				placeholder: 'Month',
+				allowClear: true,
+				data: monthData,
+				minimumResultsForSearch: -1
+			});
+		});
+	},
+
+	populateHarvestYearDropdown: function(dropdownID) {
+		'use strict';
+		ImportCrosses.retrieveHarvestYears().done(function(yearData) {
+			var dropdownData = [];
+			var dropdownSelect = $('#' + dropdownID);
+			dropdownSelect.empty();
+			$.each(yearData, function(index, value) {
+				dropdownData.push({
+					id: value,
+					text: value
 				});
 			});
-		},
 
-		populateHarvestYearDropdown : function(dropdownID) {
-			ImportCrosses.retrieveHarvestYears().done(function (yearData) {
-				var dropdownData = [];
-				var dropdownSelect = $('#' + dropdownID);
-				dropdownSelect.empty();
-				$.each(yearData, function (index, value) {
-					dropdownData.push({
-						id : value,
-						text : value
-					});
+			dropdownSelect.select2({
+				minimumResultsForSearch: -1,
+				data: dropdownData
+			});
+
+			dropdownSelect.select2('val', yearData[0]);
+		});
+	},
+
+	retrieveHarvestMonths: function() {
+		'use strict';
+		//TODO handle errors for ajax request
+		return $.ajax({
+			url: ImportCrosses.CROSSES_URL + '/getHarvestMonths',
+			type: 'GET',
+			cache: false
+		});
+	},
+
+	retrieveHarvestYears: function() {
+		'use strict';
+		//TODO handle errors for ajax request
+		return $.ajax({
+			url: ImportCrosses.CROSSES_URL + '/getHarvestYears',
+			type: 'GET',
+			cache: false
+		});
+	},
+
+	exportCrosses: function() {
+		'use strict';
+		//TODO handle errors for ajax request
+		return $.ajax({
+			url: ImportCrosses.CROSSES_URL + '/export',
+			type: 'GET',
+			cache: false
+		});
+	},
+
+	downloadCrosses: function() {
+		'use strict';
+		ImportCrosses.exportCrosses().done(function(result) {
+			if (result.isSuccess) {
+				var downloadUrl = ImportCrosses.CROSSES_URL + '/download/file';
+
+				$.fileDownload(downloadUrl, {
+					httpMethod: 'POST',
+					data: result
 				});
-
-				dropdownSelect.select2({
-					minimumResultsForSearch : -1,
-					data : dropdownData
-				});
-
-				dropdownSelect.select2('val', yearData[0]);
-			});
-		},
-
-		retrieveHarvestMonths : function() {
-			//TODO handle errors for ajax request
-			return $.ajax({
-				url: ImportCrosses.CROSSES_URL + '/getHarvestMonths',
-				type: 'GET',
-				cache: false
-			});
-		},
-
-		retrieveHarvestYears: function () {
-			//TODO handle errors for ajax request
-			return $.ajax({
-				url: ImportCrosses.CROSSES_URL + '/getHarvestYears',
-				type: 'GET',
-				cache: false
-			});
-		},
-
-
-        exportCrosses : function() {
-        	//TODO handle errors for ajax request
-            return $.ajax({
-                url: ImportCrosses.CROSSES_URL + '/export',
-                type: 'GET',
-                cache: false
-            });
-        },
-
-        downloadCrosses : function() {
-            ImportCrosses.exportCrosses().done(function(result) {
-                if (result.isSuccess) {
-                    var downloadUrl = ImportCrosses.CROSSES_URL + '/download/file';
-
-                    $.fileDownload(downloadUrl,{
-                    	httpMethod: 'POST',
-                        data: result
-                    });
-
-                } else {
-                    createErrorNotification(crossingExportErrorHeader, result.errorMessage);
-                }
-            });
-        },
+			} else {
+				createErrorNotification(crossingExportErrorHeader, result.errorMessage);
+			}
+		});
+	},
 
 		displayCrossesList: function(uniqueId, germplasmListId, listName, isDefault, crossesListId) {
 			'use strict';
@@ -531,11 +543,12 @@ var ImportCrosses = {
 				cache: false,
 				success: function(html) {
 					$('.crosses-list' + uniqueId).html(html);
-					$('.crosses-list' + uniqueId+'-li').addClass('crosses-germplasm-items');
-					$('.crosses-list' + uniqueId+'-li').data('crosses-germplasm-list-id', crossesListId);
+					$('.crosses-list' + uniqueId + '-li').addClass('crosses-germplasm-items');
+					$('.crosses-list' + uniqueId + '-li').data('crosses-germplasm-list-id', crossesListId);
 				}
 			});
 		},
+
 		displayTabCrossesList: function(germplasmListId, crossesListId, listName) {
 			'use strict';
 			var url = '/Fieldbook/germplasm/list/crosses/' + crossesListId;
@@ -568,33 +581,32 @@ var ImportCrosses = {
 				}
 			});
 		},
-		openSaveListModal: function() {
-			'use strict';
-			var  germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');
-			//TODO handle errors for ajax request
-			$.ajax({
-					url: '/Fieldbook/ListTreeManager/saveCrossesList/',
-					type: 'GET',
-					cache: false,
-					success: function(html) {
-						$('#saveGermplasmRightSection').html(html);
-						$('#saveListTreeModal').modal({
-							show: true,
-							keyboard: true,
-							backdrop: 'static'
-						});
-						$('#saveListTreeModal').data('is-save-crosses', '1');
+	openSaveListModal: function() {
+		'use strict';
+		var  germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');
+		//TODO handle errors for ajax request
+		$.ajax({
+			url: '/Fieldbook/ListTreeManager/saveCrossesList/',
+			type: 'GET',
+			cache: false,
+			success: function(html) {
+				$('#saveGermplasmRightSection').html(html);
+				$('#saveListTreeModal').modal({
+					show: true,
+					keyboard: true,
+					backdrop: 'static'
+				});
+				$('#saveListTreeModal').data('is-save-crosses', '1');
 
-						TreePersist.preLoadGermplasmTreeState(false, '#germplasmFolderTree', true);
+				TreePersist.preLoadGermplasmTreeState(false, '#germplasmFolderTree', true);
 
-						//we preselect the program lists
-						if (germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null) {
-							germplasmTreeNode.getNodeByKey('LOCAL').activate();
-						}
-					}
+				//we preselect the program lists
+				if (germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null) {
+					germplasmTreeNode.getNodeByKey('LOCAL').activate();
 				}
-			);
-		}
+			}
+		});
+	}
 };
 
 $(document).ready(function() {

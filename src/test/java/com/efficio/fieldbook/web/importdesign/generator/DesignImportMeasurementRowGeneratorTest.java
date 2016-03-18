@@ -147,7 +147,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 			}
 			if (TermId.ENTRY_TYPE.getId() == measurementData.getMeasurementVariable().getTermId()) {
 				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.ENTRY_TYPE.toString(),
-						measurementData.getValue().toString(), germplasmEntry.getCheck().toString());
+						measurementData.getValue().toString(), germplasmEntry.getEntryTypeValue().toString());
 			}
 			if (TermId.CROSS.getId() == measurementData.getMeasurementVariable().getTermId()) {
 				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.CROSS.toString(),

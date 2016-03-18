@@ -43,7 +43,7 @@ public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {
 		int interval = 3;
 		int manner = 1;
 		List<ImportedGermplasm> newList =
-				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner, "");
+				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner);
 		Assert.assertEquals(11, newList.size());
 		Assert.assertTrue(newList.get(0).getEntryId().equals(checkList.get(0).getEntryId()));
 		Assert.assertTrue(newList.get(1).getEntryId().equals(primaryList.get(0).getEntryId()));
@@ -82,7 +82,7 @@ public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {
 		int interval = 3;
 		int manner = 1;
 		List<ImportedGermplasm> newList =
-				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner, "");
+				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner);
 		Assert.assertEquals(14, newList.size());
 		Assert.assertTrue(newList.get(0).getEntryId().equals(checkList.get(0).getEntryId()));
 		Assert.assertTrue(newList.get(1).getEntryId().equals(primaryList.get(0).getEntryId()));
@@ -119,7 +119,7 @@ public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {
 		int interval = 3;
 		int manner = 2;
 		List<ImportedGermplasm> newList =
-				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner, "");
+				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner);
 		Assert.assertEquals(21, newList.size());
 		Assert.assertTrue(newList.get(0).getEntryId().equals(checkList.get(0).getEntryId()));
 		Assert.assertTrue(newList.get(1).getEntryId().equals(checkList.get(1).getEntryId()));
@@ -156,7 +156,7 @@ public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {
 		int interval = 3;
 		int manner = 2;
 		List<ImportedGermplasm> newList =
-				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner, "");
+				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner);
 		Assert.assertEquals(27, newList.size());
 		Assert.assertTrue(newList.get(0).getEntryId().equals(checkList.get(0).getEntryId()));
 		Assert.assertTrue(newList.get(1).getEntryId().equals(checkList.get(1).getEntryId()));
@@ -195,7 +195,7 @@ public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {
 			ImportedGermplasm germplasm = new ImportedGermplasm(entryId, prefix + entryId, null);
 			germplasm.setEntryCode(Integer.toString(entryId));
 			germplasm.setGid(Integer.toString(gid));
-			germplasm.setCheck(check);
+			germplasm.setEntryTypeValue(check);
 			list.add(germplasm);
 			gid++;
 		}

@@ -13,11 +13,8 @@ package com.efficio.fieldbook.web.label.printing.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -27,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,8 +33,25 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.efficio.fieldbook.service.api.LabelPrintingService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.helper.FieldbookControllerDataHelper;
+import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
+import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import net.sf.jasperreports.engine.JRException;
-
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -77,24 +90,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
-
-import com.efficio.fieldbook.service.api.LabelPrintingService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
-import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * The Class LabelPrintingController.
@@ -419,26 +414,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		response.setCharacterEncoding("UTF-8");
 		// the selected name + current date
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
-		FileInputStream in;
 
-		try {
-			in = new FileInputStream(xls);
-			OutputStream out = response.getOutputStream();
-
-			// use bigger if you want
-			byte[] buffer = new byte[LabelPrintingController.BUFFER_SIZE];
-			int length = 0;
-
-			while ((length = in.read(buffer)) > 0) {
-				out.write(buffer, 0, length);
-			}
-			in.close();
-			out.close();
-		} catch (FileNotFoundException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-		} catch (IOException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-		}
+		FieldbookControllerDataHelper.writeXlsToOutputStream(xls, response);
 
 		return "";
 	}

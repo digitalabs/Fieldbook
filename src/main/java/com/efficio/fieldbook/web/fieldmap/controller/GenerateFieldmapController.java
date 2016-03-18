@@ -12,19 +12,28 @@
 package com.efficio.fieldbook.web.fieldmap.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import com.efficio.fieldbook.service.api.ExportExcelService;
+import com.efficio.fieldbook.service.api.FieldMapService;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.fieldmap.bean.Plot;
+import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
+import com.efficio.fieldbook.web.helper.FieldbookControllerDataHelper;
+import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
+import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
+import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -41,18 +50,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.service.api.ExportExcelService;
-import com.efficio.fieldbook.service.api.FieldMapService;
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.fieldmap.bean.Plot;
-import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
-import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
-import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
-import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 
 /**
  * The Class GenerateFieldmapController.
@@ -208,18 +205,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 	}
 
 	protected void writeXlsToOutputStream(HttpServletResponse response, File xls) throws IOException {
-		FileInputStream in = new FileInputStream(xls);
-		OutputStream out = response.getOutputStream();
-
-		// use bigger if you want
-		byte[] buffer = new byte[GenerateFieldmapController.BUFFER_SIZE];
-		int length = 0;
-
-		while ((length = in.read(buffer)) > 0) {
-			out.write(buffer, 0, length);
-		}
-		in.close();
-		out.close();
+		FieldbookControllerDataHelper.writeXlsToOutputStream(xls, response);
 	}
 
 	/**

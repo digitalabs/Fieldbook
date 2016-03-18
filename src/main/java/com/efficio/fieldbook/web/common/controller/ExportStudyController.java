@@ -3,11 +3,8 @@ package com.efficio.fieldbook.web.common.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,15 +12,33 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
+import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
+import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
+import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.RExportStudyService;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
+import com.efficio.fieldbook.web.helper.FieldbookControllerDataHelper;
+import com.efficio.fieldbook.web.trial.bean.ExportTrialInstanceBean;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import net.sf.jasperreports.engine.JRException;
-
 import org.generationcp.commons.constant.ToolEnum;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.CustomReportType;
@@ -55,26 +70,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
-import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
-import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
-import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
-import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
-import com.efficio.fieldbook.web.common.service.RExportStudyService;
-import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
-import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
-import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
-import com.efficio.fieldbook.web.trial.bean.ExportTrialInstanceBean;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-
 @Controller
 @RequestMapping(ExportStudyController.URL)
 public class ExportStudyController extends AbstractBaseFieldbookController {
@@ -88,7 +83,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	private static final String CSV_CONTENT_TYPE = "text/csv";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportStudyController.class);
 	public static final String URL = "/ExportManager";
-	private static final int BUFFER_SIZE = 4096 * 4;
+	public static final int BUFFER_SIZE = 4096 * 4;
 	private static String EXPORT_TRIAL_INSTANCE = "Common/includes/exportTrialInstance";
 	private static String DISPLAY_ADVANCE_GERMPLASM_LIST = "Common/includes/displayListOfAdvanceGermplasmList";
 
@@ -164,7 +159,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		// the selected name + current date
 		final File xls = new File(outputFilename);
-		FileInputStream in;
 
 		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
 
@@ -173,25 +167,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		response.setContentType(MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(filename));
 		response.setCharacterEncoding("UTF-8");
 
-		try {
-			in = new FileInputStream(xls);
-			final OutputStream out = response.getOutputStream();
-
-			// use bigger if you want
-			final byte[] buffer = new byte[ExportStudyController.BUFFER_SIZE];
-			int length = 0;
-
-			while ((length = in.read(buffer)) > 0) {
-				out.write(buffer, 0, length);
-			}
-			in.close();
-			out.close();
-
-		} catch (final FileNotFoundException e) {
-			ExportStudyController.LOG.error(e.getMessage(), e);
-		} catch (final IOException e) {
-			ExportStudyController.LOG.error(e.getMessage(), e);
-		}
+		FieldbookControllerDataHelper.writeXlsToOutputStream(xls, response);
 
 		return "";
 
@@ -475,7 +451,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	/***
 	 * Return the list of headers's term id, otherwise null
 	 *
-	 * @param data
+	 * @param unparsedVisibleColumns
 	 * @return
 	 */
 	protected List<Integer> getVisibleColumns(final String unparsedVisibleColumns) {
@@ -563,17 +539,16 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	/**
 	 * Do export.
 	 *
-	 * @param exportType the export type
-	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response
+	 * @param request the request
 	 * @return the string
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/export/advanced/lists", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public String doAdvanceExport(final HttpServletResponse response, final HttpServletRequest req) {
+	public String doAdvanceExport(final HttpServletResponse response, final HttpServletRequest request) {
 
-		final String advancedListIds = req.getParameter("exportAdvanceListGermplasmIds");
-		final String exportType = req.getParameter("exportAdvanceListGermplasmType");
+		final String advancedListIds = request.getParameter("exportAdvanceListGermplasmIds");
+		final String exportType = request.getParameter("exportAdvanceListGermplasmType");
 
 		final UserSelection userSelection = this.getUserSelection();
 		final StudyDetails studyDetails = userSelection.getWorkbook().getStudyDetails();
@@ -630,16 +605,15 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	/**
 	 * Do export.
 	 *
-	 * @param exportType the export type
-	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response
+	 * @param request the request
 	 * @return the string
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/export/stock/lists", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public String doExportStockList(final HttpServletResponse response, final HttpServletRequest req) {
+	public String doExportStockList(final HttpServletResponse response, final HttpServletRequest request) {
 
-		final String stockIds = req.getParameter("exportStockListId");
+		final String stockIds = request.getParameter("exportStockListId");
 
 		String outputFilename = null;
 

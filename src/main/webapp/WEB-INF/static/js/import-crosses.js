@@ -328,40 +328,44 @@ var ImportCrosses = {
 		'use strict';
 		var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
-		if (ImportCrosses.isCrossImportSettingsValid(settingData)) {
-			var targetURL;
-			if ($('#presetName').val().trim() !== '') {
-				targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
-			} else {
-				targetURL = ImportCrosses.CROSSES_URL + '/submit';
+		if ($('#manualNamingSettings').is(':checked')) {
+			if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
+				return;
 			}
-
-			$.ajax({
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				url: targetURL,
-				type: 'POST',
-				cache: false,
-				data: JSON.stringify(settingData),
-				success: function(data) {
-						if (data.success === '0') {
-							showErrorMessage('', $.fieldbookMessages.errorImportFailed);
-						} else {
-							$('#crossSettingsModal').modal('hide');
-							if (isUpdateCrossesList.data) {
-								SaveAdvanceList.updateGermplasmList();
-							} else {
-								ImportCrosses.openSaveListModal();
-							}
-						}
-					},
-				error: function() {
-					showErrorMessage('', $.fieldbookMessages.errorImportCrossesSettingsFailed);
-				}
-			});
 		}
+
+		var targetURL;
+		if ($('#presetName').val().trim() !== '') {
+			targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
+		} else {
+			targetURL = ImportCrosses.CROSSES_URL + '/submit';
+		}
+
+		$.ajax({
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			url: targetURL,
+			type: 'POST',
+			cache: false,
+			data: JSON.stringify(settingData),
+			success: function(data) {
+				if (data.success === '0') {
+					showErrorMessage('', $.fieldbookMessages.errorImportFailed);
+				} else {
+					$('#crossSettingsModal').modal('hide');
+					if (isUpdateCrossesList.data) {
+						SaveAdvanceList.updateGermplasmList();
+					} else {
+						ImportCrosses.openSaveListModal();
+					}
+				}
+			},
+			error: function() {
+				showErrorMessage('', $.fieldbookMessages.errorImportCrossesSettingsFailed);
+			}
+		});
 	},
 
 	isCrossImportSettingsValid: function(importSettings) {
@@ -370,6 +374,9 @@ var ImportCrosses = {
 		if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
 			valid = false;
 			showErrorMessage('', $.fieldbookMessages.errorNoNamePrefix);
+		} else if (!importSettings.crossNameSetting.separator || importSettings.crossNameSetting.separator === '') {
+			valid = false;
+			showErrorMessage('', $.fieldbookMessages.errorNoParentageDesignationSeparator);
 		}
 
 		if (!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)) {

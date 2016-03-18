@@ -15,9 +15,28 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.GenerateDesignInput;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.common.form.ImportDesignForm;
+import com.efficio.fieldbook.web.helper.FieldbookControllerDataHelper;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -52,26 +71,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.GenerateDesignInput;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
 /**
  * The Class DesignImportController.
@@ -189,7 +188,7 @@ public class DesignImportController extends SettingsController {
 	 * This makes the design revert to default design where for every measurement rows, the entry for PLOT_NO must be equal to ENTRY_NO
 	 * 
 	 * @param studyId
-	 * @param studyType
+	 * @param isNursery
 	 * @return
 	 */
 	@ResponseBody
@@ -274,7 +273,7 @@ public class DesignImportController extends SettingsController {
 	public List<Map<String, Object>> showDetailsData(@RequestBody final EnvironmentData environmentData, final Model model,
 			@ModelAttribute("importDesignForm") final ImportDesignForm form) {
 
-		this.processEnvironmentData(environmentData);
+		FieldbookControllerDataHelper.processEnvironmentData(environmentData);
 
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
 		final DesignImportData designImportData = this.userSelection.getDesignImportData();
@@ -556,7 +555,7 @@ public class DesignImportController extends SettingsController {
 			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem,
 			final Map<String, Integer> additionalParams) throws DesignValidationException {
 
-		this.processEnvironmentData(environmentData);
+		FieldbookControllerDataHelper.processEnvironmentData(environmentData);
 
 		this.checkTheDeletedSettingDetails(this.userSelection, designImportData);
 
@@ -715,12 +714,11 @@ public class DesignImportController extends SettingsController {
 	protected void updateOperation(final int termId, final List<SettingDetail> settingDetails, final Operation operation) {
 
 		for (final SettingDetail sd : settingDetails) {
-			if (sd.getVariable().getCvTermId().intValue() == termId) {
+			if (sd.getVariable().getCvTermId() == termId) {
 				sd.getVariable().setOperation(operation);
 				break;
 			}
 		}
-
 	}
 
 	public void initializeTemporaryWorkbook(final String studyType) {
@@ -1025,18 +1023,6 @@ public class DesignImportController extends SettingsController {
 
 		designImportData.setMappedHeaders(result);
 
-	}
-
-	protected void processEnvironmentData(final EnvironmentData data) {
-		for (int i = 0; i < data.getEnvironments().size(); i++) {
-			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
-			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
-				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
-			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
-					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
-				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
-			}
-		}
 	}
 
 	/**

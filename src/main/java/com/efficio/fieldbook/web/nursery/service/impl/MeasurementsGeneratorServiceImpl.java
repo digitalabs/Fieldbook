@@ -29,6 +29,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -192,10 +193,19 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 						measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType(), var);
 					} else if (termId.intValue() == TermId.PLOT_NO.getId()) {
 						measurementData = new MeasurementData(var.getName(), Integer.toString(plotNo), false, var.getDataType(), var);
-					} else if (termId.intValue() == TermId.CHECK.getId()) {
-						measurementData =
-								new MeasurementData(var.getName(), germplasm.getCheckName(), false, var.getDataType(),
-										germplasm.getCheckId(), var);
+					} else if (termId.intValue() == TermId.ENTRY_TYPE.getId()) {
+                        // if germplasm has defined check value, use that
+                        if (germplasm.getEntryTypeCategoricalID() != null) {
+                            measurementData =
+                                    new MeasurementData(var.getName(), germplasm.getEntryTypeName(), false, var.getDataType(),
+                                            germplasm.getEntryTypeCategoricalID(), var);
+                        } else {
+                            // if germplasm does not have a defined check value, but ENTRY_TYPE factor is needed, we provide the current system default
+                            measurementData =
+                                    new MeasurementData(var.getName(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeValue(), false, var.getDataType(),
+                                            SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId(), var);
+                        }
+
 
 					} else if (termId.intValue() == TermId.REP_NO.getId()) {
 						measurementData = new MeasurementData(var.getName(), Integer.toString(repNo), false, var.getDataType(), var);

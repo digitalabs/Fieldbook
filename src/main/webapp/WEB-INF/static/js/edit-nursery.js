@@ -114,8 +114,8 @@ $(document).ready(function() {
 	});
 
 	// handler for the manualNamingSettings display
-	$('#manualNamingSettings').on('change', function(e) {
-		if ($('#manualNamingSettings').is(':checked')) {
+	$("input:radio[name='manualNamingSettings']").on('change', function(e) {
+		if ($("input:radio[name='manualNamingSettings']:checked").val() === 'true') {
         	$('#manualNamingSettingsPanel').removeClass('fbk-hide');
         } else {
         	$('#manualNamingSettingsPanel').addClass('fbk-hide');

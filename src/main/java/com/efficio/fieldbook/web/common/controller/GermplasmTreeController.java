@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -324,7 +323,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			final List<Integer> gids = new ArrayList<>();
 			final List<ImportedCrosses> importedCrosses = importedCrossesList.getImportedCrosses();
-			int sequenceIterator = 0;
 			for (ImportedCrosses cross : importedCrosses) {
 				final Name name = new Name();
 				name.setNstat(1);
@@ -333,7 +331,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				names.add(name);
 				cross.setNames(names);
 				final AdvancingSource advancingSource = new AdvancingSource(cross);
-				advancingSource.setCurrentMaxSequence(sequenceIterator++);
 				rows.add(advancingSource);
 				if (cross.getGid() != null && NumberUtils.isNumber(cross.getGid())) {
 					gids.add(Integer.valueOf(cross.getGid()));

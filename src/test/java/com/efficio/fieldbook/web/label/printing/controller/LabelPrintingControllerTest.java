@@ -11,19 +11,29 @@
 
 package com.efficio.fieldbook.web.label.printing.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.jasperreports.engine.JRException;
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
+import org.generationcp.middleware.reports.BuildReportException;
+import org.generationcp.middleware.reports.Reporter;
+import org.generationcp.middleware.reports.WLabels21;
+import org.generationcp.middleware.service.api.ReportService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,6 +49,11 @@ import com.efficio.fieldbook.web.util.AppConstants;
 
 public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
+	public static final int SUCCESS_VAL = 1;
+	public static final String TEST_JASPER_REPORT_FILE_TXT = "TEST_JASPER_REPORT_FILE.txt";
+	public static final int SAMPLE_STUDY_ID = 25004;
+	public static final String WLBL_21_JASPER_REPORT = "WLBL21";
+	public static final int FAIL_VAL = 0;
 	@Resource
 	private LabelPrintingController labelPrintingController;
 
@@ -82,6 +97,54 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		Assert.assertNotNull("Expected results but found none", results);
 		Assert.assertTrue("Expected csv file generated but found " + results.get("fileName").toString(), results.get("fileName").toString()
 				.contains("csv"));
+	}
+
+	@Test
+	public void testGenerationOfCustomReportLabels() throws BuildReportException, IOException, JRException {
+		List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+		// not really a csv type.. we just want an initial UserLabelPrinting pojo object then subsequenly convert this to a jasper report type
+		UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
+		userLabelPrinting.setGenerateType(WLBL_21_JASPER_REPORT);
+		userLabelPrinting.setStudyId(SAMPLE_STUDY_ID);
+
+		// Mock the report service, we just need a report instance to test with
+		ReportService reportService = Mockito.mock(ReportService.class);
+		Reporter reporter = Mockito.mock(WLabels21.class);
+		Mockito.when(reporter.getFileName()).thenReturn(TEST_JASPER_REPORT_FILE_TXT);
+		Mockito.when(reporter.getFileExtension()).thenReturn("txt");
+
+		// We dont care about program name in context, OutputStream is created inside the method
+		Mockito.when(reportService.getStreamReport(Mockito.eq(userLabelPrinting.getGenerateType()), Mockito.eq(userLabelPrinting.getStudyId()),Mockito.anyString(),Mockito.any(
+				OutputStream.class))).thenReturn(reporter);
+		this.labelPrintingController.setReportService(reportService);
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+
+		// Method to test
+		Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, true);
+
+		// Assertions
+		Assert.assertNotNull("We expect that results has value", results);
+		Assert.assertEquals("Label Printing report should be success", SUCCESS_VAL, results.get(LabelPrintingController.IS_SUCCESS));
+		Assert.assertEquals("We get the generated label printing file", results.get("fileName"), reporter.getFileName() );
+	}
+
+	@Test
+	public void testGenerationOfLabelsUsingAnUnknownType() {
+		List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+
+		// we create a nonsense userLabelPrinting obj with an invalid generate type
+		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		userLabelPrinting.setGenerateType("");
+
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+
+		// Method to test
+		Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false);
+
+		// Assertions
+		Assert.assertNotNull("We expect that results has value", results);
+		Assert.assertEquals("Label Printing report should NOT be a success", FAIL_VAL, results.get(LabelPrintingController.IS_SUCCESS));
+
 	}
 
 	@Test

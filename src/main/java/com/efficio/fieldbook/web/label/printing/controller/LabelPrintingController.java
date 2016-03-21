@@ -15,7 +15,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -108,7 +107,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 @RequestMapping({LabelPrintingController.URL})
 public class LabelPrintingController extends AbstractBaseFieldbookController {
 
-	private static final String IS_SUCCESS = "isSuccess";
+	static final String IS_SUCCESS = "isSuccess";
 
 	private static final String AVAILABLE_FIELDS = "availableFields";
 
@@ -915,6 +914,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	public void setCrossExpansionProperties(CrossExpansionProperties crossExpansionProperties) {
 		this.crossExpansionProperties = crossExpansionProperties;
+	}
+
+	/**
+	 * Enable setting of reportService so we can inject dependency in tests runtime
+	 * @param reportService
+	 */
+	void setReportService(ReportService reportService) {
+		this.reportService = reportService;
 	}
 
 }

@@ -188,7 +188,7 @@ public class DesignImportMeasurementRowGenerator {
 					germplasmEntry.getEntryCode()));
 		}
 		if (germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()) != null && !hasEntryTypeColumnFromTheImport) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), germplasmEntry.getCheck()));
+			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), germplasmEntry.getEntryTypeValue()));
 		}
 		if (germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()),

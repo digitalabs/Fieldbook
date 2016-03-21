@@ -1,5 +1,5 @@
 /*global showErrorMessage, createErrorNotification, crossingImportErrorHeader, isInt, crossingExportErrorHeader, invalidImportedFile,
-getJquerySafeId*/
+getJquerySafeId, SaveAdvanceList*/
 var ImportCrosses = {
 	CROSSES_URL: '/Fieldbook/crosses',
 	showFavoriteMethodsOnly: true,

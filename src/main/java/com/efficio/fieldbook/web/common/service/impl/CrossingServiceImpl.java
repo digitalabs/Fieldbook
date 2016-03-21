@@ -316,9 +316,6 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	protected void applyCrossNameSettingToImportedCrosses(final CrossSetting setting, final List<ImportedCrosses> importedCrosses) {
-
-		this.processBreedingMethodProcessCodes(setting);
-
 		Integer nextNumberInSequence = this.getNextNumberInSequence(setting.getCrossNameSetting());
 		Integer entryIdCounter = 0;
 
@@ -340,20 +337,20 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 	}
 
+	/**
+	 * this method overwrites the naming settings with the defined rules from the DB
+	 * if the breeding method was provided
+	 * @param setting
+	 */
 	protected void processBreedingMethodProcessCodes(final CrossSetting setting) {
 		final CrossNameSetting nameSetting = setting.getCrossNameSetting();
 		final BreedingMethodSetting breedingMethodSetting = setting.getBreedingMethodSetting();
 
-		try {
-			final Method method = this.germplasmDataManager.getMethodByID(breedingMethodSetting.getMethodId());
+		final Method method = this.germplasmDataManager.getMethodByID(breedingMethodSetting.getMethodId());
 
-			// overwrite other name setting items using method values here
-
-			if (method != null && method.getSuffix() != null) {
-				nameSetting.setSuffix(method.getSuffix());
-			}
-		} catch (final MiddlewareQueryException e) {
-			e.printStackTrace();
+		// overwrite other name setting items using method values here
+		if (method != null && method.getSuffix() != null) {
+			nameSetting.setSuffix(method.getSuffix());
 		}
 	}
 

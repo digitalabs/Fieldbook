@@ -174,7 +174,7 @@ public class GermplasmTreeControllerTest {
 
 		this.controller.setPaginationListSelection(paginationListSelection);
 
-		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
 		Assert.assertEquals("advancedGermplasmListId should be 2", 2, result.get("advancedGermplasmListId"));
@@ -194,7 +194,7 @@ public class GermplasmTreeControllerTest {
 		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
 		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
-		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
 		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
@@ -218,7 +218,7 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
 				.getGermplasmListByName(Matchers.anyString(), Matchers.anyString());
 
-		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
 		Assert.assertEquals(0, result.get("isSuccess"));
 		Assert.assertEquals(GermplasmTreeControllerTest.LIST_NAME_SHOULD_BE_UNIQUE, result.get("message"));
@@ -241,7 +241,7 @@ public class GermplasmTreeControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListByName(Matchers.anyString(), Matchers.anyString())).thenThrow(
 				new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
 
-		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
 		Assert.assertEquals(0, result.get("isSuccess"));
 		Assert.assertEquals(GermplasmTreeControllerTest.ERROR_MESSAGE, result.get("message"));

@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,6 +39,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.efficio.fieldbook.web.label.printing.constant.LabelPrintingFileTypes;
 import net.sf.jasperreports.engine.JRException;
 
 import org.generationcp.commons.constant.ToolSection;
@@ -152,6 +155,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private GermplasmListManager germplasmListManager;
+
+	public static final String[] GENERATED_TYPES = new String[] {"PDF", "EXCEL", "CSV"};
 
 	/**
 	 * Show trial label details.
@@ -520,39 +525,54 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		return selectedLabelFields;
 	}
 
-	protected Map<String, Object> generateLabels(List<StudyTrialInstanceInfo> trialInstances, boolean isCustomReport) {
+	Map<String, Object> generateLabels(List<StudyTrialInstanceInfo> trialInstances, boolean isCustomReport) {
 		Map<String, Object> results = new HashMap<>();
+
+		final LabelPrintingFileTypes selectedLabelPrintingType =
+				LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
+
 		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			String fileName = "";
+			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+			String fileName;
+
 			if (isCustomReport) {
-				Integer studyId = this.userLabelPrinting.getStudyId();
-				Reporter rep =
+				final Integer studyId = this.userLabelPrinting.getStudyId();
+				final Reporter rep =
 						this.reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId, this.contextUtil
-								.getProjectInContext().getProjectName(), baos);
-				fileName = rep.getFileName();
-				this.userLabelPrinting.setFilename(fileName);
-				this.getFileNameAndSetFileLocations("");
+								.getProjectInContext().getProjectName(), byteStream);
 
 				// additionally creates the file in 'target' folder, for human
 				// validation ;)
-				File reportFile = new File(this.userLabelPrinting.getFilenameDLLocation());
-				baos.writeTo(new FileOutputStream(reportFile));
+				fileName = rep.getFileName();
+				Files.write(Paths.get(this.userLabelPrinting.getFilenameDLLocation()), byteStream.toByteArray());
 
-			} else if (this.userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
-				this.getFileNameAndSetFileLocations(".pdf");
-			} else if (this.userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
-				this.getFileNameAndSetFileLocations(".xls");
+				this.getFileNameAndSetFileLocations("." + rep.getFileExtension());
+				this.userLabelPrinting.setFilename(fileName);
+
+				results.put(LabelPrintingController.IS_SUCCESS, 1);
+				results.put("fileName", fileName);
+
+			} else if (selectedLabelPrintingType.isValid()) {
+				this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
+
+				fileName =
+						this.labelPrintingService.generateLabels(selectedLabelPrintingType.getExtension(), trialInstances,
+								this.userLabelPrinting, byteStream);
+
+				results.put(LabelPrintingController.IS_SUCCESS, 1);
+				results.put("fileName", fileName);
+
 			} else {
-				this.getFileNameAndSetFileLocations(".csv");
+				final String errorMsg = this.messageSource
+						.getMessage("label.printing.cannot.generate.invalid.type", new String[] {}, LocaleContextHolder.getLocale());
+
+				LabelPrintingController.LOG.error(errorMsg);
+				results.put(LabelPrintingController.IS_SUCCESS, 0);
+				results.put(AppConstants.MESSAGE.getString(), errorMsg);
 			}
 
-			fileName =
-					this.labelPrintingService.generateLabels(this.userLabelPrinting.getGenerateType(), trialInstances,
-							this.userLabelPrinting, baos);
+			return results;
 
-			results.put(LabelPrintingController.IS_SUCCESS, 1);
-			results.put("fileName", fileName);
 		} catch (IOException | MiddlewareException | JRException | BuildReportException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
 			results.put(LabelPrintingController.IS_SUCCESS, 0);
@@ -750,8 +770,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				new BarcodeLabelPrintingSetting("1".equals(rawSettings.getBarcodeNeeded()), "Barcode", StringUtil.stringify(new String[] {
 						rawSettings.getFirstBarcodeField(), rawSettings.getSecondBarcodeField(), rawSettings.getThirdBarcodeField()}, ","));
 
-		String[] generatedTypes = {"PDF", "EXCEL", "CSV"};
-
 		if (AppConstants.LABEL_PRINTING_PDF.getString().equals(rawSettings.getGenerateType())) {
 			pdfSettings =
 					new PDFLabelPrintingSetting(rawSettings.getSizeOfLabelSheet(), Integer.parseInt(
@@ -768,7 +786,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		try {
 			xmlConfig =
 					this.generateXMLFromLabelPrintingSettings(rawSettings.getSettingsName(),
-							generatedTypes[Integer.valueOf(rawSettings.getGenerateType(), 10) - 1], nonPDFSettings, pdfSettings,
+							GENERATED_TYPES[Integer.valueOf(rawSettings.getGenerateType(), 10) - 1], nonPDFSettings, pdfSettings,
 							barcodeSettings);
 		} catch (JAXBException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);

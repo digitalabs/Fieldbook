@@ -5,8 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -33,13 +39,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
 
 @Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class FieldbookServiceTest {
@@ -219,7 +218,7 @@ public class FieldbookServiceTest {
 		try {
 			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
 		} catch (MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
+			Assert.fail("Expected mocked class but original method was called.");
 		}
 
 		Assert.assertFalse("Expected no check variables in the conditions but found one.",
@@ -240,7 +239,7 @@ public class FieldbookServiceTest {
 		try {
 			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
 		} catch (MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
+			Assert.fail("Expected mocked class but original method was called.");
 		}
 
 		Assert.assertFalse("Expected no check variables in the conditions but found one.",
@@ -262,7 +261,7 @@ public class FieldbookServiceTest {
 		try {
 			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
 		} catch (MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
+			Assert.fail("Expected mocked class but original method was called.");
 		}
 
 		Assert.assertTrue("Expected check variables in the conditions but none.",
@@ -284,16 +283,11 @@ public class FieldbookServiceTest {
 		WorkbookDataUtil.addCheckConditions(workbook);
 		WorkbookDataUtil.createTrialObservations(1, workbook);
 		try {
-			this.addCheckVariables(workbook.getConditions());
-
-			userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
-			userSelection.setWorkbook(workbook);
-			form.setImportedCheckGermplasm(this.createImportedCheckGermplasmData());
-			form.setCheckVariables(WorkbookTestUtil.createCheckVariables());
+			this.setImportedCheckGermplasmAndCheckVariables(workbook, userSelection, form);
 
 			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
 		} catch (MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
+			Assert.fail("Expected mocked class but original method was called.");
 		}
 
 		Assert.assertTrue("Expected check variables in the conditions but found none.",
@@ -311,16 +305,12 @@ public class FieldbookServiceTest {
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 		workbook.setTrialObservations(null);
 		try {
-			this.addCheckVariables(workbook.getConditions());
 
-			userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
-			userSelection.setWorkbook(workbook);
-			form.setImportedCheckGermplasm(this.createImportedCheckGermplasmData());
-			form.setCheckVariables(WorkbookTestUtil.createCheckVariables());
+			this.setImportedCheckGermplasmAndCheckVariables(workbook, userSelection, form);
 
 			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
 		} catch (MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
+			Assert.fail("Expected mocked class but original method was called.");
 		}
 
 		Assert.assertTrue("Expected check variables in the conditions but found none.",
@@ -342,12 +332,39 @@ public class FieldbookServiceTest {
 	}
 
 	private void addCheckVariables(List<MeasurementVariable> conditions) throws MiddlewareException {
-		conditions.add(this.fieldbookServiceImpl.createMeasurementVariable(String.valueOf(TermId.CHECK_START.getId()), "2",
-				Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole()));
-		conditions.add(this.fieldbookServiceImpl.createMeasurementVariable(String.valueOf(TermId.CHECK_INTERVAL.getId()), "3",
-				Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole()));
-		conditions.add(this.fieldbookServiceImpl.createMeasurementVariable(String.valueOf(TermId.CHECK_PLAN.getId()), "8415",
-				Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole()));
+		FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
+		fieldbookService.setContextUtil(contextUtil);
+
+		StandardVariable standardVariable = this.createStandardVariable(new Term(FieldbookServiceTest.CHECK_START_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_START,
+						FieldbookServiceTest.ED_CHECK_START), new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
+						FieldbookServiceTest.NUMBER), new Term(FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL,
+						FieldbookServiceTest.FIELD_TRIAL), new Term(TermId.NUMERIC_VARIABLE.getId(), FieldbookServiceTest.NUMERIC_VARIABLE,
+						FieldbookServiceTest.NUMERIC_VARIABLE), new Term(FieldbookServiceTest.TRIAL_ENV_ID,
+						FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION, FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION), new Term(
+						FieldbookServiceTest.TRIAL_DESIGN_ID, FieldbookServiceTest.TRIAL_DESIGN, FieldbookServiceTest.TRIAL_DESIGN),
+				PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_START.getId(), FieldbookServiceTest.CHECK_START);
+
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId(), null)).thenReturn(standardVariable);
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId(), null)).thenReturn(standardVariable);
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId(), null)).thenReturn(standardVariable);
+
+		conditions.add(FieldbookUtil.createMeasurementVariable(String.valueOf(TermId.CHECK_START.getId()), "2",
+				Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole(), fieldbookMiddlewareService, contextUtil));
+		conditions.add(FieldbookUtil.createMeasurementVariable(String.valueOf(TermId.CHECK_INTERVAL.getId()), "3",
+				Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole(), fieldbookMiddlewareService, contextUtil));
+		conditions.add(FieldbookUtil.createMeasurementVariable(String.valueOf(TermId.CHECK_PLAN.getId()), "8415",
+				Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole(), fieldbookMiddlewareService, contextUtil));
+	}
+
+	private void setImportedCheckGermplasmAndCheckVariables(Workbook workbook, UserSelection userSelection, ImportGermplasmListForm form) {
+		this.addCheckVariables(workbook.getConditions());
+		userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
+		userSelection.setWorkbook(workbook);
+		form.setImportedCheckGermplasm(this.createImportedCheckGermplasmData());
+		form.setCheckVariables(WorkbookTestUtil.createCheckVariables());
 	}
 
 	@Test
@@ -367,7 +384,7 @@ public class FieldbookServiceTest {
 
 			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
 		} catch (MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
+			Assert.fail("Expected mocked class but original method was called.");
 		}
 
 		Assert.assertTrue("Expected check variables to have delete operation but found Add/Update.",
@@ -399,7 +416,7 @@ public class FieldbookServiceTest {
 		try {
 			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
 		} catch (MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
+			Assert.fail("Expected mocked class but original method was called.");
 		}
 
 		Assert.assertFalse("Expected no check variables in the conditions but found one.",

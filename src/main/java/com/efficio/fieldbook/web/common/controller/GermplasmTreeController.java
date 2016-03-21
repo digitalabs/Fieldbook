@@ -241,7 +241,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				this.updateGermplasmList(germplasmListId, listDataItems);
 				session.removeAttribute("createdCrossesListId");
 
-				final List<GermplasmListData> data = new ArrayList<GermplasmListData>();
+				final List<GermplasmListData> data = new ArrayList<>();
 				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
 				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
 
@@ -274,10 +274,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
 		final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 		final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
-		final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(crossSetting, importedCrossesList);
-		this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesListWithNamingSettings,
-				this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
-		this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesListWithNamingSettings.getImportedCrosses());
+
+		this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
 		return this.fieldbookMiddlewareService.updateGermplasmList(listDataItems, germplasmList);
 	}
 
@@ -297,20 +295,34 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
 			final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 			final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
-			ImportedCrossesList importedCrossesListWithNamigSettings = null;
-			if (crossSetting.isUseManualSettingsForNaming()) {
-				this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
-					this.userSelection.getWorkbook());
-				this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
-			} else {
-				importedCrossesListWithNamigSettings = this.applyNamingRules(crossSetting, importedCrossesList);
-				this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesListWithNamigSettings,
-						this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
-				this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesListWithNamigSettings.getImportedCrosses());
-			}
+
+			this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
+			//TODO Add check for the empty desig in the records
 			return this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList);
 		} else {
 			throw new IllegalArgumentException("Unknown germplasm list type supplied when saving germplasm list");
+		}
+	}
+
+	/**
+	 * Apply the naming setting to the crosses depending whether manual setting or rules based on the breeding method were selected
+	 * @param listDataItems
+	 * @param germplasmList
+	 * @param crossSetting
+	 * @param importedCrossesList
+	 * @throws RuleException
+	 */
+	private void applyNamingSettingToCrosses(List<Pair<Germplasm, GermplasmListData>> listDataItems, GermplasmList germplasmList,
+			CrossSetting crossSetting, ImportedCrossesList importedCrossesList) throws RuleException {
+		if (crossSetting.isUseManualSettingsForNaming()) {
+			this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
+				this.userSelection.getWorkbook());
+			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
+		} else {
+			final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(crossSetting, importedCrossesList);
+			this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesListWithNamingSettings,
+					this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
+			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesListWithNamingSettings.getImportedCrosses());
 		}
 	}
 

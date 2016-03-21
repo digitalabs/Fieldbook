@@ -270,7 +270,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		int index = 0;
 		final TimerWatch timer = new TimerWatch("cross");
 
-		// FIXME previousMaxSequence is a quick hack solution to propagate previous max sequence to the next cross entry to process.
+		// FIXME previousMaxSequence is a "quick fix" solution to propagate previous max sequence to the next cross entry to process.
 		// Rules engine is currently not designed to handle this (even for advancing case). Next sequence choice is managed this via user
 		// interaction for advancing. There is no user interaction in case of cross list.
 		int previousMaxSequence = 0;

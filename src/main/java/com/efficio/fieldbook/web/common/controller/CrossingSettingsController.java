@@ -230,7 +230,7 @@ public class CrossingSettingsController extends SettingsController {
 
 	/**
 	 * Validates if current study can perform an export
-	 *
+	 * 
 	 * @return a JSON result object
 	 */
 	@ResponseBody
@@ -273,8 +273,17 @@ public class CrossingSettingsController extends SettingsController {
 			respHeaders.setContentLength(fileSystemResource.contentLength());
 			String encodedFilename = FileUtils.encodeFilenameForDownload(resource.getName());
 
-			// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-			respHeaders.set("Content-Disposition", "form-data;filename=" + encodedFilename + "; filename*=UTF-8''" + encodedFilename + ";");
+			final String userAgent = req.getHeader("User-Agent");
+
+			if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
+				// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
+				respHeaders.set("Content-Disposition", "form-data;filename=\"" + encodedFilename + "\";");
+			} else {
+				// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
+				respHeaders.set("Content-Disposition", "form-data;filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
+						+ encodedFilename + "\";");
+
+			}
 
 			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
@@ -315,7 +324,7 @@ public class CrossingSettingsController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
 	public List<Map<String, Object>> getImportedCrossesList(final HttpSession session) {
-		//session.removeAttribute("createdCrossesListId");
+		// session.removeAttribute("createdCrossesListId");
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 
 		if (null == this.studySelection.getImportedCrossesList()) {

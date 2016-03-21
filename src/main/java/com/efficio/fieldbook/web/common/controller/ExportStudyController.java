@@ -168,9 +168,17 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
 
-		// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-		response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''" + encodedFilename
-				+ "\";");
+		final String userAgent = req.getHeader("User-Agent");
+
+		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
+			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
+			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
+		} else {
+			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
+			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
+					+ encodedFilename + "\";");
+		}
+
 		response.setContentType(MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(filename));
 		response.setCharacterEncoding("UTF-8");
 

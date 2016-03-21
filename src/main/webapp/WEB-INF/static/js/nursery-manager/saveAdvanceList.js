@@ -22,6 +22,7 @@ var SaveAdvanceList = {};
 			changeBrowseGermplasmButtonBehavior(false);
 		});
 	};
+
 	SaveAdvanceList.openSaveListModal = function(object) {
 		if (parseInt($('#reviewAdvanceNurseryModal .total-review-items').html(), 10) < 1) {
 			showErrorMessage('', saveGermplasmReviewError);
@@ -126,6 +127,7 @@ var SaveAdvanceList = {};
 
 		var dataForm = $('#saveListForm').serialize();
 
+		//TODO add error handler
 		$.ajax({
 			url: saveList,
 			type: 'POST',
@@ -145,14 +147,17 @@ var SaveAdvanceList = {};
 							aHtml;
 						var id = data.advancedGermplasmListId ? data.advancedGermplasmListId : data.germplasmListId;
 						uniqueId = data.uniqueId;
-						close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="' + id + '" onclick="javascript: closeAdvanceListTab(' + id +')"></i>';
-						aHtml = '<a role="tab" data-toggle="tab" id="advanceHref' + id + '" href="#advance-list' + id + '">Advance List' + close + '</a>';
+						close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="' + id +
+							'" onclick="javascript: closeAdvanceListTab(' + id + ')"></i>';
+						aHtml = '<a role="tab" data-toggle="tab" id="advanceHref' + id + '" href="#advance-list' + id +
+							'">Advance List' + close + '</a>';
 						var stockHtml = '<div id="stock-content-pane' + id + '" class="stock-list' + id + '"></div>';
 
 						if (isNursery()) {
 							$('#create-nursery-tab-headers').append('<li id="advance-list' + id + '-li">' + aHtml + '</li>');
 							$('#create-nursery-tabs').append('<div class="tab-pane info" id="advance-list' + id + '"></div>');
-							$('#create-nursery-tabs').append('<div class="tab-pane info" id="stock-tab-pane' + id + '">' + stockHtml + '</div>');
+							$('#create-nursery-tabs').append('<div class="tab-pane info" id="stock-tab-pane' + id + '">' + stockHtml +
+								'</div>');
 							setTimeout(function() {
 								$('.nav-tabs').tabdrop('layout');
 							}, 100);
@@ -167,6 +172,7 @@ var SaveAdvanceList = {};
 			}
 		});
 	};
+
 	SaveAdvanceList.doAdvanceNursery = function() {
 
 		var serializedData;
@@ -183,7 +189,7 @@ var SaveAdvanceList = {};
 				var advanceGermplasmChangeDetail = [];
 				if (data.isSuccess === '0') {
 					showErrorMessage('page-advance-modal-message', data.message);
-				}else {
+				} else {
 					if (data.listSize === 0) {
 						showErrorMessage('page-advance-modal-message', listShouldNotBeEmptyError);
 					} else {
@@ -191,7 +197,7 @@ var SaveAdvanceList = {};
 						$('#advanceNurseryModal').modal('hide');
 						if (advanceGermplasmChangeDetail.length === 0) {
 							SaveAdvanceList.reviewAdvanceList(data.uniqueId);
-						}else {
+						} else {
 							showAdvanceGermplasmChangeConfirmationPopup(advanceGermplasmChangeDetail, data.uniqueId);
 						}
 					}
@@ -203,6 +209,7 @@ var SaveAdvanceList = {};
 			}
 		});
 	};
+
 	SaveAdvanceList.reviewAdvanceList = function(uniqueId) {
 		$.ajax({
 			url: '/Fieldbook/NurseryManager/advance/nursery/info?uniqueId=' + uniqueId,
@@ -231,13 +238,15 @@ var SaveAdvanceList = {};
 			}
 		});
 	};
+
 	SaveAdvanceList.verifyCheckboxesForSelectAll = function() {
 		if ($('.review-select-all:checked') && $('input.reviewAdvancingListGid:not(:checked)').length > 0) {
 			//this is the time we check if there are actual uncheck bxoes so we can uncheck this one
 			$('.review-select-all').prop('checked', false);
 
 		}
-	},
+	};
+
 	SaveAdvanceList.setupAdvanceListForReview = function() {
 		var sectionContainerDiv = 'reviewAdvanceNurseryModal';
 
@@ -268,7 +277,7 @@ var SaveAdvanceList = {};
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected').addClass('selected');
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.manual-selected) input.reviewAdvancingListGid:checked').parent().parent().addClass('selected');
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.selected input.reviewAdvancingListGid:not(:checked)').parent().parent().removeClass('selected');
-				}else {
+				} else {
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table input.reviewAdvancingListGid').prop('checked', false);
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected').removeClass('manual-selected');
 					if ($(row).hasClass('selected')) {
@@ -277,14 +286,14 @@ var SaveAdvanceList = {};
 						$(row).find('input.reviewAdvancingListGid').prop('checked', false);
 					}
 				}
-				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#' + getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
 				SaveAdvanceList.verifyCheckboxesForSelectAll();
 			},
 			onCtrl: function(row) {
 
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.selected input.reviewAdvancingListGid').prop('checked', true);
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.selected) input.reviewAdvancingListGid').prop('checked', false);
-				if ($(row).hasClass('manual-selected') || $(row).hasClass('selected')){
+				if ($(row).hasClass('manual-selected') || $(row).hasClass('selected')) {
 					$(row).find('input.reviewAdvancingListGid').prop('checked', true);
 					$(row).addClass('selected');
 				}else {
@@ -298,32 +307,33 @@ var SaveAdvanceList = {};
 						$(row).removeClass('selected');
 					}
 				}
-				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#' + getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
 				SaveAdvanceList.verifyCheckboxesForSelectAll();
 			},
 			onShift: function() {
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected-dummy').addClass('selected');
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.selected input.reviewAdvancingListGid').prop('checked', true);
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.selected) input.reviewAdvancingListGid').prop('checked', false);
-				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('tr.primaryRow.selected').length);
+				$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('tr.primaryRow.selected').length);
 				SaveAdvanceList.verifyCheckboxesForSelectAll();
 			}
-
 		});
-		$('#' + sectionContainerDiv + ' .advance-nursery-list-table input.reviewAdvancingListGid').on('click', function(){
+
+		$('#' + sectionContainerDiv + ' .advance-nursery-list-table input.reviewAdvancingListGid').on('click', function() {
 			$('#' + sectionContainerDiv + ' .advance-nursery-list-table').data('check-click', '1');
-			if($(this).is(':checked')){
+			if ($(this).is(':checked')) {
 				//we highlight
 				$(this).parent().parent().addClass('selected');
 				$(this).parent().parent().addClass('manual-selected');
-			}else{
+			} else {
 				$(this).parent().parent().removeClass('selected');
 				$(this).parent().parent().removeClass('manual-selected');
 			}
 			$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected input.reviewAdvancingListGid').prop('checked', true);
 			$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected').addClass('selected');
 			$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.manual-selected)').remove('selected');
-			$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+			$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#' + getJquerySafeId(sectionContainerDiv) +
+				' tr.primaryRow.selected').length);
 			SaveAdvanceList.verifyCheckboxesForSelectAll();
 		});
 
@@ -333,14 +343,14 @@ var SaveAdvanceList = {};
 		$('#reviewAdvanceNurseryModal .delete-entries').on('click', SaveAdvanceList.deleteSelectedEntries);
 		$('#reviewAdvanceNurseryModal .select-all-entries').on('click', SaveAdvanceList.selectAllReviewEntries);
 
-		$('#' + sectionContainerDiv +' .advance-germplasm-items').contextmenu({
-		    delegate: 'tr',
-		    menu: [
-		      {title: 'Delete Selected Entries', cmd: 'deleteSelected'},
-		      {title: 'Select All', cmd: 'selectAll'}
+		$('#' + sectionContainerDiv + ' .advance-germplasm-items').contextmenu({
+			delegate: 'tr',
+			menu: [
+				{title: 'Delete Selected Entries', cmd: 'deleteSelected'},
+				{title: 'Select All', cmd: 'selectAll'}
 			],
 			select: function(event, ui) {
-				switch(ui.cmd){
+				switch (ui.cmd){
 					case 'deleteSelected':
 						SaveAdvanceList.deleteSelectedEntries();
 						break;
@@ -351,31 +361,32 @@ var SaveAdvanceList = {};
 			},
 			beforeOpen: function(event, ui) {
 				ui.menu.zIndex(9999);
-		    }
-		  });
-		new BMS.Fieldbook.AdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .advance-germplasm-items', '#'+sectionContainerDiv);
-		$('#advance-nursery-germplasm-list').css('opacity','1');
-		if($('.total-review-items').html() === '0'){
+			}
+		});
+
+		new BMS.Fieldbook.AdvancedGermplasmListDataTable('#' + sectionContainerDiv + ' .advance-germplasm-items', '#' + sectionContainerDiv);
+		$('#advance-nursery-germplasm-list').css('opacity', '1');
+		if ($('.total-review-items').html() === '0') {
 			$('.review-select-all-section').hide();
-		}else{
+		} else {
 			$('.review-select-all-section').show();
 		}
-
 	};
 
-	SaveAdvanceList.selectAllReviewEntries = function(){
+	SaveAdvanceList.selectAllReviewEntries = function() {
 		var sectionContainerDiv = 'reviewAdvanceNurseryModal';
 		var isChecked = true;
-		$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('selected');
-		$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('manual-selected');
-		$('#'+getJquerySafeId(sectionContainerDiv) + ' input.reviewAdvancingListGid').prop('checked', isChecked);
+		$('#' + getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('selected');
+		$('#' + getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('manual-selected');
+		$('#' + getJquerySafeId(sectionContainerDiv) + ' input.reviewAdvancingListGid').prop('checked', isChecked);
 
-		if(isChecked){
-			$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').addClass('selected');
-			$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').addClass('manual-selected');
+		if (isChecked) {
+			$('#' + getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').addClass('selected');
+			$('#' + getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').addClass('manual-selected');
 		}
-		$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
-		$('#'+getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked', isChecked);
+		$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#' + getJquerySafeId(sectionContainerDiv) +
+			' tr.primaryRow.selected').length);
+		$('#' + getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked', isChecked);
 	};
 
 	SaveAdvanceList.deleteSelectedEntries = function() {

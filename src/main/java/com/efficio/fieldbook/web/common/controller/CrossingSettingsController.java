@@ -25,7 +25,6 @@ import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
@@ -51,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
@@ -271,19 +271,8 @@ public class CrossingSettingsController extends SettingsController {
 			final HttpHeaders respHeaders = new HttpHeaders();
 			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			respHeaders.setContentLength(fileSystemResource.contentLength());
-			String encodedFilename = FileUtils.encodeFilenameForDownload(resource.getName());
 
-			final String userAgent = req.getHeader("User-Agent");
-
-			if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
-				// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
-				respHeaders.set("Content-Disposition", "form-data;filename=\"" + encodedFilename + "\";");
-			} else {
-				// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-				respHeaders.set("Content-Disposition", "form-data;filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
-						+ encodedFilename + "\";");
-
-			}
+			FieldbookUtil.resolveContentDisposition(resource.getName(), respHeaders, req.getHeader("User-Agent"));
 
 			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 

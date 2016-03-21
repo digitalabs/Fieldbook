@@ -166,18 +166,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final File xls = new File(outputFilename);
 		FileInputStream in;
 
-		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
-
-		final String userAgent = req.getHeader("User-Agent");
-
-		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
-			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
-			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
-		} else {
-			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
-			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
-					+ encodedFilename + "\";");
-		}
+		FieldbookUtil.resolveContentDisposition(filename, response, req.getHeader("User-Agent"));
 
 		response.setContentType(MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(filename));
 		response.setCharacterEncoding("UTF-8");

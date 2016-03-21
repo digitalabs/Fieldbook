@@ -34,10 +34,10 @@ public class ImportedGermplasmMainInfoInitializer {
 		importedGermplasm.setDesig("DESIG" + entryNo);
 		importedGermplasm.setSource("SOURCE" + entryNo);
 		importedGermplasm.setBreedingMethodId(0);
-		importedGermplasm.setCheck("");
+		importedGermplasm.setEntryTypeValue("");
 		importedGermplasm.setGid("");
-		importedGermplasm.setCheckId(0);
-		importedGermplasm.setCheckName("");
+		importedGermplasm.setEntryTypeCategoricalID(0);
+		importedGermplasm.setEntryTypeName("");
 		importedGermplasm.setCross("");
 		importedGermplasm.setGnpgs(0);
 		importedGermplasm.setGpid1(0);

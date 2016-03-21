@@ -1,46 +1,34 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
+ *
+ *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.label.printing.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
+import com.efficio.fieldbook.service.api.LabelPrintingService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.constant.LabelPrintingFileTypes;
+import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
+import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import net.sf.jasperreports.engine.JRException;
-
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -80,62 +68,59 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
-import com.efficio.fieldbook.service.api.LabelPrintingService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
-import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * The Class LabelPrintingController.
- * 
+ *
  * This class would handle the label printing for the pdf and excel generation.
  */
-@Controller
-@RequestMapping({LabelPrintingController.URL})
-public class LabelPrintingController extends AbstractBaseFieldbookController {
-
-	static final String IS_SUCCESS = "isSuccess";
-
-	private static final String AVAILABLE_FIELDS = "availableFields";
-
-	/** The Constant LOG. */
-	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
+@Controller @RequestMapping({LabelPrintingController.URL}) public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/** The Constant URL. */
 	public static final String URL = "/LabelPrinting/specifyLabelDetails";
-
+	static final String IS_SUCCESS = "isSuccess";
+	private static final String AVAILABLE_FIELDS = "availableFields";
+	/** The Constant LOG. */
+	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
+	/** The Constant BUFFER_SIZE. */
+	private static final int BUFFER_SIZE = 4096 * 4;
 	/** The user label printing. */
 	@Resource
 	private UserLabelPrinting userLabelPrinting;
-
 	/** The fieldbook middleware service. */
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
 	/** The label printing service. */
 	@Resource
 	private LabelPrintingService labelPrintingService;
-
 	/** The user fieldmap. */
 	@Resource
 	private UserFieldmap userFieldmap;
-
-	/** The Constant BUFFER_SIZE. */
-	private static final int BUFFER_SIZE = 4096 * 4;
-
 	/** The message source. */
 	@Resource
 	private ResourceBundleMessageSource messageSource;
@@ -157,7 +142,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Show trial label details.
-	 * 
+	 *
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
@@ -169,8 +154,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, HttpServletRequest req,
 			HttpSession session, @PathVariable int id, Locale locale) {
 
-		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
-				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+		SessionUtility.clearSessionData(session,
+				new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME, SessionUtility.FIELDMAP_SESSION_NAME,
+						SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 		Study study = null;
 		List<FieldMapInfo> fieldMapInfoList = null;
 		FieldMapInfo fieldMapInfo = null;
@@ -208,7 +194,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Show nursery label details.
-	 * 
+	 *
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
@@ -219,8 +205,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/nursery/{id}", method = RequestMethod.GET)
 	public String showNurseryLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, HttpServletRequest req,
 			HttpSession session, @PathVariable int id, Locale locale) {
-		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
-				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+		SessionUtility.clearSessionData(session,
+				new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME, SessionUtility.FIELDMAP_SESSION_NAME,
+						SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 		Study study = null;
 		List<FieldMapInfo> fieldMapInfoList = null;
 		FieldMapInfo fieldMapInfo = null;
@@ -255,7 +242,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Show fieldmap label details.
-	 * 
+	 *
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
@@ -298,8 +285,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	public String showStockListLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model,
 			HttpServletRequest req, HttpSession session, @PathVariable int id, Locale locale) {
 
-		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
-				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+		SessionUtility.clearSessionData(session,
+				new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME, SessionUtility.FIELDMAP_SESSION_NAME,
+						SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 
 		// retrieve the stock list
 		GermplasmList stockList = null;
@@ -346,10 +334,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
 			form.setUserLabelPrinting(this.userLabelPrinting);
 			StudyType studyType = isTrial ? StudyType.T : StudyType.N;
-			model.addAttribute(
-					LabelPrintingController.AVAILABLE_FIELDS,
-					this.labelPrintingService.getAvailableLabelFieldsForStockList(
-							this.labelPrintingService.getStockListType(stockList.getType()), locale, studyType, stockList.getProjectId()));
+			model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS, this.labelPrintingService
+					.getAvailableLabelFieldsForStockList(this.labelPrintingService.getStockListType(stockList.getType()), locale, studyType,
+							stockList.getProjectId()));
 
 			if (isTrial) {
 				form.setIsTrial(true);
@@ -367,7 +354,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Generate default filename.
-	 * 
+	 *
 	 * @param userLabelPrinting the user label printing
 	 * @param isTrial the is trial
 	 * @return the string
@@ -398,7 +385,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Export file.
-	 * 
+	 *
 	 * @param response the response
 	 * @return the string
 	 */
@@ -417,8 +404,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		String encodedFilename = FileUtils.encodeFilenameForDownload(fileName);
 
 		// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-		response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''" + encodedFilename
-				+ "\";");
+		response.setHeader("Content-disposition",
+				"attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''" + encodedFilename + "\";");
 		response.setCharacterEncoding("UTF-8");
 		// the selected name + current date
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
@@ -448,7 +435,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Submits the details.
-	 * 
+	 *
 	 * @param form the form
 	 * @param result the result
 	 * @param model the model
@@ -457,8 +444,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, BindingResult result,
-			Model model, HttpServletResponse response) {
+	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, BindingResult result, Model model,
+			HttpServletResponse response) {
 
 		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
 		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
@@ -490,8 +477,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		if (workbook != null) {
 			String selectedLabelFields = this.getSelectedLabelFields(this.userLabelPrinting);
-			this.labelPrintingService.populateUserSpecifiedLabelFields(this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0)
-					.getTrialInstances(), workbook, selectedLabelFields, form.getIsTrial(), form.getIsStockList());
+			this.labelPrintingService
+					.populateUserSpecifiedLabelFields(this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances(),
+							workbook, selectedLabelFields, form.getIsTrial(), form.getIsStockList());
 		}
 
 		List<StudyTrialInstanceInfo> trialInstances = null;
@@ -535,9 +523,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 			if (isCustomReport) {
 				final Integer studyId = this.userLabelPrinting.getStudyId();
-				final Reporter rep =
-						this.reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId, this.contextUtil
-								.getProjectInContext().getProjectName(), byteStream);
+				final Reporter rep = this.reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId,
+						this.contextUtil.getProjectInContext().getProjectName(), byteStream);
 
 				// additionally creates the file in 'target' folder, for human
 				// validation ;)
@@ -553,9 +540,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			} else if (selectedLabelPrintingType.isValid()) {
 				this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
 
-				fileName =
-						this.labelPrintingService.generateLabels(selectedLabelPrintingType.getExtension(), trialInstances,
-								this.userLabelPrinting, byteStream);
+				fileName = this.labelPrintingService
+						.generateLabels(selectedLabelPrintingType.getExtension(), trialInstances, this.userLabelPrinting, byteStream);
 
 				results.put(LabelPrintingController.IS_SUCCESS, 1);
 				results.put("fileName", fileName);
@@ -611,15 +597,15 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		List<CustomReportType> customReportTypes = new ArrayList<>();
 		try {
 			if (this.userLabelPrinting.getStudyId() != null) {
-				List<StandardPreset> standardPresetList =
-						this.workbenchService.getStandardPresetByCrop(this.workbenchService.getFieldbookWebTool().getToolId().intValue(),
+				List<StandardPreset> standardPresetList = this.workbenchService
+						.getStandardPresetByCrop(this.workbenchService.getFieldbookWebTool().getToolId().intValue(),
 								this.contextUtil.getProjectInContext().getCropType().getCropName().toLowerCase(),
 								ToolSection.FB_LBL_PRINT_CUSTOM_REPORT.name());
 				// we need to convert the standard preset for custom report type
 				// to custom report type pojo
 				for (int index = 0; index < standardPresetList.size(); index++) {
-					customReportTypes.addAll(CustomReportTypeUtil.readReportConfiguration(standardPresetList.get(index),
-							this.crossExpansionProperties.getProfile()));
+					customReportTypes.addAll(CustomReportTypeUtil
+							.readReportConfiguration(standardPresetList.get(index), this.crossExpansionProperties.getProfile()));
 				}
 			}
 		} catch (MiddlewareQueryException e) {
@@ -631,7 +617,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/presets/{presetType}/{presetId}", method = RequestMethod.GET, produces = "application/json")
-	public LabelPrintingSetting getLabelPrintingSetting(@PathVariable int presetType, @PathVariable int presetId, HttpServletRequest request) {
+	public LabelPrintingSetting getLabelPrintingSetting(@PathVariable int presetType, @PathVariable int presetId,
+			HttpServletRequest request) {
 		try {
 			final Unmarshaller parseXML = JAXBContext.newInstance(LabelPrintingSetting.class).createUnmarshaller();
 
@@ -651,7 +638,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Search program-preset,
-	 * 
+	 *
 	 * @param presetName
 	 * @param request
 	 * @return list of presets that matches presetName
@@ -663,15 +650,15 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		try {
 
-			List<LabelPrintingPresets> standardPresets =
-					this.labelPrintingService.getAllLabelPrintingPresetsByName(presetName, contextInfo.getSelectedProjectId().intValue(),
+			List<LabelPrintingPresets> standardPresets = this.labelPrintingService
+					.getAllLabelPrintingPresetsByName(presetName, contextInfo.getSelectedProjectId().intValue(),
 							LabelPrintingPresets.STANDARD_PRESET);
 
 			if (!standardPresets.isEmpty()) {
 				return standardPresets;
 			} else {
-				return this.labelPrintingService.getAllLabelPrintingPresetsByName(presetName,
-						contextInfo.getSelectedProjectId().intValue(), LabelPrintingPresets.PROGRAM_PRESET);
+				return this.labelPrintingService.getAllLabelPrintingPresetsByName(presetName, contextInfo.getSelectedProjectId().intValue(),
+						LabelPrintingPresets.PROGRAM_PRESET);
 			}
 		} catch (MiddlewareQueryException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
@@ -682,7 +669,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Delete's program preset
-	 * 
+	 *
 	 * @param programPresetId
 	 * @return
 	 */
@@ -704,7 +691,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Saves the label printing setting. Note that the fields should be pre-validated before calling this service
-	 * 
+	 *
 	 * @param labelPrintingPresetSetting
 	 * @param request
 	 * @return
@@ -756,7 +743,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param rawSettings
 	 * @return
 	 */
@@ -764,28 +751,25 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		// Preparation, convert the form into appropriate pojos for easy access
 		CSVExcelLabelPrintingSetting nonPDFSettings = null;
 		PDFLabelPrintingSetting pdfSettings = null;
-		BarcodeLabelPrintingSetting barcodeSettings =
-				new BarcodeLabelPrintingSetting("1".equals(rawSettings.getBarcodeNeeded()), "Barcode", StringUtil.stringify(new String[] {
-						rawSettings.getFirstBarcodeField(), rawSettings.getSecondBarcodeField(), rawSettings.getThirdBarcodeField()}, ","));
+		BarcodeLabelPrintingSetting barcodeSettings = new BarcodeLabelPrintingSetting("1".equals(rawSettings.getBarcodeNeeded()), "Barcode",
+				StringUtil.stringify(new String[] {rawSettings.getFirstBarcodeField(), rawSettings.getSecondBarcodeField(),
+						rawSettings.getThirdBarcodeField()}, ","));
 
 		if (AppConstants.LABEL_PRINTING_PDF.getString().equals(rawSettings.getGenerateType())) {
-			pdfSettings =
-					new PDFLabelPrintingSetting(rawSettings.getSizeOfLabelSheet(), Integer.parseInt(
-							rawSettings.getNumberOfRowsPerPageOfLabel(), 10), rawSettings.getLeftSelectedLabelFields(),
-							rawSettings.getRightSelectedLabelFields());
+			pdfSettings = new PDFLabelPrintingSetting(rawSettings.getSizeOfLabelSheet(),
+					Integer.parseInt(rawSettings.getNumberOfRowsPerPageOfLabel(), 10), rawSettings.getLeftSelectedLabelFields(),
+					rawSettings.getRightSelectedLabelFields());
 		} else {
-			nonPDFSettings =
-					new CSVExcelLabelPrintingSetting("1".equals(rawSettings.getIncludeColumnHeadinginNonPdf()),
-							rawSettings.getMainSelectedLabelFields());
+			nonPDFSettings = new CSVExcelLabelPrintingSetting("1".equals(rawSettings.getIncludeColumnHeadinginNonPdf()),
+					rawSettings.getMainSelectedLabelFields());
 		}
 
 		// get the xml value
 		String xmlConfig = "";
 		try {
-			xmlConfig =
-					this.generateXMLFromLabelPrintingSettings(rawSettings.getSettingsName(),
-							LabelPrintingFileTypes.getFileTypeByIndex(rawSettings.getGenerateType()).getType(), nonPDFSettings, pdfSettings,
-							barcodeSettings);
+			xmlConfig = this.generateXMLFromLabelPrintingSettings(rawSettings.getSettingsName(),
+					LabelPrintingFileTypes.getFileTypeByIndex(rawSettings.getGenerateType()).getType(), nonPDFSettings, pdfSettings,
+					barcodeSettings);
 		} catch (JAXBException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
 		}
@@ -817,7 +801,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Generate trial instances from field map.
-	 * 
+	 *
 	 * @return the list
 	 */
 	private List<StudyTrialInstanceInfo> generateTrialInstancesFromFieldMap() {
@@ -834,7 +818,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Generate trial instances from selected field maps.
-	 * 
+	 *
 	 * @param fieldMapInfoList the field map info list
 	 * @param form the form
 	 * @return the list
@@ -890,7 +874,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Sets the user label printing.
-	 * 
+	 *
 	 * @param userLabelPrinting the new user label printing
 	 */
 	public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {

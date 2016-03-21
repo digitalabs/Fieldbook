@@ -6,26 +6,20 @@
  *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.label.printing.controller;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.util.AppConstants;
 import net.sf.jasperreports.engine.JRException;
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -40,12 +34,12 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.util.AppConstants;
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
@@ -67,8 +61,8 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false);
 
 		Assert.assertNotNull("Expected results but found none", results);
-		Assert.assertTrue("Expected pdf file generated but found " + results.get("fileName").toString(), results.get("fileName").toString()
-				.contains("pdf"));
+		Assert.assertTrue("Expected pdf file generated but found " + results.get("fileName").toString(),
+				results.get("fileName").toString().contains("pdf"));
 	}
 
 	@Test
@@ -81,8 +75,8 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false);
 
 		Assert.assertNotNull("Expected results but found none", results);
-		Assert.assertTrue("Expected xls file generated but found " + results.get("fileName").toString(), results.get("fileName").toString()
-				.contains("xls"));
+		Assert.assertTrue("Expected xls file generated but found " + results.get("fileName").toString(),
+				results.get("fileName").toString().contains("xls"));
 	}
 
 	@Test
@@ -95,8 +89,8 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false);
 
 		Assert.assertNotNull("Expected results but found none", results);
-		Assert.assertTrue("Expected csv file generated but found " + results.get("fileName").toString(), results.get("fileName").toString()
-				.contains("csv"));
+		Assert.assertTrue("Expected csv file generated but found " + results.get("fileName").toString(),
+				results.get("fileName").toString().contains("csv"));
 	}
 
 	@Test
@@ -114,8 +108,9 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		Mockito.when(reporter.getFileExtension()).thenReturn("txt");
 
 		// We dont care about program name in context, OutputStream is created inside the method
-		Mockito.when(reportService.getStreamReport(Mockito.eq(userLabelPrinting.getGenerateType()), Mockito.eq(userLabelPrinting.getStudyId()),Mockito.anyString(),Mockito.any(
-				OutputStream.class))).thenReturn(reporter);
+		Mockito.when(reportService
+				.getStreamReport(Mockito.eq(userLabelPrinting.getGenerateType()), Mockito.eq(userLabelPrinting.getStudyId()),
+						Mockito.anyString(), Mockito.any(OutputStream.class))).thenReturn(reporter);
 		this.labelPrintingController.setReportService(reportService);
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 
@@ -125,7 +120,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		// Assertions
 		Assert.assertNotNull("We expect that results has value", results);
 		Assert.assertEquals("Label Printing report should be success", SUCCESS_VAL, results.get(LabelPrintingController.IS_SUCCESS));
-		Assert.assertEquals("We get the generated label printing file", results.get("fileName"), reporter.getFileName() );
+		Assert.assertEquals("We get the generated label printing file", results.get("fileName"), reporter.getFileName());
 	}
 
 	@Test
@@ -179,10 +174,11 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		controller.setCrossExpansionProperties(crossExpansionProperties);
 		List<StandardPreset> standardPresets = new ArrayList<StandardPreset>();
 		StandardPreset preset = new StandardPreset();
-		preset.setConfiguration("<reports><profile>cimmyt</profile><report><code>WLBL05</code><name>labels without design, wheat</name></report><report><code>WLBL21</code><name>labels with design, wheat</name></report></reports>");
+		preset.setConfiguration(
+				"<reports><profile>cimmyt</profile><report><code>WLBL05</code><name>labels without design, wheat</name></report><report><code>WLBL21</code><name>labels with design, wheat</name></report></reports>");
 		standardPresets.add(preset);
-		Mockito.when(workbenchService.getStandardPresetByCrop(Matchers.anyInt(), Matchers.anyString(), Matchers.anyString())).thenReturn(
-				standardPresets);
+		Mockito.when(workbenchService.getStandardPresetByCrop(Matchers.anyInt(), Matchers.anyString(), Matchers.anyString()))
+				.thenReturn(standardPresets);
 		Tool fbTool = new Tool();
 		fbTool.setToolId(new Long(1));
 		Mockito.when(workbenchService.getFieldbookWebTool()).thenReturn(fbTool);

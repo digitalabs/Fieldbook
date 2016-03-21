@@ -2019,3 +2019,8 @@ input.review-select-all{
 .import-crosses-from-file #settingsNextButtonUpdateList {
     display: none;
 }
+
+.fbk-mandatory-field {
+    color:red;
+    font-weight:bold
+}

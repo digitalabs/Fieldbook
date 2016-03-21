@@ -31,8 +31,7 @@
 
                     <div class="row">
                         <div class="col-xs-12 col-md-12">
-                            <label
-                                    th:text="#{study.import.crosses.settings.breeding.method.text}"></label>
+                            <label th:text="#{study.import.crosses.settings.breeding.method.text}"></label>
                         </div>
                     </div>
 
@@ -42,8 +41,7 @@
                         </div>
                         <div class="col-xs-5 col-md-5">
                             <input type="checkbox" id="useSelectedMethodCheckbox"/>
-                            <label class="label-bold"
-                                   th:text="#{study.import.crosses.settings.breeding.method.label}"></label>
+                            <label class="label-bold" th:text="#{study.import.crosses.settings.breeding.method.label}"></label>
                         </div>
                         <div class="col-xs-5 col-md-5 add-bottom-padding">
                             <div class="row">
@@ -55,9 +53,9 @@
                             <div class="row">
                                 <div class="col-xs-12 col-md-12">
                                     <input type="checkbox" id="showFavoritesOnlyCheckbox"/>
-                                    <label>Show only favorite methods</label>
+                                    <label th:text="#{show.favorite.method}"></label>
                                     &nbsp;
-                                    <a href="javascript: ImportCrosses.openBreedingMethodsModal();">Manage Methods</a>
+                                    <a href="javascript: ImportCrosses.openBreedingMethodsModal();" th:text="#{nursery.managesettings.manage.method}"></a>
                                 </div>
                             </div>
 
@@ -94,8 +92,7 @@
                     <div id="manualNamingSettingsPanel" class="fbk-hide">
                         <div class="row">
                             <div class="col-xs-12 col-md-12">
-                                <label
-                                        th:text="#{study.import.crosses.settings.load.settings.text}"></label>
+                                <label th:text="#{study.import.crosses.settings.load.settings.text}"></label>
                             </div>
                         </div>
 
@@ -106,8 +103,7 @@
 
                             <div class="col-xs-5 col-md-5">
                                 <input type="checkbox" id="loadSettingsCheckbox"/>
-                                <label class="label-bold"
-                                       th:text="#{study.import.crosses.settings.load.settings.label}"></label>
+                                <label class="label-bold" th:text="#{study.import.crosses.settings.load.settings.label}"></label>
                             </div>
 
                             <div class="col-xs-5 col-md-5 add-bottom-padding">
@@ -208,8 +204,7 @@
                         </div>
                         <div class="row form-group">
                             <div class="col-xs-6 col-md-6 text-right">
-                                <label class="label-bold"
-                                       th:text="#{study.import.crosses.parentage.separator.label}"></label>
+                                <label class="label-bold" th:text="#{study.import.crosses.parentage.separator.label}"></label>
                                 <span class="fbk-mandatory-field">*</span>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
@@ -220,7 +215,7 @@
 
                         <div class="row form-group">
                             <div class="col-xs-6 col-md-6 text-right">
-                                <label class="label-bold">Example parentage designation:</label>
+                                <label class="label-bold" th:text="#{study.import.crosses.example.parentage.designation.label}"></label>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
                                 <label id="sampleParentageDesignation"/>
@@ -287,9 +282,9 @@
                                 <div class="col-xs-12 col-md-12">
 
                                     <input type="checkbox" id="locationFavoritesOnlyCheckbox"/>
-                                    <label>Show only favorite locations</label>
+                                    <label th:text="#{show.favorite.location}"></label>
                                     &nbsp;
-                                    <a href="javascript: ImportCrosses.openLocationsModal();">Manage Locations</a>
+                                    <a href="javascript: ImportCrosses.openLocationsModal();" th:text="#{nursery.managesettings.manage.location}"></a>
                                 </div>
                             </div>
                         </div>
@@ -298,8 +293,7 @@
 
                     <div class="row form-group">
                         <div class="col-xs-11 col-md-11">
-                            <label class="modal-title h5"
-                                   th:text="#{study.import.crosses.settings.save.header}">SAVE SETTINGS</label>
+                            <label class="modal-title h5" th:text="#{study.import.crosses.settings.save.header}">SAVE SETTINGS</label>
                         </div>
                         <div class="col-xs-1 col-md-1">
                             &nbsp;
@@ -312,8 +306,7 @@
                         </div>
 
                         <div class="col-xs-5 col-md-5">
-                            <span class="label-bold"
-                                   th:text="#{study.import.crosses.settings.save.settings.label}"></span>
+                            <span class="label-bold" th:text="#{study.import.crosses.settings.save.settings.label}"></span>
                         </div>
 
                         <div class="col-xs-5 col-md-5 add-bottom-padding">

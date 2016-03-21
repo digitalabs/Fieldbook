@@ -25,12 +25,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
-import com.efficio.fieldbook.web.helper.FieldbookControllerDataHelper;
 import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
@@ -205,7 +205,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 	}
 
 	protected void writeXlsToOutputStream(HttpServletResponse response, File xls) throws IOException {
-		FieldbookControllerDataHelper.writeXlsToOutputStream(xls, response);
+		FieldbookUtil.writeXlsToOutputStream(xls, response);
 	}
 
 	/**

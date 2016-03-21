@@ -34,7 +34,6 @@ import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
-import com.efficio.fieldbook.web.helper.FieldbookControllerDataHelper;
 import com.efficio.fieldbook.web.trial.bean.ExportTrialInstanceBean;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -167,7 +166,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		response.setContentType(MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(filename));
 		response.setCharacterEncoding("UTF-8");
 
-		FieldbookControllerDataHelper.writeXlsToOutputStream(xls, response);
+		FieldbookUtil.writeXlsToOutputStream(xls, response);
 
 		return "";
 

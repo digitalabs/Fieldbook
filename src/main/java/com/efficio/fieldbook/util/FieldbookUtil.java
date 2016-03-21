@@ -1,12 +1,18 @@
 
 package com.efficio.fieldbook.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
+import javax.servlet.http.HttpServletResponse;
 
+import com.efficio.fieldbook.web.common.controller.ExportStudyController;
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -17,8 +23,6 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -129,5 +133,23 @@ public class FieldbookUtil {
 			return true;
 		}
 		return false;
+	}
+
+	public static void writeXlsToOutputStream(File xls, final HttpServletResponse response) {
+		try {
+			FileInputStream in = new FileInputStream(xls);
+			final OutputStream out = response.getOutputStream();
+
+			final byte[] buffer = new byte[ExportStudyController.BUFFER_SIZE];
+			int length = 0;
+
+			while ((length = in.read(buffer)) > 0) {
+				out.write(buffer, 0, length);
+			}
+			in.close();
+			out.close();
+		} catch(IOException e) {
+			FieldbookUtil.LOG.error(e.getMessage(), e);
+		}
 	}
 }

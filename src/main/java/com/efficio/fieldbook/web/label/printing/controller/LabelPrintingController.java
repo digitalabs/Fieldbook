@@ -35,11 +35,11 @@ import javax.xml.bind.Unmarshaller;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.helper.FieldbookControllerDataHelper;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
@@ -415,7 +415,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		// the selected name + current date
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
 
-		FieldbookControllerDataHelper.writeXlsToOutputStream(xls, response);
+		FieldbookUtil.writeXlsToOutputStream(xls, response);
 
 		return "";
 	}

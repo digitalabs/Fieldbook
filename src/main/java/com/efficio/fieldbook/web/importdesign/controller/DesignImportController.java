@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.GenerateDesignInput;
@@ -25,7 +26,6 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.helper.FieldbookControllerDataHelper;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
@@ -273,7 +273,7 @@ public class DesignImportController extends SettingsController {
 	public List<Map<String, Object>> showDetailsData(@RequestBody final EnvironmentData environmentData, final Model model,
 			@ModelAttribute("importDesignForm") final ImportDesignForm form) {
 
-		FieldbookControllerDataHelper.processEnvironmentData(environmentData);
+		FieldbookUtil.processEnvironmentData(environmentData);
 
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
 		final DesignImportData designImportData = this.userSelection.getDesignImportData();
@@ -555,7 +555,7 @@ public class DesignImportController extends SettingsController {
 			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem,
 			final Map<String, Integer> additionalParams) throws DesignValidationException {
 
-		FieldbookControllerDataHelper.processEnvironmentData(environmentData);
+		FieldbookUtil.processEnvironmentData(environmentData);
 
 		this.checkTheDeletedSettingDetails(this.userSelection, designImportData);
 

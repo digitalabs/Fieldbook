@@ -8,10 +8,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletResponse;
 
 import com.efficio.fieldbook.web.common.controller.ExportStudyController;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.AppConstants;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -150,6 +152,18 @@ public class FieldbookUtil {
 			out.close();
 		} catch(IOException e) {
 			FieldbookUtil.LOG.error(e.getMessage(), e);
+		}
+	}
+
+	public static void processEnvironmentData(final EnvironmentData data) {
+		for (int i = 0; i < data.getEnvironments().size(); i++) {
+			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
+			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
+				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
+					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
+				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+			}
 		}
 	}
 }

@@ -370,13 +370,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			final PhenotypicType type = StringUtils.isEmpty(role) ? null : PhenotypicType.getPhenotypicTypeByName(role);
 			settingDetail.setRole(type);
 			stdVar.setPhenotypicType(type);
-			if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
-				settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
-			} else if (id == TermId.STUDY_UID.getId()) {
-				settingDetail.setValue(this.getCurrentIbdbUserId().toString());
-			} else if (id == TermId.STUDY_UPDATE.getId()) {
-				settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
-			}
+			this.setSettingDetailValue(id, settingDetail);
 			settingDetail.setPossibleValuesToJson(possibleValues);
 			final List<ValueReference> possibleValuesFavorite =
 					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID());
@@ -431,13 +425,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		settingDetail.setRole(variableType.getRole());
 		settingDetail.setVariableType(variableType);
 
-		if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
-			settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
-		} else if (id == TermId.STUDY_UID.getId()) {
-			settingDetail.setValue(this.getCurrentIbdbUserId().toString());
-		} else if (id == TermId.STUDY_UPDATE.getId()) {
-			settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
-		}
+		this.setSettingDetailValue(id, settingDetail);
 
 		settingDetail.setPossibleValuesToJson(possibleValues);
 		final List<ValueReference> possibleValuesFavorite =
@@ -445,6 +433,16 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 		settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 		return settingDetail;
+	}
+
+	private void setSettingDetailValue(final int id, SettingDetail settingDetail) {
+		if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
+			settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
+		} else if (id == TermId.STUDY_UID.getId()) {
+			settingDetail.setValue(this.getCurrentIbdbUserId().toString());
+		} else if (id == TermId.STUDY_UPDATE.getId()) {
+			settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
+		}
 	}
 
 	/**

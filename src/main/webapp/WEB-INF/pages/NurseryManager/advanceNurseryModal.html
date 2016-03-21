@@ -140,7 +140,7 @@
 							</div>
 						</div>
 
-                        <div id="reps-section">
+                        <div id="reps-section" th:if="${not #lists.isEmpty(replicationsChoices)}">
                             <div class="row form-group">
                                 <label class="control-label col-xs-12 add_top_padding" ><strong class="sub-content-heading" th:text="#{advancing.nursery.reps}">REPS</strong> </label>
                             </div>

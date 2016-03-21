@@ -1081,7 +1081,9 @@ function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtm
 
     if(!isNursery() || trialInstances !== undefined){
         advanceStudyHref = advanceStudyHref + '?selectedTrialInstances=' + encodeURIComponent(trialInstances.join(","));
-        advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
+        if(noOfReplications !== null) {
+        	advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
+        }
     }
 
     if (idVal != null) {
@@ -1789,7 +1791,7 @@ function validatePlantsSelected() {
 function callAdvanceNursery() {
 	var lines = $('#lineSelected').val();
 
-    if(!isNursery()){
+    if(!isNursery() && $('#reps-section').length) {
         var selectedReps = [];
         $('#replications input:checked').each(function() {
             selectedReps.push($(this).val());

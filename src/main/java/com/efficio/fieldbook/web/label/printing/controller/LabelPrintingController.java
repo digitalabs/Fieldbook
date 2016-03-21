@@ -155,8 +155,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@Resource
 	private GermplasmListManager germplasmListManager;
 
-	public static final String[] GENERATED_TYPES = new String[] {"PDF", "EXCEL", "CSV"};
-
 	/**
 	 * Show trial label details.
 	 * 
@@ -786,7 +784,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		try {
 			xmlConfig =
 					this.generateXMLFromLabelPrintingSettings(rawSettings.getSettingsName(),
-							GENERATED_TYPES[Integer.valueOf(rawSettings.getGenerateType(), 10) - 1], nonPDFSettings, pdfSettings,
+							LabelPrintingFileTypes.getFileTypeByIndex(rawSettings.getGenerateType()).getType(), nonPDFSettings, pdfSettings,
 							barcodeSettings);
 		} catch (JAXBException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);

@@ -1,4 +1,5 @@
-/*global showErrorMessage, createErrorNotification, crossingImportErrorHeader, isInt, crossingExportErrorHeader, invalidImportedFile*/
+/*global showErrorMessage, createErrorNotification, crossingImportErrorHeader, isInt, crossingExportErrorHeader, invalidImportedFile,
+getJquerySafeId*/
 var ImportCrosses = {
 	CROSSES_URL: '/Fieldbook/crosses',
 	showFavoriteMethodsOnly: true,
@@ -328,7 +329,7 @@ var ImportCrosses = {
 		'use strict';
 		var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
-		if ($('#manualNamingSettings').is(':checked')) {
+		if ($('input:radio[name=manualNamingSettings]:checked').val() === 'true') {
 			if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
 				return;
 			}
@@ -343,7 +344,7 @@ var ImportCrosses = {
 
 		$.ajax({
 			headers: {
-				'Accept': 'application/json',
+				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
 			url: targetURL,
@@ -409,7 +410,7 @@ var ImportCrosses = {
 		//TODO Handle errors for ajax request
 		return $.ajax({
 			headers: {
-				'Accept': 'application/json',
+				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
 			url: ImportCrosses.CROSSES_URL + '/generateSequenceValue',
@@ -436,14 +437,15 @@ var ImportCrosses = {
 		settingObject.crossNameSetting = {};
 		settingObject.crossNameSetting.prefix = $('#crossPrefix').val();
 		settingObject.crossNameSetting.suffix = $('#crossSuffix').val();
-		settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode = $('input:radio[name=hasPrefixSpace]:checked').val() == 'true';
-		settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode = $('input:radio[name=hasSuffixSpace]:checked').val() == 'true';
+		settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode = $('input:radio[name=hasPrefixSpace]:checked').val() === 'true';
+		settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode = $('input:radio[name=hasSuffixSpace]:checked').val() === 'true';
 		settingObject.crossNameSetting.numOfDigits = $('#sequenceNumberDigits').val();
 		settingObject.crossNameSetting.separator = $('#parentageDesignationSeparator').val();
 		settingObject.crossNameSetting.startNumber = $('#startingSequenceNumber').val();
-		settingObject.crossNameSetting.saveParentageDesignationAsAString = $('input:radio[name=hasParentageDesignationName]:checked').val() == 'true';
+		settingObject.crossNameSetting.saveParentageDesignationAsAString =
+			$('input:radio[name=hasParentageDesignationName]:checked').val() === 'true';
 		settingObject.preservePlotDuplicates =  ImportCrosses.preservePlotDuplicates;
-		settingObject.isUseManualSettingsForNaming = $('#manualNamingSettings').is(':checked');
+		settingObject.isUseManualSettingsForNaming = $('input:radio[name=manualNamingSettings]:checked').val() === 'true';
 		settingObject.additionalDetailsSetting = {};
 		settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');
 		if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
@@ -575,18 +577,18 @@ var ImportCrosses = {
 					close,
 					aHtml;
 				uniqueId = crossesListId;
-				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
-				aHtml = '<a id="advance-list'+uniqueId+'" role="tab" class="advanceList crossesList crossesList'+uniqueId+'" data-toggle="tab" href="#advance-list' + uniqueId + '" data-list-id="' + uniqueId + '">Crosses: [' + listName + ']' + close + '</a>';
+				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="' + uniqueId + '" onclick="javascript: closeAdvanceListTab(' + uniqueId + ')"></i>';
+				aHtml = '<a id="advance-list' + uniqueId + '" role="tab" class="advanceList crossesList crossesList' + uniqueId + '" data-toggle="tab" href="#advance-list' + uniqueId + '" data-list-id="' + uniqueId + '">Crosses: [' + listName + ']' + close + '</a>';
 				var stockHtml = '<div id="stock-content-pane' + uniqueId + '" class="stock-list' + uniqueId + '"></div>';
 				$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li" class="advance-germplasm-items crosses-list">' + aHtml + '</li>');
-				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="advance-list' + uniqueId + '">' + html + '</div>');
-				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="stock-tab-pane' + uniqueId + '">' + stockHtml + '</div>');
-				$('a#advance-list'+uniqueId).tab('show');
-				$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
+				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list' + uniqueId + '" id="advance-list' + uniqueId + '">' + html + '</div>');
+				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list' + uniqueId + '" id="stock-tab-pane' + uniqueId + '">' + stockHtml + '</div>');
+				$('a#advance-list' + uniqueId).tab('show');
+				$('#advance-list' + uniqueId + '.tab-pane.info').addClass('active');
 				$('.nav-tabs').tabdrop('layout');
-				$('a#advance-list'+uniqueId).on('click', function() {
+				$('a#advance-list' + uniqueId).on('click', function() {
 					$('#create-nursery-tabs .tab-pane.info').removeClass('active');
-					$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
+					$('#advance-list' + uniqueId + '.tab-pane.info').addClass('active');
 				});
 			},
 			error: function() {

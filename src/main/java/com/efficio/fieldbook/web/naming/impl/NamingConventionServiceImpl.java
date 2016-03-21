@@ -213,10 +213,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		final List<Name> names = new ArrayList<Name>();
 
 		final Name name = new Name();
-		final Integer germplasmId = source.getGermplasm().getGid() != null ? Integer.valueOf(source.getGermplasm().getGid()) : null;
-		name.setGermplasmId(germplasmId);
 		name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
-
 		name.setNval(germplasm.getDesig());
 		name.setNstat(1);
 		names.add(name);
@@ -273,8 +270,13 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		int index = 0;
 		final TimerWatch timer = new TimerWatch("cross");
 
+		// FIXME previousMaxSequence is a "quick fix" solution to propagate previous max sequence to the next cross entry to process.
+		// Rules engine is currently not designed to handle this (even for advancing case). Next sequence choice is managed this via user
+		// interaction for advancing. There is no user interaction in case of cross list.
+		int previousMaxSequence = 0;
 		for (final AdvancingSource advancingSource : rows.getRows()) {
 			final List<String> names;
+			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 
 			advancingSource.setBreedingMethod(breedingMethodMap.get(Integer.valueOf(advancingParameters.getBreedingMethodId())));
 			//default plants selected value to 1 for list of crosses because sequence is not working if plants selected value is not set
@@ -282,6 +284,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 			final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
 			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
+
+			// Save away the current max sequence once rules have been run for this entry.
+			previousMaxSequence = advancingSource.getCurrentMaxSequence() + 1;
 			for (final String name : names) {
 				importedCrosses.get(index++).setDesig(name);
 			}

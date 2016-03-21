@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -321,8 +320,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			}
 		}
 		if (!valid){
-			throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rules.not.configured", new Object[] {},
-					Locale.getDefault()));
+			throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rules.not.configured", null, "The rules"
+							+ " were not configured", LocaleContextHolder.getLocale()));
 		}
 	}
 

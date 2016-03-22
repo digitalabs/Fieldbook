@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
+
 import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +39,7 @@ import com.efficio.fieldbook.web.trial.bean.ExportTrialInstanceBean;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import net.sf.jasperreports.engine.JRException;
+
 import org.generationcp.commons.constant.ToolEnum;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.CustomReportType;
@@ -162,7 +164,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
 
 		// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-		response.setHeader("Content-disposition", "attachment; filename=" + encodedFilename + "; filename*=UTF-8''" + encodedFilename);
+		response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''" + encodedFilename
+				+ "\";");
 		response.setContentType(MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(filename));
 		response.setCharacterEncoding("UTF-8");
 

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- *
+ * 
  * Generation Challenge Programme (GCP)
- *
- *
+ * 
+ * 
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
+ * 
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.label.printing.controller;
@@ -93,7 +93,7 @@ import org.springframework.web.util.WebUtils;
 
 /**
  * The Class LabelPrintingController.
- *
+ * 
  * This class would handle the label printing for the pdf and excel generation.
  */
 @Controller
@@ -150,7 +150,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Show trial label details.
-	 *
+	 * 
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
@@ -201,7 +201,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Show nursery label details.
-	 *
+	 * 
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
@@ -248,7 +248,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Show fieldmap label details.
-	 *
+	 * 
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
@@ -360,7 +360,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Generate default filename.
-	 *
+	 * 
 	 * @param userLabelPrinting the user label printing
 	 * @param isTrial the is trial
 	 * @return the string
@@ -391,7 +391,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Export file.
-	 *
+	 * 
 	 * @param response the response
 	 * @return the string
 	 */
@@ -410,7 +410,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		String encodedFilename = FileUtils.encodeFilenameForDownload(fileName);
 
 		// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-		response.setHeader("Content-disposition", "attachment; filename=" + encodedFilename + "; filename*=UTF-8''" + encodedFilename);
+		response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''" + encodedFilename
+				+ "\";");
 		response.setCharacterEncoding("UTF-8");
 		// the selected name + current date
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
@@ -422,7 +423,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Submits the details.
-	 *
+	 * 
 	 * @param form the form
 	 * @param result the result
 	 * @param model the model
@@ -610,7 +611,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Search program-preset,
-	 *
+	 * 
 	 * @param presetName
 	 * @param request
 	 * @return list of presets that matches presetName
@@ -641,7 +642,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Delete's program preset
-	 *
+	 * 
 	 * @param programPresetId
 	 * @return
 	 */
@@ -663,7 +664,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Saves the label printing setting. Note that the fields should be pre-validated before calling this service
-	 *
+	 * 
 	 * @param labelPrintingPresetSetting
 	 * @param request
 	 * @return
@@ -715,7 +716,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param rawSettings
 	 * @return
 	 */
@@ -778,7 +779,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Generate trial instances from field map.
-	 *
+	 * 
 	 * @return the list
 	 */
 	private List<StudyTrialInstanceInfo> generateTrialInstancesFromFieldMap() {
@@ -795,7 +796,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Generate trial instances from selected field maps.
-	 *
+	 * 
 	 * @param fieldMapInfoList the field map info list
 	 * @param form the form
 	 * @return the list
@@ -841,7 +842,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName ()
 	 */
 	@Override
@@ -851,7 +852,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Sets the user label printing.
-	 *
+	 * 
 	 * @param userLabelPrinting the new user label printing
 	 */
 	public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {

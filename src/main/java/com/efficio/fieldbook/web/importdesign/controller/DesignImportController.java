@@ -674,7 +674,7 @@ public class DesignImportController extends SettingsController {
 				while (deletedTrialLevelVariables.hasNext()) {
 					final SettingDetail deletedSettingDetail = deletedTrialLevelVariables.next();
 
-					if (deletedSettingDetail.getVariable().getCvTermId().intValue() == mvar.getTermId()) {
+					if (deletedSettingDetail.getVariable().getCvTermId() == mvar.getTermId()) {
 
 						deletedSettingDetail.getVariable().setOperation(Operation.UPDATE);
 						userSelection.getTrialLevelVariableList().add(deletedSettingDetail);
@@ -684,31 +684,26 @@ public class DesignImportController extends SettingsController {
 					}
 
 					final String termIdOfName = idNameMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
-					if (termIdOfName != null) {
-
-						this.updateOperation(Integer.valueOf(termIdOfName), userSelection.getTrialLevelVariableList(), Operation.UPDATE);
-
-						deletedSettingDetail.getVariable().setOperation(Operation.UPDATE);
-						userSelection.getTrialLevelVariableList().add(deletedSettingDetail);
-
-						deletedTrialLevelVariables.remove();
-					}
+					this.addDeletedSettingDetailToTrialLevelVariableList(termIdOfName, deletedTrialLevelVariables, deletedSettingDetail);
 
 					final String termIdOfId = nameIdMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
-					if (termIdOfId != null) {
-						this.updateOperation(Integer.valueOf(termIdOfId), userSelection.getTrialLevelVariableList(), Operation.UPDATE);
-
-						deletedSettingDetail.getVariable().setOperation(Operation.UPDATE);
-						userSelection.getTrialLevelVariableList().add(deletedSettingDetail);
-
-						deletedTrialLevelVariables.remove();
-					}
+					this.addDeletedSettingDetailToTrialLevelVariableList(termIdOfId, deletedTrialLevelVariables, deletedSettingDetail);
 				}
-
 			}
-
 		}
+	}
 
+	private void addDeletedSettingDetailToTrialLevelVariableList(final String termIdOfNameOrId, Iterator<SettingDetail> deletedTrialLevelVariables,
+			SettingDetail deletedSettingDetail) {
+
+		if (termIdOfNameOrId != null) {
+
+			this.updateOperation(Integer.valueOf(termIdOfNameOrId), userSelection.getTrialLevelVariableList(), Operation.UPDATE);
+			deletedSettingDetail.getVariable().setOperation(Operation.UPDATE);
+			userSelection.getTrialLevelVariableList().add(deletedSettingDetail);
+
+			deletedTrialLevelVariables.remove();
+		}
 	}
 
 	protected void updateOperation(final int termId, final List<SettingDetail> settingDetails, final Operation operation) {

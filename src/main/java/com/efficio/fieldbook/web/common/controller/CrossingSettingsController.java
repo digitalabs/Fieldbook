@@ -314,14 +314,11 @@ public class CrossingSettingsController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
-	public List<Map<String, Object>> getImportedCrossesList(final HttpSession session) {
-		//session.removeAttribute("createdCrossesListId");
+	public List<Map<String, Object>> getImportedCrossesList() {
 		final List<Map<String, Object>> masterList = new ArrayList<>();
-
 		if (null == this.studySelection.getImportedCrossesList()) {
 			return masterList;
 		}
-
 		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
 			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(cross));
 		}

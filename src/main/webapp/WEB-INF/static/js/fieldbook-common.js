@@ -1081,7 +1081,7 @@ function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtm
 
     if(!isNursery() || trialInstances !== undefined){
         advanceStudyHref = advanceStudyHref + '?selectedTrialInstances=' + encodeURIComponent(trialInstances.join(","));
-        if(noOfReplications !== null) {
+        if(noOfReplications) {
         	advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
         }
     }

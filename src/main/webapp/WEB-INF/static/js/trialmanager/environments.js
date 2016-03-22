@@ -48,7 +48,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.settings.trialConditionDetails = [];
 			}
 
-			$scope.isLocation = $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
+			$scope.ifLocationAddedToTheDataTable = function () {
+				return $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
+			};
+
+			//the flag to determine if we have a location variable in the datatable
+			$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 
 			$scope.buttonsTopWithLocation = [{
 				//TODO disable?
@@ -97,10 +102,14 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			$scope.onAddVariable = function() {
 				$scope.nested.dtInstance.rerender();
+				// update the location flag, as it could have been added
+				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			};
 
 			$scope.$on('deleteOccurred', function() {
 				$scope.nested.dtInstance.rerender();
+				// update the location flag, as it could have been deleted
+				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			});
 
 			$scope.initiateManageLocationModal = function() {
@@ -214,11 +223,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						$scope.data.environments.pop();
 					}
 
-					// if the trial has no measurement data regardless if it is saved or not,
-					// regenerate the experimental design and measurement table
-					if ((TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement) ||
-							(!TrialManagerDataService.isOpenTrial() &&
-								TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined)) {
+					// Regenerate experimental design and measurement table when the trial is not saved yet
+					if (!TrialManagerDataService.isOpenTrial() && TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
 						refreshMeasurementTableAfterDeletingEnvironment();
 					}
 
@@ -260,8 +266,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			// on click generate design button
 			function refreshMeasurementTableAfterDeletingEnvironment() {
+				// Make sure that the measurement table will only refresh if there is a selected design type for the current trial
 				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
-				if (TrialManagerDataService.applicationData.designTypes[designTypeId].isPreset) {
+				if (designTypeId !== null && TrialManagerDataService.applicationData.designTypes[designTypeId].isPreset) {
 					TrialManagerDataService.generatePresetExpDesign(designTypeId).then(function() {
 						TrialManagerDataService.updateAfterGeneratingDesignSuccessfully();
 						TrialManagerDataService.applicationData.hasGeneratedDesignPreset = true;
@@ -358,8 +365,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			// init
 			if ($stateParams && $stateParams.addtlNumOfEnvironments && !isNaN(parseInt($stateParams.addtlNumOfEnvironments))) {
-				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments);
-				$scope.temp.noOfEnvironments += addtlNumOfEnvironments;
+				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments, 10);
+				$scope.temp.noOfEnvironments = parseInt($scope.temp.noOfEnvironments, 10) + addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 				addNewEnvironments(addtlNumOfEnvironments);
 			}

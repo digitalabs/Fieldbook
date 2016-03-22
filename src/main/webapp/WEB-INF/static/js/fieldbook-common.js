@@ -1,3 +1,5 @@
+var isAdvanceListGenerated = false;
+
 $(function() {
 	'use strict';
 
@@ -3523,21 +3525,6 @@ function showMeasurementsPreview() {
 	});
 }
 
-function loadInitialMeasurements() {
-	'use strict';
-	var domElemId = '#measurementsDiv';
-	$.ajax({
-		url: '/Fieldbook/TrialManager/openTrial/load/measurement',
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(html) {
-			$(domElemId).html(html);
-			$('body').data('expDesignShowPreview', '0');
-		}
-	});
-}
-
 function displaySelectedCheckGermplasmDetails() {
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/importGermplasmList/displaySelectedCheckGermplasmDetails',
@@ -3926,4 +3913,75 @@ function exportDesignTemplate() {
 			}
 		}
 	});
+}
+
+function setSpinnerMaxValue() {
+	'use strict';
+	if ($('#' + getJquerySafeId('checkVariables0.value')).val() === null || $('#' + getJquerySafeId('checkVariables0.value')).val() === '') {
+		$('#' + getJquerySafeId('checkVariables0.value')).val(1);
+	}
+}
+function switchCategoricalView(showCategoricalDescriptionView) {
+	'use strict';
+
+	if (typeof showCategoricalDescriptionView === 'undefined') {
+		showCategoricalDescriptionView = null;
+	}
+
+	$('.fbk-measurement-categorical-name').toggle();
+	$('.fbk-measurement-categorical-desc').toggle();
+
+	return $.get('/Fieldbook/Common/addOrRemoveTraits/setCategoricalDisplayType', {showCategoricalDescriptionView: showCategoricalDescriptionView})
+		.done(function(result) {
+			window.isCategoricalDescriptionView = result;
+
+			$(".fbk-toggle-categorical-display").text(result ? window.measurementObservationMessages.hideCategoricalDescription :
+					window.measurementObservationMessages.showCategoricalDescription);
+
+		});
+}
+
+function onMeasurementsInlineEditConfirmationEvent() {
+	'use strict';
+	return function(e) {
+		if (parseInt($(this).data('inline-edit'), 10) === 1) {
+			//keep the changes
+			saveInlineEdit(0);
+		} else if (parseInt($(this).data('inline-edit'), 10) === 0) {
+			//discard the changes
+			saveInlineEdit(1);
+		}
+		$('#inlineEditConfirmationModal').modal('hide');
+	};
+}
+
+function onMeasurementsObservationLoad(isCategoricalDisplay) {
+	'use strict';
+	var $categoricalDisplayToggleBtn = $('.fbk-toggle-categorical-display');
+
+	window.isCategoricalDescriptionView = isCategoricalDisplay;
+
+	// update the toggle button text depending on what current session value is
+	$categoricalDisplayToggleBtn.text(isCategoricalDisplay ? window.measurementObservationMessages.hideCategoricalDescription :
+		window.measurementObservationMessages.showCategoricalDescription);
+
+	// add event handlers
+	$('.inline-edit-confirmation').off('click').on('click', onMeasurementsInlineEditConfirmationEvent());
+	$categoricalDisplayToggleBtn.off('click').on('click', function() {
+		// process any unedited saves before updating measurement table's categorical view
+		processInlineEditInput();
+
+		switchCategoricalView();
+	});
+
+	// display the measurements table
+	return $.ajax({
+		url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax',
+		type: 'GET',
+		data: '',
+		cache: false,
+	}).done(function(response) {
+		new BMS.Fieldbook.MeasurementsDataTable('#measurement-table', response);
+	});
+
 }

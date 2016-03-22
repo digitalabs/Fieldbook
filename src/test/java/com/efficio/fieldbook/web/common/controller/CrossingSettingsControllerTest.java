@@ -349,6 +349,7 @@ public class CrossingSettingsControllerTest {
 		germplasmListData.setFemaleParent(TEST_FEMALE_PARENT);
 		germplasmListDatas.add(germplasmListData);
 		Mockito.when(this.germplasmListManager.retrieveListDataWithParents(80)).thenReturn(germplasmListDatas);
+		Mockito.when(this.germplasmListManager.getGermplasmListById(80)).thenReturn(germplasmList);
 
 		List<Map<String, Object>> testMasterList = this.dut.getImportedCrossesList("80");
 

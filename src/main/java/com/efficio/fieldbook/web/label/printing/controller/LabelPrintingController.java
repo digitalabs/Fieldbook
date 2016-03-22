@@ -398,30 +398,35 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		} else {
 			response.setContentType("application/vnd.ms-excel");
 		}
-		response.setHeader("Content-disposition", "attachment; filename=" + FieldbookUtil.getDownloadFileName(fileName, req));
+
+		String encodedFilename = FileUtils.encodeFilenameForDownload(fileName);
+
+		// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
+		response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''" + encodedFilename
+				+ "\";");
 		response.setCharacterEncoding("UTF-8");
 		// the selected name + current date
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
 		FileInputStream in;
 
-        try {
-            in = new FileInputStream(xls);
-            OutputStream out = response.getOutputStream();
+		try {
+			in = new FileInputStream(xls);
+			OutputStream out = response.getOutputStream();
 
-            // use bigger if you want
-            byte[] buffer = new byte[LabelPrintingController.BUFFER_SIZE];
-            int length = 0;
+			// use bigger if you want
+			byte[] buffer = new byte[LabelPrintingController.BUFFER_SIZE];
+			int length = 0;
 
-            while ((length = in.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
-            }
-            in.close();
-            out.close();
-        } catch (FileNotFoundException e) {
-            LabelPrintingController.LOG.error(e.getMessage(), e);
-        } catch (IOException e) {
-            LabelPrintingController.LOG.error(e.getMessage(), e);
-        }
+			while ((length = in.read(buffer)) > 0) {
+				out.write(buffer, 0, length);
+			}
+			in.close();
+			out.close();
+		} catch (FileNotFoundException e) {
+			LabelPrintingController.LOG.error(e.getMessage(), e);
+		} catch (IOException e) {
+			LabelPrintingController.LOG.error(e.getMessage(), e);
+		}
 
 		return "";
 	}
@@ -451,15 +456,15 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
 
-        // add validation for the file name
-        if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
-            Map<String,Object> results = new HashMap<>();
-            results.put(LabelPrintingController.IS_SUCCESS, 0);
-            results.put(AppConstants.MESSAGE.getString(), this.messageSource.getMessage("common.error.invalid.filename.windows",
-                    new Object[] {}, Locale.getDefault()));
+		// add validation for the file name
+		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
+			Map<String, Object> results = new HashMap<>();
+			results.put(LabelPrintingController.IS_SUCCESS, 0);
+			results.put(AppConstants.MESSAGE.getString(),
+					this.messageSource.getMessage("common.error.invalid.filename.windows", new Object[] {}, Locale.getDefault()));
 
-            return results;
-        }
+			return results;
+		}
 
 		Workbook workbook = this.userSelection.getWorkbook();
 
@@ -508,7 +513,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			if (isCustomReport) {
 				Integer studyId = this.userLabelPrinting.getStudyId();
 				Reporter rep =
-						this.reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId, contextUtil
+						this.reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId, this.contextUtil
 								.getProjectInContext().getProjectName(), baos);
 				fileName = rep.getFileName();
 				this.userLabelPrinting.setFilename(fileName);
@@ -527,7 +532,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				this.getFileNameAndSetFileLocations(".csv");
 			}
 
-            fileName = this.labelPrintingService.generateLabels(this.userLabelPrinting.getGenerateType(), trialInstances, this.userLabelPrinting, baos);
+			fileName =
+					this.labelPrintingService.generateLabels(this.userLabelPrinting.getGenerateType(), trialInstances,
+							this.userLabelPrinting, baos);
 
 			results.put(LabelPrintingController.IS_SUCCESS, 1);
 			results.put("fileName", fileName);
@@ -540,12 +547,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			results.put(LabelPrintingController.IS_SUCCESS, 0);
 			Locale locale = LocaleContextHolder.getLocale();
 
-            if (e.getErrorCode() != null) {
-                results.put(AppConstants.MESSAGE.getString(),
-                        this.messageSource.getMessage(e.getErrorCode(), new String[] {e.getLabelError()}, locale));
-            } else if (e.getCause() != null) {
-                results.put(AppConstants.MESSAGE.getString(), e.getCause().getMessage());
-            }
+			if (e.getErrorCode() != null) {
+				results.put(AppConstants.MESSAGE.getString(),
+						this.messageSource.getMessage(e.getErrorCode(), new String[] {e.getLabelError()}, locale));
+			} else if (e.getCause() != null) {
+				results.put(AppConstants.MESSAGE.getString(), e.getCause().getMessage());
+			}
 
 		}
 		return results;
@@ -769,7 +776,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	private String getFileNameAndSetFileLocations(String extension) {
 		String fileName = this.userLabelPrinting.getFilename().replaceAll(" ", "-") + extension;
-        fileName = FileUtils.sanitizeFileName(fileName);
+		fileName = FileUtils.sanitizeFileName(fileName);
 		String fileNameLocation = this.fieldbookProperties.getUploadDirectory() + File.separator + fileName;
 
 		this.userLabelPrinting.setFilenameDL(fileName);
@@ -863,6 +870,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.workbenchService = workbenchService;
 	}
 
+	@Override
 	public void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}

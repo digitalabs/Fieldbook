@@ -574,7 +574,7 @@ public class WorkbookUtil {
 	}
 
 	public static void updateTrialObservations(final Workbook workbook, final Workbook temporaryWorkbook) {
-		if (temporaryWorkbook.getTrialObservations() != null) {
+		if (!temporaryWorkbook.getTrialObservations().isEmpty()) {
 			workbook.setTrialObservations(temporaryWorkbook.getTrialObservations());
 		}
 	}

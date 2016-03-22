@@ -34,7 +34,7 @@
         $scope.trialSelectEnvironmentContinue = function(){
 
             // Do not go ahead for Advancing unless trial has experimental design & number of replications variables
-            if(TrialManagerDataService.currentData.experimentalDesign.designType == null) {
+            if(TrialManagerDataService.currentData.experimentalDesign.designType === null) {
                 showAlertMessage('', $.fieldbookMessages.advanceListUnableToGenerateWarningMessage);
                 return;
             }

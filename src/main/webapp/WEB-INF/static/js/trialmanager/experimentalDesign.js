@@ -118,11 +118,6 @@
 
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 
-					// make sure that the proper value for startingEntryNo is properly set inside this initialization section
-					var currentStartingEntryNo = '1';
-					if(Object.keys($scope.data).length === 1){
-						 currentStartingEntryNo = $scope.data.startingEntryNo;
-					}
 					// the property "startingEntryNo" is at least part of the data object here when the germplasm tab is loaded first
 					if (!$scope.data || Object.keys($scope.data).length <= 1) {
 						angular.copy({
@@ -139,7 +134,7 @@
 							nclatin: null,
 							replatinGroups: '',
 							startingPlotNo: 1,
-							startingEntryNo: currentStartingEntryNo,
+							startingEntryNo: (typeof $scope.data.startingEntryNo !== 'undefined')? parseInt($scope.data.startingEntryNo,10) : 1 ,
 							hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement
 						}, $scope.data);
 					}

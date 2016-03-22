@@ -119,7 +119,7 @@
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 
 					// make sure that the proper value for startingEntryNo is properly set inside this initialization section
-					var currentStartingEntryNo = null;
+					var currentStartingEntryNo = '1';
 					if(Object.keys($scope.data).length === 1){
 						 currentStartingEntryNo = $scope.data.startingEntryNo;
 					}
@@ -139,7 +139,7 @@
 							nclatin: null,
 							replatinGroups: '',
 							startingPlotNo: 1,
-							startingEntryNo: (currentStartingEntryNo !== null) ? currentStartingEntryNo:'1',
+							startingEntryNo: currentStartingEntryNo,
 							hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement
 						}, $scope.data);
 					}

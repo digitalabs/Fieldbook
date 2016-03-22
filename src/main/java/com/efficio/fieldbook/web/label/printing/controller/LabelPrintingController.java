@@ -80,6 +80,7 @@ import org.springframework.web.util.WebUtils;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
@@ -412,11 +413,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			response.setContentType("application/vnd.ms-excel");
 		}
 
-		String encodedFilename = FileUtils.encodeFilenameForDownload(fileName);
+		FieldbookUtil.resolveContentDisposition(fileName, response, req.getHeader("User-Agent"));
 
-		// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-		response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''" + encodedFilename
-				+ "\";");
 		response.setCharacterEncoding("UTF-8");
 		// the selected name + current date
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());

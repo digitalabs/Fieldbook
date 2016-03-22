@@ -224,7 +224,7 @@ public class WorkbookUtil {
 				for (int index = 0; index < newTraits.size(); index++) {
 					if (initialData.getMeasurementVariable().getTermId() == newTraits.get(index).getTermId()) {
 						// means this is a newly added trait, we should remove it
-						indexForRemoval.add(Integer.valueOf(index));
+						indexForRemoval.add(index);
 					}
 				}
 			}
@@ -459,32 +459,31 @@ public class WorkbookUtil {
 
 		if (tempWorkbook.getFactors() != null) {
 			for (final MeasurementVariable var : tempWorkbook.getFactors()) {
-				tempFactorsMap.put(Integer.valueOf(var.getTermId()), var);
+				tempFactorsMap.put(var.getTermId(), var);
 			}
 		}
 
 		if (workbook.getFactors() != null) {
 			for (final MeasurementVariable var : workbook.getFactors()) {
-				factorsMap.put(Integer.valueOf(var.getTermId()), var);
+				factorsMap.put(var.getTermId(), var);
 			}
 		}
 
 		if (tempWorkbook.getExpDesignVariables() != null) {
 			for (final StandardVariable var : tempWorkbook.getExpDesignVariables()) {
-				expDesignVariablesMap.put(Integer.valueOf(var.getId()), var);
+				expDesignVariablesMap.put(var.getId(), var);
 			}
 		}
 
 		for (final MeasurementVariable var : tempWorkbook.getFactors()) {
-			if (factorsMap.get(Integer.valueOf(var.getTermId())) == null
-					&& expDesignVariablesMap.get(Integer.valueOf(var.getTermId())) != null) {
+			if (factorsMap.get(var.getTermId()) == null && expDesignVariablesMap.get(var.getTermId()) != null) {
 				var.setOperation(Operation.ADD);
 				workbook.getFactors().add(var);
 			}
 		}
 
 		for (final MeasurementVariable var : workbook.getFactors()) {
-			if (tempFactorsMap.get(Integer.valueOf(var.getTermId())) == null && var.getOperation().equals(Operation.UPDATE)) {
+			if (tempFactorsMap.get(var.getTermId()) == null && var.getOperation().equals(Operation.UPDATE)) {
 				var.setOperation(Operation.DELETE);
 			}
 		}
@@ -498,12 +497,12 @@ public class WorkbookUtil {
 		final Map<Integer, MeasurementVariable> observationVariables = new HashMap<Integer, MeasurementVariable>();
 		if (factors != null) {
 			for (final MeasurementVariable var : factors) {
-				observationVariables.put(Integer.valueOf(var.getTermId()), var);
+				observationVariables.put(var.getTermId(), var);
 			}
 		}
 		if (variates != null) {
 			for (final MeasurementVariable var : variates) {
-				observationVariables.put(Integer.valueOf(var.getTermId()), var);
+				observationVariables.put(var.getTermId(), var);
 			}
 		}
 		return observationVariables;
@@ -515,36 +514,34 @@ public class WorkbookUtil {
 		final List<Integer> deletedList = new ArrayList<Integer>();
 		if (observations != null && !observations.isEmpty()) {
 			for (final MeasurementData data : observations.get(0).getDataList()) {
-				if (measurementDatasetVariables.get(Integer.valueOf(data.getMeasurementVariable().getTermId())) == null
+				if (measurementDatasetVariables.get(data.getMeasurementVariable().getTermId()) == null
 						&& data.getMeasurementVariable().getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-					deletedList.add(Integer.valueOf(data.getMeasurementVariable().getTermId()));
+					deletedList.add(data.getMeasurementVariable().getTermId());
 				}
 			}
 		}
-		if (deletedList != null) {
-			for (final Integer termId : deletedList) {
-				// remove from measurement rows
-				int index = 0;
-				int varIndex = 0;
-				boolean found = false;
-				if (observations != null) {
-					for (final MeasurementRow row : observations) {
-						if (index == 0) {
-							for (final MeasurementData var : row.getDataList()) {
-								if (var.getMeasurementVariable().getTermId() == termId.intValue()) {
-									found = true;
-									break;
-								}
-								varIndex++;
+		for (final Integer termId : deletedList) {
+			// remove from measurement rows
+			int index = 0;
+			int varIndex = 0;
+			boolean found = false;
+			if (observations != null) {
+				for (final MeasurementRow row : observations) {
+					if (index == 0) {
+						for (final MeasurementData var : row.getDataList()) {
+							if (var.getMeasurementVariable().getTermId() == termId) {
+								found = true;
+								break;
 							}
+							varIndex++;
 						}
-						if (found) {
-							row.getDataList().remove(varIndex);
-						} else {
-							break;
-						}
-						index++;
 					}
+					if (found) {
+						row.getDataList().remove(varIndex);
+					} else {
+						break;
+					}
+					index++;
 				}
 			}
 		}
@@ -552,7 +549,7 @@ public class WorkbookUtil {
 
 	// we would validate all conditions except for name and the study type
 	public static boolean isConditionValidate(final Integer cvTermId) {
-		if (cvTermId != null && cvTermId.intValue() != TermId.STUDY_TYPE.getId() && cvTermId.intValue() != TermId.STUDY_NAME.getId()
+		if (cvTermId != null && cvTermId != TermId.STUDY_TYPE.getId() && cvTermId != TermId.STUDY_NAME.getId()
 				&& !AppConstants.HIDE_TRIAL_VARIABLE_SETTINGS_FIELDS.getString().contains(cvTermId.toString())) {
 			return true;
 		}

@@ -1790,8 +1790,8 @@ function validatePlantsSelected() {
 
 function callAdvanceNursery() {
 	var lines = $('#lineSelected').val();
-
-    if(!isNursery() && $('#reps-section').length) {
+	var repsSectionIsDisplayed = $('#reps-section').length;
+    if(!isNursery() && repsSectionIsDisplayed) {
         var selectedReps = [];
         $('#replications input:checked').each(function() {
             selectedReps.push($(this).val());

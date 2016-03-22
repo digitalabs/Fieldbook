@@ -908,7 +908,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			this.addConditionsToTrialObservationsIfNecessary(workbook);
 		} else {
 			// no adding, just setting of data
-			if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty()
+			if (!workbook.getTrialObservations().isEmpty()
 					&& workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
 				final MeasurementVariable locationNameVar =
 						WorkbookUtil.getMeasurementVariable(workbook.getTrialConditions(), TermId.TRIAL_LOCATION.getId());
@@ -943,7 +943,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public void addConditionsToTrialObservationsIfNecessary(final Workbook workbook) {
-		if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty() && workbook.getTrialConditions() != null
+		if (!workbook.getTrialObservations().isEmpty() && workbook.getTrialConditions() != null
 				&& !workbook.getTrialConditions().isEmpty()) {
 
 			final Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();

@@ -636,7 +636,7 @@ public class EditNurseryController extends SettingsController {
 	}
 
 	private void setTrialObservationsFromVariables(final Workbook workbook) {
-		if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty() && workbook.getTrialConditions() != null
+		if (!workbook.getTrialObservations().isEmpty() && workbook.getTrialConditions() != null
 				&& !workbook.getTrialConditions().isEmpty()) {
 			for (final MeasurementVariable condition : workbook.getTrialConditions()) {
 				for (final MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {
@@ -650,7 +650,7 @@ public class EditNurseryController extends SettingsController {
 				}
 			}
 		}
-		if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty() && workbook.getTrialConstants() != null
+		if (!workbook.getTrialObservations().isEmpty() && workbook.getTrialConstants() != null
 				&& !workbook.getTrialConstants().isEmpty()) {
 			for (final MeasurementVariable constant : workbook.getTrialConstants()) {
 				for (final MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {

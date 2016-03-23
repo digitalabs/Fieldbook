@@ -18,9 +18,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.ontology.bean.EnumerationOperation;
+import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyMethodForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyModalForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyScaleForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyTraitClassForm;
+import com.efficio.fieldbook.web.ontology.validation.OntologyBrowserValidator;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -52,18 +63,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.ontology.bean.EnumerationOperation;
-import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyMethodForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyModalForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyScaleForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyTraitClassForm;
-import com.efficio.fieldbook.web.ontology.validation.OntologyBrowserValidator;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
 
 /**
  * This controller handles the ontology screen.
@@ -814,7 +813,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 				resultMap.put("maxValue", "");
 			}
 
-			resultMap.put("validValues", this.convertEnumerationsToJSON(stdVariable.getEnumerations()));
+			resultMap.put("validValues", FieldbookUtil.convertEnumerationsAndStandardVariableToJSON(stdVariable.getEnumerations(), null));
 
 		} catch (MiddlewareException e) {
 			OntologyManagerController.LOG.error(e.getMessage(), e);
@@ -823,24 +822,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 		}
 
 		return resultMap;
-	}
-
-	/**
-	 * Convert enumerations to json.
-	 *
-	 * @param enumerations the enumerations
-	 * @return the string
-	 */
-	private String convertEnumerationsToJSON(List<Enumeration> enumerations) {
-		if (enumerations != null) {
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				return mapper.writeValueAsString(enumerations);
-			} catch (Exception e) {
-				OntologyManagerController.LOG.error(e.getMessage(), e);
-			}
-		}
-		return "";
 	}
 
 	/**

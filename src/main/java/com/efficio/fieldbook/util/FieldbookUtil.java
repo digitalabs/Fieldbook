@@ -23,6 +23,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -201,5 +202,27 @@ public class FieldbookUtil {
 		}
 
 		return operation;
+	}
+
+	/**
+	 * Convert enumerations and standard variable to json.
+	 *
+	 * @param enumerations the enumerations
+	 * @param stdVariable the Standard Variable
+	 * @return the string
+	 */
+	public static String convertEnumerationsAndStandardVariableToJSON(List<Enumeration> enumerations, StandardVariable stdVariable) {
+		try {
+			if (enumerations != null) {
+				ObjectMapper mapper = new ObjectMapper();
+				return mapper.writeValueAsString(enumerations);
+			} else if (stdVariable != null) {
+				ObjectMapper mapper = new ObjectMapper();
+				return mapper.writeValueAsString(stdVariable);
+			}
+		} catch (Exception e) {
+			FieldbookUtil.LOG.error(e.getMessage(), e);
+		}
+		return "";
 	}
 }

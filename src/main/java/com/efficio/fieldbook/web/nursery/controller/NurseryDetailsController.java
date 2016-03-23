@@ -15,17 +15,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +38,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
 
 /**
  * The Class NurseryDetailsController.
@@ -128,16 +125,15 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController {
 		Map<String, String> result = new HashMap<String, String>();
 		try {
 			if (NurseryDetailsController.isNumeric(id)) {
-				result.put("stdVar", NurseryDetailsController.convertStandardVariableToJson(this.ontologyService
-						.getStandardVariable(Integer.parseInt(id),
-								contextUtil.getCurrentProgramUUID())));
+				result.put("stdVar", FieldbookUtil.convertEnumerationsAndStandardVariableToJSON
+						(null, this.ontologyService.getStandardVariable(Integer.parseInt(id), contextUtil.getCurrentProgramUUID())));
 			} else {
 				// this part should be commented out when id is already used
 				List<StandardVariable> stdVariables = this.ontologyService.getStandardVariables(id,
 						contextUtil.getCurrentProgramUUID());
 
 				if (stdVariables != null && !stdVariables.isEmpty()) {
-					result.put("stdVar", NurseryDetailsController.convertStandardVariableToJson(stdVariables.get(0)));
+					result.put("stdVar", FieldbookUtil.convertEnumerationsAndStandardVariableToJSON(null, stdVariables.get(0)));
 				} else {
 					result.put("stdVar", null);
 				}
@@ -148,18 +144,6 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController {
 			NurseryDetailsController.LOG.error(e.getMessage(), e);
 		}
 		return result;
-	}
-
-	private static String convertStandardVariableToJson(StandardVariable stdVariable) {
-		if (stdVariable != null) {
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				return mapper.writeValueAsString(stdVariable);
-			} catch (Exception e) {
-				NurseryDetailsController.LOG.error(e.getMessage(), e);
-			}
-		}
-		return "";
 	}
 
 	private static boolean isNumeric(String str) {

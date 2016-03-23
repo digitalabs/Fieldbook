@@ -684,17 +684,17 @@ public class DesignImportController extends SettingsController {
 					}
 
 					final String termIdOfName = idNameMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
-					this.addDeletedSettingDetailToTrialLevelVariableList(termIdOfName, deletedTrialLevelVariables, deletedSettingDetail);
+					this.addDeletedSettingDetailToTrialLevelVariableList(termIdOfName, deletedTrialLevelVariables, deletedSettingDetail, userSelection);
 
 					final String termIdOfId = nameIdMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
-					this.addDeletedSettingDetailToTrialLevelVariableList(termIdOfId, deletedTrialLevelVariables, deletedSettingDetail);
+					this.addDeletedSettingDetailToTrialLevelVariableList(termIdOfId, deletedTrialLevelVariables, deletedSettingDetail, userSelection);
 				}
 			}
 		}
 	}
 
 	private void addDeletedSettingDetailToTrialLevelVariableList(final String termIdOfNameOrId, Iterator<SettingDetail> deletedTrialLevelVariables,
-			SettingDetail deletedSettingDetail) {
+			SettingDetail deletedSettingDetail, UserSelection userSelection) {
 
 		if (termIdOfNameOrId != null) {
 

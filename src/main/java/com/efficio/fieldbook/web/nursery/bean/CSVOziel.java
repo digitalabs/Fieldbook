@@ -139,13 +139,7 @@ public class CSVOziel {
 
 			for (MeasurementRow row : this.observations) {
 				csvOutput.write(this.getDisplayValue(map.get(row.getLocationId())));
-				if (this.workbook.isNursery()) {
-					csvOutput.write("1");
-					csvOutput.write("1");
-				} else {
-					csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), row));
-					csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), row));
-				}
+				this.writeToCsvOutput(csvOutput, row);
 
 				String plot = WorkbookUtil.getValueByIdInRow(this.headers, TermId.PLOT_NO.getId(), row);
 				if (plot == null || "".equals(plot.trim())) {
@@ -215,13 +209,7 @@ public class CSVOziel {
 
 			for (MeasurementRow mRow : this.observations) {
 				csvOutput.write(this.getDisplayValue(map.get(mRow.getLocationId())));
-				if (this.workbook.isNursery()) {
-					csvOutput.write("1");
-					csvOutput.write("1");
-				} else {
-					csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), mRow));
-					csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), mRow));
-				}
+				this.writeToCsvOutput(csvOutput, mRow);
 
 				csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.ENTRY_NO.getId(), mRow));
 				try {
@@ -274,6 +262,18 @@ public class CSVOziel {
 			CSVOziel.LOG.error("Write data R was not successful", ex);
 		}
 
+	}
+
+	private CsvWriter writeToCsvOutput(CsvWriter csvOutput, MeasurementRow mRow) throws IOException {
+		if (this.workbook.isNursery()) {
+			csvOutput.write("1");
+			csvOutput.write("1");
+		} else {
+			csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), mRow));
+			csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), mRow));
+		}
+
+		return csvOutput;
 	}
 
 	public void readDATAnew(File file, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService) {

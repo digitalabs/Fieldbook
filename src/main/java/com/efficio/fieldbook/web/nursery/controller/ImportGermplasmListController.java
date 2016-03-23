@@ -617,7 +617,7 @@ public class ImportGermplasmListController extends SettingsController {
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
 			// Set first entry number from the list
-			if (list.size() != 0) {
+			if (!list.isEmpty()) {
 				form.setStartingEntryNo(list.get(0).getEntryId().toString());
 			}
 

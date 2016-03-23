@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -18,11 +22,6 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
-
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 
 public class WorkbookUtil {
 
@@ -320,33 +319,6 @@ public class WorkbookUtil {
 			if (variable.getOperation().equals(Operation.ADD)) {
 				final StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
 				for (final MeasurementRow row : userSelection.getMeasurementRowList()) {
-					final MeasurementData measurementData =
-							new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
-
-					measurementData.setPhenotypeId(null);
-					final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
-					row.getDataList().add(insertIndex, measurementData);
-				}
-
-				if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
-						&& isVariate) {
-					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
-				} else {
-					variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
-				}
-			}
-		}
-	}
-
-	public static void addMeasurementDataToRows(final List<MeasurementVariable> variableList,
-			final List<MeasurementRow> measurementRowList, final boolean isVariate, final UserSelection userSelection,
-			final OntologyService ontologyService, final FieldbookService fieldbookService, final String programUUID)
-			throws MiddlewareException {
-		// add new variables in measurement rows
-		for (final MeasurementVariable variable : variableList) {
-			if (variable.getOperation().equals(Operation.ADD)) {
-				final StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
-				for (final MeasurementRow row : measurementRowList) {
 					final MeasurementData measurementData =
 							new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 

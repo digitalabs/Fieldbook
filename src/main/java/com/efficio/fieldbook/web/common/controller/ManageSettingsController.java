@@ -2,13 +2,13 @@ package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -316,14 +316,7 @@ public class ManageSettingsController extends SettingsController {
 
 		Operation operation = Operation.ADD;
 		if (settingsList != null) {
-			Iterator<SettingDetail> iter = settingsList.iterator();
-			while (iter.hasNext()) {
-				SettingVariable deletedVariable = iter.next().getVariable();
-				if (deletedVariable.getCvTermId().equals(Integer.valueOf(var.getCvTermId()))) {
-					operation = deletedVariable.getOperation();
-					iter.remove();
-				}
-			}
+			operation = FieldbookUtil.getDeletedVariableOperation(settingsList, var, operation);
 		}
 		return operation;
 	}

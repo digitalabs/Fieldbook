@@ -17,11 +17,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.util.JsonIoException;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -57,19 +69,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
-
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.util.JsonIoException;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class CreateNurseryController.
@@ -637,14 +636,7 @@ public class CreateNurseryController extends SettingsController {
 
 		Operation operation = Operation.ADD;
 		if (settingsList != null) {
-			final Iterator<SettingDetail> iter = settingsList.iterator();
-			while (iter.hasNext()) {
-				final SettingVariable deletedVariable = iter.next().getVariable();
-				if (deletedVariable.getCvTermId().equals(Integer.valueOf(var.getCvTermId()))) {
-					operation = deletedVariable.getOperation();
-					iter.remove();
-				}
-			}
+			operation = FieldbookUtil.getDeletedVariableOperation(settingsList, var, operation);
 		}
 		return operation;
 	}

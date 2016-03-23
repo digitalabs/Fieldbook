@@ -7,11 +7,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletResponse;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.controller.ExportStudyController;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -185,5 +188,18 @@ public class FieldbookUtil {
 		var.setFactor(false);
 		var.setOperation(operation);
 		return var;
+	}
+
+	public static Operation getDeletedVariableOperation(List<SettingDetail> settingsList, SettingVariable var, Operation operation) {
+		final Iterator<SettingDetail> settingDetailIterator = settingsList.iterator();
+		while (settingDetailIterator.hasNext()) {
+			final SettingVariable deletedVariable = settingDetailIterator.next().getVariable();
+			if (deletedVariable.getCvTermId().equals(var.getCvTermId())) {
+				operation = deletedVariable.getOperation();
+				settingDetailIterator.remove();
+			}
+		}
+
+		return operation;
 	}
 }

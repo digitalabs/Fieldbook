@@ -63,6 +63,10 @@ var ImportCrosses = {
 		});
 
 		$('#crossSettingsModal').on('hidden.bs.modal', function() {
+				//we should clear the form and form fields on closing as we are going to reuse it later
+				//TODO clear other fields as well, some of them need to set the default value back
+				$('#breedingMethodId').val('');
+				$('#breedingMethodDropdown').select2('val', '');
 				$('#crossSettingsModal').removeClass('import-crosses-from-file');
 			});
 

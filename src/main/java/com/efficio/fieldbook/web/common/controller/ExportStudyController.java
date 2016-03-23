@@ -16,7 +16,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -168,7 +167,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		FieldbookUtil.resolveContentDisposition(filename, response, req.getHeader("User-Agent"));
 
-		response.setContentType(MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(filename));
+		response.setContentType(FileUtils.detectMimeType(filename));
 		response.setCharacterEncoding("UTF-8");
 
 		try {

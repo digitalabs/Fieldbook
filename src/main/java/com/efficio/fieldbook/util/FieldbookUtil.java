@@ -168,7 +168,7 @@ public class FieldbookUtil {
 
 		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
 
-		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
+		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1 || userAgent.indexOf("Safari") != -1) {
 			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
 			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
 		} else {

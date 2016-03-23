@@ -407,11 +407,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		String fileName = this.userLabelPrinting.getFilenameDL();
 
-		if (fileName.indexOf(".pdf") != -1) {
-			response.setContentType("application/pdf");
-		} else {
-			response.setContentType("application/vnd.ms-excel");
-		}
+		response.setContentType(FileUtils.detectMimeType(fileName));
 
 		FieldbookUtil.resolveContentDisposition(fileName, response, req.getHeader("User-Agent"));
 

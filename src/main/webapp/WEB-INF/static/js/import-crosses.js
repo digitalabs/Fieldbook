@@ -333,8 +333,15 @@ var ImportCrosses = {
 		'use strict';
 		var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
-		if ($('input:radio[name=manualNamingSettings]:checked').val() === 'true') {
+		//perform the validation depending on automated/manual names generation being selected
+		if (settingData.isUseManualSettingsForNaming) {
 			if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
+				return;
+			}
+		} else {
+			// if automated names generation was selected the breeding method is required
+			if (!settingData.breedingMethodSetting.methodId || settingData.breedingMethodSetting.methodId === '') {
+				showErrorMessage('', $.fieldbookMessages.errorImportMethodRequired);
 				return;
 			}
 		}

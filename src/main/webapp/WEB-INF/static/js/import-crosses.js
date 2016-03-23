@@ -63,6 +63,10 @@ var ImportCrosses = {
 		});
 
 		$('#crossSettingsModal').on('hidden.bs.modal', function() {
+				//we should clear the form and form fields on closing as we are going to reuse it later
+				//TODO clear other fields as well, some of them need to set the default value back
+				$('#breedingMethodId').val('');
+				$('#breedingMethodDropdown').select2('val', '');
 				$('#crossSettingsModal').removeClass('import-crosses-from-file');
 			});
 
@@ -329,8 +333,15 @@ var ImportCrosses = {
 		'use strict';
 		var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
-		if ($('input:radio[name=manualNamingSettings]:checked').val() === 'true') {
+		//perform the validation depending on automated/manual names generation being selected
+		if (settingData.isUseManualSettingsForNaming) {
 			if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
+				return;
+			}
+		} else {
+			// if automated names generation was selected the breeding method is required
+			if (!settingData.breedingMethodSetting.methodId || settingData.breedingMethodSetting.methodId === '') {
+				showErrorMessage('', $.fieldbookMessages.errorImportMethodRequired);
 				return;
 			}
 		}

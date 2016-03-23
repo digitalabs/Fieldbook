@@ -466,7 +466,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					.getMinValue() : null);
 			var.setMaxRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null ? stdvar.getConstraints()
 					.getMaxValue() : null);
-			var.setWidgetType();
 		}
 	}
 

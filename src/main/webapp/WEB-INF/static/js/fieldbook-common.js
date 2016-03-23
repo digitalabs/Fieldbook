@@ -1860,6 +1860,7 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
                 });
                 // Display Stock List if it is generated
                 StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
+                ListPage.setupPage(id + '-li');
             }
 		}
 	});

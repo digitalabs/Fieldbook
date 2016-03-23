@@ -12,9 +12,7 @@ import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
-import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
-import org.generationcp.commons.service.GermplasmOriginGenerationService;
-import org.generationcp.commons.service.GermplasmOriginParameterBuilder;
+import org.generationcp.commons.service.impl.seedsource.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -65,10 +63,7 @@ public class NamingConventionServiceImplTest {
 	private ResourceBundleMessageSource messageSource;
 
 	@Mock
-	private GermplasmOriginGenerationService germplasmOriginGenerationService;
-
-	@Mock
-	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
+	private SeedSourceGenerator seedSourceGenerator;
 
 	@InjectMocks
 	private NamingConventionServiceImpl namingConventionService = new NamingConventionServiceImpl();
@@ -143,8 +138,10 @@ public class NamingConventionServiceImplTest {
 		final String ruleGeneratedName1 = sourceGermplasmName.getNval() + "-B1";
 		final String ruleGeneratedName2 = sourceGermplasmName.getNval() + "-B2";
 		Mockito.when(this.rulesService.runRules(Mockito.any(RuleExecutionContext.class))).thenReturn(Lists.newArrayList(ruleGeneratedName1, ruleGeneratedName2));
-		final String testPlotCode = "NurseryName:Plot#";
-		Mockito.when(this.germplasmOriginGenerationService.generateOriginString(Mockito.any(GermplasmOriginGenerationParameters.class))).thenReturn(testPlotCode);
+		final String testSeedSource = "MEX-DrySeason-N1-1-2";
+		Mockito.when(
+				this.seedSourceGenerator.generateSeedSource(Mockito.any(Workbook.class), Mockito.anyString(), Mockito.anyString(),
+						Mockito.anyString(), Mockito.anyString())).thenReturn(testSeedSource);
 
 		AdvancingNursery advancingParameters = new AdvancingNursery();
 		advancingParameters.setCheckAdvanceLinesUnique(false);
@@ -159,7 +156,7 @@ public class NamingConventionServiceImplTest {
 		Assert.assertEquals(ruleGeneratedName1, advanceResult1.getDesig());
 		Assert.assertNull(advanceResult1.getGid());
 		Assert.assertEquals(ig.getCross(), advanceResult1.getCross());
-		Assert.assertEquals(testPlotCode, advanceResult1.getSource());
+		Assert.assertEquals(testSeedSource, advanceResult1.getSource());
 		Assert.assertEquals("E0001", advanceResult1.getEntryCode());
 		Assert.assertEquals(new Integer(40), advanceResult1.getBreedingMethodId());
 		Assert.assertEquals(new Integer(133), advanceResult1.getGpid1());
@@ -181,7 +178,7 @@ public class NamingConventionServiceImplTest {
 		Assert.assertEquals(ruleGeneratedName2, advanceResult2.getDesig());
 		Assert.assertNull(advanceResult2.getGid());
 		Assert.assertEquals(ig.getCross(), advanceResult2.getCross());
-		Assert.assertEquals(testPlotCode, advanceResult2.getSource());
+		Assert.assertEquals(testSeedSource, advanceResult2.getSource());
 		Assert.assertEquals("E0002", advanceResult2.getEntryCode());
 		Assert.assertEquals(new Integer(40), advanceResult2.getBreedingMethodId());
 		Assert.assertEquals(new Integer(133), advanceResult2.getGpid1());
@@ -263,9 +260,10 @@ public class NamingConventionServiceImplTest {
         final String ruleGeneratedName = name1.getNval() + "-B";
         Mockito.when(this.rulesService.runRules(Mockito.any(RuleExecutionContext.class))).thenReturn(
                 Lists.newArrayList(ruleGeneratedName));
-        final String testPlotCode = "NurseryName:Plot#";
-        Mockito.when(this.germplasmOriginGenerationService.generateOriginString(Mockito.any(GermplasmOriginGenerationParameters.class)))
-                .thenReturn(testPlotCode);
+		final String testSeedSource = "MEX-DrySeason-N1-1-2";
+		Mockito.when(
+				this.seedSourceGenerator.generateSeedSource(Mockito.any(Workbook.class), Mockito.any(String.class),
+						Mockito.any(String.class), Mockito.any(String.class), Mockito.anyString())).thenReturn(testSeedSource);
 
         AdvancingNursery info = new AdvancingNursery();
         info.setMethodChoice("1");
@@ -292,7 +290,7 @@ public class NamingConventionServiceImplTest {
         Assert.assertEquals(ruleGeneratedName, resultIG.getDesig());
         Assert.assertNull(resultIG.getGid());
         Assert.assertEquals(ig.getCross(), resultIG.getCross());
-        Assert.assertEquals(testPlotCode, resultIG.getSource());
+		Assert.assertEquals(testSeedSource, resultIG.getSource());
         Assert.assertEquals("E0001", resultIG.getEntryCode());
         Assert.assertEquals(new Integer(40), resultIG.getBreedingMethodId());
         Assert.assertEquals(new Integer(133), resultIG.getGpid1());

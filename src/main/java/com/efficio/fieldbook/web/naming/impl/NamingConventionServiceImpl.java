@@ -16,9 +16,7 @@ import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
-import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
-import org.generationcp.commons.service.GermplasmOriginGenerationService;
-import org.generationcp.commons.service.GermplasmOriginParameterBuilder;
+import org.generationcp.commons.service.impl.seedsource.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -71,10 +69,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private ResourceBundleMessageSource messageSource;
 
 	@Resource
-	private GermplasmOriginGenerationService germplasmOriginGenerationService;
-
-	@Resource
-	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
+	private SeedSourceGenerator seedSourceGenerator;
 
 	@Override
 	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException,
@@ -177,13 +172,12 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 		
 		// set the seed source string for the new Germplasm
-		final GermplasmOriginGenerationParameters parameters =
-				this.germplasmOriginParameterBuilder.build(workbook, source.getTrialInstanceNumber(), source.getReplicationNumber(),
-						selectionNumberToApply, source.getPlotNumber());
-		final String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
+		final String seedSource =
+				this.seedSourceGenerator.generateSeedSource(workbook, source.getTrialInstanceNumber(), selectionNumberToApply,
+						source.getPlotNumber(), workbook.getStudyName());
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
-						, source.getGermplasm().getCross(), seedSourceOriginString,
+						, source.getGermplasm().getCross(), seedSource,
 						FieldbookUtil.generateEntryCode(index), null /* check */
 						, breedingMethod.getMid());
 		
@@ -340,12 +334,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		this.ruleFactory = ruleFactory;
 	}
 
-	void setGermplasmOriginGenerationService(GermplasmOriginGenerationService germplasmOriginGenerationService) {
-		this.germplasmOriginGenerationService = germplasmOriginGenerationService;
-	}
-
-	void setGermplasmOriginParameterBuilder(GermplasmOriginParameterBuilder germplasmOriginParameterBuilder) {
-		this.germplasmOriginParameterBuilder = germplasmOriginParameterBuilder;
+	void setSeedSourceGenerator(SeedSourceGenerator seedSourceGenerator) {
+		this.seedSourceGenerator = seedSourceGenerator;
 	}
 
 }

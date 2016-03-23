@@ -133,7 +133,7 @@ public class ValidationServiceImpl implements ValidationService {
 
 			}
 		}
-		if (workbook.getTrialObservations() != null) {
+		if (!workbook.getTrialObservations().isEmpty()) {
 			List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
 			observations = WorkbookUtil.filterObservationsByTrialInstance(workbook.getTrialObservations(), instanceNumber);
 

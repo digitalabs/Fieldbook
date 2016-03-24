@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.common.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +61,9 @@ import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 public class GermplasmTreeControllerTest {
 
 	private static final String LIST_NAME_SHOULD_BE_UNIQUE = "List Name should be unique";
+	private static final String ERROR_RULES_NOT_CONFIGURED = "The system was not able to generate names for your crosses because automatic "
+			+ "naming rules are not configured for the breeding methods used by the crosses. Please contact your system administrator for "
+			+ "assistance, or choose the “Specify name format” option to define the cross names you would like to use.";
 	private static final String PROJECT_ID = "1";
 	private static final String LIST_PARENT_ID = GermplasmTreeControllerTest.PROJECT_ID;
 	private static final String LIST_TYPE = "GERMPLASM LITS";
@@ -148,6 +152,9 @@ public class GermplasmTreeControllerTest {
 		} catch (final Exception e) {
 
 		}
+		Mockito.when(this.messageSource.getMessage("error.save.cross.rules.not.configured", null, "The rules"
+				+ " were not configured", LocaleContextHolder.getLocale()))
+				.thenReturn(GermplasmTreeControllerTest.ERROR_RULES_NOT_CONFIGURED);
 		Mockito.when(this.germplasmDataManager.getPlotCodeField()).thenReturn(new UserDefinedField(1152));
 	}
 
@@ -174,7 +181,7 @@ public class GermplasmTreeControllerTest {
 
 		this.controller.setPaginationListSelection(paginationListSelection);
 
-		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
 		Assert.assertEquals("advancedGermplasmListId should be 2", 2, result.get("advancedGermplasmListId"));
@@ -194,7 +201,7 @@ public class GermplasmTreeControllerTest {
 		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
 		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
-		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
 		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
@@ -218,7 +225,7 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
 				.getGermplasmListByName(Matchers.anyString(), Matchers.anyString());
 
-		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
 		Assert.assertEquals(0, result.get("isSuccess"));
 		Assert.assertEquals(GermplasmTreeControllerTest.LIST_NAME_SHOULD_BE_UNIQUE, result.get("message"));
@@ -241,7 +248,7 @@ public class GermplasmTreeControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListByName(Matchers.anyString(), Matchers.anyString())).thenThrow(
 				new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
 
-		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
 		Assert.assertEquals(0, result.get("isSuccess"));
 		Assert.assertEquals(GermplasmTreeControllerTest.ERROR_MESSAGE, result.get("message"));
@@ -319,6 +326,7 @@ public class GermplasmTreeControllerTest {
 		crossSetting.setCrossNameSetting(crossNameSetting);
 		crossSetting.setBreedingMethodSetting(new BreedingMethodSetting());
 		crossSetting.setAdditionalDetailsSetting(new AdditionalDetailsSetting());
+		crossSetting.setIsUseManualSettingsForNaming(true);
 
 		return crossSetting;
 	}
@@ -332,6 +340,7 @@ public class GermplasmTreeControllerTest {
 		cross.setMaleDesig("MALE-54321");
 		cross.setMaleGid("54321");
 		cross.setGid("10021");
+		cross.setDesig("Default name1");
 		importedCrosses.add(cross);
 		final ImportedCrosses cross2 = new ImportedCrosses();
 		cross2.setFemaleDesig("FEMALE-9999");
@@ -339,6 +348,7 @@ public class GermplasmTreeControllerTest {
 		cross2.setMaleDesig("MALE-8888");
 		cross2.setMaleGid("8888");
 		cross2.setGid("10022");
+		cross2.setDesig("Default name2");
 		importedCrosses.add(cross2);
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 

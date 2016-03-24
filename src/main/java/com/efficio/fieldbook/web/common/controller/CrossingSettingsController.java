@@ -250,7 +250,8 @@ public class CrossingSettingsController extends SettingsController {
 			CrossingSettingsController.LOG.debug(e.getMessage(), e);
 
 			out.put(CrossingSettingsController.IS_SUCCESS, Boolean.FALSE);
-			out.put("errorMessage", this.messageSource.getMessage(e.getMessage(), new String[] {}, "cannot export a crossing template",
+			out.put("errorMessage",
+					this.messageSource.getMessage(e.getMessage(), new String[] {}, "cannot export a crossing template",
 							LocaleContextHolder.getLocale()));
 		}
 
@@ -269,8 +270,8 @@ public class CrossingSettingsController extends SettingsController {
 			final HttpHeaders respHeaders = new HttpHeaders();
 			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			respHeaders.setContentLength(fileSystemResource.contentLength());
-			respHeaders.setContentDispositionFormData("attachment",
-					FieldbookUtil.getDownloadFileName(fileSystemResource.getFilename(), req));
+
+			FieldbookUtil.resolveContentDisposition(resource.getName(), respHeaders, req.getHeader("User-Agent"));
 
 			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
@@ -313,11 +314,9 @@ public class CrossingSettingsController extends SettingsController {
 	public List<Map<String, Object>> getImportedCrossesList() {
 
 		final List<Map<String, Object>> masterList = new ArrayList<>();
-
 		if (null == this.studySelection.getImportedCrossesList()) {
 			return masterList;
 		}
-
 		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
 			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(cross));
 		}

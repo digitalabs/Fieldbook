@@ -23,7 +23,7 @@ public interface ValidationService {
 
 	void validateObservationValues(Workbook workbook, String instanceNumber) throws WorkbookParserException;
 
-	void validateConditionAndConstantValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException;
+	String validateConditionAndConstantValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException;
 
 	void validateObservationValues(Workbook workbook, MeasurementRow row) throws MiddlewareQueryException;
 }

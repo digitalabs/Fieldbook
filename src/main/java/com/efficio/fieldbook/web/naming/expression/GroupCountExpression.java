@@ -10,36 +10,40 @@ import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-
 @Component
 public class GroupCountExpression extends BaseExpression {
 
 	public static final String KEY = "[COUNT]";
-    public static final Integer MINIMUM_BULK_COUNT = 2;
+	public static final Integer MINIMUM_BULK_COUNT = 2;
 	public static final String BULK_COUNT_PREFIX = "B*";
 	public static final String POUND_COUNT_PREFIX = "#*";
-    public static final String SEPARATOR = "-";
+	public static final int CAPTURED_FINAL_EXPRESSION_GROUP = 1;
 
 	@Override
 	public void apply(final List<StringBuilder> values, final AdvancingSource source) {
 		for (final StringBuilder value : values) {
 			String currentValue = value.toString();
-			final String countPrefix = this.getCountPrefix(currentValue);
-			String valueWithoutProcessCode = currentValue.replace(countPrefix + this.getExpressionKey(), "");
 
-			if (valueWithoutProcessCode.charAt(valueWithoutProcessCode.length() - 1) == SEPARATOR.charAt(0)) {
-				valueWithoutProcessCode = valueWithoutProcessCode.substring(0, valueWithoutProcessCode.length() - 1);
+			// this code handles two variants of this process code : B*[COUNT] and #*[COUNT]. Here we retrieve the "prefix" to determine
+			// which (B* or #*)
+			final String countPrefix = this.getCountPrefix(currentValue);
+
+			// when processing B*[COUNT], we count B's. for #*[COUNT], #. Here we determine which
+			final String targetCountExpression = this.getTargetCountExpression(countPrefix);
+
+			// we remove meta characters added by our process code system so that they don't interfere with processing
+			final String noMetaString = removeMetaCharacters(currentValue, countPrefix, source);
+
+			final CountResultBean result = this.countExpressionOccurence(targetCountExpression, noMetaString);
+			int generatedCountValue = result.getCount();
+
+			// if the method is a bulking method, we're expected to increment the count
+			if (source.getBreedingMethod().isBulkingMethod()) {
+				generatedCountValue = result.getCount() + 1;
 			}
 
-			final String targetCountExpression = this.getTargetCountExpression(countPrefix);
-			final CountResultBean result = this.countContinuousExpressionOccurrence(targetCountExpression, valueWithoutProcessCode);
-            currentValue = this.cleanupString(new StringBuilder(valueWithoutProcessCode), result);
-            int generatedCountValue = result.getCount();
-
-            // if the method is a bulking method, we're expected to increment the count
-            if (source.getBreedingMethod().isBulkingMethod()) {
-                 generatedCountValue = result.getCount() + 1;
-            }
+			// we remove the captured expression entirely so that we have a blank slate when writing the resulting count
+			currentValue = this.cleanupString(new StringBuilder(noMetaString), result);
 
 			if (generatedCountValue >= MINIMUM_BULK_COUNT) {
 
@@ -48,20 +52,37 @@ public class GroupCountExpression extends BaseExpression {
 				value.append(currentValue);
 			} else {
 				value.delete(0, value.length());
-                value.append(currentValue);
-                value.append(SEPARATOR);
-                final String repeatingLetter = targetCountExpression.substring(targetCountExpression.length() - 1,targetCountExpression.length() );
+				value.append(currentValue);
 
-                // do while loop is used because there should be a -B or -# appended if the count is 0
-                int i = 0;
-                do {
-                    value.append(repeatingLetter);
-                    i++;
-                } while (i < result.getCount());
+				// do while loop is used because there should be a -B or -# appended if the count is 0
+				int i = 0;
+				do {
+                    if (!StringUtils.isEmpty(source.getBreedingMethod().getSeparator())) {
+                        value.append(source.getBreedingMethod().getSeparator());
+                    }
 
-            }
+					value.append(targetCountExpression);
+					i++;
+				} while (i < result.getCount());
+
+			}
 
 		}
+	}
+
+	protected String removeMetaCharacters(final String value, final String countPrefix, final AdvancingSource source) {
+		// we strip the B*[COUNT] or #*COUNT from the name being processed
+		String valueWithoutProcessCode = value.replace(countPrefix + this.getExpressionKey(), "");
+
+		// if in case a separator is defined for the breeding method, it will have been added to the end of the name. we'll need to remove
+		// it so that it doesn't hide the character we're looking to count (which is expected to be at the end of the line)
+		if (!StringUtils.isEmpty(source.getBreedingMethod().getSeparator())
+				&& valueWithoutProcessCode.endsWith(source.getBreedingMethod().getSeparator())) {
+			final int lastIndex = valueWithoutProcessCode.lastIndexOf(source.getBreedingMethod().getSeparator());
+			valueWithoutProcessCode = valueWithoutProcessCode.substring(0, lastIndex);
+		}
+
+		return valueWithoutProcessCode;
 	}
 
 	protected String cleanupString(final StringBuilder value, final CountResultBean result) {
@@ -72,48 +93,42 @@ public class GroupCountExpression extends BaseExpression {
 
 	protected String getCountPrefix(final String input) {
 		final int start = input.indexOf(GroupCountExpression.KEY);
+        // the prefix is the first two characters ahead of the [COUNT]; e.g., B* or #*
 		return input.substring(start - 2, start);
 	}
 
 	protected String getTargetCountExpression(final String countPrefix) {
 		if (GroupCountExpression.BULK_COUNT_PREFIX.equals(countPrefix)) {
-			return "-B";
+			return "B";
 		} else if (GroupCountExpression.POUND_COUNT_PREFIX.equals(countPrefix)) {
-			return "-#";
+			return "#";
 		} else {
 			throw new IllegalArgumentException("Invalid count expression");
 		}
 	}
 
-	public CountResultBean countContinuousExpressionOccurrence(final String expression, final String currentValue) {
-		final Pattern pattern = Pattern.compile("((?:" + expression + "([*][1-9])?)+)$");
+	public CountResultBean countExpressionOccurence(final String expression, final String currentValue) {
+		final Pattern pattern = Pattern.compile("(" + expression + "([*][1-9])*)$");
 		final Matcher matcher = pattern.matcher(currentValue);
 
-		String lastMatch = null;
 		int startIndex = 0;
 		int endIndex = 0;
-        int existingCount = 0;
+		int count = 0;
 		if (matcher.find()) {
-            // if there is no *n instance found
-            if (matcher.groupCount() == 1) {
-                lastMatch = matcher.group();
-            } else {
-                lastMatch = matcher.group(1);
-                final String existingCountString = matcher.group(2);
-                if (! StringUtils.isEmpty(existingCountString)) {
-                    existingCount = Integer.parseInt(existingCountString.replace("*", ""));
-                }
-            }
+			count = 1;
+			// if there is a *n instance found
+			if (matcher.groupCount() == 2) {
+				final String existingCountString = matcher.group(2);
+				if (!StringUtils.isEmpty(existingCountString)) {
+					final int existingCount = Integer.parseInt(existingCountString.replace("*", ""));
+					count += existingCount - 1;
+				}
 
-			startIndex = matcher.start();
-			endIndex = matcher.end();
+			}
+
+			startIndex = matcher.start(CAPTURED_FINAL_EXPRESSION_GROUP);
+			endIndex = matcher.end(CAPTURED_FINAL_EXPRESSION_GROUP);
 		}
-
-		int count = StringUtils.countMatches(lastMatch, expression);
-        if (existingCount > 0) {
-            // we increment the count by the value of n (from -B*n) and subtract by 1 to remove double counting
-            count += existingCount - 1;
-        }
 
 		return new CountResultBean(count, startIndex, endIndex);
 	}
@@ -123,7 +138,7 @@ public class GroupCountExpression extends BaseExpression {
 		return GroupCountExpression.KEY;
 	}
 
-    class CountResultBean {
+	class CountResultBean {
 
 		private final int count;
 		private final int start;

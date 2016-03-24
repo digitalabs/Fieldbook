@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.util;
 
 import java.util.Map;
+
 import junit.framework.Assert;
 
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -145,7 +146,6 @@ public class CrossesListUtilTest {
 		Assert.assertEquals(String.valueOf(TEST_FGID_VALUE), testImportedCrosses.getFemaleGid());
 		Assert.assertEquals(TEST_MALE_PARENT_VALUE, testImportedCrosses.getMaleDesig());
 		Assert.assertEquals(String.valueOf(TEST_MGID_VALUE), testImportedCrosses.getMaleGid());
-		Assert.assertEquals(TEST_SEED_SOURCE_VALUE, testImportedCrosses.getSource());
 		Assert.assertEquals(TEST_SEED_SOURCE_VALUE, testImportedCrosses.getSource());
 		Assert.assertEquals(TEST_FEMALE_PARENT_VALUE + "/" + TEST_MALE_PARENT_VALUE, testImportedCrosses.getCross());
 	}

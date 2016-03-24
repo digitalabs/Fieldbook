@@ -1,3 +1,5 @@
+var isAdvanceListGenerated = false;
+
 $(function() {
 	'use strict';
 
@@ -1079,7 +1081,9 @@ function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtm
 
     if(!isNursery() || trialInstances !== undefined){
         advanceStudyHref = advanceStudyHref + '?selectedTrialInstances=' + encodeURIComponent(trialInstances.join(","));
-        advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
+        if(noOfReplications) {
+        	advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
+        }
     }
 
     if (idVal != null) {
@@ -1786,8 +1790,8 @@ function validatePlantsSelected() {
 
 function callAdvanceNursery() {
 	var lines = $('#lineSelected').val();
-
-    if(!isNursery()){
+	var repsSectionIsDisplayed = $('#reps-section').length;
+    if(!isNursery() && repsSectionIsDisplayed) {
         var selectedReps = [];
         $('#replications input:checked').each(function() {
             selectedReps.push($(this).val());
@@ -3513,21 +3517,6 @@ function showMeasurementsPreview() {
 	var domElemId = '#measurementsDiv';
 	$.ajax({
 		url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(html) {
-			$(domElemId).html(html);
-			$('body').data('expDesignShowPreview', '0');
-		}
-	});
-}
-
-function loadInitialMeasurements() {
-	'use strict';
-	var domElemId = '#measurementsDiv';
-	$.ajax({
-		url: '/Fieldbook/TrialManager/openTrial/load/measurement',
 		type: 'GET',
 		data: '',
 		cache: false,

@@ -1238,6 +1238,11 @@ a.fbk-edit-experiment{
 .modal-backdrop.in {
     opacity: 0.5;
 }
+
+.advance-nursery-list-table table {
+    width: 100%;
+}
+
 .advance-nursery-list-table table th, .advance-nursery-list-table table td{
     text-align: left;
     vertical-align: middle
@@ -2001,4 +2006,21 @@ input.review-select-all{
 }
 #manage-trial-tabs #germplasm-list-pagination {
     opacity: 1 !important;
+}
+
+.import-crosses-from-file #goBackToImportCrossesButton,
+.import-crosses-from-file #settingsNextButton,
+#settingsNextButtonUpdateList {
+    display: inline-block;
+}
+
+#goBackToImportCrossesButton,
+#settingsNextButton,
+.import-crosses-from-file #settingsNextButtonUpdateList {
+    display: none;
+}
+
+.fbk-mandatory-field {
+    color:red;
+    font-weight:bold
 }

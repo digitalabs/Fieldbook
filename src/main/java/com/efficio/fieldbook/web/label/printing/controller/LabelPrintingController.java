@@ -12,6 +12,7 @@ package com.efficio.fieldbook.web.label.printing.controller;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
@@ -401,12 +402,10 @@ import java.util.Map;
 			response.setContentType("application/vnd.ms-excel");
 		}
 
-		String encodedFilename = FileUtils.encodeFilenameForDownload(fileName);
-
 		// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-		response.setHeader("Content-disposition",
-				"attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''" + encodedFilename + "\";");
 		response.setCharacterEncoding("UTF-8");
+		FieldbookUtil.resolveContentDisposition(fileName, response, req.getHeader("User-Agent"));
+
 		// the selected name + current date
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
 		FileInputStream in;
@@ -552,7 +551,7 @@ import java.util.Map;
 			this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
 
 			fileName = this.labelPrintingService
-					.generateLabels(selectedLabelPrintingType.getExtension(), trialInstances, this.userLabelPrinting, byteStream);
+					.generateLabels(selectedLabelPrintingType.getFormIndex(), trialInstances, this.userLabelPrinting, byteStream);
 
 			results.put(LabelPrintingController.IS_SUCCESS, 1);
 			results.put("fileName", fileName);
@@ -642,12 +641,16 @@ import java.util.Map;
 			return (LabelPrintingSetting) parseXML.unmarshal(new StringReader(xmlToRead));
 
 		} catch (JAXBException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
+			LabelPrintingController.LOG.error(this.messageSource
+					.getMessage("label.printing.error.parsing.preset.xml", new String[] { }, LocaleContextHolder.getLocale()), e);
+
 		} catch (LabelPrintingException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
+			LabelPrintingController.LOG.error(this.messageSource
+					.getMessage(e.getErrorCode(),  new String[] {e.getLabelError()}, LocaleContextHolder.getLocale()), e);
+
 		}
 
-		return null;
+		return new LabelPrintingSetting();
 	}
 
 	/**

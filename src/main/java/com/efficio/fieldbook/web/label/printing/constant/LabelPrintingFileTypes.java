@@ -1,7 +1,7 @@
 package com.efficio.fieldbook.web.label.printing.constant;
 
 public enum LabelPrintingFileTypes {
-	INVALID("0","INVALID","."), PDF ("1", "PDF", ".pdf"), EXCEL ("2", "EXCEL", ".xls"), CSV ("3", "CSV", ".csv");
+	INVALID("0", "INVALID", "."), PDF("1", "PDF", ".pdf"), EXCEL("2", "EXCEL", ".xls"), CSV("3", "CSV", ".csv");
 
 	private String formIndex;
 	private String extension;
@@ -11,6 +11,15 @@ public enum LabelPrintingFileTypes {
 		this.formIndex = formIndex;
 		this.type = type;
 		this.extension = extension;
+	}
+
+	public static LabelPrintingFileTypes getFileTypeByIndex(String formIndex) {
+		for (LabelPrintingFileTypes fileType : LabelPrintingFileTypes.values()) {
+			if (fileType.getFormIndex().equals(formIndex)) {
+				return fileType;
+			}
+		}
+		return INVALID;
 	}
 
 	public String getFormIndex() {
@@ -23,15 +32,6 @@ public enum LabelPrintingFileTypes {
 
 	public String getType() {
 		return type;
-	}
-
-	public static LabelPrintingFileTypes getFileTypeByIndex(String formIndex) {
-		for (LabelPrintingFileTypes fileType : LabelPrintingFileTypes.values()) {
-			if (fileType.getFormIndex().equals(formIndex)) {
-				return fileType;
-			}
-		}
-		return INVALID;
 	}
 
 	public boolean isValid() {

@@ -104,7 +104,7 @@ public class DesignImportExcelParserTest extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testCreateDesignHeaders() {
+	public void testCreateDesignHeaders() throws FileParsingException {
 
 		final Workbook workbook = this.createTestWorkbook();
 		final List<DesignHeaderItem> designHeaderItems =
@@ -123,6 +123,14 @@ public class DesignImportExcelParserTest extends AbstractBaseIntegrationTest {
 
 	}
 
+	@Test(expected = FileParsingException.class)
+	public void testCreateDesignHeadersWithEmptyFile() throws FileParsingException {
+
+		final Workbook workbook = this.createEmptyWorkbook();
+		this.parser.createDesignHeaders(workbook.getSheetAt(DesignImportExcelParser.SHEET_INDEX).getRow(
+				DesignImportExcelParser.HEADER_ROW_INDEX));
+	}
+	
 	@Test
 	public void testConvertRowsToMap() {
 
@@ -140,9 +148,8 @@ public class DesignImportExcelParserTest extends AbstractBaseIntegrationTest {
 	}
 
 	private Workbook createTestWorkbook() {
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		Sheet sheet = workbook.createSheet();
-
+		Workbook workbook = this.createEmptyWorkbook();
+		Sheet sheet = workbook.getSheetAt(DesignImportExcelParser.SHEET_INDEX);
 		Row header = sheet.createRow(0);
 		header.createCell(0).setCellValue(TRIAL_INSTANCE);
 		header.createCell(1).setCellValue(ENTRY_NO);
@@ -152,6 +159,13 @@ public class DesignImportExcelParserTest extends AbstractBaseIntegrationTest {
 		dataRow.createCell(0).setCellValue(VALUE_1);
 		dataRow.createCell(1).setCellValue(VALUE_2);
 		dataRow.createCell(2).setCellValue(VALUE_3);
+
+		return workbook;
+	}
+	
+	private Workbook createEmptyWorkbook(){
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		workbook.createSheet();
 
 		return workbook;
 	}

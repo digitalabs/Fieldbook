@@ -118,6 +118,12 @@ public class DesignImportCsvParserTest extends AbstractBaseIntegrationTest {
 
 	}
 
+	@Test(expected = FileParsingException.class)
+	public void testParseCsvWithEMptyCSVFile() throws FileParsingException {
+		final Map<Integer, List<String>> csvMap = new HashMap<>();
+		this.parser.parseCsvMap(csvMap);
+	}
+	
 	@Test
 	public void testCreateDesignHeaders() {
 

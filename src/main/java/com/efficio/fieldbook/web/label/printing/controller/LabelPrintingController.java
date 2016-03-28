@@ -514,49 +514,13 @@ import java.util.Map;
 	Map<String, Object> generateLabels(List<StudyTrialInstanceInfo> trialInstances, boolean isCustomReport) {
 		Map<String, Object> results = new HashMap<>();
 
-		final LabelPrintingFileTypes selectedLabelPrintingType =
-				LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
 
 		try {
-			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-			String fileName;
-
 			if (isCustomReport) {
-				final Integer studyId = this.userLabelPrinting.getStudyId();
-				final Reporter rep = this.reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId,
-						this.contextUtil.getProjectInContext().getProjectName(), byteStream);
-
-				this.getFileNameAndSetFileLocations("." + rep.getFileExtension());
-
-				// additionally creates the file in 'target' folder, for human
-				// validation ;)
-				fileName = rep.getFileName();
-				Files.write(Paths.get(this.userLabelPrinting.getFilenameDLLocation()), byteStream.toByteArray());
-
-				this.userLabelPrinting.setFilename(fileName);
-
-				results.put(LabelPrintingController.IS_SUCCESS, 1);
-				results.put("fileName", fileName);
-
-			} else if (selectedLabelPrintingType.isValid()) {
-				this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
-
-				fileName = this.labelPrintingService
-						.generateLabels(selectedLabelPrintingType.getExtension(), trialInstances, this.userLabelPrinting, byteStream);
-
-				results.put(LabelPrintingController.IS_SUCCESS, 1);
-				results.put("fileName", fileName);
-
+				generateLabelForCustomReports(results);
 			} else {
-				final String errorMsg = this.messageSource
-						.getMessage("label.printing.cannot.generate.invalid.type", new String[] {}, LocaleContextHolder.getLocale());
-
-				LabelPrintingController.LOG.error(errorMsg);
-				results.put(LabelPrintingController.IS_SUCCESS, 0);
-				results.put(AppConstants.MESSAGE.getString(), errorMsg);
+				generateLabelForLabelTypes(trialInstances, results);
 			}
-
-			return results;
 
 		} catch (IOException | MiddlewareException | JRException | BuildReportException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
@@ -576,6 +540,55 @@ import java.util.Map;
 
 		}
 		return results;
+	}
+
+	void generateLabelForLabelTypes(List<StudyTrialInstanceInfo> trialInstances, Map<String, Object> results) throws LabelPrintingException {
+		final String fileName;
+		final LabelPrintingFileTypes selectedLabelPrintingType =
+				LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
+		final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+
+		if (selectedLabelPrintingType.isValid()) {
+			this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
+
+			fileName = this.labelPrintingService
+					.generateLabels(selectedLabelPrintingType.getExtension(), trialInstances, this.userLabelPrinting, byteStream);
+
+			results.put(LabelPrintingController.IS_SUCCESS, 1);
+			results.put("fileName", fileName);
+
+		} else {
+			final String errorMsg = this.messageSource
+					.getMessage("label.printing.cannot.generate.invalid.type", new String[] {}, LocaleContextHolder.getLocale());
+
+			LabelPrintingController.LOG.error(errorMsg);
+			results.put(LabelPrintingController.IS_SUCCESS, 0);
+			results.put(AppConstants.MESSAGE.getString(), errorMsg);
+		}
+
+	}
+
+	void generateLabelForCustomReports(Map<String, Object> results)
+			throws JRException, IOException, BuildReportException {
+		final Integer studyId = this.userLabelPrinting.getStudyId();
+		final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+
+		final Reporter rep = this.reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId,
+				this.contextUtil.getProjectInContext().getProjectName(), byteStream);
+
+		// additionally creates the file in 'target' folder, for human
+		// validation ;)
+		final String fileName = rep.getFileName();
+
+		this.getFileNameAndSetFileLocations("." + rep.getFileExtension());
+
+		Files.write(Paths.get(this.userLabelPrinting.getFilenameDLLocation()), byteStream.toByteArray());
+
+		this.userLabelPrinting.setFilename(fileName);
+
+		results.put(LabelPrintingController.IS_SUCCESS, 1);
+		results.put("fileName", fileName);
+
 	}
 
 	@ResponseBody

@@ -6,11 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.generationcp.commons.parsing.AbstractCsvFileParser;
 import org.generationcp.commons.parsing.FileParsingException;
-import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;

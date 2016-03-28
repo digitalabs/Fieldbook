@@ -134,7 +134,7 @@
 							nclatin: null,
 							replatinGroups: '',
 							startingPlotNo: 1,
-							startingEntryNo: '1',
+							startingEntryNo: (typeof $scope.data.startingEntryNo !== 'undefined')? parseInt($scope.data.startingEntryNo,10) : 1 ,
 							hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement
 						}, $scope.data);
 					}

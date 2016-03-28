@@ -26,27 +26,27 @@ public class DesignImportExcelParser extends AbstractExcelFileParser<DesignImpor
 	public static final int HEADER_ROW_INDEX = 0;
 
 	@Override
-	public DesignImportData parseWorkbook(Workbook workbook, Map<String, Object> additionalParams) throws FileParsingException {
+	public DesignImportData parseWorkbook(final Workbook workbook, final Map<String, Object> additionalParams) throws FileParsingException {
 
-		DesignImportData data = new DesignImportData();
+		final DesignImportData data = new DesignImportData();
 
-		Sheet sheet = workbook.getSheetAt(SHEET_INDEX);
+		final Sheet sheet = workbook.getSheetAt(DesignImportExcelParser.SHEET_INDEX);
 
-		List<DesignHeaderItem> designHeaderItems = this.createDesignHeaders(sheet.getRow(HEADER_ROW_INDEX));
+		final List<DesignHeaderItem> designHeaderItems = this.createDesignHeaders(sheet.getRow(DesignImportExcelParser.HEADER_ROW_INDEX));
 		data.setUnmappedHeaders(designHeaderItems);
 		data.setRowDataMap(this.convertRowsToMap(sheet, designHeaderItems.size()));
 
 		return data;
 	}
 
-	protected List<DesignHeaderItem> createDesignHeaders(Row header) throws FileParsingException {
-		List<DesignHeaderItem> list = new ArrayList<>();
+	protected List<DesignHeaderItem> createDesignHeaders(final Row header) throws FileParsingException {
+		final List<DesignHeaderItem> list = new ArrayList<>();
 		int columnIndex = 0;
-		if(header != null){
-			Iterator<Cell> cellIterator = header.cellIterator();
+		if (header != null) {
+			final Iterator<Cell> cellIterator = header.cellIterator();
 			while (cellIterator.hasNext()) {
-				Cell cell = cellIterator.next();
-				DesignHeaderItem headerItem = new DesignHeaderItem();
+				final Cell cell = cellIterator.next();
+				final DesignHeaderItem headerItem = new DesignHeaderItem();
 				headerItem.setName(PoiUtil.getCellStringValue(cell));
 				headerItem.setColumnIndex(columnIndex);
 				list.add(headerItem);
@@ -58,10 +58,10 @@ public class DesignImportExcelParser extends AbstractExcelFileParser<DesignImpor
 		return list;
 	}
 
-	protected Map<Integer, List<String>> convertRowsToMap(Sheet sheet, int maxColumns) {
+	protected Map<Integer, List<String>> convertRowsToMap(final Sheet sheet, final int maxColumns) {
 
-		Map<Integer, List<String>> rowsMap = new HashMap<>();
-		int rowNo = HEADER_ROW_INDEX;
+		final Map<Integer, List<String>> rowsMap = new HashMap<>();
+		int rowNo = DesignImportExcelParser.HEADER_ROW_INDEX;
 		while (!PoiUtil.rowIsEmpty(sheet, rowNo, 0, maxColumns)) {
 
 			rowsMap.put(rowNo, this.convertRowtoList(sheet.getRow(rowNo), maxColumns));
@@ -71,10 +71,10 @@ public class DesignImportExcelParser extends AbstractExcelFileParser<DesignImpor
 		return rowsMap;
 	}
 
-	private List<String> convertRowtoList(Row row, int maxColumns) {
-		List<String> list = new ArrayList<>();
+	private List<String> convertRowtoList(final Row row, final int maxColumns) {
+		final List<String> list = new ArrayList<>();
 		for (int i = 0; i < maxColumns; i++) {
-			Cell cell = row.getCell(i);
+			final Cell cell = row.getCell(i);
 
 			String value = "";
 			if (cell != null) {

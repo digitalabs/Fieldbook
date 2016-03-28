@@ -68,8 +68,9 @@ public class DesignImportExcelParserTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testParseFile() throws FileParsingException, IOException {
 
-		FileInputStream input = new FileInputStream(excelFile);
-		MultipartFile multiPartFile = new MockMultipartFile("file", excelFile.getName(), "text/plain", IOUtils.toByteArray(input));
+		final FileInputStream input = new FileInputStream(DesignImportExcelParserTest.excelFile);
+		final MultipartFile multiPartFile =
+				new MockMultipartFile("file", DesignImportExcelParserTest.excelFile.getName(), "text/plain", IOUtils.toByteArray(input));
 
 		final DesignImportData result = this.parser.parseFile(multiPartFile, null);
 
@@ -77,12 +78,12 @@ public class DesignImportExcelParserTest extends AbstractBaseIntegrationTest {
 
 		Assert.assertEquals("There must be 6 headers in file.", 6, result.getUnmappedHeaders().size());
 		Assert.assertEquals("There must be 85 rows in file.", 85, result.getRowDataMap().size());
-		Assert.assertEquals(TRIAL_INSTANCE, result.getUnmappedHeaders().get(0).getName());
-		Assert.assertEquals(SITE_NAME, result.getUnmappedHeaders().get(1).getName());
-		Assert.assertEquals(ENTRY_NO, result.getUnmappedHeaders().get(2).getName());
-		Assert.assertEquals(PLOT_NO, result.getUnmappedHeaders().get(3).getName());
-		Assert.assertEquals(REP_NO, result.getUnmappedHeaders().get(4).getName());
-		Assert.assertEquals(BLOCK_NO, result.getUnmappedHeaders().get(5).getName());
+		Assert.assertEquals(DesignImportExcelParserTest.TRIAL_INSTANCE, result.getUnmappedHeaders().get(0).getName());
+		Assert.assertEquals(DesignImportExcelParserTest.SITE_NAME, result.getUnmappedHeaders().get(1).getName());
+		Assert.assertEquals(DesignImportExcelParserTest.ENTRY_NO, result.getUnmappedHeaders().get(2).getName());
+		Assert.assertEquals(DesignImportExcelParserTest.PLOT_NO, result.getUnmappedHeaders().get(3).getName());
+		Assert.assertEquals(DesignImportExcelParserTest.REP_NO, result.getUnmappedHeaders().get(4).getName());
+		Assert.assertEquals(DesignImportExcelParserTest.BLOCK_NO, result.getUnmappedHeaders().get(5).getName());
 
 		Assert.assertTrue(!result.getRowDataMap().isEmpty());
 
@@ -91,8 +92,9 @@ public class DesignImportExcelParserTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testParseFileInvalidFileFormat() throws FileParsingException, IOException {
 
-		FileInputStream input = new FileInputStream(excelFile);
-		MultipartFile multiPartFile = new MockMultipartFile("file", TEST_FILE_NAME_INVALID, "text/plain", IOUtils.toByteArray(input));
+		final FileInputStream input = new FileInputStream(DesignImportExcelParserTest.excelFile);
+		final MultipartFile multiPartFile =
+				new MockMultipartFile("file", DesignImportExcelParserTest.TEST_FILE_NAME_INVALID, "text/plain", IOUtils.toByteArray(input));
 
 		try {
 			this.parser.parseFile(multiPartFile, null);
@@ -107,14 +109,13 @@ public class DesignImportExcelParserTest extends AbstractBaseIntegrationTest {
 	public void testCreateDesignHeaders() throws FileParsingException {
 
 		final Workbook workbook = this.createTestWorkbook();
-		final List<DesignHeaderItem> designHeaderItems =
-				this.parser.createDesignHeaders(workbook.getSheetAt(DesignImportExcelParser.SHEET_INDEX).getRow(
-						DesignImportExcelParser.HEADER_ROW_INDEX));
+		final List<DesignHeaderItem> designHeaderItems = this.parser.createDesignHeaders(
+				workbook.getSheetAt(DesignImportExcelParser.SHEET_INDEX).getRow(DesignImportExcelParser.HEADER_ROW_INDEX));
 
 		Assert.assertEquals(3, designHeaderItems.size());
-		Assert.assertEquals(TRIAL_INSTANCE, designHeaderItems.get(0).getName());
-		Assert.assertEquals(ENTRY_NO, designHeaderItems.get(1).getName());
-		Assert.assertEquals(PLOT_NO, designHeaderItems.get(2).getName());
+		Assert.assertEquals(DesignImportExcelParserTest.TRIAL_INSTANCE, designHeaderItems.get(0).getName());
+		Assert.assertEquals(DesignImportExcelParserTest.ENTRY_NO, designHeaderItems.get(1).getName());
+		Assert.assertEquals(DesignImportExcelParserTest.PLOT_NO, designHeaderItems.get(2).getName());
 
 		// the column indices should follow the order of header in the headers list
 		Assert.assertEquals(0, designHeaderItems.get(0).getColumnIndex());
@@ -127,44 +128,44 @@ public class DesignImportExcelParserTest extends AbstractBaseIntegrationTest {
 	public void testCreateDesignHeadersWithEmptyFile() throws FileParsingException {
 
 		final Workbook workbook = this.createEmptyWorkbook();
-		this.parser.createDesignHeaders(workbook.getSheetAt(DesignImportExcelParser.SHEET_INDEX).getRow(
-				DesignImportExcelParser.HEADER_ROW_INDEX));
+		this.parser.createDesignHeaders(
+				workbook.getSheetAt(DesignImportExcelParser.SHEET_INDEX).getRow(DesignImportExcelParser.HEADER_ROW_INDEX));
 	}
-	
+
 	@Test
 	public void testConvertRowsToMap() {
 
 		final Workbook workbook = this.createTestWorkbook();
 		final Sheet sheet = workbook.getSheetAt(DesignImportExcelParser.SHEET_INDEX);
-		Map<Integer, List<String>> result = this.parser.convertRowsToMap(sheet, 3);
+		final Map<Integer, List<String>> result = this.parser.convertRowsToMap(sheet, 3);
 
 		Assert.assertEquals(2, result.size());
-		Assert.assertEquals(TRIAL_INSTANCE, result.get(0).get(0));
-		Assert.assertEquals(ENTRY_NO, result.get(0).get(1));
-		Assert.assertEquals(PLOT_NO, result.get(0).get(2));
-		Assert.assertEquals(VALUE_1, result.get(1).get(0));
-		Assert.assertEquals(VALUE_2, result.get(1).get(1));
-		Assert.assertEquals(VALUE_3, result.get(1).get(2));
+		Assert.assertEquals(DesignImportExcelParserTest.TRIAL_INSTANCE, result.get(0).get(0));
+		Assert.assertEquals(DesignImportExcelParserTest.ENTRY_NO, result.get(0).get(1));
+		Assert.assertEquals(DesignImportExcelParserTest.PLOT_NO, result.get(0).get(2));
+		Assert.assertEquals(DesignImportExcelParserTest.VALUE_1, result.get(1).get(0));
+		Assert.assertEquals(DesignImportExcelParserTest.VALUE_2, result.get(1).get(1));
+		Assert.assertEquals(DesignImportExcelParserTest.VALUE_3, result.get(1).get(2));
 	}
 
 	private Workbook createTestWorkbook() {
-		Workbook workbook = this.createEmptyWorkbook();
-		Sheet sheet = workbook.getSheetAt(DesignImportExcelParser.SHEET_INDEX);
-		Row header = sheet.createRow(0);
-		header.createCell(0).setCellValue(TRIAL_INSTANCE);
-		header.createCell(1).setCellValue(ENTRY_NO);
-		header.createCell(2).setCellValue(PLOT_NO);
+		final Workbook workbook = this.createEmptyWorkbook();
+		final Sheet sheet = workbook.getSheetAt(DesignImportExcelParser.SHEET_INDEX);
+		final Row header = sheet.createRow(0);
+		header.createCell(0).setCellValue(DesignImportExcelParserTest.TRIAL_INSTANCE);
+		header.createCell(1).setCellValue(DesignImportExcelParserTest.ENTRY_NO);
+		header.createCell(2).setCellValue(DesignImportExcelParserTest.PLOT_NO);
 
-		Row dataRow = sheet.createRow(1);
-		dataRow.createCell(0).setCellValue(VALUE_1);
-		dataRow.createCell(1).setCellValue(VALUE_2);
-		dataRow.createCell(2).setCellValue(VALUE_3);
+		final Row dataRow = sheet.createRow(1);
+		dataRow.createCell(0).setCellValue(DesignImportExcelParserTest.VALUE_1);
+		dataRow.createCell(1).setCellValue(DesignImportExcelParserTest.VALUE_2);
+		dataRow.createCell(2).setCellValue(DesignImportExcelParserTest.VALUE_3);
 
 		return workbook;
 	}
-	
-	private Workbook createEmptyWorkbook(){
-		HSSFWorkbook workbook = new HSSFWorkbook();
+
+	private Workbook createEmptyWorkbook() {
+		final HSSFWorkbook workbook = new HSSFWorkbook();
 		workbook.createSheet();
 
 		return workbook;

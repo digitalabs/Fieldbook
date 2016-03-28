@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -38,19 +39,22 @@ public class DesignImportExcelParser extends AbstractExcelFileParser<DesignImpor
 		return data;
 	}
 
-	protected List<DesignHeaderItem> createDesignHeaders(Row header) {
+	protected List<DesignHeaderItem> createDesignHeaders(Row header) throws FileParsingException {
 		List<DesignHeaderItem> list = new ArrayList<>();
 		int columnIndex = 0;
-		Iterator<Cell> cellIterator = header.cellIterator();
-		while (cellIterator.hasNext()) {
-			Cell cell = cellIterator.next();
-			DesignHeaderItem headerItem = new DesignHeaderItem();
-			headerItem.setName(PoiUtil.getCellStringValue(cell));
-			headerItem.setColumnIndex(columnIndex);
-			list.add(headerItem);
-			columnIndex++;
+		if(header != null){
+			Iterator<Cell> cellIterator = header.cellIterator();
+			while (cellIterator.hasNext()) {
+				Cell cell = cellIterator.next();
+				DesignHeaderItem headerItem = new DesignHeaderItem();
+				headerItem.setName(PoiUtil.getCellStringValue(cell));
+				headerItem.setColumnIndex(columnIndex);
+				list.add(headerItem);
+				columnIndex++;
+			}
+		} else {
+			throw new FileParsingException(this.messageSource.getMessage("common.error.file.empty", null, Locale.ENGLISH));
 		}
-
 		return list;
 	}
 

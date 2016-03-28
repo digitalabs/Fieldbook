@@ -526,12 +526,13 @@ import java.util.Map;
 				final Reporter rep = this.reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId,
 						this.contextUtil.getProjectInContext().getProjectName(), byteStream);
 
+				this.getFileNameAndSetFileLocations("." + rep.getFileExtension());
+				
 				// additionally creates the file in 'target' folder, for human
 				// validation ;)
 				fileName = rep.getFileName();
 				Files.write(Paths.get(this.userLabelPrinting.getFilenameDLLocation()), byteStream.toByteArray());
 
-				this.getFileNameAndSetFileLocations("." + rep.getFileExtension());
 				this.userLabelPrinting.setFilename(fileName);
 
 				results.put(LabelPrintingController.IS_SUCCESS, 1);

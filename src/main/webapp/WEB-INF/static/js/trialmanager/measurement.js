@@ -23,13 +23,13 @@
 				});
 
 				$scope.$watch(function() {
-					return TrialManagerDataService.isGeneratedOwnDesign;
+					return TrialManagerDataService.applicationData.isGeneratedOwnDesign;
 				}, function(newValue) {
 					if (newValue === true) {
 						$scope.updateOccurred = true;
 						TrialManagerDataService.clearUnappliedChangesFlag();
 						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-						TrialManagerDataService.isGeneratedOwnDesign = false;
+						TrialManagerDataService.applicationData.isGeneratedOwnDesign = false;
 
 						debounce(reloadMeasurementPage, DELAY, false)();
 

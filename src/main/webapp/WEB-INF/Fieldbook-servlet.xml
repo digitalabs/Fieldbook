@@ -481,13 +481,15 @@
 		<property name="germplasmOriginTrialsMaize" value="${germplasm.origin.trials.maize}"/>
 	</bean>
 	
-	<bean id="germplasmOriginGenerationService" class="org.generationcp.commons.service.impl.GermplasmOriginGenerationServiceImpl">
-		<property name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
-	</bean>
-
 	<bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
 		scope="request">
 		<aop:scoped-proxy />
+	</bean>
+	
+	<bean id="seedSourceGenerator" class="org.generationcp.commons.service.impl.SeedSourceGenerator">
+		<constructor-arg name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
+		<constructor-arg name="contextUtil" ref="contextUtil"/>
+		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableManager"/>
 	</bean>
 	
 	<bean id="jasperReportService" class="org.generationcp.commons.reports.service.impl.JasperReportServiceImpl"

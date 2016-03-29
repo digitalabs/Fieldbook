@@ -70,7 +70,7 @@ public class WorkbookUtil {
 			final List<MeasurementVariable> variables = observations.get(0).getMeasurementVariables();
 			for (final MeasurementRow row : observations) {
 				final String value = WorkbookUtil.getValueByIdInRow(variables, TermId.TRIAL_INSTANCE_FACTOR.getId(), row);
-				if (value == null || value.equals(trialInstance)) {
+				if (value == null || value != null && value.equals(trialInstance)) {
 					list.add(row);
 				}
 			}
@@ -572,7 +572,7 @@ public class WorkbookUtil {
 	}
 
 	public static void updateTrialObservations(final Workbook workbook, final Workbook temporaryWorkbook) {
-		if (temporaryWorkbook.getTrialObservations() != null) {
+		if (!temporaryWorkbook.getTrialObservations().isEmpty()) {
 			workbook.setTrialObservations(temporaryWorkbook.getTrialObservations());
 		}
 	}

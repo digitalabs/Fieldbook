@@ -5,7 +5,7 @@
 	<artifactId>Fieldbook</artifactId>
 	<packaging>war</packaging>
 	<name>Fieldbook</name>
-        <version>4.0.0.BETA.10</version>
+        <version>4.0.0.BETA.11</version>
 
 	<properties>
         <ibpcommons.version>${project.version}</ibpcommons.version>

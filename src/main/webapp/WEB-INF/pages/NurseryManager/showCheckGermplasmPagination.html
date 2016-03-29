@@ -37,7 +37,7 @@
 								<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.desig}">.2</a>
 							</td>
 							<td align="left">
-								<select th:field="*{importedCheckGermplasm[__${row.index}__].check}" class="form-control checklist-select">
+								<select th:field="*{importedCheckGermplasm[__${row.index}__].entryTypeValue}" class="form-control checklist-select">
 									<option value="">Please Choose</option>
 									<option th:each="type: ${checkLists}"  th:attr="data-code=${type.name}"  th:value="${type.id}" th:text="${type.description}"></option>
 								</select>

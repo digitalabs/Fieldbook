@@ -7,16 +7,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -129,5 +133,49 @@ public class FieldbookUtil {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Sets the Content Disposition response header based on the user agent.
+	 * 
+	 * @param filename
+	 * @param httpHeaders
+	 * @param userAgent
+	 */
+	public static void resolveContentDisposition(String filename, HttpHeaders httpHeaders, String userAgent) {
+
+		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
+
+		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
+			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
+			httpHeaders.set("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
+		} else {
+			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
+			httpHeaders.set("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
+					+ encodedFilename + "\";");
+		}
+
+	}
+
+	/**
+	 * Sets the Content Disposition response header based on the user agent.
+	 * 
+	 * @param filename
+	 * @param response
+	 * @param userAgent
+	 */
+	public static void resolveContentDisposition(String filename, HttpServletResponse response, String userAgent) {
+
+		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
+
+		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
+			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
+			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
+		} else {
+			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
+			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
+					+ encodedFilename + "\";");
+		}
+
 	}
 }

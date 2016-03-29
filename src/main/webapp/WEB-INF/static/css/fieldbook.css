@@ -2007,3 +2007,20 @@ input.review-select-all{
 #manage-trial-tabs #germplasm-list-pagination {
     opacity: 1 !important;
 }
+
+.import-crosses-from-file #goBackToImportCrossesButton,
+.import-crosses-from-file #settingsNextButton,
+#settingsNextButtonUpdateList {
+    display: inline-block;
+}
+
+#goBackToImportCrossesButton,
+#settingsNextButton,
+.import-crosses-from-file #settingsNextButtonUpdateList {
+    display: none;
+}
+
+.fbk-mandatory-field {
+    color:red;
+    font-weight:bold
+}

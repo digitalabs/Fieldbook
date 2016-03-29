@@ -1,3 +1,4 @@
+/*global showErrorMessage, measurementRowCount, showAlertMessage, ImportCrosses, ImportDesign*/
 var selectedTableIds = new Array();
 
 function submitEditWorkbook() {
@@ -8,6 +9,7 @@ function submitEditWorkbook() {
 	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 	serializedData += '&columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
 
+	//TODO add error handler to the ajax request
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/editNursery',
 		type: 'POST',
@@ -16,8 +18,8 @@ function submitEditWorkbook() {
 		success: function(data) {
 			if (data.status === '-1') {
 				showErrorMessage('page-message', data.errorMessage);
-			} else if ($('#chooseGermplasmAndChecks').data('replace') !== undefined
-					&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 || measurementRowCount === 0) {
+			} else if ($('#chooseGermplasmAndChecks').data('replace') !== undefined &&
+					parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 || measurementRowCount === 0) {
 				submitGermplasmAndCheck();
 			} else if (data.status === '1') {
 				recreateSessionVariables();
@@ -36,6 +38,7 @@ function submitEditWorkbook() {
 function deleteMeasurementRows() {
 	'use strict';
 
+	//TODO add error handler to the ajax request
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/editNursery/deleteMeasurementRows',
 		type: 'POST',
@@ -46,7 +49,6 @@ function deleteMeasurementRows() {
 				showErrorMessage('page-message', data.errorMessage);
 
 			} else {
-
 				submitEditWorkbook();
 			}
 		}
@@ -70,8 +72,8 @@ function submitEditForm() {
 			moveToTopScreen();
 			return false;
 		}
-		if ($('#chooseGermplasmAndChecks').data('replace') !== undefined
-				&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 && measurementRowCount > 0) {
+		if ($('#chooseGermplasmAndChecks').data('replace') !== undefined &&
+				parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 && measurementRowCount > 0) {
 			deleteMeasurementRows();
 		} else {
 			if ($('.import-study-data').data('data-import') === '1') {
@@ -99,6 +101,7 @@ $(document).ready(function() {
 	}
 
 	if (createdCrossesListId !== null && createdCrossesListId.length > 0) {
+		ImportCrosses.isFileCrossesImport = false;
 		ImportCrosses.openCrossesList(createdCrossesListId);
 	}
 
@@ -110,6 +113,15 @@ $(document).ready(function() {
 		expandedImg.toggle();
 		collapsedImg.toggle();
 		$(className).slideToggle();
+	});
+
+	// handler for the manualNamingSettings display
+	$('input:radio[name=manualNamingSettings]').on('change', function() {
+		if ($('input:radio[name=manualNamingSettings]:checked').val() === 'true') {
+			$('#manualNamingSettingsPanel').removeClass('fbk-hide');
+		} else {
+			$('#manualNamingSettingsPanel').addClass('fbk-hide');
+		}
 	});
 
 	if ($('#folderId').val() === '1') {
@@ -134,7 +146,7 @@ $(document).ready(function() {
 			});
 		}
 	});
-	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+	$('a[data-toggle="tab"]').on('shown.bs.tab', function() {
 		if ($('.import-study-data').data('data-import') === '1') {
 			if ($('.import-study-data').data('measurement-show-already') !== '1') {
 				showAlertMessage('', importSaveDataWarningMessage);

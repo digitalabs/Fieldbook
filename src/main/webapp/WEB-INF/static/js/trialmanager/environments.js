@@ -365,8 +365,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			// init
 			if ($stateParams && $stateParams.addtlNumOfEnvironments && !isNaN(parseInt($stateParams.addtlNumOfEnvironments))) {
-				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments);
-				$scope.temp.noOfEnvironments += addtlNumOfEnvironments;
+				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments, 10);
+				$scope.temp.noOfEnvironments = parseInt($scope.temp.noOfEnvironments, 10) + addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 				addNewEnvironments(addtlNumOfEnvironments,$stateParams.displayWarningMessage);
 			}

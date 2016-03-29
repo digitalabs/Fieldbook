@@ -335,9 +335,9 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 
 		for (ImportedGermplasm item : sessionImportedGermplasm) {
 			int index = sessionImportedGermplasm.indexOf(item);
-			Assert.assertEquals(formImportedGermplasm.get(index).getCheckName(), item.getCheckName());
-			Assert.assertEquals("", item.getCheck());
-			Assert.assertEquals(formImportedGermplasm.get(index).getCheckId(), item.getCheckId());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeName(), item.getEntryTypeName());
+			Assert.assertEquals("", item.getEntryTypeValue());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(), item.getEntryTypeCategoricalID());
 		}
 
 		Assert.assertEquals(4, workbook.getFactors().size());
@@ -358,9 +358,9 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 
 		for (ImportedGermplasm item : sessionImportedGermplasm) {
 			int index = sessionImportedGermplasm.indexOf(item);
-			Assert.assertEquals(formImportedGermplasm.get(index).getCheckName(), item.getCheckName());
-			Assert.assertEquals("", item.getCheck());
-			Assert.assertEquals(formImportedGermplasm.get(index).getCheckId(), item.getCheckId());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeName(), item.getEntryTypeName());
+			Assert.assertEquals("", item.getEntryTypeValue());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(), item.getEntryTypeCategoricalID());
 		}
 
 		Assert.assertEquals(4, workbook.getFactors().size());
@@ -383,9 +383,9 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 
 		for (ImportedGermplasm item : sessionImportedGermplasm) {
 			int index = sessionImportedGermplasm.indexOf(item);
-			Assert.assertEquals(formImportedGermplasm.get(index).getCheckName(), item.getCheckName());
-			Assert.assertEquals(formImportedGermplasm.get(index).getCheck(), item.getCheck());
-			Assert.assertEquals(formImportedGermplasm.get(index).getCheckId(), item.getCheckId());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeName(), item.getEntryTypeName());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeValue(), item.getEntryTypeValue());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(), item.getEntryTypeCategoricalID());
 		}
 
 		Assert.assertEquals("CHECK", workbook.getFactors().get(4).getName());
@@ -413,9 +413,9 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 
 		for (ImportedGermplasm item : sessionImportedGermplasm) {
 			int index = sessionImportedGermplasm.indexOf(item);
-			Assert.assertEquals(formImportedGermplasm.get(index).getCheckName(), item.getCheckName());
-			Assert.assertEquals(formImportedGermplasm.get(index).getCheck(), item.getCheck());
-			Assert.assertEquals(formImportedGermplasm.get(index).getCheckId(), item.getCheckId());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeName(), item.getEntryTypeName());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeValue(), item.getEntryTypeValue());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(), item.getEntryTypeCategoricalID());
 		}
 
 		Assert.assertEquals(4, workbook.getFactors().size());
@@ -431,9 +431,9 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 
 			importedGermplasm.setIndex(x);
 			importedGermplasm.setBreedingMethodId(1);
-			importedGermplasm.setCheck("CHECK");
-			importedGermplasm.setCheckId(x);
-			importedGermplasm.setCheckName("CHECK NAME");
+			importedGermplasm.setEntryTypeValue("CHECK");
+			importedGermplasm.setEntryTypeCategoricalID(x);
+			importedGermplasm.setEntryTypeName("CHECK NAME");
 			importedGermplasm.setDesig("DESIG" + x);
 			importedGermplasm.setEntryCode(String.valueOf(x));
 			importedGermplasm.setCross("CROSS" + x);

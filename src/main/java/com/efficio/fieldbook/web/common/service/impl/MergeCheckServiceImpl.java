@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,7 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 
 	@Override
 	public List<ImportedGermplasm> mergeGermplasmList(List<ImportedGermplasm> primaryList, List<ImportedGermplasm> checkList,
-			int startEntry, int interval, int manner, String defaultTestCheckId) {
+			int startEntry, int interval, int manner) {
 
 		if (!this.isThereSomethingToMerge(primaryList, checkList, startEntry, interval)) {
 			return primaryList;
@@ -53,10 +54,9 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 				newList.addAll(checks);
 			}
 			ImportedGermplasm primaryNewGermplasm = primaryGermplasm.copy();
-			if (defaultTestCheckId != null && !"".equals(defaultTestCheckId)) {
-				primaryNewGermplasm.setCheck(defaultTestCheckId);
-				primaryNewGermplasm.setCheckId(Integer.valueOf(defaultTestCheckId));
-			}
+			primaryNewGermplasm.setEntryTypeValue(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeValue());
+			primaryNewGermplasm.setEntryTypeCategoricalID(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId());
+			
 			newList.add(primaryNewGermplasm);
 			newEntry++;
 

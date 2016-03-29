@@ -166,10 +166,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final File xls = new File(outputFilename);
 		FileInputStream in;
 
-		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
+		FieldbookUtil.resolveContentDisposition(filename, response, req.getHeader("User-Agent"));
 
-		// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-		response.setHeader("Content-disposition", "attachment; filename=" + encodedFilename + "; filename*=UTF-8''" + encodedFilename);
 		response.setContentType(MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(filename));
 		response.setCharacterEncoding("UTF-8");
 
@@ -350,7 +348,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Do export.
-	 *
+	 * 
 	 * @param exportType the export type
 	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response
@@ -474,7 +472,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/***
 	 * Return the list of headers's term id, otherwise null
-	 *
+	 * 
 	 * @param data
 	 * @return
 	 */
@@ -523,7 +521,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Load initial germplasm tree.
-	 *
+	 * 
 	 * @return the string
 	 */
 	@RequestMapping(value = "/trial/instances/{studyId}", method = RequestMethod.GET)
@@ -562,7 +560,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Do export.
-	 *
+	 * 
 	 * @param exportType the export type
 	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response
@@ -629,7 +627,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Do export.
-	 *
+	 * 
 	 * @param exportType the export type
 	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response

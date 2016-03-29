@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
@@ -38,6 +36,8 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.google.common.collect.Lists;
+
+import junit.framework.Assert;
 
 public class NamingConventionServiceImplTest {
 
@@ -145,7 +145,7 @@ public class NamingConventionServiceImplTest {
 
 		AdvancingNursery advancingParameters = new AdvancingNursery();
 		advancingParameters.setCheckAdvanceLinesUnique(false);
-		List<ImportedGermplasm> igList = this.namingConventionService.generateGermplasmList(rows, advancingParameters, null);
+		List<ImportedGermplasm> igList = this.namingConventionService.generateGermplasmList(rows, advancingParameters, new Workbook());
 		Assert.assertNotNull(igList);
 		Assert.assertFalse(igList.isEmpty());
 		Assert.assertEquals(2, igList.size());

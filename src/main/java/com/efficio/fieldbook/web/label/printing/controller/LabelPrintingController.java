@@ -645,9 +645,10 @@ import java.util.Map;
 					.getMessage("label.printing.error.parsing.preset.xml", new String[] { }, LocaleContextHolder.getLocale()), e);
 
 		} catch (LabelPrintingException e) {
-			LabelPrintingController.LOG.error(this.messageSource
-					.getMessage(e.getErrorCode(),  new String[] {e.getLabelError()}, LocaleContextHolder.getLocale()), e);
+			final String labelError = this.messageSource.getMessage(e.getLabelError(),new String[]{},LocaleContextHolder.getLocale());
 
+			LabelPrintingController.LOG.error(this.messageSource
+					.getMessage(e.getErrorCode(),  new String[] {labelError}, LocaleContextHolder.getLocale()), e);
 		}
 
 		return new LabelPrintingSetting();

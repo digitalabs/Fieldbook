@@ -1066,7 +1066,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "database.connectivity.error", e.getMessage());
 		} catch (final NullPointerException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-			throw new LabelPrintingException("label.printing.preset.does.not.exists", "label.printing.preset.does.not.exists",
+			throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "label.printing.preset.does.not.exists",
 					e.getMessage());
 		}
 	}

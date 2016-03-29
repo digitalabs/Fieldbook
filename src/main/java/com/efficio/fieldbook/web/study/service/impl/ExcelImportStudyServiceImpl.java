@@ -216,7 +216,7 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
             }
             this.setCorrectBreedingMethodInfo(variableMap);
             // this would set info to location (trial level variable)
-            if (originalWorkbook.isNursery() && originalWorkbook.getTrialObservations() != null
+            if (originalWorkbook.isNursery()
                     && !originalWorkbook.getTrialObservations().isEmpty() && originalWorkbook.getTrialConditions() != null
                     && !originalWorkbook.getTrialConditions().isEmpty()) {
                 final MeasurementVariable locationNameVar =

@@ -7,9 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
-import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
-import org.generationcp.commons.service.GermplasmOriginGenerationService;
-import org.generationcp.commons.service.GermplasmOriginParameterBuilder;
+import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -59,10 +57,7 @@ public class CrossingServiceImplTest {
 	private ContextUtil contextUtil;
 	
 	@Mock
-	private GermplasmOriginGenerationService germplasmOriginGenerationService;
-	
-	@Mock
-	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
+	private SeedSourceGenerator seedSourceGenertor;
 
 	private CrossSetting crossSetting;
 	
@@ -79,16 +74,17 @@ public class CrossingServiceImplTest {
 		this.crossingService.setGermplasmDataManager(this.germplasmDataManager);
 		this.crossingService.setCrossExpansionProperties(this.crossExpansionProperties);
 		this.crossingService.setContextUtil(this.contextUtil);
-		this.crossingService.setGermplasmOriginGenerationService(this.germplasmOriginGenerationService);
-		this.crossingService.setGermplasmOriginParameterBuilder(this.germplasmOriginParameterBuilder);
+		this.crossingService.setSeedSourceGenerator(this.seedSourceGenertor);
 
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(BREEDING_METHOD_ID);
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
-		Mockito.doReturn("generatedSourceString").when(this.germplasmOriginGenerationService)
-				.generateOriginString((GermplasmOriginGenerationParameters) Matchers.any());
+		Mockito.doReturn("generatedSourceString")
+				.when(this.seedSourceGenertor)
+				.generateSeedSourceForCross(Mockito.any(Workbook.class), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+						Mockito.anyString());
 		Mockito.doReturn(new UserDefinedField(1552)).when(this.germplasmDataManager).getPlotCodeField();
 
 		this.crossSetting = new CrossSetting();

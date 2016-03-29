@@ -13,13 +13,15 @@ import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 
 public class DesignImportCsvParser extends AbstractCsvFileParser<DesignImportData> {
-
+	
+	private static final int HEADER_ROW_INDEX = 0;
+	
 	@Override
 	public DesignImportData parseCsvMap(final Map<Integer, List<String>> csvMap) throws FileParsingException {
 
 		final DesignImportData data = new DesignImportData();
-		if (csvMap.get(0) != null && !csvMap.get(0).isEmpty()) {
-			data.setUnmappedHeaders(this.createDesignHeaders(csvMap.get(0)));
+		if (csvMap.get(DesignImportCsvParser.HEADER_ROW_INDEX) != null && !csvMap.get(DesignImportCsvParser.HEADER_ROW_INDEX).isEmpty()) {
+			data.setUnmappedHeaders(this.createDesignHeaders(csvMap.get(DesignImportCsvParser.HEADER_ROW_INDEX)));
 			data.setRowDataMap(csvMap);
 		} else {
 			throw new FileParsingException(this.messageSource.getMessage("common.error.file.empty", null, Locale.ENGLISH));

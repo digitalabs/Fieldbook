@@ -177,7 +177,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 				workbook.setImportConstantsCopy(constantsCopy);
 				newVarList.addAll(constantsCopy);
 			}
-			if (workbook.getTrialObservations() != null) {
+			if (!workbook.getTrialObservations().isEmpty()) {
 				final List<MeasurementRow> trialObservationsCopy = new ArrayList<MeasurementRow>();
 				for (final MeasurementRow row : workbook.getTrialObservations()) {
 					trialObservationsCopy.add(row.copy(newVarList));
@@ -267,7 +267,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			}
 			this.setCorrectBreedingMethodInfo(variableMap);
 			// this would set info to location (trial level variable)
-			if (originalWorkbook.isNursery() && originalWorkbook.getTrialObservations() != null
+			if (originalWorkbook.isNursery()
 					&& !originalWorkbook.getTrialObservations().isEmpty() && originalWorkbook.getTrialConditions() != null
 					&& !originalWorkbook.getTrialConditions().isEmpty()) {
 				final MeasurementVariable locationNameVar =

@@ -48,7 +48,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.settings.trialConditionDetails = [];
 			}
 
-			$scope.isLocation = $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
+			$scope.ifLocationAddedToTheDataTable = function () {
+				return $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
+			};
+
+			//the flag to determine if we have a location variable in the datatable
+			$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 
 			$scope.buttonsTopWithLocation = [{
 				//TODO disable?
@@ -97,10 +102,14 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			$scope.onAddVariable = function() {
 				$scope.nested.dtInstance.rerender();
+				// update the location flag, as it could have been added
+				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			};
 
 			$scope.$on('deleteOccurred', function() {
 				$scope.nested.dtInstance.rerender();
+				// update the location flag, as it could have been deleted
+				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			});
 
 			$scope.initiateManageLocationModal = function() {
@@ -356,8 +365,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			// init
 			if ($stateParams && $stateParams.addtlNumOfEnvironments && !isNaN(parseInt($stateParams.addtlNumOfEnvironments))) {
-				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments);
-				$scope.temp.noOfEnvironments += addtlNumOfEnvironments;
+				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments, 10);
+				$scope.temp.noOfEnvironments = parseInt($scope.temp.noOfEnvironments, 10) + addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 				addNewEnvironments(addtlNumOfEnvironments);
 			}

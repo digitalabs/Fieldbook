@@ -43,34 +43,38 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 		super(workbook, currentFile, originalFileName);
 	}
 
-    @Override
-    void validateImportMetadata() throws WorkbookParserException {
-        // intentionally blank. CSV files do not contain import metadata (variable information, etc)
-    }
+	@Override
+	void validateImportMetadata() throws WorkbookParserException {
+		// intentionally blank. CSV files do not contain import metadata (variable information, etc)
+	}
 
-    protected abstract String getLabelFromRequiredColumn(MeasurementVariable variable);
+	protected abstract String getLabelFromRequiredColumn(MeasurementVariable variable);
 
-    @Override
+	@Override
 	protected void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes) throws IOException {
 		final List<String> measurementHeaders = this.getMeasurementHeaders(workbook);
 		final List<String> headers = parseObservationData().get(0);
 		for (int i = 0; i < headers.size(); i++) {
 			final String header = headers.get(i);
-			if (!header.equals(KsuFieldbookUtil.PLOT) && !measurementHeaders.contains(header)) {
-				final Set<StandardVariable> standardVariables =
-						ontologyDataManager.findStandardVariablesByNameOrSynonym(header, contextUtil.getCurrentProgramUUID());
-				Boolean found = false;
-				for (final StandardVariable standardVariable : standardVariables) {
-					if (measurementHeaders.contains(standardVariable.getName())) {
-						headers.set(i, standardVariable.getName());
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					modes.add(ChangeType.ADDED_TRAITS);
+			if (header.equals(KsuFieldbookUtil.PLOT) || measurementHeaders.contains(header)) {
+				continue;
+			}
+
+			final Set<StandardVariable> standardVariables =
+					ontologyDataManager.findStandardVariablesByNameOrSynonym(header, contextUtil.getCurrentProgramUUID());
+			Boolean found = false;
+			for (final StandardVariable standardVariable : standardVariables) {
+				if (measurementHeaders.contains(standardVariable.getName())) {
+					headers.set(i, standardVariable.getName());
+					found = true;
+					break;
 				}
 			}
+
+			if (!found) {
+				modes.add(ChangeType.ADDED_TRAITS);
+			}
+
 		}
 		parsedData.put(0, headers);
 	}

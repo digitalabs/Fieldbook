@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
@@ -35,17 +34,17 @@ public class DataKaptureImportStudyServiceImpl extends AbstractImportStudyServic
 
     @Override
     protected void detectAddedTraitsAndPerformRename(final Set modes) {
-        // TODO add added trait checking
+        // no added trait checking for DataKapture format
     }
 
     @Override
     void validateObservationColumns() throws WorkbookParserException {
-        // TODO self contained within the CSVOziel class
+        // self contained within the CSVOziel class
     }
 
     @Override
     void validateImportMetadata() throws WorkbookParserException {
-        // TODO self contained within the CSVOziel class
+        // self contained within the CSVOziel class
     }
 
     @Override

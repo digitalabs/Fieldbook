@@ -36,7 +36,7 @@ public class FieldroidImportStudyServiceImpl extends AbstractImportStudyService<
 
 	@Override
 	protected void detectAddedTraitsAndPerformRename(Set modes) {
-		// TODO requires added trait checking
+		// no added trait checking for Fieldroid
 	}
 
 	@Override

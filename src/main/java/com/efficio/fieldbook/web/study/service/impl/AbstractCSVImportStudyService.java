@@ -224,58 +224,63 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 		if (wData != null && wData.isEditable()) {
 			final String cell = row.get(columnIndex);
 			String csvValue = "";
-			if (StringUtils.isNotEmpty(cell)) {
-				if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
-						&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
-
-					wData.setAccepted(false);
-
-					String tempVal = "";
-
-					if (NumberUtils.isNumber(cell)) {
-						tempVal = this.getRealNumericValue(cell);
-						csvValue =
-								ExportImportStudyUtil.getCategoricalIdCellValue(tempVal,
-										wData.getMeasurementVariable().getPossibleValues(), true);
-					} else {
-						tempVal = cell;
-						csvValue =
-								ExportImportStudyUtil.getCategoricalIdCellValue(cell, wData.getMeasurementVariable().getPossibleValues(),
-										true);
-					}
-					final Integer termId =
-							wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
-					if (!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)) {
-						workbook.setHasExistingDataOverwrite(true);
-					}
-
-					if (TermId.CATEGORICAL_VARIABLE.getId() == wData.getMeasurementVariable().getDataTypeId() && !csvValue.equals(tempVal)) {
-						wData.setcValueId(csvValue);
-					} else {
-						wData.setcValueId(null);
-					}
-
-				} else {
-
-					if (TermId.NUMERIC_VARIABLE.getId() == wData.getMeasurementVariable().getDataTypeId()) {
-						wData.setAccepted(false);
-					}
-					if (NumberUtils.isNumber(cell)) {
-						csvValue = this.getRealNumericValue(cell);
-					} else {
-						csvValue = cell;
-					}
-
-					final Integer termId =
-							wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
-					if (!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)) {
-						workbook.setHasExistingDataOverwrite(true);
-					}
-				}
-				wData.setValue(csvValue);
+			if (StringUtils.isEmpty(cell)) {
+				return;
 			}
+			if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
+					&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
+
+				csvValue = this.processDataCellCategoricalValue(wData, cell, factorVariableMap);
+
+			} else {
+
+				if (TermId.NUMERIC_VARIABLE.getId() == wData.getMeasurementVariable().getDataTypeId()) {
+					wData.setAccepted(false);
+				}
+				if (NumberUtils.isNumber(cell)) {
+					csvValue = this.getRealNumericValue(cell);
+				} else {
+					csvValue = cell;
+				}
+
+				final Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
+				if (!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)) {
+					workbook.setHasExistingDataOverwrite(true);
+				}
+			}
+			wData.setValue(csvValue);
+
 		}
 	}
+
+    protected String processDataCellCategoricalValue(final MeasurementData wData, final String cell, final Map<Integer, MeasurementVariable> factorVariableMap) {
+        wData.setAccepted(false);
+
+        String tempVal = "";
+        final String csvValue;
+
+        if (NumberUtils.isNumber(cell)) {
+            tempVal = this.getRealNumericValue(cell);
+            csvValue = ExportImportStudyUtil.getCategoricalIdCellValue(tempVal, wData.getMeasurementVariable().getPossibleValues(),
+                            true);
+        } else {
+            tempVal = cell;
+            csvValue = ExportImportStudyUtil.getCategoricalIdCellValue(cell, wData.getMeasurementVariable().getPossibleValues(), true);
+        }
+
+        final Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
+        if (!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)) {
+            workbook.setHasExistingDataOverwrite(true);
+        }
+
+        if (TermId.CATEGORICAL_VARIABLE.getId() == wData.getMeasurementVariable().getDataTypeId() && !csvValue.equals(tempVal)) {
+            wData.setcValueId(csvValue);
+        } else {
+            wData.setcValueId(null);
+        }
+
+        return csvValue;
+    }
 
 	String getRealNumericValue(final String cell) {
 		// to remove trailing zeroes

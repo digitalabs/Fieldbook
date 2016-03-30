@@ -118,37 +118,39 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 				final String key = this.getKeyIdentifierFromRow(row, indexes);
 
 				final MeasurementRow wRow = rowsMap.get(key);
-				if (wRow != null) {
-					rowsMap.remove(key);
-
-					if (desigIndex == null) {
-						throw new WorkbookParserException("error.workbook.import.designation.empty.cell");
-					}
-
-					final String originalDesig = wRow.getMeasurementDataValue(TermId.DESIG.getId());
-					final String newDesig = row.get(desigIndex);
-
-					final String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
-					String plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NO.getId());
-					if (plotNumber == null || "".equalsIgnoreCase(plotNumber)) {
-						plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NNO.getId());
-					}
-
-					if (originalDesig != null && !originalDesig.equalsIgnoreCase(newDesig)) {
-						final List<Integer> newGids = this.getGermplasmIdsByName(newDesig);
-						if (originalGid != null && newGids.contains(Integer.valueOf(originalGid))) {
-							final MeasurementData wData = wRow.getMeasurementData(TermId.DESIG.getId());
-							wData.setValue(newDesig);
-						}
-					}
-
-					for (int j = 0; j < headerRow.size(); j++) {
-						final String headerCell = headerRow.get(j);
-						final MeasurementData wData = wRow.getMeasurementData(headerCell);
-						this.importDataCellValues(wData, row, j, workbook, factorVariableMap);
-					}
-
+				if (wRow == null) {
+					continue;
 				}
+
+				rowsMap.remove(key);
+
+				if (desigIndex == null) {
+					throw new WorkbookParserException("error.workbook.import.designation.empty.cell");
+				}
+
+				final String originalDesig = wRow.getMeasurementDataValue(TermId.DESIG.getId());
+				final String newDesig = row.get(desigIndex);
+
+				final String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
+				String plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NO.getId());
+				if (plotNumber == null || "".equalsIgnoreCase(plotNumber)) {
+					plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NNO.getId());
+				}
+
+				if (originalDesig != null && !originalDesig.equalsIgnoreCase(newDesig)) {
+					final List<Integer> newGids = this.getGermplasmIdsByName(newDesig);
+					if (originalGid != null && newGids.contains(Integer.valueOf(originalGid))) {
+						final MeasurementData wData = wRow.getMeasurementData(TermId.DESIG.getId());
+						wData.setValue(newDesig);
+					}
+				}
+
+				for (int j = 0; j < headerRow.size(); j++) {
+					final String headerCell = headerRow.get(j);
+					final MeasurementData wData = wRow.getMeasurementData(headerCell);
+					this.importDataCellValues(wData, row, j, workbook, factorVariableMap);
+				}
+
 			}
 
 		}

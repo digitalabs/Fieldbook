@@ -162,12 +162,7 @@ $(document).ready(function() {
 	$('#exportType').on('change', function() {
 		if (StudyCustomExportReports.isCustomReport()) {
 			$('.data-collection-section').hide();
-            if (!isNursery()) {
-                $('.exportTrialInstanceSection').removeClass('fbk-hide');
-            } else {
-                $('.exportTrialInstanceSection').addClass('fbk-hide');
-            }
-
+			$('.exportTrialInstanceSection').addClass('fbk-hide');
 			$('.exportRSection').css('display', 'none');
 		}else if ($(this).val() === '2') {
 			$('.data-collection-section').show();
@@ -202,17 +197,17 @@ function checkBeforeExport() {
 		studyId = getCurrentStudyIdInTab();
 	}
 
+	if (StudyCustomExportReports.isCustomReport()) {
+		StudyCustomExportReports.doExport();
+		return true;
+	}
+
 	if (!isNursery()) {
 		if (checkedInstance !== null && checkedInstance.length === 0) {
 			showErrorMessage('', 'Please select at least 1 instance');
 			return false;
 		}
 	}
-
-    if (StudyCustomExportReports.isCustomReport()) {
-        StudyCustomExportReports.doExport();
-        return true;
-    }
 
 	if ($('#exportWayType').val() === '1') {
 		exportStudy();

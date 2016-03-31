@@ -79,15 +79,7 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 		parsedData.put(0, headers);
 	}
 
-	private List<String> getMeasurementHeaders(final Workbook workbook) {
-		final List<String> headers = new ArrayList<>();
 
-		final List<MeasurementVariable> measurementDatasetVariablesView = workbook.getMeasurementDatasetVariablesView();
-		for (final MeasurementVariable mvar : measurementDatasetVariablesView) {
-			headers.add(mvar.getName());
-		}
-		return headers;
-	}
 
 	@Override
 	protected Map<Integer, List<String>> parseObservationData() throws IOException {

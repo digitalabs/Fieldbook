@@ -1,17 +1,23 @@
 
 package com.efficio.fieldbook.web.study.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
@@ -20,6 +26,11 @@ import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 
 @Transactional
 public class KsuExcelImportStudyServiceImpl extends AbstractExcelImportStudyService implements ImportStudyService {
+    @Resource
+    private OntologyDataManager ontologyDataManager;
+
+    @Resource
+    private ContextUtil contextUtil;
 
     public static final int KSU_OBSERVATION_SHEET_NUMBER = 0;
 
@@ -28,8 +39,32 @@ public class KsuExcelImportStudyServiceImpl extends AbstractExcelImportStudyServ
     }
 
     @Override
-    protected void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes) {
-        // TODO added trait checking / header renaming
+    protected void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes) throws WorkbookParserException{
+        final List<String> measurementHeaders =  this.getMeasurementHeaders(workbook);
+        final List<String> headers = Arrays.asList(this.getColumnHeaders(this.parsedData.getSheetAt(0)));
+        for (int i = 0; i < headers.size(); i++) {
+            final String header = headers.get(i);
+            if (measurementHeaders.contains(header)) {
+                continue;
+            }
+
+            final Set<StandardVariable> standardVariables =
+                    ontologyDataManager.findStandardVariablesByNameOrSynonym(header, contextUtil.getCurrentProgramUUID());
+            Boolean found = false;
+            for (final StandardVariable standardVariable : standardVariables) {
+                if (measurementHeaders.contains(standardVariable.getName())) {
+                    headers.set(i, standardVariable.getName());
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                modes.add(ChangeType.ADDED_TRAITS);
+            }
+
+        }
+
     }
 
     @Override

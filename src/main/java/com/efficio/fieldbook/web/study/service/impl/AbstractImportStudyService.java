@@ -140,7 +140,7 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 	/**
      *
      */
-	protected abstract void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes) throws IOException;
+	protected abstract void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes) throws IOException, WorkbookParserException;
 
 	/**
 	 * Provides an implementation of retrieving the trial instance number by calling another method. Can be overridden in cases where study
@@ -250,6 +250,16 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			}
 		}
 	}
+
+    List<String> getMeasurementHeaders(final Workbook workbook) {
+        final List<String> headers = new ArrayList<>();
+
+        final List<MeasurementVariable> measurementDatasetVariablesView = workbook.getMeasurementDatasetVariablesView();
+        for (final MeasurementVariable mvar : measurementDatasetVariablesView) {
+            headers.add(mvar.getName());
+        }
+        return headers;
+    }
 
     void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
         this.fieldbookMiddlewareService = fieldbookMiddlewareService;

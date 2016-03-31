@@ -152,7 +152,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				String reminderConfirmation = "";
 				if (importResult.getModes() != null && !importResult.getModes().isEmpty()) {
 					for (final ChangeType mode : importResult.getModes()) {
-						if (ImportStudyType.IMPORT_NURSERY_CSV != importStudyType && importStudyType != ImportStudyType.IMPORT_KSU_CSV) {
+						if (ImportStudyType.IMPORT_NURSERY_EXCEL == importStudyType) {
 							String message = this.messageSource.getMessage(mode.getMessageCode(), null, locale);
 							if (mode == ChangeType.ADDED_TRAITS) {
 								message +=

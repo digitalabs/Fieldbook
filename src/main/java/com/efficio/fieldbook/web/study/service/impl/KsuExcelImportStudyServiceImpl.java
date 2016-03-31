@@ -136,4 +136,12 @@ public class KsuExcelImportStudyServiceImpl extends AbstractExcelImportStudyServ
 		}
 		return null;
 	}
+
+    void setOntologyDataManager(OntologyDataManager ontologyDataManager) {
+        this.ontologyDataManager = ontologyDataManager;
+    }
+
+    void setContextUtil(ContextUtil contextUtil) {
+        this.contextUtil = contextUtil;
+    }
 }

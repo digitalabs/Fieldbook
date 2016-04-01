@@ -44,7 +44,7 @@ public class KsuExcelImportStudyServiceImpl extends AbstractExcelImportStudyServ
         final List<String> headers = Arrays.asList(this.getColumnHeaders(this.parsedData.getSheetAt(0)));
         for (int i = 0; i < headers.size(); i++) {
             final String header = headers.get(i);
-            if (measurementHeaders.contains(header)) {
+            if (measurementHeaders.contains(header) || header.equals(KsuFieldbookUtil.PLOT)) {
                 continue;
             }
 

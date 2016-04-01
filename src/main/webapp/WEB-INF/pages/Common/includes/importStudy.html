@@ -96,7 +96,7 @@
 
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default"  onclick="javascript:goBackToImport();" th:text="#{nursery.go.back}">Cancel</button>
-					<button type="button" class="btn btn-primary"  onclick="javascript:confirmStudyImport();" th:text="#{nursery.proceed}">Import</button>
+					<button type="button" class="btn btn-primary"  id="studyConfirmationButton" th:text="#{nursery.proceed}">Import</button>
 				</div>
 			</div>
 		</div>
@@ -507,6 +507,10 @@ function showImportResponse(responseText) {
 				importError += resp.confirmMessage;
 			}
 			$('#importStudyConfirmationModal .import-confirmation').html(importError);
+            $('#studyConfirmationButton').off('click');
+            $('#studyConfirmationButton').on('click', function() {
+                confirmStudyImport(resp.hasDataOverwrite);
+            })
 		}
 	} else {
 		showErrorMessage('page-import-study-message-modal', resp.error);

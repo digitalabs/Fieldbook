@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.study.service.impl;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
+import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -104,13 +105,17 @@ public class KsuExcelImportStudyServiceImplTest {
         row = Mockito.mock(Row.class);
         Mockito.doReturn(row).when(sheet).getRow(0);
 
-        Mockito.doReturn((short) TEST_COLUMN_HEADER_COUNT).when(row).getLastCellNum();
+        Mockito.doReturn((short) (TEST_COLUMN_HEADER_COUNT + 1)).when(row).getLastCellNum();
 
         for (int i = 0; i < TEST_COLUMN_HEADER_COUNT; i++) {
             final Cell cell = Mockito.mock(Cell.class);
             Mockito.doReturn(cell).when(row).getCell(i);
             Mockito.doReturn(constructHeaderName(i)).when(cell).getStringCellValue();
         }
+
+        Cell cell = Mockito.mock(Cell.class);
+        Mockito.doReturn(cell).when(row).getCell(TEST_COLUMN_HEADER_COUNT);
+        Mockito.doReturn(KsuFieldbookUtil.PLOT).when(cell).getStringCellValue();
     }
 
     String constructHeaderName(final int columnNumber) {
@@ -122,9 +127,12 @@ public class KsuExcelImportStudyServiceImplTest {
 		this.setupColumnHeaderMocks();
 
 		final String[] headerNames = this.ksuExcelImportStudy.getColumnHeaders(sheet);
-		for (int i = 0; i < headerNames.length; i++) {
+        // in our column header setup, last column is the plot column, with the other columns dynamically generated
+		for (int i = 0; i < headerNames.length - 1; i++) {
 			Assert.assertEquals("Expecting to return TempValue" + i + " but returned " + headerNames[i], "TempValue" + i, headerNames[i]);
 		}
+
+        Assert.assertEquals("Expecting plot as a column header", KsuFieldbookUtil.PLOT, headerNames[headerNames.length - 1]);
 	}
 
 	@Test

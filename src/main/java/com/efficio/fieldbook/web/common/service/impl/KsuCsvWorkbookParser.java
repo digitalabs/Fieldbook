@@ -247,6 +247,9 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 					}
 				}
 				wData.setValue(csvValue);
+				// Keep the imported value so that when the value is set to "missing"
+				// we can still track the old value.
+				wData.setOldValue(wData.getValue());
 			}
 		}
 	}

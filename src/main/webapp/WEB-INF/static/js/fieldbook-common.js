@@ -3433,11 +3433,20 @@ function toggleControlsForGermplasmListManagement(value) {
 function showGermplasmDetailsSection() {
 	'use strict';
 
-    // If Advance List for Trial is already generated then user can not Clear / Modify List.
-    if (isAdvanceListGeneratedForTrial == true) {
-        showAlertMessage('', advanceListAlreadyGeneratedForTrialWarningMessage, 10000);
-        return;
+    if(isNursery()){
+        // If Advance List for Nursery is already generated then user can not Clear / Modify List.
+        if($("#create-nursery-tab-headers").children("li").hasClass("advance-germplasm-items")){
+            showAlertMessage('', advanceListAlreadyGeneratedForNurseryWarningMessage, 10000);
+            return;
+        }
+    } else {
+        // If Advance List for Trial is already generated then user can not Clear / Modify List.
+        if (isAdvanceListGeneratedForTrial == true) {
+            showAlertMessage('', advanceListAlreadyGeneratedForTrialWarningMessage, 10000);
+            return;
+        }
     }
+
 	$('.observation-exists-notif').hide();
 	$('.overwrite-germplasm-list').hide();
 	$('.browse-import-link').show();

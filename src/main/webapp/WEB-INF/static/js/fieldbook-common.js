@@ -3432,6 +3432,12 @@ function toggleControlsForGermplasmListManagement(value) {
 
 function showGermplasmDetailsSection() {
 	'use strict';
+
+    // If Advance List for Trial is already generated then user can not Clear / Modify List.
+    if (isAdvanceListGeneratedForTrial == true) {
+        showAlertMessage('', advanceListAlreadyGeneratedForTrialWarningMessage, 10000);
+        return;
+    }
 	$('.observation-exists-notif').hide();
 	$('.overwrite-germplasm-list').hide();
 	$('.browse-import-link').show();

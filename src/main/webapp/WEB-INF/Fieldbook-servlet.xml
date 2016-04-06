@@ -484,8 +484,8 @@
 		<property name="germplasmOriginTrialsDefault" value="${germplasm.origin.trials.default}"/>
 		<property name="germplasmOriginTrialsWheat" value="${germplasm.origin.trials.wheat}"/>
 		<property name="germplasmOriginTrialsMaize" value="${germplasm.origin.trials.maize}"/>
-        <property name="breedersCrossIDOriginNursery" value="${breeders.cross.id.origin.nursery}" />
-        <property name="breedersCrossIDOriginTrial" value="${breeders.cross.id.origin.trial}" />
+        <property name="breedersCrossIDNursery" value="${breeders.cross.id.nursery}" />
+        <property name="breedersCrossIDTrial" value="${breeders.cross.id.trial}" />
 	</bean>
 	
 	<bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"

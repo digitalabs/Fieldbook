@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- *
+ * 
  * Generation Challenge Programme (GCP)
- *
- *
+ * 
+ * 
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  *
@@ -37,25 +37,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.efficio.fieldbook.service.api.LabelPrintingService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
-import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 import net.sf.jasperreports.engine.JRException;
+
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -69,7 +52,6 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
-import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -94,6 +76,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
+
+import com.efficio.fieldbook.service.api.LabelPrintingService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
+import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * The Class LabelPrintingController.
@@ -154,7 +155,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Show trial label details.
-	 *
+	 * 
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
@@ -205,7 +206,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Show nursery label details.
-	 *
+	 * 
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
@@ -252,7 +253,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Show fieldmap label details.
-	 *
+	 * 
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
@@ -352,7 +353,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Generate default filename.
-	 *
+	 * 
 	 * @param userLabelPrinting the user label printing
 	 * @param isTrial the is trial
 	 * @return the string
@@ -383,7 +384,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Export file.
-	 *
+	 * 
 	 * @param response the response
 	 * @return the string
 	 */
@@ -399,11 +400,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			response.setContentType("application/vnd.ms-excel");
 		}
 
-		String encodedFilename = FileUtils.encodeFilenameForDownload(fileName);
+		FieldbookUtil.resolveContentDisposition(fileName, response, req.getHeader("User-Agent"));
 
-		// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-		response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''" + encodedFilename
-				+ "\";");
 		response.setCharacterEncoding("UTF-8");
 		// the selected name + current date
 		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
@@ -433,7 +431,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Submits the details.
-	 *
+	 * 
 	 * @param form the form
 	 * @return the string
 	 */
@@ -618,7 +616,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Search program-preset,
-	 *
+	 * 
 	 * @param presetName
 	 * @param request
 	 * @return list of presets that matches presetName
@@ -649,7 +647,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Delete's program preset
-	 *
+	 * 
 	 * @param programPresetId
 	 * @return
 	 */
@@ -671,7 +669,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Saves the label printing setting. Note that the fields should be pre-validated before calling this service
-	 *
+	 * 
 	 * @param labelPrintingPresetSetting
 	 * @param request
 	 * @return
@@ -723,7 +721,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param rawSettings
 	 * @return
 	 */
@@ -786,7 +784,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Generate trial instances from field map.
-	 *
+	 * 
 	 * @return the list
 	 */
 	private List<StudyTrialInstanceInfo> generateTrialInstancesFromFieldMap() {
@@ -803,7 +801,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Generate trial instances from selected field maps.
-	 *
+	 * 
 	 * @param fieldMapInfoList the field map info list
 	 * @param form the form
 	 * @return the list
@@ -859,7 +857,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Sets the user label printing.
-	 *
+	 * 
 	 * @param userLabelPrinting the new user label printing
 	 */
 	public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {

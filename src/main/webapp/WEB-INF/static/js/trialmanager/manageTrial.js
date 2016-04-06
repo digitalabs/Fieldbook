@@ -393,7 +393,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			};
 
 			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
-                isAdvanceListGenerated = true;
+                isAdvanceListGeneratedForTrial = true;
 				var isSwap = false;
 				var isUpdate = false;
                 if(isPageLoading === undefined) {

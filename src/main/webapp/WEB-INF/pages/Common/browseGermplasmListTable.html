@@ -123,8 +123,8 @@ function resetGermplasmList() {
 
     // If Advance List is generated then user can not Clear List.
     if(!isNursery()) {
-        if (isAdvanceListGenerated == true) {
-            showAlertMessage('', advanceListAlreadyGeneratedWarningMessage, 10000);
+        if (isAdvanceListGeneratedForTrial == true) {
+            showAlertMessage('', advanceListAlreadyGeneratedForTrialWarningMessage, 10000);
             return;
         }
     }

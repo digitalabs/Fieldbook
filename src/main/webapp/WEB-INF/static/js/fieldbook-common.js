@@ -1,4 +1,4 @@
-var isAdvanceListGenerated = false;
+var isAdvanceListGeneratedForTrial = false;
 
 $(function() {
 	'use strict';

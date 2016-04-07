@@ -267,7 +267,7 @@ public class DesignImportControllerTest {
 
 		final ImportDesignForm form = new ImportDesignForm();
 		form.setFile(this.multiPartFile);
-		form.setFileType(DesignImportController.FILE_TYPE_ID_CSV);
+		form.setFileType(DesignImportParser.FILE_TYPE_CSV);
 		final String resultsMap = this.designImportController.importFile(form, "N");
 
 		Mockito.verify(this.userSelection).setDesignImportData(Matchers.any(DesignImportData.class));
@@ -283,7 +283,7 @@ public class DesignImportControllerTest {
 
 		final ImportDesignForm form = new ImportDesignForm();
 		form.setFile(this.multiPartFile);
-		form.setFileType(DesignImportController.FILE_TYPE_ID_CSV);
+		form.setFileType(DesignImportParser.FILE_TYPE_CSV);
 		Mockito.when(this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_CSV, this.multiPartFile)).thenThrow(
 				new FileParsingException("force file parse exception"));
 
@@ -662,8 +662,7 @@ public class DesignImportControllerTest {
 				.getMeasurementVariablesFromDataFile(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final GenerateDesignInput input =
-				new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
+		final GenerateDesignInput input = new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
 
 		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
@@ -684,8 +683,7 @@ public class DesignImportControllerTest {
 						Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final GenerateDesignInput input =
-				new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
+		final GenerateDesignInput input = new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
 		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
@@ -1173,10 +1171,6 @@ public class DesignImportControllerTest {
 		final List<MeasurementVariable> expDesignVariableList = new ArrayList<>();
 		expDesignVariableList.add(expDesignSource);
 
-//<<<<<<< HEAD
-//		new ExperimentalDesignVariable(expDesignVariableList);
-//=======
-//>>>>>>> master
 		workbook.setExperimentalDesignVariables(expDesignVariableList);
 
 		// case 3: show filename retrieved from EXP_DESIGN_SOURCE

@@ -412,6 +412,14 @@ public class DesignImportServiceImplTest {
 		Assert.fail("The logic should detect that the trial number exist");
 	}
 
+	/**
+	 * This method test the following scenarios: 1. If the number of measurement rows created are the same with the number of rows imported
+	 * from the file 2. If the starting plot no is applied properly for each measurement row created
+	 * 
+	 * This service method updates the measurement rows.
+	 * 
+	 * NOTE: Trial Instance = Environment
+	 */
 	@Test
 	public void testCreatePresetMeasurementRowsPerInstance() {
 		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
@@ -427,16 +435,18 @@ public class DesignImportServiceImplTest {
 		Assert.assertEquals("The number of measurement rows from the csv file must be equal to the number of measurements row generated.",
 				csvData.size() - 1, measurements.size());
 
-		// SITE_NAME must not included
+		// SITE_NAME must not be counted for the expected columns imported from the custom import file
 		final Integer expectedColumnNo = csvData.get(0).size() - 1;
 		Assert.assertEquals(
 				"The number of columns from the csv file must be equal to the number of measurements data per measurement row generated.",
 				expectedColumnNo.intValue(), measurements.get(0).getDataList().size());
 
+		// find the index of PLOT_NO column from the import file
 		final int plotNoIndxCSV =
 				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_DESIGN)
 						.get(TermId.PLOT_NO.getId()).getColumnIndex();
 
+		// Verify if the plot no is increased per each measurement rows based on the stated Starting Plot No
 		for (int i = 0; i < measurements.size(); i++) {
 			final List<String> rowCSV = csvData.get(i + 1);
 			final int plotNoCsv = Integer.valueOf(rowCSV.get(plotNoIndxCSV));

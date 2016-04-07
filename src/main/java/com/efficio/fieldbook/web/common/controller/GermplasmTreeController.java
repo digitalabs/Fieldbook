@@ -639,31 +639,33 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			// originAttribute gid will be set when saving once gid is known
 			attributesPerGermplasm.add(originAttribute);
 
-			//Adding Instance number, plot number and replication number as attributes of germplasm
+			//Adding Instance number, plot number and replication number as attributes of germplasm for trial advancing
+			if(this.userSelection.isTrial()){
+				final Attribute plotNumberAttribute = new Attribute();
+				plotNumberAttribute.setAval(importedGermplasm.getPlotNumber());
+				plotNumberAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","PLOT_NUMBER").getFldno());
+				plotNumberAttribute.setUserId(currentUserID);
+				plotNumberAttribute.setAdate(gDate);
+				plotNumberAttribute.setLocationId(locationId);
+				attributesPerGermplasm.add(plotNumberAttribute);
 
-			final Attribute plotNumberAttribute = new Attribute();
-			plotNumberAttribute.setAval(importedGermplasm.getPlotNumber());
-			plotNumberAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","PLOT_NUMBER").getFldno());
-			plotNumberAttribute.setUserId(currentUserID);
-			plotNumberAttribute.setAdate(gDate);
-			plotNumberAttribute.setLocationId(locationId);
-			attributesPerGermplasm.add(plotNumberAttribute);
+				final Attribute repNoAttribute = new Attribute();
+				repNoAttribute.setAval(importedGermplasm.getReplicationNumber());
+				repNoAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","REP_NUMBER").getFldno());
+				repNoAttribute.setUserId(currentUserID);
+				repNoAttribute.setAdate(gDate);
+				repNoAttribute.setLocationId(locationId);
+				attributesPerGermplasm.add(repNoAttribute);
 
-			final Attribute repNoAttribute = new Attribute();
-			repNoAttribute.setAval(importedGermplasm.getReplicationNumber());
-			repNoAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","REP_NUMBER").getFldno());
-			repNoAttribute.setUserId(currentUserID);
-			repNoAttribute.setAdate(gDate);
-			repNoAttribute.setLocationId(locationId);
-			attributesPerGermplasm.add(repNoAttribute);
+				final Attribute instanceNoAttribute = new Attribute();
+				instanceNoAttribute.setAval(importedGermplasm.getTrialInstanceNumber());
+				instanceNoAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","INSTANCE_NUMBER").getFldno());
+				instanceNoAttribute.setUserId(currentUserID);
+				instanceNoAttribute.setAdate(gDate);
+				instanceNoAttribute.setLocationId(locationId);
+				attributesPerGermplasm.add(instanceNoAttribute);
+			}
 
-			final Attribute instanceNoAttribute = new Attribute();
-			instanceNoAttribute.setAval(importedGermplasm.getTrialInstanceNumber());
-			instanceNoAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","INSTANCE_NUMBER").getFldno());
-			instanceNoAttribute.setUserId(currentUserID);
-			instanceNoAttribute.setAdate(gDate);
-			instanceNoAttribute.setLocationId(locationId);
-			attributesPerGermplasm.add(instanceNoAttribute);
 
 			germplasmAttributes.add(new ImmutablePair<Germplasm, List<Attribute>>(germplasm, Lists.newArrayList(attributesPerGermplasm)));
 		}

@@ -597,7 +597,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 				wData.setValue(xlsValue);
 				// Keep the imported value so that when the value is set to "missing"
 				// we can still track the old value.
-				wData.setOldValue(wData.getValue());
+				wData.setOldValue(xlsValue);
 			}
 		}
 	}

@@ -75,7 +75,7 @@ public class CsvExportStudyServiceImplTest {
 		Mockito.doReturn(prop).when(this.ontologyService).getProperty(TermId.BREEDING_METHOD_PROP.getId());
 		Mockito.doReturn(new Term(1, CsvExportStudyServiceImplTest.PROPERTY_NAME, "Dummy defintion")).when(prop).getTerm();
 		Mockito.doReturn(Mockito.mock(File.class)).when(this.germplasmExportService)
-		.generateCSVFile(Matchers.any(List.class), Matchers.any(List.class), Matchers.anyString());
+				.generateCSVFile(Matchers.any(List.class), Matchers.any(List.class), Matchers.anyString());
 		Mockito.doReturn(CsvExportStudyServiceImplTest.UPLOAD_DIRECTORY).when(this.fieldbookProperties).getUploadDirectory();
 	}
 
@@ -87,7 +87,7 @@ public class CsvExportStudyServiceImplTest {
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 
 		Mockito.doReturn(workbook.getObservations()).when(CsvExportStudyServiceImplTest.csvExportStudyService)
-		.getApplicableObservations(workbook, instances);
+				.getApplicableObservations(workbook, instances);
 
 		final String outputFilename =
 				CsvExportStudyServiceImplTest.csvExportStudyService.export(workbook, CsvExportStudyServiceImplTest.FILENAME, instances);
@@ -105,7 +105,7 @@ public class CsvExportStudyServiceImplTest {
 		instances.add(1);
 
 		Mockito.doReturn(workbook.getObservations()).when(CsvExportStudyServiceImplTest.csvExportStudyService)
-		.getApplicableObservations(workbook, instances);
+				.getApplicableObservations(workbook, instances);
 
 		final String outputFilename =
 				CsvExportStudyServiceImplTest.csvExportStudyService.export(workbook, CsvExportStudyServiceImplTest.FILENAME, instances);

@@ -1,12 +1,15 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -34,19 +37,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
 
 @Controller
 @RequestMapping(ObservationMatrixController.URL)
 public class ObservationMatrixController extends AbstractBaseFieldbookController {
 
-	public static final String MISSING_VALUE = "missing";
 	public static final String URL = "/Common/addOrRemoveTraits";
 	public static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
 	public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
@@ -72,7 +73,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 	@Resource
 	private PaginationListSelection paginationListSelection;
-	
+
 	@Resource
 	private ContextUtil contextUtil;
 
@@ -83,7 +84,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 	/**
 	 * Get for the pagination of the list
-	 *
+	 * 
 	 * @param form the form
 	 * @param model the model
 	 * @return the string
@@ -145,7 +146,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		try {
 			this.validationService.validateObservationValues(workbook, "");
-			this.fieldbookMiddlewareService.saveMeasurementRows(workbook,contextUtil.getCurrentProgramUUID());
+			this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID());
 			resultMap.put(ObservationMatrixController.STATUS, "1");
 		} catch (WorkbookParserException e) {
 			ObservationMatrixController.LOG.error(e.getMessage(), e);
@@ -473,11 +474,11 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	}
 
 	/**
-	 * We maintain the state of categorical description view in session to support the ff scenario:
-	 * 1. When user does a browser refresh, the state of measurements view is maintained
-	 * 2. When user switches between studies (either nursery or trial) state is also maintained
-	 * 3. Generating the modal for editing whole measurement row/entry is done in the backend (see updateExperimentModal.html) , this
-	 * also helps us track which display values in the cateogrical dropdown is used
+	 * We maintain the state of categorical description view in session to support the ff scenario: 1. When user does a browser refresh, the
+	 * state of measurements view is maintained 2. When user switches between studies (either nursery or trial) state is also maintained 3.
+	 * Generating the modal for editing whole measurement row/entry is done in the backend (see updateExperimentModal.html) , this also
+	 * helps us track which display values in the cateogrical dropdown is used
+	 * 
 	 * @param showCategoricalDescriptionView
 	 * @param session
 	 * @return
@@ -542,8 +543,8 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	}
 
 	protected boolean isNumericalValueOutOfBounds(String value, MeasurementVariable var) {
-		return var.getMinRange() != null && var.getMaxRange() != null && NumberUtils.isNumber(value) && (
-				Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange());
+		return var.getMinRange() != null && var.getMaxRange() != null && NumberUtils.isNumber(value)
+				&& (Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange());
 	}
 
 	protected boolean isCategoricalValueOutOfBounds(String cValueId, String value, List<ValueReference> possibleValues) {
@@ -624,8 +625,8 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			if (data.isCategorical()) {
 				CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
 
-				dataMap.put(data.getMeasurementVariable().getName(),
-						new Object[] {categoricalDisplayValue.getName() + suffix, categoricalDisplayValue.getDescription() + suffix, data.isAccepted()});
+				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {categoricalDisplayValue.getName() + suffix,
+						categoricalDisplayValue.getDescription() + suffix, data.isAccepted()});
 
 			} else if (data.isNumeric()) {
 				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() + suffix, data.isAccepted()});

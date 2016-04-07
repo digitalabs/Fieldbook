@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- *
+ * 
  * Generation Challenge Programme (GCP)
- *
- *
+ * 
+ * 
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
+ * 
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.nursery.service.impl;
@@ -59,10 +59,10 @@ public class ValidationServiceImpl implements ValidationService {
 
 	@Resource
 	private WorkbenchService workbenchService;
-	
+
 	@Resource
 	private WorkbenchDataManager workbenchDataManager;
-	
+
 	@Resource
 	private ContextUtil contextUtil;
 
@@ -91,7 +91,7 @@ public class ValidationServiceImpl implements ValidationService {
 		}
 		return NumberUtils.isNumber(value);
 	}
-	
+
 	@Override
 	public void validateObservationValues(final Workbook workbook, final String instanceNumber) throws WorkbookParserException {
 		final Locale locale = LocaleContextHolder.getLocale();
@@ -101,8 +101,9 @@ public class ValidationServiceImpl implements ValidationService {
 				// meaning we want to validate all
 				observations = workbook.getObservations();
 			} else {
-				observations = workbook.isNursery() ? workbook.getObservations()
-						: WorkbookUtil.filterObservationsByTrialInstance(workbook.getObservations(), instanceNumber);
+				observations =
+						workbook.isNursery() ? workbook.getObservations() : WorkbookUtil.filterObservationsByTrialInstance(
+								workbook.getObservations(), instanceNumber);
 			}
 
 			for (final MeasurementRow row : observations) {
@@ -183,7 +184,9 @@ public class ValidationServiceImpl implements ValidationService {
 	String validatePersonId(final MeasurementVariable var) {
 		String warningMessage = "";
 		if (NumberUtils.isNumber(var.getValue())) {
-			final Integer workbenchUserId = this.workbenchDataManager.getWorkbenchUserIdByIBDBUserIdAndProjectId(Integer.parseInt(var.getValue()), this.contextUtil.getProjectInContext().getProjectId());
+			final Integer workbenchUserId =
+					this.workbenchDataManager.getWorkbenchUserIdByIBDBUserIdAndProjectId(Integer.parseInt(var.getValue()), this.contextUtil
+							.getProjectInContext().getProjectId());
 			if (workbenchUserId == null) {
 				warningMessage = this.setWarningMessage(var.getName());
 			}

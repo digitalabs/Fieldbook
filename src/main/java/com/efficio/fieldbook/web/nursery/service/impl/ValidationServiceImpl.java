@@ -50,7 +50,6 @@ public class ValidationServiceImpl implements ValidationService {
 	private static final String DATA_TYPE_NUMERIC = "Numeric";
 	private static final String ERROR_INVALID_CELL = "error.workbook.save.invalidCellValue";
 	private static final String ERROR_NUMERIC_VARIABLE_VALUE = "error.workbook.save.invalidCellValueForNumericVariable";
-	public static final String MISSING_VAL = "missing";
 
 	@Resource
 	private ResourceBundleMessageSource messageSource;
@@ -87,7 +86,7 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	private boolean validateIfValueIsMissingOrNumber(final String value) {
-		if (ValidationServiceImpl.MISSING_VAL.equals(value.trim())) {
+		if (MeasurementData.MISSING_VALUE.equals(value.trim())) {
 			return true;
 		}
 		return NumberUtils.isNumber(value);

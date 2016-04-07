@@ -460,9 +460,9 @@ public class ObservationMatrixControllerTest {
 								var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var
 										.getMeasurementVariable().getPossibleValues().isEmpty())) {
 							Assert.assertTrue(var.isAccepted());
-							if (this.observationMatrixController.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(),
-									var.getMeasurementVariable().getPossibleValues())) {
-								Assert.assertEquals(ObservationMatrixController.MISSING_VALUE, var.getValue());
+							if (this.observationMatrixController.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var
+									.getMeasurementVariable().getPossibleValues())) {
+								Assert.assertEquals(MeasurementData.MISSING_VALUE, var.getValue());
 							} else {
 								Assert.assertFalse("0".equals(var.getValue()));
 							}

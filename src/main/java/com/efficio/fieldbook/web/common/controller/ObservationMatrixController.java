@@ -373,7 +373,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 					&& var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
 				if (this.isNumericalValueOutOfBounds(var.getValue(), var.getMeasurementVariable())) {
 					var.setAccepted(true);
-					var.setValue(ObservationMatrixController.MISSING_VALUE);
+					var.setValue(MeasurementData.MISSING_VALUE);
 				}
 			} else if (var != null
 					&& !StringUtils.isEmpty(var.getValue())
@@ -381,7 +381,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 							.getMeasurementVariable().getPossibleValues().isEmpty())) {
 				var.setAccepted(true);
 				if (this.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())) {
-					var.setValue(ObservationMatrixController.MISSING_VALUE);
+					var.setValue(MeasurementData.MISSING_VALUE);
 					var.setCustomCategoricalValue(true);
 				} else {
 					var.setCustomCategoricalValue(false);

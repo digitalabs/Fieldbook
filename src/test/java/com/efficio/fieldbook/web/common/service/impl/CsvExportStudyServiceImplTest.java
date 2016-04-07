@@ -31,7 +31,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.nursery.service.impl.ValidationServiceImpl;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
@@ -309,10 +308,10 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testGetNumericColumnValueIfMissing() {
 		final MeasurementData dataCell = new MeasurementData();
-		dataCell.setValue(ValidationServiceImpl.MISSING_VAL);
+		dataCell.setValue(MeasurementData.MISSING_VALUE);
 		final Integer termId = 2001;
 		final ExportColumnValue columnValue = CsvExportStudyServiceImplTest.csvExportStudyService.getNumericColumnValue(dataCell, termId);
-		Assert.assertEquals("Value should be missing", ValidationServiceImpl.MISSING_VAL, columnValue.getValue());
+		Assert.assertEquals("Value should be missing", MeasurementData.MISSING_VALUE, columnValue.getValue());
 	}
 
 	@Test

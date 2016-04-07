@@ -22,7 +22,7 @@ public class BreedersCrossIDExpression extends BaseExpression{
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
 		for (StringBuilder container : values) {
 			String newValue = this.breedersCrossIDGenerator.generateBreedersCrossID( source.getStudyType(), source.getConditions(),
-					source.getTrailInstanceObservation(), source.getBreedingMethod());
+					source.getTrailInstanceObservation(), source.getBreedingMethod(), source.getGermplasm());
 			this.replaceExpressionWithValue(container, newValue);
 		}
 	}

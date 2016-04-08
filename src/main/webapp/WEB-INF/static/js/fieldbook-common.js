@@ -3593,6 +3593,14 @@ function displaySelectedGermplasmDetails() {
 }
 function showAddEnvironmentsDialog() {
 	'use strict';
+	if (!isNursery()) {
+		var currentDesignType = angular.element('#mainApp').injector().get('TrialManagerDataService').currentData.experimentalDesign.designType;
+		if(hasMeasurementData() && currentDesignType === 3){
+			showAlertMessage('', addEnvironmentsImportDesignWarning, 5000);
+			return;
+		}
+	}
+	
 	$('#numberOfEnvironments').val('');
 	$('#addEnvironmentsModal').modal({ backdrop: 'static', keyboard: true });
 }

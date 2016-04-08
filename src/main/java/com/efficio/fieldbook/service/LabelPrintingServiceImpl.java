@@ -787,8 +787,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 					AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt(), false));
 
 
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.rep", null, locale),
-					AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt(), true));
+			labelFieldsList.add(new LabelFields(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager),
+					TermId.REP_NO.getId(), true));
 
 			workbook = this.fieldbookMiddlewareService.getTrialDataSet(studyID);
 
@@ -871,8 +871,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			labelFieldsList.addAll(this.settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(workbook));
 			labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.rep", null, locale),
-					AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt(), true));
+			labelFieldsList.add(new LabelFields(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager),
+					TermId.REP_NO.getId(), true));
 
 		}
 

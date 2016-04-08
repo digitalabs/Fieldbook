@@ -488,7 +488,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		final MeasurementVariable factorVariable = this.getMeasurementVariableByTermId(newTermId, variables);
 
-		if (factorVariable != null) {
+		if (factorVariable != null && values.get(newTermId) == null) {
 			values.put(newTermId, factorVariable.getValue());
 
 			if (populateHeaders) {

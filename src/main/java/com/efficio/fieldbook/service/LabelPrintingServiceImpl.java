@@ -836,9 +836,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_SEASON_KEY, null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(), false));
 		labelFieldsList.add(new LabelFields(
-				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY, null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt(), false));
-		labelFieldsList.add(new LabelFields(
 				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt(), false));
 

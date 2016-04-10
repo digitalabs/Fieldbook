@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.label.printing.bean;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +20,7 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.pojos.GermplasmList;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -189,6 +188,53 @@ public class UserLabelPrinting implements Serializable {
 			}
 			this.totalNumberOfLabelToPrint = Integer.toString(totalLabels);
 		}
+	}
+
+	/**
+	 * Sets the field map info.
+	 *
+	 * @param fieldMapInfo the new field map info
+	 * @param inventoryDetails the inventory details for study stock.
+	 *
+	 */
+	public void setFieldMapInfo(FieldMapInfo fieldMapInfo,List<InventoryDetails> inventoryDetails) {
+		this.fieldMapInfo = fieldMapInfo;
+
+		//Override FieldMapInfo for Trial Stock to populate data based in Inventories instead of Measurements
+		Map<Integer,Integer> instanceWiseLabelsNeeded = new HashMap<>();
+
+		Integer instanceNumber = null;
+		for(InventoryDetails inventoryDetail : inventoryDetails){
+			instanceNumber = inventoryDetail.getInstanceNumber();
+			if(instanceNumber != null){
+				if(!instanceWiseLabelsNeeded.containsKey(instanceNumber)){
+					instanceWiseLabelsNeeded.put(instanceNumber, 0);
+				}
+				Integer labelCount = instanceWiseLabelsNeeded.get(instanceNumber)+1;
+				instanceWiseLabelsNeeded.put(instanceNumber,labelCount);
+			}
+		}
+
+		if (fieldMapInfo != null) {
+			if (fieldMapInfo.getDatasets() != null && !fieldMapInfo.getDatasets().isEmpty()) {
+				FieldMapDatasetInfo info = fieldMapInfo.getDatasets().get(0);
+				if (info.getTrialInstances() != null) {
+					this.numberOfInstances = Integer.toString(info.getTrialInstances().size());
+					for (int i = 0; i < info.getTrialInstances().size(); i++) {
+						FieldMapTrialInstanceInfo trialInstanceInfo = info.getTrialInstances().get(i);
+						instanceNumber = Integer.valueOf(trialInstanceInfo.getTrialInstanceNo());
+						if(instanceWiseLabelsNeeded.get(instanceNumber) != null){
+							trialInstanceInfo.setLabelsNeeded(instanceWiseLabelsNeeded.get(instanceNumber));
+						}
+						else{
+							trialInstanceInfo.setLabelsNeeded(0);
+						}
+					}
+				}
+			}
+			this.totalNumberOfLabelToPrint = Integer.toString(inventoryDetails.size());
+		}
+
 	}
 
 	/**

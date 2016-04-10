@@ -316,12 +316,19 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
         }
 
+		List<InventoryDetails> inventoryDetails = this.labelPrintingService.getInventoryDetails(stockList.getId());
+
         for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
-            this.userLabelPrinting.setFieldMapInfo(fieldMapInfoDetail);
+			if(Objects.equals(study.getType(), StudyType.T)){
+				this.userLabelPrinting.setFieldMapInfo(fieldMapInfoDetail,inventoryDetails);
+			}
+			else{
+				this.userLabelPrinting.setFieldMapInfo(fieldMapInfoDetail);
+			}
+
             this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
         }
 
-        List<InventoryDetails> inventoryDetails = this.labelPrintingService.getInventoryDetails(stockList.getId());
         this.userLabelPrinting.setStudy(study);
         this.userLabelPrinting.setBarcodeNeeded("0");
         this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
@@ -340,8 +347,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         if(Objects.equals(study.getType(), StudyType.T)) {
             form.setIsTrial(true);
             this.userLabelPrinting.setIsTrial(true);
-            this.userLabelPrinting.setTotalNumberOfLabelToPrint(String.valueOf(inventoryDetails.size()));
-
         }else {
             form.setIsTrial(false);
             this.userLabelPrinting.setIsTrial(false);

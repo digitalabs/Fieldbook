@@ -129,7 +129,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 						<td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.trialInstanceNo}"></td>
 						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.entryCount}"></td>
 						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.repCount}"></td>
-						<td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.plotCount}"></td>
+						<td th:class="${row.even}? 'even' : 'odd'" th:if="!(*{userLabelPrinting.isStockList()} and *{userLabelPrinting.isTrial()})" th:text="${trialRow.plotCount}"></td>
+						<td th:class="${row.even}? 'even' : 'odd'" th:if="(*{userLabelPrinting.isStockList()} and *{userLabelPrinting.isTrial()})" th:text="${trialRow.labelsNeeded}"></td>
 					</tr>
 				</table>
 			</div>

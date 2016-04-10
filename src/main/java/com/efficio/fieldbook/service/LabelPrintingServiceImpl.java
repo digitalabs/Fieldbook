@@ -233,13 +233,24 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
         if(isStockList){
             inventoryDetails = this.getInventoryDetails(userLabelPrinting.getStockListId());
 
-            for(InventoryDetails inventoryDetail : inventoryDetails){
-				//TODO : The existing germplasm does not have instanceNo data for generated germplasm that we need to take care.
-				String trialInstanceNumber = String.valueOf(inventoryDetail.getInstanceNumber());
-				if(!trialInstanceInventoryDetailMap.containsKey( trialInstanceNumber)){
-					trialInstanceInventoryDetailMap.put(trialInstanceNumber, new ArrayList<InventoryDetails>());
+			if(isTrial){
+				for(InventoryDetails inventoryDetail : inventoryDetails){
+					String trialInstanceNumber = String.valueOf(inventoryDetail.getInstanceNumber());
+					if(inventoryDetail.getInstanceNumber() == null){
+						/* InstanceNumber must be NULL in all inventoryDetails for existing Trial Stock stored Data
+						because Instance No was not stored while Advancing.Considering by default instance number to "1" */
+						trialInstanceNumber = "1";
+					}
+					else{
+						 trialInstanceNumber = String.valueOf(inventoryDetail.getInstanceNumber());
+					}
+
+					if(!trialInstanceInventoryDetailMap.containsKey( trialInstanceNumber)){
+						trialInstanceInventoryDetailMap.put(trialInstanceNumber, new ArrayList<InventoryDetails>());
+					}
+					trialInstanceInventoryDetailMap.get(trialInstanceNumber).add(inventoryDetail);
+
 				}
-				trialInstanceInventoryDetailMap.get(trialInstanceNumber).add(inventoryDetail);
 			}
         }
 
@@ -259,10 +270,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
                 }
                 Map<String, InventoryDetails> inventoriesMap = new HashMap<>();
 
-                for(InventoryDetails details : inventories) {
-                    inventoriesMap.put(details.getEntryId().toString(), details);
-                }
-
+				// This will prevent execption when no inventories found for Trial instance. This will not fill up Inventory map having multiple locations in trial data as we have be default store instance no to "1" for existing trial data.
+				if(inventories != null && !inventories.isEmpty()){
+					for(InventoryDetails details : inventories) {
+						inventoriesMap.put(details.getEntryId().toString(), details);
+					}
+				}
 				params.setInventoryDetailsMap(inventoriesMap);
 			}
 

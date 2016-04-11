@@ -103,7 +103,7 @@ var ImportCrosses = {
 	preselectCrossBreedingMethod: function(breedingMethodId) {
 		// we indicate that we're using a breeding method
 		$('#useSelectedMethodCheckbox').prop('checked', true);
-		$('#showFavoritesOnlyCheckbox').prop('checked', false);
+		$('#showFavoritesOnlyCheckbox').prop('checked', false).trigger('change');
 		$('#breedingMethodId').val(selectedBreedingMethodId);
 		$('#breedingMethodDropdown').select2('val', parseInt(selectedBreedingMethodId));
 	},
@@ -186,30 +186,25 @@ var ImportCrosses = {
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
 
 		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
-			ImportCrosses.showFavoriteMethodsOnly).done(function() {
-			setTimeout(function() {
-
-			console.log('Here');
-			// this indicates that the user went through the crossing manager, and should have the breeding method setting fields disabled
-			if (selectedBreedingMethodId) {
-				if (selectedBreedingMethodId != '0') {
-					// in addition, if the user has already selected a breeding method, we should pre select that
-					ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
-				}
-
-				ImportCrosses.disableCrossingBreedingMethodSettingFields();
-
-			} else {
-				// we re enable all breeding method setting fields, in case they were disabled due to prior operations
-				ImportCrosses.enableCrossingBreedingMethodSettingFields();
-			}
-			}, 5000);
-		});
-
+			ImportCrosses.showFavoriteMethodsOnly);
 		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
 			ImportCrosses.showFavoriteLoationsOnly);
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 		ImportCrosses.updateSampleParentageDesignation();
+
+		// this indicates that the user went through the crossing manager, and should have the breeding method setting fields disabled
+		if (selectedBreedingMethodId) {
+			if (selectedBreedingMethodId != '0') {
+				// in addition, if the user has already selected a breeding method, we should pre select that
+				ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
+			}
+
+			ImportCrosses.disableCrossingBreedingMethodSettingFields();
+
+		} else {
+			// we re enable all breeding method setting fields, in case they were disabled due to prior operations
+			ImportCrosses.enableCrossingBreedingMethodSettingFields();
+		}
 
 		$('.cross-import-name-setting').off('change');
 		$('.cross-import-name-setting').on('change', ImportCrosses.updateDisplayedSequenceNameValue);

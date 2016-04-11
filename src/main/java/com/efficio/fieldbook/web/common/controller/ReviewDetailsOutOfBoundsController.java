@@ -181,7 +181,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 				this.setMeasurementDataValue(possibleValueId, measurementData, value);
 			} else if (value.getAction().equals(ReviewDetailsOutOfBoundsController.SET_SELECTED_VALUES_TO_MISSING)) {
 				measurementData.setAccepted(true);
-				measurementData.setValue(ObservationMatrixController.MISSING_VALUE);
+				measurementData.setValue(MeasurementData.MISSING_VALUE);
 			}
 		} else {
 			this.setMeasurementDataValue(possibleValueId, measurementData, value);
@@ -379,7 +379,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 	}
 
 	protected boolean isValueOutOfRange(String value, MeasurementData data) {
-		if (ObservationMatrixController.MISSING_VALUE.equalsIgnoreCase(value)) {
+		if (MeasurementData.MISSING_VALUE.equalsIgnoreCase(value)) {
 			return true;
 		} else if (NumberUtils.isNumber(value)
 				&& (Double.valueOf(value) < data.getMeasurementVariable().getMinRange() || Double.valueOf(value) > data

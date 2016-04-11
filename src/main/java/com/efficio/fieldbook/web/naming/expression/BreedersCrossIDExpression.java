@@ -21,7 +21,6 @@ public class BreedersCrossIDExpression extends BaseExpression{
 	@Override
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
 
-		//TODO SelectionNumber needs to be determined properly.
 		/**
 		 * Refer NamingConventionServiceImpl.addImportedGermplasmToList method
 		 * It requires AdvancingNursery as well, here we are not able to get AdvancingNursery instance

@@ -27,12 +27,10 @@ public class BreedersCrossIDExpression extends BaseExpression{
 		 * It requires AdvancingNursery as well, here we are not able to get AdvancingNursery instance
 		 * Basic Implementation has been added to calculate SelectionNumber
 		 */
-		int selectionNumber = source.getCurrentMaxSequence() + 1;
 		for (StringBuilder container : values) {
 			String newValue = this.breedersCrossIDGenerator.generateBreedersCrossID( source.getStudyType(), source.getConditions(),
-					source.getTrailInstanceObservation(), source.getBreedingMethod(), source.getGermplasm(), selectionNumber);
+					source.getTrailInstanceObservation(), source.getBreedingMethod(), source.getGermplasm());
 			this.replaceExpressionWithValue(container, newValue);
-			selectionNumber++;
 		}
 	}
 

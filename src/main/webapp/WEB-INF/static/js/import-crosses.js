@@ -91,6 +91,25 @@ var ImportCrosses = {
 		});
 	},
 
+	disableCrossingBreedingMethodSettingFields: function() {
+		$('.crossingBreedingMethodInput').prop('disabled', true);
+	},
+
+	enableCrossingBreedingMethodSettingFields: function() {
+		$('.crossingBreedingMethodInput').prop('disabled', false);
+		$('#breedingMethodDropdown').select2('enable');
+	},
+
+	preselectCrossBreedingMethod: function(breedingMethodId) {
+		// we indicate that we're using a breeding method
+		$('#useSelectedMethodCheckbox').prop('checked', true);
+		$('#showFavoritesOnlyCheckbox').prop('checked', false);
+		$('#breedingMethodId').val(selectedBreedingMethodId);
+		$('#breedingMethodDropdown').select2('val', parseInt(selectedBreedingMethodId));
+	},
+
+
+
 	goBackToPage: function(hiddenModalSelector, shownModalSelector) {
 		'use strict';
 		$(hiddenModalSelector).modal('hide');
@@ -167,7 +186,26 @@ var ImportCrosses = {
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
 
 		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
-			ImportCrosses.showFavoriteMethodsOnly);
+			ImportCrosses.showFavoriteMethodsOnly).done(function() {
+			setTimeout(function() {
+
+			console.log('Here');
+			// this indicates that the user went through the crossing manager, and should have the breeding method setting fields disabled
+			if (selectedBreedingMethodId) {
+				if (selectedBreedingMethodId != '0') {
+					// in addition, if the user has already selected a breeding method, we should pre select that
+					ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
+				}
+
+				ImportCrosses.disableCrossingBreedingMethodSettingFields();
+
+			} else {
+				// we re enable all breeding method setting fields, in case they were disabled due to prior operations
+				ImportCrosses.enableCrossingBreedingMethodSettingFields();
+			}
+			}, 5000);
+		});
+
 		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
 			ImportCrosses.showFavoriteLoationsOnly);
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');

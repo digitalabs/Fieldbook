@@ -37,6 +37,7 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 		// methods or no. methodConversionFunction is provided as a parameter in case developers wish to change the construction of each select2 item, tho built-in function
 		// will be used by default if this is not provided
 		processMethodDropdownAndFavoritesCheckbox: function(methodSelectID, favoritesCheckboxID, favoritesDefault, methodConversionFunction) {
+			var deferred = $.Deferred();
 			BreedingMethodsFunctions.retrieveBreedingMethods().done(function(data) {
 				if (! methodConversionFunction) {
 					methodConversionFunction = BreedingMethodsFunctions.convertMethodToSelectItem;
@@ -71,7 +72,15 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 				$(document).on('breeding-method-update', function() {
 					BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(methodSelectID, favoritesCheckboxID, favoritesDefault, methodConversionFunction);
 				});
+
+				// TODO temporarily use a delay to ensure that the promise is resolved after initialization completes
+				// ideally, we should have better control of the timing of events in our app
+				setTimeout(function() {
+					deferred.resolve();
+				}, 150);
 			});
+
+			return deferred.promise();
 		},
 
 		// FIXME : change declaration so function is not accessible to the outside

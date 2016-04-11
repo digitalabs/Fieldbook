@@ -321,8 +321,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 							<ul class="list-group field-group"  >
 							  <li class="list-group-item">
 								<label class="control-label label-bold"
-									th:text="(*{isTrial})? #{label.printing.trial.list.details} :
-												(*{isStockList}? #{label.printing.stock.list.details} :
+									th:text="(*{isStockList})? #{label.printing.stock.list.details} :
+												(*{isTrial}? #{label.printing.trial.list.details} :
 													#{label.printing.nursery.list.details})">
 									Study List Details
 								</label>
@@ -389,7 +389,9 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			<div class="col-xs-12 col-md-12" >
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
-						<label class="control-label" th:utext="(*{isTrial})? #{label.printing.choose.option.fields.csv.xls.trial}: #{label.printing.choose.option.fields.csv.xls.nursery}">.</label>
+						<label class="control-label" th:utext="*{isStockList} ?
+																((*{isTrial}) ? #{label.printing.choose.option.fields.csv.xls.trial.stock}: #{label.printing.choose.option.fields.csv.xls.nursery.stock})
+																	: ((*{isTrial}) ? #{label.printing.choose.option.fields.csv.xls.trial}: #{label.printing.choose.option.fields.csv.xls.nursery}) ">.</label>
 					</div>
 				</div>
 			</div>
@@ -409,8 +411,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 							<ul class="list-group field-group"  >
 							  <li class="list-group-item">
 								<label class="control-label label-bold"
-									th:text="(*{isTrial})? #{label.printing.trial.list.details} :
-												(*{isStockList}? #{label.printing.stock.list.details} :
+									th:text="(*{isStockList})? #{label.printing.stock.list.details} :
+												(*{isTrial}? #{label.printing.trial.list.details} :
 													#{label.printing.nursery.list.details})">
 									Study List Details
 								</label>

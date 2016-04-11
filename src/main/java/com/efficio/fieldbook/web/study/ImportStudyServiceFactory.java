@@ -13,7 +13,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import javax.annotation.Resource;
 
-public class StudyServiceFactory {
+public class ImportStudyServiceFactory {
 
     @Resource
     protected AutowireCapableBeanFactory beanFactory;
@@ -33,13 +33,15 @@ public class StudyServiceFactory {
             case IMPORT_NURSERY_CSV:
                 studyService = new CsvImportStudyServiceImpl(workbook, currentFile, originalFileName);
                 break;
-            case IMPORT_NURSERY_EXCEL:
-                studyService = new ExcelImportStudyServiceImpl(workbook, currentFile, originalFileName);
-                break;
             case IMPORT_NURSERY_FIELDLOG_FIELDROID:
                 studyService = new FieldroidImportStudyServiceImpl(workbook, currentFile, originalFileName);
                 break;
+            // we use Nursery Excel as the default import study service
+            case IMPORT_NURSERY_EXCEL:
+
             default :
+                studyService = new ExcelImportStudyServiceImpl(workbook, currentFile, originalFileName);
+                break;
 
 		}
 

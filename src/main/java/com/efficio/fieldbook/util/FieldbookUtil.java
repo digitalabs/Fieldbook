@@ -181,7 +181,7 @@ public class FieldbookUtil {
 		FieldbookUtil.resolveContentDisposition(filename, respHeaders, userAgent);
 		respHeaders.set("Content-Type", FileUtils.detectMimeType(filename) + "; charset=UTF-8");
 
-		return new ResponseEntity<FileSystemResource>(fileSystemResource, respHeaders, HttpStatus.OK);
+		return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
 	}
 

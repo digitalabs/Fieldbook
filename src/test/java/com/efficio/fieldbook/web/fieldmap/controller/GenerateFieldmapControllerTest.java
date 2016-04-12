@@ -5,19 +5,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import org.generationcp.commons.util.DateUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.Any;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;

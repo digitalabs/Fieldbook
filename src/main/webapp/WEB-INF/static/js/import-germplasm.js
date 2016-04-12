@@ -109,8 +109,9 @@
 					var cell = dataTable.api().cell(index, entryNoColIndex);
 					var currentEntryNo = cell.data();
 					var newEntryNo = parseInt(currentEntryNo) + numToAddToEntryNo;
-					cell.data(newEntryNo).draw();
+					cell.data(newEntryNo);
 				}
+                dataTable.fnDraw();
 			},
 			validateEntryAndPlotNo: function(inputNo) {
 				var validNo = '^(?=.*[1-9].*)[0-9]{1,5}$';

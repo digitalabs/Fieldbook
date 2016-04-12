@@ -23,8 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -34,6 +36,10 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -169,57 +175,24 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 		return super.show(model);
 	}
 
-	/**
-	 * Export excel.
-	 *
-	 * @param form the form
-	 * @param model the model
-	 * @param response the response
-	 * @return the string
-	 */
-	@ResponseBody
 	@RequestMapping(value = "/exportExcel", method = RequestMethod.GET)
-	public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpServletResponse response) {
+	public ResponseEntity<FileSystemResource> exportExcel(HttpServletRequest request) {
 
 		// changed selected name to block name for now
 		String fileName = this.makeSafeFileName(this.userFieldmap.getBlockName());
 
-		response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\"");
-
 		try {
 			this.exportExcelService.exportFieldMapToExcel(fileName, this.userFieldmap);
-
-			// the selected name + current date
-			this.writeXlsToOutputStream(response, new File(fileName));
+			return FieldbookUtil.createResponseEntityForFileDownload(new File(fileName), request.getHeader("User-Agent"));
 
 		} catch (FieldbookException e) {
 			GenerateFieldmapController.LOG.error(e.getMessage(), e);
-		} catch (FileNotFoundException e) {
-			GenerateFieldmapController.LOG.error(e.getMessage(), e);
-		} catch (IOException e) {
-			GenerateFieldmapController.LOG.error(e.getMessage(), e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		return "";
 	}
 
 	protected String makeSafeFileName(String filename) {
 		return filename.replace(" ", "") + "-" + DateUtil.getCurrentDateAsStringValue() + ".xls";
-	}
-
-	protected void writeXlsToOutputStream(HttpServletResponse response, File xls) throws IOException {
-		FileInputStream in = new FileInputStream(xls);
-		OutputStream out = response.getOutputStream();
-
-		// use bigger if you want
-		byte[] buffer = new byte[GenerateFieldmapController.BUFFER_SIZE];
-		int length = 0;
-
-		while ((length = in.read(buffer)) > 0) {
-			out.write(buffer, 0, length);
-		}
-		in.close();
-		out.close();
 	}
 
 	/**

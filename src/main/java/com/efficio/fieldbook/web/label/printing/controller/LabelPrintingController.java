@@ -400,9 +400,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
 	public ResponseEntity<FileSystemResource> exportFile(HttpServletRequest req) {
 
-		String filename = this.userLabelPrinting.getFilenameDL();
+		String filename = this.userLabelPrinting.getFilename();
+		String absoluteLocation = this.userLabelPrinting.getFilenameDLLocation();
 
-		return FieldbookUtil.createResponseEntityForFileDownload(filename, filename, req.getHeader("User-Agent"));
+		return FieldbookUtil.createResponseEntityForFileDownload(absoluteLocation, filename, req.getHeader("User-Agent"));
 
 	}
 

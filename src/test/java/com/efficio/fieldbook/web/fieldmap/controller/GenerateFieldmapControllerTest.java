@@ -55,8 +55,8 @@ public class GenerateFieldmapControllerTest {
 
 		String fileName = moleGenerateFieldmapCtrl.makeSafeFileName(GenerateFieldmapControllerTest.BLOCK_NAME);
 
-		Mockito.doNothing().when(moleGenerateFieldmapCtrl).writeXlsToOutputStream(this.response, new File(fileName));
-		moleGenerateFieldmapCtrl.exportExcel(this.fieldmapForm, this.model, this.response);
+		//Mockito.doNothing().when(moleGenerateFieldmapCtrl).writeXlsToOutputStream(this.response, new File(fileName));
+		//moleGenerateFieldmapCtrl.exportExcel(this.fieldmapForm, this.model, this.response);
 
 		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 

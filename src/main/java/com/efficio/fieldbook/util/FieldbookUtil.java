@@ -185,4 +185,14 @@ public class FieldbookUtil {
 
 	}
 
+	/**
+	 * Creates ResponseEntity to download a file from a controller.
+	 *
+	 * @param file - The file to be downloaded
+	 * @param userAgent - the user agent string
+	 * @return
+	 */
+	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(File file, String userAgent) {
+			return FieldbookUtil.createResponseEntityForFileDownload(file.getAbsoluteFile().toString(),file.getName(),userAgent);
+	}
 }

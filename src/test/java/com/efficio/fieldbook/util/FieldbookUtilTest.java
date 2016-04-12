@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,10 @@ import org.generationcp.middleware.pojos.ListDataProject;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class FieldbookUtilTest {
 
@@ -260,6 +264,21 @@ public class FieldbookUtilTest {
 		Assert.assertEquals("Content-disposition", contentDispositionCaptor.getValue());
 		Assert.assertEquals("If the user agent is MSIE or Trident, the Content-dispositon header value should not have 'filename*=' field",
 				"attachment; filename=\"test.xls\";", valueCaptor.getValue());
+	}
+
+	@Test
+	public void testCreateResponseEntityForFileDownload() {
+		File testFile = new File("testFile.xls");
+		ResponseEntity<FileSystemResource> result = FieldbookUtil.createResponseEntityForFileDownload(testFile,"RANDOM_BROWSER");
+
+		Assert.assertEquals("Make sure we get a http success", HttpStatus.OK, result.getStatusCode());
+
+		Assert.assertNotNull("Make sure Content-disposition header exists", result.getHeaders().get("Content-disposition"));
+		Assert.assertNotNull("Make sure we have a Content-Type header",result.getHeaders().get("Content-Type"));
+		Assert.assertNotNull("Make sure we have a Content-Type header that contains at least 1 value", result.getHeaders().get("Content-Type").get(0));
+
+		// Were not testing the mime type detection here, see a separate unit test for FileUTils.detectMimeType(...)
+		Assert.assertTrue("Make sure tht content-type header has a charset", result.getHeaders().get("Content-Type").get(0).contains("charset=UTF-8"));
 	}
 
 	@Test

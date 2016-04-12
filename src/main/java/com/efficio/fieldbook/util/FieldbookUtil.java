@@ -1,13 +1,12 @@
 
 package com.efficio.fieldbook.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -20,7 +19,10 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -149,6 +151,10 @@ public class FieldbookUtil {
 		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
 			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
 			httpHeaders.set("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
+		} else if (userAgent.indexOf("Safari") != -1) {
+			// Safari does not support url-encoded filename, so instead we use the Safari standard of writing the file name directly in
+			// utf-8 encoded header
+			httpHeaders.set("Content-disposition", "attachment; filename=\"" + FileUtils.sanitizeFileName(filename) + "\";");
 		} else {
 			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
 			httpHeaders.set("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
@@ -158,24 +164,25 @@ public class FieldbookUtil {
 	}
 
 	/**
-	 * Sets the Content Disposition response header based on the user agent.
+	 * Creates ResponseEntity to download a file from a controller.
 	 * 
-	 * @param filename
-	 * @param response
-	 * @param userAgent
+	 * @param pathname - path of the file to be downloaded
+	 * @param filename - the filename that will be set in the http response header
+	 * @param userAgent - the user agent string
+	 * @return
 	 */
-	public static void resolveContentDisposition(String filename, HttpServletResponse response, String userAgent) {
+	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(String pathname, String filename, String userAgent) {
 
-		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
+		final File resource = new File(pathname);
+		final FileSystemResource fileSystemResource = new FileSystemResource(resource);
 
-		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1 || userAgent.indexOf("Safari") != -1) {
-			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
-			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
-		} else {
-			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
-			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
-					+ encodedFilename + "\";");
-		}
+		final HttpHeaders respHeaders = new HttpHeaders();
+
+		FieldbookUtil.resolveContentDisposition(filename, respHeaders, userAgent);
+		respHeaders.set("Content-Type", FileUtils.detectMimeType(filename) + "; charset=UTF-8");
+
+		return new ResponseEntity<FileSystemResource>(fileSystemResource, respHeaders, HttpStatus.OK);
 
 	}
+
 }

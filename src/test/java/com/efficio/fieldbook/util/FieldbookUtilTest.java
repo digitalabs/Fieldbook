@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.servlet.http.HttpServletResponse;
-
 import junit.framework.Assert;
 
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -246,41 +244,6 @@ public class FieldbookUtilTest {
 
 		var.setTermId(TermId.BLOCK_ID.getId());
 		Assert.assertFalse("Should return false since its not col and range", FieldbookUtil.isFieldmapColOrRange(var));
-	}
-
-	@Test
-	public void testResolveContentDispositionInternetExplorer() {
-
-		HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-		FieldbookUtil.resolveContentDisposition(TEST_FILE_NAME, response, USER_AGENT_INTERNET_EXLORER);
-
-		ArgumentCaptor<String> contentDispositionCaptor = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<String> valueCaptor = ArgumentCaptor.forClass(String.class);
-
-		Mockito.verify(response).setHeader(contentDispositionCaptor.capture(), valueCaptor.capture());
-
-		Assert.assertEquals("Content-disposition", contentDispositionCaptor.getValue());
-		Assert.assertEquals("If the user agent is MSIE or Trident, the Content-dispositon header value should not have 'filename*=' field",
-				"attachment; filename=\"test.xls\";", valueCaptor.getValue());
-	}
-
-	@Test
-	public void testResolveContentDispositionOtherBrowser() {
-
-		HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-		FieldbookUtil.resolveContentDisposition(TEST_FILE_NAME, response, USER_AGENT_CHROME);
-
-		ArgumentCaptor.forClass(String.class);
-
-		ArgumentCaptor<String> contentDispositionCaptor = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<String> valueCaptor = ArgumentCaptor.forClass(String.class);
-
-		Mockito.verify(response).setHeader(contentDispositionCaptor.capture(), valueCaptor.capture());
-
-		Assert.assertEquals("Content-disposition", contentDispositionCaptor.getValue());
-		Assert.assertEquals(
-				"If the user agent is not Internet Explorer, the Content-dispositon header value should have 'filename*=' parameter",
-				"attachment; filename=\"test.xls\"; filename*=\"UTF-8''test.xls\";", valueCaptor.getValue());
 	}
 
 	@Test

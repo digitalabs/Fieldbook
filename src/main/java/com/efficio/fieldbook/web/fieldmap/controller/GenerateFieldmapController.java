@@ -6,27 +6,19 @@
  *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.fieldmap.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -37,7 +29,6 @@ import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -46,11 +37,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
@@ -65,14 +56,14 @@ import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
  * <p/>
  * Generates the final fieldmap for the step 3.
  */
-@Controller
-@RequestMapping({GenerateFieldmapController.URL})
-public class GenerateFieldmapController extends AbstractBaseFieldbookController {
+@Controller @RequestMapping({GenerateFieldmapController.URL}) public class GenerateFieldmapController
+		extends AbstractBaseFieldbookController {
 
 	/**
 	 * The Constant URL.
 	 */
 	public static final String URL = "/Fieldmap/generateFieldmapView";
+	public static final String REDIRECT = "redirect:";
 	/**
 	 * The Constant LOG.
 	 */
@@ -81,7 +72,6 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 	 * The Constant BUFFER_SIZE.
 	 */
 	private static final int BUFFER_SIZE = 4096 * 4;
-	public static final String REDIRECT = "redirect:";
 	/**
 	 * The user fieldmap.
 	 */
@@ -142,8 +132,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 			this.userFieldmap.setSelectedDatasetId(datasetId);
 			this.userFieldmap.setSelectedGeolocationId(geolocationId);
 
-			this.userFieldmap.setSelectedFieldMaps(this.fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(datasetId,
-					geolocationId, this.crossExpansionProperties));
+			this.userFieldmap.setSelectedFieldMaps(this.fieldbookMiddlewareService
+					.getAllFieldMapsInBlockByTrialInstanceId(datasetId, geolocationId, this.crossExpansionProperties));
 
 			FieldMapTrialInstanceInfo trialInfo =
 					this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndGeolocationId(datasetId, geolocationId);
@@ -161,11 +151,11 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 				this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
 
 				FieldPlotLayoutIterator plotIterator = this.horizontalFieldMapLayoutIterator;
-				this.userFieldmap.setFieldmap(this.fieldmapService.generateFieldmap(this.userFieldmap, plotIterator, false,
-						trialInfo.getDeletedPlots()));
+				this.userFieldmap.setFieldmap(
+						this.fieldmapService.generateFieldmap(this.userFieldmap, plotIterator, false, trialInfo.getDeletedPlots()));
 			}
-			this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap
-					.isTrial()));
+			this.userFieldmap.setSelectedFieldmapList(
+					new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
 			this.userFieldmap.setGenerated(false);
 			form.setUserFieldmap(this.userFieldmap);
 
@@ -234,9 +224,9 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 
 		// we can add logic here to decide if its vertical or horizontal
 		FieldPlotLayoutIterator plotIterator = this.horizontalFieldMapLayoutIterator;
-		Plot[][] plots =
-				plotIterator.createFieldMap(col, ranges, startRange, startCol, isSerpentine, deletedPlot, labels,
-						this.userFieldmap.isTrial(), this.userFieldmap.getFieldmap());
+		Plot[][] plots = plotIterator
+				.createFieldMap(col, ranges, startRange, startCol, isSerpentine, deletedPlot, labels, this.userFieldmap.isTrial(),
+						this.userFieldmap.getFieldmap());
 		this.userFieldmap.setFieldmap(plots);
 		form.setUserFieldmap(this.userFieldmap);
 

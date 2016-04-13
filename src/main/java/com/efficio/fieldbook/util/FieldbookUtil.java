@@ -1,4 +1,3 @@
-
 package com.efficio.fieldbook.util;
 
 import java.io.File;
@@ -31,9 +30,9 @@ import com.efficio.fieldbook.web.util.AppConstants;
  */
 public class FieldbookUtil {
 
+	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
 	private static FieldbookUtil instance;
 
-	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
 	static {
 		FieldbookUtil.instance = new FieldbookUtil();
 	}
@@ -44,15 +43,6 @@ public class FieldbookUtil {
 
 	public static FieldbookUtil getInstance() {
 		return FieldbookUtil.instance;
-	}
-
-	public List<Integer> buildVariableIDList(String idList) {
-		List<Integer> requiredVariables = new ArrayList<Integer>();
-		StringTokenizer token = new StringTokenizer(idList, ",");
-		while (token.hasMoreTokens()) {
-			requiredVariables.add(Integer.valueOf(token.nextToken()));
-		}
-		return requiredVariables;
 	}
 
 	public static List<Integer> getColumnOrderList(String columnOrders) {
@@ -86,8 +76,8 @@ public class FieldbookUtil {
 	}
 
 	public static boolean isPlotDuplicateNonFirstInstance(ImportedCrosses crosses) {
-		if (crosses.isPlotDupe() && crosses.getDuplicateEntries() != null
-				&& crosses.getEntryId() > crosses.getDuplicateEntries().iterator().next()) {
+		if (crosses.isPlotDupe() && crosses.getDuplicateEntries() != null && crosses.getEntryId() > crosses.getDuplicateEntries().iterator()
+				.next()) {
 			return true;
 		}
 		return false;
@@ -139,7 +129,7 @@ public class FieldbookUtil {
 
 	/**
 	 * Sets the Content Disposition response header based on the user agent.
-	 * 
+	 *
 	 * @param filename
 	 * @param httpHeaders
 	 * @param userAgent
@@ -157,21 +147,22 @@ public class FieldbookUtil {
 			httpHeaders.set("Content-disposition", "attachment; filename=\"" + FileUtils.sanitizeFileName(filename) + "\";");
 		} else {
 			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
-			httpHeaders.set("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
-					+ encodedFilename + "\";");
+			httpHeaders.set("Content-disposition",
+					"attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''" + encodedFilename + "\";");
 		}
 
 	}
 
 	/**
 	 * Creates ResponseEntity to download a file from a controller.
-	 * 
-	 * @param pathname - path of the file to be downloaded
-	 * @param filename - the filename that will be set in the http response header
+	 *
+	 * @param pathname  - path of the file to be downloaded
+	 * @param filename  - the filename that will be set in the http response header
 	 * @param userAgent - the user agent string
 	 * @return
 	 */
-	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(String pathname, String filename, String userAgent) {
+	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(String pathname, String filename,
+			String userAgent) {
 
 		final File resource = new File(pathname);
 		final FileSystemResource fileSystemResource = new FileSystemResource(resource);
@@ -188,11 +179,20 @@ public class FieldbookUtil {
 	/**
 	 * Creates ResponseEntity to download a file from a controller.
 	 *
-	 * @param file - The file to be downloaded
+	 * @param file      - The file to be downloaded
 	 * @param userAgent - the user agent string
 	 * @return
 	 */
 	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(File file, String userAgent) {
-			return FieldbookUtil.createResponseEntityForFileDownload(file.getAbsoluteFile().toString(),file.getName(),userAgent);
+		return FieldbookUtil.createResponseEntityForFileDownload(file.getAbsoluteFile().toString(), file.getName(), userAgent);
+	}
+
+	public List<Integer> buildVariableIDList(String idList) {
+		List<Integer> requiredVariables = new ArrayList<Integer>();
+		StringTokenizer token = new StringTokenizer(idList, ",");
+		while (token.hasMoreTokens()) {
+			requiredVariables.add(Integer.valueOf(token.nextToken()));
+		}
+		return requiredVariables;
 	}
 }

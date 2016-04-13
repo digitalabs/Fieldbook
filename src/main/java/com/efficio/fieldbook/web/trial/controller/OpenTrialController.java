@@ -667,10 +667,13 @@ public class OpenTrialController extends BaseTrialController {
 
 		this.userSelection.setTemporaryWorkbook(tempWorkbook);
 		this.userSelection.setMeasurementRowList(filteredObservations);
-		this.userSelection.getWorkbook().setTrialObservations(filteredTrialObservations);
-		this.userSelection.getWorkbook().setObservations(filteredObservations);
-		this.userSelection.getWorkbook().setMeasurementDatasetVariables(measurementDatasetVariables);
 
+		// this.userSelection.getWorkbook() will be null if the workbook is not yet saved
+		if (this.userSelection.getWorkbook() != null) {
+			this.userSelection.getWorkbook().setTrialObservations(filteredTrialObservations);
+			this.userSelection.getWorkbook().setObservations(filteredObservations);
+			this.userSelection.getWorkbook().setMeasurementDatasetVariables(measurementDatasetVariables);
+		}
 		return tempWorkbook;
 	}
 

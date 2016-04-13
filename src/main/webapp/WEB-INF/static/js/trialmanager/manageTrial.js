@@ -74,7 +74,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			})
 
 			.state('environment', {
-                url: '/environment?addtlNumOfEnvironments&timestamp',
+                url: '/environment?addtlNumOfEnvironments&displayWarningMessage&timestamp',
 				views: {
                     environment: {
                         controller: 'EnvironmentCtrl',
@@ -329,6 +329,16 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				noOfEnvironments: 0
 			};
 			$scope.refreshEnvironmentsAndExperimentalDesign = function() {
+				var currentDesignType = TrialManagerDataService.currentData.experimentalDesign.designType;
+				var showIndicateUnappliedChangesWarning = true;
+				if(TrialManagerDataService.applicationData.designTypes[currentDesignType].name === 'Custom Import Design'){
+					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd = $scope.temp.noOfEnvironments;
+					showIndicateUnappliedChangesWarning = false;
+					ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());
+					showAlertMessage('', addEnvironmentsImportDesignMessage, 5000);
+				} 
+
+				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, displayWarningMessage: showIndicateUnappliedChangesWarning, timestamp: new Date()});	
 
 				TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 				
@@ -344,8 +354,9 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				if (isOpenTrial()) {
 					$state.go('editMeasurements',{},{ location: false });
 				}
-			};
+				
 
+			};
 			$scope.displayMeasurementOnlyActions = function() {
 				return TrialManagerDataService.trialMeasurement.count &&
 					TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&

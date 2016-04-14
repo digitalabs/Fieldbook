@@ -10,7 +10,7 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 public interface MergeCheckService {
 
 	List<ImportedGermplasm> mergeGermplasmList(List<ImportedGermplasm> primaryList, List<ImportedGermplasm> checkList, int startIndex,
-			int interval, int manner, String defaultTestCheckId);
+			int interval, int manner);
 
 	void updatePrimaryListAndChecksBeforeMerge(ImportGermplasmListForm form);
 }

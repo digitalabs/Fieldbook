@@ -269,26 +269,35 @@
 		// leading edge, instead of the trailing.
 
 		.service('debounce', ['$timeout', function($timeout) {
-			return function(func, wait, immediate) {
-				var timeout, args, context, result;
+			return function(func, wait, immediate, invokeApply) {
+				var timeout, args, context, timestamp, result;
 				function debounce() {
 					/* jshint validthis:true */
 					context = this;
 					args = arguments;
+					timestamp = new Date();
+
 					var later = function() {
-						timeout = null;
-						if (!immediate) {
-							result = func.apply(context, args);
+						var last = (new Date()) - timestamp;
+						if (last < wait) {
+							timeout = $timeout(later, wait - last, invokeApply);
+						} else {
+							timeout = null;
+
+							if (!immediate) {
+								result = func.apply(context, args);
+							}
 						}
 					};
+
 					var callNow = immediate && !timeout;
-					if (timeout) {
-						$timeout.cancel(timeout);
+					if (!timeout) {
+						timeout = $timeout(later, wait, invokeApply);
 					}
-					timeout = $timeout(later, wait);
 					if (callNow) {
 						result = func.apply(context, args);
 					}
+
 					return result;
 				}
 				debounce.cancel = function() {

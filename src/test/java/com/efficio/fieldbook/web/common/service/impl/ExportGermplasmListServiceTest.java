@@ -389,7 +389,7 @@ public class ExportGermplasmListServiceTest {
 	private ImportedGermplasm generateImportedGermplasm() {
 
 		final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
-		importedGermplasm.setCheck(ExportGermplasmListServiceTest.CHECK_VALUE);
+		importedGermplasm.setEntryTypeValue(ExportGermplasmListServiceTest.CHECK_VALUE);
 		importedGermplasm.setIndex(0);
 		importedGermplasm.setGid(ExportGermplasmListServiceTest.GID_VALUE);
 		importedGermplasm.setEntryCode(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE);

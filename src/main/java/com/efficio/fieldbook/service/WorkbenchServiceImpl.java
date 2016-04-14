@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
@@ -106,6 +107,11 @@ public class WorkbenchServiceImpl implements WorkbenchService {
 	@Override
 	public Project getProjectById(Long projectId) throws MiddlewareQueryException {
 		return this.workbenchDataManager.getProjectById(projectId);
+	}
+
+	@Override
+	public Person getPersonById(int personID) throws MiddlewareQueryException {
+		return this.workbenchDataManager.getPersonById(personID);
 	}
 
 }

@@ -17,19 +17,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.ruleengine.RulesNotConfiguredException;
 import org.generationcp.commons.service.UserTreeStateService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
@@ -68,6 +70,10 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
@@ -122,6 +128,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@Resource
 	private CrossingService crossingService;
 
+	@Resource
+	private NamingConventionService namingConventionService;
+
 	private static final String NAME_NOT_UNIQUE = "Name not unique";
 	private static final String HAS_CHILDREN = "Folder has children";
 	private static final String FOLDER = "FOLDER";
@@ -151,7 +160,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 */
 	@RequestMapping(value = "/saveList/{listIdentifier}", method = RequestMethod.GET)
 	public String saveList(@ModelAttribute("saveListForm") final SaveListForm form, @PathVariable final String listIdentifier,
-			final Model model, final HttpSession session) {
+			final Model model) {
 
 		try {
 			form.setListDate(DateUtil.getCurrentDateInUIFormat());
@@ -174,8 +183,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/saveList", method = RequestMethod.POST)
-	public Map<String, Object> savePost(@ModelAttribute("saveListForm") final SaveListForm form, final Model model,
-			final HttpSession session) {
+	public Map<String, Object> savePost(@ModelAttribute("saveListForm") final SaveListForm form, final Model model) {
 		final Map<String, Object> results = new HashMap<>();
 
 		try {
@@ -185,11 +193,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 				final Integer germplasmListId = this.saveGermplasmList(form, listDataItems);
 
-				final List<GermplasmListData> data = new ArrayList<GermplasmListData>();
+				final List<GermplasmListData> data = new ArrayList<>();
 				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
 				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
 
-				final Integer listDataProjectListId = this.saveListDataProjectList(form, germplasmListId, listDataProject);
+				final Integer listDataProjectListId = this.saveListDataProjectList(form.getGermplasmListType(), germplasmListId, listDataProject);
 				results.put(GermplasmTreeController.IS_SUCCESS, 1);
 				results.put("germplasmListId", germplasmListId);
 				results.put("uniqueId", form.getListIdentifier());
@@ -202,10 +210,18 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				}
 			} else {
 				results.put(GermplasmTreeController.IS_SUCCESS, 0);
-				final String nameUniqueError = "germplasm.save.list.name.unique.error";
-				final Locale locale = LocaleContextHolder.getLocale();
-				results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage(nameUniqueError, null, locale));
+				results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage("germplasm.save.list.name.unique.error", null,
+						LocaleContextHolder.getLocale()));
 			}
+		} catch (final RulesNotConfiguredException rnce) {
+			GermplasmTreeController.LOG.error(rnce.getMessage(), rnce);
+			results.put(GermplasmTreeController.IS_SUCCESS, 0);
+			results.put(GermplasmTreeController.MESSAGE, rnce.getMessage());
+		} catch (final RuleException re) {
+			GermplasmTreeController.LOG.error(re.getMessage(), re);
+			results.put(GermplasmTreeController.IS_SUCCESS, 0);
+			results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage("germplasm.naming.failed", null,
+					LocaleContextHolder.getLocale()));
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
 			results.put(GermplasmTreeController.IS_SUCCESS, 0);
@@ -215,7 +231,65 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	protected Integer saveGermplasmList(final SaveListForm form, final List<Pair<Germplasm, GermplasmListData>> listDataItems) {
+	@ResponseBody
+	@RequestMapping(value = "/updateCrossesList", method = RequestMethod.POST)
+	public Map<String, Object> updateCrossesList (final Model model, final HttpSession session) {
+		final Map<String, Object> results = new HashMap<>();
+
+		try {
+			final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
+			final String crossesListId = (String)session.getAttribute("createdCrossesListId");
+
+			if (crossesListId != null) {
+				final Integer germplasmListId = Integer.parseInt(crossesListId);
+				final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
+				this.updateGermplasmList(germplasmListId, listDataItems);
+				session.removeAttribute("createdCrossesListId");
+
+				final List<GermplasmListData> data = new ArrayList<>();
+				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
+				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
+
+				final Integer listDataProjectListId = this.saveListDataProjectList(GERMPLASM_LIST_TYPE_CROSS, germplasmListId, listDataProject);
+				results.put(GermplasmTreeController.IS_SUCCESS, 1);
+				results.put("germplasmListId", germplasmListId);
+				results.put("listName", germplasmList.getName());
+				results.put("crossesListId", listDataProjectListId);
+			} else {
+				results.put(GermplasmTreeController.IS_SUCCESS, 0);
+				results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage("crossing.no.crossing.list", null,
+						LocaleContextHolder.getLocale()));
+			}
+		} catch (final RulesNotConfiguredException rnce){
+			GermplasmTreeController.LOG.error(rnce.getMessage(), rnce);
+			results.put(GermplasmTreeController.IS_SUCCESS, 0);
+			results.put(GermplasmTreeController.MESSAGE, rnce.getMessage());
+		} catch (final RuleException re) {
+			GermplasmTreeController.LOG.error(re.getMessage(), re);
+			results.put(GermplasmTreeController.IS_SUCCESS, 0);
+			results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage("germplasm.naming.failed", null,
+					LocaleContextHolder.getLocale()));
+		} catch (final Exception e) {
+			GermplasmTreeController.LOG.error(e.getMessage(), e);
+			results.put(GermplasmTreeController.IS_SUCCESS, 0);
+			results.put(GermplasmTreeController.MESSAGE, e.getMessage());
+		}
+
+		return results;
+	}
+
+	private Integer updateGermplasmList(final Integer germplasmListId, final List<Pair<Germplasm, GermplasmListData>> listDataItems)
+			throws RuleException {
+		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
+		final CrossSetting crossSetting = this.userSelection.getCrossSettings();
+		final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
+
+		this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
+		return this.fieldbookMiddlewareService.updateGermplasmList(listDataItems, germplasmList);
+	}
+
+	protected Integer saveGermplasmList(final SaveListForm form, final List<Pair<Germplasm, GermplasmListData>> listDataItems)
+			throws RuleException {
 		final Integer currentUserId = this.getCurrentIbdbUserId();
 		final GermplasmList germplasmList = this.createGermplasmList(form, currentUserId);
 		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
@@ -230,23 +304,95 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
 			final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 			final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
-			this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
-					this.userSelection.getWorkbook());
-			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
+
+			this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
 			return this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList);
 		} else {
 			throw new IllegalArgumentException("Unknown germplasm list type supplied when saving germplasm list");
 		}
 	}
 
-	protected Integer saveListDataProjectList(final SaveListForm form, final Integer germplasmListId,
+	private void checkForEmptyDesigNames(final List<ImportedCrosses> importedCrosses) throws RulesNotConfiguredException{
+		boolean valid = true;
+		for (final ImportedCrosses importedCross : importedCrosses) {
+			if (StringUtils.isEmpty(importedCross.getDesig())) {
+				valid = false;
+			}
+		}
+		if (!valid){
+			throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rules.not.configured", null, "The rules"
+							+ " were not configured", LocaleContextHolder.getLocale()));
+		}
+	}
+
+	/**
+	 * Apply the naming setting to the crosses depending whether manual setting or rules based on the breeding method were selected
+	 * @param listDataItems
+	 * @param germplasmList
+	 * @param crossSetting
+	 * @param importedCrossesList
+	 * @throws RuleException
+	 */
+	private void applyNamingSettingToCrosses(final List<Pair<Germplasm, GermplasmListData>> listDataItems, final GermplasmList germplasmList,
+			final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) throws RuleException {
+		if (crossSetting.isUseManualSettingsForNaming()) {
+			this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
+				this.userSelection.getWorkbook());
+			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
+		} else {
+			final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(crossSetting, importedCrossesList);
+			this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesListWithNamingSettings,
+					this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
+			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesListWithNamingSettings.getImportedCrosses());
+		}
+		this.checkForEmptyDesigNames(importedCrossesList.getImportedCrosses());
+	}
+
+	private ImportedCrossesList applyNamingRules(CrossSetting setting, ImportedCrossesList importedCrossesList) throws RuleException {
+
+		//TODO REFACTOR THIS
+		if (setting.getBreedingMethodSetting().getMethodId() != null) {
+			AdvancingSourceList list = new AdvancingSourceList();
+			List<AdvancingSource> rows= new ArrayList<>();
+
+			final List<Integer> gids = new ArrayList<>();
+			final List<ImportedCrosses> importedCrosses = importedCrossesList.getImportedCrosses();
+			for (ImportedCrosses cross : importedCrosses) {
+				final Name name = new Name();
+				name.setNstat(1);
+				name.setNval(cross.getCross());
+				List<Name> names = new ArrayList<>();
+				names.add(name);
+				cross.setNames(names);
+				final AdvancingSource advancingSource = new AdvancingSource(cross);
+				rows.add(advancingSource);
+				if (cross.getGid() != null && NumberUtils.isNumber(cross.getGid())) {
+					gids.add(Integer.valueOf(cross.getGid()));
+				}
+			}
+
+			list.setRows(rows);
+
+			final AdvancingNursery advancingParameters = new AdvancingNursery();
+			advancingParameters.setBreedingMethodId(Integer.toString(setting.getBreedingMethodSetting().getMethodId()));
+			advancingParameters.setCheckAdvanceLinesUnique(true);
+			final List<ImportedCrosses> crosses = this.namingConventionService.generateCrossesList(importedCrosses, list, advancingParameters,
+					this.userSelection.getWorkbook(), gids);
+
+			importedCrossesList.setImportedGermplasms(crosses);
+			this.userSelection.setImportedCrossesList(importedCrossesList);
+		}
+		return importedCrossesList;
+	}
+
+	protected Integer saveListDataProjectList(final String germplasmListType, final Integer germplasmListId,
 			final List<ListDataProject> dataProjectList) {
 		final GermplasmListType type;
 		final Integer currentUserID = this.getCurrentIbdbUserId();
-		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
+		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(germplasmListType)) {
 			type = GermplasmListType.ADVANCED;
 
-		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
+		} else if (GERMPLASM_LIST_TYPE_CROSS.equalsIgnoreCase(germplasmListType)) {
 			type = GermplasmListType.CROSSES;
 			// need to add the copying of the duplicate entry here
 			FieldbookUtil.copyDupeNotesToListDataProject(dataProjectList, this.userSelection.getImportedCrossesList().getImportedCrosses());
@@ -270,7 +416,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * @return the string
 	 */
 	@RequestMapping(value = "/saveCrossesList", method = RequestMethod.GET)
-	public String saveList(@ModelAttribute("saveListForm") final SaveListForm form, final Model model, final HttpSession session) {
+	public String saveList(@ModelAttribute("saveListForm") final SaveListForm form, final Model model) {
 
 		try {
 			String listName = "";
@@ -353,14 +499,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	private void populateGermplasmListData(final GermplasmList germplasmList, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			final List<ImportedCrosses> importedGermplasmList) {
-		// Common germplasm list data fields
-		final Integer listDataId = null;
-		final Integer listDataStatus = 0;
-		final Integer localRecordId = 0;
 
 		// Create germplasms to save - Map<Germplasm, List<Name>>
 		for (final ImportedCrosses importedCrosses : importedGermplasmList) {
-			final Integer gid = Integer.valueOf(importedCrosses.getGid());
+			final Integer gid = importedCrosses.getGid() != null ? Integer.valueOf(importedCrosses.getGid()): null;
 
 			final Germplasm germplasm = new Germplasm();
 			germplasm.setGid(gid);
@@ -372,6 +514,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final String seedSource = importedCrosses.getSource();
 			final String designation = importedCrosses.getDesig();
 			String groupName = importedCrosses.getCross();
+
+			// Common germplasm list data fields
+			final Integer listDataId = importedCrosses.getId(); // null will be set for new records
+			final Integer listDataStatus = 0;
+			final Integer localRecordId = 0;
 
 			if (groupName == null) {
 				// Default value if null
@@ -729,7 +876,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/expandGermplasmTree/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
 	public String expandGermplasmTree(@PathVariable final String parentKey, @PathVariable final String isFolderOnly) {
-		final boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
+		final boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly);
 		try {
 			final List<TreeNode> childNodes = this.getGermplasmChildNodes(parentKey, isFolderOnlyBool, this.getCurrentProgramUUID());
 			return TreeViewUtil.convertTreeViewToJson(childNodes);

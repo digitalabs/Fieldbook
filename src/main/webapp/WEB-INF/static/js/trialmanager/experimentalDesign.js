@@ -118,7 +118,8 @@
 
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 
-					if (!$scope.data || Object.keys($scope.data).length === 0) {
+					// the property "startingEntryNo" is at least part of the data object here when the germplasm tab is loaded first
+					if (!$scope.data || Object.keys($scope.data).length <= 1) {
 						angular.copy({
 							totalGermplasmListCount: $scope.totalGermplasmEntryListCount,
 							designType: null,
@@ -133,7 +134,7 @@
 							nclatin: null,
 							replatinGroups: '',
 							startingPlotNo: 1,
-							startingEntryNo: '',
+							startingEntryNo: (typeof $scope.data.startingEntryNo !== 'undefined')? parseInt($scope.data.startingEntryNo,10) : 1 ,
 							hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement
 						}, $scope.data);
 					}
@@ -153,6 +154,7 @@
 							$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 							$scope.data.designType = $scope.currentDesignType.id;
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
+							$scope.applicationData.unappliedChangesAvailable = true;
 
 							if ($scope.designTypes[newId].isPreset) {
 								showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
@@ -186,17 +188,17 @@
 							return;
 						}
 
-						var data = angular.copy($scope.data);
-						data.startingEntryNo = TrialManagerDataService.currentData.experimentalDesign.startingEntryNo;
+						var environmentData = angular.copy($scope.data);
+						environmentData.startingEntryNo = TrialManagerDataService.currentData.experimentalDesign.startingEntryNo;
 
 						// transform ordered has of treatment factors if existing to just the map
-						if (data && data.treatmentFactors) {
-							data.treatmentFactors = $scope.data.treatmentFactors.vals();
+						if (environmentData && environmentData.treatmentFactors) {
+							environmentData.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
-
+						
 						// non-preset design type
 						if (!$scope.designTypes[$scope.data.designType].isPreset) {
-							TrialManagerDataService.generateExpDesign(data).then(
+							TrialManagerDataService.generateExpDesign(environmentData).then(
 								function(response) {
 									if (response.valid === true) {
 										$scope.updateAfterGeneratingDesignSuccessfully();

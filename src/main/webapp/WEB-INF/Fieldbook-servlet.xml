@@ -503,7 +503,6 @@
 		<constructor-arg name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
 		<constructor-arg name="contextUtil" ref="contextUtil"/>
 		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableManager"/>
-		<constructor-arg name="germplasmDataManager" ref="germplasmDataManagerV2"/>
 	</bean>
 	
 	<bean id="jasperReportService" class="org.generationcp.commons.reports.service.impl.JasperReportServiceImpl"

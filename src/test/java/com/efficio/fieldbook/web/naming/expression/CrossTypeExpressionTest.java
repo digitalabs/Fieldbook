@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.service.impl.CrossTypeResolver;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.CropType;

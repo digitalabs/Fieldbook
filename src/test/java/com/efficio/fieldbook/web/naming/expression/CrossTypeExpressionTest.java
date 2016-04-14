@@ -26,6 +26,8 @@ import junit.framework.Assert;
 @RunWith(MockitoJUnitRunner.class)
 public class CrossTypeExpressionTest {
 
+	public static final String CRSTYP = "[CRSTYP]";
+
 	@Mock
 	private ContextUtil contextUtil;
 	@Mock
@@ -33,8 +35,6 @@ public class CrossTypeExpressionTest {
 
 	@InjectMocks
 	private CrossTypeExpression crossTypeExpression;
-
-	final List<StringBuilder> values = new ArrayList<>();
 
 	@Before
 	public void setUp() {
@@ -44,8 +44,6 @@ public class CrossTypeExpressionTest {
 		testProject.setUniqueID("e8e4be0a-5d63-452f-8fde-b1c794ec7b1a");
 		testProject.setCropType(new CropType("maize"));
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
-
-		this.values.add(new StringBuilder("[CRSTYP]"));
 	}
 
 	@Test
@@ -56,27 +54,29 @@ public class CrossTypeExpressionTest {
 		source.setBreedingMethod(breedingMethod);
 		source.setGermplasm(importedGermplasm);
 
-		this.crossTypeExpression.apply(this.values, source);
+		final List<StringBuilder> values = new ArrayList<>();
+		values.add(new StringBuilder(CRSTYP));
 
-		Assert.assertEquals("S", this.values.get(0).toString());
+		this.crossTypeExpression.apply(values, source);
+
+		Assert.assertEquals("S", values.get(0).toString());
 	}
 
-	/*@Test
-	public void testResolveForNurseryWithDoubleCrossBreedingMethod(){
-		StudyType studyType = StudyType.N;
-		Method breedingMethod = this.generateBreedingMethod("Double cross");
-		ImportedGermplasm importedGermplasm = new ImportedGermplasm();
 
-		testProject = new Project();
-		testProject.setUniqueID("e8e4be0a-5d63-452f-8fde-b1c794ec7b1a");
-		testProject.setCropType(new CropType("maize"));
+	public void testResolveForNurseryWithDoubleCrossBreedingMethod() {
+		final AdvancingSource source = new AdvancingSource();
+		final Method breedingMethod = this.generateBreedingMethod("Double cross");
+		final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+		source.setBreedingMethod(breedingMethod);
+		source.setGermplasm(importedGermplasm);
 
-		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
+		final List<StringBuilder> values = new ArrayList<>();
+		values.add(new StringBuilder(CRSTYP));
 
-		String method = new CrossTypeResolver(studyType, contextUtil, breedingMethod, importedGermplasm, null).resolve();
+		this.crossTypeExpression.apply(values, source);
 
-		Assert.assertEquals("D", method);
-	}*/
+		Assert.assertEquals("D", values.get(0).toString());
+	}
 
 	private Method generateBreedingMethod(final String methodName){
 		final Method breedingMethod = new Method();

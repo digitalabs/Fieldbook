@@ -22,15 +22,15 @@ public class CrossTypeExpression extends BaseExpression {
 	private static final String TOP_CROSS_MAIZE = "Test cross";
 	private static final String TOP_CROSS_WHEAT = "Three-way cross";
 	private static final String BACK_CROSS = "Backcross";
-	
+
 	public static final String WHEAT = "wheat";
 	public static final String MAIZE = "maize";
 
 	@Autowired
-	ContextUtil contextUtil;
+	private ContextUtil contextUtil;
 
 	@Autowired
-	protected GermplasmDataManager germplasmDataManager;
+	private GermplasmDataManager germplasmDataManager;
 
 	public CrossTypeExpression() {
 	}

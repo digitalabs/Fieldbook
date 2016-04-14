@@ -10,7 +10,7 @@
 	addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
 	addSelectionVariates = /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
 	addNurseryConditions = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
-	addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/ '',
+	addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/ '', 
 	addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/ '',
 	reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
 	reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
@@ -138,6 +138,7 @@
 	labelPrintingUnavailableFieldsMsg = /*[[#{label.printing.not.available.fields.message}]]*/ '',
 	labelPrintingDataNotAvailableMsg = /*[[#{label.printing.data.not.available.text}]]*/ '',
 	saveListSuccessfullyMessage = /*[[#{germplasm.save.list.success}]]*/ '',
+    advanceListAlreadyGeneratedWarningMessage = /*[[#{germplasm.list.you.can.not.clear.list.as.advance.list.is.already.generated}]]*/ '',
 	expDesignMsgs = {
 		0: /*[[#{experiment.design.invalid.generic.error}]]*/ '',
 		1: /*[[#{experiment.design.rows.per.replication.should.be.a.number}]]*/ '',
@@ -187,11 +188,28 @@
 	stockListImportNotSaved = false,
 	crossingSaveNurseryBeforeImport = /*[[#{study.import.crosses.error.save.nursery.before.import}]]*/ '',
     crossingSettingsSaved = /*[[#{study.import.crosses.settings.saved}]]*/ '',
-	stockIdGenerationPrefixError = /*[[#{stock.generate.id.breeder.identifier.error.numbers.found}]]*/ '';
+    stockIdGenerationPrefixError = /*[[#{stock.generate.id.breeder.identifier.error.numbers.found}]]*/ '',
+	addEnvironmentsImportDesignWarning = /*[[#{trial.add.environments.import.design.warning}]]*/ '',
+	addEnvironmentsImportDesignMessage = /*[[#{trial.add.environments.import.design.message}]]*/ '';
 	$.experimentDesignMessages = {};
 	$.experimentDesignMessages.experimentDesignGeneratedSuccessfully = /*[[#{experiment.design.generated.successfully}]]*/ '';
 	$.fieldbookMessages = {};
 	$.fieldbookMessages.nurseryManageSettingsManageLocation = /*[[#{nursery.managesettings.manage.location}]]*/ '';
+	$.fieldbookMessages.errorNoFileSelectedForImport = /*[[#{error.no.file.selected.for.import}]]*/ '';
+	$.fieldbookMessages.errorImportCrossesSettingsFailed = /*[[#{error.import.crosses.settings.failed}]]*/ '';
+	$.fieldbookMessages.errorImportMethodRequired = /*[[#{nursery.import.method.required}]]*/ '';
+	$.fieldbookMessages.errorNoNextNameInSequence = /*[[#{error.no.next.name.in.sequence}]]*/ '';
+	$.fieldbookMessages.errorImportFailed = /*[[#{common.import.failed}]]*/ '';
+	$.fieldbookMessages.errorNoNamePrefix = /*[[#{error.no.name.prefix}]]*/ '';
+	$.fieldbookMessages.errorNoParentageDesignationSeparator = /*[[#{error.no.parentage.designation.separator}]]*/ '';
+	$.fieldbookMessages.advanceListUnableToGenerateWarningMessage = /*[[#{trial.advance.trial.must.contain.EXPT_DESIGN.variable}]]*/ '';
+
+    // Measurement observation messages
+    window.measurementObservationMessages = {
+        showCategoricalDescription : /*[[#{measurements.show.categorical.description}]]*/ '',
+        hideCategoricalDescription : /*[[#{measurements.hide.categorical.description}]]*/ ''
+    };
+
 	/* jshint ignore:end */
 	//]]>
 </script>

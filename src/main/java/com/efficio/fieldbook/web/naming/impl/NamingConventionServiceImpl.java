@@ -10,13 +10,13 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
-import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
-import org.generationcp.commons.service.GermplasmOriginGenerationService;
+import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -36,7 +36,6 @@ import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
 import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
-import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
@@ -70,10 +69,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private ResourceBundleMessageSource messageSource;
 
 	@Resource
-	private GermplasmOriginGenerationService germplasmOriginGenerationService;
-
-	@Resource
-	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
+	private SeedSourceGenerator seedSourceGenerator;
 
 	@Override
 	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException,
@@ -141,12 +137,12 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 	}
 
-	private void assignGermplasmAttributes(final ImportedGermplasm germplasm, final int sourceGid, final int sourceGnpgs,
-			final int sourceGpid1, final int sourceGpid2, final Method sourceMethod, final Method breedingMethod) {
+	private void assignGermplasmAttributes(final ImportedGermplasm germplasm, final Integer sourceGid, final Integer sourceGnpgs,
+			final Integer sourceGpid1, final Integer sourceGpid2, final Method sourceMethod, final Method breedingMethod) {
 
-		if (sourceMethod != null && sourceMethod.getMtype() != null
-				&& AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype()) || sourceGnpgs < 0 && sourceGpid1 == 0
-				&& sourceGpid2 == 0) {
+		if ((sourceMethod != null && sourceMethod.getMtype() != null
+				&& AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype())) || sourceGnpgs < 0 &&
+				(sourceGpid1 != null && sourceGpid1.equals(0)) && (sourceGpid2 != null && sourceGpid2.equals(0))) {
 
 			germplasm.setGpid1(sourceGid);
 		} else {
@@ -176,18 +172,20 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 		
 		// set the seed source string for the new Germplasm
-		final GermplasmOriginGenerationParameters parameters =
-				this.germplasmOriginParameterBuilder.build(workbook, source, selectionNumberToApply);
-		final String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
+		final String seedSource =
+				this.seedSourceGenerator.generateSeedSource(workbook, source.getTrialInstanceNumber(), selectionNumberToApply,
+						source.getPlotNumber(), workbook.getStudyName());
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
-						, source.getGermplasm().getCross(), seedSourceOriginString,
+						, source.getGermplasm().getCross(), seedSource,
 						FieldbookUtil.generateEntryCode(index), null /* check */
 						, breedingMethod.getMid());
 		
 		// assign parentage etc for the new Germplasm
-		this.assignGermplasmAttributes(germplasm, Integer.valueOf(source.getGermplasm().getGid()), source.getGermplasm().getGnpgs(), source
-				.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(), source.getSourceMethod(), breedingMethod);
+		final Integer sourceGid = source.getGermplasm().getGid() != null ? Integer.valueOf(source.getGermplasm().getGid()) : -1;
+		final Integer gnpgs = source.getGermplasm().getGnpgs() != null ? source.getGermplasm().getGnpgs() : -1;
+		this.assignGermplasmAttributes(germplasm, sourceGid, gnpgs, source.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(),
+				source.getSourceMethod(), breedingMethod);
 		
 		// assign grouping based on parentage
 
@@ -209,9 +207,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		final List<Name> names = new ArrayList<Name>();
 
 		final Name name = new Name();
-		name.setGermplasmId(Integer.valueOf(source.getGermplasm().getGid()));
 		name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
-
 		name.setNval(germplasm.getDesig());
 		name.setNstat(1);
 		names.add(name);
@@ -253,6 +249,44 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 		timer.stop();
 		return list;
+	}
+
+	@Override
+	public List<ImportedCrosses> generateCrossesList(final List<ImportedCrosses> importedCrosses, final AdvancingSourceList rows,
+			final AdvancingNursery advancingParameters, final Workbook workbook, final List<Integer> gids) throws RuleException {
+
+		final List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
+		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
+		for (final Method method : methodList) {
+			breedingMethodMap.put(method.getMid(), method);
+		}
+
+		int index = 0;
+		final TimerWatch timer = new TimerWatch("cross");
+
+		// FIXME previousMaxSequence is a "quick fix" solution to propagate previous max sequence to the next cross entry to process.
+		// Rules engine is currently not designed to handle this (even for advancing case). Next sequence choice is managed this via user
+		// interaction for advancing. There is no user interaction in case of cross list.
+		int previousMaxSequence = 0;
+		for (final AdvancingSource advancingSource : rows.getRows()) {
+			final List<String> names;
+			advancingSource.setCurrentMaxSequence(previousMaxSequence);
+
+			advancingSource.setBreedingMethod(breedingMethodMap.get(Integer.valueOf(advancingParameters.getBreedingMethodId())));
+			//default plants selected value to 1 for list of crosses because sequence is not working if plants selected value is not set
+			advancingSource.setPlantsSelected(1);
+
+			final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
+			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
+
+			// Save away the current max sequence once rules have been run for this entry.
+			previousMaxSequence = advancingSource.getCurrentMaxSequence() + 1;
+			for (final String name : names) {
+				importedCrosses.get(index++).setDesig(name);
+			}
+		}
+		timer.stop();
+		return importedCrosses;
 	}
 
 	protected RuleExecutionContext setupNamingRuleExecutionContext(final AdvancingSource row, final boolean checkForDuplicateName) {
@@ -300,12 +334,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		this.ruleFactory = ruleFactory;
 	}
 
-	void setGermplasmOriginGenerationService(GermplasmOriginGenerationService germplasmOriginGenerationService) {
-		this.germplasmOriginGenerationService = germplasmOriginGenerationService;
-	}
-
-	void setGermplasmOriginParameterBuilder(GermplasmOriginParameterBuilder germplasmOriginParameterBuilder) {
-		this.germplasmOriginParameterBuilder = germplasmOriginParameterBuilder;
+	void setSeedSourceGenerator(SeedSourceGenerator seedSourceGenerator) {
+		this.seedSourceGenerator = seedSourceGenerator;
 	}
 
 }

@@ -147,7 +147,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 			}
 			if (TermId.ENTRY_TYPE.getId() == measurementData.getMeasurementVariable().getTermId()) {
 				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.ENTRY_TYPE.toString(),
-						measurementData.getValue().toString(), germplasmEntry.getCheck().toString());
+						measurementData.getValue().toString(), germplasmEntry.getEntryTypeValue().toString());
 			}
 			if (TermId.CROSS.getId() == measurementData.getMeasurementVariable().getTermId()) {
 				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.CROSS.toString(),
@@ -222,7 +222,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 	@Test
 	public void testCreateMeasurementRow() {
 
-		this.rowValues = this.designImportData.getCsvData().get(2);
+		this.rowValues = this.designImportData.getRowDataMap().get(2);
 		final MeasurementRow measurementRow = this.generator.createMeasurementRow(this.rowValues);
 		final List<MeasurementData> dataList = measurementRow.getDataList();
 
@@ -235,7 +235,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 			actualVariableValueMap.put(data.getMeasurementVariable().getName(), data.getValue());
 		}
 
-		final List<String> headerValues = this.designImportData.getCsvData().get(0);
+		final List<String> headerValues = this.designImportData.getRowDataMap().get(0);
 		final Map<String, String> expectedVariableValueMap = new HashMap<String, String>();
 		for (int i = 0; i < this.rowValues.size(); i++) {
 			expectedVariableValueMap.put(headerValues.get(i), this.rowValues.get(i));

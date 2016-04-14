@@ -349,12 +349,12 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		String val = "";
 		if (settingDetail.getPossibleValues() != null) {
 			for (final ValueReference possibleValue : settingDetail.getPossibleValues()) {
-				if (possibleValue.getId().equals(Integer.valueOf(germplasm.getCheck().toString()))) {
+				if (possibleValue.getId().equals(Integer.valueOf(germplasm.getEntryTypeValue().toString()))) {
 					val = possibleValue.getName();
 				}
 			}
 		} else {
-			val = germplasm.getCheck().toString();
+			val = germplasm.getEntryTypeValue().toString();
 		}
 
 		return val;

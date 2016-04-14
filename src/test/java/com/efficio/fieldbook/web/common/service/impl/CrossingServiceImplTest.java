@@ -7,8 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
-import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
-import org.generationcp.commons.service.GermplasmOriginGenerationService;
+import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -36,8 +35,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 import org.mockito.exceptions.verification.TooLittleActualInvocations;
 
-import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
-
 public class CrossingServiceImplTest {
 
 	private static final int BREEDING_METHOD_ID = 1;
@@ -60,10 +57,7 @@ public class CrossingServiceImplTest {
 	private ContextUtil contextUtil;
 	
 	@Mock
-	private GermplasmOriginGenerationService germplasmOriginGenerationService;
-	
-	@Mock
-	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
+	private SeedSourceGenerator seedSourceGenertor;
 
 	private CrossSetting crossSetting;
 	
@@ -80,16 +74,17 @@ public class CrossingServiceImplTest {
 		this.crossingService.setGermplasmDataManager(this.germplasmDataManager);
 		this.crossingService.setCrossExpansionProperties(this.crossExpansionProperties);
 		this.crossingService.setContextUtil(this.contextUtil);
-		this.crossingService.setGermplasmOriginGenerationService(this.germplasmOriginGenerationService);
-		this.crossingService.setGermplasmOriginParameterBuilder(this.germplasmOriginParameterBuilder);
+		this.crossingService.setSeedSourceGenerator(this.seedSourceGenertor);
 
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(BREEDING_METHOD_ID);
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
-		Mockito.doReturn("generatedSourceString").when(this.germplasmOriginGenerationService)
-				.generateOriginString((GermplasmOriginGenerationParameters) Matchers.any());
+		Mockito.doReturn("generatedSourceString")
+				.when(this.seedSourceGenertor)
+				.generateSeedSourceForCross(Mockito.any(Workbook.class), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+						Mockito.anyString());
 		Mockito.doReturn(new UserDefinedField(1552)).when(this.germplasmDataManager).getPlotCodeField();
 
 		this.crossSetting = new CrossSetting();
@@ -140,7 +135,7 @@ public class CrossingServiceImplTest {
 		
 		this.crossingService.applyCrossNameSettingToImportedCrosses(this.crossSetting, this.importedCrossesList.getImportedCrosses());
 
-		ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
+		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
 		Assert.assertEquals(null, cross1.getGid());
 		Assert.assertEquals(setting.getPrefix() + " 0000100 " + setting.getSuffix(), cross1.getDesig());
@@ -148,7 +143,7 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals((Integer) 1, cross1.getEntryId());
 		Assert.assertEquals("1", cross1.getEntryCode());
 
-		ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
+		final ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
 
 		Assert.assertEquals(null, cross2.getGid());
 		Assert.assertEquals(setting.getPrefix() + " 0000101 " + setting.getSuffix(), cross2.getDesig());

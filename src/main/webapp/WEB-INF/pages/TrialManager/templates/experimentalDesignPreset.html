@@ -6,7 +6,7 @@
 				<div ng-include="currentParams"></div>
 				<div class="add_top_padding add-bottom-padding">
 					<input type="submit" class="btn btn-info" value="Generate Design"
-						ng-hide="applicationData.hasGeneratedDesignPreset" />
+						ng-hide="!applicationData.unappliedChangesAvailable &amp;&amp; applicationData.hasGeneratedDesignPreset" />
 				</div>
 			</div>
 			<div class="col-md-6 col-sm-5">

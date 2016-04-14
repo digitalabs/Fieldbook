@@ -359,7 +359,7 @@ if (typeof StockIDFunctions === 'undefined') {
             var ids = [],
                 listDivIdentifier  = getCurrentAdvanceTabTempIdentifier(),
                 inventoryTableId = '#inventory-table' + listDivIdentifier;
-                var oTable = $(inventoryTableId).dataTable();
+                var oTable = $(inventoryTableId).dataTable({retrieve: true, searching: false});
                 var nodes = oTable.api().rows(':has(input.stockListEntryId:checked)').nodes();
                 $(nodes).each(function (i, node) {
                     ids.push($('input.stockListEntryId:checked', node).data('entryid'));

@@ -108,7 +108,7 @@ public class CrossingServiceImpl implements CrossingService {
 	public void applyCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final Integer userId,
 			final Workbook workbook) throws MiddlewareQueryException {
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
-		final List<Pair<Germplasm, Name>> germplasmPairs = getPairs(crossSetting, importedCrossesList, userId, workbook);
+		final List<Pair<Germplasm, Name>> germplasmPairs = this.getPairs(crossSetting, importedCrossesList, userId, workbook);
 		this.save(crossSetting, importedCrossesList, germplasmPairs);
 	}
 
@@ -122,11 +122,11 @@ public class CrossingServiceImpl implements CrossingService {
 
 			String malePlotNo = "";
 			String femalePlotNo = "";
-			
+
 			// Look at the observation rows of Nursery to find plot number assigned to the male/female parent germplasm of the cross.
-			for (MeasurementRow row : workbook.getObservations()) {
-				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
-				MeasurementData plotNumberData = row.getMeasurementData(TermId.PLOT_NO.getId());
+			for (final MeasurementRow row : workbook.getObservations()) {
+				final MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
+				final MeasurementData plotNumberData = row.getMeasurementData(TermId.PLOT_NO.getId());
 
 				if (gidData != null && gidData.getValue().equals(importedCross.getFemaleGid())) {
 					if (plotNumberData != null) {
@@ -182,7 +182,8 @@ public class CrossingServiceImpl implements CrossingService {
 		this.saveAttributes(crossSetting, importedCrossesList, savedGermplasmIds);
 	}
 
-	private void saveAttributes(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, List<Integer> savedGermplasmIds) {
+	private void saveAttributes(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+			final List<Integer> savedGermplasmIds) {
 		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
 			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
 		}
@@ -218,14 +219,14 @@ public class CrossingServiceImpl implements CrossingService {
 		this.germplasmDataManager.addAttributes(attributeList);
 	}
 
-	//FIXME the methods getPairs() and generateGermplasmNamePairs() should be combined into one
+	// FIXME the methods getPairs() and generateGermplasmNamePairs() should be combined into one
 	private List<Pair<Germplasm, Name>> getPairs(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final Integer userId, final Workbook workbook) {
 
 		// apply the source string here, before we save germplasm if there is no existing source
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-			if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource()) ||
-					importedCross.getSource().equalsIgnoreCase(ImportedCrosses.SEED_SOURCE_PENDING)) {
+			if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource())
+					|| importedCross.getSource().equalsIgnoreCase(ImportedCrosses.SEED_SOURCE_PENDING)) {
 				final String generatedSource =
 						this.seedSourceGenerator.generateSeedSourceForCross(workbook, importedCross.getMalePlotNo(),
 								importedCross.getFemalePlotNo(), importedCross.getMaleStudyName(), importedCross.getFemaleStudyName());
@@ -254,8 +255,8 @@ public class CrossingServiceImpl implements CrossingService {
 			return gids;
 		}
 
-		for (final ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()){
-			Integer gid = importedCrosses.getGid() != null ? Integer.parseInt(importedCrosses.getGid()) : null;
+		for (final ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
+			final Integer gid = importedCrosses.getGid() != null ? Integer.parseInt(importedCrosses.getGid()) : null;
 			if (gid != null) {
 				gids.add(gid);
 			}
@@ -335,8 +336,8 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	/**
-	 * this method overwrites the naming settings with the defined rules from the DB
-	 * if the breeding method was provided
+	 * this method overwrites the naming settings with the defined rules from the DB if the breeding method was provided
+	 * 
 	 * @param setting
 	 */
 	protected void processBreedingMethodProcessCodes(final CrossSetting setting) {
@@ -403,7 +404,7 @@ public class CrossingServiceImpl implements CrossingService {
 		germplasm.setGdate(DateUtil.getCurrentDateAsIntegerValue());
 	}
 
-	//FIXME the methods getPairs() and generateGermplasmNamePairs() should be combined into one
+	// FIXME the methods getPairs() and generateGermplasmNamePairs() should be combined into one
 	protected List<Pair<Germplasm, Name>> generateGermplasmNamePairs(final CrossSetting crossSetting,
 			final List<ImportedCrosses> importedCrosses, final Integer userId, final boolean hasPlotDuplicate)
 			throws MiddlewareQueryException {
@@ -625,10 +626,9 @@ public class CrossingServiceImpl implements CrossingService {
 	 * For Test Only
 	 * 
 	 * @param seedSourceGenerator
-	 */	
-	void setSeedSourceGenerator(SeedSourceGenerator seedSourceGenerator) {
+	 */
+	void setSeedSourceGenerator(final SeedSourceGenerator seedSourceGenerator) {
 		this.seedSourceGenerator = seedSourceGenerator;
 	}
-	
-	
+
 }

@@ -19,7 +19,9 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
@@ -41,7 +43,7 @@ public class AdvancingSourceListFactoryTest {
 
 	private static final String REPLICATION_NUMBER = "replicationNumber2";
 
-	private static final String ENV_NUMBER = "envNumber1";
+	private static final String ENV_NUMBER = "1";
 
 	@Mock
 	ContextUtil contextUtil;
@@ -99,6 +101,9 @@ public class AdvancingSourceListFactoryTest {
         Mockito.when(this.fieldbookMiddlewareService.getGermplasms(Mockito.isA(List.class))).thenReturn(germplasmList);
 
         Workbook workBook = new Workbook();
+        StudyDetails studyDetails = new StudyDetails();
+        studyDetails.setStudyType(StudyType.N);
+        workBook.setStudyDetails(studyDetails);
         workBook.setObservations(generateMeasurementRows());
 
         AdvancingNursery advanceInfo = new AdvancingNursery();

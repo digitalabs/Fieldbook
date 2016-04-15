@@ -1,16 +1,10 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import junit.framework.Assert;
-
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +13,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SelectionTraitExpressionDataProcessorTest {
@@ -85,6 +84,7 @@ public class SelectionTraitExpressionDataProcessorTest {
         String categoricalValue = "test";
         String testCategoricalValueID = "1";
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(testCategoricalValueID))).thenReturn(categoricalValue);
+		Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(testCategoricalValueID), true)).thenReturn(categoricalValue);
 
         String output = unitUnderTest.extractValue(testCategoricalValueID, TEST_TERM_ID);
 
@@ -96,6 +96,7 @@ public class SelectionTraitExpressionDataProcessorTest {
         String categoricalValue = "1";
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(categoricalValue))).thenReturn(null);
+		Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(categoricalValue), true)).thenReturn(categoricalValue);
 
         String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID);
 

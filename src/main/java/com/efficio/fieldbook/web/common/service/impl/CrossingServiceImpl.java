@@ -644,4 +644,13 @@ public class CrossingServiceImpl implements CrossingService {
 		this.seedSourceGenerator = seedSourceGenerator;
 	}
 
+	/**
+	 * For Test Only
+	 * 
+	 * @param seedSourceGenerator
+	 */
+	void setGermplasmGroupingService(final GermplasmGroupingService germplasmGroupingService) {
+		this.germplasmGroupingService = germplasmGroupingService;
+	}
+
 }

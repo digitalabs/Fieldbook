@@ -24,6 +24,7 @@ import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.service.api.GermplasmGroupingService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Before;
@@ -59,6 +60,9 @@ public class CrossingServiceImplTest {
 	@Mock
 	private SeedSourceGenerator seedSourceGenertor;
 
+	@Mock
+	private GermplasmGroupingService germplasmGroupingService;
+
 	private CrossSetting crossSetting;
 
 	@Before
@@ -75,6 +79,7 @@ public class CrossingServiceImplTest {
 		this.crossingService.setCrossExpansionProperties(this.crossExpansionProperties);
 		this.crossingService.setContextUtil(this.contextUtil);
 		this.crossingService.setSeedSourceGenerator(this.seedSourceGenertor);
+		this.crossingService.setGermplasmGroupingService(this.germplasmGroupingService);
 
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());

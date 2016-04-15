@@ -431,7 +431,13 @@ public class CrossingServiceImpl implements CrossingService {
 			if (FieldbookUtil.isContinueCrossingMerge(hasPlotDuplicate, crossSetting.isPreservePlotDuplicates(), cross)) {
 				continue;
 			}
-			final Germplasm germplasm = new Germplasm();
+
+			Germplasm germplasm = new Germplasm();
+			// retrieve the existing germplasm from database if the imported cross has existing gid
+			if (cross.getGid() != null) {
+				germplasm = this.germplasmDataManager.getGermplasmByGID(Integer.valueOf(cross.getGid()));
+			}
+
 			final Name name = new Name();
 
 			this.updateConstantFields(germplasm, name, userId);

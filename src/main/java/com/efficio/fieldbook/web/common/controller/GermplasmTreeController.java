@@ -338,11 +338,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final GermplasmList germplasmList, final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList)
 			throws RuleException {
 		if (crossSetting.isUseManualSettingsForNaming()) {
+			// this line of code is where the creation of new germplasm takes place
 			this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
 					this.userSelection.getWorkbook());
 			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
 		} else {
 			final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(crossSetting, importedCrossesList);
+			// this line of code is where the creation of new germplasm takes place
 			this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesListWithNamingSettings,
 					this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
 			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesListWithNamingSettings.getImportedCrosses());

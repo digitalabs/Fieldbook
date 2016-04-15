@@ -406,6 +406,8 @@ $(function() {
 				for (indexCounter = 0 ; indexCounter < locationSuggestionsObj.length; indexCounter++) {
 					if (locationSuggestionsObj[indexCounter].id == chosenSettingsLocationId) {
 						$('#harvestLocationIdAll').select2('data', locationSuggestionsObj[indexCounter]);
+                        // Set harvest location abbreviation which will be fetched while initializing drop down
+                        $('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
 						break;
 					}
 				}

@@ -193,14 +193,11 @@ function showCorrectLocationCombo() {
 	} else {
 		$('#s2id_harvestLocationIdFavorite').hide();
 		$('#s2id_harvestLocationIdAll').show();
-		if ($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data') != null) {
+        // harvestLocationIdAll is not null but it contains blank value so put AND condition
+		if ($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data') != null && $('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').id != "" ) {
 			$('#' + getJquerySafeId('harvestLocationId')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').id);
 			$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').text);
 			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
-		} else {
-			$('#' + getJquerySafeId('harvestLocationId')).val(0);
-			$('#' + getJquerySafeId('harvestLocationName')).val('');
-			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val('');
 		}
 	}
 }
@@ -809,6 +806,12 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 						query.callback(data);
 					}
 				});
+
+        // Set default harvest location id and name
+        if (defaultJsonVal != null) {
+            $('#' + getJquerySafeId('harvestLocationId')).val(defaultJsonVal.id);
+            $('#' + getJquerySafeId('harvestLocationName')).val(defaultJsonVal.text);
+        }
 	} else if ($(name).parent().next().children('.breeding-method-tooltip').length > 0) {
 		$(name).select2(
 				{

@@ -1,5 +1,9 @@
 /*global getJquerySafeId, showErrorMessage, oldLineSelected, changeAdvanceBreedingMethod, setCorrecMethodValues, noMethodVariatesError, oldMethodSelected, msgSamplePlotError, msgHarvestDateError, noLineVariatesError, setCorrectMethodValues, methodSuggestionsFav_obj, isInt, breedingMethodId, oldMethodSelected*/
 /*global isStudyNameUnique, validateStartDateEndDateBasic*/
+
+//Used globle variable to selected location for trial
+var selectedLocationForTrail;
+
 function checkMethod() {
 	'use strict';
 	if ($('input[type=checkbox][name=methodChoice]:checked').val() == 1) {
@@ -199,6 +203,11 @@ function showCorrectLocationCombo() {
 			$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').text);
 			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
 		}
+
+        //In case of trial we have to set selected location
+        if(!isNursery()){
+            setSelectedLocation();
+        }
 	}
 }
 
@@ -1924,4 +1933,22 @@ function checkNurseryIfShowRemoveVariableLinks() {
 			$(this).parents('.remove-all-section').addClass('fbk-hide');
 		}
 	});
+}
+
+function selectedLocation(location) {
+    selectedLocationForTrail = location;
+}
+
+
+function setSelectedLocation() {
+    $('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
+    $('#' + getJquerySafeId('harvestLocationName')).val(selectedLocationForTrail.name);
+
+    //Trial passes preferred values in which location abbreviation available in bracket.
+    //We need to split value to get actual abbreviation for selected location
+
+    var locAbbreviation = selectedLocationForTrail.name.split("(");
+    locAbbreviation[1] = templocation[1].replace(")", '');
+
+    $('#' + getJquerySafeId('harvestLocationAbbreviation')).val(locAbbreviation[1]);
 }

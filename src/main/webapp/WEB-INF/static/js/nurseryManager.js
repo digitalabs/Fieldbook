@@ -1948,7 +1948,7 @@ function setSelectedLocation() {
     //We need to split value to get actual abbreviation for selected location
 
     var locAbbreviation = selectedLocationForTrail.name.split("(");
-    locAbbreviation[1] = templocation[1].replace(")", '');
+    locAbbreviation[1] = locAbbreviation[1].replace(")", '');
 
     $('#' + getJquerySafeId('harvestLocationAbbreviation')).val(locAbbreviation[1]);
 }

@@ -4003,8 +4003,8 @@ function onMeasurementsObservationLoad(isCategoricalDisplay) {
  */
 function EscapeUtilityConstructor() {
 	/** Used to match HTML entities and HTML characters. */
-	this.reUnescapedHtml = /[&<>"'`]/g;
-	this.reHasUnescapedHtml = RegExp(this.reUnescapedHtml.source);
+	this.unescapedHtmlRegEx = /[&<>"'`]/g;
+	this.hasUnescapedHtmlRegEx = RegExp(this.unescapedHtmlRegEx.source);
 }
 
 /**
@@ -4052,8 +4052,8 @@ EscapeUtilityConstructor.prototype.escape = function(string)
 
 	string = this.toString(string);
 
-	return (string && this.reHasUnescapedHtml.test(string))
-		? string.replace(this.reUnescapedHtml, function(chr) {
+	return (string && this.hasUnescapedHtmlRegEx.test(string))
+		? string.replace(this.unescapedHtmlRegEx, function(chr) {
 			return htmlEscapes[chr];
 	}) : string;
 };

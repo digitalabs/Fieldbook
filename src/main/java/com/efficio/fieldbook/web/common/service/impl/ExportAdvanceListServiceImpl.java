@@ -101,8 +101,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		try {
 			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(stockListId);
 			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			List<InventoryDetails> inventoryDetailList =
-					this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockListId, germplasmListType);
+			List<InventoryDetails> inventoryDetailList = this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockListId);
 
 			String advanceListName = germplasmList.getName();
 			String filenamePath = this.getFileNamePath(advanceListName) + suffix;
@@ -114,13 +113,11 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 			outputFilename = filenamePath;
 			filenameList.add(filenamePath);
-		} catch (IOException e) {
-			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
-		} catch (MiddlewareQueryException e) {
+		} catch (IOException | MiddlewareQueryException e) {
 			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
-		return new File(outputFilename);
+        return new File(outputFilename);
 	}
 
 	protected String getFileNamePath(String name) {

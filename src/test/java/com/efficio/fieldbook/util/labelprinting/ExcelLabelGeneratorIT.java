@@ -11,6 +11,7 @@ import junit.framework.Assert;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -19,8 +20,10 @@ import org.springframework.context.MessageSource;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
     
@@ -116,4 +119,46 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
             Assert.fail("Excountered error while reading xls file.");
         }
     }
+
+    @Test
+    public void testGetLabelHeadersFromTrialInstancesWithMultipleTrialInstances(){
+
+        final List<StudyTrialInstanceInfo> trialInstances = new ArrayList<>();
+        FieldMapTrialInstanceInfo fieldMapTrialInstanceInfoFirst = LabelPrintingDataUtil.createFieldMapTrialInstanceInfo();
+
+        final StudyTrialInstanceInfo trialInstanceFirst =
+                new StudyTrialInstanceInfo(fieldMapTrialInstanceInfoFirst, "TrialStudy");
+        trialInstances.add(trialInstanceFirst);
+
+        FieldMapTrialInstanceInfo fieldMapTrialInstanceInfoSecond = LabelPrintingDataUtil.createFieldMapTrialInstanceInfo();
+        Map<Integer, String> labelHeadersForTrialStock = LabelPrintingDataUtil.createLabelHeadersForTrialStock();
+        //Setting LabelHeader in second Trial instance only
+        fieldMapTrialInstanceInfoSecond.setLabelHeaders(labelHeadersForTrialStock);
+
+        final StudyTrialInstanceInfo trialInstanceSecond =
+                new StudyTrialInstanceInfo(fieldMapTrialInstanceInfoSecond, "TrialStudy");
+        trialInstances.add(trialInstanceSecond);
+
+
+        Map<Integer, String> labelHeadersFromTrialInstances = this.unitUnderTest.getLabelHeadersFromTrialInstances(trialInstances);
+
+        Assert.assertNotNull(labelHeadersFromTrialInstances);
+        Assert.assertEquals("Number of Label Headers are not equal", 5, labelHeadersFromTrialInstances.size());
+
+        for(Map.Entry<Integer,String> entrySet : labelHeadersForTrialStock.entrySet()){
+            Integer keyTermId = entrySet.getKey();
+            String valueHeaderLabel = entrySet.getValue();
+
+            if(labelHeadersFromTrialInstances.containsKey(keyTermId)){
+                String actualHeaderText = labelHeadersFromTrialInstances.get(keyTermId);
+                Assert.assertEquals("Label Header Text is not equal", valueHeaderLabel , actualHeaderText);
+            }
+            else{
+                Assert.assertNull("Expected Label Header not found", keyTermId);
+            }
+
+        }
+
+    }
+
 }

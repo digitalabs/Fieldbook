@@ -69,7 +69,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				data: $(this).html(),
 				defaultContent: ''
 			});
-			if ($(this).data('term-data-type-id') == '1110') {
+			if ($(this).data('term-data-type-id') === 1110) {
 				var minVal = ($(this).data('min-range'));
 				var maxVal = ($(this).data('max-range'));
 				var termId = $(this).data('term-id');
@@ -112,7 +112,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						return EscapeHTML.escape(data);
 					}
 				});
-			} else if ($(this).data('term-data-type-id') == '1130') {
+			} else if ($(this).data('term-data-type-id') === 1130) {
 				if ($(this).data('term-valid-values') == null) {
 					$(this).data('term-valid-values', '');
 				}

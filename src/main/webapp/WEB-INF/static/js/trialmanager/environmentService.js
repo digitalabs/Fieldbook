@@ -11,8 +11,7 @@
 
 		environmentService.environments = TrialManagerDataService.currentData.environments;
 
-		environmentService.changeEnvironments = function(data) {
-			//this.environments.environments = data.key;
+		environmentService.changeEnvironments = function() {
 			this.broadcastEnvironments();
 		};
 

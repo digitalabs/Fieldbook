@@ -104,7 +104,15 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						}
 					}
 				});
-			}else if ($(this).data('term-data-type-id') == '1130') {
+			} else if ($(this).data('term-data-type-id') === 1120) {
+				columnsDef.push({
+					defaultContent: '',
+					targets: columns.length - 1,
+					render: function(data, type, full, meta) {
+						return EscapeHTML.escape(data);
+					}
+				});
+			} else if ($(this).data('term-data-type-id') == '1130') {
 				if ($(this).data('term-valid-values') == null) {
 					$(this).data('term-valid-values', '');
 				}

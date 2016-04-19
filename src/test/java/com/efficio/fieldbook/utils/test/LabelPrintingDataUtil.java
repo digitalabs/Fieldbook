@@ -177,18 +177,6 @@ public class LabelPrintingDataUtil {
 		return trialInstanceInfo;
 	}
 
-	public static FieldMapTrialInstanceInfo createFieldMapTrialInstanceInfoWithStockList() {
-		final FieldMapTrialInstanceInfo trialInstanceInfo = new FieldMapTrialInstanceInfo();
-
-		trialInstanceInfo.setBlockName(LabelPrintingDataUtil.BLOCK_NAME);
-		trialInstanceInfo.setEntryCount(LabelPrintingDataUtil.ENTRY_COUNT);
-		trialInstanceInfo.setFieldMapLabels(LabelPrintingDataUtil.createFieldMapLabels());
-		trialInstanceInfo.setHasFieldMap(LabelPrintingDataUtil.HAS_FIELDMAP);
-		trialInstanceInfo.setTrialInstanceNo(LabelPrintingDataUtil.TRIAL_INSTANCE_NO);
-		trialInstanceInfo.setFieldName(LabelPrintingDataUtil.FIELD_NAME);
-
-		return trialInstanceInfo;
-	}
 
 	private static FieldMapTrialInstanceInfo createFieldMapSecondTrialInstanceInfo() {
 		final FieldMapTrialInstanceInfo trialInstanceInfo = new FieldMapTrialInstanceInfo();

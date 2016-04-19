@@ -17,15 +17,18 @@
         $scope.TRIAL_LOCATION_ABBR_INDEX = 8189;
         $scope.TRIAL_INSTANCE_INDEX = 8170;
         $scope.PREFERENCED_LOCATION_VARIABLE=8170;
+        $scope.LOCATION_NAME_ID = 8190;
 
         $scope.data = TrialManagerDataService.currentData.environments;
 
         $scope.$on('changeEnvironments', function(){
             $scope.data = environmentService.environments;
-            angular.forEach($scope.settings.managementDetails.vals()[8190].possibleValues, function(possibleValue) {
-              if (possibleValue.id === $scope.data.environments[0].managementDetailValues[8190]) {
-                $scope.data.environments[0].managementDetailValues[$scope.PREFERENCED_LOCATION_VARIABLE] = possibleValue.displayDescription;
-               }
+            angular.forEach($scope.data.environments, function(environment){
+                angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].possibleValues, function(possibleValue) {
+                    if (possibleValue.id === environment.managementDetailValues[$scope.LOCATION_NAME_ID]) {
+                        environment.managementDetailValues[$scope.PREFERENCED_LOCATION_VARIABLE] = possibleValue.displayDescription;
+                    }
+                });
             });
         });
 

@@ -3,7 +3,8 @@
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', function($scope, TrialManagerDataService) {
+    manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', function($scope,
+    TrialManagerDataService, environmentService) {
 
         $scope.settings = TrialManagerDataService.settings.environments;
         if (Object.keys($scope.settings).length === 0) {
@@ -18,6 +19,15 @@
         $scope.PREFERENCED_LOCATION_VARIABLE=8170;
 
         $scope.data = TrialManagerDataService.currentData.environments;
+
+        $scope.$on('changeEnvironments', function(){
+            $scope.data = environmentService.environments;
+            angular.forEach($scope.settings.managementDetails.vals()[8190].possibleValues, function(possibleValue) {
+              if (possibleValue.id === $scope.data.environments[0].managementDetailValues[8190]) {
+                $scope.data.environments[0].managementDetailValues[$scope.PREFERENCED_LOCATION_VARIABLE] = possibleValue.displayDescription;
+               }
+            });
+        });
 
         $scope.trialInstances = [];
 

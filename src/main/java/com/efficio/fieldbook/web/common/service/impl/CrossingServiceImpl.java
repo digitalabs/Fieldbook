@@ -42,7 +42,6 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
-import org.generationcp.middleware.service.api.GermplasmGroupingService;
 import org.generationcp.middleware.service.api.PedigreeService;
 import org.generationcp.middleware.service.pedigree.PedigreeFactory;
 import org.generationcp.middleware.util.CrossExpansionProperties;
@@ -99,9 +98,6 @@ public class CrossingServiceImpl implements CrossingService {
 
 	@Resource
 	private SeedSourceGenerator seedSourceGenerator;
-
-	@Autowired
-	private GermplasmGroupingService germplasmGroupingService;
 
 	@Override
 	public ImportedCrossesList parseFile(final MultipartFile file) throws FileParsingException {
@@ -183,9 +179,6 @@ public class CrossingServiceImpl implements CrossingService {
 	private void save(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final List<Pair<Germplasm, Name>> germplasmPairs) {
 		final List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmPairs);
-		// assign the proper MGID for the newly created germplasm
-		this.germplasmGroupingService.processGroupInheritanceForCrosses(savedGermplasmIds, true,
-				this.crossExpansionProperties.getHybridBreedingMethods());
 		this.saveAttributes(crossSetting, importedCrossesList, savedGermplasmIds);
 	}
 
@@ -649,14 +642,4 @@ public class CrossingServiceImpl implements CrossingService {
 	void setSeedSourceGenerator(final SeedSourceGenerator seedSourceGenerator) {
 		this.seedSourceGenerator = seedSourceGenerator;
 	}
-
-	/**
-	 * For Test Only
-	 * 
-	 * @param seedSourceGenerator
-	 */
-	void setGermplasmGroupingService(final GermplasmGroupingService germplasmGroupingService) {
-		this.germplasmGroupingService = germplasmGroupingService;
-	}
-
 }

@@ -70,6 +70,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				defaultContent: ''
 			});
 			if ($(this).data('term-data-type-id') === 1110) {
+				// Column definition for Numeric data type
+
 				var minVal = ($(this).data('min-range'));
 				var maxVal = ($(this).data('max-range'));
 				var termId = $(this).data('term-id');
@@ -105,6 +107,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					}
 				});
 			} else if ($(this).data('term-data-type-id') === 1120) {
+				// Column definition for Character data type
+
+
 				columnsDef.push({
 					defaultContent: '',
 					targets: columns.length - 1,
@@ -113,6 +118,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					}
 				});
 			} else if ($(this).data('term-data-type-id') === 1130) {
+				// Column definition for Categorical data type
+
 				if ($(this).data('term-valid-values') == null) {
 					$(this).data('term-valid-values', '');
 				}

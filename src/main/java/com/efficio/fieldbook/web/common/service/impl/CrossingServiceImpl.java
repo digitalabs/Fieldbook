@@ -425,37 +425,40 @@ public class CrossingServiceImpl implements CrossingService {
 				continue;
 			}
 
-			Germplasm germplasm = new Germplasm();
-			// retrieve the existing germplasm from database if the imported cross has existing gid
+			Germplasm germplasm = null;
+
+			// Retrieve the germplasm (cross) from database: In case of Nursery -> Crossing workflows, we expect the GID to always
+			// exist as crosses are created in crossing manager and persisted.
 			if (cross.getGid() != null) {
 				germplasm = this.germplasmDataManager.getGermplasmByGID(Integer.valueOf(cross.getGid()));
-			}
-
-			final Name name = new Name();
-
-			this.updateConstantFields(germplasm, name, userId);
-
-			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
-			germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
-
-			this.populateGermplasmDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
-
-			germplasm.setLocationId(harvestLocationId);
-
-			// if nothing is defined from import crosses file, then the breeding method id to assign must be from crossing setting
-			if (cross.getRawBreedingMethod() == null) {
-				germplasm.setMethodId(crossSetting.getBreedingMethodSetting().getMethodId());
+				// Do NOT update anything else in this case.
 			} else {
-				// the usual process of retrieving methodId from file
-				germplasm.setMethodId(0);
+				germplasm = new Germplasm();
+				// In case of importing crosses, the crosses are not yet persisted, GID will be null. We populate data from spreadsheet.
+				this.updateConstantFields(germplasm, userId);
+				germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
+				germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
+				this.populateGermplasmDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
+				germplasm.setLocationId(harvestLocationId);
 
-				final Method breedingMethod = this.germplasmDataManager.getMethodByCode(cross.getRawBreedingMethod());
+				// if nothing is defined from import crosses file, then the breeding method id to assign must be from crossing setting
+				if (cross.getRawBreedingMethod() == null) {
+					germplasm.setMethodId(crossSetting.getBreedingMethodSetting().getMethodId());
+				} else {
+					// the usual process of retrieving methodId from file
+					germplasm.setMethodId(0);
 
-				if (breedingMethod != null && breedingMethod.getMid() != null && breedingMethod.getMid() != 0) {
-					germplasm.setMethodId(breedingMethod.getMid());
+					final Method breedingMethod = this.germplasmDataManager.getMethodByCode(cross.getRawBreedingMethod());
+
+					if (breedingMethod != null && breedingMethod.getMid() != null && breedingMethod.getMid() != 0) {
+						germplasm.setMethodId(breedingMethod.getMid());
+					}
 				}
 			}
 
+			final Name name = new Name();
+			name.setReferenceId(CrossingServiceImpl.NAME_REFID);
+			name.setUserId(userId);
 			name.setNval(cross.getDesig());
 			name.setNdate(germplasm.getGdate());
 			name.setLocationId(harvestLocationId);
@@ -465,22 +468,17 @@ public class CrossingServiceImpl implements CrossingService {
 			cross.setNames(names);
 
 			pairList.add(new ImmutablePair<Germplasm, Name>(germplasm, name));
-
 		}
-
 		return pairList;
 	}
 
-	protected void updateConstantFields(final Germplasm germplasm, final Name name, final Integer userId) {
+	protected void updateConstantFields(final Germplasm germplasm, final Integer userId) {
 		germplasm.setGnpgs(CrossingServiceImpl.GERMPLASM_GNPGS);
 		germplasm.setGrplce(CrossingServiceImpl.GERMPLASM_GRPLCE);
 		germplasm.setLgid(CrossingServiceImpl.GERMPLASM_LGID);
 		germplasm.setMgid(CrossingServiceImpl.GERMPLASM_MGID);
 		germplasm.setUserId(userId);
 		germplasm.setReferenceId(CrossingServiceImpl.GERMPLASM_REFID);
-
-		name.setReferenceId(CrossingServiceImpl.NAME_REFID);
-		name.setUserId(userId);
 	}
 
 	protected Integer getNextNumberInSequence(final CrossNameSetting setting) throws MiddlewareQueryException {

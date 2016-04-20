@@ -91,25 +91,11 @@ var ImportCrosses = {
 		});
 	},
 
-	disableCrossingBreedingMethodSettingFields: function() {
-		$('.crossingBreedingMethodInput').prop('disabled', true);
-		$('#breedingMethodDropdown').select2('disable', true);
-	},
-
-	enableCrossingBreedingMethodSettingFields: function() {
-		$('.crossingBreedingMethodInput').prop('disabled', false);
-		$('#breedingMethodDropdown').select2('enable');
-	},
-
 	preselectCrossBreedingMethod: function(breedingMethodId) {
 		// we indicate that we're using a breeding method
-		$('#useSelectedMethodCheckbox').prop('checked', true);
-		$('#showFavoritesOnlyCheckbox').prop('checked', false).trigger('change');
 		$('#breedingMethodId').val(selectedBreedingMethodId);
 		$('#breedingMethodDropdown').select2('val', parseInt(selectedBreedingMethodId));
 	},
-
-
 
 	goBackToPage: function(hiddenModalSelector, shownModalSelector) {
 		'use strict';
@@ -198,13 +184,10 @@ var ImportCrosses = {
 			if (selectedBreedingMethodId != '0') {
 				// in addition, if the user has already selected a breeding method, we should pre select that
 				ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
+			} else {
+				//TODO localise
+				$('#preSelectedBreedingMethodDropdown').val("Determined from parental lines");
 			}
-
-			ImportCrosses.disableCrossingBreedingMethodSettingFields();
-
-		} else {
-			// we re enable all breeding method setting fields, in case they were disabled due to prior operations
-			ImportCrosses.enableCrossingBreedingMethodSettingFields();
 		}
 
 		$('.cross-import-name-setting').off('change');

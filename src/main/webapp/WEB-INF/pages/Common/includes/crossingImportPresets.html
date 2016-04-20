@@ -29,13 +29,13 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row" id="crossingBreedingMethodText">
                         <div class="col-xs-12 col-md-12">
                             <label th:text="#{study.import.crosses.settings.breeding.method.text}"></label>
                         </div>
                     </div>
 
-                    <div class="row form-group">
+                    <div class="row form-group" id="crossesSelectBreedingMethod">
                         <div class="col-xs-1 col-md-1">
                             &nbsp;
                         </div>
@@ -62,6 +62,16 @@
                         </div>
                         <div class="col-xs-1 col-md-1">
                             &nbsp;
+                        </div>
+                    </div>
+
+                    <div class="row form-group" id="crossesPreSelectedBreedingMethod">
+                        <div class="col-xs-6 col-md-6 text-right">
+                            <label class="label-bold" th:text="#{study.import.crosses.settings.breeding.method}"></label>
+                        </div>
+                        <div class="col-xs-6 col-md-6 text-left">
+                            <input type="text" name="preSelectedBreedingMethodID" id="preSelectedBreedingMethodDropdown"
+                                   disabled="disabled" />
                         </div>
                     </div>
 

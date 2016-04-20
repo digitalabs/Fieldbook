@@ -25,9 +25,10 @@
 		$scope.$on('changeEnvironments', function() {
 			$scope.data = environmentService.environments;
 			angular.forEach($scope.data.environments, function(environment) {
-				angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].possibleValues, function(possibleValue) {
-					if (possibleValue.id === environment.managementDetailValues[$scope.LOCATION_NAME_ID]) {
-						environment.managementDetailValues[$scope.PREFERRED_LOCATION_VARIABLE] = possibleValue.displayDescription;
+                angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].possibleValues, function(possibleValue) {
+                    if (possibleValue.id === environment.managementDetailValues[$scope.LOCATION_NAME_ID]) {
+                        environment.managementDetailValues[$scope.LOCATION_NAME_ID] = possibleValue.id;
+                        selectedLocationForTrail = {id: possibleValue.id, name: possibleValue.name};
 					}
 				});
 			});
@@ -62,8 +63,6 @@
 			});
 
 			if (!isTrialInstanceSelected) {
-				//TODO Localise that
-				var selectOneLocationErrorMessage = 'Please select at least one location for Advancing Trial';
 				showErrorMessage('', selectOneLocationErrorMessage);
 			} else {
 				selectedLocationDetails.push($scope.settings.managementDetails.val($scope.PREFERRED_LOCATION_VARIABLE).variable.name);

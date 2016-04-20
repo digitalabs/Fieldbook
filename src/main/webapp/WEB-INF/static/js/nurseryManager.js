@@ -3,6 +3,7 @@
 
 //Used globle variable to selected location for trial
 var selectedLocationForTrail;
+var possibleLocationsForTrail;
 
 function checkMethod() {
 	'use strict';
@@ -1935,20 +1936,23 @@ function checkNurseryIfShowRemoveVariableLinks() {
 	});
 }
 
-function selectedLocation(location) {
+function selectedLocation(location, possibleValues) {
     selectedLocationForTrail = location;
+    possibleLocationsForTrail = possibleValues;
 }
 
 
 function setSelectedLocation() {
-    $('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
-    $('#' + getJquerySafeId('harvestLocationName')).val(selectedLocationForTrail.name);
-
     //Trial passes preferred values in which location abbreviation available in bracket.
     //We need to split value to get actual abbreviation for selected location
-
-    var locAbbreviation = selectedLocationForTrail.name.split("(");
-    locAbbreviation[1] = locAbbreviation[1].replace(")", '');
-
-    $('#' + getJquerySafeId('harvestLocationAbbreviation')).val(locAbbreviation[1]);
+    if (possibleLocationsForTrail != null && selectedLocationForTrail != null) {
+        $('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
+        var locationName = $.grep(possibleLocationsForTrail, function (e) {
+            return e.key == selectedLocationForTrail.id;
+        });
+        $('#' + getJquerySafeId('harvestLocationName')).val(locationName[0].name);
+        var locAbbreviation = locationName[0].name.split("(");
+        locAbbreviation[1] = locAbbreviation[1].replace(")", '');
+        $('#' + getJquerySafeId('harvestLocationAbbreviation')).val(locAbbreviation[1]);
+    }
 }

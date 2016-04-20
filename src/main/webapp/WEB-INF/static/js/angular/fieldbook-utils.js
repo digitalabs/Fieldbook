@@ -280,11 +280,12 @@
 
 					$scope.isLocation = parseInt(LOCATION_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
-
-                    //Setting selected location
+                    //Setting selected location is nothing is selected
+                    selectedLocation('', $scope.variableDefinition.possibleValues);
+                    //Setting selected location for selected value
                     angular.forEach($scope.variableDefinition.possibleValues, function(val, index){
                         if(val.id == $scope.valuecontainer[$scope.targetkey]){
-                            selectedLocation(val);
+                            selectedLocation(val , $scope.variableDefinition.possibleValues);
                         }
                     });
 

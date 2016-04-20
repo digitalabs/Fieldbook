@@ -88,7 +88,7 @@ public class GermplasmListController {
 				protected void doInTransactionWithoutResult(TransactionStatus arg0) {
 					GermplasmList germplasmList = GermplasmListController.this.germplasmListManager.getGermplasmListById(listId);
 					List<InventoryDetails> detailList = GermplasmListController.this.inventoryService
-							.getInventoryListByListDataProjectListId(listId, GermplasmListType.valueOf(germplasmList.getType()));
+							.getInventoryListByListDataProjectListId(listId);
 					model.addAttribute(GermplasmListController.INVENTORY_VIEW_TOGGLED, false);
 					GermplasmListController.this.prepareStockList(model, listId, detailList, germplasmList);
 				}

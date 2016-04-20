@@ -1945,7 +1945,7 @@ function selectedLocation(location, possibleValues) {
 function setSelectedLocation() {
     //Trial passes preferred values in which location abbreviation available in bracket.
     //We need to split value to get actual abbreviation for selected location
-    if (possibleLocationsForTrail != null && selectedLocationForTrail != null) {
+    if (possibleLocationsForTrail != null && selectedLocationForTrail != null && selectedLocationForTrail !='') {
         $('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
         var locationName = $.grep(possibleLocationsForTrail, function (e) {
             return e.key == selectedLocationForTrail.id;

@@ -438,7 +438,6 @@ public class CrossingServiceImpl implements CrossingService {
 				this.updateConstantFields(germplasm, userId);
 				germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 				germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
-				this.populateGermplasmDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
 
 				// if nothing is defined from import crosses file, then the breeding method id to assign must be from crossing setting
 				if (cross.getRawBreedingMethod() == null) {
@@ -455,6 +454,8 @@ public class CrossingServiceImpl implements CrossingService {
 				}
 			}
 
+			// Set germplasm date based on user input or information from source data.
+			this.populateGermplasmDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
 			// Set the location based on what is selected as harvest location in both cases of crossing.
 			germplasm.setLocationId(harvestLocationId);
 

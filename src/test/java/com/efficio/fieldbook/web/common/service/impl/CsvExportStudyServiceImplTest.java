@@ -31,7 +31,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.nursery.service.impl.ValidationServiceImpl;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
@@ -76,7 +75,7 @@ public class CsvExportStudyServiceImplTest {
 		Mockito.doReturn(prop).when(this.ontologyService).getProperty(TermId.BREEDING_METHOD_PROP.getId());
 		Mockito.doReturn(new Term(1, CsvExportStudyServiceImplTest.PROPERTY_NAME, "Dummy defintion")).when(prop).getTerm();
 		Mockito.doReturn(Mockito.mock(File.class)).when(this.germplasmExportService)
-		.generateCSVFile(Matchers.any(List.class), Matchers.any(List.class), Matchers.anyString());
+				.generateCSVFile(Matchers.any(List.class), Matchers.any(List.class), Matchers.anyString());
 		Mockito.doReturn(CsvExportStudyServiceImplTest.UPLOAD_DIRECTORY).when(this.fieldbookProperties).getUploadDirectory();
 	}
 
@@ -88,7 +87,7 @@ public class CsvExportStudyServiceImplTest {
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 
 		Mockito.doReturn(workbook.getObservations()).when(CsvExportStudyServiceImplTest.csvExportStudyService)
-		.getApplicableObservations(workbook, instances);
+				.getApplicableObservations(workbook, instances);
 
 		final String outputFilename =
 				CsvExportStudyServiceImplTest.csvExportStudyService.export(workbook, CsvExportStudyServiceImplTest.FILENAME, instances);
@@ -106,7 +105,7 @@ public class CsvExportStudyServiceImplTest {
 		instances.add(1);
 
 		Mockito.doReturn(workbook.getObservations()).when(CsvExportStudyServiceImplTest.csvExportStudyService)
-		.getApplicableObservations(workbook, instances);
+				.getApplicableObservations(workbook, instances);
 
 		final String outputFilename =
 				CsvExportStudyServiceImplTest.csvExportStudyService.export(workbook, CsvExportStudyServiceImplTest.FILENAME, instances);
@@ -309,10 +308,10 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testGetNumericColumnValueIfMissing() {
 		final MeasurementData dataCell = new MeasurementData();
-		dataCell.setValue(ValidationServiceImpl.MISSING_VAL);
+		dataCell.setValue(MeasurementData.MISSING_VALUE);
 		final Integer termId = 2001;
 		final ExportColumnValue columnValue = CsvExportStudyServiceImplTest.csvExportStudyService.getNumericColumnValue(dataCell, termId);
-		Assert.assertEquals("Value should be missing", ValidationServiceImpl.MISSING_VAL, columnValue.getValue());
+		Assert.assertEquals("Value should be missing", MeasurementData.MISSING_VALUE, columnValue.getValue());
 	}
 
 	@Test

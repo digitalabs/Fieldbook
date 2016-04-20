@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
-import com.efficio.fieldbook.web.nursery.service.impl.ValidationServiceImpl;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
@@ -199,7 +198,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		String cellVal = "";
 
 		if (dataCell.getValue() != null && !"".equalsIgnoreCase(dataCell.getValue())) {
-			if (ValidationServiceImpl.MISSING_VAL.equalsIgnoreCase(dataCell.getValue())) {
+			if (MeasurementData.MISSING_VALUE.equalsIgnoreCase(dataCell.getValue())) {
 				cellVal = dataCell.getValue();
 			} else {
 				cellVal = Double.valueOf(dataCell.getValue()).toString();

@@ -93,6 +93,7 @@ var ImportCrosses = {
 
 	disableCrossingBreedingMethodSettingFields: function() {
 		$('.crossingBreedingMethodInput').prop('disabled', true);
+		$('#breedingMethodDropdown').select2('disable', true);
 	},
 
 	enableCrossingBreedingMethodSettingFields: function() {

@@ -426,15 +426,19 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 
 			Germplasm germplasm = null;
+			Name name = null;
 
 			// Retrieve the germplasm (cross) from database: In case of Nursery -> Crossing workflows, we expect the GID to always
 			// exist as crosses are created in crossing manager and persisted.
 			if (cross.getGid() != null) {
 				germplasm = this.germplasmDataManager.getGermplasmByGID(Integer.valueOf(cross.getGid()));
-				// Do NOT update anything else in this case from the cross object...
+
+				// Find the existing name that was created in crossing manager. There should only be one and must be preferred.
+				name = germplasm.findPreferredName();
 			} else {
 				germplasm = new Germplasm();
-				// In case of importing crosses, the crosses are not yet persisted, GID will be null. We populate data from spreadsheet.
+				// In case of importing crosses, the crosses are not yet persisted, GID will be null. We populate data from spreadsheet,
+				// create new Germplasm.
 				this.updateConstantFields(germplasm, userId);
 				germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 				germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
@@ -452,6 +456,10 @@ public class CrossingServiceImpl implements CrossingService {
 						germplasm.setMethodId(breedingMethod.getMid());
 					}
 				}
+
+				// For import we always create new name
+				name = new Name();
+				name.setReferenceId(CrossingServiceImpl.NAME_REFID);
 			}
 
 			// Set germplasm date based on user input or information from source data.
@@ -459,10 +467,9 @@ public class CrossingServiceImpl implements CrossingService {
 			// Set the location based on what is selected as harvest location in both cases of crossing.
 			germplasm.setLocationId(harvestLocationId);
 
-			final Name name = new Name();
-			name.setReferenceId(CrossingServiceImpl.NAME_REFID);
-			name.setUserId(userId);
+			// Common name updates
 			name.setNval(cross.getDesig());
+			name.setUserId(userId);
 			name.setNdate(germplasm.getGdate());
 			name.setLocationId(harvestLocationId);
 

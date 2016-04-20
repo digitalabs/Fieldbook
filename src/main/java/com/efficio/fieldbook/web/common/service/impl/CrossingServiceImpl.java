@@ -431,7 +431,7 @@ public class CrossingServiceImpl implements CrossingService {
 			// exist as crosses are created in crossing manager and persisted.
 			if (cross.getGid() != null) {
 				germplasm = this.germplasmDataManager.getGermplasmByGID(Integer.valueOf(cross.getGid()));
-				// Do NOT update anything else in this case.
+				// Do NOT update anything else in this case from the cross object...
 			} else {
 				germplasm = new Germplasm();
 				// In case of importing crosses, the crosses are not yet persisted, GID will be null. We populate data from spreadsheet.
@@ -439,7 +439,6 @@ public class CrossingServiceImpl implements CrossingService {
 				germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 				germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
 				this.populateGermplasmDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
-				germplasm.setLocationId(harvestLocationId);
 
 				// if nothing is defined from import crosses file, then the breeding method id to assign must be from crossing setting
 				if (cross.getRawBreedingMethod() == null) {
@@ -455,6 +454,9 @@ public class CrossingServiceImpl implements CrossingService {
 					}
 				}
 			}
+
+			// Set the location based on what is selected as harvest location in both cases of crossing.
+			germplasm.setLocationId(harvestLocationId);
 
 			final Name name = new Name();
 			name.setReferenceId(CrossingServiceImpl.NAME_REFID);

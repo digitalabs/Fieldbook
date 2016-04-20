@@ -199,6 +199,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		germplasm.setTrialInstanceNumber(source.getTrialInstanceNumber());
 		germplasm.setReplicationNumber(source.getReplicationNumber());
+        germplasm.setPlotNumber(source.getPlotNumber());
 
 		list.add(germplasm);
 	}

@@ -69,7 +69,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				data: $(this).html(),
 				defaultContent: ''
 			});
-			if ($(this).data('term-data-type-id') == '1110') {
+			if ($(this).data('term-data-type-id') === 1110) {
+				// Column definition for Numeric data type
+
 				var minVal = ($(this).data('min-range'));
 				var maxVal = ($(this).data('max-range'));
 				var termId = $(this).data('term-id');
@@ -96,12 +98,28 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						$(td).data('term-id', termId);
 					},
 					render: function(data, type, full, meta) {
+						var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '');
+						var hiddenData = EscapeHTML.escape(data[1]);
+
 						if (data !== undefined) {
-							return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
+							return displayData + '<input type="hidden" value="' + hiddenData + '" />';
 						}
 					}
 				});
-			}else if ($(this).data('term-data-type-id') == '1130') {
+			} else if ($(this).data('term-data-type-id') === 1120) {
+				// Column definition for Character data type
+
+
+				columnsDef.push({
+					defaultContent: '',
+					targets: columns.length - 1,
+					render: function(data, type, full, meta) {
+						return EscapeHTML.escape(data);
+					}
+				});
+			} else if ($(this).data('term-data-type-id') === 1130) {
+				// Column definition for Categorical data type
+
 				if ($(this).data('term-valid-values') == null) {
 					$(this).data('term-valid-values', '');
 				}
@@ -163,10 +181,11 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							var showDescription = window.isCategoricalDescriptionView ? 'style="display:none"' : '';
 							var showName = !window.isCategoricalDescriptionView ? 'style="display:none"' : '';
 
-							var categoricalNameDom = '<span class="fbk-measurement-categorical-name" '+ showName  + '>' + data[1] + '</span>';
-							var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" '+ showDescription  + '>' + data[0] + '</span>';
+							var categoricalNameDom = '<span class="fbk-measurement-categorical-name" '+ showName  + '>' + EscapeHTML.escape(data[1]) + '</span>';
+							var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" '+ showDescription  + '>' + EscapeHTML.escape(data[0]) + '</span>';
 
-							return (isVariates ? categoricalNameDom + categoricalDescDom : data[1]) + '<input type="hidden" value="' + data[2] + '" />';
+							return (isVariates ? categoricalNameDom + categoricalDescDom : EscapeHTML.escape(data[1])) +
+								'<input type="hidden" value="' + EscapeHTML.escape(data[2]) + '" />';
 						}
 					}
 				});
@@ -182,7 +201,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == '8250') {
@@ -194,7 +213,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == 'Action') {
@@ -206,7 +225,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					width: '50px',
 					render: function(data, type, full, meta) {
 						return '<a href="javascript: editExperiment(&quot;' + tableIdentifier + '&quot;,' +
-							data + ',' + meta.row + ')" class="fbk-edit-experiment"></a>';
+							EscapeHTML.escape(data) + ',' + meta.row + ')" class="fbk-edit-experiment"></a>';
 					}
 				});
 			}
@@ -410,14 +429,19 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 					}
 				});
 			} else {
-				columns.push({data: $(this).html()});
+				columns.push({
+					data: $(this).html(),
+					render: function(data, type, row) {
+						return EscapeHTML.escape(data);
+					}
+				});
 			}
 
 			if ($(this).data('term-data-type-id') == '1130' || $(this).data('term-data-type-id') == '1110') {
 				columnsDef.push({
 					targets: columns.length - 1,
 					render: function(data, type, full, meta) {
-						return ((data[0] != null) ? data[0] :  '');
+						return EscapeHTML.escape((data[0] != null) ? data[0] :  '');
 					}
 				});
 			}
@@ -1264,7 +1288,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == '8250') {
@@ -1275,7 +1299,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else {
@@ -1284,9 +1308,9 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						if (data !== undefined) {
 							if (Array.isArray(data)) {
-								return ((data[0] != null) ? data[0] :  '');
+								return EscapeHTML.escape((data[0] != null) ? data[0] :  '');
 							} else {
-								return data;
+								return EscapeHTML.escape(data);
 							}
 						}
 					}

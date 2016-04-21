@@ -8,7 +8,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.pojos.GermplasmList;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -23,7 +22,6 @@ public class LabelPrintingProcessingParams {
 	private FieldMapTrialInstanceInfo instanceInfo;
 	private List<MeasurementRow> instanceMeasurements;
 	private Map<Integer, String> userSpecifiedLabels;
-	private GermplasmList stockList;
 	private boolean isStockList;
 	private Map<String, InventoryDetails> inventoryDetailsMap;
 
@@ -93,14 +91,6 @@ public class LabelPrintingProcessingParams {
 
 	public void setAllFieldIDs(List<Integer> allFieldIds) {
 		this.allFieldIDs = allFieldIds;
-	}
-
-	public GermplasmList getStockList() {
-		return this.stockList;
-	}
-
-	public void setStockList(GermplasmList stockList) {
-		this.stockList = stockList;
 	}
 
 	public boolean isStockList() {

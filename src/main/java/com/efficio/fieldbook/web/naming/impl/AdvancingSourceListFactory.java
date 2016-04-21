@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
-
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.Study;
@@ -31,11 +33,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 
 @Service
 @Transactional
@@ -86,6 +83,19 @@ public class AdvancingSourceListFactory {
 						&& !advanceInfo.getSelectedTrialInstances().contains(source.getTrialInstanceNumber())) {
 					continue;
 				}
+
+				// If study is Trail then setting data if trail instance is not null
+				if(source.getTrialInstanceNumber() != null){
+					MeasurementRow trialInstanceObservations =
+							workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()));
+
+					source.setTrailInstanceObservation(trialInstanceObservations);
+				}
+
+				source.setStudyType(workbook.getStudyDetails().getStudyType());
+
+				// Setting conditions for Breeders Cross ID
+				source.setConditions(workbook.getConditions());
 
 				// Only advance entries for selected replications within an environment
 				source.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));

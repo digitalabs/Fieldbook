@@ -10,26 +10,32 @@
 
 package com.efficio.fieldbook.web.label.printing.controller;
 
-import com.efficio.fieldbook.service.api.LabelPrintingService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.label.printing.constant.LabelPrintingFileTypes;
-import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
-import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import net.sf.jasperreports.engine.JRException;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -69,31 +75,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.efficio.fieldbook.service.api.LabelPrintingService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.label.printing.constant.LabelPrintingFileTypes;
+import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
+import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import net.sf.jasperreports.engine.JRException;
 
 /**
  * The Class LabelPrintingController.
@@ -102,27 +103,43 @@ import java.util.Map;
  */
 @Controller @RequestMapping({LabelPrintingController.URL}) public class LabelPrintingController extends AbstractBaseFieldbookController {
 
-	/** The Constant URL. */
+	/**
+	 * The Constant URL.
+	 */
 	public static final String URL = "/LabelPrinting/specifyLabelDetails";
 	static final String IS_SUCCESS = "isSuccess";
 	private static final String AVAILABLE_FIELDS = "availableFields";
-	/** The Constant LOG. */
+	/**
+	 * The Constant LOG.
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
-	/** The Constant BUFFER_SIZE. */
+	/**
+	 * The Constant BUFFER_SIZE.
+	 */
 	private static final int BUFFER_SIZE = 4096 * 4;
-	/** The user label printing. */
+	/**
+	 * The user label printing.
+	 */
 	@Resource
 	private UserLabelPrinting userLabelPrinting;
-	/** The fieldbook middleware service. */
+	/**
+	 * The fieldbook middleware service.
+	 */
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-	/** The label printing service. */
+	/**
+	 * The label printing service.
+	 */
 	@Resource
 	private LabelPrintingService labelPrintingService;
-	/** The user fieldmap. */
+	/**
+	 * The user fieldmap.
+	 */
 	@Resource
 	private UserFieldmap userFieldmap;
-	/** The message source. */
+	/**
+	 * The message source.
+	 */
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 
@@ -144,11 +161,11 @@ import java.util.Map;
 	/**
 	 * Show trial label details.
 	 *
-	 * @param form the form
-	 * @param model the model
+	 * @param form    the form
+	 * @param model   the model
 	 * @param session the session
-	 * @param id the id
-	 * @param locale the locale
+	 * @param id      the id
+	 * @param locale  the locale
 	 * @return the string
 	 */
 	@RequestMapping(value = "/trial/{id}", method = RequestMethod.GET)
@@ -196,11 +213,11 @@ import java.util.Map;
 	/**
 	 * Show nursery label details.
 	 *
-	 * @param form the form
-	 * @param model the model
+	 * @param form    the form
+	 * @param model   the model
 	 * @param session the session
-	 * @param id the id
-	 * @param locale the locale
+	 * @param id      the id
+	 * @param locale  the locale
 	 * @return the string
 	 */
 	@RequestMapping(value = "/nursery/{id}", method = RequestMethod.GET)
@@ -244,10 +261,10 @@ import java.util.Map;
 	/**
 	 * Show fieldmap label details.
 	 *
-	 * @param form the form
-	 * @param model the model
+	 * @param form    the form
+	 * @param model   the model
 	 * @param session the session
-	 * @param locale the locale
+	 * @param locale  the locale
 	 * @return the string
 	 */
 	@RequestMapping(value = "/fieldmap", method = RequestMethod.GET)
@@ -357,7 +374,7 @@ import java.util.Map;
 	 * Generate default filename.
 	 *
 	 * @param userLabelPrinting the user label printing
-	 * @param isTrial the is trial
+	 * @param isTrial           the is trial
 	 * @return the string
 	 */
 	private String generateDefaultFilename(UserLabelPrinting userLabelPrinting, boolean isTrial) {
@@ -435,9 +452,9 @@ import java.util.Map;
 	/**
 	 * Submits the details.
 	 *
-	 * @param form the form
-	 * @param result the result
-	 * @param model the model
+	 * @param form     the form
+	 * @param result   the result
+	 * @param model    the model
 	 * @param response the response
 	 * @return the string
 	 */
@@ -513,7 +530,6 @@ import java.util.Map;
 	Map<String, Object> generateLabels(List<StudyTrialInstanceInfo> trialInstances, boolean isCustomReport) {
 		Map<String, Object> results = new HashMap<>();
 
-
 		try {
 			if (isCustomReport) {
 				generateLabelForCustomReports(results);
@@ -541,7 +557,8 @@ import java.util.Map;
 		return results;
 	}
 
-	void generateLabelForLabelTypes(List<StudyTrialInstanceInfo> trialInstances, Map<String, Object> results) throws LabelPrintingException {
+	void generateLabelForLabelTypes(List<StudyTrialInstanceInfo> trialInstances, Map<String, Object> results)
+			throws LabelPrintingException {
 		final String fileName;
 		final LabelPrintingFileTypes selectedLabelPrintingType =
 				LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
@@ -567,13 +584,13 @@ import java.util.Map;
 
 	}
 
-	void generateLabelForCustomReports(Map<String, Object> results)
-			throws JRException, IOException, BuildReportException {
+	void generateLabelForCustomReports(Map<String, Object> results) throws JRException, IOException, BuildReportException {
 		final Integer studyId = this.userLabelPrinting.getStudyId();
 		final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
-		final Reporter rep = this.reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId,
-				this.contextUtil.getProjectInContext().getProjectName(), byteStream);
+		final Reporter rep = this.reportService
+				.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId, this.contextUtil.getProjectInContext().getProjectName(),
+						byteStream);
 
 		// additionally creates the file in 'target' folder, for human
 		// validation ;)
@@ -642,13 +659,13 @@ import java.util.Map;
 
 		} catch (JAXBException e) {
 			LabelPrintingController.LOG.error(this.messageSource
-					.getMessage("label.printing.error.parsing.preset.xml", new String[] { }, LocaleContextHolder.getLocale()), e);
+					.getMessage("label.printing.error.parsing.preset.xml", new String[] {}, LocaleContextHolder.getLocale()), e);
 
 		} catch (LabelPrintingException e) {
-			final String labelError = this.messageSource.getMessage(e.getLabelError(),new String[]{},LocaleContextHolder.getLocale());
+			final String labelError = this.messageSource.getMessage(e.getLabelError(), new String[] {}, LocaleContextHolder.getLocale());
 
-			LabelPrintingController.LOG.error(this.messageSource
-					.getMessage(e.getErrorCode(),  new String[] {labelError}, LocaleContextHolder.getLocale()), e);
+			LabelPrintingController.LOG
+					.error(this.messageSource.getMessage(e.getErrorCode(), new String[] {labelError}, LocaleContextHolder.getLocale()), e);
 		}
 
 		return new LabelPrintingSetting();
@@ -761,7 +778,6 @@ import java.util.Map;
 	}
 
 	/**
-	 *
 	 * @param rawSettings
 	 * @return
 	 */
@@ -838,7 +854,7 @@ import java.util.Map;
 	 * Generate trial instances from selected field maps.
 	 *
 	 * @param fieldMapInfoList the field map info list
-	 * @param form the form
+	 * @param form             the form
 	 * @return the list
 	 */
 	private List<StudyTrialInstanceInfo> generateTrialInstancesFromSelectedFieldMaps(List<FieldMapInfo> fieldMapInfoList,
@@ -918,6 +934,7 @@ import java.util.Map;
 
 	/**
 	 * Enable setting of reportService so we can inject dependency in tests runtime
+	 *
 	 * @param reportService
 	 */
 	void setReportService(ReportService reportService) {

@@ -18,7 +18,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -365,6 +364,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				names.add(name);
 				cross.setNames(names);
 				final AdvancingSource advancingSource = new AdvancingSource(cross);
+				//TODO add trail instance number
+				advancingSource.setConditions(this.userSelection.getWorkbook().getConditions());
+				advancingSource.setStudyType(this.userSelection.getWorkbook().getStudyDetails().getStudyType());
 				rows.add(advancingSource);
 				if (cross.getGid() != null && NumberUtils.isNumber(cross.getGid())) {
 					gids.add(Integer.valueOf(cross.getGid()));
@@ -564,12 +566,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final Integer localRecordId = 0;
 
 		// Common name fields
-		final Integer nDate = gDate;
-		final Integer nRef = 0;
+        final Integer nRef = 0;
 
 		// Create germplasms to save - Map<Germplasm, List<Name>>
 		for (final ImportedGermplasm importedGermplasm : form.getGermplasmList()) {
-
 			Integer gid = null;
 
 			if (importedGermplasm.getGid() != null) {
@@ -588,7 +588,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			for (final Name name : names) {
 
 				name.setLocationId(locationId);
-				name.setNdate(nDate);
+				name.setNdate(gDate);
 				name.setUserId(currentUserID);
 				name.setReferenceId(nRef);
 
@@ -600,21 +600,23 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				}
 			}
 
-			final Integer trueGdate = harvestDate != null && !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate;
-			final Germplasm germplasm =
-					new Germplasm(gid, methodId, gnpgs, gpid1, gpid2, currentUserID, lgid, locationId, trueGdate, preferredName);
-			germplasm.setMgid(mgid);
+			final Integer trueGdate = !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate;
+			final Germplasm germplasm;
+            germplasm = new Germplasm(gid, methodId, gnpgs, gpid1, gpid2, currentUserID, lgid, locationId, trueGdate, preferredName);
 
-			germplasms.add(new ImmutablePair<Germplasm, List<Name>>(germplasm, names));
+            germplasm.setMgid(mgid);
 
-			// Create list data items to save - Map<Germplasm,
-			// GermplasmListData>
+
+			germplasms.add(new ImmutablePair<>(germplasm, names));
+
+			// Create list data items to save - Map<Germplasm, GermplasmListData>
 			final Integer entryId = importedGermplasm.getEntryId();
 			final String entryCode = importedGermplasm.getEntryCode();
 			final String seedSource = importedGermplasm.getSource();
 			final String designation = importedGermplasm.getDesig();
 			String groupName = importedGermplasm.getCross();
-			if (groupName == null) {
+
+            if (groupName == null) {
 				// Default value if null
 				groupName = "-";
 			}
@@ -625,6 +627,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			listDataItems.add(new ImmutablePair<Germplasm, GermplasmListData>(germplasm, listData));
 
+			List<Attribute> attributesPerGermplasm = Lists.newArrayList();
 			// Add the seed source/origin attribute (which is generated based on format strings configured in crossing.properties) to the
 			// germplasm in FieldbookServiceImpl.advanceNursery().
 			final Attribute originAttribute = new Attribute();
@@ -634,7 +637,37 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			originAttribute.setAdate(gDate);
 			originAttribute.setLocationId(locationId);
 			// originAttribute gid will be set when saving once gid is known
-			germplasmAttributes.add(new ImmutablePair<Germplasm, List<Attribute>>(germplasm, Lists.newArrayList(originAttribute)));
+			attributesPerGermplasm.add(originAttribute);
+
+			//Adding Instance number, plot number and replication number as attributes of germplasm for trial advancing
+			if(this.userSelection.isTrial()){
+				final Attribute plotNumberAttribute = new Attribute();
+				plotNumberAttribute.setAval(importedGermplasm.getPlotNumber());
+				plotNumberAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","PLOT_NUMBER").getFldno());
+				plotNumberAttribute.setUserId(currentUserID);
+				plotNumberAttribute.setAdate(gDate);
+				plotNumberAttribute.setLocationId(locationId);
+				attributesPerGermplasm.add(plotNumberAttribute);
+
+				final Attribute repNoAttribute = new Attribute();
+				repNoAttribute.setAval(importedGermplasm.getReplicationNumber());
+				repNoAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","REP_NUMBER").getFldno());
+				repNoAttribute.setUserId(currentUserID);
+				repNoAttribute.setAdate(gDate);
+				repNoAttribute.setLocationId(locationId);
+				attributesPerGermplasm.add(repNoAttribute);
+
+				final Attribute instanceNoAttribute = new Attribute();
+				instanceNoAttribute.setAval(importedGermplasm.getTrialInstanceNumber());
+				instanceNoAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","INSTANCE_NUMBER").getFldno());
+				instanceNoAttribute.setUserId(currentUserID);
+				instanceNoAttribute.setAdate(gDate);
+				instanceNoAttribute.setLocationId(locationId);
+				attributesPerGermplasm.add(instanceNoAttribute);
+			}
+
+
+			germplasmAttributes.add(new ImmutablePair<Germplasm, List<Attribute>>(germplasm, Lists.newArrayList(attributesPerGermplasm)));
 		}
 	}
 

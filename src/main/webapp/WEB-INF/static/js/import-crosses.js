@@ -1,5 +1,5 @@
 /*global showErrorMessage, createErrorNotification, crossingImportErrorHeader, isInt, crossingExportErrorHeader, invalidImportedFile,
-getJquerySafeId, SaveAdvanceList*/
+getJquerySafeId, SaveAdvanceList, BreedingMethodsFunctions, selectedBreedingMethodId */
 var ImportCrosses = {
 	CROSSES_URL: '/Fieldbook/crosses',
 	showFavoriteMethodsOnly: true,
@@ -92,13 +92,18 @@ var ImportCrosses = {
 	},
 
 	preselectCrossBreedingMethod: function(breedingMethodId) {
-		// we indicate that we're using a breeding method
-		var breedingMethodText = "";
-		$('#breedingMethodId').val(selectedBreedingMethodId);
-		$('#breedingMethodDropdown').select2('val', parseInt(selectedBreedingMethodId));
-		if ($('#breedingMethodDropdown').select2('data')) {
-			breedingMethodText = $('#breedingMethodDropdown').select2('data').text;
-			$('#preSelectedBreedingMethodDropdown').val(breedingMethodText);
+		'use strict';
+		if (breedingMethodId !== '0') {
+			// in addition, if the user has already selected a breeding method, we should pre select that
+			var breedingMethodText = '';
+			$('#breedingMethodId').val(breedingMethodId);
+			$('#breedingMethodDropdown').select2('val', parseInt(breedingMethodId));
+			if ($('#breedingMethodDropdown').select2('data')) {
+				breedingMethodText = $('#breedingMethodDropdown').select2('data').text;
+				$('#preSelectedBreedingMethodDropdown').val(breedingMethodText);
+			}
+		} else {
+			$('#preSelectedBreedingMethodDropdown').val($.fieldbookMessages.determinedFromParentalLines);
 		}
 	},
 
@@ -186,12 +191,7 @@ var ImportCrosses = {
 
 		// this indicates that the user went through the crossing manager, and should have the breeding method setting fields disabled
 		if (selectedBreedingMethodId) {
-			if (selectedBreedingMethodId != '0') {
-				// in addition, if the user has already selected a breeding method, we should pre select that
-				ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
-			} else {
-				$('#preSelectedBreedingMethodDropdown').val($.fieldbookMessages.determinedFromParentalLines);
-			}
+			ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
 		}
 
 		$('.cross-import-name-setting').off('change');

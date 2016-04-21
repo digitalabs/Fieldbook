@@ -190,8 +190,7 @@ var ImportCrosses = {
 				// in addition, if the user has already selected a breeding method, we should pre select that
 				ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
 			} else {
-				//TODO localise
-				$('#preSelectedBreedingMethodDropdown').val("Determined from parental lines");
+				$('#preSelectedBreedingMethodDropdown').val($.fieldbookMessages.determinedFromParentalLines);
 			}
 		}
 

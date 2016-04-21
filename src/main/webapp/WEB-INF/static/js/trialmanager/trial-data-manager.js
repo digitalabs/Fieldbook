@@ -31,7 +31,8 @@
 			var settingRegistry = {};
 			var settingsArray = [];
 			var saveEventListeners = {};
-
+            var TRIAL_LOCATION_NAME_INDEX = 8180;
+            var LOCATION_NAME_ID = 8190;
 			var propagateChange = function(targetRegistry, dataKey, newValue) {
 				if (targetRegistry[dataKey]) {
 					angular.forEach(targetRegistry[dataKey], function(updateFunction) {
@@ -504,6 +505,14 @@
 
 						}
 					}
+                    // set selected location on save
+                    if (service.currentData.trialSettings.userInput[LOCATION_NAME_ID] != '') {
+                        selectedLocationForTrail = {
+                            name: service.currentData.trialSettings.userInput[TRIAL_LOCATION_NAME_INDEX],
+                            id: service.currentData.trialSettings.userInput[LOCATION_NAME_ID]
+                        };
+                        setSelectedLocation();
+                    }
 				},
 				onUpdateData: function(dataKey, updateFunction) {
 					if (!dataRegistry[dataKey]) {

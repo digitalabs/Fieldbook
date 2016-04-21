@@ -3995,3 +3995,68 @@ function onMeasurementsObservationLoad(isCategoricalDisplay) {
 	});
 
 }
+
+/**
+ * The following contructor contains utility functions for escaping html content from a string
+ * Logic is extracted from lodash 4.11.1 source: https://github.com/lodash/lodash/blob/master/dist/lodash.core.js
+ * @constructor
+ */
+function EscapeUtilityConstructor() {
+	/** Used to match HTML entities and HTML characters. */
+	this.unescapedHtmlRegEx = /[&<>"'`]/g;
+	this.hasUnescapedHtmlRegEx = RegExp(this.unescapedHtmlRegEx.source);
+}
+
+/**
+ * Converts `value` to a string. An empty string is returned for `null`
+ * and `undefined` values. The sign of `-0` is preserved.
+ *
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ * @example
+ *
+ * toString(null);
+ * // => ''
+ *
+ * toString(-0);
+ * // => '-0'
+ *
+ * toString([1, 2, 3]);
+ * // => '1,2,3'
+ */
+
+EscapeUtilityConstructor.prototype.toString = function(value) {
+	if (typeof value == 'string') {
+		return value;
+	}
+	return value == null ? '' : (value + '');
+};
+
+/**
+ * Used to convert characters to HTML entities.
+ *
+ * @private
+ * @param {string} chr The matched character to escape.
+ * @returns {string} Returns the escaped character.
+ */
+EscapeUtilityConstructor.prototype.escape = function(string)
+{
+	var htmlEscapes = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#39;',
+		'`': '&#96;'
+	};
+
+	string = this.toString(string);
+
+	return (string && this.hasUnescapedHtmlRegEx.test(string))
+		? string.replace(this.unescapedHtmlRegEx, function(chr) {
+			return htmlEscapes[chr];
+	}) : string;
+};
+
+/* make a global instance of EscapeUtility usable to all Fieldbook modules */
+var EscapeHTML = new EscapeUtilityConstructor();

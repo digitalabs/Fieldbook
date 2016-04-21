@@ -2010,12 +2010,12 @@ input.review-select-all{
 
 .import-crosses-from-file #goBackToImportCrossesButton,
 .import-crosses-from-file #settingsNextButton,
-#settingsNextButtonUpdateList,
-.import-crosses-from-file #crossingBreedingMethodText,
-.import-crosses-from-file #crossesSelectBreedingMethod {
+#settingsNextButtonUpdateList {
     display: inline-block;
 }
 
+.import-crosses-from-file #crossingBreedingMethodText,
+.import-crosses-from-file #crossesSelectBreedingMethod,
 #crossesPreSelectedBreedingMethod {
     display: block;
 }

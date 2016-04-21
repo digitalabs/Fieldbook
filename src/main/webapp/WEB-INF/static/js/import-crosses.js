@@ -93,8 +93,13 @@ var ImportCrosses = {
 
 	preselectCrossBreedingMethod: function(breedingMethodId) {
 		// we indicate that we're using a breeding method
+		var breedingMethodText = "";
 		$('#breedingMethodId').val(selectedBreedingMethodId);
 		$('#breedingMethodDropdown').select2('val', parseInt(selectedBreedingMethodId));
+		if ($('#breedingMethodDropdown').select2('data')) {
+			breedingMethodText = $('#breedingMethodDropdown').select2('data').text;
+			$('#preSelectedBreedingMethodDropdown').val(breedingMethodText);
+		}
 	},
 
 	goBackToPage: function(hiddenModalSelector, shownModalSelector) {

@@ -62,7 +62,11 @@ public class LabelPrintingServiceTest {
 
 	public static final Integer[] BASE_LABEL_PRINTING_FIELD_IDS = new Integer[] {
 		AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(),
-		AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()};
+		 AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()};
+
+	public static final Integer[] BASE_LABEL_PRINTING_FIELD_TRIAL_IDS = new Integer[] {
+			AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(),
+			AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()};
 
 	@Before
 	public void setUp() throws Exception {
@@ -88,7 +92,7 @@ public class LabelPrintingServiceTest {
 						LabelPrintingServiceTest.DUMMY_TRIAL_ID);
 
 		Assert.assertNotNull(retrieved);
-		this.verifyBaseLabelFieldsPresent(retrieved);
+		this.verifyBaseLabelFieldsPresent(retrieved, LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_TRIAL_IDS);
 		this.verifyLabelListContainsList(retrieved, trialSettingLabels,
 				"Retrieved available label list does not contain all trial setting related labels");
 		this.verifyLabelListContainsList(retrieved, trialEnvironmentLabels,
@@ -118,7 +122,7 @@ public class LabelPrintingServiceTest {
 						.getAvailableLabelFieldsForStudy(true, true, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_TRIAL_ID);
 
 		Assert.assertNotNull(retrieved);
-		this.verifyBaseLabelFieldsPresent(retrieved);
+		this.verifyBaseLabelFieldsPresent(retrieved , LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_TRIAL_IDS);
 		this.verifyLabelListContainsList(retrieved, trialSettingLabels,
 				"Retrieved available label list does not contain all trial setting related labels");
 		this.verifyLabelListContainsList(retrieved, trialEnvironmentLabels,
@@ -145,7 +149,7 @@ public class LabelPrintingServiceTest {
 						LabelPrintingServiceTest.DUMMY_NURSERY_ID);
 
 		Assert.assertNotNull(retrieved);
-		this.verifyBaseLabelFieldsPresent(retrieved);
+		this.verifyBaseLabelFieldsPresent(retrieved , LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_IDS);
 		this.verifyLabelListContainsList(retrieved, nurserySettingLabels,
 				"Retrieved available label list does not contain all nursery management related labels");
 		this.verifyLabelListContainsList(retrieved, traitLabels, "Retrieved available label list does not contain all trait related labels");
@@ -170,7 +174,7 @@ public class LabelPrintingServiceTest {
 						LabelPrintingServiceTest.DUMMY_NURSERY_ID);
 
 		Assert.assertNotNull(retrieved);
-		this.verifyBaseLabelFieldsPresent(retrieved);
+		this.verifyBaseLabelFieldsPresent(retrieved, LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_IDS);
 		this.verifyLabelListContainsList(retrieved, nurserySettingLabels,
 				"Retrieved available label list does not contain all nursery management related labels");
 		this.verifyLabelListContainsList(retrieved, traitLabels, "Retrieved available label list does not contain all trait related labels");
@@ -251,18 +255,19 @@ public class LabelPrintingServiceTest {
 		}
 	}
 
-	protected void verifyBaseLabelFieldsPresent(final List<LabelFields> forVerification) {
-		for (final Integer baseLabelPrintingFieldId : LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_IDS) {
+	protected void verifyBaseLabelFieldsPresent(final List<LabelFields> forVerification , Integer[] baseFieldIDs) {
+		for (final Integer baseLabelPrintingFieldId : baseFieldIDs) {
 			boolean found = false;
 
 			for (final LabelFields labelFields : forVerification) {
 				if (baseLabelPrintingFieldId.equals(labelFields.getId())) {
 					found = true;
-					break;
 				}
 			}
+			if(!found){
+				Assert.assertTrue("Base label field not present in values retrieved from service", found);
+			}
 
-			Assert.assertTrue("Base label field not present in values retrieved from service", found);
 		}
 	}
 

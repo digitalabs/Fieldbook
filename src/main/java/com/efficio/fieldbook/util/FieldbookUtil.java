@@ -1,26 +1,26 @@
+
 package com.efficio.fieldbook.util;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -32,9 +32,6 @@ public class FieldbookUtil {
 	private static FieldbookUtil instance;
 
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
-	private static final char[] HEX_CHARS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7',
-			'8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-
 	static {
 		FieldbookUtil.instance = new FieldbookUtil();
 	}
@@ -82,36 +79,6 @@ public class FieldbookUtil {
 		}
 	}
 
-	/**
-	 * return encoded file name
-	 */
-	public static String getDownloadFileName(String filename, HttpServletRequest request) {
-		String newFilename = filename;
-		try {
-			if (request.getHeader("User-Agent").indexOf("MSIE") != -1
-					|| request.getHeader("User-Agent").indexOf("Trident") != -1) {
-				URI uri = new URI(null, null, filename, null);
-				newFilename = uri.toASCIIString();
-				return newFilename;
-			}
-			byte[] bytes = filename.getBytes("UTF-8");
-			StringBuilder buff = new StringBuilder(bytes.length << 2);
-			buff.append("=?UTF-8?Q?");
-			for (byte b : bytes) {
-				int unsignedByte = b & 0xFF;
-				buff.append('=').append(FieldbookUtil.HEX_CHARS[unsignedByte >> 4])
-						.append(FieldbookUtil.HEX_CHARS[unsignedByte & 0xF]);
-			}
-			return buff.append("?=").toString();
-
-		} catch (URISyntaxException e) {
-			FieldbookUtil.LOG.error(e.getMessage(), e);
-		} catch (UnsupportedEncodingException e) {
-			FieldbookUtil.LOG.error(e.getMessage(), e);
-		}
-		return newFilename;
-	}
-
 	public static String generateEntryCode(int index) {
 		return AppConstants.ENTRY_CODE_PREFIX.getString() + String.format("%04d", index);
 	}
@@ -124,33 +91,27 @@ public class FieldbookUtil {
 		return false;
 	}
 
-	public static void mergeCrossesPlotDuplicateData(ImportedCrosses crosses,
-			List<ImportedCrosses> importedGermplasmList) {
+	public static void mergeCrossesPlotDuplicateData(ImportedCrosses crosses, List<ImportedCrosses> importedGermplasmList) {
 		if (FieldbookUtil.isPlotDuplicateNonFirstInstance(crosses)) {
 			// get the 1st instance of duplicate from the list
 			Integer firstInstanceDuplicate = crosses.getDuplicateEntries().iterator().next();
 			// needed to minus 1 since a list is 0 based
-			ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList
-					.get(firstInstanceDuplicate - 1);
+			ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList.get(firstInstanceDuplicate - 1);
 			crosses.setGid(firstInstanceCrossGermplasm.getGid());
 			crosses.setCross(firstInstanceCrossGermplasm.getCross());
 			crosses.setDesig(firstInstanceCrossGermplasm.getDesig());
 		}
 	}
 
-	public static boolean isContinueCrossingMerge(boolean hasPlotDuplicate,
-			boolean isPreservePlotDuplicate, ImportedCrosses cross) {
-		if (hasPlotDuplicate && !isPreservePlotDuplicate
-				&& FieldbookUtil.isPlotDuplicateNonFirstInstance(cross)) {
+	public static boolean isContinueCrossingMerge(boolean hasPlotDuplicate, boolean isPreservePlotDuplicate, ImportedCrosses cross) {
+		if (hasPlotDuplicate && !isPreservePlotDuplicate && FieldbookUtil.isPlotDuplicateNonFirstInstance(cross)) {
 			return true;
 		}
 		return false;
 	}
 
-	public static void copyDupeNotesToListDataProject(List<ListDataProject> dataProjectList,
-			List<ImportedCrosses> importedCrosses) {
-		if (dataProjectList != null && importedCrosses != null
-				&& dataProjectList.size() == importedCrosses.size()) {
+	public static void copyDupeNotesToListDataProject(List<ListDataProject> dataProjectList, List<ImportedCrosses> importedCrosses) {
+		if (dataProjectList != null && importedCrosses != null && dataProjectList.size() == importedCrosses.size()) {
 			for (int i = 0; i < dataProjectList.size(); i++) {
 				dataProjectList.get(i).setDuplicate(importedCrosses.get(i).getDuplicate());
 			}
@@ -160,8 +121,7 @@ public class FieldbookUtil {
 	public static List<Integer> getFilterForMeansAndStatisticalVars() {
 
 		List<Integer> isAIds = new ArrayList<Integer>();
-		StringTokenizer token = new StringTokenizer(
-				AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
+		StringTokenizer token = new StringTokenizer(AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
 		while (token.hasMoreTokens()) {
 			isAIds.add(Integer.valueOf(token.nextToken()));
 		}
@@ -169,10 +129,53 @@ public class FieldbookUtil {
 	}
 
 	public static boolean isFieldmapColOrRange(MeasurementVariable var) {
-		if (var.getTermId() == TermId.COLUMN_NO.getId()
-				|| var.getTermId() == TermId.RANGE_NO.getId()) {
+		if (var.getTermId() == TermId.COLUMN_NO.getId() || var.getTermId() == TermId.RANGE_NO.getId()) {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Sets the Content Disposition response header based on the user agent.
+	 * 
+	 * @param filename
+	 * @param httpHeaders
+	 * @param userAgent
+	 */
+	public static void resolveContentDisposition(String filename, HttpHeaders httpHeaders, String userAgent) {
+
+		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
+
+		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
+			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
+			httpHeaders.set("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
+		} else {
+			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
+			httpHeaders.set("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
+					+ encodedFilename + "\";");
+		}
+
+	}
+
+	/**
+	 * Sets the Content Disposition response header based on the user agent.
+	 * 
+	 * @param filename
+	 * @param response
+	 * @param userAgent
+	 */
+	public static void resolveContentDisposition(String filename, HttpServletResponse response, String userAgent) {
+
+		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
+
+		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
+			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
+			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
+		} else {
+			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
+			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
+					+ encodedFilename + "\";");
+		}
+
 	}
 }

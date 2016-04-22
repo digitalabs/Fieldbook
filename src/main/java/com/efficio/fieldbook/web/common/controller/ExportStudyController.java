@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -160,16 +161,16 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		final String outputFilename = new String(req.getParameter(OUTPUT_FILENAME).getBytes("iso-8859-1"), "UTF-8");
 		final String filename = new String(req.getParameter(FILENAME).getBytes("iso-8859-1"), "UTF-8");
-		final String contentType = req.getParameter(CONTENT_TYPE);
 
 		// the selected name + current date
 		final File xls = new File(outputFilename);
 		FileInputStream in;
 
-		response.setHeader("Content-disposition",
-				"attachment; filename=" + FieldbookUtil.getDownloadFileName(SettingsUtil.cleanSheetAndFileName(filename), req));
-		response.setContentType(contentType);
+		FieldbookUtil.resolveContentDisposition(filename, response, req.getHeader("User-Agent"));
+
+		response.setContentType(MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(filename));
 		response.setCharacterEncoding("UTF-8");
+
 		try {
 			in = new FileInputStream(xls);
 			final OutputStream out = response.getOutputStream();

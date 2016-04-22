@@ -189,13 +189,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 		}
 	}
 
-
-
-
-
-
-	@Ignore(
-			value = "Needs to resolve NPE and other data issues. Method under test is a highly likely candidate for refactoring, given complex logic path")
+	@Ignore(value = "Needs to resolve NPE and other data issues. Method under test is a highly likely candidate for refactoring, given complex logic path")
 	@Test
 	public void testPopulateUserSpecifiedLabelFieldsForNurseryEnvironmentDataOnly() {
 		String testDesigValue = "123";
@@ -205,7 +199,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 		List<FieldMapTrialInstanceInfo> input = new ArrayList<>();
 		input.add(LabelPrintingDataUtil.createFieldMapTrialInstanceInfo());
 
-		this.labelPrintingService.populateUserSpecifiedLabelFields(input, this.setupTestWorkbook(), testSelectedFields, false, false);
+		this.labelPrintingService.populateUserSpecifiedLabelFields(input, this.setupTestWorkbook(), testSelectedFields, false, false, null);
 
 		Assert.assertEquals(testDesigValue,
 				input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG.getId()));

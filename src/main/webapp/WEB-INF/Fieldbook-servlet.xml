@@ -262,13 +262,13 @@
 
 
 
-	<!-- Would be passed as a parameter when call getCrossExpansion so that 
+	<!-- Would be passed as a parameter when call getCrossExpansion so that
 		user has the capability to override the settings -->
 	<bean id="crossExpansionProperties"
 		class="org.generationcp.middleware.util.CrossExpansionProperties">
-		<property name="wheatLevel" value="${wheat.generation.level}" />
 		<property name="defaultLevel" value="${default.generation.level}" />
 		<property name="profile" value="${pedigree.profile}" />
+		<property name="hybridBreedingMethods" value="#{'${hybrid.breeding.methods}'.split(',')}" />
 	</bean>
 
 	<bean id="workbenchDataManager"
@@ -430,9 +430,21 @@
 		scope="prototype">
 		<aop:scoped-proxy />
 	</bean>
-
+	
 	<bean id="designImportParser"
 		class="com.efficio.fieldbook.web.util.parsing.DesignImportParser"
+		scope="prototype">
+		<aop:scoped-proxy />
+	</bean>
+
+	<bean id="designImportCsvParser"
+		class="com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser"
+		scope="prototype">
+		<aop:scoped-proxy />
+	</bean>
+	
+	<bean id="designImportExcelParser"
+		class="com.efficio.fieldbook.web.util.parsing.DesignImportExcelParser"
 		scope="prototype">
 		<aop:scoped-proxy />
 	</bean>
@@ -473,15 +485,25 @@
 		<property name="germplasmOriginTrialsDefault" value="${germplasm.origin.trials.default}"/>
 		<property name="germplasmOriginTrialsWheat" value="${germplasm.origin.trials.wheat}"/>
 		<property name="germplasmOriginTrialsMaize" value="${germplasm.origin.trials.maize}"/>
+        <property name="breedersCrossIDNursery" value="${breeders.cross.id.nursery}" />
+        <property name="breedersCrossIDTrial" value="${breeders.cross.id.trial}" />
 	</bean>
 	
-	<bean id="germplasmOriginGenerationService" class="org.generationcp.commons.service.impl.GermplasmOriginGenerationServiceImpl">
-		<property name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
-	</bean>
-
 	<bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
 		scope="request">
 		<aop:scoped-proxy />
+	</bean>
+	
+	<bean id="seedSourceGenerator" class="org.generationcp.commons.service.impl.SeedSourceGenerator">
+		<constructor-arg name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
+		<constructor-arg name="contextUtil" ref="contextUtil"/>
+		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableManager"/>
+	</bean>
+
+    <bean id="breedersCrossIDGenerator" class="org.generationcp.commons.service.impl.BreedersCrossIDGenerator">
+		<constructor-arg name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
+		<constructor-arg name="contextUtil" ref="contextUtil"/>
+		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableManager"/>
 	</bean>
 	
 	<bean id="jasperReportService" class="org.generationcp.commons.reports.service.impl.JasperReportServiceImpl"

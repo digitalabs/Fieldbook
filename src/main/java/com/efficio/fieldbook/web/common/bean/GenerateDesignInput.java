@@ -5,7 +5,11 @@ import org.generationcp.middleware.domain.dms.DesignTypeItem;
 
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 
-public class GeneratePresetDesignInput {
+/**
+ * This class is use to contain all the variables needed in generating design for the following design types: Preset Design (e.g.
+ * E30-Rep2-Block6-5Ind, E30-Rep3-Block6-5Ind, E50-Rep2-Block5-10Ind) and Custom Import Design. Used mainly in DesignImport feature.
+ */
+public class GenerateDesignInput {
 
 	private EnvironmentData environmentData;
 	private DesignTypeItem selectedDesignType;
@@ -13,7 +17,7 @@ public class GeneratePresetDesignInput {
 	private Integer startingPlotNo;
 	private Boolean hasNewEnvironmentAdded;
 
-	public GeneratePresetDesignInput() {
+	public GenerateDesignInput() {
 		this.environmentData = new EnvironmentData();
 		this.selectedDesignType = new DesignTypeItem();
 		this.startingEntryNo = 1;
@@ -21,7 +25,7 @@ public class GeneratePresetDesignInput {
 		this.hasNewEnvironmentAdded = false;
 	}
 
-	public GeneratePresetDesignInput(final EnvironmentData environmentData, final DesignTypeItem selectedDesignType,
+	public GenerateDesignInput(final EnvironmentData environmentData, final DesignTypeItem selectedDesignType,
 			final Integer startingEntryNo, final Integer startingPlotNo, final Boolean hasNewEnvironmentAdded) {
 		super();
 		this.environmentData = environmentData;

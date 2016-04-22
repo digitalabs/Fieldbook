@@ -43,7 +43,7 @@ public class MergeCheckServiceImplUnitTest {
 		int manner = 1;
 
 		List<ImportedGermplasm> newList =
-				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner, "");
+				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner);
 		Assert.assertEquals(12, newList.size());
 		Assert.assertTrue(newList.get(0).getEntryId().equals(checkList.get(0).getEntryId()));
 		Assert.assertTrue(newList.get(1).getEntryId().equals(primaryList.get(0).getEntryId()));
@@ -74,7 +74,7 @@ public class MergeCheckServiceImplUnitTest {
 		int manner = 1;
 
 		List<ImportedGermplasm> newList =
-				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner, "");
+				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner);
 
 		Assert.assertEquals(primaryList.size(), newList.size());
 		Assert.assertTrue(newList.get(0).getEntryId().equals(primaryList.get(0).getEntryId()));
@@ -105,7 +105,7 @@ public class MergeCheckServiceImplUnitTest {
 		int manner = 1;
 
 		List<ImportedGermplasm> newList =
-				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner, "10");
+				this.mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner);
 		Assert.assertEquals(12, newList.size());
 		Assert.assertTrue(newList.get(0).getEntryId().equals(checkList.get(0).getEntryId()));
 		Assert.assertTrue(newList.get(1).getEntryId().equals(primaryList.get(0).getEntryId()));
@@ -129,7 +129,7 @@ public class MergeCheckServiceImplUnitTest {
 			ImportedGermplasm germplasm = new ImportedGermplasm(entryId, prefix + entryId, null);
 			germplasm.setEntryCode(Integer.toString(entryId));
 			germplasm.setGid(Integer.toString(gid));
-			germplasm.setCheck(check);
+			germplasm.setEntryTypeValue(check);
 			list.add(germplasm);
 			gid++;
 		}

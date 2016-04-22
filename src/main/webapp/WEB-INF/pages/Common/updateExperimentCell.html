@@ -66,9 +66,12 @@ $(document).ready(function() {
 					function(index, value) {
 						var jsonVal;
 						if (value.id !== undefined) {
+							// show only name (code) if categoricalDescriptionView is false else show both key and description
+							var descriptionText = window.isCategoricalDescriptionView ? value.displayDescription : value.name;
+
 							jsonVal = {
 								'id': value.key,
-								'text': value.description,
+								'text': descriptionText,
 								'status': '0'
 							};
 						}

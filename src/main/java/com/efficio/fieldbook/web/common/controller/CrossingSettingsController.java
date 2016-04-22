@@ -323,7 +323,13 @@ public class CrossingSettingsController extends SettingsController {
 
 		for (final GermplasmListData listData : germplasmListDataList) {
 			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(listData));
-			importedCrosses.add(this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData));
+			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData);
+
+			if (importedCross.getGid() == null) {
+				throw new IllegalStateException(
+						"Cross germplsam record must already exist in database when using crossing manager to create crosses in Nurseries.");
+			}
+			importedCrosses.add(importedCross);
 		}
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 		importedCrossesList.setType(germplasmList.getType());

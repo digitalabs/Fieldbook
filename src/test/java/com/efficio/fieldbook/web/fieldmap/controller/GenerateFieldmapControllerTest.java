@@ -70,7 +70,7 @@ public class GenerateFieldmapControllerTest {
 		Assert.assertEquals("Request to controller should be success", HttpStatus.OK , output.getStatusCode());
 	}
 
-	@Test
+	@Test(expected=FieldbookException.class)
 	public void testExportExcelAssumeFailure() throws Exception {
 		/* Setup controller */
 		Mockito.when(this.userFieldmap.getBlockName()).thenReturn(GenerateFieldmapControllerTest.BLOCK_NAME);
@@ -78,11 +78,11 @@ public class GenerateFieldmapControllerTest {
 		Mockito.when(this.exportExcelService.exportFieldMapToExcel(Matchers.anyString(), Matchers.eq(this.userFieldmap))).thenThrow(
 				new FieldbookException("Something went wrong with writing the excel file"));
 
-		/* Call method to test, collect the output */
+		/*
+		 * Call method to test, collect the output
+		 * We now expect the controller to throw an exception
+		 */
 		ResponseEntity<FileSystemResource> output = generateFieldmapCtrlToTest.exportExcel(this.request);
-
-		// Verify that the export is success
-		Assert.assertEquals("Request to controller should throw an HTTP 500 error", HttpStatus.INTERNAL_SERVER_ERROR , output.getStatusCode());
 
 	}
 

@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.util;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -251,53 +252,18 @@ public class FieldbookUtilTest {
 	}
 
 	@Test
-	public void testResolveContentDispositionInternetExplorerForHttpHeaders() {
-
-		HttpHeaders httpHeaders = Mockito.mock(HttpHeaders.class);
-		FieldbookUtil.resolveContentDisposition(TEST_FILE_NAME, httpHeaders, USER_AGENT_INTERNET_EXLORER);
-
-		ArgumentCaptor<String> contentDispositionCaptor = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<String> valueCaptor = ArgumentCaptor.forClass(String.class);
-
-		Mockito.verify(httpHeaders).set(contentDispositionCaptor.capture(), valueCaptor.capture());
-
-		Assert.assertEquals("Content-disposition", contentDispositionCaptor.getValue());
-		Assert.assertEquals("If the user agent is MSIE or Trident, the Content-dispositon header value should not have 'filename*=' field",
-				"attachment; filename=\"test.xls\";", valueCaptor.getValue());
-	}
-
-	@Test
-	public void testCreateResponseEntityForFileDownload() {
+	public void testCreateResponseEntityForFileDownload() throws UnsupportedEncodingException {
 		File testFile = new File("testFile.xls");
-		ResponseEntity<FileSystemResource> result = FieldbookUtil.createResponseEntityForFileDownload(testFile,"RANDOM_BROWSER");
+		ResponseEntity<FileSystemResource> result = FieldbookUtil.createResponseEntityForFileDownload(testFile);
 
 		Assert.assertEquals("Make sure we get a http success", HttpStatus.OK, result.getStatusCode());
 
-		Assert.assertNotNull("Make sure Content-disposition header exists", result.getHeaders().get("Content-disposition"));
+		Assert.assertNotNull("Make sure Content-disposition header exists", result.getHeaders().get("Content-Disposition"));
 		Assert.assertNotNull("Make sure we have a Content-Type header",result.getHeaders().get("Content-Type"));
 		Assert.assertNotNull("Make sure we have a Content-Type header that contains at least 1 value", result.getHeaders().get("Content-Type").get(0));
 
 		// Were not testing the mime type detection here, see a separate unit test for FileUTils.detectMimeType(...)
-		Assert.assertTrue("Make sure tht content-type header has a charset", result.getHeaders().get("Content-Type").get(0).contains("charset=UTF-8"));
-	}
-
-	@Test
-	public void testResolveContentDispositionOtherBrowserForHttpHeaders() {
-
-		HttpHeaders httpHeaders = Mockito.mock(HttpHeaders.class);
-		FieldbookUtil.resolveContentDisposition(TEST_FILE_NAME, httpHeaders, USER_AGENT_CHROME);
-
-		ArgumentCaptor.forClass(String.class);
-
-		ArgumentCaptor<String> contentDispositionCaptor = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<String> valueCaptor = ArgumentCaptor.forClass(String.class);
-
-		Mockito.verify(httpHeaders).set(contentDispositionCaptor.capture(), valueCaptor.capture());
-
-		Assert.assertEquals("Content-disposition", contentDispositionCaptor.getValue());
-		Assert.assertEquals(
-				"If the user agent is not Internet Explorer, the Content-dispositon header value should have 'filename*=' parameter",
-				"attachment; filename=\"test.xls\"; filename*=\"UTF-8''test.xls\";", valueCaptor.getValue());
+		Assert.assertTrue("Make sure tht content-type header has a charset", result.getHeaders().get("Content-Type").get(0).contains("charset=utf-8"));
 	}
 
 }

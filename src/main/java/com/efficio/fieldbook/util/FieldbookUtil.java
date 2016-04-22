@@ -2,6 +2,7 @@ package com.efficio.fieldbook.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +62,7 @@ public class FieldbookUtil {
 			}
 
 		}
-		return new ArrayList<Integer>();
+		return new ArrayList<>();
 	}
 
 	public static void setColumnOrderingOnWorkbook(Workbook workbook, String columnOrderDelimited) {
@@ -112,7 +113,7 @@ public class FieldbookUtil {
 
 	public static List<Integer> getFilterForMeansAndStatisticalVars() {
 
-		List<Integer> isAIds = new ArrayList<Integer>();
+		List<Integer> isAIds = new ArrayList<>();
 		StringTokenizer token = new StringTokenizer(AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
 		while (token.hasMoreTokens()) {
 			isAIds.add(Integer.valueOf(token.nextToken()));
@@ -128,49 +129,23 @@ public class FieldbookUtil {
 	}
 
 	/**
-	 * Sets the Content Disposition response header based on the user agent.
-	 *
-	 * @param filename
-	 * @param httpHeaders
-	 * @param userAgent
-	 */
-	public static void resolveContentDisposition(String filename, HttpHeaders httpHeaders, String userAgent) {
-
-		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
-
-		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
-			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
-			httpHeaders.set("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
-		} else if (userAgent.indexOf("Safari") != -1) {
-			// Safari does not support url-encoded filename, so instead we use the Safari standard of writing the file name directly in
-			// utf-8 encoded header
-			httpHeaders.set("Content-disposition", "attachment; filename=\"" + FileUtils.sanitizeFileName(filename) + "\";");
-		} else {
-			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
-			httpHeaders.set("Content-disposition",
-					"attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''" + encodedFilename + "\";");
-		}
-
-	}
-
-	/**
 	 * Creates ResponseEntity to download a file from a controller.
 	 *
-	 * @param pathname  - path of the file to be downloaded
+	 * @param fileWithFullPath  - path of the file to be downloaded
 	 * @param filename  - the filename that will be set in the http response header
-	 * @param userAgent - the user agent string
 	 * @return
 	 */
-	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(String pathname, String filename,
-			String userAgent) {
-
-		final File resource = new File(pathname);
-		final FileSystemResource fileSystemResource = new FileSystemResource(resource);
-
+	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(String fileWithFullPath, String filename) throws UnsupportedEncodingException {
 		final HttpHeaders respHeaders = new HttpHeaders();
 
-		FieldbookUtil.resolveContentDisposition(filename, respHeaders, userAgent);
-		respHeaders.set("Content-Type", FileUtils.detectMimeType(filename) + "; charset=UTF-8");
+		final File resource = new File(fileWithFullPath);
+		final FileSystemResource fileSystemResource = new FileSystemResource(resource);
+
+		final String mimeType = FileUtils.detectMimeType(filename);
+		final String sanitizedFilename = FileUtils.sanitizeFileName(filename);
+
+		respHeaders.set("Content-Type",String.format("%s;charset=utf-8",mimeType));
+		respHeaders.set("Content-Disposition", String.format("attachment; filename=\"%s\"; filename*=utf-8\'\'%s", sanitizedFilename, FileUtils.encodeFilenameForDownload(sanitizedFilename)));
 
 		return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
@@ -180,15 +155,15 @@ public class FieldbookUtil {
 	 * Creates ResponseEntity to download a file from a controller.
 	 *
 	 * @param file      - The file to be downloaded
-	 * @param userAgent - the user agent string
 	 * @return
 	 */
-	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(File file, String userAgent) {
-		return FieldbookUtil.createResponseEntityForFileDownload(file.getAbsoluteFile().toString(), file.getName(), userAgent);
+	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(File file)
+			throws UnsupportedEncodingException {
+		return FieldbookUtil.createResponseEntityForFileDownload(file.getAbsoluteFile().toString(), file.getName());
 	}
 
 	public List<Integer> buildVariableIDList(String idList) {
-		List<Integer> requiredVariables = new ArrayList<Integer>();
+		List<Integer> requiredVariables = new ArrayList<>();
 		StringTokenizer token = new StringTokenizer(idList, ",");
 		while (token.hasMoreTokens()) {
 			requiredVariables.add(Integer.valueOf(token.nextToken()));

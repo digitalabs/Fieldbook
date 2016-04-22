@@ -160,7 +160,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final String outputFilename = new String(req.getParameter(OUTPUT_FILENAME).getBytes(ISO_8859_1), UTF_8);
 		final String filename = new String(req.getParameter(FILENAME).getBytes(ISO_8859_1), UTF_8);
 
-		return FieldbookUtil.createResponseEntityForFileDownload(outputFilename, filename, req.getHeader("User-Agent"));
+		return FieldbookUtil.createResponseEntityForFileDownload(outputFilename, filename);
 
 	}
 

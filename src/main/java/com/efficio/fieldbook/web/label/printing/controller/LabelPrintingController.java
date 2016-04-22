@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -391,12 +392,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * @return the string
 	 */
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
-	public ResponseEntity<FileSystemResource> exportFile(HttpServletRequest req) {
+	public ResponseEntity<FileSystemResource> exportFile(HttpServletRequest req) throws UnsupportedEncodingException {
 
 		String filename = this.userLabelPrinting.getFilename();
 		String absoluteLocation = this.userLabelPrinting.getFilenameDLLocation();
 
-		return FieldbookUtil.createResponseEntityForFileDownload(absoluteLocation, filename, req.getHeader("User-Agent"));
+		return FieldbookUtil.createResponseEntityForFileDownload(absoluteLocation, filename);
 
 	}
 

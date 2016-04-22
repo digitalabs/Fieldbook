@@ -11,6 +11,7 @@
 package com.efficio.fieldbook.web.fieldmap.controller;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -166,19 +167,15 @@ import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 	}
 
 	@RequestMapping(value = "/exportExcel", method = RequestMethod.GET)
-	public ResponseEntity<FileSystemResource> exportExcel(HttpServletRequest request) {
+	public ResponseEntity<FileSystemResource> exportExcel(HttpServletRequest request)
+			throws UnsupportedEncodingException, FieldbookException {
 
 		// changed selected name to block name for now
 		String fileName = this.makeSafeFileName(this.userFieldmap.getBlockName());
 
-		try {
-			this.exportExcelService.exportFieldMapToExcel(fileName, this.userFieldmap);
-			return FieldbookUtil.createResponseEntityForFileDownload(new File(fileName), request.getHeader("User-Agent"));
+		this.exportExcelService.exportFieldMapToExcel(fileName, this.userFieldmap);
 
-		} catch (FieldbookException e) {
-			GenerateFieldmapController.LOG.error(e.getMessage(), e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return FieldbookUtil.createResponseEntityForFileDownload(new File(fileName));
 	}
 
 	protected String makeSafeFileName(String filename) {

@@ -282,26 +282,33 @@
 		<aop:scoped-proxy />
 	</bean>
 
-	<bean id="methodDataManager" factory-bean="managerFactory"
-		factory-method="getOntologyMethodDataManager" scope="request">
-		<aop:scoped-proxy />
-	</bean>
+    <bean id="ontologyMethodDataManager" class="org.generationcp.middleware.manager.ontology.OntologyMethodDataManagerImpl">
 
-	<bean id="propertyDataManager" factory-bean="managerFactory"
-		factory-method="getOntologyPropertyDataManager" scope="request">
-		<aop:scoped-proxy />
-	</bean>
+    </bean>
 
-	<bean id="scaleDataManager" factory-bean="managerFactory"
-		factory-method="getOntologyScaleDataManager" scope="request">
-		<aop:scoped-proxy />
-	</bean>
+    <bean id="ontologyPropertyDataManager" class="org.generationcp.middleware.manager.ontology.OntologyPropertyDataManagerImpl">
 
-	<bean id="ontologyVariableManager" factory-bean="managerFactory"
-		factory-method="getOntologyVariableDataManager" scope="request">
-		<aop:scoped-proxy />
-	</bean>
+    </bean>
 
+    <bean id="ontologyVariableDataManager" class="org.generationcp.middleware.manager.ontology.OntologyVariableDataManagerImpl">
+
+    </bean>
+
+    <bean id="ontologyScaleDataManager" class="org.generationcp.middleware.manager.ontology.OntologyScaleDataManagerImpl">
+
+    </bean>
+
+    <bean id="ontologyDaoFactory" class="org.generationcp.middleware.manager.ontology.OntologyDaoFactory">
+        <property name="sessionProvider" ref="cropSessionProvider"/>
+    </bean>
+
+    <bean id="ontologyCommonDAO" class="org.generationcp.middleware.manager.ontology.OntologyCommonDAOImpl">
+        <property name="sessionProvider" ref="cropSessionProvider"/>
+    </bean>
+
+    <bean id="systemClock" class="org.generationcp.middleware.util.SystemClock">
+
+    </bean>
 
 	<bean id="ontologyDataManagerV2" factory-bean="managerFactory"
 		factory-method="getNewOntologyDataManager" scope="request">
@@ -497,13 +504,13 @@
 	<bean id="seedSourceGenerator" class="org.generationcp.commons.service.impl.SeedSourceGenerator">
 		<constructor-arg name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
 		<constructor-arg name="contextUtil" ref="contextUtil"/>
-		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableManager"/>
+		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableDataManager"/>
 	</bean>
 
     <bean id="breedersCrossIDGenerator" class="org.generationcp.commons.service.impl.BreedersCrossIDGenerator">
 		<constructor-arg name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
 		<constructor-arg name="contextUtil" ref="contextUtil"/>
-		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableManager"/>
+		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableDataManager"/>
 	</bean>
 	
 	<bean id="jasperReportService" class="org.generationcp.commons.reports.service.impl.JasperReportServiceImpl"
@@ -520,10 +527,16 @@
 		factory-method="getPedigreeDataManager" scope="request">
 		<aop:scoped-proxy />
 	</bean>
+
 	<bean id="reportService" factory-bean="managerFactory"
 		factory-method="getReportService" scope="request">
 		<aop:scoped-proxy />
 	</bean>
+
+    <bean id="cropSessionProvider" factory-bean="managerFactory"
+          factory-method="getSessionProvider" scope="request">
+        <aop:scoped-proxy />
+    </bean>
 
 	<!-- Data Source and Transaction Configuration -->
 
@@ -533,7 +546,7 @@
     <bean id="excelLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.ExcelLabelGenerator"/>
     <bean id="pdfLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.PDFLabelGenerator"/>
     <bean id="csvLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.CSVLabelGenerator"/>
-	
+
 	<bean id="workbenchHibernateSessionProvider"
 		class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider"
 		scope="request" destroy-method="close">

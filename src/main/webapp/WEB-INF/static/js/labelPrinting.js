@@ -174,9 +174,14 @@ LabelPrinting = {
 		});
 
 		$('#fbk-lbl-printing-proceed-export-label .yes').on('click', function() {
-			LabelPrinting.proceedExport($('#specifyLabelDetailsForm')).done(function() {
-				$('#fbk-lbl-printing-proceed-export-label').modal('hide');
-			});
+			if ($safeId('input[name=userLabelPrinting.filename]').val().length >= 100  ) {
+				showErrorMessage('', 'File name should not exceed 100 characters');
+			} else {
+				LabelPrinting.proceedExport($('#specifyLabelDetailsForm')).done(function() {
+					$('#fbk-lbl-printing-proceed-export-label').modal('hide');
+				});
+			}
+
 		});
 
 		$('#fbk-lbl-printing-proceed-export-label .no').on('click', function() {
@@ -518,10 +523,10 @@ LabelPrinting = {
 
 		}
 		var data = $safeId('#userLabelPrinting.filename').val();
-		var isValid = /[:\\\\/*?|<>]*$/i.test(data);
+		var isValid = /^[^\\\/\:\*\?\"\<\>\|\.]+$/.test(data);
 
 		if (!isValid) {
-			showInvalidInputMessage(filenameErrorCharacter);
+			showInvalidInputMessage(filenameIsInvalid);
 			moveToTopScreen();
 			return false;
 		}

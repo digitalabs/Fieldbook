@@ -111,8 +111,7 @@
 			$(cells).find(':checkbox').prop('checked', $(this).is(':checked'));
 		});
 		$('#traitDetailLink').on('click', function(e) {
-
-			showBaselineTraitDetailsModal($('#traitTermId').val());
+			showBaselineTraitDetailsModal($('#traitTermId').val(),1808);
 			e.preventDefault();
 			e.stopPropagation();
 		});

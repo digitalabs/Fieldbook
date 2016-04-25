@@ -365,6 +365,9 @@ public class DesignImportController extends SettingsController {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 		try {
+
+			this.designImportValidator.validateMappedHeaders(mappedHeaders);
+
 			this.updateDesignMapping(mappedHeaders);
 
 			this.designImportValidator.validateDesignData(this.userSelection.getDesignImportData());

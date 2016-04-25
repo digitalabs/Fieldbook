@@ -93,13 +93,17 @@ $(function() {
 
 });
 
-function isStudyNameUnique(studyName, studyId) {
+/**
+ * Return null if it has no duplicate.
+ * Return the type of duplicate if it has (study or folder)
+ * */
+function hasDuplicate(studyName, studyId) {
 	'use strict';
 	if (!studyId) {
 		studyId = 0;
 	}
 
-	var isUnique = true;
+	var duplicateType = null;
 	$.ajax({
 		url: '/Fieldbook/StudyTreeManager/isNameUnique',
 		type: 'POST',
@@ -107,14 +111,16 @@ function isStudyNameUnique(studyName, studyId) {
 		cache: false,
 		async: false,
 		success: function(data) {
-			if (data.isSuccess == 1) {
-				isUnique = true;
-			} else {
-				isUnique = false;
+			if (data.isSuccess === '1') {
+				duplicateType = null;
+			} else if(data.isStudy === '1'){
+				duplicateType = "study";
+			} else if(data.isStudy === '0'){
+				duplicateType = "folder";
 			}
 		}
 	});
-	return isUnique;
+	return duplicateType;
 }
 
 function validateStartEndDateBasic(startDate, endDate) {
@@ -1049,9 +1055,14 @@ function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUse
 
 /* ADVANCING NURSERY SPECIFIC FUNCTIONS */
 
-function advanceNursery() {
-	var idVal = $('#createNurseryMainForm #studyId').val();
-	advanceStudy(idVal);
+function advanceNursery(){
+	var hashGermplasmList = $('#totalGermplasms').val() !== '0';
+	if(!hashGermplasmList){
+		showErrorMessage('', nurseryHasNoGermplasmList);
+	} else{
+		var idVal = $('#createNurseryMainForm #studyId').val();
+    	advanceStudy(idVal);	
+	}
 }
 
 /* END ADVANCING NURSERY SPECIFIC FUNCTIONS */
@@ -1902,29 +1913,6 @@ function validateBreedingMethod() {
 		});
 	}
 	return valid;
-}
-
-function showBaselineTraitDetailsModal(id) {
-	'use strict';
-
-	if (id !== '') {
-		$.ajax({
-			url: '/Fieldbook/manageSettings/settings/details/' + id,
-			type: 'GET',
-			cache: false,
-			success: function(html) {
-				$('.variable-details-section').empty().append(html);
-				if ($('#selectedStdVarId').length != 0) {
-					$('#selectedStdVarId').val(id);
-				}
-				$('#variableDetailsModal').modal('toggle');
-				if ($('#variableDetailsModal')) {
-					var variableName = $('#ontology-tabs').data('selectedvariablename');
-					$('#variableDetailsModal .modal-title').html(variableDetailsHeader + ' ' + variableName);
-				}
-			}
-		});
-	}
 }
 
 function showBaselineTraitDetailsModal(id, variableTypeId) {

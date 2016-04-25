@@ -1413,19 +1413,19 @@ function choosePreviousNursery(studyId) {
 		}
 	});
 }
-function isNurseryNameUnique() {
+function hasDuplicateNursery() {
 	'use strict';
 	var studyId = '0';
 	if ($('#createNurseryMainForm #studyId').length !== 0) {
 		studyId = $('#createNurseryMainForm #studyId').val();
 		// we dont need to call the is name unique again since its not editable
 		// anymore in edit
-		return true;
+		return null;
 	}
 
 	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value')).val());
 
-	return isStudyNameUnique(studyName, studyId);
+	return hasDuplicate(studyName, studyId);
 }
 function isCheckParametersEditable() {
 	'use strict';
@@ -1444,15 +1444,20 @@ function validateCreateNursery() {
 	});
 
 	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
+	var duplicateType = null;
 	if ($.trim($('#' + getJquerySafeId('basicDetails0.value')).val()) === '') {
 		hasError = true;
 		name = 'Name';
 	}else if ($.trim($('#' + getJquerySafeId('basicDetails1.value')).val()) === '') {
 		hasError = true;
 		name = 'Description';
-	}else if (isNurseryNameUnique() === false) {
+	}else if (duplicateType = hasDuplicateNursery()) {
 		hasError = true;
-		customMessage = 'Name should be unique';
+		if(duplicateType === 'study') {
+			customMessage = studyNameAlreadyExistsNewNursery;
+		} else {
+			customMessage = folderNameAlreadyExistsNewNursery;
+		}
 	} else if ($('#folderId').val() === '') {
 		hasError = true;
 		name = $('#folderLabel').text();

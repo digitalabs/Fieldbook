@@ -1,6 +1,8 @@
 
 package com.efficio.fieldbook.web.importdesign.validator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +30,6 @@ import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportValidatorTest {
@@ -268,5 +269,56 @@ public class DesignImportValidatorTest {
 		this.designImportValidator.retrieveDesignHeaderItemsBasedOnDataType(mappedHeaders, TermId.CATEGORICAL_VARIABLE.getId());
 		Assert.assertEquals(DesignImportTestDataInitializer.NO_OF_CATEGORICAL_VARIABLES, characterDesignHeaderItems.size());
 
+	}
+
+	@Test
+	public void testValidateMappedHeaders() {
+
+		Map<String, List<DesignHeaderItem>> mappedHeaders = this.createMappedHeaders();
+
+		try {
+			this.designImportValidator.validateMappedHeaders(mappedHeaders);
+		} catch (DesignValidationException e) {
+			Assert.fail();
+		}
+
+	}
+
+	@Test
+	public void testValidateMappedHeadersHasDuplicateVariables() {
+
+		Map<String, List<DesignHeaderItem>> mappedHeaders = this.createMappedHeaders();
+		mappedHeaders.get("GERMPLASM").add(this.createHeaderItem(TermId.ENTRY_NO.getId(), "ENTRY"));
+
+		try {
+			this.designImportValidator.validateMappedHeaders(mappedHeaders);
+			Assert.fail();
+		} catch (DesignValidationException e) {
+
+		}
+
+	}
+
+	protected Map<String, List<DesignHeaderItem>> createMappedHeaders() {
+		Map<String, List<DesignHeaderItem>> mappedHeaders = new HashMap<>();
+
+		List<DesignHeaderItem> trialEnvironment = new ArrayList<>();
+		List<DesignHeaderItem> germplasm = new ArrayList<>();
+		List<DesignHeaderItem> trialDesign = new ArrayList<>();
+
+		trialEnvironment.add(this.createHeaderItem(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE"));
+		germplasm.add(this.createHeaderItem(TermId.ENTRY_NO.getId(), "ENTRY_NO"));
+		trialDesign.add(this.createHeaderItem(TermId.PLOT_NO.getId(), "PLOT_NO"));
+
+		mappedHeaders.put("TRIAL_ENVIRONMENT", trialEnvironment);
+		mappedHeaders.put("GERMPLASM", germplasm);
+		return mappedHeaders;
+	}
+
+	private DesignHeaderItem createHeaderItem(int termId, String headerName) {
+		DesignHeaderItem item = new DesignHeaderItem();
+		item.setId(termId);
+		item.setName(headerName);
+		return item;
 	}
 }

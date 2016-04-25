@@ -78,6 +78,7 @@ LabelPrinting = {
 				$('.saved-settings').removeClass('fbk-hide');
 				LabelPrinting.showDeleteSavedSettings();
 			} else {
+				LabelPrinting.resetLabelPrintingSettings();
 				$('.saved-settings').addClass('fbk-hide');
 			}
 		});
@@ -750,7 +751,7 @@ LabelPrinting = {
 		var selectedPreset = LabelPrinting.getSelectedPreset();
 
 		if (selectedPreset.length === 0) {
-			$('#label-format').val('').change();
+			LabelPrinting.resetLabelPrintingSettings();
 			return;
 		}
 
@@ -779,6 +780,26 @@ LabelPrinting = {
 
 			}
 		);
+	};
+
+	LabelPrinting.resetLabelPrintingSettings = function() {
+		$('#label-format').val('').change();
+
+		LabelPrinting.updatePDFFields({
+			selectedLeftFieldsList : [],
+			selectedRightFieldsList : []
+		});
+
+		LabelPrinting.updateCSVExcelFields({
+			selectedFieldsList : []
+		});
+
+		LabelPrinting.updateBarcodeOptions({
+			barcodeFieldsList : ['', '', '']
+		});
+
+		LabelPrinting.updateAdditionalLabelSettingsFormDetails(0);
+		$safeId('#userLabelPrinting.settingsName').val('');
 	};
 
 	/**

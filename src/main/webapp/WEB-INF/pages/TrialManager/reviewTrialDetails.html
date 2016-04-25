@@ -255,45 +255,56 @@
                     <label  class="control-label">
                         <span class="bms-mgt-details fbk-trial-summary-icons"></span>
                         <strong class="sub-content-heading" th:text="#{trial.trialdetails.environment.level.details}">ENVIRONMENT DETAILS</strong>
-                    </label>
-                </div>
-                <div th:if="*{environmentManagementDetails != null and not #lists.isEmpty(environmentManagementDetails)}">
-                    <table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table"
-                           id="environmentManagementDetails">
-                        <thead>
-                        <tr>
-                            <th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
-                            <th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <!-- Passing Environment_detail's type id 1806 which will fetch & display particular environment's details, valid values & usage in modal -->
-                        <tr th:each="environmentManagementDetail, rowStat : *{environmentManagementDetails}">
-                            <td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
-                                <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-                                *{environmentManagementDetails[__${rowStat.index}__].variable.cvTermId} + '\', 1806);'"
-                                   th:text="${environmentManagementDetail.variable.name}"></a>
-                            </td>
-                            <td width="55%" th:class="${rowStat.even}? 'even' : 'odd'"
-                                th:text="${environmentManagementDetail.variable.description}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- If trial has no environments selected then display No available environment details -->
-                <div th:if="*{environmentManagementDetails == null or #lists.isEmpty(environmentManagementDetails)}">
-                    <div class="add_top_padding" th:text="#{no.available.environment.level.details}">No available environment details</div>
-                </div>
-            </div>
+	                </label>
+	            </div>
+	            <div th:if="*{environmentManagementDetails != null and not #lists.isEmpty(environmentManagementDetails)}">
+					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="environmentManagementDetails">
+					<thead>
+						<tr>
+							<th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
+							<th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="environmentManagementDetail, rowStat : *{environmentManagementDetails}">
+							<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+								<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
+								*{environmentManagementDetails[__${rowStat.index}__].variable.cvTermId} + '\',1806);'" th:text="${environmentManagementDetail.variable.name}"></a>
+							</td>
+							<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${environmentManagementDetail.variable.description}"></td>
+						</tr>
+					</tbody>
+					</table>
+				</div>
+				<div th:if="*{environmentManagementDetails == null or #lists.isEmpty(environmentManagementDetails)}">
+					<div class="add_top_padding" th:text="#{no.available.environment.level.details}">No available environment details</div>
+				</div>
+			</div>
 
-            <div class="col-md-6 add_top_padding">
-                <div>
-                    <!-- Sub Header of Environments: TRIAL CONDITIONS -->
-                    <label  class="control-label">
-                        <img th:src="@{/static/svg/conditions.svg}" style="margin: 3px 4px;" width="22" height="22" />
-                        <strong class="sub-content-heading" th:text="#{trial.trialdetails.trial.conditions}">TRIAL CONDITIONS</strong>
-                    </label>
-                </div>
+			<div class="col-md-6 add_top_padding">
+	            <div>
+	                <label  class="control-label">
+	                    <img th:src="@{/static/svg/conditions.svg}" style="margin: 3px 4px;" width="22" height="22" />
+	                    <strong class="sub-content-heading" th:text="#{trial.trialdetails.trial.conditions}">TRIAL CONDITIONS</strong>
+	                </label>
+	            </div>
+				<table th:if="*{nurseryConditionDetails != null and not #lists.isEmpty(nurseryConditionDetails)}" style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="nurseryConditionDetails">
+				<thead>
+					<tr>
+						<th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
+						<th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="nurseryConditionDetail, rowStat : *{nurseryConditionDetails}">
+						<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+							<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
+							*{nurseryConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\',1803);'" th:text="${nurseryConditionDetail.variable.name}"></a>
+						</td>
+						<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${nurseryConditionDetail.variable.description}"></td>
+					</tr>
+				</tbody>
+				</table>
 
                 <table th:if="*{nurseryConditionDetails != null and not #lists.isEmpty(nurseryConditionDetails)}"
                        style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table"

@@ -43,6 +43,23 @@ public class DesignImportValidator {
 	@Resource
 	private DesignImportService designImportService;
 
+	public void validateMappedHeaders(Map<String, List<DesignHeaderItem>> mappedHeaders) throws DesignValidationException {
+
+		List<Integer> list = new ArrayList<>();
+		// check for duplicate assigned variable
+		for (Entry<String, List<DesignHeaderItem>> entry : mappedHeaders.entrySet()) {
+			for (DesignHeaderItem designHeaderItem : entry.getValue()) {
+				if (list.contains(designHeaderItem.getId())) {
+					throw new DesignValidationException(this.messageSource.getMessage("design.import.error.duplicate.variables", null,
+							Locale.ENGLISH));
+				} else {
+					list.add(designHeaderItem.getId());
+				}
+			}
+		}
+
+	}
+
 	public void validateDesignData(final DesignImportData designImportData) throws DesignValidationException {
 
 		final Map<Integer, List<String>> csvData = designImportData.getRowDataMap();
@@ -235,8 +252,8 @@ public class DesignImportValidator {
 			}
 
 			if (!NumericVariableValidator.isValidNumericValueForNumericVariable(valueToValidate, standardVariable, numericScale)) {
-				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.invalid.value", null,
-						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
+				throw new DesignValidationException(this.messageSource
+						.getMessage("design.import.error.invalid.value", null, Locale.ENGLISH).replace("{0}", standardVariable.getName()));
 			}
 		}
 	}
@@ -263,14 +280,14 @@ public class DesignImportValidator {
 
 			// categorical variables are expected to have possible values, otherwise this will cause data error
 			if (!standardVariable.hasEnumerations()) {
-				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.no.valid.values", null,
-						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
+				throw new DesignValidationException(this.messageSource.getMessage("design.import.error.no.valid.values", null,
+						Locale.ENGLISH).replace("{0}", standardVariable.getName()));
 			}
 
 			// make sure that the column value is part of the possible values of the given categorical variable
 			if (!CategoricalVariableValidator.isPartOfValidValuesForCategoricalVariable(valueToValidate, standardVariable)) {
-				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.invalid.value", null,
-						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
+				throw new DesignValidationException(this.messageSource
+						.getMessage("design.import.error.invalid.value", null, Locale.ENGLISH).replace("{0}", standardVariable.getName()));
 			}
 		}
 	}

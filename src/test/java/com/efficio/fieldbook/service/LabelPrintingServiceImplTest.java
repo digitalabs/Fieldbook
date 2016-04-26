@@ -259,8 +259,8 @@ public class LabelPrintingServiceImplTest {
 		final Integer numOfEntries = germplasmList.getListData().size();
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY)).thenReturn(
 				germplasmLists);
-		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId(), null)).thenReturn(
-				this.inventoryDetailsInitializer.createInventoryDetailList(numOfEntries));
+		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId(), germplasmList.getType()))
+				.thenReturn(this.inventoryDetailsInitializer.createInventoryDetailList(numOfEntries));
 
 		Assert.assertTrue("Expecting to return true for germplasm list entries with inventory details.",
 				this.labelPrintingServiceImpl.hasInventoryValues(studyId, workbook.isNursery()));

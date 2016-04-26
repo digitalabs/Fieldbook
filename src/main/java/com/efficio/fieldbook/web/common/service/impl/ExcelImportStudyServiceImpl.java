@@ -896,7 +896,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					final Integer mvarId = WorkbookUtil.getMeasurementVariableId(workbookVariates, traitLabel);
 					// new variates
 					if (mvarId == null) {
-						MeasurementVariable mvar = null;
+						MeasurementVariable mvar;
 						try {
 							mvar = this.getMeasurementVariable(row);
 						} catch (final MiddlewareException e) {
@@ -904,7 +904,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 							throw new WorkbookParserException(this.messageSource.getMessage("error.import.variate.duplicate.psmr",
 									new String[] {traitLabel}, LocaleContextHolder.getLocale()));
 						}
-						if (mvar == null) {
+						if (mvar.getTermId() == 0) {
 							throw new WorkbookParserException(this.messageSource.getMessage("error.import.variate.does.not.exist",
 									new String[] {traitLabel}, LocaleContextHolder.getLocale()));
 						} else if (WorkbookUtil.getMeasurementVariable(workbookVariates, mvar.getTermId()) != null) {
@@ -922,7 +922,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	}
 
 	private MeasurementVariable getMeasurementVariable(final Row row) throws MiddlewareException {
-		MeasurementVariable mvar = null;
+		MeasurementVariable mvar = new MeasurementVariable();
 		if(row.getCell(ExcelImportStudyServiceImpl.COLUMN_PROPERTY) != null && row.getCell(ExcelImportStudyServiceImpl.COLUMN_SCALE) != null && row.getCell(ExcelImportStudyServiceImpl.COLUMN_METHOD) != null){
 			final String property = row.getCell(ExcelImportStudyServiceImpl.COLUMN_PROPERTY).getStringCellValue();
 			final String scale = row.getCell(ExcelImportStudyServiceImpl.COLUMN_SCALE).getStringCellValue();

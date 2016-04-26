@@ -1413,7 +1413,7 @@ function choosePreviousNursery(studyId) {
 		}
 	});
 }
-function hasDuplicateNursery() {
+function getDuplicateNurseryType() {
 	'use strict';
 	var studyId = '0';
 	if ($('#createNurseryMainForm #studyId').length !== 0) {
@@ -1425,7 +1425,7 @@ function hasDuplicateNursery() {
 
 	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value')).val());
 
-	return hasDuplicate(studyName, studyId);
+	return getDuplicateType(studyName, studyId);
 }
 function isCheckParametersEditable() {
 	'use strict';
@@ -1451,7 +1451,7 @@ function validateCreateNursery() {
 	}else if ($.trim($('#' + getJquerySafeId('basicDetails1.value')).val()) === '') {
 		hasError = true;
 		name = 'Description';
-	}else if (duplicateType = hasDuplicateNursery()) {
+	}else if (duplicateType = getDuplicateNurseryType()) {
 		hasError = true;
 		if(duplicateType === 'study') {
 			customMessage = studyNameAlreadyExistsNewNursery;

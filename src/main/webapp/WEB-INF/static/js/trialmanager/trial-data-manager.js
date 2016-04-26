@@ -688,7 +688,7 @@
 					} else if ($.trim(service.currentData.basicDetails.basicDetails[8007]) === '') {
 						hasError = true;
 						name = 'Description';
-					} else if (!isEdit && (duplicateType = hasDuplicate(service.currentData.basicDetails.basicDetails[8005])) !== null) {
+					} else if (!isEdit && (duplicateType = getDuplicateType(service.currentData.basicDetails.basicDetails[8005])) !== null) {
 						hasError = true;
 						if(duplicateType === 'study') {
 							customMessage = studyNameAlreadyExistsNewTrial;

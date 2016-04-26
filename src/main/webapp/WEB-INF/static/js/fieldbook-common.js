@@ -97,7 +97,7 @@ $(function() {
  * Return null if it has no duplicate.
  * Return the type of duplicate if it has (study or folder)
  * */
-function hasDuplicate(studyName, studyId) {
+function getDuplicateType(studyName, studyId) {
 	'use strict';
 	if (!studyId) {
 		studyId = 0;

@@ -122,6 +122,8 @@ public class ImportGermplasmListController extends SettingsController {
 
 	protected static final String POSITION = "position";
 
+	protected static final String GROUP_ID = "groupId";
+
 	protected static final Integer MAX_ENTRY_PLOT_NUMBER_LIMIT = 99999;
 
 	/** The Constant LOG. */
@@ -530,6 +532,7 @@ public class ImportGermplasmListController extends SettingsController {
 				dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
 				dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 				dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
+				dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid());
 
 				if (!isNursery) {
 					germplasm.setEntryTypeValue(defaultTestCheckId);
@@ -609,7 +612,7 @@ public class ImportGermplasmListController extends SettingsController {
 					// BMS-1419, set the id to the original list's id
 					mainInfo.setListId(germplasmList.getListRef());
 				}
-				final List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
+				final List<ListDataProject> data = this.germplasmListManager.retrieveSnapshotListDataWithParents(germplasmList.getId());
 				list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
 			}
 
@@ -636,6 +639,7 @@ public class ImportGermplasmListController extends SettingsController {
 				dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
 				dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 				dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
+				dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid()); // Map Group_Id
 
 				if (!isNursery) {
 					if (germplasm.getEntryTypeValue() == null || "0".equals(germplasm.getEntryTypeValue())) {
@@ -765,6 +769,9 @@ public class ImportGermplasmListController extends SettingsController {
 					ImportGermplasmListController.SOURCE));
 			tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_CODE.getTermNameFromOntology(this.ontologyDataManager),
 					ImportGermplasmListController.ENTRY_CODE));
+			// Add table header named Group_Id to germplasm list
+			tableHeaderList.add(new TableHeader(ColumnLabels.GROUP_ID.getTermNameFromOntology(this.ontologyDataManager),
+					ImportGermplasmListController.GROUP_ID));
 
 		} else if (type != null && type.equalsIgnoreCase(StudyType.T.getName()) && factorsList != null) {
 			// we iterate the map for dynamic header of trial
@@ -809,6 +816,8 @@ public class ImportGermplasmListController extends SettingsController {
 				val = germplasm.getDesig();
 			} else if (term == TermId.CHECK.getId()) {
 				val = germplasm.getEntryTypeValue();
+			} else if (term == TermId.GROUP_ID.getId()) {
+				val = germplasm.getMgid().toString();
 			}
 		}
 		return val;
@@ -833,6 +842,8 @@ public class ImportGermplasmListController extends SettingsController {
 				dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
 				dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 				dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
+				dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid());
+
 				final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 				if (factorsList != null) {
 					// we iterate the map for dynamic header of trial
@@ -1279,6 +1290,7 @@ public class ImportGermplasmListController extends SettingsController {
 				germplasm.setEntryCode(aData.getEntryCode());
 				germplasm.setEntryId(aData.getEntryId());
 				germplasm.setGid(aData.getGid().toString());
+				germplasm.setMgid(aData.getMgid()); // set Group_Id from germplasm
 				germplasm.setSource(aData.getSeedSource());
 				germplasm.setGroupName(aData.getGroupName());
 				germplasm.setIndex(index++);

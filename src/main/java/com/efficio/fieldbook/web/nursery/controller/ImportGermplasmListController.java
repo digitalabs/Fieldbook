@@ -785,6 +785,8 @@ public class ImportGermplasmListController extends SettingsController {
 				}
 
 			}
+			tableHeaderList.add(new TableHeader(ColumnLabels.GROUP_ID.getTermNameFromOntology(this.ontologyDataManager),
+					ImportGermplasmListController.GROUP_ID));
 		}
 		return tableHeaderList;
 	}

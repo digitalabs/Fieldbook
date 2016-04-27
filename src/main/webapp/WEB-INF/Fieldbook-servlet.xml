@@ -578,4 +578,9 @@
     <bean id="userTreeStateService" class="org.generationcp.commons.service.impl.UserTreeStateServiceImpl"/>
     
     <bean id="resourceFinder" class="org.generationcp.middleware.util.ResourceFinder"/>
+
+	<bean id="keySequenceRegisterService" factory-bean="managerFactory"
+		  factory-method="getKeySequenceRegisterService" scope="request">
+		<aop:scoped-proxy />
+	</bean>
 </beans>

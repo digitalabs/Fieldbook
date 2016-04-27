@@ -2014,10 +2014,23 @@ input.review-select-all{
     display: inline-block;
 }
 
+.import-crosses-from-file #crossingBreedingMethodText,
+.import-crosses-from-file #crossesSelectBreedingMethod,
+#crossesPreSelectedBreedingMethod {
+    display: block;
+}
+
 #goBackToImportCrossesButton,
 #settingsNextButton,
-.import-crosses-from-file #settingsNextButtonUpdateList {
+.import-crosses-from-file #settingsNextButtonUpdateList,
+#crossingBreedingMethodText,
+#crossesSelectBreedingMethod,
+.import-crosses-from-file #crossesPreSelectedBreedingMethod{
     display: none;
+}
+
+#preSelectedBreedingMethodDropdown {
+    width: 420px;
 }
 
 .fbk-mandatory-field {

@@ -39,7 +39,8 @@ public class ExportImportStudyUtil {
 		// just in case an id was passed, but this won't be the case most of the time
 		if (idValue != null && NumberUtils.isNumber(idValue)) {
 			for (final ValueReference ref : possibleValues) {
-				if (ref.getId().equals(Integer.valueOf(idValue))) {
+				// Needs to convert to double to facilitate retrieving decimal value from categorical values
+				if (Double.valueOf(ref.getId()).equals(Double.valueOf(idValue))) {
 					return ref.getName();
 				}
 			}

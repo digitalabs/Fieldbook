@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -27,8 +28,15 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 public class ExportImportStudyUtilTest {
+
+	private static final int NO_OF_POSSIBLE_VALUES = 5;
+
+	private static String PROPERTY_NAME = "Property Name";
 
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -36,13 +44,13 @@ public class ExportImportStudyUtilTest {
 	@Mock
 	private OntologyService ontologyService;
 
-	private static String PROPERTY_NAME = "Property Name";
-
 	@Mock
 	private MessageSource messageSource;
 
 	@Mock
 	private FieldbookProperties fieldbookProperties;
+
+	private ValueReferenceTestDataInitializer valueReferenceTestDataInitializer;
 
 	private String fileName;
 	private List<Location> locations;
@@ -58,6 +66,9 @@ public class ExportImportStudyUtilTest {
 
 		this.locations = WorkbookDataUtil.createLocationData();
 		this.fileName = "trial_" + new Random().nextInt(1000) + ".xls";
+
+		// init test data initializers;
+		this.valueReferenceTestDataInitializer = new ValueReferenceTestDataInitializer();
 	}
 
 	@Test
@@ -186,6 +197,43 @@ public class ExportImportStudyUtilTest {
 		final String processedFileName = outputFileName.substring(0, this.fileName.lastIndexOf("."));
 		Assert.assertFalse("Expected no underscore before the file extension but found one.",
 				processedFileName.charAt(processedFileName.length() - 1) == '_');
+	}
+
+	@Test
+	public void testGetCategoricalCellValueWhenIdValueIsNull() {
+		final List<ValueReference> possibleValues = this.valueReferenceTestDataInitializer.createValueReferenceList(NO_OF_POSSIBLE_VALUES);
+		final String idValue = null;
+		final String returnedValue = ExportImportStudyUtil.getCategoricalCellValue(idValue, possibleValues);
+		Assert.assertNull("Expecting to return null when the id value passed is also null.", returnedValue);
+	}
+
+	@Test
+	public void testGetCategoricalCellValueWhenThereIsNoPossibleValues() {
+		final List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+		final String idValue = "1";
+		final String returnedValue = ExportImportStudyUtil.getCategoricalCellValue(idValue, possibleValues);
+		Assert.assertTrue("Expecting to return the exact id value when the there is no possible values.", returnedValue.equals(idValue));
+	}
+
+	@Test
+	public void testGetCategoricalCellValueWhenThereIsPossibleValuesAndIdValue() {
+		final List<ValueReference> possibleValues = this.valueReferenceTestDataInitializer.createValueReferenceList(NO_OF_POSSIBLE_VALUES);
+
+		final ImmutableMap<Integer, ValueReference> possibleValuesMap =
+				Maps.uniqueIndex(possibleValues, new Function<ValueReference, Integer>() {
+
+					@Override
+					public Integer apply(final ValueReference from) {
+						return from.getId();
+					}
+				});
+
+		final String idValue = "1";
+		final String expectedValue = possibleValuesMap.get(Integer.valueOf(idValue)).getName();
+		final String returnedValue = ExportImportStudyUtil.getCategoricalCellValue(idValue, possibleValues);
+
+		Assert.assertTrue("Expecting to return the exact id value passed when the there is corresponding value from the possible values.",
+				expectedValue.equals(returnedValue));
 	}
 
 	private MeasurementData getMeasurementData() {

@@ -27,6 +27,14 @@ public class ExportImportStudyUtil {
 		// do nothing
 	}
 
+	/**
+	 * Retrieves the standard value of categorical variables from its list of possible values
+	 * 
+	 * @param idValue - id value of one of the possible values of categorical variable (i.e 1 - Low, 2 - Medium, 3 - High; 1, 2 and 3 are
+	 *        the possible id values)
+	 * @param possibleValues - list of possible values of a categorical variable to search
+	 * @return actual value based on description or name of the variable that represents the possible value that is searched
+	 */
 	public static String getCategoricalCellValue(final String idValue, final List<ValueReference> possibleValues) {
 		// With the New Data Table, the idValue will contain the long text instead of the id.
 		if (idValue != null && possibleValues != null && !possibleValues.isEmpty()) {

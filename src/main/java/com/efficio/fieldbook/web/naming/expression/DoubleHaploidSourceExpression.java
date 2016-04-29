@@ -19,7 +19,12 @@ public class DoubleHaploidSourceExpression extends BaseExpression {
     public static final String KEY = "[DHSOURCE]";
 
 	@Autowired
-	private KeySequenceRegisterService keySequenceRegisterService;
+	protected KeySequenceRegisterService keySequenceRegisterService;
+
+	// This setter is only used to inject this service only in test
+	public void setKeySequenceRegisterService(KeySequenceRegisterService keySequenceRegisterService){
+		this.keySequenceRegisterService = keySequenceRegisterService;
+	}
 
 	/**
 	 * Method to append '@' + [lastUsedSequence] in designation column ex. @1, @2 etc.
@@ -28,23 +33,23 @@ public class DoubleHaploidSourceExpression extends BaseExpression {
 	 */
     @Override
     public void apply(List<StringBuilder> values, AdvancingSource source) {
-        for (StringBuilder value : values) {
+	        for (StringBuilder value : values) {
 
             try {
-	            String suffixValue = "@";
-				String methodCode = source.getBreedingMethod().getMcode();
-				if(methodCode != null) {
-					int checkIndex = value.lastIndexOf("@0");
-
-					if(checkIndex != -1) {
-						// Get the last used sequence number for method and append it using suffix value
-						int lastUsedSequence = this.keySequenceRegisterService.incrementAndGetNextSequence(methodCode);
-						this.replaceExistingSuffixValue(value, checkIndex);
-						this.replaceExpressionWithValue(value, suffixValue + lastUsedSequence);
-					} else {
-						// If designation does not contains @0 string then keep its value as it is
-						this.replaceExpressionWithValue(value, "");
+				int checkIndex = value.lastIndexOf("@0");
+				if(checkIndex != -1) {
+					//Get last sequence number for KeyPrefix with synchronization at class level
+					int lastUsedSequence;
+					synchronized (DoubleHaploidSourceExpression.class){
+						String keyPrefix = value.substring(0, checkIndex+1);
+						lastUsedSequence = this.keySequenceRegisterService.incrementAndGetNextSequence(keyPrefix);
+						replaceExistingSuffixValue(value,checkIndex+1);
+						this.replaceExpressionWithValue(value, String.valueOf(lastUsedSequence));
 					}
+
+				} else {
+					// If designation does not contains @0 string then keep its value as it is
+					this.replaceExpressionWithValue(value, "");
 				}
 			} catch (MiddlewareQueryException e) {
                 DoubleHaploidSourceExpression.LOG.error(e.getMessage(), e);
@@ -58,13 +63,12 @@ public class DoubleHaploidSourceExpression extends BaseExpression {
     }
 
 	/**
-	 * Replace the existing suffix value '@0' from designation so that it will be used later
+	 * Replace the existing suffix value '0' from designation with empty String
 	 * @param container designation value
-	 * @param startIndex starting index of @0
+	 * @param startIndex starting index of 0
 	 */
 	private void replaceExistingSuffixValue(StringBuilder container, int startIndex) {
-		int endIndex = startIndex + 2;
-
+		int endIndex = startIndex + 1;
 		container.replace(startIndex, endIndex, "");
 	}
 }

@@ -30,12 +30,10 @@ public class DoubleHaploidSourceExpressionTest extends TestExpression {
     @Test
     public void testDesignationValueWithLastUsedSequenceNumberForDoubleHaploid() throws MiddlewareException {
 		AdvancingSource source = this.createAdvancingSourceTestData("(CML454 X CML451)-B-3-1-1@0", null, null, null, "[DHSOURCE]", false);
-		String methodCode = "DHL";
 
-		source.getBreedingMethod().setMcode(methodCode);
 		List<StringBuilder> values = this.createInitialValues(source);
 
-		Mockito.when(this.keySequenceRegisterService.incrementAndGetNextSequence(methodCode)).thenReturn(25);
+		Mockito.when(this.keySequenceRegisterService.incrementAndGetNextSequence("(CML454 X CML451)-B-3-1-1@")).thenReturn(25);
 
 		doubleHaploidSourceExpression.apply(values, source);
 
@@ -49,9 +47,7 @@ public class DoubleHaploidSourceExpressionTest extends TestExpression {
 	@Test
 	public void testDesignationValueWithoutLastUsedSequenceNumberForDoubleHaploid() throws MiddlewareException {
 		AdvancingSource source = this.createAdvancingSourceTestData("(CML454 X CML451)-B-3-1-1", "-", "DH", null, "[DHSOURCE]", false);
-		String methodCode = "DHL";
 
-		source.getBreedingMethod().setMcode(methodCode);
 		List<StringBuilder> values = this.createInitialValues(source);
 
 		doubleHaploidSourceExpression.apply(values, source);

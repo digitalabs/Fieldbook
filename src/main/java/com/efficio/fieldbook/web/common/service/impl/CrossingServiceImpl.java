@@ -12,7 +12,9 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
@@ -337,7 +339,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	/**
 	 * this method overwrites the naming settings with the defined rules from the DB if the breeding method was provided
-	 * 
+	 *
 	 * @param setting
 	 */
 	protected void processBreedingMethodProcessCodes(final CrossSetting setting) {
@@ -383,7 +385,7 @@ public class CrossingServiceImpl implements CrossingService {
 	 * This method will set germplasm gdate from given date as per rules. 1. If harvested date is provided then it will be used as gdate. 2.
 	 * If harvested date and crossing date is provided then harvested date will be used as gdate. 3. If only crossing date is provided then
 	 * it will be used as gdate. 4. If both dates are not provided then current date will be used as gdate.
-	 * 
+	 *
 	 * @param germplasm germplasm instance into which gdate need to be set.
 	 * @param crossingDate date from import cross sheet.
 	 * @param harvestDate date given using user form.
@@ -477,7 +479,7 @@ public class CrossingServiceImpl implements CrossingService {
 			names.add(name);
 			cross.setNames(names);
 
-			pairList.add(new ImmutablePair<Germplasm, Name>(germplasm, name));
+			pairList.add(new ImmutablePair<>(germplasm, name));
 		}
 		return pairList;
 	}
@@ -605,9 +607,49 @@ public class CrossingServiceImpl implements CrossingService {
 		return null;
 	}
 
+	@Override public void normalizeCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList) {
+		final BreedingMethodSetting methodSetting = crossSetting.getBreedingMethodSetting();
+
+		for (ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
+			// if breeding method information is already available (from import file, etc), we retain and proceed to next
+			if (importedCrosses.isBreedingMethodInformationAvailable()) {
+				continue;
+			}
+
+			// if breeding method is based on status of parental lines, we calculate the resulting breeding method per germplasm
+			if (methodSetting.isBasedOnStatusOfParentalLines()) {
+				final Integer femaleGid = importedCrosses.getGpid1();
+				final Integer maleGid = importedCrosses.getGpid2();
+
+				Triple<Germplasm, Germplasm, Germplasm> femaleLine = retrieveParentGermplasmObjects(femaleGid);
+				Triple<Germplasm, Germplasm, Germplasm> maleLine = retrieveParentGermplasmObjects(maleGid);
+
+				importedCrosses.setBreedingMethodId(CrossingUtil.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(),
+						maleLine.getLeft(), femaleLine.getMiddle(), femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));
+			} else {
+				// otherwise, we use the breeding method selected
+				importedCrosses.setBreedingMethodId(methodSetting.getMethodId());
+
+			}
+		}
+	}
+
+	protected Triple<Germplasm, Germplasm, Germplasm> retrieveParentGermplasmObjects(final Integer germplasmID) {
+		final Germplasm parent = germplasmDataManager.getGermplasmByGID(germplasmID);
+
+		Germplasm motherOfParent = null;
+		Germplasm fatherOfParent = null;
+		if (parent != null) {
+			motherOfParent = germplasmDataManager.getGermplasmByGID(parent.getGpid1());
+			fatherOfParent = germplasmDataManager.getGermplasmByGID(parent.getGpid2());
+		}
+
+		return new ImmutableTriple<>(parent, motherOfParent, fatherOfParent);
+	}
+
 	/**
 	 * For Test Only
-	 * 
+	 *
 	 * @param germplasmListManager
 	 */
 	public void setGermplasmListManager(final GermplasmListManager germplasmListManager) {
@@ -616,7 +658,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	/**
 	 * For Test Only
-	 * 
+	 *
 	 * @param germplasmDataManager
 	 */
 	public void setGermplasmDataManager(final GermplasmDataManager germplasmDataManager) {
@@ -626,7 +668,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	/**
 	 * For Test Only
-	 * 
+	 *
 	 * @param crossExpansionProperties
 	 */
 	void setCrossExpansionProperties(final CrossExpansionProperties crossExpansionProperties) {
@@ -635,7 +677,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	/**
 	 * For Test Only
-	 * 
+	 *
 	 * @param contextUtil
 	 */
 	void setContextUtil(final ContextUtil contextUtil) {
@@ -644,7 +686,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	/**
 	 * For Test Only
-	 * 
+	 *
 	 * @param seedSourceGenerator
 	 */
 	void setSeedSourceGenerator(final SeedSourceGenerator seedSourceGenerator) {

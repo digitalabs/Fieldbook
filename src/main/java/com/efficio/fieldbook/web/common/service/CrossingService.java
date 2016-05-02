@@ -21,4 +21,6 @@ public interface CrossingService {
 
 	void applyCrossSettingWithNamingRules(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId, Workbook
 			workbook);
+
+	void normalizeCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList);
 }

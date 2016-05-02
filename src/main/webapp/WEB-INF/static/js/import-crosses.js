@@ -359,12 +359,6 @@ var ImportCrosses = {
 			if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
 				return;
 			}
-		} else {
-			// if automated names generation was selected the breeding method is required
-			if (!settingData.breedingMethodSetting.methodId || settingData.breedingMethodSetting.methodId === '') {
-				showErrorMessage('', $.fieldbookMessages.errorImportMethodRequired);
-				return;
-			}
 		}
 
 		var targetURL;

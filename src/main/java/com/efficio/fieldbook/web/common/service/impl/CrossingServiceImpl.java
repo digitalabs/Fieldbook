@@ -158,7 +158,6 @@ public class CrossingServiceImpl implements CrossingService {
 		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
 		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
 
-		CrossingUtil.applyBreedingMethodSetting(this.germplasmDataManager, crossSetting, germplasmList);
 		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmPairs, crossingNameTypeId);
 
 		this.verifyGermplasmMethodPresent(germplasmList);
@@ -243,7 +242,6 @@ public class CrossingServiceImpl implements CrossingService {
 		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmNamePairs);
 		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
 
-		CrossingUtil.applyBreedingMethodSetting(this.germplasmDataManager, crossSetting, germplasmList);
 		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmNamePairs, crossingNameTypeId);
 
 		this.verifyGermplasmMethodPresent(germplasmList);
@@ -445,19 +443,7 @@ public class CrossingServiceImpl implements CrossingService {
 				germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 				germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
 
-				// if nothing is defined from import crosses file, then the breeding method id to assign must be from crossing setting
-				if (cross.getRawBreedingMethod() == null) {
-					germplasm.setMethodId(crossSetting.getBreedingMethodSetting().getMethodId());
-				} else {
-					// the usual process of retrieving methodId from file
-					germplasm.setMethodId(0);
-
-					final Method breedingMethod = this.germplasmDataManager.getMethodByCode(cross.getRawBreedingMethod());
-
-					if (breedingMethod != null && breedingMethod.getMid() != null && breedingMethod.getMid() != 0) {
-						germplasm.setMethodId(breedingMethod.getMid());
-					}
-				}
+				germplasm.setMethodId(cross.getBreedingMethodId());
 
 				// For import we always create new name
 				name = new Name();
@@ -607,11 +593,20 @@ public class CrossingServiceImpl implements CrossingService {
 		return null;
 	}
 
-	@Override public void normalizeCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList) {
+	@Override public void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList) {
 		final BreedingMethodSetting methodSetting = crossSetting.getBreedingMethodSetting();
 
 		for (ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
-			// if breeding method information is already available (from import file, etc), we retain and proceed to next
+			// if imported cross contains raw breeding method code we use that to populate the breeding method
+			if (!StringUtils.isEmpty(importedCrosses.getRawBreedingMethod())) {
+				final Method breedingMethod = this.germplasmDataManager.getMethodByCode(importedCrosses.getRawBreedingMethod());
+
+				if (breedingMethod != null && breedingMethod.getMid() != null && breedingMethod.getMid() != 0) {
+					importedCrosses.setBreedingMethodId(breedingMethod.getMid());
+				}
+			}
+
+			// if at this point, there is already breeding method info available on the imported cross (from import file, etc, we proceed to next)
 			if (importedCrosses.isBreedingMethodInformationAvailable()) {
 				continue;
 			}

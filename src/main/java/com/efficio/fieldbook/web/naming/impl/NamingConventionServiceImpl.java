@@ -273,7 +273,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			final List<String> names;
 			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 
-			advancingSource.setBreedingMethod(breedingMethodMap.get(Integer.valueOf(advancingParameters.getBreedingMethodId())));
+			// here, we resolve the breeding method ID stored in the advancing source object into a proper breeding Method object
+			advancingSource.setBreedingMethod(breedingMethodMap.get(Integer.valueOf(advancingSource.getBreedingMethodId())));
 			//default plants selected value to 1 for list of crosses because sequence is not working if plants selected value is not set
 			advancingSource.setPlantsSelected(1);
 

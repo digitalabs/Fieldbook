@@ -341,7 +341,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		// before continuing processing of the crosses, we process the breeding method to be used for each imported cross
 		// so that the correct information is available for further operations
-		this.crossingService.normalizeCrossBreedingMethod(crossSetting, importedCrossesList);
+		this.crossingService.processCrossBreedingMethod(crossSetting, importedCrossesList);
 
 		if (crossSetting.isUseManualSettingsForNaming()) {
 			// this line of code is where the creation of new germplasm takes place
@@ -379,6 +379,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			//TODO add trail instance number
 			advancingSource.setConditions(this.userSelection.getWorkbook().getConditions());
 			advancingSource.setStudyType(this.userSelection.getWorkbook().getStudyDetails().getStudyType());
+			advancingSource.setBreedingMethodId(cross.getBreedingMethodId());
 			rows.add(advancingSource);
 			if (cross.getGid() != null && NumberUtils.isNumber(cross.getGid())) {
 				gids.add(Integer.valueOf(cross.getGid()));
@@ -388,7 +389,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		list.setRows(rows);
 
 		final AdvancingNursery advancingParameters = new AdvancingNursery();
-		advancingParameters.setBreedingMethodId(Integer.toString(setting.getBreedingMethodSetting().getMethodId()));
+
 		advancingParameters.setCheckAdvanceLinesUnique(true);
 		final List<ImportedCrosses> crosses = this.namingConventionService
 				.generateCrossesList(importedCrosses, list, advancingParameters, this.userSelection.getWorkbook(), gids);

@@ -268,6 +268,7 @@
 		class="org.generationcp.middleware.util.CrossExpansionProperties">
 		<property name="defaultLevel" value="${default.generation.level}" />
 		<property name="profile" value="${pedigree.profile}" />
+		<property name="hybridBreedingMethods" value="#{'${hybrid.breeding.methods}'.split(',')}" />
 	</bean>
 
 	<bean id="workbenchDataManager"
@@ -484,6 +485,8 @@
 		<property name="germplasmOriginTrialsDefault" value="${germplasm.origin.trials.default}"/>
 		<property name="germplasmOriginTrialsWheat" value="${germplasm.origin.trials.wheat}"/>
 		<property name="germplasmOriginTrialsMaize" value="${germplasm.origin.trials.maize}"/>
+        <property name="breedersCrossIDNursery" value="${breeders.cross.id.nursery}" />
+        <property name="breedersCrossIDTrial" value="${breeders.cross.id.trial}" />
 	</bean>
 	
 	<bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
@@ -492,6 +495,12 @@
 	</bean>
 	
 	<bean id="seedSourceGenerator" class="org.generationcp.commons.service.impl.SeedSourceGenerator">
+		<constructor-arg name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
+		<constructor-arg name="contextUtil" ref="contextUtil"/>
+		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableManager"/>
+	</bean>
+
+    <bean id="breedersCrossIDGenerator" class="org.generationcp.commons.service.impl.BreedersCrossIDGenerator">
 		<constructor-arg name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
 		<constructor-arg name="contextUtil" ref="contextUtil"/>
 		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableManager"/>

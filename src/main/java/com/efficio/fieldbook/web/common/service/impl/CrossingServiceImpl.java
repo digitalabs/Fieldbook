@@ -613,8 +613,8 @@ public class CrossingServiceImpl implements CrossingService {
 
 			// if breeding method is based on status of parental lines, we calculate the resulting breeding method per germplasm
 			if (methodSetting.isBasedOnStatusOfParentalLines()) {
-				final Integer femaleGid = importedCrosses.getGpid1();
-				final Integer maleGid = importedCrosses.getGpid2();
+				final Integer femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
+				final Integer maleGid = Integer.parseInt(importedCrosses.getMaleGid());
 
 				Triple<Germplasm, Germplasm, Germplasm> femaleLine = retrieveParentGermplasmObjects(femaleGid);
 				Triple<Germplasm, Germplasm, Germplasm> maleLine = retrieveParentGermplasmObjects(maleGid);

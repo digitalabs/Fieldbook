@@ -338,6 +338,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private void applyNamingSettingToCrosses(final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			final GermplasmList germplasmList, final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList)
 			throws RuleException {
+
+		// before continuing processing of the crosses, we process the breeding method to be used for each imported cross
+		// so that the correct information is available for further operations
+		this.crossingService.normalizeCrossBreedingMethod(crossSetting, importedCrossesList);
+
 		if (crossSetting.isUseManualSettingsForNaming()) {
 			// this line of code is where the creation of new germplasm takes place
 			this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
@@ -357,41 +362,40 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			throws RuleException {
 
 		// TODO REFACTOR THIS
-		if (setting.getBreedingMethodSetting().getMethodId() != null) {
-			final AdvancingSourceList list = new AdvancingSourceList();
-			final List<AdvancingSource> rows = new ArrayList<>();
 
-			final List<Integer> gids = new ArrayList<>();
-			final List<ImportedCrosses> importedCrosses = importedCrossesList.getImportedCrosses();
-			for (final ImportedCrosses cross : importedCrosses) {
-				final Name name = new Name();
-				name.setNstat(1);
-				name.setNval(cross.getCross());
-				final List<Name> names = new ArrayList<>();
-				names.add(name);
-				cross.setNames(names);
-				final AdvancingSource advancingSource = new AdvancingSource(cross);
-				//TODO add trail instance number
-				advancingSource.setConditions(this.userSelection.getWorkbook().getConditions());
-				advancingSource.setStudyType(this.userSelection.getWorkbook().getStudyDetails().getStudyType());
-				rows.add(advancingSource);
-				if (cross.getGid() != null && NumberUtils.isNumber(cross.getGid())) {
-					gids.add(Integer.valueOf(cross.getGid()));
-				}
+		final AdvancingSourceList list = new AdvancingSourceList();
+		final List<AdvancingSource> rows = new ArrayList<>();
+
+		final List<Integer> gids = new ArrayList<>();
+		final List<ImportedCrosses> importedCrosses = importedCrossesList.getImportedCrosses();
+		for (final ImportedCrosses cross : importedCrosses) {
+			final Name name = new Name();
+			name.setNstat(1);
+			name.setNval(cross.getCross());
+			final List<Name> names = new ArrayList<>();
+			names.add(name);
+			cross.setNames(names);
+			final AdvancingSource advancingSource = new AdvancingSource(cross);
+			//TODO add trail instance number
+			advancingSource.setConditions(this.userSelection.getWorkbook().getConditions());
+			advancingSource.setStudyType(this.userSelection.getWorkbook().getStudyDetails().getStudyType());
+			rows.add(advancingSource);
+			if (cross.getGid() != null && NumberUtils.isNumber(cross.getGid())) {
+				gids.add(Integer.valueOf(cross.getGid()));
 			}
-
-			list.setRows(rows);
-
-			final AdvancingNursery advancingParameters = new AdvancingNursery();
-			advancingParameters.setBreedingMethodId(Integer.toString(setting.getBreedingMethodSetting().getMethodId()));
-			advancingParameters.setCheckAdvanceLinesUnique(true);
-			final List<ImportedCrosses> crosses =
-					this.namingConventionService.generateCrossesList(importedCrosses, list, advancingParameters,
-							this.userSelection.getWorkbook(), gids);
-
-			importedCrossesList.setImportedGermplasms(crosses);
-			this.userSelection.setImportedCrossesList(importedCrossesList);
 		}
+
+		list.setRows(rows);
+
+		final AdvancingNursery advancingParameters = new AdvancingNursery();
+		advancingParameters.setBreedingMethodId(Integer.toString(setting.getBreedingMethodSetting().getMethodId()));
+		advancingParameters.setCheckAdvanceLinesUnique(true);
+		final List<ImportedCrosses> crosses = this.namingConventionService
+				.generateCrossesList(importedCrosses, list, advancingParameters, this.userSelection.getWorkbook(), gids);
+
+		importedCrossesList.setImportedGermplasms(crosses);
+		this.userSelection.setImportedCrossesList(importedCrossesList);
+
 		return importedCrossesList;
 	}
 

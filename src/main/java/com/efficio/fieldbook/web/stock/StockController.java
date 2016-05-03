@@ -6,18 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.ImportStockForm;
-import com.efficio.fieldbook.web.common.service.ImportInventoryService;
-import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
-import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
-import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
-import com.google.common.base.Joiner;
 import org.generationcp.commons.exceptions.StockException;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
@@ -52,6 +44,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.ImportStockForm;
+import com.efficio.fieldbook.web.common.service.ImportInventoryService;
+import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
+import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
+import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
+import com.google.common.base.Joiner;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 4/24/2015 Time: 4:38 PM
@@ -322,7 +324,7 @@ public class StockController extends AbstractBaseFieldbookController {
 			this.importInventoryService.validateInventoryDetails(inventoryDetailListFromDB, importedInventoryList, germplasmListType);
 			// Setting List Id & Inventory Details in user selection that will be used if user wants to discard the imported stock list
 			this.userSelection.setListId(listId);
-			this.userSelection.setInventoryDetails(this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType));
+			this.userSelection.setInventoryDetails(this.inventoryService.getInventoryListByListDataProjectListId(listId));
 
 			if (this.importInventoryService.hasConflict(inventoryDetailListFromDB, importedInventoryList)) {
 				result.put("hasConflict", true);

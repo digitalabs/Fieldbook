@@ -7,10 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.ImportStockForm;
-import com.efficio.fieldbook.web.common.service.ImportInventoryService;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
@@ -41,6 +37,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.ImportStockForm;
+import com.efficio.fieldbook.web.common.service.ImportInventoryService;
 
 /**
  * Created by Daniel Villafuerte on 5/8/2015.
@@ -290,7 +291,7 @@ public class StockControllerTest {
 
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(listId)).thenReturn(germplasmList);
 		Mockito.when(this.importInventoryService.parseFile(form.getFile(), additionalParams)).thenReturn(importedInventoryList);
-		Mockito.when(this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType)).thenReturn(inventoryDetailsList);
+		Mockito.when(this.inventoryService.getInventoryListByListDataProjectListId(listId)).thenReturn(inventoryDetailsList);
 		Mockito.when(this.importInventoryService.hasConflict(Mockito.anyListOf(InventoryDetails.class), Mockito.isA(ImportedInventoryList.class))).thenReturn(Boolean.FALSE);
 
 		Mockito.doNothing().when(this.importInventoryService).validateInventoryDetails(inventoryDetailsList, importedInventoryList, germplasmListType);

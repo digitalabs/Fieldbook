@@ -1292,7 +1292,7 @@ public class ImportGermplasmListController extends SettingsController {
 				germplasm.setEntryCode(aData.getEntryCode());
 				germplasm.setEntryId(aData.getEntryId());
 				germplasm.setGid(aData.getGid().toString());
-				germplasm.setMgid(aData.getMgid()); // set Group_Id from germplasm
+				germplasm.setMgid(aData.getGroupId()); // set Group_Id from germplasm
 				germplasm.setSource(aData.getSeedSource());
 				germplasm.setGroupName(aData.getGroupName());
 				germplasm.setIndex(index++);

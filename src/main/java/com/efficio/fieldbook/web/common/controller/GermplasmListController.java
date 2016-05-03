@@ -283,14 +283,14 @@ public class GermplasmListController {
 			tableHeaderList.add(new TableHeader(ColumnLabels.MALE_PARENT.getTermNameFromOntology(this.ontologyDataManager),
 					this.messageSource.getMessage("germplasm.list.male.parent", null, locale)));
 
-			tableHeaderList.add(new TableHeader(ColumnLabels.MGID.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
-					.getMessage("germplasm.list.mgid", null, locale)));
 		}
 
 		tableHeaderList.add(new TableHeader(ColumnLabels.GID.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
 				.getMessage("seed.inventory.gid", null, locale)));
 		tableHeaderList.add(new TableHeader(ColumnLabels.SEED_SOURCE.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
 				.getMessage("seed.inventory.source", null, locale)));
+		tableHeaderList.add(new TableHeader(ColumnLabels.GROUP_ID.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
+				.getMessage("germplasm.list.mgid", null, locale)));
 
 		if (germplasmListType.equals(GermplasmListType.CROSSES.name())) {
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.GERMPLASM_LIST_DUPLICATE, null,

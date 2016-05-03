@@ -77,7 +77,7 @@ public class ListDataProjectUtil {
 				germplasm.setEntryCode(aData.getEntryCode());
 				germplasm.setEntryId(aData.getEntryId());
 				germplasm.setGid(aData.getGermplasmId().toString());
-				germplasm.setMgid(aData.getMgid());
+				germplasm.setMgid(aData.getGroupId());
 				germplasm.setSource(aData.getSeedSource());
 				germplasm.setGroupName(aData.getGroupName());
 				germplasm.setIndex(index++);

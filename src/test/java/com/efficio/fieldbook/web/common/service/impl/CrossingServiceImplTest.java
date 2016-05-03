@@ -29,7 +29,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 import org.mockito.exceptions.verification.TooLittleActualInvocations;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -41,6 +44,8 @@ public class CrossingServiceImplTest {
 	private static final String SAVED_CROSSES_GID1 = "-9999";
 	private static final String SAVED_CROSSES_GID2 = "-8888";
 	private static final Integer USER_ID = 123;
+	public static final String TEST_BREEDING_METHOD_CODE = "GEN";
+	public static final Integer TEST_BREEDING_METHOD_ID = 5;
 
 	private ImportedCrossesList importedCrossesList;
 
@@ -59,8 +64,8 @@ public class CrossingServiceImplTest {
 	@Mock
 	private SeedSourceGenerator seedSourceGenertor;
 
-    @InjectMocks
-    private CrossingServiceImpl crossingService;
+	@InjectMocks
+	private CrossingServiceImpl crossingService;
 
 	private CrossSetting crossSetting;
 
@@ -69,7 +74,6 @@ public class CrossingServiceImplTest {
 
 		this.importedCrossesList = this.createImportedCrossesList();
 		this.importedCrossesList.setImportedGermplasms(this.createImportedCrosses());
-
 
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
@@ -95,10 +99,60 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
+	public void testProcessCrossBreedingMethodCodeAlreadyAvailable() {
+		List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
+
+		// we modify the data such that one of the entries already have a raw breeding method code (i.e., from import file)
+		crosses.get(0).setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
+		Method method = new Method(TEST_BREEDING_METHOD_ID);
+		Mockito.doReturn(method).when(this.germplasmDataManager).getMethodByCode(TEST_BREEDING_METHOD_CODE);
+
+		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+
+		Assert.assertEquals("Raw breeding method codes after processing should resolve to breeding method IDs in the imported cross",
+				TEST_BREEDING_METHOD_ID, crosses.get(0).getBreedingMethodId());
+	}
+
+	@Test
+	public void testProcessCrossBreedingMethodIDAlreadyAvailable() {
+
+		List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
+
+		// we provide breeding method ID values to the objects to simulate input
+        // we start from 1, because a breeding method ID of 0 is not considered a proper value
+		int i = 1;
+		for (ImportedCrosses cross : crosses) {
+			cross.setBreedingMethodId(i++);
+		}
+
+		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+
+		// we verify that the breeding method IDs have not changed from the original processing
+		i = 1;
+		for (ImportedCrosses cross : crosses) {
+			Assert.assertEquals("Breeding method ID should not be overridden if it is already present in the imported cross info", i, cross.getBreedingMethodId().intValue());
+            i++;
+		}
+	}
+
+    @Test
+    public void testProcessCrossBreedingMethodUseSetting() {
+        // we set this to false to indicate that we want to use the breeding method provided by user input
+        this.crossSetting.getBreedingMethodSetting().setBasedOnStatusOfParentalLines(false);
+        this.crossSetting.getBreedingMethodSetting().setMethodId(TEST_BREEDING_METHOD_ID);
+
+        this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+
+        for (ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
+            Assert.assertEquals("User provided breeding method must be applied to all objects", TEST_BREEDING_METHOD_ID, importedCrosses.getBreedingMethodId());
+        }
+    }
+
+	@Test
 	public void testApplyCrossSetting() throws MiddlewareQueryException {
 
 		final CrossNameSetting crossNameSetting = this.crossSetting.getCrossNameSetting();
-        this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, null);
 
 		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
@@ -160,7 +214,7 @@ public class CrossingServiceImplTest {
 		crossNameSetting.setSaveParentageDesignationAsAString(true);
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
-        this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 		this.crossingService
 				.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
 
@@ -175,18 +229,16 @@ public class CrossingServiceImplTest {
 	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToFalse() {
 		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
 
-
 		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
 		savedGermplasmIds.add(1);
 		savedGermplasmIds.add(2);
 		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
 
-
 		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
 		crossNameSetting.setSaveParentageDesignationAsAString(false);
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
-        this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 		this.crossingService
 				.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
 

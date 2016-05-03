@@ -371,8 +371,19 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				return TrialManagerDataService.applicationData.germplasmListSelected;
 			};
 
+			// Programatically navigate to specified tab state
+			$scope.navigateToTab = function(targetState) {
+				$state.go(targetState);
+				$scope.performFunctionOnTabChange(targetState);
+
+			};
+
 			$scope.performFunctionOnTabChange = function(targetState) {
-                $scope.isSettingsTab = true;
+				if (stockListImportNotSaved || $('.import-study-data').data('data-import') === '1') {
+					return;
+				}
+
+				$scope.isSettingsTab = true;
                 $scope.tabSelected = targetState;
 				if (targetState === 'editMeasurements') {
 					if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {

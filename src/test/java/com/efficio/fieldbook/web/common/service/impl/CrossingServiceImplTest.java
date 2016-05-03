@@ -28,20 +28,20 @@ import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.mockito.*;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 import org.mockito.exceptions.verification.TooLittleActualInvocations;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CrossingServiceImplTest {
 
 	private static final int BREEDING_METHOD_ID = 1;
 	private static final String SAVED_CROSSES_GID1 = "-9999";
 	private static final String SAVED_CROSSES_GID2 = "-8888";
 	private static final Integer USER_ID = 123;
-	private CrossingServiceImpl crossingService;
+
 	private ImportedCrossesList importedCrossesList;
 
 	@Mock
@@ -59,22 +59,18 @@ public class CrossingServiceImplTest {
 	@Mock
 	private SeedSourceGenerator seedSourceGenertor;
 
+    @InjectMocks
+    private CrossingServiceImpl crossingService;
+
 	private CrossSetting crossSetting;
 
 	@Before
 	public void setUp() throws MiddlewareQueryException {
 
-		MockitoAnnotations.initMocks(this);
-
 		this.importedCrossesList = this.createImportedCrossesList();
 		this.importedCrossesList.setImportedGermplasms(this.createImportedCrosses());
 
-		this.crossingService = Mockito.spy(new CrossingServiceImpl());
-		this.crossingService.setGermplasmListManager(this.germplasmListManager);
-		this.crossingService.setGermplasmDataManager(this.germplasmDataManager);
-		this.crossingService.setCrossExpansionProperties(this.crossExpansionProperties);
-		this.crossingService.setContextUtil(this.contextUtil);
-		this.crossingService.setSeedSourceGenerator(this.seedSourceGenertor);
+
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());

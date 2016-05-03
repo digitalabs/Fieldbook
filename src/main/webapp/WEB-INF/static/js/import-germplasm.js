@@ -39,6 +39,7 @@
 				$txtStartingEntryNo.change(function() {
 					window.ImportGermplasm.validateAndSetEntryNo();
 				});
+                window.ImportGermplasm.setStartingEntryNumberFirstTime();
 			},
 			validateAndSetEntryNo: function() {
 				var $txtStartingEntryNo = $('#txtStartingEntryNo');
@@ -147,7 +148,12 @@
 				var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
 				trialManager.setUnappliedChangesAvailable();
 				trialManager.updateStartingEntryNoCount($.trim($('#txtStartingEntryNo').val()));
-			}
+			},
+            setStartingEntryNumberFirstTime: function() {
+                // Setting Starting Entry Number for first time while generating design
+                var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
+                trialManager.updateStartingEntryNoCount($.trim($('#txtStartingEntryNo').val()));
+            }
 		};
 	}
 })();

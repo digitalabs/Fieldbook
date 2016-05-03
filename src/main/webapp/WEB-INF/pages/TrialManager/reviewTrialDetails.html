@@ -144,7 +144,7 @@
                 <div class="col-md-6"></div>
             </div>
             <!-- If trial has no Selection variate then display No available trial selections -->
-            <div th:if="*{environmentManagementDetails == null or #lists.isEmpty(environmentManagementDetails)}">
+            <div th:if="*{selectionVariateDetails == null or #lists.isEmpty(selectionVariateDetails)}">
                 <div class="col-md-6 add_top_padding" th:text="#{no.available.trial.selection}">No available trial selections</div>
             </div>
         </div>

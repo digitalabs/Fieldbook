@@ -156,6 +156,7 @@ public class GermplasmTreeControllerTest {
 				+ " were not configured", LocaleContextHolder.getLocale()))
 				.thenReturn(GermplasmTreeControllerTest.ERROR_RULES_NOT_CONFIGURED);
 		Mockito.when(this.germplasmDataManager.getPlotCodeField()).thenReturn(new UserDefinedField(1152));
+		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode(Mockito.isA(String.class),Mockito.isA(String.class),Mockito.isA(String.class))).thenReturn(new UserDefinedField(1151));
 	}
 
 	private Project getProject() {

@@ -141,7 +141,7 @@ public interface LabelPrintingService {
 	void saveOrUpdateLabelPrintingPresetConfig(String settingsName, String xmlConfig, Integer programId) throws MiddlewareQueryException;
 
 	void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields,
-			boolean isTrial, boolean isStockList);
+			boolean isTrial, boolean isStockList, UserLabelPrinting userLabelPrinting);
 
 	void deleteProgramPreset(Integer programPresetId) throws MiddlewareQueryException;
 
@@ -155,9 +155,9 @@ public interface LabelPrintingService {
 
 	/**
 	 * 
-	 * @param stockList
+	 * @param stockListId
 	 * @return
 	 * @throws MiddlewareQueryException
 	 */
-    Map<String, InventoryDetails> getInventoryDetailsMap(GermplasmList stockList);
+    List<InventoryDetails> getInventoryDetails(int stockListId);
 }

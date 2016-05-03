@@ -318,7 +318,7 @@ public class StockController extends AbstractBaseFieldbookController {
 			additionalParams.put(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY, germplasmListType);
 			ImportedInventoryList importedInventoryList = this.importInventoryService.parseFile(form.getFile(), additionalParams);
 			List<InventoryDetails> inventoryDetailListFromDB =
-					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+					this.inventoryService.getInventoryListByListDataProjectListId(listId);
 			this.importInventoryService.validateInventoryDetails(inventoryDetailListFromDB, importedInventoryList, germplasmListType);
 			// Setting List Id & Inventory Details in user selection that will be used if user wants to discard the imported stock list
 			this.userSelection.setListId(listId);
@@ -370,10 +370,7 @@ public class StockController extends AbstractBaseFieldbookController {
 	public Map<String, Object> executeBulkingInstructions(@PathVariable	Integer listId) {
 		Map<String, Object> result = new HashMap<>();
 		try {
-			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
-			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			List<InventoryDetails> inventoryDetailsList =
-					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+			List<InventoryDetails> inventoryDetailsList = this.inventoryService.getInventoryListByListDataProjectListId(listId);
 			this.stockService.verifyIfBulkingForStockListCanProceed(listId, inventoryDetailsList);
 			this.stockService.executeBulkingInstructions(inventoryDetailsList);
 			result.put(StockController.HAS_ERROR, false);
@@ -414,10 +411,7 @@ public class StockController extends AbstractBaseFieldbookController {
 		Integer listId = form.getListId();
 
 		try {
-			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
-			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			List<InventoryDetails> inventoryDetailListFromDB =
-					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+			List<InventoryDetails> inventoryDetailListFromDB = this.inventoryService.getInventoryListByListDataProjectListId(listId);
 
 			Double amount = form.getAmount();
 			int inventoryLocationId = form.getInventoryLocationId();

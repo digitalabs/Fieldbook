@@ -13,12 +13,14 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.util.List;
 
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
-
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 
 /**
  *
@@ -52,6 +54,13 @@ public class AdvancingSource {
     
 
 	private boolean isForceUniqueNameGeneration;
+
+	//This will be used to store conditions
+	private List<MeasurementVariable> conditions;
+	//This will be used if we have trail
+	private MeasurementRow trailInstanceObservation;
+
+	private StudyType studyType;
 
 	public AdvancingSource(ImportedGermplasm germplasm, List<Name> names, Integer plantsSelected, Method breedingMethod, boolean isCheck,
 			String nurseryName, String plotNumber) {
@@ -344,6 +353,30 @@ public class AdvancingSource {
 
 	public void setReplicationNumber(String replicationNumber) {
 		this.replicationNumber = replicationNumber;
+	}
+
+	public List<MeasurementVariable> getConditions() {
+		return conditions;
+	}
+
+	public void setConditions(List<MeasurementVariable> conditions) {
+		this.conditions = conditions;
+	}
+
+	public MeasurementRow getTrailInstanceObservation() {
+		return trailInstanceObservation;
+	}
+
+	public void setTrailInstanceObservation(MeasurementRow trailInstanceObservation) {
+		this.trailInstanceObservation = trailInstanceObservation;
+	}
+
+	public StudyType getStudyType() {
+		return studyType;
+	}
+
+	public void setStudyType(StudyType studyType) {
+		this.studyType = studyType;
 	}
 
 	public AdvancingSource copy() {

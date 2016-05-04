@@ -236,6 +236,19 @@ public class ExportImportStudyUtilTest {
 				expectedValue.equals(returnedValue));
 	}
 
+	@Test
+	public void testGetCategoricalCellValueWhenThereIsPossibleValuesAndIdValueWithDecimalPlace() {
+
+		final List<ValueReference> possibleValues = this.valueReferenceTestDataInitializer.createValueReferenceList(NO_OF_POSSIBLE_VALUES);
+
+		final String idValue = "1.1";
+		final String returnedValue = ExportImportStudyUtil.getCategoricalCellValue(idValue, possibleValues);
+		Assert.assertTrue(
+				"Expecting to return the exact id value passed when the id value has decimal place and not part of possible values of the categorical variable.",
+				idValue.equals(returnedValue));
+
+	}
+
 	private MeasurementData getMeasurementData() {
 		return new MeasurementData(WorkbookDataUtil.ENTRY, String.valueOf(1));
 	}

@@ -242,6 +242,8 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 			}
 			wData.setValue(csvValue);
 
+            wData.setOldValue(csvValue);
+
 		}
 	}
 

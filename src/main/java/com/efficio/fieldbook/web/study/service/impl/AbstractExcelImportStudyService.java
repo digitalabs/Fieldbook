@@ -251,6 +251,8 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 					}
 				}
 				wData.setValue(xlsValue);
+
+                wData.setOldValue(xlsValue);
 			}
 		}
 	}

@@ -2,10 +2,7 @@ package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
 
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.KeySequenceRegisterService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +10,6 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
 public class DoubleHaploidSourceExpression extends BaseExpression {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DoubleHaploidSourceExpression.class);
 
     public static final String KEY = "[DHSOURCE]";
 
@@ -34,9 +29,7 @@ public class DoubleHaploidSourceExpression extends BaseExpression {
     @Override
     public void apply(List<StringBuilder> values, AdvancingSource source) {
 	        for (StringBuilder value : values) {
-
-            try {
-				int checkIndex = value.lastIndexOf("@0");
+			int checkIndex = value.lastIndexOf("@0");
 				if(checkIndex != -1) {
 					//Get last sequence number for KeyPrefix with synchronization at class level
 					int lastUsedSequence;
@@ -51,9 +44,6 @@ public class DoubleHaploidSourceExpression extends BaseExpression {
 					// If designation does not contains @0 string then keep its value as it is
 					this.replaceExpressionWithValue(value, "");
 				}
-			} catch (MiddlewareQueryException e) {
-                DoubleHaploidSourceExpression.LOG.error(e.getMessage(), e);
-            }
         }
     }
 

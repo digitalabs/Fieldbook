@@ -612,7 +612,7 @@ public class ImportGermplasmListController extends SettingsController {
 					// BMS-1419, set the id to the original list's id
 					mainInfo.setListId(germplasmList.getListRef());
 				}
-				final List<ListDataProject> data = this.germplasmListManager.retrieveSnapshotListDataWithParents(germplasmList.getId());
+				final List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
 				list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
 			}
 

@@ -47,7 +47,7 @@
 					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.germplasmId}" th:attr="data-gid=${germplasm.germplasmId}" th:attrappend="data-desig=${germplasm.designation}">.3</a>
 				</td>
 				<td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.seedSource}">.2</td>
-                 <td th:if="*{listType == 'ADVANCED' }" th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.groupId}">.2</td>
+                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.groupId}">.2</td>
 
 				<td th:if="*{listType == 'CROSSES'}"
 					th:class="${T(com.efficio.fieldbook.web.common.util.GermplasmListWebUIUtil).getCSSClassForDuplicateType(germplasm) + ' ' + (row.even ? 'even' : 'odd')}"

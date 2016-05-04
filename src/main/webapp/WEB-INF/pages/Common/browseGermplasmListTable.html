@@ -120,15 +120,6 @@ var germplasmDataTable = null,
 
 function resetGermplasmList() {
 	'use strict';
-
-    // If Advance List is generated then user can not Clear List.
-    if(!isNursery()) {
-        if (isAdvanceListGenerated == true) {
-            showAlertMessage('', advanceListAlreadyGeneratedWarningMessage, 10000);
-            return;
-        }
-    }
-
 	$('#imported-germplasm-list').html('<h3></h3>');
 	$('#imported-germplasm-list-reset-button').css('opacity', '0');
 	$('#entries-details').css('display', 'none');

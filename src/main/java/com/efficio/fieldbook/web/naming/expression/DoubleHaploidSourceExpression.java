@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
@@ -11,49 +12,51 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 @Component
 public class DoubleHaploidSourceExpression extends BaseExpression {
 
-    public static final String KEY = "[DHSOURCE]";
+	public static final String KEY = "[DHSOURCE]";
 
 	@Autowired
 	protected KeySequenceRegisterService keySequenceRegisterService;
 
 	// This setter is only used to inject this service only in test
-	public void setKeySequenceRegisterService(KeySequenceRegisterService keySequenceRegisterService){
+	public void setKeySequenceRegisterService(KeySequenceRegisterService keySequenceRegisterService) {
 		this.keySequenceRegisterService = keySequenceRegisterService;
 	}
 
 	/**
 	 * Method to append '@' + [lastUsedSequence] in designation column ex. @1, @2 etc.
+	 * 
 	 * @param values Designation column value
 	 * @param source Advancing Source object contains information about source
 	 */
-    @Override
-    public void apply(List<StringBuilder> values, AdvancingSource source) {
-	        for (StringBuilder value : values) {
+	@Override
+	public void apply(List<StringBuilder> values, AdvancingSource source) {
+		for (StringBuilder value : values) {
 			int checkIndex = value.lastIndexOf("@0");
-				if(checkIndex != -1) {
-					//Get last sequence number for KeyPrefix with synchronization at class level
-					int lastUsedSequence;
-					synchronized (DoubleHaploidSourceExpression.class){
-						String keyPrefix = value.substring(0, checkIndex+1);
-						lastUsedSequence = this.keySequenceRegisterService.incrementAndGetNextSequence(keyPrefix);
-						replaceExistingSuffixValue(value,checkIndex+1);
-						this.replaceExpressionWithValue(value, String.valueOf(lastUsedSequence));
-					}
-
-				} else {
-					// If designation does not contains @0 string then keep its value as it is
-					this.replaceExpressionWithValue(value, "");
+			if (checkIndex != -1) {
+				// Get last sequence number for KeyPrefix with synchronization at class level
+				int lastUsedSequence;
+				synchronized (DoubleHaploidSourceExpression.class) {
+					String keyPrefix = value.substring(0, checkIndex + 1);
+					lastUsedSequence = this.keySequenceRegisterService.incrementAndGetNextSequence(keyPrefix);
+					replaceExistingSuffixValue(value, checkIndex + 1);
+					this.replaceExpressionWithValue(value, String.valueOf(lastUsedSequence));
 				}
-        }
-    }
 
-    @Override
-    public String getExpressionKey() {
-        return KEY;
-    }
+			} else {
+				// If designation does not contains @0 string then keep its value as it is
+				this.replaceExpressionWithValue(value, "");
+			}
+		}
+	}
+
+	@Override
+	public String getExpressionKey() {
+		return KEY;
+	}
 
 	/**
 	 * Replace the existing suffix value '0' from designation with empty String
+	 * 
 	 * @param container designation value
 	 * @param startIndex starting index of 0
 	 */

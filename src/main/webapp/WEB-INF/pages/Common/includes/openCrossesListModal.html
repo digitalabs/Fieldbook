@@ -19,8 +19,7 @@
 
 					<div class="row add_top_padding">
 						<div class="col-xs-12 col-md-12">
-							<strong class="sub-content-heading">REVIEW IMPORTED
-								CROSSES</strong>
+							<strong class="sub-content-heading">REVIEW IMPORTED CROSSES</strong>
 						</div>
 					</div>
 					<div class="row form-group add_top_padding">
@@ -45,9 +44,9 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<!-- The Back button is hidden if we came from Breeding Manager, we have model attribute 'createdCrossesListId' set -->
-					<button type="button" class="btn btn-default" id="goBackToImportCrossesButton" th:unless="${createdCrossesListId}"
-						th:text="#{common.form.back.text}">Back</button>
+					<!-- The Back button is hidden with the css styles if we came from the Breeding Manager-->
+					<button type="button" class="btn btn-default" id="goBackToImportCrossesButton" th:text="#{common.form.back.text}">
+						Back</button>
 					<button type="button" class="btn btn-primary" id="openCrossListNextButton"
 						th:text="#{common.form.next.text}" onclick="">Next</button>
 				</div>

@@ -6,8 +6,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout) {
+	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService',
+		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService) {
 
 			// if environments tab is triggered, we preload the measurements tab
 			$scope.loadMeasurementsTabInBackground();
@@ -54,6 +54,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			//the flag to determine if we have a location variable in the datatable
 			$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
+
+			$scope.onLocationChange = function(data){
+				environmentService.changeEnvironments(data);
+			}
 
 			$scope.buttonsTopWithLocation = [{
 				//TODO disable?
@@ -216,7 +220,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			/* Watchers */
 			$scope.$watch('data.noOfEnvironments', function(newVal, oldVal) {
-
+				$scope.temp.noOfEnvironments = newVal;
 				if (newVal < oldVal) {
 					// if new environment count is less than previous value, splice array
 					while ($scope.data.environments.length > newVal) {
@@ -233,7 +237,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					addNewEnvironments(newVal - oldVal);
 
 					// should not be equal to 1 since the default number of environment for a trial is 1
-					if (newVal !== 1) {
+					if(newVal !== 1 && oldVal !== 1){
 						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 					}
 				}
@@ -294,7 +298,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 			}
 
-			function addNewEnvironments(noOfEnvironments) {
+			function addNewEnvironments(noOfEnvironments, displayWarningMessage) {
 				for (var ctr = 0; ctr < noOfEnvironments; ctr++) {
 					$scope.data.environments.push({
 						managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
@@ -309,7 +313,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = i + 1;
 					}
 				}
-				TrialManagerDataService.indicateUnappliedChangesAvailable();
+				TrialManagerDataService.indicateUnappliedChangesAvailable(displayWarningMessage);
 			}
 
 			function updateEnvironmentVariables(type, entriesIncreased) {
@@ -365,10 +369,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			// init
 			if ($stateParams && $stateParams.addtlNumOfEnvironments && !isNaN(parseInt($stateParams.addtlNumOfEnvironments))) {
-				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments);
-				$scope.temp.noOfEnvironments += addtlNumOfEnvironments;
+				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments, 10);
+				$scope.temp.noOfEnvironments = parseInt($scope.temp.noOfEnvironments, 10) + addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
-				addNewEnvironments(addtlNumOfEnvironments);
+				addNewEnvironments(addtlNumOfEnvironments,$stateParams.displayWarningMessage);
 			}
 		}]).factory('DTLoadingTemplate', function() {
 			return {

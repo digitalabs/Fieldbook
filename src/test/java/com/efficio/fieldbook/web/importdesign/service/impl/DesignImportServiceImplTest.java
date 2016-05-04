@@ -58,6 +58,8 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser;
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportServiceImplTest {
 
+	private static final int STARTING_PLOT_NO_FROM_CSV = 1;
+
 	private static final int CHALK_PCT_TERMID = 22768;
 
 	private static final int GYLD_TERMID = 18000;
@@ -179,7 +181,7 @@ public class DesignImportServiceImplTest {
 
 	}
 
-	//@Test
+	@Test
 	public void testGenerateDesignForOneInstanceOnly() throws DesignValidationException {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
@@ -227,7 +229,7 @@ public class DesignImportServiceImplTest {
 		return additionalParams;
 	}
 
-	//@Test
+	@Test
 	public void testGenerateDesignForNursery() throws DesignValidationException {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
@@ -369,22 +371,23 @@ public class DesignImportServiceImplTest {
 
 	}
 
-	@Test
-	public void testValidateIfStandardVariableExistsTrialInstanceDoNotExist() {
+	@Test(expected = DesignValidationException.class)
+	public void testValidateIfStandardVariableExistsTrialInstanceDoNotExist() throws DesignValidationException {
+		this.service.validateIfStandardVariableExists(
+				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM),
+				"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
-		try {
-
-			this.service.validateIfStandardVariableExists(this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId()
-					.get(PhenotypicType.GERMPLASM), "design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
-
-			Assert.fail("The logic should detect that the trial number exist");
-
-		} catch (final DesignValidationException e) {
-
-		}
-
+		Assert.fail("The logic should detect that the trial number exist");
 	}
 
+	/**
+	 * This method test the following scenarios: 1. If the number of measurement rows created are the same with the number of rows imported
+	 * from the file 2. If the starting plot no is applied properly for each measurement row created
+	 * 
+	 * This service method updates the measurement rows.
+	 * 
+	 * NOTE: Trial Instance = Environment
+	 */
 	@Test
 	public void testCreatePresetMeasurementRowsPerInstance() {
 		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
@@ -392,25 +395,26 @@ public class DesignImportServiceImplTest {
 		final DesignImportMeasurementRowGenerator measurementRowGenerator = this.generateMeasurementRowGenerator();
 		final int trialInstanceNo = 1;
 		final Integer startingPlotNo = 3;
-		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, startingPlotNo);
+		// The delta that will be used to adjust the value of each plot no from the measurement rows
+		final int plotNoDelta = startingPlotNo - STARTING_PLOT_NO_FROM_CSV;
+
+		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, plotNoDelta);
 
 		Assert.assertEquals("The number of measurement rows from the csv file must be equal to the number of measurements row generated.",
 				csvData.size() - 1, measurements.size());
 
-		// SITE_NAME must not included
+		// SITE_NAME must not be counted for the expected columns imported from the custom import file
 		final Integer expectedColumnNo = csvData.get(0).size() - 1;
 		Assert.assertEquals(
 				"The number of columns from the csv file must be equal to the number of measurements data per measurement row generated.",
 				expectedColumnNo.intValue(), measurements.get(0).getDataList().size());
 
+		// find the index of PLOT_NO column from the import file
 		final int plotNoIndxCSV =
 				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_DESIGN)
 						.get(TermId.PLOT_NO.getId()).getColumnIndex();
 
-		// Matthew makes this change (below) and tests pass BUT WHY. No-one can read this test please make it readable.
-		// Please outline what the methids we are testing are supposed to do
-		// final int plotNoDelta = startingPlotNo - 1;
-		final int plotNoDelta = startingPlotNo;
+		// Verify if the plot no is increased per each measurement rows based on the stated Starting Plot No
 		for (int i = 0; i < measurements.size(); i++) {
 			final List<String> rowCSV = csvData.get(i + 1);
 			final int plotNoCsv = Integer.valueOf(rowCSV.get(plotNoIndxCSV));

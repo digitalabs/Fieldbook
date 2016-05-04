@@ -414,8 +414,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				}
 			};
 
-			$scope.addAdvanceTabData = function(tabId, tabData, listName, isPageLoading) {
-				isAdvanceListGenerated = true;
+			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
+                isAdvanceListGeneratedForTrial = true;
 				var isSwap = false;
 				var isUpdate = false;
 				if (isPageLoading === undefined) {

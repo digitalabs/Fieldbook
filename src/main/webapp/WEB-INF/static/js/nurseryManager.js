@@ -1,5 +1,10 @@
 /*global getJquerySafeId, showErrorMessage, oldLineSelected, changeAdvanceBreedingMethod, setCorrecMethodValues, noMethodVariatesError, oldMethodSelected, msgSamplePlotError, msgHarvestDateError, noLineVariatesError, setCorrectMethodValues, methodSuggestionsFav_obj, isInt, breedingMethodId, oldMethodSelected*/
 /*global isStudyNameUnique, validateStartDateEndDateBasic*/
+
+//Used globle variable to selected location for trial
+var selectedLocationForTrail;
+var possibleLocationsForTrail;
+
 function checkMethod() {
 	'use strict';
 	if ($('input[type=checkbox][name=methodChoice]:checked').val() == 1) {
@@ -193,15 +198,17 @@ function showCorrectLocationCombo() {
 	} else {
 		$('#s2id_harvestLocationIdFavorite').hide();
 		$('#s2id_harvestLocationIdAll').show();
-		if ($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data') != null) {
+        // harvestLocationIdAll is not null but it contains blank value so put AND condition
+		if ($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data') != null && $('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').id != "" ) {
 			$('#' + getJquerySafeId('harvestLocationId')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').id);
 			$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').text);
 			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
-		} else {
-			$('#' + getJquerySafeId('harvestLocationId')).val(0);
-			$('#' + getJquerySafeId('harvestLocationName')).val('');
-			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val('');
 		}
+
+        //In case of trial we have to set selected location
+        if(!isNursery()){
+            setSelectedLocation();
+        }
 	}
 }
 
@@ -809,6 +816,12 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 						query.callback(data);
 					}
 				});
+
+        // Set default harvest location id and name
+        if (defaultJsonVal != null) {
+            $('#' + getJquerySafeId('harvestLocationId')).val(defaultJsonVal.id);
+            $('#' + getJquerySafeId('harvestLocationName')).val(defaultJsonVal.text);
+        }
 	} else if ($(name).parent().next().children('.breeding-method-tooltip').length > 0) {
 		$(name).select2(
 				{
@@ -1926,4 +1939,25 @@ function checkNurseryIfShowRemoveVariableLinks() {
 			$(this).parents('.remove-all-section').addClass('fbk-hide');
 		}
 	});
+}
+
+function selectedLocation(location, possibleValues) {
+    selectedLocationForTrail = location;
+    possibleLocationsForTrail = possibleValues;
+}
+
+
+function setSelectedLocation() {
+    //Trial passes preferred values in which location abbreviation available in bracket.
+    //We need to split value to get actual abbreviation for selected location
+    if (possibleLocationsForTrail != null && selectedLocationForTrail != null && selectedLocationForTrail !='') {
+        $('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
+        var locationName = $.grep(possibleLocationsForTrail, function (e) {
+            return e.key == selectedLocationForTrail.id;
+        });
+        $('#' + getJquerySafeId('harvestLocationName')).val(locationName[0].name);
+        var locAbbreviation = locationName[0].name.split("(");
+        locAbbreviation[1] = locAbbreviation[1].replace(")", '');
+        $('#' + getJquerySafeId('harvestLocationAbbreviation')).val(locAbbreviation[1]);
+    }
 }

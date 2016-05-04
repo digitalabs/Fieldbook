@@ -140,7 +140,7 @@
 							</div>
 						</div>
 
-                        <div id="reps-section">
+                        <div id="reps-section" th:unless="${#lists.isEmpty(replicationsChoices)}">
                             <div class="row form-group">
                                 <label class="control-label col-xs-12 add_top_padding" ><strong class="sub-content-heading" th:text="#{advancing.nursery.reps}">REPS</strong> </label>
                             </div>
@@ -287,15 +287,16 @@ var locationSuggestions = /*[[${locationList}]]*/ null,
 	noMethodVariatesError = /*[[#{error.advancing.nursery.no.method.variates}]]*/ '',
     noMethodVariatesErrorTrial = /*[[#{error.advancing.trial.no.method.variates}]]*/ '',
 	noLineVariatesError = /*[[#{error.advancing.nursery.no.line.variates}]]*/ '',
-    noLineVariatesErrorTrial = /*[[#{error.advancing.trial.no.line.variates}]]*/ '';
-	noPlotVariatesError = /*[[#{error.advancing.nursery.no.plot.variates}]]*/ '';
+    noLineVariatesErrorTrial = /*[[#{error.advancing.trial.no.line.variates}]]*/ '',
+	noPlotVariatesError = /*[[#{error.advancing.nursery.no.plot.variates}]]*/ '',
 
-noMethodValueError = /*[[#{nursery.advance.nursery.empty.method.error}]]*/ '';
-noMethodValueErrorTrial = /*[[#{trial.advance.trial.empty.method.error}]]*/ '';
-listShouldNotBeEmptyError = /*[[#{nursery.save.advance.error.row.list.empty}]]*/ '';
-locationTooltipMessage = /*[[#{advance.nursery.location.tooltip.message} + ' ']]*/ '';
-locationTooltipMessage = /*[[#{advance.nursery.location.tooltip.message} + ' ']]*/ '';
-noReplicationSelectedError = /*[[#{error.advancing.trial.one.selected.reps}]]*/ '';
+    noMethodValueError = /*[[#{nursery.advance.nursery.empty.method.error}]]*/ '',
+    noMethodValueErrorTrial = /*[[#{trial.advance.trial.empty.method.error}]]*/ '',
+    listShouldNotBeEmptyError = /*[[#{nursery.save.advance.error.row.list.empty}]]*/ '',
+    locationTooltipMessage = /*[[#{advance.nursery.location.tooltip.message} + ' ']]*/ '',
+    locationTooltipMessage = /*[[#{advance.nursery.location.tooltip.message} + ' ']]*/ '',
+    noReplicationSelectedError = /*[[#{error.advancing.trial.one.selected.reps}]]*/ '';
+
 /* jshint ignore:end */
 
 function changeSuffix() {
@@ -406,6 +407,8 @@ $(function() {
 				for (indexCounter = 0 ; indexCounter < locationSuggestionsObj.length; indexCounter++) {
 					if (locationSuggestionsObj[indexCounter].id == chosenSettingsLocationId) {
 						$('#harvestLocationIdAll').select2('data', locationSuggestionsObj[indexCounter]);
+                        // Set harvest location abbreviation which will be fetched while initializing drop down
+                        $('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
 						break;
 					}
 				}

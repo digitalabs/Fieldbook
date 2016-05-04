@@ -370,8 +370,7 @@ public class OpenTrialController extends BaseTrialController {
 					.getTemporaryWorkbook().getTrialObservations());
 		}
 
-		// update the operation for experiment design variables : EXP_DESIGN, EXP_DESIGN_SOURCE, NREP
-		this.assignOperationOnExpDesignVariables(workbook.getConditions());
+		this.assignOperationOnExpDesignVariables(workbook.getConditions(), workbook.getExpDesignVariables());
 
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
 		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
@@ -434,10 +433,30 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
-	void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
+	/**
+	 * assign UPDATE operation for existing experimental design variables
+	 * 
+	 * @param conditions
+	 * @param existingExpDesignVariables
+	 */
+	void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions,
+			final List<StandardVariable> existingExpDesignVariables) {
+
+		// skip update if the trial has no existing experimental design
+		if (existingExpDesignVariables == null || existingExpDesignVariables.isEmpty()) {
+			return;
+		}
+
+		final List<Integer> existingExpDesignVariableIds = new ArrayList<Integer>();
+		for (final StandardVariable expVar : existingExpDesignVariables) {
+			existingExpDesignVariableIds.add(expVar.getId());
+		}
+
 		for (final MeasurementVariable mvar : conditions) {
-			if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId() || mvar.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
-					|| mvar.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
+			// update the operation for experiment design variables : EXP_DESIGN, EXP_DESIGN_SOURCE, NREP
+			// only if these variables already exists in the existing trial
+			if ((mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId() || mvar.getTermId() == TermId.NUMBER_OF_REPLICATES.getId() || mvar
+					.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) && existingExpDesignVariableIds.contains(mvar.getTermId())) {
 				mvar.setOperation(Operation.UPDATE);
 			}
 		}

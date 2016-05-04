@@ -319,13 +319,12 @@ public class StockController extends AbstractBaseFieldbookController {
 			additionalParams.put(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY, germplasmListType);
 			ImportedInventoryList importedInventoryList = this.importInventoryService.parseFile(form.getFile(), additionalParams);
 			List<InventoryDetails> inventoryDetailListFromDB =
-					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+					this.inventoryService.getInventoryListByListDataProjectListId(listId);
 			this.importInventoryService.validateInventoryDetails(inventoryDetailListFromDB, importedInventoryList, germplasmListType);
 			if (this.importInventoryService.hasConflict(inventoryDetailListFromDB, importedInventoryList)) {
 				result.put("hasConflict", true);
 				this.userSelection.setListId(listId);
-				this.userSelection
-						.setInventoryDetails(this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType));
+				this.userSelection.setInventoryDetails(this.inventoryService.getInventoryListByListDataProjectListId(listId));
 			}
 			this.importInventoryService.mergeInventoryDetails(inventoryDetailListFromDB, importedInventoryList, germplasmListType);
 			this.updateInventory(listId, inventoryDetailListFromDB);
@@ -370,12 +369,9 @@ public class StockController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/executeBulkingInstructions/{listId}", method = RequestMethod.POST)
 	public Map<String, Object> executeBulkingInstructions(@PathVariable
 	Integer listId) {
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 		try {
-			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
-			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			List<InventoryDetails> inventoryDetailsList =
-					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+			List<InventoryDetails> inventoryDetailsList = this.inventoryService.getInventoryListByListDataProjectListId(listId);
 			this.stockService.verifyIfBulkingForStockListCanProceed(listId, inventoryDetailsList);
 			this.stockService.executeBulkingInstructions(inventoryDetailsList);
 			result.put(StockController.HAS_ERROR, false);
@@ -417,10 +413,7 @@ public class StockController extends AbstractBaseFieldbookController {
 		Integer listId = form.getListId();
 
 		try {
-			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
-			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			List<InventoryDetails> inventoryDetailListFromDB =
-					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+			List<InventoryDetails> inventoryDetailListFromDB = this.inventoryService.getInventoryListByListDataProjectListId(listId);
 
 			Double amount = form.getAmount();
 			int inventoryLocationId = form.getInventoryLocationId();

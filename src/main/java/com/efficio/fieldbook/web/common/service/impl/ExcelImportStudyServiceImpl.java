@@ -137,7 +137,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			}
 			String conditionsAndConstantsErrorMessage = "";
 			try {
-				conditionsAndConstantsErrorMessage = this.validationService.validateConditionAndConstantValues(workbook, trialInstanceNumber);
+				conditionsAndConstantsErrorMessage =
+						this.validationService.validateConditionAndConstantValues(workbook, trialInstanceNumber);
 			} catch (final MiddlewareQueryException e) {
 				conditionsAndConstantsErrorMessage = e.getMessage();
 				WorkbookUtil.revertImportedConditionAndConstantsData(workbook);
@@ -177,7 +178,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 				workbook.setImportConstantsCopy(constantsCopy);
 				newVarList.addAll(constantsCopy);
 			}
-			if (workbook.getTrialObservations() != null) {
+			if (!workbook.getTrialObservations().isEmpty()) {
 				final List<MeasurementRow> trialObservationsCopy = new ArrayList<MeasurementRow>();
 				for (final MeasurementRow row : workbook.getTrialObservations()) {
 					trialObservationsCopy.add(row.copy(newVarList));
@@ -267,9 +268,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			}
 			this.setCorrectBreedingMethodInfo(variableMap);
 			// this would set info to location (trial level variable)
-			if (originalWorkbook.isNursery() && originalWorkbook.getTrialObservations() != null
-					&& !originalWorkbook.getTrialObservations().isEmpty() && originalWorkbook.getTrialConditions() != null
-					&& !originalWorkbook.getTrialConditions().isEmpty()) {
+			if (originalWorkbook.isNursery() && !originalWorkbook.getTrialObservations().isEmpty()
+					&& originalWorkbook.getTrialConditions() != null && !originalWorkbook.getTrialConditions().isEmpty()) {
 				final MeasurementVariable locationNameVar =
 						WorkbookUtil.getMeasurementVariable(originalWorkbook.getTrialConditions(), TermId.TRIAL_LOCATION.getId());
 				if (locationNameVar != null) {
@@ -595,6 +595,9 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					}
 				}
 				wData.setValue(xlsValue);
+				// Keep the imported value so that when the value is set to "missing"
+				// we can still track the old value.
+				wData.setOldValue(xlsValue);
 			}
 		}
 	}

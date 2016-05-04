@@ -192,6 +192,12 @@ public class DesignImportServiceImpl implements DesignImportService {
 		while (rowCounter <= csvData.size() - 1) {
 			final MeasurementRow measurementRow = measurementRowGenerator.createMeasurementRow(csvData.get(rowCounter));
 
+			rowCounter++;
+
+			if (measurementRow == null) {
+				continue;
+			}
+
 			final Map<Integer, MeasurementData> measurementDataMap = this.getMeasurementDataMap(measurementRow.getDataList());
 
 			// no need to override trialInstanceNo if it is null
@@ -204,11 +210,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 				measurementDataMap.get(TermId.PLOT_NO.getId()).setValue(String.valueOf(prevPlotNo + plotNoDelta));
 			}
 
-			if (measurementRow != null) {
-				measurements.add(measurementRow);
-			}
+			measurements.add(measurementRow);
 
-			rowCounter++;
 		}
 	}
 

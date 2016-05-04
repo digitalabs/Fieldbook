@@ -7,7 +7,7 @@
             'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-		'TrialSettingsManager', '_', '$localStorage', '$rootScope',
+		'TrialSettingsManager', '_', '$localStorage','$rootScope',
 		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
@@ -31,7 +31,8 @@
 			var settingRegistry = {};
 			var settingsArray = [];
 			var saveEventListeners = {};
-
+            var TRIAL_LOCATION_NAME_INDEX = 8180;
+            var LOCATION_NAME_ID = 8190;
 			var propagateChange = function(targetRegistry, dataKey, newValue) {
 				if (targetRegistry[dataKey]) {
 					angular.forEach(targetRegistry[dataKey], function(updateFunction) {
@@ -334,34 +335,7 @@
 
 					return deferred.promise;
 				},
-
-				refreshMeasurementTableAfterDeletingEnvironment: function() {
-
-					var designTypeId = service.currentData.experimentalDesign.designType;
-					if (service.applicationData.designTypes[designTypeId].isPreset) {
-						service.generatePresetExpDesign(designTypeId).then(function() {
-							service.updateAfterGeneratingDesignSuccessfully();
-							service.applicationData.hasGeneratedDesignPreset = true;
-						});
-					}else {
-						var noOfEnvironments = service.currentData.environments.noOfEnvironments;
-						var environmentData = service.currentData.experimentalDesign;
-
-						//update the no of environments in experimental design tab
-						environmentData.noOfEnvironments = noOfEnvironments;
-
-						service.generateExpDesign(environmentData).then(function(response) {
-							if (response.valid === true) {
-								service.clearUnappliedChangesFlag();
-								service.applicationData.unsavedGeneratedDesign = true;
-								$('#chooseGermplasmAndChecks').data('replace', '1');
-								$('body').data('expDesignShowPreview', '1');
-							} else {
-								showErrorMessage('', response.message);
-							}
-						});
-					}
-				},
+				
 
 				isOpenTrial: function() {
 					return service.currentData.basicDetails.studyID !== null &&
@@ -389,17 +363,17 @@
 						transformResponse: undefined
 					});
 				},
-				indicateUnappliedChangesAvailable: function() {
+				indicateUnappliedChangesAvailable: function(displayWarningMessage) {
 					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
 						service.applicationData.unappliedChangesAvailable = true;
-						showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+
+						if (displayWarningMessage === 'true' || displayWarningMessage === true) {
+							showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
 							'To update the Measurements table, please review your settings and regenerate ' +
 							'the Experimental Design on the next tab', 10000);
-						$('body').data('needGenerateExperimentalDesign', '1');
-
-						if (service.currentData.experimentalDesign.designType === 3) {
-							service.currentData.experimentalDesign.designType = null;
 						}
+
+						$('body').data('needGenerateExperimentalDesign', '1');
 					}
 				},
 
@@ -531,6 +505,14 @@
 
 						}
 					}
+                    // set selected location on save
+                    if (service.currentData.trialSettings.userInput[LOCATION_NAME_ID] != '') {
+                        selectedLocationForTrail = {
+                            name: service.currentData.trialSettings.userInput[TRIAL_LOCATION_NAME_INDEX],
+                            id: service.currentData.trialSettings.userInput[LOCATION_NAME_ID]
+                        };
+                        setSelectedLocation();
+                    }
 				},
 				onUpdateData: function(dataKey, updateFunction) {
 					if (!dataRegistry[dataKey]) {

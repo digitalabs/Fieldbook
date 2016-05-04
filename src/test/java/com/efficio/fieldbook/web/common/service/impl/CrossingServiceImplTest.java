@@ -7,9 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
-import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
-import org.generationcp.commons.service.GermplasmOriginGenerationService;
-import org.generationcp.commons.service.GermplasmOriginParameterBuilder;
+import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -48,24 +46,21 @@ public class CrossingServiceImplTest {
 
 	@Mock
 	private GermplasmListManager germplasmListManager;
-	
+
 	@Mock
 	private GermplasmDataManager germplasmDataManager;
-	
+
 	@Mock
 	private CrossExpansionProperties crossExpansionProperties;
-	
+
 	@Mock
 	private ContextUtil contextUtil;
-	
+
 	@Mock
-	private GermplasmOriginGenerationService germplasmOriginGenerationService;
-	
-	@Mock
-	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
+	private SeedSourceGenerator seedSourceGenertor;
 
 	private CrossSetting crossSetting;
-	
+
 	@Before
 	public void setUp() throws MiddlewareQueryException {
 
@@ -79,16 +74,16 @@ public class CrossingServiceImplTest {
 		this.crossingService.setGermplasmDataManager(this.germplasmDataManager);
 		this.crossingService.setCrossExpansionProperties(this.crossExpansionProperties);
 		this.crossingService.setContextUtil(this.contextUtil);
-		this.crossingService.setGermplasmOriginGenerationService(this.germplasmOriginGenerationService);
-		this.crossingService.setGermplasmOriginParameterBuilder(this.germplasmOriginParameterBuilder);
-
+		this.crossingService.setSeedSourceGenerator(this.seedSourceGenertor);
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(BREEDING_METHOD_ID);
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
-		Mockito.doReturn("generatedSourceString").when(this.germplasmOriginGenerationService)
-				.generateOriginString((GermplasmOriginGenerationParameters) Matchers.any());
+		Mockito.doReturn("generatedSourceString")
+				.when(this.seedSourceGenertor)
+				.generateSeedSourceForCross(Mockito.any(Workbook.class), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+						Mockito.anyString());
 		Mockito.doReturn(new UserDefinedField(1552)).when(this.germplasmDataManager).getPlotCodeField();
 
 		this.crossSetting = new CrossSetting();
@@ -98,7 +93,7 @@ public class CrossingServiceImplTest {
 	}
 
 	private Project createProject() {
-		Project project = new Project();
+		final Project project = new Project();
 		project.setCropType(new CropType("maize"));
 		return project;
 	}
@@ -106,11 +101,11 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testApplyCrossSetting() throws MiddlewareQueryException {
 
-		CrossNameSetting crossNameSetting = this.crossSetting.getCrossNameSetting();
+		final CrossNameSetting crossNameSetting = this.crossSetting.getCrossNameSetting();
 
-		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList,CrossingServiceImplTest.USER_ID, null);
+		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, null);
 
-		ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
+		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
 		Assert.assertEquals(CrossingServiceImplTest.SAVED_CROSSES_GID1, cross1.getGid());
 		Assert.assertEquals(crossNameSetting.getPrefix() + " 0000100 " + crossNameSetting.getSuffix(), cross1.getDesig());
@@ -120,7 +115,7 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals((Integer) 0, cross1.getNames().get(0).getLocationId());
 		Assert.assertEquals(CrossingServiceImplTest.USER_ID, cross1.getNames().get(0).getUserId());
 
-		ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
+		final ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
 
 		Assert.assertEquals(CrossingServiceImplTest.SAVED_CROSSES_GID2, cross2.getGid());
 		Assert.assertEquals(crossNameSetting.getPrefix() + " 0000101 " + crossNameSetting.getSuffix(), cross2.getDesig());
@@ -135,8 +130,8 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testApplyCrossNameSettingToImportedCrosses() throws MiddlewareQueryException {
 
-		CrossNameSetting setting = this.crossSetting.getCrossNameSetting();
-		
+		final CrossNameSetting setting = this.crossSetting.getCrossNameSetting();
+
 		this.crossingService.applyCrossNameSettingToImportedCrosses(this.crossSetting, this.importedCrossesList.getImportedCrosses());
 
 		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
@@ -158,60 +153,62 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToTrue() {
-		List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
+		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
 		Mockito.doReturn(germplasmPairs)
 				.when(this.crossingService)
 				.generateGermplasmNamePairs(this.crossSetting, this.importedCrossesList.getImportedCrosses(),
 						CrossingServiceImplTest.USER_ID, this.importedCrossesList.hasPlotDuplicate());
 
-		List<Integer> savedGermplasmIds = new ArrayList<Integer>();
+		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
 		savedGermplasmIds.add(1);
 		savedGermplasmIds.add(2);
 		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
 
 		Mockito.doNothing().when(this.crossingService)
 				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);
-		
-		CrossNameSetting crossNameSetting = this.createCrossNameSetting();
+
+		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
 		crossNameSetting.setSaveParentageDesignationAsAString(true);
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
-		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
+		this.crossingService
+				.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
 
 		try {
 			Mockito.verify(this.crossingService, Mockito.times(1)).savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds,
 					this.crossSetting);
-		} catch (TooLittleActualInvocations e) {
+		} catch (final TooLittleActualInvocations e) {
 			Assert.fail("Expecting to save parentage designation names but didn't.");
 		}
 	}
 
 	@Test
 	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToFalse() {
-		List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
+		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
 		Mockito.doReturn(germplasmPairs)
 				.when(this.crossingService)
 				.generateGermplasmNamePairs(this.crossSetting, this.importedCrossesList.getImportedCrosses(),
 						CrossingServiceImplTest.USER_ID, this.importedCrossesList.hasPlotDuplicate());
 
-		List<Integer> savedGermplasmIds = new ArrayList<Integer>();
+		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
 		savedGermplasmIds.add(1);
 		savedGermplasmIds.add(2);
 		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
 
 		Mockito.doNothing().when(this.crossingService)
 				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);
-		
-		CrossNameSetting crossNameSetting = this.createCrossNameSetting();
+
+		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
 		crossNameSetting.setSaveParentageDesignationAsAString(false);
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
-		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
+		this.crossingService
+				.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
 
 		try {
 			Mockito.verify(this.crossingService, Mockito.times(0)).savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds,
 					this.crossSetting);
-		} catch (NeverWantedButInvoked e) {
+		} catch (final NeverWantedButInvoked e) {
 			Assert.fail("Expecting to NOT save parentage designation names but didn't.");
 		}
 	}
@@ -219,9 +216,9 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testBuildCrossName() {
 
-		CrossNameSetting setting = this.createCrossNameSetting();
-		ImportedCrosses cross = this.createCross();
-		String crossName = this.crossingService.buildCrossName(cross, setting.getSeparator());
+		final CrossNameSetting setting = this.createCrossNameSetting();
+		final ImportedCrosses cross = this.createCross();
+		final String crossName = this.crossingService.buildCrossName(cross, setting.getSeparator());
 
 		Assert.assertEquals(cross.getFemaleDesig() + setting.getSeparator() + cross.getMaleDesig(), crossName);
 
@@ -233,98 +230,98 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
-    public void testPopulateGermplasmdateWithCrossingDate() {
-        Germplasm germplasm = new Germplasm();
-		String crossingDate = "20150303";
-        this.crossingService.populateGermplasmDate(germplasm, crossingDate, "");
-        Assert.assertEquals(germplasm.getGdate(), new Integer(crossingDate));
-    }
+	public void testPopulateGermplasmdateWithCrossingDate() {
+		final Germplasm germplasm = new Germplasm();
+		final String crossingDate = "20150303";
+		this.crossingService.populateGermplasmDate(germplasm, crossingDate, "");
+		Assert.assertEquals(germplasm.getGdate(), new Integer(crossingDate));
+	}
 
 	@Test
-    public void testPopulateGermplasmdateWithHarvestDate() {
-        Germplasm germplasm = new Germplasm();
+	public void testPopulateGermplasmdateWithHarvestDate() {
+		final Germplasm germplasm = new Germplasm();
 		String harvestedDate = "2015-06";
-        this.crossingService.populateGermplasmDate(germplasm, "", harvestedDate);
-        harvestedDate = harvestedDate.replace("-", "");
-        harvestedDate += "00";
-        Assert.assertEquals(germplasm.getGdate(), new Integer(harvestedDate));
-    }
+		this.crossingService.populateGermplasmDate(germplasm, "", harvestedDate);
+		harvestedDate = harvestedDate.replace("-", "");
+		harvestedDate += "00";
+		Assert.assertEquals(germplasm.getGdate(), new Integer(harvestedDate));
+	}
 
 	@Test
-    public void testPopulateGermplasmdateWithCurrentDate() {
-        Germplasm germplasm = new Germplasm();
-        this.crossingService.populateGermplasmDate(germplasm, "", "");
-        Assert.assertEquals(germplasm.getGdate(), DateUtil.getCurrentDateAsIntegerValue());
-    }
+	public void testPopulateGermplasmdateWithCurrentDate() {
+		final Germplasm germplasm = new Germplasm();
+		this.crossingService.populateGermplasmDate(germplasm, "", "");
+		Assert.assertEquals(germplasm.getGdate(), DateUtil.getCurrentDateAsIntegerValue());
+	}
 
 	@Test
-    public void testPopulateGermplasmdateWithBothDateReturnHarvestedDate() {
-        Germplasm germplasm = new Germplasm();
+	public void testPopulateGermplasmdateWithBothDateReturnHarvestedDate() {
+		final Germplasm germplasm = new Germplasm();
 		String harvestedDate = "2015-06";
-        this.crossingService.populateGermplasmDate(germplasm, "201509", harvestedDate);
-        harvestedDate = harvestedDate.replace("-", "");
-        harvestedDate += "00";
-        Assert.assertEquals(germplasm.getGdate(), new Integer(harvestedDate));
-    }
+		this.crossingService.populateGermplasmDate(germplasm, "201509", harvestedDate);
+		harvestedDate = harvestedDate.replace("-", "");
+		harvestedDate += "00";
+		Assert.assertEquals(germplasm.getGdate(), new Integer(harvestedDate));
+	}
 
 	@Test
 	public void testBuildDesignationNameInSequenceDefaultSetting() {
 
-		CrossSetting crossSetting = this.createCrossSetting();
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossSetting crossSetting = this.createCrossSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setPrefix("A");
 		setting.setSuffix("B");
 
 		crossSetting.setCrossNameSetting(setting);
-		String designationName = this.crossingService.buildDesignationNameInSequence(null, 1, crossSetting);
+		final String designationName = this.crossingService.buildDesignationNameInSequence(null, 1, crossSetting);
 		Assert.assertEquals("A1B", designationName);
 	}
 
 	@Test
 	public void testBuildDesignationNameInSequenceWithSpacesInPrefixSuffix() {
 
-		CrossSetting crossSetting = this.createCrossSetting();
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossSetting crossSetting = this.createCrossSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setPrefix("A");
 		setting.setSuffix("B");
 		setting.setAddSpaceBetweenPrefixAndCode(true);
 		setting.setAddSpaceBetweenSuffixAndCode(true);
 
 		crossSetting.setCrossNameSetting(setting);
-		String designationName = this.crossingService.buildDesignationNameInSequence(null, 1, crossSetting);
+		final String designationName = this.crossingService.buildDesignationNameInSequence(null, 1, crossSetting);
 		Assert.assertEquals("A 1 B", designationName);
 	}
 
 	@Test
 	public void testBuildDesignationNameInSequenceWithNumOfDigits() {
 
-		CrossSetting crossSetting = this.createCrossSetting();
-		CrossNameSetting setting = crossSetting.getCrossNameSetting();
+		final CrossSetting crossSetting = this.createCrossSetting();
+		final CrossNameSetting setting = crossSetting.getCrossNameSetting();
 		setting.setAddSpaceBetweenPrefixAndCode(true);
 		setting.setAddSpaceBetweenSuffixAndCode(true);
 		setting.setNumOfDigits(3);
 		setting.setPrefix("A");
 		setting.setSuffix("B");
 
-		String designationName = this.crossingService.buildDesignationNameInSequence(null, 1, crossSetting);
+		final String designationName = this.crossingService.buildDesignationNameInSequence(null, 1, crossSetting);
 		Assert.assertEquals("A 001 B", designationName);
 	}
 
 	@Test
 	public void testBuildPrefixStringDefault() {
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setPrefix(" A  ");
-		String prefix = this.crossingService.buildPrefixString(setting);
+		final String prefix = this.crossingService.buildPrefixString(setting);
 
 		Assert.assertEquals("A", prefix);
 	}
 
 	@Test
 	public void testBuildPrefixStringWithSpace() {
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setPrefix("   A");
 		setting.setAddSpaceBetweenPrefixAndCode(true);
-		String prefix = this.crossingService.buildPrefixString(setting);
+		final String prefix = this.crossingService.buildPrefixString(setting);
 
 		Assert.assertEquals("A ", prefix);
 	}
@@ -332,19 +329,19 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testBuildSuffixStringDefault() {
 
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setSuffix("  B   ");
-		String suffix = this.crossingService.buildSuffixString(setting, setting.getSuffix());
+		final String suffix = this.crossingService.buildSuffixString(setting, setting.getSuffix());
 
 		Assert.assertEquals("B", suffix);
 	}
 
 	@Test
 	public void testBuildSuffixStringWithSpace() {
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setSuffix("   B   ");
 		setting.setAddSpaceBetweenSuffixAndCode(true);
-		String suffix = this.crossingService.buildSuffixString(setting, setting.getSuffix());
+		final String suffix = this.crossingService.buildSuffixString(setting, setting.getSuffix());
 
 		Assert.assertEquals(" B", suffix);
 	}
@@ -352,22 +349,22 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testGenerateGermplasmNamePairs() throws MiddlewareQueryException {
 
-		CrossSetting crossSetting = new CrossSetting();
-		CrossNameSetting crossNameSetting = this.createCrossNameSetting();
-		BreedingMethodSetting breedingMethodSetting = new BreedingMethodSetting();
-		AdditionalDetailsSetting additionalDetailsSetting = this.createAdditionalDetailsSetting();
+		final CrossSetting crossSetting = new CrossSetting();
+		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
+		final BreedingMethodSetting breedingMethodSetting = new BreedingMethodSetting();
+		final AdditionalDetailsSetting additionalDetailsSetting = this.createAdditionalDetailsSetting();
 		crossSetting.setCrossNameSetting(crossNameSetting);
 		crossSetting.setBreedingMethodSetting(breedingMethodSetting);
 		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
 
-		List<Pair<Germplasm, Name>> germplasmPairs =
+		final List<Pair<Germplasm, Name>> germplasmPairs =
 				this.crossingService.generateGermplasmNamePairs(crossSetting, this.importedCrossesList.getImportedCrosses(),
 						CrossingServiceImplTest.USER_ID, false);
 
 		Pair<Germplasm, Name> germplasmNamePair = germplasmPairs.get(0);
-		Germplasm germplasm1 = germplasmNamePair.getLeft();
-		Name name1 = germplasmNamePair.getRight();
-		ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
+		final Germplasm germplasm1 = germplasmNamePair.getLeft();
+		final Name name1 = germplasmNamePair.getRight();
+		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
 		Assert.assertNull(germplasm1.getGid());
 		Assert.assertEquals(20150101, germplasm1.getGdate().intValue());
@@ -396,9 +393,9 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(CrossingServiceImplTest.USER_ID, name1.getUserId());
 
 		germplasmNamePair = germplasmPairs.get(1);
-		Germplasm germplasm2 = germplasmNamePair.getLeft();
-		Name name2 = germplasmNamePair.getRight();
-		ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
+		final Germplasm germplasm2 = germplasmNamePair.getLeft();
+		final Name name2 = germplasmNamePair.getRight();
+		final ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
 
 		Assert.assertNull(null, germplasm2.getGid());
 		Assert.assertEquals(20150101, germplasm2.getGdate().intValue());
@@ -430,12 +427,12 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testGetNextNumberInSequenceDefault() throws MiddlewareQueryException {
 
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setStartNumber(1);
 		setting.setPrefix("A");
 		Mockito.doReturn("1").when(this.germplasmDataManager).getNextSequenceNumberForCrossName(Matchers.anyString());
 
-		int nextNumber = this.crossingService.getNextNumberInSequence(setting);
+		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
 
 		Assert.assertEquals(1, nextNumber);
 	}
@@ -443,12 +440,12 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testGetNextNumberInSequenceStartNumberIsSpecified() throws MiddlewareQueryException {
 
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setStartNumber(1);
 		setting.setPrefix("A");
 		Mockito.doReturn("100").when(this.germplasmDataManager).getNextSequenceNumberForCrossName(Matchers.anyString());
 
-		int nextNumber = this.crossingService.getNextNumberInSequence(setting);
+		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
 
 		Assert.assertEquals(1, nextNumber);
 	}
@@ -456,38 +453,38 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testGetNextNumberInSequenceStartNumberIsNotSpecified() throws MiddlewareQueryException {
 
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setStartNumber(0);
 		setting.setPrefix("A");
 		Mockito.doReturn("100").when(this.germplasmDataManager).getNextSequenceNumberForCrossName(Matchers.anyString());
 
-		int nextNumber = this.crossingService.getNextNumberInSequence(setting);
+		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
 
 		Assert.assertEquals(100, nextNumber);
 	}
 
 	@Test
 	public void testGetNumberWithLeadingZeroesAsStringDefault() {
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setNumOfDigits(0);
-		String formattedString = this.crossingService.getNumberWithLeadingZeroesAsString(1, setting);
+		final String formattedString = this.crossingService.getNumberWithLeadingZeroesAsString(1, setting);
 
 		Assert.assertEquals("1", formattedString);
 	}
 
 	@Test
 	public void testGetNumberWithLeadingZeroesAsStringWithNumOfDigitsSpecified() {
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setNumOfDigits(8);
-		String formattedString = this.crossingService.getNumberWithLeadingZeroesAsString(1, setting);
+		final String formattedString = this.crossingService.getNumberWithLeadingZeroesAsString(1, setting);
 
 		Assert.assertEquals("00000001", formattedString);
 	}
 
 	private ImportedCrossesList createImportedCrossesList() {
 
-		ImportedCrossesList importedCrossesList = new ImportedCrossesList();
-		List<ImportedCrosses> importedCrosses = new ArrayList<>();
+		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
+		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 		return importedCrossesList;
 
@@ -495,8 +492,8 @@ public class CrossingServiceImplTest {
 
 	private List<ImportedCrosses> createImportedCrosses() {
 
-		List<ImportedCrosses> importedCrosses = new ArrayList<>();
-		ImportedCrosses cross = new ImportedCrosses();
+		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
+		final ImportedCrosses cross = new ImportedCrosses();
 		cross.setFemaleDesig("FEMALE-12345");
 		cross.setFemaleGid("12345");
 		cross.setMaleDesig("MALE-54321");
@@ -504,7 +501,7 @@ public class CrossingServiceImplTest {
 		cross.setCross("CROSS");
 		cross.setSource("MALE:1:FEMALE:1");
 		importedCrosses.add(cross);
-		ImportedCrosses cross2 = new ImportedCrosses();
+		final ImportedCrosses cross2 = new ImportedCrosses();
 		cross2.setFemaleDesig("FEMALE-9999");
 		cross2.setFemaleGid("9999");
 		cross2.setMaleDesig("MALE-8888");
@@ -518,7 +515,7 @@ public class CrossingServiceImplTest {
 	}
 
 	private ImportedCrosses createCross() {
-		ImportedCrosses cross = new ImportedCrosses();
+		final ImportedCrosses cross = new ImportedCrosses();
 		cross.setFemaleDesig("FEMALE-12345");
 		cross.setFemaleGid("12345");
 		cross.setMaleDesig("MALE-54321");
@@ -531,7 +528,7 @@ public class CrossingServiceImplTest {
 	}
 
 	private CrossNameSetting createCrossNameSetting() {
-		CrossNameSetting setting = new CrossNameSetting();
+		final CrossNameSetting setting = new CrossNameSetting();
 
 		setting.setPrefix("PREFIX");
 		setting.setSuffix("SUFFIX");
@@ -549,13 +546,13 @@ public class CrossingServiceImplTest {
 	}
 
 	private BreedingMethodSetting createBreedingMethodSetting() {
-		BreedingMethodSetting breedingMethodSetting = new BreedingMethodSetting();
+		final BreedingMethodSetting breedingMethodSetting = new BreedingMethodSetting();
 		breedingMethodSetting.setMethodId(BREEDING_METHOD_ID);
 		return breedingMethodSetting;
 	}
 
 	private AdditionalDetailsSetting createAdditionalDetailsSetting() {
-		AdditionalDetailsSetting setting = new AdditionalDetailsSetting();
+		final AdditionalDetailsSetting setting = new AdditionalDetailsSetting();
 
 		setting.setHarvestDate("20150101");
 		setting.setHarvestLocationId(99);
@@ -564,15 +561,15 @@ public class CrossingServiceImplTest {
 	}
 
 	private List<UserDefinedField> createNameTypes() {
-		List<UserDefinedField> nameTypes = new ArrayList<>();
-		UserDefinedField udf = new UserDefinedField();
+		final List<UserDefinedField> nameTypes = new ArrayList<>();
+		final UserDefinedField udf = new UserDefinedField();
 		udf.setFcode(CrossingServiceImpl.USER_DEF_FIELD_CROSS_NAME[0]);
 		nameTypes.add(udf);
 		return nameTypes;
 	}
 
 	private List<Integer> createGermplasmIds() {
-		List<Integer> ids = new ArrayList<>();
+		final List<Integer> ids = new ArrayList<>();
 		ids.add(Integer.valueOf(CrossingServiceImplTest.SAVED_CROSSES_GID1));
 		ids.add(Integer.valueOf(CrossingServiceImplTest.SAVED_CROSSES_GID2));
 		return ids;

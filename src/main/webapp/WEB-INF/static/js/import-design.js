@@ -45,10 +45,7 @@ var ImportDesign = (function() {
 		},
 
 		reloadMeasurements: function() {
-			if (isNursery()) {
-
-				// reload nursery measurements here
-			} else {
+			if (!isNursery()){
 				var angularElem = angular.element('#mainApp');
 
 				angularElem
@@ -314,6 +311,20 @@ var ImportDesign = (function() {
 
 		cancelDesignImport: function() {
 			$.get('/Fieldbook/DesignImport/cancelImportDesign');
+
+			if (!isNursery()) {
+				var angularElem = angular.element('#mainApp');
+				var TrialManagerDataService = angularElem.injector().get('TrialManagerDataService');
+				
+				if(TrialManagerDataService.applicationData.hasNewEnvironmentAdded){
+					angularElem.scope().$apply(function(){
+						TrialManagerDataService.currentData.environments.noOfEnvironments-=TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd;
+						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
+						TrialManagerDataService.applicationData.unappliedChangesAvailable = false;	
+						TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd = 0;
+					});
+				}
+			}
 		},
 
 		doSubmitImport: function() {
@@ -326,8 +337,16 @@ var ImportDesign = (function() {
 				$('#importDesignUploadForm').attr('action',
 						'/Fieldbook/DesignImport/import/N');
 			} else {
-				$('#importDesignUploadForm').attr('action',
-						'/Fieldbook/DesignImport/import/T');
+				var TrialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
+				var hasNewEnvironmentAdded = TrialManagerDataService.applicationData.hasNewEnvironmentAdded;
+				var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
+
+				var actionURL = '/Fieldbook/DesignImport/import/T';
+				if(hasNewEnvironmentAdded){
+					actionURL += '/' + noOfEnvironments;
+				}
+
+				$('#importDesignUploadForm').attr('action',actionURL);
 			}
 
 			ImportDesign.submitImport($('#importDesignUploadForm')).done(

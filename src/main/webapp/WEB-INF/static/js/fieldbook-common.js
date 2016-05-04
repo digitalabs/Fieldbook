@@ -3876,7 +3876,14 @@ function hasMeasurementsInvalidValue() {
 
 function reviewOutOfBoundsData() {
 	'use strict';
-	$('#reviewOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
+
+	if (hasMeasurementsInvalidValue()){
+		// Display the Review Out of Bound Data dialog if there are invalid values in the measurements table.
+		$('#reviewOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
+	} else {
+		showAlertMessage('', 'There are no more out of bounds data to review.', 5000);
+	}
+
 }
 
 function displayDetailsOutOfBoundsData() {

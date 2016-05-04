@@ -13,8 +13,7 @@
 					gpListDataTblClass = '.germplasm-list-data-table';
 
 				if (isNursery()) {
-					germplasmDataTable =
-						new BMS.Fieldbook.GermplasmListDataTable(gpListItemsClass, gpListDataTblClass, dataGermplasmList);
+					germplasmDataTable = new BMS.Fieldbook.GermplasmListDataTable(gpListItemsClass, gpListDataTblClass, dataGermplasmList);
 					setSpinnerMaxValue();
 					if ($noGermplasmListIndicator.length !== 0) {
 						$noGermplasmListIndicator.html(noNurseryGermplasmList);
@@ -39,7 +38,10 @@
 				$txtStartingEntryNo.change(function() {
 					window.ImportGermplasm.validateAndSetEntryNo();
 				});
-                window.ImportGermplasm.setStartingEntryNumberFirstTime();
+
+				if (!isNursery()) {
+					window.ImportGermplasm.setStartingEntryNumberFirstTime();
+				}
 			},
 			validateAndSetEntryNo: function() {
 				var $txtStartingEntryNo = $('#txtStartingEntryNo');
@@ -112,7 +114,7 @@
 					var newEntryNo = parseInt(currentEntryNo) + numToAddToEntryNo;
 					cell.data(newEntryNo);
 				}
-                dataTable.fnDraw();
+				dataTable.fnDraw();
 			},
 			validateEntryAndPlotNo: function(inputNo) {
 				var validNo = '^(?=.*[1-9].*)[0-9]{1,5}$';
@@ -149,11 +151,11 @@
 				trialManager.setUnappliedChangesAvailable();
 				trialManager.updateStartingEntryNoCount($.trim($('#txtStartingEntryNo').val()));
 			},
-            setStartingEntryNumberFirstTime: function() {
-                // Setting Starting Entry Number for first time while generating design
-                var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
-                trialManager.updateStartingEntryNoCount($.trim($('#txtStartingEntryNo').val()));
-            }
+			setStartingEntryNumberFirstTime: function() {
+				// Setting Starting Entry Number for first time while generating design
+				var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
+				trialManager.updateStartingEntryNoCount($.trim($('#txtStartingEntryNo').val()));
+			}
 		};
 	}
 })();

@@ -39,7 +39,14 @@
     					$scope.hasDropdownOptions = $scope.widgetType === 'DROPDOWN';
 
     					$scope.isLocation = parseInt(LOCATION_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
-
+                        if($scope.isLocation){
+                            selectedLocation('', $scope.variableDefinition.possibleValues);
+                            angular.forEach($scope.variableDefinition.possibleValues, function(val, index){
+                                if(val.id == $scope.valuecontainer[$scope.targetkey]){
+                                    selectedLocation(val , $scope.variableDefinition.possibleValues);
+                                }
+                            });
+                        }
     					$scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
     						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 

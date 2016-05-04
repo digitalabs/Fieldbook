@@ -1,21 +1,23 @@
-var isAdvanceListGenerated = false;
+var isAdvanceListGeneratedForTrial = false;
 
 $(function() {
 	'use strict';
 
 	// attach spinner operations to ajax events
+	//TODO Review the usage of that Spinner, there should not be global spinners in the ajax apps
 	$(document).ajaxStart(function() {
 		SpinnerManager.addActive();
 	}).ajaxStop(function() {
 		SpinnerManager.resolveActive();
 	}).ajaxError(function(xhr, error) {
-        if(error.status == 500) {
-            showErrorMessage('', ajaxGenericErrorMsg);
-        } else {
-            showErrorMessage('INVALID INPUT', error.responseText);
-        }
+		//TODO find out why do we do that here and ==
+		if (error.status == 500) {
+			showErrorMessage('', ajaxGenericErrorMsg);
+		} else {
+			showErrorMessage('INVALID INPUT', error.responseText);
+		}
 
-        SpinnerManager.resolveActive();
+		SpinnerManager.resolveActive();
 	});
 
 	if (typeof convertToSelect2 === 'undefined' || convertToSelect2) {
@@ -1010,46 +1012,46 @@ function deleteNurseryInEdit() {
 
 /* ADVANCING TRIAL SPECIFIC FUNCTIONS */
 
-function advanceTrial(){
-    'use strict';
-    var idVal = $('#studyId').val();
-    $('#advanceNurseryModal').modal('hide');
-    $('#selectEnviornmentModal').modal({ backdrop: 'static', keyboard: true });
+function advanceTrial() {
+	'use strict';
+	var idVal = $('#studyId').val();
+	$('#advanceNurseryModal').modal('hide');
+	$('#selectEnvironmentModal').modal({ backdrop: 'static', keyboard: true });
 }
 
-function trialSelectEnviornmentContinue(trialInstances,noOfReplications,selectedLocations,isTrialInstanceNumberUsed){
-    'use strict';
-    var idVal = $('#studyId').val();
-    $('#selectEnviornmentModal').modal('hide');
-    var locationDetailHtml = generateLocationDetailTable(selectedLocations,isTrialInstanceNumberUsed);
-    advanceStudy(idVal,trialInstances,noOfReplications,locationDetailHtml);
-
+function trialSelectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed) {
+	'use strict';
+	var idVal = $('#studyId').val();
+	$('#selectEnvironmentModal').modal('hide');
+	var locationDetailHtml = generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed);
+	advanceStudy(idVal, trialInstances, noOfReplications, locationDetailHtml);
 }
 
-function generateLocationDetailTable(selectedLocations,isTrialInstanceNumberUsed) {
-    var result = "<table class='table table-curved table-condensed'>";
-    if(isTrialInstanceNumberUsed){
-        result += "<caption>Update Location Name or Location Abbr in Environment Details.</caption>";
-    }
-    result += "<thead><tr><th>"+selectedLocations[0]+"</th></tr></thead>";
+function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed) {
+	//TODO Why do we generate an html code here in js?
+	//FIXME The caption is not localised
+	var result = "<table class='table table-curved table-condensed'>";
+	if (isTrialInstanceNumberUsed) {
+		result += "<caption>Update Location Name or Location Abbr in Environment Details.</caption>";
+	}
+	result += "<thead><tr><th>" + selectedLocations[0] + "</th></tr></thead>";
 
-    for(var i=1; i<selectedLocations.length; i++) {
-        result += "<tbody><tr>";
-        result += "<td>"+selectedLocations[i]+"</td>";
-        result += "</tr></tbody>";
-    }
-    result += "</table>";
-    return result;
+	for (var i = 1; i < selectedLocations.length; i++) {
+		result += "<tbody><tr>";
+		result += "<td>" + selectedLocations[i] + "</td>";
+		result += "</tr></tbody>";
+	}
+	result += "</table>";
+	return result;
 }
 
 /* END ADVANCING TRIAL SPECIFIC FUNCTIONS */
 
-
 /* ADVANCING NURSERY SPECIFIC FUNCTIONS */
 
-function advanceNursery(){
-    var idVal = $('#createNurseryMainForm #studyId').val();
-    advanceStudy(idVal);
+function advanceNursery() {
+	var idVal = $('#createNurseryMainForm #studyId').val();
+	advanceStudy(idVal);
 }
 
 /* END ADVANCING NURSERY SPECIFIC FUNCTIONS */
@@ -1076,6 +1078,8 @@ function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtm
         return;
     }
 
+	//TODO do we advance the trial using the same ajax function as advancing the nursery from the nursery manager.
+	//TODO Should that be common then with the common path?
     var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
     advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
 
@@ -1087,6 +1091,7 @@ function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtm
     }
 
     if (idVal != null) {
+    	//TODO the failure of the ajax request should be processed and error shown
         $.ajax({
             url: advanceStudyHref,
             type: 'GET',
@@ -3324,7 +3329,7 @@ function showSelectedTabNursery(selectedTabName) {
 		showAlertMessage('', importSaveDataWarningMessage);
 		return;
 	}
-	
+
 	if (stockListImportNotSaved) {
 		showAlertMessage('', importSaveDataWarningMessage);
 		e.preventDefault();
@@ -3412,31 +3417,47 @@ function displayEditFactorsAndGermplasmSection() {
 
 // Function to enable/disable & show/hide controls as per Clear list button's visibility
 function toggleControlsForGermplasmListManagement(value) {
-    if(value) {
-        $('#imported-germplasm-list-reset-button').show();
-        $('#txtStartingEntryNo').prop('title', '');
-        $('#txtStartingPlotNo').prop('title', '');
-    } else {
-        $('#imported-germplasm-list-reset-button').hide();
-        if (isNursery()) {
-            $('#txtStartingEntryNo').prop('title', 'Click Replace button to edit entry number');
-            $('#txtStartingPlotNo').prop('title', 'Click Replace button to edit plot number');
-        } else {
-            $('#txtStartingEntryNo').prop('title', 'Click Modify List button to edit entry number');
-        }
-    }
+	'use strict';
+	if (value) {
+		$('#imported-germplasm-list-reset-button').show();
+		$('#txtStartingEntryNo').prop('title', '');
+		$('#txtStartingPlotNo').prop('title', '');
+	} else {
+		$('#imported-germplasm-list-reset-button').hide();
+		if (isNursery()) {
+			$('#txtStartingEntryNo').prop('title', 'Click Replace button to edit entry number');
+			$('#txtStartingPlotNo').prop('title', 'Click Replace button to edit plot number');
+		} else {
+			$('#txtStartingEntryNo').prop('title', 'Click Modify List button to edit entry number');
+		}
+	}
 
-    $('#txtStartingEntryNo').prop('disabled', !value);
-    $('#txtStartingPlotNo').prop('disabled', !value);
+	$('#txtStartingEntryNo').prop('disabled', !value);
+	$('#txtStartingPlotNo').prop('disabled', !value);
 }
 
 function showGermplasmDetailsSection() {
 	'use strict';
+
+	if (isNursery()) {
+		// If Advance List for Nursery is already generated then user can not Clear / Modify List.
+		if ($('#create-nursery-tab-headers').children('li').hasClass('advance-germplasm-items')) {
+			showAlertMessage('', advanceListAlreadyGeneratedForNurseryWarningMessage, 10000);
+			return;
+		}
+	} else {
+		// If Advance List for Trial is already generated then user can not Clear / Modify List.
+		if (isAdvanceListGeneratedForTrial) {
+			showAlertMessage('', advanceListAlreadyGeneratedForTrialWarningMessage, 10000);
+			return;
+		}
+	}
+
 	$('.observation-exists-notif').hide();
 	$('.overwrite-germplasm-list').hide();
 	$('.browse-import-link').show();
 	if ($('.germplasm-list-items tbody tr').length > 0) {
-        toggleControlsForGermplasmListManagement(true);
+		toggleControlsForGermplasmListManagement(true);
 	}
 	//flag to determine if existing measurements should be deleted
 	$('#chooseGermplasmAndChecks').data('replace', '1');
@@ -3593,6 +3614,14 @@ function displaySelectedGermplasmDetails() {
 }
 function showAddEnvironmentsDialog() {
 	'use strict';
+	if (!isNursery()) {
+		var currentDesignType = angular.element('#mainApp').injector().get('TrialManagerDataService').currentData.experimentalDesign.designType;
+		if(hasMeasurementData() && currentDesignType === 3){
+			showAlertMessage('', addEnvironmentsImportDesignWarning, 5000);
+			return;
+		}
+	}
+
 	$('#numberOfEnvironments').val('');
 	$('#addEnvironmentsModal').modal({ backdrop: 'static', keyboard: true });
 }
@@ -3847,7 +3876,14 @@ function hasMeasurementsInvalidValue() {
 
 function reviewOutOfBoundsData() {
 	'use strict';
-	$('#reviewOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
+
+	if (hasMeasurementsInvalidValue()){
+		// Display the Review Out of Bound Data dialog if there are invalid values in the measurements table.
+		$('#reviewOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
+	} else {
+		showAlertMessage('', 'There are no more out of bounds data to review.', 5000);
+	}
+
 }
 
 function displayDetailsOutOfBoundsData() {
@@ -3987,3 +4023,68 @@ function onMeasurementsObservationLoad(isCategoricalDisplay) {
 	});
 
 }
+
+/**
+ * The following contructor contains utility functions for escaping html content from a string
+ * Logic is extracted from lodash 4.11.1 source: https://github.com/lodash/lodash/blob/master/dist/lodash.core.js
+ * @constructor
+ */
+function EscapeUtilityConstructor() {
+	/** Used to match HTML entities and HTML characters. */
+	this.unescapedHtmlRegEx = /[&<>"'`]/g;
+	this.hasUnescapedHtmlRegEx = RegExp(this.unescapedHtmlRegEx.source);
+}
+
+/**
+ * Converts `value` to a string. An empty string is returned for `null`
+ * and `undefined` values. The sign of `-0` is preserved.
+ *
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ * @example
+ *
+ * toString(null);
+ * // => ''
+ *
+ * toString(-0);
+ * // => '-0'
+ *
+ * toString([1, 2, 3]);
+ * // => '1,2,3'
+ */
+
+EscapeUtilityConstructor.prototype.toString = function(value) {
+	if (typeof value == 'string') {
+		return value;
+	}
+	return value == null ? '' : (value + '');
+};
+
+/**
+ * Used to convert characters to HTML entities.
+ *
+ * @private
+ * @param {string} chr The matched character to escape.
+ * @returns {string} Returns the escaped character.
+ */
+EscapeUtilityConstructor.prototype.escape = function(string)
+{
+	var htmlEscapes = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#39;',
+		'`': '&#96;'
+	};
+
+	string = this.toString(string);
+
+	return (string && this.hasUnescapedHtmlRegEx.test(string))
+		? string.replace(this.unescapedHtmlRegEx, function(chr) {
+			return htmlEscapes[chr];
+	}) : string;
+};
+
+/* make a global instance of EscapeUtility usable to all Fieldbook modules */
+var EscapeHTML = new EscapeUtilityConstructor();

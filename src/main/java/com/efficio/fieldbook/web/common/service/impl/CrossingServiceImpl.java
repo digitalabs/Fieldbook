@@ -603,7 +603,10 @@ public class CrossingServiceImpl implements CrossingService {
 
 				if (breedingMethod != null && breedingMethod.getMid() != null && breedingMethod.getMid() != 0) {
 					importedCrosses.setBreedingMethodId(breedingMethod.getMid());
-				}
+				} else {
+                    // TODO address case where breeding method does not exist in the parser level to avoid having this case during the saving flow
+                    importedCrosses.setBreedingMethodId(0);
+                }
 			}
 
 			// if at this point, there is already breeding method info available on the imported cross (from import file, etc, we proceed to next)

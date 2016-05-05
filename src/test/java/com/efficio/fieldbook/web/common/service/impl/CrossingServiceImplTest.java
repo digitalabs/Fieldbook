@@ -108,11 +108,11 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testProcessCrossBreedingMethodCodeAlreadyAvailable() {
-		List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
+		final List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
 
 		// we modify the data such that one of the entries already have a raw breeding method code (i.e., from import file)
 		crosses.get(0).setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
-		Method method = new Method(TEST_BREEDING_METHOD_ID);
+		final Method method = new Method(TEST_BREEDING_METHOD_ID);
 		Mockito.doReturn(method).when(this.germplasmDataManager).getMethodByCode(TEST_BREEDING_METHOD_CODE);
 
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
@@ -124,12 +124,12 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testProcessCrossBreedingMethodIDAlreadyAvailable() {
 
-		List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
+		final List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
 
 		// we provide breeding method ID values to the objects to simulate input
         // we start from 1, because a breeding method ID of 0 is not considered a proper value
 		int i = 1;
-		for (ImportedCrosses cross : crosses) {
+		for (final ImportedCrosses cross : crosses) {
 			cross.setBreedingMethodId(i++);
 		}
 
@@ -137,7 +137,7 @@ public class CrossingServiceImplTest {
 
 		// we verify that the breeding method IDs have not changed from the original processing
 		i = 1;
-		for (ImportedCrosses cross : crosses) {
+		for (final ImportedCrosses cross : crosses) {
 			Assert.assertEquals("Breeding method ID should not be overridden if it is already present in the imported cross info", i, cross.getBreedingMethodId().intValue());
             i++;
 		}
@@ -149,7 +149,7 @@ public class CrossingServiceImplTest {
 
         this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 
-        for (ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
+        for (final ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
             Assert.assertEquals("User provided breeding method must be applied to all objects", TEST_BREEDING_METHOD_ID, importedCrosses.getBreedingMethodId());
         }
     }
@@ -164,14 +164,14 @@ public class CrossingServiceImplTest {
         setupMockCallsForGermplasm(Integer.parseInt(TEST_FEMALE_GID_2));
         setupMockCallsForGermplasm(Integer.parseInt(TEST_MALE_GID_2));
 
-        for (ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
+        for (final ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
             Assert.assertNotNull("A method based on parental lines must be assigned to germplasms if user does not select a breeding method", importedCrosses.getBreedingMethodId());
             Assert.assertNotSame("A method based on parental lines must be assigned to germplasms if user does not select a breeding method", 0, importedCrosses.getBreedingMethodId());
         }
     }
 
-    void setupMockCallsForGermplasm(Integer gid) {
-        Germplasm germplasm = new Germplasm(gid);
+    void setupMockCallsForGermplasm(final Integer gid) {
+        final Germplasm germplasm = new Germplasm(gid);
         germplasm.setGnpgs(-1);
         Mockito.doReturn(germplasm).when(this.germplasmDataManager).getGermplasmByGID(gid);
 

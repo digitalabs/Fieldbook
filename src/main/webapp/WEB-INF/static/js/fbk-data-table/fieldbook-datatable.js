@@ -69,7 +69,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				data: $(this).html(),
 				defaultContent: ''
 			});
-			if ($(this).data('term-data-type-id') == '1110') {
+			if ($(this).data('term-data-type-id') === 1110) {
+				// Column definition for Numeric data type
+
 				var minVal = ($(this).data('min-range'));
 				var maxVal = ($(this).data('max-range'));
 				var termId = $(this).data('term-id');
@@ -96,12 +98,28 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						$(td).data('term-id', termId);
 					},
 					render: function(data, type, full, meta) {
+						var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '');
+						var hiddenData = EscapeHTML.escape(data[1]);
+
 						if (data !== undefined) {
-							return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
+							return displayData + '<input type="hidden" value="' + hiddenData + '" />';
 						}
 					}
 				});
-			}else if ($(this).data('term-data-type-id') == '1130') {
+			} else if ($(this).data('term-data-type-id') === 1120) {
+				// Column definition for Character data type
+
+
+				columnsDef.push({
+					defaultContent: '',
+					targets: columns.length - 1,
+					render: function(data, type, full, meta) {
+						return EscapeHTML.escape(data);
+					}
+				});
+			} else if ($(this).data('term-data-type-id') === 1130) {
+				// Column definition for Categorical data type
+
 				if ($(this).data('term-valid-values') == null) {
 					$(this).data('term-valid-values', '');
 				}
@@ -113,8 +131,36 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					targets: columns.length - 1,
 					createdCell: function(td, cellData, rowData, row, col) {
 						if (isVariates) {
-							var cellText = $(td).text();
-							if ($.inArray(cellText, possibleValues) === -1) {
+							// cellData[0] : categorical name
+							// cellData[1] : categorical display description
+
+							// current measurementData has no value thus no need to check if out-of-bounds
+							if (cellData[1] === '') {
+								return;
+							}
+
+							// look for that description in the list of possible values
+							var found = $.grep(possibleValues, function(value, i) {
+								if (value === cellData[1]) {
+									// this is the case where a=x format is retrieved directly from ontology DB
+
+									return true;
+								} else if (value !== '' && value.indexOf('=') === -1) {
+									// this is the case where categorical ref values (possibleValues) retrieved is not in a=x format
+
+									// since currentValue contains both name and description, we need to retrieve
+									// only the description by splitting from the first occurrence of the separator
+									var currentValue = cellData[1].substring(cellData[1].indexOf('=') + 1).trim();
+
+									return value === currentValue;
+								}
+
+								return false;
+							}).length;
+
+							// if not found we may change its class as accepted (blue) or invalid (red)
+							// depending on the data
+							if (found <= 0) {
 								$(td).removeClass('accepted-value');
 								$(td).removeClass('invalid-value');
 								if ($(td).text() !== 'missing') {
@@ -130,7 +176,16 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					},
 					render: function(data, type, full, meta) {
 						if (data !== undefined) {
-							return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
+							// Use knowledge from session.isCategoricalDisplayView to render correct data
+							// data[0] = name, data[1] = description, data[2] = accepted value
+							var showDescription = window.isCategoricalDescriptionView ? 'style="display:none"' : '';
+							var showName = !window.isCategoricalDescriptionView ? 'style="display:none"' : '';
+
+							var categoricalNameDom = '<span class="fbk-measurement-categorical-name" '+ showName  + '>' + EscapeHTML.escape(data[1]) + '</span>';
+							var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" '+ showDescription  + '>' + EscapeHTML.escape(data[0]) + '</span>';
+
+							return (isVariates ? categoricalNameDom + categoricalDescDom : EscapeHTML.escape(data[1])) +
+								'<input type="hidden" value="' + EscapeHTML.escape(data[2]) + '" />';
 						}
 					}
 				});
@@ -145,8 +200,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == '8250') {
@@ -157,8 +212,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == 'Action') {
@@ -170,113 +225,108 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					width: '50px',
 					render: function(data, type, full, meta) {
 						return '<a href="javascript: editExperiment(&quot;' + tableIdentifier + '&quot;,' +
-							data + ',' + meta.row + ')" class="fbk-edit-experiment"></a>';
+							EscapeHTML.escape(data) + ',' + meta.row + ')" class="fbk-edit-experiment"></a>';
 					}
 				});
 			}
 		});
+		
+		table = $(tableIdentifier).DataTable({
+			destroy: true,
+			data: dataList,
+			columns: columns,
+			scrollY: '500px',
+			scrollX: '100%',
+			scrollCollapse: true,
+			columnDefs: columnsDef,
+			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+			bAutoWidth: true,
+			iDisplayLength: 100,
+			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
-			table = $(tableIdentifier).DataTable();
-			table.clear();
-			table.rows.add(dataList).draw();
-		} else {
-			table = $(tableIdentifier).DataTable({
-				data: dataList,
-				columns: columns,
-				retrieve: true,
-				scrollY: '500px',
-				scrollX: '100%',
-				scrollCollapse: true,
-				columnDefs: columnsDef,
-				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
-				bAutoWidth: true,
-				iDisplayLength: 100,
-				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+				var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
+				// Assuming ID is in last column
+				$(nRow).attr('id', aData.experimentId);
+				$(nRow).data('row-index', this.fnGetPosition(nRow));
+				$(nRow).attr('title', toolTip);
+				$('td', nRow).attr('nowrap', 'nowrap');
 
-					var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
-					// Assuming ID is in last column
-					$(nRow).attr('id', aData.experimentId);
-					$(nRow).data('row-index', this.fnGetPosition(nRow));
-					$(nRow).attr('title', toolTip);
-					$('td', nRow).attr('nowrap', 'nowrap');
+				$(nRow).find('.accepted-value, .invalid-value, .numeric-variable').each(function() {
 
-					$(nRow).find('.accepted-value, .invalid-value, .numeric-variable').each(function() {
-
-						var termId = $(this).data('term-id');
-						var cellData = $(this).text();
-						if (termId != undefined) {
-							var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
-							var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
-							if (dataTypeId == '1110') {
-								var minVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('min-range'));
-								var maxVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));
-								var isVariates =  $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").hasClass('variates');
-								if (isVariates) {
-									$(this).removeClass('accepted-value');
-									$(this).removeClass('invalid-value');
-									if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellData) || parseFloat(cellData) > parseFloat(maxVal))) {
-										if (cellData !== 'missing') {
-
-											if ($(this).find("input[type='hidden']").val() === 'true') {
-												$(this).addClass('accepted-value');
-											} else {
-												$(this).addClass('invalid-value');
-											}
-										}
-									}
-								}
-							}else if (possibleValues != undefined) {
-								var values = possibleValues.split('|');
-
+					var termId = $(this).data('term-id');
+					var cellData = $(this).text();
+					if (termId != undefined) {
+						var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
+						var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
+						if (dataTypeId == '1110') {
+							var minVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('min-range'));
+							var maxVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));
+							var isVariates =  $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").hasClass('variates');
+							if (isVariates) {
 								$(this).removeClass('accepted-value');
 								$(this).removeClass('invalid-value');
+								if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellData) || parseFloat(cellData) > parseFloat(maxVal))) {
+									if (cellData !== 'missing') {
 
-								if (cellData !== '' && cellData !== 'missing') {
-									if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
-										if ($(this).data('is-accepted') === '1') {
+										if ($(this).find("input[type='hidden']").val() === 'true') {
 											$(this).addClass('accepted-value');
-										}else if ($(this).data('is-accepted') === '0') {
-											$(this).removeClass('invalid-value').removeClass('accepted-value');
 										} else {
 											$(this).addClass('invalid-value');
 										}
-										$(this).data('term-id', $(this).data('term-id'));
-									} else {
-										$(this).addClass('accepted-value');
 									}
 								}
 							}
+						}else if (possibleValues != undefined) {
+							var values = possibleValues.split('|');
+
+							$(this).removeClass('accepted-value');
+							$(this).removeClass('invalid-value');
+
+							if (cellData !== '' && cellData !== 'missing') {
+								if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
+									if ($(this).data('is-accepted') === '1') {
+										$(this).addClass('accepted-value');
+									}else if ($(this).data('is-accepted') === '0') {
+										$(this).removeClass('invalid-value').removeClass('accepted-value');
+									} else {
+										$(this).addClass('invalid-value');
+									}
+									$(this).data('term-id', $(this).data('term-id'));
+								} else {
+									$(this).addClass('accepted-value');
+								}
+							}
 						}
-					});
-					return nRow;
-				},
-				fnInitComplete: function(oSettings, json) {
-					$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
-					oSettings.oInstance.fnAdjustColumnSizing();
-					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-					if (this.$('.invalid-value').length !== 0) {
-						$('#review-out-of-bounds-data-list').show();
-					} else {
-						$('#review-out-of-bounds-data-list').hide();
 					}
-				},
-				language: {
-					search: '<span class="mdt-filtering-label">Search:</span>'
-				},
-				dom: 'R<"mdt-header"rli<"mdt-filtering">r>tp',
-				// For column visibility
-				colVis: {
-					exclude: [0],
-					restore: 'Restore',
-					showAll: 'Show all'
-				},
-				// Problem with reordering plugin and fixed column for column re-ordering
-				colReorder: {
-					fixedColumns: 1
+				});
+				return nRow;
+			},
+			fnInitComplete: function(oSettings, json) {
+				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
+				oSettings.oInstance.fnAdjustColumnSizing();
+				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+				if (this.$('.invalid-value').length !== 0) {
+					$('#review-out-of-bounds-data-list').show();
+				} else {
+					$('#review-out-of-bounds-data-list').hide();
 				}
-			});
-		}
+			},
+			language: {
+				search: '<span class="mdt-filtering-label">Search:</span>'
+			},
+			dom: 'R<"mdt-header"rli<"mdt-filtering">r>tp',
+			// For column visibility
+			colVis: {
+				exclude: [0],
+				restore: 'Restore',
+				showAll: 'Show all'
+			},
+			// Problem with reordering plugin and fixed column for column re-ordering
+			colReorder: {
+				fixedColumns: 1
+			}
+		});
+		
 
 		if ($('#studyId').val() != '') {
 			// Activate an inline edit on click of a table cell
@@ -366,6 +416,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 			if (($(this).data('term-id') === 'Check')) {
 				columns.push({
 					data:   'active',
+					defaultContent: '',
 					render: function(data, type, row) {
 						return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="checkbox" class="editor-active" data-binding>';
 					},
@@ -374,19 +425,27 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 			} else if (($(this).data('term-id') === 'NewValue')) {
 				columns.push({
 					data:   'newValue',
+					defaultContent: '',
 					render: function(data, type, row) {
 						return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="text" class="form-control" data-binding />';
 					}
 				});
 			} else {
-				columns.push({data: $(this).html()});
+				columns.push({
+					data: $(this).html(),
+					defaultContent: '',
+					render: function(data, type, row) {
+						return EscapeHTML.escape((data[0] != null) ? data[0] :  '');
+					}
+				});
 			}
 
 			if ($(this).data('term-data-type-id') == '1130' || $(this).data('term-data-type-id') == '1110') {
 				columnsDef.push({
 					targets: columns.length - 1,
+					defaultContent: '',
 					render: function(data, type, full, meta) {
-						return ((data[0] != null) ? data[0] :  '');
+						return EscapeHTML.escape((data[0] != null) ? data[0] :  '');
 					}
 				});
 			}
@@ -570,7 +629,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -581,7 +640,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -651,7 +710,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 					data: $(this).data('col-name'),
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -662,7 +721,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 					data: $(this).data('col-name'),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -827,7 +886,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -944,7 +1003,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
 	
 	/**
-	 * Creates a new AdvancedGermplasmListDataTable.
+	 * Creates a new AdvancedGermplasmListDataTable. This Datatable is the summary table view of the Advanced Germplasm list
 	 *
 	 * @constructor
 	 * @alias module:fieldbook-datatable
@@ -956,6 +1015,19 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 		'use strict';
 
 		var germplasmDataTable;
+		var _columnDefs = [
+			// Column defs for trialInstanceNumber and replicationNumber (hide if current study is nursery)
+			// From Datatable API, using negative index counts from the last index of the columns (n-1)
+			{
+				targets: [ -1, -2 ],
+				visible: !isNursery()
+			},
+			// column defs for the entry checkbox selection, fix width
+			{
+				targets: [0],
+				width: '38px'
+			}
+		];
 
 		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
 			this.germplasmDataTable = $(tableIdentifier).DataTable();
@@ -963,6 +1035,8 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 			this.germplasmDataTable.rows.add(dataList).draw();
 		} else {
 			this.germplasmDataTable = $(tableIdentifier).dataTable({
+				columnDefs: _columnDefs,
+				autoWidth: false,
 				retrieve: true,
 				scrollY: '500px',
 				scrollX: '100%',
@@ -1036,7 +1110,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -1047,7 +1121,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
@@ -1217,8 +1291,8 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == '8250') {
@@ -1228,8 +1302,8 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else {
@@ -1238,9 +1312,9 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						if (data !== undefined) {
 							if (Array.isArray(data)) {
-								return ((data[0] != null) ? data[0] :  '');
+								return EscapeHTML.escape((data[0] != null) ? data[0] :  '');
 							} else {
-								return data;
+								return EscapeHTML.escape(data);
 							}
 						}
 					}

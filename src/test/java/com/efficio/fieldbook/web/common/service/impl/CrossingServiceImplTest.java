@@ -2,9 +2,13 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
@@ -40,14 +44,18 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingServiceImplTest {
 
-	private static final int BREEDING_METHOD_ID = 1;
+    private static final int BREEDING_METHOD_ID = 1;
 	private static final String SAVED_CROSSES_GID1 = "-9999";
 	private static final String SAVED_CROSSES_GID2 = "-8888";
 	private static final Integer USER_ID = 123;
 	public static final String TEST_BREEDING_METHOD_CODE = "GEN";
 	public static final Integer TEST_BREEDING_METHOD_ID = 5;
+    public static final String TEST_FEMALE_GID_1 = "12345";
+    public static final String TEST_MALE_GID_1 = "54321";
+    public static final String TEST_FEMALE_GID_2 = "9999";
+    public static final String TEST_MALE_GID_2 = "8888";
 
-	private ImportedCrossesList importedCrossesList;
+    private ImportedCrossesList importedCrossesList;
 
 	@Mock
 	private GermplasmListManager germplasmListManager;
@@ -137,8 +145,6 @@ public class CrossingServiceImplTest {
 
     @Test
     public void testProcessCrossBreedingMethodUseSetting() {
-        // we set this to false to indicate that we want to use the breeding method provided by user input
-        this.crossSetting.getBreedingMethodSetting().setBasedOnStatusOfParentalLines(false);
         this.crossSetting.getBreedingMethodSetting().setMethodId(TEST_BREEDING_METHOD_ID);
 
         this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
@@ -147,6 +153,31 @@ public class CrossingServiceImplTest {
             Assert.assertEquals("User provided breeding method must be applied to all objects", TEST_BREEDING_METHOD_ID, importedCrosses.getBreedingMethodId());
         }
     }
+
+    @Test
+    public void testProcessCrossBreedingMethodNoSetting() {
+        this.crossSetting.getBreedingMethodSetting().setMethodId(null);
+        this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+
+        setupMockCallsForGermplasm(Integer.parseInt(TEST_FEMALE_GID_1));
+        setupMockCallsForGermplasm(Integer.parseInt(TEST_MALE_GID_1));
+        setupMockCallsForGermplasm(Integer.parseInt(TEST_FEMALE_GID_2));
+        setupMockCallsForGermplasm(Integer.parseInt(TEST_MALE_GID_2));
+
+        for (ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
+            Assert.assertNotNull("A method based on parental lines must be assigned to germplasms if user does not select a breeding method", importedCrosses.getBreedingMethodId());
+            Assert.assertNotSame("A method based on parental lines must be assigned to germplasms if user does not select a breeding method", 0, importedCrosses.getBreedingMethodId());
+        }
+    }
+
+    void setupMockCallsForGermplasm(Integer gid) {
+        Germplasm germplasm = new Germplasm(gid);
+        germplasm.setGnpgs(-1);
+        Mockito.doReturn(germplasm).when(this.germplasmDataManager).getGermplasmByGID(gid);
+
+
+    }
+
 
 	@Test
 	public void testApplyCrossSetting() throws MiddlewareQueryException {
@@ -531,17 +562,17 @@ public class CrossingServiceImplTest {
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 		final ImportedCrosses cross = new ImportedCrosses();
 		cross.setFemaleDesig("FEMALE-12345");
-		cross.setFemaleGid("12345");
+		cross.setFemaleGid(TEST_FEMALE_GID_1);
 		cross.setMaleDesig("MALE-54321");
-		cross.setMaleGid("54321");
+		cross.setMaleGid(TEST_MALE_GID_1);
 		cross.setCross("CROSS");
 		cross.setSource("MALE:1:FEMALE:1");
 		importedCrosses.add(cross);
 		final ImportedCrosses cross2 = new ImportedCrosses();
 		cross2.setFemaleDesig("FEMALE-9999");
-		cross2.setFemaleGid("9999");
+		cross2.setFemaleGid(TEST_FEMALE_GID_2);
 		cross2.setMaleDesig("MALE-8888");
-		cross2.setMaleGid("8888");
+		cross2.setMaleGid(TEST_MALE_GID_2);
 		cross2.setCross("CROSS");
 		cross2.setSource("MALE:2:FEMALE:2");
 		importedCrosses.add(cross2);

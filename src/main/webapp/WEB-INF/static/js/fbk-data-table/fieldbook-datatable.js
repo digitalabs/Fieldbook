@@ -416,6 +416,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 			if (($(this).data('term-id') === 'Check')) {
 				columns.push({
 					data:   'active',
+					defaultContent: '',
 					render: function(data, type, row) {
 						return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="checkbox" class="editor-active" data-binding>';
 					},
@@ -424,6 +425,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 			} else if (($(this).data('term-id') === 'NewValue')) {
 				columns.push({
 					data:   'newValue',
+					defaultContent: '',
 					render: function(data, type, row) {
 						return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="text" class="form-control" data-binding />';
 					}
@@ -431,6 +433,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 			} else {
 				columns.push({
 					data: $(this).html(),
+					defaultContent: '',
 					render: function(data, type, row) {
 						return EscapeHTML.escape((data[0] != null) ? data[0] :  '');
 					}
@@ -440,6 +443,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 			if ($(this).data('term-data-type-id') == '1130' || $(this).data('term-data-type-id') == '1110') {
 				columnsDef.push({
 					targets: columns.length - 1,
+					defaultContent: '',
 					render: function(data, type, full, meta) {
 						return EscapeHTML.escape((data[0] != null) ? data[0] :  '');
 					}

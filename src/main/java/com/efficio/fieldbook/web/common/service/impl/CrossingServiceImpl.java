@@ -615,7 +615,8 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 
 			// if breeding method is based on status of parental lines, we calculate the resulting breeding method per germplasm
-			if (methodSetting.isBasedOnStatusOfParentalLines()) {
+            // currently, the convention is that parental lines will be used as basis if user does not select any method
+			if (methodSetting.getMethodId() == null || methodSetting.getMethodId() == 0) {
 				final Integer femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
 				final Integer maleGid = Integer.parseInt(importedCrosses.getMaleGid());
 

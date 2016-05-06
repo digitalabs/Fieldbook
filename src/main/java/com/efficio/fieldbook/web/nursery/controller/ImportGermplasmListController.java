@@ -639,7 +639,7 @@ public class ImportGermplasmListController extends SettingsController {
 				dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
 				dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 				dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
-				dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid()); // Map Group_Id
+				dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid() == 0 ? "-" : germplasm.getMgid()); // Map Group_Id
 
 				if (!isNursery) {
 					if (germplasm.getEntryTypeValue() == null || "0".equals(germplasm.getEntryTypeValue())) {

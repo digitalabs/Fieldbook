@@ -532,7 +532,7 @@ public class ImportGermplasmListController extends SettingsController {
 				dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
 				dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 				dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
-				dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid());
+				dataMap.put(ImportGermplasmListController.GROUP_ID,  germplasm.getMgid() == 0 ? "-" : germplasm.getMgid());
 
 				if (!isNursery) {
 					germplasm.setEntryTypeValue(defaultTestCheckId);

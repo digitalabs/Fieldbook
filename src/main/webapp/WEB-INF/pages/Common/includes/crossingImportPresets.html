@@ -117,9 +117,7 @@
                             </div>
 
                             <div class="col-xs-5 col-md-5 add-bottom-padding">
-                                <div class="col-xs-12 col-md-12">
-                                    <input type="hidden" name="presetSettings" id="presetSettingsDropdown"/>
-                                </div>
+                                <input type="hidden" name="presetSettings" id="presetSettingsDropdown"/>
                             </div>
                             <div class="col-xs-1 col-md-1">
                                 &nbsp;
@@ -246,6 +244,22 @@
                                 </input>
                             </div>
                         </div>
+                        <div class="row form-group">
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
+
+                            <div class="col-xs-5 col-md-5">
+                                <span class="label-bold" th:text="#{study.import.crosses.settings.save.settings.label}"></span>
+                            </div>
+
+                            <div class="col-xs-5 col-md-5 add-bottom-padding">
+                                <input type="text" id="presetName"/>
+                            </div>
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row form-group">
@@ -300,33 +314,6 @@
                         </div>
 
                     </div>
-
-                    <div class="row form-group">
-                        <div class="col-xs-11 col-md-11">
-                            <label class="modal-title h5" th:text="#{study.import.crosses.settings.save.header}">SAVE SETTINGS</label>
-                        </div>
-                        <div class="col-xs-1 col-md-1">
-                            &nbsp;
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <div class="col-xs-1 col-md-1">
-                            &nbsp;
-                        </div>
-
-                        <div class="col-xs-5 col-md-5">
-                            <span class="label-bold" th:text="#{study.import.crosses.settings.save.settings.label}"></span>
-                        </div>
-
-                        <div class="col-xs-5 col-md-5 add-bottom-padding">
-                                <input type="text" id="presetName"/>
-                        </div>
-                        <div class="col-xs-1 col-md-1">
-                            &nbsp;
-                        </div>
-                    </div>
-
                 </div>
 
                 <div class="modal-footer">

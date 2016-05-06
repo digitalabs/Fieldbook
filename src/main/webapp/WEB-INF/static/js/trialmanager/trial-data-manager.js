@@ -414,6 +414,8 @@
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
 								'regenerate the design on the Experimental Design tab', 10000);
 					} else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
+                        // Hide Discard Imported Data button when the user presses Save button
+                        $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
 						performDataCleanup();
 						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 						var serializedData = (JSON.stringify(columnsOrder));

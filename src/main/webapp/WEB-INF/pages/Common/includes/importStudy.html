@@ -640,8 +640,6 @@ function revertStockListData(){
 			$('#discardImportStockListDataConfirmation').modal('hide');
 			$('.import-study-data').data('data-import', '0');
 			var response = JSON.parse(resp);
-			console.log(resp);
-			console.log(response.stockListId);
 			StockIDFunctions.displayStockList(response.stockListId);
 			stockListImportNotSaved = false;
 		}

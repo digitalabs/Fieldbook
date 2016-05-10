@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -397,10 +398,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Export file.
-	 *
-	 * @param response the response
-	 * @return the string
+	 * Export File
+	 * @param req
+	 * @return
+	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
 	public ResponseEntity<FileSystemResource> exportFile(HttpServletRequest req) throws UnsupportedEncodingException {

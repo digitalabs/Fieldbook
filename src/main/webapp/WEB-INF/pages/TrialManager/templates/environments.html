@@ -78,8 +78,11 @@
                     <td>{{environment.managementDetailValues[TRIAL_INSTANCE_NO_INDEX]}}</td>
                     <td ng-repeat="key in settings.managementDetails.keys()"
                         ng-hide="settings.managementDetails.val(key).hidden">
-                        <show-setting-form-element-new settings="settings.managementDetails" targetkey="{{key}}"
-                                                   valuecontainer="environment.managementDetailValues"></show-setting-form-element-new></td>
+                        <show-setting-form-element-new ng-if="isLocation" settings="settings.managementDetails" targetkey="{{key}}"
+                                                   valuecontainer="environment.managementDetailValues"
+                                                       changefunction="onLocationChange({key: environment.managementDetailValues[key]})"></show-setting-form-element-new>
+                        <show-setting-form-element-new ng-if="!isLocation" settings="settings.managementDetails" targetkey="{{key}}"
+                                                       valuecontainer="environment.managementDetailValues"></show-setting-form-element-new></td>
                     <td ng-repeat="key in settings.trialConditionDetails.keys()">
                         <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
                                                    valuecontainer="environment.trialDetailValues"></show-setting-form-element></td>

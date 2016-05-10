@@ -6,8 +6,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout) {
+	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService',
+		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService) {
 
 			// if environments tab is triggered, we preload the measurements tab
 			$scope.loadMeasurementsTabInBackground();
@@ -54,6 +54,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			//the flag to determine if we have a location variable in the datatable
 			$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
+
+			$scope.onLocationChange = function(data){
+				environmentService.changeEnvironments(data);
+			}
 
 			$scope.buttonsTopWithLocation = [{
 				//TODO disable?

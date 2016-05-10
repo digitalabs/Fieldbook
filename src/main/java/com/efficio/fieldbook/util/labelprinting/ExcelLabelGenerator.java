@@ -96,7 +96,7 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
             if (includeHeader) {
                 row = labelPrintingSheet.createRow(rowIndex++);
                 // we add all the selected fields header
-                this.printHeaderFields(trialInstances.get(0).getTrialInstance().getLabelHeaders(), includeHeader, selectedFieldIDs, row,
+                this.printHeaderFields(getLabelHeadersFromTrialInstances(trialInstances), includeHeader, selectedFieldIDs, row,
                         columnIndex, labelStyle);
             }
 

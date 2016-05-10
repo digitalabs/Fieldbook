@@ -264,14 +264,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			breedingMethodMap.put(method.getMid(), method);
 		}
 
-		final Integer breedingMethodId = Integer.valueOf(advancingParameters.getBreedingMethodId());
-		final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
-
-		if (!this.germplasmDataManager.isMethodNamingConfigurationValid(breedingMethodId)) {
-			throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rules.not.configured", null, "The rules"
-					+ " were not configured", LocaleContextHolder.getLocale()));
-		}
-
 		int index = 0;
 		final TimerWatch timer = new TimerWatch("cross");
 
@@ -283,8 +275,16 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			final List<String> names;
 			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 
+            final Integer breedingMethodId = advancingSource.getBreedingMethodId();
+            final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
+
+            if (!this.germplasmDataManager.isMethodNamingConfigurationValid(breedingMethodId)) {
+                throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rule.not.configured", new Object[] {selectedMethod.getMname()}, "The rules"
+                        + " were not configured", LocaleContextHolder.getLocale()));
+            }
+
 			// here, we resolve the breeding method ID stored in the advancing source object into a proper breeding Method object
-			advancingSource.setBreedingMethod(breedingMethodMap.get(Integer.valueOf(advancingSource.getBreedingMethodId())));
+			advancingSource.setBreedingMethod(selectedMethod);
 			//default plants selected value to 1 for list of crosses because sequence is not working if plants selected value is not set
 			advancingSource.setPlantsSelected(1);
 

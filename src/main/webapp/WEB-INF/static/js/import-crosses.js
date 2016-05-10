@@ -189,10 +189,15 @@ var ImportCrosses = {
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 		ImportCrosses.updateSampleParentageDesignation();
 
+		$('#breedingMethodSelectionDiv').hide();
+
 		// this indicates that the user went through the crossing manager, and should have the breeding method setting fields disabled
 		if (selectedBreedingMethodId) {
 			ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
 		}
+
+		$('#useSelectedMethodCheckbox').off('change');
+		$('#useSelectedMethodCheckbox').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
 
 		$('.cross-import-name-setting').off('change');
 		$('.cross-import-name-setting').on('change', ImportCrosses.updateDisplayedSequenceNameValue);
@@ -212,6 +217,17 @@ var ImportCrosses = {
 				ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(':checked');
 				ImportCrosses.goBackToPage('#crossSettingsModal', '#openCrossesListModal');
 			});
+	},
+
+	enableDisableBreedingMethodDropdown : function() {
+		var checkboxValue = $('#useSelectedMethodCheckbox').prop('checked');
+		if (checkboxValue) {
+			$('#breedingMethodSelectionDiv').show();
+		} else {
+			$('#breedingMethodSelectionDiv').hide();
+
+			$('#breedingMethodDropdown').select2('val', null);
+		}
 	},
 
 	validateStartingSequenceNumber: function(value) {
@@ -359,6 +375,9 @@ var ImportCrosses = {
 			if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
 				return;
 			}
+		} else if (!settingData.breedingMethodSetting.basedOnStatusOfParentalLines && !settingData.breedingMethodSetting.methodId) {
+			showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
+			return;
 		}
 
 		var targetURL;
@@ -458,7 +477,7 @@ var ImportCrosses = {
 			settingObject.breedingMethodSetting.methodId = null;
 		}
 
-		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').is(':checked');
+		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').prop('checked');
 
 		settingObject.crossNameSetting = {};
 		settingObject.crossNameSetting.prefix = $('#crossPrefix').val();

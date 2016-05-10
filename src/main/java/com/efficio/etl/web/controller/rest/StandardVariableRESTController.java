@@ -48,7 +48,7 @@ public class StandardVariableRESTController {
 	@Resource
 	private OntologyDataManager ontologyDataManager;
 
-	@Resource
+	@Resource(name = "ontologyVariableManager")
 	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@Resource

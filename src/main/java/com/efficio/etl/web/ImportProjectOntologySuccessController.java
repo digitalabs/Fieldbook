@@ -20,7 +20,7 @@ public class ImportProjectOntologySuccessController extends AbstractBaseETLContr
 	@Resource
 	private ETLService etlService;
 
-	@Resource
+  	@Resource(name = "etlUserSelection")
 	private UserSelection userSelection;
 
 	@Override

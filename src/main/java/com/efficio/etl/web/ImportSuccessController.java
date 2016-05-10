@@ -24,7 +24,7 @@ public class ImportSuccessController extends AbstractBaseETLController {
 	@Resource
 	private ETLService etlService;
 
-	@Resource
+  	@Resource(name = "etlUserSelection")
 	private UserSelection userSelection;
 
 	@Override

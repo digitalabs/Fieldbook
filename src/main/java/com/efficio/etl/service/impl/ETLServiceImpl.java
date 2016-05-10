@@ -84,7 +84,7 @@ public class ETLServiceImpl implements ETLService {
 	public static final int STUDY_DETAILS_VALUE_COLUMN_INDEX = 1;
 	public static final String PMKEY_LABEL = "PMKEY";
 
-	@Resource
+  	@Resource(name = "etlFileService")
 	private FileService fileService;
 
 	@Resource
@@ -99,7 +99,7 @@ public class ETLServiceImpl implements ETLService {
 	@Resource
 	private WorkbenchDataManager workbenchDataManager;
 
-	@Resource
+	@Resource(name = "etlMessageSource")
 	private ReloadableResourceBundleMessageSource messageSource;
 
 	@Resource

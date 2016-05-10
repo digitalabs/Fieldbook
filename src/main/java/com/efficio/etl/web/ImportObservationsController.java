@@ -42,7 +42,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	public static final String URL = "/workbook/importObservations";
 	private static final Logger LOG = LoggerFactory.getLogger(ImportObservationsController.class);
 
-	@Resource
+	@Resource(name = "etlUserSelection")
 	private UserSelection userSelection;
 
 	@Resource

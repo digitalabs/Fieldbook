@@ -48,7 +48,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 	public static final String URL = "/workbook/mapOntology";
 	private static final Logger LOG = LoggerFactory.getLogger(AngularMapOntologyController.class);
 
-	@Resource
+	@Resource(name = "etlUserSelection")
 	private UserSelection userSelection;
 
 	@Resource

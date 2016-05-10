@@ -62,7 +62,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	@Resource
 	private ETLService etlService;
 
-	@Resource
+	@Resource(name = "etlUserSelection")
 	private UserSelection userSelection;
 
 	@Resource

@@ -57,7 +57,7 @@ public class FileUploadController extends AbstractBaseETLController {
 	@Resource
 	private ETLService etlService;
 
-	@Resource
+  	@Resource(name = "etlUserSelection")
 	private UserSelection userSelection;
 
 	@Resource
@@ -66,7 +66,7 @@ public class FileUploadController extends AbstractBaseETLController {
 	@Resource
 	private DataImportService dataImportService;
 
-	@Resource
+  	@Resource(name = "etlMessageSource")
 	private ReloadableResourceBundleMessageSource messageSource;
 
 	@Resource

@@ -65,23 +65,16 @@
 </div>
 
 <script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/showAddOrRemoveTraitsPagination.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 //<![CDATA[
-(function() {
+
+jQuery(function() {
 	'use strict';
 	var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
+	initializeTraitsPagination(isCategoricalDisplay);
+});
 
-	jQuery(function() {
-		onMeasurementsObservationLoad(isCategoricalDisplay);
-
-		$('#inlineEditConfirmationModalClose').on('click', function(e) { 
-			// When the confirmation popup is clicked, stop the bubbling of event to parent elements so that body.click is not executed.
-			e.stopPropagation(); 
-			// then manually close the confirmation popup.
-			$('#inlineEditConfirmationModal').modal('hide');
-		 });
-	});
-
-})();
 //]]>
 </script>
+

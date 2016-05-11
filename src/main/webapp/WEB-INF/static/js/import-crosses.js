@@ -189,8 +189,6 @@ var ImportCrosses = {
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 		ImportCrosses.updateSampleParentageDesignation();
 
-		$('#breedingMethodSelectionDiv').hide();
-
 		// this indicates that the user went through the crossing manager, and should have the breeding method setting fields disabled
 		if (selectedBreedingMethodId) {
 			ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);

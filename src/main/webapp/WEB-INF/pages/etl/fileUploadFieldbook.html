@@ -1,0 +1,135 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="base-template">
+<head>
+    <title th:inline="text">[[#{page.title.file.upload}]]</title>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script th:src="@{/static/js/html5shiv.js}" type="text/javascript"></script>
+    <script th:src="@{/static/js/respond.min.js}" type="text/javascript"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/bootstrap-fileupload.css}"/>
+</head>
+<body>
+
+<section layout:fragment="content">
+    <div class="page-header">
+        <h2>
+            Importing Fieldbook Excel Worksheet
+        </h2>
+
+    </div>
+
+    <div id="page-message">Importing of <span th:text="${fileName}"></span> is in progress. Please do not refresh the page while the system processes the data.</div>
+    <div id="divProgress" class="progress progress-striped active">
+        <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <span class="sr-only">In Progress</span>
+        </div>
+    </div>
+
+
+</section>
+
+<!-- Scripts location, note that the div tag will be remove after merging to decorator -->
+<div layout:fragment="page-script">
+
+    <script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        //<![CDATA[
+        var poll;
+
+        $(function(){
+
+
+            $.ajax({
+                url: 'fileUpload/startProcess',
+                type: 'post',
+                cache: false,
+                success: function (data) {
+
+                    getUpdate(data);
+
+                },
+                error: function(){
+                    showErrorAlert("An error occurred while connecting to the web service. Please try again.");
+                },
+                contentType: "application/json"
+            });
+
+
+
+        });
+
+        function getUpdate(data){
+            /** $.ajax({
+			        url: 'fileUpload/getUpdate',
+			        type: 'get',
+			        dataType: 'json',
+			        success: function (data) { **/
+
+            //console.log(data);
+            var fileName = /*[[${fileName}]]*/ "";
+
+            if (data.statusCode == '1'){
+                //clearInterval(poll);
+                showSuccessAlert();
+            }else if (data.statusCode == '-1'){
+                //clearInterval(poll);
+                /**MiddlewareQueryException
+                 IOException
+                 Exception
+                 FormatError**/
+                var message;
+                if (data.errorType == 'PhenotypeException'){
+                    message = data.statusMessage + " Please correct the data and <a href='fileUpload'>try again</a>.";
+                }else if (data.errorType == 'MiddlewareQueryException'){
+                    message = "An error occured while saving to the database. Please <a href='fileUpload'>try again</a>.";
+                }else if (data.errorType == 'IOException'){
+                    message = "An error occured while processing " + fileName + ". Please <a href='fileUpload'>try again</a>.";
+                }else if (data.errorType == 'Exception'){
+                    message = "An error occured while processing the request. Please <a href='fileUpload'>try again</a>.";
+                }else if (data.errorType == 'WorkbookParserException-OverMaxLimit'){
+                	message = "An error occured while processing " + fileName + ". Please <a href='fileUpload'>try again</a>. "  + data.statusMessage;
+                }else if (data.errorType == 'WorkbookParserException'){
+                    message = "System cannot process " + fileName + " file. Please review the format and <a href='fileUpload'>try again</a>. You may also continue to import the file using the <a href='workbook/step2'>Data Import Wizard.</a> " + data.statusMessage;
+                }
+
+                showErrorAlert(message);
+            }
+
+        }
+        /**,
+         error: function(){
+			        	clearInterval(poll);
+			        	showErrorAlert("An error occurred while connecting to the web service. Please try again.");
+			        },
+         contentType: "application/json"
+         });
+
+         }**/
+
+        function showSuccessAlert(){
+            $("#divProgress").hide();
+            $("#page-message").addClass("alert alert-success");
+            $("#page-message").html("Fieldbook file has been successfully imported! You may now close this page or go back to the <a href='fileUpload'>upload page</a>.");
+        }
+
+        function showErrorAlert(message){
+            $("#divProgress").hide();
+            $("#page-message").addClass("alert alert-danger");
+            $("#page-message").html(message);
+        }
+
+        //]]>
+    </script>
+
+</div>
+
+</body>
+
+</html>

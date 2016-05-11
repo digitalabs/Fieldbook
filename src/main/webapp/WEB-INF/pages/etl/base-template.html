@@ -1,0 +1,62 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Dataset Importer tool"/>
+    <meta name="author" content="Digital Labs (Efficio)"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:inline="text">[[#{app.title}]]</title>
+
+    <!-- Bootstrap -->
+    <link th:href="@{/static/css/app.css}" rel="stylesheet" media="screen"/>
+
+    <!-- Main Application CSS -->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144"
+          th:href="@{/static/ico/apple-touch-icon-144-precomposed.png}"/>
+    <link rel="apple-touch-icon-precomposed" sizes="114x114"
+          th:href="@{/static/ico/apple-touch-icon-114-precomposed.png}"/>
+    <link rel="apple-touch-icon-precomposed" sizes="72x72"
+          th:href="@{/static/ico/apple-touch-icon-72-precomposed.png}"/>
+    <link rel="apple-touch-icon-precomposed" th:href="@{static/ico/apple-touch-icon-57-precomposed.png}"/>
+    <link rel="shortcut icon" th:href="@{/static/ico/favicon.png}"/>
+
+    <script type="text/javascript" th:src="@{/static/js/modernizr.custom.36252.js}"></script>
+
+    <!--[if !IE]><!--><script>if (/*@cc_on!@*/false) {document.documentElement.className+=' ie10';}</script><!--<![endif]-->
+    <!--[if IE]><![endif]-->
+    <!--[if IE 8 ]><script>if (/*@cc_on!@*/false) {document.documentElement.className+=' ie8';}</script><![endif]-->
+    <!--[if IE 9 ]><script>if (/*@cc_on!@*/false) {document.documentElement.className+=' ie9';}</script><![endif]-->
+    <!--[if (gt IE 9)|!(IE)]><!--><html lang="en"><!--<![endif]-->
+
+</head>
+<body>
+<header>
+    <div th:substituteby="/header"></div>
+</header>
+<section class="main-content" layout:fragment="content"></section>
+
+<footer class="container-fluid"  style="padding: 0 10pt">
+
+</footer>
+
+<!-- Base JS Scripts -->
+<script type="text/javascript" th:src="@{/static/js/jquery-1.10.2.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/select2.js}"></script>
+
+<script type="text/javascript" th:src="@{/static/js/spin.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/spinner.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/bootbox.min.js}"></script>
+<script type="text/javascript" th:src="@{/dynamic/js/di-init.js}"></script>
+<div layout:fragment="page-script" th:remove="tag"></div>
+</body>
+</html>

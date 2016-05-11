@@ -1,0 +1,307 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="base-template">
+<head>
+    <title th:inline="text">[[#{page.title.categorize.headers}]]</title>
+
+    <!--[if lte IE 8]>
+    <script type="text/javascript" th:src="@{/static/js/respond.min.js}"></script>
+    <![endif]-->
+
+
+    <style type="text/css">
+
+        @media screen and (max-width: 1024px) {
+            .jumbotron {
+                width: 1054px;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .jumbotron {
+                width: 100%;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            .container {
+                max-width: none !important;
+                width: 1024px;
+            }
+        }
+
+        @media screen {
+            .h4 small {
+                color: inherit;
+            }
+        }
+
+
+    </style>
+
+
+</head>
+<body>
+
+<section layout:fragment="content">
+    <div class="page-header">
+        <h2>Step 5</h2>
+
+        <div class="progress">
+            <div class="progress-bar progress-bar-success" role="progressbar"
+                 aria-valuenow="62" aria-valuemin="0" aria-valuemax="100"
+                 style="width: 62%;">
+                <span class="sr-only">62% Complete</span>
+            </div>
+        </div>
+
+        <div th:utext="#{categorize.headers.desc}"></div>
+
+    </div>
+
+    <div class="swimlane">
+
+        <div class="row">
+            <!-- Col -->
+            <div class="col-sm-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+
+                                <span class="badge counter">0</span>
+                                <span th:text="#{role.uncategorized.text}">Uncategorized</span>
+
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group" id="headers">
+                            <li class="list-group-item"
+                                th:each="header, status : ${headerList}" th:id="${status.count}">
+                                <div class="list-group-item-content" th:text="${header}"></div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Col -->
+            <div class="col-sm-2 col-sm-offset-1">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                                <span class="badge counter">0</span> <span th:text="#{role.trial.environment.text}">Trial Environment</span>
+
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group" id="t_env">
+                            <li class="list-group-item"
+                                th:each="header, status : ${trialEnvironmentList}">
+                                <div class="list-group-item-content" th:text="${header}"></div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!--  Col -->
+            <div class="col-sm-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                                <span class="badge counter">0</span>
+                                <span th:text="#{role.germplasm.entry.text}">Germplasm Entry</span>
+
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group" id="germplasm">
+                            <li class="list-group-item"
+                                th:each="header, status : ${germplasmList}">
+                                <div class="list-group-item-content" th:text="${header}"></div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+            <!--  Col -->
+            <div class="col-sm-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+
+                        <h4 class="panel-title">
+                            <span class="badge counter">0</span>
+                                <span th:text="#{role.trial.design.text}">Trial Design</span>
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group" id="t_design">
+                            <li class="list-group-item"
+                                th:each="header, status : ${trialDesignList}">
+                                <div class="list-group-item-content" th:text="${header}"></div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <span class="badge counter">0</span>
+                                <span th:text="#{role.variate.text}">Variate</span>
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group" id="variate">
+                            <li class="list-group-item"
+                                th:each="header, status : ${variateList}">
+                                <div class="list-group-item-content" th:text="${header}"></div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <form action="#" th:action="@{/workbook/categorizeHeaders}"
+          method="post" name="swimlanes" id="swimlanes"
+          th:object="${categorizationForm}">
+
+        <input type="hidden" th:field="*{trialEnvironments}"/>
+        <input type="hidden" th:field="*{germplasmEntries}"/>
+        <input type="hidden" th:field="*{trialDesigns}"/>
+        <input type="hidden" th:field="*{variates}"/>
+
+        <div class="form-group">
+            <div class="text-center">
+                <a th:text="#{form.prev.text}" th:href="@{studyName}" class="btn btn-default btn-sm"></a>
+                <input type="button" th:value="#{form.next.text}" onclick="submitMe()"
+                       class="btn btn-primary btn-sm"/>
+            </div>
+        </div>
+
+    </form>
+
+
+</section>
+
+<div layout:fragment="page-script" th:remove="tag">
+
+    <script type="text/javascript" th:src="@{/static/js/jquery-ui-1.10.3.custom.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/jquery-multisortable.js}"></script>
+    <script type="text/javascript">
+        //<![CDATA[
+
+        // function compute(object)
+        // {
+
+        // 	//alert(object.id);
+        // 	$("#"+object.id+"_counter").html($("#"+object.id+" li").size());
+        // }
+
+        $(function () {
+
+            $('ul.list-group').each(
+                    function () {
+                        $(this).parent().parent().find('.counter')
+                                .text($(this).children().size());
+                    });
+
+            $("ul.list-group").multisortable(
+                    {
+                        items: "li.list-group-item",
+                        connectWith: "ul.list-group",
+                        delay: 150, //Needed to prevent accidental drag when trying to select
+                        receive: function (event, ui) {
+                            // console.log("recieve");
+                            // compute(this);
+                        },
+
+                        out: function (event, ui) {
+                            //console.log('out');
+
+                            $(this).parent().parent().removeClass("panel-info");
+                        },
+
+                        over: function (event, ui) {
+                            //console.log('over');
+
+
+                            $(this).parent().parent().addClass("panel-info");
+                        },
+
+                        remove: function (event, ui) {
+                            // console.log("remove");
+                            // compute(this);
+                        },
+                        stop: function (event, ui) {
+
+                            setTimeout(function () {
+                                $('li.list-group-item.selected').removeClass(
+                                        "selected");
+
+                            }, 50); //0.5 seconds
+
+                            $('ul.list-group').each(
+                                    function () {
+                                        $(this).parent().parent().find('.counter')
+                                                .text($(this).children().size());
+                                    });
+
+                            //console.log("stop");
+                        }
+                    });
+        });
+
+
+        function submitMe() {
+
+            var t_env = $('#t_env li div').map(function (i, n) {
+                return $(n).text();
+            }).get().join(',');
+
+            var germplasm = $('#germplasm li div').map(function (i, n) {
+                return $(n).text();
+            }).get().join(',');
+
+            var t_design = $('#t_design li div').map(function (i, n) {
+                return $(n).text();
+            }).get().join(',');
+
+            var variates = $('#variate li div').map(function (i, n) {
+                return $(n).text();
+            }).get().join(',');
+
+            $("#trialEnvironments").val(t_env);
+            $("#germplasmEntries").val(germplasm);
+            $("#trialDesigns").val(t_design);
+            $("#variates").val(variates);
+
+            //alert(conditions);
+
+            document.getElementById('swimlanes').submit();
+        }
+        //]]>
+    </script>
+
+</div>
+
+</body>
+
+</html>

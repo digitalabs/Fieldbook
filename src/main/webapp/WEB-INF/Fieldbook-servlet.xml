@@ -579,6 +579,11 @@
     
     <bean id="resourceFinder" class="org.generationcp.middleware.util.ResourceFinder"/>
 
+    <bean id="keySequenceRegisterService" factory-bean="managerFactory"
+          factory-method="getKeySequenceRegisterService" scope="request">
+        <aop:scoped-proxy />
+    </bean>
+
     <!-- Nested <beans> elements can only be at the end. -->
 
 	<!-- Only activate liquibase auto update in non-production environments.
@@ -605,8 +610,5 @@
 		<bean id="liquibaseInitBean" class="org.generationcp.middleware.liquibase.LiquibaseInitBean" />
 	</beans>
 
-	<bean id="keySequenceRegisterService" factory-bean="managerFactory"
-		  factory-method="getKeySequenceRegisterService" scope="request">
-		<aop:scoped-proxy />
-	</bean>
+
 </beans>

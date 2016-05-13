@@ -258,15 +258,14 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 		}
 	}
 
-	private String getRealNumericValue(String cell) {
+	protected String getRealNumericValue(String cell) {
 		String realValue = "";
 
 		if (NumberUtils.isNumber(cell)) {
 			Double doubleVal = NumberUtils.createDouble(cell);
-			Integer intVal = NumberUtils.createInteger(cell);
-
-			if (Double.parseDouble(intVal.toString()) == doubleVal) {
-				realValue = intVal.toString();
+			
+			if (doubleVal.doubleValue() == doubleVal.intValue()) {
+				realValue = Integer.toString(doubleVal.intValue());
 			} else {
 				realValue = doubleVal.toString();
 			}

@@ -89,5 +89,37 @@ public class KsuCsvWorkbookParserTest {
 		assertEquals("ENTRY_NO", rowHeaders[indexes.get(2)]);
 
 	}
+	
+	@Test
+	public void testGetRealNumericValueOfWholeNumber() {
+		String value = "24";
+		String expectedResult = "24";
+		String actualResult = parser.getRealNumericValue(value);
+		assertEquals("The expected value is " + expectedResult, expectedResult, actualResult);
+	}
+	
+	@Test
+	public void testGetRealNumericValueOfDecimalNumberWithZeroDecimals() {
+		String value = "24.0";
+		String expectedResult = "24";
+		String actualResult = parser.getRealNumericValue(value);
+		assertEquals("The expected value is " + expectedResult, expectedResult, actualResult);
+	}
+	
+	@Test
+	public void testGetRealNumericValueOfDecimalNumberWithNonZeroDecimals() {
+		String value = "24.30";
+		String expectedResult = "24.3";
+		String actualResult = parser.getRealNumericValue(value);
+		assertEquals("The expected value is " + expectedResult, expectedResult, actualResult);
+	}
+	
+	@Test
+	public void testGetRealNumericValueOfNonNumericValue() {
+		String value = "notANumber";
+		String expectedResult = "";
+		String actualResult = parser.getRealNumericValue(value);
+		assertEquals("The expected value is " + expectedResult, expectedResult, actualResult);
+	}
 
 }

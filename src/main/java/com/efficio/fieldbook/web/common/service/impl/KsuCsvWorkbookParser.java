@@ -25,15 +25,15 @@ import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 
-	private KsuCsvImportStudyServiceImpl ksuCsvImportStudyService;
-	private Workbook workbook;
-	private String trialInstanceNo;
-	private Map<String, MeasurementRow> rowsMap;
+	private final KsuCsvImportStudyServiceImpl ksuCsvImportStudyService;
+	private final Workbook workbook;
+	private final String trialInstanceNo;
+	private final Map<String, MeasurementRow> rowsMap;
 	private List<GermplasmChangeDetail> changeDetailsList;
 	private Set<ChangeType> modes;
 
-	public KsuCsvWorkbookParser(KsuCsvImportStudyServiceImpl ksuCsvImportStudyService, Workbook workbook, String trialInstanceNo,
-			Map<String, MeasurementRow> rowsMap) {
+	public KsuCsvWorkbookParser(final KsuCsvImportStudyServiceImpl ksuCsvImportStudyService, final Workbook workbook,
+			final String trialInstanceNo, final Map<String, MeasurementRow> rowsMap) {
 		this.ksuCsvImportStudyService = ksuCsvImportStudyService;
 		this.workbook = workbook;
 		this.trialInstanceNo = trialInstanceNo;
@@ -41,9 +41,9 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 	}
 
 	@Override
-	public KsuCsvWorkbookParser parseCsvMap(Map<Integer, List<String>> csvMap) throws FileParsingException {
+	public KsuCsvWorkbookParser parseCsvMap(final Map<Integer, List<String>> csvMap) throws FileParsingException {
 		// validate headers
-		String[] rowHeaders = csvMap.get(0).toArray(new String[csvMap.get(0).size()]);
+		final String[] rowHeaders = csvMap.get(0).toArray(new String[csvMap.get(0).size()]);
 
 		if (!this.ksuCsvImportStudyService.isValidHeaderNames(rowHeaders)) {
 			throw new FileParsingException("error.workbook.import.requiredColumnsMissing");
@@ -55,31 +55,32 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 		return this;
 	}
 
-	protected void importDataToWorkbook(Map<Integer, List<String>> csvMap, Workbook workbook, String trialInstanceNo,
-			Map<String, MeasurementRow> rowsMap) throws FileParsingException {
+	protected void importDataToWorkbook(final Map<Integer, List<String>> csvMap, final Workbook workbook, final String trialInstanceNo,
+			final Map<String, MeasurementRow> rowsMap) throws FileParsingException {
 		this.modes = new HashSet<>();
 		this.changeDetailsList = new ArrayList<>();
 
-		List<MeasurementVariable> variablesFactors = workbook.getFactors();
-		List<MeasurementRow> observations = workbook.getObservations();
+		final List<MeasurementVariable> variablesFactors = workbook.getFactors();
+		final List<MeasurementRow> observations = workbook.getObservations();
 
 		// setup factor map
-		Map<Integer, MeasurementVariable> factorVariableMap = new HashMap<Integer, MeasurementVariable>();
-		for (MeasurementVariable var : variablesFactors) {
+		final Map<Integer, MeasurementVariable> factorVariableMap = new HashMap<Integer, MeasurementVariable>();
+		for (final MeasurementVariable var : variablesFactors) {
 			factorVariableMap.put(var.getTermId(), var);
 		}
 
 		if (!Objects.equals(rowsMap, null) && !rowsMap.isEmpty()) {
 			workbook.setHasExistingDataOverwrite(false);
-			List<String> headerRow = csvMap.get(0);
-			List<Integer> indexes = this.getColumnIndexesFromObservation(csvMap, variablesFactors, trialInstanceNo);
-			Integer desigIndex = this.findIndexOfColumn(headerRow, this.getColumnLabel(variablesFactors, TermId.DESIG.getId())).get(0);
+			final List<String> headerRow = csvMap.get(0);
+			final List<Integer> indexes = this.getColumnIndexesFromObservation(csvMap, variablesFactors, trialInstanceNo);
+			final Integer desigIndex =
+					this.findIndexOfColumn(headerRow, this.getColumnLabel(variablesFactors, TermId.DESIG.getId())).get(0);
 
 			for (int i = 1; i < csvMap.size(); i++) {
-				List<String> row = csvMap.get(i);
-				String key = this.getKeyIdentifierFromRow(row, indexes);
+				final List<String> row = csvMap.get(i);
+				final String key = this.getKeyIdentifierFromRow(row, indexes);
 
-				MeasurementRow wRow = rowsMap.get(key);
+				final MeasurementRow wRow = rowsMap.get(key);
 				if (wRow == null) {
 					this.modes.add(ChangeType.ADDED_ROWS);
 				} else {
@@ -89,24 +90,25 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 						throw new FileParsingException("error.workbook.import.designation.empty.cell");
 					}
 
-					String originalDesig = wRow.getMeasurementDataValue(TermId.DESIG.getId());
-					String newDesig = row.get(desigIndex);
+					final String originalDesig = wRow.getMeasurementDataValue(TermId.DESIG.getId());
+					final String newDesig = row.get(desigIndex);
 
-					String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
-					String entryNumber = wRow.getMeasurementDataValue(TermId.ENTRY_NO.getId());
+					final String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
+					final String entryNumber = wRow.getMeasurementDataValue(TermId.ENTRY_NO.getId());
 					String plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NO.getId());
 					if (plotNumber == null || "".equalsIgnoreCase(plotNumber)) {
 						plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NNO.getId());
 					}
 
 					if (originalDesig != null && !originalDesig.equalsIgnoreCase(newDesig)) {
-						List<Integer> newGids = this.ksuCsvImportStudyService.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
+						final List<Integer> newGids =
+								this.ksuCsvImportStudyService.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
 						if (originalGid != null && newGids.contains(Integer.valueOf(originalGid))) {
-							MeasurementData wData = wRow.getMeasurementData(TermId.DESIG.getId());
+							final MeasurementData wData = wRow.getMeasurementData(TermId.DESIG.getId());
 							wData.setValue(newDesig);
 						} else {
-							int index = observations.indexOf(wRow);
-							GermplasmChangeDetail changeDetail =
+							final int index = observations.indexOf(wRow);
+							final GermplasmChangeDetail changeDetail =
 									new GermplasmChangeDetail(index, originalDesig, originalGid, newDesig, "", trialInstanceNo,
 											entryNumber, plotNumber);
 							if (newGids != null && !newGids.isEmpty()) {
@@ -117,8 +119,8 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 					}
 
 					for (int j = 0; j < headerRow.size(); j++) {
-						String headerCell = headerRow.get(j);
-						MeasurementData wData = wRow.getMeasurementData(headerCell);
+						final String headerCell = headerRow.get(j);
+						final MeasurementData wData = wRow.getMeasurementData(headerCell);
 						this.importDataCellValues(wData, row, j, workbook, factorVariableMap);
 					}
 
@@ -132,10 +134,10 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 		}
 	}
 
-	protected List<Integer> getColumnIndexesFromObservation(Map<Integer, List<String>> csvMap, List<MeasurementVariable> variables,
-			String trialInstanceNumber) throws FileParsingException {
+	protected List<Integer> getColumnIndexesFromObservation(final Map<Integer, List<String>> csvMap,
+			final List<MeasurementVariable> variables, final String trialInstanceNumber) throws FileParsingException {
 		String plotLabel = null, entryLabel = null;
-		for (MeasurementVariable variable : variables) {
+		for (final MeasurementVariable variable : variables) {
 			if (variable.getTermId() == TermId.PLOT_NO.getId() || variable.getTermId() == TermId.PLOT_NNO.getId()) {
 				plotLabel = this.ksuCsvImportStudyService.getLabelFromKsuRequiredColumn(variable);
 			} else if (variable.getTermId() == TermId.ENTRY_NO.getId()) {
@@ -143,10 +145,10 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 			}
 		}
 		if (plotLabel != null && entryLabel != null) {
-			List<Integer> indexes = this.findIndexOfColumn(csvMap.get(0), plotLabel, entryLabel);
+			final List<Integer> indexes = this.findIndexOfColumn(csvMap.get(0), plotLabel, entryLabel);
 			indexes.add(0, NumberUtils.createInteger(trialInstanceNumber));
 
-			for (int index : indexes) {
+			for (final int index : indexes) {
 				if (index == -1) {
 					return new ArrayList<>();
 				}
@@ -157,8 +159,8 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 		return new ArrayList<>();
 	}
 
-	protected List<Integer> findIndexOfColumn(List<String> headers, String... cellValue) throws FileParsingException {
-		List<Integer> results = new ArrayList<>();
+	protected List<Integer> findIndexOfColumn(final List<String> headers, final String... cellValue) throws FileParsingException {
+		final List<Integer> results = new ArrayList<>();
 
 		for (int i = 0; i < cellValue.length; i++) {
 			results.add(headers.indexOf(cellValue[i]));
@@ -167,8 +169,8 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 		return results;
 	}
 
-	private String getColumnLabel(List<MeasurementVariable> variables, int termId) {
-		for (MeasurementVariable variable : variables) {
+	private String getColumnLabel(final List<MeasurementVariable> variables, final int termId) {
+		for (final MeasurementVariable variable : variables) {
 			if (variable.getTermId() == termId) {
 				return variable.getName();
 			}
@@ -176,9 +178,9 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 		return "";
 	}
 
-	private String getKeyIdentifierFromRow(List<String> row, List<Integer> indexes) throws FileParsingException {
-		String plot = row.get(indexes.get(1));
-		String entry = row.get(indexes.get(2));
+	private String getKeyIdentifierFromRow(final List<String> row, final List<Integer> indexes) throws FileParsingException {
+		final String plot = row.get(indexes.get(1));
+		final String entry = row.get(indexes.get(2));
 
 		if (plot == null) {
 			throw new FileParsingException("error.workbook.import.plot.no.empty.cell");
@@ -189,10 +191,10 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 		return indexes.get(0) + "-" + plot + "-" + entry;
 	}
 
-	protected void importDataCellValues(MeasurementData wData, List<String> row, int columnIndex, Workbook workbook,
-			Map<Integer, MeasurementVariable> factorVariableMap) {
+	protected void importDataCellValues(final MeasurementData wData, final List<String> row, final int columnIndex,
+			final Workbook workbook, final Map<Integer, MeasurementVariable> factorVariableMap) {
 		if (wData != null && wData.isEditable()) {
-			String cell = row.get(columnIndex);
+			final String cell = row.get(columnIndex);
 			String csvValue = "";
 			if (StringUtils.isNotEmpty(cell)) {
 				if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
@@ -203,8 +205,8 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 					String tempVal = "";
 
 					if (NumberUtils.isNumber(cell)) {
-						double doubleVal = Double.valueOf(cell);
-						double intVal = Double.valueOf(cell).intValue();
+						final double doubleVal = Double.valueOf(cell);
+						final double intVal = Double.valueOf(cell).intValue();
 						boolean getDoubleVal = false;
 						if (doubleVal - intVal > 0) {
 							getDoubleVal = true;
@@ -223,7 +225,8 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 								ExportImportStudyUtil.getCategoricalIdCellValue(cell, wData.getMeasurementVariable().getPossibleValues(),
 										true);
 					}
-					Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
+					final Integer termId =
+							wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
 					if (!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)) {
 						workbook.setHasExistingDataOverwrite(true);
 					}
@@ -245,7 +248,8 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 						csvValue = cell;
 					}
 
-					Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
+					final Integer termId =
+							wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
 					if (!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)) {
 						workbook.setHasExistingDataOverwrite(true);
 					}
@@ -258,12 +262,12 @@ class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 		}
 	}
 
-	protected String getRealNumericValue(String cell) {
+	protected String getRealNumericValue(final String cell) {
 		String realValue = "";
 
 		if (NumberUtils.isNumber(cell)) {
-			Double doubleVal = NumberUtils.createDouble(cell);
-			
+			final Double doubleVal = NumberUtils.createDouble(cell);
+
 			if (doubleVal.doubleValue() == doubleVal.intValue()) {
 				realValue = Integer.toString(doubleVal.intValue());
 			} else {

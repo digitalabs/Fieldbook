@@ -13,7 +13,9 @@ package com.efficio.fieldbook.utils.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.Maps;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -177,18 +179,6 @@ public class LabelPrintingDataUtil {
 		return trialInstanceInfo;
 	}
 
-	public static FieldMapTrialInstanceInfo createFieldMapTrialInstanceInfoWithStockList() {
-		final FieldMapTrialInstanceInfo trialInstanceInfo = new FieldMapTrialInstanceInfo();
-
-		trialInstanceInfo.setBlockName(LabelPrintingDataUtil.BLOCK_NAME);
-		trialInstanceInfo.setEntryCount(LabelPrintingDataUtil.ENTRY_COUNT);
-		trialInstanceInfo.setFieldMapLabels(LabelPrintingDataUtil.createFieldMapLabels());
-		trialInstanceInfo.setHasFieldMap(LabelPrintingDataUtil.HAS_FIELDMAP);
-		trialInstanceInfo.setTrialInstanceNo(LabelPrintingDataUtil.TRIAL_INSTANCE_NO);
-		trialInstanceInfo.setFieldName(LabelPrintingDataUtil.FIELD_NAME);
-
-		return trialInstanceInfo;
-	}
 
 	private static FieldMapTrialInstanceInfo createFieldMapSecondTrialInstanceInfo() {
 		final FieldMapTrialInstanceInfo trialInstanceInfo = new FieldMapTrialInstanceInfo();
@@ -260,5 +250,15 @@ public class LabelPrintingDataUtil {
 		trialInstances.add(trialInstance);
 
 		return trialInstances;
+	}
+
+	public static Map<Integer, String> createLabelHeadersForTrialStock() {
+		final Map<Integer, String> labelHeaders = Maps.newHashMap();
+		labelHeaders.put(8170, "TRIAL_INSTANCE");
+		labelHeaders.put(8210, "REP_NO");
+		labelHeaders.put(1718,"TOTAL");
+		labelHeaders.put(1719, "UNITS");
+		labelHeaders.put(1722, "AMOUNT");
+		return labelHeaders;
 	}
 }

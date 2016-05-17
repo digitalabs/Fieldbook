@@ -45,9 +45,9 @@ public class SwimTestController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(Model model) {
 
-		model.addAttribute("templateName", "/categorizeHeaders");
+		model.addAttribute("templateName", "/etl/categorizeHeaders");
 
-		return "base-template";
+		return "etl/base-template";
 
 	}
 

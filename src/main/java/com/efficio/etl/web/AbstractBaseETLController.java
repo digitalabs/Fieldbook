@@ -45,7 +45,7 @@ public abstract class AbstractBaseETLController {
 	}
 
 	public String show(Model model, boolean requiresSelection, HttpServletRequest request) {
-		if (!this.getContentName().equals("fileUpload")
+		if (!this.getContentName().equals("etl/fileUpload")
 				&& requiresSelection
 				&& (this.getUserSelection() == null || this.getUserSelection().getActualFileName() == null || this.getUserSelection()
 						.getActualFileName().isEmpty())) {

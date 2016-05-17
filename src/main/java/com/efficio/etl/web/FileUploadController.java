@@ -39,10 +39,10 @@ import com.efficio.etl.web.validators.FileUploadFormValidator;
  */
 
 @Controller
-@RequestMapping({"/", FileUploadController.URL})
+@RequestMapping({"/etl", FileUploadController.URL})
 public class FileUploadController extends AbstractBaseETLController {
 
-	public static final String URL = "/fileUpload";
+	public static final String URL = "/etl/fileUpload";
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileUploadController.class);
 
@@ -104,7 +104,7 @@ public class FileUploadController extends AbstractBaseETLController {
 
 			if ("fieldbook".equalsIgnoreCase(uploadForm.getImportType())) {
 				model.addAttribute("fileName", this.userSelection.getActualFileName());
-				return "fileUploadFieldbook";
+				return "etl/fileUploadFieldbook";
 
 			} else {
 				try {
@@ -220,7 +220,7 @@ public class FileUploadController extends AbstractBaseETLController {
 
 	@Override
 	public String getContentName() {
-		return "fileUpload";
+		return "etl/fileUpload";
 	}
 
 	@ModelAttribute("form")

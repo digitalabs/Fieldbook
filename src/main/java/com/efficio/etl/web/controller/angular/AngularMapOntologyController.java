@@ -59,7 +59,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 	@Override
 	public String getContentName() {
-		return "angular/angularMapHeaders";
+		return "etl/angular/angularMapHeaders";
 	}
 
 	@Override

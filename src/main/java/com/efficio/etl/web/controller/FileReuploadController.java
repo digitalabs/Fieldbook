@@ -38,7 +38,7 @@ public class FileReuploadController extends AbstractBaseETLController {
 
 	@Override
 	public String getContentName() {
-		return "reupload";
+		return "etl/reupload";
 	}
 
 	@Override

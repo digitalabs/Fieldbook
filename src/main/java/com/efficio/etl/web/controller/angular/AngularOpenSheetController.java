@@ -72,7 +72,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 
 	@Override
 	public String getContentName() {
-		return "angular/angularOpenSheet";
+		return "etl/angular/angularOpenSheet";
 	}
 
 	@ResponseBody

@@ -56,9 +56,9 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	@Override
 	public String getContentName() {
 		if (this.hasErrors) {
-			return "validateProjectData";
+			return "etl/validateProjectData";
 		}
-		return "importObservations";
+		return "etl/importObservations";
 	}
 
 	@Override

@@ -35,7 +35,7 @@ public class ImportSuccessController extends AbstractBaseETLController {
 
 	@Override
 	public String getContentName() {
-		return "importSuccess";
+		return "etl/importSuccess";
 	}
 
 	@Override

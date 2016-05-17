@@ -31,7 +31,7 @@ public class ImportProjectOntologySuccessController extends AbstractBaseETLContr
 
 	@Override
 	public String getContentName() {
-		return "importProjectOntology";
+		return "etl/importProjectOntology";
 	}
 
 	@Override

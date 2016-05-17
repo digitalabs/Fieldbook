@@ -70,7 +70,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 	@Override
 	public String getContentName() {
-		return "angular/angularSelectSheet";
+		return "etl/angular/angularSelectSheet";
 	}
 
 	@Override

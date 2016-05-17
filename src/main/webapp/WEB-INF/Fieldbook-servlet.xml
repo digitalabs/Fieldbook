@@ -69,7 +69,7 @@
 		  class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
-				<value>Messages</value>
+				<value>classpath:Messages</value>
 			</list>
 		</property>
 		<property name="cacheSeconds" value="1" />

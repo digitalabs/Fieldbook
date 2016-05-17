@@ -104,6 +104,9 @@
 					class="com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect" />
 				<bean
 					class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect" />
+				<bean
+						class="org.thymeleaf.extras.conditionalcomments.dialect.ConditionalCommentsDialect" />
+				<bean class="nz.net.ultraq.thymeleaf.LayoutDialect" />
 			</set>
 		</property>
 		<property name="messageResolver" ref="nonCachableMessageResolver"></property>

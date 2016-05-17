@@ -50,8 +50,7 @@ public class KsuCsvWorkbookParserTest {
 	private Map<Integer, List<String>> csvMap;
 
 	@InjectMocks
-	private final KsuCsvWorkbookParser parser = Mockito.spy(new KsuCsvWorkbookParser(this.ksuCsvImportStudyService, this.workbook,
-			this.testTrialInstanceNo, this.rowsMap));
+	private KsuCsvWorkbookParser parser;
 
 	@Before
 	public void setUp() throws Exception {
@@ -61,15 +60,8 @@ public class KsuCsvWorkbookParserTest {
 
 	@Test
 	public void testParseCsvMap() throws Exception {
-		Mockito.doNothing()
-				.when(this.parser)
-				.importDataToWorkbook(Matchers.eq(this.csvMap), Matchers.eq(this.workbook), Matchers.eq(this.testTrialInstanceNo),
-						Matchers.eq(this.rowsMap));
-
 		this.parser.parseCsvMap(this.csvMap);
-
-		Mockito.verify(this.parser, Mockito.times(1)).importDataToWorkbook(Matchers.eq(this.csvMap), Matchers.eq(this.workbook),
-				Matchers.eq(this.testTrialInstanceNo), Matchers.eq(this.rowsMap));
+		Mockito.verify(this.ksuCsvImportStudyService, Mockito.times(1)).isValidHeaderNames(Matchers.eq(this.rowHeaders));
 	}
 
 	@Test(expected = FileParsingException.class)

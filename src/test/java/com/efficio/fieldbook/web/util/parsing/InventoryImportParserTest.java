@@ -251,6 +251,7 @@ public class InventoryImportParserTest {
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.UNITS), "SCALE2");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT), "15");
+        testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL), "y");
 
 		InventoryDetails details = rowConverter.convertToObject(testRowValue);
 		Assert.assertNotNull("Inventory details could not be properly created when all inventory related columns are present", details);
@@ -261,6 +262,7 @@ public class InventoryImportParserTest {
 		Assert.assertEquals("Inventory details not created with proper location name", "Test Location 1", details.getLocationName());
 		Assert.assertEquals("Inventory details not created with proper scale id", new Integer(2), details.getScaleId());
 		Assert.assertEquals("Inventory details not created with proper scale name", "SCALE2", details.getScaleName());
+        Assert.assertEquals("Inventory details assumes upper case value for Bulk Compl in future comparisons", "Y", details.getBulkCompl());
 	}
 
 	protected InventoryImportParser.InventoryRowConverter createForTestingRowConverter(Workbook workbook) {

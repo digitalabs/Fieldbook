@@ -250,6 +250,9 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			String duplicate = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.DUPLICATE));
 			String bulkWith = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH));
 			String bulkCompl = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL));
+            if (!StringUtils.isEmpty(bulkCompl)) {
+                bulkCompl = bulkCompl.toUpperCase();
+            }
 
 			InventoryDetails details = new InventoryDetails();
 			details.setGid(gid);

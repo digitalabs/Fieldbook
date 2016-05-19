@@ -21,32 +21,40 @@ import org.generationcp.middleware.service.api.InventoryService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ExportAdvanceListServiceImplTest {
-
-	private ExportAdvanceListServiceImpl exportAdvanceListServiceImpl;
+	@Mock
 	private FieldbookProperties fieldbookProperties;
+	
+	@Mock
 	private InventoryService inventoryMiddlewareService;
+	
+	@Mock
 	private FieldbookService fieldbookMiddlewareService;
+	
+	@Mock
+	private GermplasmExportService germplasmExportServiceImpl;
+	
 	private String advancedListIds;
 	private final String tempDirectory = "";
 	private final String studyName = "StudyName";
-	private GermplasmExportService germplasmExportServiceImpl;
 
+	@InjectMocks
+	private ExportAdvanceListServiceImpl exportAdvanceListServiceImpl;
+	
 	@Before
 	public void setUp() throws MiddlewareQueryException {
-		this.exportAdvanceListServiceImpl = Mockito.spy(new ExportAdvanceListServiceImpl());
-		this.fieldbookProperties = Mockito.mock(FieldbookProperties.class);
-		this.inventoryMiddlewareService = Mockito.mock(InventoryService.class);
-		this.fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		this.germplasmExportServiceImpl = Mockito.mock(GermplasmExportService.class);
-
 		Mockito.when(this.fieldbookProperties.getUploadDirectory()).thenReturn(this.tempDirectory);
 		GermplasmList germplasmList = new GermplasmList();
 		germplasmList.setName("TempGermplasmListName");
@@ -72,7 +80,7 @@ public class ExportAdvanceListServiceImplTest {
 	public void testGenerateAdvanceListColumnValues() {
 		List<Map<Integer, ExportColumnValue>> exportColumnsValuesList =
 				this.exportAdvanceListServiceImpl.generateAdvanceListColumnValues(this.generateSampleInventoryDetailsList(5),
-						this.exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders(false));
+						this.exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders(false, ""));
 		Assert.assertEquals("There should be 5 set of column values", 5, exportColumnsValuesList.size());
 		// we check random data
 		Assert.assertEquals("The 1st GID should be 0", "0", exportColumnsValuesList.get(0).get(TermId.GID.getId()).getValue());
@@ -139,7 +147,7 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testGenerateAdvanceListColumnHeaders() {
-		List<ExportColumnHeader> exportColumnHeaders = this.exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders(false);
+		List<ExportColumnHeader> exportColumnHeaders = this.exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders(false, "");
 
 		Assert.assertEquals("1st column should be ENTRY NO", exportColumnHeaders.get(0).getId().intValue(), TermId.ENTRY_NO.getId());
 		Assert.assertEquals("2nd column should be DESIG", exportColumnHeaders.get(1).getId().intValue(), TermId.DESIG.getId());
@@ -149,16 +157,14 @@ public class ExportAdvanceListServiceImplTest {
 		Assert.assertEquals("6th column should be LOCATION_ID", exportColumnHeaders.get(5).getId().intValue(), TermId.LOCATION_ID.getId());
 		Assert.assertEquals("7th column should be INVENTORY_AMOUNT", exportColumnHeaders.get(6).getId().intValue(),
 				AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt());
-		Assert.assertEquals("8th column should be INVENTORY_SCALE", exportColumnHeaders.get(7).getId().intValue(),
-				AppConstants.TEMPORARY_INVENTORY_SCALE.getInt());
-		Assert.assertEquals("9th column should be STOCKID", exportColumnHeaders.get(8).getId().intValue(), TermId.STOCKID.getId());
-		Assert.assertEquals("10th column should be INVENTORY_COMMENT", exportColumnHeaders.get(9).getId().intValue(),
+		Assert.assertEquals("8th column should be STOCKID", exportColumnHeaders.get(7).getId().intValue(), TermId.STOCKID.getId());
+		Assert.assertEquals("9th column should be INVENTORY_COMMENT", exportColumnHeaders.get(8).getId().intValue(),
 				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt());
 	}
 
 	@Test
 	public void testGenerateAdvanceListColumnHeadersForCrosses() {
-		List<ExportColumnHeader> exportColumnHeaders = this.exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders(true);
+		List<ExportColumnHeader> exportColumnHeaders = this.exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders(true, "");
 
 		Assert.assertEquals("1st column should be ENTRY NO", exportColumnHeaders.get(0).getId().intValue(), TermId.ENTRY_NO.getId());
 		Assert.assertEquals("2nd column should be DESIG", exportColumnHeaders.get(1).getId().intValue(), TermId.DESIG.getId());
@@ -171,10 +177,8 @@ public class ExportAdvanceListServiceImplTest {
 		Assert.assertEquals("9th column should be LOCATION_ID", exportColumnHeaders.get(8).getId().intValue(), TermId.LOCATION_ID.getId());
 		Assert.assertEquals("10th column should be INVENTORY_AMOUNT", exportColumnHeaders.get(9).getId().intValue(),
 				AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt());
-		Assert.assertEquals("11th column should be INVENTORY_SCALE", exportColumnHeaders.get(10).getId().intValue(),
-				AppConstants.TEMPORARY_INVENTORY_SCALE.getInt());
-		Assert.assertEquals("12th column should be STOCKID", exportColumnHeaders.get(11).getId().intValue(), TermId.STOCKID.getId());
-		Assert.assertEquals("13th column should be INVENTORY_COMMENT", exportColumnHeaders.get(12).getId().intValue(),
+		Assert.assertEquals("11th column should be STOCKID", exportColumnHeaders.get(10).getId().intValue(), TermId.STOCKID.getId());
+		Assert.assertEquals("12th column should be INVENTORY_COMMENT", exportColumnHeaders.get(11).getId().intValue(),
 				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt());
 	}
 
@@ -206,11 +210,6 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testExportAdvanceGermplasmListInCsvMoreThan1AdvanceItem() throws IOException {
-		Mockito.doReturn(true).when(this.exportAdvanceListServiceImpl).zipFileNameList(Matchers.anyString(), Matchers.anyList());
-		Mockito.doReturn("TempGermplasmListName").when(this.exportAdvanceListServiceImpl).getFileNamePath(Matchers.anyString());
-		Mockito.when(this.germplasmExportServiceImpl.generateCSVFile(Matchers.anyList(), Matchers.anyList(), Matchers.anyString())).thenReturn(
-				new File("Temp"));
-
 		File file =
 				this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList(this.advancedListIds, this.studyName, this.germplasmExportServiceImpl,
 						AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString());
@@ -219,7 +218,6 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testExportAdvanceGermplasmListInCsvOnly1Item() throws IOException {
-		Mockito.doReturn("TempGermplasmListName").when(this.exportAdvanceListServiceImpl).getFileNamePath(Matchers.anyString());
 		Mockito.when(this.germplasmExportServiceImpl.generateCSVFile(Matchers.anyList(), Matchers.anyList(), Matchers.anyString())).thenReturn(
 				new File("Temp"));
 
@@ -231,7 +229,6 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testExportAdvanceGermplasmListInCsvThrowsIOException() throws MiddlewareQueryException, IOException {
-		Mockito.doReturn("TempGermplasmListName").when(this.exportAdvanceListServiceImpl).getFileNamePath(Matchers.anyString());
 		Mockito.when(this.germplasmExportServiceImpl.generateCSVFile(Matchers.anyList(), Matchers.anyList(), Matchers.anyString())).thenThrow(
 				new IOException());
 		File file =
@@ -242,7 +239,6 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testExportAdvanceGermplasmListInCsvThrowsMiddlewareException() throws MiddlewareQueryException, IOException {
-		Mockito.doReturn("TempGermplasmListName").when(this.exportAdvanceListServiceImpl).getFileNamePath(Matchers.anyString());
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt())).thenThrow(
 				new MiddlewareQueryException("error"));
 
@@ -254,7 +250,6 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testExportAdvanceGermplasmListInXlsOnly1Item() throws IOException {
-		Mockito.doReturn("TempGermplasmListName").when(this.exportAdvanceListServiceImpl).getFileNamePath(Matchers.anyString());
 		Mockito.when(
 				this.germplasmExportServiceImpl.generateExcelFileForSingleSheet(Matchers.anyList(), Matchers.anyList(), Matchers.anyString(),
 						Matchers.anyString())).thenReturn(new FileOutputStream(new File("temp")));
@@ -267,7 +262,6 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testExportAdvanceGermplasmListInXlsThrowsIOException() throws IOException {
-		Mockito.doReturn("TempGermplasmListName").when(this.exportAdvanceListServiceImpl).getFileNamePath(Matchers.anyString());
 		Mockito.when(
 				this.germplasmExportServiceImpl.generateExcelFileForSingleSheet(Matchers.anyList(), Matchers.anyList(), Matchers.anyString(),
 						Matchers.anyString())).thenThrow(new IOException());
@@ -280,7 +274,6 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testExportAdvanceGermplasmListInXlsThrowsMiddlewareException() throws IOException, MiddlewareQueryException {
-		Mockito.doReturn("TempGermplasmListName").when(this.exportAdvanceListServiceImpl).getFileNamePath(Matchers.anyString());
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt())).thenThrow(
 				new MiddlewareQueryException("error"));
 
@@ -292,8 +285,6 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testExportAdvanceGermplasmListInXlsMoreThan1AdvanceItem() throws IOException {
-		Mockito.doReturn(true).when(this.exportAdvanceListServiceImpl).zipFileNameList(Matchers.anyString(), Matchers.anyList());
-		Mockito.doReturn("TempGermplasmListName").when(this.exportAdvanceListServiceImpl).getFileNamePath(Matchers.anyString());
 		Mockito.when(
 				this.germplasmExportServiceImpl.generateExcelFileForSingleSheet(Matchers.anyList(), Matchers.anyList(), Matchers.anyString(),
 						Matchers.anyString())).thenReturn(new FileOutputStream(new File("temp")));
@@ -310,7 +301,7 @@ public class ExportAdvanceListServiceImplTest {
 				new Integer[] {TermId.ENTRY_NO.getId(), TermId.DESIG.getId(), TermId.CROSS.getId(), TermId.GID.getId(),
 						TermId.SOURCE.getId(), TermId.DUPLICATE.getId(), TermId.BULK_WITH.getId(), TermId.BULK_COMPL.getId(),
 						TermId.LOCATION_ID.getId(), AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(),
-						AppConstants.TEMPORARY_INVENTORY_SCALE.getInt(), AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()};
+						AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()};
 		InventoryDetails inventoryDetails = this.getSampleInventoryDetails(1, 1);
 		for (int i = 0; i < columnHeaderIds.length; i++) {
 			String result = this.exportAdvanceListServiceImpl.getInventoryDetailValueInfo(inventoryDetails, columnHeaderIds[i]);

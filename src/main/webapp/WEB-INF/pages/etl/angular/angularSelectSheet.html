@@ -109,7 +109,7 @@
                     <label for="txtStartDate" class="col-md-2 control-label" th:text="#{study.name.start.date.label}">Start Date</label>
 
                     <div class="col-md-10 date-picker">
-                        <input id="txtStartDate" jq-datepicker type="text" class="form-control" ng-model="selected.studyDetails.startDate"
+                        <input id="txtStartDate" jq-datepicker="" type="text" class="form-control" ng-model="selected.studyDetails.startDate"
                                ng:disabled="existingStudySelected()"/>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
                     <label for="txtEndDate" class="col-md-2 control-label" th:text="#{study.name.end.date.label}">End Date</label>
 
                     <div class="col-md-10 date-picker">
-                        <input id="txtEndDate" jq-datepicker type="text" class="form-control" ng-model="selected.studyDetails.endDate"
+                        <input id="txtEndDate" jq-datepicker="" type="text" class="form-control" ng-model="selected.studyDetails.endDate"
                                 ng:disabled="existingStudySelected()"/>
                     </div>
                 </div>
@@ -147,7 +147,7 @@
 
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
-                        <a th:text="#{form.prev.text}" th:href="@{/}" class="btn btn-default btn-sm"></a>
+                        <a th:text="#{form.prev.text}" th:href="@{/etl}" class="btn btn-default btn-sm"></a>
                         <input type="button" name="action" th:value="#{form.next.text}" class="btn btn-primary btn-sm"
                                ng:click="validateAndSubmit()" ng-disabled="userAttemptedSubmission"/>
                     </div>

@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<section layout:fragment="content" ng:controller="OpenSheetJSController" ng:cloak>
+<section layout:fragment="content" ng:controller="OpenSheetJSController" ng:cloak="">
     <div class="content-header">
         <h2 th:utext="#{page.title.open.sheet}">
             [[#{page.title.open.sheet}]]
@@ -16,7 +16,7 @@
         <div th:utext="#{open.sheet.first.row.select.label}"></div>
     </div>
     
-    <div class="alert alert-success" style="display:none;"  toggle="isReady" page-notification>
+    <div class="alert alert-success" style="display:none;"  toggle="isReady" page-notification="">
 		Project Ontology Import is successful. You may now continue importing project data.
  	</div>
 
@@ -46,7 +46,7 @@
             <div class="col-md-6">
                 <input type="text" class="form-control" id="firstRowSelect" ng:click="selectRow('Content')"
                        ng:model="selected.contentRowDisplayText" name="contentRowDisplayText" size="80"
-                       required></input>
+                       required=""></input>
                 <br/>
             </div>
         </div>

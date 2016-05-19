@@ -12,6 +12,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
@@ -127,7 +128,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 	protected void exportList(List<InventoryDetails> inventoryDetailList, String filenamePath, String sheetName,
 			GermplasmExportService germplasmExportServiceImpl, String type, boolean displayCrossRelatedColumns) throws IOException {
-		List<ExportColumnHeader> exportColumnHeaders = this.generateAdvanceListColumnHeaders(displayCrossRelatedColumns);
+		List<ExportColumnHeader> exportColumnHeaders = this.generateAdvanceListColumnHeaders(displayCrossRelatedColumns, this.getAmountsHeader(inventoryDetailList));
 		if (AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)) {
 			germplasmExportServiceImpl.generateExcelFileForSingleSheet(
 					this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders), exportColumnHeaders, filenamePath,
@@ -138,7 +139,16 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		}
 	}
 
-	protected boolean zipFileNameList(String outputFilename, List<String> filenameList) {
+	private String getAmountsHeader(List<InventoryDetails> inventoryDetailList) {
+		for(InventoryDetails inventoryDetails: inventoryDetailList){
+			if(inventoryDetails.getScaleName() != null){
+				return inventoryDetails.getScaleName();
+			}
+		}
+		return "";
+	}
+
+		protected boolean zipFileNameList(String outputFilename, List<String> filenameList) {
 		ZipUtil.zipIt(outputFilename, filenameList);
 		return true;
 	}
@@ -152,7 +162,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		return advancedGermplasmListIds;
 	}
 
-	protected List<ExportColumnHeader> generateAdvanceListColumnHeaders(boolean displayCrossRelatedColumns) {
+	protected List<ExportColumnHeader> generateAdvanceListColumnHeaders(boolean displayCrossRelatedColumns, String amountHeader) {
 		List<ExportColumnHeader> exportColumnHeaders = new ArrayList<ExportColumnHeader>();
 		Locale locale = LocaleContextHolder.getLocale();
 
@@ -179,9 +189,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(),
 				this.messageSource.getMessage("seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(),
-				this.messageSource.getMessage("seed.inventory.amount", null, locale), true, ExportColumnHeader.BLUE));
-		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_SCALE.getInt(),
-				this.messageSource.getMessage("seed.inventory.table.scale", null, locale), true, ExportColumnHeader.BLUE));
+				StringUtils.isEmpty(amountHeader)? "SEED_AMOUNT_g": amountHeader, true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.STOCKID.getId(),
 				this.messageSource.getMessage("seed.inventory.stockid", null, locale), true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(),
@@ -194,9 +202,9 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<Map<Integer, ExportColumnValue>>();
 		for (InventoryDetails inventoryDetails : inventoryDetailList) {
 			Map<Integer, ExportColumnValue> dataMap = new HashMap<Integer, ExportColumnValue>();
-			for (ExportColumnHeader columnHeaders : exportColumnHeaders) {
-				dataMap.put(columnHeaders.getId(), new ExportColumnValue(columnHeaders.getId(),
-						this.getInventoryDetailValueInfo(inventoryDetails, columnHeaders.getId())));
+			for (ExportColumnHeader columnHeader : exportColumnHeaders) {
+				dataMap.put(columnHeader.getId(), new ExportColumnValue(columnHeader.getId(),
+						this.getInventoryDetailValueInfo(inventoryDetails, columnHeader.getId())));
 			}
 			exportColumnValues.add(dataMap);
 		}
@@ -226,8 +234,6 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 			val = inventoryDetails.getLocationAbbr();
 		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt()) {
 			val = this.getInventoryAmount(inventoryDetails);
-		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_SCALE.getInt()) {
-			val = this.getInventoryValue(inventoryDetails.getScaleName());
 		} else if (columnHeaderId == TermId.STOCKID.getId()) {
 			val = this.getInventoryValue(inventoryDetails.getInventoryID());
 		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()) {

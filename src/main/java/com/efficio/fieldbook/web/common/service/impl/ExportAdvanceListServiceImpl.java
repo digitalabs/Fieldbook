@@ -148,7 +148,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		return "";
 	}
 
-		protected boolean zipFileNameList(String outputFilename, List<String> filenameList) {
+	protected boolean zipFileNameList(String outputFilename, List<String> filenameList) {
 		ZipUtil.zipIt(outputFilename, filenameList);
 		return true;
 	}

@@ -18,7 +18,7 @@ public enum InventoryHeaderLabels {
 	private final boolean isAnAdvancedListHeader;
 	private final boolean isARequiredHeader;
 
-	private InventoryHeaderLabels(String name, boolean isAnAdvancedListHeader, boolean isARequiredHeader) {
+	private InventoryHeaderLabels(final String name, final boolean isAnAdvancedListHeader, final boolean isARequiredHeader) {
 		this.name = name;
 		this.isAnAdvancedListHeader = isAnAdvancedListHeader;
 		this.isARequiredHeader = isARequiredHeader;
@@ -36,12 +36,12 @@ public enum InventoryHeaderLabels {
 		return this.isARequiredHeader;
 	}
 
-	public static Map<InventoryHeaderLabels, Integer> headers(GermplasmListType germplasmListType) {
-		InventoryHeaderLabels[] values = InventoryHeaderLabels.values();
-		Map<InventoryHeaderLabels, Integer> headers = new LinkedHashMap<InventoryHeaderLabels, Integer>();
+	public static Map<InventoryHeaderLabels, Integer> headers(final GermplasmListType germplasmListType) {
+		final InventoryHeaderLabels[] values = InventoryHeaderLabels.values();
+		final Map<InventoryHeaderLabels, Integer> headers = new LinkedHashMap<InventoryHeaderLabels, Integer>();
 
 		int columnIndex = 0;
-		for (InventoryHeaderLabels inventoryHeaderLabels : values) {
+		for (final InventoryHeaderLabels inventoryHeaderLabels : values) {
 			if (germplasmListType == GermplasmListType.ADVANCED && !inventoryHeaderLabels.isAnAdvancedListHeader) {
 				continue;
 			}
@@ -52,12 +52,12 @@ public enum InventoryHeaderLabels {
 		return headers;
 	}
 
-	public static Map<InventoryHeaderLabels, Integer> getRequiredHeadersMap(GermplasmListType listType) {
-		InventoryHeaderLabels[] values = InventoryHeaderLabels.values();
-		Map<InventoryHeaderLabels, Integer> headers = new LinkedHashMap<InventoryHeaderLabels, Integer>();
+	public static Map<InventoryHeaderLabels, Integer> getRequiredHeadersMap(final GermplasmListType listType) {
+		final InventoryHeaderLabels[] values = InventoryHeaderLabels.values();
+		final Map<InventoryHeaderLabels, Integer> headers = new LinkedHashMap<InventoryHeaderLabels, Integer>();
 		int columnIndex = 0;
 
-		for (InventoryHeaderLabels inventoryHeaderLabels : values) {
+		for (final InventoryHeaderLabels inventoryHeaderLabels : values) {
 			if (listType == GermplasmListType.ADVANCED && !inventoryHeaderLabels.isAnAdvancedListHeader) {
 				continue;
 			}
@@ -71,20 +71,20 @@ public enum InventoryHeaderLabels {
 		return headers;
 	}
 
-	public static String[] getHeaderNames(Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap) {
-		String[] headers = new String[inventoryHeaderLabelsMap.keySet().size()];
+	public static String[] getHeaderNames(final Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap) {
+		final String[] headers = new String[inventoryHeaderLabelsMap.keySet().size()];
 		int index = 0;
-		for (InventoryHeaderLabels inventoryHeaderLabels : inventoryHeaderLabelsMap.keySet()) {
+		for (final InventoryHeaderLabels inventoryHeaderLabels : inventoryHeaderLabelsMap.keySet()) {
 			headers[index] = inventoryHeaderLabels.getName();
 			index++;
 		}
 		return headers;
 	}
 
-	public static String[] getRequiredHeaderNames(Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap) {
-		List<String> headers = new ArrayList<String>();
+	public static String[] getRequiredHeaderNames(final Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap) {
+		final List<String> headers = new ArrayList<String>();
 		String[] requiredHeaders;
-		for (InventoryHeaderLabels inventoryHeaderLabels : inventoryHeaderLabelsMap.keySet()) {
+		for (final InventoryHeaderLabels inventoryHeaderLabels : inventoryHeaderLabelsMap.keySet()) {
 			if (inventoryHeaderLabels.isARequiredHeader) {
 				headers.add(inventoryHeaderLabels.getName());
 			}

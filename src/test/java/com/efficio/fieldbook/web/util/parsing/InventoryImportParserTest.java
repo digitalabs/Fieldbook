@@ -87,12 +87,12 @@ public class InventoryImportParserTest {
 				.getStockIdsByListDataProjectListId(InventoryImportParserTest.TEST_LIST_ID);
 	}
 
-	private Workbook createWorkbook(GermplasmListType germplasmListType) throws Exception {
+	private Workbook createWorkbook(final GermplasmListType germplasmListType) throws Exception {
 		String filename = InventoryImportParserTest.TEST_FILE_NAME;
 		if (germplasmListType == GermplasmListType.CROSSES) {
 			filename = InventoryImportParserTest.TEST_FILE_NAME_WITH_BULKING;
 		}
-		File workbookFile = new File(ClassLoader.getSystemClassLoader().getResource(filename).toURI());
+		final File workbookFile = new File(ClassLoader.getSystemClassLoader().getResource(filename).toURI());
 
 		assert workbookFile.exists();
 
@@ -100,7 +100,7 @@ public class InventoryImportParserTest {
 	}
 
 	private List<String> createDummyStockIds() {
-		List<String> stockIds = new ArrayList<String>();
+		final List<String> stockIds = new ArrayList<String>();
 		for (int i = 0; i < 5; i++) {
 			stockIds.add(InventoryImportParserTest.STOCKID_PREFIX + "1-" + i);
 		}
@@ -110,37 +110,26 @@ public class InventoryImportParserTest {
 	@Test
 	public void testBuildAllowedLocationList() {
 		this.parser.setLocations(this.testLocationList);
-		List<String> allowedLocationsList = this.parser.buildAllowedLocationsList();
+		final List<String> allowedLocationsList = this.parser.buildAllowedLocationsList();
 		Assert.assertEquals(this.testLocationList.size(), allowedLocationsList.size());
 
 	}
 
 	@Test
 	public void testConvertToLocationMap() {
-		Map<String, Location> locationMap = this.parser.convertToLocationMap(this.testLocationList);
+		final Map<String, Location> locationMap = this.parser.convertToLocationMap(this.testLocationList);
 
 		Assert.assertEquals(locationMap.size(), this.testLocationList.size());
-		Collection<Location> values = locationMap.values();
-		for (Location location : this.testLocationList) {
+		final Collection<Location> values = locationMap.values();
+		for (final Location location : this.testLocationList) {
 			Assert.assertTrue(values.contains(location));
-		}
-	}
-
-	@Test
-	public void testConvertToScaleMap() {
-		Map<String, Scale> scaleMap = this.parser.convertToScaleMap(this.testScaleList);
-
-		Assert.assertEquals(scaleMap.size(), this.testScaleList.size());
-		Collection<Scale> values = scaleMap.values();
-		for (Scale scale : this.testScaleList) {
-			Assert.assertTrue(values.contains(scale));
 		}
 	}
 
 	@Test
 	public void testSetupParsingValidations() {
 		this.generateHeaders(GermplasmListType.CROSSES);
-		ParseValidationMap map = this.parser.setupIndividualColumnValidation();
+		final ParseValidationMap map = this.parser.setupIndividualColumnValidation();
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).isEmpty());
@@ -166,7 +155,7 @@ public class InventoryImportParserTest {
 				.get(0) instanceof BulkComplValidator);
 	}
 
-	private void generateHeaders(GermplasmListType crosses) {
+	private void generateHeaders(final GermplasmListType crosses) {
 		this.inventoryHeaderLabelsMap = InventoryHeaderLabels.headers(GermplasmListType.CROSSES);
 		this.headers = InventoryHeaderLabels.getHeaderNames(this.inventoryHeaderLabelsMap);
 		this.parser.setInventoryHeaderLabelsMap(this.inventoryHeaderLabelsMap);
@@ -175,15 +164,15 @@ public class InventoryImportParserTest {
 
 	@Test
 	public void testObejectConversionAllInventoryItemsMissing() throws Exception {
-		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
+		final GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
 		this.generateHeaders(germplasmListType);
-		InventoryImportParser.InventoryRowConverter rowConverter =
+		final InventoryImportParser.InventoryRowConverter rowConverter =
 				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
-		Map<Integer, String> testRowValue = new HashMap<>();
+		final Map<Integer, String> testRowValue = new HashMap<>();
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
 
-		InventoryDetails details = rowConverter.convertToObject(testRowValue);
+		final InventoryDetails details = rowConverter.convertToObject(testRowValue);
 
 		Assert.assertEquals(new Integer(-10), details.getGid());
 		Assert.assertNull(details.getAmount());
@@ -192,16 +181,16 @@ public class InventoryImportParserTest {
 	}
 
 	public void testObejectConversionSomeInventoryItemsMissing() throws Exception {
-		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
+		final GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
 		this.generateHeaders(germplasmListType);
-		InventoryImportParser.InventoryRowConverter rowConverter =
+		final InventoryImportParser.InventoryRowConverter rowConverter =
 				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
-		Map<Integer, String> testRowValue = new HashMap<>();
+		final Map<Integer, String> testRowValue = new HashMap<>();
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
 
-		InventoryDetails details = rowConverter.convertToObject(testRowValue);
+		final InventoryDetails details = rowConverter.convertToObject(testRowValue);
 
 		Assert.assertEquals(new Integer(-10), details.getGid());
 		Assert.assertEquals("Expecting that the LocationAbbr has a value", "TEST1", details.getLocationAbbr());
@@ -211,14 +200,14 @@ public class InventoryImportParserTest {
 
 	@Test
 	public void testObjectConversionNoInventoryItemsPresent() throws Exception {
-		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
+		final GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
 		this.generateHeaders(germplasmListType);
-		InventoryImportParser.InventoryRowConverter rowConverter =
+		final InventoryImportParser.InventoryRowConverter rowConverter =
 				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
-		Map<Integer, String> testRowValue = new HashMap<>();
+		final Map<Integer, String> testRowValue = new HashMap<>();
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
-		InventoryDetails details = rowConverter.convertToObject(testRowValue);
+		final InventoryDetails details = rowConverter.convertToObject(testRowValue);
 		Assert.assertNotNull("Inventory details could not be properly created when all inventory related columns are blank", details);
 		Assert.assertNull(details.getAmount());
 		Assert.assertNull(details.getComment());
@@ -226,17 +215,17 @@ public class InventoryImportParserTest {
 
 	@Test
 	public void testObjectConversionAllInventoryItemsPresent() throws Exception {
-		GermplasmListType germplasmListType = GermplasmListType.CROSSES;
+		final GermplasmListType germplasmListType = GermplasmListType.CROSSES;
 		this.generateHeaders(germplasmListType);
-		InventoryImportParser.InventoryRowConverter rowConverter =
+		final InventoryImportParser.InventoryRowConverter rowConverter =
 				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
-		Map<Integer, String> testRowValue = new HashMap<>();
+		final Map<Integer, String> testRowValue = new HashMap<>();
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT), "15");
 
-		InventoryDetails details = rowConverter.convertToObject(testRowValue);
+		final InventoryDetails details = rowConverter.convertToObject(testRowValue);
 		Assert.assertNotNull("Inventory details could not be properly created when all inventory related columns are present", details);
 
 		Assert.assertEquals(details.getAmount(), 15.0, 0);
@@ -247,15 +236,15 @@ public class InventoryImportParserTest {
 		Assert.assertEquals("Inventory details not created with proper scale name", "SEED_AMOUNT_kg", details.getScaleName());
 	}
 
-	protected InventoryImportParser.InventoryRowConverter createForTestingRowConverter(Workbook workbook) {
-		Map<String, Location> locationMap = this.parser.convertToLocationMap(this.testLocationList);
+	protected InventoryImportParser.InventoryRowConverter createForTestingRowConverter(final Workbook workbook) {
+		final Map<String, Location> locationMap = this.parser.convertToLocationMap(this.testLocationList);
 		return new InventoryImportParser.InventoryRowConverter(workbook, InventoryImportParserTest.DUMMY_INDEX,
 				InventoryImportParser.INVENTORY_SHEET, this.inventoryHeaderLabelsMap.size(), this.inventoryHeaderLabelsMap, locationMap,
 				this.testScaleList.get(0));
 	}
 
 	protected List<Location> createDummyLocationList() {
-		List<Location> locationList = new ArrayList<>();
+		final List<Location> locationList = new ArrayList<>();
 
 		Location location = new Location();
 		location.setLocid(1);
@@ -273,14 +262,14 @@ public class InventoryImportParserTest {
 	}
 
 	protected List<Scale> createDummyScaleList() {
-		List<Scale> scaleList = new ArrayList<>();
+		final List<Scale> scaleList = new ArrayList<>();
 
-		Scale scale = new Scale(new Term(1, "SEED_AMOUNT_kg", "Weighed"));
+		final Scale scale = new Scale(new Term(1, "SEED_AMOUNT_kg", "Weighed"));
 		scale.setDisplayName("Test Scale 1");
 		scale.setId(1);
 		scaleList.add(scale);
 
-		Scale scale2 = new Scale(new Term(2, "SEED_AMOUNT_g", "Weighed"));
+		final Scale scale2 = new Scale(new Term(2, "SEED_AMOUNT_g", "Weighed"));
 		scale2.setDisplayName("Test Display 2");
 		scaleList.add(scale2);
 
@@ -289,12 +278,13 @@ public class InventoryImportParserTest {
 
 	@Test
 	public void testParseWorkbook_Crosses() throws Exception {
-		GermplasmListType germplasmListType = GermplasmListType.CROSSES;
-		Map<String, Object> additionalParams = new HashMap<String, Object>();
+		final GermplasmListType germplasmListType = GermplasmListType.CROSSES;
+		final Map<String, Object> additionalParams = new HashMap<String, Object>();
 		additionalParams.put(InventoryImportParser.HEADERS_MAP_PARAM_KEY, InventoryHeaderLabels.headers(GermplasmListType.CROSSES));
 		additionalParams.put(InventoryImportParser.LIST_ID_PARAM_KEY, InventoryImportParserTest.TEST_LIST_ID);
 		additionalParams.put(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY, InventoryImportParserTest.TEST_GERMPLASM_LIST_TYPE);
-		ImportedInventoryList importedInventoryList = this.parser.parseWorkbook(this.createWorkbook(germplasmListType), additionalParams);
+		final ImportedInventoryList importedInventoryList =
+				this.parser.parseWorkbook(this.createWorkbook(germplasmListType), additionalParams);
 		Assert.assertNotNull(importedInventoryList);
 	}
 }

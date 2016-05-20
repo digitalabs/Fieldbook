@@ -11,7 +11,7 @@ public class InventoryHeaderLabelsTest {
 
 	@Test
 	public void testHeaders_Advanced() {
-		Map<InventoryHeaderLabels, Integer> advancedHeadersMap = this.createInventoryHeaderLabelsMap(GermplasmListType.ADVANCED);
+		final Map<InventoryHeaderLabels, Integer> advancedHeadersMap = this.createInventoryHeaderLabelsMap(GermplasmListType.ADVANCED);
 		Assert.assertEquals(9, advancedHeadersMap.size());
 		Assert.assertTrue(advancedHeadersMap.containsKey(InventoryHeaderLabels.ENTRY));
 		Assert.assertTrue(advancedHeadersMap.containsKey(InventoryHeaderLabels.DESIGNATION));
@@ -26,7 +26,7 @@ public class InventoryHeaderLabelsTest {
 
 	@Test
 	public void testHeaders_Crosses() {
-		Map<InventoryHeaderLabels, Integer> crossesHeadersMap = InventoryHeaderLabels.headers(GermplasmListType.CROSSES);
+		final Map<InventoryHeaderLabels, Integer> crossesHeadersMap = InventoryHeaderLabels.headers(GermplasmListType.CROSSES);
 		Assert.assertEquals(12, crossesHeadersMap.size());
 		Assert.assertTrue(crossesHeadersMap.containsKey(InventoryHeaderLabels.ENTRY));
 		Assert.assertTrue(crossesHeadersMap.containsKey(InventoryHeaderLabels.DESIGNATION));
@@ -42,18 +42,18 @@ public class InventoryHeaderLabelsTest {
 		Assert.assertTrue(crossesHeadersMap.containsKey(InventoryHeaderLabels.COMMENT));
 	}
 
-	private Map<InventoryHeaderLabels, Integer> createInventoryHeaderLabelsMap(GermplasmListType germplasmListType) {
+	private Map<InventoryHeaderLabels, Integer> createInventoryHeaderLabelsMap(final GermplasmListType germplasmListType) {
 		return InventoryHeaderLabels.headers(germplasmListType);
 	}
 
-	private Map<InventoryHeaderLabels, Integer> createInventoryRequiredHeaderLabelsMap(GermplasmListType germplasmListType) {
+	private Map<InventoryHeaderLabels, Integer> createInventoryRequiredHeaderLabelsMap(final GermplasmListType germplasmListType) {
 		return InventoryHeaderLabels.getRequiredHeadersMap(germplasmListType);
 	}
 
 	@Test
 	public void testGetHeaderNames_Advanced() {
-		Map<InventoryHeaderLabels, Integer> advancedHeadersMap = this.createInventoryHeaderLabelsMap(GermplasmListType.ADVANCED);
-		String[] headers = InventoryHeaderLabels.getHeaderNames(advancedHeadersMap);
+		final Map<InventoryHeaderLabels, Integer> advancedHeadersMap = this.createInventoryHeaderLabelsMap(GermplasmListType.ADVANCED);
+		final String[] headers = InventoryHeaderLabels.getHeaderNames(advancedHeadersMap);
 		Assert.assertEquals(advancedHeadersMap.keySet().size(), headers.length);
 		Assert.assertEquals(9, headers.length);
 		Assert.assertTrue(headers[0].equals(InventoryHeaderLabels.ENTRY.getName()));
@@ -69,8 +69,8 @@ public class InventoryHeaderLabelsTest {
 
 	@Test
 	public void testGetHeaderNames_Crosses() {
-		Map<InventoryHeaderLabels, Integer> crossesHeadersMap = this.createInventoryHeaderLabelsMap(GermplasmListType.CROSSES);
-		String[] headers = InventoryHeaderLabels.getHeaderNames(crossesHeadersMap);
+		final Map<InventoryHeaderLabels, Integer> crossesHeadersMap = this.createInventoryHeaderLabelsMap(GermplasmListType.CROSSES);
+		final String[] headers = InventoryHeaderLabels.getHeaderNames(crossesHeadersMap);
 		Assert.assertEquals(crossesHeadersMap.keySet().size(), headers.length);
 		Assert.assertEquals(12, headers.length);
 		Assert.assertTrue(headers[0].equals(InventoryHeaderLabels.ENTRY.getName()));
@@ -89,8 +89,9 @@ public class InventoryHeaderLabelsTest {
 
 	@Test
 	public void testGetRequiredHeaderNames_Advanced() {
-		Map<InventoryHeaderLabels, Integer> advancedHeadersMap = this.createInventoryRequiredHeaderLabelsMap(GermplasmListType.ADVANCED);
-		String[] headers = InventoryHeaderLabels.getHeaderNames(advancedHeadersMap);
+		final Map<InventoryHeaderLabels, Integer> advancedHeadersMap =
+				this.createInventoryRequiredHeaderLabelsMap(GermplasmListType.ADVANCED);
+		final String[] headers = InventoryHeaderLabels.getHeaderNames(advancedHeadersMap);
 		Assert.assertEquals(advancedHeadersMap.keySet().size(), headers.length);
 		Assert.assertEquals(8, headers.length);
 		Assert.assertTrue(headers[0].equals(InventoryHeaderLabels.ENTRY.getName()));
@@ -105,8 +106,9 @@ public class InventoryHeaderLabelsTest {
 
 	@Test
 	public void testGetRequiredHeaderNames_Crosses() {
-		Map<InventoryHeaderLabels, Integer> crossesHeadersMap = this.createInventoryRequiredHeaderLabelsMap(GermplasmListType.CROSSES);
-		String[] headers = InventoryHeaderLabels.getRequiredHeaderNames(crossesHeadersMap);
+		final Map<InventoryHeaderLabels, Integer> crossesHeadersMap =
+				this.createInventoryRequiredHeaderLabelsMap(GermplasmListType.CROSSES);
+		final String[] headers = InventoryHeaderLabels.getRequiredHeaderNames(crossesHeadersMap);
 		Assert.assertEquals(crossesHeadersMap.keySet().size(), headers.length);
 		Assert.assertEquals(11, headers.length);
 		Assert.assertTrue(headers[0].equals(InventoryHeaderLabels.ENTRY.getName()));

@@ -139,7 +139,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		}
 	}
 
-	private String getAmountsHeader(List<InventoryDetails> inventoryDetailList) {
+	String getAmountsHeader(List<InventoryDetails> inventoryDetailList) {
 		for(InventoryDetails inventoryDetails: inventoryDetailList){
 			if(inventoryDetails.getScaleName() != null){
 				return inventoryDetails.getScaleName();

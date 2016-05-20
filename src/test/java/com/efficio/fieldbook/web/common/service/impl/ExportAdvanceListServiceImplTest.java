@@ -34,6 +34,8 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExportAdvanceListServiceImplTest {
+	private static final String SEED_AMOUNT_KG = "SEED_AMOUNT_kg";
+
 	@Mock
 	private FieldbookProperties fieldbookProperties;
 	
@@ -49,12 +51,15 @@ public class ExportAdvanceListServiceImplTest {
 	private String advancedListIds;
 	private final String tempDirectory = "";
 	private final String studyName = "StudyName";
-
+	
+	List<InventoryDetails> inventoryDetailsList;
+	
 	@InjectMocks
 	private ExportAdvanceListServiceImpl exportAdvanceListServiceImpl;
 	
 	@Before
 	public void setUp() throws MiddlewareQueryException {
+		this.inventoryDetailsList = this.generateSampleInventoryDetailsList(5);
 		Mockito.when(this.fieldbookProperties.getUploadDirectory()).thenReturn(this.tempDirectory);
 		GermplasmList germplasmList = new GermplasmList();
 		germplasmList.setName("TempGermplasmListName");
@@ -79,7 +84,7 @@ public class ExportAdvanceListServiceImplTest {
 	@Test
 	public void testGenerateAdvanceListColumnValues() {
 		List<Map<Integer, ExportColumnValue>> exportColumnsValuesList =
-				this.exportAdvanceListServiceImpl.generateAdvanceListColumnValues(this.generateSampleInventoryDetailsList(5),
+				this.exportAdvanceListServiceImpl.generateAdvanceListColumnValues(this.inventoryDetailsList,
 						this.exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders(false, ""));
 		Assert.assertEquals("There should be 5 set of column values", 5, exportColumnsValuesList.size());
 		// we check random data
@@ -315,6 +320,12 @@ public class ExportAdvanceListServiceImplTest {
 		String result = this.exportAdvanceListServiceImpl.getInventoryDetailValueInfo(inventoryDetails, 0);
 		Assert.assertEquals("Should return empty string since there is not matching condition for the ID", "", result);
 	}
+	
+	@Test
+	public void testGetAmountsHeader(){
+		String amountsHeader = this.exportAdvanceListServiceImpl.getAmountsHeader(this.inventoryDetailsList);
+		Assert.assertEquals("The amounts header should be " + SEED_AMOUNT_KG, SEED_AMOUNT_KG, amountsHeader);
+	}
 
 	private List<InventoryDetails> generateSampleInventoryDetailsList(int rows) {
 		List<InventoryDetails> inventoryDetailList = new ArrayList<InventoryDetails>();
@@ -331,6 +342,7 @@ public class ExportAdvanceListServiceImplTest {
 		inventoryDetails.setDuplicate("Plot Dupe: " + entryId + 1);
 		inventoryDetails.setBulkWith("SID-" + (entryId + 1) + "1");
 		inventoryDetails.setBulkCompl("Y");
+		inventoryDetails.setScaleName(SEED_AMOUNT_KG);
 		return inventoryDetails;
 	}
 }

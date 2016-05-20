@@ -39,7 +39,7 @@ import com.efficio.etl.web.validators.FileUploadFormValidator;
 @RequestMapping(ImportObservationsController.URL)
 public class ImportObservationsController extends AbstractBaseETLController {
 
-	public static final String URL = "/workbook/importObservations";
+	public static final String URL = "/etl/workbook/importObservations";
 	private static final Logger LOG = LoggerFactory.getLogger(ImportObservationsController.class);
 
 	@Resource(name = "etlUserSelection")

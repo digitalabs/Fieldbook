@@ -45,7 +45,7 @@ import com.efficio.etl.web.validators.FileUploadFormValidator;
 @RequestMapping(AngularMapOntologyController.URL)
 public class AngularMapOntologyController extends AbstractBaseETLController {
 
-	public static final String URL = "/workbook/mapOntology";
+	public static final String URL = "/etl/workbook/mapOntology";
 	private static final Logger LOG = LoggerFactory.getLogger(AngularMapOntologyController.class);
 
 	@Resource(name = "etlUserSelection")

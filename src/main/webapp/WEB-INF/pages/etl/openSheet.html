@@ -29,7 +29,7 @@
 		</form>	
 	</div>
 
-    <form class="form-horizontal" role="form" action="#" th:action="@{/workbook/openSheet}" method="post" onsubmit="return beforeSubmit()"
+    <form class="form-horizontal" role="form" action="#" th:action="@{/etl/workbook/openSheet}" method="post" onsubmit="return beforeSubmit()"
           th:object="${selectRowsForm}">
         <input type="hidden" th:field="*{headerRow}"/>
         <input type="hidden" th:field="*{contentRow}"/>

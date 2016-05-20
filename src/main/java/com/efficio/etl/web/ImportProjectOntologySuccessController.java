@@ -15,7 +15,7 @@ import com.efficio.etl.web.bean.UserSelection;
 @RequestMapping(ImportProjectOntologySuccessController.URL)
 public class ImportProjectOntologySuccessController extends AbstractBaseETLController {
 
-	public static final String URL = "/workbook/importProjectOntology";
+	public static final String URL = "/etl/workbook/importProjectOntology";
 
 	@Resource
 	private ETLService etlService;

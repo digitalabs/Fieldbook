@@ -556,7 +556,7 @@ angular.module('di-mapHeaders', ['digitalabs-util','dataset-importer-directives'
                 var postData = $scope.mappingdata.germplasm.concat($scope.mappingdata.trialDesign).
                         concat($scope.mappingdata.trialEnvironment).concat($scope.mappingdata.variate);
 
-                myHttp.post(APPLICATION_BASE + '/workbook/mapOntology', postData).then(function(response) {
+                myHttp.post(APPLICATION_BASE + '/etl/workbook/mapOntology', postData).then(function(response) {
                     $scope.previewMode = true;
 
                     // this iterates over
@@ -623,7 +623,7 @@ angular.module('di-mapHeaders', ['digitalabs-util','dataset-importer-directives'
                 var postData = $scope.mappingdata.germplasm.concat($scope.mappingdata.trialDesign).
                         concat($scope.mappingdata.trialEnvironment).concat($scope.mappingdata.variate);
 
-                myHttp.post(APPLICATION_BASE + "/workbook/mapOntology/confirm", postData).then(function(response) {
+                myHttp.post(APPLICATION_BASE + "/etl/workbook/mapOntology/confirm", postData).then(function(response) {
                     if (response.data.success) {
                         window.location.href = response.data.redirectUrl;
                     } else {
@@ -973,7 +973,7 @@ angular.module('di-mapHeaders', ['digitalabs-util','dataset-importer-directives'
                         this.data.standardVariables = localStorageService.get(cachedStandardVariablesName);
 
                         if (this.data.standardVariables == null || this.data.standardVariables.length == 0) {
-                            resourceFactory("api/standardVariable/datasetType/"+datasetType).retrieveAll().then(function(response) {
+                            resourceFactory("etl/api/standardVariable/datasetType/"+datasetType).retrieveAll().then(function(response) {
                                 myData.standardVariables = response;
                                 localStorageService.add(cachedStandardVariablesName,response);
 

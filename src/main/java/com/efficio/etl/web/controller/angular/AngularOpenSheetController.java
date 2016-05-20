@@ -39,7 +39,7 @@ import com.efficio.etl.web.bean.UserSelection;
 @RequestMapping(AngularOpenSheetController.URL)
 public class AngularOpenSheetController extends AbstractBaseETLController {
 
-	public static final String URL = "/workbook/openSheet";
+	public static final String URL = "/etl/workbook/openSheet";
 
 	public final static int ROW_COUNT_PER_SCREEN = 10;
 	public final static int MAX_DISPLAY_CHARACTER_PER_ROW = 60;

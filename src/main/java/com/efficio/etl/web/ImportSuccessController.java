@@ -19,7 +19,7 @@ import com.efficio.etl.web.bean.UserSelection;
 @RequestMapping(ImportSuccessController.URL)
 public class ImportSuccessController extends AbstractBaseETLController {
 
-	public static final String URL = "/workbook/importSuccess";
+	public static final String URL = "/etl/workbook/importSuccess";
 
 	@Resource
 	private ETLService etlService;

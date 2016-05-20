@@ -40,7 +40,7 @@ public class StandardVariableRESTController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StandardVariableRESTController.class);
 
-	public static final String URL = "api/standardVariable";
+	public static final String URL = "etl/api/standardVariable";
 
 	@Resource
 	private ETLService etlService;

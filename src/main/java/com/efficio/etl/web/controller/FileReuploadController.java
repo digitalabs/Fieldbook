@@ -28,7 +28,7 @@ import com.efficio.etl.web.validators.FileUploadFormValidator;
 @RequestMapping(FileReuploadController.URL)
 public class FileReuploadController extends AbstractBaseETLController {
 
-	public static final String URL = "workbook/reupload";
+	public static final String URL = "etl/workbook/reupload";
 
 	@Resource
 	private ETLService etlService;

@@ -120,12 +120,12 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 	private void validateImportedInventoryDetails(List<InventoryDetails> inventoryDetailListFromImport) throws FieldbookException {
 		for (InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
 			if (inventoryDetailsFromImport.getLocationId() != null && inventoryDetailsFromImport.getScaleId() != null
-					&& inventoryDetailsFromImport.getAmount() != null) {
+					&& (inventoryDetailsFromImport.getAmount() != null && inventoryDetailsFromImport.getAmount() != 0)) {
 				continue;
 			} else if (inventoryDetailsFromImport.getLocationId() != null || inventoryDetailsFromImport.getScaleId() != null
 					|| (inventoryDetailsFromImport.getAmount() != null && inventoryDetailsFromImport.getAmount() != 0)) {
 				throw new FieldbookException(this.messageSource.getMessage("common.error.import.missing.inventory.values.for.row",
-						new Object[] {inventoryDetailsFromImport.getEntryId()}, Locale.getDefault()));
+						new Object[] {this.parser.getAmountHeader(), inventoryDetailsFromImport.getEntryId()}, Locale.getDefault()));
 			}
 		}
 	}

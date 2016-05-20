@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
  */
 public class InventoryImportParser extends AbstractExcelFileParser<ImportedInventoryList> {
 
+	private static final String DEFAULT_AMOUNT_HEADER = "SEED_AMOUNT_G";
+
 	private static final Logger LOG = LoggerFactory.getLogger(InventoryImportParser.class);
 
 	private static final String INVALID_HEADERS = "common.parsing.invalid.headers";
@@ -92,7 +94,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		this.validateFileHeader();
 
 		this.parseInventoryDetails();
-
+		
 		return this.importedInventoryList;
 	}
 
@@ -289,5 +291,12 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	public void setInventoryDataManager(final InventoryDataManager inventoryDataManager) {
 		this.inventoryDataManager = inventoryDataManager;
+	}
+	
+	public String getAmountHeader(){
+		if(this.scale == null){
+			return DEFAULT_AMOUNT_HEADER;
+		}
+		return scale.getName();
 	}
 }

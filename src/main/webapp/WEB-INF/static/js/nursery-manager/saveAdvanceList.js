@@ -247,6 +247,12 @@ var SaveAdvanceList = {};
 		}
 	};
 
+    SaveAdvanceList.setSelectedEntries = function () {
+        var sectionContainerDiv = 'reviewAdvanceNurseryModal';
+        var selectedEntries = $('.advance-nursery-list-table .dataTables_scrollBody > .advance-germplasm-items tr.primaryRow.selected').length;
+        $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(selectedEntries);
+    };
+
 	SaveAdvanceList.setupAdvanceListForReview = function() {
 		var sectionContainerDiv = 'reviewAdvanceNurseryModal';
 		

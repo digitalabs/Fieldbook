@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mockito="http://www.mockito.org/spring/mockito"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+       	http://www.mockito.org/spring/mockito https://bitbucket.org/kubek2k/springockito/raw/tip/springockito/src/main/resources/spring/mockito.xsd
+       	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd ">
+
+    <context:property-placeholder location="classpath:datasetImporter.properties"/>
+
+    <bean id="workbook" class="org.apache.poi.ss.usermodel.WorkbookFactory" factory-method="create">
+        <constructor-arg value="classpath:Population114_Pheno_FB_1.xls" type="java.io.InputStream"/>
+    </bean>
+
+    <bean id="sheet" factory-bean="workbook" factory-method="getSheetAt">
+        <constructor-arg value="1"/>
+    </bean>
+
+    <bean id="etlService" class="com.efficio.etl.service.impl.ETLServiceImpl"/>
+
+    <bean id="fileService" class="com.efficio.etl.service.impl.FileServiceImpl" init-method="init">
+        <constructor-arg value="${upload.directory}"/>
+    </bean>
+
+    <mockito:mock id="dummyDataService" class="org.generationcp.middleware.service.api.DataImportService"/>
+
+
+    <mockito:mock class="org.generationcp.middleware.manager.api.OntologyDataManager" id="dummyManager"/>
+
+    <mockito:mock class="org.generationcp.middleware.manager.api.StudyDataManager" id="studyDataManager"/>
+
+    <mockito:mock class="org.generationcp.middleware.manager.api.WorkbenchDataManager" id="workbenchDataManager"/>
+
+
+    <bean id="messageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>/WEB-INF/i18n/Messages</value>
+            </list>
+        </property>
+        <property name="cacheSeconds" value="1"/>
+        <property name="useCodeAsDefaultMessage" value="true"/>
+    </bean>
+    
+    <bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
+		scope="request">
+		<aop:scoped-proxy />
+	</bean>
+
+
+</beans>

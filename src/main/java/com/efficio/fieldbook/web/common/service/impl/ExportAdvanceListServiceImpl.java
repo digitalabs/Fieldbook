@@ -12,7 +12,6 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
@@ -37,17 +36,19 @@ import com.efficio.fieldbook.web.util.ZipUtil;
 
 public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
+	private static final String DEFAULT_AMOUNT_HEADER = "SEED_AMOUNT_g";
+
 	private static final Logger LOG = LoggerFactory.getLogger(ExportAdvanceListServiceImpl.class);
 
 	@Resource
 	private FieldbookProperties fieldbookProperties;
-	
+
 	@Resource
 	private InventoryService inventoryMiddlewareService;
-	
+
 	@Resource
 	public MessageSource messageSource;
-	
+
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
@@ -152,7 +153,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 				return inventoryDetails.getScaleName();
 			}
 		}
-		return "";
+		return ExportAdvanceListServiceImpl.DEFAULT_AMOUNT_HEADER;
 	}
 
 	protected boolean zipFileNameList(final String outputFilename, final List<String> filenameList) {
@@ -196,8 +197,8 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(),
 				this.messageSource.getMessage("seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
-		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(),
-				StringUtils.isEmpty(amountHeader) ? "SEED_AMOUNT_g" : amountHeader, true, ExportColumnHeader.BLUE));
+		exportColumnHeaders
+				.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(), amountHeader, true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.STOCKID.getId(),
 				this.messageSource.getMessage("seed.inventory.stockid", null, locale), true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(),

@@ -52,7 +52,7 @@ import org.generationcp.middleware.util.PoiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.NoSuchMessageException;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.efficio.etl.service.ETLService;
 import com.efficio.etl.service.FileService;
@@ -99,8 +99,8 @@ public class ETLServiceImpl implements ETLService {
 	@Resource
 	private WorkbenchDataManager workbenchDataManager;
 
-	@Resource(name = "etlMessageSource")
-	private ReloadableResourceBundleMessageSource messageSource;
+  	@Resource
+  	private ResourceBundleMessageSource messageSource;
 
 	@Resource
 	private ContextUtil contextUtil;

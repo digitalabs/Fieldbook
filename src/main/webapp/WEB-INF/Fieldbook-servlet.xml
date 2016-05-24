@@ -65,18 +65,6 @@
 		<property name="basename" value="Messages" />
 	</bean>
 
-	<bean id="etlMessageSource"
-		  class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basenames">
-			<list>
-				<value>classpath:Messages</value>
-			</list>
-		</property>
-		<property name="cacheSeconds" value="1" />
-		<property name="useCodeAsDefaultMessage" value="true" />
-	</bean>
-
-
 	<!-- **************************************************************** -->
 	<!-- THYMELEAF-SPECIFIC ARTIFACTS -->
 	<!-- TemplateResolver <- TemplateEngine <- ViewResolver -->

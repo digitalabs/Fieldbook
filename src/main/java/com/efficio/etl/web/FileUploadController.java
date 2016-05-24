@@ -19,7 +19,7 @@ import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.etl.service.ETLService;
 import com.efficio.etl.web.bean.FileUploadForm;
 import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.controller.angular.AngularSelectSheetController;
 import com.efficio.etl.web.validators.FileUploadFormValidator;
 
 /**
@@ -66,8 +65,8 @@ public class FileUploadController extends AbstractBaseETLController {
 	@Resource
 	private DataImportService dataImportService;
 
-  	@Resource(name = "etlMessageSource")
-	private ReloadableResourceBundleMessageSource messageSource;
+    @Resource
+	private ResourceBundleMessageSource messageSource;
 
 	@Resource
 	private ContextUtil contextUtil;

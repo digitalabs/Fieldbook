@@ -63,8 +63,6 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	private List<Location> locations;
 
-	private Map<String, Scale> scaleMap;
-
 	private Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap;
 	private String[] headers;
 	private String[] requiredHeaders;
@@ -97,7 +95,6 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 	}
 
 	void validateFileHeader() throws FileParsingException {
-		this.buildScaleMap();
 		final int tempRowNo = this.currentParseIndex;
 		if (this.isHeaderInvalid(tempRowNo, InventoryImportParser.INVENTORY_SHEET, this.requiredHeaders)
 				&& this.isHeaderInvalid(tempRowNo, InventoryImportParser.INVENTORY_SHEET, this.headers)) {
@@ -133,14 +130,6 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		}
 
 		return locationMap;
-	}
-
-	public void buildScaleMap() {
-		this.scaleMap = new HashMap<>();
-		final List<Scale> scales = this.ontologyService.getAllInventoryScales();
-		for (final Scale scale : scales) {
-			this.scaleMap.put(scale.getName().toUpperCase(), scale);
-		}
 	}
 
 	protected ParseValidationMap setupIndividualColumnValidation() {
@@ -265,14 +254,21 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		for (int i = 0; i < headers.length; i++) {
 			if (headers[i].equalsIgnoreCase(InventoryHeaderLabels.AMOUNT.getName())) {
 				final String amountHeader = this.getCellStringValue(sheetNumber, headerNo, i);
-				this.scale = this.scaleMap.get(amountHeader.toUpperCase());
-				isInvalid = isInvalid || this.scale == null;
+				isInvalid = this.isAmountHeaderValid(amountHeader)?isInvalid : true;
 			} else {
 				isInvalid = isInvalid || !headers[i].equalsIgnoreCase(this.getCellStringValue(sheetNumber, headerNo, i));
 			}
 		}
 
 		return isInvalid;
+	}
+
+	private boolean isAmountHeaderValid(final String amountHeader) {
+		this.scale = this.ontologyService.getScaleVariable(amountHeader);
+		if(scale == null || scale.getTerm() == null){
+			return false;
+		}
+		return true;
 	}
 
 	public void setLocations(final List<Location> locations) {

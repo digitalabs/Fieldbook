@@ -83,7 +83,7 @@ public class InventoryImportParserTest {
 		this.testLocationList = this.createDummyLocationList();
 		this.testStockIds = this.createDummyStockIds();
 		Mockito.doReturn(this.testLocationList).when(this.fieldbookMiddlewareService).getAllLocations();
-		Mockito.doReturn(this.scaleTDI.createScale()).when(this.ontologyService).getScaleVariable(Matchers.anyString());
+		Mockito.doReturn(this.scaleTDI.createScale()).when(this.ontologyService).getInventoryScaleByName(Matchers.anyString());
 		Mockito.doReturn(this.testStockIds).when(this.inventoryDataManager)
 				.getStockIdsByListDataProjectListId(InventoryImportParserTest.TEST_LIST_ID);
 	}

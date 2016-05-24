@@ -184,8 +184,8 @@ if (typeof StockIDFunctions === 'undefined') {
 			'use strict';
 			$('li#stock-list' + listId + '-li').remove();
 
-			if ($('#stock-list-anchor' + listId).length === 1) {
-				$('#stock-list-anchor' + listId).remove();
+			if ($('#stock-tab-pane' + listId).length === 1) {
+				$('#stock-tab-pane' + listId).remove();
 			}
 
 			setTimeout(function() {
@@ -342,6 +342,8 @@ if (typeof StockIDFunctions === 'undefined') {
 					showSuccessfulMessage('', 'Import Success');
 				}
 				$('.import-stock-section .modal').modal('hide');
+                // Display Discard Imported Data button after successful import of stock list
+                $('.fbk-discard-imported-stocklist-data').removeClass('fbk-hide');
 				StockIDFunctions.displayStockList(resp.stockListId);
 			}
 		},

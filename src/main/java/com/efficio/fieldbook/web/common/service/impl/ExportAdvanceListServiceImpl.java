@@ -36,7 +36,7 @@ import com.efficio.fieldbook.web.util.ZipUtil;
 
 public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
-	private static final String DEFAULT_AMOUNT_HEADER = "SEED_AMOUNT_g";
+	private static final String DEFAULT_AMOUNT_HEADER = "SEED_AMOUNT_G";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExportAdvanceListServiceImpl.class);
 

@@ -3137,7 +3137,6 @@ function makeGermplasmListDraggable(isDraggable) {
         $('.germplasm-list-items tbody tr').off('click');
     }
 
-    // Set number of selected entries while moving one page to another page
     SaveAdvanceList.setSelectedEntries();
     // Change background of selected rows
     $('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');

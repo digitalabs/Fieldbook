@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.google.common.collect.Maps;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -245,6 +246,26 @@ public abstract class BaseLabelGenerator {
         }
 
         return buffer.toString();
+    }
+
+    /**
+     * This method returns retrieve Label headers to be printed in any of the trial instances having advance lines
+     * @param trialInstances
+     * @return Map<Integer, String> Map of label header with key as TermId and value as Label
+     */
+    protected Map<Integer, String> getLabelHeadersFromTrialInstances(final List<StudyTrialInstanceInfo> trialInstances){
+        Map<Integer, String> labelHeaders = Maps.newHashMap();
+
+        for(StudyTrialInstanceInfo trialInstanceInfo : trialInstances){
+            if(trialInstanceInfo.getTrialInstance() != null && trialInstanceInfo.getTrialInstance().getLabelHeaders() != null
+                    && !trialInstanceInfo.getTrialInstance().getLabelHeaders().isEmpty()){
+                labelHeaders = trialInstanceInfo.getTrialInstance().getLabelHeaders();
+                break;
+            }
+        }
+
+        return labelHeaders;
+
     }
 
 }

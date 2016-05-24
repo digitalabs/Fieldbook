@@ -1829,7 +1829,6 @@ function showSelectedAdvanceTab(uniqueId) {
 function closeAdvanceListTab(uniqueId) {
 	'use strict';
 	$('li#advance-list' + uniqueId + '-li').remove();
-	$('.info#advance-list' + uniqueId).remove();
 	if ($('#list' + uniqueId).length === 1) {
 		$('#list' + uniqueId).remove();
 	}
@@ -3548,8 +3547,10 @@ function showMeasurementsPreview() {
 		data: '',
 		cache: false,
 		success: function(html) {
-			$(domElemId).html(html);
-			$('body').data('expDesignShowPreview', '0');
+            setTimeout(function(){
+                $(domElemId).html(html);
+                $('body').data('expDesignShowPreview', '0');
+            }, 300);
 		}
 	});
 }

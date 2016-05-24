@@ -18,10 +18,9 @@ import org.generationcp.commons.parsing.validation.ParseValidationMap;
 import org.generationcp.commons.parsing.validation.ValueRangeValidator;
 import org.generationcp.commons.parsing.validation.ValueTypeValidator;
 import org.generationcp.commons.service.FileService;
+import org.generationcp.middleware.data.initializer.ScaleTestDataInitializer;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.domain.oms.Scale;
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -31,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -70,19 +70,20 @@ public class InventoryImportParserTest {
 	private static final String STOCKID_PREFIX = "SID";
 
 	private List<Location> testLocationList;
-	private List<Scale> testScaleList;
 	private List<String> testStockIds;
 
 	private String[] headers;
 	private Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap;
-
+	
+	private ScaleTestDataInitializer scaleTDI;
+	 
 	@Before
 	public void setUp() throws Exception {
+		this.scaleTDI = new ScaleTestDataInitializer();
 		this.testLocationList = this.createDummyLocationList();
-		this.testScaleList = this.createDummyScaleList();
 		this.testStockIds = this.createDummyStockIds();
 		Mockito.doReturn(this.testLocationList).when(this.fieldbookMiddlewareService).getAllLocations();
-		Mockito.doReturn(this.testScaleList).when(this.ontologyService).getAllInventoryScales();
+		Mockito.doReturn(this.scaleTDI.createScale()).when(this.ontologyService).getScaleVariable(Matchers.anyString());
 		Mockito.doReturn(this.testStockIds).when(this.inventoryDataManager)
 				.getStockIdsByListDataProjectListId(InventoryImportParserTest.TEST_LIST_ID);
 	}
@@ -240,7 +241,7 @@ public class InventoryImportParserTest {
 		final Map<String, Location> locationMap = this.parser.convertToLocationMap(this.testLocationList);
 		return new InventoryImportParser.InventoryRowConverter(workbook, InventoryImportParserTest.DUMMY_INDEX,
 				InventoryImportParser.INVENTORY_SHEET, this.inventoryHeaderLabelsMap.size(), this.inventoryHeaderLabelsMap, locationMap,
-				this.testScaleList.get(0));
+				this.scaleTDI.createScale());
 	}
 
 	protected List<Location> createDummyLocationList() {
@@ -259,21 +260,6 @@ public class InventoryImportParserTest {
 		locationList.add(location);
 
 		return locationList;
-	}
-
-	protected List<Scale> createDummyScaleList() {
-		final List<Scale> scaleList = new ArrayList<>();
-
-		final Scale scale = new Scale(new Term(1, "SEED_AMOUNT_kg", "Weighed"));
-		scale.setDisplayName("Test Scale 1");
-		scale.setId(1);
-		scaleList.add(scale);
-
-		final Scale scale2 = new Scale(new Term(2, "SEED_AMOUNT_g", "Weighed"));
-		scale2.setDisplayName("Test Display 2");
-		scaleList.add(scale2);
-
-		return scaleList;
 	}
 
 	@Test

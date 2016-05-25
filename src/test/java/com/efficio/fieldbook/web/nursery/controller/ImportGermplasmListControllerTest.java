@@ -11,17 +11,10 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.google.common.collect.Lists;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -58,15 +51,21 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.ui.ExtendedModelMap;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.MergeCheckService;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.google.common.collect.Lists;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ImportGermplasmListControllerTest {
@@ -661,6 +660,7 @@ public class ImportGermplasmListControllerTest {
 			data.setGermplasmId(x);
 			data.setListDataProjectId(x);
 			data.setCheckType(ImportGermplasmListControllerTest.CHECK_TYPE);
+			data.setGroupId(0);
 			list.add(data);
 		}
 		return list;

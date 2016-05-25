@@ -263,7 +263,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		return isInvalid;
 	}
 
-	private boolean isAmountHeaderValid(final String amountHeader) {
+	boolean isAmountHeaderValid(final String amountHeader) {
 		this.scale = this.ontologyService.getInventoryScaleByName(amountHeader);
 		if(scale == null || scale.getTerm() == null){
 			return false;

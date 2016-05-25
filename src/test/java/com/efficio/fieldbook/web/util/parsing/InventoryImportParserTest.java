@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -42,6 +41,8 @@ import org.springframework.context.MessageSource;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InventoryImportParserTest {
+
+	private static final String AMOUNT_HEADER = "SEED_AMOUNT_KG";
 
 	@Mock
 	private FileService fileService;
@@ -83,7 +84,7 @@ public class InventoryImportParserTest {
 		this.testLocationList = this.createDummyLocationList();
 		this.testStockIds = this.createDummyStockIds();
 		Mockito.doReturn(this.testLocationList).when(this.fieldbookMiddlewareService).getAllLocations();
-		Mockito.doReturn(this.scaleTDI.createScale()).when(this.ontologyService).getInventoryScaleByName(Matchers.anyString());
+		Mockito.doReturn(this.scaleTDI.createScale()).when(this.ontologyService).getInventoryScaleByName(AMOUNT_HEADER);
 		Mockito.doReturn(this.testStockIds).when(this.inventoryDataManager)
 				.getStockIdsByListDataProjectListId(InventoryImportParserTest.TEST_LIST_ID);
 	}
@@ -272,5 +273,17 @@ public class InventoryImportParserTest {
 		final ImportedInventoryList importedInventoryList =
 				this.parser.parseWorkbook(this.createWorkbook(germplasmListType), additionalParams);
 		Assert.assertNotNull(importedInventoryList);
+	}
+	
+	@Test
+	public void testIsAmountHeaderValidTrue(){
+		final boolean isAmountHeaderValid = this.parser.isAmountHeaderValid(AMOUNT_HEADER);
+		Assert.assertTrue("The header should be valid", isAmountHeaderValid);
+	}
+	
+	@Test
+	public void testIsAmountHeaderValidFalse(){
+		final boolean isAmountHeaderValid = this.parser.isAmountHeaderValid("SEED_AMOUNT_X");
+		Assert.assertFalse("The header should be invalid", isAmountHeaderValid);
 	}
 }

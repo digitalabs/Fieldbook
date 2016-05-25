@@ -62,22 +62,31 @@ public class DesignImportMeasurementRowGenerator {
 		this.availableCheckTypes = availableCheckTypes;
 	}
 
+	/**
+	 * Create measurement row based on the values per row from the csv file.
+	 * 
+	 * @param rowValues
+	 * @return returns measurement row based on the values per row from the csv file filtered from the number of trial instances in UI. If
+	 *         the trial instance value from the row is not included from the trial instances from the UI, this method will only returns
+	 *         empty class with empty data list.
+	 */
 	public MeasurementRow createMeasurementRow(final List<String> rowValues) {
-
 		LOG.debug("Design Import - Creating Measurement Row");
+
 		final MeasurementRow measurement = new MeasurementRow();
 
 		final Map<Integer, DesignHeaderItem> trialEnvironmentHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT);
 
-		// do not add the trial instance record from file if it is not selected in environment tab
-		if (!this.trialInstancesFromUI.contains(rowValues.get(trialEnvironmentHeaders.get(TermId.TRIAL_INSTANCE_FACTOR.getId())
+		final List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+		measurement.setDataList(dataList);
+
+		// only add record from file if the trial instance value within the row is selected/included in environment tab
+		if (this.trialInstancesFromUI.contains(rowValues.get(trialEnvironmentHeaders.get(TermId.TRIAL_INSTANCE_FACTOR.getId())
 				.getColumnIndex()))) {
-			return null;
+			dataList.addAll(this.createMeasurementRowDataList(rowValues));
 		}
 
 		LOG.debug("Design Import - Creating Data List");
-		final List<MeasurementData> dataList = this.createMeasurementRowDataList(rowValues);
-		measurement.setDataList(dataList);
 
 		return measurement;
 	}

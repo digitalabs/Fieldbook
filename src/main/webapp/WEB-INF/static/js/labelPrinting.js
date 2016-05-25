@@ -541,11 +541,16 @@ LabelPrinting = {
 
 		var formElm = $('#specifyLabelDetailsForm');
 		$('#customReport').val(isCustomReport);
+		
 		if (isCustomReport) {
 			LabelPrinting.updateAdditionalLabelSettingsFormDetails(type);
 			LabelPrinting.proceedExport(formElm);
 		} else {
-
+			if ($safeId('input[name=userLabelPrinting.filename]').val().length >= 100  ) {
+				showErrorMessage('', 'File name should not exceed 100 characters');
+				return false;
+			}
+			
 			var selectedPreset = LabelPrinting.getSelectedPreset();
 
 			if (selectedPreset.length == 0) {

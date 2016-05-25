@@ -1571,7 +1571,13 @@ function showImportOptions() {
 	if (isNursery()) {
 		$('li#nursery-measurements-li a').tab('show');
 	} else {
-		window.location.hash = '#/editMeasurements';
+		// Navigate to edit measurements tab when clicking on import measurements
+		// similar to the nursery
+		var scope = angular.element(document.getElementById("mainApp")).scope();
+		scope.$apply(function() {
+			scope.navigateToTab('editMeasurements');
+		});
+
 	}
 	if ($('.import-study-data').data('data-import') === '1') {
 		showAlertMessage('', importDataWarningNotification);

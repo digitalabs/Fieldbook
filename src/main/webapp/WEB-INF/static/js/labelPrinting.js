@@ -174,14 +174,9 @@ LabelPrinting = {
 		});
 
 		$('#fbk-lbl-printing-proceed-export-label .yes').on('click', function() {
-			if ($safeId('input[name=userLabelPrinting.filename]').val().length >= 100  ) {
-				showErrorMessage('', 'File name should not exceed 100 characters');
-			} else {
-				LabelPrinting.proceedExport($('#specifyLabelDetailsForm')).done(function() {
-					$('#fbk-lbl-printing-proceed-export-label').modal('hide');
-				});
-			}
-
+			LabelPrinting.proceedExport($('#specifyLabelDetailsForm')).done(function() {
+				$('#fbk-lbl-printing-proceed-export-label').modal('hide');
+			});
 		});
 
 		$('#fbk-lbl-printing-proceed-export-label .no').on('click', function() {

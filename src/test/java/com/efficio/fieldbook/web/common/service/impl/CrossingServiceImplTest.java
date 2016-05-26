@@ -2,13 +2,9 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
@@ -37,8 +33,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.exceptions.verification.NeverWantedButInvoked;
-import org.mockito.exceptions.verification.TooLittleActualInvocations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -249,11 +243,9 @@ public class CrossingServiceImplTest {
 		this.crossingService
 				.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
 
-		try {
-			Mockito.verify(this.germplasmDataManager, Mockito.atLeastOnce()).addGermplasmName(Mockito.any(List.class));
-		} catch (final TooLittleActualInvocations e) {
-			Assert.fail("Expecting to save parentage designation names but didn't.");
-		}
+		// TODO prepare descriptive messages for verification failure once Mockito has stable 2.0 version
+		Mockito.verify(this.germplasmDataManager, Mockito.atLeastOnce()).addGermplasmName(Mockito.any(List.class));
+
 	}
 
 	@Test
@@ -273,11 +265,8 @@ public class CrossingServiceImplTest {
 		this.crossingService
 				.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
 
-		try {
-			Mockito.verify(this.germplasmDataManager, Mockito.never()).addGermplasmName(Mockito.anyList());
-		} catch (final NeverWantedButInvoked e) {
-			Assert.fail("Expecting to NOT save parentage designation names but didn't.");
-		}
+		Mockito.verify(this.germplasmDataManager, Mockito.never()).addGermplasmName(Mockito.anyList());
+
 	}
 
 	@Test

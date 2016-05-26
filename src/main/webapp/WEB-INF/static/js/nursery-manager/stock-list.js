@@ -184,8 +184,8 @@ if (typeof StockIDFunctions === 'undefined') {
 			'use strict';
 			$('li#stock-list' + listId + '-li').remove();
 
-			if ($('#stock-list-anchor' + listId).length === 1) {
-				$('#stock-list-anchor' + listId).remove();
+			if ($('#stock-tab-pane' + listId).length === 1) {
+				$('#stock-tab-pane' + listId).remove();
 			}
 
 			setTimeout(function() {

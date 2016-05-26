@@ -25,6 +25,8 @@ import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
  */
 public class ImportInventoryServiceImpl implements ImportInventoryService {
 
+	private static final String DEFAULT_AMOUNT_HEADER = "SEED_AMOUNT_G";
+
 	@Resource
 	private InventoryImportParser parser;
 
@@ -118,16 +120,30 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 	}
 
 	private void validateImportedInventoryDetails(List<InventoryDetails> inventoryDetailListFromImport) throws FieldbookException {
+		String amountHeader = null;
 		for (InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
+			amountHeader = (amountHeader == null ? inventoryDetailsFromImport.getScaleName() : amountHeader);
 			if (inventoryDetailsFromImport.getLocationId() != null && inventoryDetailsFromImport.getScaleId() != null
 					&& inventoryDetailsFromImport.getAmount() != null) {
 				continue;
 			} else if (inventoryDetailsFromImport.getLocationId() != null || inventoryDetailsFromImport.getScaleId() != null
 					|| (inventoryDetailsFromImport.getAmount() != null && inventoryDetailsFromImport.getAmount() != 0)) {
 				throw new FieldbookException(this.messageSource.getMessage("common.error.import.missing.inventory.values.for.row",
-						new Object[] {inventoryDetailsFromImport.getEntryId()}, Locale.getDefault()));
+						new Object[] {this.getAmountHeader(amountHeader, inventoryDetailListFromImport), inventoryDetailsFromImport.getEntryId()}, Locale.getDefault()));
 			}
 		}
+	}
+
+	private String getAmountHeader(final String amountHeader, final List<InventoryDetails> inventoryDetailsList) {
+		if(amountHeader==null){
+			for(InventoryDetails inventoryDetails: inventoryDetailsList){
+				if(inventoryDetails.getScaleName() != null) {
+					return inventoryDetails.getScaleName().toUpperCase();
+				}
+			}
+			return DEFAULT_AMOUNT_HEADER;
+		}
+		return amountHeader.toUpperCase();
 	}
 
 	private void checkEntriesIfTheyMatch(List<InventoryDetails> inventoryDetailListFromImport,

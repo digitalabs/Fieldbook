@@ -15,6 +15,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
+import org.generationcp.commons.ruleengine.RulesNotConfiguredException;
 import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
@@ -26,6 +27,7 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.TimerWatch;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +56,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private RulesService rulesService;
 
 	@Resource
-	private GermplasmDataManager germplasmDataManger;
+	private GermplasmDataManager germplasmDataManager;
 
 	@Resource
 	private AdvancingSourceListFactory advancingSourceListFactory;
@@ -262,6 +264,14 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			breedingMethodMap.put(method.getMid(), method);
 		}
 
+		final Integer breedingMethodId = Integer.valueOf(advancingParameters.getBreedingMethodId());
+		final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
+
+		if (!this.germplasmDataManager.isMethodNamingConfigurationValid(breedingMethodId)) {
+			throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rules.not.configured", null, "The rules"
+					+ " were not configured", LocaleContextHolder.getLocale()));
+		}
+
 		int index = 0;
 		final TimerWatch timer = new TimerWatch("cross");
 
@@ -273,7 +283,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			final List<String> names;
 			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 
-			advancingSource.setBreedingMethod(breedingMethodMap.get(Integer.valueOf(advancingParameters.getBreedingMethodId())));
+			advancingSource.setBreedingMethod(selectedMethod);
 			//default plants selected value to 1 for list of crosses because sequence is not working if plants selected value is not set
 			advancingSource.setPlantsSelected(1);
 
@@ -300,7 +310,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 
 		final NamingRuleExecutionContext context =
-				new NamingRuleExecutionContext(sequenceList, this.processCodeService, row, this.germplasmDataManger,
+				new NamingRuleExecutionContext(sequenceList, this.processCodeService, row, this.germplasmDataManager,
 						new ArrayList<String>());
 		context.setMessageSource(this.messageSource);
 
@@ -319,8 +329,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		this.rulesService = rulesService;
 	}
 
-	void setGermplasmDataManger(GermplasmDataManager germplasmDataManger) {
-		this.germplasmDataManger = germplasmDataManger;
+	void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
+		this.germplasmDataManager = germplasmDataManager;
 	}
 
 	void setAdvancingSourceListFactory(AdvancingSourceListFactory advancingSourceListFactory) {

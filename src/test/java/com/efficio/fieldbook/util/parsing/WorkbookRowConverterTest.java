@@ -42,7 +42,7 @@ public class WorkbookRowConverterTest {
 		Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap = InventoryHeaderLabels.headers(GermplasmListType.CROSSES);
 		this.dut =
 				new InventoryImportParser.InventoryRowConverter(Mockito.mock(Workbook.class), 0, 0, inventoryHeaderLabelsMap.size(),
-						inventoryHeaderLabelsMap, new HashMap<String, Location>(), new HashMap<String, Scale>());
+						inventoryHeaderLabelsMap, new HashMap<String, Location>(), new Scale());
 	}
 
 	@SuppressWarnings("unchecked")

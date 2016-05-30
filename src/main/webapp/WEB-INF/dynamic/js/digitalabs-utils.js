@@ -52,8 +52,6 @@ datasetImporterDirectives.directive('resizableaffix',function($window,$parse) {
         link: function(scope,elem,attr) {
             scope.resizeComponent = function() {
                 scope.width = $(attr.parent).width() - parseInt(elem.css('paddingLeft')) - parseInt(elem.css('paddingRight')) - parseInt(elem.css('marginLeft')) - parseInt(elem.css('marginRight')) - parseInt(elem.css('borderLeftWidth')) - parseInt(elem.css('borderRightWidth'));
-
-                //console.log("did resized to:" + scope.width);
                 elem.css({width : scope.width});
             };
 
@@ -67,7 +65,6 @@ datasetImporterDirectives.directive('resizableaffix',function($window,$parse) {
 
 
             angular.element($window).bind('resize', function() {
-                //console.log("re-sized");
                 scope.resizeComponent();
                 scope.$apply();
             });
@@ -105,6 +102,6 @@ datasetImporterDirectives.directive('pageNotification',['$timeout',function($tim
 
             scope.$watch('toggle',doNotify);
         }
-    }
+    };
 }]);
 

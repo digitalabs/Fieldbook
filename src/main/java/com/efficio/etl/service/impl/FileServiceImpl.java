@@ -120,13 +120,12 @@ public class FileServiceImpl implements FileService {
 	public String saveTemporaryFile(InputStream userFile) throws IOException {
 		String tempFileName = RandomStringUtils.randomAlphanumeric(15) + FileServiceImpl.TEMP_FILE_EXTENSION;
 
-		File file = null;
+		File file;
 		FileOutputStream fos = null;
 		try {
 			file = new File(this.getFilePath(tempFileName));
 			file.createNewFile();
 			fos = new FileOutputStream(file);
-			int bytes = IOUtils.copy(userFile, fos);
 
 		} finally {
 			IOUtils.closeQuietly(fos);

@@ -29,15 +29,6 @@ angular.module('digitalabs-data', [])
                 angular.extend(this, data);
             };
 
-            /*var prepareObject = function (data) {
-                angular.forEach(data, function (value, key) {
-                    if (value && value.$$v) {
-                        data[key] = value.$$v;
-                    }
-                });
-                return angular.copy(data);
-            };*/
-
             // provides a method to retrieve items of a particular resource in pages. Search parameters to refine the list retrieved is optional
             // It assumes that the backend accepts the ff parameters : startRowIndex, lastRowIndex, and expects a list=true param-value pair to recognize processing
             Resource.getPagedList = function (pageNumber, searchParams) {
@@ -67,8 +58,6 @@ angular.module('digitalabs-data', [])
                     });
 
                     return result;
-                }, function (response) {
-                    alert(response.data);
                 });
             };
 
@@ -78,16 +67,10 @@ angular.module('digitalabs-data', [])
                 }).then(function (response) {
                     var result = [];
                     angular.forEach(response.data, function (value, key) {
-                        /*if (value.id) {
-                            result[value.id] = new Resource(value);
-                        } else {*/
-                            result.push(new Resource(value));
-                        /*}*/
+                        result.push(new Resource(value));
                     });
 
                     return result;
-                }, function (response) {
-                    alert(response.data);
                 });
             };
 

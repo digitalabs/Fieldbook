@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -41,6 +43,8 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 
 	public static final String URL = "/etl/workbook/openSheet";
 
+  	private static final Logger LOG = LoggerFactory.getLogger(AngularOpenSheetController.class);
+
 	public final static int ROW_COUNT_PER_SCREEN = 10;
 	public final static int MAX_DISPLAY_CHARACTER_PER_ROW = 60;
 
@@ -64,7 +68,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 			model.addAttribute("columnHeaders", columnHeaders);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+		  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
 		}
 
 		return super.show(model);
@@ -99,7 +103,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 				columnIndex = this.getValidIndexColumnIndex(workbook);// override columnIndex because the indexColumn is no longer displayed
 																		// in the page
 			} catch (Exception e) {
-				e.printStackTrace();
+			  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
 			}
 			Integer observationCount =
 					this.etlService.calculateObservationRows(workbook, this.userSelection.getSelectedSheet(), contentIndex, columnIndex);
@@ -109,7 +113,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 
 			return returnVal;
 		} catch (IOException e) {
-			e.printStackTrace();
+		  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
 			returnVal.put("status", "error");
 			returnVal.put("message", e.getMessage());
 		}
@@ -124,7 +128,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 			Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			return this.etlService.retrieveColumnInformation(workbook, this.userSelection.getSelectedSheet(), rowIndex);
 		} catch (IOException e) {
-			e.printStackTrace();
+		  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
 		}
 
 		return new ArrayList<IndexValueDTO>();
@@ -158,7 +162,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 			return rowList;
 
 		} catch (IOException e) {
-			e.printStackTrace();
+		  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
 			return new ArrayList<RowDTO>();
 		}
 	}
@@ -173,7 +177,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 			returnValue.put("value", count);
 			returnValue.put("status", "ok");
 		} catch (IOException e) {
-			e.printStackTrace();
+		  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
 			returnValue.put("status", "error");
 		}
 

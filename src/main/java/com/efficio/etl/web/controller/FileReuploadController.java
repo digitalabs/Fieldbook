@@ -6,6 +6,8 @@ import java.io.IOException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,6 +31,8 @@ import com.efficio.etl.web.validators.FileUploadFormValidator;
 public class FileReuploadController extends AbstractBaseETLController {
 
 	public static final String URL = "etl/workbook/reupload";
+
+  	private static final Logger LOG = LoggerFactory.getLogger(FileReuploadController.class);
 
 	@Resource
 	private ETLService etlService;
@@ -68,7 +72,7 @@ public class FileReuploadController extends AbstractBaseETLController {
 				this.userSelection.setServerFileName(tempFileName);
 				this.userSelection.setActualFileName(uploadForm.getFile().getOriginalFilename());
 			} catch (IOException e) {
-				e.printStackTrace();
+			  	FileReuploadController.LOG.error(e.getMessage(), e);
 				result.reject("uploadForm.file", "Error occurred while uploading file.");
 				return this.getContentName();
 			}

@@ -8,6 +8,8 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.generationcp.commons.util.SpringAppContextProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import com.efficio.etl.service.FileService;
@@ -21,6 +23,8 @@ import com.efficio.etl.web.bean.UserSelection;
 
 @Deprecated
 public class DatasetImporterSessionListener implements HttpSessionListener {
+
+  	private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterSessionListener.class);
 
 	@Override
 	public void sessionCreated(HttpSessionEvent httpSessionEvent) {
@@ -41,7 +45,7 @@ public class DatasetImporterSessionListener implements HttpSessionListener {
 					fileService.deleteTempFile(userSelection.getServerFileName());
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+			  	DatasetImporterSessionListener.LOG.error(e.getMessage(), e);
 			}
 		}
 

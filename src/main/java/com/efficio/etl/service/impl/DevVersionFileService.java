@@ -11,6 +11,8 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.efficio.etl.service.FileService;
 
@@ -22,6 +24,8 @@ import com.efficio.etl.service.FileService;
 public class DevVersionFileService implements FileService {
 
 	private String fileLocation;
+
+    private static final Logger LOG = LoggerFactory.getLogger(DevVersionFileService.class);
 
 	@Override
 	public String saveTemporaryFile(InputStream userFile) throws IOException {
@@ -37,7 +41,7 @@ public class DevVersionFileService implements FileService {
 
 			return workbook;
 		} catch (InvalidFormatException e) {
-			e.printStackTrace(); // To change body of catch statement use File | Settings | File Templates.
+		  	DevVersionFileService.LOG.error(e.getMessage(), e);
 			return null;
 		} finally {
 			IOUtils.closeQuietly(is);

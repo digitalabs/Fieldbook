@@ -8,6 +8,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,6 +27,8 @@ import com.efficio.etl.web.bean.UserSelection;
 @Controller
 @RequestMapping("/test/swimlanes")
 public class SwimTestController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SwimTestController.class);
 
 	@Resource
 	private ETLService etlService;
@@ -62,7 +66,7 @@ public class SwimTestController {
 				return headers;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+		  	SwimTestController.LOG.error(e.getMessage(), e);
 		}
 
 		return new ArrayList<String>();

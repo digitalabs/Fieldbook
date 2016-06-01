@@ -1,5 +1,15 @@
 /*global showErrorMessage, measurementRowCount, showAlertMessage, ImportCrosses, ImportDesign*/
-var selectedTableIds = new Array();
+/*global BMS, StockIDFunctions */
+//TODO put these functions under appropriate namespaces
+/* global submitGermplasmAndCheck, recreateSessionVariables, processInlineEditInput, moveToTopScreen,
+hasMeasurementsInvalidValue, validateCreateNursery, validateStartEndDate, doSaveImportedData,
+displayEditFactorsAndGermplasmSection, truncateStudyVariableNames, displayAdvanceList */
+//TODO put these datatables under appropriate namespaces
+/* global selectedCheckListDataTable, germplasmDataTable */
+/* global programNurseriesText, importSaveDataWarningMessage */
+
+//TODO find out who needs this global variable
+var selectedTableIds = [];
 
 function submitEditWorkbook() {
 	'use strict';
@@ -9,7 +19,6 @@ function submitEditWorkbook() {
 	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 	serializedData += '&columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
 
-	//TODO add error handler to the ajax request
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/editNursery',
 		type: 'POST',
@@ -30,7 +39,12 @@ function submitEditWorkbook() {
 			$('.import-study-data').data('data-import', '0');
 			$('.fbk-discard-imported-data').addClass('fbk-hide');
 			$('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
+			//TODO Redesign so that this global flag is not needed
 			stockListImportNotSaved = false;
+		},
+		error: function() {
+			//TODO Localise messages
+			showErrorMessage('Server error', 'Could not save the nurvery.');
 		}
 	});
 }
@@ -38,7 +52,6 @@ function submitEditWorkbook() {
 function deleteMeasurementRows() {
 	'use strict';
 
-	//TODO add error handler to the ajax request
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/editNursery/deleteMeasurementRows',
 		type: 'POST',
@@ -51,6 +64,10 @@ function deleteMeasurementRows() {
 			} else {
 				submitEditWorkbook();
 			}
+		},
+		error: function() {
+			//TODO Localise messages
+			showErrorMessage('Server error', 'Could not delete measurement rows.');
 		}
 	});
 }
@@ -64,6 +81,7 @@ function submitEditForm() {
 
 	if (hasMeasurementsInvalidValue()) {
 		//we check if there is invalid value in the measurements
+		//TODO Localise messages
 		showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
 		return false;
 	}
@@ -100,6 +118,7 @@ $(document).ready(function() {
 		$('#import-crosses').css('display', 'block');
 	}
 
+	//TODO Redesign so that this global flag is not needed
 	if (createdCrossesListId !== null && createdCrossesListId.length > 0) {
 		ImportCrosses.isFileCrossesImport = false;
 		ImportCrosses.openCrossesList(createdCrossesListId);
@@ -138,7 +157,7 @@ $(document).ready(function() {
 	$('.nav-tabs').tabdrop('layout');
 	$('li#nursery-settings-li a').tab('show');
 	$('a[data-toggle="tab"]').each(function() {
-		if ($(this).hasClass('crossesList') || $(this).hasClass('advanceList') ) {
+		if ($(this).hasClass('crossesList') || $(this).hasClass('advanceList')) {
 			StockIDFunctions.generateStockListTabIfNecessary($(this).data('list-id')).done(function() {
 				// re compute the tab drop whenever a new tab is generated
 				$('.nav-tabs').tabdrop({position: 'left'});
@@ -185,6 +204,7 @@ $(document).ready(function() {
 			showAlertMessage('', importSaveDataWarningMessage);
 			e.preventDefault();
 		}
+		//TODO Redesign so that this global flag is not needed
 		if (stockListImportNotSaved) {
 			showAlertMessage('', importSaveDataWarningMessage);
 			e.preventDefault();

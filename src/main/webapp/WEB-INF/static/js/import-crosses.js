@@ -119,6 +119,7 @@ var ImportCrosses = {
 			'use strict';
 			var crossesURL = ImportCrosses.CROSSES_URL + '/getImportedCrossesList' + '/' + (createdCrossesListId &&
 				createdCrossesListId.length > 0 ? createdCrossesListId : '');
+			//TODO ajaxerrorhandling
 			return $.ajax(
 			{
 				url: crossesURL,
@@ -153,6 +154,7 @@ var ImportCrosses = {
 				$('.crosses-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
 			},
 			error: function() {
+				//TODO ajaxerrorhandling
 				//TODO put error message
 			}
 		});

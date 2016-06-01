@@ -5,6 +5,7 @@ var StudyCustomExportReports = {
 		if ($('#exportStudyModal').data('custom-report-loaded') !== '1') {
 			$('#exportStudyModal').data('custom-report-loaded', '1');
 			var type = isNursery() ? 'nursery' : 'trial';
+			//TODO ajaxerrorhandling
 			$.ajax({
 				url: '/Fieldbook/ExportManager/custom/' + type + '/reports',
 				type: 'GET',
@@ -45,6 +46,7 @@ var StudyCustomExportReports = {
 			studyId = ($('#createTrialMainForm #studyId').val());
 		}
 
+		//TODO ajaxerrorhandling
 		$.ajax('/Fieldbook/ExportManager/export/custom/report', {
 			headers: {
 				'Accept': 'application/json',

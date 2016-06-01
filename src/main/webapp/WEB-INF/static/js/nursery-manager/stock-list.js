@@ -57,6 +57,7 @@ if (typeof StockIDFunctions === 'undefined') {
 
 			var listId = $('#stockIDModalSourceListID').val();
 
+			//TODO ajaxerrorhandling
 			$.ajax(
 				{
 					headers: {
@@ -108,6 +109,7 @@ if (typeof StockIDFunctions === 'undefined') {
 
 			var url = '/Fieldbook/stock/generateStockTabIfNecessary/' + listId;
 
+			//TODO ajaxerrorhandling
 			return $.ajax({
 				url: url,
 				type: 'GET',
@@ -139,6 +141,7 @@ if (typeof StockIDFunctions === 'undefined') {
 
 			var url = '/Fieldbook/germplasm/list/stock/' + listId;
 
+			//TODO ajaxerrorhandling
 			return $.ajax({
 				url: url,
 				type: 'GET',
@@ -166,6 +169,7 @@ if (typeof StockIDFunctions === 'undefined') {
 
 			var url = '/Fieldbook/germplasm/list/stockinventory/' + listId;
 
+			//TODO ajaxerrorhandling
 			return $.ajax({
 				url: url,
 				type: 'GET',
@@ -200,6 +204,7 @@ if (typeof StockIDFunctions === 'undefined') {
 			$('#generateStockIDModal').modal('hide');
 
 			var germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');
+			//TODO ajaxerrorhandling
 			$.ajax(
 				{
 					url: '/Fieldbook/ListTreeManager/saveStockList/',
@@ -253,6 +258,7 @@ if (typeof StockIDFunctions === 'undefined') {
 
 			var deferred = $.Deferred();
 
+			//TODO ajaxerrorhandling
 			$.ajax(
 				{
 					headers: {
@@ -370,6 +376,7 @@ if (typeof StockIDFunctions === 'undefined') {
 				return;
 			}
 
+			//TODO ajaxerrorhandling
 			$.ajax({
 				url: '/Fieldbook/stock/ajax/' + getCurrentAdvanceTabTempIdentifier(),
 				type: 'POST',
@@ -422,6 +429,7 @@ if (typeof StockIDFunctions === 'undefined') {
 				// update lots
 				var serializedData = $('#add-plot-form').serialize();
 
+				//TODO ajaxerrorhandling
 				$.ajax({
 					url: '/Fieldbook/stock/update/lots',
 					type: 'POST',
@@ -440,6 +448,7 @@ if (typeof StockIDFunctions === 'undefined') {
 		},
 
 		executeBulkingInstructions: function(listId) {
+			//TODO ajaxerrorhandling
 			$.ajax({
 				url: '/Fieldbook/stock/executeBulkingInstructions/' + listId,
 				type: 'POST',

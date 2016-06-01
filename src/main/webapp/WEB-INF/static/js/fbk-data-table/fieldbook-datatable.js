@@ -347,6 +347,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					}else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
 						processInlineEditInput();
 						if ($('#measurement-table').data('show-inline-edit') === '1') {
+							//TODO ajaxerrorhandling
 							$.ajax({
 								url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/' + rowIndex + '/' + $colHeader.data('term-id'),
 								type: 'GET',

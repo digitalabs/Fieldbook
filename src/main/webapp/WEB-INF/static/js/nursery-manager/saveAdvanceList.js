@@ -33,6 +33,7 @@ var SaveAdvanceList = {};
 		var listIdentifier = $(object).attr('id'),
 		germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree'),
 		additionalLazyLoadUrl = '/1';
+		//TODO ajaxerrorhandling
 		$.ajax(
 			{
 				url: '/Fieldbook/ListTreeManager/saveList/' + listIdentifier,
@@ -127,7 +128,7 @@ var SaveAdvanceList = {};
 
 		var dataForm = $('#saveListForm').serialize();
 
-		//TODO add error handler
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: saveList,
 			type: 'POST',
@@ -180,6 +181,7 @@ var SaveAdvanceList = {};
 		$('input[type=checkbox][name=methodChoice]').prop('disabled', false);
 		serializedData = $('#advanceNurseryModalForm').serialize();
 
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/NurseryManager/advance/nursery',
 			type: 'POST',
@@ -234,6 +236,7 @@ var SaveAdvanceList = {};
 
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
+				//TODO ajaxerrorhandling FIXME
 				console.log('The following error occured: ' + textStatus, errorThrown);
 			}
 		});
@@ -425,6 +428,7 @@ var SaveAdvanceList = {};
 
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
+				//TODO ajaxerrorhandling FIXME
 				console.log('The following error occured: ' + textStatus, errorThrown);
 			}
 		});

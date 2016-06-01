@@ -138,6 +138,7 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
+					//TODO ajaxerrorhandling FIXME
 					console.log('The following error occurred: ' + textStatus, errorThrown);
 				},
 				complete: function() {

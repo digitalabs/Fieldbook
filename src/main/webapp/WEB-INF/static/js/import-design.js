@@ -211,6 +211,7 @@ var ImportDesign = (function() {
 									} : service.retrieveGenerateDesignInput(designTypeId);
 			data.environmentData = environmentData;
 
+			//TODO ajaxerrorhandling
 			$.ajax({
 				type: 'POST',
 				url: '/Fieldbook/DesignImport/generate',
@@ -291,6 +292,7 @@ var ImportDesign = (function() {
 									});
 							});
 
+						//TODO ajaxerrorhandling
 						$.ajax({
 								url: '/Fieldbook/DesignImport/showDetails/data/',
 								type: 'POST',
@@ -408,6 +410,7 @@ var ImportDesign = (function() {
 				studyId = $('#studyId').val();
 			}
 
+			//TODO ajaxerrorhandling
 			$.ajax({
 				url: '/Fieldbook/DesignImport/import/change/' + studyId + '/' +
 						isNursery(),

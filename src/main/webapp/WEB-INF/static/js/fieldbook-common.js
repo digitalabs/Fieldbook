@@ -100,6 +100,7 @@ function isStudyNameUnique(studyName, studyId) {
 	}
 
 	var isUnique = true;
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/StudyTreeManager/isNameUnique',
 		type: 'POST',
@@ -149,6 +150,7 @@ function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction) {
 		action = overrideAction;
 	}
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: action,
 		type: 'POST',
@@ -166,6 +168,7 @@ function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction) {
 function showPage(paginationUrl, pageNum, sectionDiv) {
 	'use strict';
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: paginationUrl + pageNum,
 		type: 'GET',
@@ -223,6 +226,7 @@ function showPage(paginationUrl, pageNum, sectionDiv) {
 function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId, paginationListIdentifier) {
 	'use strict';
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: paginationUrl + pageNum + '?listIdentifier=' + paginationListIdentifier,
 		type: 'GET',
@@ -256,6 +260,7 @@ function showPostPage(paginationUrl, previewPageNum, pageNum, sectionDiv, formNa
 
 	serializedData = $form.serialize();
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: paginationUrl + pageNum + '/' + previewPageNum + '?r=' + (Math.random() * 999),
 		type: 'POST',
@@ -328,6 +333,7 @@ function createFieldMap(tableName) {
 
 // FIXME obsolete
 function checkTrialOptions(id) {
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/Fieldmap/enterFieldDetails/createFieldmap/' + id,
 		type: 'GET',
@@ -346,6 +352,7 @@ function checkTrialOptions(id) {
 
 // FIXME obsolete
 function createNurseryFieldmap(id) {
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/Fieldmap/enterFieldDetails/createNurseryFieldmap/' + id,
 		type: 'GET',
@@ -423,6 +430,7 @@ function isFloatNumber(val) {
 
 function selectTrialInstance() {
 	if (!isNursery()) {
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance',
 			type: 'GET',
@@ -455,6 +463,7 @@ function selectTrialInstance() {
 }
 
 function selectTrialInstanceCreate() {
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance',
 		type: 'GET',
@@ -738,6 +747,7 @@ function showFieldMapPopUpCreate(ids) {
 			selectTrialInstanceCreate();
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
+			//TODO ajaxerrorhandling FIXME
 			console.log('The following error occured: ' + textStatus, errorThrown);
 		},
 		complete: function() {
@@ -753,6 +763,7 @@ function showFieldMapPopUp(tableName, id) {
 	} else {
 		link = '/Fieldbook/Fieldmap/enterFieldDetails/createNurseryFieldmap/';
 	}
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: link + id,
 		type: 'GET',
@@ -898,6 +909,7 @@ function openStudyOldFb() {
 	'use strict';
 	//for opening old fb
 	var openStudyHref = '/Fieldbook/TrialManager/createTrial/open';
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: openStudyHref,
 		type: 'GET',
@@ -1091,7 +1103,7 @@ function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtm
     }
 
     if (idVal != null) {
-    	//TODO the failure of the ajax request should be processed and error shown
+    	//TODO ajaxerrorhandling
         $.ajax({
             url: advanceStudyHref,
             type: 'GET',
@@ -1454,6 +1466,7 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 		var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
 		columnOrders = (JSON.stringify(columnsOrder));
 	}
+	//TODO ajaxerrorhandling
 	$.ajax(newAction, {
 		headers: {
 			'Accept': 'application/json',
@@ -1594,6 +1607,7 @@ function moveToTopScreen() {
 function openImportGermplasmList(type) {
 	'use strict';
 	$('.germplasmAndCheckSection').data('import-from', type);
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/ListTreeManager/germplasm/import/url',
 		type: 'GET',
@@ -1787,6 +1801,7 @@ function validatePlantsSelected() {
 				}
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
+				//TODO ajaxerrorhandling FIXME
 				console.log('The following error occured: ' + textStatus, errorThrown);
 			},
 			complete: function() {
@@ -1849,6 +1864,7 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
 	} else {
 		url += '?isSnapshot=1';
 	}
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: url,
 		type: 'GET',
@@ -1900,6 +1916,7 @@ function validateBreedingMethod() {
 				}
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
+				//TODO ajaxerrorhandling FIXME
 				console.log('The following error occured: ' + textStatus, errorThrown);
 			},
 			complete: function() {
@@ -1913,6 +1930,7 @@ function showBaselineTraitDetailsModal(id) {
 	'use strict';
 
 	if (id !== '') {
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/manageSettings/settings/details/' + id,
 			type: 'GET',
@@ -1936,6 +1954,7 @@ function showBaselineTraitDetailsModal(id, variableTypeId) {
 	'use strict';
 
 	if (id !== '') {
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/manageSettings/settings/details/' + variableTypeId + '/' + id,
 			type: 'GET',
@@ -2038,6 +2057,7 @@ function recreateMethodCombo() {
 			}
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
+			//TODO ajaxerrorhandling FIXME
 			console.log('The following error occured: ' + textStatus, errorThrown);
 		},
 		complete: function() {
@@ -2121,6 +2141,7 @@ function recreateLocationCombo() {
 	}
 
 	if (inventoryPopup || advancePopup || fieldmapScreen || createGermplasm || hasCreateGermplasm || createGermplasmOpened) {
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/locations/getLocations',
 			type: 'GET',
@@ -2318,6 +2339,7 @@ function createFolder() {
 			parentFolderId = 1;
 		}
 
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/StudyTreeManager/addStudyFolder',
 			type: 'POST',
@@ -2378,6 +2400,7 @@ function submitDeleteFolder() {
 	var isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder;
 
 	if (isFolder) {
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/StudyTreeManager/deleteStudyFolder',
 			type: 'POST',
@@ -2426,7 +2449,7 @@ function moveStudy(sourceNode, targetNode) {
 	if (targetId === 'LOCAL') {
 		targetId = 1;
 	}
-
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/StudyTreeManager/moveStudyFolder',
 		type: 'POST',
@@ -2462,6 +2485,7 @@ function submitDeleteGermplasmFolder() {
 
 	var folderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/ListTreeManager/deleteGermplasmFolder',
 		type: 'POST',
@@ -2491,6 +2515,7 @@ function moveGermplasm(sourceNode, targetNode) {
 		targetId = 1;
 	}
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/ListTreeManager/moveGermplasmFolder',
 		type: 'POST',
@@ -2512,6 +2537,7 @@ function closeModal(modalId) {
 
 function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
 	'use strict';
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/ListTreeManager/germplasm/detail/url',
 		type: 'GET',
@@ -2535,6 +2561,7 @@ function editExperiment(tableIdentifier, expId, rowIndex) {
 		if (needToSaveFirst) {
 			showAlertMessage('', measurementsTraitsChangeWarning);
 		} else {
+			//TODO ajaxerrorhandling
 			$.ajax({
 				url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/' + rowIndex,
 				type: 'GET',
@@ -2573,6 +2600,7 @@ function isAllowedEditMeasurementDataCell(isShowErrorMessage) {
 
 function showListTreeToolTip(node, nodeSpan) {
 	'use strict';
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/ListTreeManager/germplasm/list/header/details/' + node.data.key,
 		type: 'GET',
@@ -2670,6 +2698,7 @@ function isValidInput(input) {
 
 function doDeleteNursery(id, callback) {
 	'use strict';
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/deleteNursery/' + id,
 		type: 'POST',
@@ -2734,6 +2763,7 @@ function addUpdateCheckType(operation) {
 	if (validateCheckFields()) {
 		var $form = $('#manageCheckValue,#comboCheckCode');
 		var serializedData = $form.serialize();
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/NurseryManager/importGermplasmList/addUpdateCheckType/'
 					+ operation,
@@ -2901,6 +2931,7 @@ function getIdOfValue(value) {
 function reloadCheckTypeDropDown(addOnChange, select2ClassName) {
 	'use strict';
 	var currentCheckId = $('#checkId').val();
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes',
 		type: 'GET',
@@ -2918,6 +2949,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 	var defaultData = null;
 
 	if (suggestions_obj.length === 0) {
+		//TODO ajaxerrorhandling
 		$
 				.ajax({
 					url: '/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes',
@@ -3022,6 +3054,7 @@ function hideClearChecksButton() {
 function reloadCheckListTable() {
 	'use strict';
 	if (isNursery()) {
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/ListManager/GermplasmList/reload/check/list/N',
 			type: 'GET',
@@ -3033,6 +3066,7 @@ function reloadCheckListTable() {
 			}
 		});
 	} else {
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/ListManager/GermplasmList/refreshListDetails',
 			type: 'GET',
@@ -3181,6 +3215,7 @@ function addDetailsTab(studyId, title) {
 		$('li#li-study' + studyId + ' a').tab('show');
 	} else {
 		var studyType = isNursery() ? 'N' : 'T';
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/StudyManager/reviewStudyDetails/show/' + studyType + '/' + studyId,
 			type: 'GET',
@@ -3246,6 +3281,7 @@ function loadDatasetDropdown(optionTag) {
 			$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection').val('');
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
+			//TODO ajaxerrorhandling FIXME
 			console.log('The following error occured: ' + textStatus,
 					errorThrown);
 		},
@@ -3272,6 +3308,7 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 			|| $('#' + getJquerySafeId('dset-tab-') + datasetId).length !== 0) {
 		return;
 	}
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/addOrRemoveTraits/viewStudyAjax/' + studyType + '/' + datasetId,
 		type: 'GET',
@@ -3321,6 +3358,7 @@ function getUsageDetails() {
 			$('#ontology-usage-tab').html(html);
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
+			//TODO ajaxerrorhandling FIXME
 			console.log('The following error occured: ' + textStatus, errorThrown);
 		},
 		complete: function() {
@@ -3541,6 +3579,7 @@ function disableCheckVariables(isDisabled) {
 function showMeasurementsPreview() {
 	'use strict';
 	var domElemId = '#measurementsDiv';
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
 		type: 'GET',
@@ -3556,6 +3595,7 @@ function showMeasurementsPreview() {
 }
 
 function displaySelectedCheckGermplasmDetails() {
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/importGermplasmList/displaySelectedCheckGermplasmDetails',
 		type: 'GET',
@@ -3585,6 +3625,7 @@ function displaySelectedGermplasmDetails() {
 	} else {
 		url = url + '/T';
 	}
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: url,
 		type: 'GET',
@@ -3659,6 +3700,7 @@ function checkBeforeAdvanceExport() {
 function showExportAdvanceOptions() {
 	'use strict';
 	var studyId = $('#studyId').val();
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/ExportManager/retrieve/advanced/lists/' + studyId,
 		type: 'GET',
@@ -3734,6 +3776,7 @@ function processInlineEditInput() {
 function saveInlineEdit(isDiscard) {
 	'use strict';
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/data?isDiscard=' + isDiscard,
 		type: 'POST',
@@ -3772,6 +3815,7 @@ function markCellAsMissing(indexElem, indexTermId, indexDataVal, isNew, elem) {
 		'isNew': isNew
 	};
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		headers: {
 			'Accept': 'application/json',
@@ -3801,6 +3845,7 @@ function markCellAsAccepted(indexElem, indexTermId, elem) {
 		'termId':indexTermId
 	};
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		headers: {
 			'Accept': 'application/json',
@@ -3827,6 +3872,7 @@ function markCellAsAccepted(indexElem, indexTermId, elem) {
 function markAllCellAsAccepted() {
 	'use strict';
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/accepted/all',
 		type: 'GET',
@@ -3845,6 +3891,7 @@ function markAllCellAsAccepted() {
 function markAllCellAsMissing() {
 	'use strict';
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/missing/all',
 		type: 'GET',
@@ -3863,6 +3910,7 @@ function markAllCellAsMissing() {
 function reloadMeasurementTable() {
 	'use strict';
 	if ($('#measurement-table').length !== 0) {
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/ImportManager/import/preview',
 			type: 'POST',
@@ -3899,6 +3947,7 @@ function displayDetailsOutOfBoundsData() {
 	removeDetailsOutOfBoundDataInSessionStorage();
 
 	if ($('#reviewDetailsOutOfBoundsDataModalBody').length !== 0) {
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/Common/ReviewDetailsOutOfBounds/showDetails',
 			type: 'GET',
@@ -3943,6 +3992,7 @@ function proceedToReviewOutOfBoundsDataAction() {
 }
 
 function exportDesignTemplate() {
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/DesignTemplate/export',
 		type: 'GET',
@@ -4020,6 +4070,7 @@ function onMeasurementsObservationLoad(isCategoricalDisplay) {
 	});
 
 	// display the measurements table
+	//TODO ajaxerrorhandling
 	return $.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax',
 		type: 'GET',

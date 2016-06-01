@@ -55,6 +55,7 @@ function displaySectionsPerMethodVariateValues() {
 	'use strict';
 	var id = $('#methodVariateId').val();
 	if (id !== '') {
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/NurseryManager/advance/nursery/checkMethodTypeMode/' + id,
 			type: 'GET',
@@ -879,6 +880,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 
 function checkMeasurementData(variableType, variableId) {
 	var hasData = '0';
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/editNursery/checkMeasurementData/'
 				+ variableType + '/' + variableId,
@@ -906,6 +908,7 @@ function deleteMultiVariable(variableType, variableIds, sectionDiv) {
 		});
 		checkShowSettingsFormReminder();
 		// remove row from session
+		//TODO ajaxerrorhandling
 		$.ajax({
 			url: '/Fieldbook/NurseryManager/createNursery/deleteVariable/'
 					+ variableType + '/' + variableIds,
@@ -970,6 +973,7 @@ function proceedWithDelete() {
 	}
 
 	// remove row from session
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/createNursery/deleteVariable/'
 				+ variableType + '/' + variableId,
@@ -1203,6 +1207,7 @@ function hideDeleteConfirmation() {
 
 function clearSettings() {
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/createNursery/clearSettings',
 		type: 'GET',
@@ -1359,6 +1364,7 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 			$('#chooseSettingsDiv').html(html);
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
+			//TODO ajaxerrorhandling FIXME
 			console.log('The following error occured: ' + textStatus,
 					errorThrown);
 		},
@@ -1381,6 +1387,7 @@ function choosePreviousNursery(studyId) {
 		url = '/Fieldbook/NurseryManager/createNursery/nursery/';
 	}
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: url + studyId,
 		type: 'GET',
@@ -1399,6 +1406,7 @@ function choosePreviousNursery(studyId) {
 		},
 		complete: function() {
 			url = '/Fieldbook/NurseryManager/createNursery/nursery/getChecks/';
+			//TODO ajaxerrorhandling
 			$.ajax({
 				url: url + studyId,
 				type: 'GET',
@@ -1672,6 +1680,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 	var selectedMethodAll = $('#methodIdAll').val();
 	var selectedMethodFavorite = $('#methodIdFavorite').val();
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/breedingMethod/getBreedingMethods',
 		type: 'GET',
@@ -1765,6 +1774,7 @@ function displaySaveSuccessMessage(idDomSelector, messageToDisplay) {
 function recreateSessionVariables() {
 	'use strict';
 
+	//TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/editNursery/recreate/session/variables',
 		type: 'GET',
@@ -1782,6 +1792,7 @@ function recreateSessionVariables() {
 function recreateSessionVariablesForEntryNo() {
     'use strict';
 
+	//TODO ajaxerrorhandling
     $.ajax({
         url: '/Fieldbook/NurseryManager/editNursery/recreate/session/variables',
         type: 'GET',
@@ -1851,6 +1862,7 @@ function submitGermplasmAndCheck() {
 	}
 
     serializedData += '&columnOrders=' + (BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table'));
+    //TODO ajaxerrorhandling
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/GermplasmList/submitAll',
 		type: 'POST',

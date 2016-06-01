@@ -163,6 +163,7 @@
 			};
 
 			var recreateSessionVariablesTrial = function() {
+				//TODO ajaxerrorhandling
 				$.ajax({
 					url: '/Fieldbook/TrialManager/openTrial/recreate/session/variables',
 					type: 'GET',
@@ -205,8 +206,10 @@
 				}
 			};
 
+			//TODO ajaxerrorhandling this service
 			var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
 				{id: '@id'}, {get: {method: 'get', isArray: true}});
+			//TODO ajaxerrorhandling this service
 			var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
 
 			var service = {
@@ -291,6 +294,7 @@
 				},
 
 				retrieveDesignType: function() {
+					//TODO ajaxerrorhandling
 					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function(designTypes) {
 						service.applicationData.designTypes = designTypes;
 					});
@@ -323,6 +327,7 @@
 
 					var data = service.retrieveGenerateDesignInput(designType);
 
+					//TODO ajaxerrorhandling
 					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data)).then(function(resp) {
 						if (!resp.data.isSuccess) {
 							deferred.reject(resp.data);
@@ -355,6 +360,7 @@
 					return refreshMeasurementDeferred.promise;
 				},
 				reloadMeasurementAjax: function(data) {
+					//TODO ajaxerrorhandling
 					return $http({
 						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
 						method: 'POST',
@@ -469,6 +475,7 @@
 								service.applicationData.unsavedGeneratedDesign === false)
 							) {
 								service.currentData.columnOrders = serializedData;
+								//TODO ajaxerrorhandling
 								$http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function() {
 									recreateSessionVariablesTrial();
 									notifySaveEventListeners();
@@ -489,6 +496,7 @@
 								});
 							} else {
 								service.currentData.columnOrders = serializedData;
+								//TODO ajaxerrorhandling
 								$http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).
 									success(function() {
 										submitGermplasmList().then(function(trialID) {
@@ -631,6 +639,7 @@
 						});
 
 					if (checkedCvtermIds.length > 0) {
+						//TODO ajaxerrorhandling
 						$http.post('/Fieldbook/manageSettings/deleteVariable/' + mode, checkedCvtermIds)
 							.success(function() {
 								_(checkedCvtermIds).each(function(varIds) {

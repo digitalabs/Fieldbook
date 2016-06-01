@@ -87,6 +87,7 @@
     };
 
     $scope.updateDataTable = function() {
+    	//TODO ajaxerrorhandling
         $.ajax({
             url: '/Fieldbook/ListManager/GermplasmList/refreshListDetails',
             type: 'GET',

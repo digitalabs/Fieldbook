@@ -294,8 +294,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 								showErrorMessage('', response.message);
 							}
 						}, function(errResponse) {
-							//TODO Localise the message
-                            showErrorMessage('Server error', 'Could not generate the design.');
+                            showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
                         }
 					);
 				}

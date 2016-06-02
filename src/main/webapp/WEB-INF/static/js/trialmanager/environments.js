@@ -293,7 +293,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							} else {
 								showErrorMessage('', response.message);
 							}
-						}
+						}, function(errResponse) {
+							//TODO Localise the message
+                            showErrorMessage('Server error', 'Could not generate the design.');
+                        }
 					);
 				}
 			}

@@ -13,42 +13,12 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 		'showSettingFormElementNew']);
 
 	// HTTP INTERCEPTOR CONFIGURATION START
-	// The following block defines an interceptor that hooks into AJAX operations initiated by Angular to start / stop the spinner operation
-	manageTrialApp.factory('spinnerHttpInterceptor', function($q) {
-		return {
-			request: function(config) {
-				SpinnerManager.addActive();
-
-				return config || $q.when(config);
-			},
-			requestError: function(config) {
-				SpinnerManager.resolveActive();
-				showErrorMessage('', ajaxGenericErrorMsg);
-
-				return config || $q.when(config);
-			},
-			response: function(config) {
-				SpinnerManager.resolveActive();
-
-				return config || $q.when(config);
-			},
-			responseError: function(config) {
-				SpinnerManager.resolveActive();
-				showErrorMessage('', ajaxGenericErrorMsg);
-
-				return config || $q.when(config);
-			}
-		};
-	});
 
 	// Added to prevent Unsecured HTML error
+	//TODO Should we remove this?
 	manageTrialApp.config(function($sceProvider) {
 		$sceProvider.enabled(false);
 	});
-
-	manageTrialApp.config(['$httpProvider', function($httpProvider) {
-		$httpProvider.interceptors.push('spinnerHttpInterceptor');
-	}]);
 
 	// HTTP INTERCEPTOR CONFIGURATION END
 

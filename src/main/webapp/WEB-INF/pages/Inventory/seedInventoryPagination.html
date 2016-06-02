@@ -71,7 +71,7 @@
 
     <div class="row form-group">
          <!--Display Select all checkbox with label at bottom of table. By selecting checkbox as well as label of checkbox, it will select all rows from table -->
-        <input type="checkbox" class="review-select-all select-all-margin" id="selectAllGroup"/>
+        <input type="checkbox" class="review-select-all select-all-margin" id="selectAllGroup" onclick="selectAllEntries()"/>
         <label for="selectAllGroup" th:text="#{nursery.nurserydetails.review.select.all}"></label>
     </div>
  </form>
@@ -111,6 +111,7 @@ var InventoryPage = {
 				$('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('selected');
 				$('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('manual-selected');
 				$('#' + getJquerySafeId(sectionContainerDiv) + ' input.stockListEntryId').prop('checked', isChecked);
+                $('#' + getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked', isChecked);
 
 				if (isChecked) {
 					$('#' + getJquerySafeId(inventoryTableId) + ' tr').addClass('selected');
@@ -192,6 +193,9 @@ var InventoryPage = {
 			} else {
 				$(this).parent().parent().removeClass('selected');
 				$(this).parent().parent().removeClass('manual-selected');
+                // Deselect "Select All" check box from header as well as from bottom while selecting any one row from table
+                $('#' + getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked', false);
+                $('#' + getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').prop('checked', false);
 			}
 			$('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected input.stockListEntryId').prop('checked', true);
 			$('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected').addClass('selected');
@@ -206,6 +210,41 @@ var InventoryPage = {
 		$('#' + sectionContainerDiv + ' .main-inventory').css('opacity', 1);
 	}
 };
+
+function selectAllEntries() {
+    // Select all entries of table based on the bottom select all checkbox
+    var listDivIdentifier = '';
+    if (isNursery()) {
+        if ($('#create-nursery-tab-headers .tabdrop').hasClass('active')) {
+            //means the active is in the tab drop
+            listDivIdentifier = $('#create-nursery-tab-headers .tabdrop li.active .fbk-close-tab').attr('id');
+        } else {
+            listDivIdentifier = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
+        }
+    } else {
+        listDivIdentifier = $('#manage-trial-tab-headers .active').children('a').attr('tab-data');
+    }
+
+    var sectionContainerDiv = 'stock-content-pane' + listDivIdentifier;
+    var inventoryTableId = 'inventory-table' + listDivIdentifier;
+
+    var isChecked = $('#' + getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked');
+
+    $('#' + getJquerySafeId(sectionContainerDiv) + ' input.stockListEntryId').prop('checked', isChecked);
+    $('#' + getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').prop('checked', isChecked);
+
+    if (isChecked) {
+        $('#' + getJquerySafeId(inventoryTableId) + ' tr').addClass('selected');
+        $('#' + getJquerySafeId(inventoryTableId) + ' tr').addClass('manual-selected');
+    } else {
+        $('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('selected');
+        $('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('manual-selected');
+    }
+
+    var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
+    // Display the total number of records selected
+    $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
+}
 
 $(document).ready(function() {
 	'use strict';

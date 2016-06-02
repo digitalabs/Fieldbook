@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -204,7 +205,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 	}
 
 	protected String makeSafeFileName(String filename) {
-		return filename.replace(" ", "") + "-" + DateUtil.getCurrentDateAsStringValue() + ".xls";
+		filename =  filename.replace(" ", "") + "-" + DateUtil.getCurrentDateAsStringValue() + ".xls";
+		return FileUtils.sanitizeFileName(filename);
 	}
 
 	protected void writeXlsToOutputStream(HttpServletResponse response, File xls) throws IOException {

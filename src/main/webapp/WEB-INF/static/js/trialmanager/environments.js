@@ -293,7 +293,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							} else {
 								showErrorMessage('', response.message);
 							}
-						}
+						}, function(errResponse) {
+                            showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+                        }
 					);
 				}
 			}

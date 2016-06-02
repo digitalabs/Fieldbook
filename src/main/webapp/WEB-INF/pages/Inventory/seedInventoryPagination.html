@@ -68,7 +68,13 @@
 		   </tbody>
 		 </table>
 	 </div>
-	 </form>
+
+    <div class="row form-group">
+         <!--Display Select all checkbox with label at bottom of table. By selecting checkbox as well as label of checkbox, it will select all rows from table -->
+        <input type="checkbox" class="review-select-all select-all-margin" id="selectAllGroup"/>
+        <label for="selectAllGroup" th:text="#{nursery.nurserydetails.review.select.all}"></label>
+    </div>
+ </form>
 
  </div>
  <br />

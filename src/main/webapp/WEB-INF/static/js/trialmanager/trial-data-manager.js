@@ -1,17 +1,20 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
  showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
- invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates, showErrorMessage*/
+ invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates, showErrorMessage, BMS,
+ processInlineEditInput, hasMeasurementsInvalidValue, setSelectedLocation */
+ //TODO put these globals under a namespace
+ /* globals unsavedTreatmentFactor */
 (function() {
 	'use strict';
 	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
-            'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
-		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-		'TrialSettingsManager', '_', '$localStorage','$rootScope',
-		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
-					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
-					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage, $rootScope) {
+            'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA',
+            'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA',
+            'TREATMENT_FACTORS_INITIAL_DATA', 'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT',
+            'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q', 'TrialSettingsManager', '_', '$localStorage', '$rootScope',
+		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA,
+			ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA,
+			MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
+			TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage, $rootScope) {
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
 			var extractData = function(initialData, initializeProperty) {
@@ -31,8 +34,8 @@
 			var settingRegistry = {};
 			var settingsArray = [];
 			var saveEventListeners = {};
-            var TRIAL_LOCATION_NAME_INDEX = 8180;
-            var LOCATION_NAME_ID = 8190;
+			var TRIAL_LOCATION_NAME_INDEX = 8180;
+			var LOCATION_NAME_ID = 8190;
 			var propagateChange = function(targetRegistry, dataKey, newValue) {
 				if (targetRegistry[dataKey]) {
 					angular.forEach(targetRegistry[dataKey], function(updateFunction) {
@@ -303,7 +306,7 @@
 				retrieveGenerateDesignInput: function(designType) {
 					var environmentData = angular.copy(service.currentData.environments);
 
-					_.each(environmentData.environments, function(data, key) {
+					_.each(environmentData.environments, function(data) {
 						_.each(data.managementDetailValues, function(value, key) {
 							if (value && value.id) {
 								data.managementDetailValues[key] = value.id;
@@ -340,12 +343,12 @@
 
 					return deferred.promise;
 				},
-				
 
 				isOpenTrial: function() {
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
+
 				deleteEnvironment: function(index) {
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;
@@ -354,11 +357,15 @@
 					if (deleteMeasurementPossible) {
 						service.applicationData.unsavedTraitsAvailable = true;
 
-						$rootScope.$broadcast('onDeleteEnvironment', { deletedEnvironmentIndex: index, deferred: refreshMeasurementDeferred });
+						$rootScope.$broadcast('onDeleteEnvironment', {
+							deletedEnvironmentIndex: index,
+							deferred: refreshMeasurementDeferred
+						});
 					}
 
 					return refreshMeasurementDeferred.promise;
 				},
+
 				reloadMeasurementAjax: function(data) {
 					//TODO ajaxerrorhandling
 					return $http({
@@ -369,6 +376,7 @@
 						transformResponse: undefined
 					});
 				},
+
 				indicateUnappliedChangesAvailable: function(displayWarningMessage) {
 					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
 						service.applicationData.unappliedChangesAvailable = true;
@@ -420,8 +428,8 @@
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
 								'regenerate the design on the Experimental Design tab', 10000);
 					} else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
-                        // Hide Discard Imported Data button when the user presses Save button
-                        $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
+						// Hide Discard Imported Data button when the user presses Save button
+						$('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
 						performDataCleanup();
 						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 						var serializedData = (JSON.stringify(columnsOrder));
@@ -448,11 +456,11 @@
 										$('body').data('needToSave', '0');
 									});
 								} else {
+									//TODO localise that mesage
 									showErrorMessage('', 'Trial could not be saved at the moment. Please try again later.');
 								}
 							});
 						} else {
-
 							if (service.trialMeasurement.count > 0 && $('.import-study-data').data('data-import') === '1') {
 								doSaveImportedData().then(function() {
 									notifySaveEventListeners();
@@ -515,14 +523,15 @@
 
 						}
 					}
-                    // set selected location on save
-                    if (service.currentData.trialSettings.userInput[LOCATION_NAME_ID] != '') {
-                        selectedLocationForTrail = {
-                            name: service.currentData.trialSettings.userInput[TRIAL_LOCATION_NAME_INDEX],
-                            id: service.currentData.trialSettings.userInput[LOCATION_NAME_ID]
-                        };
-                        setSelectedLocation();
-                    }
+					// set selected location on save
+					if (service.currentData.trialSettings.userInput[LOCATION_NAME_ID] !== '') {
+						//TODO Remove that global
+						selectedLocationForTrail = {
+							name: service.currentData.trialSettings.userInput[TRIAL_LOCATION_NAME_INDEX],
+							id: service.currentData.trialSettings.userInput[LOCATION_NAME_ID]
+						};
+						setSelectedLocation();
+					}
 				},
 				onUpdateData: function(dataKey, updateFunction) {
 					if (!dataRegistry[dataKey]) {

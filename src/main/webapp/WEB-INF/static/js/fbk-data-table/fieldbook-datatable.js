@@ -439,7 +439,11 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 					data: $(this).html(),
 					defaultContent: '',
 					render: function(data, type, row) {
-						return EscapeHTML.escape((data[0] != null) ? data[0] :  '');
+                        if(data && Array === data.constructor){
+                            return data[0];
+                        } else {
+                            return data;
+                        }
 					}
 				});
 			}

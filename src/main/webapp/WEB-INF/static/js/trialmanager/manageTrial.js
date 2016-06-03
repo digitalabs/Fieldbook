@@ -149,10 +149,6 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
 							event.preventDefault();
 						}
-						if (stockListImportNotSaved) {
-							showAlertMessage('', importSaveDataWarningMessage);
-							e.preventDefault();
-						}
 
 						// a 'transition prevented' error
 					});
@@ -380,6 +376,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			$scope.performFunctionOnTabChange = function(targetState) {
 				// do not switch tab if we have newly imported measurements or stock list is not saved
 				if (stockListImportNotSaved || $('.import-study-data').data('data-import') === '1') {
+                    // Display warning if the user tries to navigate across tabs(except advance & stock-list tab) without saving imported inventory file
+                    showAlertMessage('', importSaveDataWarningMessage);
 					return;
 				}
 

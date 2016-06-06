@@ -69,11 +69,9 @@
 		 </table>
 	 </div>
 
-    <div class="row form-group">
-         <!--Display Select all checkbox with label at bottom of table. By selecting checkbox as well as label of checkbox, it will select all rows from table -->
-        <input type="checkbox" class="review-select-all select-all-margin" id="selectAllGroup" onclick="selectAllEntries()"/>
-        <label for="selectAllGroup" th:text="#{nursery.nurserydetails.review.select.all}"></label>
-    </div>
+     <!--Display Select all checkbox with label at bottom of table. By selecting checkbox as well as label of checkbox, it will select all rows from table -->
+    <input type="checkbox" class="review-select-all select-all-margin" id="selectAllGroup" onclick="selectAllEntries()"/>
+    <label for="selectAllGroup" th:text="#{nursery.nurserydetails.review.select.all}"></label>
  </form>
 
  </div>
@@ -106,7 +104,7 @@ var InventoryPage = {
 			//select all the checkbox in the section container div
 			//needed set time out since chrme is not able to rnder properly the checkbox if its checked or not
 			setTimeout(function() {
-				
+
 				var isChecked = $('#' + getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').prop('checked');
 				$('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('selected');
 				$('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('manual-selected');

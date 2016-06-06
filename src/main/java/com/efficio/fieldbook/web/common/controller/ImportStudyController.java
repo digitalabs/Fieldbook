@@ -10,8 +10,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
 import com.efficio.fieldbook.web.study.ImportStudyType;
-import com.efficio.fieldbook.web.study.StudyServiceFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -82,7 +82,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	private FileService fileService;
 
 	@Resource
-	private StudyServiceFactory studyServiceFactory;
+	private ImportStudyServiceFactory studyServiceFactory;
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;

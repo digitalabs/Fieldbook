@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -21,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.web.common.bean.TableHeader;
@@ -47,6 +49,9 @@ public class GermplasmListControllerTest {
 
 	@Mock
 	private InventoryService inventoryService;
+
+	@Mock
+	private PlatformTransactionManager transactionManager;
 
 	@InjectMocks
 	private final GermplasmListController dut = Mockito.spy(new GermplasmListController());
@@ -94,6 +99,25 @@ public class GermplasmListControllerTest {
 
 	}
 
+	@Test
+	public void testDisplayStockList(){
+		GermplasmList list = Mockito.mock(GermplasmList.class);
+		Mockito.when(list.getName()).thenReturn(GermplasmListControllerTest.TEST_LIST_NAME);
+		Mockito.when(list.getType()).thenReturn(GermplasmListType.ADVANCED.name());
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListById(GermplasmListControllerTest.TEST_LIST_ID);
+
+		List<InventoryDetails> inventoryDetailsList = this.generateInventoryDetails();
+		Mockito.doReturn(inventoryDetailsList).when(this.inventoryService).getInventoryListByListDataProjectListId(GermplasmListControllerTest.TEST_LIST_ID);
+
+		Model model = Mockito.mock(Model.class);
+		this.dut.displayStockList(GermplasmListControllerTest.TEST_LIST_ID, Mockito.mock(HttpServletRequest.class), model);
+
+		Mockito.verify(model).addAttribute("totalNumberOfGermplasms", inventoryDetailsList.size());
+		Mockito.verify(model).addAttribute("listId", GermplasmListControllerTest.TEST_LIST_ID);
+		Mockito.verify(model).addAttribute("listName", GermplasmListControllerTest.TEST_LIST_NAME);
+		Mockito.verify(model).addAttribute(Matchers.eq(GermplasmListController.TABLE_HEADER_LIST), Matchers.anyListOf(TableHeader.class));
+	}
+
 	protected List<ListDataProject> generateTestListDataProject() {
 		List<ListDataProject> dataProjectList = new ArrayList<>();
 
@@ -106,5 +130,16 @@ public class GermplasmListControllerTest {
 		}
 
 		return dataProjectList;
+	}
+
+	protected List<InventoryDetails> generateInventoryDetails(){
+		List<InventoryDetails> inventoryDetailsList = new ArrayList<>();
+		InventoryDetails inventoryDetails = new InventoryDetails();
+
+		inventoryDetails.setGid(100);
+		inventoryDetails.setGermplasmName("Germplasm_Name");
+		inventoryDetailsList.add(inventoryDetails);
+
+		return inventoryDetailsList;
 	}
 }

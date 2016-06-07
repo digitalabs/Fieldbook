@@ -425,6 +425,7 @@
 					} else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         // Hide Discard Imported Data button when the user presses Save button
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
+                        stockListImportNotSaved = false;
 						performDataCleanup();
 						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 						var serializedData = (JSON.stringify(columnsOrder));

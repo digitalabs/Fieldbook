@@ -113,7 +113,6 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 							showAlertMessage('', importSaveDataWarningMessage);
 							event.preventDefault();
 						}
-
 						// a 'transition prevented' error
 					});
 
@@ -342,8 +341,10 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			$scope.performFunctionOnTabChange = function(targetState) {
 				// do not switch tab if we have newly imported measurements or stock list is not saved
 				if (stockListImportNotSaved || $('.import-study-data').data('data-import') === '1') {
-					return;
-				}
+                    // Display warning if the user tries to navigate across tabs(except advance & stock-list tab) without saving imported inventory file
+                    showAlertMessage('', importSaveDataWarningMessage);
+                    return;
+                }
 
 				$scope.isSettingsTab = true;
 				$scope.tabSelected = targetState;

@@ -462,6 +462,12 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			});
 
 			$scope.tabChange = function(selectedTab) {
+
+                // Display warning if the user tries to navigate across tabs(advance & stock-list tab) without saving imported inventory file
+                if(stockListImportNotSaved) {
+                    showAlertMessage('', importSaveDataWarningMessage);
+                    return;
+                }
 				$scope.tabSelected = selectedTab;
 				$scope.isSettingsTab = false;
 

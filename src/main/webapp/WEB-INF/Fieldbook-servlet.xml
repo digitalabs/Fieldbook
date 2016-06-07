@@ -184,7 +184,7 @@
 	<bean id="exportGermplasmListService"
 		class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl" />
 
-    <bean id="studyServiceFactory" class="com.efficio.fieldbook.web.study.StudyServiceFactory"/>
+    <bean id="studyServiceFactory" class="com.efficio.fieldbook.web.study.ImportStudyServiceFactory"/>
 
 	<bean id="designImportService"
 		  class="com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceImpl"/>

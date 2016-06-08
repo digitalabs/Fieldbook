@@ -216,9 +216,13 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			final String comment = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.COMMENT));
 			final String duplicate = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.DUPLICATE));
 			final String bulkWith = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH));
-			final String bulkCompl = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL));
+			String bulkCompl = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL));
+            if (!StringUtils.isEmpty(bulkCompl)) {
+                bulkCompl = bulkCompl.toUpperCase();
+            }
 
-			final InventoryDetails details = new InventoryDetails();
+
+            final InventoryDetails details = new InventoryDetails();
 			details.setGid(gid);
 			details.setEntryId(entryId);
 			details.setGermplasmName(name);

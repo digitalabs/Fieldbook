@@ -44,7 +44,7 @@ function submitEditWorkbook() {
 		},
 		error: function() {
 			//TODO Localise messages
-			showErrorMessage('Server error', 'Could not save the nurvery.');
+			showErrorMessage($.fieldbookMessages.errorServerError, 'Could not save the nurvery.');
 		}
 	});
 }

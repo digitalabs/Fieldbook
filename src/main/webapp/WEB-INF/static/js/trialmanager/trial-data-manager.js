@@ -1,9 +1,9 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
- showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
+ showInvalidInputMessage, nurseryFieldsIsRequired,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
  invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates, showErrorMessage, BMS,
  processInlineEditInput, hasMeasurementsInvalidValue, setSelectedLocation */
  //TODO put these globals under a namespace
- /* globals unsavedTreatmentFactor */
+ /* globals unsavedTreatmentFactor, saveSuccessMessage */
 (function() {
 	'use strict';
 	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
@@ -60,24 +60,30 @@
 			};
 
 			var updateFrontEndTrialData = function(trialID, updateFunction) {
-				$http.get('/Fieldbook/TrialManager/openTrial/updateSavedTrial?trialID=' + trialID).success(function(data) {
+				$http({
+					method: 'GET',
+					timeout: 10000,
+					url: '/Fieldbook/TrialManager/openTrial/updateSavedTrial?trialID=' + trialID
+				}).then(function successCallback(response) {
 					if (updateFunction) {
-						updateFunction(data);
+						updateFunction(response.data);
 					} else {
 						// update necessary data and settings
 						// currently identified is the stockid, locationid, and experimentid found in the environment tab
-						service.updateSettings('environments', extractSettings(data.environmentData));
-						service.updateCurrentData('environments', extractData(data.environmentData));
+						service.updateSettings('environments', extractSettings(response.data.environmentData));
+						service.updateCurrentData('environments', extractData(response.data.environmentData));
 
 						service.currentData.basicDetails.studyID = trialID;
-						service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
-						service.updateTrialMeasurementRowCount(data.measurementRowCount);
+						service.trialMeasurement.hasMeasurement = response.data.measurementDataExisting;
+						service.updateTrialMeasurementRowCount(response.data.measurementRowCount);
 
 						// TODO: change from global function call
 						displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 							service.trialMeasurement.count);
 					}
-
+				}, function errorCallback() {
+					//TODO Localise message
+					showErrorMessage($.fieldbookMessages.errorServerError, 'Could not update the trial');
 				});
 			};
 
@@ -166,16 +172,20 @@
 			};
 
 			var recreateSessionVariablesTrial = function() {
-				//TODO ajaxerrorhandling
 				$.ajax({
 					url: '/Fieldbook/TrialManager/openTrial/recreate/session/variables',
 					type: 'GET',
 					data: '',
 					cache: false,
+					timeout: 10000,
 					success: function(html) {
 						$('body').data('columnReordered', '0');
 						$('#measurementsDiv').html(html);
 						showSuccessfulMessage('', saveSuccessMessage);
+					},
+					error: function() {
+						//TODO Localise message
+						showErrorMessage($.fieldbookMessages.errorServerError, 'Could not recreate session variables in a trial');
 					}
 				});
 			};
@@ -293,13 +303,20 @@
 					service.clearUnappliedChangesFlag();
 					service.applicationData.unsavedGeneratedDesign = true;
 					$('#chooseGermplasmAndChecks').data('replace', '1');
+					//FIXME this flag should be removed
 					$('body').data('expDesignShowPreview', '1');
 				},
 
 				retrieveDesignType: function() {
-					//TODO ajaxerrorhandling
-					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function(designTypes) {
-						service.applicationData.designTypes = designTypes;
+					$http({
+						method: 'GET',
+						timeout: 10000,
+						url: '/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes'
+					}).then(function successCallback(response) {
+						service.applicationData.designTypes = response.designTypes;
+					}, function errorCallback() {
+						//TODO Localise message
+						showErrorMessage($.fieldbookMessages.errorServerError, 'Could not retrieve design types');
 					});
 				},
 
@@ -330,8 +347,8 @@
 
 					var data = service.retrieveGenerateDesignInput(designType);
 
-					//TODO ajaxerrorhandling
-					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data)).then(function(resp) {
+					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data), {timeout: 10000})
+						.then(function successCallback(resp) {
 						if (!resp.data.isSuccess) {
 							deferred.reject(resp.data);
 							return;
@@ -339,6 +356,9 @@
 						service.updateCurrentData('environments', data.environmentData);
 
 						deferred.resolve(true);
+					}, function errorCallback() {
+						//TODO Localise message
+						showErrorMessage($.fieldbookMessages.errorServerError, 'Could not generate preset experimental design');
 					});
 
 					return deferred.promise;
@@ -366,14 +386,15 @@
 					return refreshMeasurementDeferred.promise;
 				},
 
+				//TODO move this method to MeasurementsCtrl controller
 				reloadMeasurementAjax: function(data) {
-					//TODO ajaxerrorhandling
 					return $http({
 						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
 						method: 'POST',
 						headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 						data: data,
-						transformResponse: undefined
+						transformResponse: undefined,
+						timeout: 10000
 					});
 				},
 
@@ -419,12 +440,14 @@
 					}
 					if (hasMeasurementsInvalidValue()) {
 						//we check if there is invalid value in the measurements
+						//TODO Localise the message
 						showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
 						return false;
 					}
 					if (service.applicationData.unsavedTreatmentFactorsAvailable) {
 						showErrorMessage('', unsavedTreatmentFactor);
 					} else if (service.applicationData.unappliedChangesAvailable) {
+						//TODO Localise the message
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
 								'regenerate the design on the Experimental Design tab', 10000);
 					} else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
@@ -441,8 +464,9 @@
 								url: '/Fieldbook/TrialManager/createTrial',
 								method: 'POST',
 								data: service.currentData,
-								transformResponse: undefined
-							}).then(function(response) {
+								transformResponse: undefined,
+								timeout: 10000
+							}).then(function successCallback(response) {
 								if (response.data === 'success' && response.status === 200) {
 									submitGermplasmList().then(function(generatedID) {
 										showSuccessfulMessage('', saveSuccessMessage);
@@ -456,9 +480,14 @@
 										$('body').data('needToSave', '0');
 									});
 								} else {
-									//TODO localise that mesage
-									showErrorMessage('', 'Trial could not be saved at the moment. Please try again later.');
+									//TODO localise that message
+									showErrorMessage($.fieldbookMessages.errorServerError,
+										'Trial could not be saved at the moment. Please try again later.');
 								}
+							}, function errorCallback() {
+								//TODO localise that message
+								showErrorMessage($.fieldbookMessages.errorServerError,
+									'Trial could not be saved at the moment. Please try again later.');
 							});
 						} else {
 							if (service.trialMeasurement.count > 0 && $('.import-study-data').data('data-import') === '1') {
@@ -484,7 +513,8 @@
 							) {
 								service.currentData.columnOrders = serializedData;
 								//TODO ajaxerrorhandling
-								$http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function() {
+								$http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData, {timeout: 10000})
+									.success(function() {
 									recreateSessionVariablesTrial();
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(updatedData) {
@@ -505,7 +535,7 @@
 							} else {
 								service.currentData.columnOrders = serializedData;
 								//TODO ajaxerrorhandling
-								$http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).
+								$http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData, {timeout: 10000}).
 									success(function() {
 										submitGermplasmList().then(function(trialID) {
 											showSuccessfulMessage('', saveSuccessMessage);
@@ -763,11 +793,7 @@
 						valid = valid && !isValidVariables.hasError;
 						createErrorNotification(isValidVariables.customHeader, isValidVariables.customMessage);
 					}
-
-					//valid = false    // remove later
-
 					return valid;
-
 				},
 
 				validateAllVariablesInput: function() {

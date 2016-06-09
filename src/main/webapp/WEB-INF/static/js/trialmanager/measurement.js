@@ -115,10 +115,13 @@
 							'&deletedEnvironment=' + deletedEnvironmentIndex + addedData;
 
 						//we reload
-						return TrialManagerDataService.reloadMeasurementAjax(dataParam).success(function(data) {
-							$measurementContainer.html(data);
+						return TrialManagerDataService.reloadMeasurementAjax(dataParam).then(function successCallback(response) {
+							$measurementContainer.html(response.data);
 							$body.data('needToSave', '1');
 							$body.data('columnReordered', columnsOrder.length !== 0 ? '1' : '0');
+						}, function errorCallback() {
+							//TODO Localise message
+                            showErrorMessage($.fieldbookMessages.errorServerError, 'Could not reload measurements');
 						});
 					}
 				}

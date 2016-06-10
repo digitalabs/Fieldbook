@@ -1,6 +1,8 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -21,10 +23,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.google.common.collect.Lists;
 import junit.framework.Assert;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SelectionTraitExpressionDataProcessorTest {

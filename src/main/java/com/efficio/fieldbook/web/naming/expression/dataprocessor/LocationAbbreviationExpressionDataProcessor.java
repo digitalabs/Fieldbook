@@ -1,8 +1,7 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -14,7 +13,9 @@ import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
 public class LocationAbbreviationExpressionDataProcessor implements ExpressionDataProcessor {

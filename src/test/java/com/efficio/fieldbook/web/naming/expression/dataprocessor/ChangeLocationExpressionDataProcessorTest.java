@@ -1,8 +1,7 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.google.common.collect.Lists;
+import java.util.List;
+
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -12,7 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.List;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.google.common.collect.Lists;
 
 public class ChangeLocationExpressionDataProcessorTest {
 

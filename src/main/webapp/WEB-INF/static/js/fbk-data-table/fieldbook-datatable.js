@@ -435,17 +435,17 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 					}
 				});
 			} else {
-				columns.push({
-					data: $(this).html(),
-					defaultContent: '',
-					render: function(data, type, row) {
-                        if(data && Array.isArray(data)) {
-                            return EscapeHTML.escape(data[0] ? data[0] :  '');
+                columns.push({
+                    data: $(this).html(),
+                    defaultContent: '',
+                    render: function (data, type, row) {
+                        if (data && Array.isArray(data)) {
+                            return EscapeHTML.escape(data[0] ? data[0] : '');
                         } else {
-                            return EscapeHTML.escape(data ? data :  '');
+                            return EscapeHTML.escape(data ? data : '');
                         }
-					}
-				});
+                    }
+                });
 			}
 
 			if ($(this).data('term-data-type-id') == '1130' || $(this).data('term-data-type-id') == '1110') {

@@ -219,7 +219,8 @@ var ImportDesign = (function() {
 				contentType: 'application/json; charset=utf-8'
 			}).done(function(resp) {
 				ImportDesign.updateEnvironmentAndMeasurements(resp);
-
+				//TODO Remove needGenerateExperimentalDesign global
+				$body.data('needGenerateExperimentalDesign', '0');
 				angular.element('#mainApp').scope().$broadcast('designImportGenerated');
 
 			});
@@ -227,8 +228,7 @@ var ImportDesign = (function() {
 
 		updateEnvironmentAndMeasurements: function(resp) {
 			if (!resp.isSuccess) {
-				createErrorNotification(designImportErrorHeader, resp.error
-						.join('<br/>'));
+				createErrorNotification(designImportErrorHeader, resp.error.join('<br/>'));
 				return;
 			}
 
@@ -237,12 +237,12 @@ var ImportDesign = (function() {
 			$body.removeClass('modal-open');
 			$('#chooseGermplasmAndChecks').data('replace', '1');
 			$body.data('expDesignShowPreview', '1');
-			$body.data('needGenerateExperimentalDesign', '0');
 
 			ImportDesign.closeReviewModal();
 			ImportDesign.reloadMeasurements();
 
 			if (isNursery()) {
+				//TODO Localise the message
 				showSuccessfulMessage(
 						'',
 						'The nursery design was imported successfully. Please save your nursery before proceeding to Measurements tab.');
@@ -264,8 +264,8 @@ var ImportDesign = (function() {
 
 				angular.element('#mainApp').scope().$apply();
 
-				ImportDesign.getTrialManagerDataService()
-						.clearUnappliedChangesFlag();
+				ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();
+				//TODO Localise the message
 				showSuccessfulMessage(
 						'',
 						'The trial design was imported successfully. Please review the Measurements tab.');

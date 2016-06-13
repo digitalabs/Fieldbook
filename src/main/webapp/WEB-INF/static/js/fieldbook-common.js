@@ -2546,7 +2546,7 @@ function editExperiment(tableIdentifier, expId, rowIndex) {
 			});
 		}
 	} else {
-		showAlertMessage('', measurementWarningNeedGenExpDesign);
+		showAlertMessage('', $.fieldbookMessages.measurementWarningNeedGenExpDesign);
 	}
 }
 
@@ -2565,7 +2565,7 @@ function isAllowedEditMeasurementDataCell(isShowErrorMessage) {
 		}
 	} else {
 		if (showErrorMessage) {
-			showAlertMessage('', measurementWarningNeedGenExpDesign);
+			showAlertMessage('', $.fieldbookMessages.measurementWarningNeedGenExpDesign.measurementWarningNeedGenExpDesign);
 		}
 	}
 	return false;

@@ -2533,7 +2533,7 @@ function editExperiment(tableIdentifier, expId, rowIndex) {
 	if (isNursery() || canEdit) {
 		// We show the ajax page here
 		if (needToSaveFirst) {
-			showAlertMessage('', measurementsTraitsChangeWarning);
+			showAlertMessage('', $.fieldbookMessages.measurementsTraitsChangeWarning);
 		} else {
 			$.ajax({
 				url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/' + rowIndex,
@@ -2550,19 +2550,13 @@ function editExperiment(tableIdentifier, expId, rowIndex) {
 	}
 }
 
-function isAllowedEditMeasurementDataCell(isShowErrorMessage) {
+function isAllowedEditMeasurementDataCell() {
 	'use strict';
 	var canEdit = $('body').data('needGenerateExperimentalDesign') === '1' ? false : true,
-			needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
+		needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
 	if (isNursery() || canEdit) {
 		// We show the ajax page here
-		if (needToSaveFirst) {
-			if (isShowErrorMessage) {
-				showAlertMessage('', measurementsTraitsChangeWarning);
-			}
-		} else {
-			return true;
-		}
+		return !needToSaveFirst;
 	} else {
 		if (showErrorMessage) {
 			showAlertMessage('', $.fieldbookMessages.measurementWarningNeedGenExpDesign.measurementWarningNeedGenExpDesign);

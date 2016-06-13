@@ -207,7 +207,6 @@
 
 			var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
 				{id: '@id'}, {get: {method: 'get', isArray: true}});
-			var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
 
 			var service = {
 				// user input data and default values of standard variables
@@ -280,6 +279,7 @@
 				},
 				// the data param structures
 				generateExpDesign: function(data) {
+					var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
 					return GenerateExpDesignService.save(data).$promise;
 				},
 

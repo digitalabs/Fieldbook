@@ -344,7 +344,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					if ($colHeader.hasClass('factors')) {
 						//we should now submit it
 						processInlineEditInput();
-					}else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
+					} else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
 						processInlineEditInput();
 						if ($('#measurement-table').data('show-inline-edit') === '1') {
 							$.ajax({

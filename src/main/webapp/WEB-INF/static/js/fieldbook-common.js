@@ -3772,6 +3772,10 @@ function markCellAsMissing(indexElem, indexTermId, indexDataVal, isNew, elem) {
 			} else {
 				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
 			}
+		},
+		error: function () {
+			//TODO Localise the message
+			showErrorMessage('Server error', 'Could not update the measurement');
 		}
 	});
 }

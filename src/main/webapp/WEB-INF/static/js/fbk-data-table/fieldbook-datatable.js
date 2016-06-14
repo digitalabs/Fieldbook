@@ -353,6 +353,10 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 								success: function(data) {
 									$tdCell.html(data);
 									$tdCell.data('is-inline-edit', '1');
+								},
+								error: function() {
+									//TODO localise the message
+									showErrorMessage('Server Error', 'Could not update the measurement');
 								}
 							});
 						}

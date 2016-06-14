@@ -341,6 +341,7 @@
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
+
 				deleteEnvironment: function(index) {
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;
@@ -354,6 +355,7 @@
 
 					return refreshMeasurementDeferred.promise;
 				},
+
 				reloadMeasurementAjax: function(data) {
 					return $http({
 						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
@@ -363,6 +365,7 @@
 						transformResponse: undefined
 					});
 				},
+
 				indicateUnappliedChangesAvailable: function(displayWarningMessage) {
 					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
 						service.applicationData.unappliedChangesAvailable = true;
@@ -373,8 +376,12 @@
 							'To update the Measurements table, please review your settings and regenerate ' +
 							'the Experimental Design on the next tab', 10000);
 						}
+					}
+				},
 
-						$('body').data('needGenerateExperimentalDesign', '1');
+				warnAboutUnappliedChanges: function() {
+					if (service.applicationData.unappliedChangesAvailable) {
+						showAlertMessage('Unapplied Changes', $.fieldbookMessages.measurementWarningNeedGenExpDesign, 10000);
 					}
 				},
 
@@ -395,7 +402,6 @@
 				clearUnappliedChangesFlag: function() {
 					service.applicationData.unappliedChangesAvailable = false;
 					service.applicationData.unsavedTreatmentFactorsAvailable = false;
-					$('body').data('needGenerateExperimentalDesign', '0');
 				},
 				extractData: extractData,
 				extractSettings: extractSettings,

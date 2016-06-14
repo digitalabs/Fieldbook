@@ -218,8 +218,8 @@ var ImportDesign = (function() {
 				contentType: 'application/json; charset=utf-8'
 			}).done(function(resp) {
 				ImportDesign.updateEnvironmentAndMeasurements(resp);
-				//TODO Remove needGenerateExperimentalDesign global
-				$body.data('needGenerateExperimentalDesign', '0');
+				//TODO Remove expDesignShowPreview global
+				$body.data('expDesignShowPreview', '1');
 				angular.element('#mainApp').scope().$broadcast('designImportGenerated');
 
 			});
@@ -235,7 +235,6 @@ var ImportDesign = (function() {
 
 			$body.removeClass('modal-open');
 			$('#chooseGermplasmAndChecks').data('replace', '1');
-			$body.data('expDesignShowPreview', '1');
 
 			ImportDesign.closeReviewModal();
 			ImportDesign.reloadMeasurements();

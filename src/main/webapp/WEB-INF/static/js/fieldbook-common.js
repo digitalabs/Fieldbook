@@ -2528,41 +2528,46 @@ function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
 
 function editExperiment(tableIdentifier, expId, rowIndex) {
 	'use strict';
-	var canEdit = $('body').data('needGenerateExperimentalDesign') === '1' ? false : true,
-		needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
-	if (isNursery() || canEdit) {
-		// We show the ajax page here
-		if (needToSaveFirst) {
-			showAlertMessage('', $.fieldbookMessages.measurementsTraitsChangeWarning);
-		} else {
-			$.ajax({
-				url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/' + rowIndex,
-				type: 'GET',
-				cache: false,
-				success: function(dataResp) {
-					$('.edit-experiment-section').html(dataResp);
-					$('.updateExperimentModal').modal({ backdrop: 'static', keyboard: true });
-				}
-			});
-		}
-	} else {
-		showAlertMessage('', $.fieldbookMessages.measurementWarningNeedGenExpDesign);
+	var needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
+
+	if (!isNursery() && angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.unappliedChangesAvailable) {
+		angular.element('#mainApp').injector().get('TrialManagerDataService').warnAboutUnappliedChanges();
+		return;
 	}
+	// We show the ajax page here
+	if (needToSaveFirst) {
+		showAlertMessage('', $.fieldbookMessages.measurementsTraitsChangeWarning);
+	} else {
+		$.ajax({
+			url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/' + rowIndex,
+			type: 'GET',
+			cache: false,
+			success: function(dataResp) {
+				$('.edit-experiment-section').html(dataResp);
+				$('.updateExperimentModal').modal({ backdrop: 'static', keyboard: true });
+			},
+			error: function() {
+				//TODO Localise the message
+				showErrorMessage('Update experiment error', 'Could not update the experiment.');
+			}
+		});
+	}
+
 }
 
 function isAllowedEditMeasurementDataCell() {
 	'use strict';
-	var canEdit = $('body').data('needGenerateExperimentalDesign') === '1' ? false : true,
-		needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
-	if (isNursery() || canEdit) {
-		// We show the ajax page here
-		return !needToSaveFirst;
-	} else {
-		if (showErrorMessage) {
-			showAlertMessage('', $.fieldbookMessages.measurementWarningNeedGenExpDesign.measurementWarningNeedGenExpDesign);
-		}
+	var needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
+
+	if (!isNursery()) {
+		angular.element('#mainApp').injector().get('TrialManagerDataService').warnAboutUnappliedChanges();
+		return !angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.unappliedChangesAvailable;
 	}
-	return false;
+
+	if (needToSaveFirst) {
+		showAlertMessage('', $.fieldbookMessages.measurementWarningNeedGenExpDesign.measurementWarningNeedGenExpDesign);
+	}
+	return !needToSaveFirst;
 }
 
 function showListTreeToolTip(node, nodeSpan) {

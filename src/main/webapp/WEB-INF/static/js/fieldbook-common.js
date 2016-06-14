@@ -2555,13 +2555,24 @@ function editExperiment(tableIdentifier, expId, rowIndex) {
 
 }
 
+function isAllowedEditMeasurementDataCellForTrials(needToSaveFirst) {
+	'use strict';
+	var trialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
+	if (needToSaveFirst) {
+		showAlertMessage('', $.fieldbookMessages.measurementsTraitsChangeWarning);
+		return false;
+	}
+	trialManagerDataService.warnAboutUnappliedChanges();
+	return !trialManagerDataService.applicationData.unappliedChangesAvailable;
+}
+
 function isAllowedEditMeasurementDataCell() {
 	'use strict';
+	// used to watch for changes on Traits
 	var needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
 
 	if (!isNursery()) {
-		angular.element('#mainApp').injector().get('TrialManagerDataService').warnAboutUnappliedChanges();
-		return !angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.unappliedChangesAvailable;
+		isAllowedEditMeasurementDataCellForTrials(needToSaveFirst);
 	}
 
 	if (needToSaveFirst) {

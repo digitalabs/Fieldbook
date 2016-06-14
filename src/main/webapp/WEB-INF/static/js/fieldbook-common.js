@@ -3532,23 +3532,6 @@ function disableCheckVariables(isDisabled) {
 	$('#specifyCheckSection').find('input,select').prop('disabled', isDisabled);
 }
 
-function showMeasurementsPreview() {
-	'use strict';
-	var domElemId = '#measurementsDiv';
-	$.ajax({
-		url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(html) {
-            setTimeout(function(){
-                $(domElemId).html(html);
-                $('body').data('expDesignShowPreview', '0');
-            }, 300);
-		}
-	});
-}
-
 function displaySelectedCheckGermplasmDetails() {
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/importGermplasmList/displaySelectedCheckGermplasmDetails',

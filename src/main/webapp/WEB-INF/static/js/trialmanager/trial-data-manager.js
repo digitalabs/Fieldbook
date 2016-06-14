@@ -367,7 +367,8 @@
 					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
 						service.applicationData.unappliedChangesAvailable = true;
 
-						if (displayWarningMessage === 'true' || displayWarningMessage === true) {
+						if (displayWarningMessage === 'true' || displayWarningMessage) {
+							//TODO Localise that message
 							showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
 							'To update the Measurements table, please review your settings and regenerate ' +
 							'the Experimental Design on the next tab', 10000);

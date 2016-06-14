@@ -189,8 +189,7 @@ var ImportDesign = (function() {
 		generateDesign: function() {
 
 			var environmentData = isNursery() ? ImportDesign.nurseryEnvironmentDetails
-					: angular
-							.copy(ImportDesign.trialManagerCurrentData().environments);
+					: angular.copy(ImportDesign.trialManagerCurrentData().environments);
 
 			$.each(environmentData.environments, function(key, data) {
 				$.each(data.managementDetailValues, function(key, value) {

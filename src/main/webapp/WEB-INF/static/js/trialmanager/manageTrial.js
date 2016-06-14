@@ -1,9 +1,6 @@
-/**
- * Created by cyrus on 7/1/14.
- */
 
 /*global angular,openStudyTree, SpinnerManager, ajaxGenericErrorMsg, showErrorMessage, operationMode, resetGermplasmList,
-showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader*/
+showAlertMessage,importSaveDataWarningMessage,createErrorNotification,errorMsgHeader, ImportDesign*/
 
 (function() {
 	'use strict';
@@ -173,7 +170,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout', '_',
-		'$localStorage', '$state', '$location', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location) {
+		'$localStorage', '$state', '$location', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage,
+			$state, $location) {
 			$scope.trialTabs = [
 				{   name: 'Settings',
 					state: 'trialSettings'
@@ -414,8 +412,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				}
 			};
 
-			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
-                isAdvanceListGeneratedForTrial = true;
+			$scope.addAdvanceTabData = function(tabId, tabData, listName, isPageLoading) {
+				isAdvanceListGeneratedForTrial = true;
 				var isSwap = false;
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
@@ -447,7 +445,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 								id: 'stock-content-pane' + tabId
 							});
 							isSwap = true;
-							if (isPageLoading != true) {
+							if (isPageLoading !== true) {
 								$scope.tabSelected = 'stock-list' + tabId + '-li';
 							}
 							$('#listActionButton' + tabId).addClass('disabled');
@@ -466,7 +464,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 						data: tabData,
 						id: 'advance-list' + tabId + '-li'
 					});
-					if (isPageLoading != true) {
+					if (isPageLoading !== true) {
 						$scope.tabSelected = 'advance-list' + tabId + '-li';
 						$scope.isSettingsTab = false;
 					}
@@ -515,7 +513,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 					}
 				}
 				return null;
-			}
+			};
 		}]);
 
 	manageTrialApp.filter('filterMeasurementState', function() {
@@ -561,7 +559,9 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			filtered.sort(function(a, b) {
 				return (a[field] > b[field] ? 1 : -1);
 			});
-			if (reverse) filtered.reverse();
+			if (reverse) {
+				filtered.reverse();
+			}
 			return filtered;
 		};
 	});

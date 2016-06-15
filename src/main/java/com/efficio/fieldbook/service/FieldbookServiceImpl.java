@@ -781,7 +781,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			}
 
 			SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-					this.ontologyService);
+					this.ontologyService, contextUtil.getCurrentProgramUUID());
 		}
 	}
 

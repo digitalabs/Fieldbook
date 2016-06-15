@@ -656,7 +656,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 			// set value of breeding method code back to code after saving
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-					this.ontologyService);
+					this.ontologyService, contextUtil.getCurrentProgramUUID());
 			// remove selection variates from traits list
 			this.removeSelectionVariatesFromTraits(this.userSelection.getBaselineTraitsList());
 		}

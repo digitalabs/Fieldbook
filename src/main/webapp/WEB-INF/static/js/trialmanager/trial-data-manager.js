@@ -208,7 +208,8 @@
 			var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
 				{id: '@id'}, {get: {method: 'get', isArray: true}});
 			var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
-
+			var UpdateStartingEntryNoService = $resource('/Fieldbook/TrialManager/GermplasmList/startingEntryNo', {}, {});
+			
 			var service = {
 				// user input data and default values of standard variables
 				currentData: {
@@ -569,6 +570,7 @@
 				updateStartingEntryNoCount: function(newCountValue) {
 					service.currentData.experimentalDesign.startingEntryNo = newCountValue;
 					$('body').data('service.currentData.experimentalDesign.startingEntryNo', newCountValue);
+					UpdateStartingEntryNoService.save(newCountValue);
 				},
 
 				onUpdateSettings: function(key, updateFunction) {

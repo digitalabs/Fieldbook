@@ -59,6 +59,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -870,6 +871,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			form.setImportedGermplasmMainInfo(this.getUserSelection().getImportedGermplasmMainInfo());
 			form.setImportedGermplasm(list);
+			form.setStartingEntryNo(Integer.toString(this.getUserSelection().getStartingEntryNo()));
 
 		} catch (final Exception e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
@@ -1684,5 +1686,41 @@ public class ImportGermplasmListController extends SettingsController {
 
 		return totalGermplasmCount;
 
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/startingEntryNo", method = RequestMethod.POST)
+	public void updateEntryNumbersOfGermplasmList(@RequestBody Integer startingEntryNo) {
+		final List<ImportedGermplasm> list =
+				this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+		final Integer lowestEntryNo = getLowestEntryNo(list);
+		if(lowestEntryNo == null) {
+			return;
+		}
+		final Integer numToAddToEntryNo = startingEntryNo - lowestEntryNo;
+		for (final ImportedGermplasm germplasm : list) {
+			final Integer currentEntryNo = germplasm.getEntryId();
+			if(currentEntryNo != null) {
+				germplasm.setEntryId(currentEntryNo + numToAddToEntryNo);
+			}
+		}
+		this.getUserSelection().setStartingEntryNo(startingEntryNo);
+	}
+
+	private Integer getLowestEntryNo(List<ImportedGermplasm> list) {
+		if(list==null || list.isEmpty()) {
+			return null;
+		}
+		Integer lowestEntryNo = list.get(0).getEntryId();
+		if(list.size() == 1) {
+			return lowestEntryNo;
+		}
+		for (int i = 1; i < list.size(); i++) {
+			ImportedGermplasm germplasm = list.get(i);
+			if(germplasm.getEntryId() != null && germplasm.getEntryId() < lowestEntryNo) {
+				lowestEntryNo = germplasm.getEntryId();
+			}
+		}
+		return lowestEntryNo;
 	}
 }

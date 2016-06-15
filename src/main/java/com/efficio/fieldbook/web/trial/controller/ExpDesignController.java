@@ -46,6 +46,8 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 @Controller
 @RequestMapping(ExpDesignController.URL)
@@ -166,139 +168,144 @@ public class ExpDesignController extends BaseTrialController {
 		return Integer.valueOf(name.substring(start, end));
 	}
 
+	// CreateTrial-Step06-GenerateDesign
 	@ResponseBody
 	@RequestMapping(value = "/generate", method = RequestMethod.POST)
 	public ExpDesignValidationOutput showMeasurements(final Model model, @RequestBody final ExpDesignParameterUi expDesign) {
-		/*
-		 * 0 - Resolvable Complete Block Design 1 - Resolvable Incomplete Block Design 2 - Resolvable Row Col
-		 */
-		// we do the conversion
-		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
-		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
-		// transfer over data from user input into the list of setting details stored in the session
-		final List<SettingDetail> combinedList = new ArrayList<>();
-		combinedList.addAll(basicDetails);
-
-		if (studyLevelConditions != null) {
-			combinedList.addAll(studyLevelConditions);
-		}
-
-		final List<SettingDetail> variatesList = new ArrayList<>();
-
-		if (this.userSelection.getBaselineTraitsList() != null) {
-			variatesList.addAll(this.userSelection.getBaselineTraitsList());
-		}
-
-		if (this.userSelection.getSelectionVariates() != null) {
-			variatesList.addAll(this.userSelection.getSelectionVariates());
-		}
-
-		final String name = "";
-
-		final Dataset dataset =
-				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
-						this.userSelection.getPlotsLevelList(), variatesList , this.userSelection,
-						this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
-						this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID());
-
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.contextUtil.getCurrentProgramUUID());
-		final StudyDetails details = new StudyDetails();
-		details.setStudyType(StudyType.T);
-		workbook.setStudyDetails(details);
-		this.userSelection.setTemporaryWorkbook(workbook);
-
-		final int designType = expDesign.getDesignType();
-		final List<ImportedGermplasm> germplasmList =
-				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
-
-		ExpDesignValidationOutput expParameterOutput = new ExpDesignValidationOutput(true, "");
-		final Locale locale = LocaleContextHolder.getLocale();
+		final Monitor monitor = MonitorFactory.start("CreateTrial.bms.fieldbook.ExpDesignController.showMeasurements");
 		try {
 
-			// we validate here if there is gerplasm
-			if (germplasmList == null) {
-				expParameterOutput =
-						new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.generate.no.germplasm", null,
-								locale));
-			} else {
-				final ExperimentDesignService designService = this.getExpDesignService(designType);
-				if (designService != null) {
-					// we call the validation
-					expParameterOutput = designService.validate(expDesign, germplasmList);
-					// we call the actual process
-					if (expParameterOutput.isValid()) {
-						expDesign.setNoOfEnvironmentsToAdd(this.countNewEnvironments(expDesign.getNoOfEnvironments(), this.userSelection,
-								expDesign.isHasMeasurementData()));
+			/*
+			 * 0 - Resolvable Complete Block Design 1 - Resolvable Incomplete Block Design 2 - Resolvable Row Col
+			 */
+			// we do the conversion
+			final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
+			final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
+			// transfer over data from user input into the list of setting details stored in the session
+			final List<SettingDetail> combinedList = new ArrayList<>();
+			combinedList.addAll(basicDetails);
 
-						// Setting starting plot number in user selection
-						if (expDesign.getStartingPlotNo() != null && !expDesign.getStartingPlotNo().isEmpty()) {
-							this.userSelection.setStartingPlotNo(Integer.parseInt(expDesign.getStartingPlotNo()));
-						} else {
-							// Default plot no will be 1 if not given
-							expDesign.setStartingPlotNo("1");
-							this.userSelection.setStartingPlotNo(1);
-						}
+			if (studyLevelConditions != null) {
+				combinedList.addAll(studyLevelConditions);
+			}
 
-						this.userSelection.setStartingEntryNo(StringUtil.parseInt(expDesign.getStartingEntryNo(), null));
+			final List<SettingDetail> variatesList = new ArrayList<>();
 
-						if (this.userSelection.getStartingEntryNo() != null) {
-							Integer entryNo = this.userSelection.getStartingEntryNo();
-							for (final ImportedGermplasm g : germplasmList) {
-								g.setEntryId(entryNo++);
+			if (this.userSelection.getBaselineTraitsList() != null) {
+				variatesList.addAll(this.userSelection.getBaselineTraitsList());
+			}
+
+			if (this.userSelection.getSelectionVariates() != null) {
+				variatesList.addAll(this.userSelection.getSelectionVariates());
+			}
+
+			final String name = "";
+
+			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
+					this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,
+					this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
+					this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID());
+
+			final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.contextUtil.getCurrentProgramUUID());
+			final StudyDetails details = new StudyDetails();
+			details.setStudyType(StudyType.T);
+			workbook.setStudyDetails(details);
+			this.userSelection.setTemporaryWorkbook(workbook);
+
+			final int designType = expDesign.getDesignType();
+			final List<ImportedGermplasm> germplasmList =
+					this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+
+			ExpDesignValidationOutput expParameterOutput = new ExpDesignValidationOutput(true, "");
+			final Locale locale = LocaleContextHolder.getLocale();
+			try {
+
+				// we validate here if there is gerplasm
+				if (germplasmList == null) {
+					expParameterOutput = new ExpDesignValidationOutput(false,
+							this.messageSource.getMessage("experiment.design.generate.no.germplasm", null, locale));
+				} else {
+					final ExperimentDesignService designService = this.getExpDesignService(designType);
+					if (designService != null) {
+						// we call the validation
+						expParameterOutput = designService.validate(expDesign, germplasmList);
+						// we call the actual process
+						if (expParameterOutput.isValid()) {
+							expDesign.setNoOfEnvironmentsToAdd(this.countNewEnvironments(expDesign.getNoOfEnvironments(),
+									this.userSelection, expDesign.isHasMeasurementData()));
+
+							// Setting starting plot number in user selection
+							if (expDesign.getStartingPlotNo() != null && !expDesign.getStartingPlotNo().isEmpty()) {
+								this.userSelection.setStartingPlotNo(Integer.parseInt(expDesign.getStartingPlotNo()));
+							} else {
+								// Default plot no will be 1 if not given
+								expDesign.setStartingPlotNo("1");
+								this.userSelection.setStartingPlotNo(1);
 							}
-						}
 
-						final List<MeasurementRow> measurementRows =
-								designService.generateDesign(germplasmList, expDesign, workbook.getConditions(), workbook.getFactors(),
-										workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
+							this.userSelection.setStartingEntryNo(StringUtil.parseInt(expDesign.getStartingEntryNo(), null));
 
-						this.userSelection.setExpDesignParams(expDesign);
-						this.userSelection.setExpDesignVariables(designService.getExperimentalDesignVariables(expDesign));
-
-						workbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection,
-								expDesign.isHasMeasurementData()));
-						// should have at least 1 record
-						final List<MeasurementVariable> currentNewFactors = new ArrayList<>();
-						final List<MeasurementVariable> oldFactors = workbook.getFactors();
-						final List<MeasurementVariable> deletedFactors = new ArrayList<>();
-						if (measurementRows != null && !measurementRows.isEmpty()) {
-							final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
-							final MeasurementRow dataRow = measurementRows.get(0);
-							for (final MeasurementData measurementData : dataRow.getDataList()) {
-								measurementDatasetVariables.add(measurementData.getMeasurementVariable());
-								if (measurementData.getMeasurementVariable() != null && measurementData.getMeasurementVariable().isFactor()) {
-									currentNewFactors.add(measurementData.getMeasurementVariable());
+							if (this.userSelection.getStartingEntryNo() != null) {
+								Integer entryNo = this.userSelection.getStartingEntryNo();
+								for (final ImportedGermplasm g : germplasmList) {
+									g.setEntryId(entryNo++);
 								}
 							}
-							workbook.setMeasurementDatasetVariables(measurementDatasetVariables);
-						}
-						for (final MeasurementVariable var : oldFactors) {
-							// we do the cleanup of old variables
-							if (WorkbookUtil.getMeasurementVariable(currentNewFactors, var.getTermId()) == null) {
-								// we remove it
-								deletedFactors.add(var);
+
+							final List<MeasurementRow> measurementRows =
+									designService.generateDesign(germplasmList, expDesign, workbook.getConditions(), workbook.getFactors(),
+											workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
+
+							this.userSelection.setExpDesignParams(expDesign);
+							this.userSelection.setExpDesignVariables(designService.getExperimentalDesignVariables(expDesign));
+
+							workbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection,
+									expDesign.isHasMeasurementData()));
+							// should have at least 1 record
+							final List<MeasurementVariable> currentNewFactors = new ArrayList<>();
+							final List<MeasurementVariable> oldFactors = workbook.getFactors();
+							final List<MeasurementVariable> deletedFactors = new ArrayList<>();
+							if (measurementRows != null && !measurementRows.isEmpty()) {
+								final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
+								final MeasurementRow dataRow = measurementRows.get(0);
+								for (final MeasurementData measurementData : dataRow.getDataList()) {
+									measurementDatasetVariables.add(measurementData.getMeasurementVariable());
+									if (measurementData.getMeasurementVariable() != null
+											&& measurementData.getMeasurementVariable().isFactor()) {
+										currentNewFactors.add(measurementData.getMeasurementVariable());
+									}
+								}
+								workbook.setMeasurementDatasetVariables(measurementDatasetVariables);
 							}
-						}
-						if (oldFactors != null) {
-							for (final MeasurementVariable var : deletedFactors) {
-								oldFactors.remove(var);
+							for (final MeasurementVariable var : oldFactors) {
+								// we do the cleanup of old variables
+								if (WorkbookUtil.getMeasurementVariable(currentNewFactors, var.getTermId()) == null) {
+									// we remove it
+									deletedFactors.add(var);
+								}
 							}
+							if (oldFactors != null) {
+								for (final MeasurementVariable var : deletedFactors) {
+									oldFactors.remove(var);
+								}
+							}
+							workbook.setExpDesignVariables(designService.getRequiredVariable());
 						}
-						workbook.setExpDesignVariables(designService.getRequiredVariable());
 					}
 				}
+			} catch (final BVDesignException e) {
+				// this should catch when the BV design is not successful
+				expParameterOutput = new ExpDesignValidationOutput(false, this.messageSource.getMessage(e.getBvErrorCode(), null, locale));
+			} catch (final Exception e) {
+				ExpDesignController.LOG.error(e.getMessage(), e);
+				expParameterOutput = new ExpDesignValidationOutput(false,
+						this.messageSource.getMessage("experiment.design.invalid.generic.error", null, locale));
 			}
-		} catch (final BVDesignException e) {
-			// this should catch when the BV design is not successful
-			expParameterOutput = new ExpDesignValidationOutput(false, this.messageSource.getMessage(e.getBvErrorCode(), null, locale));
-		} catch (final Exception e) {
-			ExpDesignController.LOG.error(e.getMessage(), e);
-			expParameterOutput =
-					new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.invalid.generic.error", null,
-							locale));
-		}
 
-		return expParameterOutput;
+			return expParameterOutput;
+		} finally {
+			monitor.stop();
+		}
 	}
 
 	protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(final List<MeasurementRow> measurementRows,

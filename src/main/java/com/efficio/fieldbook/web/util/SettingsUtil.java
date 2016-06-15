@@ -67,7 +67,6 @@ import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.hazelcast.util.StringUtil;
 
 /**
  * The Class SettingsUtil.
@@ -288,7 +287,7 @@ public class SettingsUtil {
 					variable.setName(detailFromSession.getVariable().getName());
 					variable.setOperation(detailFromSession.getVariable().getOperation());
 
-					if (isDesignGenerated && !StringUtil.isNullOrEmpty(detailFromSession.getValue())
+					if (isDesignGenerated && !StringUtils.isBlank(detailFromSession.getValue())
 							&& !detailFromSession.getValue().equalsIgnoreCase("Please Choose")) {
 						detailWithValue.setValue(detailFromSession.getValue());
 					}

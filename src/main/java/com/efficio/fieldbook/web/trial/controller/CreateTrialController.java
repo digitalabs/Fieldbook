@@ -15,23 +15,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -51,6 +38,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 /**
  * The Class CreateTrialController.
@@ -105,6 +109,7 @@ public class CreateTrialController extends BaseTrialController {
 	 * @param session the session
 	 * @return the string
 	 */
+	// CreateTrial-Step01-Init (Load create trial page)
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model, final HttpSession session) {
 
@@ -220,75 +225,77 @@ public class CreateTrialController extends BaseTrialController {
 		return super.retrieveVariablePairs(id);
 	}
 
+	// CreateTrial-Step07-PostAllCollectedInfo
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public String submit(@RequestBody final TrialData data) {
-		this.processEnvironmentData(data.getEnvironments());
-		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
-		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
-		basicDetails = this.addUserIdIfNecessary(basicDetails);
-		// transfer over data from user input into the list of setting details stored in the session
-		this.populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
 
-		final List<SettingDetail> combinedList = new ArrayList<>();
-		combinedList.addAll(basicDetails);
+		final Monitor monitor = MonitorFactory.start("CreateTrial.bms.fieldbook.CreateTrialController.submit");
+		try {
+			this.processEnvironmentData(data.getEnvironments());
+			final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
+			List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
+			basicDetails = this.addUserIdIfNecessary(basicDetails);
+			// transfer over data from user input into the list of setting details stored in the session
+			this.populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
 
-		if (studyLevelConditions != null) {
-			this.populateSettingData(studyLevelConditions, data.getTrialSettings().getUserInput());
-			combinedList.addAll(studyLevelConditions);
+			final List<SettingDetail> combinedList = new ArrayList<>();
+			combinedList.addAll(basicDetails);
+
+			if (studyLevelConditions != null) {
+				this.populateSettingData(studyLevelConditions, data.getTrialSettings().getUserInput());
+				combinedList.addAll(studyLevelConditions);
+			}
+
+			final String name = data.getBasicDetails().getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId()));
+
+			if (this.userSelection.getStudyLevelConditions() == null) {
+				this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
+			}
+
+			if (this.userSelection.getBaselineTraitsList() == null) {
+				this.userSelection.setBaselineTraitsList(new ArrayList<SettingDetail>());
+			}
+
+			if (this.userSelection.getSelectionVariates() == null) {
+				this.userSelection.setSelectionVariates(new ArrayList<SettingDetail>());
+			}
+
+			// Combining variates to baseline traits
+			this.userSelection.getBaselineTraitsList().addAll(this.userSelection.getSelectionVariates());
+
+			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, name,
+					this.userSelection, data.getTreatmentFactors().getCurrentData(), this.contextUtil.getCurrentProgramUUID());
+
+			SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
+			final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
+					this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
+					this.userSelection.getExperimentalDesignVariables(), this.contextUtil.getCurrentProgramUUID());
+
+			if (this.userSelection.getTemporaryWorkbook() != null) {
+				this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook,
+						this.userSelection.getTemporaryWorkbook().getTrialObservations());
+			}
+
+			final List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
+			variablesForEnvironment.addAll(workbook.getTrialVariables());
+
+			final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(
+					data.getEnvironments().getEnvironments(), variablesForEnvironment, this.userSelection.getExpDesignParams());
+			workbook.setTrialObservations(trialEnvironmentValues);
+
+			this.createStudyDetails(workbook, data.getBasicDetails());
+
+			this.userSelection.setWorkbook(workbook);
+
+			this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(data.getEnvironments().getEnvironments()));
+
+			this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), name, data.getColumnOrders(), workbook);
+
+			return "success";
+		} finally {
+			monitor.stop();
 		}
-
-		final String name = data.getBasicDetails().getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId()));
-
-		if(this.userSelection.getStudyLevelConditions() == null) {
-			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
-		}
-
-		if (this.userSelection.getBaselineTraitsList() == null) {
-			this.userSelection.setBaselineTraitsList(new ArrayList<SettingDetail>());
-		}
-
-		if (this.userSelection.getSelectionVariates() == null) {
-			this.userSelection.setSelectionVariates(new ArrayList<SettingDetail>());
-		}
-
-		//Combining variates to baseline traits
-		this.userSelection.getBaselineTraitsList().addAll(this.userSelection.getSelectionVariates());
-
-		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService,
-				name,
-				this.userSelection,
-				data.getTreatmentFactors().getCurrentData(),
-				this.contextUtil.getCurrentProgramUUID());
-
-		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
-		final Workbook workbook =
-				SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
-						this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
-						this.userSelection.getExperimentalDesignVariables(), this.contextUtil.getCurrentProgramUUID());
-
-		if (this.userSelection.getTemporaryWorkbook() != null) {
-			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook, this.userSelection
-					.getTemporaryWorkbook().getTrialObservations());
-		}
-
-		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
-		variablesForEnvironment.addAll(workbook.getTrialVariables());
-
-		final List<MeasurementRow> trialEnvironmentValues =
-				WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment,
-						this.userSelection.getExpDesignParams());
-		workbook.setTrialObservations(trialEnvironmentValues);
-
-		this.createStudyDetails(workbook, data.getBasicDetails());
-
-		this.userSelection.setWorkbook(workbook);
-
-		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(data.getEnvironments().getEnvironments()));
-
-		this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), name, data.getColumnOrders(), workbook);
-
-		return "success";
 	}
 
 	protected TabInfo prepareGermplasmTabInfo(final boolean isClearSettings) {

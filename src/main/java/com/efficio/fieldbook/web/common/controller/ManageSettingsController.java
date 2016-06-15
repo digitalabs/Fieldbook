@@ -47,6 +47,8 @@ import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -254,10 +256,15 @@ public class ManageSettingsController extends SettingsController {
 	 * @param form the form
 	 * @param mode the mode
 	 * @return the string
+	 * @throws Exception
 	 */
+	// CreateTrial-Step03-AddSettingVariable
+	// CreateTrial-Step04-AddEnvVariable
+	// CreateTrial-Step05-AddEnvConditions
 	@ResponseBody
 	@RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
-	public List<SettingDetail> addSettings(@RequestBody CreateNurseryForm form, @PathVariable int mode) {
+	public List<SettingDetail> addSettings(@RequestBody CreateNurseryForm form, @PathVariable int mode) throws Exception {
+		final Monitor monitor = MonitorFactory.start("CreateTrial.bms.fieldbook.ManageSettingsController.addSettings");
 		List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
 		try {
 			List<SettingVariable> selectedVariables = form.getSelectedVariables();
@@ -278,14 +285,11 @@ public class ManageSettingsController extends SettingsController {
 
 			if (newSettings != null && !newSettings.isEmpty()) {
 				this.addNewSettingDetails(mode, newSettings);
-				return newSettings;
 			}
-
-		} catch (Exception e) {
-			ManageSettingsController.LOG.error(e.getMessage(), e);
+			return newSettings;
+		} finally {
+			monitor.stop();
 		}
-
-		return new ArrayList<SettingDetail>();
 	}
 
 	/**

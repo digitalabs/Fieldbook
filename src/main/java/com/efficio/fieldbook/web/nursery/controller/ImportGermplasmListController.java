@@ -827,7 +827,7 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	@RequestMapping(value = "/refreshListDetails", method = RequestMethod.GET)
-	public String refereshListDetails(final Model model, @ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form) {
+	public String refreshListDetails(final Model model, @ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form) {
 
 		try {
 			final String type = "T";

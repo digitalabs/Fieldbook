@@ -862,7 +862,7 @@ public class ImportGermplasmListController extends SettingsController {
 				dataTableDataList.add(dataMap);
 			}
 
-			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckTypeList());
+			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, checkList);
 			model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
 			model.addAttribute(ImportGermplasmListController.TYPE2, type);
 			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST,

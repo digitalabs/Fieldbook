@@ -1519,20 +1519,6 @@ public class ImportGermplasmListController extends SettingsController {
 					}
 				}
 			}
-		} else {
-			// we set the check to null
-			if (userSelection.getImportedGermplasmMainInfo() != null
-					&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList() != null
-					&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null) {
-
-				// this is to keep track of the original list before merging
-				// with the checks
-				for (final ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms()) {
-					germplasm.setEntryTypeCategoricalID(null);
-					germplasm.setEntryTypeValue("");
-				}
-			}
 		}
 
 		// end: section for taking note of the check germplasm

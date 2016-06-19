@@ -64,6 +64,8 @@ import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 @Service
 @Transactional
@@ -103,6 +105,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	@Override
 	public ImportResult importWorkbook(final Workbook workbook, final String filename, final OntologyService ontologyService,
 			final FieldbookService fieldbookMiddlewareService) throws WorkbookParserException {
+		
+		Monitor monitor = MonitorFactory.start("ImportStudy : com.efficio.fieldbook.web.common.service.impl.ExcelImportStudyServiceImpl.importWorkbook");
 
 		try {
 			final org.apache.poi.ss.usermodel.Workbook xlsBook = this.parseFile(filename);
@@ -155,6 +159,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 
 		} catch (final Exception e) {
 			throw new WorkbookParserException(e.getMessage(), e);
+		} finally {
+			LOG.info("Exiting Import  Workbook - Excel " + monitor.stop());
 		}
 	}
 

@@ -69,6 +69,8 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.hazelcast.util.StringUtil;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 /**
  * The Class SettingsUtil.
@@ -1905,30 +1907,33 @@ public class SettingsUtil {
 
 	private static List<Integer> getBreedingMethodIndices(final List<MeasurementRow> observations, final OntologyService ontologyService,
 			final boolean isResetAll, String programUUID) {
-		LOG.info("Start BreedingMethodIndices");
+		Monitor monitor = MonitorFactory.start("ExportStudy:ImportStudy:com.efficio.fieldbook.web.util.SettingsUtil.getBreedingMethodIndices");
 		final List<Integer> indices = new ArrayList<>();
-		final MeasurementRow mrow = observations.get(0);
-		final Map<Integer, StandardVariable> varCache = new HashMap<>();
-		StandardVariable stdVar = null;
-		int index = 0;
-		// FIXME this is OTT logic
-		for (final MeasurementData data : mrow.getDataList()) {
-			if(!varCache.keySet().contains(data.getMeasurementVariable().getTermId())){
-				// EHCached we hope
-				stdVar = ontologyService.getStandardVariable(data.getMeasurementVariable().getTermId(), programUUID);
-				varCache.put(data.getMeasurementVariable().getTermId(), stdVar);
+		try {
+			final MeasurementRow mrow = observations.get(0);
+			final Map<Integer, StandardVariable> varCache = new HashMap<>();
+			StandardVariable stdVar = null;
+			int index = 0;
+			// FIXME this is OTT logic
+			for (final MeasurementData data : mrow.getDataList()) {
+				if (!varCache.keySet().contains(data.getMeasurementVariable().getTermId())) {
+					// EHCached we hope
+					stdVar = ontologyService.getStandardVariable(data.getMeasurementVariable().getTermId(), programUUID);
+					varCache.put(data.getMeasurementVariable().getTermId(), stdVar);
+				}
+				stdVar = varCache.get(data.getMeasurementVariable().getTermId());
+				if (stdVar != null) {
+					if (stdVar.getId() != TermId.BREEDING_METHOD_VARIATE.getId()
+							&& stdVar.getProperty().getId() == TermId.BREEDING_METHOD_PROP.getId() && isResetAll
+							|| !isResetAll && stdVar.getId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
+						indices.add(index);
+					}
+				}
+				index++;
 			}
-			stdVar = varCache.get(data.getMeasurementVariable().getTermId());
-			if(stdVar != null){
-  			if (stdVar.getId() != TermId.BREEDING_METHOD_VARIATE.getId()
-  					&& stdVar.getProperty().getId() == TermId.BREEDING_METHOD_PROP.getId() && isResetAll || !isResetAll
-  					&& stdVar.getId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
-  				indices.add(index);
-  			}
-			}
-			index++;
+		} finally {
+			LOG.info("Complete Resetting Indices" + monitor.stop());
 		}
-		LOG.info("End BreedingMethodIndices");
 		return indices;
 	}
 
@@ -1938,29 +1943,36 @@ public class SettingsUtil {
 		if (observations == null || observations.isEmpty()) {
 			return;
 		}
-
-		final List<Integer> indeces = SettingsUtil.getBreedingMethodIndices(observations, ontologyService, isResetAll, programUUID);
-
-		if (indeces.isEmpty()) {
-			return;
-		}
-
-		final List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-		final Map<String, Method> methodMap = new HashMap<String, Method>();
-		// create a map to get method id based on given code
-		if (methods != null) {
-			for (final Method method : methods) {
-				methodMap.put(method.getMcode(), method);
-			}
-		}
-
-		// set value back to id
-		for (final MeasurementRow row : observations) {
-			for (final Integer i : indeces) {
-				final Method method = methodMap.get(row.getDataList().get(i).getValue());
-				row.getDataList().get(i).setValue(method == null ? row.getDataList().get(i).getValue() : String.valueOf(method.getMid()));
-			}
-		}
+		
+		Monitor monitor = MonitorFactory.start("ImportStudy : com.efficio.fieldbook.web.util.SettingsUtil.resetBreedingMethodValueToId");
+		
+		try {
+			
+  		final List<Integer> indeces = SettingsUtil.getBreedingMethodIndices(observations, ontologyService, isResetAll, programUUID);
+  
+  		if (indeces.isEmpty()) {
+  			return;
+  		}
+  
+  		final List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
+  		final Map<String, Method> methodMap = new HashMap<String, Method>();
+  		// create a map to get method id based on given code
+  		if (methods != null) {
+  			for (final Method method : methods) {
+  				methodMap.put(method.getMcode(), method);
+  			}
+  		}
+  
+  		// set value back to id
+  		for (final MeasurementRow row : observations) {
+  			for (final Integer i : indeces) {
+  				final Method method = methodMap.get(row.getDataList().get(i).getValue());
+  				row.getDataList().get(i).setValue(method == null ? row.getDataList().get(i).getValue() : String.valueOf(method.getMid()));
+  			}
+  		}
+  	} finally {
+  	  LOG.info("Exiting resetBreedingMethodsToId " + monitor.stop());
+  	}
 
 	}
 
@@ -1970,7 +1982,7 @@ public class SettingsUtil {
 		// set value of breeding method code in selection variates to code
 		// instead of id
 
-		LOG.info("Start ResetBreedingMethodValueToCode");
+		Monitor monitor = MonitorFactory.start("ExportStudy:ImportStudy:com.efficio.fieldbook.web.util.SettingsUtil.resetBreedingMethodValueToCode");
 		
 		if (observations == null || observations.isEmpty()) {
 			return;
@@ -2006,7 +2018,7 @@ public class SettingsUtil {
 			}
 		}
 		
-		LOG.info("End ResetBreedingMethodValueToCode");
+		monitor.stop();
 		
 	}
 

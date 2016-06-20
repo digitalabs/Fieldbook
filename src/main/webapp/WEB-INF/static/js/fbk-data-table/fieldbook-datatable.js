@@ -1218,6 +1218,7 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 			scrollY: '500px',
 			scrollX: '100%',
 			scrollCollapse: true,
+            retrieve: true,
 			aoColumns: aoColumnsDef,
 			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 			dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
@@ -1237,7 +1238,7 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 				$(parentDiv + ' .numberOfAdvanceSelected').html(selectedRowCount);
 			},
 			fnInitComplete: function(oSettings, json) {
-				
+
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
 					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');

@@ -208,7 +208,8 @@
 			var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
 				{id: '@id'}, {get: {method: 'get', isArray: true}});
 			var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
-
+			var UpdateStartingEntryNoService = $resource('/Fieldbook/TrialManager/GermplasmList/startingEntryNo', {}, {});
+			
 			var service = {
 				// user input data and default values of standard variables
 				currentData: {
@@ -416,6 +417,7 @@
 					} else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         // Hide Discard Imported Data button when the user presses Save button
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
+                        stockListImportNotSaved = false;
 						performDataCleanup();
 						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 						var serializedData = (JSON.stringify(columnsOrder));
@@ -569,6 +571,7 @@
 				updateStartingEntryNoCount: function(newCountValue) {
 					service.currentData.experimentalDesign.startingEntryNo = newCountValue;
 					$('body').data('service.currentData.experimentalDesign.startingEntryNo', newCountValue);
+					UpdateStartingEntryNoService.save(newCountValue);
 				},
 
 				onUpdateSettings: function(key, updateFunction) {

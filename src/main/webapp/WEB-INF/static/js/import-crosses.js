@@ -203,8 +203,11 @@ var ImportCrosses = {
 
 		ImportCrosses.populateHarvestMonthDropdown('harvestMonthDropdown');
 		ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
-
+		
+		$('#settingsNextButton').off('click');
 		$('#settingsNextButton').click(false, ImportCrosses.submitCrossImportSettings);
+		
+		$('#settingsNextButtonUpdateList').off('click');
 		$('#settingsNextButtonUpdateList').click(true, ImportCrosses.submitCrossImportSettings);
 
 		$('#goBackToOpenCrossesButton').off('click');
@@ -369,7 +372,7 @@ var ImportCrosses = {
 		}
 
 		var targetURL;
-				var settingsForSaving;
+		var settingsForSaving;
 		if ($('#presetName').val().trim() !== '') {
 			targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
 					settingsForSaving = true;

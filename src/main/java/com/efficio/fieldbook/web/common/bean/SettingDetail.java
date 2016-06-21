@@ -27,8 +27,11 @@ public class SettingDetail implements Serializable {
 	private List<ValueReference> possibleValues;
 	private List<ValueReference> possibleValuesFavorite;
 	private List<ValueReference> filteredValues;
+	private List<ValueReference> filteredFavoriteValues;
 	private String possibleValuesJson;
 	private String possibleValuesFavoriteJson;
+	private String filteredValuesJson;
+	private String filteredFavoriteValuesJson;
 	private String value;
 	private boolean isDeletable;
 	private boolean isFavorite;
@@ -188,6 +191,30 @@ public class SettingDetail implements Serializable {
 	public void setVariableType(VariableType variableType) {
 		this.variableType = variableType;
 	}
+	
+	public List<ValueReference> getFilteredValues() {
+		return filteredValues;
+	}
+
+	public void setFilteredValues(List<ValueReference> filteredValues) {
+		this.filteredValues = filteredValues;
+	}
+
+	public boolean isFiltered() {
+		return isFiltered;
+	}
+
+	public void setFiltered(boolean isFiltered) {
+		this.isFiltered = isFiltered;
+	}
+
+	public List<ValueReference> getFilteredFavoriteValues() {
+		return filteredFavoriteValues;
+	}
+
+	public void setFilteredFavoriteValues(List<ValueReference> filteredFavoriteValues) {
+		this.filteredFavoriteValues = filteredFavoriteValues;
+	}
 
 	public String getDisplayValue() {
 		if (this.getPossibleValues() != null && !this.getPossibleValues().isEmpty() && this.value != null) {
@@ -255,19 +282,39 @@ public class SettingDetail implements Serializable {
 		Debug.println(indent + 3, "variableType: " + this.variableType);
 	}
 
-	public List<ValueReference> getFilteredValues() {
-		return filteredValues;
+	public String getFilteredValuesJson() {
+		return filteredValuesJson;
 	}
 
-	public void setFilteredValues(List<ValueReference> filteredValues) {
-		this.filteredValues = filteredValues;
+	public void setFilteredValuesToJson(List<ValueReference> filteredValues) {
+		try {
+			ObjectMapper om = new ObjectMapper();
+			this.setFilteredValuesJson(om.writeValueAsString(filteredValues));
+		} catch (Exception e) {
+			this.setPossibleValuesJson("err");
+		}
+	}
+	
+	public void setFilteredValuesJson(String filteredValuesJson) {
+		this.filteredValuesJson = filteredValuesJson;
 	}
 
-	public boolean isFiltered() {
-		return isFiltered;
+	public String getFilteredFavoriteValuesJson() {
+		return filteredFavoriteValuesJson;
 	}
 
-	public void setFiltered(boolean isFiltered) {
-		this.isFiltered = isFiltered;
+	public void setFilteredFavoriteValuesToJson(List<ValueReference> filteredFavoriteValues) {
+		try {
+			ObjectMapper om = new ObjectMapper();
+			this.setFilteredFavoriteValuesJson(om.writeValueAsString(filteredFavoriteValues));
+		} catch (Exception e) {
+			this.setPossibleValuesJson("err");
+		}
 	}
+	
+	public void setFilteredFavoriteValuesJson(String filteredFavoriteValuesJson) {
+		this.filteredFavoriteValuesJson = filteredFavoriteValuesJson;
+	}
+
+
 }

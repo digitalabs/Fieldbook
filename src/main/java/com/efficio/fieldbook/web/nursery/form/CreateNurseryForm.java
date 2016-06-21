@@ -202,6 +202,7 @@ public class CreateNurseryForm {
 
 	private String columnOrders;
 	private Integer germplasmListId;
+	private List<?> filterTypes;
 
 	/**
 	 * Gets the project id.
@@ -1285,5 +1286,13 @@ public class CreateNurseryForm {
 
 	public Integer getGermplasmListId() {
 		return germplasmListId;
+	}
+
+	public List<?> getFilterTypes() {
+		return filterTypes;
+	}
+
+	public void setFilterTypes(List<?> filterTypes) {
+		this.filterTypes = filterTypes;
 	}
 }

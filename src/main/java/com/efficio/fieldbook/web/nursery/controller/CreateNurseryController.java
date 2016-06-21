@@ -598,16 +598,27 @@ public class CreateNurseryController extends SettingsController {
 			if (selectedVariables != null && !selectedVariables.isEmpty()) {
 				for (final SettingVariable var : selectedVariables) {
 					final Operation operation = this.removeVarFromDeletedList(var, mode);
-
+					List<?> types = form.getFilterTypes();
 					var.setOperation(operation);
 					this.populateSettingVariable(var);
 					final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
 					final SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
 					final List<ValueReference> possibleValuesFavorite =
-							this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID());
+							this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID());					
+					final List<ValueReference> filteredValues =
+							this.fieldbookService.getFilteredValues(var.getCvTermId(), this.getCurrentProject().getUniqueID(), types);
+					final List<ValueReference> filteredAndFavoriteValues =
+							this.fieldbookService.getFilteredAndFavoriteValues(var.getCvTermId(), this.getCurrentProject().getUniqueID(), types);
+					
 					newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
+					newSetting.setFilteredValues(filteredValues);
+					newSetting.setFilteredFavoriteValues(filteredAndFavoriteValues);
+					
 					newSetting.setPossibleValuesToJson(possibleValues);
 					newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+					newSetting.setFilteredValuesToJson(filteredValues);
+					newSetting.setFilteredFavoriteValuesToJson(filteredAndFavoriteValues);
+					
 					newSettings.add(newSetting);
 				}
 			}

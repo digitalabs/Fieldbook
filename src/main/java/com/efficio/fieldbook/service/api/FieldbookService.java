@@ -211,4 +211,6 @@ public interface FieldbookService {
 	void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook);
 
 	List<ValueReference> getFilteredValues(int id, String programUUID, List<?> types);
+
+	List<ValueReference> getFilteredAndFavoriteValues(int id, String programUUID, List<?> types);
 }

@@ -27,6 +27,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.service.FileService;
@@ -404,10 +405,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 			final boolean isFilterOutGenerative) {
 		final List<Method> methods = this.fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIDList,
 				isFilterOutGenerative);
-		return transformMethodsToValueReferences(methods);
+		return convertMethodsToValueReferences(methods);
 	}
 
-	private List<ValueReference> transformMethodsToValueReferences(final List<Method> methods) {
+	private List<ValueReference> convertMethodsToValueReferences(final List<Method> methods) {
 		final List<ValueReference> list = new ArrayList<ValueReference>();
 		if (methods != null && !methods.isEmpty()) {
 			for (final Method method : methods) {
@@ -1206,14 +1207,23 @@ public class FieldbookServiceImpl implements FieldbookService {
 			list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(),
 					AppConstants.PLEASE_CHOOSE.getString()));
 			filteredValues = list;
-			filteredValues.addAll(transformMethodsToValueReferences(
-					this.fieldbookMiddlewareService.getFilteredBreedingMethodsByTypes((List<String>) types)));
+			filteredValues.addAll(convertMethodsToValueReferences(this.fieldbookMiddlewareService
+					.getFilteredBreedingMethodsByTypes((List<String>) types, programUUID)));
 
 		} else if (DataType.LOCATION.equals(dataType)) {
 			filteredValues = this.convertLocationsToValueReferences(
-					this.fieldbookMiddlewareService.getFilteredLocationByTypes((List<Integer>) types));
+					this.fieldbookMiddlewareService.getFilteredLocationByTypes((List<Integer>) types, programUUID));
 		}
 		return filteredValues;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ValueReference> getFilteredAndFavoriteValues(final int id, final String programUUID,
+			final List<?> types) {
+		List<ValueReference> favoriteList = this.getAllPossibleValuesFavorite(id, programUUID);
+		List<ValueReference> filteredList = getFilteredValues(id, programUUID, types);
+		return ListUtils.intersection(favoriteList, filteredList);
 	}
 	
 	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {

@@ -578,7 +578,9 @@
 				updateStartingEntryNoCount: function(newCountValue) {
 					service.currentData.experimentalDesign.startingEntryNo = newCountValue;
 					$('body').data('service.currentData.experimentalDesign.startingEntryNo', newCountValue);
-					UpdateStartingEntryNoService.save(newCountValue);
+					if(!isNaN(parseInt(newCountValue))) {
+						UpdateStartingEntryNoService.save(newCountValue);
+					}
 				},
 
 				onUpdateSettings: function(key, updateFunction) {

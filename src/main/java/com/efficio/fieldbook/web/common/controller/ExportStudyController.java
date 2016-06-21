@@ -37,6 +37,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.manager.ontology.api.OntologyPropertyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.reports.BuildReportException;
 import org.generationcp.middleware.reports.Reporter;
@@ -74,6 +76,8 @@ import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOve
 import com.efficio.fieldbook.web.trial.bean.ExportTrialInstanceBean;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 @Controller
 @RequestMapping(ExportStudyController.URL)
@@ -120,7 +124,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private OntologyService ontologyService;
-
+	
 	@Resource
 	private ExportOrderingRowColImpl exportOrderingRowColService;
 
@@ -149,6 +153,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private JasperReportService jasperReportService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override
 	public String getContentName() {
@@ -249,10 +256,18 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/export/{exportType}/{exportWayType}", method = RequestMethod.POST)
 	public String exportFile(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
 			@PathVariable final int exportWayType, final HttpServletRequest req, final HttpServletResponse response) throws IOException {
+		
+		String result = "";
+		final Monitor monitor = MonitorFactory.start("ExportStudy:com.efficio.fieldbook.web.common.controller.ExportStudyController.exportFile");
+		try{
 		final boolean isTrial = false;
 		final List<Integer> instancesList = new ArrayList<Integer>();
-		instancesList.add(1);
-		return this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
+		instancesList.add(1);		
+		result = this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
+		} finally {
+		  monitor.stop();
+		}
+		return result;
 	}
 
 	@ResponseBody
@@ -267,7 +282,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			instancesList.add(Integer.valueOf(tokenizer.nextToken()));
 		}
 		return this.doExport(exportType, selectedTraitTermId, response, isTrial, instancesList, exportWayType, data);
-
 	}
 
 	@ResponseBody
@@ -275,14 +289,20 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	public String exportFileTrial(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
 			@PathVariable final String instances, @PathVariable final int exportWayType, final HttpServletRequest req,
 			final HttpServletResponse response) throws IOException {
-		final boolean isTrial = true;
-		final List<Integer> instancesList = new ArrayList<Integer>();
-		final StringTokenizer tokenizer = new StringTokenizer(instances, "|");
-		while (tokenizer.hasMoreTokens()) {
-			instancesList.add(Integer.valueOf(tokenizer.nextToken()));
+		String result = "";
+		Monitor monitor = MonitorFactory.start("ExportStudy:com.efficio.fieldbook.web.common.controller.ExportStudyController.exportFileTrial");
+		try{
+  		final boolean isTrial = true;
+  		final List<Integer> instancesList = new ArrayList<Integer>();
+  		final StringTokenizer tokenizer = new StringTokenizer(instances, "|");
+  		while (tokenizer.hasMoreTokens()) {
+  			instancesList.add(Integer.valueOf(tokenizer.nextToken()));
+  		}
+  		result = this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
+		}finally {
+			monitor.stop();		  
 		}
-		return this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
-
+		return result;
 	}
 
 	@ResponseBody
@@ -361,6 +381,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		/*
 		 * exportWayType 1 - row column 2 - serpentine (range) 3 - serpentine (col)
 		 */
+
+		Monitor monitor = MonitorFactory.start("ExportStudy: getWorkbook : com.efficio.fieldbook.web.common.controller.ExportStudyController.exportFileTrial");
+		
 		final ExportDataCollectionOrderService exportDataCollectionService = this.getExportOrderService(exportWayType);
 
 		final UserSelection userSelection = this.getUserSelection();
@@ -377,7 +400,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 						workbookSession = this.fieldbookMiddlewareService.getNurseryDataSet(Integer.valueOf(studyId));
 					}
 					SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbookSession.getObservations(), false,
-							this.ontologyService);
+							this.ontologyService, contextUtil.getCurrentProgramUUID());
 
 					this.getPaginationListSelection().addReviewFullWorkbook(studyId, workbookSession);
 				} else {
@@ -388,14 +411,23 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			}
 		} catch (final NumberFormatException e) {
 			ExportStudyController.LOG.error(e.getMessage(), e);
+		} finally {
+			monitor.stop();
 		}
+
+		monitor = MonitorFactory.start("ExportStudy: processWorkbook : com.efficio.fieldbook.web.common.controller.ExportStudyController.exportFileTrial");
 
 		final Map<String, Object> results = new HashMap<>();
 		try {
+			
+			final String breedingMethodPropertyName = this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();		
+			
+			excelExportStudyService.setBreeedingMethodPropertyName(breedingMethodPropertyName);
+			
 			final Workbook workbook = userSelection.getWorkbook();
 
 			SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), true,
-					this.ontologyService);
+					this.ontologyService, contextUtil.getCurrentProgramUUID());
 
 			exportDataCollectionService.reorderWorkbook(workbook);
 
@@ -458,13 +490,15 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			results.put(CONTENT_TYPE, response.getContentType());
 
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), true,
-					this.ontologyService);
+					this.ontologyService, contextUtil.getCurrentProgramUUID());
+			
 		} catch (final Exception e) {
 			// generic exception handling block needs to be added here so that the calling AJAX function receives proper notification that
 			// the operation was a failure
-
 			results.put(IS_SUCCESS, false);
 			results.put(ERROR_MESSAGE, this.messageSource.getMessage("export.study.error", null, Locale.ENGLISH));
+		} finally {
+			monitor.stop();
 		}
 
 		return super.convertObjectToJson(results);

@@ -67,6 +67,8 @@ import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 @Controller
 @RequestMapping(ImportStudyController.URL)
@@ -128,73 +130,81 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/import/{studyType}/{importType}", method = RequestMethod.POST)
-	public String importFile(@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form,
-			@PathVariable final String studyType, @PathVariable final int importType, final BindingResult result, final Model model) {
+	public String importFile(@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form, @PathVariable final String studyType,
+			@PathVariable final int importType, final BindingResult result, final Model model) {
 
-		final boolean isTrial = "TRIAL".equalsIgnoreCase(studyType);
-		ImportResult importResult = null;
-		final UserSelection userSelection = this.getUserSelection(isTrial);
+		Monitor monitor = MonitorFactory.start("ImportStudy:com.efficio.fieldbook.web.common.controller.ImportStudyController.importFile");
 
-		/**
-		 * Should always revert the data first to the original data here we should move here that part the copies it to the original
-		 * observation
-		 */
-		WorkbookUtil.resetWorkbookObservations(userSelection.getWorkbook());
-
-		importResult = this.importWorkbookByType(form.getFile(), result, userSelection.getWorkbook(), importType);
-
-		final Locale locale = LocaleContextHolder.getLocale();
 		final Map<String, Object> resultsMap = new HashMap<String, Object>();
-		resultsMap.put("hasDataOverwrite", userSelection.getWorkbook().hasExistingDataOverwrite() ? "1" : "0");
-		if (!result.hasErrors()) {
-			userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
-			form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
-			form.changePage(userSelection.getCurrentPage());
-			userSelection.setCurrentPage(form.getCurrentPage());
-			form.setImportVal(1);
-			form.setNumberOfInstances(userSelection.getWorkbook().getTotalNumberOfInstances());
-			form.setTrialEnvironmentValues(this.transformTrialObservations(userSelection.getWorkbook().getTrialObservations(),
-					userSelection.getTrialLevelVariableList()));
-			form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
 
-			if (importResult.getErrorMessage() != null && !"".equalsIgnoreCase(importResult.getErrorMessage())) {
-				resultsMap.put(ImportStudyController.IS_SUCCESS, 0);
-				resultsMap.put(ImportStudyController.ERROR, importResult.getErrorMessage());
-			} else {
-				resultsMap.put(ImportStudyController.IS_SUCCESS, 1);
-				resultsMap.put("modes", importResult.getModes());
-				this.populateConfirmationMessages(importResult.getChangeDetails());
-				resultsMap.put("changeDetails", importResult.getChangeDetails());
-				resultsMap.put("errorMessage", importResult.getErrorMessage());
-				final List<String> detailErrorMessage = new ArrayList<String>();
-				String reminderConfirmation = "";
-				if (importResult.getModes() != null && !importResult.getModes().isEmpty()) {
-					for (final ChangeType mode : importResult.getModes()) {
-						String message = this.messageSource.getMessage(mode.getMessageCode(), null, locale);
-						if (mode == ChangeType.ADDED_TRAITS) {
-							message +=
-									StringUtils.join(WorkbookUtil.getAddedTraits(userSelection.getWorkbook().getVariates(), userSelection
-											.getWorkbook().getObservations()), ", ");
+		try {
+
+			final boolean isTrial = "TRIAL".equalsIgnoreCase(studyType);
+			ImportResult importResult = null;
+			final UserSelection userSelection = this.getUserSelection(isTrial);
+
+			/**
+			 * Should always revert the data first to the original data here we should move here that part the copies it to the original
+			 * observation
+			 */
+			WorkbookUtil.resetWorkbookObservations(userSelection.getWorkbook());
+
+			importResult = this.importWorkbookByType(form.getFile(), result, userSelection.getWorkbook(), importType);
+
+			final Locale locale = LocaleContextHolder.getLocale();
+			resultsMap.put("hasDataOverwrite", userSelection.getWorkbook().hasExistingDataOverwrite() ? "1" : "0");
+			if (!result.hasErrors()) {
+				userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
+				form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+				form.changePage(userSelection.getCurrentPage());
+				userSelection.setCurrentPage(form.getCurrentPage());
+				form.setImportVal(1);
+				form.setNumberOfInstances(userSelection.getWorkbook().getTotalNumberOfInstances());
+				form.setTrialEnvironmentValues(
+						this.transformTrialObservations(userSelection.getWorkbook().getTrialObservations(), userSelection.getTrialLevelVariableList()));
+				form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
+
+				if (importResult.getErrorMessage() != null && !"".equalsIgnoreCase(importResult.getErrorMessage())) {
+					resultsMap.put(ImportStudyController.IS_SUCCESS, 0);
+					resultsMap.put(ImportStudyController.ERROR, importResult.getErrorMessage());
+				} else {
+					resultsMap.put(ImportStudyController.IS_SUCCESS, 1);
+					resultsMap.put("modes", importResult.getModes());
+					this.populateConfirmationMessages(importResult.getChangeDetails());
+					resultsMap.put("changeDetails", importResult.getChangeDetails());
+					resultsMap.put("errorMessage", importResult.getErrorMessage());
+					final List<String> detailErrorMessage = new ArrayList<String>();
+					String reminderConfirmation = "";
+					if (importResult.getModes() != null && !importResult.getModes().isEmpty()) {
+						for (final ChangeType mode : importResult.getModes()) {
+							String message = this.messageSource.getMessage(mode.getMessageCode(), null, locale);
+							if (mode == ChangeType.ADDED_TRAITS) {
+								message += StringUtils.join(
+										WorkbookUtil.getAddedTraits(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook().getObservations()),
+										", ");
+							}
+							detailErrorMessage.add(message);
 						}
-						detailErrorMessage.add(message);
+						reminderConfirmation = this.messageSource.getMessage("confirmation.import.text", null, locale);
 					}
-					reminderConfirmation = this.messageSource.getMessage("confirmation.import.text", null, locale);
+					resultsMap.put("message", reminderConfirmation);
+					resultsMap.put("confirmMessage", this.messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));
+					resultsMap.put("detailErrorMessage", detailErrorMessage);
+					resultsMap.put("conditionConstantsImportErrorMessage", importResult.getConditionsAndConstantsErrorMessage());
 				}
-				resultsMap.put("message", reminderConfirmation);
-				resultsMap.put("confirmMessage", this.messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));
-				resultsMap.put("detailErrorMessage", detailErrorMessage);
-				resultsMap.put("conditionConstantsImportErrorMessage", importResult.getConditionsAndConstantsErrorMessage());
-			}
 
-		} else {
-			resultsMap.put(ImportStudyController.IS_SUCCESS, 0);
-			final String errorCode = result.getFieldError("file").getCode();
-			try {
-				resultsMap.put(ImportStudyController.ERROR, this.messageSource.getMessage(errorCode, null, locale));
-			} catch (final NoSuchMessageException e) {
-				resultsMap.put(ImportStudyController.ERROR, errorCode);
-				ImportStudyController.LOG.error(e.getMessage(), e);
+			} else {
+				resultsMap.put(ImportStudyController.IS_SUCCESS, 0);
+				final String errorCode = result.getFieldError("file").getCode();
+				try {
+					resultsMap.put(ImportStudyController.ERROR, this.messageSource.getMessage(errorCode, null, locale));
+				} catch (final NoSuchMessageException e) {
+					resultsMap.put(ImportStudyController.ERROR, errorCode);
+					ImportStudyController.LOG.error(e.getMessage(), e);
+				}
 			}
+		} finally {
+			LOG.info("Completing ImportStudy" + monitor.stop());
 		}
 
 		return super.convertObjectToJson(resultsMap);
@@ -203,6 +213,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	protected ImportResult importWorkbookByType(final MultipartFile file, final BindingResult result, final Workbook workbook,
 			final Integer importType) {
 		ImportResult importResult = null;
+		
+		Monitor monitor = MonitorFactory.start("ImportStudy:com.efficio.fieldbook.web.common.controller.ImportStudyController.importWorkbookByType");
 
 		this.validateImportFile(file, result, importType);
 
@@ -236,6 +248,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				result.rejectValue("file", e.getMessage());
 			} catch (final IOException e) {
 				ImportStudyController.LOG.error(e.getMessage(), e);
+			} finally {
+				LOG.info("Exit Import Study " + monitor.stop());
 			}
 		}
 
@@ -243,21 +257,26 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	protected void validateImportFile(final MultipartFile file, final BindingResult result, final Integer importType) {
-		if (file == null) {
-			result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
-		} else {
-			if (AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType
-					|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType || AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
-				final boolean isCSVFile = file.getOriginalFilename().contains(".csv");
-				if (!isCSVFile) {
-					result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
-				}
-			} else if (AppConstants.IMPORT_NURSERY_EXCEL.getInt() == importType || AppConstants.IMPORT_KSU_EXCEL.getInt() == importType) {
-				final boolean isExcelFile = file.getOriginalFilename().contains(".xls") || file.getOriginalFilename().contains(".xlsx");
-				if (!isExcelFile) {
-					result.rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
-				}
-			}
+		Monitor monitor = MonitorFactory.start("ImportStudy : com.efficio.fieldbook.web.common.controller.ImportStudyController.validateImportFile");
+		try {
+  		if (file == null) {
+  			result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
+  		} else {
+  			if (AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType
+  					|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType || AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
+  				final boolean isCSVFile = file.getOriginalFilename().contains(".csv");
+  				if (!isCSVFile) {
+  					result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
+  				}
+  			} else if (AppConstants.IMPORT_NURSERY_EXCEL.getInt() == importType || AppConstants.IMPORT_KSU_EXCEL.getInt() == importType) {
+  				final boolean isExcelFile = file.getOriginalFilename().contains(".xls") || file.getOriginalFilename().contains(".xlsx");
+  				if (!isExcelFile) {
+  					result.rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
+  				}
+  			}
+  		} 
+		}finally {
+			monitor.stop();
 		}
 	}
 
@@ -482,50 +501,55 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/import/save", method = RequestMethod.POST)
 	public String saveImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model)
 			throws MiddlewareException {
-		final UserSelection userSelection = this.getUserSelection(false);
-		final List<MeasurementVariable> traits =
-				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
-						.getObservations());
-		final Workbook workbook = userSelection.getWorkbook();
-		userSelection.getWorkbook().getVariates().addAll(traits);
-
-		this.fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
-				AppConstants.ID_NAME_COMBINATION.getString(), true);
-
-		// will do the cleanup for BM_CODE_VTE here
-		SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-				this.ontologyService);
-		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), this.contextUtil.getCurrentProgramUUID());
-		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService);
-		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
-
-		userSelection.getWorkbook().setOriginalObservations(userSelection.getWorkbook().getObservations());
-		final List<SettingDetail> newTraits = new ArrayList<SettingDetail>();
-		final List<SettingDetail> selectedVariates = new ArrayList<SettingDetail>();
-		SettingsUtil.convertWorkbookVariatesToSettingDetails(traits, this.fieldbookMiddlewareService, this.fieldbookService, newTraits,
-				selectedVariates);
-
-		if (workbook.isNursery()) {
-			userSelection.getSelectionVariates().addAll(selectedVariates);
-			userSelection.setNewSelectionVariates(selectedVariates);
-			form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
-		} else {
-			form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+		Monitor monitor = MonitorFactory.start("ImportSudy:com.efficio.fieldbook.web.common.controller.ImportStudyController.saveImportedFile");
+		try{
+  		final UserSelection userSelection = this.getUserSelection(false);
+  		final List<MeasurementVariable> traits =
+  				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
+  						.getObservations());
+  		final Workbook workbook = userSelection.getWorkbook();
+  		userSelection.getWorkbook().getVariates().addAll(traits);
+  
+  		this.fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+  				AppConstants.ID_NAME_COMBINATION.getString(), true);
+  
+  		// will do the cleanup for BM_CODE_VTE here
+  		SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
+  				this.ontologyService, contextUtil.getCurrentProgramUUID());
+  		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), this.contextUtil.getCurrentProgramUUID());
+  		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService, contextUtil.getCurrentProgramUUID());
+  		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
+  
+  		userSelection.getWorkbook().setOriginalObservations(userSelection.getWorkbook().getObservations());
+  		final List<SettingDetail> newTraits = new ArrayList<SettingDetail>();
+  		final List<SettingDetail> selectedVariates = new ArrayList<SettingDetail>();
+  		SettingsUtil.convertWorkbookVariatesToSettingDetails(traits, this.fieldbookMiddlewareService, this.fieldbookService, newTraits,
+  				selectedVariates);
+  
+  		if (workbook.isNursery()) {
+  			userSelection.getSelectionVariates().addAll(selectedVariates);
+  			userSelection.setNewSelectionVariates(selectedVariates);
+  			form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+  		} else {
+  			form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+  		}
+  		userSelection.getBaselineTraitsList().addAll(newTraits);
+  		userSelection.setNewTraits(newTraits);
+  
+  		for (final SettingDetail detail : newTraits) {
+  			detail.getVariable().setOperation(Operation.UPDATE);
+  		}
+  		for (final SettingDetail detail : selectedVariates) {
+  			detail.getVariable().setOperation(Operation.UPDATE);
+  		}
+  		form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(userSelection.getWorkbook()
+  				.getMeasurementDatesetId(), SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));
+  
+  		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(), userSelection.getWorkbook()
+  				.getStudyDetails().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
+		} finally {
+		  monitor.stop();
 		}
-		userSelection.getBaselineTraitsList().addAll(newTraits);
-		userSelection.setNewTraits(newTraits);
-
-		for (final SettingDetail detail : newTraits) {
-			detail.getVariable().setOperation(Operation.UPDATE);
-		}
-		for (final SettingDetail detail : selectedVariates) {
-			detail.getVariable().setOperation(Operation.UPDATE);
-		}
-		form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(userSelection.getWorkbook()
-				.getMeasurementDatesetId(), SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));
-
-		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(), userSelection.getWorkbook()
-				.getStudyDetails().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
 
 		return super.showAjaxPage(model, ImportStudyController.ADD_OR_REMOVE_TRAITS_HTML);
 	}

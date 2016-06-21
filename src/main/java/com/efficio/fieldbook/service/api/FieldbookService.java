@@ -209,4 +209,6 @@ public interface FieldbookService {
 	void addConditionsToTrialObservationsIfNecessary(Workbook workbook);
 
 	void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook);
+
+	List<ValueReference> getFilteredValues(int id, String programUUID, List<?> types);
 }

@@ -26,17 +26,20 @@ public class SettingDetail implements Serializable {
 	private SettingVariable variable;
 	private List<ValueReference> possibleValues;
 	private List<ValueReference> possibleValuesFavorite;
+	private List<ValueReference> filteredValues;
 	private String possibleValuesJson;
 	private String possibleValuesFavoriteJson;
 	private String value;
 	private boolean isDeletable;
 	private boolean isFavorite;
 	private boolean isHidden;
+	private boolean isFiltered;
 	private int order;
 	private Integer group;
 	private PairedVariable pairedVariable;
 	private PhenotypicType role;
 	private VariableType variableType;
+	
 
 	public SettingDetail() {
 		super();
@@ -250,5 +253,21 @@ public class SettingDetail implements Serializable {
 		Debug.println(indent + 3, "pairedVariable: " + this.pairedVariable);
 		Debug.println(indent + 3, "role: " + this.role);
 		Debug.println(indent + 3, "variableType: " + this.variableType);
+	}
+
+	public List<ValueReference> getFilteredValues() {
+		return filteredValues;
+	}
+
+	public void setFilteredValues(List<ValueReference> filteredValues) {
+		this.filteredValues = filteredValues;
+	}
+
+	public boolean isFiltered() {
+		return isFiltered;
+	}
+
+	public void setFiltered(boolean isFiltered) {
+		this.isFiltered = isFiltered;
 	}
 }

@@ -400,13 +400,20 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return possibleValuesFavorite;
 	}
 
-	private List<ValueReference> getFavoriteBreedingMethods(final List<Integer> methodIDList, final boolean isFilterOutGenerative) {
+	private List<ValueReference> getFavoriteBreedingMethods(final List<Integer> methodIDList,
+			final boolean isFilterOutGenerative) {
+		final List<Method> methods = this.fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIDList,
+				isFilterOutGenerative);
+		return transformMethodsToValueReferences(methods);
+	}
+
+	private List<ValueReference> transformMethodsToValueReferences(final List<Method> methods) {
 		final List<ValueReference> list = new ArrayList<ValueReference>();
-		final List<Method> methods = this.fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIDList, isFilterOutGenerative);
 		if (methods != null && !methods.isEmpty()) {
 			for (final Method method : methods) {
 				if (method != null) {
-					list.add(new ValueReference(method.getMid(), method.getMdesc(), method.getMname() + " - " + method.getMcode()));
+					list.add(new ValueReference(method.getMid(), method.getMdesc(),
+							method.getMname() + " - " + method.getMcode()));
 				}
 			}
 		}
@@ -1180,6 +1187,35 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ValueReference> getFilteredValues(final int id, final String programUUID, final List<?> types) {
+		final Variable variable = this.ontologyVariableDataManager.getVariable(programUUID, id, true, false);
+		assert !Objects.equals(variable, null);
+
+		List<ValueReference> filteredValues = null;
+		DataType dataType = variable.getScale().getDataType();
+
+		// hacks to override the dataType(s)
+		if (TermId.BREEDING_METHOD_CODE.getId() == variable.getId()) {
+			dataType = DataType.BREEDING_METHOD;
+		}
+
+		if (DataType.BREEDING_METHOD.equals(dataType)) {
+			final List<ValueReference> list = new ArrayList<>();
+			list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(),
+					AppConstants.PLEASE_CHOOSE.getString()));
+			filteredValues = list;
+			filteredValues.addAll(transformMethodsToValueReferences(
+					this.fieldbookMiddlewareService.getFilteredBreedingMethodsByTypes((List<String>) types)));
+
+		} else if (DataType.LOCATION.equals(dataType)) {
+			filteredValues = this.convertLocationsToValueReferences(
+					this.fieldbookMiddlewareService.getFilteredLocationByTypes((List<Integer>) types));
+		}
+		return filteredValues;
+	}
+	
 	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}

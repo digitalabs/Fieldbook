@@ -1932,7 +1932,7 @@ public class SettingsUtil {
 				index++;
 			}
 		} finally {
-			LOG.info("Complete Resetting Indices" + monitor.stop());
+			monitor.stop();
 		}
 		return indices;
 	}
@@ -1971,7 +1971,7 @@ public class SettingsUtil {
   			}
   		}
   	} finally {
-  	  LOG.info("Exiting resetBreedingMethodsToId " + monitor.stop());
+  	  monitor.stop();
   	}
 
 	}
@@ -1987,39 +1987,40 @@ public class SettingsUtil {
 		if (observations == null || observations.isEmpty()) {
 			return;
 		}
-
-		final List<Integer> indeces = SettingsUtil.getBreedingMethodIndices(observations, ontologyService, isResetAll, programUUID);
-
 		
-		if (indeces.isEmpty()) {
-			return;
-		}
-
-		final List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-		final Map<Integer, Method> methodMap = new HashMap<Integer, Method>();
-
-		if (methods != null) {
-			for (final Method method : methods) {
-				methodMap.put(method.getMid(), method);
-			}
-		}
-		for (final MeasurementRow row : observations) {
-			for (final Integer i : indeces) {
-				Integer value = null;
-
-				if (row.getDataList().get(i).getValue() == null || row.getDataList().get(i).getValue().isEmpty()) {
-					value = null;
-				} else if (NumberUtils.isNumber(row.getDataList().get(i).getValue())) {
-					value = Integer.parseInt(row.getDataList().get(i).getValue());
-				}
-
-				final Method method = methodMap.get(value);
-				row.getDataList().get(i).setValue(method == null ? row.getDataList().get(i).getValue() : method.getMcode());
-			}
-		}
-		
-		monitor.stop();
-		
+		try{
+  		final List<Integer> indeces = SettingsUtil.getBreedingMethodIndices(observations, ontologyService, isResetAll, programUUID);
+  
+  		
+  		if (indeces.isEmpty()) {
+  			return;
+  		}
+  
+  		final List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
+  		final Map<Integer, Method> methodMap = new HashMap<Integer, Method>();
+  
+  		if (methods != null) {
+  			for (final Method method : methods) {
+  				methodMap.put(method.getMid(), method);
+  			}
+  		}
+  		for (final MeasurementRow row : observations) {
+  			for (final Integer i : indeces) {
+  				Integer value = null;
+  
+  				if (row.getDataList().get(i).getValue() == null || row.getDataList().get(i).getValue().isEmpty()) {
+  					value = null;
+  				} else if (NumberUtils.isNumber(row.getDataList().get(i).getValue())) {
+  					value = Integer.parseInt(row.getDataList().get(i).getValue());
+  				}
+  
+  				final Method method = methodMap.get(value);
+  				row.getDataList().get(i).setValue(method == null ? row.getDataList().get(i).getValue() : method.getMcode());
+  			}
+  		}
+		} finally {
+			monitor.stop();		  
+		}		
 	}
 
 	public static List<Integer> buildVariates(final List<MeasurementVariable> variates) {

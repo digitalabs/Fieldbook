@@ -257,12 +257,17 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	public String exportFile(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
 			@PathVariable final int exportWayType, final HttpServletRequest req, final HttpServletResponse response) throws IOException {
 		
+		String result = "";
 		final Monitor monitor = MonitorFactory.start("ExportStudy:com.efficio.fieldbook.web.common.controller.ExportStudyController.exportFile");
+		try{
 		final boolean isTrial = false;
 		final List<Integer> instancesList = new ArrayList<Integer>();
 		instancesList.add(1);		
-		monitor.stop();		
-		return this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
+		result = this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
+		} finally {
+		  monitor.stop();
+		}
+		return result;
 	}
 
 	@ResponseBody
@@ -284,16 +289,20 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	public String exportFileTrial(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
 			@PathVariable final String instances, @PathVariable final int exportWayType, final HttpServletRequest req,
 			final HttpServletResponse response) throws IOException {
+		String result = "";
 		Monitor monitor = MonitorFactory.start("ExportStudy:com.efficio.fieldbook.web.common.controller.ExportStudyController.exportFileTrial");
-		final boolean isTrial = true;
-		final List<Integer> instancesList = new ArrayList<Integer>();
-		final StringTokenizer tokenizer = new StringTokenizer(instances, "|");
-		while (tokenizer.hasMoreTokens()) {
-			instancesList.add(Integer.valueOf(tokenizer.nextToken()));
+		try{
+  		final boolean isTrial = true;
+  		final List<Integer> instancesList = new ArrayList<Integer>();
+  		final StringTokenizer tokenizer = new StringTokenizer(instances, "|");
+  		while (tokenizer.hasMoreTokens()) {
+  			instancesList.add(Integer.valueOf(tokenizer.nextToken()));
+  		}
+  		result = this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
+		}finally {
+			monitor.stop();		  
 		}
-		monitor.stop();
-		return this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
-
+		return result;
 	}
 
 	@ResponseBody
@@ -403,7 +412,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		} catch (final NumberFormatException e) {
 			ExportStudyController.LOG.error(e.getMessage(), e);
 		} finally {
-			LOG.debug("Exiting GetWorkbook in doExport" + monitor.stop());
+			monitor.stop();
 		}
 
 		monitor = MonitorFactory.start("ExportStudy: processWorkbook : com.efficio.fieldbook.web.common.controller.ExportStudyController.exportFileTrial");
@@ -489,7 +498,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			results.put(IS_SUCCESS, false);
 			results.put(ERROR_MESSAGE, this.messageSource.getMessage("export.study.error", null, Locale.ENGLISH));
 		} finally {
-			LOG.debug("Exiting ProcessWorkbook in doExport" + monitor.stop());
+			monitor.stop();
 		}
 
 		return super.convertObjectToJson(results);

@@ -276,7 +276,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
   			}
   		} 
 		}finally {
-			LOG.info("Exiting Validate Import File : " + monitor.stop());
+			monitor.stop();
 		}
 	}
 
@@ -548,7 +548,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
   		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(), userSelection.getWorkbook()
   				.getStudyDetails().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
 		} finally {
-		  LOG.info("Exiting ImportSutdy-Save : " + monitor.stop());
+		  monitor.stop();
 		}
 
 		return super.showAjaxPage(model, ImportStudyController.ADD_OR_REMOVE_TRAITS_HTML);

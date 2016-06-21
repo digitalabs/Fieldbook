@@ -571,6 +571,10 @@
 				updateStartingEntryNoCount: function(newCountValue) {
 					service.currentData.experimentalDesign.startingEntryNo = newCountValue;
 					$('body').data('service.currentData.experimentalDesign.startingEntryNo', newCountValue);
+					//check if the starting entry number is a number before calling the resource 
+					//for updating the starting entry number in the server
+					//as the server expects the parameter passed as an Integer
+					//the newCountValue becomes "" or null if the germplasm list is not yet selected for the trial
 					if(!isNaN(parseInt(newCountValue))) {
 						UpdateStartingEntryNoService.save(newCountValue);
 					}

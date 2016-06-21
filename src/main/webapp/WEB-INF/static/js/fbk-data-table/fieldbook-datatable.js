@@ -242,6 +242,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 			bAutoWidth: true,
 			iDisplayLength: 100,
+			deferRender: true,
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
 				var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;

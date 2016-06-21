@@ -25,6 +25,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
@@ -210,7 +211,7 @@ public interface FieldbookService {
 
 	void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook);
 
-	List<ValueReference> getFilteredValues(int id, String programUUID, List<?> types);
+	List<ValueReference> getFilteredAndFavoriteValues(int id, String programUUID, Map<DataType, List<String>> types);
 
-	List<ValueReference> getFilteredAndFavoriteValues(int id, String programUUID, List<?> types);
+	List<ValueReference> getFilteredValues(int id, String programUUID, Map<DataType, List<String>> types);
 }

@@ -12,10 +12,12 @@
 package com.efficio.fieldbook.web.nursery.form;
 
 import java.util.List;
+import java.util.Map;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.ontology.DataType;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -25,7 +27,7 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
  * The Class CreateNurseryForm.
  */
 public class CreateNurseryForm {
-
+	
 	private String experimentTypeId;
 
 	/** The project id. */
@@ -202,7 +204,7 @@ public class CreateNurseryForm {
 
 	private String columnOrders;
 	private Integer germplasmListId;
-	private List<?> filterTypes;
+	private Map<DataType, List<String>> filterTypes;
 
 	/**
 	 * Gets the project id.
@@ -1288,11 +1290,11 @@ public class CreateNurseryForm {
 		return germplasmListId;
 	}
 
-	public List<?> getFilterTypes() {
+	public Map<DataType, List<String>> getFilterTypes() {
 		return filterTypes;
 	}
 
-	public void setFilterTypes(List<?> filterTypes) {
+	public void setFilterTypes(Map<DataType, List<String>> filterTypes) {
 		this.filterTypes = filterTypes;
 	}
 }

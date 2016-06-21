@@ -36,12 +36,15 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
+import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.pojos.LocationType;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.MethodType;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -475,6 +478,19 @@ public class CreateNurseryController extends SettingsController {
 		form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + ","
 				+ AppConstants.FIXED_NURSERY_VARIABLES.getString());
 		form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
+		
+		Map<DataType, List<String>> filterTypes = new HashMap<DataType, List<String>>();
+		ArrayList<String> methodList = new ArrayList<String>();
+		methodList.add(MethodType.MAN.getCode());
+		methodList.add(MethodType.DER.getCode());
+		filterTypes.put(DataType.BREEDING_METHOD, methodList);
+		
+		
+		List<String> locationList = new ArrayList<String>();;
+		locationList.add(LocationType.BREED.getCode());
+		filterTypes.put(DataType.LOCATION, locationList);
+		form.setFilterTypes(filterTypes);
+		
 		try {
 			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.getCurrentIbdbUserId()));
 		} catch (final MiddlewareQueryException e) {
@@ -598,7 +614,7 @@ public class CreateNurseryController extends SettingsController {
 			if (selectedVariables != null && !selectedVariables.isEmpty()) {
 				for (final SettingVariable var : selectedVariables) {
 					final Operation operation = this.removeVarFromDeletedList(var, mode);
-					List<?> types = form.getFilterTypes();
+					Map<DataType, List<String>> types = form.getFilterTypes();
 					var.setOperation(operation);
 					this.populateSettingVariable(var);
 					final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());

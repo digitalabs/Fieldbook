@@ -52,6 +52,7 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.pojos.LocationType;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
@@ -1188,13 +1189,14 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<ValueReference> getFilteredValues(final int id, final String programUUID, final List<?> types) {
+	public List<ValueReference> getFilteredValues(final int id, final String programUUID,
+			final Map<DataType, List<String>> types) {
 		final Variable variable = this.ontologyVariableDataManager.getVariable(programUUID, id, true, false);
 		assert !Objects.equals(variable, null);
 
-		List<ValueReference> filteredValues = null;
+		List<String> selectedTypes = new ArrayList<String>();
+		List<ValueReference> filteredValues = new ArrayList<ValueReference>();
 		DataType dataType = variable.getScale().getDataType();
 
 		// hacks to override the dataType(s)
@@ -1207,20 +1209,51 @@ public class FieldbookServiceImpl implements FieldbookService {
 			list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(),
 					AppConstants.PLEASE_CHOOSE.getString()));
 			filteredValues = list;
+			selectedTypes = types.get(DataType.BREEDING_METHOD);
 			filteredValues.addAll(convertMethodsToValueReferences(this.fieldbookMiddlewareService
-					.getFilteredBreedingMethodsByTypes((List<String>) types, programUUID)));
+					.getFilteredBreedingMethodsByTypes((List<String>) selectedTypes, programUUID)));
 
 		} else if (DataType.LOCATION.equals(dataType)) {
-			filteredValues = this.convertLocationsToValueReferences(
-					this.fieldbookMiddlewareService.getFilteredLocationByTypes((List<Integer>) types, programUUID));
+			selectedTypes = types.get(DataType.LOCATION);
+			for (Iterator<String> iterator = selectedTypes.iterator(); iterator.hasNext();) {
+				String type = (String) iterator.next();
+				if (LocationType.BREED.equals(type)) {
+					filteredValues.addAll(this
+							.convertLocationsToValueReferences(this.getAllBreedingLocationsByUniqueID(programUUID)));
+				} else if (LocationType.SSTORE.equals(type)) {
+					filteredValues.addAll(this
+							.convertLocationsToValueReferences(this.getAllStorageLocationsByUniqueID(programUUID)));
+				}
+			}
+
 		}
 		return filteredValues;
 	}
 	
+	private List<Location> getAllStorageLocationsByUniqueID(String programUUID) {
+		final List<Location> seedLocationsOfCurrentProgram = new ArrayList<Location>();
+
+		try {
+			final List<Location> seedLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
+
+			for (final Location location : seedLocations) {
+				if (location.getUniqueID() == null || location.getUniqueID().equals(programUUID)) {
+					seedLocationsOfCurrentProgram.add(location);
+				}
+			}
+
+		} catch (final MiddlewareQueryException e) {
+			FieldbookServiceImpl.LOG.error(e.getMessage(), e);
+		}
+
+		return seedLocationsOfCurrentProgram;
+	
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ValueReference> getFilteredAndFavoriteValues(final int id, final String programUUID,
-			final List<?> types) {
+			final Map<DataType, List<String>> types) {
 		List<ValueReference> favoriteList = this.getAllPossibleValuesFavorite(id, programUUID);
 		List<ValueReference> filteredList = getFilteredValues(id, programUUID, types);
 		return ListUtils.intersection(favoriteList, filteredList);

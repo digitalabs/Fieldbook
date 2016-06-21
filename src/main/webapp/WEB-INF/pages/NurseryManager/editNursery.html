@@ -82,7 +82,7 @@
 										   th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
 									</li>
 									<li id="create-new-crosses" th:if="*{germplasmListId > -1}">
-										<a th:href="@{~/BreedingManager/main/createcrosses(nurseryid=*{studyId},germplasmlistid=*{germplasmListId})}" class="create-new-crosses"
+										<a th:href="@{~/ibpworkbench/mainbm/createcrosses(nurseryid=*{studyId},germplasmlistid=*{germplasmListId})}" class="create-new-crosses"
 										   th:text="#{nursery.nurserydetails.action.create.new.crosses}">Create new Crosses</a>
 									</li>
 									<li>

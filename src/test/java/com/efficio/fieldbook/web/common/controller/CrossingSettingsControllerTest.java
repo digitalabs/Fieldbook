@@ -10,6 +10,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import org.generationcp.commons.constant.ColumnLabels;
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.service.impl.SettingsPresetServiceImpl;
@@ -20,8 +23,11 @@ import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
@@ -71,6 +77,7 @@ public class CrossingSettingsControllerTest {
 	public static final String TEST_FEMALE_PARENT = "testFemaleParent";
 	public static final int MGID = 836;
 	public static final int FGID = 535;
+	private static final String TEST_DUPLICATE = "SID-1";
 
 	@Mock
 	private WorkbenchService workbenchService;
@@ -88,8 +95,11 @@ public class CrossingSettingsControllerTest {
 	private MessageSource messageSource;
 	@Mock
 	private GermplasmListManager germplasmListManager;
-
+	@Mock
+	private OntologyDataManager ontologyDataManager;
+	
 	private CrossesListUtil crossesListUtil;
+	
 
 	@Spy
 	private final SettingsPresetService settingsPresetService = new SettingsPresetServiceImpl();
@@ -100,7 +110,26 @@ public class CrossingSettingsControllerTest {
 	@Before
 	public void setup(){
 		this.crossesListUtil = new CrossesListUtil();
+		this.crossesListUtil.setOntologyDataManager(ontologyDataManager);
 		this.dut.setCrossesListUtil(this.crossesListUtil);
+		mockMappingOfHeadersToOntology();
+	}
+	
+	private void mockMappingOfHeadersToOntology() {
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(getTerm(ColumnLabels.ENTRY_ID));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(getTerm(ColumnLabels.PARENTAGE));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_CODE.getId())).thenReturn(getTerm(ColumnLabels.ENTRY_CODE));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.FEMALE_PARENT.getId())).thenReturn(getTerm(ColumnLabels.FEMALE_PARENT));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.FGID.getId())).thenReturn(getTerm(ColumnLabels.FGID));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.MALE_PARENT.getId())).thenReturn(getTerm(ColumnLabels.MALE_PARENT));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.MGID.getId())).thenReturn(getTerm(ColumnLabels.MGID));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(getTerm(ColumnLabels.SEED_SOURCE));
+	}
+
+	private Term getTerm(ColumnLabels columnLabel) {
+		int id = columnLabel.getTermId().getId();
+		String name = columnLabel.getName();
+		return new Term(id, name, name);
 	}
 
 	@Test
@@ -336,6 +365,7 @@ public class CrossingSettingsControllerTest {
 		return setting;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetImportedCrossesListSuccess() throws Exception {
 
@@ -351,27 +381,84 @@ public class CrossingSettingsControllerTest {
 		Mockito.when(this.germplasmListManager.retrieveListDataWithParents(80)).thenReturn(germplasmListDatas);
 		Mockito.when(this.germplasmListManager.getGermplasmListById(80)).thenReturn(germplasmList);
 
-		List<Map<String, Object>> testMasterList = this.dut.getImportedCrossesList("80");
-
+		Map<String, Object> testResponseMap = this.dut.getImportedCrossesList("80");
+		List<String> tableHeaderList = (List<String>) testResponseMap.get(CrossesListUtil.TABLE_HEADER_LIST);
+		List<Map<String, Object>> testMasterList = (List<Map<String, Object>>) testResponseMap.get(CrossesListUtil.LIST_DATA_TABLE);
+		
 		Assert.assertEquals("The master list should contain 1 record: ", 1, testMasterList.size());
-		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.ENTRY_CODE));
-		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_ENTRY_CODE));
-		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.SOURCE));
-		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_SEED_SOURCE));
-		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.MALE_PARENT));
-		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_MALE_PARENT));
-		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.ENTRY));
-		Assert.assertTrue(testMasterList.get(0).containsValue(ENTRY_ID));
-		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.FGID));
-		Assert.assertTrue(testMasterList.get(0).containsValue(FGID));
-		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.PARENTAGE));
-		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_FEMALE_PARENT + "/" + TEST_MALE_PARENT));
-		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.DUPLICATE));
-		Assert.assertTrue(testMasterList.get(0).containsValue(""));
-		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.MGID));
-		Assert.assertTrue(testMasterList.get(0).containsValue(MGID));
-		Assert.assertTrue(testMasterList.get(0).containsKey(CrossesListUtil.FEMALE_PARENT));
-		Assert.assertTrue(testMasterList.get(0).containsValue(TEST_FEMALE_PARENT));
+		Map<String, Object> data = testMasterList.get(0);
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX)));
+		Assert.assertTrue(data.containsValue(TEST_ENTRY_CODE));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
+		Assert.assertTrue(data.containsValue(TEST_SEED_SOURCE));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX)));
+		Assert.assertTrue(data.containsValue(TEST_MALE_PARENT));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
+		Assert.assertTrue(data.containsValue(ENTRY_ID));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+		Assert.assertTrue(data.containsValue(FGID));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
+		Assert.assertTrue(data.containsValue(TEST_FEMALE_PARENT + "/" + TEST_MALE_PARENT));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
+		Assert.assertTrue(data.containsValue(""));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+		Assert.assertTrue(data.containsValue(MGID));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX)));
+		Assert.assertTrue(data.containsValue(TEST_FEMALE_PARENT));
+	}
+	
+	@Test
+	public void testGetImportedCrossesListEmpty() throws Exception {
+		Map<String, Object> testResponseMap = this.dut.getImportedCrossesList();
+		Assert.assertTrue("The response map should be empty", testResponseMap.isEmpty());
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testGetImportedCrossesListWithSessionData() throws Exception {
+		fillUpUserSelectionWithImportedCrossTestData();
+		
+		Map<String, Object> testResponseMap = this.dut.getImportedCrossesList();
+		Assert.assertFalse("The response map should not be empty", testResponseMap.isEmpty());
+		
+		List<String> tableHeaderList = (List<String>) testResponseMap.get(CrossesListUtil.TABLE_HEADER_LIST);
+		List<Map<String, Object>> testMasterList = (List<Map<String, Object>>) testResponseMap.get(CrossesListUtil.LIST_DATA_TABLE);
+		Map<String, Object> data = testMasterList.get(0);
+		Assert.assertEquals("The master list should contain 1 record: ", 1, testMasterList.size());
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX)));
+		Assert.assertTrue(data.containsValue(TEST_ENTRY_CODE));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
+		Assert.assertTrue(data.containsValue(TEST_SEED_SOURCE));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX)));
+		Assert.assertTrue(data.containsValue(TEST_MALE_PARENT));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
+		Assert.assertTrue(data.containsValue(ENTRY_ID));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+		Assert.assertTrue(data.containsValue(Integer.toString(FGID)));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
+		Assert.assertTrue(data.containsValue(TEST_FEMALE_PARENT + "/" + TEST_MALE_PARENT));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
+		Assert.assertTrue(data.containsValue(TEST_SEED_SOURCE));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+		Assert.assertTrue(data.containsValue(Integer.toString(MGID)));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX)));
+		Assert.assertTrue(data.containsValue(TEST_FEMALE_PARENT));
 	}
 
+	private void fillUpUserSelectionWithImportedCrossTestData() {
+		Mockito.when(this.studySelection.getImportedCrossesList()).thenReturn(new ImportedCrossesList());
+		List<ImportedCrosses> importedCrossesList = this.studySelection.getImportedCrossesList().getImportedCrosses();
+		ImportedCrosses importedCrosses = new ImportedCrosses();
+		importedCrosses.setEntryId(ENTRY_ID);
+		importedCrosses.setCross(TEST_FEMALE_PARENT + "/" + TEST_MALE_PARENT);
+		importedCrosses.setEntryCode(TEST_ENTRY_CODE);
+		importedCrosses.setFemaleDesig(TEST_FEMALE_PARENT);
+		importedCrosses.setFemaleGid(Integer.toString(FGID));
+		importedCrosses.setMaleDesig(TEST_MALE_PARENT);
+		importedCrosses.setMaleGid(Integer.toString(MGID));
+		importedCrosses.setSource(TEST_SEED_SOURCE);
+		importedCrosses.setDuplicate(TEST_DUPLICATE);
+		importedCrossesList.add(importedCrosses);
+	}
+	
 }

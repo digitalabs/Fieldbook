@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.web.util;
 
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -98,33 +99,54 @@ public class CrossesListUtilTest {
 	@Test
 	public void testGenerateDatatableDataMapWithDups_importedCrosses() {
 
-		final Map<String, Object> dataMap = this.crossesListUtil.generateDatatableDataMapWithDups(this.importedCrosses);
+		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
+		final Map<String, Object> dataMap = this.crossesListUtil.generateDatatableDataMapWithDups(
+				tableHeaderList, this.importedCrosses);
 
-		Assert.assertTrue("Expecting to have a column name ENTRY.", this.hasColumnHeader(dataMap, "ENTRY"));
-		Assert.assertTrue("Expecting to have a column name PARENTAGE.", this.hasColumnHeader(dataMap, "PARENTAGE"));
-		Assert.assertTrue("Expecting to have a column name ENTRY CODE.", this.hasColumnHeader(dataMap, "ENTRY CODE"));
-		Assert.assertTrue("Expecting to have a column name FEMALE PARENT.", this.hasColumnHeader(dataMap, "FEMALE PARENT"));
-		Assert.assertTrue("Expecting to have a column name FGID.", this.hasColumnHeader(dataMap, "FGID"));
-		Assert.assertTrue("Expecting to have a column name Male Parent.", this.hasColumnHeader(dataMap, "MALE PARENT"));
-		Assert.assertTrue("Expecting to have a column name MGID.", this.hasColumnHeader(dataMap, "MGID"));
-		Assert.assertTrue("Expecting to have a column name SOURCE.", this.hasColumnHeader(dataMap, "SOURCE"));
-		Assert.assertTrue("Expecting to have a column name DUPLICATE.", this.hasColumnHeader(dataMap, "DUPLICATE"));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FGID_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MGID_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.SOURCE_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 	}
 
 	@Test
 	public void testGenerateDatatableDataMapWithDups_germplasmListData() {
+		
+		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
+		final Map<String, Object> dataMap = this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, this.crossesData);
 
-		final Map<String, Object> dataMap = this.crossesListUtil.generateDatatableDataMapWithDups(this.crossesData);
-
-		Assert.assertTrue("Expecting to have a column name ENTRY.", this.hasColumnHeader(dataMap, "ENTRY"));
-		Assert.assertTrue("Expecting to have a column name PARENTAGE.", this.hasColumnHeader(dataMap, "PARENTAGE"));
-		Assert.assertTrue("Expecting to have a column name ENTRY CODE.", this.hasColumnHeader(dataMap, "ENTRY CODE"));
-		Assert.assertTrue("Expecting to have a column name FEMALE PARENT.", this.hasColumnHeader(dataMap, "FEMALE PARENT"));
-		Assert.assertTrue("Expecting to have a column name FGID.", this.hasColumnHeader(dataMap, "FGID"));
-		Assert.assertTrue("Expecting to have a column name Male Parent.", this.hasColumnHeader(dataMap, "MALE PARENT"));
-		Assert.assertTrue("Expecting to have a column name MGID.", this.hasColumnHeader(dataMap, "MGID"));
-		Assert.assertTrue("Expecting to have a column name SOURCE.", this.hasColumnHeader(dataMap, "SOURCE"));
-		Assert.assertTrue("Expecting to have a column name DUPLICATE.", this.hasColumnHeader(dataMap, "DUPLICATE"));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FGID_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MGID_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.SOURCE_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".", 
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 	}
 
 	@Test

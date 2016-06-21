@@ -8,14 +8,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.Resource;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
-import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.Study;
@@ -29,10 +24,21 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
+import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 @Service
 @Transactional
@@ -48,6 +54,8 @@ public class AdvancingSourceListFactory {
 	private ExpressionDataProcessorFactory dataProcessorFactory;
 
 	private static final String DEFAULT_TEST_VALUE = "T";
+	
+	private static final Logger LOG = LoggerFactory.getLogger(AdvancingSourceListFactory.class);
 
 	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery,
 			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
@@ -56,129 +64,135 @@ public class AdvancingSourceListFactory {
 		ExpressionDataProcessor dataProcessor = dataProcessorFactory.retrieveExecutorProcessor();
 
 		AdvancingSourceList list = new AdvancingSourceList();
-
-		List<AdvancingSource> rows = new ArrayList<>();
-
-		Integer methodVariateId = advanceInfo.getMethodVariateId();
-		Integer lineVariateId = advanceInfo.getLineVariateId();
-		Integer plotVariateId = advanceInfo.getPlotVariateId();
-		List<Name> names = null;
-
-		String nurseryName = null;
-		if (nursery != null) {
-			nurseryName = nursery.getName();
+		
+		Monitor monitor = MonitorFactory.start("AdvanceNursery:com.efficio.fieldbook.web.naming.impl.AdvancingSourceListFactory.createAdvancingSourceList");
+		
+		try {
+  		List<AdvancingSource> rows = new ArrayList<>();
+  
+  		Integer methodVariateId = advanceInfo.getMethodVariateId();
+  		Integer lineVariateId = advanceInfo.getLineVariateId();
+  		Integer plotVariateId = advanceInfo.getPlotVariateId();
+  		List<Name> names = null;
+  
+  		String nurseryName = null;
+  		if (nursery != null) {
+  			nurseryName = nursery.getName();
+  		}
+  
+  		dataProcessor.processEnvironmentLevelData(environmentLevel, workbook, advanceInfo, nursery);
+  
+  		List<Integer> gids = new ArrayList<>();
+  
+  		if (workbook != null && workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
+  			for (MeasurementRow row : workbook.getObservations()) {
+            AdvancingSource source = environmentLevel.copy();
+                  
+            // Only advance entries for selected trial instances (environments) 
+    				source.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
+    				if (source.getTrialInstanceNumber() != null && advanceInfo.getSelectedTrialInstances() != null
+    						&& !advanceInfo.getSelectedTrialInstances().contains(source.getTrialInstanceNumber())) {
+    					continue;
+  				}
+  
+  				// If study is Trail then setting data if trail instance is not null
+  				if(source.getTrialInstanceNumber() != null){
+  					MeasurementRow trialInstanceObservations =
+  							workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()));
+  
+  					source.setTrailInstanceObservation(trialInstanceObservations);
+  				}
+  
+  				source.setStudyType(workbook.getStudyDetails().getStudyType());
+  
+  				// Setting conditions for Breeders Cross ID
+  				source.setConditions(workbook.getConditions());
+  
+  				// Only advance entries for selected replications within an environment
+  				source.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
+  				if (source.getReplicationNumber() != null && advanceInfo.getSelectedReplications() != null
+  						&& !advanceInfo.getSelectedReplications().contains(source.getReplicationNumber())) {
+  					continue;
+  				}
+  
+  				Integer methodId = null;
+  				if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {
+  					if (methodVariateId != null) {
+  						methodId = this.getBreedingMethodId(methodVariateId, row, breedingMethodCodeMap);
+  					}
+  				} else {
+  					methodId = this.getIntegerValue(advanceInfo.getBreedingMethodId());
+  				}
+  
+  				if (methodId == null) {
+  					continue;
+  				}
+  
+  				ImportedGermplasm germplasm = this.createGermplasm(row);
+  				if (germplasm.getGid() != null && NumberUtils.isNumber(germplasm.getGid())) {
+  					gids.add(Integer.valueOf(germplasm.getGid()));
+  				}
+  
+  				MeasurementData checkData = row.getMeasurementData(TermId.CHECK.getId());
+  				String check = null;
+  				if (checkData != null) {
+  					check = checkData.getcValueId();
+  					if (checkData != null && checkData.getMeasurementVariable() != null
+  							&& checkData.getMeasurementVariable().getPossibleValues() != null
+  							&& !checkData.getMeasurementVariable().getPossibleValues().isEmpty() && check != null
+  							&& NumberUtils.isNumber(check)) {
+  
+  						for (ValueReference valref : checkData.getMeasurementVariable().getPossibleValues()) {
+  							if (valref.getId().equals(Double.valueOf(check).intValue())) {
+  								check = valref.getName();
+  								break;
+  							}
+  						}
+  					}
+  				}
+  
+  				boolean isCheck =
+  						check != null && !"".equals(check) && !AdvancingSourceListFactory.DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
+  
+  				MeasurementData plotNumberData = row.getMeasurementData(TermId.PLOT_NO.getId());
+  				if (plotNumberData != null) {
+  					source.setPlotNumber(plotNumberData.getValue());
+  				}
+  				
+  				Method breedingMethod = breedingMethodMap.get(methodId);
+  				Integer plantsSelected = null;
+  				Boolean isBulk = breedingMethod.isBulkingMethod();
+  				if (isBulk != null) {
+  					if (isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
+  						if (plotVariateId != null) {
+  							plantsSelected = this.getIntegerValue(row.getMeasurementDataValue(plotVariateId));
+  						}
+  					} else {
+  						if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
+  							plantsSelected = this.getIntegerValue(row.getMeasurementDataValue(lineVariateId));
+  						}
+  					}
+  					source.setGermplasm(germplasm);
+  					source.setNames(names);
+  					source.setPlantsSelected(plantsSelected);
+  					source.setBreedingMethod(breedingMethod);
+  					source.setCheck(isCheck);
+  					source.setNurseryName(nurseryName);
+  
+                      dataProcessor.processPlotLevelData(source, row);
+  
+  					rows.add(source);
+  				}
+  
+  			}
+  		}
+  
+  		this.setNamesToGermplasm(rows, gids);
+  		list.setRows(rows);
+  		this.assignSourceGermplasms(list, breedingMethodMap);
+		} finally {
+		  monitor.stop();
 		}
-
-		dataProcessor.processEnvironmentLevelData(environmentLevel, workbook, advanceInfo, nursery);
-
-		List<Integer> gids = new ArrayList<>();
-
-		if (workbook != null && workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
-			for (MeasurementRow row : workbook.getObservations()) {
-                AdvancingSource source = environmentLevel.copy();
-                
-                // Only advance entries for selected trial instances (environments) 
-				source.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
-				if (source.getTrialInstanceNumber() != null && advanceInfo.getSelectedTrialInstances() != null
-						&& !advanceInfo.getSelectedTrialInstances().contains(source.getTrialInstanceNumber())) {
-					continue;
-				}
-
-				// If study is Trail then setting data if trail instance is not null
-				if(source.getTrialInstanceNumber() != null){
-					MeasurementRow trialInstanceObservations =
-							workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()));
-
-					source.setTrailInstanceObservation(trialInstanceObservations);
-				}
-
-				source.setStudyType(workbook.getStudyDetails().getStudyType());
-
-				// Setting conditions for Breeders Cross ID
-				source.setConditions(workbook.getConditions());
-
-				// Only advance entries for selected replications within an environment
-				source.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
-				if (source.getReplicationNumber() != null && advanceInfo.getSelectedReplications() != null
-						&& !advanceInfo.getSelectedReplications().contains(source.getReplicationNumber())) {
-					continue;
-				}
-
-				Integer methodId = null;
-				if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {
-					if (methodVariateId != null) {
-						methodId = this.getBreedingMethodId(methodVariateId, row, breedingMethodCodeMap);
-					}
-				} else {
-					methodId = this.getIntegerValue(advanceInfo.getBreedingMethodId());
-				}
-
-				if (methodId == null) {
-					continue;
-				}
-
-				ImportedGermplasm germplasm = this.createGermplasm(row);
-				if (germplasm.getGid() != null && NumberUtils.isNumber(germplasm.getGid())) {
-					gids.add(Integer.valueOf(germplasm.getGid()));
-				}
-
-				MeasurementData checkData = row.getMeasurementData(TermId.CHECK.getId());
-				String check = null;
-				if (checkData != null) {
-					check = checkData.getcValueId();
-					if (checkData != null && checkData.getMeasurementVariable() != null
-							&& checkData.getMeasurementVariable().getPossibleValues() != null
-							&& !checkData.getMeasurementVariable().getPossibleValues().isEmpty() && check != null
-							&& NumberUtils.isNumber(check)) {
-
-						for (ValueReference valref : checkData.getMeasurementVariable().getPossibleValues()) {
-							if (valref.getId().equals(Double.valueOf(check).intValue())) {
-								check = valref.getName();
-								break;
-							}
-						}
-					}
-				}
-
-				boolean isCheck =
-						check != null && !"".equals(check) && !AdvancingSourceListFactory.DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
-
-				MeasurementData plotNumberData = row.getMeasurementData(TermId.PLOT_NO.getId());
-				if (plotNumberData != null) {
-					source.setPlotNumber(plotNumberData.getValue());
-				}
-				
-				Method breedingMethod = breedingMethodMap.get(methodId);
-				Integer plantsSelected = null;
-				Boolean isBulk = breedingMethod.isBulkingMethod();
-				if (isBulk != null) {
-					if (isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
-						if (plotVariateId != null) {
-							plantsSelected = this.getIntegerValue(row.getMeasurementDataValue(plotVariateId));
-						}
-					} else {
-						if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
-							plantsSelected = this.getIntegerValue(row.getMeasurementDataValue(lineVariateId));
-						}
-					}
-					source.setGermplasm(germplasm);
-					source.setNames(names);
-					source.setPlantsSelected(plantsSelected);
-					source.setBreedingMethod(breedingMethod);
-					source.setCheck(isCheck);
-					source.setNurseryName(nurseryName);
-
-                    dataProcessor.processPlotLevelData(source, row);
-
-					rows.add(source);
-				}
-
-			}
-		}
-
-		this.setNamesToGermplasm(rows, gids);
-		list.setRows(rows);
-		this.assignSourceGermplasms(list, breedingMethodMap);
 		return list;
 	}
 

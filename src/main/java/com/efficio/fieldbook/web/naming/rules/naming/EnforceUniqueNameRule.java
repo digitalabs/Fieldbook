@@ -8,11 +8,15 @@ import org.generationcp.commons.ruleengine.BranchingRule;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 2/17/2015 Time: 1:50 PM
@@ -22,9 +26,13 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionContext> {
 
 	public static final String KEY = "Unique";
+	
+	public static final Logger LOG = LoggerFactory.getLogger(EnforceUniqueNameRule.class);
 
 	@Override
 	public Object runRule(NamingRuleExecutionContext context) throws RuleException {
+		
+		Monitor monitor = MonitorFactory.start("AdvanceNursery:com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule.runRule");
 
 		List<String> currentData = context.getCurrentData();
 		GermplasmDataManager germplasmDataManager = context.getGermplasmDataManager();
@@ -45,6 +53,8 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 
 		} catch (MiddlewareQueryException e) {
 			throw new RuleException(e.getMessage(), e);
+		} finally {
+			monitor.stop();
 		}
 
 		// this rule does not actually do any processing on the data

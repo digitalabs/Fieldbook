@@ -72,6 +72,8 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.google.common.collect.Sets;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 @Controller
 @RequestMapping(AdvancingController.URL)
@@ -226,27 +228,28 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			Model model) {
 		
 		Map<String, Object> results = new HashMap<>();
-		AdvancingNursery advancingNursery = new AdvancingNursery();
 		
-		Study study = this.fieldbookMiddlewareService.getStudy(Integer.valueOf(form.getNurseryId()));
-		advancingNursery.setStudy(study);	
-		advancingNursery.setMethodChoice(form.getMethodChoice());
-		advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
-		advancingNursery.setLineChoice(form.getLineChoice());
-		advancingNursery.setLineSelected(form.getLineSelected() != null ? form.getLineSelected().trim() : null);
-		advancingNursery.setHarvestDate(form.getHarvestDate());
-		advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
-		advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "");
-		advancingNursery.setAllPlotsChoice(form.getAllPlotsChoice());
-		advancingNursery.setLineVariateId(form.getLineVariateId());
-		advancingNursery.setPlotVariateId(form.getPlotVariateId());
-		advancingNursery.setMethodVariateId(form.getMethodVariateId());
-		advancingNursery.setCheckAdvanceLinesUnique(form.getCheckAdvanceLinesUnique() != null && "1".equalsIgnoreCase(form.getCheckAdvanceLinesUnique()));
-        advancingNursery.setSelectedReplications(form.getSelectedReplications());
-        advancingNursery.setSelectedTrialInstances(form.getSelectedTrialInstances());
-        
+		Monitor monitor = MonitorFactory.start("AdvanceNursery:com.efficio.fieldbook.web.nursery.controller.AdvancingController.postAdvanceNursery");
 		try {
-
+  		AdvancingNursery advancingNursery = new AdvancingNursery();
+  		
+  		Study study = this.fieldbookMiddlewareService.getStudy(Integer.valueOf(form.getNurseryId()));
+  		advancingNursery.setStudy(study);	
+  		advancingNursery.setMethodChoice(form.getMethodChoice());
+  		advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
+  		advancingNursery.setLineChoice(form.getLineChoice());
+  		advancingNursery.setLineSelected(form.getLineSelected() != null ? form.getLineSelected().trim() : null);
+  		advancingNursery.setHarvestDate(form.getHarvestDate());
+  		advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
+  		advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "");
+  		advancingNursery.setAllPlotsChoice(form.getAllPlotsChoice());
+  		advancingNursery.setLineVariateId(form.getLineVariateId());
+  		advancingNursery.setPlotVariateId(form.getPlotVariateId());
+  		advancingNursery.setMethodVariateId(form.getMethodVariateId());
+  		advancingNursery.setCheckAdvanceLinesUnique(form.getCheckAdvanceLinesUnique() != null && "1".equalsIgnoreCase(form.getCheckAdvanceLinesUnique()));
+          advancingNursery.setSelectedReplications(form.getSelectedReplications());
+          advancingNursery.setSelectedTrialInstances(form.getSelectedTrialInstances());
+        
 			if (advancingNursery.getMethodChoice() != null && !advancingNursery.getMethodChoice().isEmpty()) {
 				Method method = this.fieldbookMiddlewareService.getMethodById(Integer.valueOf(advancingNursery.getBreedingMethodId()));
 				if ("GEN".equals(method.getMtype())) {
@@ -288,6 +291,8 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			results.put(AdvancingController.IS_SUCCESS, "0");
 			results.put(AdvancingController.LIST_SIZE, 0);
 			results.put(AdvancingController.MESSAGE, form.getErrorInAdvance());
+		} finally {
+			monitor.stop();
 		}
 
 		return results;

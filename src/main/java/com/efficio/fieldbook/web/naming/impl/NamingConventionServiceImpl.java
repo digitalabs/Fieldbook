@@ -27,6 +27,8 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.TimerWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,8 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 @Service
 @Transactional
@@ -72,11 +76,19 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@Resource
 	private SeedSourceGenerator seedSourceGenerator;
+	
+	public static final Logger LOG = LoggerFactory.getLogger(NamingConventionServiceImpl.class);
+			
 
 	@Override
 	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException,
 			MiddlewareQueryException, FieldbookException {
 
+		final AdvanceResult result = new AdvanceResult();
+		
+		Monitor monitor = MonitorFactory.start("AdvanceNursery:com.efficio.fieldbook.web.naming.impl.NamingConventionServiceImpl.advanceNursery");
+
+		try{
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
 		final Map<String, Method> breedingMethodCodeMap = new HashMap<>();
 		final List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
@@ -97,23 +109,29 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			}
 		}
 
-		final AdvanceResult result = new AdvanceResult();
 		result.setAdvanceList(importedGermplasmList);
 		result.setChangeDetails(changeDetails);
+		} finally {
+			monitor.stop();
+		}
 
 		return result;
 	}
 
 	private AdvancingSourceList createAdvancingSourceList(final AdvancingNursery advanceInfo, Workbook workbook,
 			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
-
+		Monitor monitor = MonitorFactory.start("AdvanceNursery:com.efficio.fieldbook.web.naming.impl.NamingConventionServiceImpl.createAdvancingSourceList");
 		final Study study = advanceInfo.getStudy();
-		if (workbook == null) {
-			if (study.getType().equals("N")) {
-				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(study.getId());
-			} else if (study.getType().equals("T")) {
-				workbook = this.fieldbookMiddlewareService.getTrialDataSet(study.getId());
-			}
+		try {
+  		if (workbook == null) {
+  			if (study.getType().equals("N")) {
+  				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(study.getId());
+  			} else if (study.getType().equals("T")) {
+  				workbook = this.fieldbookMiddlewareService.getTrialDataSet(study.getId());
+  			}
+  		} 
+		} finally {
+			monitor.stop();
 		}
 		return this.advancingSourceListFactory.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 	}
@@ -225,32 +243,34 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		final List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
 		int index = 1;
-		final TimerWatch timer = new TimerWatch("advance");
-
-		for (final AdvancingSource row : rows.getRows()) {
-			if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
-					&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
-
-				final List<String> names;
-				final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, advancingParameters.isCheckAdvanceLinesUnique());
-				names = (List<String>) this.rulesService.runRules(namingExecutionContext);
-
-				// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
-				// reference index
-				if (row.getChangeDetail() != null) {
-					// index - 1 is used because Java uses 0-based referencing
-					row.getChangeDetail().setIndex(index - 1);
-				}
-
-				// One plot may result in multiple plants/ears selected depending on selection method.
-				int selectionNumber = row.getCurrentMaxSequence() + 1;
-				for (final String name : names) {
-					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber, advancingParameters);
-					selectionNumber++;
-				}
-			}
+		Monitor monitor = MonitorFactory.start("AdvanceNursery:com.efficio.fieldbook.web.naming.impl.NamingConventionServiceImpl.generateGermplasmList");
+		try {
+  		for (final AdvancingSource row : rows.getRows()) {
+  			if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
+  					&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
+  
+  				final List<String> names;
+  				final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, advancingParameters.isCheckAdvanceLinesUnique());
+  				names = (List<String>) this.rulesService.runRules(namingExecutionContext);
+  
+  				// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
+  				// reference index
+  				if (row.getChangeDetail() != null) {
+  					// index - 1 is used because Java uses 0-based referencing
+  					row.getChangeDetail().setIndex(index - 1);
+  				}
+  
+  				// One plot may result in multiple plants/ears selected depending on selection method.
+  				int selectionNumber = row.getCurrentMaxSequence() + 1;
+  				for (final String name : names) {
+  					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber, advancingParameters);
+  					selectionNumber++;
+  				}
+  			}
+  		}
+		} finally {
+		  monitor.stop();
 		}
-		timer.stop();
 		return list;
 	}
 

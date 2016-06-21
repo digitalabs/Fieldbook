@@ -229,7 +229,7 @@ public class CrossingSettingsController extends SettingsController {
 
 	/**
 	 * Validates if current study can perform an export
-	 * 
+	 *
 	 * @return a JSON result object
 	 */
 	@ResponseBody
@@ -313,18 +313,18 @@ public class CrossingSettingsController extends SettingsController {
 	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
 	public Map<String, Object> getImportedCrossesList() {
 
-		Map<String, Object> responseMap = new HashMap<>();
+		final Map<String, Object> responseMap = new HashMap<>();
 		if (null == this.studySelection.getImportedCrossesList()) {
 			return responseMap;
 		}
-		
-		List<Map<String, Object>> masterList = new ArrayList<>();
-		final List<String> tableHeaderList = crossesListUtil.getTableHeaders();
-		
+
+		final List<Map<String, Object>> masterList = new ArrayList<>();
+		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
+
 		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
 			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, cross));
 		}
-		
+
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
 
@@ -335,7 +335,7 @@ public class CrossingSettingsController extends SettingsController {
 	@RequestMapping(value = "/getImportedCrossesList/{createdCrossesListId}", method = RequestMethod.GET)
 	public Map<String, Object> getImportedCrossesList(@PathVariable final String createdCrossesListId) {
 
-		Map<String, Object> responseMap = new HashMap<>();
+		final Map<String, Object> responseMap = new HashMap<>();
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
 
@@ -345,7 +345,7 @@ public class CrossingSettingsController extends SettingsController {
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 
-		final List<String> tableHeaderList = crossesListUtil.getTableHeaders();
+		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		for (final GermplasmListData listData : germplasmListDataList) {
 			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, listData));
 			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData);
@@ -359,7 +359,7 @@ public class CrossingSettingsController extends SettingsController {
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 		importedCrossesList.setType(germplasmList.getType());
 		this.userSelection.setImportedCrossesList(importedCrossesList);
-		
+
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
 		return responseMap;

@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class CrossesListUtil {
 
 	public static final String TABLE_HEADER_LIST = "tableHeaderList";
 	public static final String LIST_DATA_TABLE = "listDataTable";
-	
+
 	public static final int ENTRY_INDEX = 0;
 	public static final int PARENTAGE_INDEX = 1;
 	public static final int ENTRY_CODE_INDEX = 2;
@@ -37,14 +38,14 @@ public class CrossesListUtil {
 
 		final Map<String, Object> dataMap = new HashMap<>();
 
-		dataMap.put(getTermNameFromOntology(ColumnLabels.ENTRY_ID), importedCrosses.getEntryId());
-		dataMap.put(getTermNameFromOntology(ColumnLabels.PARENTAGE), importedCrosses.getCross());
-		dataMap.put(getTermNameFromOntology(ColumnLabels.ENTRY_CODE), importedCrosses.getEntryCode());
-		dataMap.put(getTermNameFromOntology(ColumnLabels.FEMALE_PARENT), importedCrosses.getFemaleDesig());
-		dataMap.put(getTermNameFromOntology(ColumnLabels.FGID), importedCrosses.getFemaleGid());
-		dataMap.put(getTermNameFromOntology(ColumnLabels.MALE_PARENT), importedCrosses.getMaleDesig());
-		dataMap.put(getTermNameFromOntology(ColumnLabels.MGID), importedCrosses.getMaleGid());
-		dataMap.put(getTermNameFromOntology(ColumnLabels.SEED_SOURCE), importedCrosses.getSource());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_ID), importedCrosses.getEntryId());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.PARENTAGE), importedCrosses.getCross());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_CODE), importedCrosses.getEntryCode());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.FEMALE_PARENT), importedCrosses.getFemaleDesig());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.FGID), importedCrosses.getFemaleGid());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.MALE_PARENT), importedCrosses.getMaleDesig());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.MGID), importedCrosses.getMaleGid());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.SEED_SOURCE), importedCrosses.getSource());
 
 		return dataMap;
 	}
@@ -52,7 +53,8 @@ public class CrossesListUtil {
 	public Map<String, Object> generateDatatableDataMapWithDups(final List<String> tableHeaderList, final GermplasmListData crossesData) {
 		final Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), crossesData.getEntryId());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX), crossesData.getFemaleParent() + DEFAULT_SEPARATOR + crossesData.getMaleParent());
+		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX), crossesData.getFemaleParent() + CrossesListUtil.DEFAULT_SEPARATOR
+				+ crossesData.getMaleParent());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX), crossesData.getEntryCode());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX), crossesData.getFemaleParent());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FGID_INDEX), crossesData.getFgid());
@@ -68,7 +70,7 @@ public class CrossesListUtil {
 		importedCrosses.setCrossListId(crossesData.getId());
 		importedCrosses.setEntryId(crossesData.getEntryId());
 		importedCrosses.setGid(crossesData.getGid() != null ? Integer.toString(crossesData.getGid()) : null);
-		importedCrosses.setCross(crossesData.getFemaleParent() + DEFAULT_SEPARATOR + crossesData.getMaleParent());
+		importedCrosses.setCross(crossesData.getFemaleParent() + CrossesListUtil.DEFAULT_SEPARATOR + crossesData.getMaleParent());
 		importedCrosses.setEntryCode(crossesData.getEntryCode());
 		importedCrosses.setFemaleDesig(crossesData.getFemaleParent());
 		importedCrosses.setFemaleGid(String.valueOf(crossesData.getFgid()));
@@ -104,19 +106,19 @@ public class CrossesListUtil {
 	}
 
 	public List<String> getTableHeaders() {
-		
+
 		final List<String> tableHeaderList = new ArrayList<>();
-		
-		tableHeaderList.add(getTermNameFromOntology(ColumnLabels.ENTRY_ID));
-		tableHeaderList.add(getTermNameFromOntology(ColumnLabels.PARENTAGE));
-		tableHeaderList.add(getTermNameFromOntology(ColumnLabels.ENTRY_CODE));
-		tableHeaderList.add(getTermNameFromOntology(ColumnLabels.FEMALE_PARENT));
-		tableHeaderList.add(getTermNameFromOntology(ColumnLabels.FGID));
-		tableHeaderList.add(getTermNameFromOntology(ColumnLabels.MALE_PARENT));
-		tableHeaderList.add(getTermNameFromOntology(ColumnLabels.MGID));
-		tableHeaderList.add(getTermNameFromOntology(ColumnLabels.SEED_SOURCE));
-		tableHeaderList.add(getTermNameFromOntology(ColumnLabels.DUPLICATE));
-		
+
+		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.ENTRY_ID));
+		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.PARENTAGE));
+		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.ENTRY_CODE));
+		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.FEMALE_PARENT));
+		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.FGID));
+		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.MALE_PARENT));
+		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.MGID));
+		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.SEED_SOURCE));
+		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.DUPLICATE));
+
 		return tableHeaderList;
 	}
 

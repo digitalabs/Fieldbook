@@ -40,14 +40,11 @@ import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.pojos.LocationType;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.MethodType;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Constant;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -637,17 +634,7 @@ public class SettingsUtil {
 			final List<SettingDetail> removedFactors = new ArrayList<SettingDetail>();
 			final List<SettingDetail> removedConditions = new ArrayList<SettingDetail>();
 			
-			Map<DataType, List<String>> filterTypes = new HashMap<DataType, List<String>>();
-			ArrayList<String> methodList = new ArrayList<String>();
-			methodList.add(MethodType.MAN.getCode());
-			methodList.add(MethodType.DER.getCode());
-			filterTypes.put(DataType.BREEDING_METHOD, methodList);
-			
-			
-			List<String> locationList = new ArrayList<String>();;
-			locationList.add(LocationType.BREED.getCode());
-			filterTypes.put(DataType.LOCATION, locationList);	
-			
+		
 			if (dataset.getConditions() != null) {
 				// create a map of code and its id-code-name combination
 				final Map<String, String> idCodeNameMap = new HashMap<String, String>();

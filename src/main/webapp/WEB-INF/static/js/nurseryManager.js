@@ -721,6 +721,8 @@ function toggleLocationDropdown(rowIndex) {
 		+ '.favorite1')).is(':checked');
 	var selectedVal = '';
 	var showAll = true;
+	var filterLocations = $('#' + getJquerySafeId('filterLocations')).is(':checked');
+	var allLocations = $('#' + getJquerySafeId('allLocations')).is(':checked');
 
 	// get previously selected value
 	if ($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).select2('data')) {
@@ -733,22 +735,29 @@ function toggleLocationDropdown(rowIndex) {
 				false, null);
 
 	// get possible values based on checkbox
-	if (showFavorite) {
+	if(showFavorite){
+
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		showAll = false;
 		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
 				.parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $(
-			$('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-			.parent().find('.selectedValueFave')).val();
-	} else {
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
+			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+	}
+	else if (allMethod){
+
+		possibleValues = $('#allValuesJson' + rowIndex).text();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+				.parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
+			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+	}
+	else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
 		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValueFave')).val(selectedVal);
+				.parent().find('.selectedValue')).val(selectedVal);
 		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValue')).val();
+			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	}
-
 	// recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
 			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'), showAll, selectedVal);

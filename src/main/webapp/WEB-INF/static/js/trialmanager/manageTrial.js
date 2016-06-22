@@ -109,12 +109,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 				$rootScope.$on('$stateChangeStart',
 					function(event) {
-						if ($('.import-study-data').data('data-import') === '1') {
-							showAlertMessage('', importSaveDataWarningMessage);
-
-							event.preventDefault();
-						}
-						if (stockListImportNotSaved) {
+						if ($('.import-study-data').data('data-import') === '1' || stockListImportNotSaved) {
 							showAlertMessage('', importSaveDataWarningMessage);
 							event.preventDefault();
 						}

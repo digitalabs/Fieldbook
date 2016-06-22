@@ -31,20 +31,30 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.transaction.PlatformTransactionManager;
 
 public class StudyTreeControllerTest {
 
 	private static final String NEW_FOLDER_ID = "2";
+	
+	private static final String FOLDER_ID = "1";
 
 	private static final String PARENT_FOLDER_ID = "1";
 
 	private static final String FOLDER_NAME = "FOLDER 1";
 
+	private static final String CONTAINS_TRIALS = "The folder FOLDER 1 cannot be deleted because it contains trials";
+	
+	private static final String CONTAINS_NURSERIES = "The folder FOLDER 1 cannot be deleted because it contains nurseries";
+	
+	private static final String FOLDER_NOT_EMPTY = "The folder FOLDER 1 cannot be deleted because it is not empty";
+	
 	private Project selectedProject;
 
 	@Mock
@@ -164,5 +174,45 @@ public class StudyTreeControllerTest {
 
 		Assert.assertEquals("0", result.get(StudyTreeController.IS_SUCCESS));
 		Assert.assertEquals("Folder name is not unique", result.get(StudyTreeController.MESSAGE));
+	}
+	
+	@Test
+	public void testIsFolderEmptyTrue() {
+		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString(), Matchers.eq(StudyType.nurseriesAndTrials()))).thenReturn(true);
+		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.N.getName(), FOLDER_NAME);
+		Assert.assertEquals("The result's isSuccess attribute should be 1", "1", result.get(StudyTreeController.IS_SUCCESS));
+	}
+	
+	@Test
+	public void testIsFolderEmptyFalseContainsTrials() {
+		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString(), Matchers.eq(StudyType.nurseriesAndTrials()))).thenReturn(false);
+		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString(), Matchers.eq(StudyType.nurseries()))).thenReturn(true);
+		Mockito.when(this.messageSource.getMessage(Matchers.eq("browse.trial.delete.folder.contains.trials"), Matchers.eq(new Object[] {FOLDER_NAME}), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn(CONTAINS_TRIALS);
+		
+		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.N.getName(), FOLDER_NAME);
+		Assert.assertEquals("The result's isSuccess attribute should be 0", "0", result.get(StudyTreeController.IS_SUCCESS));		
+		Assert.assertEquals("The message should be '"+CONTAINS_TRIALS+"'", CONTAINS_TRIALS, result.get(StudyTreeController.MESSAGE));
+	}
+	
+	@Test
+	public void testIsFolderEmptyFalseContainsNurseries() {
+		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString(), Matchers.eq(StudyType.nurseriesAndTrials()))).thenReturn(false);
+		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString(), Matchers.eq(StudyType.trials()))).thenReturn(true);
+		Mockito.when(this.messageSource.getMessage(Matchers.eq("browse.nursery.delete.folder.contains.nurseries"), Matchers.eq(new Object[] {FOLDER_NAME}), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn(CONTAINS_NURSERIES);
+		
+		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.T.getName(), FOLDER_NAME);
+		Assert.assertEquals("The result's isSuccess attribute should be 0", "0", result.get(StudyTreeController.IS_SUCCESS));		
+		Assert.assertEquals("The message should be '"+CONTAINS_NURSERIES+"'", CONTAINS_NURSERIES, result.get(StudyTreeController.MESSAGE));
+	}
+	
+	@Test
+	public void testIsFolderEmptyFalseFolderEmpty() {
+		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString(), Matchers.eq(StudyType.nurseriesAndTrials()))).thenReturn(false);
+		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString(), Matchers.eq(StudyType.nurseries()))).thenReturn(false);
+		Mockito.when(this.messageSource.getMessage(Matchers.eq("browse.nursery.delete.folder.not.empty"), Matchers.eq(new Object[] {FOLDER_NAME}), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn(FOLDER_NOT_EMPTY);
+		
+		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.N.getName(), FOLDER_NAME);
+		Assert.assertEquals("The result's isSuccess attribute should be 0", "0", result.get(StudyTreeController.IS_SUCCESS));		
+		Assert.assertEquals("The message should be '"+FOLDER_NOT_EMPTY+"'", FOLDER_NOT_EMPTY, result.get(StudyTreeController.MESSAGE));
 	}
 }

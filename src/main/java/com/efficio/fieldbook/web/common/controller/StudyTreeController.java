@@ -71,49 +71,46 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
-	public String loadInitialTree(@PathVariable String isFolderOnly, @PathVariable String type) {
-		boolean isNursery = type != null && "N".equalsIgnoreCase(type) ? true : false;
+	public String loadInitialTree(@PathVariable final String isFolderOnly, @PathVariable final String type) {
+		final boolean isNursery = type != null && "N".equalsIgnoreCase(type) ? true : false;
 		try {
-			List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-			String localName = isNursery ? AppConstants.NURSERIES.getString() : AppConstants.TRIALS.getString();
-			TreeNode localTreeNode =
-					new TreeNode(StudyTreeController.LOCAL, localName, true, "lead", AppConstants.FOLDER_ICON_PNG.getString(),
-							this.getCurrentProgramUUID());
+			final List<TreeNode> rootNodes = new ArrayList<TreeNode>();
+			final String localName = isNursery ? AppConstants.NURSERIES.getString() : AppConstants.TRIALS.getString();
+			final TreeNode localTreeNode = new TreeNode(StudyTreeController.LOCAL, localName, true, "lead",
+					AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID());
 			rootNodes.add(localTreeNode);
 			return TreeViewUtil.convertTreeViewToJson(rootNodes);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 		}
 		return "[]";
 	}
 
-	private List<TreeNode> getChildNodes(String parentKey, boolean isNursery, boolean isFolderOnly) {
+	private List<TreeNode> getChildNodes(final String parentKey, final boolean isNursery, final boolean isFolderOnly) {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		if (parentKey != null && !"".equals(parentKey)) {
 			try {
 				if (StudyTreeController.LOCAL.equals(parentKey)) {
-					List<Reference> rootFolders =
-							this.studyDataManager.getRootFolders(this.getCurrentProgramUUID(), isNursery ? StudyType.nurseries()
-									: StudyType.trials());
+					final List<Reference> rootFolders = this.studyDataManager.getRootFolders(this.getCurrentProgramUUID(),
+							isNursery ? StudyType.nurseries() : StudyType.trials());
 					childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, false, true, isFolderOnly);
 				} else if (NumberUtils.isNumber(parentKey)) {
 					childNodes = this.getChildrenTreeNodes(parentKey, isNursery, isFolderOnly);
 				} else {
 					StudyTreeController.LOG.error("parentKey = " + parentKey + " is not a number");
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				StudyTreeController.LOG.error(e.getMessage(), e);
 			}
 		}
 		return childNodes;
 	}
 
-	private List<TreeNode> getChildrenTreeNodes(String parentKey, boolean isNursery, boolean isFolderOnly) {
+	private List<TreeNode> getChildrenTreeNodes(final String parentKey, final boolean isNursery, final boolean isFolderOnly) {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
-		int parentId = Integer.valueOf(parentKey);
-		List<Reference> folders =
-				this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID(), isNursery ? StudyType.nurseries()
-						: StudyType.trials());
+		final int parentId = Integer.valueOf(parentKey);
+		final List<Reference> folders = this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID(),
+				isNursery ? StudyType.nurseries() : StudyType.trials());
 
 		childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folders, false, true, isFolderOnly);
 		return childNodes;
@@ -121,13 +118,14 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/expandTree/{type}/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
-	public String expandTree(@PathVariable String parentKey, @PathVariable String isFolderOnly, @PathVariable String type) {
-		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
-		boolean isNursery = type != null && "N".equalsIgnoreCase(type) ? true : false;
+	public String expandTree(@PathVariable final String parentKey, @PathVariable final String isFolderOnly,
+			@PathVariable final String type) {
+		final boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
+		final boolean isNursery = type != null && "N".equalsIgnoreCase(type) ? true : false;
 		try {
-			List<TreeNode> childNodes = this.getChildNodes(parentKey, isNursery, isFolderOnlyBool);
+			final List<TreeNode> childNodes = this.getChildNodes(parentKey, isNursery, isFolderOnlyBool);
 			return TreeViewUtil.convertTreeViewToJson(childNodes);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 		}
 		return "[]";
@@ -135,15 +133,15 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveChildren/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
-	public String retrieveChildren(@PathVariable String parentKey, @PathVariable String isFolderOnly) {
-		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
+	public String retrieveChildren(@PathVariable final String parentKey, @PathVariable final String isFolderOnly) {
+		final boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
 		try {
 			if (StudyTreeController.LOCAL.equals(parentKey)) {
 				return this.getRootFolders(isFolderOnlyBool);
 			} else if (NumberUtils.isNumber(parentKey)) {
 
-				int parentId = Integer.valueOf(parentKey);
-				List<Reference> folders =
+				final int parentId = Integer.valueOf(parentKey);
+				final List<Reference> folders =
 						this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID(), StudyType.nurseriesAndTrials());
 				return TreeViewUtil.convertStudyFolderReferencesToJson(folders, false, true, isFolderOnlyBool);
 
@@ -151,19 +149,19 @@ public class StudyTreeController {
 				StudyTreeController.LOG.error("parentKey = " + parentKey + " is not a number");
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 		}
 
 		return "[]";
 	}
 
-	private String getRootFolders(boolean isFolderOnly) {
+	private String getRootFolders(final boolean isFolderOnly) {
 		try {
-			List<Reference> rootFolders =
+			final List<Reference> rootFolders =
 					this.studyDataManager.getRootFolders(this.getCurrentProgramUUID(), StudyType.nurseriesAndTrials());
 			return TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, false, true, isFolderOnly);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 		}
 		return "[]";
@@ -171,19 +169,19 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/has/observations/{studyId}/{studyName}", method = RequestMethod.GET)
-	public Map<String, String> hasObservations(@PathVariable int studyId, @PathVariable String studyName) {
-		Map<String, String> dataResults = new HashMap<String, String>();
+	public Map<String, String> hasObservations(@PathVariable final int studyId, @PathVariable final String studyName) {
+		final Map<String, String> dataResults = new HashMap<String, String>();
 
 		int datasetId;
 		try {
 			datasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
-			long observationCount = this.fieldbookMiddlewareService.countObservations(datasetId);
+			final long observationCount = this.fieldbookMiddlewareService.countObservations(datasetId);
 			if (observationCount > 0) {
 				dataResults.put(StudyTreeController.HAS_OBSERVATIONS, "1");
 			} else {
 				dataResults.put(StudyTreeController.HAS_OBSERVATIONS, "0");
 			}
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 			dataResults.put(StudyTreeController.HAS_OBSERVATIONS, "0");
 		}
@@ -193,17 +191,16 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/isNameUnique", method = RequestMethod.POST)
-	public Map<String, Object> isNameUnique(HttpServletRequest req) {
-		String studyId = req.getParameter("studyId");
-		String studyName = req.getParameter("name");
-		Integer studyIdInt = Integer.valueOf(studyId);
+	public Map<String, Object> isNameUnique(final HttpServletRequest req) {
+		final String studyId = req.getParameter("studyId");
+		final String studyName = req.getParameter("name");
+		final Integer studyIdInt = Integer.valueOf(studyId);
 
-		Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Map<String, Object> resultsMap = new HashMap<String, Object>();
 		try {
 
-			Integer studyIdDb =
-					this.fieldbookMiddlewareService.getProjectIdByNameAndProgramUUID(HtmlUtils.htmlEscape(studyName),
-							this.getCurrentProgramUUID());
+			final Integer studyIdDb = this.fieldbookMiddlewareService.getProjectIdByNameAndProgramUUID(HtmlUtils.htmlEscape(studyName),
+					this.getCurrentProgramUUID());
 
 			if (studyIdDb == null) {
 				// meaning there is no study
@@ -215,7 +212,7 @@ public class StudyTreeController {
 				resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
 			resultsMap.put(StudyTreeController.MESSAGE, e.getMessage());
@@ -236,7 +233,7 @@ public class StudyTreeController {
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus status) {
+				protected void doInTransactionWithoutResult(final TransactionStatus status) {
 
 					final String parentKey = req.getParameter("parentFolderId");
 					final String folderName = req.getParameter("folderName");
@@ -244,27 +241,26 @@ public class StudyTreeController {
 
 					if (folderName.equalsIgnoreCase(AppConstants.NURSERIES.getString())
 							|| folderName.equalsIgnoreCase(AppConstants.TRIALS.getString())) {
-						throw new MiddlewareQueryException(StudyTreeController.this.messageSource.getMessage("folder.name.not.unique",
-								null, locale));
+						throw new MiddlewareQueryException(
+								StudyTreeController.this.messageSource.getMessage("folder.name.not.unique", null, locale));
 					}
 					Integer parentFolderId = Integer.parseInt(parentKey);
 					if (StudyTreeController.this.studyDataManager.isStudy(parentFolderId)) {
-						DmsProject project = StudyTreeController.this.studyDataManager.getParentFolder(parentFolderId);
+						final DmsProject project = StudyTreeController.this.studyDataManager.getParentFolder(parentFolderId);
 						if (project == null) {
 							throw new MiddlewareQueryException("Parent folder cannot be null");
 						}
 						parentFolderId = project.getProjectId();
 					}
-					int newFolderId =
-							StudyTreeController.this.studyDataManager.addSubFolder(parentFolderId, folderName, folderName,
-									StudyTreeController.this.getCurrentProgramUUID());
+					final int newFolderId = StudyTreeController.this.studyDataManager.addSubFolder(parentFolderId, folderName, folderName,
+							StudyTreeController.this.getCurrentProgramUUID());
 					resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 					resultsMap.put(StudyTreeController.NEW_FOLDER_ID, Integer.toString(newFolderId));
 
 				}
 			});
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 
 			StudyTreeController.LOG.error(e.getMessage(), e);
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
@@ -277,19 +273,19 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/renameStudyFolder", method = RequestMethod.POST)
-	public Map<String, Object> renameStudyFolder(HttpServletRequest req) {
-		Map<String, Object> resultsMap = new HashMap<String, Object>();
-		Locale locale = LocaleContextHolder.getLocale();
+	public Map<String, Object> renameStudyFolder(final HttpServletRequest req) {
+		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Locale locale = LocaleContextHolder.getLocale();
 		try {
-			String newFolderName = req.getParameter("newFolderName");
-			String folderId = req.getParameter("folderId");
+			final String newFolderName = req.getParameter("newFolderName");
+			final String folderId = req.getParameter("folderId");
 			if (newFolderName.equalsIgnoreCase(AppConstants.NURSERIES.getString())
 					|| newFolderName.equalsIgnoreCase(AppConstants.TRIALS.getString())) {
 				throw new MiddlewareQueryException(this.messageSource.getMessage("folder.name.not.unique", null, locale));
 			}
 			this.studyDataManager.renameSubFolder(newFolderName, Integer.parseInt(folderId), this.getCurrentProgramUUID());
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
 			resultsMap.put(StudyTreeController.MESSAGE, e.getMessage());
@@ -299,14 +295,14 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/deleteStudyFolder", method = RequestMethod.POST)
-	public Map<String, Object> deleteStudyListFolder(HttpServletRequest req) {
-		Map<String, Object> resultsMap = new HashMap<String, Object>();
-		Locale locale = LocaleContextHolder.getLocale();
+	public Map<String, Object> deleteStudyListFolder(final HttpServletRequest req) {
+		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Locale locale = LocaleContextHolder.getLocale();
 		try {
-			String folderId = req.getParameter("folderId");
+			final String folderId = req.getParameter("folderId");
 			this.studyDataManager.deleteEmptyFolder(Integer.parseInt(folderId), this.getCurrentProgramUUID());
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
 			resultsMap.put(StudyTreeController.MESSAGE,
@@ -318,40 +314,41 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/isFolderEmpty/{folderId}/{studyType}/{folderName}", method = RequestMethod.POST)
-	public Map<String, Object> isFolderEmpty(HttpServletRequest req, @PathVariable String folderId, @PathVariable String studyType, @PathVariable String folderName) {
-		Map<String, Object> resultsMap = new HashMap<String, Object>();
-		Locale locale = LocaleContextHolder.getLocale();
-		boolean isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(), StudyType.nurseriesAndTrials());
-		if(isFolderEmpty){
+	public Map<String, Object> isFolderEmpty(final HttpServletRequest req, @PathVariable final String folderId,
+			@PathVariable final String studyType, @PathVariable final String folderName) {
+		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Locale locale = LocaleContextHolder.getLocale();
+		boolean isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(),
+				StudyType.nurseriesAndTrials());
+		if (isFolderEmpty) {
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 		} else {
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
-			List<StudyType> studyTypeList = studyType.equals(StudyType.N.getName())? StudyType.nurseries():StudyType.trials();
+			final List<StudyType> studyTypeList = studyType.equals(StudyType.N.getName()) ? StudyType.nurseries() : StudyType.trials();
 			isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(), studyTypeList);
 			String message;
-			if(!isFolderEmpty){
+			if (!isFolderEmpty) {
 				message = "browse.nursery.delete.folder.not.empty";
 			} else {
-				message = studyType.equals(StudyType.N.getName())? "browse.trial.delete.folder.contains.trials":"browse.nursery.delete.folder.contains.nurseries";
+				message = studyType.equals(StudyType.N.getName()) ? "browse.trial.delete.folder.contains.trials"
+						: "browse.nursery.delete.folder.contains.nurseries";
 			}
-			resultsMap.put(StudyTreeController.MESSAGE, this.messageSource.getMessage(message, new Object[] {folderName},
-					locale));
-			
+			resultsMap.put(StudyTreeController.MESSAGE, this.messageSource.getMessage(message, new Object[] {folderName}, locale));
 		}
 		return resultsMap;
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/moveStudyFolder", method = RequestMethod.POST)
-	public Map<String, Object> moveStudyFolder(HttpServletRequest req) {
-		String sourceId = req.getParameter("sourceId");
-		String targetId = req.getParameter("targetId");
-		String isStudy = req.getParameter("isStudy");
-		boolean isAStudy = "1".equalsIgnoreCase(isStudy) ? true : false;
-		Map<String, Object> resultsMap = new HashMap<String, Object>();
+	public Map<String, Object> moveStudyFolder(final HttpServletRequest req) {
+		final String sourceId = req.getParameter("sourceId");
+		final String targetId = req.getParameter("targetId");
+		final String isStudy = req.getParameter("isStudy");
+		final boolean isAStudy = "1".equalsIgnoreCase(isStudy) ? true : false;
+		final Map<String, Object> resultsMap = new HashMap<String, Object>();
 		try {
 			this.studyDataManager.moveDmsProject(Integer.parseInt(sourceId), Integer.parseInt(targetId), isAStudy);
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 			throw new MiddlewareQueryException(e.getMessage(), e);
 		}
@@ -362,23 +359,23 @@ public class StudyTreeController {
 		return this.contextUtil.getCurrentProgramUUID();
 	}
 
-	void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+	void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
-	void setStudyDataManager(StudyDataManager studyDataManager) {
+	void setStudyDataManager(final StudyDataManager studyDataManager) {
 		this.studyDataManager = studyDataManager;
 	}
 
-	void setMessageSource(MessageSource messageSource) {
+	void setMessageSource(final MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 
-	void setContextUtil(ContextUtil contextUtil) {
+	void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}
 
-	void setRequest(HttpServletRequest request) {
+	void setRequest(final HttpServletRequest request) {
 		this.request = request;
 	}
 }

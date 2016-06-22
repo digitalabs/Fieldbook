@@ -204,7 +204,7 @@ public class CreateNurseryForm {
 
 	private String columnOrders;
 	private Integer germplasmListId;
-	private Map<DataType, List<String>> filterTypes;
+
 
 	/**
 	 * Gets the project id.
@@ -1290,11 +1290,4 @@ public class CreateNurseryForm {
 		return germplasmListId;
 	}
 
-	public Map<DataType, List<String>> getFilterTypes() {
-		return filterTypes;
-	}
-
-	public void setFilterTypes(Map<DataType, List<String>> filterTypes) {
-		this.filterTypes = filterTypes;
-	}
 }

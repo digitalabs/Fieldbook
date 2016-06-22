@@ -288,20 +288,17 @@ public class ManageSettingsController extends SettingsController {
 					List<ValueReference> possibleValuesFavorite =
 							this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID());
 					
-					final List<ValueReference> filteredValues =
-							this.fieldbookService.getFilteredValues(var.getCvTermId(), this.getCurrentProject().getUniqueID(), filterTypes);
-					final List<ValueReference> filteredAndFavoriteValues =
-							this.fieldbookService.getFilteredAndFavoriteValues(var.getCvTermId(), this.getCurrentProject().getUniqueID(), filterTypes);
+					final List<ValueReference> allValues =
+							this.fieldbookService.getAllPossibleValuesWithFilter(var.getCvTermId(), false);
+
 					
 					
 					newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
-					newSetting.setFilteredValues(filteredValues);
-					newSetting.setFilteredFavoriteValues(filteredAndFavoriteValues);
-					
+					newSetting.setAllValues(allValues);
+										
 					newSetting.setPossibleValuesToJson(possibleValues);
 					newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-					newSetting.setFilteredValuesToJson(filteredValues);
-					newSetting.setFilteredFavoriteValuesToJson(filteredAndFavoriteValues);
+					newSetting.setAllValuesToJson(allValues);
 					newSettings.add(newSetting);
 				}
 			}

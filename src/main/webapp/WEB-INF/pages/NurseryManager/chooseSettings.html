@@ -71,12 +71,9 @@
 							 class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
 						</div>
 						
-						<!-- filtered and filteredFavorite values -->						
-						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'filteredValuesJson' + ${rowStat.index}"
-							 class="filteredValuesJson" style="display:none" th:text="${nurseryLevelVariable.filteredValuesJson}">
-						</div>
-						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'filteredFavoriteValuesJson' + ${rowStat.index}"
-							 class="filteredFavoriteValuesJson" style="display:none" th:text="${nurseryLevelVariable.filteredFavoriteValuesJson}">
+						<!-- all values -->						
+						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'allValuesJson' + ${rowStat.index}"
+							 class="allValuesJson" style="display:none" th:text="${nurseryLevelVariable.allValuesJson}">
 						</div>
 
 						<input  maxlength="250"  th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}"
@@ -213,6 +210,7 @@
 
 			<div class=" row collapse in" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}" th:remove="tag">
 				<div class="form-group">
+					<br></br>
 					<span th:text="#{nursery.create.nursery.method.note}">If you plan to advance the nursery with a single method, please select it below</span>
 				</div>
 
@@ -233,12 +231,9 @@
 						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
 							 class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
 						</div>
-						<!-- filtered and filteredFavorite values -->						
-						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'filteredValuesJson' + ${rowStat.index}"
-							 class="filteredValuesJson" style="display:none" th:text="${nurseryLevelVariable.filteredValuesJson}">
-						</div>
-						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'filteredFavoriteValuesJson' + ${rowStat.index}"
-							 class="filteredFavoriteValuesJson" style="display:none" th:text="${nurseryLevelVariable.filteredFavoriteValuesJson}">
+						<!-- all values -->						
+						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'allValuesJson' + ${rowStat.index}"
+							 class="allValuesJson" style="display:none" th:text="${nurseryLevelVariable.allValuesJson}">
 						</div>
 					</div>
 					<div class="col-xs-4 breeding-method-note">
@@ -249,12 +244,12 @@
 				<!-- radio buttons for filtering -->
 				<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
 					<label class="radio-inline">
-									<input class="instanceNumber" id="filterMethods" type="checkbox" value="1" checked="true" th:field="*{studyLevelVariables[__${rowStat.index}__].filtered}"
-										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
+									<input id="filterMethods" name="filter" type="radio" checked="true"
+										onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
 									<span >Derivative and Maintenance methods</span>
-									&nbsp;&nbsp;
-									<input class="instanceNumber" id="allMethods" type="checkbox" value="2" checked="false" th:field="*{studyLevelVariables[__${rowStat.index}__].filtered}"
-										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
+									&nbsp;&nbsp; 
+									<input id="allMethods" name="filter" type="radio" checked="false"
+										onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
 									<span >All methods</span>
 					</label>
 				</div>

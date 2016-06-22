@@ -26,12 +26,10 @@ public class SettingDetail implements Serializable {
 	private SettingVariable variable;
 	private List<ValueReference> possibleValues;
 	private List<ValueReference> possibleValuesFavorite;
-	private List<ValueReference> filteredValues;
-	private List<ValueReference> filteredFavoriteValues;
+	private List<ValueReference> allValues;
 	private String possibleValuesJson;
 	private String possibleValuesFavoriteJson;
-	private String filteredValuesJson;
-	private String filteredFavoriteValuesJson;
+	private String allValuesJson;
 	private String value;
 	private boolean isDeletable;
 	private boolean isFavorite;
@@ -191,14 +189,6 @@ public class SettingDetail implements Serializable {
 	public void setVariableType(VariableType variableType) {
 		this.variableType = variableType;
 	}
-	
-	public List<ValueReference> getFilteredValues() {
-		return filteredValues;
-	}
-
-	public void setFilteredValues(List<ValueReference> filteredValues) {
-		this.filteredValues = filteredValues;
-	}
 
 	public boolean isFiltered() {
 		return isFiltered;
@@ -206,14 +196,6 @@ public class SettingDetail implements Serializable {
 
 	public void setFiltered(boolean isFiltered) {
 		this.isFiltered = isFiltered;
-	}
-
-	public List<ValueReference> getFilteredFavoriteValues() {
-		return filteredFavoriteValues;
-	}
-
-	public void setFilteredFavoriteValues(List<ValueReference> filteredFavoriteValues) {
-		this.filteredFavoriteValues = filteredFavoriteValues;
 	}
 
 	public String getDisplayValue() {
@@ -282,39 +264,29 @@ public class SettingDetail implements Serializable {
 		Debug.println(indent + 3, "variableType: " + this.variableType);
 	}
 
-	public String getFilteredValuesJson() {
-		return filteredValuesJson;
+	public List<ValueReference> getAllValues() {
+		return allValues;
 	}
 
-	public void setFilteredValuesToJson(List<ValueReference> filteredValues) {
-		try {
-			ObjectMapper om = new ObjectMapper();
-			this.setFilteredValuesJson(om.writeValueAsString(filteredValues));
-		} catch (Exception e) {
-			this.setPossibleValuesJson("err");
-		}
+	public void setAllValues(List<ValueReference> allValues) {
+		this.allValues = allValues;
+	}
+
+
+	public String getAllValuesJson() {
+		return allValuesJson;
+	}
+
+	public void setAllValuesJson(String allValuesJson) {
+		this.allValuesJson = allValuesJson;
 	}
 	
-	public void setFilteredValuesJson(String filteredValuesJson) {
-		this.filteredValuesJson = filteredValuesJson;
-	}
-
-	public String getFilteredFavoriteValuesJson() {
-		return filteredFavoriteValuesJson;
-	}
-
-	public void setFilteredFavoriteValuesToJson(List<ValueReference> filteredFavoriteValues) {
+	public void setAllValuesToJson(List<ValueReference> allValues) {
 		try {
 			ObjectMapper om = new ObjectMapper();
-			this.setFilteredFavoriteValuesJson(om.writeValueAsString(filteredFavoriteValues));
+			this.setAllValuesJson(om.writeValueAsString(allValues));
 		} catch (Exception e) {
-			this.setPossibleValuesJson("err");
+			this.setPossibleValuesFavoriteJson("err");
 		}
 	}
-	
-	public void setFilteredFavoriteValuesJson(String filteredFavoriteValuesJson) {
-		this.filteredFavoriteValuesJson = filteredFavoriteValuesJson;
-	}
-
-
 }

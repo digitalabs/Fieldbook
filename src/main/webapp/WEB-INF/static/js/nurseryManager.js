@@ -508,8 +508,46 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 			newRow = newRow + '</div>';
 
 		} else if (settingDetail.variable.cvTermId == locationId) {
-			// show favorite location
+			
 			locMethodCbxId = name + ctr;
+			//show filter types
+			newRow = newRow
+			//FIXME localise
+			+ '<div class="possibleValuesDiv"><span class="fbk-filter-header">'
+			+ $.fieldbookMessages.showFavoriteLocationHeader
+			+' </span><input type="checkbox" id="'
+			+ name
+			+ ctr
+			+ '.favorite1"'
+			+ ' name="'
+			+ name
+			+ '['
+			+ ctr
+			+ '].favorite"'
+			+ ' onclick="javascript: toggleLocationDropdown('
+			+ ctr
+			+ ');" />'
+			+ '<input type="hidden" name="_'
+			+ name
+			+ '['
+			+ ctr
+			+ '].favorite" value="on" /> '
+			+ '<span>&nbsp;&nbsp;'
+			+ showFavoriteLocationLabel
+			+ '</span></div>'
+			+ '<div id="possibleValuesJson'
+			+ ctr
+			+ '" class="possibleValuesJson" style="display:none">'
+			+ JSON.stringify(settingDetail.possibleValues)
+			+ '</div><div id="possibleValuesFavoriteJson'
+			+ ctr
+			+ '" class="possibleValuesFavoriteJson" style="display:none">'
+			+ JSON.stringify(settingDetail.possibleValuesFavorite)
+			+ '</div>';
+			
+			
+			
+			// show favorite location
 			newRow = newRow
 					//FIXME localise
 					+ '<div class="possibleValuesDiv"><span class="fbk-filter-header">'
@@ -629,7 +667,7 @@ function toggleMethodDropdown(rowIndex) {
 	var showFavorite = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex
 		+ '.favorite1')).is(':checked');
 	var selectedVal = '';
-	var filtermethod = $('#' + getJquerySafeId('filterMethods')).is(':checked');
+	var filterMethod = $('#' + getJquerySafeId('filterMethods')).is(':checked');
 	var allMethod = $('#' + getJquerySafeId('allMethods')).is(':checked');
 
 	// get previously selected value
@@ -643,32 +681,26 @@ function toggleMethodDropdown(rowIndex) {
 			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),
 			false, null);
 	
-	if(showFavorite && filterMethod){
-		// 2
-		possibleValues = $('#filteredFavoriteValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
-	}
-	else if (showFavorite && allMethod){
-		//3
+
+	// get possible values based on checkbox
+
+	if(showFavorite){
+
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
 		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
 				.parent().find('.selectedValue')).val(selectedVal);
 		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
 			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	}
-	else if(!showFavorite && filterMethod){
-		//1
-		possibleValues = $('#filteredValuesJson' + rowIndex).text();
+	else if (allMethod){
+
+		possibleValues = $('#allValuesJson' + rowIndex).text();
 		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
 				.parent().find('.selectedValue')).val(selectedVal);
 		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
 			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	}
-	else{
-		//4
+	else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
 		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
 				.parent().find('.selectedValue')).val(selectedVal);
@@ -676,20 +708,7 @@ function toggleMethodDropdown(rowIndex) {
 			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	}
 
-	// get possible values based on checkbox
-	/*if (showFavorite) {
-		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
-	} else {
-		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValue')).val();
-	}*/
+
 	// recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
 			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),

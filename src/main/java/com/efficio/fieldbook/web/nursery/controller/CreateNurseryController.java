@@ -478,18 +478,7 @@ public class CreateNurseryController extends SettingsController {
 		form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + ","
 				+ AppConstants.FIXED_NURSERY_VARIABLES.getString());
 		form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
-		
-		Map<DataType, List<String>> filterTypes = new HashMap<DataType, List<String>>();
-		ArrayList<String> methodList = new ArrayList<String>();
-		methodList.add(MethodType.MAN.getCode());
-		methodList.add(MethodType.DER.getCode());
-		filterTypes.put(DataType.BREEDING_METHOD, methodList);
-		
-		
-		List<String> locationList = new ArrayList<String>();;
-		locationList.add(LocationType.BREED.getCode());
-		filterTypes.put(DataType.LOCATION, locationList);
-		form.setFilterTypes(filterTypes);
+
 		
 		try {
 			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.getCurrentIbdbUserId()));
@@ -614,26 +603,19 @@ public class CreateNurseryController extends SettingsController {
 			if (selectedVariables != null && !selectedVariables.isEmpty()) {
 				for (final SettingVariable var : selectedVariables) {
 					final Operation operation = this.removeVarFromDeletedList(var, mode);
-					Map<DataType, List<String>> types = form.getFilterTypes();
+
 					var.setOperation(operation);
 					this.populateSettingVariable(var);
 					final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
 					final SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
 					final List<ValueReference> possibleValuesFavorite =
 							this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID());					
-					final List<ValueReference> filteredValues =
-							this.fieldbookService.getFilteredValues(var.getCvTermId(), this.getCurrentProject().getUniqueID(), types);
-					final List<ValueReference> filteredAndFavoriteValues =
-							this.fieldbookService.getFilteredAndFavoriteValues(var.getCvTermId(), this.getCurrentProject().getUniqueID(), types);
 					
 					newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
-					newSetting.setFilteredValues(filteredValues);
-					newSetting.setFilteredFavoriteValues(filteredAndFavoriteValues);
+
 					
 					newSetting.setPossibleValuesToJson(possibleValues);
 					newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-					newSetting.setFilteredValuesToJson(filteredValues);
-					newSetting.setFilteredFavoriteValuesToJson(filteredAndFavoriteValues);
 					
 					newSettings.add(newSetting);
 				}

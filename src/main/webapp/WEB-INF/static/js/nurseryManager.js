@@ -511,7 +511,10 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 			// show favorite location
 			locMethodCbxId = name + ctr;
 			newRow = newRow
-					+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
+					//FIXME localise
+					+ '<div class="possibleValuesDiv"><span class="fbk-filter-header">'
+					+ $.fieldbookMessages.showFavoriteLocationHeader
+					+' </span><input type="checkbox" id="'
 					+ name
 					+ ctr
 					+ '.favorite1"'

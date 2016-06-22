@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -25,6 +27,8 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.ontology.api.OntologyPropertyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.manager.ontology.daoElements.VariableFilter;
+import org.generationcp.middleware.pojos.LocationType;
+import org.generationcp.middleware.pojos.MethodType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -264,14 +268,40 @@ public class ManageSettingsController extends SettingsController {
 			if (selectedVariables != null && !selectedVariables.isEmpty()) {
 				for (SettingVariable var : selectedVariables) {
 					Operation operation = this.removeVarFromDeletedList(var, mode);
-
+					
+					Map<DataType, List<String>> filterTypes = new HashMap<DataType, List<String>>();
+					ArrayList<String> methodList = new ArrayList<String>();
+					methodList.add(MethodType.MAN.getCode());
+					methodList.add(MethodType.DER.getCode());
+					filterTypes.put(DataType.BREEDING_METHOD, methodList);
+					
+					
+					List<String> locationList = new ArrayList<String>();;
+					locationList.add(LocationType.BREED.getCode());
+					filterTypes.put(DataType.LOCATION, locationList);				
+					
+					
 					var.setOperation(operation);
 					this.populateSettingVariable(var);
 					List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
 					SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
 					List<ValueReference> possibleValuesFavorite =
 							this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID());
+					
+					final List<ValueReference> filteredValues =
+							this.fieldbookService.getFilteredValues(var.getCvTermId(), this.getCurrentProject().getUniqueID(), filterTypes);
+					final List<ValueReference> filteredAndFavoriteValues =
+							this.fieldbookService.getFilteredAndFavoriteValues(var.getCvTermId(), this.getCurrentProject().getUniqueID(), filterTypes);
+					
+					
 					newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
+					newSetting.setFilteredValues(filteredValues);
+					newSetting.setFilteredFavoriteValues(filteredAndFavoriteValues);
+					
+					newSetting.setPossibleValuesToJson(possibleValues);
+					newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+					newSetting.setFilteredValuesToJson(filteredValues);
+					newSetting.setFilteredFavoriteValuesToJson(filteredAndFavoriteValues);
 					newSettings.add(newSetting);
 				}
 			}

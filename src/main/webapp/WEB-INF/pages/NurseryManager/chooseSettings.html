@@ -249,11 +249,11 @@
 				<!-- radio buttons for filtering -->
 				<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
 					<label class="radio-inline">
-									<input class="instanceNumber"  type="radio" value="1" th:field="*{studyLevelVariables[__${rowStat.index}__].filtered}"
+									<input class="instanceNumber" id="filterMethods" type="checkbox" value="1" checked="true" th:field="*{studyLevelVariables[__${rowStat.index}__].filtered}"
 										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
 									<span >Derivative and Maintenance methods</span>
 									&nbsp;&nbsp;
-									<input class="instanceNumber"  type="radio" value="2" th:field="*{!studyLevelVariables[__${rowStat.index}__].filtered}"
+									<input class="instanceNumber" id="allMethods" type="checkbox" value="2" checked="false" th:field="*{studyLevelVariables[__${rowStat.index}__].filtered}"
 										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
 									<span >All methods</span>
 					</label>

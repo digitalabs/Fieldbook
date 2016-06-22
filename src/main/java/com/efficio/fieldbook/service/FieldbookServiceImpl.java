@@ -1217,10 +1217,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 			selectedTypes = types.get(DataType.LOCATION);
 			for (Iterator<String> iterator = selectedTypes.iterator(); iterator.hasNext();) {
 				String type = (String) iterator.next();
-				if (LocationType.BREED.equals(type)) {
+				if (LocationType.BREED.getCode().equals(type)) {
 					filteredValues.addAll(this
 							.convertLocationsToValueReferences(this.getAllBreedingLocationsByUniqueID(programUUID)));
-				} else if (LocationType.SSTORE.equals(type)) {
+				} else if (LocationType.SSTORE.getCode().equals(type)) {
 					filteredValues.addAll(this
 							.convertLocationsToValueReferences(this.getAllStorageLocationsByUniqueID(programUUID)));
 				}

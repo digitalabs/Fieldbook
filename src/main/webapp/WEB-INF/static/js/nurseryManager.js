@@ -629,6 +629,8 @@ function toggleMethodDropdown(rowIndex) {
 	var showFavorite = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex
 		+ '.favorite1')).is(':checked');
 	var selectedVal = '';
+	var filtermethod = $('#' + getJquerySafeId('filterMethods')).is(':checked');
+	var allMethod = $('#' + getJquerySafeId('allMethods')).is(':checked');
 
 	// get previously selected value
 	if ($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).select2('data')) {
@@ -640,9 +642,42 @@ function toggleMethodDropdown(rowIndex) {
 	initializePossibleValuesCombo([], '#'
 			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),
 			false, null);
+	
+	if(showFavorite && filterMethod){
+		// 2
+		possibleValues = $('#filteredFavoriteValuesJson' + rowIndex).text();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+				.parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
+			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+	}
+	else if (showFavorite && allMethod){
+		//3
+		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+				.parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
+			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+	}
+	else if(!showFavorite && filterMethod){
+		//1
+		possibleValues = $('#filteredValuesJson' + rowIndex).text();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+				.parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
+			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+	}
+	else{
+		//4
+		possibleValues = $('#possibleValuesJson' + rowIndex).text();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+				.parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
+			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+	}
 
 	// get possible values based on checkbox
-	if (showFavorite) {
+	/*if (showFavorite) {
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
 		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
 				.parent().find('.selectedValue')).val(selectedVal);
@@ -654,7 +689,7 @@ function toggleMethodDropdown(rowIndex) {
 			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val(selectedVal);
 		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
 			+ rowIndex + '.value')).parent().find('.selectedValue')).val();
-	}
+	}*/
 	// recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
 			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),

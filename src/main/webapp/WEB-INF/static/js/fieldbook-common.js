@@ -2345,13 +2345,13 @@ function createFolder() {
 function deleteFolder(object) {
 	'use strict';
 
-	var currentFolderName,
+	if (!$(object).hasClass('disable-image')) {
+		var currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title,
 		isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder,
 		deleteConfirmationText,
-		studyType = isNursery()?'N':'T';
-	var folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
-	if (!$(object).hasClass('disable-image')) {
-		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
+		studyType = isNursery()?'N':'T',
+		folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
+		
 		if (isFolder) {
 			$.ajax({
 				url: '/Fieldbook/StudyTreeManager/isFolderEmpty/'+folderId+'/'+studyType+'/'+currentFolderName,

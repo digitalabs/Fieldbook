@@ -317,6 +317,31 @@ public class StudyTreeController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/isFolderEmpty/{folderId}/{studyType}/{folderName}", method = RequestMethod.POST)
+	public Map<String, Object> isFolderEmpty(HttpServletRequest req, @PathVariable String folderId, @PathVariable String studyType, @PathVariable String folderName) {
+		Map<String, Object> resultsMap = new HashMap<String, Object>();
+		Locale locale = LocaleContextHolder.getLocale();
+		boolean isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(), StudyType.nurseriesAndTrials());
+		if(isFolderEmpty){
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
+		} else {
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
+			List<StudyType> studyTypeList = studyType.equals(StudyType.N.getName())? StudyType.nurseries():StudyType.trials();
+			isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(), studyTypeList);
+			String message;
+			if(!isFolderEmpty){
+				message = "browse.nursery.delete.folder.not.empty";
+			} else {
+				message = studyType.equals(StudyType.N.getName())? "browse.trial.delete.folder.contains.trials":"browse.nursery.delete.folder.contains.nurseries";
+			}
+			resultsMap.put(StudyTreeController.MESSAGE, this.messageSource.getMessage(message, new Object[] {folderName},
+					locale));
+			
+		}
+		return resultsMap;
+	}
+	
+	@ResponseBody
 	@RequestMapping(value = "/moveStudyFolder", method = RequestMethod.POST)
 	public Map<String, Object> moveStudyFolder(HttpServletRequest req) {
 		String sourceId = req.getParameter("sourceId");

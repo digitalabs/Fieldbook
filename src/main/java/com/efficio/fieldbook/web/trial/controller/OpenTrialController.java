@@ -63,6 +63,8 @@ import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
@@ -187,6 +189,7 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(value = "/{trialId}", method = RequestMethod.GET)
 	public String openTrial(@ModelAttribute("createTrialForm") final CreateTrialForm form, @PathVariable final Integer trialId,
 			final Model model, final HttpSession session, final RedirectAttributes redirectAttributes) {
+		Monitor monitor = MonitorFactory.start("OpenTrial.bms.fieldbook.OpenTrialController.openTrial");
 		this.clearSessionData(session);
 		try {
 			if (trialId != null && trialId != 0) {
@@ -226,6 +229,8 @@ public class OpenTrialController extends BaseTrialController {
 					this.errorHandlerService.getErrorMessagesAsString(e.getCode(), new String[] {AppConstants.TRIAL.getString(),
 							StringUtils.capitalize(AppConstants.TRIAL.getString()), AppConstants.TRIAL.getString()}, "\n"));
 			return "redirect:" + ManageTrialController.URL;
+		} finally {
+			monitor.stop();
 		}
 	}
 

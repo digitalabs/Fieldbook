@@ -78,6 +78,8 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -1156,26 +1158,36 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public void saveStudyImportedCrosses(final List<Integer> crossesIds, final Integer studyId) {
-		if (crossesIds != null && !crossesIds.isEmpty()) {
-			for (final Integer crossesId : crossesIds) {
-				this.fieldbookMiddlewareService.updateGermlasmListInfoStudy(crossesId, studyId != null ? studyId : 0);
+		final Monitor monitor = MonitorFactory.start("CreateTrial.bms.fieldbook.FieldbookServiceImpl.saveStudyImportedCrosses");
+		try {
+			if (crossesIds != null && !crossesIds.isEmpty()) {
+				for (final Integer crossesId : crossesIds) {
+					this.fieldbookMiddlewareService.updateGermlasmListInfoStudy(crossesId, studyId != null ? studyId : 0);
+				}
 			}
+		} finally {
+			monitor.stop();
 		}
-
 	}
 
 	@Override
 	public void saveStudyColumnOrdering(final Integer studyId, final String studyName, final String columnOrderDelimited,
 			final Workbook workbook) {
-		final List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
-		if (studyId != null && !columnOrdersList.isEmpty()) {
-			this.fieldbookMiddlewareService.saveStudyColumnOrdering(studyId, studyName, columnOrdersList);
-			workbook.setColumnOrderedLists(columnOrdersList);
-		} else {
-			if (studyId != null && workbook.getStudyDetails() != null) {
-				workbook.getStudyDetails().setId(studyId);
+
+		final Monitor monitor = MonitorFactory.start("CreateTrial.bms.fieldbook.FieldbookServiceImpl.saveStudyColumnOrdering");
+		try {
+			final List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
+			if (studyId != null && !columnOrdersList.isEmpty()) {
+				this.fieldbookMiddlewareService.saveStudyColumnOrdering(studyId, studyName, columnOrdersList);
+				workbook.setColumnOrderedLists(columnOrdersList);
+			} else {
+				if (studyId != null && workbook.getStudyDetails() != null) {
+					workbook.getStudyDetails().setId(studyId);
+				}
+				this.fieldbookMiddlewareService.setOrderVariableByRank(workbook);
 			}
-			this.fieldbookMiddlewareService.setOrderVariableByRank(workbook);
+		} finally {
+			monitor.stop();
 		}
 
 	}

@@ -200,6 +200,15 @@
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- JAMon performance monitoring. -->
+		<dependency>
+			<groupId>com.jamonapi</groupId>
+			<artifactId>jamon</artifactId>
+			<version>2.81</version>
+			<scope>provided</scope>
+		</dependency>
+		
 		<!-- IBPCommons Dependency -->
 		<dependency>
 			<groupId>org.generationcp</groupId>

@@ -27,7 +27,6 @@ import java.util.StringTokenizer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -68,7 +67,6 @@ import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.hazelcast.util.StringUtil;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
@@ -291,7 +289,7 @@ public class SettingsUtil {
 					variable.setName(detailFromSession.getVariable().getName());
 					variable.setOperation(detailFromSession.getVariable().getOperation());
 
-					if (isDesignGenerated && !StringUtil.isNullOrEmpty(detailFromSession.getValue())
+					if (isDesignGenerated && !StringUtils.isBlank(detailFromSession.getValue())
 							&& !detailFromSession.getValue().equalsIgnoreCase("Please Choose")) {
 						detailWithValue.setValue(detailFromSession.getValue());
 					}

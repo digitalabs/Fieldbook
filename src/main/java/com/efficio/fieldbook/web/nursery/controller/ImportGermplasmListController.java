@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -79,7 +80,8 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.hazelcast.util.StringUtil;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 /**
  * This controller handles the 2nd step in the nursery manager process.
@@ -241,76 +243,85 @@ public class ImportGermplasmListController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = {"/next", "/submitAll"}, method = RequestMethod.POST)
 	@Transactional
+	// CreateTrial-Step09-SaveTrialFinal
 	public String nextScreen(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final BindingResult result,
 			final Model model, final HttpServletRequest req) throws BVDesignException {
-		// start: section for taking note of the check germplasm
-		boolean isDeleteObservations = false;
 
-		final boolean isNursery = this.userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N;
-		boolean hasTemporaryWorkbook = false;
+		final Monitor monitor = MonitorFactory.start("CreateTrial.bms.fieldbook.ImportGermplasmListController.nextScreen");
+		try {
+			// start: section for taking note of the check germplasm
+			boolean isDeleteObservations = false;
 
-		if (this.userSelection.getTemporaryWorkbook() != null) {
+			// "createTrial.org.gcp.fieldbook.web.nursery.controller.ImportGermplasmListController.nextScreen"
 
-			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
-			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook()
-					.getObservations(), false, this.userSelection, this.ontologyService, this.fieldbookService, this.contextUtil
-					.getCurrentProgramUUID());
-			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(), this.userSelection.getWorkbook()
-					.getObservations(), true, this.userSelection, this.ontologyService, this.fieldbookService, this.contextUtil
-					.getCurrentProgramUUID());
+			final boolean isNursery = this.userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N;
+			boolean hasTemporaryWorkbook = false;
 
-			this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
+			if (this.userSelection.getTemporaryWorkbook() != null) {
 
-			this.updateObservationsFromTemporaryWorkbookToWorkbook(this.userSelection);
+				WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
+				WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(),
+						this.userSelection.getWorkbook().getObservations(), false, this.userSelection, this.ontologyService,
+						this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
+				WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(),
+						this.userSelection.getWorkbook().getObservations(), true, this.userSelection, this.ontologyService,
+						this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
 
-			this.userSelection.setTemporaryWorkbook(null);
+				this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
 
-			hasTemporaryWorkbook = true;
-			isDeleteObservations = true;
+				this.updateObservationsFromTemporaryWorkbookToWorkbook(this.userSelection);
 
-		}
+				this.userSelection.setTemporaryWorkbook(null);
 
-		// if we have no germplasm list available for the nursery, skip this validation flow
-		if (null != this.getUserSelection().getImportedGermplasmMainInfo()
-				&& null != this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()) {
-			this.assignAndIncrementEntryNumberAndPlotNumber(form);
-
-			// NOTE: clearing measurements if germplasm list is null
-			if (this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null) {
-				this.userSelection.getMeasurementRowList().clear();
-			}
-
-			if (isNursery && !hasTemporaryWorkbook) {
-
-				this.validateEntryAndPlotNo(form);
-
-				this.processImportedGermplasmAndChecks(this.userSelection, form);
-
-			} else if (!hasTemporaryWorkbook) {
-				// this section of code is only called for existing trial without temporary workbook. No need for reset of measurement row
-				// list here
+				hasTemporaryWorkbook = true;
 				isDeleteObservations = true;
+
 			}
+
+			// if we have no germplasm list available for the nursery, skip this validation flow
+			if (null != this.getUserSelection().getImportedGermplasmMainInfo()
+					&& null != this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()) {
+				this.assignAndIncrementEntryNumberAndPlotNumber(form);
+
+				// NOTE: clearing measurements if germplasm list is null
+				if (this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null) {
+					this.userSelection.getMeasurementRowList().clear();
+				}
+
+				if (isNursery && !hasTemporaryWorkbook) {
+
+					this.validateEntryAndPlotNo(form);
+
+					this.processImportedGermplasmAndChecks(this.userSelection, form);
+
+				} else if (!hasTemporaryWorkbook) {
+					// this section of code is only called for existing trial without temporary workbook. No need for reset of measurement
+					// row
+					// list here
+					isDeleteObservations = true;
+				}
+			}
+
+			this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());
+
+			this.fieldbookService.createIdCodeNameVariablePairs(this.userSelection.getWorkbook(),
+					AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+			this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+					AppConstants.ID_NAME_COMBINATION.getString(), true);
+			final int studyId = this.dataImportService.saveDataset(this.userSelection.getWorkbook(), true, isDeleteObservations,
+					this.getCurrentProject().getUniqueID());
+			this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
+
+			// for saving the list data project
+			this.saveListDataProject(isNursery, studyId);
+
+			this.fieldbookService.saveStudyColumnOrdering(studyId, this.userSelection.getWorkbook().getStudyName(), form.getColumnOrders(),
+					this.userSelection.getWorkbook());
+
+			return Integer.toString(studyId);
+		} finally {
+			monitor.stop();
 		}
-
-		this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());
-
-		this.fieldbookService.createIdCodeNameVariablePairs(this.userSelection.getWorkbook(),
-				AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
-		this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
-				AppConstants.ID_NAME_COMBINATION.getString(), true);
-		final int studyId =
-				this.dataImportService.saveDataset(this.userSelection.getWorkbook(), true, isDeleteObservations, this.getCurrentProject()
-						.getUniqueID());
-		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
-
-		// for saving the list data project
-		this.saveListDataProject(isNursery, studyId);
-
-		this.fieldbookService.saveStudyColumnOrdering(studyId, this.userSelection.getWorkbook().getStudyName(), form.getColumnOrders(),
-				this.userSelection.getWorkbook());
-
-		return Integer.toString(studyId);
 	}
 
 	/**
@@ -495,6 +506,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param model the model
 	 * @return the string
 	 */
+	// CreateTrial-Step02-SelectList
 	@RequestMapping(value = "/displayGermplasmDetails/{listId}/{type}", method = RequestMethod.GET)
 	public String displayGermplasmDetails(@PathVariable final Integer listId, @PathVariable final String type,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
@@ -1659,7 +1671,7 @@ public class ImportGermplasmListController extends SettingsController {
 	protected boolean hasExperimentalDesign(final Workbook workbook) {
 		final ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
 		return expDesignVar != null && expDesignVar.getExperimentalDesign() != null
-				&& !StringUtil.isNullOrEmpty(expDesignVar.getExperimentalDesign().getValue());
+				&& !StringUtils.isBlank(expDesignVar.getExperimentalDesign().getValue());
 
 	}
 

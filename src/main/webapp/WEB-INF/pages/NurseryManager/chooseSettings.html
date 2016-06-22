@@ -224,6 +224,7 @@
 
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
+						
 						<!-- store possible values of variable -->
 						<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"></div>
 						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
@@ -232,7 +233,6 @@
 						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
 							 class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
 						</div>
-						
 						<!-- filtered and filteredFavorite values -->						
 						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'filteredValuesJson' + ${rowStat.index}"
 							 class="filteredValuesJson" style="display:none" th:text="${nurseryLevelVariable.filteredValuesJson}">
@@ -249,8 +249,13 @@
 				<!-- radio buttons for filtering -->
 				<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
 					<label class="radio-inline">
-									<input class="instanceNumber"  type="radio" value="1" th:field="*{exportInstanceType}"/>
+									<input class="instanceNumber"  type="radio" value="1" th:field="*{studyLevelVariables[__${rowStat.index}__].filtered}"
+										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
 									<span >Derivative and Maintenance methods</span>
+									&nbsp;&nbsp;
+									<input class="instanceNumber"  type="radio" value="2" th:field="*{!studyLevelVariables[__${rowStat.index}__].filtered}"
+										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
+									<span >All methods</span>
 					</label>
 				</div>
 
@@ -302,14 +307,6 @@
 						</div>
 						<div th:if="${nurseryCondition.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJsonCons' + ${rowStat.index}"
 							 class="possibleValuesFavoriteJsonCons" style="display:none" th:text="${nurseryCondition.possibleValuesFavoriteJson}">
-						</div>
-						
-						<!-- filtered and filteredFavorite values -->						
-						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'filteredValuesJson' + ${rowStat.index}"
-							 class="filteredValuesJson" style="display:none" th:text="${nurseryLevelVariable.filteredValuesJson}">
-						</div>
-						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'filteredFavoriteValuesJson' + ${rowStat.index}"
-							 class="filteredFavoriteValuesJson" style="display:none" th:text="${nurseryLevelVariable.filteredFavoriteValuesJson}">
 						</div>
 
 						<input  maxlength="250" th:if="${nurseryCondition.variable.widgetType.type == 'NTEXT'}"

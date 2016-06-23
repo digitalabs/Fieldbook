@@ -44,12 +44,26 @@
 					</div>
 
 					<div class="row form-group">
-							<div class="col-md-5">
-								&nbsp;
-							</div>
+						<div class="col-md-5">
+							<label class="control-label label-bold" th:text="#{show.favorite.location.header}"> Showing: </label>
+						</div>
+						<div class="col-md-4">
+							<label>
+								<input id="showBreedingLocationInventory" name="filter" value="1" type="radio" checked="checked"/> <span th:text="#{show.breeding.location}">Breeding locations</span>
+								&nbsp;&nbsp;
+							</label>
+							<label>
+								<input id="showAllLocationInventory" name="filter" value="2" type="radio"/> <span th:text="#{show.all.location}">All locations types</span>
+								&nbsp;&nbsp;
+							</label>
+						</div>
+					</div>
+					<div class="row form-group">
+						<div class="col-md-5">
+						</div>
 							<div class="col-md-4">
 								<label>
-									<input id="showFavoriteLocationInventory" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
+									<input id="showFavoriteLocationInventory" value="1" type="checkbox"/> <span th:text="#{show.include.favorite.location}">Include favorite locations only</span>
 									&nbsp;&nbsp;
 								</label>
 							</div>

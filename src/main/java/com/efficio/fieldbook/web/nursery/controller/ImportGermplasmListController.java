@@ -244,10 +244,10 @@ public class ImportGermplasmListController extends SettingsController {
 	@RequestMapping(value = {"/next", "/submitAll"}, method = RequestMethod.POST)
 	@Transactional
 	// CreateTrial-Step09-SaveTrialFinal
-	public String nextScreen(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final BindingResult result,
+	public String saveNurseryOrTrial(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final BindingResult result,
 			final Model model, final HttpServletRequest req) throws BVDesignException {
 
-		final Monitor monitor = MonitorFactory.start("CreateTrial.bms.fieldbook.ImportGermplasmListController.nextScreen");
+		final Monitor monitor = MonitorFactory.start("CreateTrial.bms.fieldbook.ImportGermplasmListController.saveNurseryOrTrial");
 		try {
 			// start: section for taking note of the check germplasm
 			boolean isDeleteObservations = false;

@@ -546,10 +546,10 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	/**
-	 * Test to verify nextScreen() works and performs steps as expected.
+	 * Test to verify saveNurseryOrTrial() works and performs steps as expected.
 	 */
 	@Test
-	public void testNextScreen() throws BVDesignException {
+	public void testSaveNurseryOrTrial() throws BVDesignException {
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		form.setStartingEntryNo("801");
 		final Workbook workbook = new Workbook();
@@ -612,7 +612,7 @@ public class ImportGermplasmListControllerTest {
 
 		Mockito.doNothing().when(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
 
-		final String studyIdInNextScreen = this.importGermplasmListController.nextScreen(form, null, null, null);
+		final String studyId = this.importGermplasmListController.saveNurseryOrTrial(form, null, null, null);
 
 		Mockito.verify(this.fieldbookService).createIdCodeNameVariablePairs(Matchers.isA(Workbook.class), Matchers.isA(String.class));
 		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.isA(Workbook.class), Matchers.anyList(),
@@ -622,7 +622,7 @@ public class ImportGermplasmListControllerTest {
 		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyList(), Matchers.isA(Integer.class));
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
 
-		Assert.assertEquals("Expecting studyIdInSaveDataset returned from nextScreen", "3", studyIdInNextScreen);
+		Assert.assertEquals("Expected studyId of the saved nursery or trial returned.", "3", studyId);
 	}
 
 	@Test

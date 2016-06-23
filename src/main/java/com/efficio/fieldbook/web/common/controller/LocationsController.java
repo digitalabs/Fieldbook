@@ -71,10 +71,12 @@ public class LocationsController extends AbstractBaseFieldbookController {
 			List<Integer> locationsIds =
 					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.contextUtil.getCurrentProgramUUID());
 			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
+			List<Location> allLocations = this.fieldbookMiddlewareService.getAllLocations();
 			List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocations();
 			List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
 			result.put("success", "1");
 			result.put("favoriteLocations", faveLocations);
+			result.put("allLocations", allLocations);
 			result.put("allBreedingLocations", allBreedingLocations);
 			result.put("allSeedStorageLocations", allSeedStorageLocations);
 		} catch (MiddlewareQueryException e) {

@@ -304,6 +304,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-xs-12 col-md-12">
+									<label class="radio-inline">
+										<input id="showBreedingLocationOnlyRadio" name="filter" type="radio" checked="true" />
+										<span>All breeding locations</span>
+										&nbsp;&nbsp; 
+										<input id="showAllLocationOnlyRadio" name="filter" type="radio" checked="false" />
+										<span>All locations</span>
+									</label>
+                                </div>
+                                <div class="col-xs-12 col-md-12">
 
                                     <input type="checkbox" id="locationFavoritesOnlyCheckbox"/>
                                     <label th:text="#{show.favorite.location}"></label>

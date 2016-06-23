@@ -41,7 +41,6 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -385,6 +384,17 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID());
 			settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 			settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+			
+			final List<ValueReference> allValues =
+					fieldbookService.getAllPossibleValuesWithFilter(svar.getCvTermId(), false);					
+			settingDetail.setAllValues(allValues);
+			settingDetail.setAllValuesToJson(allValues);
+			
+			final List<ValueReference> allFavoriteValues = fieldbookService.getAllFavoriteValues(allValues,
+					possibleValuesFavorite);
+			settingDetail.setAllFavoriteValues(allFavoriteValues);
+			settingDetail.setAllFavoriteValuesToJson(allFavoriteValues);
+			
 			return settingDetail;
 		} else {
 			final SettingVariable svar = new SettingVariable();

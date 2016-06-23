@@ -27,9 +27,11 @@ public class SettingDetail implements Serializable {
 	private List<ValueReference> possibleValues;
 	private List<ValueReference> possibleValuesFavorite;
 	private List<ValueReference> allValues;
+	private List<ValueReference> allFavoriteValues;
 	private String possibleValuesJson;
 	private String possibleValuesFavoriteJson;
 	private String allValuesJson;
+	private String allFavoriteValuesJson;
 	private String value;
 	private boolean isDeletable;
 	private boolean isFavorite;
@@ -272,7 +274,6 @@ public class SettingDetail implements Serializable {
 		this.allValues = allValues;
 	}
 
-
 	public String getAllValuesJson() {
 		return allValuesJson;
 	}
@@ -280,7 +281,7 @@ public class SettingDetail implements Serializable {
 	public void setAllValuesJson(String allValuesJson) {
 		this.allValuesJson = allValuesJson;
 	}
-	
+
 	public void setAllValuesToJson(List<ValueReference> allValues) {
 		try {
 			ObjectMapper om = new ObjectMapper();
@@ -288,5 +289,31 @@ public class SettingDetail implements Serializable {
 		} catch (Exception e) {
 			this.setPossibleValuesFavoriteJson("err");
 		}
+	}
+
+	public List<ValueReference> getAllFavoriteValues() {
+		return allFavoriteValues;
+	}
+
+	public void setAllFavoriteValues(List<ValueReference> allFavoriteValues) {
+		this.allFavoriteValues = allFavoriteValues;
+	}
+
+	public void setAllFavoriteValuesToJson(List<ValueReference> allFavoriteValuesJson) {
+		try {
+			ObjectMapper om = new ObjectMapper();
+			this.setAllFavoriteValuesJson(om.writeValueAsString(allFavoriteValuesJson));
+		} catch (Exception e) {
+			this.setPossibleValuesFavoriteJson("err");
+		}
+		
+	}
+
+	public String getAllFavoriteValuesJson() {
+		return allFavoriteValuesJson;
+	}
+
+	public void setAllFavoriteValuesJson(String allFavoriteValuesJson) {
+		this.allFavoriteValuesJson = allFavoriteValuesJson;
 	}
 }

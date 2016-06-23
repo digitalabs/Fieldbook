@@ -688,13 +688,15 @@ public class SettingsUtil {
 					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 					
 					final List<ValueReference> allValues =
-							fieldbookService.getAllPossibleValuesWithFilter(variable.getCvTermId(), false);
-
-					
+							fieldbookService.getAllPossibleValuesWithFilter(variable.getCvTermId(), false);					
 					settingDetail.setAllValues(allValues);
 					settingDetail.setAllValuesToJson(allValues);
 					
-
+					final List<ValueReference> allFavoriteValues = fieldbookService.getAllFavoriteValues(allValues,
+							possibleValuesFavorite);
+					settingDetail.setAllFavoriteValues(allFavoriteValues);
+					settingDetail.setAllFavoriteValuesToJson(allFavoriteValues);
+					
 					if (userSelection != null) {
 						final StandardVariable standardVariable =
 								SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
@@ -2238,7 +2240,6 @@ public class SettingsUtil {
 		}
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	public static String getExperimentalDesignValue(final ExpDesignParameterUi param, final TermId termId) {
 		switch (termId) {
 			case EXPERIMENT_DESIGN_FACTOR:

@@ -212,4 +212,6 @@ public interface FieldbookService {
 	
 	public List<ValueReference> getAllPossibleValuesWithFilter(final int id, boolean filtered);
 
+	List<ValueReference> getAllFavoriteValues(List<ValueReference> allValues, List<ValueReference> favoriteValues);
+
 }

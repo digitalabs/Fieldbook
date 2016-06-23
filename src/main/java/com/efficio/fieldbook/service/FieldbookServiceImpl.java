@@ -27,6 +27,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.service.FileService;
@@ -1210,5 +1211,15 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	public void setUserDataManager(final UserDataManager userDataManager) {
 		this.userDataManager = userDataManager;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ValueReference> getAllFavoriteValues(final List<ValueReference> allValues,
+			final List<ValueReference> favoriteValues) {
+		if(allValues != null && favoriteValues != null){
+			return ListUtils.intersection(allValues, favoriteValues);	
+		}
+		return ListUtils.EMPTY_LIST;
 	}
 }

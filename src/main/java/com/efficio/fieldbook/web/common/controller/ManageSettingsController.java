@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -18,7 +17,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -27,8 +25,6 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.ontology.api.OntologyPropertyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.manager.ontology.daoElements.VariableFilter;
-import org.generationcp.middleware.pojos.LocationType;
-import org.generationcp.middleware.pojos.MethodType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -269,18 +265,6 @@ public class ManageSettingsController extends SettingsController {
 				for (SettingVariable var : selectedVariables) {
 					Operation operation = this.removeVarFromDeletedList(var, mode);
 					
-					Map<DataType, List<String>> filterTypes = new HashMap<DataType, List<String>>();
-					ArrayList<String> methodList = new ArrayList<String>();
-					methodList.add(MethodType.MAN.getCode());
-					methodList.add(MethodType.DER.getCode());
-					filterTypes.put(DataType.BREEDING_METHOD, methodList);
-					
-					
-					List<String> locationList = new ArrayList<String>();;
-					locationList.add(LocationType.BREED.getCode());
-					filterTypes.put(DataType.LOCATION, locationList);				
-					
-					
 					var.setOperation(operation);
 					this.populateSettingVariable(var);
 					List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
@@ -291,7 +275,10 @@ public class ManageSettingsController extends SettingsController {
 					final List<ValueReference> allValues =
 							this.fieldbookService.getAllPossibleValuesWithFilter(var.getCvTermId(), false);
 
-					
+					final List<ValueReference> allFavoriteValues = fieldbookService.getAllFavoriteValues(allValues,
+							possibleValuesFavorite);
+					newSetting.setAllFavoriteValues(allFavoriteValues);
+					newSetting.setAllFavoriteValuesToJson(allFavoriteValues);
 					
 					newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
 					newSetting.setAllValues(allValues);
@@ -355,41 +342,6 @@ public class ManageSettingsController extends SettingsController {
 			}
 		}
 		return operation;
-	}
-
-	/**
-	 * Gets the setting detail list.
-	 *
-	 * @param mode the mode
-	 * @return the setting detail list
-	 */
-	private List<SettingDetail> getSettingDetailList(int mode) {
-		if (mode == VariableType.STUDY_DETAIL.getId()) {
-			return this.userSelection.getStudyLevelConditions();
-		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId()) {
-			return this.userSelection.getPlotsLevelList();
-		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.NURSERY_CONDITION.getId()) {
-			List<SettingDetail> newList = new ArrayList<SettingDetail>();
-
-			if (this.userSelection.getBaselineTraitsList() != null) {
-				for (SettingDetail setting : this.userSelection.getBaselineTraitsList()) {
-					newList.add(setting);
-				}
-			}
-			if (this.userSelection.getNurseryConditions() != null) {
-				for (SettingDetail setting : this.userSelection.getNurseryConditions()) {
-					newList.add(setting);
-				}
-			}
-			return newList;
-		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
-			return this.userSelection.getSelectionVariates();
-		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
-			return this.userSelection.getTrialLevelVariableList();
-		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
-			return this.userSelection.getTreatmentFactors();
-		}
-		return new ArrayList<SettingDetail>();
 	}
 
 	@ResponseBody

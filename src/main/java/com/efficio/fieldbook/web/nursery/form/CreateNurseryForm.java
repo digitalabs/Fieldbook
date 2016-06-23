@@ -12,12 +12,10 @@
 package com.efficio.fieldbook.web.nursery.form;
 
 import java.util.List;
-import java.util.Map;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.ontology.DataType;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;

@@ -469,6 +469,25 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 
 		if (parseInt(settingDetail.variable.cvTermId, 10) == parseInt(breedingMethodId, 10) ||
 				parseInt(settingDetail.variable.cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)) {
+			
+			// all values div
+			newRow = newRow
+					+ '<div class="form-group possibleValuesDiv"> <label class="radio-inline"> <input id="filterMethods" name="methodFilter" type="radio" checked="true"'
+					+ ' onclick="javascript: toggleMethodDropdown('
+					+ ctr
+					+ ');" /> <span >Derivative and Maintenance methods</span> &nbsp;&nbsp; '
+					+ '<input id="allMethods" name="methodFilter" type="radio" checked="false"'
+					+ ' onclick="javascript: toggleMethodDropdown('
+					+ ctr
+					+ ');" /> <span >All methods</span></label>'
+					+ '</span></div>'
+					+ '<div id="allValuesJson" class="allValuesJson" style="display:none">'
+					+ JSON.stringify(settingDetail.allValues)
+					+ '</div>'
+					+ '<div id="allFavoriteValuesJson" class="allFavoriteValuesJson" style="display:none">'
+					+ JSON.stringify(settingDetail.allFavoriteValues)
+					+ '</div>';
+			
 			// show favorite method
 			locMethodCbxId = name + ctr;
 			newRow = newRow
@@ -506,53 +525,41 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '<span><a href="javascript: openManageMethods();">'
 					+ manageMethodLabel + '</a></span>';
 			newRow = newRow + '</div>';
-
+		
 		} else if (settingDetail.variable.cvTermId == locationId) {
 			
 			locMethodCbxId = name + ctr;
-			//show filter types
+			// all values div
 			newRow = newRow
-			//FIXME localise
-			+ '<div class="possibleValuesDiv"><span class="fbk-filter-header">'
-			+ $.fieldbookMessages.showFavoriteLocationHeader
-			+' </span><input type="checkbox" id="'
-			+ name
-			+ ctr
-			+ '.favorite1"'
-			+ ' name="'
-			+ name
-			+ '['
-			+ ctr
-			+ '].favorite"'
-			+ ' onclick="javascript: toggleLocationDropdown('
-			+ ctr
-			+ ');" />'
-			+ '<input type="hidden" name="_'
-			+ name
-			+ '['
-			+ ctr
-			+ '].favorite" value="on" /> '
-			+ '<span>&nbsp;&nbsp;'
-			+ showFavoriteLocationLabel
-			+ '</span></div>'
-			+ '<div id="possibleValuesJson'
-			+ ctr
-			+ '" class="possibleValuesJson" style="display:none">'
-			+ JSON.stringify(settingDetail.possibleValues)
-			+ '</div><div id="possibleValuesFavoriteJson'
-			+ ctr
-			+ '" class="possibleValuesFavoriteJson" style="display:none">'
-			+ JSON.stringify(settingDetail.possibleValuesFavorite)
-			+ '</div>';
+					+ '<div class="form-group possibleValuesDiv"> <label class="radio-inline"> <input id="filterLocations" name="locationFilter" type="radio" checked="true"'
+					+ ' onclick="javascript: toggleLocationDropdown('
+					+ ctr
+					+ ');" /> <span >All breeding locations</span> &nbsp;&nbsp; '
+					+ '<input id="allLocations" name="locationFilter" type="radio" checked="false"'
+					+ ' onclick="javascript: toggleLocationDropdown('
+					+ ctr
+					+ ');" /> <span >All locations</span></label>'
+					+ '</span></div>'
+					+ '<div id="allValuesJson'
+					+ ctr
+					+ '" class="allValuesJson"'
+					+ 'style="display:none">'
+					+ JSON.stringify(settingDetail.allValues)
+					+ '</div>';
 			
-			
+			// all favorite values div
+			newRow = newRow
+					+ '<div id="allFavoriteValuesJson'
+					+ ctr
+					+ '" class="allFavoriteValuesJson"'
+					+ 'style="display:none">'
+					+ JSON.stringify(settingDetail.allFavoriteValues)
+					+ '</div>';
 			
 			// show favorite location
+			locMethodCbxId = name + ctr;
 			newRow = newRow
-					//FIXME localise
-					+ '<div class="possibleValuesDiv"><span class="fbk-filter-header">'
-					+ $.fieldbookMessages.showFavoriteLocationHeader
-					+' </span><input type="checkbox" id="'
+					+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
 					+ name
 					+ ctr
 					+ '.favorite1"'
@@ -586,6 +593,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '<span><a href="javascript: openManageLocations();">'
 					+ manageLocationLabel + '</a></span>';
 			newRow = newRow + '</div>';
+	
 
 		} else {
 			newRow = newRow + '<div id="possibleValuesJson'
@@ -684,28 +692,64 @@ function toggleMethodDropdown(rowIndex) {
 
 	// get possible values based on checkbox
 
-	if(showFavorite){
+	if (showFavorite && !allMethod) {
 
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
-	}
-	else if (allMethod){
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
+	} else if (allMethod && !showFavorite) {
 
 		possibleValues = $('#allValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
-	}
-	else {
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
+	} else if (allMethod && showFavorite) {
+		possibleValues = $('#allFavoriteValuesJson' + rowIndex).text();
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
+	} else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
 	}
 
 
@@ -735,28 +779,64 @@ function toggleLocationDropdown(rowIndex) {
 				false, null);
 
 	// get possible values based on checkbox
-	if(showFavorite){
+	if (showFavorite && !allLocations) {
 
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
-	}
-	else if (allMethod){
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
+	} else if (allLocations && !showFavorite) {
 
 		possibleValues = $('#allValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
-	}
-	else {
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
+	} else if (allLocations && showFavorite) {
+		possibleValues = $('#allFavoriteValuesJson' + rowIndex).text();
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
+	} else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
 	}
 	// recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'

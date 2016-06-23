@@ -171,8 +171,8 @@ public class ExpDesignController extends BaseTrialController {
 	// CreateTrial-Step06-GenerateDesign
 	@ResponseBody
 	@RequestMapping(value = "/generate", method = RequestMethod.POST)
-	public ExpDesignValidationOutput showMeasurements(final Model model, @RequestBody final ExpDesignParameterUi expDesign) {
-		final Monitor monitor = MonitorFactory.start("CreateTrial.bms.fieldbook.ExpDesignController.showMeasurements");
+	public ExpDesignValidationOutput generateExperimentalDesign(final Model model, @RequestBody final ExpDesignParameterUi expDesign) {
+		final Monitor monitor = MonitorFactory.start("CreateTrial.bms.fieldbook.ExpDesignController.generateExperimentalDesign");
 		try {
 
 			/*

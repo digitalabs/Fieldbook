@@ -122,7 +122,7 @@ public class CrossesListUtilTest {
 	}
 
 	@Test
-	public void testGenerateDatatableDataMapWithDups_germplasmListData() {
+	public void testGenerateDatatableDataMapWithDupsGermplasmListData() {
 
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		final Map<String, Object> dataMap = this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, this.crossesData);

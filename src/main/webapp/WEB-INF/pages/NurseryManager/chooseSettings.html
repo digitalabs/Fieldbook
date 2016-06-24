@@ -55,11 +55,11 @@
 				<!-- radio buttons for filtering -->
 				<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}">
 					<label class="radio-inline">
-									<input id="filterLocations" name="locationFilter" type="radio" checked="true"
+									<input id="filterLocations" name="locationFilter" type="radio" checked="checked"
 										th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'"/>
 									<span >All breeding locations</span>
-									&nbsp;&nbsp; 
-									<input id="allLocations" name="locationFilter" type="radio" checked="false"
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+									<input id="allLocations" name="locationFilter" type="radio" 
 										th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'"/>
 									<span >All locations</span>
 					</label>
@@ -266,11 +266,11 @@
 				<!-- radio buttons for filtering -->
 				<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
 					<label class="radio-inline">
-									<input id="filterMethods" name="methodFilter" type="radio" checked="true"
+									<input id="filterMethods" name="methodFilter" type="radio" checked="checked"
 										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
 									<span >Derivative and Maintenance methods</span>
-									&nbsp;&nbsp; 
-									<input id="allMethods" name="methodFilter" type="radio" checked="false"
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									<input id="allMethods" name="methodFilter" type="radio"
 										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
 									<span >All methods</span>
 					</label>

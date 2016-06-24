@@ -89,7 +89,7 @@ public interface FieldbookService {
 	 * @param projectId the project id
 	 * @return the all possible values favorite
 	 */
-	List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId);
+	public List<ValueReference> getAllPossibleValuesFavorite(final int id, final String programUUID, boolean filtered);
 
 	/**
 	 * Gets the all possible values by psmr.
@@ -212,6 +212,10 @@ public interface FieldbookService {
 	
 	public List<ValueReference> getAllPossibleValuesWithFilter(final int id, boolean filtered);
 
-	List<ValueReference> getAllFavoriteValues(List<ValueReference> allValues, List<ValueReference> favoriteValues);
+	public List<ValueReference> getAllFavoriteValues(List<ValueReference> allValues, List<ValueReference> favoriteValues);
+
+	public List<ValueReference> getAllPossibleValuesFavoriteWithFilter(int id, boolean filtered);
+	
+	
 
 }

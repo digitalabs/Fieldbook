@@ -270,7 +270,7 @@ public class ManageSettingsController extends SettingsController {
 					List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
 					SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
 					List<ValueReference> possibleValuesFavorite =
-							this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID());
+							this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID(), true);
 					
 					final List<ValueReference> allValues =
 							this.fieldbookService.getAllPossibleValuesWithFilter(var.getCvTermId(), false);

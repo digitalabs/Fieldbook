@@ -606,7 +606,7 @@ public class CreateNurseryController extends SettingsController {
 					final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
 					final SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
 					final List<ValueReference> possibleValuesFavorite =
-							this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID());					
+							this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID(), true);					
 					
 					newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
 

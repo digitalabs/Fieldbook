@@ -94,7 +94,7 @@ public class SettingsServiceImpl implements SettingsService {
 			}
 			settingDetail.setPossibleValuesToJson(possibleValues);
 			List<ValueReference> possibleValuesFavorite =
-					this.fieldbookService.getAllPossibleValuesFavorite(id, programUUID);
+					this.fieldbookService.getAllPossibleValuesFavorite(id, programUUID, false);
 			settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 			settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 			return settingDetail;

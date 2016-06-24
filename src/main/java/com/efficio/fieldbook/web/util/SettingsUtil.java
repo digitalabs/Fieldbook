@@ -491,7 +491,7 @@ public class SettingsUtil {
 		List<ValueReference> possibleValueList = new ArrayList<ValueReference>();
 
 		try {
-			possibleValueList = fieldbookService.getAllPossibleValuesFavorite(standardVariableId, programUUID);
+			possibleValueList = fieldbookService.getAllPossibleValuesFavorite(standardVariableId, programUUID, true);
 		} catch (final MiddlewareException e) {
 			SettingsUtil.LOG.error(e.getMessage(), e);
 		}

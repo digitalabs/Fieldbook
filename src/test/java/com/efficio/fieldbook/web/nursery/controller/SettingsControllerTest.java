@@ -366,7 +366,7 @@ public class SettingsControllerTest {
 		Mockito.when(this.fieldbookService.getAllPossibleValues(Mockito.anyInt())).thenReturn(valueReferenceList);
 		Mockito.when(this.controller.getCurrentProject()).thenReturn(project);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
-		Mockito.when(this.fieldbookService.getAllPossibleValuesFavorite(Mockito.anyInt(), Mockito.any(String.class))).thenReturn(valueReferenceList);
+		Mockito.when(this.fieldbookService.getAllPossibleValuesFavorite(Mockito.anyInt(), Mockito.any(String.class), false)).thenReturn(valueReferenceList);
 
 		SettingDetail settingDetail = this.controller.createSettingDetail(variable.getId(), VariableType.SELECTION_METHOD);
 		Assert.assertEquals("Error in Role for settingDetail", VariableType.SELECTION_METHOD.getRole().name(), settingDetail.getRole().name());
@@ -382,7 +382,7 @@ public class SettingsControllerTest {
 		Mockito.verify(this.variableDataManager, Mockito.times(1)).getVariable(this.contextUtil.getCurrentProgramUUID(), variable.getId(), false, false);
 		Mockito.verify(this.fieldbookService, Mockito.times(1)).getAllPossibleValues(variable.getId());
 		Mockito.verify(this.contextUtil, Mockito.times(1)).getProjectInContext();
-		Mockito.verify(this.fieldbookService, Mockito.times(1)).getAllPossibleValuesFavorite(variable.getId(), this.controller.getCurrentProject().getUniqueID());
+		Mockito.verify(this.fieldbookService, Mockito.times(1)).getAllPossibleValuesFavorite(variable.getId(), this.controller.getCurrentProject().getUniqueID(), false);
 	}
 
 }

@@ -178,6 +178,7 @@ function showCorrectLocationCombo() {
 	if (isChecked) {
 		$('#s2id_harvestLocationIdFavorite').show();
 		$('#s2id_harvestLocationIdAll').hide();
+		$('#s2id_harvestLocationIdBreeding').hide();
 		if ($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2(
 				'data') != null) {
 			$('#' + getJquerySafeId('harvestLocationId')).val(
@@ -197,7 +198,15 @@ function showCorrectLocationCombo() {
 		}
 	} else {
 		$('#s2id_harvestLocationIdFavorite').hide();
-		$('#s2id_harvestLocationIdAll').show();
+
+		if ($('#showAllLocationOnlyRadio').is(':checked')) {
+			$('#s2id_harvestLocationIdAll').show();
+			$('#s2id_harvestLocationIdBreeding').hide();
+		} else {
+			$('#s2id_harvestLocationIdBreeding').show();
+			$('#s2id_harvestLocationIdAll').hide();
+		}
+
         // harvestLocationIdAll is not null but it contains blank value so put AND condition
 		if ($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data') != null && $('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').id != "" ) {
 			$('#' + getJquerySafeId('harvestLocationId')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').id);
@@ -233,6 +242,7 @@ function showCorrectMethodCombo() {
 	} else {
 		$('#s2id_methodIdFavorite').hide();
 		$('#s2id_methodIdAll').show();
+
 		setCorrectMethodValues(methodSelect);
 		if ($('#' + getJquerySafeId('methodIdAll')).select2('data') != null) {
 			$('#' + getJquerySafeId('breedingMethodId')).val($('#' + getJquerySafeId('methodIdAll')).select2('data').id);

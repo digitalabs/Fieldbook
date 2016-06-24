@@ -41,6 +41,9 @@ public class AdvancingNurseryForm {
 	/** The field location id all. */
 	private String harvestLocationIdAll;
 
+	/** The field location id breeding. */
+	private String harvestLocationIdBreeding;
+
 	/** The field location id favorite. */
 	private String harvestLocationIdFavorite;
 
@@ -243,6 +246,20 @@ public class AdvancingNurseryForm {
 	 */
 	public void setHarvestLocationIdAll(String harvestLocationIdAll) {
 		this.harvestLocationIdAll = harvestLocationIdAll;
+	}
+
+	/**
+	 * @return the harvestLocationIdBreeding
+	 */
+	public String getHarvestLocationIdBreeding() {
+		return harvestLocationIdBreeding;
+	}
+
+	/**
+	 * @param harvestLocationIdBreeding the harvestLocationIdBreeding to set
+	 */
+	public void setHarvestLocationIdBreeding(String harvestLocationIdBreeding) {
+		this.harvestLocationIdBreeding = harvestLocationIdBreeding;
 	}
 
 	/**

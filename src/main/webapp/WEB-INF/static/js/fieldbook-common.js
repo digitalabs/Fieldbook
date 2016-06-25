@@ -1178,6 +1178,39 @@ function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestio
 	});
 }
 
+function initializeHarvestLocationBreedingFavoritesSelect2(locationSuggestionsBreedingFavorites, locationSuggestionsBreedingFavoritesObj) {
+
+	$.each(locationSuggestionsBreedingFavorites, function(index, value) {
+		locationSuggestionsBreedingFavoritesObj.push({
+			id: value.locid,
+			text: value.lname,
+			abbr: value.labbr
+		});
+	});
+
+	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+	$('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2({
+		minimumResultsForSearch: locationSuggestionsBreedingFavoritesObj.length == 0 ? -1 : 20,
+		query: function(query) {
+			var data = {results: locationSuggestionsBreedingFavoritesObj}, i, j, s;
+			// Return the array that matches
+			data.results = $.grep(data.results, function(item, index) {
+				return ($.fn.select2.defaults.matcher(query.term, item.text));
+			});
+			query.callback(data);
+		}
+	}).on('change', function() {
+		$('#' + getJquerySafeId('harvestLocationId')).val($('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2('data').id);
+		$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2('data').text);
+		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2('data').abbr);
+		if ($('#harvestloc-tooltip')) {
+			$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2('data').abbr);
+			$('.help-tooltip-nursery-advance').tooltip('destroy');
+			$('.help-tooltip-nursery-advance').tooltip();
+		}
+	});
+}
+
 function initializeHarvestLocationBreedingSelect2(locationSuggestionsBreeding, locationSuggestionsBreedingObj) {
 
 	$.each(locationSuggestionsBreeding, function(index, value) {
@@ -2126,6 +2159,7 @@ function generateGenericLocationSuggestions(genericLocationJson) {
 function recreateLocationCombo() {
 	var selectedLocationAll = $('#harvestLocationIdAll').val();
 	var selectedLocationBreeding = $('#harvestLocationIdBreeding').val();
+	var selectedLocationBreedingFavorites = $('#harvestLocationIdBreedingFavorites').val();
 	var selectedLocationFavorite = $('#harvestLocationIdFavorite').val();
 
 	var inventoryPopup = false;
@@ -2183,10 +2217,13 @@ function recreateLocationCombo() {
 						// of locations
 						recreateLocationComboAfterClose('harvestLocationIdAll', data.allLocations);
 						recreateLocationComboAfterClose('harvestLocationIdBreeding', data.allBreedingLocations);
+						recreateLocationComboAfterClose('harvestLocationIdBreedingFavorites', data.allBreedingFavoritesLocations);
 						recreateLocationComboAfterClose('harvestLocationIdFavorite', data.favoriteLocations);
 						showCorrectLocationCombo();
 						// set previously selected value of location
-						if ($('#showFavoriteLocation').prop('checked')) {
+						if ($('#showFavoriteLocation').prop('checked') && $('#showBreedingLocationOnlyRadio').prop('checked')) {
+							setComboValues(selectedLocationBreedingFavorites_obj, selectedLocationBreedingFavorites, 'harvestLocationIdBreedingFavorites');
+						} else if ($('#showFavoriteLocation').prop('checked')) {
 							setComboValues(locationSuggestionsFav_obj, selectedLocationFavorite, 'harvestLocationIdFavorite');
 						} else if ($('#showAllLocationOnlyRadio').prop('checked')) {
 							setComboValues(locationSuggestions_obj, selectedLocationAll, 'harvestLocationIdAll');
@@ -2289,6 +2326,14 @@ function recreateLocationComboAfterClose(comboName, data) {
 		//reload the data retrieved
 		locationSuggestionsBreeding = data;
 		initializeHarvestLocationBreedingSelect2(locationSuggestionsBreeding, locationSuggestionsBreedingObj);
+	} else if (comboName == 'harvestLocationIdBreedingFavorites') {
+		//clear BreedingFavorites locations dropdown
+		locationSuggestionsBreedingFavorites = [];
+		locationSuggestionsBreedingFavoritesObj = [];
+		initializeHarvestLocationBreedingFavoritesSelect2(locationSuggestionsBreedingFavorites, locationSuggestionsBreedingFavoritesObj);
+		//reload the data retrieved
+		locationSuggestionsBreedingFavorites = data;
+		initializeHarvestLocationBreedingFavoritesSelect2(locationSuggestionsBreedingFavorites, locationSuggestionsBreedingFavoritesObj);
 	} else if (comboName == 'inventoryLocationIdAll') {
 		//clear all locations dropdown
 		initializePossibleValuesComboInventory(data, '#inventoryLocationIdAll', true, null);

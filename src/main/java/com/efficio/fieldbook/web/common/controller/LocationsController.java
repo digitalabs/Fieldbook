@@ -3,6 +3,8 @@ package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+
+import org.apache.commons.collections.ListUtils;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -78,6 +80,7 @@ public class LocationsController extends AbstractBaseFieldbookController {
 			result.put("favoriteLocations", faveLocations);
 			result.put("allLocations", allLocations);
 			result.put("allBreedingLocations", allBreedingLocations);
+			result.put("allBreedingFavoritesLocations", ListUtils.intersection(allBreedingLocations, faveLocations));
 			result.put("allSeedStorageLocations", allSeedStorageLocations);
 		} catch (MiddlewareQueryException e) {
 			LocationsController.LOG.error(e.getMessage(), e);

@@ -44,6 +44,9 @@ public class AdvancingNurseryForm {
 	/** The field location id breeding. */
 	private String harvestLocationIdBreeding;
 
+	/** The field location id breeding. */
+	private String harvestLocationIdBreedingFavorites;
+
 	/** The field location id favorite. */
 	private String harvestLocationIdFavorite;
 
@@ -260,6 +263,21 @@ public class AdvancingNurseryForm {
 	 */
 	public void setHarvestLocationIdBreeding(String harvestLocationIdBreeding) {
 		this.harvestLocationIdBreeding = harvestLocationIdBreeding;
+	}
+
+	/**
+	 * @return the harvestLocationIdBreedingFavorites
+	 */
+	public String getHarvestLocationIdBreedingFavorites() {
+		return harvestLocationIdBreedingFavorites;
+	}
+
+
+	/**
+	 * @param harvestLocationIdBreedingFavorites the harvestLocationIdBreedingFavorites to set
+	 */
+	public void setHarvestLocationIdBreedingFavorites(String harvestLocationIdBreedingFavorites) {
+		this.harvestLocationIdBreedingFavorites = harvestLocationIdBreedingFavorites;
 	}
 
 	/**
@@ -850,4 +868,5 @@ public class AdvancingNurseryForm {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
+
 }

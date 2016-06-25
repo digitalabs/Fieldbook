@@ -176,7 +176,15 @@ function showCorrectLocationCombo() {
 	// if show favorite location is checked, hide all field locations, else,
 	// show only favorite locations
 	if (isChecked) {
-		$('#s2id_harvestLocationIdFavorite').show();
+
+		if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
+			$('#s2id_harvestLocationIdBreedingFavorites').show();
+			$('#s2id_harvestLocationIdFavorite').hide();
+		} else {
+			$('#s2id_harvestLocationIdBreedingFavorites').hide();
+			$('#s2id_harvestLocationIdFavorite').show();
+		}
+
 		$('#s2id_harvestLocationIdAll').hide();
 		$('#s2id_harvestLocationIdBreeding').hide();
 		if ($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2(
@@ -198,6 +206,7 @@ function showCorrectLocationCombo() {
 		}
 	} else {
 		$('#s2id_harvestLocationIdFavorite').hide();
+		$('#s2id_harvestLocationIdBreedingFavorites').hide();
 
 		if ($('#showAllLocationOnlyRadio').is(':checked')) {
 			$('#s2id_harvestLocationIdAll').show();

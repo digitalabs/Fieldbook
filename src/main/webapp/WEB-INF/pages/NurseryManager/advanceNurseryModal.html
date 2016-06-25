@@ -166,6 +166,7 @@
 									<div class="col-xs-10">
 										<input type="hidden" th:field="*{harvestLocationIdAll}" class="select2" placeholder=""/>
 										<input type="hidden" th:field="*{harvestLocationIdBreeding}" class="select2" placeholder=""/>
+										<input type="hidden" th:field="*{harvestLocationIdBreedingFavorites}" class="select2" placeholder=""/>
 										<input type="hidden" th:field="*{harvestLocationIdFavorite}" class="select2" placeholder=""/>
 										<input type="hidden" th:field="*{harvestLocationId}"/>
 										<input type="hidden" th:field="*{harvestLocationName}" />
@@ -360,6 +361,7 @@ $(function() {
 
 	$('#s2id_harvestLocationIdFavorite').hide();
 	$('#s2id_harvestLocationIdAll').hide();
+	$('#s2id_harvestLocationIdBreedingFavorites').hide();
 	$('#s2id_harvestLocationIdBreeding').show();
 
 	$('#s2id_methodIdFavorite').hide();

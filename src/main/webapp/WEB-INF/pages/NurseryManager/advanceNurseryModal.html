@@ -181,11 +181,17 @@
 							<div class="row form-group">
 								<div class="col-sm-offset-6 col-xs-6">
 									<label class="radio-inline">
-										<input id="showBreedingLocationOnlyRadio" name="filter" type="radio" checked="true" />
-										<span>All breeding locations&nbsp;&nbsp;</span>
-										<input id="showAllLocationOnlyRadio" name="filter" type="radio" checked="false" />
-										<span>All locations</span>
+										<input id="showBreedingLocationOnlyRadio" name="filter" value="1" type="radio" checked="checked" /> <span th:text="#{show.breeding.location}">Breeding locations</span>
+										&nbsp;&nbsp;
 									</label>
+									<label class="radio-inline">
+										<input id="showAllLocationOnlyRadio" name="filter" value="2" type="radio" /> <span th:text="#{show.all.location}">All locations types</span>
+										&nbsp;&nbsp;
+									</label>
+								</div>
+							</div>
+							<div class="row form-group">
+								<div class="col-sm-offset-6 col-xs-6">
 									<label class="control-label">
 										<input class="advance-favorite-location-checkbox" id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
 										&nbsp;&nbsp;&nbsp;
@@ -272,6 +278,9 @@ var locationSuggestions = /*[[${locationList}]]*/ null,
 
 	locationSuggestionsFav = /*[[${favoriteLocationList}]]*/ null,
 	locationSuggestionsFav_obj = [],
+
+	selectedLocationBreedingFavorites_obj = [],
+	locationSuggestionsBreeding_obj = [],
 
 	methodSuggestions = /*[[${methodList}]]*/ null,
 	methodSuggestions_obj = [],

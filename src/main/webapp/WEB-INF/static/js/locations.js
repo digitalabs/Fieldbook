@@ -51,6 +51,7 @@ if (typeof (LocationsFunctions) === 'undefined') {
 
 				var allPossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allLocations, locationConversionFunction);
 				var favoritePossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.favoriteLocations, locationConversionFunction);
+				var favoriteBreedingPossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allBreedingFavoritesLocations, locationConversionFunction);
 
 				var $favFilter = $('#' + getJquerySafeId(favoritesCheckboxID));
 				var $allFilter = $('#' + getJquerySafeId(allRadioButtonId));
@@ -59,7 +60,11 @@ if (typeof (LocationsFunctions) === 'undefined') {
 
 				var applyFilter = function () {
 					if ($favFilter.is(':checked')) {
-						LocationsFunctions.createSelect2Dropdown(favoritePossibleValues, locationSelectID);
+						if ($breedingFilter.is(':checked')) {
+							LocationsFunctions.createSelect2Dropdown(favoriteBreedingPossibleValues, locationSelectID);
+						} else {
+							LocationsFunctions.createSelect2Dropdown(favoritePossibleValues, locationSelectID);
+						}
 					} else if ($allFilter.is(':checked')) {
 						LocationsFunctions.createSelect2Dropdown(allPossibleValues, locationSelectID);
 					} else {

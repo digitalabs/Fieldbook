@@ -304,13 +304,14 @@
                             </div>
                             <div class="row">
                                 <div class="col-xs-12 col-md-12">
-									<label class="radio-inline">
-										<input id="showBreedingLocationOnlyRadio" name="filter" type="radio" checked="true" />
-										<span>All breeding locations</span>
-										&nbsp;&nbsp; 
-										<input id="showAllLocationOnlyRadio" name="filter" type="radio" checked="false" />
-										<span>All locations</span>
-									</label>
+                                    <label class="radio-inline">
+                                        <input id="showBreedingLocationOnlyRadio" name="filter" value="1" type="radio" checked="checked" /> <span th:text="#{show.breeding.location}">Breeding locations</span>
+                                        &nbsp;&nbsp;
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input id="showAllLocationOnlyRadio" name="filter" value="2" type="radio" /> <span th:text="#{show.all.location}">All locations types</span>
+                                        &nbsp;&nbsp;
+                                    </label>
                                 </div>
                                 <div class="col-xs-12 col-md-12">
 

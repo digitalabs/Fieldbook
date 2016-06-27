@@ -72,16 +72,18 @@ public class LocationsController extends AbstractBaseFieldbookController {
 		try {
 			List<Integer> locationsIds =
 					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.contextUtil.getCurrentProgramUUID());
-			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
-			List<Location> allLocations = this.fieldbookMiddlewareService.getAllLocations();
-			List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocations();
+			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds); //All Favorite
+			List<Location> allLocations = this.fieldbookMiddlewareService.getAllLocations(); //All locations
+			List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocations();//All Breeding
 			List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
 			result.put("success", "1");
 			result.put("favoriteLocations", faveLocations);
 			result.put("allLocations", allLocations);
 			result.put("allBreedingLocations", allBreedingLocations);
-			result.put("allBreedingFavoritesLocations", ListUtils.intersection(allBreedingLocations, faveLocations));
 			result.put("allSeedStorageLocations", allSeedStorageLocations);
+			result.put("allBreedingFavoritesLocations", ListUtils.intersection(allBreedingLocations, faveLocations));
+			result.put("allSeedStorageFavoritesLocations", ListUtils.intersection(allSeedStorageLocations, faveLocations));
+
 		} catch (MiddlewareQueryException e) {
 			LocationsController.LOG.error(e.getMessage(), e);
 			result.put("success", "-1");

@@ -2167,14 +2167,17 @@ function recreateLocationCombo() {
 						refreshImportLocationCombo(data);
 						refreshLocationComboInSettings(data);
 					} else if (inventoryPopup) {
-						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allSeedStorageLocations);
-						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations);
+						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations); // Favorites
+						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allLocations); //All locations
+						recreateLocationComboAfterClose('inventoryLocationIdBreeding', data.allBreedingLocations);//All locations
+						recreateLocationComboAfterClose('inventoryLocationIdAllSeedStorage', data.allSeedStorageLocations);//All seed Storage ??
+						
 						showCorrectLocationInventoryCombo();
 						// set previously selected value of location
 						if ($('#showFavoriteLocationInventory').prop('checked')) {
 							setComboValues(generateGenericLocationSuggestions(data.favoriteLocations), $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
 						} else {
-							setComboValues(generateGenericLocationSuggestions(data.allSeedStorageLocations), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
+							setComboValues(generateGenericLocationSuggestions(data.allLocations), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
 						}
 						refreshLocationComboInSettings(data);
 					} else if (advancePopup === true
@@ -2305,6 +2308,10 @@ function recreateLocationComboAfterClose(comboName, data) {
 		initializePossibleValuesComboInventory(data, '#inventoryLocationIdAll', true, null);
 	} else if (comboName == 'inventoryLocationIdFavorite') {
 		initializePossibleValuesComboInventory(data, '#inventoryLocationIdFavorite', false, null);
+	} else if(comboName == 'inventoryLocationIdSeedStorage' ){
+		initializePossibleValuesComboInventory(data, '#inventoryLocationIdSeedStorage', false, null);
+	}else if(comboName == 'inventoryLocationIdFavoriteSeedStorage' ){
+		initializePossibleValuesComboInventory(data, '#inventoryLocationIdFavoriteSeedStorage', false, null);
 	} else {
 		//clear the favorite locations dropdown
 		locationSuggestionsFav = [];

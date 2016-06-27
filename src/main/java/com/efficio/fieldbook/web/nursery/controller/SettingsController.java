@@ -397,9 +397,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			settingDetail.setAllFavoriteValues(intersection);
 			settingDetail.setAllFavoriteValuesToJson(intersection);
 
-			settingDetail.setAllFavoriteValues(allFavoriteValues);
-			settingDetail.setAllFavoriteValuesToJson(allFavoriteValues);
-
 			return settingDetail;
 		} else {
 			final SettingVariable svar = new SettingVariable();

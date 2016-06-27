@@ -53,7 +53,7 @@
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 
 				<!-- radio buttons for filtering -->
-				<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}">
+				<div class="possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}">
 					<label class="radio-inline">
 									<input id="filterLocations" name="locationFilter" type="radio" checked="checked"
 										th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'"/>
@@ -264,7 +264,7 @@
 				</div>
 				
 				<!-- radio buttons for filtering -->
-				<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
+				<div class="possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
 					<label class="radio-inline">
 									<input id="filterMethods" name="methodFilter" type="radio" checked="checked"
 										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>

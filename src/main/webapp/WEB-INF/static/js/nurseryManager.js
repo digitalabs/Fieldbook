@@ -507,7 +507,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 			
 			// all values div
 			newRow = newRow
-					+ '<div class="form-group possibleValuesDiv"> <label class="radio-inline"> <input id="filterMethods" name="methodFilter" type="radio" checked="checked"'
+					+ '<div class="possibleValuesDiv"> <label class="radio-inline"> <input id="filterMethods" name="methodFilter" type="radio" checked="checked"'
 					+ ' onclick="javascript: toggleMethodDropdown('
 					+ ctr
 					+ ');" /> <span >Derivative and Maintenance methods</span> &nbsp;&nbsp; '
@@ -566,10 +566,10 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 			locMethodCbxId = name + ctr;
 			// all values div
 			newRow = newRow
-					+ '<div class="form-group possibleValuesDiv"> <label class="radio-inline"> <input id="filterLocations" name="locationFilter" type="radio" checked="checked"'
+					+ '<div class="possibleValuesDiv"> <label class="radio-inline"> <input id="filterLocations" name="locationFilter" type="radio" checked="checked"'
 					+ ' onclick="javascript: toggleLocationDropdown('
 					+ ctr
-					+ ');" /> <span >Breeding locations</span> &nbsp;&nbsp; '
+					+ ');" /> <span >All Breeding locations</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  '
 					+ '<input id="allLocations" name="locationFilter" type="radio" '
 					+ ' onclick="javascript: toggleLocationDropdown('
 					+ ctr

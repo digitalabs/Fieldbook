@@ -359,10 +359,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			final SettingVariable svar =
 					new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
 							stdVar.getMethod().getName(), role, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
-							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints()
-									.getMinValue() : null,
-							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
-									.getMaxValue() : null);
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null
+									? stdVar.getConstraints().getMinValue() : null,
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null
+									? stdVar.getConstraints().getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
@@ -384,17 +384,17 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), false);
 			settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 			settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-			
-			final List<ValueReference> allValues =
-					fieldbookService.getAllPossibleValuesWithFilter(svar.getCvTermId(), false);					
+
+			final List<ValueReference> allValues = this.fieldbookService.getAllPossibleValuesWithFilter(svar.getCvTermId(), false);
 			settingDetail.setAllValues(allValues);
 			settingDetail.setAllValuesToJson(allValues);
-			
-			final List<ValueReference> allFavoriteValues = fieldbookService.getAllFavoriteValues(allValues,
-					possibleValuesFavorite);
+
+			final List<ValueReference> allFavoriteValues =
+					this.fieldbookService.getAllPossibleValuesFavorite(svar.getCvTermId(), this.getCurrentProject().getUniqueID(), null);
+
 			settingDetail.setAllFavoriteValues(allFavoriteValues);
 			settingDetail.setAllFavoriteValuesToJson(allFavoriteValues);
-			
+
 			return settingDetail;
 		} else {
 			final SettingVariable svar = new SettingVariable();
@@ -402,7 +402,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			return new SettingDetail(svar, null, null, false);
 		}
 	}
-
+	
 	/**
 	 * Creates the setting detail.
 	 *

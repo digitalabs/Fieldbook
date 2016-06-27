@@ -257,34 +257,34 @@ public class ManageSettingsController extends SettingsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
-	public List<SettingDetail> addSettings(@RequestBody CreateNurseryForm form, @PathVariable int mode) {
-		List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
+	public List<SettingDetail> addSettings(@RequestBody final CreateNurseryForm form, @PathVariable final int mode) {
+		final List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
 		try {
-			List<SettingVariable> selectedVariables = form.getSelectedVariables();
+			final List<SettingVariable> selectedVariables = form.getSelectedVariables();
 			if (selectedVariables != null && !selectedVariables.isEmpty()) {
-				for (SettingVariable var : selectedVariables) {
-					Operation operation = this.removeVarFromDeletedList(var, mode);
-					
+				for (final SettingVariable var : selectedVariables) {
+					final Operation operation = this.removeVarFromDeletedList(var, mode);
+
 					var.setOperation(operation);
 					this.populateSettingVariable(var);
-					List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
-					SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
-					List<ValueReference> possibleValuesFavorite =
-							this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID(), true);
-					
-					final List<ValueReference> allValues =
-							this.fieldbookService.getAllPossibleValuesWithFilter(var.getCvTermId(), false);
+					final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
+					final SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
+					final List<ValueReference> possibleValuesFavoriteFiltered = this.fieldbookService
+							.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID(), true);
 
-					final List<ValueReference> allFavoriteValues = fieldbookService.getAllFavoriteValues(allValues,
-							possibleValuesFavorite);
+					final List<ValueReference> allValues = this.fieldbookService.getAllPossibleValuesWithFilter(var.getCvTermId(), false);
+
+					final List<ValueReference> allFavoriteValues = this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(),
+							this.getCurrentProject().getUniqueID(), null);
+
 					newSetting.setAllFavoriteValues(allFavoriteValues);
 					newSetting.setAllFavoriteValuesToJson(allFavoriteValues);
-					
-					newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
+
+					newSetting.setPossibleValuesFavorite(possibleValuesFavoriteFiltered);
 					newSetting.setAllValues(allValues);
-										
+
 					newSetting.setPossibleValuesToJson(possibleValues);
-					newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+					newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavoriteFiltered);
 					newSetting.setAllValuesToJson(allValues);
 					newSettings.add(newSetting);
 				}
@@ -295,7 +295,7 @@ public class ManageSettingsController extends SettingsController {
 				return newSettings;
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ManageSettingsController.LOG.error(e.getMessage(), e);
 		}
 

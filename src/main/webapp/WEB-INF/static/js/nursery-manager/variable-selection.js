@@ -498,7 +498,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 					});
 
 					if (data[0] && data[0].variable.dataTypeId === 1130 &&  data[0].variable.widgetType === 'DROPDOWN' && data[0]
-					.possibleValues.length == 0) {
+					.possibleValues.length === 0) {
 						showAlertMessage('', variableNoValidValueNotification);
 					}
 				}, this),

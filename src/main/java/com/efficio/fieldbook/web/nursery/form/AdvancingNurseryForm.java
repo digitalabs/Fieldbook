@@ -68,6 +68,12 @@ public class AdvancingNurseryForm {
 	/** The field location id all. */
 	private String methodIdAll;
 
+	/** The field location id Derivative And Maintenance */
+	private String methodIdDerivativeAndMaintenance;
+
+	/** The field location id Derivative And Maintenance Favorite */
+	private String methodIdDerivativeAndMaintenanceFavorite;
+
 	/** The field location id favorite. */
 	private String methodIdFavorite;
 
@@ -177,6 +183,34 @@ public class AdvancingNurseryForm {
 	 */
 	public void setMethodIdAll(String methodIdAll) {
 		this.methodIdAll = methodIdAll;
+	}
+
+	/**
+	 * @return the methodIdDerivativeAndMaintenance
+	 */
+	public String getMethodIdDerivativeAndMaintenance() {
+		return methodIdDerivativeAndMaintenance;
+	}
+
+	/**
+	 * @param methodIdDerivativeAndMaintenance the methodIdDerivativeAndMaintenance to set
+	 */
+	public void setMethodIdDerivativeAndMaintenance(String methodIdDerivativeAndMaintenance) {
+		this.methodIdDerivativeAndMaintenance = methodIdDerivativeAndMaintenance;
+	}
+
+	/**
+	 * @return the methodIdDerivativeAndMaintenanceFavorite
+	 */
+	public String getMethodIdDerivativeAndMaintenanceFavorite() {
+		return methodIdDerivativeAndMaintenanceFavorite;
+	}
+
+	/**
+	 * @param methodIdDerivativeAndMaintenanceFavorite the methodIdDerivativeAndMaintenanceFavorite to set
+	 */
+	public void setMethodIdDerivativeAndMaintenanceFavorite(String methodIdDerivativeAndMaintenanceFavorite) {
+		this.methodIdDerivativeAndMaintenanceFavorite = methodIdDerivativeAndMaintenanceFavorite;
 	}
 
 	/**

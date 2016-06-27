@@ -1277,7 +1277,7 @@ function initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSug
 	});
 }
 
-function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj) {
+function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj, methodId) {
 
 	$.each(methodSuggestions, function(index, value) {
 		methodSuggestionsObj.push({
@@ -1288,7 +1288,7 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj) {
 	});
 
 	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('methodIdAll')).select2({
+	$('#' + getJquerySafeId(methodId)).select2({
 		minimumResultsForSearch: methodSuggestionsObj.length == 0 ? -1 : 20,
 		query: function(query) {
 			var data = {results: methodSuggestionsObj}, i, j, s;
@@ -1301,43 +1301,9 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj) {
 
 	}).on('change', function() {
 		if ($('#' + getJquerySafeId('advanceBreedingMethodId')).length !== 0) {
-			$('#' + getJquerySafeId('advanceBreedingMethodId')).val($('#' + getJquerySafeId('methodIdAll')).select2('data').id);
+			$('#' + getJquerySafeId('advanceBreedingMethodId')).val($('#' + getJquerySafeId(methodId)).select2('data').id);
 			if ($('#method-tooltip')) {
-				$('#method-tooltip').attr('title', $('#' + getJquerySafeId('methodIdAll')).select2('data').tooltip);
-				$('.help-tooltip-nursery-advance').tooltip('destroy');
-				$('.help-tooltip-nursery-advance').tooltip();
-			}
-			$('#' + getJquerySafeId('advanceBreedingMethodId')).trigger('change');
-		}
-	});
-}
-
-function initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFavObj) {
-
-	$.each(methodSuggestionsFav, function(index, value) {
-		methodSuggestionsFavObj.push({
-			id: value.mid,
-			text: value.mname + ' - ' + value.mcode,
-			tooltip: value.mdesc
-		});
-	});
-
-	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('methodIdFavorite')).select2({
-		minimumResultsForSearch: methodSuggestionsFavObj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: methodSuggestionsFavObj}, i, j, s;
-			// Return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-			});
-			query.callback(data);
-		}
-	}).on('change', function() {
-		if ($('#' + getJquerySafeId('advanceBreedingMethodId')).length !== 0) {
-			$('#' + getJquerySafeId('advanceBreedingMethodId')).val($('#' + getJquerySafeId('methodIdFavorite')).select2('data').id);
-			if ($('#method-tooltip')) {
-				$('#method-tooltip').attr('title', $('#' + getJquerySafeId('methodIdFavorite')).select2('data').tooltip);
+				$('#method-tooltip').attr('title', $('#' + getJquerySafeId(methodId)).select2('data').tooltip);
 				$('.help-tooltip-nursery-advance').tooltip('destroy');
 				$('.help-tooltip-nursery-advance').tooltip();
 			}
@@ -2356,18 +2322,34 @@ function recreateMethodComboAfterClose(comboName, data) {
 		//clear the all methods dropdown
 		methodSuggestions = [];
 		methodSuggestionsObj = [];
-		initializeMethodSelect2(methodSuggestions, methodSuggestionsObj);
+		initializeMethodSelect2(methodSuggestions, methodSuggestionsObj, comboName);
 		//reload the data
 		methodSuggestions = data;
-		initializeMethodSelect2(methodSuggestions, methodSuggestionsObj);
+		initializeMethodSelect2(methodSuggestions, methodSuggestionsObj, comboName);
+	} else if (comboName == 'methodIdDerivativeAndMaintenance') {
+		//clear the all methods dropdown
+		methodSuggestionsDerivativeAndMaintenance = [];
+		methodSuggestionsDerivativeAndMaintenanceObj = [];
+		initializeMethodSelect2(methodSuggestionsDerivativeAndMaintenance, methodSuggestionsDerivativeAndMaintenanceObj, comboName);
+		//reload the data
+		methodSuggestionsDerivativeAndMaintenance = data;
+		initializeMethodSelect2(methodSuggestionsDerivativeAndMaintenance, methodSuggestionsDerivativeAndMaintenanceObj, comboName);
+	} else if (comboName == 'methodIdDerivativeAndMaintenanceFavorite') {
+		//clear the all methods dropdown
+		methodSuggestionsDerivativeAndMaintenanceFavorite = [];
+		methodSuggestionsDerivativeAndMaintenanceFavoriteObj = [];
+		initializeMethodSelect2(methodSuggestionsDerivativeAndMaintenanceFavorite, methodSuggestionsDerivativeAndMaintenanceFavoriteObj, comboName);
+		//reload the data
+		methodSuggestionsDerivativeAndMaintenanceFavorite = data;
+		initializeMethodSelect2(methodSuggestionsDerivativeAndMaintenanceFavorite, methodSuggestionsDerivativeAndMaintenanceFavoriteObj, comboName);
 	} else {
 		//clear the favorite methods dropdown
 		methodSuggestionsFav = [];
 		methodSuggestionsFavObj = [];
-		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFavObj);
+		initializeMethodSelect2(methodSuggestionsFav, methodSuggestionsFavObj, 'methodIdFavorite');
 		//reload the data
 		methodSuggestionsFav = data;
-		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFavObj);
+		initializeMethodSelect2(methodSuggestionsFav, methodSuggestionsFavObj, 'methodIdFavorite');
 	}
 }
 

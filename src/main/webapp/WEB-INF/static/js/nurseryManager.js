@@ -10,24 +10,27 @@ function checkMethod() {
 	if ($('input[type=checkbox][name=methodChoice]:checked').val() == 1) {
 		$('#methodIdFavorite').select2('enable', true);
 		$('#methodIdAll').select2('enable', true);
+		$('#methodIdDerivativeAndMaintenance').select2('enable', true);
+		$('#methodIdDerivativeAndMaintenanceFavorite').select2('enable', true);
+
 		$('#showFavoriteMethod').prop('disabled', false);
+
 		$('#method-variates-section').hide();
 		$('.method-selection-div').find('input,select').prop('disabled', false);
-		$('#methodIdAll').select2('enable', true);
-		$('#methodIdFavorite').select2('enable', true);
 
 		setCorrectMethodValues(true);
 		changeAdvanceBreedingMethod();
 	} else {
 		$('#method-variates-section').show();
 		$('.method-selection-div').find('input,select').prop('disabled', true);
+
 		$('#methodIdAll').select2('enable', false);
 		$('#methodIdFavorite').select2('enable', false);
+		$('#methodIdDerivativeAndMaintenance').select2('enable', false);
+		$('#methodIdDerivativeAndMaintenanceFavorite').select2('enable', false);
 
 		if ($('#namingConvention').val() != 3) {
 			$('#showFavoriteMethod').prop('disabled', 'disabled');
-			$('#methodIdFavorite').select2('enable', false);
-			$('#methodIdAll').select2('enable', false);
 		}
 		oldMethodSelected = $('#' + getJquerySafeId('advanceBreedingMethodId')).val();
 		$('#methodSelected').val($('#defaultMethodId').val());
@@ -239,9 +242,19 @@ function showCorrectMethodCombo() {
 		methodSelect = true;
 	}
 
+	// Hide everything then choose what to show
+	$('#s2id_methodIdDerivativeAndMaintenanceFavorite').hide();
+	$('#s2id_methodIdFavorite').hide();
+	$('#s2id_methodIdAll').hide();
+	$('#s2id_methodIdDerivativeAndMaintenance').hide();
+
 	if (isChecked) {
-		$('#s2id_methodIdFavorite').show();
-		$('#s2id_methodIdAll').hide();
+		if ($('#showDerivativeAndMaintenanceRadio').is(':checked')) {
+			$('#s2id_methodIdDerivativeAndMaintenanceFavorite').show();
+		} else {
+			$('#s2id_methodIdFavorite').show();
+		}
+
 		setCorrectMethodValues(methodSelect);
 		if ($('#' + getJquerySafeId('methodIdFavorite')).select2('data') != null) {
 			$('#' + getJquerySafeId('breedingMethodId')).val($('#' + getJquerySafeId('methodIdFavorite')).select2('data').id);
@@ -249,8 +262,11 @@ function showCorrectMethodCombo() {
 			$('#' + getJquerySafeId('breedingMethodId')).val(0);
 		}
 	} else {
-		$('#s2id_methodIdFavorite').hide();
-		$('#s2id_methodIdAll').show();
+		if ($('#showDerivativeAndMaintenanceRadio').is(':checked')) {
+			$('#s2id_methodIdDerivativeAndMaintenance').show();
+		} else {
+			$('#s2id_methodIdAll').show();
+		}
 
 		setCorrectMethodValues(methodSelect);
 		if ($('#' + getJquerySafeId('methodIdAll')).select2('data') != null) {
@@ -1835,6 +1851,8 @@ function nurseryValidateStartEndDateBasic() {
 
 function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 	var selectedMethodAll = $('#methodIdAll').val();
+	var selectedMethodDerivativeAndMaintenance = $('#methodIdDerivativeAndMaintenance').val();
+	var selectedMethodDerivativeAndMaintenanceFavorite = $('#methodIdDerivativeAndMaintenanceFavorite').val();
 	var selectedMethodFavorite = $('#methodIdFavorite').val();
 
 	$.ajax({
@@ -1848,16 +1866,22 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 				if (selectedMethodAll != null) {
 					// recreate the select2 combos to get updated list of
 					// methods
-					recreateMethodComboAfterClose('methodIdAll', data.allNonGenerativeMethods);
-					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdAll', data.allMethods);
+					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteMethods);
+					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenance', data.allNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenanceFavorite', data.favoriteNonGenerativeMethods);
 					showCorrectMethodCombo();
 					// set previously selected value of method
 					if ($('#showFavoriteMethod').prop('checked')) {
-						setComboValues(methodSuggestionsFav_obj,
-								selectedMethodFavorite, 'methodIdFavorite');
+						if ($('#showDerivativeAndMaintenanceRadio').prop('checked')) {
+							setComboValues(methodSuggestionsDerivativeAndMaintenanceFavorites_obj, selectedMethodDerivativeAndMaintenanceFavorite, 'methodIdDerivativeAndMaintenanceFavorite');
+						} else {
+							setComboValues(methodSuggestionsFav_obj, selectedMethodFavorite, 'methodIdFavorite');
+						}
+					} else if ($('#showDerivativeAndMaintenanceRadio').prop('checked')) {
+						setComboValues(methodSuggestionsDerivativeAndMaintenance_obj, selectedMethodDerivativeAndMaintenance, 'methodIdAll');
 					} else {
-						setComboValues(methodSuggestions_obj,
-								selectedMethodAll, 'methodIdAll');
+						setComboValues(methodSuggestions_obj, selectedMethodAll, 'methodIdAll');
 					}
 				} else {
 					var selectedVal = null;

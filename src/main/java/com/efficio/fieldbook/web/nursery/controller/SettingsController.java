@@ -391,6 +391,11 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 			final List<ValueReference> allFavoriteValues =
 					this.fieldbookService.getAllPossibleValuesFavorite(svar.getCvTermId(), this.getCurrentProject().getUniqueID(), null);
+			
+			final List<ValueReference>  intersection = SettingsUtil.intersection(allValues, allFavoriteValues);
+			
+			settingDetail.setAllFavoriteValues(intersection);
+			settingDetail.setAllFavoriteValuesToJson(intersection);
 
 			settingDetail.setAllFavoriteValues(allFavoriteValues);
 			settingDetail.setAllFavoriteValuesToJson(allFavoriteValues);

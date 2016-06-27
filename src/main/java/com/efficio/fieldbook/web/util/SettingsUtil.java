@@ -24,6 +24,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -618,6 +619,7 @@ public class SettingsUtil {
 	 * @param programUUID the project id
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
+	@SuppressWarnings("unchecked")
 	private static void convertXmlNurseryDatasetToPojo(
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			final com.efficio.fieldbook.service.api.FieldbookService fieldbookService, final Dataset dataset,
@@ -686,9 +688,11 @@ public class SettingsUtil {
 
 					final List<ValueReference> allFavoriteValues =
 							fieldbookService.getAllPossibleValuesFavorite(variable.getCvTermId(), programUUID, null);
+					
+					final List<ValueReference>  intersection = SettingsUtil.intersection(allValues, allFavoriteValues);
 
-					settingDetail.setAllFavoriteValues(allFavoriteValues);
-					settingDetail.setAllFavoriteValuesToJson(allFavoriteValues);
+					settingDetail.setAllFavoriteValues(intersection);
+					settingDetail.setAllFavoriteValuesToJson(intersection);
 
 					if (userSelection != null) {
 						final StandardVariable standardVariable =
@@ -2557,5 +2561,13 @@ public class SettingsUtil {
 			}
 		}
 		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<ValueReference> intersection(final List<ValueReference> firstList, final List<ValueReference> secondList) {
+		if (firstList != null && secondList != null) {
+			return ListUtils.intersection(firstList, secondList);
+		}
+		return ListUtils.EMPTY_LIST;
 	}
 }

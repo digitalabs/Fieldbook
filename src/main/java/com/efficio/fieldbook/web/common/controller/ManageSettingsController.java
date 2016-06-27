@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.ListUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -255,6 +256,7 @@ public class ManageSettingsController extends SettingsController {
 	 * @param mode the mode
 	 * @return the string
 	 */
+	@SuppressWarnings("unchecked")
 	@ResponseBody
 	@RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
 	public List<SettingDetail> addSettings(@RequestBody final CreateNurseryForm form, @PathVariable final int mode) {
@@ -276,9 +278,12 @@ public class ManageSettingsController extends SettingsController {
 
 					final List<ValueReference> allFavoriteValues = this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(),
 							this.getCurrentProject().getUniqueID(), null);
-
-					newSetting.setAllFavoriteValues(allFavoriteValues);
-					newSetting.setAllFavoriteValuesToJson(allFavoriteValues);
+					
+					
+					final List<ValueReference>  intersection = SettingsUtil.intersection(allValues, allFavoriteValues);
+					
+					newSetting.setAllFavoriteValues(intersection);
+					newSetting.setAllFavoriteValuesToJson(intersection);
 
 					newSetting.setPossibleValuesFavorite(possibleValuesFavoriteFiltered);
 					newSetting.setAllValues(allValues);

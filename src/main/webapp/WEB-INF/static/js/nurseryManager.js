@@ -544,11 +544,11 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '<div class="form-group possibleValuesDiv"> <label class="radio-inline"> <input id="filterLocations" name="locationFilter" type="radio" checked="checked"'
 					+ ' onclick="javascript: toggleLocationDropdown('
 					+ ctr
-					+ ');" /> <span >All breeding locations</span> &nbsp;&nbsp; '
+					+ ');" /> <span >Breeding locations</span> &nbsp;&nbsp; '
 					+ '<input id="allLocations" name="locationFilter" type="radio" '
 					+ ' onclick="javascript: toggleLocationDropdown('
 					+ ctr
-					+ ');" /> <span >All locations</span></label>'
+					+ ');" /> <span >All location types</span></label>'
 					+ '</span></div>'
 					+ '<div id="allValuesJson'
 					+ ctr

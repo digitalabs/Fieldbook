@@ -3,6 +3,8 @@ package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+
+import org.apache.commons.collections.ListUtils;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -77,7 +79,7 @@ public class BreedingMethodController extends AbstractBaseFieldbookController {
 			result.put("allMethods", breedingMethods);
 			result.put("favoriteMethods", favoriteMethods);
 			result.put("allNonGenerativeMethods", allNonGenerativeMethods);
-			result.put("favoriteNonGenerativeMethods", favoriteMethods);
+			result.put("favoriteNonGenerativeMethods", ListUtils.intersection(favoriteMethods, allNonGenerativeMethods));
 		} catch (MiddlewareQueryException e) {
 			BreedingMethodController.LOG.error(e.getMessage(), e);
 			result.put("success", "-1");

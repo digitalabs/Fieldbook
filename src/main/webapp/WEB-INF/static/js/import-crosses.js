@@ -182,10 +182,14 @@ var ImportCrosses = {
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
 
+		if (ImportCrosses.showFavoriteLoationsOnly) {
+			$safeId('#favoritesCheckboxID').prop('checked', true);
+		}
+
 		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
 			ImportCrosses.showFavoriteMethodsOnly);
 		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
-			ImportCrosses.showFavoriteLoationsOnly);
+			'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio');
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 		ImportCrosses.updateSampleParentageDesignation();
 
@@ -210,6 +214,8 @@ var ImportCrosses = {
 		$('#goBackToOpenCrossesButton').on('click', function() {
 				ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(':checked');
 				ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(':checked');
+				ImportCrosses.showAllLocationOnly = $('#showAllLocationOnlyRadio').is(':checked');
+				ImportCrosses.showBreedingLocationOnly = $('#showBreedingLocationOnlyRadio').is(':checked');
 				ImportCrosses.goBackToPage('#crossSettingsModal', '#openCrossesListModal');
 			});
 	},

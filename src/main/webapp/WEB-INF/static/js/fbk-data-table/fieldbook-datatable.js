@@ -514,18 +514,21 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 	 * @param {string} tableIdentifier the id of the table container
 	 * @param {string} ajaxUrl the URL from which to retrieve table data
 	 */
-	var dataTableConstructor = function ReviewDetailsOutOfBoundsDataTable(tableIdentifier, dataList) {
+	var dataTableConstructor = function PreviewCrossesDataTable(tableIdentifier, dataList, tableHeaderList) {
 		'use strict';
 
 		var columns = [],
 			columnsDef = [],
 			table;
-
-		$(tableIdentifier + ' thead tr th').each(function() {
+		
+		$.each( tableHeaderList, function( index, value ){
 			columns.push({
-				data: $(this).html(),
+				data: value,
 				defaultContent: '',
 			});
+		});
+
+		$(tableIdentifier + ' thead tr th').each(function(index) {
 			if ($(this).html() === 'DUPLICATE') {
 				columnsDef.push({
 					defaultContent: '',
@@ -545,6 +548,8 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					}
 				});
 			}
+			//update header with the correct ontology name
+			$(this).html(columns[index].data);
 		});
 
 		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {

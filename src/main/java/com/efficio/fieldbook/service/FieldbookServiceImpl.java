@@ -295,7 +295,17 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public List<ValueReference> getAllPossibleValues(final Variable variable) {
-		List<ValueReference> possibleValues = this.getCachedValues(false, variable);
+		return this.getAllPosibleValues(variable, true, true);
+	}
+
+	@Override
+	public List<ValueReference> getAllPossibleValuesWithFilter(final int id, final boolean filtered) {
+		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, true, false);
+		return this.getAllPosibleValues(variable, filtered, false);
+	}
+
+	private List<ValueReference> getAllPosibleValues(final Variable variable, final boolean filtered, final boolean excludesProgramValues) {
+		List<ValueReference> possibleValues = this.getCachedValues(!filtered, variable);
 
 		if (possibleValues.isEmpty()) {
 			DataType dataType = variable.getScale().getDataType();
@@ -310,13 +320,18 @@ public class FieldbookServiceImpl implements FieldbookService {
 					possibleValues
 							.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
 					final List<ValueReference> allBreedingMethods =
-							this.getAllBreedingMethods(true, this.contextUtil.getCurrentProgramUUID());
+							this.getAllBreedingMethods(filtered, this.contextUtil.getCurrentProgramUUID());
 					possibleValues.addAll(allBreedingMethods);
 					this.possibleValuesCache.addPossibleValuesByDataType(DataType.BREEDING_METHOD, allBreedingMethods);
 					break;
 				case LOCATION:
-					possibleValues = this.getAllLocations(true);
-					this.possibleValuesCache.addLocations(true, possibleValues);
+					if (excludesProgramValues) {
+						possibleValues = this.getAllLocations(filtered);
+					} else {
+						possibleValues = this.getAllLocationsByProgram(filtered);
+					}
+
+					this.possibleValuesCache.addLocations(filtered, possibleValues);
 					break;
 				case PERSON:
 					possibleValues =
@@ -324,7 +339,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 					this.possibleValuesCache.addPossibleValuesByDataType(DataType.PERSON, possibleValues);
 					break;
 				case CATEGORICAL_VARIABLE:
-					// note as noticed: NURERY_TYPE is a categorical, has special handling in prev but we'll treat it as categorical type
+					// note as noticed: NURERY_TYPE is a categorical, has special
+					// handling in prev but we'll treat it as categorical type
 					// from now on
 					for (final TermSummary value : variable.getScale().getCategories()) {
 						possibleValues.add(new ValueReference(value));
@@ -338,7 +354,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 		return possibleValues;
 	}
-
+	
 	private List<ValueReference> getCachedValues(final boolean isGetAllRecords, final Variable variable) {
 		List<ValueReference> possibleValues = new ArrayList<>();
 		if (!variable.getScale().getDataType().isSystemDataType()) {
@@ -373,7 +389,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<ValueReference> getAllPossibleValuesFavorite(final int id, final String programUUID) {
+	public List<ValueReference> getAllPossibleValuesFavorite(final int id, final String programUUID, final Boolean filtered) {
 		final Variable variable = this.ontologyVariableDataManager.getVariable(programUUID, id, true, false);
 		assert !Objects.equals(variable, null);
 
@@ -390,23 +406,29 @@ public class FieldbookServiceImpl implements FieldbookService {
 			final List<ValueReference> list = new ArrayList<>();
 			list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
 			possibleValuesFavorite = list;
-			possibleValuesFavorite.addAll(this.getFavoriteBreedingMethods(methodIds, false));
+			possibleValuesFavorite.addAll(this.getFavoriteBreedingMethods(methodIds, filtered));
 
 		} else if (DataType.LOCATION.equals(dataType)) {
-			List<Integer> locationIds = this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID);
-			possibleValuesFavorite =
-					this.convertLocationsToValueReferences(this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationIds));
+			final List<Integer> locationIds = this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID);
+			possibleValuesFavorite = this.convertLocationsToValueReferences(
+					this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationIds, filtered));
+
 		}
 		return possibleValuesFavorite;
 	}
+	
+	private List<ValueReference> getFavoriteBreedingMethods(final List<Integer> methodIDList, final Boolean isFilterOutGenerative) {
+		final List<Method> methods = this.fieldbookMiddlewareService.getFavoriteMethods(methodIDList, isFilterOutGenerative);
+		return this.convertMethodsToValueReferences(methods);
+	}
 
-	private List<ValueReference> getFavoriteBreedingMethods(final List<Integer> methodIDList, final boolean isFilterOutGenerative) {
+	private List<ValueReference> convertMethodsToValueReferences(final List<Method> methods) {
 		final List<ValueReference> list = new ArrayList<ValueReference>();
-		final List<Method> methods = this.fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIDList, isFilterOutGenerative);
 		if (methods != null && !methods.isEmpty()) {
 			for (final Method method : methods) {
 				if (method != null) {
-					list.add(new ValueReference(method.getMid(), method.getMdesc(), method.getMname() + " - " + method.getMcode()));
+					list.add(new ValueReference(method.getMid(), method.getMdesc(),
+							method.getMname() + " - " + method.getMcode()));
 				}
 			}
 		}
@@ -429,21 +451,39 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	public List<ValueReference> getAllLocations(final boolean isBreedingMethodOnly) {
 		final String currentProgramUUID = this.contextUtil.getCurrentProgramUUID();
-
 		if (isBreedingMethodOnly) {
 			return this.convertLocationsToValueReferences(this.getAllBreedingLocationsByUniqueID(currentProgramUUID));
 		}
 
 		// added filtering of location based on programUUID
 		final List<Location> locations = this.fieldbookMiddlewareService.getAllLocations();
+
 		for (final Iterator<Location> it = locations.iterator(); it.hasNext();) {
 			if (currentProgramUUID.equals(it.next().getUniqueID())) {
 				it.remove();
 			}
+
 		}
+		return this.convertLocationsToValueReferences(locations);
+	}
+
+	private List<ValueReference> getAllLocationsByProgram(final boolean isBreedingMethodOnly) {
+		final List<Location> locations = this.getLocationsByProgram(isBreedingMethodOnly);
 
 		return this.convertLocationsToValueReferences(locations);
+	}
 
+	public List<Location> getLocationsByProgram(final boolean isBreedingMethodOnly) {
+		final String currentProgramUUID = this.contextUtil.getCurrentProgramUUID();
+		if (isBreedingMethodOnly) {
+			return this.getAllBreedingLocationsByUniqueID(currentProgramUUID);
+		}
+
+		// added filtering of location based on programUUID
+		final List<Location> locations = this.fieldbookMiddlewareService.getAllLocations();
+
+
+		return locations;
 	}
 
 	private List<ValueReference> convertLocationsToValueReferences(final List<Location> locations) {
@@ -1180,6 +1220,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	}
 
+	
 	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}

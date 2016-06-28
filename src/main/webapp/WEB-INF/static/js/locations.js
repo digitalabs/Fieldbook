@@ -36,7 +36,7 @@ if (typeof (LocationsFunctions) === 'undefined') {
 		// function that prepares and initializes both the Select2 dropdown containing the location list as well as the checkbox that toggles between displaying only favorite
 		// locations or no. locationConversionFunction is provided as a parameter in case developers wish to change the construction of each select2 item, tho built-in function
 		// will be used by default if this is not provided
-		processLocationDropdownAndFavoritesCheckbox: function(locationSelectID, favoritesCheckboxID, favoritesDefault, locationType, locationConversionFunction) {
+		processLocationDropdownAndFavoritesCheckbox: function(locationSelectID, favoritesCheckboxID, allRadioButtonId, breedingLocationOnlyRadio, locationType, locationConversionFunction) {
 			LocationsFunctions.retrieveLocations().done(function(data) {
 				if (! locationConversionFunction) {
 					locationConversionFunction = LocationsFunctions.convertLocationToSelectItem;
@@ -49,25 +49,35 @@ if (typeof (LocationsFunctions) === 'undefined') {
 					possibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allSeedStorageLocations, locationConversionFunction);
 				}
 
+				var allPossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allLocations, locationConversionFunction);
 				var favoritePossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.favoriteLocations, locationConversionFunction);
+				var favoriteBreedingPossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allBreedingFavoritesLocations, locationConversionFunction);
 
-				if (favoritesDefault) {
-					$safeId('#' + favoritesCheckboxID).prop('checked', true);
-					LocationsFunctions.createSelect2Dropdown(favoritePossibleValues, locationSelectID);
-				} else {
-					LocationsFunctions.createSelect2Dropdown(possibleValues, locationSelectID);
-				}
+				var $favFilter = $('#' + getJquerySafeId(favoritesCheckboxID));
+				var $allFilter = $('#' + getJquerySafeId(allRadioButtonId));
+				var $breedingFilter = $('#' + getJquerySafeId(breedingLocationOnlyRadio));
+				var $filters = $favFilter.add($allFilter).add($breedingFilter);
 
-				// attach change handler to checkbox for switching between favorite only and all breeding methods
-				$('#' + getJquerySafeId(favoritesCheckboxID)).on('change', function() {
-					// get previous value of dropdown first
-					var currentSelected = $('#' + getJquerySafeId(locationSelectID)).select2('data');
-
-					if (this.checked) {
-						LocationsFunctions.createSelect2Dropdown(favoritePossibleValues, locationSelectID);
+				var applyFilter = function () {
+					if ($favFilter.is(':checked')) {
+						if ($breedingFilter.is(':checked')) {
+							LocationsFunctions.createSelect2Dropdown(favoriteBreedingPossibleValues, locationSelectID);
+						} else {
+							LocationsFunctions.createSelect2Dropdown(favoritePossibleValues, locationSelectID);
+						}
+					} else if ($allFilter.is(':checked')) {
+						LocationsFunctions.createSelect2Dropdown(allPossibleValues, locationSelectID);
 					} else {
 						LocationsFunctions.createSelect2Dropdown(possibleValues, locationSelectID);
 					}
+				}
+				applyFilter();
+
+				$filters.on('change', function() {
+					// get previous value of dropdown first
+					var currentSelected = $('#' + getJquerySafeId(locationSelectID)).select2('data');
+
+					applyFilter();
 
 					if (currentSelected && currentSelected.id) {
 						$('#' + getJquerySafeId(locationSelectID)).select2('val', currentSelected.id);

@@ -1865,6 +1865,10 @@ td.accepted-value {
 .fbk-left-padding{
 	padding-left: 10px;
 }
+.fbk-filter-header {
+	font-weight: bold;
+	padding-right: 1em;
+}
 
 .short-dropdown {
     width:100px;

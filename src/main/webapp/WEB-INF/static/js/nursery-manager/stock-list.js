@@ -383,7 +383,9 @@ if (typeof StockIDFunctions === 'undefined') {
 					$('#page-message-lots').html('');
 					$('#addLotsModal').modal({ backdrop: 'static', keyboard: true });
 					initializePossibleValuesComboInventory(inventoryLocationSuggestions, '#inventoryLocationIdAll', true, null);
+					initializePossibleValuesComboInventory(inventorySeedStorageLocationSuggestions, '#inventoryLocationIdSeedStorage', false, null);
 					initializePossibleValuesComboInventory(inventoryFavoriteLocationSuggestions, '#inventoryLocationIdFavorite', false, null);
+					initializePossibleValuesComboInventory(inventoryFavoriteSeedStorageLocationSuggestions, '#inventoryLocationIdFavoriteSeedStorage', false, null);
 					initializePossibleValuesComboScale(scaleSuggestions, '#inventoryScaleId', false, null);
 					showCorrectLocationInventoryCombo();
 				}

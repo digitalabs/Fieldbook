@@ -219,6 +219,7 @@ var ImportDesign = (function() {
 			}).done(function(resp) {
 				ImportDesign.updateEnvironmentAndMeasurements(resp);
 				//TODO Remove expDesignShowPreview global
+				var $body = $('body');
 				$body.data('expDesignShowPreview', '1');
 				angular.element('#mainApp').scope().$broadcast('designImportGenerated');
 

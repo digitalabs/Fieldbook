@@ -1,9 +1,8 @@
-/**
- * Created by cyrus on 7/1/14.
- */
-
-/*global angular,openStudyTree, SpinnerManager, ajaxGenericErrorMsg, showErrorMessage, operationMode, resetGermplasmList,
-showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader*/
+/*global angular, openStudyTree, showErrorMessage, operationMode, resetGermplasmList,
+showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
+stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, InventoryPage*/
+//TODO move this messages under a namespace
+/* global addEnvironmentsImportDesignMessage, importSaveDataWarningMessage*/
 
 (function() {
 	'use strict';
@@ -12,45 +11,11 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 		'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
 		'showSettingFormElementNew']);
 
-	// HTTP INTERCEPTOR CONFIGURATION START
-	// The following block defines an interceptor that hooks into AJAX operations initiated by Angular to start / stop the spinner operation
-	manageTrialApp.factory('spinnerHttpInterceptor', function($q) {
-		return {
-			request: function(config) {
-				SpinnerManager.addActive();
-
-				return config || $q.when(config);
-			},
-			requestError: function(config) {
-				SpinnerManager.resolveActive();
-				showErrorMessage('', ajaxGenericErrorMsg);
-
-				return config || $q.when(config);
-			},
-			response: function(config) {
-				SpinnerManager.resolveActive();
-
-				return config || $q.when(config);
-			},
-			responseError: function(config) {
-				SpinnerManager.resolveActive();
-				showErrorMessage('', ajaxGenericErrorMsg);
-
-				return config || $q.when(config);
-			}
-		};
-	});
-
-	// Added to prevent Unsecured HTML error
+	/*** Added to prevent Unsecured HTML error
+	   It is used by ng-bind-html ***/
 	manageTrialApp.config(function($sceProvider) {
 		$sceProvider.enabled(false);
 	});
-
-	manageTrialApp.config(['$httpProvider', function($httpProvider) {
-		$httpProvider.interceptors.push('spinnerHttpInterceptor');
-	}]);
-
-	// HTTP INTERCEPTOR CONFIGURATION END
 
 	// routing configuration
 	// TODO: if possible, retrieve the template urls from the list of constants
@@ -144,11 +109,11 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
 				$rootScope.$on('$stateChangeStart',
 					function(event) {
-						if ($('.import-study-data').data('data-import') === '1') {
+						if ($('.import-study-data').data('data-import') === '1' || stockListImportNotSaved) {
 							showAlertMessage('', importSaveDataWarningMessage);
-
 							event.preventDefault();
 						}
+
 						// a 'transition prevented' error
 					});
 
@@ -168,7 +133,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout', '_',
-		'$localStorage', '$state', '$location', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location) {
+		'$localStorage', '$state', '$location', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage,
+			$state, $location) {
 			$scope.trialTabs = [
 				{   name: 'Settings',
 					state: 'trialSettings'
@@ -251,7 +217,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			// To apply scope safely
 			$scope.safeApply = function(fn) {
 				var phase = this.$root.$$phase;
-				if (phase == '$apply' || phase == '$digest') {
+				if (phase === '$apply' || phase === '$digest') {
 					if (fn && (typeof(fn) === 'function')) {
 						fn();
 					}
@@ -333,7 +299,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 					showAlertMessage('', addEnvironmentsImportDesignMessage, 5000);
 				}
 
-				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, displayWarningMessage: showIndicateUnappliedChangesWarning, timestamp: new Date()});
+				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments,
+					displayWarningMessage: showIndicateUnappliedChangesWarning, timestamp: new Date()});
 
 				TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 
@@ -375,10 +342,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			$scope.performFunctionOnTabChange = function(targetState) {
 				// do not switch tab if we have newly imported measurements or stock list is not saved
 				if (stockListImportNotSaved || $('.import-study-data').data('data-import') === '1') {
-                    // Display warning if the user tries to navigate across tabs(except advance & stock-list tab) without saving imported inventory file
-                    showAlertMessage('', importSaveDataWarningMessage);
-                    return;
-                }
+					return;
+				}
 
 				$scope.isSettingsTab = true;
 				$scope.tabSelected = targetState;
@@ -411,15 +376,16 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				}
 			};
 
-			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
-                isAdvanceListGeneratedForTrial = true;
+			$scope.addAdvanceTabData = function(tabId, tabData, listName, isPageLoading) {
+				//TODO remove this global
+				isAdvanceListGeneratedForTrial = true;
 				var isSwap = false;
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
 				}
 				angular.forEach($scope.advanceTrialTabs, function(value, index) {
-					if (value.name == listName && value.id == tabId) {
+					if (value.name === listName && value.id === tabId) {
 						isUpdate = true;
 						$scope.advanceTabsData[index].data = tabData;
 						return;
@@ -430,7 +396,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				$scope.stockListTabs = [];
 				angular.forEach($scope.advanceTrialTabs, function(value, index) {
 					if (!isSwap && !isUpdate) {
-						if (value.id == tabId) {
+						if (value.id === tabId) {
 							$scope.advanceTrialTabs.splice(index + 1, 0, {
 								name: listName,
 								state: 'stock-list' + tabId + '-li',
@@ -444,7 +410,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 								id: 'stock-content-pane' + tabId
 							});
 							isSwap = true;
-							if (isPageLoading != true) {
+							if (isPageLoading !== true) {
 								$scope.tabSelected = 'stock-list' + tabId + '-li';
 							}
 							$('#listActionButton' + tabId).addClass('disabled');
@@ -463,7 +429,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 						data: tabData,
 						id: 'advance-list' + tabId + '-li'
 					});
-					if (isPageLoading != true) {
+					if (isPageLoading !== true) {
 						$scope.tabSelected = 'advance-list' + tabId + '-li';
 						$scope.isSettingsTab = false;
 					}
@@ -478,12 +444,6 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			});
 
 			$scope.tabChange = function(selectedTab) {
-
-                // Display warning if the user tries to navigate across tabs(advance & stock-list tab) without saving imported inventory file
-                if(stockListImportNotSaved) {
-                    showAlertMessage('', importSaveDataWarningMessage);
-                    return;
-                }
 				$scope.tabSelected = selectedTab;
 				$scope.isSettingsTab = false;
 
@@ -513,12 +473,12 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			});
 			$scope.findIndexByKeyValue = function(arraytosearch, key, valuetosearch) {
 				for (var i = 0; i < arraytosearch.length; i++) {
-					if (arraytosearch[i][key] == valuetosearch) {
+					if (arraytosearch[i][key] === valuetosearch) {
 						return i;
 					}
 				}
 				return null;
-			}
+			};
 		}]);
 
 	manageTrialApp.filter('filterMeasurementState', function() {
@@ -564,7 +524,9 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			filtered.sort(function(a, b) {
 				return (a[field] > b[field] ? 1 : -1);
 			});
-			if (reverse) filtered.reverse();
+			if (reverse) {
+				filtered.reverse();
+			}
 			return filtered;
 		};
 	});

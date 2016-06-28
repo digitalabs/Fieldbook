@@ -208,8 +208,7 @@
 			var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
 				{id: '@id'}, {get: {method: 'get', isArray: true}});
 			var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
-			var UpdateStartingEntryNoService = $resource('/Fieldbook/TrialManager/GermplasmList/startingEntryNo', {}, {});
-			
+
 			var service = {
 				// user input data and default values of standard variables
 				currentData: {
@@ -417,7 +416,6 @@
 					} else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         // Hide Discard Imported Data button when the user presses Save button
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
-                        stockListImportNotSaved = false;
 						performDataCleanup();
 						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 						var serializedData = (JSON.stringify(columnsOrder));
@@ -571,13 +569,6 @@
 				updateStartingEntryNoCount: function(newCountValue) {
 					service.currentData.experimentalDesign.startingEntryNo = newCountValue;
 					$('body').data('service.currentData.experimentalDesign.startingEntryNo', newCountValue);
-					//check if the starting entry number is a number before calling the resource 
-					//for updating the starting entry number in the server
-					//as the server expects the parameter passed as an Integer
-					//the newCountValue becomes "" or null if the germplasm list is not yet selected for the trial
-					if($.isNumeric(newCountValue)) {
-						UpdateStartingEntryNoService.save(newCountValue);
-					}
 				},
 
 				onUpdateSettings: function(key, updateFunction) {

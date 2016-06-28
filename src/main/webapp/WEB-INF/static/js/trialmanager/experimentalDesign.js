@@ -202,7 +202,9 @@
 									} else {
 										showErrorMessage('', response.message);
 									}
-								}
+								}, function(errResponse) {
+                                    showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+                                }
 							);
 						} else {
 							TrialManagerDataService.generatePresetExpDesign($scope.data.designType).then(function() {

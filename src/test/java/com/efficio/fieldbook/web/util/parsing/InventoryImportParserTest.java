@@ -75,9 +75,9 @@ public class InventoryImportParserTest {
 
 	private String[] headers;
 	private Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap;
-
+	
 	private ScaleTestDataInitializer scaleTDI;
-
+	 
 	@Before
 	public void setUp() throws Exception {
 		this.scaleTDI = new ScaleTestDataInitializer();
@@ -226,7 +226,6 @@ public class InventoryImportParserTest {
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT), "15");
-        testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL), "y");
 
 		final InventoryDetails details = rowConverter.convertToObject(testRowValue);
 		Assert.assertNotNull("Inventory details could not be properly created when all inventory related columns are present", details);
@@ -237,7 +236,6 @@ public class InventoryImportParserTest {
 		Assert.assertEquals("Inventory details not created with proper location name", "Test Location 1", details.getLocationName());
 		Assert.assertEquals("Inventory details not created with proper scale id", new Integer(1), details.getScaleId());
 		Assert.assertEquals("Inventory details not created with proper scale name", "SEED_AMOUNT_kg", details.getScaleName());
-		Assert.assertEquals("Inventory details assumes upper case value for Bulk Compl in future comparisons", "Y", details.getBulkCompl());
 	}
 
 	protected InventoryImportParser.InventoryRowConverter createForTestingRowConverter(final Workbook workbook) {
@@ -276,13 +274,13 @@ public class InventoryImportParserTest {
 				this.parser.parseWorkbook(this.createWorkbook(germplasmListType), additionalParams);
 		Assert.assertNotNull(importedInventoryList);
 	}
-
+	
 	@Test
 	public void testIsAmountHeaderValidTrue(){
 		final boolean isAmountHeaderValid = this.parser.isAmountHeaderValid(AMOUNT_HEADER);
 		Assert.assertTrue("The header should be valid", isAmountHeaderValid);
 	}
-
+	
 	@Test
 	public void testIsAmountHeaderValidFalse(){
 		final boolean isAmountHeaderValid = this.parser.isAmountHeaderValid("SEED_AMOUNT_X");

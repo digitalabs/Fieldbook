@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.web.util;
 
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -56,7 +57,6 @@ public class CrossesListUtilTest {
 		Mockito.when(this.importedCrosses.getMaleGid()).thenReturn(this.dummyString);
 		Mockito.when(this.importedCrosses.getSource()).thenReturn(this.dummyString);
 
-
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(this.fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(this.fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_CODE.getId())).thenReturn(this.fromOntology);
@@ -98,56 +98,77 @@ public class CrossesListUtilTest {
 	@Test
 	public void testGenerateDatatableDataMapWithDups_importedCrosses() {
 
-		final Map<String, Object> dataMap = this.crossesListUtil.generateDatatableDataMapWithDups(this.importedCrosses);
+		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
+		final Map<String, Object> dataMap = this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, this.importedCrosses);
 
-		Assert.assertTrue("Expecting to have a column name ENTRY.", this.hasColumnHeader(dataMap, "ENTRY"));
-		Assert.assertTrue("Expecting to have a column name PARENTAGE.", this.hasColumnHeader(dataMap, "PARENTAGE"));
-		Assert.assertTrue("Expecting to have a column name ENTRY CODE.", this.hasColumnHeader(dataMap, "ENTRY CODE"));
-		Assert.assertTrue("Expecting to have a column name FEMALE PARENT.", this.hasColumnHeader(dataMap, "FEMALE PARENT"));
-		Assert.assertTrue("Expecting to have a column name FGID.", this.hasColumnHeader(dataMap, "FGID"));
-		Assert.assertTrue("Expecting to have a column name Male Parent.", this.hasColumnHeader(dataMap, "MALE PARENT"));
-		Assert.assertTrue("Expecting to have a column name MGID.", this.hasColumnHeader(dataMap, "MGID"));
-		Assert.assertTrue("Expecting to have a column name SOURCE.", this.hasColumnHeader(dataMap, "SOURCE"));
-		Assert.assertTrue("Expecting to have a column name DUPLICATE.", this.hasColumnHeader(dataMap, "DUPLICATE"));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FGID_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MGID_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.SOURCE_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 	}
 
 	@Test
-	public void testGenerateDatatableDataMapWithDups_germplasmListData() {
+	public void testGenerateDatatableDataMapWithDupsGermplasmListData() {
 
-		final Map<String, Object> dataMap = this.crossesListUtil.generateDatatableDataMapWithDups(this.crossesData);
+		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
+		final Map<String, Object> dataMap = this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, this.crossesData);
 
-		Assert.assertTrue("Expecting to have a column name ENTRY.", this.hasColumnHeader(dataMap, "ENTRY"));
-		Assert.assertTrue("Expecting to have a column name PARENTAGE.", this.hasColumnHeader(dataMap, "PARENTAGE"));
-		Assert.assertTrue("Expecting to have a column name ENTRY CODE.", this.hasColumnHeader(dataMap, "ENTRY CODE"));
-		Assert.assertTrue("Expecting to have a column name FEMALE PARENT.", this.hasColumnHeader(dataMap, "FEMALE PARENT"));
-		Assert.assertTrue("Expecting to have a column name FGID.", this.hasColumnHeader(dataMap, "FGID"));
-		Assert.assertTrue("Expecting to have a column name Male Parent.", this.hasColumnHeader(dataMap, "MALE PARENT"));
-		Assert.assertTrue("Expecting to have a column name MGID.", this.hasColumnHeader(dataMap, "MGID"));
-		Assert.assertTrue("Expecting to have a column name SOURCE.", this.hasColumnHeader(dataMap, "SOURCE"));
-		Assert.assertTrue("Expecting to have a column name DUPLICATE.", this.hasColumnHeader(dataMap, "DUPLICATE"));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FGID_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MGID_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.SOURCE_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 	}
 
 	@Test
 	public void testConvertGermplasmListData2ImportedCrosses() {
 		final GermplasmListData germplasmListData = new GermplasmListData();
-		germplasmListData.setEntryId(TEST_ENTRY_ID_VALUE);
-		germplasmListData.setEntryCode(TEST_ENTRY_CODE_VALUE);
-		germplasmListData.setFemaleParent(TEST_FEMALE_PARENT_VALUE);
-		germplasmListData.setFgid(TEST_FGID_VALUE);
-		germplasmListData.setMaleParent(TEST_MALE_PARENT_VALUE);
-		germplasmListData.setMgid(TEST_MGID_VALUE);
-		germplasmListData.setSeedSource(TEST_SEED_SOURCE_VALUE);
+		germplasmListData.setEntryId(CrossesListUtilTest.TEST_ENTRY_ID_VALUE);
+		germplasmListData.setEntryCode(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE);
+		germplasmListData.setFemaleParent(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE);
+		germplasmListData.setFgid(CrossesListUtilTest.TEST_FGID_VALUE);
+		germplasmListData.setMaleParent(CrossesListUtilTest.TEST_MALE_PARENT_VALUE);
+		germplasmListData.setMgid(CrossesListUtilTest.TEST_MGID_VALUE);
+		germplasmListData.setSeedSource(CrossesListUtilTest.TEST_SEED_SOURCE_VALUE);
 
 		final ImportedCrosses testImportedCrosses = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(germplasmListData);
 
-		Assert.assertEquals(Integer.valueOf(TEST_ENTRY_ID_VALUE), testImportedCrosses.getEntryId());
-		Assert.assertEquals(TEST_ENTRY_CODE_VALUE, testImportedCrosses.getEntryCode());
-		Assert.assertEquals(TEST_FEMALE_PARENT_VALUE, testImportedCrosses.getFemaleDesig());
-		Assert.assertEquals(String.valueOf(TEST_FGID_VALUE), testImportedCrosses.getFemaleGid());
-		Assert.assertEquals(TEST_MALE_PARENT_VALUE, testImportedCrosses.getMaleDesig());
-		Assert.assertEquals(String.valueOf(TEST_MGID_VALUE), testImportedCrosses.getMaleGid());
-		Assert.assertEquals(ImportedCrosses.SEED_SOURCE_PENDING, testImportedCrosses.getSource());
-		Assert.assertEquals(TEST_FEMALE_PARENT_VALUE + "/" + TEST_MALE_PARENT_VALUE, testImportedCrosses.getCross());
+		Assert.assertEquals(Integer.valueOf(CrossesListUtilTest.TEST_ENTRY_ID_VALUE), testImportedCrosses.getEntryId());
+		Assert.assertEquals(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE, testImportedCrosses.getEntryCode());
+		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE, testImportedCrosses.getFemaleDesig());
+		Assert.assertEquals(String.valueOf(CrossesListUtilTest.TEST_FGID_VALUE), testImportedCrosses.getFemaleGid());
+		Assert.assertEquals(CrossesListUtilTest.TEST_MALE_PARENT_VALUE, testImportedCrosses.getMaleDesig());
+		Assert.assertEquals(String.valueOf(CrossesListUtilTest.TEST_MGID_VALUE), testImportedCrosses.getMaleGid());
+		Assert.assertEquals(CrossesListUtilTest.TEST_SEED_SOURCE_VALUE, testImportedCrosses.getSource());
+		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE + "/" + CrossesListUtilTest.TEST_MALE_PARENT_VALUE,
+				testImportedCrosses.getCross());
 	}
 
 	private boolean hasColumnHeader(final Map<String, Object> tableHeaderList, final String columnName) {

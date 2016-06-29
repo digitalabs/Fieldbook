@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.StandardVariableInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -303,8 +305,10 @@ public class OpenTrialControllerTest {
 			variable.setProperty(TestDataHelper.createProperty());
 			variable.setScale(TestDataHelper.createScale());
 
-			Mockito.when(this.variableDataManager.getVariable(Mockito.eq(PROGRAM_UUID), Mockito.eq(measurementVariable.getTermId()), Mockito.anyBoolean(),
-					Mockito.anyBoolean())).thenReturn(variable);;
+			Mockito.when(
+					this.variableDataManager.getVariable(Mockito.eq(PROGRAM_UUID), Mockito.eq(measurementVariable.getTermId()),
+							Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(variable);
+			;
 		}
 	}
 
@@ -795,26 +799,28 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testPrepareMeasurementVariableTabInfo() {
-		List<MeasurementVariable> variatesList = this.createVariates();
+		final List<MeasurementVariable> variatesList = this.createVariates();
 
-		Variable variable = new Variable();
+		final Variable variable = new Variable();
 		variable.setId(UnitTestDaoIDGenerator.generateId(Variable.class));
 		variable.setName("Variable Name");
 		variable.setMethod(TestDataHelper.createMethod());
 		variable.setProperty(TestDataHelper.createProperty());
 		variable.setScale(TestDataHelper.createScale());
 
-		Mockito.when(this.variableDataManager.getVariable(Mockito.any(String.class), Mockito.any(Integer.class), Mockito.anyBoolean(),
-				Mockito.anyBoolean())).thenReturn(variable);
+		Mockito.when(
+				this.variableDataManager.getVariable(Mockito.any(String.class), Mockito.any(Integer.class), Mockito.anyBoolean(),
+						Mockito.anyBoolean())).thenReturn(variable);
 
-		TabInfo tabInfo = this.openTrialController.prepareMeasurementVariableTabInfo(variatesList, VariableType.SELECTION_METHOD, false);
+		final TabInfo tabInfo =
+				this.openTrialController.prepareMeasurementVariableTabInfo(variatesList, VariableType.SELECTION_METHOD, false);
 
 		Assert.assertEquals("Operation", Operation.UPDATE, tabInfo.getSettings().get(0).getVariable().getOperation());
 		Assert.assertEquals("Deletable", true, tabInfo.getSettings().get(0).isDeletable());
 	}
 
 	private List<MeasurementVariable> createVariates() {
-		List<MeasurementVariable> variables = new ArrayList<>();
+		final List<MeasurementVariable> variables = new ArrayList<>();
 		variables.add(this.createMeasurementVariable(BM_CODE_VTE, "BM_CODE_VTE", "Breeding Method", "BMETH_CODE", "Observed", "VARIATE"));
 		return variables;
 	}
@@ -835,19 +841,69 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testGetAdvancedList() {
-		GermplasmList germplasm = new GermplasmList();
+		final GermplasmList germplasm = new GermplasmList();
 		germplasm.setId(501);
 		germplasm.setName("Advance Trial List");
 
-		List<GermplasmList> germplasmList = new ArrayList<>();
+		final List<GermplasmList> germplasmList = new ArrayList<>();
 		germplasmList.add(germplasm);
 
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Mockito.anyInt(), Mockito.any(GermplasmListType.class))).thenReturn(germplasmList);
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Mockito.anyInt(), Mockito.any(GermplasmListType.class)))
+				.thenReturn(germplasmList);
 
-		List<AdvanceList> advancedList = this.openTrialController.getAdvancedList(germplasm.getId());
+		final List<AdvanceList> advancedList = this.openTrialController.getAdvancedList(germplasm.getId());
 
 		Assert.assertEquals("Advance List size", 1, advancedList.size());
 		Assert.assertEquals("Advance List Id: ", germplasm.getId(), advancedList.get(0).getId());
 		Assert.assertEquals("Advance List Name: ", germplasm.getName(), advancedList.get(0).getName());
+	}
+
+	@Test
+	public void testAssignOperationOnExpDesignVariablesForExistingTrialWithoutExperimentalDesign() {
+		final List<MeasurementVariable> conditions = this.initMeasurementVariableList();
+
+		this.openTrialController.assignOperationOnExpDesignVariables(conditions, null);
+
+		for (final MeasurementVariable var : conditions) {
+			Assert.assertTrue("Expecting that the experimental variable's operation still set to ADD",
+					var.getOperation().equals(Operation.ADD));
+		}
+	}
+
+	@Test
+	public void testAssignOperationOnExpDesignVariablesForExistingTrialWithExperimentalDesign() {
+		final List<MeasurementVariable> conditions = this.initMeasurementVariableList();
+
+		final List<StandardVariable> existingExpDesignVariables = this.initExpDesignVariables();
+
+		this.openTrialController.assignOperationOnExpDesignVariables(conditions, existingExpDesignVariables);
+
+		for (final MeasurementVariable var : conditions) {
+			Assert.assertTrue("Expecting that the experimental variable's operation is now set to UPDATE",
+					var.getOperation().equals(Operation.UPDATE));
+		}
+	}
+
+	private List<StandardVariable> initExpDesignVariables() {
+		final List<StandardVariable> existingExpDesignVariables = new ArrayList<StandardVariable>();
+		existingExpDesignVariables
+				.add(StandardVariableInitializer.createStdVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXP_DESIGN"));
+		existingExpDesignVariables.add(StandardVariableInitializer.createStdVariable(TermId.NUMBER_OF_REPLICATES.getId(), "NREP"));
+		existingExpDesignVariables
+				.add(StandardVariableInitializer.createStdVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "EXP_DESIGN_SOURCE"));
+		return existingExpDesignVariables;
+	}
+
+	private List<MeasurementVariable> initMeasurementVariableList() {
+		final MeasurementVariableTestDataInitializer measurementVariableInit = new MeasurementVariableTestDataInitializer();
+		final List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
+		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "10110"));
+		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "SampleFile.csv"));
+		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "2"));
+
+		for (final MeasurementVariable var : conditions) {
+			var.setOperation(Operation.ADD);
+		}
+		return conditions;
 	}
 }

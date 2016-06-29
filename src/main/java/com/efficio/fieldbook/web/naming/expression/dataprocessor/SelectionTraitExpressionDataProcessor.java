@@ -3,10 +3,9 @@ package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.Resource;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
@@ -16,6 +15,9 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.springframework.stereotype.Component;
+
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
 public class SelectionTraitExpressionDataProcessor implements ExpressionDataProcessor {
@@ -61,8 +63,8 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 		}
 
 		final String categoricalValue =
-				this.ontologyVariableDataManager.retrieveVariableCategoricalValue(contextUtil.getCurrentProgramUUID(), variableTermID,
-						Integer.parseInt(value));
+				this.ontologyVariableDataManager.retrieveVariableCategoricalNameValue(contextUtil.getCurrentProgramUUID(), variableTermID,
+						Integer.parseInt(value), true);
 
 		if (categoricalValue == null) {
 			// this case happens when a numeric value is provided as an out of bounds value

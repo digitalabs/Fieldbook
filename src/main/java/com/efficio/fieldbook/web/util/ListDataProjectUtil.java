@@ -18,8 +18,8 @@ public class ListDataProjectUtil {
 			for (ImportedGermplasm aData : projectGermplasmList) {
 				ListDataProject listDataProj = new ListDataProject();
 				listDataProj.setGermplasmId(Integer.valueOf(aData.getGid()));
-				if (aData.getCheckId() != null) {
-					listDataProj.setCheckType(aData.getCheckId());
+				if (aData.getEntryTypeCategoricalID() != null) {
+					listDataProj.setCheckType(aData.getEntryTypeCategoricalID());
 				} else {
 					listDataProj.setCheckType(0);
 				}
@@ -70,13 +70,14 @@ public class ListDataProjectUtil {
 		if (data != null && !data.isEmpty()) {
 			for (ListDataProject aData : data) {
 				ImportedGermplasm germplasm = new ImportedGermplasm();
-				germplasm.setCheck(aData.getCheckType().toString());
-				germplasm.setCheckId(aData.getCheckType());
+				germplasm.setEntryTypeValue(aData.getCheckType().toString());
+				germplasm.setEntryTypeCategoricalID(aData.getCheckType());
 				germplasm.setCross(aData.getGroupName());
 				germplasm.setDesig(aData.getDesignation());
 				germplasm.setEntryCode(aData.getEntryCode());
 				germplasm.setEntryId(aData.getEntryId());
 				germplasm.setGid(aData.getGermplasmId().toString());
+				germplasm.setMgid(aData.getGroupId());
 				germplasm.setSource(aData.getSeedSource());
 				germplasm.setGroupName(aData.getGroupName());
 				germplasm.setIndex(index++);

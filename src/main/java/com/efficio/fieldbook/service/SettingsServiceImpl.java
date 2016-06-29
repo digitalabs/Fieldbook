@@ -59,10 +59,11 @@ public class SettingsServiceImpl implements SettingsService {
 	}
 
 	@Override
-	public SettingDetail createSettingDetail(int id, String name, UserSelection userSelection, int currentIbDbUserId, String programUUID) throws MiddlewareException {
+	public SettingDetail createSettingDetail(final int id, final String name, final UserSelection userSelection,
+			final int currentIbDbUserId, final String programUUID) throws MiddlewareException {
 
 		String variableName;
-		StandardVariable stdVar = this.fieldbookMiddlewareService.getStandardVariable(id, programUUID);
+		final StandardVariable stdVar = this.fieldbookMiddlewareService.getStandardVariable(id, programUUID);
 
 		if (name != null && !name.isEmpty()) {
 			variableName = name;
@@ -71,20 +72,20 @@ public class SettingsServiceImpl implements SettingsService {
 		}
 
 		if (stdVar != null && stdVar.getName() != null) {
-			SettingVariable svar =
+			final SettingVariable svar =
 					new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
-							stdVar.getMethod().getName(), null, stdVar.getDataType().getName(), stdVar
-							.getDataType().getId(), stdVar.getConstraints() != null
-							&& stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
-									stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
-											.getMaxValue() : null);
+							stdVar.getMethod().getName(), null, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null
+									? stdVar.getConstraints().getMinValue() : null,
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null
+									? stdVar.getConstraints().getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 			svar.setOperation(Operation.ADD);
 
-			List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
-			SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
+			final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
+			final SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
 			if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
 				settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
 			} else if (id == TermId.STUDY_UID.getId()) {
@@ -93,17 +94,17 @@ public class SettingsServiceImpl implements SettingsService {
 				settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
 			}
 			settingDetail.setPossibleValuesToJson(possibleValues);
-			List<ValueReference> possibleValuesFavorite =
-					this.fieldbookService.getAllPossibleValuesFavorite(id, programUUID);
+			final List<ValueReference> possibleValuesFavorite = this.fieldbookService.getAllPossibleValuesFavorite(id, programUUID, false);
 			settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 			settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 			return settingDetail;
 		} else {
-			SettingVariable svar = new SettingVariable();
+			final SettingVariable svar = new SettingVariable();
 			svar.setCvTermId(stdVar.getId());
 			return new SettingDetail(svar, null, null, false);
 		}
 	}
+
 
 	@Override
 	public List<LabelFields> retrieveTrialSettingsAsLabels(Workbook workbook) {

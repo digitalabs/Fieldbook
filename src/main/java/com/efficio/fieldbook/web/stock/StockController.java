@@ -6,18 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.ImportStockForm;
-import com.efficio.fieldbook.web.common.service.ImportInventoryService;
-import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
-import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
-import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
-import com.google.common.base.Joiner;
+import org.apache.commons.collections.ListUtils;
 import org.generationcp.commons.exceptions.StockException;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
@@ -52,6 +45,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.ImportStockForm;
+import com.efficio.fieldbook.web.common.service.ImportInventoryService;
+import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
+import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
+import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
+import com.google.common.base.Joiner;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 4/24/2015 Time: 4:38 PM
@@ -99,6 +102,46 @@ public class StockController extends AbstractBaseFieldbookController {
 	@Resource
 	private UserSelection userSelection;
 
+	
+
+	/**
+	 * Gets the data types.
+	 *
+	 * @return the data types
+	 */
+	@ModelAttribute("favoriteSeedStorageLocationList")
+	public List<Location> getFavoriteSeedStorageLocationList() {
+		try {
+			List<Integer> locationsIds =
+					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.contextUtil.getCurrentProgramUUID());
+			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds); //All Favorite
+
+			List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
+			return ListUtils.intersection(allSeedStorageLocations, faveLocations);
+
+		} catch (MiddlewareQueryException e) {
+			StockController.LOG.error(e.getMessage(), e);
+		}
+
+		return new ArrayList<>();
+	}
+	
+	/**
+	 * Gets the data types.
+	 *
+	 * @return the data types
+	 */
+	@ModelAttribute("allLocationList")
+	public List<Location> getAllLocationList() {
+		try {
+			return this.fieldbookMiddlewareService.getAllLocations();
+		} catch (MiddlewareQueryException e) {
+			StockController.LOG.error(e.getMessage(), e);
+		}
+
+		return new ArrayList<>();
+	}
+	
 	/**
 	 * Gets the data types.
 	 *
@@ -306,26 +349,26 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/import", method = RequestMethod.POST)
-	public String importList(@ModelAttribute("importStockForm")
-	ImportStockForm form) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public String importList(@ModelAttribute("importStockForm")	ImportStockForm form) {
+		Map<String, Object> result = new HashMap<>();
 		try {
 			Integer listId = form.getStockListId();
 			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			Map<String, Object> additionalParams = new HashMap<String, Object>();
+			Map<String, Object> additionalParams = new HashMap<>();
 			additionalParams.put(InventoryImportParser.HEADERS_MAP_PARAM_KEY, InventoryHeaderLabels.headers(germplasmListType));
 			additionalParams.put(InventoryImportParser.LIST_ID_PARAM_KEY, listId);
 			additionalParams.put(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY, germplasmListType);
 			ImportedInventoryList importedInventoryList = this.importInventoryService.parseFile(form.getFile(), additionalParams);
 			List<InventoryDetails> inventoryDetailListFromDB =
-					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+					this.inventoryService.getInventoryListByListDataProjectListId(listId);
 			this.importInventoryService.validateInventoryDetails(inventoryDetailListFromDB, importedInventoryList, germplasmListType);
+			// Setting List Id & Inventory Details in user selection that will be used if user wants to discard the imported stock list
+			this.userSelection.setListId(listId);
+			this.userSelection.setInventoryDetails(this.inventoryService.getInventoryListByListDataProjectListId(listId));
+
 			if (this.importInventoryService.hasConflict(inventoryDetailListFromDB, importedInventoryList)) {
 				result.put("hasConflict", true);
-				this.userSelection.setListId(listId);
-				this.userSelection
-						.setInventoryDetails(this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType));
 			}
 			this.importInventoryService.mergeInventoryDetails(inventoryDetailListFromDB, importedInventoryList, germplasmListType);
 			this.updateInventory(listId, inventoryDetailListFromDB);
@@ -352,9 +395,8 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/revertStockListData/data", method = RequestMethod.POST)
-	public String revertStockListData(@ModelAttribute("importStockForm")
-	ImportStockForm form) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public String revertStockListData(@ModelAttribute("importStockForm") ImportStockForm form) {
+		Map<String, Object> result = new HashMap<>();
 		Integer listId = this.userSelection.getListId();
 		List<InventoryDetails> inventoryDetailListFromDB = this.userSelection.getInventoryDetails();
 		this.updateInventory(listId, inventoryDetailListFromDB);
@@ -368,14 +410,10 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/executeBulkingInstructions/{listId}", method = RequestMethod.POST)
-	public Map<String, Object> executeBulkingInstructions(@PathVariable
-	Integer listId) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	public Map<String, Object> executeBulkingInstructions(@PathVariable	Integer listId) {
+		Map<String, Object> result = new HashMap<>();
 		try {
-			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
-			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			List<InventoryDetails> inventoryDetailsList =
-					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+			List<InventoryDetails> inventoryDetailsList = this.inventoryService.getInventoryListByListDataProjectListId(listId);
 			this.stockService.verifyIfBulkingForStockListCanProceed(listId, inventoryDetailsList);
 			this.stockService.executeBulkingInstructions(inventoryDetailsList);
 			result.put(StockController.HAS_ERROR, false);
@@ -404,10 +442,9 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/update/lots", method = RequestMethod.POST)
-	public Map<String, Object> updateLots(@ModelAttribute("seedStoreForm")
-	SeedStoreForm form, Model model, Locale local) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		List<Integer> entryIdList = new ArrayList<Integer>();
+	public Map<String, Object> updateLots(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, Locale local) {
+		Map<String, Object> result = new HashMap<>();
+		List<Integer> entryIdList = new ArrayList<>();
 
 		for (String gid : form.getEntryIdList().split(",")) {
 			entryIdList.add(Integer.parseInt(gid));
@@ -417,10 +454,7 @@ public class StockController extends AbstractBaseFieldbookController {
 		Integer listId = form.getListId();
 
 		try {
-			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
-			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			List<InventoryDetails> inventoryDetailListFromDB =
-					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+			List<InventoryDetails> inventoryDetailListFromDB = this.inventoryService.getInventoryListByListDataProjectListId(listId);
 
 			Double amount = form.getAmount();
 			int inventoryLocationId = form.getInventoryLocationId();

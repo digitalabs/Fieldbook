@@ -1,28 +1,36 @@
 /*global getJquerySafeId, showErrorMessage, oldLineSelected, changeAdvanceBreedingMethod, setCorrecMethodValues, noMethodVariatesError, oldMethodSelected, msgSamplePlotError, msgHarvestDateError, noLineVariatesError, setCorrectMethodValues, methodSuggestionsFav_obj, isInt, breedingMethodId, oldMethodSelected*/
 /*global isStudyNameUnique, validateStartDateEndDateBasic*/
+
+//Used globle variable to selected location for trial
+var selectedLocationForTrail;
+var possibleLocationsForTrail;
+
 function checkMethod() {
 	'use strict';
 	if ($('input[type=checkbox][name=methodChoice]:checked').val() == 1) {
 		$('#methodIdFavorite').select2('enable', true);
 		$('#methodIdAll').select2('enable', true);
+		$('#methodIdDerivativeAndMaintenance').select2('enable', true);
+		$('#methodIdDerivativeAndMaintenanceFavorite').select2('enable', true);
+
 		$('#showFavoriteMethod').prop('disabled', false);
+
 		$('#method-variates-section').hide();
 		$('.method-selection-div').find('input,select').prop('disabled', false);
-		$('#methodIdAll').select2('enable', true);
-		$('#methodIdFavorite').select2('enable', true);
 
 		setCorrectMethodValues(true);
 		changeAdvanceBreedingMethod();
 	} else {
 		$('#method-variates-section').show();
 		$('.method-selection-div').find('input,select').prop('disabled', true);
+
 		$('#methodIdAll').select2('enable', false);
 		$('#methodIdFavorite').select2('enable', false);
+		$('#methodIdDerivativeAndMaintenance').select2('enable', false);
+		$('#methodIdDerivativeAndMaintenanceFavorite').select2('enable', false);
 
 		if ($('#namingConvention').val() != 3) {
 			$('#showFavoriteMethod').prop('disabled', 'disabled');
-			$('#methodIdFavorite').select2('enable', false);
-			$('#methodIdAll').select2('enable', false);
 		}
 		oldMethodSelected = $('#' + getJquerySafeId('advanceBreedingMethodId')).val();
 		$('#methodSelected').val($('#defaultMethodId').val());
@@ -171,8 +179,17 @@ function showCorrectLocationCombo() {
 	// if show favorite location is checked, hide all field locations, else,
 	// show only favorite locations
 	if (isChecked) {
-		$('#s2id_harvestLocationIdFavorite').show();
+
+		if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
+			$('#s2id_harvestLocationIdBreedingFavorites').show();
+			$('#s2id_harvestLocationIdFavorite').hide();
+		} else {
+			$('#s2id_harvestLocationIdBreedingFavorites').hide();
+			$('#s2id_harvestLocationIdFavorite').show();
+		}
+
 		$('#s2id_harvestLocationIdAll').hide();
+		$('#s2id_harvestLocationIdBreeding').hide();
 		if ($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2(
 				'data') != null) {
 			$('#' + getJquerySafeId('harvestLocationId')).val(
@@ -192,16 +209,27 @@ function showCorrectLocationCombo() {
 		}
 	} else {
 		$('#s2id_harvestLocationIdFavorite').hide();
-		$('#s2id_harvestLocationIdAll').show();
-		if ($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data') != null) {
+		$('#s2id_harvestLocationIdBreedingFavorites').hide();
+
+		if ($('#showAllLocationOnlyRadio').is(':checked')) {
+			$('#s2id_harvestLocationIdAll').show();
+			$('#s2id_harvestLocationIdBreeding').hide();
+		} else {
+			$('#s2id_harvestLocationIdBreeding').show();
+			$('#s2id_harvestLocationIdAll').hide();
+		}
+
+        // harvestLocationIdAll is not null but it contains blank value so put AND condition
+		if ($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data') != null && $('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').id != "" ) {
 			$('#' + getJquerySafeId('harvestLocationId')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').id);
 			$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').text);
 			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
-		} else {
-			$('#' + getJquerySafeId('harvestLocationId')).val(0);
-			$('#' + getJquerySafeId('harvestLocationName')).val('');
-			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val('');
 		}
+
+        //In case of trial we have to set selected location
+        if(!isNursery()){
+            setSelectedLocation();
+        }
 	}
 }
 
@@ -214,9 +242,19 @@ function showCorrectMethodCombo() {
 		methodSelect = true;
 	}
 
+	// Hide everything then choose what to show
+	$('#s2id_methodIdDerivativeAndMaintenanceFavorite').hide();
+	$('#s2id_methodIdFavorite').hide();
+	$('#s2id_methodIdAll').hide();
+	$('#s2id_methodIdDerivativeAndMaintenance').hide();
+
 	if (isChecked) {
-		$('#s2id_methodIdFavorite').show();
-		$('#s2id_methodIdAll').hide();
+		if ($('#showDerivativeAndMaintenanceRadio').is(':checked')) {
+			$('#s2id_methodIdDerivativeAndMaintenanceFavorite').show();
+		} else {
+			$('#s2id_methodIdFavorite').show();
+		}
+
 		setCorrectMethodValues(methodSelect);
 		if ($('#' + getJquerySafeId('methodIdFavorite')).select2('data') != null) {
 			$('#' + getJquerySafeId('breedingMethodId')).val($('#' + getJquerySafeId('methodIdFavorite')).select2('data').id);
@@ -224,8 +262,12 @@ function showCorrectMethodCombo() {
 			$('#' + getJquerySafeId('breedingMethodId')).val(0);
 		}
 	} else {
-		$('#s2id_methodIdFavorite').hide();
-		$('#s2id_methodIdAll').show();
+		if ($('#showDerivativeAndMaintenanceRadio').is(':checked')) {
+			$('#s2id_methodIdDerivativeAndMaintenance').show();
+		} else {
+			$('#s2id_methodIdAll').show();
+		}
+
 		setCorrectMethodValues(methodSelect);
 		if ($('#' + getJquerySafeId('methodIdAll')).select2('data') != null) {
 			$('#' + getJquerySafeId('breedingMethodId')).val($('#' + getJquerySafeId('methodIdAll')).select2('data').id);
@@ -462,6 +504,25 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 
 		if (parseInt(settingDetail.variable.cvTermId, 10) == parseInt(breedingMethodId, 10) ||
 				parseInt(settingDetail.variable.cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)) {
+			
+			// all values div
+			newRow = newRow
+					+ '<div class="possibleValuesDiv"> <label class="radio-inline"> <input id="filterMethods" name="methodFilter" type="radio" checked="checked"'
+					+ ' onclick="javascript: toggleMethodDropdown('
+					+ ctr
+					+ ');" /> <span >Derivative and Maintenance methods</span> &nbsp;&nbsp; '
+					+ '<input id="allMethods" name="methodFilter" type="radio"'
+					+ ' onclick="javascript: toggleMethodDropdown('
+					+ ctr
+					+ ');" /> <span >All methods</span></label>'
+					+ '</span></div>'
+					+ '<div id="allValuesJson" class="allValuesJson" style="display:none">'
+					+ JSON.stringify(settingDetail.allValues)
+					+ '</div>'
+					+ '<div id="allFavoriteValuesJson" class="allFavoriteValuesJson" style="display:none">'
+					+ JSON.stringify(settingDetail.allFavoriteValues)
+					+ '</div>';
+			
 			// show favorite method
 			locMethodCbxId = name + ctr;
 			newRow = newRow
@@ -499,8 +560,37 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '<span><a href="javascript: openManageMethods();">'
 					+ manageMethodLabel + '</a></span>';
 			newRow = newRow + '</div>';
-
+		
 		} else if (settingDetail.variable.cvTermId == locationId) {
+			
+			locMethodCbxId = name + ctr;
+			// all values div
+			newRow = newRow
+					+ '<div class="possibleValuesDiv"> <label class="radio-inline"> <input id="filterLocations" name="locationFilter" type="radio" checked="checked"'
+					+ ' onclick="javascript: toggleLocationDropdown('
+					+ ctr
+					+ ');" /> <span >All Breeding locations</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  '
+					+ '<input id="allLocations" name="locationFilter" type="radio" '
+					+ ' onclick="javascript: toggleLocationDropdown('
+					+ ctr
+					+ ');" /> <span >All location types</span></label>'
+					+ '</span></div>'
+					+ '<div id="allValuesJson'
+					+ ctr
+					+ '" class="allValuesJson"'
+					+ 'style="display:none">'
+					+ JSON.stringify(settingDetail.allValues)
+					+ '</div>';
+			
+			// all favorite values div
+			newRow = newRow
+					+ '<div id="allFavoriteValuesJson'
+					+ ctr
+					+ '" class="allFavoriteValuesJson"'
+					+ 'style="display:none">'
+					+ JSON.stringify(settingDetail.allFavoriteValues)
+					+ '</div>';
+			
 			// show favorite location
 			locMethodCbxId = name + ctr;
 			newRow = newRow
@@ -538,6 +628,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '<span><a href="javascript: openManageLocations();">'
 					+ manageLocationLabel + '</a></span>';
 			newRow = newRow + '</div>';
+	
 
 		} else {
 			newRow = newRow + '<div id="possibleValuesJson'
@@ -619,6 +710,8 @@ function toggleMethodDropdown(rowIndex) {
 	var showFavorite = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex
 		+ '.favorite1')).is(':checked');
 	var selectedVal = '';
+	var filterMethod = $('#' + getJquerySafeId('filterMethods')).is(':checked');
+	var allMethod = $('#' + getJquerySafeId('allMethods')).is(':checked');
 
 	// get previously selected value
 	if ($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).select2('data')) {
@@ -630,21 +723,71 @@ function toggleMethodDropdown(rowIndex) {
 	initializePossibleValuesCombo([], '#'
 			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),
 			false, null);
+	
 
 	// get possible values based on checkbox
-	if (showFavorite) {
+
+	if (showFavorite && !allMethod) {
+
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
+	} else if (allMethod && !showFavorite) {
+
+		possibleValues = $('#allValuesJson' + rowIndex).text();
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
+	} else if (allMethod && showFavorite) {
+		possibleValues = $('#allFavoriteValuesJson' + rowIndex).text();
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
 	} else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValue')).val();
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
 	}
+
+
 	// recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
 			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),
@@ -657,6 +800,8 @@ function toggleLocationDropdown(rowIndex) {
 		+ '.favorite1')).is(':checked');
 	var selectedVal = '';
 	var showAll = true;
+	var filterLocations = $('#' + getJquerySafeId('filterLocations')).is(':checked');
+	var allLocations = $('#' + getJquerySafeId('allLocations')).is(':checked');
 
 	// get previously selected value
 	if ($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).select2('data')) {
@@ -669,22 +814,65 @@ function toggleLocationDropdown(rowIndex) {
 				false, null);
 
 	// get possible values based on checkbox
-	if (showFavorite) {
+	if (showFavorite && !allLocations) {
+
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		showAll = false;
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValue')).val(selectedVal);
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
 		selectedVal = $(
-			$('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-			.parent().find('.selectedValueFave')).val();
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
+	} else if (allLocations && !showFavorite) {
+
+		possibleValues = $('#allValuesJson' + rowIndex).text();
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
+	} else if (allLocations && showFavorite) {
+		possibleValues = $('#allFavoriteValuesJson' + rowIndex).text();
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
 	} else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-				.parent().find('.selectedValueFave')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + '.value')).parent().find('.selectedValue')).val();
+		$(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValue')).val(selectedVal);
+		selectedVal = $(
+				$(
+						'#'
+								+ getJquerySafeId('studyLevelVariables'
+										+ rowIndex + '.value')).parent().find(
+						'.selectedValueFave')).val();
 	}
-
 	// recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
 			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'), showAll, selectedVal);
@@ -809,6 +997,12 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 						query.callback(data);
 					}
 				});
+
+        // Set default harvest location id and name
+        if (defaultJsonVal != null) {
+            $('#' + getJquerySafeId('harvestLocationId')).val(defaultJsonVal.id);
+            $('#' + getJquerySafeId('harvestLocationName')).val(defaultJsonVal.text);
+        }
 	} else if ($(name).parent().next().children('.breeding-method-tooltip').length > 0) {
 		$(name).select2(
 				{
@@ -1657,6 +1851,8 @@ function nurseryValidateStartEndDateBasic() {
 
 function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 	var selectedMethodAll = $('#methodIdAll').val();
+	var selectedMethodDerivativeAndMaintenance = $('#methodIdDerivativeAndMaintenance').val();
+	var selectedMethodDerivativeAndMaintenanceFavorite = $('#methodIdDerivativeAndMaintenanceFavorite').val();
 	var selectedMethodFavorite = $('#methodIdFavorite').val();
 
 	$.ajax({
@@ -1670,16 +1866,22 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 				if (selectedMethodAll != null) {
 					// recreate the select2 combos to get updated list of
 					// methods
-					recreateMethodComboAfterClose('methodIdAll', data.allNonGenerativeMethods);
-					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdAll', data.allMethods);
+					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteMethods);
+					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenance', data.allNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenanceFavorite', data.favoriteNonGenerativeMethods);
 					showCorrectMethodCombo();
 					// set previously selected value of method
 					if ($('#showFavoriteMethod').prop('checked')) {
-						setComboValues(methodSuggestionsFav_obj,
-								selectedMethodFavorite, 'methodIdFavorite');
+						if ($('#showDerivativeAndMaintenanceRadio').prop('checked')) {
+							setComboValues(methodSuggestionsDerivativeAndMaintenanceFavorites_obj, selectedMethodDerivativeAndMaintenanceFavorite, 'methodIdDerivativeAndMaintenanceFavorite');
+						} else {
+							setComboValues(methodSuggestionsFav_obj, selectedMethodFavorite, 'methodIdFavorite');
+						}
+					} else if ($('#showDerivativeAndMaintenanceRadio').prop('checked')) {
+						setComboValues(methodSuggestionsDerivativeAndMaintenance_obj, selectedMethodDerivativeAndMaintenance, 'methodIdAll');
 					} else {
-						setComboValues(methodSuggestions_obj,
-								selectedMethodAll, 'methodIdAll');
+						setComboValues(methodSuggestions_obj, selectedMethodAll, 'methodIdAll');
 					}
 				} else {
 					var selectedVal = null;
@@ -1921,4 +2123,25 @@ function checkNurseryIfShowRemoveVariableLinks() {
 			$(this).parents('.remove-all-section').addClass('fbk-hide');
 		}
 	});
+}
+
+function selectedLocation(location, possibleValues) {
+    selectedLocationForTrail = location;
+    possibleLocationsForTrail = possibleValues;
+}
+
+
+function setSelectedLocation() {
+    //Trial passes preferred values in which location abbreviation available in bracket.
+    //We need to split value to get actual abbreviation for selected location
+    if (possibleLocationsForTrail != null && selectedLocationForTrail != null && selectedLocationForTrail !='') {
+        $('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
+        var locationName = $.grep(possibleLocationsForTrail, function (e) {
+            return e.key == selectedLocationForTrail.id;
+        });
+        $('#' + getJquerySafeId('harvestLocationName')).val(locationName[0].name);
+        var locAbbreviation = locationName[0].name.split("(");
+        locAbbreviation[1] = locAbbreviation[1].replace(")", '');
+        $('#' + getJquerySafeId('harvestLocationAbbreviation')).val(locAbbreviation[1]);
+    }
 }

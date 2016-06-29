@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.label.printing.bean;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.pojos.GermplasmList;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -113,9 +113,11 @@ public class UserLabelPrinting implements Serializable {
 
 	private boolean isTrial;
 
-	private GermplasmList stockList;
+	private Integer stockListId;
 
-	private Map<String, InventoryDetails> inventoryDetailsMap;
+    private String stockListTypeName;
+
+	private List<InventoryDetails> inventoryDetailsList;
 
 	/**
 	 * Gets the field map info.
@@ -186,6 +188,53 @@ public class UserLabelPrinting implements Serializable {
 			}
 			this.totalNumberOfLabelToPrint = Integer.toString(totalLabels);
 		}
+	}
+
+	/**
+	 * Sets the field map info.
+	 *
+	 * @param fieldMapInfo the new field map info
+	 * @param inventoryDetails the inventory details for study stock.
+	 *
+	 */
+	public void setFieldMapInfo(FieldMapInfo fieldMapInfo,List<InventoryDetails> inventoryDetails) {
+		this.fieldMapInfo = fieldMapInfo;
+
+		//Override FieldMapInfo for Trial Stock to populate data based in Inventories instead of Measurements
+		Map<Integer,Integer> instanceWiseLabelsNeeded = new HashMap<>();
+
+		Integer instanceNumber = null;
+		for(InventoryDetails inventoryDetail : inventoryDetails){
+			instanceNumber = inventoryDetail.getInstanceNumber();
+			if(instanceNumber != null){
+				if(!instanceWiseLabelsNeeded.containsKey(instanceNumber)){
+					instanceWiseLabelsNeeded.put(instanceNumber, 0);
+				}
+				Integer labelCount = instanceWiseLabelsNeeded.get(instanceNumber)+1;
+				instanceWiseLabelsNeeded.put(instanceNumber,labelCount);
+			}
+		}
+
+		if (fieldMapInfo != null) {
+			if (fieldMapInfo.getDatasets() != null && !fieldMapInfo.getDatasets().isEmpty()) {
+				FieldMapDatasetInfo info = fieldMapInfo.getDatasets().get(0);
+				if (info.getTrialInstances() != null) {
+					this.numberOfInstances = Integer.toString(info.getTrialInstances().size());
+					for (int i = 0; i < info.getTrialInstances().size(); i++) {
+						FieldMapTrialInstanceInfo trialInstanceInfo = info.getTrialInstances().get(i);
+						instanceNumber = Integer.valueOf(trialInstanceInfo.getTrialInstanceNo());
+						if(instanceWiseLabelsNeeded.get(instanceNumber) != null){
+							trialInstanceInfo.setLabelsNeeded(instanceWiseLabelsNeeded.get(instanceNumber));
+						}
+						else{
+							trialInstanceInfo.setLabelsNeeded(0);
+						}
+					}
+				}
+			}
+			this.totalNumberOfLabelToPrint = Integer.toString(inventoryDetails.size());
+		}
+
 	}
 
 	/**
@@ -602,22 +651,6 @@ public class UserLabelPrinting implements Serializable {
 		isTrial = trial;
 	}
 
-	public GermplasmList getStockList() {
-		return this.stockList;
-	}
-
-	public void setStockList(GermplasmList stockList) {
-		this.stockList = stockList;
-	}
-
-	public Map<String, InventoryDetails> getInventoryDetailsMap() {
-		return this.inventoryDetailsMap;
-	}
-
-	public void setInventoryDetailsMap(Map<String, InventoryDetails> inventoryDetailsMap) {
-		this.inventoryDetailsMap = inventoryDetailsMap;
-	}
-
 	public Integer getStudyId() {
 		return this.studyId;
 	}
@@ -626,4 +659,27 @@ public class UserLabelPrinting implements Serializable {
 		this.studyId = studyId;
 	}
 
+    public Integer getStockListId() {
+        return stockListId;
+    }
+
+    public void setStockListId(Integer stockListId) {
+        this.stockListId = stockListId;
+    }
+
+    public String getStockListTypeName() {
+        return stockListTypeName;
+    }
+
+    public void setStockListTypeName(String stockListTypeName) {
+        this.stockListTypeName = stockListTypeName;
+    }
+
+    public List<InventoryDetails> getInventoryDetailsList() {
+        return inventoryDetailsList;
+    }
+
+    public void setInventoryDetailsList(List<InventoryDetails> inventoryDetailsList) {
+        this.inventoryDetailsList = inventoryDetailsList;
+    }
 }

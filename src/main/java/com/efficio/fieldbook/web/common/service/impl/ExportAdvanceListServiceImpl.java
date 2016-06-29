@@ -36,14 +36,19 @@ import com.efficio.fieldbook.web.util.ZipUtil;
 
 public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
+	private static final String DEFAULT_AMOUNT_HEADER = "SEED_AMOUNT_G";
+
 	private static final Logger LOG = LoggerFactory.getLogger(ExportAdvanceListServiceImpl.class);
 
 	@Resource
 	private FieldbookProperties fieldbookProperties;
+
 	@Resource
 	private InventoryService inventoryMiddlewareService;
+
 	@Resource
 	public MessageSource messageSource;
+
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
@@ -54,30 +59,30 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	private static final String STOCK_LIST_EXPORT_SHEET_NAME = "Inventory List";
 
 	@Override
-	public File exportAdvanceGermplasmList(String delimitedAdvanceGermplasmListIds, String studyName, GermplasmExportService germplasmExportServiceImpl,
-			String type) {
-		List<Integer> advanceGermplasmListIds = this.parseDelimitedAdvanceGermplasmListIds(delimitedAdvanceGermplasmListIds);
-		List<String> filenameList = new ArrayList<String>();
+	public File exportAdvanceGermplasmList(final String delimitedAdvanceGermplasmListIds, final String studyName,
+			final GermplasmExportService germplasmExportServiceImpl, final String type) {
+		final List<Integer> advanceGermplasmListIds = this.parseDelimitedAdvanceGermplasmListIds(delimitedAdvanceGermplasmListIds);
+		final List<String> filenameList = new ArrayList<String>();
 		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
-		String suffix = AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)
+		final String suffix = AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)
 				? AppConstants.EXPORT_XLS_SUFFIX.getString() : AppConstants.EXPORT_CSV_SUFFIX.getString();
 
-		for (Integer advanceGermpasmListId : advanceGermplasmListIds) {
+		for (final Integer advanceGermpasmListId : advanceGermplasmListIds) {
 			try {
-				List<InventoryDetails> inventoryDetailList =
+				final List<InventoryDetails> inventoryDetailList =
 						this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(advanceGermpasmListId);
-				GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(advanceGermpasmListId);
-				String advanceListName = germplasmList.getName();
-				String filenamePath = this.getFileNamePath(advanceListName) + suffix;
-				String sheetName = WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.ADVANCE_LIST_SHEET_NAME);
+				final GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(advanceGermpasmListId);
+				final String advanceListName = germplasmList.getName();
+				final String filenamePath = this.getFileNamePath(advanceListName) + suffix;
+				final String sheetName = WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.ADVANCE_LIST_SHEET_NAME);
 
 				this.exportList(inventoryDetailList, filenamePath, sheetName, germplasmExportServiceImpl, type, false);
 
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
-			} catch (MiddlewareQueryException e) {
+			} catch (final MiddlewareQueryException e) {
 				ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 			}
 		}
@@ -92,21 +97,21 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	}
 
 	@Override
-	public File exportStockList(Integer stockListId, GermplasmExportService germplasmExportServiceImpl) {
+	public File exportStockList(final Integer stockListId, final GermplasmExportService germplasmExportServiceImpl) {
 
-		List<String> filenameList = new ArrayList<String>();
+		final List<String> filenameList = new ArrayList<String>();
 		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
-		String suffix = AppConstants.EXPORT_XLS_SUFFIX.getString();
+		final String suffix = AppConstants.EXPORT_XLS_SUFFIX.getString();
 
 		try {
-			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(stockListId);
-			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			List<InventoryDetails> inventoryDetailList =
-					this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockListId, germplasmListType);
+			final GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(stockListId);
+			final GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
+			final List<InventoryDetails> inventoryDetailList =
+					this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockListId);
 
-			String advanceListName = germplasmList.getName();
-			String filenamePath = this.getFileNamePath(advanceListName) + suffix;
-			String sheetName =
+			final String advanceListName = germplasmList.getName();
+			final String filenamePath = this.getFileNamePath(advanceListName) + suffix;
+			final String sheetName =
 					org.apache.poi.ss.util.WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.STOCK_LIST_EXPORT_SHEET_NAME);
 
 			this.exportList(inventoryDetailList, filenamePath, sheetName, germplasmExportServiceImpl,
@@ -114,23 +119,24 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 			outputFilename = filenamePath;
 			filenameList.add(filenamePath);
-		} catch (IOException e) {
-			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
-		} catch (MiddlewareQueryException e) {
+		} catch (IOException | MiddlewareQueryException e) {
 			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
 		return new File(outputFilename);
 	}
 
-	protected String getFileNamePath(String name) {
-		String filenamePath = this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(name);
+	protected String getFileNamePath(final String name) {
+		final String filenamePath =
+				this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(name);
 		return filenamePath;
 	}
 
-	protected void exportList(List<InventoryDetails> inventoryDetailList, String filenamePath, String sheetName,
-			GermplasmExportService germplasmExportServiceImpl, String type, boolean displayCrossRelatedColumns) throws IOException {
-		List<ExportColumnHeader> exportColumnHeaders = this.generateAdvanceListColumnHeaders(displayCrossRelatedColumns);
+	protected void exportList(final List<InventoryDetails> inventoryDetailList, final String filenamePath, final String sheetName,
+			final GermplasmExportService germplasmExportServiceImpl, final String type, final boolean displayCrossRelatedColumns)
+					throws IOException {
+		final List<ExportColumnHeader> exportColumnHeaders =
+				this.generateAdvanceListColumnHeaders(displayCrossRelatedColumns, this.getAmountsHeader(inventoryDetailList));
 		if (AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)) {
 			germplasmExportServiceImpl.generateExcelFileForSingleSheet(
 					this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders), exportColumnHeaders, filenamePath,
@@ -141,23 +147,33 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		}
 	}
 
-	protected boolean zipFileNameList(String outputFilename, List<String> filenameList) {
+	String getAmountsHeader(final List<InventoryDetails> inventoryDetailList) {
+		for (final InventoryDetails inventoryDetails : inventoryDetailList) {
+			if (inventoryDetails.getScaleName() != null) {
+				return inventoryDetails.getScaleName();
+			}
+		}
+		return ExportAdvanceListServiceImpl.DEFAULT_AMOUNT_HEADER;
+	}
+
+	protected boolean zipFileNameList(final String outputFilename, final List<String> filenameList) {
 		ZipUtil.zipIt(outputFilename, filenameList);
 		return true;
 	}
 
-	protected List<Integer> parseDelimitedAdvanceGermplasmListIds(String advancedListIds) {
-		List<Integer> advancedGermplasmListIds = new ArrayList<Integer>();
-		StringTokenizer tokenizer = new StringTokenizer(advancedListIds, "|");
+	protected List<Integer> parseDelimitedAdvanceGermplasmListIds(final String advancedListIds) {
+		final List<Integer> advancedGermplasmListIds = new ArrayList<Integer>();
+		final StringTokenizer tokenizer = new StringTokenizer(advancedListIds, "|");
 		while (tokenizer.hasMoreTokens()) {
 			advancedGermplasmListIds.add(Integer.valueOf(tokenizer.nextToken()));
 		}
 		return advancedGermplasmListIds;
 	}
 
-	protected List<ExportColumnHeader> generateAdvanceListColumnHeaders(boolean displayCrossRelatedColumns) {
-		List<ExportColumnHeader> exportColumnHeaders = new ArrayList<ExportColumnHeader>();
-		Locale locale = LocaleContextHolder.getLocale();
+	protected List<ExportColumnHeader> generateAdvanceListColumnHeaders(final boolean displayCrossRelatedColumns,
+			final String amountHeader) {
+		final List<ExportColumnHeader> exportColumnHeaders = new ArrayList<ExportColumnHeader>();
+		final Locale locale = LocaleContextHolder.getLocale();
 
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_NO.getId(),
 				this.messageSource.getMessage("seed.entry.number", null, locale), true, ExportColumnHeader.GREEN));
@@ -181,10 +197,8 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(),
 				this.messageSource.getMessage("seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
-		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(),
-				this.messageSource.getMessage("seed.inventory.amount", null, locale), true, ExportColumnHeader.BLUE));
-		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_SCALE.getInt(),
-				this.messageSource.getMessage("seed.inventory.table.scale", null, locale), true, ExportColumnHeader.BLUE));
+		exportColumnHeaders
+				.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(), amountHeader, true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.STOCKID.getId(),
 				this.messageSource.getMessage("seed.inventory.stockid", null, locale), true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(),
@@ -192,21 +206,21 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		return exportColumnHeaders;
 	}
 
-	protected List<Map<Integer, ExportColumnValue>> generateAdvanceListColumnValues(List<InventoryDetails> inventoryDetailList,
-			List<ExportColumnHeader> exportColumnHeaders) {
-		List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<Map<Integer, ExportColumnValue>>();
-		for (InventoryDetails inventoryDetails : inventoryDetailList) {
-			Map<Integer, ExportColumnValue> dataMap = new HashMap<Integer, ExportColumnValue>();
-			for (ExportColumnHeader columnHeaders : exportColumnHeaders) {
-				dataMap.put(columnHeaders.getId(), new ExportColumnValue(columnHeaders.getId(),
-						this.getInventoryDetailValueInfo(inventoryDetails, columnHeaders.getId())));
+	protected List<Map<Integer, ExportColumnValue>> generateAdvanceListColumnValues(final List<InventoryDetails> inventoryDetailList,
+			final List<ExportColumnHeader> exportColumnHeaders) {
+		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<Map<Integer, ExportColumnValue>>();
+		for (final InventoryDetails inventoryDetails : inventoryDetailList) {
+			final Map<Integer, ExportColumnValue> dataMap = new HashMap<Integer, ExportColumnValue>();
+			for (final ExportColumnHeader columnHeader : exportColumnHeaders) {
+				dataMap.put(columnHeader.getId(), new ExportColumnValue(columnHeader.getId(),
+						this.getInventoryDetailValueInfo(inventoryDetails, columnHeader.getId())));
 			}
 			exportColumnValues.add(dataMap);
 		}
 		return exportColumnValues;
 	}
 
-	protected String getInventoryDetailValueInfo(InventoryDetails inventoryDetails, int columnHeaderId) {
+	protected String getInventoryDetailValueInfo(final InventoryDetails inventoryDetails, final int columnHeaderId) {
 		String val = "";
 		if (columnHeaderId == TermId.ENTRY_NO.getId()) {
 			val = inventoryDetails.getEntryId().toString();
@@ -229,8 +243,6 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 			val = inventoryDetails.getLocationAbbr();
 		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt()) {
 			val = this.getInventoryAmount(inventoryDetails);
-		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_SCALE.getInt()) {
-			val = this.getInventoryValue(inventoryDetails.getScaleName());
 		} else if (columnHeaderId == TermId.STOCKID.getId()) {
 			val = this.getInventoryValue(inventoryDetails.getInventoryID());
 		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()) {
@@ -239,27 +251,27 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		return val;
 	}
 
-	protected String getInventoryValue(String inventoryValue) {
+	protected String getInventoryValue(final String inventoryValue) {
 		return inventoryValue != null ? inventoryValue : "";
 	}
 
-	protected String getInventoryAmount(InventoryDetails inventoryDetails) {
+	protected String getInventoryAmount(final InventoryDetails inventoryDetails) {
 		return inventoryDetails.getAmount() != null ? inventoryDetails.getAmount().toString() : "";
 	}
 
-	public void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
+	public void setFieldbookProperties(final FieldbookProperties fieldbookProperties) {
 		this.fieldbookProperties = fieldbookProperties;
 	}
 
-	public void setInventoryMiddlewareService(InventoryService inventoryMiddlewareService) {
+	public void setInventoryMiddlewareService(final InventoryService inventoryMiddlewareService) {
 		this.inventoryMiddlewareService = inventoryMiddlewareService;
 	}
 
-	public void setMessageSource(MessageSource messageSource) {
+	public void setMessageSource(final MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 
-	public void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+	public void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 

@@ -134,7 +134,7 @@
 							nclatin: null,
 							replatinGroups: '',
 							startingPlotNo: 1,
-							startingEntryNo: '1',
+							startingEntryNo: (typeof $scope.data.startingEntryNo !== 'undefined')? parseInt($scope.data.startingEntryNo,10) : 1 ,
 							hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement
 						}, $scope.data);
 					}
@@ -205,7 +205,9 @@
 									} else {
 										showErrorMessage('', response.message);
 									}
-								}
+								}, function(errResponse) {
+                                    showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+                                }
 							);
 						} else {
 							TrialManagerDataService.generatePresetExpDesign($scope.data.designType).then(function() {

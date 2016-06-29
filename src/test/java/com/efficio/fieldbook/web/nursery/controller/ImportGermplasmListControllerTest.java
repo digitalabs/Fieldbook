@@ -11,17 +11,10 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.google.common.collect.Lists;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -58,15 +51,21 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.ui.ExtendedModelMap;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.MergeCheckService;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.google.common.collect.Lists;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ImportGermplasmListControllerTest {
@@ -412,13 +411,13 @@ public class ImportGermplasmListControllerTest {
 
 		Mockito.when(
 				this.mergeCheckService.mergeGermplasmList(Mockito.anyList(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyInt(),
-						Mockito.anyInt(), Mockito.anyString())).thenReturn(mergedImportedGermplasm);
+						Mockito.anyInt())).thenReturn(mergedImportedGermplasm);
 
 		this.importGermplasmListController.mergePrimaryAndCheckGermplasmList(this.userSelection, form);
 
 		Mockito.verify(this.mergeCheckService).updatePrimaryListAndChecksBeforeMerge(form);
 		Mockito.verify(this.mergeCheckService).mergeGermplasmList(Mockito.anyList(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyInt(),
-				Mockito.anyInt(), Mockito.anyString());
+				Mockito.anyInt());
 
 		Assert.assertEquals(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
 				mergedImportedGermplasm);
@@ -458,11 +457,11 @@ public class ImportGermplasmListControllerTest {
 		final List<ImportedGermplasm> importedGermplasmList =
 				this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 
-		Assert.assertEquals("", importedGermplasmList.get(0).getCheck());
-		Assert.assertEquals(0, importedGermplasmList.get(0).getCheckId().intValue());
+		Assert.assertEquals("", importedGermplasmList.get(0).getEntryTypeValue());
+		Assert.assertEquals(0, importedGermplasmList.get(0).getEntryTypeCategoricalID().intValue());
 
-		Assert.assertEquals("", importedGermplasmList.get(1).getCheck());
-		Assert.assertEquals(0, importedGermplasmList.get(1).getCheckId().intValue());
+		Assert.assertEquals("", importedGermplasmList.get(1).getEntryTypeValue());
+		Assert.assertEquals(0, importedGermplasmList.get(1).getEntryTypeCategoricalID().intValue());
 
 	}
 
@@ -479,11 +478,11 @@ public class ImportGermplasmListControllerTest {
 		final List<ImportedGermplasm> importedGermplasmList =
 				this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 
-		Assert.assertEquals("10180", importedGermplasmList.get(0).getCheck());
-		Assert.assertEquals(10180, importedGermplasmList.get(0).getCheckId().intValue());
+		Assert.assertEquals("10180", importedGermplasmList.get(0).getEntryTypeValue());
+		Assert.assertEquals(10180, importedGermplasmList.get(0).getEntryTypeCategoricalID().intValue());
 
-		Assert.assertEquals("10180", importedGermplasmList.get(1).getCheck());
-		Assert.assertEquals(10180, importedGermplasmList.get(1).getCheckId().intValue());
+		Assert.assertEquals("10180", importedGermplasmList.get(1).getEntryTypeValue());
+		Assert.assertEquals(10180, importedGermplasmList.get(1).getEntryTypeCategoricalID().intValue());
 
 	}
 
@@ -503,7 +502,7 @@ public class ImportGermplasmListControllerTest {
 
 		Mockito.when(
 				this.mergeCheckService.mergeGermplasmList(Mockito.anyList(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyInt(),
-						Mockito.anyInt(), Mockito.anyString())).thenReturn(mergedImportedGermplasm);
+						Mockito.anyInt())).thenReturn(mergedImportedGermplasm);
 
 		this.importGermplasmListController.processImportedGermplasmAndChecks(this.userSelection, form);
 
@@ -568,7 +567,7 @@ public class ImportGermplasmListControllerTest {
 		importedGermplasm.setEntryId(1);
 		importedGermplasm.setEntryCode("2");
 		importedGermplasm.setDesig("(CML454 X CML451)-B-4-1-112");
-		importedGermplasm.setCheckId(1);
+		importedGermplasm.setEntryTypeCategoricalID(1);
 		importedGermplasm.setSource("Source");
 		importedGermplasm.setGroupName("Group Name");
 		germplasmList.add(importedGermplasm);
@@ -661,6 +660,7 @@ public class ImportGermplasmListControllerTest {
 			data.setGermplasmId(x);
 			data.setListDataProjectId(x);
 			data.setCheckType(ImportGermplasmListControllerTest.CHECK_TYPE);
+			data.setGroupId(0);
 			list.add(data);
 		}
 		return list;

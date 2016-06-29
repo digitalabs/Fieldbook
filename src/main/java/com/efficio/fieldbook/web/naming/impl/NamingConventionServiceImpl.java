@@ -15,9 +15,9 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
+import org.generationcp.commons.ruleengine.RulesNotConfiguredException;
 import org.generationcp.commons.ruleengine.service.RulesService;
-import org.generationcp.commons.service.GermplasmOriginGenerationParameters;
-import org.generationcp.commons.service.GermplasmOriginGenerationService;
+import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -27,6 +27,7 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.TimerWatch;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,6 @@ import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
 import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
-import com.efficio.fieldbook.web.naming.service.GermplasmOriginParameterBuilder;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
@@ -56,7 +56,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private RulesService rulesService;
 
 	@Resource
-	private GermplasmDataManager germplasmDataManger;
+	private GermplasmDataManager germplasmDataManager;
 
 	@Resource
 	private AdvancingSourceListFactory advancingSourceListFactory;
@@ -71,10 +71,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private ResourceBundleMessageSource messageSource;
 
 	@Resource
-	private GermplasmOriginGenerationService germplasmOriginGenerationService;
-
-	@Resource
-	private GermplasmOriginParameterBuilder germplasmOriginParameterBuilder;
+	private SeedSourceGenerator seedSourceGenerator;
 
 	@Override
 	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException,
@@ -177,12 +174,12 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 		
 		// set the seed source string for the new Germplasm
-		final GermplasmOriginGenerationParameters parameters =
-				this.germplasmOriginParameterBuilder.build(workbook, source, selectionNumberToApply);
-		final String seedSourceOriginString = this.germplasmOriginGenerationService.generateOriginString(parameters);
+		final String seedSource =
+				this.seedSourceGenerator.generateSeedSource(workbook, source.getTrialInstanceNumber(), selectionNumberToApply,
+						source.getPlotNumber(), workbook.getStudyName());
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
-						, source.getGermplasm().getCross(), seedSourceOriginString,
+						, source.getGermplasm().getCross(), seedSource,
 						FieldbookUtil.generateEntryCode(index), null /* check */
 						, breedingMethod.getMid());
 		
@@ -204,6 +201,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		germplasm.setTrialInstanceNumber(source.getTrialInstanceNumber());
 		germplasm.setReplicationNumber(source.getReplicationNumber());
+        germplasm.setPlotNumber(source.getPlotNumber());
 
 		list.add(germplasm);
 	}
@@ -212,10 +210,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		final List<Name> names = new ArrayList<Name>();
 
 		final Name name = new Name();
-		final Integer germplasmId = source.getGermplasm().getGid() != null ? Integer.valueOf(source.getGermplasm().getGid()) : null;
-		name.setGermplasmId(germplasmId);
 		name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
-
 		name.setNval(germplasm.getDesig());
 		name.setNstat(1);
 		names.add(name);
@@ -269,18 +264,34 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			breedingMethodMap.put(method.getMid(), method);
 		}
 
+		final Integer breedingMethodId = Integer.valueOf(advancingParameters.getBreedingMethodId());
+		final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
+
+		if (!this.germplasmDataManager.isMethodNamingConfigurationValid(breedingMethodId)) {
+			throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rules.not.configured", null, "The rules"
+					+ " were not configured", LocaleContextHolder.getLocale()));
+		}
+
 		int index = 0;
 		final TimerWatch timer = new TimerWatch("cross");
 
+		// FIXME previousMaxSequence is a "quick fix" solution to propagate previous max sequence to the next cross entry to process.
+		// Rules engine is currently not designed to handle this (even for advancing case). Next sequence choice is managed this via user
+		// interaction for advancing. There is no user interaction in case of cross list.
+		int previousMaxSequence = 0;
 		for (final AdvancingSource advancingSource : rows.getRows()) {
 			final List<String> names;
+			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 
-			advancingSource.setBreedingMethod(breedingMethodMap.get(Integer.valueOf(advancingParameters.getBreedingMethodId())));
+			advancingSource.setBreedingMethod(selectedMethod);
 			//default plants selected value to 1 for list of crosses because sequence is not working if plants selected value is not set
 			advancingSource.setPlantsSelected(1);
 
 			final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
 			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
+
+			// Save away the current max sequence once rules have been run for this entry.
+			previousMaxSequence = advancingSource.getCurrentMaxSequence() + 1;
 			for (final String name : names) {
 				importedCrosses.get(index++).setDesig(name);
 			}
@@ -299,7 +310,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 
 		final NamingRuleExecutionContext context =
-				new NamingRuleExecutionContext(sequenceList, this.processCodeService, row, this.germplasmDataManger,
+				new NamingRuleExecutionContext(sequenceList, this.processCodeService, row, this.germplasmDataManager,
 						new ArrayList<String>());
 		context.setMessageSource(this.messageSource);
 
@@ -318,8 +329,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		this.rulesService = rulesService;
 	}
 
-	void setGermplasmDataManger(GermplasmDataManager germplasmDataManger) {
-		this.germplasmDataManger = germplasmDataManger;
+	void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
+		this.germplasmDataManager = germplasmDataManager;
 	}
 
 	void setAdvancingSourceListFactory(AdvancingSourceListFactory advancingSourceListFactory) {
@@ -334,12 +345,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		this.ruleFactory = ruleFactory;
 	}
 
-	void setGermplasmOriginGenerationService(GermplasmOriginGenerationService germplasmOriginGenerationService) {
-		this.germplasmOriginGenerationService = germplasmOriginGenerationService;
-	}
-
-	void setGermplasmOriginParameterBuilder(GermplasmOriginParameterBuilder germplasmOriginParameterBuilder) {
-		this.germplasmOriginParameterBuilder = germplasmOriginParameterBuilder;
+	void setSeedSourceGenerator(SeedSourceGenerator seedSourceGenerator) {
+		this.seedSourceGenerator = seedSourceGenerator;
 	}
 
 }

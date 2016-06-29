@@ -1,13 +1,13 @@
 
 /*global angular, modalConfirmationTitle, openManageLocations,
-environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, showErrorMessage, SpinnerManager*/
+environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, showErrorMessage*/
 
 (function() {
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout) {
+	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService',
+		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService) {
 
 			// if environments tab is triggered, we preload the measurements tab
 			$scope.loadMeasurementsTabInBackground();
@@ -48,7 +48,16 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.settings.trialConditionDetails = [];
 			}
 
-			$scope.isLocation = $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
+			$scope.ifLocationAddedToTheDataTable = function () {
+				return $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
+			};
+
+			//the flag to determine if we have a location variable in the datatable
+			$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
+
+			$scope.onLocationChange = function(data){
+				environmentService.changeEnvironments(data);
+			}
 
 			$scope.buttonsTopWithLocation = [{
 				//TODO disable?
@@ -97,10 +106,14 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			$scope.onAddVariable = function() {
 				$scope.nested.dtInstance.rerender();
+				// update the location flag, as it could have been added
+				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			};
 
 			$scope.$on('deleteOccurred', function() {
 				$scope.nested.dtInstance.rerender();
+				// update the location flag, as it could have been deleted
+				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			});
 
 			$scope.initiateManageLocationModal = function() {
@@ -207,18 +220,15 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			/* Watchers */
 			$scope.$watch('data.noOfEnvironments', function(newVal, oldVal) {
-
+				$scope.temp.noOfEnvironments = newVal;
 				if (newVal < oldVal) {
 					// if new environment count is less than previous value, splice array
 					while ($scope.data.environments.length > newVal) {
 						$scope.data.environments.pop();
 					}
 
-					// if the trial has no measurement data regardless if it is saved or not,
-					// regenerate the experimental design and measurement table
-					if ((TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement) ||
-							(!TrialManagerDataService.isOpenTrial() &&
-								TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined)) {
+					// Regenerate experimental design and measurement table when the trial is not saved yet
+					if (!TrialManagerDataService.isOpenTrial() && TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
 						refreshMeasurementTableAfterDeletingEnvironment();
 					}
 
@@ -227,7 +237,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					addNewEnvironments(newVal - oldVal);
 
 					// should not be equal to 1 since the default number of environment for a trial is 1
-					if (newVal !== 1) {
+					if(newVal !== 1 && oldVal !== 1){
 						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 					}
 				}
@@ -260,8 +270,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			// on click generate design button
 			function refreshMeasurementTableAfterDeletingEnvironment() {
+				// Make sure that the measurement table will only refresh if there is a selected design type for the current trial
 				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
-				if (TrialManagerDataService.applicationData.designTypes[designTypeId].isPreset) {
+				if (designTypeId !== null && TrialManagerDataService.applicationData.designTypes[designTypeId].isPreset) {
 					TrialManagerDataService.generatePresetExpDesign(designTypeId).then(function() {
 						TrialManagerDataService.updateAfterGeneratingDesignSuccessfully();
 						TrialManagerDataService.applicationData.hasGeneratedDesignPreset = true;
@@ -282,12 +293,14 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							} else {
 								showErrorMessage('', response.message);
 							}
-						}
+						}, function(errResponse) {
+                            showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+                        }
 					);
 				}
 			}
 
-			function addNewEnvironments(noOfEnvironments) {
+			function addNewEnvironments(noOfEnvironments, displayWarningMessage) {
 				for (var ctr = 0; ctr < noOfEnvironments; ctr++) {
 					$scope.data.environments.push({
 						managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
@@ -302,7 +315,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = i + 1;
 					}
 				}
-				TrialManagerDataService.indicateUnappliedChangesAvailable();
+				TrialManagerDataService.indicateUnappliedChangesAvailable(displayWarningMessage);
 			}
 
 			function updateEnvironmentVariables(type, entriesIncreased) {
@@ -338,30 +351,26 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			}
 
 			function updateDeletedEnvironment(index) {
-				SpinnerManager.addActiveWithCustomDelay(0);
+				// remove 1 environment
+				$scope.temp.noOfEnvironments -= 1;
+				$scope.data.environments.splice(index, 1);
+				$scope.updateTrialInstanceNo($scope.data.environments, index);
+				$scope.data.noOfEnvironments -= 1;
 
-				$timeout(function() {
-					// remove 1 environment
-					$scope.temp.noOfEnvironments -= 1;
-					$scope.data.environments.splice(index, 1);
-					$scope.updateTrialInstanceNo($scope.data.environments, index);
-					$scope.data.noOfEnvironments -= 1;
+				//update the no of environments in experimental design tab
+				if (TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
+					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
+				}
 
-					//update the no of environments in experimental design tab
-					if (TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
-						TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
-					}
-
-					TrialManagerDataService.deleteEnvironment(index + 1).then(SpinnerManager.resolveActive);
-				}, 60);
+				TrialManagerDataService.deleteEnvironment(index + 1);
 			}
 
 			// init
 			if ($stateParams && $stateParams.addtlNumOfEnvironments && !isNaN(parseInt($stateParams.addtlNumOfEnvironments))) {
-				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments);
-				$scope.temp.noOfEnvironments += addtlNumOfEnvironments;
+				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments, 10);
+				$scope.temp.noOfEnvironments = parseInt($scope.temp.noOfEnvironments, 10) + addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
-				addNewEnvironments(addtlNumOfEnvironments);
+				addNewEnvironments(addtlNumOfEnvironments,$stateParams.displayWarningMessage);
 			}
 		}]).factory('DTLoadingTemplate', function() {
 			return {

@@ -71,6 +71,7 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 				$(document).on('breeding-method-update', function() {
 					BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(methodSelectID, favoritesCheckboxID, favoritesDefault, methodConversionFunction);
 				});
+
 			});
 		},
 

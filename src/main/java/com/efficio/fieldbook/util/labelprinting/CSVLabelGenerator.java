@@ -39,7 +39,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
 
         final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
         final List<ExportColumnHeader> exportColumnHeaders =
-                this.generateColumnHeaders(selectedFieldIDs, trialInstances.get(0).getTrialInstance().getLabelHeaders());
+                this.generateColumnHeaders(selectedFieldIDs, getLabelHeadersFromTrialInstances(trialInstances));
 
         final List<Map<Integer, ExportColumnValue>> exportColumnValues =
                 this.generateColumnValues(trialInstances, selectedFieldIDs, userLabelPrinting);

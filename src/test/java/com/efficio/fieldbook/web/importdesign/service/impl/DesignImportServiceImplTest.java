@@ -58,6 +58,8 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser;
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportServiceImplTest {
 
+	private static final int STARTING_PLOT_NO_FROM_CSV = 1;
+
 	private static final int CHALK_PCT_TERMID = 22768;
 
 	private static final int GYLD_TERMID = 18000;
@@ -153,33 +155,35 @@ public class DesignImportServiceImplTest {
 		final Map<Integer, StandardVariable> result =
 				this.service.convertToStandardVariables(workbook.getGermplasmFactors(), PhenotypicType.GERMPLASM);
 
-		Assert.assertEquals(result.size(), workbook.getGermplasmFactors().size());
+		Assert.assertEquals(
+				"The number of converted standard variables must be equal to the number of germplasm factors from the workbook.",
+				result.size(), workbook.getGermplasmFactors().size());
 
 		for (final MeasurementVariable measurementVar : workbook.getFactors()) {
 			final StandardVariable stdVar = result.get(measurementVar.getTermId());
 			if (stdVar != null) {
-				Assert.assertTrue(stdVar.getId() == measurementVar.getTermId());
-				Assert.assertTrue(stdVar.getPhenotypicType().getLabelList().contains(measurementVar.getLabel()));
-
+				Assert.assertTrue("The standard variable id must be equal to the measurement variable id.",
+						stdVar.getId() == measurementVar.getTermId());
+				Assert.assertTrue("The standard variable phenotypic type must be equal to the measurement variable label.", stdVar
+						.getPhenotypicType().getLabelList().contains(measurementVar.getLabel()));
 			}
-
 		}
-
 	}
 
 	@Test
 	public void testExtractTrialInstancesFromEnvironmentData() {
-
-		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(5);
+		final int expectedNumberOfTrialInstances = 5;
+		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(expectedNumberOfTrialInstances);
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final Set<String> result = this.service.extractTrialInstancesFromEnvironmentData(environmentData);
 
-		Assert.assertEquals(5, result.size());
-
+		final int actualNoOfExtractedTrialInstances = result.size();
+		Assert.assertEquals("The number of extracted trial instances must be equal to " + expectedNumberOfTrialInstances + " but returned "
+				+ actualNoOfExtractedTrialInstances, expectedNumberOfTrialInstances, actualNoOfExtractedTrialInstances);
 	}
 
-	//@Test
+	@Test
 	public void testGenerateDesignForOneInstanceOnly() throws DesignValidationException {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
@@ -187,6 +191,7 @@ public class DesignImportServiceImplTest {
 		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
 				.getImportedGermplasmMainInfo();
 
+		// Make sure that there is only 1 trial instance included in the selected environments from the UI
 		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
 
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
@@ -195,20 +200,22 @@ public class DesignImportServiceImplTest {
 				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false,
 						this.createAdditionalParamsMap(1, 1));
 
-		Assert.assertEquals("The first trial instance has only 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES,
-				measurements.size());
+		Assert.assertEquals("The first trial instance must only have " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES
+				+ " observations.", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, measurements.size());
 
 	}
 
 	@Test
 	public void testGenerateDesignForThreeInstances() throws DesignValidationException {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+		final int noOfTrialInstances = 3;
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, noOfTrialInstances);
 
 		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
 				.getImportedGermplasmMainInfo();
 
-		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(3);
+		// Make sure that there is only 3 trial instances included in the selected environments from the UI
+		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(noOfTrialInstances);
 
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
@@ -216,7 +223,10 @@ public class DesignImportServiceImplTest {
 				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false,
 						this.createAdditionalParamsMap(1, 1));
 
-		Assert.assertEquals("Only the first trial has observations so the measurement count should be 6", 6, measurements.size());
+		// Not including the header row from the count of number of rows from the csv file
+		final int expectedNumberOfMeasurements = this.designImportData.getRowDataMap().size() - 1;
+		Assert.assertEquals("Expecting to return " + expectedNumberOfMeasurements + " observations for " + noOfTrialInstances
+				+ " trial instances but didn't. ", expectedNumberOfMeasurements, measurements.size());
 
 	}
 
@@ -227,11 +237,12 @@ public class DesignImportServiceImplTest {
 		return additionalParams;
 	}
 
-	//@Test
+	@Test
 	public void testGenerateDesignForNursery() throws DesignValidationException {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
 
+		// Setting to 1 since there is only 1 environment for nursery
 		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
@@ -239,8 +250,9 @@ public class DesignImportServiceImplTest {
 				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false,
 						this.createAdditionalParamsMap(1, 1));
 
-		Assert.assertEquals("The first trial instance has only 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES,
-				measurements.size());
+		Assert.assertEquals("Expecting that the number of measurement rows generated for nursery is "
+				+ DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations but returned " + measurements.size() + " instead.",
+				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, measurements.size());
 
 	}
 
@@ -252,6 +264,7 @@ public class DesignImportServiceImplTest {
 		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
 				.getImportedGermplasmMainInfo();
 
+		// Make sure that there is only 3 trial instances included in the selected environments from the UI
 		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(3);
 
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
@@ -281,14 +294,20 @@ public class DesignImportServiceImplTest {
 
 	@Test
 	public void testGetDesignMeasurementVariables() {
-
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
-
 		final Set<MeasurementVariable> result = this.service.getDesignMeasurementVariables(workbook, this.designImportData, true);
 
-		Assert.assertEquals("The total number of Factors and Variates in workbook is 14", 14, result.size());
+		// retrieve no of variables imported from the csv file
+		final int noOfVariablesFromCSVFile = this.designImportData.getRowDataMap().get(0).size();
+		final int expectedNoOfVariablesUsed =
+				noOfVariablesFromCSVFile + workbook.getGermplasmFactors().size() + workbook.getVariates().size();
+		Assert.assertEquals("The total number of variables to use for generating design from workbook and csv file must be equal to "
+				+ expectedNoOfVariablesUsed + " but returned " + result.size() + " instead.", expectedNoOfVariablesUsed, result.size());
 	}
 
+	/**
+	 * NOTE: PREVIEW mode is the table shown in the REVIEW DESIGN DETAILS modal before clicking the finish button in Import Design feature
+	 */
 	@Test
 	public void testGetDesignMeasurementVariablesNotPreview() {
 
@@ -301,25 +320,38 @@ public class DesignImportServiceImplTest {
 		Assert.assertEquals("The total number of Factors and Variates (less the trial environments) in workbook is 13", 13, result.size());
 	}
 
+	/**
+	 * Extracts Trial design variables as list of Measurement Variable. The list of trial design variables from the csv file are the
+	 * following: PLOT_NO, ENTRY_NO, BLOCK_NO
+	 */
 	@Test
 	public void testGetDesignRequiredMeasurementVariable() {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
+		final int expectedNoOfTrialDesignVariablesFromCSV =
+				this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN).size();
 		final Set<MeasurementVariable> result = this.service.getDesignRequiredMeasurementVariable(workbook, this.designImportData);
 
-		Assert.assertEquals("The total number of Design Factors is 4", 4, result.size());
-
+		Assert.assertEquals("The total number of Trial Design Factors is " + expectedNoOfTrialDesignVariablesFromCSV + " but returned "
+				+ result.size() + " instead.", expectedNoOfTrialDesignVariablesFromCSV, result.size());
 	}
 
+	/**
+	 * Extracts Trial design variables as list of Standard Variable. The list of trial design variables from the csv file are the following:
+	 * PLOT_NO, ENTRY_NO, BLOCK_NO
+	 */
 	@Test
 	public void testGetDesignRequiredStandardVariables() {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
+		final int expectedNoOfTrialDesignVariablesFromCSV =
+				this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN).size();
 		final Set<StandardVariable> result = this.service.getDesignRequiredStandardVariables(workbook, this.designImportData);
 
-		Assert.assertEquals("The total number of Design Factors is 4", 4, result.size());
+		Assert.assertEquals("The total number of Trial Design Factors is " + expectedNoOfTrialDesignVariablesFromCSV + " but returned "
+				+ result.size() + " instead.", expectedNoOfTrialDesignVariablesFromCSV, result.size());
 
 	}
 
@@ -334,12 +366,12 @@ public class DesignImportServiceImplTest {
 				this.service.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getRowDataMap());
 
 		Assert.assertEquals("The total number of trial instances in file is 3", 3, result.size());
-		Assert.assertEquals("Each trial instance in file has 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, result
-				.get("1").size());
-		Assert.assertEquals("Each trial instance in file has 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, result
-				.get("2").size());
-		Assert.assertEquals("Each trial instance in file has 5 observations", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, result
-				.get("3").size());
+		Assert.assertEquals("1st trial instance in file has " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations",
+				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, result.get("1").size());
+		Assert.assertEquals("2nd trial instance in file has " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations",
+				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, result.get("2").size());
+		Assert.assertEquals("Each trial instance in file has " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations",
+				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, result.get("3").size());
 
 	}
 
@@ -348,9 +380,11 @@ public class DesignImportServiceImplTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
+		final int expectedNoOfMeasurementVariablesFromCSV = this.designImportData.getRowDataMap().get(0).size();
 		final Set<MeasurementVariable> returnValue = this.service.getMeasurementVariablesFromDataFile(workbook, this.designImportData);
 
-		Assert.assertEquals("The test data only contains 7 Measurement Variables", 7, returnValue.size());
+		Assert.assertEquals("The csv file only contains " + expectedNoOfMeasurementVariablesFromCSV + " Measurement Variables",
+				expectedNoOfMeasurementVariablesFromCSV, returnValue.size());
 
 	}
 
@@ -369,22 +403,23 @@ public class DesignImportServiceImplTest {
 
 	}
 
-	@Test
-	public void testValidateIfStandardVariableExistsTrialInstanceDoNotExist() {
+	@Test(expected = DesignValidationException.class)
+	public void testValidateIfStandardVariableExistsTrialInstanceDoNotExist() throws DesignValidationException {
+		this.service.validateIfStandardVariableExists(
+				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM),
+				"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
-		try {
-
-			this.service.validateIfStandardVariableExists(this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId()
-					.get(PhenotypicType.GERMPLASM), "design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
-
-			Assert.fail("The logic should detect that the trial number exist");
-
-		} catch (final DesignValidationException e) {
-
-		}
-
+		Assert.fail("The logic should detect that the trial number exist");
 	}
 
+	/**
+	 * This method test the following scenarios: 1. If the number of measurement rows created are the same with the number of rows imported
+	 * from the file 2. If the starting plot no is applied properly for each measurement row created
+	 * 
+	 * This service method updates the measurement rows.
+	 * 
+	 * NOTE: Trial Instance = Environment
+	 */
 	@Test
 	public void testCreatePresetMeasurementRowsPerInstance() {
 		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
@@ -392,25 +427,26 @@ public class DesignImportServiceImplTest {
 		final DesignImportMeasurementRowGenerator measurementRowGenerator = this.generateMeasurementRowGenerator();
 		final int trialInstanceNo = 1;
 		final Integer startingPlotNo = 3;
-		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, startingPlotNo);
+		// The delta that will be used to adjust the value of each plot no from the measurement rows
+		final int plotNoDelta = startingPlotNo - STARTING_PLOT_NO_FROM_CSV;
+
+		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, plotNoDelta);
 
 		Assert.assertEquals("The number of measurement rows from the csv file must be equal to the number of measurements row generated.",
 				csvData.size() - 1, measurements.size());
 
-		// SITE_NAME must not included
+		// SITE_NAME must not be counted for the expected columns imported from the custom import file
 		final Integer expectedColumnNo = csvData.get(0).size() - 1;
 		Assert.assertEquals(
 				"The number of columns from the csv file must be equal to the number of measurements data per measurement row generated.",
 				expectedColumnNo.intValue(), measurements.get(0).getDataList().size());
 
+		// find the index of PLOT_NO column from the import file
 		final int plotNoIndxCSV =
 				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_DESIGN)
 						.get(TermId.PLOT_NO.getId()).getColumnIndex();
 
-		// Matthew makes this change (below) and tests pass BUT WHY. No-one can read this test please make it readable.
-		// Please outline what the methids we are testing are supposed to do
-		// final int plotNoDelta = startingPlotNo - 1;
-		final int plotNoDelta = startingPlotNo;
+		// Verify if the plot no is increased per each measurement rows based on the stated Starting Plot No
 		for (int i = 0; i < measurements.size(); i++) {
 			final List<String> rowCSV = csvData.get(i + 1);
 			final int plotNoCsv = Integer.valueOf(rowCSV.get(plotNoIndxCSV));

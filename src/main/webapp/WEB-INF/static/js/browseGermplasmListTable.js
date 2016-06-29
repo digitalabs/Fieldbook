@@ -32,6 +32,11 @@ function resetGermplasmList() {
 	listId = 0;
 	lastDraggedPrimaryList = 0;
 
+	if (!isNursery()) {
+		var trialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
+		trialManagerDataService.indicateUnappliedChangesAvailable(true);
+	}
+
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/importGermplasmList/resetNurseryGermplasmDetails',
 		type: 'GET',

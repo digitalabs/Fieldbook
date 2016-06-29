@@ -385,7 +385,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 					isPageLoading = false;
 				}
 				angular.forEach($scope.advanceTrialTabs, function(value, index) {
-					if (value.name === listName && value.id === tabId) {
+					if (value.name === listName && parseInt(value.id) === parseInt(tabId)) {
 						isUpdate = true;
 						$scope.advanceTabsData[index].data = tabData;
 						return;
@@ -396,7 +396,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				$scope.stockListTabs = [];
 				angular.forEach($scope.advanceTrialTabs, function(value, index) {
 					if (!isSwap && !isUpdate) {
-						if (value.id === tabId) {
+						if (parseInt(value.id) === parseInt(tabId)) {
 							$scope.advanceTrialTabs.splice(index + 1, 0, {
 								name: listName,
 								state: 'stock-list' + tabId + '-li',

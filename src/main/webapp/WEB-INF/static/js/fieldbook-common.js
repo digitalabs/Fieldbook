@@ -2655,7 +2655,7 @@ function isAllowedEditMeasurementDataCell() {
 	}
 
 	if (needToSaveFirst) {
-		showAlertMessage('', $.fieldbookMessages.measurementWarningNeedGenExpDesign.measurementWarningNeedGenExpDesign);
+		showAlertMessage('', $.fieldbookMessages.measurementWarningNeedGenExpDesign);
 	}
 	return !needToSaveFirst;
 }

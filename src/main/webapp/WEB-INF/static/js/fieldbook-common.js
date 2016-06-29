@@ -2167,11 +2167,10 @@ function recreateLocationCombo() {
 						refreshImportLocationCombo(data);
 						refreshLocationComboInSettings(data);
 					} else if (inventoryPopup) {
-						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations); // Favorites
 						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allLocations); //All locations
-						recreateLocationComboAfterClose('inventoryLocationIdBreeding', data.allBreedingLocations);//All locations
-						recreateLocationComboAfterClose('inventoryLocationIdAllSeedStorage', data.allSeedStorageLocations);//All seed Storage ??
-						
+						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations); // Favorites
+						recreateLocationComboAfterClose('inventoryLocationIdSeedStorage', data.allSeedStorageLocations);//All seed Storage
+						recreateLocationComboAfterClose('inventoryLocationIdFavoriteSeedStorage', data.allSeedStorageFavoritesLocations); //All Favorites seed Storage
 						showCorrectLocationInventoryCombo();
 						// set previously selected value of location
 						if ($('#showFavoriteLocationInventory').prop('checked')) {

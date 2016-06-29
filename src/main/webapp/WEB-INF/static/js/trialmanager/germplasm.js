@@ -55,7 +55,6 @@
     };
 
     $scope.germplasmListCleared = function() {
-        TrialManagerDataService.clearUnappliedChangesFlag();
         TrialManagerDataService.updateTrialMeasurementRowCount(0);
         TrialManagerDataService.applicationData.germplasmListCleared = true;
         TrialManagerDataService.applicationData.germplasmListSelected = false;

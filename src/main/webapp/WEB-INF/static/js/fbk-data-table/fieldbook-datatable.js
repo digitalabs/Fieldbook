@@ -331,7 +331,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		if ($('#studyId').val() != '') {
 			// Activate an inline edit on click of a table cell
 			$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
-				if (isAllowedEditMeasurementDataCell(false)) {
+				if (isAllowedEditMeasurementDataCell()) {
 					var $tdCell = $(this);
 					var cellTdIndex =  $(this).index();
 					var rowIndex = $(this).parent('tr').data('row-index');
@@ -344,7 +344,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					if ($colHeader.hasClass('factors')) {
 						//we should now submit it
 						processInlineEditInput();
-					}else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
+					} else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
 						processInlineEditInput();
 						if ($('#measurement-table').data('show-inline-edit') === '1') {
 							$.ajax({
@@ -353,6 +353,10 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 								success: function(data) {
 									$tdCell.html(data);
 									$tdCell.data('is-inline-edit', '1');
+								},
+								error: function() {
+									//TODO localise the message
+									showErrorMessage('Server Error', 'Could not update the measurement');
 								}
 							});
 						}

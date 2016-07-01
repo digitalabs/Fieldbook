@@ -52,12 +52,41 @@
 
     					$scope.localData = {};
     					$scope.localData.useFavorites = false;
+						$scope.locationLookup = 1;
 
-    					$scope.updateDropdownValues = function() {
-    						$scope.dropdownValues = (!$scope.localData.useFavorites) ? $scope.variableDefinition.possibleValues : $scope.variableDefinition.possibleValuesFavorite;
-    					};
+						
+						$scope.updateDropdownValuesFavorites = function() { // Change state for favorite checkbox
+						if($scope.localData.useFavorites){
+							if($scope.locationLookup ==1){
+								$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
+							}else{
+								$scope.dropdownValues = $scope.variableDefinition.allFavoriteValues;
+							}
+							
+						}else{
+							if($scope.locationLookup ==1){
+								$scope.dropdownValues = $scope.variableDefinition.possibleValues;
+							}else{
+								$scope.dropdownValues = $scope.variableDefinition.allValues;
+							}
+						}
+					};
+					
 
-    					// if the value of the dropdown from existing data matches from the list of favorites, we set the checkbox as true
+					$scope.updateDropdownValuesBreedingLocation = function() { // Change state for breeding
+																												// location radio
+								$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.possibleValuesFavorite
+										: $scope.variableDefinition.possibleValues;
+								$scope.locationLookup = 1;
+					};
+
+					$scope.updateDropdownValuesAllLocation = function() { // Change state for all locations radio
+								$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.allFavoriteValues
+										: $scope.variableDefinition.allValues;
+								$scope.locationLookup = 2;
+					};
+					
+					// if the value of the dropdown from existing data matches from the list of favorites, we set the checkbox as true
     					var useFavorites = function(currentVal) {
 
     						if (!$scope.variableDefinition.existingData && null !== $scope.variableDefinition.possibleValuesFavorite) {
@@ -80,7 +109,7 @@
 
     						$scope.localData.useFavorites = useFavorites(currentVal);
 
-    						$scope.updateDropdownValues();
+    						$scope.updateDropdownValuesFavorites();
 
     						$scope.computeMinimumSearchResults = function() {
     							return ($scope.dropdownValues.length > 0) ? 20 : -1;
@@ -135,6 +164,7 @@
     						}
     					}
 
+
     					// TODO: add code that can handle display of favorite methods, as well as update of possible values in case of click of manage methods
     					if ($scope.isLocation) {
     						$scope.clearArray = function(targetArray) {
@@ -145,7 +175,6 @@
     						};
 
     						$scope.updateLocationValues = function() {
-    							if (!$scope.variableDefinition.locationUpdated) {
     								$http.get('/Fieldbook/locations/getLocations').then(function(returnVal) {
     									if (returnVal.data.success === '1') {
     										$scope.variableDefinition.locationUpdated = true;
@@ -153,17 +182,24 @@
     										// and have changes applied to all components with a copy of the previous reference
     										$scope.clearArray($scope.variableDefinition.possibleValues);
     										$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
+											$scope.clearArray($scope.variableDefinition.allFavoriteValues);
+											$scope.clearArray($scope.variableDefinition.allValues);
+    										
 
     										$scope.variableDefinition.possibleValues.push.apply($scope.variableDefinition.possibleValues,
     											$scope.convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
     										$scope.variableDefinition.possibleValuesFavorite.push.apply(
     											$scope.variableDefinition.possibleValuesFavorite,
-    											$scope.convertLocationsToPossibleValues(returnVal.data.favoriteLocations));
-    										$scope.updateDropdownValues();
+    											$scope.convertLocationsToPossibleValues(returnVal.data.allBreedingFavoritesLocations));
+    										$scope.variableDefinition.allFavoriteValues.push.apply(
+    											$scope.variableDefinition.allFavoriteValues,
+    											$scope.convertLocationsToPossibleValues(returnVal.data.favoriteLocations));	
+    										$scope.variableDefinition.allValues.push.apply(
+    											$scope.variableDefinition.allValues,
+    											$scope.convertLocationsToPossibleValues(returnVal.data.allLocations));													
+    										$scope.updateDropdownValuesFavorites();
     									}
     								});
-
-    							}
     						};
 
     						$scope.convertLocationsToPossibleValues = function(locations) {

@@ -295,10 +295,34 @@
 						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
 					$scope.localData = {};
-					$scope.localData.useFavorites = false;
+//					$scope.localData.useFavorites = true;
+					$scope.lookupLocation = 1;
+					
 
-					$scope.updateDropdownValues = function() {
-						$scope.dropdownValues = (!$scope.localData.useFavorites) ? $scope.variableDefinition.possibleValues : $scope.variableDefinition.possibleValuesFavorite;
+					$scope.updateDropdownValuesFavorites = function() {
+					if ($scope.localData.useFavorites) {
+						if ($scope.lookupLocation == 1) {
+							$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
+						} else {
+							$scope.dropdownValues = $scope.variableDefinition.allFavoriteValues;
+							}
+						} else {
+							if ($scope.lookupLocation == 1) {
+								$scope.dropdownValues = $scope.variableDefinition.possibleValues;
+							} else {
+								$scope.dropdownValues = $scope.variableDefinition.allValues;
+							}
+						}
+					};
+					
+					$scope.updateDropdownValuesBreedingLocation = function() { // Funcion para el cambio de estado del checkBox
+						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.possibleValuesFavorite : $scope.variableDefinition.possibleValues;
+						$scope.lookupLocation = 1;
+					};
+					
+					$scope.updateDropdownValuesAllLocation = function() { // Funcion para el cambio de estado del checkBox
+						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.allFavoriteValues : $scope.variableDefinition.allValues;
+						$scope.lookupLocation = 2;
 					};
 
 					// if the value of the dropdown from existing data matches from the list of favorites, we set the checkbox as true
@@ -324,7 +348,7 @@
 
 						$scope.localData.useFavorites = useFavorites(currentVal);
 
-						$scope.updateDropdownValues();
+						$scope.updateDropdownValuesFavorites();
 
 						$scope.computeMinimumSearchResults = function() {
 							return ($scope.dropdownValues.length > 0) ? 20 : -1;
@@ -390,23 +414,38 @@
 
 						$scope.updateLocationValues = function() {
 							if (!$scope.variableDefinition.locationUpdated) {
-								$http.get('/Fieldbook/locations/getLocations').then(function(returnVal) {
-									if (returnVal.data.success === '1') {
-										$scope.variableDefinition.locationUpdated = true;
-										// clear and copy of array is performed so as to preserve previous reference
-										// and have changes applied to all components with a copy of the previous reference
-										$scope.clearArray($scope.variableDefinition.possibleValues);
-										$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
-
-										$scope.variableDefinition.possibleValues.push.apply($scope.variableDefinition.possibleValues,
-											$scope.convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
-										$scope.variableDefinition.possibleValuesFavorite.push.apply(
-											$scope.variableDefinition.possibleValuesFavorite,
-											$scope.convertLocationsToPossibleValues(returnVal.data.favoriteLocations));
-										$scope.updateDropdownValues();
-									}
-								});
-
+								$http
+									.get('/Fieldbook/locations/getLocations')
+									.then(
+										function(returnVal) {
+											if (returnVal.data.success === '1') {
+												$scope.variableDefinition.locationUpdated = true;
+												// clear and copy of array is performed so as to preserve previous reference
+												// and have changes applied to all components with a copy of the previous
+												// reference
+												$scope.clearArray($scope.variableDefinition.allValues);
+												$scope.clearArray($scope.variableDefinition.possibleValues);
+												$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
+												$scope.clearArray($scope.variableDefinition.allFavoriteValues);
+	
+												$scope.variableDefinition.allValues.push.apply(
+													$scope.variableDefinition.allValues, $scope
+														.convertLocationsToPossibleValues(returnVal.data.allLocations));
+												$scope.variableDefinition.possibleValues.push.apply(
+													$scope.variableDefinition.possibleValues, $scope
+														.convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
+												$scope.variableDefinition.allFavoriteValues.push.apply(
+													$scope.variableDefinition.allFavoriteValues, $scope
+														.convertLocationsToPossibleValues(returnVal.data.favoriteLocations));
+												$scope.variableDefinition.possibleValuesFavorite.push
+													.apply(
+														$scope.variableDefinition.possibleValuesFavorite,
+														$scope
+															.convertLocationsToPossibleValues(returnVal.data.allBreedingFavoritesLocations));
+												$scope.updateDropdownValuesFavorites();
+											}
+										});
+	
 							}
 						};
 

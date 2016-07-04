@@ -2090,7 +2090,8 @@ function refreshImportMethodCombo(data) {
 		initializePossibleValuesCombo(data.allMethods,
 				'#importMethodId', false, selectedValue);
 	}
-	replacePossibleJsonValues(data.favoriteMethods, data.allMethods, 'Method');
+	replacePossibleJsonValues(data.allNonGenerativeMethods, data.favoriteNonGenerativeMethods, data.allMethods, data.favoriteMethods,
+		'Method');
 }
 
 function refreshImportLocationCombo(data) {
@@ -2105,7 +2106,8 @@ function refreshImportLocationCombo(data) {
 		initializePossibleValuesCombo(data.allBreedingLocations,
 				'#importLocationId', true, selectedValue);
 	}
-	replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, 'Location');
+	replacePossibleJsonValues(data.allBreedingLocations, data.allBreedingFavoritesLocations, data.allLocations, data.favoriteLocations,
+		'Location');
 }
 
 function generateGenericLocationSuggestions(genericLocationJson) {
@@ -2254,7 +2256,8 @@ function refreshMethodComboInSettings(data) {
 					'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		}
 
-		replacePossibleJsonValues(data.favoriteNonGenerativeMethods, data.allNonGenerativeMethods, index);
+		replacePossibleJsonValues(data.allNonGenerativeMethods, data.favoriteNonGenerativeMethods, data.allMethods, data.favoriteMethods,
+			index);
 	}
 }
 
@@ -2262,19 +2265,27 @@ function refreshLocationComboInSettings(data) {
 	var selectedVal = null;
 	var index = getLocationRowIndex();
 	if (index > -1) {
-		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data')) {
-			selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
+		var id = '#' + getJquerySafeId('studyLevelVariables' + index + '.value');
+		if ($(id).select2('data')) {
+			selectedVal = $(id).select2('data').id;
 		}
-		initializePossibleValuesCombo([], '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
+		initializePossibleValuesCombo([], id, true, selectedVal);
 
 		// update values in combo
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
-			initializePossibleValuesCombo(data.favoriteLocations, '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+			if ($("#allLocations").is(':checked')) {
+				initializePossibleValuesCombo(data.favoriteLocations, id, false, selectedVal);
+			} else {
+				initializePossibleValuesCombo(data.allBreedingFavoritesLocations, id, false, selectedVal);
+			}
+		} else if ($("#allLocations").is(':checked')) {
+			initializePossibleValuesCombo(data.allLocations, id, true, selectedVal);
 		} else {
-			initializePossibleValuesCombo(data.allBreedingLocations, '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
+			initializePossibleValuesCombo(data.allBreedingLocations, id, true, selectedVal);
 		}
 
-		replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, index);
+		replacePossibleJsonValues(data.allBreedingLocations, data.allBreedingFavoritesLocations, data.allLocations, data.favoriteLocations,
+			index);
 	}
 }
 

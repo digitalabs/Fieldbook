@@ -186,8 +186,12 @@ var ImportCrosses = {
 			$safeId('#favoritesCheckboxID').prop('checked', true);
 		}
 
+		if (ImportCrosses.showFavoriteMethodsOnly) {
+			$safeId('#showFavoritesOnlyCheckbox').prop('checked', true);
+		}
+
 		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
-			ImportCrosses.showFavoriteMethodsOnly);
+			'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
 		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
 			'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio');
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');

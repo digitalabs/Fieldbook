@@ -52,6 +52,20 @@
                             </div>
                             <div class="row">
                                 <div class="col-xs-12 col-md-12">
+                                    <label class="radio-inline">
+                                        <input id="showBreedingMethodOnlyRadio" name="filter" value="1" type="radio" checked="checked" />
+                                        <span th:text="#{show.derivative.maintenance.method}">Derivative and Maintenance methods</span>
+                                        &nbsp;&nbsp;
+                                    </label>
+                                </div>
+                                <div class="col-xs-12 col-md-12">
+                                    <label class="radio-inline">
+                                        <input id="showAllMethodOnlyRadio" name="filter" value="2" type="radio" />
+                                        <span th:text="#{show.all.methods}">All Methods</span>
+                                        &nbsp;&nbsp;
+                                    </label>
+                                </div>
+                                <div class="col-xs-12 col-md-12">
                                     <input type="checkbox" class="crossingBreedingMethodInput" id="showFavoritesOnlyCheckbox"/>
                                     <label th:text="#{show.favorite.method}"></label>
                                     &nbsp;

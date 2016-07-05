@@ -526,6 +526,8 @@ $(document).ready(function() {
 	// remove any other listeners for the location update
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);
+	$(document).off('method-update');
+	$(document).on('method-update', recreateMethodCombo);
 	$('#variateDeleteConfirmationModal').on('click', '#cancelDelete', function() {
 		if (document.initialEnabledStat && document.enableActions !== undefined) {
 			document.enableActions();

@@ -2172,7 +2172,7 @@ function recreateLocationCombo() {
 						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations); // Favorites
 						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allLocations); //All locations
 						recreateLocationComboAfterClose('inventoryLocationIdBreeding', data.allBreedingLocations);//All locations
-						recreateLocationComboAfterClose('inventoryLocationIdAllSeedStorage', data.allSeedStorageLocations);//All seed Storage ??
+						recreateLocationComboAfterClose('inventoryLocationIdAllSeedStorage', data.allSeedStorageLocations);//All seed Storage
 						
 						showCorrectLocationInventoryCombo();
 						// set previously selected value of location

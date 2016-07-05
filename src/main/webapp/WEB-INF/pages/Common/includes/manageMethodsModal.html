@@ -8,7 +8,7 @@
 							&nbsp;
 						</div>
 						<div class="col-xs-1 col-md-1">
-							<button  id="closeManageMethodModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+							<button  id="closeManageMethodModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" onClick="propagateLocationUpdateEvent();" aria-hidden="true"/>
 						</div>
 					</div>
 
@@ -62,6 +62,13 @@ function openManageMethods() {
 		methodIframeOpened = true;
 		$('#methodFrame').attr('src', document.programMethodUrl + document.projectID);
 	}
+}
+
+function propagateLocationUpdateEvent() {
+	'use strict'
+	$.event.trigger({
+		type: 'method-update'
+	});
 }
 //]]>
 </script>

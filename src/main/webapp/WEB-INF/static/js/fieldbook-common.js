@@ -2354,8 +2354,9 @@ function deleteFolder(object) {
 		
 		if (isFolder) {
 			$.ajax({
-				url: '/Fieldbook/StudyTreeManager/isFolderEmpty/'+folderId+'/'+studyType+'/'+currentFolderName,
+				url: '/Fieldbook/StudyTreeManager/isFolderEmpty/'+folderId+'/'+studyType,
 				type: 'POST',
+				data: 'folderName=' + currentFolderName,
 				cache: false,
 				success: function(data) {
 					var node;

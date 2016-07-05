@@ -313,9 +313,10 @@ public class StudyTreeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/isFolderEmpty/{folderId}/{studyType}/{folderName}", method = RequestMethod.POST)
+	@RequestMapping(value = "/isFolderEmpty/{folderId}/{studyType}", method = RequestMethod.POST)
 	public Map<String, Object> isFolderEmpty(final HttpServletRequest req, @PathVariable final String folderId,
-			@PathVariable final String studyType, @PathVariable final String folderName) {
+			@PathVariable final String studyType) {
+		final String folderName = req.getParameter("folderName");
 		final Map<String, Object> resultsMap = new HashMap<String, Object>();
 		final Locale locale = LocaleContextHolder.getLocale();
 		boolean isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(),

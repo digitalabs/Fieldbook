@@ -438,7 +438,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	private void setCross(final InventoryDetails entry) {
-		final Integer gid = entry.getGid();
+		//get the original gid as when the inventory is bulked and is a bulking donor, the gid becomes null
+		final Integer gid = entry.getOriginalGid();
 		try {
 			final String cross = this.pedigreeService.getCrossExpansion(gid, this.crossExpansionProperties);
 			entry.setCross(cross);

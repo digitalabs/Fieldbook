@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -39,6 +40,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -478,16 +480,68 @@ public class LabelPrintingServiceImplTest {
 
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 		userLabelPrinting.setStockListId(4);
+		
+		ArgumentCaptor<Integer> gidCaptor = ArgumentCaptor.forClass(Integer.class);
+		ArgumentCaptor<CrossExpansionProperties> crossExpansionProperties = ArgumentCaptor.forClass(CrossExpansionProperties.class);
+		
+		final int numberOfEntries = 10;
+		final List<InventoryDetails> inventoryDetailList = this.inventoryDetailsInitializer.createInventoryDetailList(numberOfEntries);
+		bulkSomeStocksForTest(inventoryDetailList);
+		Mockito.when(this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(Mockito.isA(Integer.class))).thenReturn(
+				inventoryDetailList);
 
+		Mockito.when(this.pedigreeService.getCrossExpansion(Mockito.isA(Integer.class), Mockito.isA(CrossExpansionProperties.class)))
+				.thenReturn("cross");
+		
 		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params,
 				this.measurementData, this.environmentData, userLabelPrinting);
 		try {
+			//verify that the gid passed for getting the cross expansion is not null
+			Mockito.verify(this.pedigreeService, Mockito.times(numberOfEntries)).getCrossExpansion(
+					gidCaptor.capture(), crossExpansionProperties.capture());
+			Assert.assertNotNull(gidCaptor.getValue());
+			
 			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getGermplasmListsByProjectId(
 					LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.NURSERY);
 		} catch (final NeverWantedButInvoked e) {
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is never invoked.");
 		}
 
+	}
+
+	/**
+	 * Bulk the first two entries to the 3rd entry (for testing purposes)
+	 * @param inventoryDetailList
+	 */
+	private void bulkSomeStocksForTest(final List<InventoryDetails> inventoryDetailList) {
+		final InventoryDetails firstEntry = inventoryDetailList.get(0);
+		final InventoryDetails secondEntry = inventoryDetailList.get(1);
+		final InventoryDetails thirdEntry = inventoryDetailList.get(2);
+		
+		setAsBulkingDonor(firstEntry);
+		setAsBulkingDonor(secondEntry);
+		setAsBulkingRecipient(thirdEntry);
+		
+	}
+
+	private void setAsBulkingDonor(final InventoryDetails entry) {
+		entry.setBulkCompl(InventoryDetails.BULK_COMPL_COMPLETED);
+		//just make the source record id not equal to the stock source record id
+		entry.setSourceRecordId(getRandomNumber(10,20));
+		entry.setStockSourceRecordId(entry.getSourceRecordId() + 20);
+	}
+	
+	private void setAsBulkingRecipient(final InventoryDetails entry) {
+		entry.setBulkCompl(InventoryDetails.BULK_COMPL_COMPLETED);
+		//just make the source record id equal to the stock source record id
+		entry.setSourceRecordId(getRandomNumber(10,20));
+		entry.setStockSourceRecordId(entry.getSourceRecordId());
+	}
+	
+	private int getRandomNumber(int minValue, int maxValue) {
+		Random rn = new Random();
+		int range = maxValue - minValue + 1;
+		return  rn.nextInt(range) + minValue;
 	}
 
 	@Test

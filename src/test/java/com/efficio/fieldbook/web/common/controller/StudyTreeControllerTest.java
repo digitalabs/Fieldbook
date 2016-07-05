@@ -83,6 +83,7 @@ public class StudyTreeControllerTest {
 		MockitoAnnotations.initMocks(this);
 		this.selectedProject = this.createProject();
 		Mockito.doReturn(this.selectedProject.getUniqueID()).when(this.contextUtil).getCurrentProgramUUID();
+		Mockito.when(this.request.getParameter("folderName")).thenReturn(FOLDER_NAME);
 	}
 
 	private Project createProject() {
@@ -179,7 +180,7 @@ public class StudyTreeControllerTest {
 	@Test
 	public void testIsFolderEmptyTrue() {
 		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString(), Matchers.eq(StudyType.nurseriesAndTrials()))).thenReturn(true);
-		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.N.getName(), FOLDER_NAME);
+		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.N.getName());
 		Assert.assertEquals("The result's isSuccess attribute should be 1", "1", result.get(StudyTreeController.IS_SUCCESS));
 	}
 	
@@ -189,7 +190,7 @@ public class StudyTreeControllerTest {
 		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString(), Matchers.eq(StudyType.nurseries()))).thenReturn(true);
 		Mockito.when(this.messageSource.getMessage(Matchers.eq("browse.trial.delete.folder.contains.trials"), Matchers.eq(new Object[] {FOLDER_NAME}), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn(CONTAINS_TRIALS);
 		
-		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.N.getName(), FOLDER_NAME);
+		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.N.getName());
 		Assert.assertEquals("The result's isSuccess attribute should be 0", "0", result.get(StudyTreeController.IS_SUCCESS));		
 		Assert.assertEquals("The message should be '"+CONTAINS_TRIALS+"'", CONTAINS_TRIALS, result.get(StudyTreeController.MESSAGE));
 	}
@@ -200,7 +201,7 @@ public class StudyTreeControllerTest {
 		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString(), Matchers.eq(StudyType.trials()))).thenReturn(true);
 		Mockito.when(this.messageSource.getMessage(Matchers.eq("browse.nursery.delete.folder.contains.nurseries"), Matchers.eq(new Object[] {FOLDER_NAME}), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn(CONTAINS_NURSERIES);
 		
-		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.T.getName(), FOLDER_NAME);
+		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.T.getName());
 		Assert.assertEquals("The result's isSuccess attribute should be 0", "0", result.get(StudyTreeController.IS_SUCCESS));		
 		Assert.assertEquals("The message should be '"+CONTAINS_NURSERIES+"'", CONTAINS_NURSERIES, result.get(StudyTreeController.MESSAGE));
 	}
@@ -211,7 +212,7 @@ public class StudyTreeControllerTest {
 		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString(), Matchers.eq(StudyType.nurseries()))).thenReturn(false);
 		Mockito.when(this.messageSource.getMessage(Matchers.eq("browse.nursery.delete.folder.not.empty"), Matchers.eq(new Object[] {FOLDER_NAME}), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn(FOLDER_NOT_EMPTY);
 		
-		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.N.getName(), FOLDER_NAME);
+		Map<String, Object> result = this.controller.isFolderEmpty(this.request, FOLDER_ID, StudyType.N.getName());
 		Assert.assertEquals("The result's isSuccess attribute should be 0", "0", result.get(StudyTreeController.IS_SUCCESS));		
 		Assert.assertEquals("The message should be '"+FOLDER_NOT_EMPTY+"'", FOLDER_NOT_EMPTY, result.get(StudyTreeController.MESSAGE));
 	}

@@ -730,63 +730,21 @@ function toggleMethodDropdown(rowIndex) {
 	// get possible values based on checkbox
 
 	if (showFavorite && !allMethod) {
-
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else if (allMethod && !showFavorite) {
-
 		possibleValues = $('#allValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else if (allMethod && showFavorite) {
 		possibleValues = $('#allFavoriteValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	}
 
 

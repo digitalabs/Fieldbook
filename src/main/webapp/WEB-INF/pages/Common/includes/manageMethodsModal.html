@@ -8,7 +8,7 @@
 							&nbsp;
 						</div>
 						<div class="col-xs-1 col-md-1">
-							<button  id="closeManageMethodModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" onClick="propagateLocationUpdateEvent();" aria-hidden="true"/>
+							<button  id="closeManageMethodModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" onClick="propagateMethodUpdateEvent();" aria-hidden="true"/>
 						</div>
 					</div>
 
@@ -47,6 +47,9 @@ $(function() {
 			});
 
 			BreedingMethodsFunctions.openModal('crossSettingsModal');
+			// Manage modal only available from import crosses
+			// and this class is needed to display the combo
+			$('#crossSettingsModal').addClass('import-crosses-from-file')
 		}
 	});
 });
@@ -64,7 +67,7 @@ function openManageMethods() {
 	}
 }
 
-function propagateLocationUpdateEvent() {
+function propagateMethodUpdateEvent() {
 	'use strict'
 	$.event.trigger({
 		type: 'method-update'

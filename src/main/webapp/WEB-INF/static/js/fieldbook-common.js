@@ -2087,15 +2087,16 @@ function refreshImportMethodCombo(data) {
 		selectedValue = $('#importMethodId').select2('data').id;
 	}
 	if ($('#importFavoriteMethod').is(':checked')) {
-
-		initializePossibleValuesCombo(data.favoriteMethods,
-				'#importMethodId', false, selectedValue);
+		if ($('#showAllMethodOnlyRadio').is(':checked')) {
+			initializePossibleValuesCombo(data.favoriteMethods, '#importMethodId', false, selectedValue);
+		} else {
+			initializePossibleValuesCombo(data.favoriteGenerativeMethods, '#importMethodId', false, selectedValue);
+		}
+	} else if ($('#showAllMethodOnlyRadio').is(':checked')) {
+		initializePossibleValuesCombo(data.allMethods, '#importMethodId', false, selectedValue);
 	} else {
-		initializePossibleValuesCombo(data.allMethods,
-				'#importMethodId', false, selectedValue);
+		initializePossibleValuesCombo(data.favoriteGenerativeMethods, '#importMethodId', false, selectedValue);
 	}
-	replacePossibleJsonValues(data.allNonGenerativeMethods, data.favoriteNonGenerativeMethods, data.allMethods, data.favoriteMethods,
-		'Method');
 }
 
 function refreshImportLocationCombo(data) {

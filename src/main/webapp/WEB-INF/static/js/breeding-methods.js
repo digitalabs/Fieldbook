@@ -46,10 +46,10 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 						methodConversionFunction = BreedingMethodsFunctions.convertMethodToSelectItem;
 					}
 
-					var allNonGenerativeMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.allNonGenerativeMethods, methodConversionFunction);
+					var allGenerativeMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.allGenerativeMethods, methodConversionFunction);
 					var allMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.allMethods, methodConversionFunction);
 					var favoriteMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.favoriteMethods, methodConversionFunction);
-					var favoriteNonGenerativeMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.favoriteNonGenerativeMethods, methodConversionFunction);
+					var favoriteGenerativeMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.favoriteGenerativeMethods, methodConversionFunction);
 
 					var $favFilter = $('#' + getJquerySafeId(favoritesCheckboxID));
 					var $allFilter = $('#' + getJquerySafeId(allRadioButtonId));
@@ -59,14 +59,14 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 					var applyFilter = function() {
 						if ($favFilter.is(':checked')) {
 							if ($filterMethodOnly.is(':checked')) {
-								BreedingMethodsFunctions.createSelect2Dropdown(favoriteNonGenerativeMethods, methodSelectID);
+								BreedingMethodsFunctions.createSelect2Dropdown(favoriteGenerativeMethods, methodSelectID);
 							} else {
 								BreedingMethodsFunctions.createSelect2Dropdown(favoriteMethods, methodSelectID);
 							}
 						} else if ($allFilter.is(':checked')) {
 							BreedingMethodsFunctions.createSelect2Dropdown(allMethods, methodSelectID);
 						} else {
-							BreedingMethodsFunctions.createSelect2Dropdown(allNonGenerativeMethods, methodSelectID);
+							BreedingMethodsFunctions.createSelect2Dropdown(allGenerativeMethods, methodSelectID);
 						}
 					};
 					applyFilter();

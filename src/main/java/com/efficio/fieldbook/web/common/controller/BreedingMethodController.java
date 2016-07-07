@@ -76,12 +76,15 @@ public class BreedingMethodController extends AbstractBaseFieldbookController {
 			List<Integer> methodIds = this.fieldbookMiddlewareService.getFavoriteProjectMethods(this.contextUtil.getCurrentProgramUUID());
 			List<Method> favoriteMethods = this.fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);
 			List<Method> allNonGenerativeMethods = this.fieldbookMiddlewareService.getAllBreedingMethods(true);
+			List<Method> allGenerativeMethods = this.fieldbookMiddlewareService.getAllGenerativeMethods(this.contextUtil.getCurrentProgramUUID());
 
 			result.put("success", "1");
 			result.put("allMethods", breedingMethods);
 			result.put("favoriteMethods", favoriteMethods);
 			result.put("allNonGenerativeMethods", allNonGenerativeMethods);
+			result.put("allGenerativeMethods", allGenerativeMethods);
 			result.put("favoriteNonGenerativeMethods", ListUtils.intersection(favoriteMethods, allNonGenerativeMethods));
+			result.put("favoriteGenerativeMethods", ListUtils.intersection(favoriteMethods, allGenerativeMethods));
 		} catch (MiddlewareQueryException e) {
 			BreedingMethodController.LOG.error(e.getMessage(), e);
 			result.put("success", "-1");

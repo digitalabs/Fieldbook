@@ -98,10 +98,9 @@ public class BreedingMethodController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/getBreedingMethodById", method = RequestMethod.GET)
 	public String getBreedingMethodById(@RequestParam(value = "data") String id) {
 		String result = new String();
+		try {
 			Method method = this.fieldbookMiddlewareService.getBreedingMethodById(Integer.parseInt(id.replace("\"", "")));
 			result = method.getMname() + " - " + method.getMcode();
-		try {
-			
 		} catch (MiddlewareQueryException e) {
 			BreedingMethodController.LOG.error(e.getMessage(), e);
 			result = "-1";

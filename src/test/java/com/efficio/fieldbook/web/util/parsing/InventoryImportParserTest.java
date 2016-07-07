@@ -237,8 +237,6 @@ public class InventoryImportParserTest {
 		Assert.assertEquals("Inventory details not created with proper location name", "Test Location 1", details.getLocationName());
 		Assert.assertEquals("Inventory details not created with proper scale id", new Integer(1), details.getScaleId());
 		Assert.assertEquals("Inventory details not created with proper scale name", "SEED_AMOUNT_kg", details.getScaleName());
-		Assert.assertEquals("Inventory details not created with proper scale id", new Integer(2), details.getScaleId());
-		Assert.assertEquals("Inventory details not created with proper scale name", "SCALE2", details.getScaleName());
         Assert.assertEquals("Inventory details assumes upper case value for Bulk Compl in future comparisons", "Y", details.getBulkCompl());
 	}
 

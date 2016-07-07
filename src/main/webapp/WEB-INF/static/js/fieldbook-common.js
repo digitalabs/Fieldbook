@@ -2044,8 +2044,12 @@ function recreateMethodCombo() {
 				} else if (selectedMethodAll != null) {
 
 					//recreate the select2 combos to get updated list of methods
-					recreateMethodComboAfterClose('methodIdAll', data.allNonGenerativeMethods);
-					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdAll', data.allMethods);
+					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteMethods);
+
+					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenance', data.allNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenanceFavorite', data.favoriteNonGenerativeMethods);
+	
 					showCorrectMethodCombo();
 					//set previously selected value of method
 					if ($('#showFavoriteMethod').prop('checked')) {

@@ -89,7 +89,7 @@ public interface FieldbookService {
 	 * @param projectId the project id
 	 * @return the all possible values favorite
 	 */
-	List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId);
+	public List<ValueReference> getAllPossibleValuesFavorite(final int id, final String programUUID, Boolean filtered);
 
 	/**
 	 * Gets the all possible values by psmr.
@@ -209,4 +209,7 @@ public interface FieldbookService {
 	void addConditionsToTrialObservationsIfNecessary(Workbook workbook);
 
 	void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook);
+
+	public List<ValueReference> getAllPossibleValuesWithFilter(final int id, boolean filtered);
+
 }

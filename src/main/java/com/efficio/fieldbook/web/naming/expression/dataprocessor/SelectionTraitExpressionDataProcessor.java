@@ -3,14 +3,12 @@ package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -42,7 +40,7 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 		}
 		for (final MeasurementVariable condition : possibleEnvironmentSources) {
 			if (condition.getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
-				setSelectionTraitValue(condition.getValue(), source, condition.getTermId(), condition.getPossibleValues());
+				source.setSelectionTraitValue(extractValue(condition.getValue(), condition.getTermId()));
 			}
 		}
 	}
@@ -51,28 +49,9 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 	public void processPlotLevelData(final AdvancingSource source, final MeasurementRow row) {
 		final List<MeasurementData> rowData = row.getDataList();
 
-		if(source.getTrailInstanceObservation() != null){
-			rowData.addAll(source.getTrailInstanceObservation().getDataList());
-		}
-
 		for (final MeasurementData measurementData : rowData) {
 			if (measurementData.getMeasurementVariable().getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
-				setSelectionTraitValue(measurementData.getValue(), source, measurementData.getMeasurementVariable().getTermId(), measurementData.getMeasurementVariable().getPossibleValues());
-			}
-		}
-	}
-
-	protected void setSelectionTraitValue(final String categoricalValue, final AdvancingSource source, final int termID, List<ValueReference> possibleValuesForSelectionTraitProperty){
-		if(StringUtils.isNumeric(categoricalValue)){
-			source.setSelectionTraitValue(extractValue(categoricalValue, termID));
-		}
-		else{
-			if(possibleValuesForSelectionTraitProperty != null && !possibleValuesForSelectionTraitProperty.isEmpty()){
-				for(ValueReference valueReference : possibleValuesForSelectionTraitProperty){
-					if(Objects.equals(valueReference.getDescription(), categoricalValue)){
-						source.setSelectionTraitValue(extractValue(String.valueOf(valueReference.getId()), termID));
-					}
-				}
+				source.setSelectionTraitValue(extractValue(measurementData.getValue(), measurementData.getMeasurementVariable().getTermId()));
 			}
 		}
 	}

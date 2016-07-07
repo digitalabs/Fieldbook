@@ -1,6 +1,6 @@
 
 /*global angular, modalConfirmationTitle, openManageLocations,
-environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, showErrorMessage, SpinnerManager*/
+environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, showErrorMessage*/
 
 (function() {
 	'use strict';
@@ -293,7 +293,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							} else {
 								showErrorMessage('', response.message);
 							}
-						}
+						}, function(errResponse) {
+                            showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+                        }
 					);
 				}
 			}
@@ -349,22 +351,18 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			}
 
 			function updateDeletedEnvironment(index) {
-				SpinnerManager.addActiveWithCustomDelay(0);
+				// remove 1 environment
+				$scope.temp.noOfEnvironments -= 1;
+				$scope.data.environments.splice(index, 1);
+				$scope.updateTrialInstanceNo($scope.data.environments, index);
+				$scope.data.noOfEnvironments -= 1;
 
-				$timeout(function() {
-					// remove 1 environment
-					$scope.temp.noOfEnvironments -= 1;
-					$scope.data.environments.splice(index, 1);
-					$scope.updateTrialInstanceNo($scope.data.environments, index);
-					$scope.data.noOfEnvironments -= 1;
+				//update the no of environments in experimental design tab
+				if (TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
+					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
+				}
 
-					//update the no of environments in experimental design tab
-					if (TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
-						TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
-					}
-
-					TrialManagerDataService.deleteEnvironment(index + 1).then(SpinnerManager.resolveActive);
-				}, 60);
+				TrialManagerDataService.deleteEnvironment(index + 1);
 			}
 
 			// init

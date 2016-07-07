@@ -1,6 +1,4 @@
-/**
- * Created by cyrus on 7/2/14.
- */
+
 /*global angular, displayStudyGermplasmSection, openListTree, displaySelectedGermplasmDetails*/
 
 (function() {
@@ -57,7 +55,6 @@
     };
 
     $scope.germplasmListCleared = function() {
-        TrialManagerDataService.clearUnappliedChangesFlag();
         TrialManagerDataService.updateTrialMeasurementRowCount(0);
         TrialManagerDataService.applicationData.germplasmListCleared = true;
         TrialManagerDataService.applicationData.germplasmListSelected = false;

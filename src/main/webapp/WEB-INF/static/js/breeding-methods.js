@@ -169,7 +169,22 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 
 		retrieveCurrentProjectID: function() {
 			return $.get('/Fieldbook/breedingMethod/programID');
+		},
+		
+		getBreedingMethodById: function() {
+			return $.ajax({
+				url: '/Fieldbook/breedingMethod/getBreedingMethodById',
+				type: 'GET',
+				data: 'data=' + selectedBreedingMethodId,
+				success: function(data) {
+					console.log("success");
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('The following error occurred: ' + textStatus, errorThrown);
+				},
+				complete: function() {
+				}
+			});
 		}
-
 	};
 }

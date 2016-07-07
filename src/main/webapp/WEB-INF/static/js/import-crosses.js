@@ -96,12 +96,10 @@ var ImportCrosses = {
 		if (breedingMethodId !== '0') {
 			// in addition, if the user has already selected a breeding method, we should pre select that
 			var breedingMethodText = '';
-			$('#breedingMethodId').val(breedingMethodId);
-			$('#breedingMethodDropdown').select2('val', parseInt(breedingMethodId));
-			if ($('#breedingMethodDropdown').select2('data')) {
-				breedingMethodText = $('#breedingMethodDropdown').select2('data').text;
-				$('#preSelectedBreedingMethodDropdown').val(breedingMethodText);
-			}
+			breedingMethodText = BreedingMethodsFunctions.getBreedingMethodById(breedingMethodId).done(function(response) {
+				$('#preSelectedBreedingMethodDropdown').val(response);
+			});
+
 		} else {
 			$('#preSelectedBreedingMethodDropdown').val($.fieldbookMessages.determinedFromParentalLines);
 		}
@@ -470,7 +468,10 @@ var ImportCrosses = {
 		settingObject.breedingMethodSetting = {};
 		settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
 
-		if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
+		if(selectedBreedingMethodId != ''){
+			settingObject.breedingMethodSetting.methodId = selectedBreedingMethodId;
+		}
+		else if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
 			settingObject.breedingMethodSetting.methodId = null;
 		}
 

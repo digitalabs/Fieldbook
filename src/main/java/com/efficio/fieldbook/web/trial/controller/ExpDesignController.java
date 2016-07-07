@@ -227,8 +227,7 @@ public class ExpDesignController extends BaseTrialController {
 					expParameterOutput = designService.validate(expDesign, germplasmList);
 					// we call the actual process
 					if (expParameterOutput.isValid()) {
-						expDesign.setNoOfEnvironmentsToAdd(this.countNewEnvironments(expDesign.getNoOfEnvironments(), this.userSelection,
-								expDesign.isHasMeasurementData()));
+						expDesign.setNoOfEnvironmentsToAdd(this.countNewEnvironments(expDesign.getNoOfEnvironments(), this.userSelection));
 
 						// Setting starting plot number in user selection
 						if (expDesign.getStartingPlotNo() != null && !expDesign.getStartingPlotNo().isEmpty()) {
@@ -255,8 +254,7 @@ public class ExpDesignController extends BaseTrialController {
 						this.userSelection.setExpDesignParams(expDesign);
 						this.userSelection.setExpDesignVariables(designService.getExperimentalDesignVariables(expDesign));
 
-						workbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection,
-								expDesign.isHasMeasurementData()));
+						workbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection));
 						// should have at least 1 record
 						final List<MeasurementVariable> currentNewFactors = new ArrayList<>();
 						final List<MeasurementVariable> oldFactors = workbook.getFactors();
@@ -274,7 +272,8 @@ public class ExpDesignController extends BaseTrialController {
 						}
 						for (final MeasurementVariable var : oldFactors) {
 							// we do the cleanup of old variables
-							if (WorkbookUtil.getMeasurementVariable(currentNewFactors, var.getTermId()) == null) {
+							if (!currentNewFactors.isEmpty() && WorkbookUtil.getMeasurementVariable(currentNewFactors, var.getTermId()) == null && 
+									!isFieldMapVariable(var.getTermId())) {
 								// we remove it
 								deletedFactors.add(var);
 							}
@@ -301,15 +300,24 @@ public class ExpDesignController extends BaseTrialController {
 		return expParameterOutput;
 	}
 
+	protected boolean isFieldMapVariable(final int termId) {
+		boolean aFieldMapVariable = false;
+		if(TermId.RANGE_NO.getId() == termId || TermId.COLUMN_NO.getId() == termId 
+				|| TermId.BLOCK_NO.getId() == termId) {
+			aFieldMapVariable = true;
+		}
+		return aFieldMapVariable;
+	}
+
 	protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(final List<MeasurementRow> measurementRows,
-			final UserSelection userSelection, final boolean hasMeasurementData) {
+			final UserSelection userSelection) {
 		Workbook workbook = null;
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null) {
 			workbook = userSelection.getTemporaryWorkbook();
 		} else {
 			workbook = userSelection.getWorkbook();
 		}
-		if (workbook != null && workbook.getObservations() != null && hasMeasurementData) {
+		if (workbook != null && workbook.getObservations() != null && measurementRows != null) {
 			final List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
 			observations.addAll(workbook.getObservations());
 			observations.addAll(measurementRows);
@@ -318,7 +326,7 @@ public class ExpDesignController extends BaseTrialController {
 		return measurementRows;
 	}
 
-	protected String countNewEnvironments(final String noOfEnvironments, final UserSelection userSelection, final boolean hasMeasurementData) {
+	protected String countNewEnvironments(final String noOfEnvironments, final UserSelection userSelection) {
 		Workbook workbook = null;
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null) {
 			workbook = userSelection.getTemporaryWorkbook();
@@ -326,7 +334,7 @@ public class ExpDesignController extends BaseTrialController {
 			workbook = userSelection.getWorkbook();
 		}
 
-		if (workbook != null && workbook.getObservations() != null && hasMeasurementData) {
+		if (workbook != null && workbook.getObservations() != null) {
 			return String.valueOf(Integer.parseInt(noOfEnvironments) - this.getMaxInstanceNo(workbook.getObservations()));
 		}
 		return noOfEnvironments;

@@ -43,7 +43,7 @@ public class ExpDesignControllerTestIT extends AbstractBaseIntegrationTest {
 		this.userSelection.setWorkbook(null);
 		final List<MeasurementRow> measurementRows = WorkbookDataUtil.createNewObservations(ExpDesignControllerTestIT.NO_OF_OBSERVATIONS);
 		final List<MeasurementRow> combinedMeasurementRows =
-				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection, true);
+				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection);
 
 		Assert.assertEquals("Expected " + measurementRows.size() + " but got " + combinedMeasurementRows.size() + " instead.",
 				measurementRows.size(), combinedMeasurementRows.size());
@@ -59,7 +59,7 @@ public class ExpDesignControllerTestIT extends AbstractBaseIntegrationTest {
 
 		final List<MeasurementRow> measurementRows = WorkbookDataUtil.createNewObservations(ExpDesignControllerTestIT.NO_OF_OBSERVATIONS);
 		final List<MeasurementRow> combinedMeasurementRows =
-				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection, true);
+				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection);
 
 		Assert.assertEquals("Expected " + measurementRows.size() + " but got " + combinedMeasurementRows.size() + " instead.",
 				measurementRows.size(), combinedMeasurementRows.size());
@@ -74,7 +74,7 @@ public class ExpDesignControllerTestIT extends AbstractBaseIntegrationTest {
 		this.userSelection.setWorkbook(workbook);
 
 		final List<MeasurementRow> combinedMeasurementRows =
-				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection, true);
+				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection);
 
 		Assert.assertEquals("Expected " + (measurementRows.size() + workbook.getObservations().size()) + " but got "
 				+ combinedMeasurementRows.size() + " instead.", measurementRows.size() + workbook.getObservations().size(),
@@ -90,27 +90,11 @@ public class ExpDesignControllerTestIT extends AbstractBaseIntegrationTest {
 		this.userSelection.setWorkbook(null);
 
 		final List<MeasurementRow> combinedMeasurementRows =
-				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection, true);
+				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection);
 
 		Assert.assertEquals("Expected " + (measurementRows.size() + workbook.getObservations().size()) + " but got "
 				+ combinedMeasurementRows.size() + " instead.", measurementRows.size() + workbook.getObservations().size(),
 				combinedMeasurementRows.size());
-	}
-
-	@Test
-	public void testCombineNewlyGeneratedMeasurementsWithoutMeasurementData() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTestIT.NO_OF_OBSERVATIONS, StudyType.T);
-
-		final List<MeasurementRow> measurementRows = WorkbookDataUtil.createNewObservations(ExpDesignControllerTestIT.NO_OF_OBSERVATIONS);
-
-		this.userSelection.setTemporaryWorkbook(null);
-		this.userSelection.setWorkbook(workbook);
-
-		final List<MeasurementRow> combinedMeasurementRows =
-				this.expDesignController.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection, false);
-
-		Assert.assertEquals("Expected " + measurementRows.size() + " but got " + combinedMeasurementRows.size() + " instead.",
-				measurementRows.size(), combinedMeasurementRows.size());
 	}
 
 	@Test
@@ -119,7 +103,7 @@ public class ExpDesignControllerTestIT extends AbstractBaseIntegrationTest {
 		this.userSelection.setWorkbook(null);
 
 		final String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTestIT.ENVIRONMENTS, this.userSelection, true);
+				this.expDesignController.countNewEnvironments(ExpDesignControllerTestIT.ENVIRONMENTS, this.userSelection);
 
 		Assert.assertEquals("Expected " + ExpDesignControllerTestIT.ENVIRONMENTS + " but got " + noOfNewEnvironments + " instead.",
 				ExpDesignControllerTestIT.ENVIRONMENTS, noOfNewEnvironments);
@@ -134,7 +118,7 @@ public class ExpDesignControllerTestIT extends AbstractBaseIntegrationTest {
 		this.userSelection.setWorkbook(null);
 
 		final String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTestIT.ENVIRONMENTS, this.userSelection, true);
+				this.expDesignController.countNewEnvironments(ExpDesignControllerTestIT.ENVIRONMENTS, this.userSelection);
 
 		Assert.assertEquals("Expected " + ExpDesignControllerTestIT.ENVIRONMENTS + " but got " + noOfNewEnvironments + " instead.",
 				ExpDesignControllerTestIT.ENVIRONMENTS, noOfNewEnvironments);
@@ -149,7 +133,7 @@ public class ExpDesignControllerTestIT extends AbstractBaseIntegrationTest {
 		this.userSelection.setWorkbook(workbook);
 
 		final String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTestIT.ENVIRONMENTS, this.userSelection, true);
+				this.expDesignController.countNewEnvironments(ExpDesignControllerTestIT.ENVIRONMENTS, this.userSelection);
 
 		Assert.assertEquals("Expected " + ExpDesignControllerTestIT.ENVIRONMENTS + " but got " + noOfNewEnvironments + " instead.",
 				ExpDesignControllerTestIT.ENVIRONMENTS, noOfNewEnvironments);
@@ -163,7 +147,7 @@ public class ExpDesignControllerTestIT extends AbstractBaseIntegrationTest {
 		this.userSelection.setWorkbook(workbook);
 
 		final String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTestIT.ENVIRONMENTS, this.userSelection, true);
+				this.expDesignController.countNewEnvironments(ExpDesignControllerTestIT.ENVIRONMENTS, this.userSelection);
 
 		Assert.assertEquals("Expected "
 				+ (Integer.parseInt(ExpDesignControllerTestIT.ENVIRONMENTS) - workbook.getTrialObservations().size()) + " but got "
@@ -179,25 +163,11 @@ public class ExpDesignControllerTestIT extends AbstractBaseIntegrationTest {
 		this.userSelection.setWorkbook(null);
 
 		final String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTestIT.ENVIRONMENTS, this.userSelection, true);
+				this.expDesignController.countNewEnvironments(ExpDesignControllerTestIT.ENVIRONMENTS, this.userSelection);
 
 		Assert.assertEquals("Expected "
 				+ (Integer.parseInt(ExpDesignControllerTestIT.ENVIRONMENTS) - workbook.getTrialObservations().size()) + " but got "
 				+ noOfNewEnvironments + " instead.", Integer.parseInt(ExpDesignControllerTestIT.ENVIRONMENTS)
 				- workbook.getTrialObservations().size(), Integer.parseInt(noOfNewEnvironments));
-	}
-
-	@Test
-	public void testCountNewEnvironmentsWithoutMeasurementData() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(ExpDesignControllerTestIT.NO_OF_OBSERVATIONS, StudyType.T);
-
-		this.userSelection.setTemporaryWorkbook(null);
-		this.userSelection.setWorkbook(workbook);
-
-		final String noOfNewEnvironments =
-				this.expDesignController.countNewEnvironments(ExpDesignControllerTestIT.ENVIRONMENTS, this.userSelection, false);
-
-		Assert.assertEquals("Expected " + ExpDesignControllerTestIT.ENVIRONMENTS + " but got " + noOfNewEnvironments + " instead.",
-				ExpDesignControllerTestIT.ENVIRONMENTS, noOfNewEnvironments);
 	}
 }

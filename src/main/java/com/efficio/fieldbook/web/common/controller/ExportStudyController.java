@@ -22,8 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.sf.jasperreports.engine.JRException;
-
 import org.generationcp.commons.constant.ToolEnum;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.CustomReportType;
@@ -38,7 +36,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.manager.ontology.api.OntologyPropertyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.reports.BuildReportException;
 import org.generationcp.middleware.reports.Reporter;
@@ -76,6 +73,8 @@ import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOve
 import com.efficio.fieldbook.web.trial.bean.ExportTrialInstanceBean;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+
+import net.sf.jasperreports.engine.JRException;
 
 @Controller
 @RequestMapping(ExportStudyController.URL)
@@ -557,7 +556,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		trialIds.add(studyId);
 		List<FieldMapInfo> fieldMapInfoList = new ArrayList<FieldMapInfo>();
 
-		fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties);
+		fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties, false);
 
 		if (fieldMapInfoList != null && fieldMapInfoList.get(0).getDatasets() != null
 				&& fieldMapInfoList.get(0).getDatasets().get(0).getTrialInstances() != null) {

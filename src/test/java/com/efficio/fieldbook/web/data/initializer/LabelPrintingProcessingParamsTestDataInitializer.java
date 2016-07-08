@@ -15,6 +15,7 @@ public class LabelPrintingProcessingParamsTestDataInitializer {
 
 		final LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
 		params.setLabelHeaders(new HashMap<Integer, String>());
+		params.setAllFieldIDs(new ArrayList<Integer>());
 
 		return params;
 

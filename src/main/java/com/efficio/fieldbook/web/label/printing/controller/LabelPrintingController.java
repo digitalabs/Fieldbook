@@ -290,6 +290,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setSecondBarcodeField("");
 		this.userLabelPrinting.setThirdBarcodeField("");
 		this.userLabelPrinting.setFieldMapsExisting(true);
+		
+		this.userLabelPrinting.setSettingsName("");
 
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, this.userFieldmap.isTrial()));
 		form.setUserLabelPrinting(this.userLabelPrinting);

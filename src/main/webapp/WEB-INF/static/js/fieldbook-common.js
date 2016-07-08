@@ -2350,13 +2350,18 @@ function deleteFolder(object) {
 		isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder,
 		deleteConfirmationText,
 		studyType = isNursery()?'N':'T',
-		folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
+		folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key,
+		folderName = JSON.stringify({'folderName': currentFolderName});
 		
 		if (isFolder) {
 			$.ajax({
 				url: '/Fieldbook/StudyTreeManager/isFolderEmpty/'+folderId+'/'+studyType,
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
 				type: 'POST',
-				data: 'folderName=' + currentFolderName,
+				data: folderName,
 				cache: false,
 				success: function(data) {
 					var node;

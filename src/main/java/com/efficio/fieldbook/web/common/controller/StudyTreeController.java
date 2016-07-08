@@ -30,6 +30,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -314,9 +315,9 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/isFolderEmpty/{folderId}/{studyType}", method = RequestMethod.POST)
-	public Map<String, Object> isFolderEmpty(final HttpServletRequest req, @PathVariable final String folderId,
+	public Map<String, Object> isFolderEmpty(@RequestBody final Map<String, String> data, @PathVariable final String folderId,
 			@PathVariable final String studyType) {
-		final String folderName = req.getParameter("folderName");
+		final String folderName = data.get("folderName");
 		final Map<String, Object> resultsMap = new HashMap<String, Object>();
 		final Locale locale = LocaleContextHolder.getLocale();
 		boolean isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(),

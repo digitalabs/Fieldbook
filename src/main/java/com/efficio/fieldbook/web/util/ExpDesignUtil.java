@@ -314,6 +314,12 @@ public class ExpDesignUtil {
 			} else if (termId.intValue() == TermId.COL.getId()) {
 				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
 
+			} else if (termId.intValue() == TermId.RANGE_NO.getId()) {
+				measurementData = new MeasurementData(var.getName(), "", false, var.getDataType(), var);
+
+			} else if (termId.intValue() == TermId.COLUMN_NO.getId()) {
+				measurementData = new MeasurementData(var.getName(), "", false, var.getDataType(), var);
+
 			} else if (termId.intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				measurementData = new MeasurementData(var.getName(), Integer.toString(trialNo), false, var.getDataType(), var);
 
@@ -381,6 +387,8 @@ public class ExpDesignUtil {
 
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();
+
+
 		varList.addAll(nonTrialFactors);
 		for (StandardVariable var : requiredExpDesignVariable) {
 			if (WorkbookUtil.getMeasurementVariable(nonTrialFactors, var.getId()) == null) {
@@ -406,6 +414,9 @@ public class ExpDesignUtil {
 				}
 			}
 		}
+
+		addFieldMapVariablesIfAvailable(varList, factors);
+
 		for (MeasurementVariable var : varList) {
 			var.setFactor(true);
 		}
@@ -444,6 +455,20 @@ public class ExpDesignUtil {
 			}
 		}
 		return measurementRowList;
+	}
+
+	private static void addFieldMapVariablesIfAvailable(final List<MeasurementVariable> varList, final List<MeasurementVariable> factors) {
+
+		MeasurementVariable rangeNoMeasurementVariable = WorkbookUtil.getMeasurementVariable(factors, TermId.RANGE_NO.getId());
+		if (rangeNoMeasurementVariable != null) {
+			varList.add(rangeNoMeasurementVariable);
+		}
+
+		MeasurementVariable columnNoMeasurementVariable = WorkbookUtil.getMeasurementVariable(factors, TermId.COLUMN_NO.getId());
+		if (columnNoMeasurementVariable != null) {
+			varList.add(columnNoMeasurementVariable);
+		}
+
 	}
 
 	public static String cleanBVDesingKey(String key) {

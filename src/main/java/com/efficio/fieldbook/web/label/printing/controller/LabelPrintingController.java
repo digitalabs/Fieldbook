@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -96,6 +97,7 @@ import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+
 import net.sf.jasperreports.engine.JRException;
 
 /**
@@ -934,5 +936,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	void setReportService(ReportService reportService) {
 		this.reportService = reportService;
 	}
-
+	
+	void setUserFieldMap(final UserFieldmap userFieldmap) {
+		this.userFieldmap = userFieldmap;
+	}
+	
+	UserLabelPrinting getUserLabelPrinting() {
+		return this.userLabelPrinting;
+	}
 }

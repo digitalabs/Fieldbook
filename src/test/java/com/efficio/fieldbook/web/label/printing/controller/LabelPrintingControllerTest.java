@@ -56,6 +56,7 @@ import net.sf.jasperreports.engine.JRException;
 
 public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
+	private static final String EMPTY_STRING = "";
 	public static final int SUCCESS_VAL = 1;
 	public static final String TEST_JASPER_REPORT_FILE_TXT = "TEST_JASPER_REPORT_FILE.txt";
 	public static final int SAMPLE_STUDY_ID = 25004;
@@ -161,7 +162,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
 		// we create a nonsense userLabelPrinting obj with an invalid generate type
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		userLabelPrinting.setGenerateType("");
+		userLabelPrinting.setGenerateType(LabelPrintingControllerTest.EMPTY_STRING);
 
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 
@@ -275,15 +276,18 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 				"The Number of Labels per row should be 3 but got " + resultUserLabelPrinting.getNumberOfLabelPerRow() + " instead.", "3",
 				resultUserLabelPrinting.getNumberOfLabelPerRow());
 		Assert.assertEquals("The First Barcode Field's value should be an empty String but got "
-				+ resultUserLabelPrinting.getFirstBarcodeField() + " instead.", "", resultUserLabelPrinting.getFirstBarcodeField());
+				+ resultUserLabelPrinting.getFirstBarcodeField() + " instead.", LabelPrintingControllerTest.EMPTY_STRING,
+				resultUserLabelPrinting.getFirstBarcodeField());
 		Assert.assertEquals("The Second Barcode Field's value should be an empty String but got "
-				+ resultUserLabelPrinting.getSecondBarcodeField() + " instead.", "", resultUserLabelPrinting.getSecondBarcodeField());
+				+ resultUserLabelPrinting.getSecondBarcodeField() + " instead.", LabelPrintingControllerTest.EMPTY_STRING,
+				resultUserLabelPrinting.getSecondBarcodeField());
 		Assert.assertEquals("The Third Barcode Field's value should be an empty String but got "
-				+ resultUserLabelPrinting.getThirdBarcodeField() + " instead.", "", resultUserLabelPrinting.getThirdBarcodeField());
+				+ resultUserLabelPrinting.getThirdBarcodeField() + " instead.", LabelPrintingControllerTest.EMPTY_STRING,
+				resultUserLabelPrinting.getThirdBarcodeField());
 		Assert.assertTrue("The Field Maps should be existing.", resultUserLabelPrinting.isFieldMapsExisting());
 		Assert.assertEquals(
-				"The Settings name should be an empty String but got " + resultUserLabelPrinting.getSettingsName() + " instead.", "",
-				resultUserLabelPrinting.getSettingsName());
+				"The Settings name should be an empty String but got " + resultUserLabelPrinting.getSettingsName() + " instead.",
+				LabelPrintingControllerTest.EMPTY_STRING, resultUserLabelPrinting.getSettingsName());
 
 		final String fileName = LabelPrintingControllerTest.FILE_NAME + new SimpleDateFormat("yyyyMMdd").format(new Date());
 		Assert.assertEquals("The file name should be " + fileName + " but got " + resultUserLabelPrinting.getFilename() + " instead.",

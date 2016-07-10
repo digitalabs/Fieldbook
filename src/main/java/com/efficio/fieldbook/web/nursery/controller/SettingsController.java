@@ -381,7 +381,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			}
 			settingDetail.setPossibleValuesToJson(possibleValues);
 			final List<ValueReference> possibleValuesFavorite =
-					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), false);
+					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), true);
 			settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 			settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 

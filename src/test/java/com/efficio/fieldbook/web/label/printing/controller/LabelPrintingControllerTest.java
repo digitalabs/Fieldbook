@@ -246,7 +246,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		final UserLabelPrinting userLabelPrinting =
 				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
-		this.userFieldmap.setSelectedFieldMaps(this.fieldMapInfoTDI.createFieldMapInfoList(true, 1));
+		this.userFieldmap.setSelectedFieldMaps(LabelPrintingControllerTest.fieldMapInfoTDI.createFieldMapInfoList(true, 1));
 		this.userFieldmap.setTrial(true);
 		final LabelPrintingForm form = Mockito.mock(LabelPrintingForm.class);
 		final Model model = Mockito.mock(Model.class);
@@ -256,40 +256,26 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		final String returnValue = this.labelPrintingController.showFieldmapLabelDetails(form, model, session, locale);
 		final UserLabelPrinting resultUserLabelPrinting = this.labelPrintingController.getUserLabelPrinting();
 
-		Assert.assertEquals(
-				"The return value should be " + LabelPrintingControllerTest.RETURN_VALUE + " but got " + returnValue + " instead.",
+		Assert.assertEquals("The return value should be " + LabelPrintingControllerTest.RETURN_VALUE,
 				LabelPrintingControllerTest.RETURN_VALUE, returnValue);
-		Assert.assertNull("The filename should be null but got " + resultUserLabelPrinting.getStudyId() + " instead.",
-				resultUserLabelPrinting.getStudyId());
-		Assert.assertEquals(
-				"The field map info's value should be " + this.userFieldmap.getSelectedFieldMaps().get(0) + " but got "
-						+ resultUserLabelPrinting.getFieldMapInfo() + " instead.",
+		Assert.assertNull("The filename should be null.", resultUserLabelPrinting.getStudyId());
+		Assert.assertEquals("The field map info's value should be " + this.userFieldmap.getSelectedFieldMaps().get(0),
 				this.userFieldmap.getSelectedFieldMaps().get(0), resultUserLabelPrinting.getFieldMapInfo());
-		Assert.assertEquals("The Barcode Needed's Value should be '0' but got " + resultUserLabelPrinting.getBarcodeNeeded() + " instead.",
-				"0", resultUserLabelPrinting.getBarcodeNeeded());
-		Assert.assertEquals(
-				"The Inclue Column Heading in Non Pdf's Value should be '1' but got "
-						+ resultUserLabelPrinting.getIncludeColumnHeadinginNonPdf() + " instead.",
-				"1", resultUserLabelPrinting.getIncludeColumnHeadinginNonPdf());
-		Assert.assertEquals(
-				"The Number of Labels per row should be 3 but got " + resultUserLabelPrinting.getNumberOfLabelPerRow() + " instead.", "3",
-				resultUserLabelPrinting.getNumberOfLabelPerRow());
-		Assert.assertEquals("The First Barcode Field's value should be an empty String but got "
-				+ resultUserLabelPrinting.getFirstBarcodeField() + " instead.", LabelPrintingControllerTest.EMPTY_STRING,
+		Assert.assertEquals("The Barcode Needed's Value should be '0'.", "0", resultUserLabelPrinting.getBarcodeNeeded());
+		Assert.assertEquals("The Inclue Column Heading in Non Pdf's Value should be '1'.", "1",
+				resultUserLabelPrinting.getIncludeColumnHeadinginNonPdf());
+		Assert.assertEquals("The Number of Labels per row should be 3.", "3", resultUserLabelPrinting.getNumberOfLabelPerRow());
+		Assert.assertEquals("The First Barcode Field's value should be an empty String.", LabelPrintingControllerTest.EMPTY_STRING,
 				resultUserLabelPrinting.getFirstBarcodeField());
-		Assert.assertEquals("The Second Barcode Field's value should be an empty String but got "
-				+ resultUserLabelPrinting.getSecondBarcodeField() + " instead.", LabelPrintingControllerTest.EMPTY_STRING,
+		Assert.assertEquals("The Second Barcode Field's value should be an empty String.", LabelPrintingControllerTest.EMPTY_STRING,
 				resultUserLabelPrinting.getSecondBarcodeField());
-		Assert.assertEquals("The Third Barcode Field's value should be an empty String but got "
-				+ resultUserLabelPrinting.getThirdBarcodeField() + " instead.", LabelPrintingControllerTest.EMPTY_STRING,
+		Assert.assertEquals("The Third Barcode Field's value should be an empty.", LabelPrintingControllerTest.EMPTY_STRING,
 				resultUserLabelPrinting.getThirdBarcodeField());
 		Assert.assertTrue("The Field Maps should be existing.", resultUserLabelPrinting.isFieldMapsExisting());
-		Assert.assertEquals(
-				"The Settings name should be an empty String but got " + resultUserLabelPrinting.getSettingsName() + " instead.",
-				LabelPrintingControllerTest.EMPTY_STRING, resultUserLabelPrinting.getSettingsName());
+		Assert.assertEquals("The Settings name should be an empty String.", LabelPrintingControllerTest.EMPTY_STRING,
+				resultUserLabelPrinting.getSettingsName());
 
 		final String fileName = LabelPrintingControllerTest.FILE_NAME + new SimpleDateFormat("yyyyMMdd").format(new Date());
-		Assert.assertEquals("The file name should be " + fileName + " but got " + resultUserLabelPrinting.getFilename() + " instead.",
-				fileName, resultUserLabelPrinting.getFilename());
+		Assert.assertEquals("The file name should be " + fileName, fileName, resultUserLabelPrinting.getFilename());
 	}
 }

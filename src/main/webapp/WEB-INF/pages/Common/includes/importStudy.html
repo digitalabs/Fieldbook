@@ -159,7 +159,18 @@
 							<input class="selectedValue" type="hidden" />
 							<input class="selectedValueFave" type="hidden" />
 							<input type="hidden" th:field="*{importMethodId}" class="form-control select2" />
-
+							<div style="width: 100%" class="possibleValuesDiv">
+							        <label class="radio-inline">
+                                        <input id="showBreedingMethodOnlyRadio" name="cross_import_method_filter" value="1" type="radio" checked="checked" />
+                                        <span th:text="#{show.derivative.maintenance.method}">Derivative and Maintenance methods</span>
+                                        &nbsp;&nbsp;
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input id="showAllMethodOnlyRadio" name="cross_import_method_filter" value="2" type="radio" />
+                                        <span th:text="#{show.all.methods}">All Methods</span>
+                                        &nbsp;&nbsp;
+                                    </label>
+							</div>
 							<div style="width: 100%" class="possibleValuesDiv">
 									<input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importMethodId\', \'importFavoriteMethod\', \'Method\', false);'" id="importFavoriteMethod" />
 									&nbsp;&nbsp;
@@ -196,7 +207,17 @@
 							<input type="hidden" th:field="*{importLocationId}" class="form-control select2" />
 
 							<div style="width: 100%" class="possibleValuesDiv">
-									<input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importLocationId\', \'importFavoriteLocation\', \'Location\', true);'" id="importFavoriteLocation" />
+									<label class="radio-inline">
+                                        <input id="showBreedingLocationOnlyRadio" name="filter" value="1" type="radio" checked="checked" /> <span th:text="#{show.breeding.location}">Breeding locations</span>
+                                        &nbsp;&nbsp;
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input id="showAllLocationOnlyRadio" name="filter" value="2" type="radio" /> <span th:text="#{show.all.location}">All locations types</span>
+                                        &nbsp;&nbsp;
+                                    </label>
+                            </div>
+                            <div style="width: 100%" class="possibleValuesDiv">
+                                    <input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importLocationId\', \'importFavoriteLocation\', \'Location\', true);'" id="importFavoriteLocation" />
 									&nbsp;&nbsp;
 									<span th:text="#{show.favorite.location}">Show Favorite Location</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 									<a class='import-manage-location' href="javascript: void(0)"  th:text="#{nursery.managesettings.manage.location}">Manage Location</a>

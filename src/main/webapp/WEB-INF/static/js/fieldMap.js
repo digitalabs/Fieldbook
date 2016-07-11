@@ -156,6 +156,7 @@ function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj)
 	}).on('change', function() {
 		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
 		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
+		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
 		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
 	});
 
@@ -191,6 +192,79 @@ function initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestion
 	}).on('change', function() {
 		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').id);
 		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
+		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
+		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
+	});
+
+}
+
+function initializeLocationBreedingFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
+	'use strict';
+	$.each(locationSuggestionsFav, function(index, value) {
+		var locNameDisplay = value.lname;
+		if (value.labbr != null && value.labbr != '') {
+			locNameDisplay  += ' - (' + value.labbr + ')';
+		}
+		locationSuggestionsFav_obj.push({
+			'id': value.locid,
+			'text': locNameDisplay
+		});
+	});
+
+	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+	$('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2({
+		minimumResultsForSearch: locationSuggestionsFav_obj.length == 0 ? -1 : 20,
+		query: function(query) {
+			var data = {results: locationSuggestionsFav_obj}, i, j, s;
+			// return the array that matches
+			data.results = $.grep(data.results, function(item, index) {
+				return ($.fn.select2.defaults.matcher(query.term, item.text));
+
+			});
+			query.callback(data);
+
+		}
+
+	}).on('change', function() {
+		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2('data').id);
+		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2('data').text);
+		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2('data').text);
+		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
+	});
+
+}
+
+function initializeLocationBreedingSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
+	'use strict';
+	$.each(locationSuggestionsFav, function(index, value) {
+		var locNameDisplay = value.lname;
+		if (value.labbr != null && value.labbr != '') {
+			locNameDisplay  += ' - (' + value.labbr + ')';
+		}
+		locationSuggestionsFav_obj.push({
+			'id': value.locid,
+			'text': locNameDisplay
+		});
+	});
+
+	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+	$('#' + getJquerySafeId('fieldLocationIdBreeding')).select2({
+		minimumResultsForSearch: locationSuggestionsFav_obj.length == 0 ? -1 : 20,
+		query: function(query) {
+			var data = {results: locationSuggestionsFav_obj}, i, j, s;
+			// return the array that matches
+			data.results = $.grep(data.results, function(item, index) {
+				return ($.fn.select2.defaults.matcher(query.term, item.text));
+
+			});
+			query.callback(data);
+
+		}
+
+	}).on('change', function() {
+		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2('data').id);
+		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2('data').text);
+		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2('data').text);
 		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
 	});
 
@@ -593,16 +667,65 @@ function recreatePopupFieldCombo() {
  );
 }
 
-function showCorrectLocationCombo() {
+//function showCorrectLocationCombo() {
+//	var isChecked = $('#showFavoriteLocation').is(':checked');
+//	//if show favorite location is checked, hide all field locations, else, show only favorite locations
+//	if (isChecked) {
+//		$('#s2id_fieldLocationIdFavorite').show();
+//		$('#s2id_fieldLocationIdAll').hide();
+//		if ($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data') != null) {
+//			$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').id);
+//			$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
+//			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').abbr);
+//
+//		} else {
+//			$('#' + getJquerySafeId('fieldLocationId')).val(0);
+//			$('#' + getJquerySafeId('fieldLocationName')).val('');
+//			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val('');
+//		}
+//	} else {
+//		$('#s2id_fieldLocationIdFavorite').hide();
+//		$('#s2id_fieldLocationIdAll').show();
+//		if ($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data') != null) {
+//			$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
+//			$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
+//			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').abbr);
+//		} else {
+//			$('#' + getJquerySafeId('fieldLocationId')).val(0);
+//			$('#' + getJquerySafeId('fieldLocationName')).val('');
+//			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val('');
+//		}
+//
+//	}
+//}
+
+function showCorrectFieldLocationCombo() {
 	var isChecked = $('#showFavoriteLocation').is(':checked');
-	//if show favorite location is checked, hide all field locations, else, show only favorite locations
+	// if show favorite location is checked, hide all field locations, else,
+	// show only favorite locations
 	if (isChecked) {
-		$('#s2id_fieldLocationIdFavorite').show();
+
+		if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
+			$('#s2id_fieldLocationIdBreedingFavorites').show();
+			$('#s2id_fieldLocationIdFavorite').hide();
+		} else {
+			$('#s2id_fieldLocationIdBreedingFavorites').hide();
+			$('#s2id_fieldLocationIdFavorite').show();
+		}
+
 		$('#s2id_fieldLocationIdAll').hide();
-		if ($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data') != null) {
-			$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').id);
-			$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
-			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').abbr);
+		$('#s2id_fieldLocationIdBreeding').hide();
+		if ($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2(
+				'data') != null) {
+			$('#' + getJquerySafeId('fieldLocationId')).val(
+				$('#' + getJquerySafeId('fieldLocationIdFavorite'))
+					.select2('data').id);
+			$('#' + getJquerySafeId('fieldLocationName')).val(
+				$('#' + getJquerySafeId('fieldLocationIdFavorite'))
+					.select2('data').text);
+			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val(
+				$('#' + getJquerySafeId('fieldLocationIdFavorite'))
+					.select2('data').abbr);
 
 		} else {
 			$('#' + getJquerySafeId('fieldLocationId')).val(0);
@@ -611,19 +734,25 @@ function showCorrectLocationCombo() {
 		}
 	} else {
 		$('#s2id_fieldLocationIdFavorite').hide();
-		$('#s2id_fieldLocationIdAll').show();
-		if ($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data') != null) {
+		$('#s2id_fieldLocationIdBreedingFavorites').hide();
+
+		if ($('#showAllLocationOnlyRadio').is(':checked')) {
+			$('#s2id_fieldLocationIdAll').show();
+			$('#s2id_fieldLocationIdBreeding').hide();
+		} else {
+			$('#s2id_fieldLocationIdBreeding').show();
+			$('#s2id_fieldLocationIdAll').hide();
+		}
+
+		// fieldLocationIdAll is not null but it contains blank value so put AND condition
+		if ($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data') != null && $('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id != "" ) {
 			$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
 			$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').abbr);
-		} else {
-			$('#' + getJquerySafeId('fieldLocationId')).val(0);
-			$('#' + getJquerySafeId('fieldLocationName')).val('');
-			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val('');
 		}
 
 	}
 }
+
 function setComboValues(suggestions_obj, id, name) {
 	'use strict';
 	var dataVal = {id:'', text:'', description:''}; //default value
@@ -639,29 +768,6 @@ function setComboValues(suggestions_obj, id, name) {
 	}
 	//set the selected value of the combo
 	$('#' + name).select2('data', dataVal);
-}
-
-function recreateLocationComboAfterClose(comboName, data) {
-	'use strict';
-	if (comboName == 'fieldLocationIdAll') {
-		//clear all locations dropdown
-		locationSuggestions = [];
-		locationSuggestions_obj = [];
-
-		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
-		//reload the data retrieved
-		locationSuggestions = data;
-		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
-	} else {
-		//clear the favorite locations dropdown
-		locationSuggestionsFav = [];
-		locationSuggestionsFav_obj = [];
-		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
-		//reload the data
-		locationSuggestionsFav = data;
-		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
-	}
-
 }
 
 function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId) {
@@ -895,47 +1001,25 @@ function doEnterFieldDetailsPageLoad() {
 	setSelectedTrialsAsDraggable();
 	calculateTotalPlots();
 
-	initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
-	initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+	recreateLocationCombo();
 
 	initializeFieldSelect2({}, [], true);
 	initializeBlockSelect2({}, [], true);
 
 	showBlockDetails(true, null);
 
+
 	// remove any other listeners for the location update
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);
 
 	$('#s2id_fieldLocationIdFavorite').hide();
-	$('#s2id_fieldLocationIdAll').show();
-	$('#showFavoriteLocation').removeAttr('checked');
-	$('#showFavoriteLocation').on('change', function() {
-		var isChecked = $('#showFavoriteLocation').is(':checked');
-		//if show favorite location is checked, hide all field locations, else, show only favorite locations
-		if (isChecked) {
-			$('#s2id_fieldLocationIdFavorite').show();
-			$('#s2id_fieldLocationIdAll').hide();
-			if ($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data') != null) {
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').id);
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
-			} else {
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val('');
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val('');
-			}
-		} else {
-			$('#s2id_fieldLocationIdFavorite').hide();
-			$('#s2id_fieldLocationIdAll').show();
-			if ($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data') != null) {
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-			} else {
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val('');
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val('');
-			}
+	$('#s2id_fieldLocationIdAll').hide();
+	$('#s2id_fieldLocationIdBreedingFavorites').show();
+	$('#s2id_fieldLocationIdBreeding').hide();
 
-		}
-		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val());
+	$('#showFavoriteLocation, #showAllLocationRadio, #showBreedingLocationOnlyRadio').on('change', function() {
+		showCorrectFieldLocationCombo();
 	});
 
 	var numRowPerPlot = $('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val();
@@ -951,36 +1035,45 @@ function doEnterFieldDetailsPageLoad() {
 		$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(numRowPerPlot);
 
 		if (isChecked) {
-			$('#s2id_fieldLocationIdFavorite').show();
-			$('#s2id_fieldLocationIdAll').hide();
-			for (var index in locationSuggestionsFav_obj) {
-				if (locationSuggestionsFav_obj[index].id == locId) {
 
-					$('#fieldLocationIdFavorite').select2('data', locationSuggestionsFav_obj[index]);
-					$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').id);
-					$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
-					break;
-				}
-			}
+			if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
+				$('#s2id_fieldLocationIdBreedingFavorites').show();
+				$('#s2id_fieldLocationIdFavorite').hide();
+				$('#s2id_fieldLocationIdAll').hide();
+				$('#s2id_fieldLocationIdBreeding').hide();
+				setCorrectValueToFieldCombo (locationSuggestionsBreedingFav_obj, locId, 'fieldLocationIdBreedingFavorite')
+			} else {
+				$('#s2id_fieldLocationIdBreedingFavorites').hide();
+				$('#s2id_fieldLocationIdFavorite').show();
+				$('#s2id_fieldLocationIdAll').hide();
+				$('#s2id_fieldLocationIdBreeding').hide();
+				setCorrectValueToFieldCombo (locationSuggestionsFav_obj, locId, 'fieldLocationIdFavorite');
+			};
 
 		} else {
-			//not checked
-			$('#s2id_fieldLocationIdFavorite').hide();
-			$('#s2id_fieldLocationIdAll').show();
-			for (var index in locationSuggestions_obj) {
-				if (locationSuggestions_obj[index].id == locId) {
-					$('#fieldLocationIdAll').select2('data', locationSuggestions_obj[index]);
-					$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
-					$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-					break;
-				}
-			}
+
+			if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
+				$('#s2id_fieldLocationIdBreedingFavorites').hide();
+				$('#s2id_fieldLocationIdFavorite').hide();
+				$('#s2id_fieldLocationIdAll').hide();
+				$('#s2id_fieldLocationIdBreeding').show();
+				setCorrectValueToFieldCombo (locationSuggestionsBreeding_obj, locId, 'fieldLocationIdBreeding')
+			} else {
+				$('#s2id_fieldLocationIdBreedingFavorites').hide();
+				$('#s2id_fieldLocationIdFavorite').hide();
+				$('#s2id_fieldLocationIdAll').show();
+				$('#s2id_fieldLocationIdBreeding').hide();
+				setCorrectValueToFieldCombo (locationSuggestions_obj, locId, 'fieldLocationIdAll');
+			};
+
 
 		}
 	}
 
 	$('#' + getJquerySafeId('fieldLocationIdAll')).val('');
 	$('#' + getJquerySafeId('fieldLocationIdFavorite')).val('');
+	$('#' + getJquerySafeId('fieldLocationIdBreeding')).val('');
+	$('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).val('');
 	if ($('#' + getJquerySafeId('userFieldmap.fieldId')).val() != '') {
 		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val());
 	}
@@ -1000,6 +1093,75 @@ function doEnterFieldDetailsPageLoad() {
 
 	doPreselectValues(prevFieldLocationId, prevFieldId, prevBlockId);
 }
+
+function setCorrectValueToFieldCombo (ls_obj, locId, fieldInputId) {
+	for (var index in ls_obj) {
+		if (ls_obj[index].id == locId) {
+			$('#fieldLocationIdAll').select2('data', ls_obj[index]);
+			$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId(fieldInputId)).select2('data').id);
+			$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId(fieldInputId)).select2('data').text);
+			break;
+		}
+	}
+}
+
+
+function showCorrectFieldLocationCombo() {
+	var isChecked = $('#showFavoriteLocation').is(':checked');
+	// if show favorite location is checked, hide all field locations, else,
+	// show only favorite locations
+	if (isChecked) {
+
+		if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
+			$('#s2id_fieldLocationIdBreedingFavorites').show();
+			$('#s2id_fieldLocationIdFavorite').hide();
+		} else {
+			$('#s2id_fieldLocationIdBreedingFavorites').hide();
+			$('#s2id_fieldLocationIdFavorite').show();
+		}
+
+		$('#s2id_fieldLocationIdAll').hide();
+		$('#s2id_fieldLocationIdBreeding').hide();
+		if ($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2(
+				'data') != null) {
+			$('#' + getJquerySafeId('fieldLocationId')).val(
+				$('#' + getJquerySafeId('fieldLocationIdFavorite'))
+					.select2('data').id);
+			$('#' + getJquerySafeId('fieldLocationName')).val(
+				$('#' + getJquerySafeId('fieldLocationIdFavorite'))
+					.select2('data').text);
+			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val(
+				$('#' + getJquerySafeId('fieldLocationIdFavorite'))
+					.select2('data').abbr);
+
+		} else {
+			$('#' + getJquerySafeId('fieldLocationId')).val(0);
+			$('#' + getJquerySafeId('fieldLocationName')).val('');
+
+		}
+	} else {
+		$('#s2id_fieldLocationIdFavorite').hide();
+		$('#s2id_fieldLocationIdBreedingFavorites').hide();
+
+		if ($('#showAllLocationRadio').is(':checked')) {
+			$('#s2id_fieldLocationIdAll').show();
+			$('#s2id_fieldLocationIdBreeding').hide();
+		} else {
+			$('#s2id_fieldLocationIdBreeding').show();
+			$('#s2id_fieldLocationIdAll').hide();
+		}
+
+		// harvestLocationIdAll is not null but it contains blank value so put AND condition
+		if ($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data') != null && $('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id != "" ) {
+			$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
+			$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
+
+		}
+
+
+	}
+}
+
 
 function doPreselectValues(locationId, fieldId, blockId) {
 	'use strict';

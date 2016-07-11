@@ -2064,8 +2064,6 @@ function recreateMethodCombo() {
 				} else {
 					if ($('.hasCreateGermplasm').length === 0 || ($('.hasCreateGermplasm').length > 0 && $('.hasCreateGermplasm').val() === '0')) {
 						refreshMethodComboInSettings(data);
-					}
-					if (createGermplasm) {
 						refreshImportMethodCombo(data);
 					}
 				}

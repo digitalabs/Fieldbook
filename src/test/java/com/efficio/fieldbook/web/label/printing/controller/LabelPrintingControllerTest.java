@@ -262,7 +262,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		Assert.assertEquals("The field map info's value should be " + this.userFieldmap.getSelectedFieldMaps().get(0),
 				this.userFieldmap.getSelectedFieldMaps().get(0), resultUserLabelPrinting.getFieldMapInfo());
 		Assert.assertEquals("The Barcode Needed's Value should be '0'.", "0", resultUserLabelPrinting.getBarcodeNeeded());
-		Assert.assertEquals("The Inclue Column Heading in Non Pdf's Value should be '1'.", "1",
+		Assert.assertEquals("The Include Column Heading in Non Pdf's Value should be '1'.", "1",
 				resultUserLabelPrinting.getIncludeColumnHeadinginNonPdf());
 		Assert.assertEquals("The Number of Labels per row should be 3.", "3", resultUserLabelPrinting.getNumberOfLabelPerRow());
 		Assert.assertEquals("The First Barcode Field's value should be an empty String.", LabelPrintingControllerTest.EMPTY_STRING,

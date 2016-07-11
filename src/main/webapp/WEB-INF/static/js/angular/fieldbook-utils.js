@@ -350,7 +350,9 @@
 						$scope.updateDropdownValuesFavorites();
 
 						$scope.computeMinimumSearchResults = function() {
-							return ($scope.dropdownValues.length > 0) ? 20 : -1;
+							if($scope.dropdownValues != null)
+								return ($scope.dropdownValues.length > 0) ? 20 : -1;
+							return -1;
 						};
 
 						$scope.dropdownOptions = {

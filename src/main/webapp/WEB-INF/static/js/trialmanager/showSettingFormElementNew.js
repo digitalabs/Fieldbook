@@ -51,6 +51,7 @@
     						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
     					$scope.localData = {};
+						$scope.localData.useFavorites = true;
 						$scope.locationLookup = 1;
 
 						$scope.updateDropdownValuesFavorites = function() { // Change state for favorite checkbox
@@ -109,9 +110,11 @@
 
     						$scope.updateDropdownValuesFavorites();
 
-    						$scope.computeMinimumSearchResults = function() {
-    							return ($scope.dropdownValues.length > 0) ? 20 : -1;
-    						};
+							$scope.computeMinimumSearchResults = function() {
+								if($scope.dropdownValues != null)
+									return ($scope.dropdownValues.length > 0) ? 20 : -1;
+								return -1;
+							};
 
     						$scope.dropdownOptions = {
     							data: function() {

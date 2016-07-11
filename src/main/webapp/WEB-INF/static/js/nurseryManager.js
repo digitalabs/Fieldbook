@@ -308,10 +308,12 @@ function getIndexFromName(name) {
 	return name.split('[')[1].split(']')[0];
 }
 
-function replacePossibleJsonValues(favoriteJson, allJson, index) {
+function replacePossibleJsonValues(possibleValues, possibleValuesFavorite, allValues, allFavoriteValues, index) {
 	'use strict';
-	$('#possibleValuesJson' + index).text(allJson);
-	$('#possibleValuesFavoriteJson' + index).text(favoriteJson);
+	$('#possibleValuesJson' + index).text(JSON.stringify(possibleValues));
+	$('#possibleValuesFavoriteJson' + index).text(JSON.stringify(possibleValuesFavorite));
+	$('#allValuesJson' + index).text(JSON.stringify(allValues));
+	$('#allFavoriteValuesJson' + index).text(JSON.stringify(allFavoriteValues));
 }
 
 function setComboValues(suggestions_obj, id, name) {
@@ -728,63 +730,21 @@ function toggleMethodDropdown(rowIndex) {
 	// get possible values based on checkbox
 
 	if (showFavorite && !allMethod) {
-
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else if (allMethod && !showFavorite) {
-
 		possibleValues = $('#allValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else if (allMethod && showFavorite) {
 		possibleValues = $('#allFavoriteValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	}
 
 
@@ -815,63 +775,21 @@ function toggleLocationDropdown(rowIndex) {
 
 	// get possible values based on checkbox
 	if (showFavorite && !allLocations) {
-
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else if (allLocations && !showFavorite) {
-
 		possibleValues = $('#allValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else if (allLocations && showFavorite) {
 		possibleValues = $('#allFavoriteValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	}
 	// recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
@@ -1910,8 +1828,8 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 					}
 
 					if (index > -1) {
-						replacePossibleJsonValues(data.favoriteNonGenerativeMethods,
-								data.allNonGenerativeMethods, index);
+						replacePossibleJsonValues(data.allNonGenerativeMethods, data.favoriteNonGenerativeMethods, data.allMethods,
+							data.favoriteMethods, index);
 					}
 				}
 			} else {

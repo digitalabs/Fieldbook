@@ -295,16 +295,15 @@
 						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
 					$scope.localData = {};
-//					$scope.localData.useFavorites = true;
+					$scope.localData.useFavorites = true;
 					$scope.lookupLocation = 1;
 					
-
 					$scope.updateDropdownValuesFavorites = function() {
-					if ($scope.localData.useFavorites) {
-						if ($scope.lookupLocation == 1) {
-							$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
-						} else {
-							$scope.dropdownValues = $scope.variableDefinition.allFavoriteValues;
+						if ($scope.localData.useFavorites) {
+							if ($scope.lookupLocation == 1) {
+								$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
+							} else {
+								$scope.dropdownValues = $scope.variableDefinition.allFavoriteValues;
 							}
 						} else {
 							if ($scope.lookupLocation == 1) {
@@ -314,13 +313,13 @@
 							}
 						}
 					};
-					
-					$scope.updateDropdownValuesBreedingLocation = function() { // Funcion para el cambio de estado del checkBox
+			
+					$scope.updateDropdownValuesBreedingLocation = function() { // Change state for breeding
 						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.possibleValuesFavorite : $scope.variableDefinition.possibleValues;
 						$scope.lookupLocation = 1;
 					};
 					
-					$scope.updateDropdownValuesAllLocation = function() { // Funcion para el cambio de estado del checkBox
+					$scope.updateDropdownValuesAllLocation = function() { // Change state for all locations radio
 						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.allFavoriteValues : $scope.variableDefinition.allValues;
 						$scope.lookupLocation = 2;
 					};

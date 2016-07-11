@@ -4,10 +4,10 @@
         <div ng-if="isLocation">
             <div class="possibleValuesDiv">
                 <input type="radio" ng-disabled="blockInput"
-                 ng-model="locationLookup" value=1 ng-change="updateDropdownValuesBreedingLocation()"> &nbsp;
+                 ng-model="locationLookup" value="1" ng-change="updateDropdownValuesBreedingLocation()"> &nbsp;
                 <span th:text="#{show.breeding.location}">Breeding locations</span> &nbsp;
                 <input type="radio" ng-disabled="blockInput" 
-                ng-model="locationLookup" value=2 ng-change="updateDropdownValuesAllLocation()"> &nbsp;
+                ng-model="locationLookup" value="2" ng-change="updateDropdownValuesAllLocation()"> &nbsp;
                 <span th:text="#{show.all.location}">All locations types</span>
             </div>
             <div class="possibleValuesDiv">            

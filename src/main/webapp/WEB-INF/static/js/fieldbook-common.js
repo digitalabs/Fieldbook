@@ -2423,14 +2423,39 @@ function createFolder() {
 function deleteFolder(object) {
 	'use strict';
 
-	var currentFolderName,
-		isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder,
-		deleteConfirmationText;
-
 	if (!$(object).hasClass('disable-image')) {
+		var currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title,
+		isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder,
+		deleteConfirmationText,
+		studyType = isNursery()?'N':'T',
+		folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key,
+		folderName = JSON.stringify({'folderName': currentFolderName});
+		
 		if (isFolder) {
-			$('#delete-heading-modal').text(deleteFolderTitle);
-			deleteConfirmationText = deleteConfirmation;
+			$.ajax({
+				url: '/Fieldbook/StudyTreeManager/isFolderEmpty/'+folderId+'/'+studyType,
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				type: 'POST',
+				data: folderName,
+				cache: false,
+				success: function(data) {
+					var node;
+					if (data.isSuccess === '1') {
+						$('#delete-heading-modal').text(deleteFolderTitle);
+						deleteConfirmationText = deleteConfirmation;
+						showDeleteStudyFolderDiv(deleteConfirmationText);
+					} else {
+						hideAddFolderDiv();
+						hideRenameFolderDiv();
+						$('#cant-delete-heading-modal').text(deleteFolderTitle);
+						$('#cant-delete-message').html(data.message);
+						$('#cantDeleteFolder').modal('show');
+					}
+				}
+			});
 		} else {
 			if (isNursery()) {
 				$('#delete-heading-modal').text(deleteNurseryTitle);
@@ -2439,14 +2464,18 @@ function deleteFolder(object) {
 				$('#delete-heading-modal').text(deleteTrialTitle);
 				deleteConfirmationText = deleteTrialConfirmation;
 			}
+			showDeleteStudyFolderDiv(deleteConfirmationText);
 		}
-		$('#deleteStudyFolder').modal('show');
-		hideAddFolderDiv();
-		hideRenameFolderDiv();
-		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
-		$('#delete-confirmation').html(deleteConfirmationText + ' ' + currentFolderName + '?');
-		$('#page-delete-study-folder-message-modal').html('');
 	}
+}
+
+function showDeleteStudyFolderDiv(deleteConfirmationText) {
+	hideAddFolderDiv();
+	hideRenameFolderDiv();
+	var currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
+	$('#delete-confirmation').html(deleteConfirmationText + ' ' + currentFolderName + '?');
+	$('#deleteStudyFolder').modal('show');
+	$('#page-delete-study-folder-message-modal').html('');
 }
 
 function submitDeleteFolder() {

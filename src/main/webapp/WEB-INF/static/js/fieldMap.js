@@ -125,7 +125,7 @@ function showEnterFieldDetailsMessage(msg) {
 	createErrorNotification(errorMsgHeader, msg);
 }
 
-function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj) {
+function initializeFieldLocationSelect2(locationSuggestions, locationSuggestions_obj) {
 	'use strict';
 	$.each(locationSuggestions, function(index, value) {
 		var locNameDisplay = value.lname;
@@ -162,7 +162,7 @@ function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj)
 
 }
 
-function initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
+function initializeFieldLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
 	'use strict';
 	$.each(locationSuggestionsFav, function(index, value) {
 		var locNameDisplay = value.lname;
@@ -198,7 +198,7 @@ function initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestion
 
 }
 
-function initializeLocationBreedingFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
+function initializeFieldLocationBreedingFavoritesSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
 	'use strict';
 	$.each(locationSuggestionsFav, function(index, value) {
 		var locNameDisplay = value.lname;
@@ -234,7 +234,7 @@ function initializeLocationBreedingFavSelect2(locationSuggestionsFav, locationSu
 
 }
 
-function initializeLocationBreedingSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
+function initializeFieldLocationBreedingSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
 	'use strict';
 	$.each(locationSuggestionsFav, function(index, value) {
 		var locNameDisplay = value.lname;
@@ -1151,7 +1151,7 @@ function showCorrectFieldLocationCombo() {
 			$('#s2id_fieldLocationIdAll').hide();
 		}
 
-		// harvestLocationIdAll is not null but it contains blank value so put AND condition
+		// LocationIdAll is not null but it contains blank value so put AND condition
 		if ($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data') != null && $('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id != "" ) {
 			$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
 			$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);

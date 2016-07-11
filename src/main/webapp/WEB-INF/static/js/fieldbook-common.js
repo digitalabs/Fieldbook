@@ -1142,7 +1142,7 @@ function hideErrorMessage() {
 	$('#page-message .alert-danger').fadeOut(1000);
 }
 
-function initializeFieldLocationSelect2(locationSuggestions, locationSuggestionsObj) {
+/*function initializeFieldLocationSelect2(locationSuggestions, locationSuggestionsObj) {
 
 	$.each(locationSuggestions, function (index, value) {
 		var locNameDisplay = value.lname;
@@ -1170,11 +1170,7 @@ function initializeFieldLocationSelect2(locationSuggestions, locationSuggestions
 		$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
 		$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
 		$('#' + getJquerySafeId('fieldLocationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').abbr);
-		//if ($('#harvestloc-tooltip')) {
-		//	$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').abbr);
-		//	$('.help-tooltip-nursery-advance').tooltip('destroy');
-		//	$('.help-tooltip-nursery-advance').tooltip();
-		//}
+		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
 	});
 }
 
@@ -1204,11 +1200,7 @@ function initializeFieldLocationBreedingSelect2(locationSuggestionsBreeding, loc
 		$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2('data').id);
 		$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2('data').text);
 		$('#' + getJquerySafeId('fieldLocationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2('data').abbr);
-		//if ($('#harvestloc-tooltip')) {
-		//	$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdBreeding')).select2('data').abbr);
-		//	$('.help-tooltip-nursery-advance').tooltip('destroy');
-		//	$('.help-tooltip-nursery-advance').tooltip();
-		//}
+		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
 	});
 }
 
@@ -1237,11 +1229,7 @@ function initializeFieldLocationBreedingFavoritesSelect2(locationSuggestionsBree
 		$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2('data').id);
 		$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2('data').text);
 		 $('#' + getJquerySafeId('fieldLocationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2('data').abbr);
-		//if ($('#harvestloc-tooltip')) {
-		//	$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2('data').abbr);
-		//	$('.help-tooltip-nursery-advance').tooltip('destroy');
-		//	$('.help-tooltip-nursery-advance').tooltip();
-		//}
+		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
 	});
 }
 
@@ -1271,12 +1259,10 @@ function initializeFieldLocationFavSelect2(locationSuggestionsFav, locationSugge
 		$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
 		$('#' + getJquerySafeId('fieldLocationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').abbr);
 		//if ($('#harvestloc-tooltip')) {
-		//	$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
-		//	$('.help-tooltip-nursery-advance').tooltip('destroy');
-		//	$('.help-tooltip-nursery-advance').tooltip();
-		//}
+		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
+
 	});
-}
+}*/
 
 function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestionsObj) {
 

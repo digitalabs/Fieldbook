@@ -36,7 +36,7 @@ import org.generationcp.middleware.reports.WLabels21;
 import org.generationcp.middleware.service.api.ReportService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -71,12 +71,11 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 	@Resource
 	private LabelPrintingController labelPrintingController;
 
-	private FieldMapInfoTestDataInitializer fieldMapInfoTDI;
+	private static FieldMapInfoTestDataInitializer fieldMapInfoTDI;
 
-	@Override
-	@Before
-	public void setUp() {
-		this.fieldMapInfoTDI = new FieldMapInfoTestDataInitializer();
+	@BeforeClass
+	public static void setUpClass() {
+		LabelPrintingControllerTest.fieldMapInfoTDI = new FieldMapInfoTestDataInitializer();
 	}
 
 	@Test

@@ -28,6 +28,7 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -1902,31 +1903,43 @@ public class SettingsUtil {
 		return index;
 	}
 
-	private static List<Integer> getBreedingMethodIndeces(final List<MeasurementRow> observations, final OntologyService ontologyService,
-			final boolean isResetAll) {
-		final List<Integer> indeces = new ArrayList<Integer>();
+	private static List<Integer> getBreedingMethodIndices(final List<MeasurementRow> observations, final OntologyService ontologyService,
+			final boolean isResetAll, String programUUID) {
+		LOG.info("Start BreedingMethodIndices");
+		final List<Integer> indices = new ArrayList<>();
 		final MeasurementRow mrow = observations.get(0);
+		final Map<Integer, StandardVariable> varCache = new HashMap<>();
+		StandardVariable stdVar = null;
 		int index = 0;
+		// FIXME this is OTT logic
 		for (final MeasurementData data : mrow.getDataList()) {
-			if (data.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
-					&& ontologyService.getProperty(data.getMeasurementVariable().getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP
-							.getId() && isResetAll || !isResetAll
-					&& data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
-				indeces.add(index);
+			if(!varCache.keySet().contains(data.getMeasurementVariable().getTermId())){
+				// EHCached we hope
+				stdVar = ontologyService.getStandardVariable(data.getMeasurementVariable().getTermId(), programUUID);
+				varCache.put(data.getMeasurementVariable().getTermId(), stdVar);
+			}
+			stdVar = varCache.get(data.getMeasurementVariable().getTermId());
+			if(stdVar != null){
+  			if (stdVar.getId() != TermId.BREEDING_METHOD_VARIATE.getId()
+  					&& stdVar.getProperty().getId() == TermId.BREEDING_METHOD_PROP.getId() && isResetAll || !isResetAll
+  					&& stdVar.getId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
+  				indices.add(index);
+  			}
 			}
 			index++;
 		}
-		return indeces;
+		LOG.info("End BreedingMethodIndices");
+		return indices;
 	}
 
 	public static void resetBreedingMethodValueToId(
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final List<MeasurementRow> observations, final boolean isResetAll, final OntologyService ontologyService) {
+			final List<MeasurementRow> observations, final boolean isResetAll, final OntologyService ontologyService, String programUUID) {
 		if (observations == null || observations.isEmpty()) {
 			return;
 		}
 
-		final List<Integer> indeces = SettingsUtil.getBreedingMethodIndeces(observations, ontologyService, isResetAll);
+		final List<Integer> indeces = SettingsUtil.getBreedingMethodIndices(observations, ontologyService, isResetAll, programUUID);
 
 		if (indeces.isEmpty()) {
 			return;
@@ -1953,15 +1966,19 @@ public class SettingsUtil {
 
 	public static void resetBreedingMethodValueToCode(
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final List<MeasurementRow> observations, final boolean isResetAll, final OntologyService ontologyService) {
+			final List<MeasurementRow> observations, final boolean isResetAll, final OntologyService ontologyService, final String programUUID) {
 		// set value of breeding method code in selection variates to code
 		// instead of id
+
+		LOG.info("Start ResetBreedingMethodValueToCode");
+		
 		if (observations == null || observations.isEmpty()) {
 			return;
 		}
 
-		final List<Integer> indeces = SettingsUtil.getBreedingMethodIndeces(observations, ontologyService, isResetAll);
+		final List<Integer> indeces = SettingsUtil.getBreedingMethodIndices(observations, ontologyService, isResetAll, programUUID);
 
+		
 		if (indeces.isEmpty()) {
 			return;
 		}
@@ -1988,6 +2005,9 @@ public class SettingsUtil {
 				row.getDataList().get(i).setValue(method == null ? row.getDataList().get(i).getValue() : method.getMcode());
 			}
 		}
+		
+		LOG.info("End ResetBreedingMethodValueToCode");
+		
 	}
 
 	public static List<Integer> buildVariates(final List<MeasurementVariable> variates) {

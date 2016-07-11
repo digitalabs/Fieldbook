@@ -331,7 +331,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		if ($('#studyId').val() != '') {
 			// Activate an inline edit on click of a table cell
 			$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
-				if (isAllowedEditMeasurementDataCell(false)) {
+				if (isAllowedEditMeasurementDataCell()) {
 					var $tdCell = $(this);
 					var cellTdIndex =  $(this).index();
 					var rowIndex = $(this).parent('tr').data('row-index');
@@ -344,7 +344,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					if ($colHeader.hasClass('factors')) {
 						//we should now submit it
 						processInlineEditInput();
-					}else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
+					} else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
 						processInlineEditInput();
 						if ($('#measurement-table').data('show-inline-edit') === '1') {
 							$.ajax({
@@ -353,6 +353,10 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 								success: function(data) {
 									$tdCell.html(data);
 									$tdCell.data('is-inline-edit', '1');
+								},
+								error: function() {
+									//TODO localise the message
+									showErrorMessage('Server Error', 'Could not update the measurement');
 								}
 							});
 						}
@@ -431,17 +435,13 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 					}
 				});
 			} else {
-                columns.push({
-                    data: $(this).html(),
-                    defaultContent: '',
-                    render: function (data, type, row) {
-                        if (data && Array.isArray(data)) {
-                            return EscapeHTML.escape(data[0] ? data[0] : '');
-                        } else {
-                            return EscapeHTML.escape(data ? data : '');
-                        }
-                    }
-                });
+				columns.push({
+					data: $(this).html(),
+					defaultContent: '',
+					render: function(data, type, row) {
+						return EscapeHTML.escape((data[0] != null) ? data[0] :  '');
+					}
+				});
 			}
 
 			if ($(this).data('term-data-type-id') == '1130' || $(this).data('term-data-type-id') == '1110') {
@@ -518,18 +518,21 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 	 * @param {string} tableIdentifier the id of the table container
 	 * @param {string} ajaxUrl the URL from which to retrieve table data
 	 */
-	var dataTableConstructor = function ReviewDetailsOutOfBoundsDataTable(tableIdentifier, dataList) {
+	var dataTableConstructor = function PreviewCrossesDataTable(tableIdentifier, dataList, tableHeaderList) {
 		'use strict';
 
 		var columns = [],
 			columnsDef = [],
 			table;
-
-		$(tableIdentifier + ' thead tr th').each(function() {
+		
+		$.each( tableHeaderList, function( index, value ){
 			columns.push({
-				data: $(this).html(),
+				data: value,
 				defaultContent: '',
 			});
+		});
+
+		$(tableIdentifier + ' thead tr th').each(function(index) {
 			if ($(this).html() === 'DUPLICATE') {
 				columnsDef.push({
 					defaultContent: '',
@@ -549,6 +552,8 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					}
 				});
 			}
+			//update header with the correct ontology name
+			$(this).html(columns[index].data);
 		});
 
 		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
@@ -1218,11 +1223,10 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 			scrollY: '500px',
 			scrollX: '100%',
 			scrollCollapse: true,
-            retrieve: true,
 			aoColumns: aoColumnsDef,
 			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 			dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
-
+			retrieve: true,
 			iDisplayLength: 100,
 			fnDrawCallback: function(oSettings) {
 				
@@ -1238,7 +1242,7 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 				$(parentDiv + ' .numberOfAdvanceSelected').html(selectedRowCount);
 			},
 			fnInitComplete: function(oSettings, json) {
-
+				
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
 					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');

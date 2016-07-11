@@ -1,8 +1,5 @@
-/**
- * Created by cyrus on 7/2/14.
- */
+/* global angular, showErrorMessage, showSuccessfulMessage, expDesignMsgs */
 
-/* global angular, showErrorMessage, showSuccessfulMessage, showMeasurementsPreview, expDesignMsgs */
 (function() {
 		'use strict';
 
@@ -205,7 +202,9 @@
 									} else {
 										showErrorMessage('', response.message);
 									}
-								}
+								}, function(errResponse) {
+                                    showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+                                }
 							);
 						} else {
 							TrialManagerDataService.generatePresetExpDesign($scope.data.designType).then(function() {
@@ -220,6 +219,8 @@
 					$scope.$on('designImportGenerated', function() {
 						var summaryPromise = $http.get('/Fieldbook/DesignImport/getMappingSummary');
 						var designTypeDetailsPromise = $http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails');
+
+						TrialManagerDataService.applicationData.unappliedChangesAvailable = false;
 
 						$q.all([summaryPromise, designTypeDetailsPromise]).then(function(results) {
 							$scope.applicationData.importDesignMappedData = results[0].data;

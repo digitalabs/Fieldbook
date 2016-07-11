@@ -172,7 +172,7 @@
                                     </label>
 							</div>
 							<div style="width: 100%" class="possibleValuesDiv">
-									<input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importMethodId\', \'importFavoriteMethod\', \'Method\', false);'" id="importFavoriteMethod" />
+									<input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importMethodId\', \'importFavoriteMethod\', \'Method\', false);'" id="importFavoriteMethod" checked="checked"/>
 									&nbsp;&nbsp;
 									<span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 									<a class='import-manage-method' href="javascript: void(0)" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
@@ -217,7 +217,7 @@
                                     </label>
                             </div>
                             <div style="width: 100%" class="possibleValuesDiv">
-                                    <input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importLocationId\', \'importFavoriteLocation\', \'Location\', true);'" id="importFavoriteLocation" />
+                                    <input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importLocationId\', \'importFavoriteLocation\', \'Location\', true);'" id="importFavoriteLocation" checked="checked"/>
 									&nbsp;&nbsp;
 									<span th:text="#{show.favorite.location}">Show Favorite Location</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 									<a class='import-manage-location' href="javascript: void(0)"  th:text="#{nursery.managesettings.manage.location}">Manage Location</a>

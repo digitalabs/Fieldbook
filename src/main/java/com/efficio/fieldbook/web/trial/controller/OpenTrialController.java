@@ -541,10 +541,8 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(value = "/load/dynamic/change/measurement", method = RequestMethod.POST)
 	public String loadDynamicChangeMeasurement(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
 			final HttpServletRequest request) {
-		boolean isInPreviewMode = false;
 		Workbook workbook = this.userSelection.getWorkbook();
 		if (this.userSelection.getTemporaryWorkbook() != null) {
-			isInPreviewMode = true;
 			workbook = this.userSelection.getTemporaryWorkbook();
 		}
 
@@ -586,10 +584,6 @@ public class OpenTrialController extends BaseTrialController {
 			measurementDatasetVariables = newMeasurementDatasetVariables;
 		}
 
-		// we do a cleanup here
-		if (isInPreviewMode) {
-			model.addAttribute(OpenTrialController.IS_EXP_DESIGN_PREVIEW, "0");
-		}
 		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
 		measurementDatasetVariables = workbook.arrangeMeasurementVariables(measurementDatasetVariables);
 		return this.loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, model,
@@ -633,6 +627,7 @@ public class OpenTrialController extends BaseTrialController {
 		form.setMeasurementVariables(measurementDatasetVariables);
 		this.userSelection.setMeasurementDatasetVariable(measurementDatasetVariables);
 		model.addAttribute("createNurseryForm", form);
+		model.addAttribute(OpenTrialController.IS_EXP_DESIGN_PREVIEW, this.isPreviewEditable(workbook));
 		return super.showAjaxPage(model, BaseTrialController.URL_DATATABLE);
 	}
 

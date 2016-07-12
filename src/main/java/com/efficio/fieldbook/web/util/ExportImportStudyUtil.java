@@ -27,6 +27,14 @@ public class ExportImportStudyUtil {
 		// do nothing
 	}
 
+	/**
+	 * Retrieves the standard value of categorical variables from its list of possible values
+	 * 
+	 * @param idValue - id value of one of the possible values of categorical variable (i.e 1 - Low, 2 - Medium, 3 - High; 1, 2 and 3 are
+	 *        the possible id values)
+	 * @param possibleValues - list of possible values of a categorical variable to search
+	 * @return actual value based on description or name of the variable that represents the possible value that is searched
+	 */
 	public static String getCategoricalCellValue(final String idValue, final List<ValueReference> possibleValues) {
 		// With the New Data Table, the idValue will contain the long text instead of the id.
 		if (idValue != null && possibleValues != null && !possibleValues.isEmpty()) {
@@ -39,7 +47,8 @@ public class ExportImportStudyUtil {
 		// just in case an id was passed, but this won't be the case most of the time
 		if (idValue != null && NumberUtils.isNumber(idValue)) {
 			for (final ValueReference ref : possibleValues) {
-				if (ref.getId().equals(Integer.valueOf(idValue))) {
+				// Needs to convert to double to facilitate retrieving decimal value from categorical values
+				if (Double.valueOf(ref.getId()).equals(Double.valueOf(idValue))) {
 					return ref.getName();
 				}
 			}
@@ -116,7 +125,7 @@ public class ExportImportStudyUtil {
 	}
 
 	public static String getSiteNameOfTrialInstance(final MeasurementRow trialObservation,
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		if (trialObservation != null && trialObservation.getMeasurementVariables() != null) {
 			for (final MeasurementData data : trialObservation.getDataList()) {
 				if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_LOCATION.getId()) {
@@ -130,8 +139,7 @@ public class ExportImportStudyUtil {
 	}
 
 	private static String getSiteNameOfTrialInstanceBasedOnLocationID(
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final MeasurementData data)
-			throws MiddlewareQueryException {
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final MeasurementData data) {
 		if (data.getValue() != null && !data.getValue().isEmpty() && NumberUtils.isNumber(data.getValue())) {
 			return "_" + fieldbookMiddlewareService.getLocationById(Integer.parseInt(data.getValue())).getLname();
 		} else {
@@ -148,6 +156,7 @@ public class ExportImportStudyUtil {
 		return false;
 	}
 
+	// FIXME : eliminate use - if this is called in a loop this is BAD
 	public static String getPropertyName(final OntologyService ontologyService) {
 		String propertyName = "";
 		try {

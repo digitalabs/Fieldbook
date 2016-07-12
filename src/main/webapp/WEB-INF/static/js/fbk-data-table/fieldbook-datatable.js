@@ -69,7 +69,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				data: $(this).html(),
 				defaultContent: ''
 			});
-			if ($(this).data('term-data-type-id') == '1110') {
+			if ($(this).data('term-data-type-id') === 1110) {
+				// Column definition for Numeric data type
+
 				var minVal = ($(this).data('min-range'));
 				var maxVal = ($(this).data('max-range'));
 				var termId = $(this).data('term-id');
@@ -96,12 +98,28 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						$(td).data('term-id', termId);
 					},
 					render: function(data, type, full, meta) {
+						var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '');
+						var hiddenData = EscapeHTML.escape(data[1]);
+
 						if (data !== undefined) {
-							return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
+							return displayData + '<input type="hidden" value="' + hiddenData + '" />';
 						}
 					}
 				});
-			}else if ($(this).data('term-data-type-id') == '1130') {
+			} else if ($(this).data('term-data-type-id') === 1120) {
+				// Column definition for Character data type
+
+
+				columnsDef.push({
+					defaultContent: '',
+					targets: columns.length - 1,
+					render: function(data, type, full, meta) {
+						return EscapeHTML.escape(data);
+					}
+				});
+			} else if ($(this).data('term-data-type-id') === 1130) {
+				// Column definition for Categorical data type
+
 				if ($(this).data('term-valid-values') == null) {
 					$(this).data('term-valid-values', '');
 				}
@@ -163,10 +181,11 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							var showDescription = window.isCategoricalDescriptionView ? 'style="display:none"' : '';
 							var showName = !window.isCategoricalDescriptionView ? 'style="display:none"' : '';
 
-							var categoricalNameDom = '<span class="fbk-measurement-categorical-name" '+ showName  + '>' + data[1] + '</span>';
-							var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" '+ showDescription  + '>' + data[0] + '</span>';
+							var categoricalNameDom = '<span class="fbk-measurement-categorical-name" '+ showName  + '>' + EscapeHTML.escape(data[1]) + '</span>';
+							var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" '+ showDescription  + '>' + EscapeHTML.escape(data[0]) + '</span>';
 
-							return (isVariates ? categoricalNameDom + categoricalDescDom : data[1]) + '<input type="hidden" value="' + data[2] + '" />';
+							return (isVariates ? categoricalNameDom + categoricalDescDom : EscapeHTML.escape(data[1])) +
+								'<input type="hidden" value="' + EscapeHTML.escape(data[2]) + '" />';
 						}
 					}
 				});
@@ -182,7 +201,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == '8250') {
@@ -194,7 +213,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == 'Action') {
@@ -206,7 +225,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					width: '50px',
 					render: function(data, type, full, meta) {
 						return '<a href="javascript: editExperiment(&quot;' + tableIdentifier + '&quot;,' +
-							data + ',' + meta.row + ')" class="fbk-edit-experiment"></a>';
+							EscapeHTML.escape(data) + ',' + meta.row + ')" class="fbk-edit-experiment"></a>';
 					}
 				});
 			}
@@ -312,7 +331,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		if ($('#studyId').val() != '') {
 			// Activate an inline edit on click of a table cell
 			$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
-				if (isAllowedEditMeasurementDataCell(false)) {
+				if (isAllowedEditMeasurementDataCell()) {
 					var $tdCell = $(this);
 					var cellTdIndex =  $(this).index();
 					var rowIndex = $(this).parent('tr').data('row-index');
@@ -325,7 +344,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					if ($colHeader.hasClass('factors')) {
 						//we should now submit it
 						processInlineEditInput();
-					}else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
+					} else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
 						processInlineEditInput();
 						if ($('#measurement-table').data('show-inline-edit') === '1') {
 							$.ajax({
@@ -334,6 +353,10 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 								success: function(data) {
 									$tdCell.html(data);
 									$tdCell.data('is-inline-edit', '1');
+								},
+								error: function() {
+									//TODO localise the message
+									showErrorMessage('Server Error', 'Could not update the measurement');
 								}
 							});
 						}
@@ -397,6 +420,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 			if (($(this).data('term-id') === 'Check')) {
 				columns.push({
 					data:   'active',
+					defaultContent: '',
 					render: function(data, type, row) {
 						return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="checkbox" class="editor-active" data-binding>';
 					},
@@ -405,19 +429,31 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 			} else if (($(this).data('term-id') === 'NewValue')) {
 				columns.push({
 					data:   'newValue',
+					defaultContent: '',
 					render: function(data, type, row) {
 						return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="text" class="form-control" data-binding />';
 					}
 				});
 			} else {
-				columns.push({data: $(this).html()});
+                columns.push({
+                    data: $(this).html(),
+                    defaultContent: '',
+                    render: function (data, type, row) {
+                        if (data && Array.isArray(data)) {
+                            return EscapeHTML.escape(data[0] ? data[0] : '');
+                        } else {
+                            return EscapeHTML.escape(data ? data : '');
+                        }
+                    }
+                });
 			}
 
 			if ($(this).data('term-data-type-id') == '1130' || $(this).data('term-data-type-id') == '1110') {
 				columnsDef.push({
 					targets: columns.length - 1,
+					defaultContent: '',
 					render: function(data, type, full, meta) {
-						return ((data[0] != null) ? data[0] :  '');
+						return EscapeHTML.escape((data[0] != null) ? data[0] :  '');
 					}
 				});
 			}
@@ -486,18 +522,21 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 	 * @param {string} tableIdentifier the id of the table container
 	 * @param {string} ajaxUrl the URL from which to retrieve table data
 	 */
-	var dataTableConstructor = function ReviewDetailsOutOfBoundsDataTable(tableIdentifier, dataList) {
+	var dataTableConstructor = function PreviewCrossesDataTable(tableIdentifier, dataList, tableHeaderList) {
 		'use strict';
 
 		var columns = [],
 			columnsDef = [],
 			table;
-
-		$(tableIdentifier + ' thead tr th').each(function() {
+		
+		$.each( tableHeaderList, function( index, value ){
 			columns.push({
-				data: $(this).html(),
+				data: value,
 				defaultContent: '',
 			});
+		});
+
+		$(tableIdentifier + ' thead tr th').each(function(index) {
 			if ($(this).html() === 'DUPLICATE') {
 				columnsDef.push({
 					defaultContent: '',
@@ -517,6 +556,8 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					}
 				});
 			}
+			//update header with the correct ontology name
+			$(this).html(columns[index].data);
 		});
 
 		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
@@ -1186,10 +1227,11 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 			scrollY: '500px',
 			scrollX: '100%',
 			scrollCollapse: true,
+            retrieve: true,
 			aoColumns: aoColumnsDef,
 			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 			dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
-
+			retrieve: true,
 			iDisplayLength: 100,
 			fnDrawCallback: function(oSettings) {
 				
@@ -1205,7 +1247,7 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 				$(parentDiv + ' .numberOfAdvanceSelected').html(selectedRowCount);
 			},
 			fnInitComplete: function(oSettings, json) {
-				
+
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
 					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
@@ -1264,7 +1306,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == '8250') {
@@ -1275,7 +1317,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else {
@@ -1284,9 +1326,9 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						if (data !== undefined) {
 							if (Array.isArray(data)) {
-								return ((data[0] != null) ? data[0] :  '');
+								return EscapeHTML.escape((data[0] != null) ? data[0] :  '');
 							} else {
-								return data;
+								return EscapeHTML.escape(data);
 							}
 						}
 					}

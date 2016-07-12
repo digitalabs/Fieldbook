@@ -3,19 +3,23 @@ package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import javax.annotation.Resource;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.springframework.stereotype.Component;
+
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
 public class SelectionTraitExpressionDataProcessor implements ExpressionDataProcessor {
@@ -38,7 +42,7 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 		}
 		for (final MeasurementVariable condition : possibleEnvironmentSources) {
 			if (condition.getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
-				source.setSelectionTraitValue(extractValue(condition.getValue(), condition.getTermId()));
+				setSelectionTraitValue(condition.getValue(), source, condition.getTermId(), condition.getPossibleValues());
 			}
 		}
 	}
@@ -47,9 +51,28 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 	public void processPlotLevelData(final AdvancingSource source, final MeasurementRow row) {
 		final List<MeasurementData> rowData = row.getDataList();
 
+		if(source.getTrailInstanceObservation() != null){
+			rowData.addAll(source.getTrailInstanceObservation().getDataList());
+		}
+
 		for (final MeasurementData measurementData : rowData) {
 			if (measurementData.getMeasurementVariable().getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
-				source.setSelectionTraitValue(extractValue(measurementData.getValue(), measurementData.getMeasurementVariable().getTermId()));
+				setSelectionTraitValue(measurementData.getValue(), source, measurementData.getMeasurementVariable().getTermId(), measurementData.getMeasurementVariable().getPossibleValues());
+			}
+		}
+	}
+
+	protected void setSelectionTraitValue(final String categoricalValue, final AdvancingSource source, final int termID, List<ValueReference> possibleValuesForSelectionTraitProperty){
+		if(StringUtils.isNumeric(categoricalValue)){
+			source.setSelectionTraitValue(extractValue(categoricalValue, termID));
+		}
+		else{
+			if(possibleValuesForSelectionTraitProperty != null && !possibleValuesForSelectionTraitProperty.isEmpty()){
+				for(ValueReference valueReference : possibleValuesForSelectionTraitProperty){
+					if(Objects.equals(valueReference.getDescription(), categoricalValue)){
+						source.setSelectionTraitValue(extractValue(String.valueOf(valueReference.getId()), termID));
+					}
+				}
 			}
 		}
 	}
@@ -61,8 +84,8 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 		}
 
 		final String categoricalValue =
-				this.ontologyVariableDataManager.retrieveVariableCategoricalValue(contextUtil.getCurrentProgramUUID(), variableTermID,
-						Integer.parseInt(value));
+				this.ontologyVariableDataManager.retrieveVariableCategoricalNameValue(contextUtil.getCurrentProgramUUID(), variableTermID,
+						Integer.parseInt(value), true);
 
 		if (categoricalValue == null) {
 			// this case happens when a numeric value is provided as an out of bounds value

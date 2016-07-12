@@ -64,7 +64,7 @@
 			<div class="col-sm-8 col-xs-10">
 				<p class="form-control-static" >
 					<a id="cropOntologyId" target="_blank" href="http://www.cropontology.org/terms"
-					   th:href="@{http://www.cropontology.org/terms/} + *{variable.id} + '/'" th:text="*{variable.id}"></a>
+					   th:href="@{http://www.cropontology.org/terms/} + *{variable.property.cropOntologyId} + '/'" th:text="*{variable.property.cropOntologyId}"></a>
 				</p>
 			</div>
 		</div>

@@ -7,7 +7,7 @@
             'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-		'TrialSettingsManager', '_', '$localStorage', '$rootScope',
+		'TrialSettingsManager', '_', '$localStorage','$rootScope',
 		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
@@ -31,7 +31,8 @@
 			var settingRegistry = {};
 			var settingsArray = [];
 			var saveEventListeners = {};
-
+            var TRIAL_LOCATION_NAME_INDEX = 8180;
+            var LOCATION_NAME_ID = 8190;
 			var propagateChange = function(targetRegistry, dataKey, newValue) {
 				if (targetRegistry[dataKey]) {
 					angular.forEach(targetRegistry[dataKey], function(updateFunction) {
@@ -206,8 +207,9 @@
 
 			var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
 				{id: '@id'}, {get: {method: 'get', isArray: true}});
-			var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
 
+			var UpdateStartingEntryNoService = $resource('/Fieldbook/TrialManager/GermplasmList/startingEntryNo', {}, {});
+			
 			var service = {
 				// user input data and default values of standard variables
 				currentData: {
@@ -279,6 +281,7 @@
 				},
 				// the data param structures
 				generateExpDesign: function(data) {
+					var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
 					return GenerateExpDesignService.save(data).$promise;
 				},
 
@@ -334,39 +337,13 @@
 
 					return deferred.promise;
 				},
-
-				refreshMeasurementTableAfterDeletingEnvironment: function() {
-
-					var designTypeId = service.currentData.experimentalDesign.designType;
-					if (service.applicationData.designTypes[designTypeId].isPreset) {
-						service.generatePresetExpDesign(designTypeId).then(function() {
-							service.updateAfterGeneratingDesignSuccessfully();
-							service.applicationData.hasGeneratedDesignPreset = true;
-						});
-					}else {
-						var noOfEnvironments = service.currentData.environments.noOfEnvironments;
-						var environmentData = service.currentData.experimentalDesign;
-
-						//update the no of environments in experimental design tab
-						environmentData.noOfEnvironments = noOfEnvironments;
-
-						service.generateExpDesign(environmentData).then(function(response) {
-							if (response.valid === true) {
-								service.clearUnappliedChangesFlag();
-								service.applicationData.unsavedGeneratedDesign = true;
-								$('#chooseGermplasmAndChecks').data('replace', '1');
-								$('body').data('expDesignShowPreview', '1');
-							} else {
-								showErrorMessage('', response.message);
-							}
-						});
-					}
-				},
+				
 
 				isOpenTrial: function() {
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
+
 				deleteEnvironment: function(index) {
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;
@@ -380,6 +357,7 @@
 
 					return refreshMeasurementDeferred.promise;
 				},
+
 				reloadMeasurementAjax: function(data) {
 					return $http({
 						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
@@ -389,17 +367,23 @@
 						transformResponse: undefined
 					});
 				},
-				indicateUnappliedChangesAvailable: function() {
+
+				indicateUnappliedChangesAvailable: function(displayWarningMessage) {
 					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
 						service.applicationData.unappliedChangesAvailable = true;
-						showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+
+						if (displayWarningMessage === 'true' || displayWarningMessage) {
+							//TODO Localise that message
+							showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
 							'To update the Measurements table, please review your settings and regenerate ' +
 							'the Experimental Design on the next tab', 10000);
-						$('body').data('needGenerateExperimentalDesign', '1');
-
-						if (service.currentData.experimentalDesign.designType === 3) {
-							service.currentData.experimentalDesign.designType = null;
 						}
+					}
+				},
+
+				warnAboutUnappliedChanges: function() {
+					if (service.applicationData.unappliedChangesAvailable) {
+						showAlertMessage('Unapplied Changes', $.fieldbookMessages.measurementWarningNeedGenExpDesign, 10000);
 					}
 				},
 
@@ -420,7 +404,6 @@
 				clearUnappliedChangesFlag: function() {
 					service.applicationData.unappliedChangesAvailable = false;
 					service.applicationData.unsavedTreatmentFactorsAvailable = false;
-					$('body').data('needGenerateExperimentalDesign', '0');
 				},
 				extractData: extractData,
 				extractSettings: extractSettings,
@@ -440,6 +423,9 @@
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
 								'regenerate the design on the Experimental Design tab', 10000);
 					} else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
+                        // Hide Discard Imported Data button when the user presses Save button
+                        $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
+                        stockListImportNotSaved = false;
 						performDataCleanup();
 						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 						var serializedData = (JSON.stringify(columnsOrder));
@@ -531,6 +517,14 @@
 
 						}
 					}
+                    // set selected location on save
+                    if (service.currentData.trialSettings.userInput[LOCATION_NAME_ID] != '') {
+                        selectedLocationForTrail = {
+                            name: service.currentData.trialSettings.userInput[TRIAL_LOCATION_NAME_INDEX],
+                            id: service.currentData.trialSettings.userInput[LOCATION_NAME_ID]
+                        };
+                        setSelectedLocation();
+                    }
 				},
 				onUpdateData: function(dataKey, updateFunction) {
 					if (!dataRegistry[dataKey]) {
@@ -585,6 +579,13 @@
 				updateStartingEntryNoCount: function(newCountValue) {
 					service.currentData.experimentalDesign.startingEntryNo = newCountValue;
 					$('body').data('service.currentData.experimentalDesign.startingEntryNo', newCountValue);
+					//check if the starting entry number is a number before calling the resource 
+					//for updating the starting entry number in the server
+					//as the server expects the parameter passed as an Integer
+					//the newCountValue becomes "" or null if the germplasm list is not yet selected for the trial
+					if($.isNumeric(newCountValue)) {
+						UpdateStartingEntryNoService.save(newCountValue);
+					}
 				},
 
 				onUpdateSettings: function(key, updateFunction) {

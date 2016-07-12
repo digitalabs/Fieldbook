@@ -27,6 +27,7 @@
 					<div class="fbk-nursery-heading-btns">
 						<input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick="" type="button" value="Save"/>
 						<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>
+                        <input type="button" value="Save" class="btn btn-info fbk-discard-imported-stocklist-data fbk-hide" onclick="discardImportedStockList();" th:value="#{import.discard.data}"/>
 					</div>
 				</div>
 
@@ -550,6 +551,7 @@ var translations = {
 <script type="text/javascript" th:src="@{/static/js/trialmanager/trialSettings.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/germplasm.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/treatment.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/environmentService.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>

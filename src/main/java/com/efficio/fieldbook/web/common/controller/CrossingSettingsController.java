@@ -263,23 +263,7 @@ public class CrossingSettingsController extends SettingsController {
 	public ResponseEntity<FileSystemResource> download(final HttpServletRequest req) throws UnsupportedEncodingException {
 		final String outputFilename = new String(req.getParameter("outputFilename").getBytes("iso-8859-1"), "UTF-8");
 
-		try {
-			final File resource = new File(outputFilename);
-			final FileSystemResource fileSystemResource = new FileSystemResource(resource);
-
-			final HttpHeaders respHeaders = new HttpHeaders();
-			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			respHeaders.setContentLength(fileSystemResource.contentLength());
-
-			FieldbookUtil.resolveContentDisposition(resource.getName(), respHeaders, req.getHeader("User-Agent"));
-
-			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
-
-		} catch (final IOException e) {
-			CrossingSettingsController.LOG.error("Cannot download file " + outputFilename, e);
-
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
+		return FieldbookUtil.createResponseEntityForFileDownload(new File(outputFilename));
 	}
 
 	@ResponseBody
@@ -311,23 +295,31 @@ public class CrossingSettingsController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
-	public List<Map<String, Object>> getImportedCrossesList() {
+	public Map<String, Object> getImportedCrossesList() {
+
+		final Map<String, Object> responseMap = new HashMap<>();
+		if (null == this.studySelection.getImportedCrossesList()) {
+			return responseMap;
+		}
 
 		final List<Map<String, Object>> masterList = new ArrayList<>();
-		if (null == this.studySelection.getImportedCrossesList()) {
-			return masterList;
-		}
+		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
+
 		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
-			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(cross));
+			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, cross));
 		}
 
-		return masterList;
+		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
+		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
+
+		return responseMap;
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList/{createdCrossesListId}", method = RequestMethod.GET)
-	public List<Map<String, Object>> getImportedCrossesList(@PathVariable final String createdCrossesListId) {
+	public Map<String, Object> getImportedCrossesList(@PathVariable final String createdCrossesListId) {
 
+		final Map<String, Object> responseMap = new HashMap<>();
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
 
@@ -337,14 +329,24 @@ public class CrossingSettingsController extends SettingsController {
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 
+		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		for (final GermplasmListData listData : germplasmListDataList) {
-			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(listData));
-			importedCrosses.add(this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData));
+			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, listData));
+			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData);
+
+			if (importedCross.getGid() == null) {
+				throw new IllegalStateException(
+						"Cross germplsam record must already exist in database when using crossing manager to create crosses in Nurseries.");
+			}
+			importedCrosses.add(importedCross);
 		}
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 		importedCrossesList.setType(germplasmList.getType());
 		this.userSelection.setImportedCrossesList(importedCrossesList);
-		return masterList;
+
+		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
+		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
+		return responseMap;
 	}
 
 	protected void saveCrossSetting(final CrossSetting setting, final String programUUID) throws MiddlewareQueryException, JAXBException {

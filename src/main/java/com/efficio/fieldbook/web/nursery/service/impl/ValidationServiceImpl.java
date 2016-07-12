@@ -47,17 +47,16 @@ public class ValidationServiceImpl implements ValidationService {
 	private static final String DATA_TYPE_NUMERIC = "Numeric";
 	private static final String ERROR_INVALID_CELL = "error.workbook.save.invalidCellValue";
 	private static final String ERROR_NUMERIC_VARIABLE_VALUE = "error.workbook.save.invalidCellValueForNumericVariable";
-	public static final String MISSING_VAL = "missing";
 
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-	
+
 	@Resource
 	private WorkbenchDataManager workbenchDataManager;
-	
+
 	@Resource
 	private ContextUtil contextUtil;
 
@@ -81,12 +80,12 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	private boolean validateIfValueIsMissingOrNumber(final String value) {
-		if (ValidationServiceImpl.MISSING_VAL.equals(value.trim())) {
+		if (MeasurementData.MISSING_VALUE.equals(value.trim())) {
 			return true;
 		}
 		return NumberUtils.isNumber(value);
 	}
-	
+
 	@Override
 	public void validateObservationValues(final Workbook workbook, final String instanceNumber) throws WorkbookParserException {
 		final Locale locale = LocaleContextHolder.getLocale();
@@ -96,8 +95,9 @@ public class ValidationServiceImpl implements ValidationService {
 				// meaning we want to validate all
 				observations = workbook.getObservations();
 			} else {
-				observations = workbook.isNursery() ? workbook.getObservations()
-						: WorkbookUtil.filterObservationsByTrialInstance(workbook.getObservations(), instanceNumber);
+				observations =
+						workbook.isNursery() ? workbook.getObservations() : WorkbookUtil.filterObservationsByTrialInstance(
+								workbook.getObservations(), instanceNumber);
 			}
 
 			for (final MeasurementRow row : observations) {
@@ -178,7 +178,9 @@ public class ValidationServiceImpl implements ValidationService {
 	String validatePersonId(final MeasurementVariable var) {
 		String warningMessage = "";
 		if (NumberUtils.isNumber(var.getValue())) {
-			final Integer workbenchUserId = this.workbenchDataManager.getWorkbenchUserIdByIBDBUserIdAndProjectId(Integer.parseInt(var.getValue()), this.contextUtil.getProjectInContext().getProjectId());
+			final Integer workbenchUserId =
+					this.workbenchDataManager.getWorkbenchUserIdByIBDBUserIdAndProjectId(Integer.parseInt(var.getValue()), this.contextUtil
+							.getProjectInContext().getProjectId());
 			if (workbenchUserId == null) {
 				warningMessage = this.setWarningMessage(var.getName());
 			}

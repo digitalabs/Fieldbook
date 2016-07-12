@@ -98,7 +98,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
 	@Resource
-	private ContextUtil contextUtil;
+	protected ContextUtil contextUtil;
 
 	@Override
 	public ImportResult importWorkbook(final Workbook workbook, final String filename, final OntologyService ontologyService,
@@ -126,7 +126,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					this.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
 			final List<GermplasmChangeDetail> changeDetailsList = new ArrayList<GermplasmChangeDetail>();
 			this.importDataToWorkbook(modes, xlsBook.getSheetAt(1), rowsMap, trialInstanceNumber, changeDetailsList, workbook);
-			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
+			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService, contextUtil.getCurrentProgramUUID());
 
 			try {
 				this.validationService.validateObservationValues(workbook, trialInstanceNumber);
@@ -137,7 +137,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			}
 			String conditionsAndConstantsErrorMessage = "";
 			try {
-				conditionsAndConstantsErrorMessage = this.validationService.validateConditionAndConstantValues(workbook, trialInstanceNumber);
+				conditionsAndConstantsErrorMessage =
+						this.validationService.validateConditionAndConstantValues(workbook, trialInstanceNumber);
 			} catch (final MiddlewareQueryException e) {
 				conditionsAndConstantsErrorMessage = e.getMessage();
 				WorkbookUtil.revertImportedConditionAndConstantsData(workbook);
@@ -267,9 +268,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			}
 			this.setCorrectBreedingMethodInfo(variableMap);
 			// this would set info to location (trial level variable)
-			if (originalWorkbook.isNursery()
-					&& !originalWorkbook.getTrialObservations().isEmpty() && originalWorkbook.getTrialConditions() != null
-					&& !originalWorkbook.getTrialConditions().isEmpty()) {
+			if (originalWorkbook.isNursery() && !originalWorkbook.getTrialObservations().isEmpty()
+					&& originalWorkbook.getTrialConditions() != null && !originalWorkbook.getTrialConditions().isEmpty()) {
 				final MeasurementVariable locationNameVar =
 						WorkbookUtil.getMeasurementVariable(originalWorkbook.getTrialConditions(), TermId.TRIAL_LOCATION.getId());
 				if (locationNameVar != null) {
@@ -595,6 +595,9 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					}
 				}
 				wData.setValue(xlsValue);
+				// Keep the imported value so that when the value is set to "missing"
+				// we can still track the old value.
+				wData.setOldValue(xlsValue);
 			}
 		}
 	}

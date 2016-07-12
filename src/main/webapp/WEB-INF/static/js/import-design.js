@@ -45,10 +45,7 @@ var ImportDesign = (function() {
 		},
 
 		reloadMeasurements: function() {
-			if (isNursery()) {
-
-				// reload nursery measurements here
-			} else {
+			if (!isNursery()){
 				var angularElem = angular.element('#mainApp');
 
 				angularElem
@@ -192,8 +189,7 @@ var ImportDesign = (function() {
 		generateDesign: function() {
 
 			var environmentData = isNursery() ? ImportDesign.nurseryEnvironmentDetails
-					: angular
-							.copy(ImportDesign.trialManagerCurrentData().environments);
+					: angular.copy(ImportDesign.trialManagerCurrentData().environments);
 
 			$.each(environmentData.environments, function(key, data) {
 				$.each(data.managementDetailValues, function(key, value) {
@@ -222,7 +218,9 @@ var ImportDesign = (function() {
 				contentType: 'application/json; charset=utf-8'
 			}).done(function(resp) {
 				ImportDesign.updateEnvironmentAndMeasurements(resp);
-
+				//TODO Remove expDesignShowPreview global
+				var $body = $('body');
+				$body.data('expDesignShowPreview', '1');
 				angular.element('#mainApp').scope().$broadcast('designImportGenerated');
 
 			});
@@ -230,8 +228,7 @@ var ImportDesign = (function() {
 
 		updateEnvironmentAndMeasurements: function(resp) {
 			if (!resp.isSuccess) {
-				createErrorNotification(designImportErrorHeader, resp.error
-						.join('<br/>'));
+				createErrorNotification(designImportErrorHeader, resp.error.join('<br/>'));
 				return;
 			}
 
@@ -239,13 +236,12 @@ var ImportDesign = (function() {
 
 			$body.removeClass('modal-open');
 			$('#chooseGermplasmAndChecks').data('replace', '1');
-			$body.data('expDesignShowPreview', '1');
-			$body.data('needGenerateExperimentalDesign', '0');
 
 			ImportDesign.closeReviewModal();
 			ImportDesign.reloadMeasurements();
 
 			if (isNursery()) {
+				//TODO Localise the message
 				showSuccessfulMessage(
 						'',
 						'The nursery design was imported successfully. Please save your nursery before proceeding to Measurements tab.');
@@ -267,8 +263,8 @@ var ImportDesign = (function() {
 
 				angular.element('#mainApp').scope().$apply();
 
-				ImportDesign.getTrialManagerDataService()
-						.clearUnappliedChangesFlag();
+				ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();
+				//TODO Localise the message
 				showSuccessfulMessage(
 						'',
 						'The trial design was imported successfully. Please review the Measurements tab.');
@@ -314,6 +310,20 @@ var ImportDesign = (function() {
 
 		cancelDesignImport: function() {
 			$.get('/Fieldbook/DesignImport/cancelImportDesign');
+
+			if (!isNursery()) {
+				var angularElem = angular.element('#mainApp');
+				var TrialManagerDataService = angularElem.injector().get('TrialManagerDataService');
+				
+				if(TrialManagerDataService.applicationData.hasNewEnvironmentAdded){
+					angularElem.scope().$apply(function(){
+						TrialManagerDataService.currentData.environments.noOfEnvironments-=TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd;
+						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
+						TrialManagerDataService.applicationData.unappliedChangesAvailable = false;	
+						TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd = 0;
+					});
+				}
+			}
 		},
 
 		doSubmitImport: function() {
@@ -326,8 +336,16 @@ var ImportDesign = (function() {
 				$('#importDesignUploadForm').attr('action',
 						'/Fieldbook/DesignImport/import/N');
 			} else {
-				$('#importDesignUploadForm').attr('action',
-						'/Fieldbook/DesignImport/import/T');
+				var TrialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
+				var hasNewEnvironmentAdded = TrialManagerDataService.applicationData.hasNewEnvironmentAdded;
+				var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
+
+				var actionURL = '/Fieldbook/DesignImport/import/T';
+				if(hasNewEnvironmentAdded){
+					actionURL += '/' + noOfEnvironments;
+				}
+
+				$('#importDesignUploadForm').attr('action',actionURL);
 			}
 
 			ImportDesign.submitImport($('#importDesignUploadForm')).done(

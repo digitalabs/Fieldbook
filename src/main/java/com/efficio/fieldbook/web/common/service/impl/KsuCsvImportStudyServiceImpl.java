@@ -13,6 +13,7 @@ import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
@@ -34,6 +35,9 @@ public class KsuCsvImportStudyServiceImpl extends KsuExcelImportStudyServiceImpl
 
 	@Resource
 	protected ValidationService validationService;
+	
+	@Resource
+	ContextUtil contextUtil;
 
 	@Resource
 	protected AutowireCapableBeanFactory beanFactory;
@@ -51,7 +55,7 @@ public class KsuCsvImportStudyServiceImpl extends KsuExcelImportStudyServiceImpl
 
 			ksuCsvWorkbookParser.parseFile(filename);
 
-			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
+			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService, contextUtil.getCurrentProgramUUID());
 
 			this.validationService.validateObservationValues(workbook, trialInstanceNo);
 

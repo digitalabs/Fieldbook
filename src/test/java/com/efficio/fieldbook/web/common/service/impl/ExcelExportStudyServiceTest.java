@@ -59,6 +59,8 @@ public class ExcelExportStudyServiceTest extends AbstractBaseIntegrationTest {
 	private FieldbookProperties fieldbookProperties;
 
 	private static com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+	
+	private String breedingMethodPropertyName = "Breeding Method";
 
 	@Test
 	public void testExportingMoreThan4000Observations() {
@@ -86,7 +88,7 @@ public class ExcelExportStudyServiceTest extends AbstractBaseIntegrationTest {
 		((ExcelExportStudyServiceImpl) this.excelExportStudyService).writeDescriptionSheet(xlsBook, workbook, workbook
 				.getTrialObservations().get(0), visibleColumns);
 		((ExcelExportStudyServiceImpl) this.excelExportStudyService).writeObservationSheet(xlsBook, workbook, workbook.getObservations(),
-				visibleColumns);
+				visibleColumns, breedingMethodPropertyName);
 
 		try {
 			fos = new FileOutputStream(new File(filenamePath));

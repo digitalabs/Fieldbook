@@ -184,8 +184,8 @@ if (typeof StockIDFunctions === 'undefined') {
 			'use strict';
 			$('li#stock-list' + listId + '-li').remove();
 
-			if ($('#stock-list-anchor' + listId).length === 1) {
-				$('#stock-list-anchor' + listId).remove();
+			if ($('#stock-tab-pane' + listId).length === 1) {
+				$('#stock-tab-pane' + listId).remove();
 			}
 
 			setTimeout(function() {
@@ -331,17 +331,19 @@ if (typeof StockIDFunctions === 'undefined') {
 			if (resp.hasError) {
 				showErrorMessage('', resp.errorMessage);
 			} else {
+                stockListImportNotSaved = true;
 				if(resp.hasConflict){
 					$('.fbk-save-nursery').addClass('fbk-hide');
 					$('.fbk-save-stocklist').removeClass('fbk-hide');
 					$('.fbk-discard-imported-stocklist-data').removeClass('fbk-hide');
 					showAlertMessage('', importStocklistSuccessOverwriteDataWarningToSaveMessage);
-					stockListImportNotSaved = true;
 				}
 				else{
 					showSuccessfulMessage('', 'Import Success');
 				}
 				$('.import-stock-section .modal').modal('hide');
+                // Display Discard Imported Data button after successful import of stock list
+                $('.fbk-discard-imported-stocklist-data').removeClass('fbk-hide');
 				StockIDFunctions.displayStockList(resp.stockListId);
 			}
 		},
@@ -381,7 +383,9 @@ if (typeof StockIDFunctions === 'undefined') {
 					$('#page-message-lots').html('');
 					$('#addLotsModal').modal({ backdrop: 'static', keyboard: true });
 					initializePossibleValuesComboInventory(inventoryLocationSuggestions, '#inventoryLocationIdAll', true, null);
+					initializePossibleValuesComboInventory(inventorySeedStorageLocationSuggestions, '#inventoryLocationIdSeedStorage', false, null);
 					initializePossibleValuesComboInventory(inventoryFavoriteLocationSuggestions, '#inventoryLocationIdFavorite', false, null);
+					initializePossibleValuesComboInventory(inventoryFavoriteSeedStorageLocationSuggestions, '#inventoryLocationIdFavoriteSeedStorage', false, null);
 					initializePossibleValuesComboScale(scaleSuggestions, '#inventoryScaleId', false, null);
 					showCorrectLocationInventoryCombo();
 				}

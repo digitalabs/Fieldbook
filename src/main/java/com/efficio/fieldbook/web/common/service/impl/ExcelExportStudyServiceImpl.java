@@ -18,8 +18,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
@@ -46,6 +49,8 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -55,6 +60,8 @@ import org.springframework.web.util.HtmlUtils;
 @Service
 @Transactional
 public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ExcelExportStudyServiceImpl.class);
 
 	private static final int PIXEL_SIZE = 250;
 
@@ -76,10 +83,11 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
+	private String breedingMethodPropertyName = "";
+
 	protected static final List<Integer> STUDY_DETAILS_IDS = Arrays.asList(TermId.STUDY_NAME.getId(), TermId.STUDY_TITLE.getId(),
 			TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(), TermId.START_DATE.getId(), TermId.END_DATE.getId(),
 			TermId.STUDY_TYPE.getId(), TermId.STUDY_UID.getId(), TermId.STUDY_STATUS.getId());
-	private String breedingMethodPropertyName = "";
 
 	@Override
 	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
@@ -93,8 +101,6 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		final List<String> filenameList = new ArrayList<String>();
 		String outputFilename = null;
 
-		this.breedingMethodPropertyName = this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
-
 		for (final Integer trialInstanceNo : instances) {
 			final List<Integer> indexes = new ArrayList<Integer>();
 			indexes.add(trialInstanceNo);
@@ -107,7 +113,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 				final HSSFWorkbook xlsBook = new HSSFWorkbook();
 				this.writeDescriptionSheet(xlsBook, workbook, instanceLevelObservation, visibleColumns);
-				this.writeObservationSheet(xlsBook, workbook, plotLevelObservations, visibleColumns);
+				this.writeObservationSheet(xlsBook, workbook, plotLevelObservations, visibleColumns, breedingMethodPropertyName);
 
 				final String filenamePath =
 						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename,
@@ -165,7 +171,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	}
 
 	protected void writeObservationSheet(final HSSFWorkbook xlsBook, final Workbook workbook, final List<MeasurementRow> observations,
-			final List<Integer> visibleColumns) {
+			final List<Integer> visibleColumns, String breedingMethodPropertyName) {
+		LOG.info("Start Export Observation Sheet");
 		final Locale locale = LocaleContextHolder.getLocale();
 		final HSSFSheet xlsSheet = xlsBook.createSheet(this.messageSource.getMessage("export.study.sheet.observation", null, locale));
 		int currentRowNum = 0;
@@ -176,8 +183,10 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 		for (final MeasurementRow dataRow : observations) {
 			this.writeObservationRow(currentRowNum++, xlsSheet, dataRow, workbook.getMeasurementDatasetVariables(), xlsBook, style,
-					visibleColumns);
+					visibleColumns, breedingMethodPropertyName);
 		}
+		LOG.info("End Export Observation Sheet");
+
 	}
 
 	private CellStyle createCellStyle(final HSSFWorkbook xlsBook) {
@@ -393,7 +402,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 					variable.setLabel(ExcelExportStudyServiceImpl.PLOT);
 				}
 
-				this.writeSectionRow(rowNumIndex++, xlsSheet, variable);
+				this.writeSectionRow(rowNumIndex++, xlsSheet, variable, breedingMethodPropertyName);
 			}
 		}
 		return rowNumIndex;
@@ -448,7 +457,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 	}
 
-	private void writeSectionRow(final int currentRowNum, final HSSFSheet xlsSheet, final MeasurementVariable variable) {
+	private void writeSectionRow(final int currentRowNum, final HSSFSheet xlsSheet, final MeasurementVariable variable, final String breedingMethodPropertyName) {
 		final HSSFRow row = xlsSheet.createRow(currentRowNum);
 
 		HSSFCell cell = row.createCell(0, Cell.CELL_TYPE_STRING);
@@ -482,7 +491,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		if (variable != null && variable.getPossibleValues() != null && !variable.getPossibleValues().isEmpty()
 				&& variable.getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
 				&& variable.getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
-				&& !variable.getProperty().equals(this.breedingMethodPropertyName) && variable.getTermId() != TermId.PI_ID.getId()
+				&& !variable.getProperty().equals(breedingMethodPropertyName) && variable.getTermId() != TermId.PI_ID.getId()
 				&& variable.getTermId() != Integer.parseInt(AppConstants.COOPERATOR_ID.getString())
 				&& variable.getTermId() != TermId.LOCATION_ID.getId()) {
 			cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(variable.getValue(), variable.getPossibleValues()));
@@ -533,7 +542,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	}
 
 	private void writeObservationRow(final int currentRowNum, final HSSFSheet xlsSheet, final MeasurementRow dataRow,
-			final List<MeasurementVariable> variables, final HSSFWorkbook xlsBook, final CellStyle style, final List<Integer> visibleColumns) {
+			final List<MeasurementVariable> variables, final HSSFWorkbook xlsBook, final CellStyle style, final List<Integer> visibleColumns,
+			String propertyName) {
 
 		final HSSFRow row = xlsSheet.createRow(currentRowNum);
 		int currentColNum = 0;
@@ -553,8 +563,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 						&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty()
 						&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
 						&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
-						&& !dataCell.getMeasurementVariable().getProperty()
-								.equals(ExportImportStudyUtil.getPropertyName(this.ontologyService))) {
+						&& !dataCell.getMeasurementVariable().getProperty().equals(propertyName)) {
 
 					cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable()
 							.getPossibleValues()));
@@ -609,5 +618,10 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	@Override
+	public void setBreeedingMethodPropertyName(String breedingMethodPropertyName) {
+		this.breedingMethodPropertyName = breedingMethodPropertyName;
 	}
 }

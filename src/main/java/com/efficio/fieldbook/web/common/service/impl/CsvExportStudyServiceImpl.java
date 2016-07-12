@@ -28,6 +28,12 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.ZipUtil;
+
 @Service
 @Transactional
 public class CsvExportStudyServiceImpl implements CsvExportStudyService {
@@ -155,6 +161,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 					continue;
 				}
 
+				// FIXME : DB visit IN LOOP
 				columnValueMap.put(termId, this.getColumnValue(dataCell, termId));
 
 			}
@@ -193,7 +200,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		String cellVal = "";
 
 		if (dataCell.getValue() != null && !"".equalsIgnoreCase(dataCell.getValue())) {
-			if (ValidationServiceImpl.MISSING_VAL.equalsIgnoreCase(dataCell.getValue())) {
+			if (MeasurementData.MISSING_VALUE.equalsIgnoreCase(dataCell.getValue())) {
 				cellVal = dataCell.getValue();
 			} else {
 				cellVal = Double.valueOf(dataCell.getValue()).toString();

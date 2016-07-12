@@ -159,7 +159,8 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 						&& dataCell.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 					continue;
 				}
-
+				
+				// FIXME : DB visit IN LOOP
 				columnValueMap.put(termId, this.getColumnValue(dataCell, termId));
 
 			}

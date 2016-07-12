@@ -381,7 +381,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			}
 			settingDetail.setPossibleValuesToJson(possibleValues);
 			final List<ValueReference> possibleValuesFavorite =
-					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), false);
+					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), true);
 			settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 			settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 
@@ -668,7 +668,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 			// set value of breeding method code back to code after saving
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-					this.ontologyService);
+					this.ontologyService, contextUtil.getCurrentProgramUUID());
 			// remove selection variates from traits list
 			this.removeSelectionVariatesFromTraits(this.userSelection.getBaselineTraitsList());
 		}

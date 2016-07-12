@@ -3175,6 +3175,7 @@ function reloadCheckListTable() {
 			$('#imported-germplasm-list').html(html);
 			$('#entries-details').css('display', 'block');
 			$('#numberOfEntries').html($('#totalGermplasms').val());
+			$('#txtStartingEntryNo').prop('disabled', false);
 		});
 	}
 }

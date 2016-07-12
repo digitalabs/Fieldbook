@@ -1,6 +1,6 @@
 <div class="row form-group col-xs-12 col-md-12">
 <img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px;" width="22" height="22"/>
-<strong class="sub-content-heading" th:if="${isExpDesignPreview != '1'}" th:text="#{nursery.edit.nursery.add.measurements}"></strong>
+<strong class="sub-content-heading" th:if="${isExpDesignPreview != '1'}" th:text="#{nursery.edit.nursery.measurements}"></strong>
 <strong class="sub-content-heading exp-design-preview" th:if="${isExpDesignPreview == '1'}" th:text="#{nursery.edit.nursery.preview.measurements}"></strong>
 </div>
 
@@ -47,7 +47,7 @@
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}">Confirmation</label>
 					</div>
 					<div class="col-xs-1 col-md-1">
-						<button id="close" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"></button>
+						<button id="inlineEditConfirmationModalClose" type="button" class="close pull-right glyphicon glyphicon-remove" aria-hidden="true"></button>
 					</div>
 				</div>
 				<div class="row form-group">
@@ -65,16 +65,16 @@
 </div>
 
 <script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/showAddOrRemoveTraitsPagination.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 //<![CDATA[
-(function() {
+
+jQuery(function() {
 	'use strict';
 	var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
+	initializeTraitsPagination(isCategoricalDisplay);
+});
 
-	jQuery(function() {
-		onMeasurementsObservationLoad(isCategoricalDisplay);
-	});
-
-})();
 //]]>
 </script>
+

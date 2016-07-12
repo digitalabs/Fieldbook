@@ -11,17 +11,10 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.google.common.collect.Lists;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -56,17 +49,23 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.MergeCheckService;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ImportGermplasmListControllerTest {
@@ -76,8 +75,10 @@ public class ImportGermplasmListControllerTest {
 	private static final Integer PROJECT_ID = 97;
 	private static final Integer GERMPLASM_LIST_ID = 98;
 	private static final Integer STUDY_ID = 99;
+	private static final Integer STARTING_ENTRY_NO = 10;
+	private static final int TOTAL_NUMBER_OF_ENTRIES = 20;
 
-	private String programUUID = UUID.randomUUID().toString();
+	private final String programUUID = UUID.randomUUID().toString();
 
 	@Mock
 	private OntologyDataManager ontologyDataManager;
@@ -135,7 +136,7 @@ public class ImportGermplasmListControllerTest {
 				.thenReturn(experimentalDesign);
 
 		this.userSelection = new UserSelection();
-        this.importGermplasmListController.setUserSelection(this.userSelection);
+		this.importGermplasmListController.setUserSelection(this.userSelection);
 	}
 
 	@Test
@@ -192,7 +193,8 @@ public class ImportGermplasmListControllerTest {
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
 
-		final List<Map<String, Object>> listDataTable = (List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
+		final List<Map<String, Object>> listDataTable =
+				(List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
 
 		// Check if the content of list data table is equal to the GermplasmListData
 		Assert.assertEquals(5, listDataTable.size());
@@ -232,7 +234,8 @@ public class ImportGermplasmListControllerTest {
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
 
-		final List<Map<String, Object>> listDataTable = (List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
+		final List<Map<String, Object>> listDataTable =
+				(List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
 
 		// Check if the content of list data table is equal to the GermplasmListData
 		Assert.assertEquals(5, listDataTable.size());
@@ -280,7 +283,8 @@ public class ImportGermplasmListControllerTest {
 
 		Assert.assertTrue(this.userSelection.isImportValid());
 
-		final List<Map<String, Object>> listDataTable = (List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
+		final List<Map<String, Object>> listDataTable =
+				(List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
 
 		// Check if the content of list data table is equal to the GermplasmListData
 		Assert.assertEquals(5, listDataTable.size());
@@ -327,7 +331,8 @@ public class ImportGermplasmListControllerTest {
 
 		Assert.assertTrue(this.userSelection.isImportValid());
 
-		final List<Map<String, Object>> listDataTable = (List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
+		final List<Map<String, Object>> listDataTable =
+				(List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
 
 		// Check if the content of list data table is equal to the GermplasmListData
 		Assert.assertEquals(5, listDataTable.size());
@@ -411,14 +416,14 @@ public class ImportGermplasmListControllerTest {
 		final List<ImportedGermplasm> mergedImportedGermplasm = this.createMergedImportedGermplasm();
 
 		Mockito.when(
-				this.mergeCheckService.mergeGermplasmList(Mockito.anyList(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyInt(),
-						Mockito.anyInt())).thenReturn(mergedImportedGermplasm);
+				this.mergeCheckService.mergeGermplasmList(Matchers.anyList(), Matchers.anyList(), Matchers.anyInt(), Matchers.anyInt(),
+						Matchers.anyInt())).thenReturn(mergedImportedGermplasm);
 
 		this.importGermplasmListController.mergePrimaryAndCheckGermplasmList(this.userSelection, form);
 
 		Mockito.verify(this.mergeCheckService).updatePrimaryListAndChecksBeforeMerge(form);
-		Mockito.verify(this.mergeCheckService).mergeGermplasmList(Mockito.anyList(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyInt(),
-				Mockito.anyInt());
+		Mockito.verify(this.mergeCheckService).mergeGermplasmList(Matchers.anyList(), Matchers.anyList(), Matchers.anyInt(),
+				Matchers.anyInt(), Matchers.anyInt());
 
 		Assert.assertEquals(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
 				mergedImportedGermplasm);
@@ -502,8 +507,8 @@ public class ImportGermplasmListControllerTest {
 		final List<ImportedGermplasm> mergedImportedGermplasm = this.createMergedImportedGermplasm();
 
 		Mockito.when(
-				this.mergeCheckService.mergeGermplasmList(Mockito.anyList(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyInt(),
-						Mockito.anyInt())).thenReturn(mergedImportedGermplasm);
+				this.mergeCheckService.mergeGermplasmList(Matchers.anyList(), Matchers.anyList(), Matchers.anyInt(), Matchers.anyInt(),
+						Matchers.anyInt())).thenReturn(mergedImportedGermplasm);
 
 		this.importGermplasmListController.processImportedGermplasmAndChecks(this.userSelection, form);
 
@@ -579,8 +584,12 @@ public class ImportGermplasmListControllerTest {
 
 		this.importGermplasmListController.setUserSelection(this.userSelection);
 
-		Mockito.doNothing().when(this.fieldbookService).createIdCodeNameVariablePairs(Mockito.isA(Workbook.class), Mockito.isA(String.class));
-		Mockito.doNothing().when(this.fieldbookService).createIdNameVariablePairs(Mockito.isA(Workbook.class), Mockito.anyList(), Mockito.isA(String.class), Mockito.anyBoolean());
+		Mockito.doNothing().when(this.fieldbookService)
+				.createIdCodeNameVariablePairs(Matchers.isA(Workbook.class), Matchers.isA(String.class));
+		Mockito.doNothing()
+				.when(this.fieldbookService)
+				.createIdNameVariablePairs(Matchers.isA(Workbook.class), Matchers.anyList(), Matchers.isA(String.class),
+						Matchers.anyBoolean());
 
 		final Project project = new Project();
 		project.setUniqueID("123");
@@ -588,27 +597,29 @@ public class ImportGermplasmListControllerTest {
 		project.setProjectId(Long.parseLong("123"));
 		Mockito.when(this.importGermplasmListController.getCurrentProject()).thenReturn(project);
 
-		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Mockito.isA(Long.class), Mockito.isA(Integer.class))).thenReturn(1);
+		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.isA(Long.class), Matchers.isA(Integer.class))).thenReturn(1);
 		final Integer studyIdInSaveDataset = 3;
 
 		Mockito.when(this.dataImportService.saveDataset(workbook, true, true, project.getUniqueID())).thenReturn(studyIdInSaveDataset);
-		Mockito.doNothing().when(this.fieldbookService).saveStudyImportedCrosses(Mockito.anyList(), Mockito.isA(Integer.class));
+		Mockito.doNothing().when(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyList(), Matchers.isA(Integer.class));
 
 		final List<ListDataProject> listDataProjects = new ArrayList<>();
 		final ListDataProject listDataProject = new ListDataProject();
 		listDataProjects.add(listDataProject);
 
-		Mockito.when(this.fieldbookMiddlewareService.saveOrUpdateListDataProject(3, GermplasmListType.NURSERY, 4, listDataProjects, 7)).thenReturn(3);
+		Mockito.when(this.fieldbookMiddlewareService.saveOrUpdateListDataProject(3, GermplasmListType.NURSERY, 4, listDataProjects, 7))
+				.thenReturn(3);
 
 		Mockito.doNothing().when(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
 
 		final String studyIdInNextScreen = this.importGermplasmListController.nextScreen(form, null, null, null);
 
-		Mockito.verify(this.fieldbookService).createIdCodeNameVariablePairs(Mockito.isA(Workbook.class), Mockito.isA(String.class));
-		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Mockito.isA(Workbook.class), Mockito.anyList(), Mockito.isA(String.class), Mockito.anyBoolean());
-		Mockito.verify(this.workbenchService).getCurrentIbdbUserId(Mockito.isA(Long.class), Mockito.isA(Integer.class));
+		Mockito.verify(this.fieldbookService).createIdCodeNameVariablePairs(Matchers.isA(Workbook.class), Matchers.isA(String.class));
+		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.isA(Workbook.class), Matchers.anyList(),
+				Matchers.isA(String.class), Matchers.anyBoolean());
+		Mockito.verify(this.workbenchService).getCurrentIbdbUserId(Matchers.isA(Long.class), Matchers.isA(Integer.class));
 		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID());
-		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(Mockito.anyList(), Mockito.isA(Integer.class));
+		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyList(), Matchers.isA(Integer.class));
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
 
 		Assert.assertEquals("Expecting studyIdInSaveDataset returned from nextScreen", "3", studyIdInNextScreen);
@@ -625,29 +636,27 @@ public class ImportGermplasmListControllerTest {
 
 		controllerToTest.validateEntryAndPlotNo(form);
 
-
 		// validateEntryAndPlotNo should not process if theres no imported germplasm in the study
 		// Matthew : changed 0 to 1 - please improve this test
-		Mockito.verify(controllerToTest,Mockito.times(1)).computeTotalExpectedWithChecks(form);
+		Mockito.verify(controllerToTest, Mockito.times(1)).computeTotalExpectedWithChecks(form);
 
 	}
 
-    @Test
-    public void testComputeTotalExpectedWithChecksEmptyChecks() throws Exception {
-        ImportGermplasmListForm form = new ImportGermplasmListForm();
-        ImportedGermplasmMainInfo mainInfo = Mockito.mock(ImportedGermplasmMainInfo.class);
+	@Test
+	public void testComputeTotalExpectedWithChecksEmptyChecks() throws Exception {
+		final ImportGermplasmListForm form = new ImportGermplasmListForm();
+		final ImportedGermplasmMainInfo mainInfo = Mockito.mock(ImportedGermplasmMainInfo.class);
 
-        this.userSelection.setImportedGermplasmMainInfo(mainInfo);
-        ImportedGermplasmList importedList = Mockito.mock(ImportedGermplasmList.class);
-        Mockito.doReturn(importedList).when(mainInfo).getImportedGermplasmList();
-        Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList()).when(importedList).getImportedGermplasms();
+		this.userSelection.setImportedGermplasmMainInfo(mainInfo);
+		final ImportedGermplasmList importedList = Mockito.mock(ImportedGermplasmList.class);
+		Mockito.doReturn(importedList).when(mainInfo).getImportedGermplasmList();
+		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList()).when(importedList).getImportedGermplasms();
 
-        int count = this.importGermplasmListController.computeTotalExpectedWithChecks(form);
-        Assert.assertEquals("Unable to provide an accurate count of total expected germplasms if there is no check information", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES,
-                count);
+		final int count = this.importGermplasmListController.computeTotalExpectedWithChecks(form);
+		Assert.assertEquals("Unable to provide an accurate count of total expected germplasms if there is no check information",
+				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, count);
 
-    }
-
+	}
 
 	private List<ListDataProject> createListDataProject() {
 		final List<ListDataProject> list = new ArrayList<>();
@@ -661,6 +670,7 @@ public class ImportGermplasmListControllerTest {
 			data.setGermplasmId(x);
 			data.setListDataProjectId(x);
 			data.setCheckType(ImportGermplasmListControllerTest.CHECK_TYPE);
+			data.setGroupId(0);
 			list.add(data);
 		}
 		return list;
@@ -775,7 +785,8 @@ public class ImportGermplasmListControllerTest {
 
 	private List<MeasurementVariable> createVariates() {
 		final List<MeasurementVariable> variables = new ArrayList<>();
-		variables.add(this.createMeasurementVariable(EH_CM_TERMID, "EH_cm", "Ear height", "cm", "EH measurement", "VARIATE"));
+		variables.add(this.createMeasurementVariable(ImportGermplasmListControllerTest.EH_CM_TERMID, "EH_cm", "Ear height", "cm",
+				"EH measurement", "VARIATE"));
 		return variables;
 
 	}
@@ -792,8 +803,8 @@ public class ImportGermplasmListControllerTest {
 		return measurementVariable;
 	}
 
-	protected StandardVariable createStandardVariable(final int termId, final String name, final Term property, final Term scale, final Term method, final Term dataType,
-                                                      final PhenotypicType phenotypicType) {
+	protected StandardVariable createStandardVariable(final int termId, final String name, final Term property, final Term scale,
+			final Term method, final Term dataType, final PhenotypicType phenotypicType) {
 
 		final StandardVariable stdVar = new StandardVariable(property, scale, method, dataType, null, phenotypicType);
 		stdVar.setId(termId);
@@ -804,25 +815,23 @@ public class ImportGermplasmListControllerTest {
 
 	@Test
 	public void testCheckNumbersUpdatedAppropriately() throws Exception {
-		//Unchanged check entry number if there are no new start entry number
-		checkNumberTest(1, 5, 1, 1, null);
-		checkNumberTest(0, 0, 3, 3, null);
+		// Unchanged check entry number if there are no new start entry number
+		this.checkNumberTest(1, 5, 1, 1, null);
+		this.checkNumberTest(0, 0, 3, 3, null);
 
 		// Since the entry number starts at 100 we expect the check id to be bumped to 100 too
-		checkNumberTest(1, 5, 1, 100, "100");
+		this.checkNumberTest(1, 5, 1, 100, "100");
 
 		// Since the entry number starts at 50 and our choosen check id is 52 we expect the check id to be bumped to 52 too
-		checkNumberTest(1, 5, 3, 52, "50");
-
+		this.checkNumberTest(1, 5, 3, 52, "50");
 
 	}
 
 	private void checkNumberTest(final int startEntryNumberForTestList, final int numberOfItemsInGermplasmList,
-			final int checkNumberInCheckList,
-			final int expectedGermplasmCheckEntryNumber, final String startEntryNumber) {
+			final int checkNumberInCheckList, final int expectedGermplasmCheckEntryNumber, final String startEntryNumber) {
 		final UserSelection userSelection = new UserSelection();
-		userSelection.setImportedGermplasmMainInfo(getGermplasmMainInfo(startEntryNumberForTestList, 5));
-		userSelection.setImportedCheckGermplasmMainInfo(getGermplasmMainInfo(checkNumberInCheckList, 1));
+		userSelection.setImportedGermplasmMainInfo(this.getGermplasmMainInfo(startEntryNumberForTestList, 5));
+		userSelection.setImportedCheckGermplasmMainInfo(this.getGermplasmMainInfo(checkNumberInCheckList, 1));
 
 		final ImportGermplasmListController importGermplasmListController = new ImportGermplasmListController();
 		importGermplasmListController.setUserSelection(userSelection);
@@ -832,20 +841,123 @@ public class ImportGermplasmListControllerTest {
 		form.setStartingPlotNo("100");
 		importGermplasmListController.assignAndIncrementEntryNumberAndPlotNumber(form);
 
-		assertEquals("We exepect this to ", userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
-				new Integer(expectedGermplasmCheckEntryNumber));
+		Assert.assertEquals("We exepect this to ", userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
+				.getImportedGermplasms().get(0).getEntryId(), new Integer(expectedGermplasmCheckEntryNumber));
 	}
 
 	private ImportedGermplasmMainInfo getGermplasmMainInfo(final int startingEntryId, final int number) {
 		final ImportedGermplasmMainInfo importedGermplasmMainInfo = new ImportedGermplasmMainInfo();
 		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
-		for (int i = 0; i <  number; i++) {
-			germplasmList.add(new ImportedGermplasm(i+startingEntryId, "desig", "check"));
+		for (int i = 0; i < number; i++) {
+			germplasmList.add(new ImportedGermplasm(i + startingEntryId, "desig", "check"));
 		}
 		importedGermplasmList.setImportedGermplasms(germplasmList);
 		importedGermplasmMainInfo.setImportedGermplasmList(importedGermplasmList);
 		return importedGermplasmMainInfo;
+	}
+
+	/**
+	 * Test to verify nextScreen() works and performs steps as expected.
+	 */
+	@Test
+	public void testRefreshListDetails() {
+		final ImportGermplasmListForm form = new ImportGermplasmListForm();
+		final Model model = Mockito.mock(Model.class);
+		final List<Enumeration> checkTypes = this.createCheckTypesTestData();
+		Mockito.doReturn(checkTypes).when(this.fieldbookService).getCheckTypeList();
+		this.updateUserSelection();
+		this.importGermplasmListController.setUserSelection(this.userSelection);
+		this.importGermplasmListController.refreshListDetails(model, form);
+		Assert.assertEquals(this.userSelection.getImportedGermplasmMainInfo(), form.getImportedGermplasmMainInfo());
+		Assert.assertEquals(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
+				form.getImportedGermplasm());
+		Assert.assertEquals(Integer.toString(this.userSelection.getStartingEntryNo()), form.getStartingEntryNo());
+		Mockito.verify(model).addAttribute(ImportGermplasmListController.CHECK_LISTS, checkTypes);
+		Mockito.verify(model).addAttribute(ImportGermplasmListController.TYPE2, "T");
+		Mockito.verify(model).addAttribute("hasMeasurement", false);
+
+	}
+
+	private void updateUserSelection() {
+		this.userSelection.setStartingEntryNo(ImportGermplasmListControllerTest.STARTING_ENTRY_NO);
+		this.userSelection.setPlotsLevelList(this.createPlotsLevelListTestData());
+		this.userSelection.setImportedGermplasmMainInfo(this.createImportedGermplasmMainInfoTestData());
+	}
+
+	private ImportedGermplasmMainInfo createImportedGermplasmMainInfoTestData() {
+		final ImportedGermplasmMainInfo importedGermplasmMainInfo = new ImportedGermplasmMainInfo();
+		importedGermplasmMainInfo.setImportedGermplasmList(this.createImportedGermplasmsTestData());
+		return importedGermplasmMainInfo;
+	}
+
+	private ImportedGermplasmList createImportedGermplasmsTestData() {
+		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+		final List<ImportedGermplasm> importedGermplasms = new ArrayList<>();
+		for (int entryNo = ImportGermplasmListControllerTest.STARTING_ENTRY_NO, count = 0; count < ImportGermplasmListControllerTest.TOTAL_NUMBER_OF_ENTRIES; entryNo++, count++) {
+			importedGermplasms.add(this.createImportedGermplasmTestData(count, entryNo));
+		}
+		importedGermplasmList.setImportedGermplasms(importedGermplasms);
+		return importedGermplasmList;
+	}
+
+	private ImportedGermplasm createImportedGermplasmTestData(final int index, final int entryNo) {
+		final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+		importedGermplasm.setIndex(index);
+		importedGermplasm.setEntryId(entryNo);
+		importedGermplasm.setMgid(entryNo * 10);
+		return importedGermplasm;
+	}
+
+	private List<SettingDetail> createPlotsLevelListTestData() {
+		final List<SettingDetail> plotsLevelList = new ArrayList<>();
+		plotsLevelList.add(this.createSettingDetailTestData(TermId.GID.getId()));
+		plotsLevelList.add(this.createSettingDetailTestData(TermId.ENTRY_CODE.getId()));
+		plotsLevelList.add(this.createSettingDetailTestData(TermId.ENTRY_NO.getId()));
+		plotsLevelList.add(this.createSettingDetailTestData(TermId.SOURCE.getId()));
+		plotsLevelList.add(this.createSettingDetailTestData(TermId.GERMPLASM_SOURCE.getId()));
+		plotsLevelList.add(this.createSettingDetailTestData(TermId.CROSS.getId()));
+		plotsLevelList.add(this.createSettingDetailTestData(TermId.DESIG.getId()));
+		plotsLevelList.add(this.createSettingDetailTestData(TermId.CHECK.getId()));
+		plotsLevelList.add(this.createSettingDetailTestData(TermId.GROUP_ID.getId()));
+		return plotsLevelList;
+	}
+
+	private SettingDetail createSettingDetailTestData(final int termId) {
+		final SettingDetail settingDetail = new SettingDetail();
+		settingDetail.setVariable(this.createSettingVariable(termId));
+		return settingDetail;
+	}
+
+	private SettingVariable createSettingVariable(final int termId) {
+		final SettingVariable variable = new SettingVariable();
+		variable.setCvTermId(termId);
+		return variable;
+	}
+
+	private List<Enumeration> createCheckTypesTestData() {
+		final List<Enumeration> checkTypes = new ArrayList<>();
+		checkTypes.add(new Enumeration(10170, "T", "Test entry", 1));
+		checkTypes.add(new Enumeration(10170, "C", "Check entry", 2));
+		checkTypes.add(new Enumeration(10170, "D", "Disease entry", 3));
+		checkTypes.add(new Enumeration(10170, "S", "Stress entry", 4));
+		return checkTypes;
+	}
+
+	@Test
+	public void testUpdateEntryNumbersOfGermplasmList() {
+		this.updateUserSelection();
+		this.importGermplasmListController.setUserSelection(this.userSelection);
+		final Integer newStartingEntryNo = 50;
+		this.importGermplasmListController.updateEntryNumbersOfGermplasmList(newStartingEntryNo);
+		final List<ImportedGermplasm> list =
+				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+		int expectedEntryNo = newStartingEntryNo;
+		for (final ImportedGermplasm germplasm : list) {
+			final Integer currentEntryNo = germplasm.getEntryId();
+			Assert.assertEquals(new Integer(expectedEntryNo++), currentEntryNo);
+		}
+		Assert.assertEquals(newStartingEntryNo, this.userSelection.getStartingEntryNo());
 	}
 
 }

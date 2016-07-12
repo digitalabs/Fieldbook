@@ -37,6 +37,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
@@ -59,6 +60,7 @@ import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -91,12 +93,18 @@ public class ExportStudyControllerTest {
 
 	@Mock
 	private ExportOrderingRowColImpl exportOrderingRowColService;
+	
+	@Mock
+	private ExcelExportStudyService excelExportStudyService;
 
 	@Mock
 	private HttpServletRequest req;
 
 	@Mock
 	private HttpServletResponse resp;
+	
+	@Mock
+	private ContextUtil contextUtil;
 
 	@InjectMocks
 	private ExportStudyController exportStudyController;
@@ -293,7 +301,9 @@ public class ExportStudyControllerTest {
 		Mockito.when(
 				this.csvExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.CSV_EXT, instances,
 						this.getVisibleColumns())).thenReturn(outputFilename + ExportStudyControllerTest.CSV_EXT);
-
+		
+		mockBreedingMethod();
+		
 		String returnedValue = this.exportStudyController.exportFile(data, exportType, exportWayType, this.req, this.resp);
 
 		HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
@@ -306,6 +316,12 @@ public class ExportStudyControllerTest {
 		Assert.assertEquals(
 				"Expected that the returned output filename is " + outputFilename + ".csv but returned " + result.get("outputFilename"),
 				outputFilename + ExportStudyControllerTest.CSV_EXT, result.get("outputFilename"));
+	}
+
+	private void mockBreedingMethod() {
+		final Property testProperty = this.getProperty();
+		testProperty.getTerm().setName("Single Cross");
+		Mockito.when(this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId())).thenReturn(testProperty);
 	}
 
 	private void mockOtherRelatedMethodCallsForExportStudyMethods(ExportStudyController exportStudyController,
@@ -368,7 +384,9 @@ public class ExportStudyControllerTest {
 		this.exportStudyController.setUserSelection(userSelection);
 
 		this.mockOtherRelatedMethodCallsForExportStudyMethods(this.exportStudyController, generatedFilename, userSelection);
-
+		
+		mockBreedingMethod();
+		
 		Mockito.when(
 				this.csvExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.CSV_EXT, instances,
 						this.getVisibleColumns())).thenReturn(outputFilename + ExportStudyControllerTest.CSV_EXT);
@@ -412,7 +430,9 @@ public class ExportStudyControllerTest {
 				this.csvExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.CSV_EXT, instances,
 						this.getVisibleColumns())).thenReturn(outputFilename + ExportStudyControllerTest.ZIP_EXT);
 		Mockito.when(this.resp.getContentType()).thenReturn(ExportStudyControllerTest.ZIP_CONTENT_TYPE);
-
+		
+		mockBreedingMethod();
+		
 		String returnedValue =
 				this.exportStudyController.exportFileTrial(data, exportType, this.getTrialInstanceString(instances), exportWayType,
 						this.req, this.resp);

@@ -13,12 +13,10 @@ package com.efficio.fieldbook.web.label.printing.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -29,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,6 +66,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -96,6 +97,7 @@ import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+
 import net.sf.jasperreports.engine.JRException;
 
 /**
@@ -186,7 +188,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			study = this.fieldbookMiddlewareService.getStudy(id);
 			List<Integer> ids = new ArrayList<>();
 			ids.add(id);
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties, true);
 
 			for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
 				fieldMapInfo = fieldMapInfoDetail;
@@ -237,7 +239,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			study = this.fieldbookMiddlewareService.getStudy(id);
 			List<Integer> ids = new ArrayList<>();
 			ids.add(id);
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties, true);
 			for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
 				fieldMapInfo = fieldMapInfoDetail;
 				hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
@@ -320,9 +322,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		List<FieldMapInfo> fieldMapInfoList;
 
 		if(Objects.equals(study.getType(), StudyType.T)){
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties, true);
 		}else {
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties, true);
 		}
 
 		List<InventoryDetails> inventoryDetails = this.labelPrintingService.getInventoryDetails(stockList.getId());
@@ -398,51 +400,19 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Export file.
-	 *
-	 * @param response the response
-	 * @return the string
+	 * Export File
+	 * @param req
+	 * @return
+	 * @throws UnsupportedEncodingException
 	 */
-	@ResponseBody
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
-	public String exportFile(HttpServletRequest req, HttpServletResponse response) {
+	public ResponseEntity<FileSystemResource> exportFile(HttpServletRequest req) throws UnsupportedEncodingException {
 
-		String fileName = this.userLabelPrinting.getFilenameDL();
+		String filename = this.userLabelPrinting.getFilename();
+		String absoluteLocation = this.userLabelPrinting.getFilenameDLLocation();
 
-		if (fileName.indexOf(".pdf") != -1) {
-			response.setContentType("application/pdf");
-		} else {
-			response.setContentType("application/vnd.ms-excel");
-		}
+		return FieldbookUtil.createResponseEntityForFileDownload(absoluteLocation, filename);
 
-		// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-		response.setCharacterEncoding("UTF-8");
-		FieldbookUtil.resolveContentDisposition(fileName, response, req.getHeader("User-Agent"));
-
-		// the selected name + current date
-		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
-		FileInputStream in;
-
-		try {
-			in = new FileInputStream(xls);
-			OutputStream out = response.getOutputStream();
-
-			// use bigger if you want
-			byte[] buffer = new byte[LabelPrintingController.BUFFER_SIZE];
-			int length = 0;
-
-			while ((length = in.read(buffer)) > 0) {
-				out.write(buffer, 0, length);
-			}
-			in.close();
-			out.close();
-		} catch (FileNotFoundException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-		} catch (IOException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-		}
-
-		return "";
 	}
 
 	/**

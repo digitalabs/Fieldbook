@@ -61,7 +61,7 @@ public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl 
 			List<GermplasmChangeDetail> changeDetailsList = new ArrayList<GermplasmChangeDetail>();
 			this.importDataToWorkbook(modes, xlsBook.getSheetAt(0), rowsMap, trialInstanceNumber, changeDetailsList, workbook);
 
-			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
+			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService, contextUtil.getCurrentProgramUUID());
 
 			this.validationService.validateObservationValues(workbook, trialInstanceNumber);
 

@@ -87,7 +87,8 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 					this.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNo, workbook.isNursery());
 			this.performStudyDataImport(modes, parsedData, rowsMap, trialInstanceNo, changeDetailsList, workbook);
 
-			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
+			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService, 
+					workbook.getStudyDetails().getProgramUUID());
 
 			try {
 				this.validationService.validateObservationValues(workbook, trialInstanceNo);

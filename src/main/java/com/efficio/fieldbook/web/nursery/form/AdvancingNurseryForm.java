@@ -41,6 +41,12 @@ public class AdvancingNurseryForm {
 	/** The field location id all. */
 	private String harvestLocationIdAll;
 
+	/** The field location id breeding. */
+	private String harvestLocationIdBreeding;
+
+	/** The field location id breeding. */
+	private String harvestLocationIdBreedingFavorites;
+
 	/** The field location id favorite. */
 	private String harvestLocationIdFavorite;
 
@@ -61,6 +67,12 @@ public class AdvancingNurseryForm {
 
 	/** The field location id all. */
 	private String methodIdAll;
+
+	/** The field location id Derivative And Maintenance */
+	private String methodIdDerivativeAndMaintenance;
+
+	/** The field location id Derivative And Maintenance Favorite */
+	private String methodIdDerivativeAndMaintenanceFavorite;
 
 	/** The field location id favorite. */
 	private String methodIdFavorite;
@@ -174,6 +186,34 @@ public class AdvancingNurseryForm {
 	}
 
 	/**
+	 * @return the methodIdDerivativeAndMaintenance
+	 */
+	public String getMethodIdDerivativeAndMaintenance() {
+		return methodIdDerivativeAndMaintenance;
+	}
+
+	/**
+	 * @param methodIdDerivativeAndMaintenance the methodIdDerivativeAndMaintenance to set
+	 */
+	public void setMethodIdDerivativeAndMaintenance(String methodIdDerivativeAndMaintenance) {
+		this.methodIdDerivativeAndMaintenance = methodIdDerivativeAndMaintenance;
+	}
+
+	/**
+	 * @return the methodIdDerivativeAndMaintenanceFavorite
+	 */
+	public String getMethodIdDerivativeAndMaintenanceFavorite() {
+		return methodIdDerivativeAndMaintenanceFavorite;
+	}
+
+	/**
+	 * @param methodIdDerivativeAndMaintenanceFavorite the methodIdDerivativeAndMaintenanceFavorite to set
+	 */
+	public void setMethodIdDerivativeAndMaintenanceFavorite(String methodIdDerivativeAndMaintenanceFavorite) {
+		this.methodIdDerivativeAndMaintenanceFavorite = methodIdDerivativeAndMaintenanceFavorite;
+	}
+
+	/**
 	 * Gets the method id favorite.
 	 *
 	 * @return the method id favorite
@@ -243,6 +283,35 @@ public class AdvancingNurseryForm {
 	 */
 	public void setHarvestLocationIdAll(String harvestLocationIdAll) {
 		this.harvestLocationIdAll = harvestLocationIdAll;
+	}
+
+	/**
+	 * @return the harvestLocationIdBreeding
+	 */
+	public String getHarvestLocationIdBreeding() {
+		return harvestLocationIdBreeding;
+	}
+
+	/**
+	 * @param harvestLocationIdBreeding the harvestLocationIdBreeding to set
+	 */
+	public void setHarvestLocationIdBreeding(String harvestLocationIdBreeding) {
+		this.harvestLocationIdBreeding = harvestLocationIdBreeding;
+	}
+
+	/**
+	 * @return the harvestLocationIdBreedingFavorites
+	 */
+	public String getHarvestLocationIdBreedingFavorites() {
+		return harvestLocationIdBreedingFavorites;
+	}
+
+
+	/**
+	 * @param harvestLocationIdBreedingFavorites the harvestLocationIdBreedingFavorites to set
+	 */
+	public void setHarvestLocationIdBreedingFavorites(String harvestLocationIdBreedingFavorites) {
+		this.harvestLocationIdBreedingFavorites = harvestLocationIdBreedingFavorites;
 	}
 
 	/**
@@ -833,4 +902,5 @@ public class AdvancingNurseryForm {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
+
 }

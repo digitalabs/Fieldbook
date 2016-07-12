@@ -161,12 +161,12 @@
 							<input type="hidden" th:field="*{importMethodId}" class="form-control select2" />
 							<div style="width: 100%" class="possibleValuesDiv">
 							        <label class="radio-inline">
-                                        <input id="showBreedingMethodOnlyRadio" name="cross_import_method_filter" value="1" type="radio" checked="checked" />
+                                        <input id="showBreedingMethodImportStudyOnlyRadio" name="import_study_method_filter" value="1" type="radio" checked="checked" />
                                         <span th:text="#{show.derivative.maintenance.method}">Derivative and Maintenance methods</span>
                                         &nbsp;&nbsp;
                                     </label>
                                     <label class="radio-inline">
-                                        <input id="showAllMethodOnlyRadio" name="cross_import_method_filter" value="2" type="radio" />
+                                        <input id="showAllMethodImportStudyOnlyRadio" name="import_study_method_filter" value="2" type="radio" />
                                         <span th:text="#{show.all.methods}">All Methods</span>
                                         &nbsp;&nbsp;
                                     </label>
@@ -208,11 +208,11 @@
 
 							<div style="width: 100%" class="possibleValuesDiv">
 									<label class="radio-inline">
-                                        <input id="showBreedingLocationOnlyRadio" name="filter" value="1" type="radio" checked="checked" /> <span th:text="#{show.breeding.location}">Breeding locations</span>
+                                        <input id="showBreedingLocationImportStudyOnlyRadio" name="import_study_location_filter" value="1" type="radio" checked="checked" /> <span th:text="#{show.breeding.location}">Breeding locations</span>
                                         &nbsp;&nbsp;
                                     </label>
                                     <label class="radio-inline">
-                                        <input id="showAllLocationOnlyRadio" name="filter" value="2" type="radio" /> <span th:text="#{show.all.location}">All locations types</span>
+                                        <input id="showAllLocationImportStudyOnlyRadio" name="import_study_location_filter" value="2" type="radio" /> <span th:text="#{show.all.location}">All locations types</span>
                                         &nbsp;&nbsp;
                                     </label>
                             </div>

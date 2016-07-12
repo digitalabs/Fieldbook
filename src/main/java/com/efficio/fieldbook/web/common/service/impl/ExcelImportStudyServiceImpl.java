@@ -98,7 +98,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
 	@Resource
-	private ContextUtil contextUtil;
+	protected ContextUtil contextUtil;
 
 	@Override
 	public ImportResult importWorkbook(final Workbook workbook, final String filename, final OntologyService ontologyService,
@@ -126,7 +126,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					this.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
 			final List<GermplasmChangeDetail> changeDetailsList = new ArrayList<GermplasmChangeDetail>();
 			this.importDataToWorkbook(modes, xlsBook.getSheetAt(1), rowsMap, trialInstanceNumber, changeDetailsList, workbook);
-			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
+			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService, contextUtil.getCurrentProgramUUID());
 
 			try {
 				this.validationService.validateObservationValues(workbook, trialInstanceNumber);

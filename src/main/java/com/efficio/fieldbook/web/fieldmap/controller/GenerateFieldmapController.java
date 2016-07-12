@@ -17,21 +17,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import com.efficio.fieldbook.service.api.ExportExcelService;
-import com.efficio.fieldbook.service.api.FieldMapService;
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.fieldmap.bean.Plot;
-import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
-import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
-import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
-import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -42,7 +31,6 @@ import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -192,10 +180,6 @@ import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 
 	protected String makeSafeFileName(String filename) {
 		return filename.replace(" ", "") + "-" + DateUtil.getCurrentDateAsStringValue() + ".xls";
-	}
-
-	protected void writeXlsToOutputStream(HttpServletResponse response, File xls) throws IOException {
-		FieldbookUtil.writeXlsToOutputStream(xls, response);
 	}
 
 	/**

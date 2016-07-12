@@ -2095,7 +2095,7 @@ function refreshImportMethodCombo(data) {
 	} else if ($('#showAllMethodOnlyRadio').is(':checked')) {
 		initializePossibleValuesCombo(data.allMethods, '#importMethodId', false, selectedValue);
 	} else {
-		initializePossibleValuesCombo(data.favoriteGenerativeMethods, '#importMethodId', false, selectedValue);
+		initializePossibleValuesCombo(data.allGenerativeMethods, '#importMethodId', false, selectedValue);
 	}
 }
 

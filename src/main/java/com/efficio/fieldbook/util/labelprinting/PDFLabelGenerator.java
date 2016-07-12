@@ -1,5 +1,13 @@
 package com.efficio.fieldbook.util.labelprinting;
 
+import java.awt.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import com.efficio.fieldbook.util.LabelPaperFactory;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
@@ -13,9 +21,13 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
@@ -25,14 +37,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class PDFLabelGenerator extends BaseLabelGenerator {
 
@@ -228,14 +232,7 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
                         // we go the next line
                         final int needed = fixTableRowSize - numberOfLabelPerRow;
 
-                        for (int neededCount = 0; neededCount < needed; neededCount++) {
-                            final PdfPCell cellNeeded = new PdfPCell();
-
-                            cellNeeded.setBorder(Rectangle.NO_BORDER);
-                            cellNeeded.setBackgroundColor(Color.white);
-
-                            table.addCell(cellNeeded);
-                        }
+                        this.setBorderAndBackgroundColor(table, needed);
 
                         table.completeRow();
                         if (numberofRowsPerPageOfLabel == 10) {
@@ -265,16 +262,9 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
                 // we go the next line
 
                 final int remaining = numberOfLabelPerRow - i % numberOfLabelPerRow;
-                for (int neededCount = 0; neededCount < remaining; neededCount++) {
-                    final PdfPCell cellNeeded = new PdfPCell();
+                this.setBorderAndBackgroundColor(table, remaining);
 
-                    cellNeeded.setBorder(Rectangle.NO_BORDER);
-                    cellNeeded.setBackgroundColor(Color.white);
-
-                    table.addCell(cellNeeded);
-                }
-
-                table.completeRow();
+				table.completeRow();
                 if (numberofRowsPerPageOfLabel == 10) {
 
                     table.setSpacingAfter(paper.getSpacingAfter());
@@ -301,6 +291,16 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
         return fileName;
     }
 
+	private void setBorderAndBackgroundColor(PdfPTable table, final int count) {
+		for (int neededCount = 0; neededCount < count; neededCount++) {
+			final PdfPCell cellNeeded = new PdfPCell();
+
+			cellNeeded.setBorder(Rectangle.NO_BORDER);
+			cellNeeded.setBackgroundColor(Color.white);
+
+			table.addCell(cellNeeded);
+		}
+	}
 
 
     /**

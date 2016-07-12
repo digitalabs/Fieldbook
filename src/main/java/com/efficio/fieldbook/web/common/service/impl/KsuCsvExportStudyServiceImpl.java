@@ -6,17 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.Resource;
-
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
@@ -25,12 +15,16 @@ import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(KsuCsvExportStudyServiceImpl.class);
 
 	@Resource
 	private FieldbookProperties fieldbookProperties;

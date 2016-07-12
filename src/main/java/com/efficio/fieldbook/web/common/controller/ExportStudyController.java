@@ -18,6 +18,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
+import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
+import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
+import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.RExportStudyService;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
+import com.efficio.fieldbook.web.trial.bean.ExportTrialInstanceBean;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import net.sf.jasperreports.engine.JRException;
+
 import org.generationcp.commons.constant.ToolEnum;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.CustomReportType;
@@ -89,6 +110,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	private static final String CSV_CONTENT_TYPE = "text/csv";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportStudyController.class);
 	public static final String URL = "/ExportManager";
+	public static final int BUFFER_SIZE = 4096 * 4;
 	private static String EXPORT_TRIAL_INSTANCE = "Common/includes/exportTrialInstance";
 	private static String DISPLAY_ADVANCE_GERMPLASM_LIST = "Common/includes/displayListOfAdvanceGermplasmList";
 
@@ -120,7 +142,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private OntologyService ontologyService;
-	
+
 	@Resource
 	private ExportOrderingRowColImpl exportOrderingRowColService;
 
@@ -149,7 +171,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private JasperReportService jasperReportService;
-	
+
 	@Resource
 	private ContextUtil contextUtil;
 
@@ -324,7 +346,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Do export.
-	 * 
+	 *
 	 * @param exportType the export type
 	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response
@@ -375,11 +397,11 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		final Map<String, Object> results = new HashMap<>();
 		try {
-			
-			final String breedingMethodPropertyName = this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();		
-			
+
+			final String breedingMethodPropertyName = this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
+
 			excelExportStudyService.setBreeedingMethodPropertyName(breedingMethodPropertyName);
-			
+
 			final Workbook workbook = userSelection.getWorkbook();
 
 			SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), true,
@@ -447,9 +469,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), true,
 					this.ontologyService, contextUtil.getCurrentProgramUUID());
-			
+
 			LOG.info("Export Nursery/Trial : doExport : processWorbook : end");
-			
+
 		} catch (final Exception e) {
 			// generic exception handling block needs to be added here so that the calling AJAX function receives proper notification that
 			// the operation was a failure
@@ -464,8 +486,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/***
 	 * Return the list of headers's term id, otherwise null
-	 * 
-	 * @param data
+	 *
+	 * @param unparsedVisibleColumns
 	 * @return
 	 */
 	protected List<Integer> getVisibleColumns(final String unparsedVisibleColumns) {
@@ -513,7 +535,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Load initial germplasm tree.
-	 * 
+	 *
 	 * @return the string
 	 */
 	@RequestMapping(value = "/trial/instances/{studyId}", method = RequestMethod.GET)
@@ -552,18 +574,17 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Do export.
-	 * 
-	 * @param exportType the export type
-	 * @param selectedTraitTermId the selected trait term id
+	 *
 	 * @param response the response
+	 * @param request the request
 	 * @return the string
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/export/advanced/lists", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public String doAdvanceExport(final HttpServletResponse response, final HttpServletRequest req) {
+	public String doAdvanceExport(final HttpServletResponse response, final HttpServletRequest request) {
 
-		final String advancedListIds = req.getParameter("exportAdvanceListGermplasmIds");
-		final String exportType = req.getParameter("exportAdvanceListGermplasmType");
+		final String advancedListIds = request.getParameter("exportAdvanceListGermplasmIds");
+		final String exportType = request.getParameter("exportAdvanceListGermplasmType");
 
 		final UserSelection userSelection = this.getUserSelection();
 		final StudyDetails studyDetails = userSelection.getWorkbook().getStudyDetails();
@@ -619,17 +640,16 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Do export.
-	 * 
-	 * @param exportType the export type
-	 * @param selectedTraitTermId the selected trait term id
+	 *
 	 * @param response the response
+	 * @param request the request
 	 * @return the string
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/export/stock/lists", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public String doExportStockList(final HttpServletResponse response, final HttpServletRequest req) {
+	public String doExportStockList(final HttpServletResponse response, final HttpServletRequest request) {
 
-		final String stockIds = req.getParameter("exportStockListId");
+		final String stockIds = request.getParameter("exportStockListId");
 
 		String outputFilename = null;
 

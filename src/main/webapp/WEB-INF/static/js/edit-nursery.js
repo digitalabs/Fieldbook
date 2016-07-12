@@ -1,5 +1,4 @@
-/*global showErrorMessage, measurementRowCount, showAlertMessage, ImportCrosses, ImportDesign*/
-var selectedTableIds = new Array();
+var selectedTableIds = [];
 
 function submitEditWorkbook() {
 	'use strict';

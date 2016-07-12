@@ -26,6 +26,8 @@ import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
@@ -50,9 +52,6 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
@@ -92,18 +91,6 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		studyDetails.print(1);
-	}
-
-	protected void processEnvironmentData(final EnvironmentData data) {
-		for (int i = 0; i < data.getEnvironments().size(); i++) {
-			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
-			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
-				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
-			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
-					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
-				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
-			}
-		}
 	}
 
 	protected void populateSettingData(final List<SettingDetail> details, final Map<String, String> values) {
@@ -186,7 +173,7 @@ public abstract class BaseTrialController extends SettingsController {
 				}
 			}
 
-			if(entryNumberList.size() != 0) {
+			if(!entryNumberList.isEmpty()) {
 				Collections.sort(entryNumberList);
 				data.setStartingEntryNo(String.valueOf(entryNumberList.get(0)));
 			}

@@ -990,7 +990,7 @@ function recreateComboAfterUpdate(combo, data) {
 	var newData = { 'id': data.id,
 			'text': data.name + getOntologySuffix(data.id),
 			'description': data.definition
-		}
+		};
 	description.val(data.definition);
 	$('#combo' + combo).select2('data', newData).trigger('change');
 }

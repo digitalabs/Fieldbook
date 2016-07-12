@@ -19,6 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.csvreader.CsvReader;
+import com.csvreader.CsvWriter;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -31,11 +35,6 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.csvreader.CsvReader;
-import com.csvreader.CsvWriter;
-import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * This class was copied from CIMMYT's Fieldbook Code.
@@ -73,6 +72,7 @@ public class CSVOziel {
 			try {
 				csvOutput.write(cad);
 			} catch (IOException ex) {
+				CSVOziel.LOG.error("writeColums was not successful", ex);
 			}
 
 		}
@@ -85,6 +85,7 @@ public class CSVOziel {
 				csvOutput.endRecord();
 			}
 		} catch (IOException ex) {
+			CSVOziel.LOG.error("writeRows was not successful", ex);
 		}
 	}
 
@@ -103,6 +104,7 @@ public class CSVOziel {
 			}
 
 		} catch (IOException ex) {
+			CSVOziel.LOG.error("writeTraitsFromObservations was not successful", ex);
 		}
 	}
 
@@ -120,6 +122,7 @@ public class CSVOziel {
 			}
 
 		} catch (IOException ex) {
+			CSVOziel.LOG.error("writeTraitsR was not successful", ex);
 		}
 	}
 
@@ -136,13 +139,7 @@ public class CSVOziel {
 
 			for (MeasurementRow row : this.observations) {
 				csvOutput.write(this.getDisplayValue(map.get(row.getLocationId())));
-				if (this.workbook.isNursery()) {
-					csvOutput.write("1");
-					csvOutput.write("1");
-				} else {
-					csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), row));
-					csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), row));
-				}
+				this.writeToCsvOutput(csvOutput, row);
 
 				String plot = WorkbookUtil.getValueByIdInRow(this.headers, TermId.PLOT_NO.getId(), row);
 				if (plot == null || "".equals(plot.trim())) {
@@ -189,6 +186,7 @@ public class CSVOziel {
 				csvOutput.endRecord();
 			}
 		} catch (IOException ex) {
+			CSVOziel.LOG.error("Write data was not successful", ex);
 		}
 
 	}
@@ -211,13 +209,7 @@ public class CSVOziel {
 
 			for (MeasurementRow mRow : this.observations) {
 				csvOutput.write(this.getDisplayValue(map.get(mRow.getLocationId())));
-				if (this.workbook.isNursery()) {
-					csvOutput.write("1");
-					csvOutput.write("1");
-				} else {
-					csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), mRow));
-					csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), mRow));
-				}
+				this.writeToCsvOutput(csvOutput, mRow);
 
 				csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.ENTRY_NO.getId(), mRow));
 				try {
@@ -267,8 +259,21 @@ public class CSVOziel {
 				csvOutput.endRecord();
 			}
 		} catch (IOException ex) {
+			CSVOziel.LOG.error("Write data R was not successful", ex);
 		}
 
+	}
+
+	private CsvWriter writeToCsvOutput(CsvWriter csvOutput, MeasurementRow mRow) throws IOException {
+		if (this.workbook.isNursery()) {
+			csvOutput.write("1");
+			csvOutput.write("1");
+		} else {
+			csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), mRow));
+			csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), mRow));
+		}
+
+		return csvOutput;
 	}
 
 	public void readDATAnew(File file, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService) {
@@ -344,7 +349,7 @@ public class CSVOziel {
 				}
 
 				for (int i = 0; i < titulos.size(); i++) {
-					String head = titulos.get(i).toString();
+					String head = titulos.get(i);
 					int col = this.buscaCol(head);
 					if (col >= 0) {
 						String data = csvReader.get(head);
@@ -359,9 +364,8 @@ public class CSVOziel {
 				}
 			}
 			csvReader.close();
-		} catch (FileNotFoundException ex) {
-
 		} catch (IOException e) {
+			CSVOziel.LOG.error("Read data of breeding method was not successful", e);
 		}
 	}
 
@@ -417,6 +421,7 @@ public class CSVOziel {
 				isvalid = false;
 			}
 		} catch (IOException ex) {
+			CSVOziel.LOG.error("isValid was not successful", ex);
 		}
 		return isvalid;
 	}

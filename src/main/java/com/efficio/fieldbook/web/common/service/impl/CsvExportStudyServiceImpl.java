@@ -8,9 +8,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
+import com.efficio.fieldbook.web.nursery.service.impl.ValidationServiceImpl;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.ZipUtil;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.GermplasmExportService;
@@ -20,8 +25,6 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +37,6 @@ import com.efficio.fieldbook.web.util.ZipUtil;
 @Service
 @Transactional
 public class CsvExportStudyServiceImpl implements CsvExportStudyService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(CsvExportStudyServiceImpl.class);
 
 	@Resource
 	private FieldbookProperties fieldbookProperties;
@@ -159,7 +160,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 						&& dataCell.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 					continue;
 				}
-				
+
 				// FIXME : DB visit IN LOOP
 				columnValueMap.put(termId, this.getColumnValue(dataCell, termId));
 

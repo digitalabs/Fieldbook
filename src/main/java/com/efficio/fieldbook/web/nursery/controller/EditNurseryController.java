@@ -11,6 +11,14 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -59,14 +67,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * The Class CreateNurseryController.
  */
@@ -93,7 +93,7 @@ public class EditNurseryController extends SettingsController {
 	/**
 	 * The Constant LOG.
 	 */
-	public static final Logger LOG = LoggerFactory.getLogger(EditNurseryController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EditNurseryController.class);
 	/**
 	 * The ontology service.
 	 */

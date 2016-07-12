@@ -1,22 +1,34 @@
 package com.efficio.fieldbook.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
+import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -24,6 +36,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.controller.ExportStudyController;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
@@ -169,5 +185,85 @@ public class FieldbookUtil {
 			requiredVariables.add(Integer.valueOf(token.nextToken()));
 		}
 		return requiredVariables;
+	}
+
+	public static void writeXlsToOutputStream(File xls, final HttpServletResponse response) {
+		try {
+			FileInputStream in = new FileInputStream(xls);
+			final OutputStream out = response.getOutputStream();
+
+			final byte[] buffer = new byte[ExportStudyController.BUFFER_SIZE];
+			int length = 0;
+
+			while ((length = in.read(buffer)) > 0) {
+				out.write(buffer, 0, length);
+			}
+			in.close();
+			out.close();
+		} catch(IOException e) {
+			FieldbookUtil.LOG.error(e.getMessage(), e);
+		}
+	}
+
+	public static void processEnvironmentData(final EnvironmentData data) {
+		for (int i = 0; i < data.getEnvironments().size(); i++) {
+			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
+			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
+				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
+					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
+				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+			}
+		}
+	}
+
+	public static MeasurementVariable createMeasurementVariable(final String idToCreate, final String value, final Operation operation,
+			final PhenotypicType role, final FieldbookService fieldbookMiddlewareService, final ContextUtil contextUtil) {
+		final StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate), contextUtil.getCurrentProgramUUID());
+		stdvar.setPhenotypicType(role);
+		final MeasurementVariable var =
+				new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(),
+						stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType()
+						.getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
+		var.setRole(role);
+		var.setDataTypeId(stdvar.getDataType().getId());
+		var.setFactor(false);
+		var.setOperation(operation);
+		return var;
+	}
+
+	public static Operation getDeletedVariableOperation(List<SettingDetail> settingsList, SettingVariable var, Operation operation) {
+		final Iterator<SettingDetail> settingDetailIterator = settingsList.iterator();
+		while (settingDetailIterator.hasNext()) {
+			final SettingVariable deletedVariable = settingDetailIterator.next().getVariable();
+			if (deletedVariable.getCvTermId().equals(var.getCvTermId())) {
+				operation = deletedVariable.getOperation();
+				settingDetailIterator.remove();
+			}
+		}
+
+		return operation;
+	}
+
+	/**
+	 * Convert enumerations and standard variable to json.
+	 *
+	 * @param enumerations the enumerations
+	 * @param stdVariable the Standard Variable
+	 * @return the string
+	 */
+	public static String convertEnumerationsAndStandardVariableToJSON(List<Enumeration> enumerations, StandardVariable stdVariable) {
+		try {
+			if (enumerations != null) {
+				ObjectMapper mapper = new ObjectMapper();
+				return mapper.writeValueAsString(enumerations);
+			} else if (stdVariable != null) {
+				ObjectMapper mapper = new ObjectMapper();
+				return mapper.writeValueAsString(stdVariable);
+			}
+		} catch (Exception e) {
+			FieldbookUtil.LOG.error(e.getMessage(), e);
+		}
+		return "";
 	}
 }

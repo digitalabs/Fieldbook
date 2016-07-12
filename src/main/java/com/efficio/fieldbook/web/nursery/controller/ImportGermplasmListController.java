@@ -20,10 +20,25 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.TableHeader;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.service.MergeCheckService;
+import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.nursery.form.UpdateGermplasmCheckForm;
+import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
+import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.hazelcast.util.StringUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -64,22 +79,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.TableHeader;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.common.service.MergeCheckService;
-import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.nursery.form.UpdateGermplasmCheckForm;
-import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.hazelcast.util.StringUtil;
 
 /**
  * This controller handles the 2nd step in the nursery manager process.
@@ -332,6 +331,7 @@ public class ImportGermplasmListController extends SettingsController {
 				throw new FieldbookRequestValidationException("entry.number.should.be.in.range");
 			}
 		}
+
 
 		final Integer totalExpectedNumber = this.computeTotalExpectedWithChecks(form);
 		final Integer plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), null);
@@ -621,7 +621,7 @@ public class ImportGermplasmListController extends SettingsController {
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
 			// Set first entry number from the list
-			if (list.size() != 0) {
+			if (!list.isEmpty()) {
 				form.setStartingEntryNo(list.get(0).getEntryId().toString());
 			}
 
@@ -1635,25 +1635,8 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param conditions
 	 */
 	protected void addExperimentFactorToBeDeleted(final List<MeasurementVariable> conditions) {
-		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.EXPERIMENT_DESIGN_FACTOR.getId()), "", Operation.DELETE,
-				PhenotypicType.TRIAL_ENVIRONMENT));
-	}
-
-	protected MeasurementVariable createMeasurementVariable(final String idToCreate, final String value, final Operation operation,
-			final PhenotypicType role) {
-		final StandardVariable stdvar =
-				this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate), this.contextUtil.getCurrentProgramUUID());
-		stdvar.setPhenotypicType(role);
-		final MeasurementVariable var =
-				new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(),
-						stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType()
-								.getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
-		var.setRole(role);
-		var.setDataTypeId(stdvar.getDataType().getId());
-		var.setFactor(false);
-		var.setOperation(operation);
-		return var;
-
+		conditions.add(FieldbookUtil.createMeasurementVariable(String.valueOf(TermId.EXPERIMENT_DESIGN_FACTOR.getId()), "", Operation.DELETE,
+				PhenotypicType.TRIAL_ENVIRONMENT, fieldbookMiddlewareService, contextUtil));
 	}
 
 	protected boolean hasExperimentalDesign(final Workbook workbook) {

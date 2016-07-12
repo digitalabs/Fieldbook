@@ -6,10 +6,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.StringTokenizer;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
+import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -27,17 +35,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
-import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
-import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 @Service
 @Transactional
@@ -262,18 +259,13 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 									new ExpDesignValidationOutput(false, this.messageSource.getMessage(
 											"experiment.design.nclatin.should.not.be.greater.than.the.replication.count", null, locale));
 						} else if (expDesignParameter.getReplicationsArrangement() != null
-								&& expDesignParameter.getReplicationsArrangement().intValue() == 3) {
+								&& expDesignParameter.getReplicationsArrangement() == 3) {
 							// meaning adjacent
-							StringTokenizer tokenizer = new StringTokenizer(expDesignParameter.getReplatinGroups(), ",");
-							int totalReplatingGroup = 0;
 
-							while (tokenizer.hasMoreTokens()) {
-								totalReplatingGroup += Integer.parseInt(tokenizer.nextToken());
-							}
-							if (totalReplatingGroup != replicationCount) {
-								output =
-										new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-												"experiment.design.replating.groups.not.equal.to.replicates", null, locale));
+							boolean isValid = ExpDesignUtil.replatingGroupEqualToReplicationCount(expDesignParameter, replicationCount);
+							if(!isValid) {
+								output = new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+										"experiment.design.replating.groups.not.equal.to.replicates", null, locale));
 							}
 						}
 					}

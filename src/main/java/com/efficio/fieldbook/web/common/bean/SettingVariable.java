@@ -14,15 +14,14 @@ package com.efficio.fieldbook.web.common.bean;
 import java.io.Serializable;
 import java.util.Set;
 
+import com.efficio.fieldbook.web.nursery.bean.WidgetType;
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
 import org.springframework.web.util.HtmlUtils;
-
-import com.efficio.fieldbook.web.nursery.bean.WidgetType;
-import com.efficio.fieldbook.web.util.AppConstants;
 
 public class SettingVariable implements Serializable {
 
@@ -74,7 +73,6 @@ public class SettingVariable implements Serializable {
 		this.dataTypeId = dataTypeId;
 		this.minRange = minRange;
 		this.maxRange = maxRange;
-		this.setWidgetType();
 	}
 
 	public String getTraitClass() {
@@ -176,10 +174,9 @@ public class SettingVariable implements Serializable {
 			this.minRange =
 					standardVariable.getConstraints() != null && standardVariable.getConstraints().getMinValue() != null ? standardVariable
 							.getConstraints().getMinValue() : null;
-					this.maxRange =
+			this.maxRange =
 					standardVariable.getConstraints() != null && standardVariable.getConstraints().getMaxValue() != null ? standardVariable
 							.getConstraints().getMaxValue() : null;
-							this.setWidgetType();
 
 		}
 	}
@@ -234,10 +231,6 @@ public class SettingVariable implements Serializable {
 	 */
 	public void setDataTypeId(Integer dataTypeId) {
 		this.dataTypeId = dataTypeId;
-	}
-
-	public void setWidgetType() {
-
 	}
 
 	// TODO : shift computation of widget type elsewhere, to avoid having it continuously recomputed

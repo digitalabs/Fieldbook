@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
@@ -223,7 +224,7 @@ public class CreateTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public String submit(@RequestBody final TrialData data) {
-		this.processEnvironmentData(data.getEnvironments());
+		FieldbookUtil.processEnvironmentData(data.getEnvironments());
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		basicDetails = this.addUserIdIfNecessary(basicDetails);

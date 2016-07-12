@@ -14,11 +14,10 @@ package com.efficio.fieldbook.util;
 import java.util.List;
 import java.util.Map;
 
-import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
-import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
-
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
 public class FieldMapUtilityHelper {
 
@@ -189,8 +188,7 @@ public class FieldMapUtilityHelper {
 				order[0] += 1;
 			}
 		} else {
-			if (isStarted) {
-			} else {
+			if (!isStarted) {
 				plot.setNotStarted(true);
 			}
 		}

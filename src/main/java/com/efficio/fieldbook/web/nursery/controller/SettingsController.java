@@ -18,9 +18,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
@@ -49,19 +60,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * The Class SettingsController.
@@ -372,13 +370,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			final PhenotypicType type = StringUtils.isEmpty(role) ? null : PhenotypicType.getPhenotypicTypeByName(role);
 			settingDetail.setRole(type);
 			stdVar.setPhenotypicType(type);
-			if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
-				settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
-			} else if (id == TermId.STUDY_UID.getId()) {
-				settingDetail.setValue(this.getCurrentIbdbUserId().toString());
-			} else if (id == TermId.STUDY_UPDATE.getId()) {
-				settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
-			}
+			this.setSettingDetailValue(id, settingDetail);
 			settingDetail.setPossibleValuesToJson(possibleValues);
 			final List<ValueReference> possibleValuesFavorite =
 					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), true);
@@ -435,7 +427,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		settingVariable.setCvTermId(variable.getId());
 		settingVariable.setCropOntologyId(property.getCropOntologyId());
 
-		if(property.getClasses().size() > 0){
+		if(!property.getClasses().isEmpty()){
 			settingVariable.setTraitClass(property.getClasses().iterator().next());
 		}
 
@@ -446,13 +438,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		settingDetail.setRole(variableType.getRole());
 		settingDetail.setVariableType(variableType);
 
-		if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
-			settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
-		} else if (id == TermId.STUDY_UID.getId()) {
-			settingDetail.setValue(this.getCurrentIbdbUserId().toString());
-		} else if (id == TermId.STUDY_UPDATE.getId()) {
-			settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
-		}
+		this.setSettingDetailValue(id, settingDetail);
 
 		settingDetail.setPossibleValuesToJson(possibleValues);
 		final List<ValueReference> possibleValuesFavorite =
@@ -460,6 +446,16 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 		settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 		return settingDetail;
+	}
+
+	private void setSettingDetailValue(final int id, SettingDetail settingDetail) {
+		if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
+			settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
+		} else if (id == TermId.STUDY_UID.getId()) {
+			settingDetail.setValue(this.getCurrentIbdbUserId().toString());
+		} else if (id == TermId.STUDY_UPDATE.getId()) {
+			settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
+		}
 	}
 
 	/**
@@ -483,7 +479,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					.getMinValue() : null);
 			var.setMaxRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null ? stdvar.getConstraints()
 					.getMaxValue() : null);
-			var.setWidgetType();
 		}
 	}
 

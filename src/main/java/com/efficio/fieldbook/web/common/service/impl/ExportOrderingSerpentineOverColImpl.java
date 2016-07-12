@@ -4,23 +4,25 @@ package com.efficio.fieldbook.web.common.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldmapBlockInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
-import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 @Service
 @Transactional
 public class ExportOrderingSerpentineOverColImpl extends ExportDataCollectionOrderService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ExportOrderingSerpentineOverColImpl.class);
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -82,8 +84,7 @@ public class ExportOrderingSerpentineOverColImpl extends ExportDataCollectionOrd
 				}
 			}
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ExportOrderingSerpentineOverColImpl.LOG.error(e.getMessage(), e);
 		}
 
 		workbook.setExportArrangedObservations(arrangedExportObservations);

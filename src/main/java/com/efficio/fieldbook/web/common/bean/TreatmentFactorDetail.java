@@ -13,9 +13,8 @@ package com.efficio.fieldbook.web.common.bean;
 
 import java.io.Serializable;
 
-import org.generationcp.middleware.domain.oms.TermId;
-
 import com.efficio.fieldbook.web.nursery.bean.WidgetType;
+import org.generationcp.middleware.domain.oms.TermId;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -93,7 +92,6 @@ public class TreatmentFactorDetail implements Serializable {
 		this.possibleValuesJson = possibleValuesJson;
 		this.minRange = minRange;
 		this.maxRange = maxRange;
-		this.setWidgetType();
 	}
 
 	/**
@@ -226,13 +224,6 @@ public class TreatmentFactorDetail implements Serializable {
 		}
 
 		return this.widgetType;
-	}
-
-	/**
-	 * Sets the widget type.
-	 *
-	 */
-	public void setWidgetType() {
 	}
 
 	/**

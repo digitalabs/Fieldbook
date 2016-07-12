@@ -2,15 +2,21 @@ package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.ListUtils;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -39,15 +45,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -278,10 +275,10 @@ public class ManageSettingsController extends SettingsController {
 
 					final List<ValueReference> allFavoriteValues = this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(),
 							this.getCurrentProject().getUniqueID(), null);
-					
-					
+
+
 					final List<ValueReference>  intersection = SettingsUtil.intersection(allValues, allFavoriteValues);
-					
+
 					newSetting.setAllFavoriteValues(intersection);
 					newSetting.setAllFavoriteValuesToJson(intersection);
 
@@ -337,14 +334,7 @@ public class ManageSettingsController extends SettingsController {
 
 		Operation operation = Operation.ADD;
 		if (settingsList != null) {
-			Iterator<SettingDetail> iter = settingsList.iterator();
-			while (iter.hasNext()) {
-				SettingVariable deletedVariable = iter.next().getVariable();
-				if (deletedVariable.getCvTermId().equals(Integer.valueOf(var.getCvTermId()))) {
-					operation = deletedVariable.getOperation();
-					iter.remove();
-				}
-			}
+			operation = FieldbookUtil.getDeletedVariableOperation(settingsList, var, operation);
 		}
 		return operation;
 	}

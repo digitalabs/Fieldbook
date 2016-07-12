@@ -8,12 +8,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
+import com.efficio.fieldbook.web.trial.bean.xml.ExpDesignParameter;
+import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
+import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.util.DateUtil;
@@ -29,15 +37,6 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
-import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
-import com.efficio.fieldbook.web.trial.bean.xml.ExpDesignParameter;
-import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
-import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 
 public class ExpDesignUtil {
 
@@ -451,5 +450,16 @@ public class ExpDesignUtil {
 			return "_" + key.replace("-", "_");
 		}
 		return key;
+	}
+
+	public static boolean replatingGroupEqualToReplicationCount(ExpDesignParameterUi expDesignParameter, int replicationCount) {
+		StringTokenizer tokenizer = new StringTokenizer(expDesignParameter.getReplatinGroups(), ",");
+		int totalReplatingGroup = 0;
+
+		while (tokenizer.hasMoreTokens()) {
+			totalReplatingGroup += Integer.parseInt(tokenizer.nextToken());
+		}
+
+		return totalReplatingGroup == replicationCount;
 	}
 }

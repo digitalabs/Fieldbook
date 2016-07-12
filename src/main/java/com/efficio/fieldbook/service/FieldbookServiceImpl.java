@@ -24,9 +24,27 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.service.internal.DesignRunner;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.service.FileService;
@@ -58,26 +76,6 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.service.internal.DesignRunner;
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
-import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -684,23 +682,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return idNameMap;
 	}
 
-	protected MeasurementVariable createMeasurementVariable(final String idToCreate, final String value, final Operation operation,
-			final PhenotypicType role) {
-		final StandardVariable stdvar =
-				this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate), this.contextUtil.getCurrentProgramUUID());
-		stdvar.setPhenotypicType(role);
-		final MeasurementVariable var =
-				new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(),
-						stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType()
-								.getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
-		var.setRole(role);
-		var.setDataTypeId(stdvar.getDataType().getId());
-		var.setFactor(false);
-		var.setOperation(operation);
-		return var;
-
-	}
-
 	@Override
 	public void createIdCodeNameVariablePairs(final Workbook workbook, final String idCodeNamePairs) {
 		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
@@ -732,14 +713,14 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 							// add code if it is not yet in the list
 							workbook.getConditions().add(
-									this.createMeasurementVariable(codeTermId, method == null ? "" : method.getMcode(), Operation.ADD,
-											measurementVar.getRole()));
+									FieldbookUtil.createMeasurementVariable(codeTermId, method == null ? "" : method.getMcode(), Operation.ADD,
+											measurementVar.getRole(), fieldbookMiddlewareService, contextUtil));
 
 							// add name if it is not yet in the list
 							if (studyConditionMap.get(nameTermId) == null) {
 								workbook.getConditions().add(
-										this.createMeasurementVariable(nameTermId, method == null ? "" : method.getMname(), Operation.ADD,
-												measurementVar.getRole()));
+										FieldbookUtil.createMeasurementVariable(nameTermId, method == null ? "" : method.getMname(), Operation.ADD,
+												measurementVar.getRole(), fieldbookMiddlewareService, contextUtil));
 							}
 
 							// set the correct value of the name and id for update operation
@@ -766,8 +747,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 								&& studyConditionMap.get(codeTermId).getOperation().equals(Operation.ADD)) {
 							final MeasurementVariable codeTermVar = studyConditionMap.get(codeTermId);
 							workbook.getConditions().add(
-									this.createMeasurementVariable(nameTermId, method == null ? "" : method.getMname(), Operation.ADD,
-											codeTermVar.getRole()));
+									FieldbookUtil.createMeasurementVariable(nameTermId, method == null ? "" : method.getMname(), Operation.ADD,
+											codeTermVar.getRole(), fieldbookMiddlewareService, contextUtil));
 						}
 
 						// set correct values of id, code and name before saving
@@ -1100,8 +1081,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 	private void setMeasurementDataInList(final MeasurementRow row, final ImportGermplasmListForm form) {
 		if (row.getDataList() != null) {
 			for (final MeasurementData data : row.getDataList()) {
-				if (AppConstants.CHECK_VARIABLES.getString().contains(String.valueOf(data.getMeasurementVariable().getTermId()))) {
-					this.setMeasurementData(data, form, data.getMeasurementVariable().getTermId());
+				if(data.getMeasurementVariable() != null) {
+					if (AppConstants.CHECK_VARIABLES.getString().contains(String.valueOf(data.getMeasurementVariable().getTermId()))) {
+						this.setMeasurementData(data, form, data.getMeasurementVariable().getTermId());
+					}
 				}
 			}
 		}
@@ -1115,15 +1098,15 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	private void addCheckVariables(final List<MeasurementVariable> conditions, final ImportGermplasmListForm form) {
-		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_START.getId()),
+		conditions.add(FieldbookUtil.createMeasurementVariable(String.valueOf(TermId.CHECK_START.getId()),
 				SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId()), Operation.ADD,
-				VariableType.ENVIRONMENT_DETAIL.getRole()));
-		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_INTERVAL.getId()),
+				VariableType.ENVIRONMENT_DETAIL.getRole(), fieldbookMiddlewareService, contextUtil));
+		conditions.add(FieldbookUtil.createMeasurementVariable(String.valueOf(TermId.CHECK_INTERVAL.getId()),
 				SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_INTERVAL.getId()), Operation.ADD,
-				VariableType.ENVIRONMENT_DETAIL.getRole()));
-		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_PLAN.getId()),
+				VariableType.ENVIRONMENT_DETAIL.getRole(), fieldbookMiddlewareService, contextUtil));
+		conditions.add(FieldbookUtil.createMeasurementVariable(String.valueOf(TermId.CHECK_PLAN.getId()),
 				SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId()), Operation.ADD,
-				VariableType.ENVIRONMENT_DETAIL.getRole()));
+				VariableType.ENVIRONMENT_DETAIL.getRole(), fieldbookMiddlewareService, contextUtil));
 	}
 
 	private void updateCheckVariables(final List<MeasurementVariable> conditions, final ImportGermplasmListForm form) {

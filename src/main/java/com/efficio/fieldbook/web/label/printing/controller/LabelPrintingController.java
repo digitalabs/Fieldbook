@@ -13,12 +13,10 @@ package com.efficio.fieldbook.web.label.printing.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -68,6 +66,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -400,51 +400,19 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Export file.
-	 *
-	 * @param response the response
-	 * @return the string
+	 * Export File
+	 * @param req
+	 * @return
+	 * @throws UnsupportedEncodingException
 	 */
-	@ResponseBody
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
-	public String exportFile(HttpServletRequest req, HttpServletResponse response) {
+	public ResponseEntity<FileSystemResource> exportFile(HttpServletRequest req) throws UnsupportedEncodingException {
 
-		String fileName = this.userLabelPrinting.getFilenameDL();
+		String filename = this.userLabelPrinting.getFilename();
+		String absoluteLocation = this.userLabelPrinting.getFilenameDLLocation();
 
-		if (fileName.indexOf(".pdf") != -1) {
-			response.setContentType("application/pdf");
-		} else {
-			response.setContentType("application/vnd.ms-excel");
-		}
+		return FieldbookUtil.createResponseEntityForFileDownload(absoluteLocation, filename);
 
-		// Those user agents (browser) that do not support the RFC 5987 encoding ignore filename when it occurs after filename.
-		response.setCharacterEncoding("UTF-8");
-		FieldbookUtil.resolveContentDisposition(fileName, response, req.getHeader("User-Agent"));
-
-		// the selected name + current date
-		File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
-		FileInputStream in;
-
-		try {
-			in = new FileInputStream(xls);
-			OutputStream out = response.getOutputStream();
-
-			// use bigger if you want
-			byte[] buffer = new byte[LabelPrintingController.BUFFER_SIZE];
-			int length = 0;
-
-			while ((length = in.read(buffer)) > 0) {
-				out.write(buffer, 0, length);
-			}
-			in.close();
-			out.close();
-		} catch (FileNotFoundException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-		} catch (IOException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-		}
-
-		return "";
 	}
 
 	/**

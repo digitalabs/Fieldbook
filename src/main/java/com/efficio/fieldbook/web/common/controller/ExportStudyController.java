@@ -3,11 +3,8 @@ package com.efficio.fieldbook.web.common.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +13,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,6 +42,8 @@ import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -80,6 +78,8 @@ import net.sf.jasperreports.engine.JRException;
 @RequestMapping(ExportStudyController.URL)
 public class ExportStudyController extends AbstractBaseFieldbookController {
 
+	private static final String UTF_8 = "UTF-8";
+	private static final String ISO_8859_1 = "iso-8859-1";
 	private static final String CONTENT_TYPE = "contentType";
 	private static final String FILENAME = "filename";
 	private static final String OUTPUT_FILENAME = "outputFilename";
@@ -89,7 +89,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	private static final String CSV_CONTENT_TYPE = "text/csv";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportStudyController.class);
 	public static final String URL = "/ExportManager";
-	private static final int BUFFER_SIZE = 4096 * 4;
 	private static String EXPORT_TRIAL_INSTANCE = "Common/includes/exportTrialInstance";
 	private static String DISPLAY_ADVANCE_GERMPLASM_LIST = "Common/includes/displayListOfAdvanceGermplasmList";
 
@@ -159,43 +158,13 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		return null;
 	}
 
-	@ResponseBody
 	@RequestMapping(value = "/download/file", method = RequestMethod.GET)
-	public String downloadFile(final HttpServletRequest req, final HttpServletResponse response) throws UnsupportedEncodingException {
+	public ResponseEntity<FileSystemResource> downloadFile(final HttpServletRequest req) throws UnsupportedEncodingException {
 
-		final String outputFilename = new String(req.getParameter(OUTPUT_FILENAME).getBytes("iso-8859-1"), "UTF-8");
-		final String filename = new String(req.getParameter(FILENAME).getBytes("iso-8859-1"), "UTF-8");
+		final String outputFilename = new String(req.getParameter(OUTPUT_FILENAME).getBytes(ISO_8859_1), UTF_8);
+		final String filename = new String(req.getParameter(FILENAME).getBytes(ISO_8859_1), UTF_8);
 
-		// the selected name + current date
-		final File xls = new File(outputFilename);
-		FileInputStream in;
-
-		FieldbookUtil.resolveContentDisposition(filename, response, req.getHeader("User-Agent"));
-
-		response.setContentType(MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(filename));
-		response.setCharacterEncoding("UTF-8");
-
-		try {
-			in = new FileInputStream(xls);
-			final OutputStream out = response.getOutputStream();
-
-			// use bigger if you want
-			final byte[] buffer = new byte[ExportStudyController.BUFFER_SIZE];
-			int length = 0;
-
-			while ((length = in.read(buffer)) > 0) {
-				out.write(buffer, 0, length);
-			}
-			in.close();
-			out.close();
-
-		} catch (final FileNotFoundException e) {
-			ExportStudyController.LOG.error(e.getMessage(), e);
-		} catch (final IOException e) {
-			ExportStudyController.LOG.error(e.getMessage(), e);
-		}
-
-		return "";
+		return FieldbookUtil.createResponseEntityForFileDownload(outputFilename, filename);
 
 	}
 

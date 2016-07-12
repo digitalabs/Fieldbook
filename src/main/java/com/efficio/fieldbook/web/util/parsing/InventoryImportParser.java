@@ -206,6 +206,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 		@Override
 		public InventoryDetails convertToObject(final Map<Integer, String> rowValues) throws FileParsingException {
+
 			final Integer gid = Integer.parseInt(rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)));
 			final Integer entryId = Integer.parseInt(rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)));
 			final String name = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.DESIGNATION));
@@ -216,9 +217,13 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			final String comment = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.COMMENT));
 			final String duplicate = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.DUPLICATE));
 			final String bulkWith = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH));
-			final String bulkCompl = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL));
 
-			final InventoryDetails details = new InventoryDetails();
+			String bulkCompl = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL));
+            if (!StringUtils.isEmpty(bulkCompl)) {
+                bulkCompl = bulkCompl.toUpperCase();
+            }
+
+			InventoryDetails details = new InventoryDetails();
 			details.setGid(gid);
 			details.setEntryId(entryId);
 			details.setGermplasmName(name);

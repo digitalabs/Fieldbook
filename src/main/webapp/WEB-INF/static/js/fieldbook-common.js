@@ -2174,16 +2174,31 @@ function recreateLocationCombo() {
 						refreshImportLocationCombo(data);
 						refreshLocationComboInSettings(data);
 					} else if (inventoryPopup) {
-						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allLocations); //All locations
+						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allLocations); // All locations
 						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations); // Favorites
-						recreateLocationComboAfterClose('inventoryLocationIdSeedStorage', data.allSeedStorageLocations);//All seed Storage
-						recreateLocationComboAfterClose('inventoryLocationIdFavoriteSeedStorage', data.allSeedStorageFavoritesLocations); //All Favorites seed Storage
+						recreateLocationComboAfterClose('inventoryLocationIdSeedStorage', data.allSeedStorageLocations);// All seed Storage
+						recreateLocationComboAfterClose('inventoryLocationIdFavoriteSeedStorage', data.allSeedStorageFavoritesLocations); // All Favorites
+																																			// seed
+																																			// Storage
 						showCorrectLocationInventoryCombo();
 						// set previously selected value of location
 						if ($('#showFavoriteLocationInventory').prop('checked')) {
-							setComboValues(generateGenericLocationSuggestions(data.favoriteLocations), $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
+							if ($('#showSeedStorageLocationInventory').prop('checked')) {
+								setComboValues(generateGenericLocationSuggestions(data.allSeedStorageFavoritesLocations), $(
+									'#inventoryLocationIdFavoriteSeedStorage').val(), 'inventoryLocationIdFavoriteSeedStorage');
+							} else {
+								setComboValues(generateGenericLocationSuggestions(data.favoriteLocations),
+									$('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
+							}
 						} else {
-							setComboValues(generateGenericLocationSuggestions(data.allLocations), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
+							if ($('#showSeedStorageLocationInventory').prop('checked')) {
+								setComboValues(generateGenericLocationSuggestions(data.allSeedStorageLocations), $(
+									'#inventoryLocationIdSeedStorage').val(), 'inventoryLocationIdSeedStorage');
+							} else {
+								setComboValues(generateGenericLocationSuggestions(data.allLocations), $('#inventoryLocationIdAll').val(),
+									'inventoryLocationIdAll');
+
+							}
 						}
 						refreshLocationComboInSettings(data);
 					} else if (advancePopup === true

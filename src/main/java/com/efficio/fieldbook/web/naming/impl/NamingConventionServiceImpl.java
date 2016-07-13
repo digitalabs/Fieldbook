@@ -278,7 +278,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
             final Integer breedingMethodId = advancingSource.getBreedingMethodId();
             final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
 
-            if (!this.germplasmDataManager.isMethodNamingConfigurationValid(breedingMethodId)) {
+			if (!this.germplasmDataManager.isMethodNamingConfigurationValid(selectedMethod)) {
                 throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rule.not.configured", new Object[] {selectedMethod.getMname()}, "The rules"
                         + " were not configured", LocaleContextHolder.getLocale()));
             }

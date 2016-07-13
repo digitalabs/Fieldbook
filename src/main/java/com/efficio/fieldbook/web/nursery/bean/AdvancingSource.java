@@ -33,6 +33,10 @@ public class AdvancingSource {
 	private List<Name> names;
 	private Integer plantsSelected;
 	private Method breedingMethod;
+	/**
+	 * This field is used to temporarily store the breeding method ID until such time as it can be resolved to a proper breeding Method object
+	 */
+	private Integer breedingMethodId;
 	private boolean isCheck;
 	private boolean isBulk;
 	private String nurseryName;
@@ -377,6 +381,14 @@ public class AdvancingSource {
 
 	public void setStudyType(StudyType studyType) {
 		this.studyType = studyType;
+	}
+
+	public Integer getBreedingMethodId() {
+		return breedingMethodId;
+	}
+
+	public void setBreedingMethodId(Integer breedingMethodId) {
+		this.breedingMethodId = breedingMethodId;
 	}
 
 	public AdvancingSource copy() {

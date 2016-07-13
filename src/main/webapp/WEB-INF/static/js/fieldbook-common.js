@@ -3808,8 +3808,7 @@ function processInlineEditInput() {
 					isNew = '0';
 				}
 				$('.data-value').val('missing');
-			} else if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellText) ||
-				parseFloat(cellText) > parseFloat(maxVal))) {
+			} else if (minVal && parseFloat(minVal) > parseFloat(cellText) || maxVal && parseFloat(cellText) > parseFloat(maxVal)) {
 				isNew = '1';
 			}
 			indexDataVal =  $('.data-value').val();

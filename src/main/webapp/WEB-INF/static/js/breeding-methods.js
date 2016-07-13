@@ -36,7 +36,7 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 		// function that prepares and initializes both the Select2 dropdown containing the method list as well as the checkbox that toggles between displaying only favorite
 		// methods or no. methodConversionFunction is provided as a parameter in case developers wish to change the construction of each select2 item, tho built-in function
 		// will be used by default if this is not provided
-		processMethodDropdownAndFavoritesCheckbox: function(methodSelectID, favoritesCheckboxID, favoritesDefault, methodConversionFunction) {
+		processMethodDropdownAndFavoritesCheckbox: function(methodID, methodSelectID, favoritesCheckboxID, favoritesDefault, methodConversionFunction) {
 			BreedingMethodsFunctions.retrieveBreedingMethods().done(function(data) {
 				if (! methodConversionFunction) {
 					methodConversionFunction = BreedingMethodsFunctions.convertMethodToSelectItem;
@@ -44,8 +44,8 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 
 				var possibleValues = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.allMethods, methodConversionFunction);
 				var favoritePossibleValues = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.favoriteMethods, methodConversionFunction);
-
-				if (favoritesDefault) {
+					
+				if (favoritesDefault && !methodID) {
 					$safeId('#' + favoritesCheckboxID).prop('checked', true);
 					BreedingMethodsFunctions.createSelect2Dropdown(favoritePossibleValues, methodSelectID);
 				} else {
@@ -69,7 +69,7 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 				});
 
 				$(document).on('breeding-method-update', function() {
-					BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(methodSelectID, favoritesCheckboxID, favoritesDefault, methodConversionFunction);
+					BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(methodID, methodSelectID, favoritesCheckboxID, favoritesDefault, methodConversionFunction);
 				});
 
 			});

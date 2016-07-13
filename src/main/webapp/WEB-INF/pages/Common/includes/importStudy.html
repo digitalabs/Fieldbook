@@ -37,12 +37,12 @@
 							<div class="col-xs-5 col-md-5">
 								<select style="width: 205px" id="importType">
 									<option value="0">Please Choose</option>
+									<option value="7" th:text="#{nursery.import.csv}"></option>
 									<option value="4" th:text="#{nursery.import.datakapture}"></option>
 									<option selected="selected" value="3" th:text="#{nursery.import.excel}"></option>
 									<option value="1" th:text="#{nursery.import.fieldlog.fieldroid}"></option>
 									<option value="5" th:text="#{nursery.import.ksu.fieldbook.excel}"></option>
 									<option value="6" th:text="#{nursery.import.ksu.fieldbook.csv}"></option>
-
 								</select>
 							</div>
 						</div>
@@ -96,7 +96,7 @@
 
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default"  onclick="javascript:goBackToImport();" th:text="#{nursery.go.back}">Cancel</button>
-					<button type="button" class="btn btn-primary"  onclick="javascript:confirmStudyImport();" th:text="#{nursery.proceed}">Import</button>
+					<button type="button" class="btn btn-primary"  id="studyConfirmationButton" th:text="#{nursery.proceed}">Import</button>
 				</div>
 			</div>
 		</div>
@@ -507,6 +507,10 @@ function showImportResponse(responseText) {
 				importError += resp.confirmMessage;
 			}
 			$('#importStudyConfirmationModal .import-confirmation').html(importError);
+            $('#studyConfirmationButton').off('click');
+            $('#studyConfirmationButton').on('click', function() {
+                confirmStudyImport(resp.hasDataOverwrite);
+            })
 		}
 	} else {
 		showErrorMessage('page-import-study-message-modal', resp.error);

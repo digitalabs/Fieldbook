@@ -184,18 +184,13 @@
 	<bean id="exportGermplasmListService"
 		class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl" />
 
-
-	<bean id="ksuExcelImportStudyService"
-		class="com.efficio.fieldbook.web.common.service.impl.KsuExcelImportStudyServiceImpl" />
-
-
-	<bean id="excelImportStudyService"
-		class="com.efficio.fieldbook.web.common.service.impl.ExcelImportStudyServiceImpl" />
-
+    <bean id="studyServiceFactory" class="com.efficio.fieldbook.web.study.ImportStudyServiceFactory"/>
 
 	<bean id="designImportService"
 		  class="com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceImpl"/>
 
+    <bean id="genericCsvParser"
+          class="org.generationcp.commons.parsing.GenericCsvFileProcessor"/>
 
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

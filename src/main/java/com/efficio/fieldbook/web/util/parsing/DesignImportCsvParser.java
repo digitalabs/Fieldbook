@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.generationcp.commons.parsing.AbstractCsvFileParser;
+import org.generationcp.commons.parsing.AbstractCsvFileProcessor;
 import org.generationcp.commons.parsing.FileParsingException;
 
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 
-public class DesignImportCsvParser extends AbstractCsvFileParser<DesignImportData> {
-	
+public class DesignImportCsvParser extends AbstractCsvFileProcessor<DesignImportData> {
+
 	private static final int HEADER_ROW_INDEX = 0;
 	
 	@Override

@@ -476,7 +476,8 @@ public class WorkbookUtil {
 		}
 
 		for (final MeasurementVariable var : tempWorkbook.getFactors()) {
-			if (factorsMap.get(var.getTermId()) == null && expDesignVariablesMap.get(var.getTermId()) != null) {
+			if (factorsMap.get(var.getTermId()) == null
+					&& expDesignVariablesMap.get(var.getTermId()) != null) {
 				var.setOperation(Operation.ADD);
 				workbook.getFactors().add(var);
 			}
@@ -520,32 +521,32 @@ public class WorkbookUtil {
 				}
 			}
 		}
-		for (final Integer termId : deletedList) {
-			// remove from measurement rows
-			int index = 0;
-			int varIndex = 0;
-			boolean found = false;
-			if (observations != null) {
-				for (final MeasurementRow row : observations) {
-					if (index == 0) {
-						for (final MeasurementData var : row.getDataList()) {
-							if (var.getMeasurementVariable().getTermId() == termId) {
-								found = true;
-								break;
-							}
-							varIndex++;
-						}
-					}
-					if (found) {
-						row.getDataList().remove(varIndex);
-					} else {
-						break;
-					}
-					index++;
-				}
-			}
-		}
-	}
+        for (final Integer termId : deletedList) {
+            // remove from measurement rows
+            int index = 0;
+            int varIndex = 0;
+            boolean found = false;
+            if (observations != null) {
+                for (final MeasurementRow row : observations) {
+                    if (index == 0) {
+                        for (final MeasurementData var : row.getDataList()) {
+                            if (var.getMeasurementVariable().getTermId() == termId) {
+                                found = true;
+                                break;
+                            }
+                            varIndex++;
+                        }
+                    }
+                    if (found) {
+                        row.getDataList().remove(varIndex);
+                    } else {
+                        break;
+                    }
+                    index++;
+                }
+            }
+        }
+    }
 
 	// we would validate all conditions except for name and the study type
 	public static boolean isConditionValidate(final Integer cvTermId) {

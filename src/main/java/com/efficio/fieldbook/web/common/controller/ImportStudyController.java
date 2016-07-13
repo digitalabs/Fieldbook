@@ -10,11 +10,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
+import com.efficio.fieldbook.web.study.ImportStudyType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.util.DateUtil;
@@ -34,8 +34,6 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -58,11 +56,6 @@ import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
-import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
-import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuCsvImportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -89,21 +82,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	private FileService fileService;
 
 	@Resource
-	private FieldroidImportStudyService fieldroidImportStudyService;
-
-	@Autowired
-	@Qualifier("excelImportStudyService")
-	private ExcelImportStudyService excelImportStudyService;
-
-	@Resource
-	private DataKaptureImportStudyService dataKaptureImportStudyService;
-
-	@Autowired
-	@Qualifier("ksuExcelImportStudyService")
-	private KsuExcelImportStudyService ksuExcelImportStudyService;
-
-	@Resource
-	private KsuCsvImportStudyService ksuCsvImportStudyService;
+	private ImportStudyServiceFactory studyServiceFactory;
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -134,6 +113,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		final boolean isTrial = "TRIAL".equalsIgnoreCase(studyType);
 		ImportResult importResult = null;
 		final UserSelection userSelection = this.getUserSelection(isTrial);
+		final ImportStudyType importStudyType = ImportStudyType.getImportType(importType);
+
+		assert importStudyType != null;
 
 		/**
 		 * Should always revert the data first to the original data here we should move here that part the copies it to the original
@@ -141,10 +123,10 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		 */
 		WorkbookUtil.resetWorkbookObservations(userSelection.getWorkbook());
 
-		importResult = this.importWorkbookByType(form.getFile(), result, userSelection.getWorkbook(), importType);
+		importResult = this.importWorkbookByType(form.getFile(), result, userSelection.getWorkbook(), importStudyType);
 
 		final Locale locale = LocaleContextHolder.getLocale();
-		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Map<String, Object> resultsMap = new HashMap<>();
 		resultsMap.put("hasDataOverwrite", userSelection.getWorkbook().hasExistingDataOverwrite() ? "1" : "0");
 		if (!result.hasErrors()) {
 			userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
@@ -166,19 +148,24 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				this.populateConfirmationMessages(importResult.getChangeDetails());
 				resultsMap.put("changeDetails", importResult.getChangeDetails());
 				resultsMap.put("errorMessage", importResult.getErrorMessage());
-				final List<String> detailErrorMessage = new ArrayList<String>();
+				final List<String> detailErrorMessage = new ArrayList<>();
 				String reminderConfirmation = "";
 				if (importResult.getModes() != null && !importResult.getModes().isEmpty()) {
 					for (final ChangeType mode : importResult.getModes()) {
-						String message = this.messageSource.getMessage(mode.getMessageCode(), null, locale);
-						if (mode == ChangeType.ADDED_TRAITS) {
-							message +=
-									StringUtils.join(WorkbookUtil.getAddedTraits(userSelection.getWorkbook().getVariates(), userSelection
-											.getWorkbook().getObservations()), ", ");
+						if (ImportStudyType.IMPORT_NURSERY_EXCEL == importStudyType) {
+							String message = this.messageSource.getMessage(mode.getMessageCode(), null, locale);
+							if (mode == ChangeType.ADDED_TRAITS) {
+								message +=
+										StringUtils.join(WorkbookUtil.getAddedTraits(userSelection.getWorkbook().getVariates(),
+												userSelection.getWorkbook().getObservations()), ", ");
+
+							}
+							detailErrorMessage.add(message);
+							reminderConfirmation = this.messageSource.getMessage("confirmation.import.text", null, locale);
+						} else if (mode == ChangeType.ADDED_TRAITS) {
+							reminderConfirmation = this.messageSource.getMessage("confirmation.import.text.traits.added", null, locale);
 						}
-						detailErrorMessage.add(message);
 					}
-					reminderConfirmation = this.messageSource.getMessage("confirmation.import.text", null, locale);
 				}
 				resultsMap.put("message", reminderConfirmation);
 				resultsMap.put("confirmMessage", this.messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));
@@ -201,35 +188,17 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	protected ImportResult importWorkbookByType(final MultipartFile file, final BindingResult result, final Workbook workbook,
-			final Integer importType) {
+			final ImportStudyType studyImportType) {
 		ImportResult importResult = null;
 
-		this.validateImportFile(file, result, importType);
+		this.validateImportFile(file, result, studyImportType);
 
 		if (!result.hasErrors()) {
 			try {
 				final String filename = this.fileService.saveTemporaryFile(file.getInputStream());
-				if (AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType) {
-					importResult =
-							this.fieldroidImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
-									this.ontologyService, this.fieldbookMiddlewareService);
-				} else if (AppConstants.IMPORT_NURSERY_EXCEL.getInt() == importType) {
-					importResult =
-							this.excelImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
-									this.ontologyService, this.fieldbookMiddlewareService);
-				} else if (AppConstants.IMPORT_DATAKAPTURE.getInt() == importType) {
-					importResult =
-							this.dataKaptureImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
-									this.ontologyService, this.fieldbookMiddlewareService);
-				} else if (AppConstants.IMPORT_KSU_EXCEL.getInt() == importType) {
-					importResult =
-							this.ksuExcelImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
-									this.ontologyService, this.fieldbookMiddlewareService);
-				} else if (AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
-					importResult =
-							this.ksuCsvImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
-									file.getOriginalFilename());
-				}
+				importResult =
+						this.studyServiceFactory.createStudyImporter(studyImportType, workbook, this.fileService.getFilePath(filename),
+								file.getOriginalFilename()).importWorkbook();
 
 			} catch (final WorkbookParserException e) {
 				ImportStudyController.LOG.error(e.getMessage(), e);
@@ -242,17 +211,18 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		return importResult;
 	}
 
-	protected void validateImportFile(final MultipartFile file, final BindingResult result, final Integer importType) {
+	protected void validateImportFile(final MultipartFile file, final BindingResult result, final ImportStudyType importStudyType) {
 		if (file == null) {
 			result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
 		} else {
-			if (AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType
-					|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType || AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
+			if (ImportStudyType.IMPORT_NURSERY_FIELDLOG_FIELDROID == importStudyType
+					|| ImportStudyType.IMPORT_DATAKAPTURE == importStudyType || ImportStudyType.IMPORT_KSU_CSV == importStudyType
+					|| ImportStudyType.IMPORT_NURSERY_CSV == importStudyType) {
 				final boolean isCSVFile = file.getOriginalFilename().contains(".csv");
 				if (!isCSVFile) {
 					result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
 				}
-			} else if (AppConstants.IMPORT_NURSERY_EXCEL.getInt() == importType || AppConstants.IMPORT_KSU_EXCEL.getInt() == importType) {
+			} else if (ImportStudyType.IMPORT_NURSERY_EXCEL == importStudyType || ImportStudyType.IMPORT_KSU_EXCEL == importStudyType) {
 				final boolean isExcelFile = file.getOriginalFilename().contains(".xls") || file.getOriginalFilename().contains(".xlsx");
 				if (!isExcelFile) {
 					result.rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
@@ -263,10 +233,10 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	private List<List<ValueReference>> transformTrialObservations(final List<MeasurementRow> trialObservations,
 			final List<SettingDetail> trialHeaders) {
-		final List<List<ValueReference>> list = new ArrayList<List<ValueReference>>();
+		final List<List<ValueReference>> list = new ArrayList<>();
 		if (trialHeaders != null && !trialHeaders.isEmpty() && trialObservations != null && !trialObservations.isEmpty()) {
 			for (final MeasurementRow row : trialObservations) {
-				final List<ValueReference> refList = new ArrayList<ValueReference>();
+				final List<ValueReference> refList = new ArrayList<>();
 				for (final SettingDetail header : trialHeaders) {
 					for (final MeasurementData data : row.getDataList()) {
 						if (data.getMeasurementVariable() != null
@@ -307,12 +277,12 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	private void doRevertData(final CreateNurseryForm form) {
 		final UserSelection userSelection = this.getUserSelection(false);
 		// we should remove here the newly added traits
-		final List<MeasurementVariable> newVariableList = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> newVariableList = new ArrayList<>();
 
 		newVariableList.addAll(userSelection.getWorkbook().isNursery() ? userSelection.getWorkbook().getMeasurementDatasetVariables()
 				: userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 		form.setMeasurementVariables(newVariableList);
-		final List<MeasurementRow> list = new ArrayList<MeasurementRow>();
+		final List<MeasurementRow> list = new ArrayList<>();
 		if (userSelection.getWorkbook().getOriginalObservations() != null) {
 			for (final MeasurementRow row : userSelection.getWorkbook().getOriginalObservations()) {
 				list.add(row.copy());
@@ -370,7 +340,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 								dateInteger, name);
 
 				// instead of directly saving into the database, store the germplasm - name pair into a list
-				germplasmPairs.add(new ImmutablePair<Germplasm, Name>(germplasm, name));
+				germplasmPairs.add(new ImmutablePair<>(germplasm, name));
 
 				// store the measurement row and the associated index of the entry so that the GID resulting in the database save later on
 				// can still be used to properly update the required data structures
@@ -385,7 +355,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 			}
 
-			if (responseDetail.getStatus() > 0 && entryNumData != null && entryNumData.getValue() != null) {
+			if (responseDetail.getStatus() > 0 && entryNumData != null) {
 				final Map<String, String> tempMap = new HashMap<>();
 				tempMap.put(Integer.toString(TermId.GID.getId()), gidData.getValue());
 				tempMap.put(Integer.toString(TermId.DESIG.getId()), desigData.getValue());
@@ -427,7 +397,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		if (!userSelection.getWorkbook().isNursery()) {
 			for (final MeasurementRow row : observations) {
 				final MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
-				if (entryNumData != null && entryNumData.getValue() != null && changeMap.containsKey(entryNumData.getValue())) {
+				if (entryNumData != null && changeMap.containsKey(entryNumData.getValue())) {
 					final Map<String, String> tempMap = changeMap.get(entryNumData.getValue());
 					final MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
 					final MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
@@ -453,12 +423,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 		try {
 			return this.objectMapper.readValue(userResponses, GermplasmChangeDetail[].class);
-		} catch (final JsonParseException e) {
-			ImportStudyController.LOG.error(e.getMessage(), e);
-			throw new FieldbookException(e.getMessage());
-		} catch (final JsonMappingException e) {
-			ImportStudyController.LOG.error(e.getMessage(), e);
-			throw new FieldbookException(e.getMessage());
 		} catch (final IOException e) {
 			ImportStudyController.LOG.error(e.getMessage(), e);
 			throw new FieldbookException(e.getMessage());
@@ -500,8 +464,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
 
 		userSelection.getWorkbook().setOriginalObservations(userSelection.getWorkbook().getObservations());
-		final List<SettingDetail> newTraits = new ArrayList<SettingDetail>();
-		final List<SettingDetail> selectedVariates = new ArrayList<SettingDetail>();
+		final List<SettingDetail> newTraits = new ArrayList<>();
+		final List<SettingDetail> selectedVariates = new ArrayList<>();
 		SettingsUtil.convertWorkbookVariatesToSettingDetails(traits, this.fieldbookMiddlewareService, this.fieldbookService, newTraits,
 				selectedVariates);
 
@@ -538,7 +502,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 						.getObservations());
 
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
-		final List<MeasurementVariable> newVariableList = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> newVariableList = new ArrayList<>();
 
 		form.setMeasurementVariables(newVariableList);
 
@@ -562,22 +526,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	public void setFileService(final FileService fileService) {
 		this.fileService = fileService;
-	}
-
-	public void setFieldroidImportStudyService(final FieldroidImportStudyService fieldroidImportStudyService) {
-		this.fieldroidImportStudyService = fieldroidImportStudyService;
-	}
-
-	public void setExcelImportStudyService(final ExcelImportStudyService excelImportStudyService) {
-		this.excelImportStudyService = excelImportStudyService;
-	}
-
-	public void setDataKaptureImportStudyService(final DataKaptureImportStudyService dataKaptureImportStudyService) {
-		this.dataKaptureImportStudyService = dataKaptureImportStudyService;
-	}
-
-	public void setKsuExcelImportStudyService(final KsuExcelImportStudyService ksuExcelImportStudyService) {
-		this.ksuExcelImportStudyService = ksuExcelImportStudyService;
 	}
 
 	public void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {

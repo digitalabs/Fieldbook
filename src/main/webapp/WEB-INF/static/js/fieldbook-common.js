@@ -2041,6 +2041,7 @@ function recreateMethodCombo() {
 				if (createGermplasmOpened) {
 					refreshImportMethodCombo(data);
 					refreshMethodComboInSettings(data);
+					refreshGermplasMethodCombo(data);
 				} else if (selectedMethodAll != null) {
 
 					//recreate the select2 combos to get updated list of methods
@@ -2049,7 +2050,7 @@ function recreateMethodCombo() {
 
 					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenance', data.allNonGenerativeMethods);
 					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenanceFavorite', data.favoriteNonGenerativeMethods);
-	
+
 					showCorrectMethodCombo();
 					//set previously selected value of method
 					if ($('#showFavoriteMethod').prop('checked')) {
@@ -2067,6 +2068,7 @@ function recreateMethodCombo() {
 					}
 					if (createGermplasm) {
 						refreshImportMethodCombo(data);
+						refreshGermplasMethodCombo(data);
 					}
 				}
 			} else {
@@ -2099,6 +2101,34 @@ function refreshImportMethodCombo(data) {
 	}
 }
 
+function refreshGermplasMethodCombo(data) {
+	var selectedValue = null;
+	if ($('#importMethodId').select2('data')) {
+		selectedValue = $('#importMethodId').select2('data').id;
+	}
+	if ($('#importFavoriteMethod').is(':checked')) {
+		if($('#showDerivateAndMaintenanceMethodImportStudyOnlyRadio').is(':checked')){
+			initializePossibleValuesCombo(data.favoriteNonGenerativeMethods,
+				'#importMethodId', true, selectedValue);
+		}else{
+			initializePossibleValuesCombo(data.favoriteMethods,
+				'#importMethodId', true, selectedValue);
+		}
+
+	} else {
+		if($('#showDerivateAndMaintenanceMethodImportStudyOnlyRadio').is(':checked')){
+			initializePossibleValuesCombo(data.allNonGenerativeMethods,
+				'#importMethodId', true, selectedValue);
+		}else{
+			initializePossibleValuesCombo(data.allMethods,
+				'#importMethodId', true, selectedValue);
+		}
+
+	}
+	replacePossibleJsonValuesImportGermPlasm(data.allNonGenerativeMethods, data.favoriteNonGenerativeMethods, data.allMethods, data.favoriteMethods,
+		'Method');
+}
+
 function refreshImportLocationCombo(data) {
 	var selectedValue = null;
 	if ($('#importLocationId').select2('data')) {
@@ -2112,6 +2142,34 @@ function refreshImportLocationCombo(data) {
 				'#importLocationId', true, selectedValue);
 	}
 	replacePossibleJsonValues(data.allBreedingLocations, data.allBreedingFavoritesLocations, data.allLocations, data.favoriteLocations,
+		'Location');
+}
+
+function refreshGermplasLocationCombo(data) {
+	var selectedValue = null;
+	if ($('#importLocationId').select2('data')) {
+		selectedValue = $('#importLocationId').select2('data').id;
+	}
+	if ($('#importFavoriteLocation').is(':checked')) {
+		if($('#showBreedingLocationImportStudyOnlyRadio').is(':checked')){
+			initializePossibleValuesCombo(data.allBreedingFavoritesLocations,
+				'#importLocationId', true, selectedValue);
+		}else{
+			initializePossibleValuesCombo(data.favoriteLocations,
+				'#importLocationId', true, selectedValue);
+		}
+
+	} else {
+		if($('#showBreedingLocationImportStudyOnlyRadio').is(':checked')){
+			initializePossibleValuesCombo(data.allBreedingLocations,
+				'#importLocationId', true, selectedValue);
+		}else{
+			initializePossibleValuesCombo(data.allLocations,
+				'#importLocationId', true, selectedValue);
+		}
+
+	}
+	replacePossibleJsonValuesImportGermPlasm(data.allBreedingLocations, data.allBreedingFavoritesLocations, data.allLocations, data.favoriteLocations,
 		'Location');
 }
 
@@ -2173,6 +2231,7 @@ function recreateLocationCombo() {
 					if (createGermplasmOpened) {
 						refreshImportLocationCombo(data);
 						refreshLocationComboInSettings(data);
+						refreshGermplasLocationCombo(data);
 					} else if (inventoryPopup) {
 						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allLocations); // All locations
 						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations); // Favorites
@@ -2245,6 +2304,7 @@ function recreateLocationCombo() {
 						}
 						if (createGermplasm) {
 							refreshImportLocationCombo(data);
+							refreshGermplasLocationCombo(data);
 						}
 					}
 				} else {
@@ -2500,7 +2560,7 @@ function deleteFolder(object) {
 		studyType = isNursery()?'N':'T',
 		folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key,
 		folderName = JSON.stringify({'folderName': currentFolderName});
-		
+
 		if (isFolder) {
 			$.ajax({
 				url: '/Fieldbook/StudyTreeManager/isFolderEmpty/'+folderId+'/'+studyType,

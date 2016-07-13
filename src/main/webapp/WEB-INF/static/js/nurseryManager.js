@@ -316,6 +316,14 @@ function replacePossibleJsonValues(possibleValues, possibleValuesFavorite, allVa
 	$('#allFavoriteValuesJson' + index).text(JSON.stringify(allFavoriteValues));
 }
 
+function replacePossibleJsonValuesImportGermPlasm(possibleValues, possibleValuesFavorite, allValues, allFavoriteValues, index) {
+	'use strict';
+	$('#possibleValuesJson' + index).text(JSON.stringify(possibleValues));
+	$('#possibleValuesFavoriteJson' + index).text(JSON.stringify(possibleValuesFavorite));
+	$('#allPossibleValuesJson' + index).text(JSON.stringify(allValues));
+	$('#allPossibleValuesFavoriteJson' + index).text(JSON.stringify(allFavoriteValues));
+}
+
 function setComboValues(suggestions_obj, id, name) {
 	var dataVal = {
 		id: '',
@@ -506,7 +514,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 
 		if (parseInt(settingDetail.variable.cvTermId, 10) == parseInt(breedingMethodId, 10) ||
 				parseInt(settingDetail.variable.cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)) {
-			
+
 			// all values div
 			newRow = newRow
 					+ '<div class="possibleValuesDiv"> <label class="radio-inline"> <input id="filterMethods" name="methodFilter" type="radio" checked="checked"'
@@ -524,7 +532,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '<div id="allFavoriteValuesJson" class="allFavoriteValuesJson" style="display:none">'
 					+ JSON.stringify(settingDetail.allFavoriteValues)
 					+ '</div>';
-			
+
 			// show favorite method
 			locMethodCbxId = name + ctr;
 			newRow = newRow
@@ -562,9 +570,9 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '<span><a href="javascript: openManageMethods();">'
 					+ manageMethodLabel + '</a></span>';
 			newRow = newRow + '</div>';
-		
+
 		} else if (settingDetail.variable.cvTermId == locationId) {
-			
+
 			locMethodCbxId = name + ctr;
 			// all values div
 			newRow = newRow
@@ -583,7 +591,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ 'style="display:none">'
 					+ JSON.stringify(settingDetail.allValues)
 					+ '</div>';
-			
+
 			// all favorite values div
 			newRow = newRow
 					+ '<div id="allFavoriteValuesJson'
@@ -592,7 +600,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ 'style="display:none">'
 					+ JSON.stringify(settingDetail.allFavoriteValues)
 					+ '</div>';
-			
+
 			// show favorite location
 			locMethodCbxId = name + ctr;
 			newRow = newRow
@@ -630,7 +638,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '<span><a href="javascript: openManageLocations();">'
 					+ manageLocationLabel + '</a></span>';
 			newRow = newRow + '</div>';
-	
+
 
 		} else {
 			newRow = newRow + '<div id="possibleValuesJson'
@@ -707,6 +715,45 @@ function toggleDropdownGen(comboId, favoriteCheckId, suffix, isLocation) {
 
 }
 
+function toggleDropdownImportStudy(allCheckId, comboId, favoriteCheckId, suffix, isLocation) {
+	var possibleValues;
+	var showFavorite = $('#' + favoriteCheckId).is(':checked');
+	var showAll = $('#' + allCheckId).is(':checked');
+	var selectedVal = '';
+
+	// get previously selected value
+	if ($('#' + comboId).select2('data')) {
+		selectedVal = $('#' + comboId).select2('data').id;
+	}
+
+	// reset select2 combo
+	initializePossibleValuesCombo([], '#' + comboId, isLocation, null);
+
+	// get possible values based on checkbox
+	if (showFavorite) {
+		if (showAll) {
+			possibleValues = $('#allPossibleValuesFavoriteJson' + suffix).text();
+		} else {
+			possibleValues = $('#possibleValuesFavoriteJson' + suffix).text();
+		}
+		$('#' + comboId).parent().find('.selectedValue').val(selectedVal);
+		selectedVal = $('#' + comboId).parent().find('.selectedValueFave').val();
+	} else if (showAll) {
+		possibleValues = $('#allPossibleValuesJson' + suffix).text();
+		$('#' + comboId).parent().find('.selectedValueFave').val(selectedVal);
+		selectedVal = $('#' + comboId).parent().find('.selectedValue').val();
+	} else {
+		possibleValues = $('#possibleValuesJson' + suffix).text();
+		$($('#' + comboId).parent().find('.selectedValueFave')).val(selectedVal);
+		selectedVal = $($('#' + comboId).parent().find('.selectedValue')).val();
+	}
+
+	// recreate select2 combo
+	initializePossibleValuesCombo($.parseJSON(possibleValues), '#' + comboId,
+			showFavorite ? false : isLocation, selectedVal);
+
+}
+
 function toggleMethodDropdown(rowIndex) {
 	var possibleValues;
 	var showFavorite = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex
@@ -725,7 +772,7 @@ function toggleMethodDropdown(rowIndex) {
 	initializePossibleValuesCombo([], '#'
 			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),
 			false, null);
-	
+
 
 	// get possible values based on checkbox
 

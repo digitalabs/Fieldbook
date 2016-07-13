@@ -161,18 +161,18 @@
 							<input type="hidden" th:field="*{importMethodId}" class="form-control select2" />
 							<div style="width: 100%" class="possibleValuesDiv">
 							        <label class="radio-inline">
-                                        <input id="showBreedingMethodImportStudyOnlyRadio" name="import_study_method_filter" value="1" type="radio" checked="checked" />
+										<input id="showDerivateAndMaintenanceMethodImportStudyOnlyRadio" th:onclick="'javascript: toggleDropdownImportStudy(\'showAllMethodImportStudyOnlyRadio\', \'importMethodId\', \'importFavoriteMethod\', \'Method\', false);'" name="import_study_method_filter" value="1" type="radio" checked="checked" />
                                         <span th:text="#{show.derivative.maintenance.method}">Derivative and Maintenance methods</span>
                                         &nbsp;&nbsp;
                                     </label>
                                     <label class="radio-inline">
-                                        <input id="showAllMethodImportStudyOnlyRadio" name="import_study_method_filter" value="2" type="radio" />
+										<input id="showAllMethodImportStudyOnlyRadio" th:onclick="'javascript: toggleDropdownImportStudy(\'showAllMethodImportStudyOnlyRadio\', \'importMethodId\', \'importFavoriteMethod\', \'Method\', false);'" name="import_study_method_filter" value="2" type="radio" />
                                         <span th:text="#{show.all.methods}">All Methods</span>
                                         &nbsp;&nbsp;
                                     </label>
 							</div>
 							<div style="width: 100%" class="possibleValuesDiv">
-									<input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importMethodId\', \'importFavoriteMethod\', \'Method\', false);'" id="importFavoriteMethod" checked="checked"/>
+									<input type="checkbox" th:onclick="'javascript: toggleDropdownImportStudy(\'showAllMethodImportStudyOnlyRadio\', \'importMethodId\', \'importFavoriteMethod\', \'Method\', false);'" id="importFavoriteMethod" checked="checked"/>
 									&nbsp;&nbsp;
 									<span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 									<a class='import-manage-method' href="javascript: void(0)" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
@@ -183,6 +183,14 @@
 							</div>
 							<div id="possibleValuesFavoriteJsonMethod"
 								class="possibleValuesFavoriteJsonMethod" style="display:none">
+							</div>
+							<!-- all values -->
+							<div id="allPossibleValuesJsonMethod"
+								 class="allPossibleValuesJsonMethod" style="display:none">
+							</div>
+							<!-- all favorite values -->
+							<div id="allPossibleValuesFavoriteJsonMethod"
+								 class="allPossibleValuesFavoriteJsonMethod" style="display:none">
 							</div>
 						</div>
 					</div>
@@ -208,16 +216,16 @@
 
 							<div style="width: 100%" class="possibleValuesDiv">
 									<label class="radio-inline">
-                                        <input id="showBreedingLocationImportStudyOnlyRadio" name="import_study_location_filter" value="1" type="radio" checked="checked" /> <span th:text="#{show.breeding.location}">Breeding locations</span>
+											<input id="showBreedingLocationImportStudyOnlyRadio" th:onclick="'javascript: toggleDropdownImportStudy(\'showAllLocationImportStudyOnlyRadio\', \'importLocationId\', \'importFavoriteLocation\', \'Location\', true);'" name="import_study_location_filter" value="1" type="radio" checked="checked" /> <span th:text="#{show.breeding.location}">Breeding locations</span>
                                         &nbsp;&nbsp;
                                     </label>
                                     <label class="radio-inline">
-                                        <input id="showAllLocationImportStudyOnlyRadio" name="import_study_location_filter" value="2" type="radio" /> <span th:text="#{show.all.location}">All locations types</span>
+											<input id="showAllLocationImportStudyOnlyRadio" th:onclick="'javascript: toggleDropdownImportStudy(\'showAllLocationImportStudyOnlyRadio\', \'importLocationId\', \'importFavoriteLocation\', \'Location\', true);'" name="import_study_location_filter" value="2" type="radio" /> <span th:text="#{show.all.location}">All locations types</span>
                                         &nbsp;&nbsp;
                                     </label>
                             </div>
                             <div style="width: 100%" class="possibleValuesDiv">
-                                    <input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importLocationId\', \'importFavoriteLocation\', \'Location\', true);'" id="importFavoriteLocation" checked="checked"/>
+										<input type="checkbox" th:onclick="'javascript: toggleDropdownImportStudy(\'showAllLocationImportStudyOnlyRadio\', \'importLocationId\', \'importFavoriteLocation\', \'Location\', true);'" id="importFavoriteLocation" checked="checked"/>
 									&nbsp;&nbsp;
 									<span th:text="#{show.favorite.location}">Show Favorite Location</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 									<a class='import-manage-location' href="javascript: void(0)"  th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
@@ -228,6 +236,14 @@
 							</div>
 							<div id="possibleValuesFavoriteJsonLocation"
 								class="possibleValuesFavoriteJsonLocation" style="display:none">
+							</div>
+							<!-- all values -->
+							<div id="allPossibleValuesJsonLocation"
+								 class="allPossibleValuesJsonLocation" style="display:none">
+							</div>
+							<!-- all favorite values -->
+							<div id="allPossibleValuesFavoriteJsonLocation"
+								 class="allPossibleValuesFavoriteJsonLocation" style="display:none">
 							</div>
 						</div>
 					</div>
@@ -275,8 +291,6 @@
 						<label class="control-label label-bold" th:text="#{import.data.discard.confirmation}">Do you really want to discard your imported data?</label>
 					</div>
 				</div>
-
-
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal"  th:text="#{common.form.no.text}">Cancel</button>
 					<button type="button" class="btn btn-primary"  onclick="javascript:revertData(true);" th:text="#{common.form.yes.text}">Import</button>

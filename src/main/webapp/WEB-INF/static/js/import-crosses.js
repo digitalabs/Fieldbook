@@ -186,8 +186,8 @@ var ImportCrosses = {
 			$safeId('#favoritesCheckboxID').prop('checked', true);
 		}
 
-		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
-			ImportCrosses.showFavoriteMethodsOnly);
+		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(selectedBreedingMethodId, 'breedingMethodDropdown', 
+			'showFavoritesOnlyCheckbox', ImportCrosses.showFavoriteMethodsOnly);
 		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
 			'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio');
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');

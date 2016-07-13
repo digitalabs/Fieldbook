@@ -186,8 +186,8 @@ var ImportCrosses = {
 			$safeId('#favoritesCheckboxID').prop('checked', true);
 		}
 
-		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
-			ImportCrosses.showFavoriteMethodsOnly);
+		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(selectedBreedingMethodId, 'breedingMethodDropdown', 
+			'showFavoritesOnlyCheckbox', ImportCrosses.showFavoriteMethodsOnly);
 		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
 			'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio');
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
@@ -197,6 +197,9 @@ var ImportCrosses = {
 		if (selectedBreedingMethodId) {
 			ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
 		}
+
+		$('#useSelectedMethodCheckbox').off('change');
+		$('#useSelectedMethodCheckbox').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
 
 		$('.cross-import-name-setting').off('change');
 		$('.cross-import-name-setting').on('change', ImportCrosses.updateDisplayedSequenceNameValue);
@@ -218,6 +221,17 @@ var ImportCrosses = {
 				ImportCrosses.showBreedingLocationOnly = $('#showBreedingLocationOnlyRadio').is(':checked');
 				ImportCrosses.goBackToPage('#crossSettingsModal', '#openCrossesListModal');
 			});
+	},
+
+	enableDisableBreedingMethodDropdown : function() {
+		var checkboxValue = $('#useSelectedMethodCheckbox').prop('checked');
+		if (checkboxValue) {
+			$('#breedingMethodSelectionDiv').show();
+		} else {
+			$('#breedingMethodSelectionDiv').hide();
+
+			$('#breedingMethodDropdown').select2('val', null);
+		}
 	},
 
 	validateStartingSequenceNumber: function(value) {
@@ -365,12 +379,9 @@ var ImportCrosses = {
 			if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
 				return;
 			}
-		} else {
-			// if automated names generation was selected the breeding method is required
-			if (!settingData.breedingMethodSetting.methodId || settingData.breedingMethodSetting.methodId === '') {
-				showErrorMessage('', $.fieldbookMessages.errorImportMethodRequired);
-				return;
-			}
+		} else if (!settingData.breedingMethodSetting.basedOnStatusOfParentalLines && !settingData.breedingMethodSetting.methodId) {
+			showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
+			return;
 		}
 
 		var targetURL;
@@ -394,6 +405,7 @@ var ImportCrosses = {
 					showErrorMessage('', $.fieldbookMessages.errorImportFailed);
 				} else {
 					$('#crossSettingsModal').modal('hide');
+					selectedBreedingMethodId = 0;
 					if (isUpdateCrossesList.data) {
 						SaveAdvanceList.updateGermplasmList();
 					} else {
@@ -470,7 +482,7 @@ var ImportCrosses = {
 			settingObject.breedingMethodSetting.methodId = null;
 		}
 
-		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').is(':checked');
+		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').prop('checked');
 
 		settingObject.crossNameSetting = {};
 		settingObject.crossNameSetting.prefix = $('#crossPrefix').val();

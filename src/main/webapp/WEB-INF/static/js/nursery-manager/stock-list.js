@@ -331,12 +331,12 @@ if (typeof StockIDFunctions === 'undefined') {
 			if (resp.hasError) {
 				showErrorMessage('', resp.errorMessage);
 			} else {
+                stockListImportNotSaved = true;
 				if(resp.hasConflict){
 					$('.fbk-save-nursery').addClass('fbk-hide');
 					$('.fbk-save-stocklist').removeClass('fbk-hide');
 					$('.fbk-discard-imported-stocklist-data').removeClass('fbk-hide');
 					showAlertMessage('', importStocklistSuccessOverwriteDataWarningToSaveMessage);
-					stockListImportNotSaved = true;
 				}
 				else{
 					showSuccessfulMessage('', 'Import Success');

@@ -142,7 +142,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 			workbook = this.fieldbookMiddlewareService.getCompleteDataset(datasetId, isTrial);
 			this.fieldbookService.setAllPossibleValuesInWorkbook(workbook);
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-					this.ontologyService);
+					this.ontologyService, contextUtil.getCurrentProgramUUID());
 		} catch (MiddlewareException e) {
 			AddOrRemoveTraitsController.LOG.error(e.getMessage(), e);
 		}

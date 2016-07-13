@@ -83,11 +83,8 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 
 					});
 
-					$(document).on(
-						'breeding-method-update',
-						function() {
-							BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(methodSelectID, favoritesCheckboxID,
-								allRadioButtonId, filteredMethodOnlyRadio, methodConversionFunction);
+				$(document).on('breeding-method-update', function() {
+					BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(methodID, methodSelectID, favoritesCheckboxID, favoritesDefault, methodConversionFunction);
 					});
 
 				});

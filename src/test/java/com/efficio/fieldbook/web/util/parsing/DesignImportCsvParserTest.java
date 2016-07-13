@@ -22,11 +22,11 @@ import org.junit.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import au.com.bytecode.opencsv.CSVReader;
-
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 public class DesignImportCsvParserTest extends AbstractBaseIntegrationTest {
 
@@ -52,8 +52,9 @@ public class DesignImportCsvParserTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testParseFile() throws FileParsingException, IOException {
 
-		FileInputStream input = new FileInputStream(csvFile);
-		MultipartFile multiPartFile = new MockMultipartFile("file", csvFile.getName(), "text/plain", IOUtils.toByteArray(input));
+		final FileInputStream input = new FileInputStream(DesignImportCsvParserTest.csvFile);
+		final MultipartFile multiPartFile =
+				new MockMultipartFile("file", DesignImportCsvParserTest.csvFile.getName(), "text/plain", IOUtils.toByteArray(input));
 
 		final DesignImportData result = this.parser.parseFile(multiPartFile);
 
@@ -75,8 +76,9 @@ public class DesignImportCsvParserTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testParseFileInvalidFileFormat() throws FileParsingException, IOException {
 
-		FileInputStream input = new FileInputStream(csvFile);
-		MultipartFile multiPartFile = new MockMultipartFile("file", TEST_FILE_NAME_INVALID, "text/plain", IOUtils.toByteArray(input));
+		final FileInputStream input = new FileInputStream(DesignImportCsvParserTest.csvFile);
+		final MultipartFile multiPartFile =
+				new MockMultipartFile("file", DesignImportCsvParserTest.TEST_FILE_NAME_INVALID, "text/plain", IOUtils.toByteArray(input));
 
 		try {
 			this.parser.parseFile(multiPartFile);
@@ -116,6 +118,12 @@ public class DesignImportCsvParserTest extends AbstractBaseIntegrationTest {
 
 		Assert.assertTrue(!result.getRowDataMap().isEmpty());
 
+	}
+
+	@Test(expected = FileParsingException.class)
+	public void testParseCsvWithEMptyCSVFile() throws FileParsingException {
+		final Map<Integer, List<String>> csvMap = new HashMap<>();
+		this.parser.parseCsvMap(csvMap);
 	}
 
 	@Test

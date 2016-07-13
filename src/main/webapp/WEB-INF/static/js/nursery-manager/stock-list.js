@@ -331,12 +331,12 @@ if (typeof StockIDFunctions === 'undefined') {
 			if (resp.hasError) {
 				showErrorMessage('', resp.errorMessage);
 			} else {
+                stockListImportNotSaved = true;
 				if(resp.hasConflict){
 					$('.fbk-save-nursery').addClass('fbk-hide');
 					$('.fbk-save-stocklist').removeClass('fbk-hide');
 					$('.fbk-discard-imported-stocklist-data').removeClass('fbk-hide');
 					showAlertMessage('', importStocklistSuccessOverwriteDataWarningToSaveMessage);
-					stockListImportNotSaved = true;
 				}
 				else{
 					showSuccessfulMessage('', 'Import Success');
@@ -397,12 +397,18 @@ if (typeof StockIDFunctions === 'undefined') {
 			var entryIds = StockIDFunctions.getSelectedInventoryEntryIds();
 			$('#entryIdList').val(entryIds);
 			if ($('#showFavoriteLocationInventory').is(':checked')) {
-				if ($('#' + getJquerySafeId('inventoryLocationIdFavorite')).select2('data') !== null) {
-					$('#inventoryLocationId').val($('#' + getJquerySafeId('inventoryLocationIdFavorite')).select2('data').id);
+				if ($('#showFavoriteLocationInventory').is(':checked')) {
+					if ($('#' + getJquerySafeId('inventoryLocationIdFavorite')).select2('data') !== null) {
+						$('#inventoryLocationId').val($('#' + getJquerySafeId('inventoryLocationIdFavorite')).select2('data').id);
+					} else if ($('#' + getJquerySafeId('inventoryLocationIdFavoriteSeedStorage')).select2('data') !== null) {
+						$('#inventoryLocationId').val($('#' + getJquerySafeId('inventoryLocationIdFavoriteSeedStorage')).select2('data').id);
+					}
 				}
 			} else {
 				if ($('#' + getJquerySafeId('inventoryLocationIdAll')).select2('data') !== null) {
 					$('#inventoryLocationId').val($('#' + getJquerySafeId('inventoryLocationIdAll')).select2('data').id);
+				}else if ($('#' + getJquerySafeId('inventoryLocationIdSeedStorage')).select2('data') !== null) {
+					$('#inventoryLocationId').val($('#' + getJquerySafeId('inventoryLocationIdSeedStorage')).select2('data').id);
 				}
 			}
 			if ($('#inventoryLocationId').val() === '0' || $('#inventoryLocationId').val() === '') {

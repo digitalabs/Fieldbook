@@ -3,10 +3,10 @@
         <input type="hidden" ui-select2="dropdownOptions" class="form-control select2" ng-model="valuecontainer[targetkey]" value-as-object="false" ng-change="changefunction()" ng-disabled="blockInput"/>
         <div ng-if="isLocation">
             <div class="possibleValuesDiv">
-                <input type="radio" ng-disabled="blockInput"
+                <input type="radio" ng-disabled="blockInput" ng-attr-name="env_location_filter_$parent.$index"
                  ng-model="locationLookup" value="1" ng-change="updateDropdownValuesBreedingLocation()"> &nbsp;
                 <span th:text="#{show.breeding.location}">Breeding locations</span> &nbsp;
-                <input type="radio" ng-disabled="blockInput" 
+                <input type="radio" ng-disabled="blockInput" ng-attr-name="env_location_filter_$parent.$index"
                 ng-model="locationLookup" value="2" ng-change="updateDropdownValuesAllLocation()"> &nbsp;
                 <span th:text="#{show.all.location}">All locations types</span>
             </div>

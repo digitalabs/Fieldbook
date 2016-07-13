@@ -593,7 +593,8 @@ public class CrossingServiceImpl implements CrossingService {
 		return null;
 	}
 
-	@Override public void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList) {
+	@Override
+	public void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList) {
 		final BreedingMethodSetting methodSetting = crossSetting.getBreedingMethodSetting();
 
 		for (ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {

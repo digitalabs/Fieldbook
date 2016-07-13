@@ -26,8 +26,12 @@ public class SettingDetail implements Serializable {
 	private SettingVariable variable;
 	private List<ValueReference> possibleValues;
 	private List<ValueReference> possibleValuesFavorite;
+	private List<ValueReference> allValues;
+	private List<ValueReference> allFavoriteValues;
 	private String possibleValuesJson;
 	private String possibleValuesFavoriteJson;
+	private String allValuesJson;
+	private String allFavoriteValuesJson;
 	private String value;
 	private boolean isDeletable;
 	private boolean isFavorite;
@@ -37,6 +41,7 @@ public class SettingDetail implements Serializable {
 	private PairedVariable pairedVariable;
 	private PhenotypicType role;
 	private VariableType variableType;
+	
 
 	public SettingDetail() {
 		super();
@@ -95,15 +100,15 @@ public class SettingDetail implements Serializable {
 		return this.possibleValuesFavoriteJson;
 	}
 
-	public void setPossibleValuesFavoriteJson(String possibleValuesFavoriteJson) {
+	public void setPossibleValuesFavoriteJson(final String possibleValuesFavoriteJson) {
 		this.possibleValuesFavoriteJson = possibleValuesFavoriteJson;
 	}
 
-	public void setPossibleValuesFavoriteToJson(List<ValueReference> possibleValuesFavorite) {
+	public void setPossibleValuesFavoriteToJson(final List<ValueReference> possibleValuesFavorite) {
 		try {
-			ObjectMapper om = new ObjectMapper();
+			final ObjectMapper om = new ObjectMapper();
 			this.setPossibleValuesFavoriteJson(om.writeValueAsString(possibleValuesFavorite));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			this.setPossibleValuesFavoriteJson("err");
 		}
 	}
@@ -250,5 +255,56 @@ public class SettingDetail implements Serializable {
 		Debug.println(indent + 3, "pairedVariable: " + this.pairedVariable);
 		Debug.println(indent + 3, "role: " + this.role);
 		Debug.println(indent + 3, "variableType: " + this.variableType);
+	}
+
+	public List<ValueReference> getAllValues() {
+		return this.allValues;
+	}
+
+	public void setAllValues(final List<ValueReference> allValues) {
+		this.allValues = allValues;
+	}
+
+	public String getAllValuesJson() {
+		return this.allValuesJson;
+	}
+
+	public void setAllValuesJson(final String allValuesJson) {
+		this.allValuesJson = allValuesJson;
+	}
+
+	public void setAllValuesToJson(final List<ValueReference> allValues) {
+		try {
+			final ObjectMapper om = new ObjectMapper();
+			this.setAllValuesJson(om.writeValueAsString(allValues));
+		} catch (final Exception e) {
+			this.setPossibleValuesFavoriteJson("err");
+		}
+	}
+
+	public List<ValueReference> getAllFavoriteValues() {
+		return this.allFavoriteValues;
+	}
+
+	public void setAllFavoriteValues(final List<ValueReference> allFavoriteValues) {
+		this.allFavoriteValues = allFavoriteValues;
+	}
+
+	public void setAllFavoriteValuesToJson(final List<ValueReference> allFavoriteValuesJson) {
+		try {
+			final ObjectMapper om = new ObjectMapper();
+			this.setAllFavoriteValuesJson(om.writeValueAsString(allFavoriteValuesJson));
+		} catch (final Exception e) {
+			this.setPossibleValuesFavoriteJson("err");
+		}
+
+	}
+
+	public String getAllFavoriteValuesJson() {
+		return this.allFavoriteValuesJson;
+	}
+
+	public void setAllFavoriteValuesJson(final String allFavoriteValuesJson) {
+		this.allFavoriteValuesJson = allFavoriteValuesJson;
 	}
 }

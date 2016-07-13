@@ -207,8 +207,9 @@
 
 			var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
 				{id: '@id'}, {get: {method: 'get', isArray: true}});
-			var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
 
+			var UpdateStartingEntryNoService = $resource('/Fieldbook/TrialManager/GermplasmList/startingEntryNo', {}, {});
+			
 			var service = {
 				// user input data and default values of standard variables
 				currentData: {
@@ -280,6 +281,7 @@
 				},
 				// the data param structures
 				generateExpDesign: function(data) {
+					var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
 					return GenerateExpDesignService.save(data).$promise;
 				},
 
@@ -341,6 +343,7 @@
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
+
 				deleteEnvironment: function(index) {
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;
@@ -354,6 +357,7 @@
 
 					return refreshMeasurementDeferred.promise;
 				},
+
 				reloadMeasurementAjax: function(data) {
 					return $http({
 						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
@@ -363,17 +367,23 @@
 						transformResponse: undefined
 					});
 				},
+
 				indicateUnappliedChangesAvailable: function(displayWarningMessage) {
 					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
 						service.applicationData.unappliedChangesAvailable = true;
 
-						if (displayWarningMessage === 'true' || displayWarningMessage === true) {
+						if (displayWarningMessage === 'true' || displayWarningMessage) {
+							//TODO Localise that message
 							showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
 							'To update the Measurements table, please review your settings and regenerate ' +
 							'the Experimental Design on the next tab', 10000);
 						}
+					}
+				},
 
-						$('body').data('needGenerateExperimentalDesign', '1');
+				warnAboutUnappliedChanges: function() {
+					if (service.applicationData.unappliedChangesAvailable) {
+						showAlertMessage('Unapplied Changes', $.fieldbookMessages.measurementWarningNeedGenExpDesign, 10000);
 					}
 				},
 
@@ -394,7 +404,6 @@
 				clearUnappliedChangesFlag: function() {
 					service.applicationData.unappliedChangesAvailable = false;
 					service.applicationData.unsavedTreatmentFactorsAvailable = false;
-					$('body').data('needGenerateExperimentalDesign', '0');
 				},
 				extractData: extractData,
 				extractSettings: extractSettings,
@@ -416,6 +425,7 @@
 					} else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         // Hide Discard Imported Data button when the user presses Save button
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
+                        stockListImportNotSaved = false;
 						performDataCleanup();
 						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 						var serializedData = (JSON.stringify(columnsOrder));
@@ -569,6 +579,13 @@
 				updateStartingEntryNoCount: function(newCountValue) {
 					service.currentData.experimentalDesign.startingEntryNo = newCountValue;
 					$('body').data('service.currentData.experimentalDesign.startingEntryNo', newCountValue);
+					//check if the starting entry number is a number before calling the resource 
+					//for updating the starting entry number in the server
+					//as the server expects the parameter passed as an Integer
+					//the newCountValue becomes "" or null if the germplasm list is not yet selected for the trial
+					if($.isNumeric(newCountValue)) {
+						UpdateStartingEntryNoService.save(newCountValue);
+					}
 				},
 
 				onUpdateSettings: function(key, updateFunction) {

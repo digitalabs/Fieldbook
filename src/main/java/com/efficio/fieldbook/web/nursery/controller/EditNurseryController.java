@@ -171,7 +171,7 @@ public class EditNurseryController extends SettingsController {
 
 				// measurements part
 				SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-						this.ontologyService);
+						this.ontologyService, contextUtil.getCurrentProgramUUID());
 				this.setMeasurementsData(form, workbook);
 
 				// make factors non-editable if experiments exist already

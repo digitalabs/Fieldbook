@@ -25,7 +25,7 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
  * The Class CreateNurseryForm.
  */
 public class CreateNurseryForm {
-
+	
 	private String experimentTypeId;
 
 	/** The project id. */
@@ -202,6 +202,7 @@ public class CreateNurseryForm {
 
 	private String columnOrders;
 	private Integer germplasmListId;
+
 
 	/**
 	 * Gets the project id.
@@ -1286,4 +1287,5 @@ public class CreateNurseryForm {
 	public Integer getGermplasmListId() {
 		return germplasmListId;
 	}
+
 }

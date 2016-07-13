@@ -405,6 +405,7 @@ var ImportCrosses = {
 					showErrorMessage('', $.fieldbookMessages.errorImportFailed);
 				} else {
 					$('#crossSettingsModal').modal('hide');
+					selectedBreedingMethodId = 0;
 					if (isUpdateCrossesList.data) {
 						SaveAdvanceList.updateGermplasmList();
 					} else {

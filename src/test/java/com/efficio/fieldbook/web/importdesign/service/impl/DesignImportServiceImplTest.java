@@ -8,8 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
+import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
+import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -415,9 +425,9 @@ public class DesignImportServiceImplTest {
 	/**
 	 * This method test the following scenarios: 1. If the number of measurement rows created are the same with the number of rows imported
 	 * from the file 2. If the starting plot no is applied properly for each measurement row created
-	 * 
+	 *
 	 * This service method updates the measurement rows.
-	 * 
+	 *
 	 * NOTE: Trial Instance = Environment
 	 */
 	@Test
@@ -564,7 +574,7 @@ public class DesignImportServiceImplTest {
 		final Scale scale = new Scale();
 		scale.setMaxValue("1");
 		scale.setMinValue("100");
-		Mockito.doReturn(scale).when(this.ontologyScaleDataManager).getScaleById(1, false);
+		Mockito.doReturn(scale).when(this.ontologyScaleDataManager).getScale(1, false);
 	}
 
 	@SuppressWarnings({"unchecked"})

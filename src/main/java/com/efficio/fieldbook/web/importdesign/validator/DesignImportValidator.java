@@ -10,9 +10,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.mysql.jdbc.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -21,13 +26,6 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.manager.ontology.api.OntologyScaleDataManager;
 import org.springframework.context.MessageSource;
-
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.mysql.jdbc.StringUtils;
 
 public class DesignImportValidator {
 
@@ -223,7 +221,7 @@ public class DesignImportValidator {
 	private void validateValuesForNumericalVariables(final Map<Integer, List<String>> csvRowData, final Integer columnIndex,
 			final StandardVariable standardVariable) throws DesignValidationException {
 
-		final Scale numericScale = this.ontologyScaleDataManager.getScaleById(standardVariable.getScale().getId(), false);
+		final Scale numericScale = this.ontologyScaleDataManager.getScale(standardVariable.getScale().getId(), false);
 
 		for (final Map.Entry<Integer, List<String>> row : csvRowData.entrySet()) {
 			final List<String> columnValues = row.getValue();

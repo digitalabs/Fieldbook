@@ -262,11 +262,13 @@ public class ImportGermplasmListController extends SettingsController {
 			this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
 
 			this.updateObservationsFromTemporaryWorkbookToWorkbook(this.userSelection);
+			
+			this.updateToBeDeletedLocationIdsIfExisting(this.userSelection.getTemporaryWorkbook().getToBeDeletedLocationIds(), 
+					this.userSelection.getWorkbook().getToBeDeletedLocationIds());
 
 			this.userSelection.setTemporaryWorkbook(null);
 
 			hasTemporaryWorkbook = true;
-			isDeleteObservations = true;
 
 		}
 
@@ -311,6 +313,12 @@ public class ImportGermplasmListController extends SettingsController {
 				this.userSelection.getWorkbook());
 
 		return Integer.toString(studyId);
+	}
+
+	private void updateToBeDeletedLocationIdsIfExisting(final List<Integer> srcOfToBeDeletedLocationIds, 
+			final List<Integer> destOftoBeDeletedLocationIds) {
+		destOftoBeDeletedLocationIds.clear();
+		destOftoBeDeletedLocationIds.addAll(srcOfToBeDeletedLocationIds);
 	}
 
 	/**

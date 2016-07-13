@@ -164,11 +164,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 			};
 
-			$scope.deleteEnvironment = function(index) {
+			$scope.deleteEnvironment = function(index, locationId) {
 				if (!TrialManagerDataService.isOpenTrial() ||
 						(TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement)) {
 					// For New Trial and Existing Trial w/o measurement data
-					confirmDeleteEnvironment(index);
+					confirmDeleteEnvironment(index, locationId);
 
 				} else if (TrialManagerDataService.trialMeasurement.hasMeasurement) {
 					// For Existing Trial with measurement data
@@ -179,7 +179,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							var warningMessage = 'This environment cannot be removed because it contains measurement data.';
 							showAlertMessage('', warningMessage);
 						} else {
-							confirmDeleteEnvironment(index);
+							confirmDeleteEnvironment(index, locationId);
 						}
 					});
 				}
@@ -252,7 +252,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			}, true);
 
 			/* Controller Utility functions */
-			function confirmDeleteEnvironment(index) {
+			function confirmDeleteEnvironment(index, locationId) {
+				updateToBeDeletedLocationIds(locationId);
 				// Existing Trial with measurement data
 				var modalInstance = $scope.getModalInstance();
 				modalInstance.result.then(function(shouldContinue) {
@@ -260,6 +261,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						updateDeletedEnvironment(index);
 					}
 				});
+			}
+			
+			function updateToBeDeletedLocationIds(locationId) {
+				if(TrialManagerDataService.currentData.environments.toBeDeletedLocationIds === null) {
+					TrialManagerDataService.currentData.environments.toBeDeletedLocationIds = [];
+				}
+				TrialManagerDataService.currentData.environments.toBeDeletedLocationIds.push(locationId);
 			}
 
 			function hasMeasurementDataOnEnvironment(environmentNo) {

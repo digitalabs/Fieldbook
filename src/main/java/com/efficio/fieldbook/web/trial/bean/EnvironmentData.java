@@ -11,6 +11,7 @@ public class EnvironmentData implements TabInfoBean {
 
 	private int noOfEnvironments;
 	private List<Environment> environments;
+	private List<Integer> toBeDeletedLocationIds;
 
 	public EnvironmentData() {
 		this.noOfEnvironments = 0;
@@ -32,4 +33,17 @@ public class EnvironmentData implements TabInfoBean {
 	public void setEnvironments(List<Environment> environments) {
 		this.environments = environments;
 	}
+
+	
+	public List<Integer> getToBeDeletedLocationIds() {
+		return toBeDeletedLocationIds;
+	}
+
+	
+	public void setToBeDeletedLocationIds(List<Integer> toBeDeletedLocationIds) {
+		this.toBeDeletedLocationIds = toBeDeletedLocationIds;
+	}
+	
+	
+	
 }

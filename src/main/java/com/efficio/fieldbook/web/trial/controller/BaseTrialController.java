@@ -104,6 +104,10 @@ public abstract class BaseTrialController extends SettingsController {
 				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			}
 		}
+		if(data.getToBeDeletedLocationIds() != null && !data.getToBeDeletedLocationIds().isEmpty() && 
+				this.userSelection.getTemporaryWorkbook() != null) {
+			this.userSelection.getTemporaryWorkbook().setToBeDeletedLocationIds(data.getToBeDeletedLocationIds());
+		}
 	}
 
 	protected void populateSettingData(final List<SettingDetail> details, final Map<String, String> values) {

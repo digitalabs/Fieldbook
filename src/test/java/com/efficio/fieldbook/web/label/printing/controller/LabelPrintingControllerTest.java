@@ -224,62 +224,68 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 	public void testExportFileInCSVFormat() throws UnsupportedEncodingException {
 		final UserLabelPrinting userLabelPrinting =
 				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
-		final String contentType = "[application/octet-stream;charset=utf-8]";
-		final String contentDisposition = "[attachment; filename=\"" + userLabelPrinting.getFilenameWithExtension()
-				+ "\"; filename*=utf-8''" + userLabelPrinting.getFilenameWithExtension() + "]";
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 		final ResponseEntity<FileSystemResource> reponseEntity =
 				this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
 
+		final String filenameWithExtension = userLabelPrinting.getFilenameWithExtension();
+		final String contentDisposition =
+				"[attachment; filename=\"" + filenameWithExtension + "\"; filename*=utf-8''" + filenameWithExtension + "]";
 		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
 		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition,
 				responseEntityContentDisposition);
+
+		final String contentType = "[application/octet-stream;charset=utf-8]";
 		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
 		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
-		final String reponseEntityFileName = reponseEntity.getBody().getFilename();
-		Assert.assertEquals("The file name should be " + userLabelPrinting.getFilenameWithExtension(),
-				userLabelPrinting.getFilenameWithExtension(), reponseEntityFileName);
+
+		final String responseEntityFileName = reponseEntity.getBody().getFilename();
+		Assert.assertEquals("The file name should be " + filenameWithExtension, filenameWithExtension, responseEntityFileName);
 	}
 
 	@Test
 	public void testExportFileInExcelFormat() throws UnsupportedEncodingException {
 		final UserLabelPrinting userLabelPrinting =
 				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
-		final String contentType = "[application/vnd.ms-excel;charset=utf-8]";
-		final String contentDisposition = "[attachment; filename=\"" + userLabelPrinting.getFilenameWithExtension()
-				+ "\"; filename*=utf-8''" + userLabelPrinting.getFilenameWithExtension() + "]";
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 		final ResponseEntity<FileSystemResource> reponseEntity =
 				this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
 
+		final String filenameWithExtension = userLabelPrinting.getFilenameWithExtension();
+		final String contentDisposition =
+				"[attachment; filename=\"" + filenameWithExtension + "\"; filename*=utf-8''" + filenameWithExtension + "]";
 		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
 		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition,
 				responseEntityContentDisposition);
+
+		final String contentType = "[application/vnd.ms-excel;charset=utf-8]";
 		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
 		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
-		final String reponseEntityFileName = reponseEntity.getBody().getFilename();
-		Assert.assertEquals("The file name should be " + userLabelPrinting.getFilenameWithExtension(),
-				userLabelPrinting.getFilenameWithExtension(), reponseEntityFileName);
+
+		final String responseEntityFileName = reponseEntity.getBody().getFilename();
+		Assert.assertEquals("The file name should be " + filenameWithExtension, filenameWithExtension, responseEntityFileName);
 	}
 
 	@Test
 	public void testExportFileInPDFFormat() throws UnsupportedEncodingException {
 		final UserLabelPrinting userLabelPrinting =
 				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
-		final String contentType = "[application/pdf;charset=utf-8]";
-		final String contentDisposition = "[attachment; filename=\"" + userLabelPrinting.getFilenameWithExtension()
-				+ "\"; filename*=utf-8''" + userLabelPrinting.getFilenameWithExtension() + "]";
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 		final ResponseEntity<FileSystemResource> reponseEntity =
 				this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
 
+		final String filenameWithExtension = userLabelPrinting.getFilenameWithExtension();
+		final String contentDisposition =
+				"[attachment; filename=\"" + filenameWithExtension + "\"; filename*=utf-8''" + filenameWithExtension + "]";
 		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
 		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition,
 				responseEntityContentDisposition);
+
+		final String contentType = "[application/pdf;charset=utf-8]";
 		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
 		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
-		final String reponseEntityFileName = reponseEntity.getBody().getFilename();
-		Assert.assertEquals("The file name should be " + userLabelPrinting.getFilenameWithExtension(),
-				userLabelPrinting.getFilenameWithExtension(), reponseEntityFileName);
+
+		final String responseEntityFileName = reponseEntity.getBody().getFilename();
+		Assert.assertEquals("The file name should be " + filenameWithExtension, filenameWithExtension, responseEntityFileName);
 	}
 }

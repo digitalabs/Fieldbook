@@ -2122,7 +2122,7 @@ function generateGenericLocationSuggestions(genericLocationJson) {
 	});
 	return genericLocationSuggestion;
 }
-function recreateLocationCombo() {
+function recreateLocationCombo(possibleFavorite) {
 	var selectedLocationAll = $('#harvestLocationIdAll').val();
 	var selectedLocationBreeding = $('#harvestLocationIdBreeding').val();
 	var selectedLocationBreedingFavorites = $('#harvestLocationIdBreedingFavorites').val();
@@ -2217,6 +2217,12 @@ function recreateLocationCombo() {
 						}
 						if (createGermplasm) {
 							refreshImportLocationCombo(data);
+						}
+
+					} 
+					if(possibleFavorite === 'showFavoriteLocationInventory'){
+						if(data.allSeedStorageFavoritesLocations.length !== 0){
+							$('#' + possibleFavorite).prop('checked', true);
 						}
 					}
 				} else {

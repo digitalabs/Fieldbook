@@ -10,13 +10,16 @@
 
 package com.efficio.fieldbook.web.label.printing.controller;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.util.AppConstants;
-import net.sf.jasperreports.engine.JRException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -33,16 +36,22 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.util.AppConstants;
+
+import net.sf.jasperreports.engine.JRException;
 
 public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
+	private static final String CONTENT_TYPE = "Content-Type";
+	private static final String CONTENT_DISPOSITION = "Content-Disposition";
 	public static final int SUCCESS_VAL = 1;
 	public static final String TEST_JASPER_REPORT_FILE_TXT = "TEST_JASPER_REPORT_FILE.txt";
 	public static final int SAMPLE_STUDY_ID = 25004;

@@ -171,16 +171,15 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testGetLabelPrintingCustomReportsIfThereIsStudyId() throws MiddlewareQueryException {
-		LabelPrintingController controller = new LabelPrintingController();
 		WorkbenchService workbenchService = Mockito.mock(WorkbenchService.class);
 		Integer studyId = new Integer(3);
 		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 		userLabelPrinting.setStudyId(studyId);
-		controller.setUserLabelPrinting(userLabelPrinting);
-		controller.setWorkbenchService(workbenchService);
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+		this.labelPrintingController.setWorkbenchService(workbenchService);
 		CrossExpansionProperties crossExpansionProperties = new CrossExpansionProperties();
 		crossExpansionProperties.setProfile("Cimmyt");
-		controller.setCrossExpansionProperties(crossExpansionProperties);
+		this.labelPrintingController.setCrossExpansionProperties(crossExpansionProperties);
 		List<StandardPreset> standardPresets = new ArrayList<StandardPreset>();
 		StandardPreset preset = new StandardPreset();
 		preset.setConfiguration(
@@ -197,21 +196,20 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		cropType.setCropName("Test");
 		project.setCropType(cropType);
 		Mockito.when(contextUtil.getProjectInContext()).thenReturn(project);
-		controller.setContextUtil(contextUtil);
-		List<CustomReportType> presets = controller.getLabelPrintingCustomReports();
+		this.labelPrintingController.setContextUtil(contextUtil);
+		List<CustomReportType> presets = this.labelPrintingController.getLabelPrintingCustomReports();
 		Assert.assertEquals("Should return 2 presets since there is a study", 2, presets.size());
 	}
 
 	@Test
 	public void testGetLabelPrintingCustomReportsIfThereIsNoStudyId() throws MiddlewareQueryException {
-		LabelPrintingController controller = new LabelPrintingController();
 		WorkbenchService workbenchService = Mockito.mock(WorkbenchService.class);
 		Integer studyId = null;
 		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 		userLabelPrinting.setStudyId(studyId);
-		controller.setUserLabelPrinting(userLabelPrinting);
-		controller.setWorkbenchService(workbenchService);
-		List<CustomReportType> presets = controller.getLabelPrintingCustomReports();
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+		this.labelPrintingController.setWorkbenchService(workbenchService);
+		List<CustomReportType> presets = this.labelPrintingController.getLabelPrintingCustomReports();
 		Assert.assertEquals("Should return no preset since there is not study", 0, presets.size());
 	}
 }

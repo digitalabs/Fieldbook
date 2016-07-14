@@ -122,21 +122,21 @@ public class LabelPrintingDataUtil {
 			userLabelPrinting.setRightSelectedLabelFields(LabelPrintingDataUtil.RIGHT_LABEL_FIELDS);
 			userLabelPrinting.setMainSelectedLabelFields("");
 
-			userLabelPrinting.setFilenameDL(LabelPrintingDataUtil.FILE_NAME_DL_PDF);
+			userLabelPrinting.setFilenameWithExtention(LabelPrintingDataUtil.FILE_NAME_DL_PDF);
 			userLabelPrinting.setFilenameDLLocation(LabelPrintingDataUtil.FILE_NAME_DDL_PDF);
 		} else if (type.equals(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
 			userLabelPrinting.setLeftSelectedLabelFields("");
 			userLabelPrinting.setRightSelectedLabelFields("");
 			userLabelPrinting.setMainSelectedLabelFields(LabelPrintingDataUtil.MAIN_LABEL_FIELDS);
 
-			userLabelPrinting.setFilenameDL(LabelPrintingDataUtil.FILE_NAME_DL_XLS);
+			userLabelPrinting.setFilenameWithExtention(LabelPrintingDataUtil.FILE_NAME_DL_XLS);
 			userLabelPrinting.setFilenameDLLocation(LabelPrintingDataUtil.FILE_NAME_DDL_XLS);
 		} else {
 			userLabelPrinting.setLeftSelectedLabelFields("");
 			userLabelPrinting.setRightSelectedLabelFields("");
 			userLabelPrinting.setMainSelectedLabelFields(LabelPrintingDataUtil.MAIN_LABEL_FIELDS);
 
-			userLabelPrinting.setFilenameDL(LabelPrintingDataUtil.FILE_NAME_DL_CSV);
+			userLabelPrinting.setFilenameWithExtention(LabelPrintingDataUtil.FILE_NAME_DL_CSV);
 			userLabelPrinting.setFilenameDLLocation(LabelPrintingDataUtil.FILE_NAME_DDL_CSV);
 		}
 

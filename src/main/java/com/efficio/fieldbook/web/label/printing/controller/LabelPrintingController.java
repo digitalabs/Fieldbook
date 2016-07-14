@@ -403,7 +403,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
 	public ResponseEntity<FileSystemResource> exportFile(HttpServletRequest req) throws UnsupportedEncodingException {
 
-		String filename = this.userLabelPrinting.getFilenameDL();
+		String filename = this.userLabelPrinting.getFilenameWithExtension();
 		String absoluteLocation = this.userLabelPrinting.getFilenameDLLocation();
 		
 		return FieldbookUtil.createResponseEntityForFileDownload(absoluteLocation, filename);
@@ -785,7 +785,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		fileName = FileUtils.sanitizeFileName(fileName);
 		String fileNameLocation = this.fieldbookProperties.getUploadDirectory() + File.separator + fileName;
 
-		this.userLabelPrinting.setFilenameDL(fileName);
+		this.userLabelPrinting.setFilenameWithExtention(fileName);
 		this.userLabelPrinting.setFilenameDLLocation(fileNameLocation);
 		return fileName;
 	}

@@ -98,7 +98,7 @@ public class LabelPrintingDataUtil {
 		return fieldMapInfoList;
 	}
 	
-	public static UserLabelPrinting createUserLabelPrintingWithFileName(final String filenameWithExtension, final String type) {
+	public static UserLabelPrinting createUserLabelPrinting(final String filenameWithExtension, final String type) {
 		final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(type);
 		userLabelPrinting.setFilenameWithExtention(filenameWithExtension);
 		userLabelPrinting.setFilenameDLLocation("C://tmp/" + filenameWithExtension);

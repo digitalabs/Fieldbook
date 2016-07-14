@@ -41,6 +41,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
@@ -50,8 +51,6 @@ import net.sf.jasperreports.engine.JRException;
 
 public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
-	private static final String CONTENT_TYPE = "Content-Type";
-	private static final String CONTENT_DISPOSITION = "Content-Disposition";
 	public static final int SUCCESS_VAL = 1;
 	public static final String TEST_JASPER_REPORT_FILE_TXT = "TEST_JASPER_REPORT_FILE.txt";
 	public static final int SAMPLE_STUDY_ID = 25004;
@@ -224,9 +223,9 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 		ResponseEntity<FileSystemResource> reponseEntity = this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
 		
-		final String responseEntityContentDisposition  = reponseEntity.getHeaders().get(CONTENT_DISPOSITION).toString();
+		final String responseEntityContentDisposition  = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
 		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition, responseEntityContentDisposition);
-		final String responseEntityContentType = reponseEntity.getHeaders().get(CONTENT_TYPE).toString();
+		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
 		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
 		final String reponseEntityFileName = reponseEntity.getBody().getFilename();
 		Assert.assertEquals("The file name should be " + filename, filename, reponseEntityFileName);
@@ -243,9 +242,9 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 		ResponseEntity<FileSystemResource> reponseEntity = this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
 		
-		final String responseEntityContentDisposition  = reponseEntity.getHeaders().get(CONTENT_DISPOSITION).toString();
+		final String responseEntityContentDisposition  = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
 		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition, responseEntityContentDisposition);
-		final String responseEntityContentType = reponseEntity.getHeaders().get(CONTENT_TYPE).toString();
+		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
 		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
 		final String reponseEntityFileName = reponseEntity.getBody().getFilename();
 		Assert.assertEquals("The file name should be " + filename, filename, reponseEntityFileName);
@@ -262,9 +261,9 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 		ResponseEntity<FileSystemResource> reponseEntity = this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
 		
-		final String responseEntityContentDisposition  = reponseEntity.getHeaders().get(CONTENT_DISPOSITION).toString();
+		final String responseEntityContentDisposition  = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
 		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition, responseEntityContentDisposition);
-		final String responseEntityContentType = reponseEntity.getHeaders().get(CONTENT_TYPE).toString();
+		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
 		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
 		final String reponseEntityFileName = reponseEntity.getBody().getFilename();
 		Assert.assertEquals("The file name should be " + filename, filename, reponseEntityFileName);

@@ -22,12 +22,6 @@ import junit.framework.Assert;
 
 public class FieldbookUtilTest {
 
-	private static final String TEST_FILE_NAME = "test.xls";
-	private static final String USER_AGENT_INTERNET_EXLORER =
-			"Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0;  rv:11.0) like Gecko";
-	private static final String USER_AGENT_CHROME =
-			"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
-
 	@Test
 	public void testGetColumnOrderListIfThereAreParameters() {
 		String columnOrderDelimited = "[\"1100\", \"1900\"]";

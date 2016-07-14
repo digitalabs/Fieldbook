@@ -562,13 +562,7 @@ $(document).ready(function() {
 			checkFavoritesIfValIsAFavorite(select2Index);
 		});
 	}
-	//method checkbox selection
-	if ($.parseJSON($('#possibleValuesFavoriteJson0').text()).length > 1) {
-		$('.study-level-method-checkbox').click();
-	}
-	else{
-		$('.study-level-method-checkbox').prop( 'checked', false );
-	}
+	checkMethodFavorite();
 	checkNurseryIfShowRemoveVariableLinks();
 	$('.remove-btn').on('click', function() {
 		var sectionDiv = $(this).data('section');

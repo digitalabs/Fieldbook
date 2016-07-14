@@ -98,13 +98,6 @@ public class LabelPrintingDataUtil {
 		return fieldMapInfoList;
 	}
 	
-	public static UserLabelPrinting createUserLabelPrinting(final String filenameWithExtension, final String type) {
-		final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(type);
-		userLabelPrinting.setFilenameWithExtention(filenameWithExtension);
-		userLabelPrinting.setFilenameDLLocation("C://tmp/" + filenameWithExtension);
-		return userLabelPrinting;
-	}
-	
 	public static UserLabelPrinting createUserLabelPrinting(final String type) {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 

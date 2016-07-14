@@ -223,7 +223,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testExportFileInCSVFormat() throws UnsupportedEncodingException {
 		final UserLabelPrinting userLabelPrinting =
-				LabelPrintingDataUtil.createUserLabelPrinting("filename.csv", AppConstants.LABEL_PRINTING_CSV.getString());
+				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
 		final String contentType = "[application/octet-stream;charset=utf-8]";
 		final String contentDisposition = "[attachment; filename=\"" + userLabelPrinting.getFilenameWithExtension()
 				+ "\"; filename*=utf-8''" + userLabelPrinting.getFilenameWithExtension() + "]";
@@ -244,7 +244,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testExportFileInExcelFormat() throws UnsupportedEncodingException {
 		final UserLabelPrinting userLabelPrinting =
-				LabelPrintingDataUtil.createUserLabelPrinting("filename.xls", AppConstants.LABEL_PRINTING_EXCEL.getString());
+				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
 		final String contentType = "[application/vnd.ms-excel;charset=utf-8]";
 		final String contentDisposition = "[attachment; filename=\"" + userLabelPrinting.getFilenameWithExtension()
 				+ "\"; filename*=utf-8''" + userLabelPrinting.getFilenameWithExtension() + "]";
@@ -265,7 +265,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testExportFileInPDFFormat() throws UnsupportedEncodingException {
 		final UserLabelPrinting userLabelPrinting =
-				LabelPrintingDataUtil.createUserLabelPrinting("filename.pdf", AppConstants.LABEL_PRINTING_PDF.getString());
+				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
 		final String contentType = "[application/pdf;charset=utf-8]";
 		final String contentDisposition = "[attachment; filename=\"" + userLabelPrinting.getFilenameWithExtension()
 				+ "\"; filename*=utf-8''" + userLabelPrinting.getFilenameWithExtension() + "]";

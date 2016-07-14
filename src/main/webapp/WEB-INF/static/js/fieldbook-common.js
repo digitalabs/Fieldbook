@@ -2176,9 +2176,22 @@ function recreateLocationCombo(possibleFavorite) {
 						showCorrectLocationInventoryCombo();
 						// set previously selected value of location
 						if ($('#showFavoriteLocationInventory').prop('checked')) {
-							setComboValues(generateGenericLocationSuggestions(data.favoriteLocations), $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
+							if ($('#showSeedStorageLocationInventory').prop('checked')) {
+								setComboValues(generateGenericLocationSuggestions(data.allSeedStorageFavoritesLocations), $(
+									'#inventoryLocationIdFavoriteSeedStorage').val(), 'inventoryLocationIdFavoriteSeedStorage');
+							} else {
+								setComboValues(generateGenericLocationSuggestions(data.favoriteLocations),
+									$('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
+							}
 						} else {
-							setComboValues(generateGenericLocationSuggestions(data.allLocations), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
+							if ($('#showSeedStorageLocationInventory').prop('checked')) {
+								setComboValues(generateGenericLocationSuggestions(data.allSeedStorageLocations), $(
+									'#inventoryLocationIdSeedStorage').val(), 'inventoryLocationIdSeedStorage');
+							} else {
+								setComboValues(generateGenericLocationSuggestions(data.allLocations), $('#inventoryLocationIdAll').val(),
+									'inventoryLocationIdAll');
+
+							}
 						}
 						refreshLocationComboInSettings(data);
 					} else if (advancePopup === true

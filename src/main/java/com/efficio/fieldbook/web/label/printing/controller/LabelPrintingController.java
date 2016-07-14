@@ -783,7 +783,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		fileName = FileUtils.sanitizeFileName(fileName);
 		final String fileNameLocation = this.fieldbookProperties.getUploadDirectory() + File.separator + fileName;
 
-		this.userLabelPrinting.setFilenameWithExtention(fileName);
+		this.userLabelPrinting.setFilenameWithExtension(fileName);
 		this.userLabelPrinting.setFilenameDLLocation(fileNameLocation);
 		return fileName;
 	}

@@ -142,7 +142,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param filenameWithExtension the new filename with extension
 	 */
-	public void setFilenameWithExtention(String filenameWithExtension) {
+	public void setFilenameWithExtension(String filenameWithExtension) {
 		this.filenameWithExtension = filenameWithExtension;
 	}
 

@@ -2160,7 +2160,9 @@ function recreateLocationCombo(possibleFavorite) {
 			type: 'GET',
 			cache: false,
 			data: '',
-			async: false,
+			async: true, // FIXME popup should be open for $.show() to work 
+						 // Refactor, move logic of showing to when 
+						 // the popup is already open if ajax should be sync
 			success: function(data) {
 				if (data.success == '1') {
 					if (createGermplasmOpened) {
@@ -2183,6 +2185,11 @@ function recreateLocationCombo(possibleFavorite) {
 						|| selectedLocationAll != null) {
 						// recreate the select2 combos to get updated list
 						// of locations
+
+						if (data.allBreedingFavoritesLocations && data.allBreedingFavoritesLocations.length > 0) {
+							$('#showFavoriteLocation').prop('checked', true);
+						}
+
 						recreateLocationComboAfterClose('harvestLocationIdAll', data.allLocations);
 						recreateLocationComboAfterClose('harvestLocationIdBreeding', data.allBreedingLocations);
 						recreateLocationComboAfterClose('harvestLocationIdBreedingFavorites', data.allBreedingFavoritesLocations);

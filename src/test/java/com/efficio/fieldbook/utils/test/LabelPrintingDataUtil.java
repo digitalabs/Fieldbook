@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -25,6 +24,7 @@ import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.google.common.collect.Maps;
 
 /**
  * The Class SettingsUtil.
@@ -97,7 +97,14 @@ public class LabelPrintingDataUtil {
 
 		return fieldMapInfoList;
 	}
-
+	
+	public static UserLabelPrinting createUserLabelPrintingWithFileName(final String filenameWithExtension, final String type) {
+		final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(type);
+		userLabelPrinting.setFilenameWithExtention(filenameWithExtension);
+		userLabelPrinting.setFilenameDLLocation("C://tmp/" + filenameWithExtension);
+		return userLabelPrinting;
+	}
+	
 	public static UserLabelPrinting createUserLabelPrinting(final String type) {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 

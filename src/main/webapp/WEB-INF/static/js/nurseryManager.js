@@ -1876,6 +1876,11 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 				if (selectedMethodAll != null) {
 					// recreate the select2 combos to get updated list of
 					// methods
+				
+					if (data.favoriteNonGenerativeMethods && data.favoriteNonGenerativeMethods.length > 0) {
+						$('#showFavoriteMethod').prop('checked', true);
+					}
+
 					recreateMethodComboAfterClose('methodIdAll', data.allMethods);
 					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteMethods);
 					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenance', data.allNonGenerativeMethods);

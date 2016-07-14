@@ -338,6 +338,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private void applyNamingSettingToCrosses(final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			final GermplasmList germplasmList, final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList)
 			throws RuleException {
+
+		// before continuing processing of the crosses, we process the breeding method to be used for each imported cross
+		// so that the correct information is available for further operations
+		this.crossingService.processCrossBreedingMethod(crossSetting, importedCrossesList);
+
 		if (crossSetting.isUseManualSettingsForNaming()) {
 			// this line of code is where the creation of new germplasm takes place
 			this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
@@ -357,41 +362,41 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			throws RuleException {
 
 		// TODO REFACTOR THIS
-		if (setting.getBreedingMethodSetting().getMethodId() != null) {
-			final AdvancingSourceList list = new AdvancingSourceList();
-			final List<AdvancingSource> rows = new ArrayList<>();
 
-			final List<Integer> gids = new ArrayList<>();
-			final List<ImportedCrosses> importedCrosses = importedCrossesList.getImportedCrosses();
-			for (final ImportedCrosses cross : importedCrosses) {
-				final Name name = new Name();
-				name.setNstat(1);
-				name.setNval(cross.getCross());
-				final List<Name> names = new ArrayList<>();
-				names.add(name);
-				cross.setNames(names);
-				final AdvancingSource advancingSource = new AdvancingSource(cross);
-				//TODO add trail instance number
-				advancingSource.setConditions(this.userSelection.getWorkbook().getConditions());
-				advancingSource.setStudyType(this.userSelection.getWorkbook().getStudyDetails().getStudyType());
-				rows.add(advancingSource);
-				if (cross.getGid() != null && NumberUtils.isNumber(cross.getGid())) {
-					gids.add(Integer.valueOf(cross.getGid()));
-				}
+		final AdvancingSourceList list = new AdvancingSourceList();
+		final List<AdvancingSource> rows = new ArrayList<>();
+
+		final List<Integer> gids = new ArrayList<>();
+		final List<ImportedCrosses> importedCrosses = importedCrossesList.getImportedCrosses();
+		for (final ImportedCrosses cross : importedCrosses) {
+			final Name name = new Name();
+			name.setNstat(1);
+			name.setNval(cross.getCross());
+			final List<Name> names = new ArrayList<>();
+			names.add(name);
+			cross.setNames(names);
+			final AdvancingSource advancingSource = new AdvancingSource(cross);
+			//TODO add trail instance number
+			advancingSource.setConditions(this.userSelection.getWorkbook().getConditions());
+			advancingSource.setStudyType(this.userSelection.getWorkbook().getStudyDetails().getStudyType());
+			advancingSource.setBreedingMethodId(cross.getBreedingMethodId());
+			rows.add(advancingSource);
+			if (cross.getGid() != null && NumberUtils.isNumber(cross.getGid())) {
+				gids.add(Integer.valueOf(cross.getGid()));
 			}
-
-			list.setRows(rows);
-
-			final AdvancingNursery advancingParameters = new AdvancingNursery();
-			advancingParameters.setBreedingMethodId(Integer.toString(setting.getBreedingMethodSetting().getMethodId()));
-			advancingParameters.setCheckAdvanceLinesUnique(true);
-			final List<ImportedCrosses> crosses =
-					this.namingConventionService.generateCrossesList(importedCrosses, list, advancingParameters,
-							this.userSelection.getWorkbook(), gids);
-
-			importedCrossesList.setImportedGermplasms(crosses);
-			this.userSelection.setImportedCrossesList(importedCrossesList);
 		}
+
+		list.setRows(rows);
+
+		final AdvancingNursery advancingParameters = new AdvancingNursery();
+
+		advancingParameters.setCheckAdvanceLinesUnique(true);
+		final List<ImportedCrosses> crosses = this.namingConventionService
+				.generateCrossesList(importedCrosses, list, advancingParameters, this.userSelection.getWorkbook(), gids);
+
+		importedCrossesList.setImportedGermplasms(crosses);
+		this.userSelection.setImportedCrossesList(importedCrossesList);
+
 		return importedCrossesList;
 	}
 
@@ -539,7 +544,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource, designation, groupName,
 							listDataStatus, localRecordId);
 
-			listDataItems.add(new ImmutablePair<Germplasm, GermplasmListData>(germplasm, listData));
+			listDataItems.add(new ImmutablePair<>(germplasm, listData));
 		}
 	}
 
@@ -633,7 +638,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource, designation, groupName,
 							listDataStatus, localRecordId);
 
-			listDataItems.add(new ImmutablePair<Germplasm, GermplasmListData>(germplasm, listData));
+			listDataItems.add(new ImmutablePair<>(germplasm, listData));
 
 			List<Attribute> attributesPerGermplasm = Lists.newArrayList();
 			// Add the seed source/origin attribute (which is generated based on format strings configured in crossing.properties) to the
@@ -712,7 +717,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitGermplasmTree/{isFolderOnly}", method = RequestMethod.GET)
 	public String loadInitialGermplasmTree(@PathVariable final String isFolderOnly) {
 		try {
-			final List<TreeNode> rootNodes = new ArrayList<TreeNode>();
+			final List<TreeNode> rootNodes = new ArrayList<>();
 			rootNodes.add(new TreeNode(GermplasmTreeController.LISTS, AppConstants.LISTS.getString(), true, "lead",
 					AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID()));
 			return TreeViewUtil.convertTreeViewToJson(rootNodes);
@@ -732,7 +737,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitGermplasmTreeTable", method = RequestMethod.GET)
 	public String loadInitialGermplasmTreeTable(final Model model) {
 		try {
-			final List<TreeTableNode> rootNodes = new ArrayList<TreeTableNode>();
+			final List<TreeTableNode> rootNodes = new ArrayList<>();
 			final TreeTableNode localNode =
 					new TreeTableNode(GermplasmTreeController.LISTS, AppConstants.LISTS.getString(), null, null, null, null, "1");
 			rootNodes.add(localNode);
@@ -750,7 +755,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	protected List<GermplasmList> getGermplasmListChildren(final String id, final String programUUID) {
-		List<GermplasmList> children = new ArrayList<GermplasmList>();
+		List<GermplasmList> children = new ArrayList<>();
 		if (GermplasmTreeController.LISTS.equals(id)) {
 			children = this.germplasmListManager.getAllTopLevelListsBatched(programUUID, GermplasmTreeController.BATCH_SIZE);
 		} else if (NumberUtils.isNumber(id)) {
@@ -775,7 +780,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	protected List<TreeTableNode> getGermplasmListFolderChildNodes(final String id, final String programUUID) {
-		List<TreeTableNode> childNodes = new ArrayList<TreeTableNode>();
+		List<TreeTableNode> childNodes = new ArrayList<>();
 		if (id != null && !"".equals(id)) {
 			childNodes = this.getGermplasmFolderChildrenNode(id, programUUID);
 			for (final TreeTableNode newNode : childNodes) {
@@ -787,7 +792,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	private List<TreeNode> getGermplasmChildNodes(final String parentKey, final boolean isFolderOnly, final String programUUID) {
-		List<TreeNode> childNodes = new ArrayList<TreeNode>();
+		List<TreeNode> childNodes = new ArrayList<>();
 		if (parentKey != null && !"".equals(parentKey)) {
 			try {
 				if (GermplasmTreeController.LISTS.equals(parentKey)) {
@@ -817,7 +822,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	private List<TreeNode> getGermplasmChildrenNode(final String parentKey, final boolean isFolderOnly, final String programUUID) {
-		List<TreeNode> childNodes = new ArrayList<TreeNode>();
+		List<TreeNode> childNodes;
 		final int parentId = Integer.valueOf(parentKey);
 		final List<GermplasmList> childLists =
 				this.germplasmListManager
@@ -838,7 +843,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/germplasm/list/header/details/{listId}", method = RequestMethod.GET)
 	public Map<String, Object> getGermplasmListHeaderDetails(@PathVariable final int listId) {
-		final Map<String, Object> dataResults = new HashMap<String, Object>();
+		final Map<String, Object> dataResults = new HashMap<>();
 		try {
 			final GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 			dataResults.put("name", germplasmList.getName());
@@ -945,11 +950,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	protected boolean isSimilarToRootFolderName(final String itemName) {
-		if (itemName.equalsIgnoreCase(AppConstants.LISTS.getString())) {
-			return true;
-		}
+		return itemName.equalsIgnoreCase(AppConstants.LISTS.getString());
 
-		return false;
 	}
 
 	@ResponseBody
@@ -1014,7 +1016,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/renameGermplasmFolder", method = RequestMethod.POST)
 	public Map<String, Object> renameStudyFolder(final HttpServletRequest req) {
-		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Map<String, Object> resultsMap = new HashMap<>();
 		final String newName = req.getParameter("newFolderName");
 		final String folderId = req.getParameter("folderId");
 
@@ -1093,7 +1095,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/save/state/{type}")
 	public String saveTreeState(@PathVariable final String type, @RequestParam(value = "expandedNodes[]") final String[] expandedNodes) {
 		GermplasmTreeController.LOG.debug("Save the debug nodes");
-		final List<String> states = new ArrayList<String>();
+		final List<String> states = new ArrayList<>();
 		String status = "OK";
 		try {
 			if (!GermplasmTreeController.NODE_NONE.equalsIgnoreCase(expandedNodes[0])) {

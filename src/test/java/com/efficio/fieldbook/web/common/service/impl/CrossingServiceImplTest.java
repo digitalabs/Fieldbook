@@ -28,21 +28,28 @@ import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.exceptions.verification.NeverWantedButInvoked;
-import org.mockito.exceptions.verification.TooLittleActualInvocations;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CrossingServiceImplTest {
 
-	private static final int BREEDING_METHOD_ID = 1;
+    private static final int BREEDING_METHOD_ID = 1;
 	private static final String SAVED_CROSSES_GID1 = "-9999";
 	private static final String SAVED_CROSSES_GID2 = "-8888";
 	private static final Integer USER_ID = 123;
-	private CrossingServiceImpl crossingService;
-	private ImportedCrossesList importedCrossesList;
+	public static final String TEST_BREEDING_METHOD_CODE = "GEN";
+	public static final Integer TEST_BREEDING_METHOD_ID = 5;
+    public static final String TEST_FEMALE_GID_1 = "12345";
+    public static final String TEST_MALE_GID_1 = "54321";
+    public static final String TEST_FEMALE_GID_2 = "9999";
+    public static final String TEST_MALE_GID_2 = "8888";
+
+    private ImportedCrossesList importedCrossesList;
 
 	@Mock
 	private GermplasmListManager germplasmListManager;
@@ -59,22 +66,17 @@ public class CrossingServiceImplTest {
 	@Mock
 	private SeedSourceGenerator seedSourceGenertor;
 
+	@InjectMocks
+	private CrossingServiceImpl crossingService;
+
 	private CrossSetting crossSetting;
 
 	@Before
 	public void setUp() throws MiddlewareQueryException {
 
-		MockitoAnnotations.initMocks(this);
-
 		this.importedCrossesList = this.createImportedCrossesList();
 		this.importedCrossesList.setImportedGermplasms(this.createImportedCrosses());
 
-		this.crossingService = Mockito.spy(new CrossingServiceImpl());
-		this.crossingService.setGermplasmListManager(this.germplasmListManager);
-		this.crossingService.setGermplasmDataManager(this.germplasmDataManager);
-		this.crossingService.setCrossExpansionProperties(this.crossExpansionProperties);
-		this.crossingService.setContextUtil(this.contextUtil);
-		this.crossingService.setSeedSourceGenerator(this.seedSourceGenertor);
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
@@ -99,10 +101,83 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
+	public void testProcessCrossBreedingMethodCodeAlreadyAvailable() {
+		final List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
+
+		// we modify the data such that one of the entries already have a raw breeding method code (i.e., from import file)
+		crosses.get(0).setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
+		final Method method = new Method(TEST_BREEDING_METHOD_ID);
+		Mockito.doReturn(method).when(this.germplasmDataManager).getMethodByCode(TEST_BREEDING_METHOD_CODE);
+
+		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+
+		Assert.assertEquals("Raw breeding method codes after processing should resolve to breeding method IDs in the imported cross",
+				TEST_BREEDING_METHOD_ID, crosses.get(0).getBreedingMethodId());
+	}
+
+	@Test
+	public void testProcessCrossBreedingMethodIDAlreadyAvailable() {
+
+		final List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
+
+		// we provide breeding method ID values to the objects to simulate input
+        // we start from 1, because a breeding method ID of 0 is not considered a proper value
+		int i = 1;
+		for (final ImportedCrosses cross : crosses) {
+			cross.setBreedingMethodId(i++);
+		}
+
+		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+
+		// we verify that the breeding method IDs have not changed from the original processing
+		i = 1;
+		for (final ImportedCrosses cross : crosses) {
+			Assert.assertEquals("Breeding method ID should not be overridden if it is already present in the imported cross info", i, cross.getBreedingMethodId().intValue());
+            i++;
+		}
+	}
+
+    @Test
+    public void testProcessCrossBreedingMethodUseSetting() {
+        this.crossSetting.getBreedingMethodSetting().setMethodId(TEST_BREEDING_METHOD_ID);
+
+        this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+
+        for (final ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
+            Assert.assertEquals("User provided breeding method must be applied to all objects", TEST_BREEDING_METHOD_ID, importedCrosses.getBreedingMethodId());
+        }
+    }
+
+    @Test
+    public void testProcessCrossBreedingMethodNoSetting() {
+        this.crossSetting.getBreedingMethodSetting().setMethodId(null);
+        this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+
+        setupMockCallsForGermplasm(Integer.parseInt(TEST_FEMALE_GID_1));
+        setupMockCallsForGermplasm(Integer.parseInt(TEST_MALE_GID_1));
+        setupMockCallsForGermplasm(Integer.parseInt(TEST_FEMALE_GID_2));
+        setupMockCallsForGermplasm(Integer.parseInt(TEST_MALE_GID_2));
+
+        for (final ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
+            Assert.assertNotNull("A method based on parental lines must be assigned to germplasms if user does not select a breeding method", importedCrosses.getBreedingMethodId());
+            Assert.assertNotSame("A method based on parental lines must be assigned to germplasms if user does not select a breeding method", 0, importedCrosses.getBreedingMethodId());
+        }
+    }
+
+    void setupMockCallsForGermplasm(final Integer gid) {
+        final Germplasm germplasm = new Germplasm(gid);
+        germplasm.setGnpgs(-1);
+        Mockito.doReturn(germplasm).when(this.germplasmDataManager).getGermplasmByGID(gid);
+
+
+    }
+
+
+	@Test
 	public void testApplyCrossSetting() throws MiddlewareQueryException {
 
 		final CrossNameSetting crossNameSetting = this.crossSetting.getCrossNameSetting();
-
+		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, null);
 
 		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
@@ -154,63 +229,44 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToTrue() {
 		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
-		Mockito.doReturn(germplasmPairs)
-				.when(this.crossingService)
-				.generateGermplasmNamePairs(this.crossSetting, this.importedCrossesList.getImportedCrosses(),
-						CrossingServiceImplTest.USER_ID, this.importedCrossesList.hasPlotDuplicate());
 
 		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
 		savedGermplasmIds.add(1);
 		savedGermplasmIds.add(2);
 		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
-
-		Mockito.doNothing().when(this.crossingService)
-				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);
 
 		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
 		crossNameSetting.setSaveParentageDesignationAsAString(true);
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
+		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 		this.crossingService
 				.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
 
-		try {
-			Mockito.verify(this.crossingService, Mockito.times(1)).savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds,
-					this.crossSetting);
-		} catch (final TooLittleActualInvocations e) {
-			Assert.fail("Expecting to save parentage designation names but didn't.");
-		}
+		// TODO prepare descriptive messages for verification failure once Mockito has stable 2.0 version
+		Mockito.verify(this.germplasmDataManager, Mockito.atLeastOnce()).addGermplasmName(Mockito.any(List.class));
+
 	}
 
 	@Test
 	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToFalse() {
 		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
-		Mockito.doReturn(germplasmPairs)
-				.when(this.crossingService)
-				.generateGermplasmNamePairs(this.crossSetting, this.importedCrossesList.getImportedCrosses(),
-						CrossingServiceImplTest.USER_ID, this.importedCrossesList.hasPlotDuplicate());
 
 		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
 		savedGermplasmIds.add(1);
 		savedGermplasmIds.add(2);
 		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
 
-		Mockito.doNothing().when(this.crossingService)
-				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);
-
 		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
 		crossNameSetting.setSaveParentageDesignationAsAString(false);
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
+		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 		this.crossingService
 				.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
 
-		try {
-			Mockito.verify(this.crossingService, Mockito.times(0)).savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds,
-					this.crossSetting);
-		} catch (final NeverWantedButInvoked e) {
-			Assert.fail("Expecting to NOT save parentage designation names but didn't.");
-		}
+		Mockito.verify(this.germplasmDataManager, Mockito.never()).addGermplasmName(Mockito.anyList());
+
 	}
 
 	@Test
@@ -495,17 +551,17 @@ public class CrossingServiceImplTest {
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 		final ImportedCrosses cross = new ImportedCrosses();
 		cross.setFemaleDesig("FEMALE-12345");
-		cross.setFemaleGid("12345");
+		cross.setFemaleGid(TEST_FEMALE_GID_1);
 		cross.setMaleDesig("MALE-54321");
-		cross.setMaleGid("54321");
+		cross.setMaleGid(TEST_MALE_GID_1);
 		cross.setCross("CROSS");
 		cross.setSource("MALE:1:FEMALE:1");
 		importedCrosses.add(cross);
 		final ImportedCrosses cross2 = new ImportedCrosses();
 		cross2.setFemaleDesig("FEMALE-9999");
-		cross2.setFemaleGid("9999");
+		cross2.setFemaleGid(TEST_FEMALE_GID_2);
 		cross2.setMaleDesig("MALE-8888");
-		cross2.setMaleGid("8888");
+		cross2.setMaleGid(TEST_MALE_GID_2);
 		cross2.setCross("CROSS");
 		cross2.setSource("MALE:2:FEMALE:2");
 		importedCrosses.add(cross2);

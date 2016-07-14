@@ -2092,7 +2092,7 @@ function discardImportedStockList(){
 
 function checkFavoritesIfValIsAFavorite(rowIndex) {
 	'use strict';
-
+	
 	var valueOfDropdown = parseInt($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).val(), 10);
 	var possibleValuesElm = $('#possibleValuesFavoriteJson' + rowIndex);
 	var possibleValuesFavoriteArr = $.parseJSON(possibleValuesElm.text());
@@ -2102,7 +2102,7 @@ function checkFavoritesIfValIsAFavorite(rowIndex) {
 	}
 	if (possibleValuesFavoriteArr !== null) {
 		$.each(possibleValuesFavoriteArr, function(index, val) {
-			if (val.id === valueOfDropdown) {
+			if (val.id === valueOfDropdown || possibleValuesFavoriteArr.length > 0) {
 				$('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.favorite1')).click();
 				return false;
 			}

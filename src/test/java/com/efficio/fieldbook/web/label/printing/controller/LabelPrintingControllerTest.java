@@ -212,4 +212,61 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		List<CustomReportType> presets = this.labelPrintingController.getLabelPrintingCustomReports();
 		Assert.assertEquals("Should return no preset since there is not study", 0, presets.size());
 	}
+	
+	@Test
+	public void testExportFileInCSVFormat() throws UnsupportedEncodingException {
+		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		String filename = "filename.csv";
+		String contentType = "[application/octet-stream;charset=utf-8]";
+		String contentDisposition = "[attachment; filename=\"filename.csv\"; filename*=utf-8''filename.csv]";
+		userLabelPrinting.setFilenameDL(filename);
+		userLabelPrinting.setFilenameDLLocation("C://tmp/" + filename);
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+		ResponseEntity<FileSystemResource> reponseEntity = this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
+		
+		final String responseEntityContentDisposition  = reponseEntity.getHeaders().get(CONTENT_DISPOSITION).toString();
+		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition, responseEntityContentDisposition);
+		final String responseEntityContentType = reponseEntity.getHeaders().get(CONTENT_TYPE).toString();
+		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
+		final String reponseEntityFileName = reponseEntity.getBody().getFilename();
+		Assert.assertEquals("The file name should be " + filename, filename, reponseEntityFileName);
+	}
+	
+	@Test
+	public void testExportFileInExcelFormat() throws UnsupportedEncodingException {
+		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		String filename = "filename.xls";
+		String contentType = "[application/vnd.ms-excel;charset=utf-8]";
+		String contentDisposition = "[attachment; filename=\"filename.xls\"; filename*=utf-8''filename.xls]";
+		userLabelPrinting.setFilenameDL(filename);
+		userLabelPrinting.setFilenameDLLocation("C://tmp/" + filename);
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+		ResponseEntity<FileSystemResource> reponseEntity = this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
+		
+		final String responseEntityContentDisposition  = reponseEntity.getHeaders().get(CONTENT_DISPOSITION).toString();
+		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition, responseEntityContentDisposition);
+		final String responseEntityContentType = reponseEntity.getHeaders().get(CONTENT_TYPE).toString();
+		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
+		final String reponseEntityFileName = reponseEntity.getBody().getFilename();
+		Assert.assertEquals("The file name should be " + filename, filename, reponseEntityFileName);
+	}
+	
+	@Test
+	public void testExportFileInPDFFormat() throws UnsupportedEncodingException {
+		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		String filename = "filename.pdf";
+		String contentType = "[application/pdf;charset=utf-8]";
+		String contentDisposition = "[attachment; filename=\"filename.pdf\"; filename*=utf-8''filename.pdf]";
+		userLabelPrinting.setFilenameDL(filename);
+		userLabelPrinting.setFilenameDLLocation("C://tmp/" + filename);
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+		ResponseEntity<FileSystemResource> reponseEntity = this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
+		
+		final String responseEntityContentDisposition  = reponseEntity.getHeaders().get(CONTENT_DISPOSITION).toString();
+		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition, responseEntityContentDisposition);
+		final String responseEntityContentType = reponseEntity.getHeaders().get(CONTENT_TYPE).toString();
+		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
+		final String reponseEntityFileName = reponseEntity.getBody().getFilename();
+		Assert.assertEquals("The file name should be " + filename, filename, reponseEntityFileName);
+	}
 }

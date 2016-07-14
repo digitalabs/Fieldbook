@@ -30,7 +30,6 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -118,10 +117,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * The Constant LOG.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
-	/**
-	 * The Constant BUFFER_SIZE.
-	 */
-	private static final int BUFFER_SIZE = 4096 * 4;
 	/**
 	 * The user label printing.
 	 */

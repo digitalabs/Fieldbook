@@ -2160,9 +2160,7 @@ function recreateLocationCombo(possibleFavorite) {
 			type: 'GET',
 			cache: false,
 			data: '',
-			async: true, // FIXME popup should be open for $.show() to work 
-						 // Refactor, move logic of showing to when 
-						 // the popup is already open if ajax should be sync
+			async: false,
 			success: function(data) {
 				if (data.success == '1') {
 					if (createGermplasmOpened) {

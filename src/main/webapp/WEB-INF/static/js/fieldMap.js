@@ -140,7 +140,7 @@ function initializeFieldLocationSelect2(locationSuggestions, locationSuggestions
 	});
 
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('fieldLocationIdAll')).select2({
+	$('#fieldLocationIdAll').select2({
 		minimumResultsForSearch: locationSuggestions_obj.length == 0 ? -1 : 20,
 		query: function(query) {
 			var data = {results: locationSuggestions_obj}, i, j, s;
@@ -154,9 +154,9 @@ function initializeFieldLocationSelect2(locationSuggestions, locationSuggestions
 		}
 
 	}).on('change', function() {
-		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
-		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').abbr);
+		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#fieldLocationIdAll').select2('data').id);
+		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#fieldLocationIdAll').select2('data').text);
+		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#fieldLocationIdAll').select2('data').abbr);
 		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
 	});
 
@@ -176,7 +176,7 @@ function initializeFieldLocationFavSelect2(locationSuggestionsFav, locationSugge
 	});
 
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('fieldLocationIdFavorite')).select2({
+	$('#fieldLocationIdFavorite').select2({
 		minimumResultsForSearch: locationSuggestionsFav_obj.length == 0 ? -1 : 20,
 		query: function(query) {
 			var data = {results: locationSuggestionsFav_obj}, i, j, s;
@@ -190,9 +190,9 @@ function initializeFieldLocationFavSelect2(locationSuggestionsFav, locationSugge
 		}
 
 	}).on('change', function() {
-		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').id);
-		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
-		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').abbr);
+		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#fieldLocationIdFavorite').select2('data').id);
+		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#fieldLocationIdFavorite').select2('data').text);
+		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#fieldLocationIdFavorite').select2('data').abbr);
 		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
 	});
 }
@@ -211,7 +211,7 @@ function initializeFieldLocationBreedingFavoritesSelect2(locationSuggestionsFav,
 	});
 
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2({
+	$('#fieldLocationIdBreedingFavorites').select2({
 		minimumResultsForSearch: locationSuggestionsFav_obj.length == 0 ? -1 : 20,
 		query: function(query) {
 			var data = {results: locationSuggestionsFav_obj}, i, j, s;
@@ -225,9 +225,9 @@ function initializeFieldLocationBreedingFavoritesSelect2(locationSuggestionsFav,
 		}
 
 	}).on('change', function() {
-		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2('data').id);
-		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2('data').text);
-		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2('data').abbr);
+		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#fieldLocationIdBreedingFavorites').select2('data').id);
+		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#fieldLocationIdBreedingFavorites').select2('data').text);
+		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#fieldLocationIdBreedingFavorites').select2('data').abbr);
 		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
 	});
 
@@ -247,7 +247,7 @@ function initializeFieldLocationBreedingSelect2(locationSuggestionsFav, location
 	});
 
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('fieldLocationIdBreeding')).select2({
+	$('#fieldLocationIdBreeding').select2({
 		minimumResultsForSearch: locationSuggestionsFav_obj.length == 0 ? -1 : 20,
 		query: function(query) {
 			var data = {results: locationSuggestionsFav_obj}, i, j, s;
@@ -261,9 +261,9 @@ function initializeFieldLocationBreedingSelect2(locationSuggestionsFav, location
 		}
 
 	}).on('change', function() {
-		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2('data').id);
-		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2('data').text);
-		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2('data').abbr);
+		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#fieldLocationIdBreeding').select2('data').id);
+		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#fieldLocationIdBreeding').select2('data').text);
+		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#fieldLocationIdBreeding').select2('data').abbr);
 		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
 	});
 
@@ -666,127 +666,6 @@ function recreatePopupFieldCombo() {
  );
 }
 
-function showCorrectFieldLocationCombo() {
-	var isChecked = $('#showFavoriteLocation').is(':checked');
-	// if show favorite location is checked, hide all field locations, else,
-	// show only favorite locations
-	if (isChecked) {
-
-		if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
-			$('#s2id_fieldLocationIdBreedingFavorites').show();
-			$('#s2id_fieldLocationIdFavorite').hide();
-			if ($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2(
-					'data') != null) {
-				$('#' + getJquerySafeId('fieldLocationId')).val(
-					$('#' + getJquerySafeId('fieldLocationIdBreedingFavorites'))
-						.select2('data').id);
-				$('#' + getJquerySafeId('fieldLocationName')).val(
-					$('#' + getJquerySafeId('fieldLocationIdBreedingFavorites'))
-						.select2('data').text);
-				$('#' + getJquerySafeId('fieldLocationAbbreviation')).val(
-					$('#' + getJquerySafeId('fieldLocationIdBreedingFavorites'))
-						.select2('data').abbr);
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2('data').id);
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdBreedingFavorites')).select2('data').text);
-			} else {
-				$('#' + getJquerySafeId('fieldLocationId')).val(0);
-				$('#' + getJquerySafeId('fieldLocationName')).val('');
-				$('#' + getJquerySafeId('fieldLocationAbbreviation')).val('');
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val('');
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val('');
-			}
-
-		} else {
-			$('#s2id_fieldLocationIdBreedingFavorites').hide();
-			$('#s2id_fieldLocationIdFavorite').show();
-			if ($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2(
-					'data') != null) {
-				$('#' + getJquerySafeId('fieldLocationId')).val(
-					$('#' + getJquerySafeId('fieldLocationIdFavorite'))
-						.select2('data').id);
-				$('#' + getJquerySafeId('fieldLocationName')).val(
-					$('#' + getJquerySafeId('fieldLocationIdFavorite'))
-						.select2('data').text);
-				$('#' + getJquerySafeId('fieldLocationAbbreviation')).val(
-					$('#' + getJquerySafeId('fieldLocationIdFavorite'))
-						.select2('data').abbr);
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').id);
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
-			} else {
-				$('#' + getJquerySafeId('fieldLocationId')).val(0);
-				$('#' + getJquerySafeId('fieldLocationName')).val('');
-				$('#' + getJquerySafeId('fieldLocationAbbreviation')).val('');
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val('');
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val('');
-			}
-
-		}
-		$('#s2id_fieldLocationIdAll').hide();
-		$('#s2id_fieldLocationIdBreeding').hide();
-
-	} else {
-		$('#s2id_fieldLocationIdFavorite').hide();
-		$('#s2id_fieldLocationIdBreedingFavorites').hide();
-
-		if ($('#showAllLocationOnlyRadio').is(':checked')) {
-			$('#s2id_fieldLocationIdAll').show();
-			$('#s2id_fieldLocationIdBreeding').hide();
-			if ($('#' + getJquerySafeId('fieldLocationIdAll')).select2(
-					'data') != null) {
-				$('#' + getJquerySafeId('fieldLocationId')).val(
-					$('#' + getJquerySafeId('fieldLocationIdAll'))
-						.select2('data').id);
-				$('#' + getJquerySafeId('fieldLocationName')).val(
-					$('#' + getJquerySafeId('fieldLocationIdAll'))
-						.select2('data').text);
-				$('#' + getJquerySafeId('fieldLocationAbbreviation')).val(
-					$('#' + getJquerySafeId('fieldLocationIdAll'))
-						.select2('data').abbr);
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-			} else {
-				$('#' + getJquerySafeId('fieldLocationId')).val(0);
-				$('#' + getJquerySafeId('fieldLocationName')).val('');
-				$('#' + getJquerySafeId('fieldLocationAbbreviation')).val('');
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val('');
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val('');
-			}
-		} else {
-			$('#s2id_fieldLocationIdBreeding').show();
-			$('#s2id_fieldLocationIdAll').hide();
-			if ($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2(
-					'data') != null) {
-				$('#' + getJquerySafeId('fieldLocationId')).val(
-					$('#' + getJquerySafeId('fieldLocationIdBreeding'))
-						.select2('data').id);
-				$('#' + getJquerySafeId('fieldLocationName')).val(
-					$('#' + getJquerySafeId('fieldLocationIdBreeding'))
-						.select2('data').text);
-				$('#' + getJquerySafeId('fieldLocationAbbreviation')).val(
-					$('#' + getJquerySafeId('fieldLocationIdBreeding'))
-						.select2('data').abbr);
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2('data').id);
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdBreeding')).select2('data').text);
-			} else {
-				$('#' + getJquerySafeId('fieldLocationId')).val(0);
-				$('#' + getJquerySafeId('fieldLocationName')).val('');
-				$('#' + getJquerySafeId('fieldLocationAbbreviation')).val('');
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val('');
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val('');
-			}
-		}
-
-		// fieldLocationIdAll is not null but it contains blank value so put AND condition
-		if ($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data') != null && $('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id != "" ) {
-			$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
-			$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-			$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
-			$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-		}
-
-	}
-}
-
 function setComboValues(suggestions_obj, id, name) {
 	'use strict';
 	var dataVal = {id:'', text:'', description:''}; //default value
@@ -1098,8 +977,6 @@ function doEnterFieldDetailsPageLoad() {
 				$('#s2id_fieldLocationIdBreeding').hide();
 				setCorrectValueToFieldCombo (locationSuggestions, prevFieldLocationId, 'fieldLocationIdAll');
 			};
-
-
 		}
 	}
 
@@ -1151,22 +1028,13 @@ function showCorrectFieldLocationCombo() {
 
 		$('#s2id_fieldLocationIdAll').hide();
 		$('#s2id_fieldLocationIdBreeding').hide();
-		if ($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2(
-				'data') != null) {
-			$('#' + getJquerySafeId('fieldLocationId')).val(
-				$('#' + getJquerySafeId('fieldLocationIdFavorite'))
-					.select2('data').id);
-			$('#' + getJquerySafeId('fieldLocationName')).val(
-				$('#' + getJquerySafeId('fieldLocationIdFavorite'))
-					.select2('data').text);
-			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val(
-				$('#' + getJquerySafeId('fieldLocationIdFavorite'))
-					.select2('data').abbr);
-
+		if ($('#fieldLocationIdFavorite').select2('data') != null) {
+			$('#fieldLocationId').val($('#fieldLocationIdFavorite').select2('data').id);
+			$('#fieldLocationName').val($('#fieldLocationIdFavorite').select2('data').text);
+			$('#fieldLocationAbbreviation').val($('#fieldLocationIdFavorite').select2('data').abbr);
 		} else {
-			$('#' + getJquerySafeId('fieldLocationId')).val(0);
-			$('#' + getJquerySafeId('fieldLocationName')).val('');
-
+			$('#fieldLocationId').val(0);
+			$('#fieldLocationName').val('');
 		}
 	} else {
 		$('#s2id_fieldLocationIdFavorite').hide();
@@ -1181,13 +1049,10 @@ function showCorrectFieldLocationCombo() {
 		}
 
 		// LocationIdAll is not null but it contains blank value so put AND condition
-		if ($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data') != null && $('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id != "" ) {
-			$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
-			$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-
+		if ($('#fieldLocationIdAll').select2('data') != null && $('#fieldLocationIdAll').select2('data').id != "" ) {
+			$('#fieldLocationId').val($('#fieldLocationIdAll').select2('data').id);
+			$('#fieldLocationName').val($('#fieldLocationIdAll').select2('data').text);
 		}
-
-
 	}
 }
 

@@ -51,7 +51,7 @@
     						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
     					$scope.localData = {};
-						$scope.localData.useFavorites = true;
+						
 						$scope.locationLookup = 1;
 
 						$scope.updateDropdownValuesFavorites = function() { // Change state for favorite checkbox
@@ -73,29 +73,26 @@
 
 						$scope.updateDropdownValuesBreedingLocation = function() { // Change state for breeding
 							// location radio
-							$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.possibleValuesFavorite
+							$scope.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.possibleValuesFavorite
 								: $scope.variableDefinition.possibleValues;
 							$scope.locationLookup = 1;
 						};
 
 						$scope.updateDropdownValuesAllLocation = function() { // Change state for all locations radio
-							$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.allFavoriteValues
+							$scope.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.allFavoriteValues
 								: $scope.variableDefinition.allValues;
 							$scope.locationLookup = 2;
 						};
 
-						// if the value of the dropdown from existing data matches from the list of favorites, we set the checkbox
-						// as true
-    					var useFavorites = function(currentVal) {
+						// if the list of favorites has any element, we set the checkbox
+						var useFavorites = function(currentVal) {
 
-    						if (!$scope.variableDefinition.existingData && null !== $scope.variableDefinition.possibleValuesFavorite) {
-    							return $scope.variableDefinition.possibleValuesFavorite.length > 0;
-    						} else if (currentVal !== null && !isNaN(currentVal) && null !== $scope.variableDefinition.possibleValuesFavorite) {
-    							return $scope.localData.useFavorites || _.where($scope.variableDefinition.possibleValuesFavorite, {'id':parseInt(currentVal, 10)}).length > 0;
-    						}
+							if ($scope.variableDefinition.possibleValuesFavorite !== null) {
+								return $scope.variableDefinition.possibleValuesFavorite.length > 0;
+							}
 
-    						return $scope.localData.useFavorites;
-    					};
+							return $scope.localData.useFavorites;
+						};
 
     					if ($scope.hasDropdownOptions) {
     						var currentVal = $scope.valuecontainer[$scope.targetkey];
@@ -111,8 +108,10 @@
     						$scope.updateDropdownValuesFavorites();
 
 							$scope.computeMinimumSearchResults = function() {
-								if($scope.dropdownValues != null)
-									return ($scope.dropdownValues.length > 0) ? 20 : -1;
+								if($scope.dropdownValues != null) {
+									return $scope.dropdownValues.length > 0 ? 20 : -1;
+								}
+									
 								return -1;
 							};
 
@@ -166,7 +165,8 @@
     					}
 
 
-    					// TODO: add code that can handle display of favorite methods, as well as update of possible values in case of click of manage methods
+    					// TODO: add code that can handle display of favorite methods, as well as update of possible values in case of click
+    					// of manage methods
     					if ($scope.isLocation) {
     						$scope.clearArray = function(targetArray) {
     							// current internet research suggests that this is the fastest way of clearing an array

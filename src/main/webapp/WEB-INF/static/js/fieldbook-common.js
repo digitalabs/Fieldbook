@@ -2241,7 +2241,6 @@ function recreateLocationCombo(possibleFavorite) {
 					if(possibleFavorite === 'showFavoriteLocationInventory'){
 						if(data.allSeedStorageFavoritesLocations.length !== 0){
 							$('#' + possibleFavorite).prop('checked', true);
-							showCorrectLocationInventoryCombo();
 						}
 					}
 				} else {

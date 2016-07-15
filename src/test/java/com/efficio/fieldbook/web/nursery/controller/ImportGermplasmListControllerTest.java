@@ -872,6 +872,8 @@ public class ImportGermplasmListControllerTest {
 		Assert.assertEquals(this.userSelection.getImportedGermplasmMainInfo(), form.getImportedGermplasmMainInfo());
 		Assert.assertEquals(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
 				form.getImportedGermplasm());
+		Assert.assertEquals(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().
+				get(0).getEntryId().toString(), form.getStartingEntryNo());
 		Assert.assertEquals(Integer.toString(this.userSelection.getStartingEntryNo()), form.getStartingEntryNo());
 		Mockito.verify(model).addAttribute(ImportGermplasmListController.CHECK_LISTS, checkTypes);
 		Mockito.verify(model).addAttribute(ImportGermplasmListController.TYPE2, "T");

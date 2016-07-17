@@ -2017,7 +2017,7 @@ function checkIfNull(object) {
 	}
 }
 
-function recreateMethodCombo() {
+function recreateMethodCombo(possibleFavorite) {
 	var selectedMethodAll = $('#methodIdAll').val(),
 		selectedMethodFavorite = $('#methodIdFavorite').val();
 	var createGermplasm = false;
@@ -2071,6 +2071,10 @@ function recreateMethodCombo() {
 						refreshGermplasMethodCombo(data);
 					}
 				}
+				if(possibleFavorite){
+					ValidateValueCheckBoxFavorite(possibleFavorite,data);
+					refreshGermplasMethodCombo(data);
+				}
 			} else {
 				showErrorMessage('page-message', data.errorMessage);
 			}
@@ -2107,21 +2111,17 @@ function refreshGermplasMethodCombo(data) {
 		selectedValue = $('#importMethodId').select2('data').id;
 	}
 	if ($('#importFavoriteMethod').is(':checked')) {
-		if($('#showDerivateAndMaintenanceMethodImportStudyOnlyRadio').is(':checked')){
-			initializePossibleValuesCombo(data.favoriteNonGenerativeMethods,
-				'#importMethodId', true, selectedValue);
-		}else{
-			initializePossibleValuesCombo(data.favoriteMethods,
-				'#importMethodId', true, selectedValue);
+		if ($('#showDerivateAndMaintenanceMethodImportStudyOnlyRadio').is(':checked')) {
+			initializePossibleValuesCombo(data.favoriteNonGenerativeMethods, '#importMethodId', true, selectedValue);
+		} else {
+			initializePossibleValuesCombo(data.favoriteMethods, '#importMethodId', true, selectedValue);
 		}
 
 	} else {
-		if($('#showDerivateAndMaintenanceMethodImportStudyOnlyRadio').is(':checked')){
-			initializePossibleValuesCombo(data.allNonGenerativeMethods,
-				'#importMethodId', true, selectedValue);
-		}else{
-			initializePossibleValuesCombo(data.allMethods,
-				'#importMethodId', true, selectedValue);
+		if ($('#showDerivateAndMaintenanceMethodImportStudyOnlyRadio').is(':checked')) {
+			initializePossibleValuesCombo(data.allNonGenerativeMethods, '#importMethodId', true, selectedValue);
+		} else {
+			initializePossibleValuesCombo(data.allMethods, '#importMethodId', true, selectedValue);
 		}
 
 	}
@@ -2151,21 +2151,17 @@ function refreshGermplasLocationCombo(data) {
 		selectedValue = $('#importLocationId').select2('data').id;
 	}
 	if ($('#importFavoriteLocation').is(':checked')) {
-		if($('#showBreedingLocationImportStudyOnlyRadio').is(':checked')){
-			initializePossibleValuesCombo(data.allBreedingFavoritesLocations,
-				'#importLocationId', true, selectedValue);
-		}else{
-			initializePossibleValuesCombo(data.favoriteLocations,
-				'#importLocationId', true, selectedValue);
+		if ($('#showBreedingLocationImportStudyOnlyRadio').is(':checked')) {
+			initializePossibleValuesCombo(data.allBreedingFavoritesLocations, '#importLocationId', true, selectedValue);
+		} else {
+			initializePossibleValuesCombo(data.favoriteLocations, '#importLocationId', true, selectedValue);
 		}
 
 	} else {
-		if($('#showBreedingLocationImportStudyOnlyRadio').is(':checked')){
-			initializePossibleValuesCombo(data.allBreedingLocations,
-				'#importLocationId', true, selectedValue);
-		}else{
-			initializePossibleValuesCombo(data.allLocations,
-				'#importLocationId', true, selectedValue);
+		if ($('#showBreedingLocationImportStudyOnlyRadio').is(':checked')) {
+			initializePossibleValuesCombo(data.allBreedingLocations, '#importLocationId', true, selectedValue);
+		} else {
+			initializePossibleValuesCombo(data.allLocations, '#importLocationId', true, selectedValue);
 		}
 
 	}
@@ -2187,7 +2183,7 @@ function generateGenericLocationSuggestions(genericLocationJson) {
 	});
 	return genericLocationSuggestion;
 }
-function recreateLocationCombo() {
+function recreateLocationCombo(possibleFavorite) {
 	var selectedLocationAll = $('#harvestLocationIdAll').val();
 	var selectedLocationBreeding = $('#harvestLocationIdBreeding').val();
 	var selectedLocationBreedingFavorites = $('#harvestLocationIdBreedingFavorites').val();
@@ -2303,8 +2299,12 @@ function recreateLocationCombo() {
 						}
 						if (createGermplasm) {
 							refreshImportLocationCombo(data);
-							refreshGermplasLocationCombo(data);
 						}
+
+					}
+					if(possibleFavorite){
+						ValidateValueCheckBoxFavorite(possibleFavorite,data);
+						refreshGermplasLocationCombo(data);
 					}
 				} else {
 					showErrorMessage('page-message', data.errorMessage);
@@ -4272,6 +4272,27 @@ function onMeasurementsObservationLoad(isCategoricalDisplay) {
 		new BMS.Fieldbook.MeasurementsDataTable('#measurement-table', response);
 	});
 
+}
+
+function ValidateValueCheckBoxFavorite(checkFavorite,data){
+	
+	if(checkFavorite === 'showFavoriteLocationInventory'){
+		if(data.allSeedStorageFavoritesLocations.length !== 0){
+			$('#' + checkFavorite).prop('checked', true);
+		}
+	}
+	
+	if(checkFavorite === 'importFavoriteMethod'){
+		if(data.favoriteNonGenerativeMethods.length !== 0){
+			$('#' + checkFavorite).prop('checked', true);
+		}
+	}
+	
+	if(checkFavorite === 'importFavoriteLocation'){
+		if(data.allBreedingFavoritesLocations.length !== 0){
+			$('#' + checkFavorite).prop('checked', true);
+		}
+	}
 }
 
 /**

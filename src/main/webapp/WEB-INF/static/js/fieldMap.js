@@ -125,145 +125,36 @@ function showEnterFieldDetailsMessage(msg) {
 	createErrorNotification(errorMsgHeader, msg);
 }
 
-function initializeFieldLocationSelect2(locationSuggestions, locationSuggestions_obj) {
+function initializeFieldLocationsSelect2(_locationSuggestions, _locationSuggestions_obj, fieldName) {
 	'use strict';
-	$.each(locationSuggestions, function(index, value) {
+	fieldName = '#' + fieldName;
+	$.each(_locationSuggestions, function(index, value) {
 		var locNameDisplay = value.lname;
 		if (value.labbr != null && value.labbr != '') {
 			locNameDisplay  += ' - (' + value.labbr + ')';
 		}
-		locationSuggestions_obj.push({
+		_locationSuggestions_obj.push({
 			'id': value.locid,
 			'text': locNameDisplay
 		});
 
 	});
 
-	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#fieldLocationIdAll').select2({
-		minimumResultsForSearch: locationSuggestions_obj.length == 0 ? -1 : 20,
+	$(fieldName).select2({
+		minimumResultsForSearch: _locationSuggestions_obj.length == 0 ? -1 : 20,
 		query: function(query) {
-			var data = {results: locationSuggestions_obj}, i, j, s;
+			var data = {results: _locationSuggestions_obj}, i, j, s;
 			// return the array that matches
 			data.results = $.grep(data.results, function(item, index) {
 				return ($.fn.select2.defaults.matcher(query.term, item.text));
 
 			});
 			query.callback(data);
-
 		}
-
 	}).on('change', function() {
-		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#fieldLocationIdAll').select2('data').id);
-		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#fieldLocationIdAll').select2('data').text);
-		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#fieldLocationIdAll').select2('data').abbr);
-		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
-	});
-
-}
-
-function initializeFieldLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
-	'use strict';
-	$.each(locationSuggestionsFav, function(index, value) {
-		var locNameDisplay = value.lname;
-		if (value.labbr != null && value.labbr != '') {
-			locNameDisplay  += ' - (' + value.labbr + ')';
-		}
-		locationSuggestionsFav_obj.push({
-			'id': value.locid,
-			'text': locNameDisplay
-		});
-	});
-
-	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#fieldLocationIdFavorite').select2({
-		minimumResultsForSearch: locationSuggestionsFav_obj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: locationSuggestionsFav_obj}, i, j, s;
-			// return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-
-			});
-			query.callback(data);
-
-		}
-
-	}).on('change', function() {
-		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#fieldLocationIdFavorite').select2('data').id);
-		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#fieldLocationIdFavorite').select2('data').text);
-		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#fieldLocationIdFavorite').select2('data').abbr);
-		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
-	});
-}
-
-function initializeFieldLocationBreedingFavoritesSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
-	'use strict';
-	$.each(locationSuggestionsFav, function(index, value) {
-		var locNameDisplay = value.lname;
-		if (value.labbr != null && value.labbr != '') {
-			locNameDisplay  += ' - (' + value.labbr + ')';
-		}
-		locationSuggestionsFav_obj.push({
-			'id': value.locid,
-			'text': locNameDisplay
-		});
-	});
-
-	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#fieldLocationIdBreedingFavorites').select2({
-		minimumResultsForSearch: locationSuggestionsFav_obj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: locationSuggestionsFav_obj}, i, j, s;
-			// return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-
-			});
-			query.callback(data);
-
-		}
-
-	}).on('change', function() {
-		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#fieldLocationIdBreedingFavorites').select2('data').id);
-		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#fieldLocationIdBreedingFavorites').select2('data').text);
-		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#fieldLocationIdBreedingFavorites').select2('data').abbr);
-		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
-	});
-
-}
-
-function initializeFieldLocationBreedingSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
-	'use strict';
-	$.each(locationSuggestionsFav, function(index, value) {
-		var locNameDisplay = value.lname;
-		if (value.labbr != null && value.labbr != '') {
-			locNameDisplay  += ' - (' + value.labbr + ')';
-		}
-		locationSuggestionsFav_obj.push({
-			'id': value.locid,
-			'text': locNameDisplay
-		});
-	});
-
-	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#fieldLocationIdBreeding').select2({
-		minimumResultsForSearch: locationSuggestionsFav_obj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: locationSuggestionsFav_obj}, i, j, s;
-			// return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-
-			});
-			query.callback(data);
-
-		}
-
-	}).on('change', function() {
-		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#fieldLocationIdBreeding').select2('data').id);
-		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#fieldLocationIdBreeding').select2('data').text);
-		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($('#fieldLocationIdBreeding').select2('data').abbr);
+		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($(fieldName).select2('data').id);
+		$('#' + getJquerySafeId('userFieldmap.locationName')).val($(fieldName).select2('data').text);
+		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($(fieldName).select2('data').abbr);
 		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
 	});
 
@@ -925,11 +816,6 @@ function doEnterFieldDetailsPageLoad() {
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);
 
-	$('#s2id_fieldLocationIdFavorite').hide();
-	$('#s2id_fieldLocationIdAll').hide();
-	$('#s2id_fieldLocationIdBreedingFavorites').show();
-	$('#s2id_fieldLocationIdBreeding').hide();
-
 	$('#showFavoriteLocation, #showAllLocationRadio, #showBreedingLocationOnlyRadio').on('change', function() {
 		showCorrectFieldLocationCombo();
 		initializeFieldSelect2({}, [], true);
@@ -977,6 +863,14 @@ function doEnterFieldDetailsPageLoad() {
 				$('#s2id_fieldLocationIdBreeding').hide();
 				setCorrectValueToFieldCombo (locationSuggestions, prevFieldLocationId, 'fieldLocationIdAll');
 			};
+		}
+	} else {
+		if (Object.keys(locationSuggestionsBreedingFav_obj).length > 0) {
+			$('#showFavoriteLocation').prop('checked', true);
+			$('#s2id_fieldLocationIdFavorite').hide();
+			$('#s2id_fieldLocationIdAll').hide();
+			$('#s2id_fieldLocationIdBreedingFavorites').show();
+			$('#s2id_fieldLocationIdBreeding').hide();
 		}
 	}
 

@@ -2282,7 +2282,6 @@ function recreateLocationCombo() {
 						refreshLocationComboInSettings(data);
 
 					} else if (fieldmapScreen === true) {
-						//recreate the select2 combos to get updated list of locations
 						recreateFieldLocationComboAfterClose('fieldLocationIdAll', data.allLocations);
 						recreateFieldLocationComboAfterClose('fieldLocationIdFavorite', data.favoriteLocations);
 						recreateFieldLocationComboAfterClose('fieldLocationIdBreeding', data.allBreedingLocations);
@@ -2416,40 +2415,40 @@ function recreateLocationComboAfterClose(comboName, data) {
 		//reload the data
 		locationSuggestionsFav = data;
 		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFavObj);
+	//	locSug = [];
 	}
 }
 
 
-function recreateFieldLocationComboAfterClose(comboName, data, locations, locations_obj) {
-    if (comboName == 'fieldLocationIdAll') {
+function recreateFieldLocationComboAfterClose(comboName, data) {
+	if (comboName == 'fieldLocationIdAll') {
 		locationSuggestions = [];
 		locationSuggestions_obj = [];
-		initializeFieldLocationSelect2(locationSuggestions, locationSuggestions_obj);
+		initializeFieldLocationsSelect2(locationSuggestions, locationSuggestions_obj,comboName);
 		//reload the data retrieved
 		locationSuggestions = data;
-		initializeFieldLocationSelect2(locationSuggestions, locationSuggestions_obj);
+		initializeFieldLocationsSelect2(locationSuggestions, locationSuggestions_obj,comboName);
 	} else if (comboName == 'fieldLocationIdBreeding') {
 		locationSuggestionsBreeding = [];
 		locationSuggestionsBreeding_obj = [];
-		initializeFieldLocationBreedingSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj);
+		initializeFieldLocationsSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj, comboName);
 		//reload the data retrieved
 		locationSuggestionsBreeding = data;
-		initializeFieldLocationBreedingSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj);
+		initializeFieldLocationsSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj, comboName);
 	} else if (comboName == 'fieldLocationIdBreedingFavorites') {
 		locationSuggestionsBreedingFav = [];
 		locationSuggestionsBreedingFav_obj = [];
-		initializeFieldLocationBreedingFavoritesSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj);
+		initializeFieldLocationsSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj,comboName);
 		//reload the data retrieved
 		locationSuggestionsBreedingFav = data;
-		initializeFieldLocationBreedingFavoritesSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj);
+		initializeFieldLocationsSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj,comboName);
 	} else if (comboName=="fieldLocationIdFavorite") {
 		locationSuggestionsFav = [];
 		locationSuggestionsFav_obj = [];
-		initializeFieldLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+		initializeFieldLocationsSelect2(locationSuggestionsFav, locationSuggestionsFav_obj,comboName);
 		//reload the data retrieved
 		locationSuggestionsFav = data;
-		initializeFieldLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
-	} else {
+		initializeFieldLocationsSelect2(locationSuggestionsFav, locationSuggestionsFav_obj,comboName);
 	}
 }
 

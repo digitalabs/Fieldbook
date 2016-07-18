@@ -180,14 +180,6 @@ var ImportCrosses = {
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
 
-		if (ImportCrosses.showFavoriteLoationsOnly) {
-			$safeId('#favoritesCheckboxID').prop('checked', true);
-		}
-
-		if (ImportCrosses.showFavoriteMethodsOnly) {
-			$safeId('#showFavoritesOnlyCheckbox').prop('checked', true);
-		}
-
 		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
 			'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
 		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',

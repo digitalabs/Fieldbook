@@ -46,6 +46,9 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 						methodConversionFunction = BreedingMethodsFunctions.convertMethodToSelectItem;
 					}
 
+					$('#showFavoritesOnlyCheckbox').prop('checked',
+						data && data.favoriteGenerativeMethods && data.favoriteGenerativeMethods.length > 0);
+
 					var allGenerativeMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.allGenerativeMethods, methodConversionFunction);
 					var allMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.allMethods, methodConversionFunction);
 					var favoriteMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.favoriteMethods, methodConversionFunction);
@@ -83,8 +86,11 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 
 					});
 
-				$(document).on('breeding-method-update', function() {
-					BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(methodID, methodSelectID, favoritesCheckboxID, favoritesDefault, methodConversionFunction);
+					$(document).on(
+						'breeding-method-update',
+						function() {
+							BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(methodSelectID, favoritesCheckboxID,
+								allRadioButtonId, filteredMethodOnlyRadio, methodConversionFunction);
 					});
 
 				});

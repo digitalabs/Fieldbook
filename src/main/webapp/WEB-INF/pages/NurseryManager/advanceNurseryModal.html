@@ -394,8 +394,6 @@ function changeAdvanceBreedingMethod() {
 
 $(function() {
 	'use strict';
-	recreateLocationCombo();
-	recreateModalMethodCombo('advanceBreedingMethodId', 'showAdvanceFavoriteMethod');
 
 	$('#s2id_harvestLocationIdFavorite').hide();
 	$('#s2id_harvestLocationIdAll').hide();
@@ -406,6 +404,9 @@ $(function() {
 	$('#s2id_methodIdDerivativeAndMaintenance').hide();
 	$('#s2id_methodIdDerivativeAndMaintenanceFavorite').hide();
 	$('#s2id_methodIdAll').show();
+
+	recreateLocationCombo();
+	recreateModalMethodCombo('advanceBreedingMethodId', 'showAdvanceFavoriteMethod');
 
 	$('#showFavoriteLocation, #showAllLocationOnlyRadio, #showBreedingLocationOnlyRadio').on('change', function() {
 		showCorrectLocationCombo();

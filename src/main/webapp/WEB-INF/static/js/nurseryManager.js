@@ -705,10 +705,20 @@ function toggleDropdownGen(comboId, favoriteCheckId, suffix, isLocation) {
 
 }
 
+//method checkbox selection
+function checkMethodFavorite(){	
+	if ($.parseJSON($('#possibleValuesFavoriteJson0').text()).length > 1) {
+		$('#' + getJquerySafeId('study-level-method-checkbox')).prop( 'checked', true );
+		toggleMethodDropdown(0);
+	}
+	else{
+		$('#' + getJquerySafeId('study-level-method-checkbox')).prop( 'checked', false );
+	}
+}
+
 function toggleMethodDropdown(rowIndex) {
 	var possibleValues;
-	var showFavorite = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex
-		+ '.favorite1')).is(':checked');
+	var showFavorite = $('#' + getJquerySafeId('study-level-method-checkbox')).is(':checked');
 	var selectedVal = '';
 	var filterMethod = $('#' + getJquerySafeId('filterMethods')).is(':checked');
 	var allMethod = $('#' + getJquerySafeId('allMethods')).is(':checked');
@@ -1866,6 +1876,11 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 				if (selectedMethodAll != null) {
 					// recreate the select2 combos to get updated list of
 					// methods
+				
+					if (data.favoriteNonGenerativeMethods && data.favoriteNonGenerativeMethods.length > 0) {
+						$('#showFavoriteMethod').prop('checked', true);
+					}
+
 					recreateMethodComboAfterClose('methodIdAll', data.allMethods);
 					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteMethods);
 					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenance', data.allNonGenerativeMethods);
@@ -2092,7 +2107,7 @@ function discardImportedStockList(){
 
 function checkFavoritesIfValIsAFavorite(rowIndex) {
 	'use strict';
-
+	
 	var valueOfDropdown = parseInt($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).val(), 10);
 	var possibleValuesElm = $('#possibleValuesFavoriteJson' + rowIndex);
 	var possibleValuesFavoriteArr = $.parseJSON(possibleValuesElm.text());
@@ -2102,7 +2117,7 @@ function checkFavoritesIfValIsAFavorite(rowIndex) {
 	}
 	if (possibleValuesFavoriteArr !== null) {
 		$.each(possibleValuesFavoriteArr, function(index, val) {
-			if (val.id === valueOfDropdown) {
+			if (val.id === valueOfDropdown || possibleValuesFavoriteArr.length > 0) {
 				$('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.favorite1')).click();
 				return false;
 			}

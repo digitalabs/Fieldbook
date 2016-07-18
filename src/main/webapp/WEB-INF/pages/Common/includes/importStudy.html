@@ -434,6 +434,7 @@ function doSaveImportedData() {
 
 			if (isNursery()) {
 				doRefreshNurserySettings();
+				updateMeasurementDataExistingValue(!hasMeasurementData());
 				displayEditFactorsAndGermplasmSection();
 			} else {
 				displaySaveSuccessMessage('page-message', saveImportSuccessMessage);

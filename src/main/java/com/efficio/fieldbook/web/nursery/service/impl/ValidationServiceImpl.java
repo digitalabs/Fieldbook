@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
+ *
+ *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.nursery.service.impl;
@@ -39,7 +39,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -56,9 +55,6 @@ public class ValidationServiceImpl implements ValidationService {
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
-	@Resource
-	private WorkbenchService workbenchService;
 
 	@Resource
 	private WorkbenchDataManager workbenchDataManager;
@@ -96,7 +92,7 @@ public class ValidationServiceImpl implements ValidationService {
 	public void validateObservationValues(final Workbook workbook, final String instanceNumber) throws WorkbookParserException {
 		final Locale locale = LocaleContextHolder.getLocale();
 		if (workbook.getObservations() != null) {
-			List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
+			final List<MeasurementRow> observations;
 			if (instanceNumber != null && "".equalsIgnoreCase(instanceNumber)) {
 				// meaning we want to validate all
 				observations = workbook.getObservations();

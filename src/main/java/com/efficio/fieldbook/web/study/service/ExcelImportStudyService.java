@@ -9,8 +9,8 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.common.service;
+package com.efficio.fieldbook.web.study.service;
 
-public interface FieldroidImportStudyService extends ImportStudyService {
+public interface ExcelImportStudyService extends ImportStudyService {
 
 }

@@ -1,10 +1,6 @@
 
 package com.efficio.fieldbook.web.importdesign.controller;
 
-/**
- * Created by cyrus on 5/8/15.
- */
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

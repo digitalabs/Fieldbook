@@ -65,21 +65,6 @@ public class CrossingTemplateExcelExporter {
 
 			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook));
 
-			// 3. update observation sheet
-			int rowIndex = 1;
-			final Sheet obsSheet = excelWorkbook.getSheetAt(1);
-
-			int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
-			List<Experiment> experiments = this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null);
-
-			for (Experiment gpData : experiments) {
-				PoiUtil.setCellValue(obsSheet, 0, rowIndex, studyName);
-				PoiUtil.setCellValue(obsSheet, 1, rowIndex, Integer.parseInt(gpData.getFactors().findById(TermId.PLOT_NO).getValue()));
-                PoiUtil.setCellValue(obsSheet, 2, rowIndex, gpData.getFactors().findById(TermId.DESIG).getValue());
-                PoiUtil.setCellValue(obsSheet, 3, rowIndex, gpData.getFactors().findById(TermId.CROSS).getValue());
-				rowIndex++;
-			}
-
 			// 4. return the resulting file back to the user
 			return this.createExcelOutputFile(studyName, excelWorkbook);
 

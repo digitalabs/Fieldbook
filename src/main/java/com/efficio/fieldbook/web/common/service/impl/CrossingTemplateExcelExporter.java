@@ -95,6 +95,8 @@ public class CrossingTemplateExcelExporter {
 
 		int actualRow = startingRow - 1;
 
+		descriptionSheet.setZoom(1, 1); //100% magnification
+
 		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(actualRow)).writeListDetailsRow(descriptionSheet,
 				GermplasmExportedWorkbook.LIST_NAME, "", "Enter a list name here, or add it when saving in the BMS", labelStyle, textStyle);
 

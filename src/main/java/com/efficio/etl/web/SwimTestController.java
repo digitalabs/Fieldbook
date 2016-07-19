@@ -38,8 +38,8 @@ public class SwimTestController {
 
 	public void provideTestUserSelection() {
 		this.userSelection = new UserSelection();
-		this.userSelection.setActualFileName("Population114_Pheno_FB_1.xls");
-		this.userSelection.setServerFileName("Population114_Pheno_FB_1.xls");
+		this.userSelection.setActualFileName("Population114_Pheno_DSI_1.xls");
+		this.userSelection.setServerFileName("Population114_Pheno_DSI_1.xls");
 		this.userSelection.setSelectedSheet(1);
 		this.userSelection.setHeaderRowIndex(0);
 		this.userSelection.setContentRowIndex(1);

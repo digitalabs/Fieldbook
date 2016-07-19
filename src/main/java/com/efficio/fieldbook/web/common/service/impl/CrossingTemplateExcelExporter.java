@@ -92,7 +92,7 @@ public class CrossingTemplateExcelExporter {
 		}
 	}
 
-	private void updateCodesSection(final Sheet codesSheet) {
+	void updateCodesSection(final Sheet codesSheet) {
 		int startingRow = codesSheet.getLastRowNum();
 
 		// Users

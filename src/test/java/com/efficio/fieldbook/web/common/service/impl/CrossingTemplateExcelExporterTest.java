@@ -27,6 +27,8 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.junit.After;
@@ -138,6 +140,43 @@ public class CrossingTemplateExcelExporterTest {
 		Assert.assertEquals(sheet.getRow(2).getCell(0).getStringCellValue(), "LIST DATE");
 		Assert.assertTrue(sheet.getRow(2).getCell(1).getNumericCellValue() == 20150506);
 		Assert.assertEquals(sheet.getRow(2).getCell(3).getStringCellValue(), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
+	}
+
+	@Test
+	public void testUpdateCodesSection() throws IOException {
+
+		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
+		final Project projectMock = Mockito.mock(Project.class);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(projectMock);
+
+		// User
+
+		final int userId = 8;
+
+		final Person mockPerson = Mockito.mock(Person.class);
+		Mockito.when(this.workbenchDataManager.getPersonById(Matchers.anyInt())).thenReturn(mockPerson);
+
+		final ArrayList<User> users = new ArrayList<User>();
+		final User mockUser = Mockito.mock(User.class);
+		Mockito.when(mockUser.getUserid()).thenReturn(userId);
+		users.add(mockUser);
+		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(users);
+
+		// Methods
+
+		final String mCode = "6";
+
+		final List<Method> methods = new ArrayList<>();
+		final Method mockMethod = Mockito.mock(Method.class);
+		methods.add(mockMethod);
+		Mockito.when(mockMethod.getMcode()).thenReturn(mCode);
+		Mockito.when(this.germplasmDataManager.getMethodsByType(Matchers.anyString(), Matchers.anyString())).thenReturn(methods);
+
+		final Sheet sheet = this.workbook.getSheetAt(2);
+		this.exporter.updateCodesSection(sheet);
+
+		Assert.assertEquals(String.valueOf(userId), sheet.getRow(1).getCell(2).getStringCellValue());
+		Assert.assertEquals(mCode, sheet.getRow(2).getCell(2).getStringCellValue());
 	}
 
 	@Test(expected = CrossingTemplateExportException.class)

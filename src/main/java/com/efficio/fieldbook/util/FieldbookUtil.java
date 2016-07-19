@@ -31,6 +31,8 @@ import com.efficio.fieldbook.web.util.AppConstants;
  */
 public class FieldbookUtil {
 
+	public static final String CONTENT_TYPE = "Content-Type";
+	public static final String CONTENT_DISPOSITION = "Content-Disposition";
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
 	private static FieldbookUtil instance;
 
@@ -144,8 +146,8 @@ public class FieldbookUtil {
 		final String mimeType = FileUtils.detectMimeType(filename);
 		final String sanitizedFilename = FileUtils.sanitizeFileName(filename);
 
-		respHeaders.set("Content-Type",String.format("%s;charset=utf-8",mimeType));
-		respHeaders.set("Content-Disposition", String.format("attachment; filename=\"%s\"; filename*=utf-8\'\'%s", sanitizedFilename, FileUtils.encodeFilenameForDownload(sanitizedFilename)));
+		respHeaders.set(FieldbookUtil.CONTENT_TYPE,String.format("%s;charset=utf-8",mimeType));
+		respHeaders.set(FieldbookUtil.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"; filename*=utf-8\'\'%s", sanitizedFilename, FileUtils.encodeFilenameForDownload(sanitizedFilename)));
 
 		return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 

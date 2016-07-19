@@ -41,9 +41,10 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingTemplateExcelExporterTest {
 
-	public static final String STUDY_NAME = "studyname";
+	private static final String STUDY_NAME = "studyname";
 	private static final int STUDY_ID = 1;
-	public static final String TEST_FILENAME = "testFilename.xls";
+	private static final String TEST_FILENAME = "testFilename.xls";
+
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
@@ -104,7 +105,7 @@ public class CrossingTemplateExcelExporterTest {
 	public void testWriteListDetailsSection() throws IOException {
 		final Sheet sheet = this.workbook.getSheetAt(0);
 		final GermplasmList list = new GermplasmList();
-		list.setDate(20150506l);
+		list.setDate(20150506L);
 		list.setType("LST");
 		this.exporter.writeListDetailsSection(sheet, 1, list, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook));
 
@@ -118,11 +119,12 @@ public class CrossingTemplateExcelExporterTest {
 				"Enter a list description here, or add it when saving in the BMS");
 
 		Assert.assertEquals(sheet.getRow(2).getCell(0).getStringCellValue(), "LIST DATE");
-		Assert.assertEquals(sheet.getRow(2).getCell(1).getStringCellValue(), "20150506");
+		Assert.assertTrue(sheet.getRow(2).getCell(1).getNumericCellValue() == 20150506);
 		Assert.assertEquals(sheet.getRow(2).getCell(3).getStringCellValue(), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
 	}
 
 	@Test(expected = CrossingTemplateExportException.class)
+	@SuppressWarnings("unchecked")
 	public void retrieveAndValidateIfHasGermplasmListExceptionHandling() throws Exception {
 		Mockito.when(
 				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
@@ -137,8 +139,10 @@ public class CrossingTemplateExcelExporterTest {
 		for (int i = 0; i < 5; i++) {
 			final GermplasmList gplist = new GermplasmList();
 			gplist.setId(i);
+			gplist.setDate(20150506L);
 			list.add(gplist);
 		}
+
 		return list;
 	}
 
@@ -157,7 +161,7 @@ public class CrossingTemplateExcelExporterTest {
 		return list;
 	}
 
-    protected Variable createTestVariable(Integer termId, String value) {
+    private Variable createTestVariable(final Integer termId, final String value) {
         final Variable testVariable = new Variable();
         testVariable.setValue(value);
         final StandardVariable standardVariable = new StandardVariable();

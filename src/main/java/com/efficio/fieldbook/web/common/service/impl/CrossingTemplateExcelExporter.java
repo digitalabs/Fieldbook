@@ -90,7 +90,7 @@ public class CrossingTemplateExcelExporter {
 				labelStyle, textStyle);
 
 		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(++actualRow)).writeListDetailsRow(descriptionSheet,
-				GermplasmExportedWorkbook.LIST_DATE, String.valueOf(germplasmList.getDate()),
+				GermplasmExportedWorkbook.LIST_DATE, germplasmList.getDate(),
 				"Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank", labelStyle, textStyle);
 
 		return ++actualRow;

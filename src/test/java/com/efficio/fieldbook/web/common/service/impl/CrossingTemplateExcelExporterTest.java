@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
 import org.generationcp.commons.service.FileService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -21,9 +22,13 @@ import org.generationcp.middleware.domain.dms.VariableList;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.User;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -57,6 +62,15 @@ public class CrossingTemplateExcelExporterTest {
 	@Mock
 	private File templateFile;
 
+	@Mock
+	protected ContextUtil contextUtil;
+
+	@Mock
+	private WorkbenchDataManager workbenchDataManager;
+
+	@Mock
+	private GermplasmDataManager germplasmDataManager;
+
 	@InjectMocks
 	private CrossingTemplateExcelExporter exporter;
 
@@ -87,6 +101,9 @@ public class CrossingTemplateExcelExporterTest {
 				.getExperiments(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt(), Matchers.any(VariableTypeList.class));
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
+		Project projectMock = Mockito.mock(Project.class);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(projectMock);
+		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<User>());
 
 		// to test
 		final File exportFile =

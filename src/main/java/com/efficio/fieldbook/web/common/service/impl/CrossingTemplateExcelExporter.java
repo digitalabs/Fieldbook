@@ -14,6 +14,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -96,6 +97,13 @@ public class CrossingTemplateExcelExporter {
 			final Row row = codesSheet.createRow(++startingRow);
 			row.createCell(0).setCellValue(GermplasmExportedWorkbook.CONDITION);
 			row.createCell(1).setCellValue(GermplasmExportedWorkbook.USER);
+
+			CellStyle style = codesSheet.getWorkbook().createCellStyle();
+			style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			style.setFillForegroundColor(IndexedColors.VIOLET.getIndex());
+			row.getCell(0).setCellStyle(style);
+			row.getCell(1).setCellStyle(style);
+
 			row.createCell(2).setCellValue(user.getUserid());
 			final Person person = this.workbenchDataManager.getPersonById(user.getPersonid());
 			row.createCell(3).setCellValue(person.getDisplayName());

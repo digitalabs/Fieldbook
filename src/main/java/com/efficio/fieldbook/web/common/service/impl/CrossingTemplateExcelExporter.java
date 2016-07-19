@@ -14,22 +14,25 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
 import org.generationcp.commons.parsing.ExcelWorkbookRow;
 import org.generationcp.commons.parsing.GermplasmExportedWorkbook;
 import org.generationcp.commons.service.FileService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.StringUtil;
-import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.util.PoiUtil;
+import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.User;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
 
@@ -50,6 +53,12 @@ public class CrossingTemplateExcelExporter {
 	@Resource
 	private FileService fileService;
 
+	@Resource
+	protected ContextUtil contextUtil;
+
+	@Autowired
+	private WorkbenchDataManager workbenchDataManager;
+
 	private String templateFile;
 
 	public File export(Integer studyId, String studyName) throws CrossingTemplateExportException {
@@ -63,13 +72,33 @@ public class CrossingTemplateExcelExporter {
 			final GermplasmList gpList = crossesList.get(0);
 			gpList.setType(GermplasmListType.LST.name());
 
+			// 3. write details
 			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook));
 
-			// 4. return the resulting file back to the user
+			// 4. write details
+			this.updateCodesSection(excelWorkbook.getSheetAt(2));
+
+			// return the resulting file back to the user
 			return this.createExcelOutputFile(studyName, excelWorkbook);
 
 		} catch (MiddlewareException | IOException | InvalidFormatException e) {
 			throw new CrossingTemplateExportException(e.getMessage(), e);
+		}
+	}
+
+	private void updateCodesSection(final Sheet codesSheet) {
+		int startingRow = codesSheet.getLastRowNum();
+
+		final List<User> allProgramMembers =
+				this.workbenchDataManager.getUsersByProjectId(this.contextUtil.getProjectInContext().getProjectId());
+
+		for (final User user : allProgramMembers) {
+			final Row row = codesSheet.createRow(++startingRow);
+			row.createCell(0).setCellValue(GermplasmExportedWorkbook.CONDITION);
+			row.createCell(1).setCellValue(GermplasmExportedWorkbook.USER);
+			row.createCell(2).setCellValue(user.getUserid());
+			final Person person = this.workbenchDataManager.getPersonById(user.getPersonid());
+			row.createCell(3).setCellValue(person.getDisplayName());
 		}
 	}
 

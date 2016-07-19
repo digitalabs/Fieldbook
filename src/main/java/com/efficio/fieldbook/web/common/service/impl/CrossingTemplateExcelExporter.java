@@ -76,7 +76,7 @@ public class CrossingTemplateExcelExporter {
 	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final GermplasmList germplasmList,
 			final ExcelCellStyleBuilder sheetStyles) {
 		final CellStyle labelStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.LABEL_STYLE);
-		final CellStyle textStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.TEXT_STYLE);
+		final CellStyle textStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.NUMERIC_STYLE);
 
 		int actualRow = startingRow - 1;
 
@@ -87,10 +87,6 @@ public class CrossingTemplateExcelExporter {
 
 		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(++actualRow)).writeListDetailsRow(descriptionSheet,
 				GermplasmExportedWorkbook.LIST_DESCRIPTION, "", "Enter a list description here, or add it when saving in the BMS",
-				labelStyle, textStyle);
-
-		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(++actualRow)).writeListDetailsRow(descriptionSheet,
-				GermplasmExportedWorkbook.LIST_TYPE, germplasmList.getType(), "See valid list types on Codes sheet for more options",
 				labelStyle, textStyle);
 
 		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(++actualRow)).writeListDetailsRow(descriptionSheet,

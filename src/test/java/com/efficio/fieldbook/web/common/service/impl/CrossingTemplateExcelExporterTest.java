@@ -117,13 +117,9 @@ public class CrossingTemplateExcelExporterTest {
 		Assert.assertEquals(sheet.getRow(1).getCell(3).getStringCellValue(),
 				"Enter a list description here, or add it when saving in the BMS");
 
-		Assert.assertEquals(sheet.getRow(2).getCell(0).getStringCellValue(), "LIST TYPE");
-		Assert.assertEquals(sheet.getRow(2).getCell(1).getStringCellValue(), "LST");
-		Assert.assertEquals(sheet.getRow(2).getCell(3).getStringCellValue(), "See valid list types on Codes sheet for more options");
-
-		Assert.assertEquals(sheet.getRow(3).getCell(0).getStringCellValue(), "LIST DATE");
-		Assert.assertEquals(sheet.getRow(3).getCell(1).getStringCellValue(), "20150506");
-		Assert.assertEquals(sheet.getRow(3).getCell(3).getStringCellValue(), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
+		Assert.assertEquals(sheet.getRow(2).getCell(0).getStringCellValue(), "LIST DATE");
+		Assert.assertEquals(sheet.getRow(2).getCell(1).getStringCellValue(), "20150506");
+		Assert.assertEquals(sheet.getRow(2).getCell(3).getStringCellValue(), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
 	}
 
 	@Test(expected = CrossingTemplateExportException.class)

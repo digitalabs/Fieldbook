@@ -28,9 +28,11 @@ import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,9 @@ public class CrossingTemplateExcelExporter {
 	@Autowired
 	private WorkbenchDataManager workbenchDataManager;
 
+	@Resource
+	private GermplasmDataManager germplasmDataManager;
+
 	private String templateFile;
 
 	public File export(Integer studyId, String studyName) throws CrossingTemplateExportException {
@@ -76,7 +81,7 @@ public class CrossingTemplateExcelExporter {
 			// 3. write details
 			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook));
 
-			// 4. write details
+			// 4. update codes
 			this.updateCodesSection(excelWorkbook.getSheetAt(2));
 
 			// return the resulting file back to the user
@@ -90,24 +95,47 @@ public class CrossingTemplateExcelExporter {
 	private void updateCodesSection(final Sheet codesSheet) {
 		int startingRow = codesSheet.getLastRowNum();
 
+		// Users
+
 		final List<User> allProgramMembers =
 				this.workbenchDataManager.getUsersByProjectId(this.contextUtil.getProjectInContext().getProjectId());
+
+		final CellStyle userCellStyle = codesSheet.getWorkbook().createCellStyle();
+		userCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		userCellStyle.setFillForegroundColor(IndexedColors.VIOLET.getIndex());
 
 		for (final User user : allProgramMembers) {
 			final Row row = codesSheet.createRow(++startingRow);
 			row.createCell(0).setCellValue(GermplasmExportedWorkbook.CONDITION);
 			row.createCell(1).setCellValue(GermplasmExportedWorkbook.USER);
+			row.getCell(0).setCellStyle(userCellStyle);
+			row.getCell(1).setCellStyle(userCellStyle);
 
-			CellStyle style = codesSheet.getWorkbook().createCellStyle();
-			style.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			style.setFillForegroundColor(IndexedColors.VIOLET.getIndex());
-			row.getCell(0).setCellStyle(style);
-			row.getCell(1).setCellStyle(style);
-
-			row.createCell(2).setCellValue(user.getUserid());
+			row.createCell(2).setCellValue(user.getUserid().toString());
 			final Person person = this.workbenchDataManager.getPersonById(user.getPersonid());
 			row.createCell(3).setCellValue(person.getDisplayName());
 		}
+
+		// Methods
+
+		final List<Method> methods = this.germplasmDataManager.getMethodsByType("GEN", this.contextUtil.getCurrentProgramUUID());
+
+		final CellStyle methodCellStyle = codesSheet.getWorkbook().createCellStyle();
+		methodCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		methodCellStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
+
+		for (final Method method : methods) {
+			final Row row = codesSheet.createRow(++startingRow);
+			row.createCell(0).setCellValue(GermplasmExportedWorkbook.VARIATE);
+			row.createCell(1).setCellValue(GermplasmExportedWorkbook.BREEDING_METHOD);
+
+			row.getCell(0).setCellStyle(methodCellStyle);
+			row.getCell(1).setCellStyle(methodCellStyle);
+
+			row.createCell(2).setCellValue(method.getMcode());
+			row.createCell(3).setCellValue(method.getMname());
+		}
+
 	}
 
 	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final GermplasmList germplasmList,

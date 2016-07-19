@@ -11,6 +11,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import junit.framework.Assert;
+
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -55,8 +57,6 @@ import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-
-import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EditNurseryControllerTest {
@@ -132,7 +132,7 @@ public class EditNurseryControllerTest {
 
 	@Mock
 	private OntologyService ontologyService;
-	
+
 	@InjectMocks
 	private EditNurseryController editNurseryController;
 
@@ -143,10 +143,6 @@ public class EditNurseryControllerTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
 		Mockito.when(this.request.getSession()).thenReturn(this.session);
 		this.editNurseryController.setFieldbookService(this.fieldbookService);
-		final Workbook workbook = Mockito.mock(Workbook.class);
-		Mockito.when(workbook.getMeasurementDatesetId()).thenReturn(1);
-		Mockito.when(workbook.getVariates()).thenReturn(new ArrayList<MeasurementVariable>());
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 	}
 
 	@Test
@@ -444,20 +440,6 @@ public class EditNurseryControllerTest {
 		Assert.assertEquals(combineVariates.get(1).getVariableType(), VariableType.SELECTION_METHOD);
 	}
 
-	@Test
-	public void testIsMeasurementDataExistingTrue() {
-		Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.anyInt(), Matchers.anyList())).thenReturn(true);
-		final Map<String, Object> resultMap = this.editNurseryController.isMeasurementDataExisting();
-		Assert.assertEquals("The study should have measurement data", true, resultMap.get(EditNurseryController.HAS_MEASUREMENT_DATA_STR));
-	}
-	
-	@Test
-	public void testIsMeasurementDataExistingFalse() {
-		Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.anyInt(), Matchers.anyList())).thenReturn(false);
-		final Map<String, Object> resultMap = this.editNurseryController.isMeasurementDataExisting();
-		Assert.assertEquals("The study should have measurement data", false, resultMap.get(EditNurseryController.HAS_MEASUREMENT_DATA_STR));
-	}
-	
 	private SettingDetail initializeSettingDetails(final boolean isAddNursery) {
 		final SettingDetail settingDetail = Mockito.mock(SettingDetail.class);
 

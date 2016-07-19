@@ -41,18 +41,104 @@
     <script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
     <script type="text/javascript" th:inline="javascript">
         //<![CDATA[
-        var poll;
+
+        "use strict";
+
+        var fileName = /*[[${fileName}]]*/ "";
 
         $(function(){
 
+        	validateAndParseWorkbook();
+
+        });
+
+        function validateAndParseWorkbook(){
 
             $.ajax({
-                url: 'fileUpload/startProcess',
+                url: 'fileUpload/validateAndParseWorkbook',
                 type: 'post',
                 cache: false,
                 success: function (data) {
 
-                    getUpdate(data);
+                     if (data.statusCode === '1'){
+
+                        //If the uploaded workbook file has no validation errors, continue to save the data.
+                    	 startProcess(0);
+
+                     } else if (data.statusCode === '2'){
+
+                     	//Ask the user if he wants to proceed in saving the workbook even if there are
+                     	//out of bounds data.
+                    	var modalLabel = /*[[#{out.of.bounds.confirmation}]]*/ '';
+
+                 		bootbox.dialog({
+           					message: modalLabel,
+           					closeButton: false,
+           					buttons: {
+
+           						cancel: {
+           							label:'Cancel',
+           							callback: function(){
+           								window.location = 'fileUpload';
+           							}
+
+           						},
+
+           						discard: {
+           							label:'Discard',
+           							className: 'btn-primary',
+           							callback: function (){
+           								startProcess(1);
+           							}
+
+
+           						},
+           						keep:{
+           							label:'Keep',
+           							className: 'btn-primary',
+           							callback: function (){
+           								startProcess(0);
+           							}
+           						}
+           					}
+           				});
+
+
+
+
+                     } else if (data.statusCode === '-1'){
+
+                    	//Display the validation erros
+                     	processError(data);
+
+                     }
+
+                },
+                error: function(){
+                    showErrorAlert("The system cannot process the uploaded file. The system only supports Excel versions 97/2000/XP/2003-2008.");
+                },
+                contentType: "application/json"
+            });
+
+        }
+
+ 		function startProcess(confirmDiscard){
+
+            $.ajax({
+                url: 'fileUpload/startProcess/' + confirmDiscard,
+                type: 'post',
+                cache: false,
+                success: function (data) {
+
+                	  if (data.statusCode === '1'){
+
+                          showSuccessAlert();
+
+                      } else if (data.statusCode === '-1') {
+
+                    	  processError(data);
+
+                      }
 
                 },
                 error: function(){
@@ -61,57 +147,28 @@
                 contentType: "application/json"
             });
 
+        }
 
+        function processError(data){
 
-        });
+        	 var message;
+             if (data.errorType == 'PhenotypeException'){
+                 message = data.statusMessage + " Please correct the data and <a href='fileUpload'>try again</a>.";
+             }else if (data.errorType == 'MiddlewareQueryException'){
+                 message = "An error occured while saving to the database. Please <a href='fileUpload'>try again</a>.";
+             }else if (data.errorType == 'IOException'){
+                 message = "An error occured while processing " + fileName + ". Please <a href='fileUpload'>try again</a>.";
+             }else if (data.errorType == 'Exception'){
+                 message = "An error occured while processing the request. Please <a href='fileUpload'>try again</a>.";
+             }else if (data.errorType == 'WorkbookParserException-OverMaxLimit'){
+             	message = "An error occured while processing " + fileName + ". Please <a href='fileUpload'>try again</a>. "  + data.statusMessage;
+             }else if (data.errorType == 'WorkbookParserException'){
+                 message = "System cannot process " + fileName + " file. Please review the format and <a href='fileUpload'>try again</a>. You may also continue to import the file using the <a href='workbook/step2'>Data Import Wizard.</a> " + data.statusMessage;
+             }
 
-        function getUpdate(data){
-            /** $.ajax({
-			        url: 'fileUpload/getUpdate',
-			        type: 'get',
-			        dataType: 'json',
-			        success: function (data) { **/
-
-            //console.log(data);
-            var fileName = /*[[${fileName}]]*/ "";
-
-            if (data.statusCode == '1'){
-                //clearInterval(poll);
-                showSuccessAlert();
-            }else if (data.statusCode == '-1'){
-                //clearInterval(poll);
-                /**MiddlewareQueryException
-                 IOException
-                 Exception
-                 FormatError**/
-                var message;
-                if (data.errorType == 'PhenotypeException'){
-                    message = data.statusMessage + " Please correct the data and <a href='fileUpload'>try again</a>.";
-                }else if (data.errorType == 'MiddlewareQueryException'){
-                    message = "An error occured while saving to the database. Please <a href='fileUpload'>try again</a>.";
-                }else if (data.errorType == 'IOException'){
-                    message = "An error occured while processing " + fileName + ". Please <a href='fileUpload'>try again</a>.";
-                }else if (data.errorType == 'Exception'){
-                    message = "An error occured while processing the request. Please <a href='fileUpload'>try again</a>.";
-                }else if (data.errorType == 'WorkbookParserException-OverMaxLimit'){
-                	message = "An error occured while processing " + fileName + ". Please <a href='fileUpload'>try again</a>. "  + data.statusMessage;
-                }else if (data.errorType == 'WorkbookParserException'){
-                    message = "System cannot process " + fileName + " file. Please review the format and <a href='fileUpload'>try again</a>. You may also continue to import the file using the <a href='workbook/step2'>Data Import Wizard.</a> " + data.statusMessage;
-                }
-
-                showErrorAlert(message);
-            }
+             showErrorAlert(message);
 
         }
-        /**,
-         error: function(){
-			        	clearInterval(poll);
-			        	showErrorAlert("An error occurred while connecting to the web service. Please try again.");
-			        },
-         contentType: "application/json"
-         });
-
-         }**/
 
         function showSuccessAlert(){
             $("#divProgress").hide();

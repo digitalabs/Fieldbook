@@ -234,8 +234,60 @@
 
                         myHttp.post("openSheet", $scope.selected).success(function (data) {
                             if (data.success) {
-                            	Spinner.play();
-                            	window.location = data.redirectUrl;
+
+                                if (data.hasOutOfBoundsData){
+
+                                    var modalLabel = /*[[#{out.of.bounds.confirmation}]]*/ '';
+
+
+                                    bootbox.dialog(
+                                            {
+                                                message: modalLabel,
+                                                closeButton: false,
+                                                buttons: {
+
+                                                    cancel: {
+                                                        label:'Cancel',
+                                                        callback: function(){
+
+                                                            $scope.userAttemptedSubmission = false;
+                                                            $scope.$apply();
+                                                            Spinner.stop();
+                                                        }
+
+                                                    },
+
+                                                    discard: {
+                                                        label:'Discard',
+                                                        className: 'btn-primary',
+                                                        callback: function (){
+
+                                                            Spinner.play();
+                                                            $scope.userAttemptedSubmission = false;
+                                                            window.location = data.redirectUrl + '/1';
+                                                        }
+
+
+                                                    },
+                                                    keep:{
+                                                        label:'Keep',
+                                                        className: 'btn-primary',
+                                                        callback: function (){
+
+                                                            Spinner.play();
+                                                            $scope.userAttemptedSubmission = false;
+                                                            window.location = data.redirectUrl + '/0';
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                    );
+
+                                } else {
+                                    Spinner.play();
+                                    window.location = data.redirectUrl + '/0';
+                                }
+
                             } else {
                                 $scope.messages = data.messages;
                                 $scope.userAttemptedSubmission = false;

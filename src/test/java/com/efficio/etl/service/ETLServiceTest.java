@@ -1,30 +1,49 @@
 
 package com.efficio.etl.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.DataSet;
 import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.service.api.DataImportService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -45,12 +64,29 @@ public class ETLServiceTest {
 	private Workbook workbook;
 
 	@Mock
+	private FileService fileService;
+
+	@Mock
 	private StudyDataManager studyDataManager;
 
+	@Mock
+	private ContextUtil contextUtil;
+
+	@Mock
+	private OntologyDataManager ontologyDataManager;
+
+	@Mock
+	private DataImportService dataImportService;
+
+	@Mock
+	private ResourceBundleMessageSource messageSource;
+
 	@InjectMocks
-	private ETLService etlService = new ETLServiceImpl();
+	private ETLServiceImpl etlService = new ETLServiceImpl();
 
 	private UserSelection userSelection;
+
+	private final static String PROGRAM_UUID = "9f2102ee-ca88-43bc-900a-09dc49a29ddb";
 
 	private final static int ALL_OBSERVATION_ROWS = 447;
 	private final static int GID_COLUMN = 1;
@@ -63,7 +99,7 @@ public class ETLServiceTest {
 
 	private final static String[] COLUMN_HEADERS = new String[] {"ENTRY", "GID", "DESIG", "CROSS", "SOURCE", "PLOT", "BLOCK", "REP", "ROW",
 			"COL", "NBEPm2", "GYLD", "equi-Kkni", "equi-Tiand", "DTFL", "DFLF", "FDect", "GDENS", "TGW", "PERTH", "PH1", "PH2", "INTNN1",
-			"INTNN2", "PEDL1", "PEDL2", "PANL1", "PANL2", "NHH", "NBGPAN", "PH", "INTNN", "PEDL", "PANL"};
+			"INTNN2", "PEDL1", "PEDL2", "PANL1", "PANL2", "NHH", "NBGPAN", "PH", "INTNN", "PEDL", "PANL", "AleuCol_1_5"};
 
 	private final static String SHEET_1_NAME = "Description";
 	private final static String SHEET_2_NAME = "Observation";
@@ -76,6 +112,7 @@ public class ETLServiceTest {
 	private static final String PLOT_NO = "PLOT_NO";
 	private static final String ASI = "ASI";
 	private static final String ASI_MEAN = "ASI_MEAN";
+	private static final String ALEU_COL_1_5 = "ALEU_COL_1_5";
 
 	private static final int STUDY_ID = 1;
 	private static final int TRIAL_DATASET_ID = 2;
@@ -99,22 +136,14 @@ public class ETLServiceTest {
 	private static final String DUMMY_DATATYPE_DEF = "DATATYPE-DEF";
 
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException {
+
 		MockitoAnnotations.initMocks(this);
 		this.userSelection = new UserSelection();
-		this.userSelection.setHeaderRowIndex(ETLServiceTest.OBSERVATION_HEADER_ROW);
-		this.userSelection.setContentRowIndex(ETLServiceTest.OBSERVATION_CONTENT_ROW);
-		this.userSelection.setSelectedSheet(ETLServiceTest.OBSERVATION_SHEET_INDEX);
-	}
+		this.fillObservationInfoOfUserSelection(this.userSelection);
 
-	private void fillStudyDetailsOfUserSelection(final Integer studyId) {
-		this.userSelection.setStudyName("ETLStudy" + Math.random());
-		this.userSelection.setStudyTitle("Study for testing");
-		this.userSelection.setStudyObjective("To test the data import tool");
-		this.userSelection.setStudyStartDate("09/01/2015");
-		this.userSelection.setStudyEndDate("10/01/2015");
-		this.userSelection.setStudyType(StudyType.T.getName());
-		this.userSelection.setStudyId(studyId);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+		Mockito.when(this.fileService.retrieveWorkbook(Mockito.anyString())).thenReturn(this.workbook);
 	}
 
 	@Test
@@ -166,7 +195,7 @@ public class ETLServiceTest {
 	@Test
 	public void testRetrieveAndSetProjectOntologyForPlotDataImport() {
 		final int datasetType = DataSetType.PLOT_DATA.getId();
-		this.fillStudyDetailsOfUserSelection(STUDY_ID);
+		this.fillStudyDetailsOfUserSelection(this.userSelection, STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
 		final List<DataSet> plotDatasets = this.createPlotDatasetsTestData(this.userSelection.getStudyName() + "-PLOTDATA");
@@ -228,7 +257,7 @@ public class ETLServiceTest {
 	@Test
 	public void testRetrieveAndSetProjectOntologyForPlotDataImportOldDatasetNames() {
 		final int datasetType = DataSetType.PLOT_DATA.getId();
-		this.fillStudyDetailsOfUserSelection(STUDY_ID);
+		this.fillStudyDetailsOfUserSelection(this.userSelection, STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
 		final List<DataSet> plotDatasets = this.createPlotDatasetsTestData("MEASUREMENT EFEC_" + this.userSelection.getStudyName());
@@ -289,7 +318,7 @@ public class ETLServiceTest {
 	@Test
 	public void testRetrieveAndSetProjectOntologyForMeansDataImport() {
 		final int datasetType = DataSetType.MEANS_DATA.getId();
-		this.fillStudyDetailsOfUserSelection(STUDY_ID);
+		this.fillStudyDetailsOfUserSelection(this.userSelection, STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
 		final List<DataSet> meansDatasets = this.createMeansDatasetsTestData(this.userSelection.getStudyName() + "-MEANS");
@@ -348,6 +377,214 @@ public class ETLServiceTest {
 		for (final MeasurementVariable measurementVariable : workbook.getVariates()) {
 			Assert.assertTrue("A variate should have a variate role", measurementVariable.getRole() == PhenotypicType.VARIATE);
 		}
+	}
+
+	@Test
+	public void testCheckOutOfBoundsDataTrue() throws IOException {
+
+		// Accept any workbook when checkForOutOfBoundsData is called. It will be captured and verified later.
+		Mockito.when(
+				this.dataImportService.checkForOutOfBoundsData(Mockito.eq(this.ontologyDataManager),
+						Mockito.any(org.generationcp.middleware.domain.etl.Workbook.class), Mockito.eq(PROGRAM_UUID))).thenReturn(true);
+
+		final int datasetType = DataSetType.PLOT_DATA.getId();
+		this.fillStudyDetailsOfUserSelection(this.userSelection, STUDY_ID);
+		this.userSelection.setDatasetType(datasetType);
+		this.userSelection.getPhenotypicMap().putAll(this.createPhenotyicMapTestData());
+
+		final ArgumentCaptor<org.generationcp.middleware.domain.etl.Workbook> workbookCaptor =
+				ArgumentCaptor.forClass(org.generationcp.middleware.domain.etl.Workbook.class);
+
+		Assert.assertTrue(this.etlService.checkOutOfBoundsData(this.userSelection));
+
+		// Make sure the dataImportService.checkForOutOfBoundsData is called
+		Mockito.verify(this.dataImportService, Mockito.times(1)).checkForOutOfBoundsData(Mockito.eq(this.ontologyDataManager),
+				workbookCaptor.capture(), Mockito.eq(PROGRAM_UUID));
+		Assert.assertNotNull(workbookCaptor.getValue());
+	}
+
+	@Test
+	public void testCheckOutOfBoundsDataFalse() throws IOException {
+
+		// Accept any workbook when checkForOutOfBoundsData is called. It will be captured and verified later.
+		Mockito.when(
+				this.dataImportService.checkForOutOfBoundsData(Mockito.eq(this.ontologyDataManager),
+						Mockito.any(org.generationcp.middleware.domain.etl.Workbook.class), Mockito.eq(PROGRAM_UUID))).thenReturn(false);
+
+		final int datasetType = DataSetType.PLOT_DATA.getId();
+		this.fillStudyDetailsOfUserSelection(this.userSelection, STUDY_ID);
+		this.userSelection.setDatasetType(datasetType);
+		this.userSelection.getPhenotypicMap().putAll(this.createPhenotyicMapTestData());
+
+		final ArgumentCaptor<org.generationcp.middleware.domain.etl.Workbook> workbookCaptor =
+				ArgumentCaptor.forClass(org.generationcp.middleware.domain.etl.Workbook.class);
+
+		Assert.assertFalse(this.etlService.checkOutOfBoundsData(this.userSelection));
+
+		// Make sure the dataImportService.checkForOutOfBoundsData is called
+		Mockito.verify(this.dataImportService, Mockito.times(1)).checkForOutOfBoundsData(Mockito.eq(this.ontologyDataManager),
+				workbookCaptor.capture(), Mockito.eq(PROGRAM_UUID));
+		Assert.assertNotNull(workbookCaptor.getValue());
+
+	}
+
+	@Test(expected = IOException.class)
+	public void testCheckOutOfBoundsDataException() throws IOException {
+
+		Mockito.when(this.fileService.retrieveWorkbook(Mockito.anyString())).thenThrow(new IOException());
+		this.etlService.checkOutOfBoundsData(this.userSelection);
+
+	}
+
+	@Test
+	public void testIsObservationOverMaximumLimitTrue() {
+
+		List<String> errors = new ArrayList<>();
+		this.etlService.setMaxRowLimit(100);
+		Assert.assertTrue(this.etlService.isObservationOverMaximumLimit(this.userSelection, errors, this.workbook));
+		Assert.assertTrue(!errors.isEmpty());
+	}
+
+	@Test
+	public void testIsObservationOverMaximumLimitFalse() {
+
+		List<String> errors = new ArrayList<>();
+
+		Assert.assertFalse(this.etlService.isObservationOverMaximumLimit(this.userSelection, errors, this.workbook));
+		Assert.assertTrue("If max limit for observation is not reached, there should be no error added in the list.", errors.isEmpty());
+	}
+
+	@Test
+	public void testIsWorkbookHasObservationRecordsFalse() {
+		List<String> errors = new ArrayList<>();
+		Workbook emptyWorkbook = new HSSFWorkbook();
+		emptyWorkbook.createSheet();
+		emptyWorkbook.createSheet();
+
+		Assert.assertFalse(this.etlService.isWorkbookHasObservationRecords(this.userSelection, errors, emptyWorkbook));
+		Assert.assertTrue(!errors.isEmpty());
+		Assert.assertEquals("error.observation.no.records", errors.get(0));
+	}
+
+	@Test
+	public void testIsWorkbookHasObservationRecordsTrue() {
+		List<String> errors = new ArrayList<>();
+
+		Assert.assertTrue(this.etlService.isWorkbookHasObservationRecords(this.userSelection, errors, this.workbook));
+		Assert.assertTrue(errors.isEmpty());
+	}
+
+	@Test
+	public void testCreateWorkbookFromUserSelection() {
+
+		final int datasetType = DataSetType.PLOT_DATA.getId();
+		this.fillStudyDetailsOfUserSelection(this.userSelection, STUDY_ID);
+		this.userSelection.setDatasetType(datasetType);
+		this.userSelection.getPhenotypicMap().putAll(this.createPhenotyicMapTestData());
+
+		org.generationcp.middleware.domain.etl.Workbook workbook =
+				this.etlService.createWorkbookFromUserSelection(this.userSelection, true);
+
+		Assert.assertEquals(8, workbook.getFactors().size());
+		Assert.assertEquals(3, workbook.getVariates().size());
+
+	}
+
+	@Test
+	public void testExtractExcelFileDataNoInvalidValues() {
+
+		this.userSelection.setObservationRows(1);
+		org.generationcp.middleware.domain.etl.Workbook testWorkbook = this.createTestWorkbook();
+		Workbook importData = this.createTestExcelWorkbookFromWorkbook(testWorkbook, false);
+		List<MeasurementRow> result = this.etlService.extractExcelFileData(importData, this.userSelection, testWorkbook, false);
+
+		Assert.assertEquals(1, result.size());
+
+		Assert.assertEquals("1", result.get(0).getMeasurementData(TRIAL_INSTANCE).getValue());
+		Assert.assertEquals("1", result.get(0).getMeasurementData(ENTRY_NO).getValue());
+		Assert.assertEquals("1", result.get(0).getMeasurementData(PLOT_NO).getValue());
+		Assert.assertEquals("1", result.get(0).getMeasurementData(ALEU_COL_1_5).getValue());
+
+	}
+
+	@Test
+	public void testExtractExcelFileDataDiscardInvalidValues() {
+
+		this.userSelection.setObservationRows(1);
+		org.generationcp.middleware.domain.etl.Workbook testWorkbook = this.createTestWorkbook();
+		Workbook importData = this.createTestExcelWorkbookFromWorkbook(testWorkbook, true);
+		List<MeasurementRow> result = this.etlService.extractExcelFileData(importData, this.userSelection, testWorkbook, true);
+
+		Assert.assertEquals(1, result.size());
+
+		Assert.assertEquals("1", result.get(0).getMeasurementData(TRIAL_INSTANCE).getValue());
+		Assert.assertEquals("1", result.get(0).getMeasurementData(ENTRY_NO).getValue());
+		Assert.assertEquals("1", result.get(0).getMeasurementData(PLOT_NO).getValue());
+		Assert.assertEquals("The value must be empty since the original data is an invalid value", "",
+				result.get(0).getMeasurementData(ALEU_COL_1_5).getValue());
+
+	}
+
+	@Test
+	public void testExtractExcelFileDataKeepInvalidValues() {
+
+		this.userSelection.setObservationRows(1);
+		org.generationcp.middleware.domain.etl.Workbook testWorkbook = this.createTestWorkbook();
+		Workbook importData = this.createTestExcelWorkbookFromWorkbook(testWorkbook, true);
+		List<MeasurementRow> result = this.etlService.extractExcelFileData(importData, this.userSelection, testWorkbook, false);
+
+		Assert.assertEquals(1, result.size());
+
+		Assert.assertEquals("1", result.get(0).getMeasurementData(TRIAL_INSTANCE).getValue());
+		Assert.assertEquals("1", result.get(0).getMeasurementData(ENTRY_NO).getValue());
+		Assert.assertEquals("1", result.get(0).getMeasurementData(PLOT_NO).getValue());
+		Assert.assertEquals("The value should be 6", "6", result.get(0).getMeasurementData(ALEU_COL_1_5).getValue());
+
+	}
+
+	protected Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {
+
+		Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> map = new HashMap<>();
+
+		// Trial Environment
+		LinkedHashMap<String, MeasurementVariable> trialEnvironmentsMap = new LinkedHashMap<>();
+		trialEnvironmentsMap.put(TRIAL_INSTANCE, this.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), TRIAL_INSTANCE,
+				PhenotypicType.TRIAL_ENVIRONMENT, DataType.NUMERIC_VARIABLE.getId()));
+		map.put(PhenotypicType.TRIAL_ENVIRONMENT, trialEnvironmentsMap);
+
+		// Trial Design
+		LinkedHashMap<String, MeasurementVariable> trialDesignsMap = new LinkedHashMap<>();
+		trialDesignsMap.put("REP", this.createMeasurementVariable(TermId.REP_NO.getId(), "REP", PhenotypicType.TRIAL_DESIGN,
+				DataType.NUMERIC_VARIABLE.getId()));
+		trialDesignsMap.put("ROW",
+				this.createMeasurementVariable(TermId.ROW.getId(), "ROW", PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
+		trialDesignsMap.put("COL",
+				this.createMeasurementVariable(TermId.COL.getId(), "COL", PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
+		map.put(PhenotypicType.TRIAL_DESIGN, trialDesignsMap);
+
+		// Germplasm
+		LinkedHashMap<String, MeasurementVariable> germplasmMap = new LinkedHashMap<>();
+		germplasmMap.put("SOURCE", this.createMeasurementVariable(TermId.SOURCE.getId(), "SOURCE", PhenotypicType.GERMPLASM,
+				DataType.NUMERIC_VARIABLE.getId()));
+		germplasmMap.put(
+				"ENTRY",
+				this.createMeasurementVariable(TermId.ENTRY_NO.getId(), "ENTRY", PhenotypicType.GERMPLASM,
+						DataType.NUMERIC_VARIABLE.getId()));
+		germplasmMap.put("CROSS",
+				this.createMeasurementVariable(TermId.CROSS.getId(), "CROSS", PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
+		germplasmMap.put("GID",
+				this.createMeasurementVariable(TermId.GID.getId(), "GID", PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
+		map.put(PhenotypicType.GERMPLASM, germplasmMap);
+
+		// Variate
+		LinkedHashMap<String, MeasurementVariable> variatesMap = new LinkedHashMap<>();
+		variatesMap.put("GYLD", this.createMeasurementVariable(18150, "GYLD", PhenotypicType.VARIATE, DataType.NUMERIC_VARIABLE.getId()));
+		variatesMap.put("PH", this.createMeasurementVariable(20343, "PH", PhenotypicType.VARIATE, DataType.NUMERIC_VARIABLE.getId()));
+		variatesMap.put("AleuCol_1_5",
+				this.createMeasurementVariable(51547, "AleuCol_1_5", PhenotypicType.VARIATE, DataType.CATEGORICAL_VARIABLE.getId()));
+		map.put(PhenotypicType.VARIATE, variatesMap);
+
+		return map;
 	}
 
 	private List<DataSet> createTrialDatasetsTestData(final String datasetName) {
@@ -451,4 +688,101 @@ public class ETLServiceTest {
 				PhenotypicType.VARIATE), ++rank));
 		return meansVariableTypeList;
 	}
+
+	private MeasurementVariable createMeasurementVariable(int termId, String name, PhenotypicType phenotypicType, int dataTypeId) {
+		StandardVariable stdvar = this.createStandardVariableTestData(name, phenotypicType);
+		stdvar.setPhenotypicType(phenotypicType);
+		stdvar.setId(termId);
+		final MeasurementVariable var =
+				new MeasurementVariable(termId, stdvar.getName(), stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod()
+						.getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(), "", stdvar.getPhenotypicType()
+						.getLabelList().get(0));
+		var.setRole(phenotypicType);
+		var.setDataTypeId(stdvar.getDataType().getId());
+		var.setFactor(false);
+		var.setOperation(null);
+		return var;
+	}
+
+	private void fillObservationInfoOfUserSelection(final UserSelection userSelection) {
+		userSelection.setHeaderRowIndex(ETLServiceTest.OBSERVATION_HEADER_ROW);
+		userSelection.setContentRowIndex(ETLServiceTest.OBSERVATION_CONTENT_ROW);
+		userSelection.setSelectedSheet(ETLServiceTest.OBSERVATION_SHEET_INDEX);
+		userSelection.setObservationRows(ETLServiceTest.ALL_OBSERVATION_ROWS);
+	}
+
+	private void fillStudyDetailsOfUserSelection(final UserSelection userSelection, final Integer studyId) {
+		userSelection.setStudyName("ETLStudy" + Math.random());
+		userSelection.setStudyTitle("Study for testing");
+		userSelection.setStudyObjective("To test the data import tool");
+		userSelection.setStudyStartDate("09/01/2015");
+		userSelection.setStudyEndDate("10/01/2015");
+		userSelection.setStudyType(StudyType.T.getName());
+		userSelection.setStudyId(studyId);
+	}
+
+	protected Workbook createTestExcelWorkbookFromWorkbook(org.generationcp.middleware.domain.etl.Workbook workbook,
+			boolean withInvalidValues) {
+
+		HSSFWorkbook excelWorkbook = new HSSFWorkbook();
+		excelWorkbook.createSheet("Description");
+		HSSFSheet observationSheet = excelWorkbook.createSheet("Observation");
+
+		List<MeasurementVariable> allVariables = new LinkedList<>();
+		allVariables.addAll(workbook.getFactors());
+		allVariables.addAll(workbook.getVariates());
+
+		HSSFRow row1 = observationSheet.createRow(0);
+		for (int i = 0; i < allVariables.size(); i++) {
+			HSSFCell cell = row1.createCell(i);
+			cell.setCellValue(allVariables.get(i).getName());
+		}
+
+		HSSFRow row2 = observationSheet.createRow(1);
+		for (int i = 0; i < allVariables.size(); i++) {
+			HSSFCell cell = row2.createCell(i);
+
+			if (allVariables.get(i).getDataTypeId() == DataType.CATEGORICAL_VARIABLE.getId()) {
+				cell.setCellValue(withInvalidValues ? "6" : "1");
+			} else {
+				cell.setCellValue("1");
+			}
+
+		}
+
+		return excelWorkbook;
+	}
+
+	protected org.generationcp.middleware.domain.etl.Workbook createTestWorkbook() {
+		org.generationcp.middleware.domain.etl.Workbook workbook = new org.generationcp.middleware.domain.etl.Workbook();
+
+		List<MeasurementVariable> factors = new LinkedList<>();
+		List<MeasurementVariable> variates = new LinkedList<>();
+
+		factors.add(new MeasurementVariable(TRIAL_INSTANCE, "", "", "", "", "", "", ""));
+		factors.add(new MeasurementVariable(ENTRY_NO, "", "", "", "", "", "", ""));
+		factors.add(new MeasurementVariable(PLOT_NO, "", "", "", "", "", "", ""));
+
+		MeasurementVariable categorical = new MeasurementVariable(ALEU_COL_1_5, "", "", "", "", "", "", "");
+		categorical.setPossibleValues(this.createPossibleValues());
+		categorical.setDataTypeId(DataType.CATEGORICAL_VARIABLE.getId());
+		categorical.setRole(PhenotypicType.VARIATE);
+		factors.add(categorical);
+
+		workbook.setFactors(factors);
+		workbook.setVariates(variates);
+
+		return workbook;
+	}
+
+	protected List<ValueReference> createPossibleValues() {
+		List<ValueReference> possibleValues = new ArrayList<>();
+		possibleValues.add(new ValueReference(1, "1", ""));
+		possibleValues.add(new ValueReference(2, "2", ""));
+		possibleValues.add(new ValueReference(3, "3", ""));
+		possibleValues.add(new ValueReference(4, "4", ""));
+		possibleValues.add(new ValueReference(5, "5", ""));
+		return possibleValues;
+	}
+
 }

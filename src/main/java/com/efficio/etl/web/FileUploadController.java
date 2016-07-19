@@ -12,9 +12,10 @@ import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.exceptions.PhenotypeException;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -65,7 +67,10 @@ public class FileUploadController extends AbstractBaseETLController {
 	@Resource
 	private DataImportService dataImportService;
 
-    @Resource
+	@Resource
+	private OntologyDataManager ontologyDataManager;
+
+	@Resource
 	private ResourceBundleMessageSource messageSource;
 
 	@Resource
@@ -125,8 +130,9 @@ public class FileUploadController extends AbstractBaseETLController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "startProcess", method = RequestMethod.POST)
-	public Map<String, String> startProcess(final HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) {
+	@RequestMapping(value = "startProcess/{confirmDiscard}", method = RequestMethod.POST)
+	public Map<String, String> startProcess(@PathVariable int confirmDiscard, final HttpSession session, HttpServletRequest request,
+			HttpServletResponse response, Model model) {
 		// HTTP 1.1
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 		// HTTP 1.0
@@ -138,9 +144,14 @@ public class FileUploadController extends AbstractBaseETLController {
 		this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "Import has started.");
 
 		try {
+
 			String programUUID = this.contextUtil.getCurrentProgramUUID();
 			org.generationcp.middleware.domain.etl.Workbook wb;
-			wb = this.dataImportService.strictParseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID);
+
+			wb =
+					this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
+							confirmDiscard == 1 ? true : false, this.ontologyDataManager, new WorkbookParser());
+
 			this.dataImportService.saveDataset(wb, programUUID);
 
 			this.httpSessionUtil.clearSessionData(session, new String[] {HTTPSessionUtil.USER_SELECTION_SESSION_NAME});
@@ -149,22 +160,55 @@ public class FileUploadController extends AbstractBaseETLController {
 			this.returnMessage.put(FileUploadController.STATUS_CODE, "1");
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "Import is done.");
 
-		} catch (PhenotypeException e) {
-			FileUploadController.LOG.error(e.getMessage(), e);
+		} catch (WorkbookParserException e) {
 
-			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
-			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, e.getMessage().replaceAll("\n", "<br>"));
-			this.returnMessage.put(FileUploadController.ERROR_TYPE, "PhenotypeException");
-
-		} catch (MiddlewareQueryException e) {
 			FileUploadController.LOG.error(e.getMessage(), e);
 			this.returnMessage.clear();
 			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, e.getMessage());
-			this.returnMessage.put(FileUploadController.ERROR_TYPE, "MiddlewareQueryException");
+			this.returnMessage.put(FileUploadController.ERROR_TYPE, e.getClass().getSimpleName());
 
 		} catch (IOException e) {
+			FileUploadController.LOG.error(e.getMessage(), e);
+			this.returnMessage.clear();
+			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
+			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "An error occurred while reading the file.");
+			this.returnMessage.put(FileUploadController.ERROR_TYPE, e.getClass().getSimpleName());
+		}
+
+		return this.returnMessage;
+
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "validateAndParseWorkbook", method = RequestMethod.POST)
+	public Map<String, String> validateAndParseWorkbook(final HttpSession session, HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+
+		// HTTP 1.1
+		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+		// HTTP 1.0
+		response.setHeader("Pragma", "no-cache");
+		// Proxies
+		response.setDateHeader("Expires", 0);
+
+		try {
+
+			String programUUID = this.contextUtil.getCurrentProgramUUID();
+			Workbook workbook =
+					this.dataImportService.strictParseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection),
+							programUUID);
+
+			if (workbook.hasOutOfBoundsData()) {
+				this.returnMessage.put(FileUploadController.STATUS_CODE, "2");
+				this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "");
+			} else {
+				this.returnMessage.put(FileUploadController.STATUS_CODE, "1");
+				this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "");
+			}
+
+		} catch (IOException e) {
+
 			FileUploadController.LOG.error(e.getMessage(), e);
 
 			this.returnMessage.clear();
@@ -173,6 +217,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			this.returnMessage.put(FileUploadController.ERROR_TYPE, "IOException");
 
 		} catch (WorkbookParserException e) {
+
 			FileUploadController.LOG.error(e.getMessage(), e);
 			Boolean isMaxLimitException = false;
 			StringBuilder builder = new StringBuilder();

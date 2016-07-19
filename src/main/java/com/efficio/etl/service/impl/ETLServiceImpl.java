@@ -4,6 +4,7 @@ package com.efficio.etl.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -83,6 +85,8 @@ public class ETLServiceImpl implements ETLService {
 	public static final int STUDY_DETAILS_LABEL_COLUMN_INDEX = 0;
 	public static final int STUDY_DETAILS_VALUE_COLUMN_INDEX = 1;
 	public static final String PMKEY_LABEL = "PMKEY";
+
+	private int maxRowLimit = WorkbookParser.DEFAULT_MAX_ROW_LIMIT;
 
   	@Resource(name = "etlFileService")
 	private FileService fileService;
@@ -255,8 +259,7 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	@Override
-	public int calculateObservationRows(final Workbook workbook, final int sheetIndex, final int contentRowIndex,
-			final int indexColumnIndex) {
+	public int calculateObservationRows(final Workbook workbook, final int sheetIndex, final int contentRowIndex, final int indexColumnIndex) {
 		final Sheet sheet = workbook.getSheetAt(sheetIndex);
 
 		final int lastRow = sheet.getLastRowNum();
@@ -370,31 +373,8 @@ public class ETLServiceImpl implements ETLService {
 
 						categoryHeaders.add(header);
 
-						try {
-							final VariableDTO dto = new VariableDTO(var);
-							dto.setHeaderName(header);
+						this.populateVariableDtoList(returnVal, header, var, variableDTOList);
 
-							// it's possible that the Standard Variable is
-							// mapped to STUDY or DATASET
-							if (variableDTOList == null) {
-								// add to unmatched
-								returnVal.get(null).add(dto);
-							} else {
-								variableDTOList.add(dto);
-							}
-						} catch (final Exception e) {
-							ETLServiceImpl.LOG.error(e.getMessage(), e);
-							List<VariableDTO> unmatched = returnVal.get(null);
-							if (unmatched == null) {
-								unmatched = new ArrayList<VariableDTO>();
-								returnVal.put(null, unmatched);
-							}
-
-							final VariableDTO dto = new VariableDTO();
-							dto.setHeaderName(header);
-
-							unmatched.add(dto);
-						}
 					} else {
 						List<VariableDTO> unmatched = returnVal.get(null);
 						if (unmatched == null) {
@@ -414,6 +394,35 @@ public class ETLServiceImpl implements ETLService {
 		} catch (final MiddlewareException e) {
 			ETLServiceImpl.LOG.error(e.getMessage(), e);
 			return null;
+		}
+	}
+
+	protected void populateVariableDtoList(final Map<PhenotypicType, List<VariableDTO>> returnVal, final String header,
+			final StandardVariable var, final List<VariableDTO> variableDTOList) {
+		try {
+			final VariableDTO dto = new VariableDTO(var);
+			dto.setHeaderName(header);
+
+			// it's possible that the Standard Variable is
+			// mapped to STUDY or DATASET
+			if (variableDTOList == null) {
+				// add to unmatched
+				returnVal.get(null).add(dto);
+			} else {
+				variableDTOList.add(dto);
+			}
+		} catch (final Exception e) {
+			ETLServiceImpl.LOG.error(e.getMessage(), e);
+			List<VariableDTO> unmatched = returnVal.get(null);
+			if (unmatched == null) {
+				unmatched = new ArrayList<VariableDTO>();
+				returnVal.put(null, unmatched);
+			}
+
+			final VariableDTO dto = new VariableDTO();
+			dto.setHeaderName(header);
+
+			unmatched.add(dto);
 		}
 	}
 
@@ -459,8 +468,8 @@ public class ETLServiceImpl implements ETLService {
 			if (measurementVariableMap == null) {
 				// order should be preserved
 				measurementVariableMap = new LinkedHashMap<String, MeasurementVariable>();
-				userSelection.setMeasurementVariablesByPhenotypic(type,
-						(LinkedHashMap<String, MeasurementVariable>) measurementVariableMap);
+				userSelection
+						.setMeasurementVariablesByPhenotypic(type, (LinkedHashMap<String, MeasurementVariable>) measurementVariableMap);
 			}
 
 			measurementVariableMap.put(dto.getHeaderName(), variable);
@@ -473,7 +482,7 @@ public class ETLServiceImpl implements ETLService {
 	 */
 	@Override
 	public List<MeasurementRow> extractExcelFileData(final Workbook workbook, final UserSelection userSelection,
-			final org.generationcp.middleware.domain.etl.Workbook importData) {
+			final org.generationcp.middleware.domain.etl.Workbook importData, final boolean discardInvalidValues) {
 		final List<MeasurementVariable> variableList = importData.getAllVariables();
 		final List<String> columnHeaders = this.retrieveColumnHeaders(workbook, userSelection);
 		// DMV : a linkedhashmap is used to preserve insert order
@@ -486,19 +495,18 @@ public class ETLServiceImpl implements ETLService {
 			}
 		}
 
-		return this.extractExcelFileData(workbook, userSelection, variableIndexMap);
+		return this.extractExcelFileData(workbook, userSelection, variableIndexMap, discardInvalidValues);
 	}
 
 	protected List<MeasurementRow> extractExcelFileData(final Workbook workbook, final UserSelection userSelection,
-			final Map<Integer, MeasurementVariable> variableIndexMap) {
+			final Map<Integer, MeasurementVariable> variableIndexMap, final boolean discardInvalidValues) {
 		final Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
 
 		final List<MeasurementRow> rows = new ArrayList<MeasurementRow>(userSelection.getObservationRows());
 
-		for (int i = userSelection.getContentRowIndex(); i <= userSelection.getContentRowIndex() + userSelection.getObservationRows()
-				- 1; i++) {
+		for (int i = userSelection.getContentRowIndex(); i <= userSelection.getContentRowIndex() + userSelection.getObservationRows() - 1; i++) {
 			final MeasurementRow row = new MeasurementRow();
-			row.setDataList(this.convertRow(sheet, i, variableIndexMap));
+			row.setDataList(this.convertRow(sheet, i, variableIndexMap, discardInvalidValues));
 			rows.add(row);
 		}
 
@@ -506,16 +514,20 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	protected List<MeasurementData> convertRow(final Sheet sheet, final int dataRowIndex,
-			final Map<Integer, MeasurementVariable> variableIndexMap) {
+			final Map<Integer, MeasurementVariable> variableIndexMap, boolean discardInvalidValues) {
 		final List<MeasurementData> dataList = new ArrayList<MeasurementData>(variableIndexMap.size());
 
 		for (final Map.Entry<Integer, MeasurementVariable> entry : variableIndexMap.entrySet()) {
 			final Integer columnIndex = entry.getKey();
 			final MeasurementVariable variable = entry.getValue();
-			final String data = PoiUtil.getCellStringValue(PoiUtil.getCell(sheet, columnIndex, dataRowIndex));
-
+			String data = PoiUtil.getCellStringValue(PoiUtil.getCell(sheet, columnIndex, dataRowIndex));
 			final MeasurementData measurementData = new MeasurementData(variable.getName(), data);
 			measurementData.setMeasurementVariable(variable);
+
+			if (discardInvalidValues && !measurementData.isCategoricalValueValid() && variable.getRole() == PhenotypicType.VARIATE) {
+				measurementData.setValue("");
+			}
+
 			dataList.add(measurementData);
 		}
 
@@ -668,7 +680,7 @@ public class ETLServiceImpl implements ETLService {
 	/***
 	 * This sets the study id, and id of datasets of the workbook. This also set the conditions, constants, factors and variates of the
 	 * workbook based on what is saved in the trial dataset and the dataset for import (plot data or means data)
-	 *
+	 * 
 	 * @param wb as the Workbook
 	 * @param studyId as the id of the study
 	 */
@@ -736,7 +748,6 @@ public class ETLServiceImpl implements ETLService {
 		}
 		return plotDataSet;
 	}
-
 
 	private DataSet getTrialDataset(final Integer studyId) {
 		DataSet trialDataSet = DatasetUtil.getTrialDataSet(this.studyDataManager, studyId);
@@ -864,14 +875,18 @@ public class ETLServiceImpl implements ETLService {
 		if (pmKeyLabel != null && !pmKeyLabel.trim().equals(ETLServiceImpl.PMKEY_LABEL)) {
 			rowAdjustMent++;
 		}
-		final String objective = this.getCellStringValue(sheet, ETLServiceImpl.OBJECTIVE_ROW_INDEX - rowAdjustMent,
-				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		final String startDateStr = this.getCellStringValue(sheet, ETLServiceImpl.START_DATE_ROW_INDEX - rowAdjustMent,
-				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		final String endDateStr = this.getCellStringValue(sheet, ETLServiceImpl.END_DATE_ROW_INDEX - rowAdjustMent,
-				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		final String studyType = this.getCellStringValue(sheet, ETLServiceImpl.STUDY_TYPE_ROW_INDEX - rowAdjustMent,
-				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
+		final String objective =
+				this.getCellStringValue(sheet, ETLServiceImpl.OBJECTIVE_ROW_INDEX - rowAdjustMent,
+						ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
+		final String startDateStr =
+				this.getCellStringValue(sheet, ETLServiceImpl.START_DATE_ROW_INDEX - rowAdjustMent,
+						ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
+		final String endDateStr =
+				this.getCellStringValue(sheet, ETLServiceImpl.END_DATE_ROW_INDEX - rowAdjustMent,
+						ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
+		final String studyType =
+				this.getCellStringValue(sheet, ETLServiceImpl.STUDY_TYPE_ROW_INDEX - rowAdjustMent,
+						ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
 		StudyType studyTypeValue = StudyType.getStudyType(studyType);
 		if (studyTypeValue == null) {
 			studyTypeValue = StudyType.N;
@@ -920,6 +935,99 @@ public class ETLServiceImpl implements ETLService {
 			}
 		}
 		return hasMeasurementEffectDataset;
+	}
+
+	@Override
+	public boolean checkOutOfBoundsData(final UserSelection userSelection) throws IOException {
+
+		org.generationcp.middleware.domain.etl.Workbook importData = null;
+
+		String programUUID = this.contextUtil.getCurrentProgramUUID();
+
+		boolean hasOutOfBoundsData = false;
+
+		Workbook workbook = this.retrieveCurrentWorkbook(userSelection);
+
+		boolean isMeansDataImport =
+				userSelection.getDatasetType() != null && userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA.getId();
+
+		importData = this.createWorkbookFromUserSelection(userSelection, isMeansDataImport);
+
+		List<String> errors = new ArrayList<String>();
+		boolean isWorkbookHasObservationRecords = this.isWorkbookHasObservationRecords(userSelection, errors, workbook);
+		boolean isObservationOverMaxLimit = this.isObservationOverMaximumLimit(userSelection, errors, workbook);
+
+		if (isWorkbookHasObservationRecords && !isObservationOverMaxLimit) {
+
+			importData.setObservations(this.extractExcelFileData(workbook, userSelection, importData, false));
+			hasOutOfBoundsData = this.dataImportService.checkForOutOfBoundsData(this.ontologyDataManager, importData, programUUID);
+		}
+
+		return hasOutOfBoundsData;
+
+	}
+
+	@Override
+	public boolean isObservationOverMaximumLimit(final UserSelection userSelection, List<String> errors, Workbook workbook) {
+		Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
+		Integer lastRowNum = PoiUtil.getLastRowNum(sheet);
+
+		if (lastRowNum > this.maxRowLimit) {
+			List<Message> messages = new ArrayList<Message>();
+			Message message =
+					new Message("error.observation.over.maximum.limit", new DecimalFormat("###,###,###").format(this.maxRowLimit));
+			messages.add(message);
+			errors.addAll(this.convertMessageList(messages));
+
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isWorkbookHasObservationRecords(final UserSelection userSelection, List<String> errors, Workbook workbook) {
+		Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
+		Integer lastRowNum = PoiUtil.getLastRowNum(sheet);
+
+		if (lastRowNum == 0) {
+			List<Message> messages = new ArrayList<Message>();
+			Message message = new Message("error.observation.no.records");
+			messages.add(message);
+			errors.addAll(this.convertMessageList(messages));
+
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public org.generationcp.middleware.domain.etl.Workbook createWorkbookFromUserSelection(final UserSelection userSelection,
+			boolean isMeansDataImport) {
+
+		org.generationcp.middleware.domain.etl.Workbook importData = null;
+
+		ETLServiceImpl.LOG.debug("userSelection.getPhenotypicMap() = " + userSelection.getPhenotypicMap());
+		// check if headers are not set (it means the user skipped the import project ontology)
+		if (userSelection.getPhenotypicMap() == null || userSelection.getPhenotypicMap().isEmpty()) {
+			// set variables and ids in workbook
+			importData = this.retrieveAndSetProjectOntology(userSelection, isMeansDataImport);
+		} else {
+			// get workbook from user selection
+			importData = this.convertToWorkbook(userSelection);
+		}
+
+		return importData;
+	}
+
+	public int getMaxRowLimit() {
+		return this.maxRowLimit;
+	}
+
+	public void setMaxRowLimit(int value) {
+		if (value > 0) {
+			this.maxRowLimit = value;
+		}
 	}
 
 }

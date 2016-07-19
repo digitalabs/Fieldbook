@@ -29,112 +29,126 @@ import com.efficio.etl.web.bean.VariableDTO;
  */
 public interface ETLService {
 
-	/**
-	 * Takes in an input stream representing the Excel file to be read, and
-	 * returns the temporary file name used to store it in the system
-	 * 
-	 * @param in
-	 * @return
-	 */
-	public String storeUserWorkbook(InputStream in) throws IOException;
+  /**
+   * Takes in an input stream representing the Excel file to be read, and returns the temporary file name used to store it in the system
+   *
+   * @param in
+   * @return
+   */
+  public String storeUserWorkbook(InputStream in) throws IOException;
 
-	/**
-	 * Retrieves
-	 * 
-	 * @param userSelection
-	 * @return
-	 * @throws WorkbookParserException
-	 */
-	public Workbook retrieveCurrentWorkbook(UserSelection userSelection)
-			throws IOException;
+  /**
+   * Retrieves
+   *
+   * @param userSelection
+   * @return
+   * @throws WorkbookParserException
+   */
+  public Workbook retrieveCurrentWorkbook(UserSelection userSelection) throws IOException;
 
-	public File retrieveCurrentWorkbookAsFile(UserSelection userSelection)
-			throws IOException;
+  public File retrieveCurrentWorkbookAsFile(UserSelection userSelection) throws IOException;
 
-	public List<SheetDTO> retrieveSheetInformation(Workbook workbook);
+  public List<SheetDTO> retrieveSheetInformation(Workbook workbook);
 
-	public List<RowDTO> retrieveRowInformation(Workbook workbook,
-			int sheetIndex, int startRow, int endRow, int maxRowContentLength);
+  public List<RowDTO> retrieveRowInformation(Workbook workbook, int sheetIndex, int startRow, int endRow, int maxRowContentLength);
 
-	public List<IndexValueDTO> retrieveColumnInformation(Workbook workbook,
-			int sheetIndex, int rowIndex);
+  public List<IndexValueDTO> retrieveColumnInformation(Workbook workbook, int sheetIndex, int rowIndex);
 
-	public int calculateObservationRows(Workbook workbook, int sheetIndex,
-			int contentRowIndex, int indexColumnIndex);
+  public int calculateObservationRows(Workbook workbook, int sheetIndex, int contentRowIndex, int indexColumnIndex);
 
-	public List<String> retrieveColumnHeaders(Workbook workbook,
-			UserSelection userSelection);
+  public List<String> retrieveColumnHeaders(Workbook workbook, UserSelection userSelection);
 
-	public int getAvailableRowsForDisplay(Workbook workbook,
-			int selectedSheetIndex);
+  public int getAvailableRowsForDisplay(Workbook workbook, int selectedSheetIndex);
 
-	public int getAvailableRowsForDisplay(Workbook workbook,
-			UserSelection userSelection);
+  public int getAvailableRowsForDisplay(Workbook workbook, UserSelection userSelection);
 
-	public org.generationcp.middleware.domain.etl.Workbook convertToWorkbook(
-			UserSelection userSelection);
+  public org.generationcp.middleware.domain.etl.Workbook convertToWorkbook(UserSelection userSelection);
 
-	public Map<PhenotypicType, List<VariableDTO>> prepareInitialCategorization(
-			List<String> headers, UserSelection selection);
+  public Map<PhenotypicType, List<VariableDTO>> prepareInitialCategorization(List<String> headers, UserSelection selection);
 
-	public VariableDTO retrieveStandardVariableByID(int id);
+  public VariableDTO retrieveStandardVariableByID(int id);
 
-	public void mergeVariableData(VariableDTO[] variables, Workbook workbook,
-			UserSelection userSelection);
+  public void mergeVariableData(VariableDTO[] variables, Workbook workbook, UserSelection userSelection);
 
-	public List<MeasurementRow> extractExcelFileData(Workbook workbook,
-			UserSelection userSelection,
-			org.generationcp.middleware.domain.etl.Workbook importData);
+  public List<MeasurementRow> extractExcelFileData(Workbook workbook, UserSelection userSelection,
+		  org.generationcp.middleware.domain.etl.Workbook importData, boolean discardInvalidValues);
 
-	public PhenotypicType retrievePhenotypicType(String typeName);
+  public PhenotypicType retrievePhenotypicType(String typeName);
 
-	public String getCVDefinitionById(int termId);
+  public String getCVDefinitionById(int termId);
 
-	public List<String> convertMessageList(List<Message> messages);
+  public List<String> convertMessageList(List<Message> messages);
 
-	public String convertMessage(Message message);
+  public String convertMessage(Message message);
 
-	public List<StudyDetails> retrieveExistingStudyDetails(String programUUID);
+  public List<StudyDetails> retrieveExistingStudyDetails(String programUUID);
 
-	public Map<String, List<Message>> validateProjectOntology(
-			org.generationcp.middleware.domain.etl.Workbook importData);
+  public Map<String, List<Message>> validateProjectOntology(org.generationcp.middleware.domain.etl.Workbook importData);
 
-	public int saveProjectOntology(
-			org.generationcp.middleware.domain.etl.Workbook importData,
-			String programUUID) throws MiddlewareQueryException;
+  public int saveProjectOntology(org.generationcp.middleware.domain.etl.Workbook importData, String programUUID)
+		  throws MiddlewareQueryException;
 
-	public Map<String, List<Message>> validateProjectData(
-			org.generationcp.middleware.domain.etl.Workbook importData,
-			String programUUID);
+  public Map<String, List<Message>> validateProjectData(org.generationcp.middleware.domain.etl.Workbook importData, String programUUID);
 
-	public int saveProjectData(
-			org.generationcp.middleware.domain.etl.Workbook importData,
-			String programUUID) throws MiddlewareQueryException;
+  public int saveProjectData(org.generationcp.middleware.domain.etl.Workbook importData, String programUUID)
+		  throws MiddlewareQueryException;
 
-	public org.generationcp.middleware.domain.etl.Workbook retrieveAndSetProjectOntology(
-			UserSelection userSelection, boolean isMeansDataImport)
-			throws MiddlewareException;
+  public org.generationcp.middleware.domain.etl.Workbook retrieveAndSetProjectOntology(UserSelection userSelection,
+		  boolean isMeansDataImport) throws MiddlewareException;
 
-	public Map<String, List<Message>> checkForMismatchedHeaders(
-			List<String> fileHeaders, List<MeasurementVariable> studyHeaders,
-			boolean isMeansDataImport);
+  public Map<String, List<Message>> checkForMismatchedHeaders(List<String> fileHeaders, List<MeasurementVariable> studyHeaders,
+		  boolean isMeansDataImport);
 
-	public Tool getOntologyBrowserTool();
+  public Tool getOntologyBrowserTool();
 
-	public Tool getFieldbookWebTool();
+  public Tool getFieldbookWebTool();
 
-	public Workbook retrieveCurrentWorkbookWithValidation(
-			UserSelection userSelection) throws IOException,
-			WorkbookParserException;
+  public Workbook retrieveCurrentWorkbookWithValidation(UserSelection userSelection) throws IOException, WorkbookParserException;
 
-	int getIndexColumnIndex(List<String> fileHeaders,
-			List<MeasurementVariable> studyHeaders);
+  int getIndexColumnIndex(List<String> fileHeaders, List<MeasurementVariable> studyHeaders);
 
-	public StudyDetails readStudyDetails(Sheet sheet);
+  public StudyDetails readStudyDetails(Sheet sheet);
 
-	public boolean hasMeansDataset(int studyId) throws MiddlewareException;
+  public boolean hasMeansDataset(int studyId) throws MiddlewareException;
 
-	public boolean hasMeasurementEffectDataset(int studyId)
-			throws MiddlewareException;
+  public boolean hasMeasurementEffectDataset(int studyId) throws MiddlewareException;
+
+  /**
+   * Checks the uploaded workbook for out of bounds data. Returns true if there are out of bounds data.
+   *
+   * @param userSelection
+   * @return
+   * @throws IOException
+   */
+  boolean checkOutOfBoundsData(UserSelection userSelection) throws IOException;
+
+  /**
+   * Checks whether the workbook has observation records or not
+   *
+   * @param userSelection
+   * @param errors
+   * @param workbook
+   * @return
+   */
+  boolean isWorkbookHasObservationRecords(UserSelection userSelection, List<String> errors, Workbook workbook);
+
+  /**
+   * Checks if the number of observations in the uploaded file is over the maximum limit
+   *
+   * @param userSelection
+   * @param errors
+   * @param workbook
+   * @return
+   */
+  boolean isObservationOverMaximumLimit(UserSelection userSelection, List<String> errors, Workbook workbook);
+
+  /**
+   * Creates a Workbook from UserSelection
+   *
+   * @param userSelection
+   * @param isMeansDataImport
+   * @return
+   */
+  org.generationcp.middleware.domain.etl.Workbook createWorkbookFromUserSelection(UserSelection userSelection, boolean isMeansDataImport);
 
 }

@@ -346,6 +346,7 @@
 	<bean id="dataImportService" factory-bean="managerFactory"
 		factory-method="getDataImportService" scope="request">
 		<aop:scoped-proxy />
+		<property name="maxRowLimit" value="${dataset.import.maximum.row.limit}" />
 	</bean>
 
 	<bean id="fieldbookMiddlewareService" factory-bean="managerFactory"
@@ -599,7 +600,10 @@
     
     <bean id="resourceFinder" class="org.generationcp.middleware.util.ResourceFinder"/>
 
-	<bean id="etlService" class="com.efficio.etl.service.impl.ETLServiceImpl" />
+	<bean id="etlService" class="com.efficio.etl.service.impl.ETLServiceImpl" >
+		<property name="maxRowLimit" value="${dataset.import.maximum.row.limit}" />
+	</bean>
+
 	<bean id="httpSessionUtil" class="org.generationcp.commons.util.HTTPSessionUtil" />
 
 

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -41,12 +42,15 @@ import com.efficio.etl.web.bean.UserSelection;
 @RequestMapping(AngularOpenSheetController.URL)
 public class AngularOpenSheetController extends AbstractBaseETLController {
 
+	private static final String MESSAGE = "message";
+	private static final String VALUE = "value";
+	private static final String STATUS = "status";
 	public static final String URL = "/etl/workbook/openSheet";
 
-  	private static final Logger LOG = LoggerFactory.getLogger(AngularOpenSheetController.class);
+	public static final int ROW_COUNT_PER_SCREEN = 10;
+	public static final int MAX_DISPLAY_CHARACTER_PER_ROW = 60;
 
-	public final static int ROW_COUNT_PER_SCREEN = 10;
-	public final static int MAX_DISPLAY_CHARACTER_PER_ROW = 60;
+	private static final Logger LOG = LoggerFactory.getLogger(AngularOpenSheetController.class);
 
 	@Resource
 	private ETLService etlService;
@@ -68,7 +72,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 			model.addAttribute("columnHeaders", columnHeaders);
 
 		} catch (IOException e) {
-		  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
+			AngularOpenSheetController.LOG.error(e.getMessage(), e);
 		}
 
 		return super.show(model);
@@ -88,7 +92,22 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 		this.userSelection.setObservationRows(form.getObservationRows());
 		this.userSelection.setContentRowDisplayText(form.getContentRowDisplayText());
 
-		return this.wrapFormResult(ImportObservationsController.URL, request);
+		Map<String, Object> result = null;
+		try {
+
+			result = this.wrapFormResult(ImportObservationsController.URL, request);
+			result.put("hasOutOfBoundsData", this.etlService.checkOutOfBoundsData(this.userSelection));
+
+		} catch (IOException e) {
+
+			LOG.error(e.getMessage(), e);
+
+			result = new HashMap<String, Object>();
+			result.put("success", false);
+			result.put(MESSAGE, "An error occurred while reading the file.");
+		}
+
+		return result;
 	}
 
 	@ResponseBody
@@ -96,27 +115,34 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 	public Map<String, Object> getObservationRowsForColumn(@RequestParam("columnIndex") int columnIndex,
 			@RequestParam("contentIndex") int contentIndex) {
 		Map<String, Object> returnVal = new HashMap<String, Object>();
+		Workbook workbook;
+
 		try {
-			Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
+			workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
+		} catch (IOException e) {
+			LOG.error(e.getMessage(), e);
 
-			try {
-				columnIndex = this.getValidIndexColumnIndex(workbook);// override columnIndex because the indexColumn is no longer displayed
-																		// in the page
-			} catch (Exception e) {
-			  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
-			}
-			Integer observationCount =
-					this.etlService.calculateObservationRows(workbook, this.userSelection.getSelectedSheet(), contentIndex, columnIndex);
-
-			returnVal.put("value", observationCount);
-			returnVal.put("status", "success");
+			returnVal.put(STATUS, "error");
+			returnVal.put(MESSAGE, e.getMessage());
 
 			return returnVal;
-		} catch (IOException e) {
-		  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
-			returnVal.put("status", "error");
-			returnVal.put("message", e.getMessage());
 		}
+
+		// override columnIndex because the indexColumn is no longer
+		// displayed in the page
+		int validColumnIndex = columnIndex;
+
+		try {
+			validColumnIndex = this.getValidIndexColumnIndex(workbook);
+		} catch (MiddlewareException e) {
+			LOG.error(e.getMessage(), e);
+		}
+
+		Integer observationCount =
+				this.etlService.calculateObservationRows(workbook, this.userSelection.getSelectedSheet(), contentIndex, validColumnIndex);
+
+		returnVal.put(VALUE, observationCount);
+		returnVal.put(STATUS, "success");
 
 		return returnVal;
 	}
@@ -128,7 +154,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 			Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			return this.etlService.retrieveColumnInformation(workbook, this.userSelection.getSelectedSheet(), rowIndex);
 		} catch (IOException e) {
-		  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
+			AngularOpenSheetController.LOG.error(e.getMessage(), e);
 		}
 
 		return new ArrayList<IndexValueDTO>();
@@ -138,31 +164,33 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 	@RequestMapping(value = "/displayRow", params = "list=true")
 	public List<RowDTO> getUpdatedRowDisplayHTML(@RequestParam(value = "lastRowIndex") Integer lastRowIndex, @RequestParam(
 			value = "startRowIndex", required = false) Integer startRow) {
+
+		Integer lastRowIndexLocal = lastRowIndex;
+		Integer startRowIndexLocal = startRow;
+
 		try {
+
 			Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 
-			if (startRow == null) {
-				startRow = 0;
+			if (startRowIndexLocal == null) {
+				startRowIndexLocal = 0;
 			}
-			if (startRow <= this.userSelection.getHeaderRowIndex()) {
-				startRow = this.userSelection.getHeaderRowIndex() + 1;
+			if (startRowIndexLocal <= this.userSelection.getHeaderRowIndex()) {
+				startRowIndexLocal = this.userSelection.getHeaderRowIndex() + 1;
 			}
 
 			int count = this.etlService.getAvailableRowsForDisplay(workbook, this.userSelection.getSelectedSheet());
 
 			// position of header row is subtracted from count to give
-			if (lastRowIndex > count) {
-				lastRowIndex = count;
+			if (lastRowIndexLocal > count) {
+				lastRowIndexLocal = count;
 			}
 
-			List<RowDTO> rowList =
-					this.etlService.retrieveRowInformation(workbook, this.userSelection.getSelectedSheet(), startRow, lastRowIndex,
-							AngularOpenSheetController.MAX_DISPLAY_CHARACTER_PER_ROW);
-
-			return rowList;
+			return this.etlService.retrieveRowInformation(workbook, this.userSelection.getSelectedSheet(), startRowIndexLocal,
+					lastRowIndexLocal, AngularOpenSheetController.MAX_DISPLAY_CHARACTER_PER_ROW);
 
 		} catch (IOException e) {
-		  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
+			AngularOpenSheetController.LOG.error(e.getMessage(), e);
 			return new ArrayList<RowDTO>();
 		}
 	}
@@ -174,11 +202,11 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 		try {
 			Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			Integer count = this.etlService.getAvailableRowsForDisplay(workbook, this.userSelection);
-			returnValue.put("value", count);
-			returnValue.put("status", "ok");
+			returnValue.put(VALUE, count);
+			returnValue.put(STATUS, "ok");
 		} catch (IOException e) {
-		  	AngularOpenSheetController.LOG.error(e.getMessage(), e);
-			returnValue.put("status", "error");
+			AngularOpenSheetController.LOG.error(e.getMessage(), e);LOG.error(e.getMessage(), e);
+			returnValue.put(STATUS, "error");
 		}
 
 		return returnValue;
@@ -214,7 +242,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 		return this.userSelection;
 	}
 
-	public int getValidIndexColumnIndex(Workbook workbook) throws Exception {
+	public int getValidIndexColumnIndex(Workbook workbook) {
 		boolean isMeansDataImport =
 				this.userSelection.getDatasetType() != null
 						&& this.userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA.getId();
@@ -224,4 +252,5 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 		List<MeasurementVariable> studyHeaders = importData.getAllVariables();
 		return this.etlService.getIndexColumnIndex(fileHeaders, studyHeaders);
 	}
+
 }

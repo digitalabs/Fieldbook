@@ -2,7 +2,6 @@
 package com.efficio.etl.web;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,21 +10,22 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.exceptions.PhenotypeException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
-import org.generationcp.middleware.util.PoiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -51,6 +51,12 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	@Resource
 	private ContextUtil contextUtil;
 
+	@Resource
+	private DataImportService dataImportService;
+
+	@Resource
+	private OntologyDataManager ontologyDataManager;
+
 	private boolean hasErrors;
 
 	@Override
@@ -66,55 +72,43 @@ public class ImportObservationsController extends AbstractBaseETLController {
 		return this.userSelection;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String processImport(@ModelAttribute("uploadForm") FileUploadForm uploadForm, Model model, HttpSession session,
-			HttpServletRequest request) {
+	@RequestMapping(value = "/{confirmDiscard}", method = RequestMethod.GET)
+	public String processImport(@ModelAttribute("uploadForm") FileUploadForm uploadForm, @PathVariable int confirmDiscard, Model model,
+			HttpSession session, HttpServletRequest request) {
 		List<String> errors = new ArrayList<String>();
+
 		org.generationcp.middleware.domain.etl.Workbook importData = null;
+
 		String programUUID = null;
 		try {
+
 			programUUID = this.contextUtil.getCurrentProgramUUID();
 			Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			boolean isMeansDataImport =
 					this.userSelection.getDatasetType() != null
 							&& this.userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA.getId();
 
-			ImportObservationsController.LOG.debug("userSelection.getPhenotypicMap() = " + this.userSelection.getPhenotypicMap());
-			// check if headers are not set (it means the user skipped the import project ontology)
-			if (this.userSelection.getPhenotypicMap() == null || this.userSelection.getPhenotypicMap().isEmpty()) {
-				// set variables and ids in workbook
-				importData = this.etlService.retrieveAndSetProjectOntology(this.userSelection, isMeansDataImport);
-			} else {
-				// get workbook from user selection
-				importData = this.etlService.convertToWorkbook(this.userSelection);
-			}
+			importData = this.etlService.createWorkbookFromUserSelection(this.userSelection, isMeansDataImport);
+
+			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getVariates(), programUUID,
+					this.ontologyDataManager);
+
 			List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection);
 			List<MeasurementVariable> studyHeaders = importData.getAllVariables();
 			Map<String, List<Message>> mismatchErrors =
 					this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
 
-			Sheet sheet = workbook.getSheetAt(this.userSelection.getSelectedSheet());
-			Integer maxLimit = 10000;
-			Integer lastRowNum = PoiUtil.getLastRowNum(sheet);
-
-			if (lastRowNum == 0) {
-				List<Message> messages = new ArrayList<Message>();
-				Message message = new Message("error.observation.no.records");
-				messages.add(message);
-				errors.addAll(this.etlService.convertMessageList(messages));
-			} else if (lastRowNum > maxLimit) {
-				List<Message> messages = new ArrayList<Message>();
-				Message message = new Message("error.observation.over.maximum.limit", new DecimalFormat("###,###,###").format(maxLimit));
-				messages.add(message);
-				errors.addAll(this.etlService.convertMessageList(messages));
-			}
+			boolean isWorkbookHasObservationRecords = this.etlService.isWorkbookHasObservationRecords(this.userSelection, errors, workbook);
+			boolean isObservationOverMaxLimit = this.etlService.isObservationOverMaximumLimit(this.userSelection, errors, workbook);
 
 			if (mismatchErrors != null && !mismatchErrors.isEmpty()) {
 				for (Map.Entry<String, List<Message>> entry : mismatchErrors.entrySet()) {
 					errors.addAll(this.etlService.convertMessageList(entry.getValue()));
 				}
-			} else if (lastRowNum <= maxLimit) {
-				importData.setObservations(this.etlService.extractExcelFileData(workbook, this.userSelection, importData));
+			} else if (isWorkbookHasObservationRecords && !isObservationOverMaxLimit) {
+
+				importData.setObservations(this.etlService.extractExcelFileData(workbook, this.userSelection, importData,
+						confirmDiscard == 1 ? true : false));
 
 				// there is now an expectation after the validate project data step
 				Map<String, List<Message>> projectDataErrors = this.etlService.validateProjectData(importData, programUUID);
@@ -186,4 +180,5 @@ public class ImportObservationsController extends AbstractBaseETLController {
 		return super.show(model);
 
 	}
+
 }

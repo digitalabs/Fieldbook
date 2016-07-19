@@ -126,7 +126,7 @@ public class FileServiceImpl implements FileService {
 			file = new File(this.getFilePath(tempFileName));
 			file.createNewFile();
 			fos = new FileOutputStream(file);
-		  	int bytes = IOUtils.copy(userFile, fos);
+		  	IOUtils.copy(userFile, fos);
 
 		} finally {
 			IOUtils.closeQuietly(fos);

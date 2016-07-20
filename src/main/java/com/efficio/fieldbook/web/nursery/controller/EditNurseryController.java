@@ -897,8 +897,7 @@ public class EditNurseryController extends SettingsController {
 	/**
 	 * Checks is the measurement data is existing
 	 *
-	 * @param form the form
-	 * @return the boolean
+	 * @return the map
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/isMeasurementDataExisting", method = RequestMethod.GET)

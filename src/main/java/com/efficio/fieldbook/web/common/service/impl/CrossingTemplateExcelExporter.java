@@ -70,7 +70,7 @@ public class CrossingTemplateExcelExporter {
 
 	private String templateFile;
 
-	public File export(Integer studyId, String studyName) throws CrossingTemplateExportException {
+	public File export(final Integer studyId, final String studyName) throws CrossingTemplateExportException {
 		try {
 			final Workbook excelWorkbook = this.fileService.retrieveWorkbookTemplate(this.templateFile);
 
@@ -82,7 +82,7 @@ public class CrossingTemplateExcelExporter {
 			gpList.setType(GermplasmListType.LST.name());
 
 			// 3. write details
-			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook));
+			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook), studyId);
 
 			// 4. update codes
 			this.updateCodesSection(excelWorkbook.getSheetAt(2));
@@ -103,8 +103,8 @@ public class CrossingTemplateExcelExporter {
 	private void writeNurseryListSheet(Sheet nurseryListSheet, final ExcelCellStyleBuilder sheetStyles, final int studyId,
 			final String studyName) {
 
-		int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
-		List<Experiment> experiments = this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null);
+		final int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
+		final List<Experiment> experiments = this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null);
 
 		int rowIndex = 1;
 
@@ -115,8 +115,12 @@ public class CrossingTemplateExcelExporter {
 			PoiUtil.setCellValue(nurseryListSheet, 4, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
 			PoiUtil.setCellValue(nurseryListSheet, 5, rowIndex, gpData.getFactors().findById(TermId.DESIG).getValue());
 			PoiUtil.setCellValue(nurseryListSheet, 6, rowIndex, gpData.getFactors().findById(TermId.CROSS).getValue());
-			PoiUtil.setCellValue(nurseryListSheet, 7, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_COLUMN).getValue());
-			PoiUtil.setCellValue(nurseryListSheet, 8, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_RANGE).getValue());
+			if (gpData.getFactors().findById(TermId.FIELDMAP_COLUMN) != null) {
+				PoiUtil.setCellValue(nurseryListSheet, 7, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_COLUMN).getValue());
+			}
+			if (gpData.getFactors().findById(TermId.FIELDMAP_RANGE) != null) {
+				PoiUtil.setCellValue(nurseryListSheet, 8, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_RANGE).getValue());
+			}
 			rowIndex++;
 		}
 	}
@@ -169,7 +173,7 @@ public class CrossingTemplateExcelExporter {
 	}
 
 	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final GermplasmList germplasmList,
-			final ExcelCellStyleBuilder sheetStyles) {
+			final ExcelCellStyleBuilder sheetStyles, final Integer studyId) {
 		final CellStyle labelStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.LABEL_STYLE);
 		final CellStyle textStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.NUMERIC_STYLE);
 
@@ -189,6 +193,10 @@ public class CrossingTemplateExcelExporter {
 				GermplasmExportedWorkbook.LIST_DATE, germplasmList.getDate(),
 				"Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank", labelStyle, textStyle);
 
+		final String createdByUserName = this.fieldbookMiddlewareService.getOwnerListName(this.fieldbookMiddlewareService.getStudy
+				(studyId).getUser());
+		descriptionSheet.getRow(5).getCell(6).setCellValue(createdByUserName); //G6 cell with the Username
+		
 		return ++actualRow;
 	}
 

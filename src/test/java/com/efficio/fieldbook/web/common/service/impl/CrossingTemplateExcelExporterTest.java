@@ -126,7 +126,8 @@ public class CrossingTemplateExcelExporterTest {
 		final GermplasmList list = new GermplasmList();
 		list.setDate(20150506L);
 		list.setType("LST");
-		this.exporter.writeListDetailsSection(sheet, 1, list, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook));
+		this.exporter.writeListDetailsSection(sheet, 1, list, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
+				CrossingTemplateExcelExporterTest.STUDY_ID);
 
 		Assert.assertEquals(sheet.getRow(0).getCell(0).getStringCellValue(), "LIST NAME");
 		Assert.assertEquals(sheet.getRow(0).getCell(1).getStringCellValue(), "");

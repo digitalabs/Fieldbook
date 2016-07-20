@@ -895,7 +895,7 @@ public class EditNurseryController extends SettingsController {
 	}
 	
 	/**
-	 * Checks is the measurement data is existing
+	 * Checks if the measurement data is existing
 	 *
 	 * @return the map
 	 */

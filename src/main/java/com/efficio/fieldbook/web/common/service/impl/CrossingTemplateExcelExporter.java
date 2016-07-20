@@ -25,7 +25,9 @@ import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.StringUtil;
+import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -35,6 +37,7 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
+import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
@@ -83,6 +86,10 @@ public class CrossingTemplateExcelExporter {
 
 			// 4. update codes
 			this.updateCodesSection(excelWorkbook.getSheetAt(2));
+			
+			// 5. write Nursery List Sheet
+			this.writeNurseryListSheet(excelWorkbook.getSheetAt(3),new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook),studyId,studyName);
+			
 
 			// return the resulting file back to the user
 			return this.createExcelOutputFile(studyName, excelWorkbook);
@@ -91,6 +98,29 @@ public class CrossingTemplateExcelExporter {
 			throw new CrossingTemplateExportException(e.getMessage(), e);
 		}
 	}
+
+	
+	private void writeNurseryListSheet(Sheet nurseryListSheet, final ExcelCellStyleBuilder sheetStyles, final int studyId,
+			final String studyName) {
+
+		int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
+		List<Experiment> experiments = this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null);
+
+		int rowIndex = 1;
+
+		for (Experiment gpData : experiments) {
+			PoiUtil.setCellValue(nurseryListSheet, 0, rowIndex, studyName);
+			PoiUtil.setCellValue(nurseryListSheet, 1, rowIndex, Integer.parseInt(gpData.getFactors().findById(TermId.PLOT_NO).getValue()));
+			PoiUtil.setCellValue(nurseryListSheet, 3, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
+			PoiUtil.setCellValue(nurseryListSheet, 4, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
+			PoiUtil.setCellValue(nurseryListSheet, 5, rowIndex, gpData.getFactors().findById(TermId.DESIG).getValue());
+			PoiUtil.setCellValue(nurseryListSheet, 6, rowIndex, gpData.getFactors().findById(TermId.CROSS).getValue());
+			PoiUtil.setCellValue(nurseryListSheet, 7, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_COLUMN).getValue());
+			PoiUtil.setCellValue(nurseryListSheet, 8, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_RANGE).getValue());
+			rowIndex++;
+		}
+	}
+
 
 	void updateCodesSection(final Sheet codesSheet) {
 		int startingRow = codesSheet.getLastRowNum();

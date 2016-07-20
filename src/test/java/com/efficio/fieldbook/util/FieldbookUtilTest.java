@@ -8,28 +8,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class FieldbookUtilTest {
+import junit.framework.Assert;
 
-	private static final String TEST_FILE_NAME = "test.xls";
-	private static final String USER_AGENT_INTERNET_EXLORER =
-			"Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0;  rv:11.0) like Gecko";
-	private static final String USER_AGENT_CHROME =
-			"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
+public class FieldbookUtilTest {
 
 	@Test
 	public void testGetColumnOrderListIfThereAreParameters() {
@@ -258,12 +249,12 @@ public class FieldbookUtilTest {
 
 		Assert.assertEquals("Make sure we get a http success", HttpStatus.OK, result.getStatusCode());
 
-		Assert.assertNotNull("Make sure Content-disposition header exists", result.getHeaders().get("Content-Disposition"));
-		Assert.assertNotNull("Make sure we have a Content-Type header",result.getHeaders().get("Content-Type"));
-		Assert.assertNotNull("Make sure we have a Content-Type header that contains at least 1 value", result.getHeaders().get("Content-Type").get(0));
+		Assert.assertNotNull("Make sure Content-disposition header exists", result.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION));
+		Assert.assertNotNull("Make sure we have a Content-Type header",result.getHeaders().get(FieldbookUtil.CONTENT_TYPE));
+		Assert.assertNotNull("Make sure we have a Content-Type header that contains at least 1 value", result.getHeaders().get(FieldbookUtil.CONTENT_TYPE).get(0));
 
 		// Were not testing the mime type detection here, see a separate unit test for FileUTils.detectMimeType(...)
-		Assert.assertTrue("Make sure tht content-type header has a charset", result.getHeaders().get("Content-Type").get(0).contains("charset=utf-8"));
+		Assert.assertTrue("Make sure tht content-type header has a charset", result.getHeaders().get(FieldbookUtil.CONTENT_TYPE).get(0).contains("charset=utf-8"));
 	}
 
 }

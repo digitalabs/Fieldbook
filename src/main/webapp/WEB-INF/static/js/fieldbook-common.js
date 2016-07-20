@@ -2260,6 +2260,11 @@ function recreateLocationCombo(possibleFavorite) {
 						|| selectedLocationAll != null) {
 						// recreate the select2 combos to get updated list
 						// of locations
+
+						if (data.allBreedingFavoritesLocations && data.allBreedingFavoritesLocations.length > 0) {
+							$('#showFavoriteLocation').prop('checked', true);
+						}
+
 						recreateLocationComboAfterClose('harvestLocationIdAll', data.allLocations);
 						recreateLocationComboAfterClose('harvestLocationIdBreeding', data.allBreedingLocations);
 						recreateLocationComboAfterClose('harvestLocationIdBreedingFavorites', data.allBreedingFavoritesLocations);

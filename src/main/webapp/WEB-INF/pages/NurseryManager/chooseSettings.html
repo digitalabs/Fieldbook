@@ -277,7 +277,7 @@
 				</div>
 
 				<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
-					<input class="study-level-method-checkbox"
+					<input class="study-level-method-checkbox" id="study-level-method-checkbox"
 						   type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
 						   th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 					&nbsp;&nbsp;
@@ -564,6 +564,7 @@ $(document).ready(function() {
 			checkFavoritesIfValIsAFavorite(select2Index);
 		});
 	}
+	checkMethodFavorite();
 	checkNurseryIfShowRemoveVariableLinks();
 	$('.remove-btn').on('click', function() {
 		var sectionDiv = $(this).data('section');

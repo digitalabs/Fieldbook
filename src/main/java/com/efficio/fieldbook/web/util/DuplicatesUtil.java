@@ -24,8 +24,8 @@ public class DuplicatesUtil {
 
 	public static void processDuplicates(ImportedCrossesList parseResults) {
 		if (parseResults != null) {
-			Map<Object, List<ImportedCrosses>> possibleDuplicates = new LinkedHashMap<Object, List<ImportedCrosses>>();
-			Map<Object, List<ImportedCrosses>> possibleReciprocals = new LinkedHashMap<Object, List<ImportedCrosses>>();
+			Map<Object, List<ImportedCrosses>> possibleDuplicates = new LinkedHashMap<>();
+			Map<Object, List<ImportedCrosses>> possibleReciprocals = new LinkedHashMap<>();
 			DuplicatesUtil.addToDuplicatesMap(parseResults, possibleDuplicates);
 			DuplicatesUtil.setDuplicateNotesForDuplicates(possibleDuplicates);
 			DuplicatesUtil.addToReciprocalsMap(parseResults, possibleReciprocals);
@@ -52,7 +52,7 @@ public class DuplicatesUtil {
 
 	private static Set<ImportedCrosses> getAllPedigreeReciprocals(List<ImportedCrosses> importedCrossesList,
 			Set<ImportedCrosses> plotReciprocals) {
-		Set<ImportedCrosses> pedigreeReciprocals = new LinkedHashSet<ImportedCrosses>();
+		Set<ImportedCrosses> pedigreeReciprocals = new LinkedHashSet<>();
 		for (ImportedCrosses importedCrosses : importedCrossesList) {
 			if (!plotReciprocals.contains(importedCrosses)) {
 				pedigreeReciprocals.add(importedCrosses);
@@ -65,13 +65,13 @@ public class DuplicatesUtil {
 			Set<ImportedCrosses> pedigreeReciprocals) {
 		if (plotReciprocals != null && !plotReciprocals.isEmpty()) {
 			// process plot reciprocals
-			List<Integer> plotReciprocalEntries = new ArrayList<Integer>();
+			List<Integer> plotReciprocalEntries = new ArrayList<>();
 			DuplicatesUtil.getAllEntries(plotReciprocals, plotReciprocalEntries);
 			importedCrosses.setDuplicatePrefix(ImportedCrosses.PLOT_RECIP_PREFIX);
 			DuplicatesUtil.setDuplicateEntries(importedCrosses, plotReciprocalEntries);
 		} else {
 			// process pedigree reciprocals
-			List<Integer> pedigreeReciprocalEntries = new ArrayList<Integer>();
+			List<Integer> pedigreeReciprocalEntries = new ArrayList<>();
 			DuplicatesUtil.getAllEntries(pedigreeReciprocals, pedigreeReciprocalEntries);
 			importedCrosses.setDuplicatePrefix(ImportedCrosses.PEDIGREE_RECIP_PREFIX);
 			DuplicatesUtil.setDuplicateEntries(importedCrosses, pedigreeReciprocalEntries);
@@ -85,8 +85,8 @@ public class DuplicatesUtil {
 			if (importedCrossesList == null || importedCrossesList.size() < 2) {
 				continue;
 			}
-			Map<Object, List<ImportedCrosses>> femalePlotImportedCrosses = new HashMap<Object, List<ImportedCrosses>>();
-			Map<Object, List<ImportedCrosses>> malePlotImportedCrosses = new HashMap<Object, List<ImportedCrosses>>();
+			Map<Object, List<ImportedCrosses>> femalePlotImportedCrosses = new HashMap<>();
+			Map<Object, List<ImportedCrosses>> malePlotImportedCrosses = new HashMap<>();
 			DuplicatesUtil.getAllPossiblePlotDuplicates(importedCrossesList, femalePlotImportedCrosses, malePlotImportedCrosses);
 			DuplicatesUtil.setDuplicateNotesAsPlotOrPedigreeDuplicates(importedCrossesList, femalePlotImportedCrosses,
 					malePlotImportedCrosses);
@@ -95,7 +95,7 @@ public class DuplicatesUtil {
 	}
 
 	private static void setDuplicatePrefixAndEntriesForDuplicates(List<ImportedCrosses> importedCrossesList, String prefix) {
-		List<Integer> entries = new ArrayList<Integer>();
+		List<Integer> entries = new ArrayList<>();
 		DuplicatesUtil.getAllEntries(importedCrossesList, entries);
 		for (ImportedCrosses importedCrosses : importedCrossesList) {
 			if (DuplicatesUtil.canStillSetDuplicateNotes(importedCrosses, prefix)) {
@@ -183,7 +183,7 @@ public class DuplicatesUtil {
 
 	private static Set<ImportedCrosses> getAllPlotReciprocals(List<ImportedCrosses> importedCrossesList, String femalePlotNo,
 			String malePlotNo) {
-		Set<ImportedCrosses> plotReciprocals = new LinkedHashSet<ImportedCrosses>();
+		Set<ImportedCrosses> plotReciprocals = new LinkedHashSet<>();
 		for (ImportedCrosses importedCrosses : importedCrossesList) {
 			if (femalePlotNo.equals(importedCrosses.getMalePlotNo()) || malePlotNo.equals(importedCrosses.getFemalePlotNo())) {
 				plotReciprocals.add(importedCrosses);

@@ -82,7 +82,8 @@ public class CrossingTemplateExcelExporter {
 			gpList.setType(GermplasmListType.LST.name());
 
 			// 3. write details
-			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook), currentUserId);
+			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook),
+					currentUserId, studyName);
 
 			// 4. update codes
 			this.updateCodesSection(excelWorkbook.getSheetAt(2));
@@ -174,7 +175,7 @@ public class CrossingTemplateExcelExporter {
 	}
 
 	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final GermplasmList germplasmList,
-			final ExcelCellStyleBuilder sheetStyles, final Integer currentUserId) {
+			final ExcelCellStyleBuilder sheetStyles, final Integer currentUserId, final String studyName) {
 		final CellStyle labelStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.LABEL_STYLE);
 		final CellStyle textStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.NUMERIC_STYLE);
 
@@ -196,7 +197,8 @@ public class CrossingTemplateExcelExporter {
 
 		final String currentExportingUserName = this.fieldbookMiddlewareService.getOwnerListName(currentUserId);
 		descriptionSheet.getRow(5).getCell(6).setCellValue(currentExportingUserName); //G6 cell with the Username
-		
+		descriptionSheet.getRow(6).getCell(6).setCellValue(studyName); //G7 cell with the name of the Nursery
+
 		return ++actualRow;
 	}
 

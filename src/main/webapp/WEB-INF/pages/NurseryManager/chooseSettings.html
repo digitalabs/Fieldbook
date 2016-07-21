@@ -52,6 +52,18 @@
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 
+				<!-- radio buttons for filtering -->
+				<div class="possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}">
+					<label class="radio-inline">
+									<input id="filterLocations" name="locationFilter" type="radio" checked="checked"
+										th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'"/>
+									<span >All breeding locations</span>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+									<input id="allLocations" name="locationFilter" type="radio" 
+										th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'"/>
+									<span >All locations</span>
+					</label>
+				</div>
 						<!-- Show Favorite Location -->
 						<div style="width: 100%" th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
 							<input
@@ -69,6 +81,16 @@
 						</div>
 						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
 							 class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
+						</div>
+						
+						<!-- all values -->						
+						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'allValuesJson' + ${rowStat.index}"
+							 class="allValuesJson" style="display:none" th:text="${nurseryLevelVariable.allValuesJson}">
+						</div>
+						
+						<!-- all favorite values -->						
+						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'allFavoriteValuesJson' + ${rowStat.index}"
+							 class="allFavoriteValuesJson" style="display:none" th:text="${nurseryLevelVariable.allFavoriteValuesJson}">
 						</div>
 
 						<input  maxlength="250"  th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}"
@@ -205,6 +227,7 @@
 
 			<div class=" row collapse in" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}" th:remove="tag">
 				<div class="form-group">
+					<br></br>
 					<span th:text="#{nursery.create.nursery.method.note}">If you plan to advance the nursery with a single method, please select it below</span>
 				</div>
 
@@ -216,6 +239,7 @@
 
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
+						
 						<!-- store possible values of variable -->
 						<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"></div>
 						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
@@ -224,14 +248,36 @@
 						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
 							 class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
 						</div>
+						<!-- all values -->						
+						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'allValuesJson' + ${rowStat.index}"
+							 class="allValuesJson" style="display:none" th:text="${nurseryLevelVariable.allValuesJson}">
+						</div>
+						
+						<!-- all favorite values -->						
+						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'allFavoriteValuesJson' + ${rowStat.index}"
+							 class="allFavoriteValuesJson" style="display:none" th:text="${nurseryLevelVariable.allFavoriteValuesJson}">
+						</div>
 					</div>
 					<div class="col-xs-4 breeding-method-note">
 						<span class="bms-fa-question-circle help-tooltip-nursery breeding-method-tooltip" data-placement="right" data-toggle="tooltip" data-container="body"></span>
 					</div>
 				</div>
+				
+				<!-- radio buttons for filtering -->
+				<div class="possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
+					<label class="radio-inline">
+									<input id="filterMethods" name="methodFilter" type="radio" checked="checked"
+										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
+									<span >Derivative and Maintenance methods</span>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									<input id="allMethods" name="methodFilter" type="radio"
+										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
+									<span >All methods</span>
+					</label>
+				</div>
 
 				<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
-					<input class="study-level-method-checkbox"
+					<input class="study-level-method-checkbox" id="study-level-method-checkbox"
 						   type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
 						   th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 					&nbsp;&nbsp;
@@ -516,6 +562,7 @@ $(document).ready(function() {
 			checkFavoritesIfValIsAFavorite(select2Index);
 		});
 	}
+	checkMethodFavorite();
 	checkNurseryIfShowRemoveVariableLinks();
 	$('.remove-btn').on('click', function() {
 		var sectionDiv = $(this).data('section');

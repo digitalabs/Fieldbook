@@ -9,8 +9,13 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.common.service;
+package com.efficio.fieldbook.web.study.service;
 
-public interface ExcelImportStudyService extends ImportStudyService {
+import org.generationcp.middleware.exceptions.WorkbookParserException;
 
+import com.efficio.fieldbook.web.common.bean.ImportResult;
+
+public interface ImportStudyService {
+
+	ImportResult importWorkbook() throws WorkbookParserException;
 }

@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.ListUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -255,23 +256,41 @@ public class ManageSettingsController extends SettingsController {
 	 * @param mode the mode
 	 * @return the string
 	 */
+	@SuppressWarnings("unchecked")
 	@ResponseBody
 	@RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
-	public List<SettingDetail> addSettings(@RequestBody CreateNurseryForm form, @PathVariable int mode) {
-		List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
+	public List<SettingDetail> addSettings(@RequestBody final CreateNurseryForm form, @PathVariable final int mode) {
+		final List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
 		try {
-			List<SettingVariable> selectedVariables = form.getSelectedVariables();
+			final List<SettingVariable> selectedVariables = form.getSelectedVariables();
 			if (selectedVariables != null && !selectedVariables.isEmpty()) {
-				for (SettingVariable var : selectedVariables) {
-					Operation operation = this.removeVarFromDeletedList(var, mode);
+				for (final SettingVariable var : selectedVariables) {
+					final Operation operation = this.removeVarFromDeletedList(var, mode);
 
 					var.setOperation(operation);
 					this.populateSettingVariable(var);
-					List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
-					SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
-					List<ValueReference> possibleValuesFavorite =
-							this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID());
-					newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
+					final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
+					final SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
+					final List<ValueReference> possibleValuesFavoriteFiltered = this.fieldbookService
+							.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID(), true);
+
+					final List<ValueReference> allValues = this.fieldbookService.getAllPossibleValuesWithFilter(var.getCvTermId(), false);
+
+					final List<ValueReference> allFavoriteValues = this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(),
+							this.getCurrentProject().getUniqueID(), null);
+					
+					
+					final List<ValueReference>  intersection = SettingsUtil.intersection(allValues, allFavoriteValues);
+					
+					newSetting.setAllFavoriteValues(intersection);
+					newSetting.setAllFavoriteValuesToJson(intersection);
+
+					newSetting.setPossibleValuesFavorite(possibleValuesFavoriteFiltered);
+					newSetting.setAllValues(allValues);
+
+					newSetting.setPossibleValuesToJson(possibleValues);
+					newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavoriteFiltered);
+					newSetting.setAllValuesToJson(allValues);
 					newSettings.add(newSetting);
 				}
 			}
@@ -281,7 +300,7 @@ public class ManageSettingsController extends SettingsController {
 				return newSettings;
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ManageSettingsController.LOG.error(e.getMessage(), e);
 		}
 
@@ -328,41 +347,6 @@ public class ManageSettingsController extends SettingsController {
 			}
 		}
 		return operation;
-	}
-
-	/**
-	 * Gets the setting detail list.
-	 *
-	 * @param mode the mode
-	 * @return the setting detail list
-	 */
-	private List<SettingDetail> getSettingDetailList(int mode) {
-		if (mode == VariableType.STUDY_DETAIL.getId()) {
-			return this.userSelection.getStudyLevelConditions();
-		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId()) {
-			return this.userSelection.getPlotsLevelList();
-		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.NURSERY_CONDITION.getId()) {
-			List<SettingDetail> newList = new ArrayList<SettingDetail>();
-
-			if (this.userSelection.getBaselineTraitsList() != null) {
-				for (SettingDetail setting : this.userSelection.getBaselineTraitsList()) {
-					newList.add(setting);
-				}
-			}
-			if (this.userSelection.getNurseryConditions() != null) {
-				for (SettingDetail setting : this.userSelection.getNurseryConditions()) {
-					newList.add(setting);
-				}
-			}
-			return newList;
-		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
-			return this.userSelection.getSelectionVariates();
-		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
-			return this.userSelection.getTrialLevelVariableList();
-		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
-			return this.userSelection.getTreatmentFactors();
-		}
-		return new ArrayList<SettingDetail>();
 	}
 
 	@ResponseBody

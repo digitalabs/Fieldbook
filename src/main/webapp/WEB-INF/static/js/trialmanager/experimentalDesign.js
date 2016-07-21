@@ -1,8 +1,5 @@
-/**
- * Created by cyrus on 7/2/14.
- */
+/* global angular, showErrorMessage, showSuccessfulMessage, expDesignMsgs */
 
-/* global angular, showErrorMessage, showSuccessfulMessage, showMeasurementsPreview, expDesignMsgs */
 (function() {
 		'use strict';
 
@@ -205,7 +202,9 @@
 									} else {
 										showErrorMessage('', response.message);
 									}
-								}
+								}, function(errResponse) {
+                                    showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+                                }
 							);
 						} else {
 							TrialManagerDataService.generatePresetExpDesign($scope.data.designType).then(function() {
@@ -220,6 +219,8 @@
 					$scope.$on('designImportGenerated', function() {
 						var summaryPromise = $http.get('/Fieldbook/DesignImport/getMappingSummary');
 						var designTypeDetailsPromise = $http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails');
+
+						TrialManagerDataService.applicationData.unappliedChangesAvailable = false;
 
 						$q.all([summaryPromise, designTypeDetailsPromise]).then(function(results) {
 							$scope.applicationData.importDesignMappedData = results[0].data;
@@ -351,12 +352,12 @@
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[27]);
 										return false;
 									}
-									if ($scope.data.nblatin >= ($scope.totalGermplasmEntryListCount / $scope.data.blockSize)) {
+									if (Number($scope.data.nblatin) >= ($scope.totalGermplasmEntryListCount / $scope.data.blockSize)) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[11]);
 										return false;
 									}
 
-									if ($scope.data.nblatin >= Number($scope.data.replicationsCount)) {
+									if (Number($scope.data.nblatin) >= Number($scope.data.replicationsCount)) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[23]);
 										return false;
 									}
@@ -403,29 +404,29 @@
 
 								if ($scope.data.useLatenized) {
 
-									if ($scope.data.nrlatin >= $scope.data.replicationsCount) {
+									if (Number($scope.data.nrlatin) >= Number($scope.data.replicationsCount)) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[15]);
 										return false;
 									}
 
-									if ($scope.data.nclatin >= $scope.data.replicationsCount) {
+									if (Number($scope.data.nclatin) >= Number($scope.data.replicationsCount)) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[16]);
 										return false;
 									}
 
-									if ($scope.data.nrlatin <= 0 || $scope.data.nrlatin >= $scope.data.rowsPerReplications) {
+									if (Number($scope.data.nrlatin) <= 0 || Number($scope.data.nrlatin) >= Number($scope.data.rowsPerReplications)) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[14]);
 										return false;
 
 									}
 
-									if ($scope.data.nclatin <= 0 || $scope.data.nclatin >= $scope.data.colsPerReplications) {
+									if (Number($scope.data.nclatin) <= 0 || Number($scope.data.nclatin) >= Number($scope.data.colsPerReplications)) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[17]);
 										return false;
 
 									}
 
-									if ($scope.data.replicationsArrangement <= 0) {
+									if (Number($scope.data.replicationsArrangement <= 0)) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[21]);
 										return false;
 									}

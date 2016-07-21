@@ -339,12 +339,12 @@ if (typeof StockIDFunctions === 'undefined') {
 			if (resp.hasError) {
 				showErrorMessage('', resp.errorMessage);
 			} else {
+                stockListImportNotSaved = true;
 				if(resp.hasConflict){
 					$('.fbk-save-nursery').addClass('fbk-hide');
 					$('.fbk-save-stocklist').removeClass('fbk-hide');
 					$('.fbk-discard-imported-stocklist-data').removeClass('fbk-hide');
 					showAlertMessage('', importStocklistSuccessOverwriteDataWarningToSaveMessage);
-					stockListImportNotSaved = true;
 				}
 				else{
 					showSuccessfulMessage('', 'Import Success');
@@ -391,7 +391,9 @@ if (typeof StockIDFunctions === 'undefined') {
 					$('#page-message-lots').html('');
 					$('#addLotsModal').modal({ backdrop: 'static', keyboard: true });
 					initializePossibleValuesComboInventory(inventoryLocationSuggestions, '#inventoryLocationIdAll', true, null);
+					initializePossibleValuesComboInventory(inventorySeedStorageLocationSuggestions, '#inventoryLocationIdSeedStorage', false, null);
 					initializePossibleValuesComboInventory(inventoryFavoriteLocationSuggestions, '#inventoryLocationIdFavorite', false, null);
+					initializePossibleValuesComboInventory(inventoryFavoriteSeedStorageLocationSuggestions, '#inventoryLocationIdFavoriteSeedStorage', false, null);
 					initializePossibleValuesComboScale(scaleSuggestions, '#inventoryScaleId', false, null);
 					showCorrectLocationInventoryCombo();
 				}
@@ -403,12 +405,18 @@ if (typeof StockIDFunctions === 'undefined') {
 			var entryIds = StockIDFunctions.getSelectedInventoryEntryIds();
 			$('#entryIdList').val(entryIds);
 			if ($('#showFavoriteLocationInventory').is(':checked')) {
-				if ($('#' + getJquerySafeId('inventoryLocationIdFavorite')).select2('data') !== null) {
-					$('#inventoryLocationId').val($('#' + getJquerySafeId('inventoryLocationIdFavorite')).select2('data').id);
+				if ($('#showFavoriteLocationInventory').is(':checked')) {
+					if ($('#inventoryLocationIdFavorite').select2('data')) {
+						$('#inventoryLocationId').val($('#inventoryLocationIdFavorite').select2('data').id);
+					} else if ($('#inventoryLocationIdFavoriteSeedStorage').select2('data')) {
+						$('#inventoryLocationId').val($('#inventoryLocationIdFavoriteSeedStorage').select2('data').id);
+					}
 				}
 			} else {
-				if ($('#' + getJquerySafeId('inventoryLocationIdAll')).select2('data') !== null) {
-					$('#inventoryLocationId').val($('#' + getJquerySafeId('inventoryLocationIdAll')).select2('data').id);
+				if ($('#inventoryLocationIdAll').select2('data')) {
+					$('#inventoryLocationId').val($('#inventoryLocationIdAll').select2('data').id);
+				} else if ($('#inventoryLocationIdSeedStorage').select2('data')) {
+					$('#inventoryLocationId').val($('#inventoryLocationIdSeedStorage').select2('data').id);
 				}
 			}
 			if ($('#inventoryLocationId').val() === '0' || $('#inventoryLocationId').val() === '') {

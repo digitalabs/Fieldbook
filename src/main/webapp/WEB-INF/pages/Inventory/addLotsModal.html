@@ -3,7 +3,7 @@
 		method="post" th:object="${seedStoreForm}" enctype="multipart/form-data">
 		<input type="hidden" th:field="*{listId}"/>
 		<input type ="hidden" th:field="*{entryIdList}" />
-	<!-- Modal -->
+	<!-- Modal  -->
 	<div class="modal fade" id="addLotsModal" role="dialog" aria-labelledby="addLotsLabel" aria-hidden="true">
 		<div class="modal-dialog  modal-extra-large">
 			<div class="modal-content">
@@ -38,18 +38,34 @@
 							<input type="hidden" th:field="*{inventoryLocationId}" class="form-control" />
 							<input type="hidden" name="inventoryLocationIdAll" id="inventoryLocationIdAll" class="form-control select2" placeholder=""/>
 							<input type="hidden" name="inventoryLocationIdFavorite" id="inventoryLocationIdFavorite" class="form-control select2" placeholder=""/>
-
+							<input type="hidden" name="inventoryLocationIdSeedStorage" id="inventoryLocationIdSeedStorage" class="form-control select2" placeholder=""/>
+							<input type="hidden" name="inventoryLocationIdFavoriteSeedStorage" id="inventoryLocationIdFavoriteSeedStorage" class="form-control select2" placeholder=""/>
+							
 						</div>
 						<div class="col-md-3 add_top_padding"><a class='inventory-manage-location' href="javascript: void(0)" th:text="#{advancing.nursery.manage.location}">Manage Locations</a></div>
 					</div>
 
 					<div class="row form-group">
-							<div class="col-md-5">
-								&nbsp;
-							</div>
+						<div class="col-md-5">
+							<label class="control-label label-bold" th:text="#{show.favorite.location.header}"> Showing: </label>
+						</div>
+						<div class="col-md-4">
+							<label>
+								<input id="showSeedStorageLocationInventory" name="filter" value="1" type="radio" checked="checked"/> <span th:text="#{show.Seed.Storage.location}">Seed storage locations</span>
+								&nbsp;&nbsp;
+							</label>
+							<label>
+								<input id="showAllLocationInventory" name="filter" value="2" type="radio"/> <span th:text="#{show.all.location}">All locations types</span>
+								&nbsp;&nbsp;
+							</label>
+						</div>
+					</div>
+					<div class="row form-group">
+						<div class="col-md-5">
+						</div>
 							<div class="col-md-4">
 								<label>
-									<input id="showFavoriteLocationInventory" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
+									<input id="showFavoriteLocationInventory" value="1" type="checkbox"/> <span th:text="#{show.include.favorite.location}">Include favorite locations only</span>
 									&nbsp;&nbsp;
 								</label>
 							</div>
@@ -105,15 +121,24 @@
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
-var inventoryLocationSuggestions = /*[[${locationList}]]*/ null,
+var inventoryLocationSuggestions = /*[[${allLocationList}]]*/ null,
 	inventoryFavoriteLocationSuggestions = /*[[${favoriteLocationList}]]*/ null,
+	inventorySeedStorageLocationSuggestions = /*[[${locationList}]]*/ null,
+	inventoryFavoriteSeedStorageLocationSuggestions = /*[[${favoriteSeedStorageLocationList}]]*/ null,
 	scaleSuggestions = /*[[${scaleList}]]*/ null;
 
 $(document).ready(function() {
+	$('#showSeedStorageLocationInventory').on('change', function() {
+		showCorrectLocationInventoryCombo();
+	});
+	$('#showAllLocationInventory').on('change', function() {
+		showCorrectLocationInventoryCombo();
+	});
 	$('#showFavoriteLocationInventory').on('change', function() {
 		showCorrectLocationInventoryCombo();
 	});
-
+	
+	recreateLocationCombo('showFavoriteLocationInventory');
 	// remove any other listeners for the location update
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);

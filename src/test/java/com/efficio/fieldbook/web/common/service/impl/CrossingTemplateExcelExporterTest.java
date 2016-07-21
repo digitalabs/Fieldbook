@@ -3,8 +3,10 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -142,7 +144,10 @@ public class CrossingTemplateExcelExporterTest {
 				"Enter a list description here, or add it when saving in the BMS");
 
 		Assert.assertEquals(sheet.getRow(2).getCell(0).getStringCellValue(), "LIST DATE");
-		Assert.assertTrue(sheet.getRow(2).getCell(1).getNumericCellValue() == 20150506);
+		final Date todaysDate = new Date();
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		final String todaysDateText = dateFormat.format(todaysDate);
+		Assert.assertTrue(sheet.getRow(2).getCell(1).getNumericCellValue() == Long.parseLong(todaysDateText));
 		Assert.assertEquals(sheet.getRow(2).getCell(3).getStringCellValue(), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
 	}
 

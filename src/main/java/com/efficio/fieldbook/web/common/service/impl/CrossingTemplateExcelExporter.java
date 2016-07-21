@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -191,8 +194,12 @@ public class CrossingTemplateExcelExporter {
 				GermplasmExportedWorkbook.LIST_DESCRIPTION, "", "Enter a list description here, or add it when saving in the BMS",
 				labelStyle, textStyle);
 
+		final Date todaysDate = new Date();
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		final String todaysDateText = dateFormat.format(todaysDate);
+
 		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(++actualRow)).writeListDetailsRow(descriptionSheet,
-				GermplasmExportedWorkbook.LIST_DATE, germplasmList.getDate(),
+				GermplasmExportedWorkbook.LIST_DATE, Long.parseLong(todaysDateText),
 				"Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank", labelStyle, textStyle);
 
 		final String currentExportingUserName = this.fieldbookMiddlewareService.getOwnerListName(currentUserId);

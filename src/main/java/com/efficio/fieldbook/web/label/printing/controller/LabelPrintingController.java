@@ -119,10 +119,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
 	/**
-	 * The Constant BUFFER_SIZE.
-	 */
-	private static final int BUFFER_SIZE = 4096 * 4;
-	/**
 	 * The user label printing.
 	 */
 	@Resource
@@ -238,7 +234,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			final List<Integer> ids = new ArrayList<>();
 			ids.add(id);
 			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties, true);
-			for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
+			for (final FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
 				fieldMapInfo = fieldMapInfoDetail;
 				hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
 			}
@@ -320,9 +316,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		List<FieldMapInfo> fieldMapInfoList;
 
-		if(Objects.equals(study.getType(), StudyType.T)){
+		if (Objects.equals(study.getType(), StudyType.T)) {
 			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties, true);
-		}else {
+		} else {
 			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties, true);
 		}
 
@@ -397,15 +393,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Export File
+	 * 
 	 * @param req
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
-	public ResponseEntity<FileSystemResource> exportFile(HttpServletRequest req) throws UnsupportedEncodingException {
+	public ResponseEntity<FileSystemResource> exportFile(final HttpServletRequest req) throws UnsupportedEncodingException {
 
-		String filename = this.userLabelPrinting.getFilename();
-		String absoluteLocation = this.userLabelPrinting.getFilenameDLLocation();
+		final String filename = this.userLabelPrinting.getFilenameWithExtension();
+		final String absoluteLocation = this.userLabelPrinting.getFilenameDLLocation();
 
 		return FieldbookUtil.createResponseEntityForFileDownload(absoluteLocation, filename);
 	}
@@ -787,7 +784,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		fileName = FileUtils.sanitizeFileName(fileName);
 		final String fileNameLocation = this.fieldbookProperties.getUploadDirectory() + File.separator + fileName;
 
-		this.userLabelPrinting.setFilenameDL(fileName);
+		this.userLabelPrinting.setFilenameWithExtension(fileName);
 		this.userLabelPrinting.setFilenameDLLocation(fileNameLocation);
 		return fileName;
 	}

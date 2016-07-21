@@ -12,6 +12,7 @@ package com.efficio.fieldbook.web.label.printing.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.pojo.CustomReportType;
@@ -41,10 +43,13 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
@@ -197,16 +202,15 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testGetLabelPrintingCustomReportsIfThereIsStudyId() throws MiddlewareQueryException {
-		final LabelPrintingController controller = new LabelPrintingController();
 		final WorkbenchService workbenchService = Mockito.mock(WorkbenchService.class);
 		final Integer studyId = new Integer(3);
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 		userLabelPrinting.setStudyId(studyId);
-		controller.setUserLabelPrinting(userLabelPrinting);
-		controller.setWorkbenchService(workbenchService);
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+		this.labelPrintingController.setWorkbenchService(workbenchService);
 		final CrossExpansionProperties crossExpansionProperties = new CrossExpansionProperties();
 		crossExpansionProperties.setProfile("Cimmyt");
-		controller.setCrossExpansionProperties(crossExpansionProperties);
+		this.labelPrintingController.setCrossExpansionProperties(crossExpansionProperties);
 		final List<StandardPreset> standardPresets = new ArrayList<StandardPreset>();
 		final StandardPreset preset = new StandardPreset();
 		preset.setConfiguration(
@@ -223,21 +227,21 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		cropType.setCropName("Test");
 		project.setCropType(cropType);
 		Mockito.when(contextUtil.getProjectInContext()).thenReturn(project);
-		controller.setContextUtil(contextUtil);
-		final List<CustomReportType> presets = controller.getLabelPrintingCustomReports();
+		this.labelPrintingController.setContextUtil(contextUtil);
+		final List<CustomReportType> presets = this.labelPrintingController.getLabelPrintingCustomReports();
 		Assert.assertEquals("Should return 2 presets since there is a study", 2, presets.size());
 	}
 
 	@Test
 	public void testGetLabelPrintingCustomReportsIfThereIsNoStudyId() throws MiddlewareQueryException {
-		final LabelPrintingController controller = new LabelPrintingController();
 		final WorkbenchService workbenchService = Mockito.mock(WorkbenchService.class);
 		final Integer studyId = null;
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 		userLabelPrinting.setStudyId(studyId);
-		controller.setUserLabelPrinting(userLabelPrinting);
-		controller.setWorkbenchService(workbenchService);
-		final List<CustomReportType> presets = controller.getLabelPrintingCustomReports();
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+		this.labelPrintingController.setWorkbenchService(workbenchService);
+		final List<CustomReportType> presets = this.labelPrintingController.getLabelPrintingCustomReports();
+
 		Assert.assertEquals("Should return no preset since there is not study", 0, presets.size());
 	}
 
@@ -277,5 +281,73 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
 		final String fileName = LabelPrintingControllerTest.FILE_NAME + new SimpleDateFormat("yyyyMMdd").format(new Date());
 		Assert.assertEquals("The file name should be " + fileName, fileName, resultUserLabelPrinting.getFilename());
+	}
+		
+	public void testExportFileInCSVFormat() throws UnsupportedEncodingException {
+		final UserLabelPrinting userLabelPrinting =
+				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+		final ResponseEntity<FileSystemResource> reponseEntity =
+				this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
+
+		final String filenameWithExtension = userLabelPrinting.getFilenameWithExtension();
+		final String contentDisposition =
+				"[attachment; filename=\"" + filenameWithExtension + "\"; filename*=utf-8''" + filenameWithExtension + "]";
+		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
+		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition,
+				responseEntityContentDisposition);
+
+		final String contentType = "[application/octet-stream;charset=utf-8]";
+		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
+		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
+
+		final String responseEntityFileName = reponseEntity.getBody().getFilename();
+		Assert.assertEquals("The file name should be " + filenameWithExtension, filenameWithExtension, responseEntityFileName);
+	}
+
+	@Test
+	public void testExportFileInExcelFormat() throws UnsupportedEncodingException {
+		final UserLabelPrinting userLabelPrinting =
+				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+		final ResponseEntity<FileSystemResource> reponseEntity =
+				this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
+
+		final String filenameWithExtension = userLabelPrinting.getFilenameWithExtension();
+		final String contentDisposition =
+				"[attachment; filename=\"" + filenameWithExtension + "\"; filename*=utf-8''" + filenameWithExtension + "]";
+		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
+		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition,
+				responseEntityContentDisposition);
+
+		final String contentType = "[application/vnd.ms-excel;charset=utf-8]";
+		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
+		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
+
+		final String responseEntityFileName = reponseEntity.getBody().getFilename();
+		Assert.assertEquals("The file name should be " + filenameWithExtension, filenameWithExtension, responseEntityFileName);
+	}
+
+	@Test
+	public void testExportFileInPDFFormat() throws UnsupportedEncodingException {
+		final UserLabelPrinting userLabelPrinting =
+				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+		final ResponseEntity<FileSystemResource> reponseEntity =
+				this.labelPrintingController.exportFile(Mockito.mock(HttpServletRequest.class));
+
+		final String filenameWithExtension = userLabelPrinting.getFilenameWithExtension();
+		final String contentDisposition =
+				"[attachment; filename=\"" + filenameWithExtension + "\"; filename*=utf-8''" + filenameWithExtension + "]";
+		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
+		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition,
+				responseEntityContentDisposition);
+
+		final String contentType = "[application/pdf;charset=utf-8]";
+		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
+		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
+
+		final String responseEntityFileName = reponseEntity.getBody().getFilename();
+		Assert.assertEquals("The file name should be " + filenameWithExtension, filenameWithExtension, responseEntityFileName);
 	}
 }

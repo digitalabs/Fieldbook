@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
@@ -35,8 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -91,9 +88,6 @@ public class CrossingSettingsController extends SettingsController {
 
 	@Resource
 	private CrossNameService crossNameService;
-
-	@Resource
-	private ContextUtil contextUtil;
 
 	@Resource
 	private CrossingTemplateExcelExporter crossingTemplateExcelExporter;
@@ -241,7 +235,11 @@ public class CrossingSettingsController extends SettingsController {
 			if (studyId == null && this.studySelection.getWorkbook().getStudyDetails() != null) {
 				studyId = this.studySelection.getWorkbook().getStudyDetails().getId();
 			}
-			final File result = this.crossingTemplateExcelExporter.export(studyId, this.studySelection.getWorkbook().getStudyName());
+
+			final Integer currentUserId = this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
+					this.contextUtil.getCurrentWorkbenchUserId());
+
+			final File result = this.crossingTemplateExcelExporter.export(studyId, this.studySelection.getWorkbook().getStudyName(), currentUserId);
 
 			out.put(CrossingSettingsController.IS_SUCCESS, Boolean.TRUE);
 			out.put("outputFilename", result.getAbsolutePath());

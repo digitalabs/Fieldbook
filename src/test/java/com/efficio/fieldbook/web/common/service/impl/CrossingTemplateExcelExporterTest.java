@@ -51,6 +51,7 @@ public class CrossingTemplateExcelExporterTest {
 	private static final String STUDY_NAME = "studyname";
 	private static final int STUDY_ID = 1;
 	private static final String TEST_FILENAME = "testFilename.xls";
+	private static final int CURRENT_USER_ID = 1;
 
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -109,7 +110,8 @@ public class CrossingTemplateExcelExporterTest {
 
 		// to test
 		final File exportFile =
-				this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+				this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME,
+						CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
 		Assert.assertEquals("uses same study name", "CrossingTemplate-" + CrossingTemplateExcelExporterTest.STUDY_NAME + ".xls",
 				exportFile.getName());
 	}
@@ -117,7 +119,8 @@ public class CrossingTemplateExcelExporterTest {
 	@Test(expected = CrossingTemplateExportException.class)
 	public void testExportException() throws Exception {
 		Mockito.doThrow(new InvalidFormatException("forced exception")).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
-		this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+		this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME,
+				CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
 	}
 
 	@Test
@@ -209,6 +212,7 @@ public class CrossingTemplateExcelExporterTest {
 
 		final VariableList factors = new VariableList();
 		factors.add(createTestVariable(TermId.PLOT_NO.getId(), "1"));
+		factors.add(createTestVariable(TermId.GID.getId(), "1"));
         factors.add(createTestVariable(TermId.DESIG.getId(), "ABC"));
         factors.add(createTestVariable(TermId.CROSS.getId(), "abc/def"));
 

@@ -70,7 +70,7 @@ public class CrossingTemplateExcelExporter {
 
 	private String templateFile;
 
-	public File export(final Integer studyId, final String studyName) throws CrossingTemplateExportException {
+	public File export(final Integer studyId, final String studyName, final Integer currentUserId) throws CrossingTemplateExportException {
 		try {
 			final Workbook excelWorkbook = this.fileService.retrieveWorkbookTemplate(this.templateFile);
 
@@ -82,13 +82,14 @@ public class CrossingTemplateExcelExporter {
 			gpList.setType(GermplasmListType.LST.name());
 
 			// 3. write details
-			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook), studyId);
+			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook), currentUserId);
 
 			// 4. update codes
 			this.updateCodesSection(excelWorkbook.getSheetAt(2));
 			
 			// 5. write Nursery List Sheet
-			this.writeNurseryListSheet(excelWorkbook.getSheetAt(3),new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook),studyId,studyName);
+			this.writeNurseryListSheet(excelWorkbook.getSheetAt(3),new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook), studyId,
+					studyName);
 			
 
 			// return the resulting file back to the user
@@ -173,7 +174,7 @@ public class CrossingTemplateExcelExporter {
 	}
 
 	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final GermplasmList germplasmList,
-			final ExcelCellStyleBuilder sheetStyles, final Integer studyId) {
+			final ExcelCellStyleBuilder sheetStyles, final Integer currentUserId) {
 		final CellStyle labelStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.LABEL_STYLE);
 		final CellStyle textStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.NUMERIC_STYLE);
 
@@ -193,9 +194,8 @@ public class CrossingTemplateExcelExporter {
 				GermplasmExportedWorkbook.LIST_DATE, germplasmList.getDate(),
 				"Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank", labelStyle, textStyle);
 
-		final String createdByUserName = this.fieldbookMiddlewareService.getOwnerListName(this.fieldbookMiddlewareService.getStudy
-				(studyId).getUser());
-		descriptionSheet.getRow(5).getCell(6).setCellValue(createdByUserName); //G6 cell with the Username
+		final String currentExportingUserName = this.fieldbookMiddlewareService.getOwnerListName(currentUserId);
+		descriptionSheet.getRow(5).getCell(6).setCellValue(currentExportingUserName); //G6 cell with the Username
 		
 		return ++actualRow;
 	}

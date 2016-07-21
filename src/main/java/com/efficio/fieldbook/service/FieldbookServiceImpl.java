@@ -311,7 +311,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			DataType dataType = variable.getScale().getDataType();
 
 			// hacks to override the dataType(s)
-			if (TermId.BREEDING_METHOD_CODE.getId() == variable.getId()) {
+			if (TermId.BREEDING_METHOD_CODE.getId() == variable.getId() || TermId.BREEDING_METHOD_VARIATE_CODE.getId() == variable.getId()) {
 				dataType = DataType.BREEDING_METHOD;
 			}
 

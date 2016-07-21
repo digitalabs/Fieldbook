@@ -265,7 +265,7 @@ public class AdvancingSourceListFactory {
 		Integer methodId = null;
 		if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE.getId())) {
 			methodId = this.getIntegerValue(row.getMeasurementDataValue(methodVariateId));
-		} else if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_TEXT.getId())) {
+		} else if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_TEXT.getId()) || methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_CODE.getId())) {
 			String methodName = row.getMeasurementDataValue(methodVariateId);
 			if (NumberUtils.isNumber(methodName)) {
 				methodId = Double.valueOf(methodName).intValue();
@@ -276,9 +276,13 @@ public class AdvancingSourceListFactory {
 				while (iterator.hasNext()) {
 					String code = iterator.next();
 					Method method = breedingMethodCodeMap.get(code);
-					if (methodName != null && methodName.equalsIgnoreCase(method.getMname())) {
+					if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_TEXT.getId()) && methodName != null && methodName.equalsIgnoreCase(method.getMname())) {
 						methodId = method.getMid();
 						break;
+					}
+					if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_CODE.getId()) && methodName != null && methodName.equalsIgnoreCase(method.getMcode())) {
+						methodId = method.getMid();
+					  	break;
 					}
 				}
 			}

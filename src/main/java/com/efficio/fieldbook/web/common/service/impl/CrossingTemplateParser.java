@@ -55,7 +55,6 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 	private final Map<String, Integer> observationColumnMap = new HashMap<>();
 	private ImportedCrossesList importedCrossesList;
-	private int currentRow = 0;
 
 	/**
 	 * Resources
@@ -71,8 +70,6 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	@Resource
 	private CrossingService crossingService;
 
-	private CrossesListDescriptionSheetParser<ImportedCrossesList> crossesListDescriptionSheetParser;
-
 	public CrossingTemplateParser() {
 
 	}
@@ -81,9 +78,11 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	public ImportedCrossesList parseWorkbook(final Workbook workbook, final Map<String, Object> additionalParams) throws FileParsingException {
 		this.workbook = workbook;
 		try {
-			this.crossesListDescriptionSheetParser = new CrossesListDescriptionSheetParser<>(new ImportedCrossesList());
 
-			this.importedCrossesList = this.crossesListDescriptionSheetParser.parseWorkbook(this.workbook, additionalParams);
+			CrossesListDescriptionSheetParser<ImportedCrossesList> crossesListDescriptionSheetParser =
+					new CrossesListDescriptionSheetParser<>(new ImportedCrossesList());
+
+			this.importedCrossesList = crossesListDescriptionSheetParser.parseWorkbook(this.workbook, additionalParams);
 
 			this.parseObservationSheet(this.contextUtil.getCurrentProgramUUID());
 		} catch (final MiddlewareQueryException e) {
@@ -103,38 +102,38 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			throw new FileParsingException("Invalid Observation headers");
 		}
 
-		this.currentRow = 1;
-		while (!this.isRowEmpty(CrossingTemplateParser.OBSERVATION_SHEET_NO, this.currentRow,
+		int currentRow = 1;
+		while (!this.isRowEmpty(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 						this.importedCrossesList.sizeOfObservationHeader())) {
 
 			final String femaleNursery =
-					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, this.currentRow,
+					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 							this.observationColumnMap.get(AppConstants.FEMALE_NURSERY.getString()));
 			final String femalePlotNo =
-					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, this.currentRow,
+					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 							this.observationColumnMap.get(AppConstants.FEMALE_PLOT.getString()));
 			final String maleNursery =
-					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, this.currentRow,
+					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 							this.observationColumnMap.get(AppConstants.MALE_NURSERY.getString()));
 			final String malePlotNo =
-					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, this.currentRow,
+					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 							this.observationColumnMap.get(AppConstants.MALE_PLOT.getString()));
 			final String breedingMethod =
-					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, this.currentRow,
+					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 							this.observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
 			final String crossingDate =
-					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, this.currentRow,
+					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 							this.observationColumnMap.get(AppConstants.CROSSING_DATE.getString()));
 			final String seedsHarvested =
-					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, this.currentRow,
+					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 							this.observationColumnMap.get(AppConstants.SEEDS_HARVESTED.getString()));
 			final String notes =
-					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, this.currentRow,
+					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 							this.observationColumnMap.get(AppConstants.NOTES.getString()));
 
 			if (!this.isObservationRowValid(femaleNursery, femalePlotNo, maleNursery, malePlotNo, crossingDate, seedsHarvested)) {
 
-				throw new FileParsingException("Invalid Observation on row: " + this.currentRow);
+				throw new FileParsingException("Invalid Observation on row: " + currentRow);
 			}
 
 			// process female + male parent entries, will throw middleware query exception if no study valid or null
@@ -142,7 +141,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			final ListDataProject maleListData = this.getCrossingListProjectData(maleNursery, Integer.valueOf(malePlotNo), programUUID);
 
 			final ImportedCrosses importedCrosses =
-					new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery, femalePlotNo, malePlotNo, this.currentRow);
+					new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery, femalePlotNo, malePlotNo, currentRow);
 			// Show sounrce as "Pending" in initial dialogue. 
 			// Source (Plot Code) string is generated later in the proces and will be displayed in the final list generated.
 			importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
@@ -158,7 +157,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 			this.importedCrossesList.addImportedCrosses(importedCrosses);
 
-			this.currentRow++;
+			currentRow++;
 		}
 	}
 

@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +29,7 @@ import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -116,6 +116,10 @@ public class CrossingTemplateExcelExporter {
 		for (Experiment gpData : experiments) {
 			PoiUtil.setCellValue(nurseryListSheet, 0, rowIndex, studyName);
 			PoiUtil.setCellValue(nurseryListSheet, 1, rowIndex, Integer.parseInt(gpData.getFactors().findById(TermId.PLOT_NO).getValue()));
+			if (gpData.getFactors().findById(TermId.ENTRY_TYPE) != null) {
+				int entryType = Integer.parseInt(gpData.getFactors().findById(TermId.ENTRY_TYPE).getValue());
+				PoiUtil.setCellValue(nurseryListSheet, 2, rowIndex, getEntryTypeName(entryType));
+			}
 			PoiUtil.setCellValue(nurseryListSheet, 3, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
 			PoiUtil.setCellValue(nurseryListSheet, 4, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
 			PoiUtil.setCellValue(nurseryListSheet, 5, rowIndex, gpData.getFactors().findById(TermId.DESIG).getValue());
@@ -130,6 +134,21 @@ public class CrossingTemplateExcelExporter {
 		}
 	}
 
+	private String getEntryTypeName(final int entryType_ID) {
+
+		if (SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId() == (entryType_ID)) {
+			return SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeName();
+		} else if (SystemDefinedEntryType.DISEASE_CHECK.getEntryTypeCategoricalId() == (entryType_ID)) {
+			return SystemDefinedEntryType.DISEASE_CHECK.getEntryTypeName();
+		} else if (SystemDefinedEntryType.STRESS_CHECK.getEntryTypeCategoricalId() == (entryType_ID)) {
+			return SystemDefinedEntryType.STRESS_CHECK.getEntryTypeName();
+		} else if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() == (entryType_ID)) {
+			return SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName();
+
+		}
+
+		return "";
+	}
 
 	void updateCodesSection(final Sheet codesSheet) {
 		int startingRow = codesSheet.getLastRowNum();

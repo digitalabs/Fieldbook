@@ -105,7 +105,8 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 */
 	protected void parseObservationSheet(final String programUUID) throws FileParsingException {
 		if (this.isObservationsHeaderInvalid()) {
-			throw new FileParsingException("Invalid Observation headers");
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.headers", new String[] {},
+					LocaleContextHolder.getLocale()));
 		}
 
 		String femaleNursery = null;
@@ -118,12 +119,13 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 
 		if (femaleNursery == null || femaleNursery == "") {
-			throw new FileParsingException("The Female Nursery Name specified in the Description should not be empty");
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.nursery.empty", new String[] {},
+					LocaleContextHolder.getLocale()));
 		}
 
 		if (!femaleNursery.equals(this.studySelection.getWorkbook().getStudyName())) {
-			throw new FileParsingException(
-					"The Female Nursery Name specified in the Description should match the name of the current nursery");
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.nursery.match", new String[] {},
+					LocaleContextHolder.getLocale()));
 		}
 
 		int currentRow = 1;

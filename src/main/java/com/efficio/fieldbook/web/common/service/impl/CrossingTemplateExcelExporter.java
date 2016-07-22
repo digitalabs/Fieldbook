@@ -105,7 +105,7 @@ public class CrossingTemplateExcelExporter {
 	}
 
 	
-	private void writeNurseryListSheet(Sheet nurseryListSheet, final ExcelCellStyleBuilder sheetStyles, final int studyId,
+	void writeNurseryListSheet(Sheet nurseryListSheet, final ExcelCellStyleBuilder sheetStyles, final int studyId,
 			final String studyName) {
 
 		final int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
@@ -136,13 +136,13 @@ public class CrossingTemplateExcelExporter {
 
 	private String getEntryTypeName(final int entryType_ID) {
 
-		if (SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId() == (entryType_ID)) {
+		if (SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId() == entryType_ID) {
 			return SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeName();
-		} else if (SystemDefinedEntryType.DISEASE_CHECK.getEntryTypeCategoricalId() == (entryType_ID)) {
+		} else if (SystemDefinedEntryType.DISEASE_CHECK.getEntryTypeCategoricalId() == entryType_ID) {
 			return SystemDefinedEntryType.DISEASE_CHECK.getEntryTypeName();
-		} else if (SystemDefinedEntryType.STRESS_CHECK.getEntryTypeCategoricalId() == (entryType_ID)) {
+		} else if (SystemDefinedEntryType.STRESS_CHECK.getEntryTypeCategoricalId() == entryType_ID) {
 			return SystemDefinedEntryType.STRESS_CHECK.getEntryTypeName();
-		} else if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() == (entryType_ID)) {
+		} else if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() == entryType_ID) {
 			return SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName();
 
 		}

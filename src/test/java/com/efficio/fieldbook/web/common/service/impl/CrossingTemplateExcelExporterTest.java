@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.dms.VariableList;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
@@ -188,6 +189,30 @@ public class CrossingTemplateExcelExporterTest {
 		Assert.assertEquals(mCode, sheet.getRow(2).getCell(2).getStringCellValue());
 	}
 
+	@Test
+	public void testwriteNurseryListSection() throws IOException {
+
+		final int measurementDataSetId =10101;
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString())).thenReturn(measurementDataSetId);
+		
+		final List<Experiment> experiments = intializeExperiments();
+		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null)).thenReturn(experiments);
+		
+		final Sheet sheet = this.workbook.getSheetAt(3);
+		this.exporter.writeNurseryListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook), CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+		Assert.assertEquals(String.valueOf("studyname"), sheet.getRow(1).getCell(0).getStringCellValue());
+		Assert.assertEquals(1, (int) sheet.getRow(1).getCell(1).getNumericCellValue());
+		Assert.assertEquals(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName(), sheet.getRow(1).getCell(2).getStringCellValue());
+		Assert.assertEquals(String.valueOf("1"), sheet.getRow(1).getCell(3).getStringCellValue());
+		Assert.assertEquals(String.valueOf("1"), sheet.getRow(1).getCell(4).getStringCellValue());
+		Assert.assertEquals(String.valueOf("ABC"), sheet.getRow(1).getCell(5).getStringCellValue());
+		Assert.assertEquals(String.valueOf("abc/def"), sheet.getRow(1).getCell(6).getStringCellValue());
+		Assert.assertEquals(String.valueOf("100"), sheet.getRow(1).getCell(7).getStringCellValue());
+		Assert.assertEquals(String.valueOf("1"), sheet.getRow(1).getCell(8).getStringCellValue());
+
+		
+	}
+	
 	@Test(expected = CrossingTemplateExportException.class)
 	@SuppressWarnings("unchecked")
 	public void retrieveAndValidateIfHasGermplasmListExceptionHandling() throws Exception {
@@ -220,6 +245,9 @@ public class CrossingTemplateExcelExporterTest {
 		factors.add(createTestVariable(TermId.GID.getId(), "1"));
         factors.add(createTestVariable(TermId.DESIG.getId(), "ABC"));
         factors.add(createTestVariable(TermId.CROSS.getId(), "abc/def"));
+        factors.add(createTestVariable(TermId.ENTRY_TYPE.getId(), "10170"));
+        factors.add(createTestVariable(TermId.FIELDMAP_COLUMN.getId(), "100"));
+        factors.add(createTestVariable(TermId.FIELDMAP_RANGE.getId(), "1"));
 
 		experiment.setFactors(factors);
 		list.add(experiment);

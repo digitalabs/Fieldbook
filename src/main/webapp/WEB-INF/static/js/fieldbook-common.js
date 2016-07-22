@@ -3284,6 +3284,7 @@ function makeGermplasmListDraggable(isDraggable) {
         $('.germplasm-list-items tbody tr').off('click');
     }
 
+    SaveAdvanceList.setSelectedEntries();
     // Change background of selected rows
     $('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
 }

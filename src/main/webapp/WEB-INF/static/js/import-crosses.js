@@ -141,6 +141,7 @@ var ImportCrosses = {
 
 		return deferred.promise();
 	},
+
 	displayCrossesGermplasmDetails: function(listId) {
 		'use strict';
 		$.ajax({
@@ -203,8 +204,11 @@ var ImportCrosses = {
 
 		ImportCrosses.populateHarvestMonthDropdown('harvestMonthDropdown');
 		ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
-
+		
+		$('#settingsNextButton').off('click');
 		$('#settingsNextButton').click(false, ImportCrosses.submitCrossImportSettings);
+		
+		$('#settingsNextButtonUpdateList').off('click');
 		$('#settingsNextButtonUpdateList').click(true, ImportCrosses.submitCrossImportSettings);
 
 		$('#goBackToOpenCrossesButton').off('click');
@@ -240,7 +244,7 @@ var ImportCrosses = {
 	updateSampleParentageDesignation: function() {
 		'use strict';
 		var value = $('#parentageDesignationSeparator').val();
-		$('#sampleParentageDesignation').text('ABC-123' + value + 'DEF-456');
+		$('#sampleParentageDesignation').text('FEMALE-123' + value + 'MALE-456');
 	},
 
 	processImportSettingsDropdown: function(dropdownID, useSettingsCheckboxID) {
@@ -379,10 +383,13 @@ var ImportCrosses = {
 			}
 
 		var targetURL;
+		var settingsForSaving;
 		if ($('#presetName').val().trim() !== '') {
 			targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
+					settingsForSaving = true;
 		} else {
 			targetURL = ImportCrosses.CROSSES_URL + '/submit';
+					settingsForSaving = false;
 		}
 
 		$.ajax({
@@ -404,6 +411,13 @@ var ImportCrosses = {
 						SaveAdvanceList.updateGermplasmList();
 					} else {
 						ImportCrosses.openSaveListModal();
+
+							if (settingsForSaving) {
+								// as per UI requirements, we also display a success message regarding the saving of the settings
+								// if an error in the settings saving has occurred, program flow would have continued in the data.success === '0' branch
+								// hence, we can safely assume that settings have been properly saved at this point
+								showSuccessfulMessage('', crossingSettingsSaved);
+							}
 					}
 				}
 			},

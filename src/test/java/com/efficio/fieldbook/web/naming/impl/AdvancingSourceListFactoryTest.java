@@ -165,6 +165,106 @@ public class AdvancingSourceListFactoryTest {
 
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testCreateAdvancingSourceListSuccessWithSelectionVariateMethod() throws FieldbookException {
+        ExpressionDataProcessor expressionDataProcessor = Mockito.mock(ExpressionDataProcessor.class);
+        Mockito.when(dataProcessorFactory.retrieveExecutorProcessor()).thenReturn(expressionDataProcessor);
+
+        Mockito.doNothing().when(expressionDataProcessor).processEnvironmentLevelData(Mockito.isA(AdvancingSource.class),Mockito.isA(Workbook.class),
+                Mockito.isA(AdvancingNursery.class),Mockito.isNull(Study.class));
+        Map<Integer,List<Name>> mapNames = Maps.newHashMap();
+        List<Name> nameList = Lists.newArrayList();
+        Name name = new Name();
+        name.setNid(32);
+        name.setNval("nVal");
+        name.setTypeId(23);
+        name.setNstat(11);
+
+        nameList.add(name);
+        mapNames.put(13, nameList);
+
+        Mockito.when(this.fieldbookMiddlewareService.getNamesByGids(Mockito.isA(List.class))).thenReturn(mapNames);
+
+        List<Germplasm> germplasmList = Lists.newArrayList();
+        Germplasm germplasm = new Germplasm();
+        germplasm.setGid(13);
+        germplasm.setGpid1(401);
+        germplasm.setGpid2(402);
+        germplasm.setGnpgs(403);
+        germplasm.setMethodId(14);
+
+        germplasmList.add(germplasm);
+        Mockito.when(this.fieldbookMiddlewareService.getGermplasms(Mockito.isA(List.class))).thenReturn(germplasmList);
+
+        Workbook workBook = new Workbook();
+        StudyDetails studyDetails = new StudyDetails();
+        studyDetails.setStudyType(StudyType.N);
+        workBook.setStudyDetails(studyDetails);
+
+        List<MeasurementRow> measurementRows = generateMeasurementRows();
+        MeasurementRow row = new MeasurementRow();
+        List<MeasurementData> rowData = Lists.newArrayList();
+
+        MeasurementData measurementData = new MeasurementData();
+        measurementData.setValue("DSP");
+        MeasurementVariable measurementVariable = new MeasurementVariable();
+        measurementVariable.setTermId(8252);
+        measurementData.setMeasurementVariable(measurementVariable);
+        rowData.add(measurementData);
+
+        row.setDataList(rowData);
+
+        measurementRows.add(row);
+        workBook.setObservations(measurementRows);
+
+        AdvancingNursery advanceInfo = new AdvancingNursery();
+        advanceInfo.setMethodVariateId(8252);
+        advanceInfo.setLineVariateId(2);
+        advanceInfo.setPlotVariateId(3);
+
+        Study study = null;
+
+        Map<Integer, Method > breedingMethodMap = Maps.newConcurrentMap();
+        Method variateMethod = new Method();
+        variateMethod.setGeneq(1490);
+        variateMethod.setCount("1");
+        variateMethod.setIsnew(true);
+        variateMethod.setMcode("DSP");
+        variateMethod.setMdesc("Single Selection");
+        variateMethod.setMgrp("methodGroup");
+        variateMethod.setMid(30);
+        variateMethod.setMname("Single Selection Variate");
+        variateMethod.setPrefix("prefix");
+
+        breedingMethodMap.put(30,variateMethod);
+
+        Map<String, Method > breedingMethodCodeMap = Maps.newConcurrentMap();
+        breedingMethodCodeMap.put("DSP",variateMethod);
+
+        advanceInfo.setSelectedTrialInstances(Sets.newHashSet(ENV_NUMBER));
+        advanceInfo.setSelectedReplications(Sets.newHashSet(REPLICATION_NUMBER));
+
+        AdvancingSourceList advancingSourceList = factory.createAdvancingSourceList(workBook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
+
+        Assert.assertEquals("Expected number of advancing source rows were not generated.", 1, advancingSourceList.getRows().size());
+        AdvancingSource source = advancingSourceList.getRows().get(0);
+
+        Assert.assertNotNull(source);
+
+
+        Assert.assertEquals(1490,source.getBreedingMethod().getGeneq().intValue());
+        Assert.assertEquals("1",source.getBreedingMethod().getCount());
+        Assert.assertTrue(source.getBreedingMethod().getIsnew());
+        Assert.assertEquals("DSP",source.getBreedingMethod().getMcode());
+        Assert.assertEquals("Single Selection",source.getBreedingMethod().getMdesc());
+        Assert.assertEquals("methodGroup",source.getBreedingMethod().getMgrp());
+        Assert.assertEquals(30,source.getBreedingMethod().getMid().intValue());
+        Assert.assertEquals("Single Selection Variate",source.getBreedingMethod().getMname());
+        Assert.assertEquals("prefix",source.getBreedingMethod().getPrefix());
+
+    }
+
     private List<MeasurementRow> generateMeasurementRows(){
         List<MeasurementRow> observations = Lists.newArrayList();
         MeasurementRow row1 = new MeasurementRow();

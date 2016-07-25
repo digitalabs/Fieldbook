@@ -45,6 +45,14 @@ if (typeof StockIDFunctions === 'undefined') {
 		},
 
 		saveStockList: function() {
+			'use strict';
+			var breederIdentifier = $('#breederIdentifierField').val().trim();
+			
+			if(!StockIDFunctions.validatePrefix(breederIdentifier)){
+				showErrorMessage('', stockIdGenerationPrefixError);
+				return;
+			}
+			
 			var stockGenerationSettings = {
 				// use the default identifier of SID when user provides no value
 				breederIdentifier: $('#breederIdentifierField').val().trim() === '' ? 'SID' : $('#breederIdentifierField').val().trim(),

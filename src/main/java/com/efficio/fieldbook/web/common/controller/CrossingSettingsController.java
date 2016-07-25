@@ -311,7 +311,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
-
+		responseMap.put(CrossesListUtil.IS_IMPORT, true);
 		return responseMap;
 	}
 
@@ -346,6 +346,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
+		responseMap.put(CrossesListUtil.IS_IMPORT, false);
 		return responseMap;
 	}
 

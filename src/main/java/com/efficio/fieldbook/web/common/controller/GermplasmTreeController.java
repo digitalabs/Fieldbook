@@ -307,6 +307,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
 
 			this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
+			//Set imported user as owner of the list
+			germplasmList.setUserId(importedCrossesList.getUserId());
 			return this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList);
 		} else {
 			throw new IllegalArgumentException("Unknown germplasm list type supplied when saving germplasm list");

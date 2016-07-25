@@ -25,6 +25,7 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
- * Created by cyrus on 1/22/15. This parses a Crossing Template Excel file Note that this class is stateful, declare in spring app context
+ * This parses a Crossing Template Excel file Note that this class is stateful, declare in spring app context
  * as prototyped scope
  */
 public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCrossesList> {
@@ -76,6 +77,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	@Resource
 	private CrossingService crossingService;
 
+	@Resource
+	private UserDataManager userDataManager;
+
 	public CrossingTemplateParser() {
 
 	}
@@ -85,8 +89,8 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		this.workbook = workbook;
 		try {
 
-			CrossesListDescriptionSheetParser<ImportedCrossesList> crossesListDescriptionSheetParser =
-					new CrossesListDescriptionSheetParser<>(new ImportedCrossesList());
+			final CrossesListDescriptionSheetParser<ImportedCrossesList> crossesListDescriptionSheetParser =
+					new CrossesListDescriptionSheetParser<>(new ImportedCrossesList(), this.userDataManager);
 
 			this.importedCrossesList = crossesListDescriptionSheetParser.parseWorkbook(this.workbook, additionalParams);
 

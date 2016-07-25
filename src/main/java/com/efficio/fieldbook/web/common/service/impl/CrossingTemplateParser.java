@@ -139,7 +139,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			final String femalePlotNo =
 					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 							this.observationColumnMap.get(AppConstants.FEMALE_PLOT.getString()));
-			final String maleNursery =
+			String maleNursery =
 					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 							this.observationColumnMap.get(AppConstants.MALE_NURSERY.getString()));
 			final String malePlotNo =
@@ -155,9 +155,14 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 					this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 							this.observationColumnMap.get(AppConstants.NOTES.getString()));
 
-			if (!this.isObservationRowValid(femalePlotNo, maleNursery, malePlotNo, crossingDate)) {
+			if (!this.isObservationRowValid(femalePlotNo, malePlotNo, crossingDate)) {
+				throw new FileParsingException(
+						this.messageSource.getMessage("error.import.crosses.observation.row",
+								new Integer[] { currentRow }, LocaleContextHolder.getLocale()));
+			}
 
-				throw new FileParsingException("Invalid Observation on row: " + currentRow);
+			if (StringUtils.isBlank(maleNursery)) {
+				maleNursery = femaleNursery;
 			}
 
 			// process female + male parent entries, will throw middleware query exception if no study valid or null
@@ -166,7 +171,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 			final ImportedCrosses importedCrosses =
 					new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery, femalePlotNo, malePlotNo, currentRow);
-			// Show sounrce as "Pending" in initial dialogue. 
+			// Show source as "Pending" in initial dialogue. 
 			// Source (Plot Code) string is generated later in the proces and will be displayed in the final list generated.
 			importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
 			importedCrosses.setOptionalFields(breedingMethod, crossingDate, notes);
@@ -185,9 +190,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-	protected boolean isObservationRowValid(final String femalePlot, final String maleNursery, final String malePlot,
+	protected boolean isObservationRowValid(final String femalePlot, final String malePlot,
 			final String crossingDate) {
-		return StringUtils.isNotBlank(femalePlot) && StringUtils.isNotBlank(maleNursery) && StringUtils.isNotBlank(malePlot)
+		return StringUtils.isNotBlank(femalePlot) && StringUtils.isNotBlank(malePlot)
 				&& StringUtils.isNumeric(femalePlot) && StringUtils.isNumeric(malePlot)
 				&& (!StringUtils.isNotBlank(crossingDate) || DateUtil.isValidDate(crossingDate));
 	}

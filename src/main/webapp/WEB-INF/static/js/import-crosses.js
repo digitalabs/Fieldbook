@@ -72,7 +72,7 @@ var ImportCrosses = {
 
 		ImportCrosses.getImportedCrossesTable(createdCrossesListId).done(function(response) {
 			setTimeout(function() {
-				new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList);
+				new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList, response.isImport);
 			}, 240);
 		});
 

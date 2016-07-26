@@ -282,6 +282,10 @@ public class CrossingSettingsController extends SettingsController {
 
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 1);
 			resultsMap.put(CrossingSettingsController.HAS_PLOT_DUPLICATE, parseResults.hasPlotDuplicate());
+			
+			if (!parseResults.getWarningMessages().isEmpty()) {
+				resultsMap.put("warnings", parseResults.getWarningMessages());
+			}
 
 		} catch (final FileParsingException e) {
 			CrossingSettingsController.LOG.error(e.getMessage(), e);

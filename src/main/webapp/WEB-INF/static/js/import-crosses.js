@@ -29,6 +29,11 @@ var ImportCrosses = {
 				createErrorNotification(crossingImportErrorHeader, resp.error.join('<br/>'));
 				return;
 			}
+			
+			if (resp.warnings) {
+				createWarningNotification(warningMsgHeader, resp.warnings.join('<br/>'), 10000);
+			}
+
 			ImportCrosses.preservePlotDuplicates = false;
 			$('.import-crosses-section .modal').modal('hide');
 			$('#openCrossesListModal').data('hasPlotDuplicate', resp.hasPlotDuplicate);

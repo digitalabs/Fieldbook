@@ -118,5 +118,92 @@ public class SeasonExpressionDataProcessorTest {
     	this.seasonExpressionDataProcessor.processEnvironmentLevelData(this.advancingSource, workbook, null, null);
 		Assert.assertEquals("The season should be an empty String", EMPTY_STRING, advancingSource.getSeason());
     }
+    
+    @Test
+    public void testProcessPlotLevelDataWithSeasonMonthVariable() {
+    	final MeasurementVariable instance1SeasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_MONTH.getId(), "");
+		final MeasurementData instance1SeasonMD = this.measurementDataTDI.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_MONTH_VALUE, instance1SeasonMV);
+
+		final MeasurementVariable instance1MV = this.measurementVarTDI.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
+		final MeasurementData instance1MD = this.measurementDataTDI.createMeasurementData("1", instance1MV);
+
+		final MeasurementRow trialInstanceObservation = new MeasurementRow();
+		trialInstanceObservation.setDataList(Lists.newArrayList(instance1MD, instance1SeasonMD));
+		
+		this.advancingSource.setStudyType(StudyType.T);
+		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
+		
+		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
+		Assert.assertEquals("The season should be " + SEASON_MONTH_VALUE, SEASON_MONTH_VALUE, advancingSource.getSeason());
     }
+    
+    @Test
+    public void testProcessPlotLevelDataWithSeasonVarTextVariable() {
+    	final MeasurementVariable instance1SeasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), "");
+		final MeasurementData instance1SeasonMD = this.measurementDataTDI.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE, instance1SeasonMV);
+
+		final MeasurementVariable instance1MV = this.measurementVarTDI.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
+		final MeasurementData instance1MD = this.measurementDataTDI.createMeasurementData("1", instance1MV);
+
+		final MeasurementRow trialInstanceObservation = new MeasurementRow();
+		trialInstanceObservation.setDataList(Lists.newArrayList(instance1MD, instance1SeasonMD));
+		
+		this.advancingSource.setStudyType(StudyType.T);
+		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
+		
+		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
+		Assert.assertEquals("The season should be " + SEASON_CATEGORY_VALUE, SEASON_CATEGORY_VALUE, advancingSource.getSeason());
+    }
+    
+    @Test
+    public void testProcessPlotLevelDataWithSeasonVarVariable() {
+    	final MeasurementVariable instance1SeasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_VAR.getId(), "");
+		final MeasurementData instance1SeasonMD = this.measurementDataTDI.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE, instance1SeasonMV);
+
+		final MeasurementVariable instance1MV = this.measurementVarTDI.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
+		final MeasurementData instance1MD = this.measurementDataTDI.createMeasurementData("1", instance1MV);
+
+		final MeasurementRow trialInstanceObservation = new MeasurementRow();
+		trialInstanceObservation.setDataList(Lists.newArrayList(instance1MD, instance1SeasonMD));
+		
+		this.advancingSource.setStudyType(StudyType.T);
+		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
+		
+		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
+		Assert.assertEquals("The season should be " + SEASON_CATEGORY_VALUE, SEASON_CATEGORY_VALUE, advancingSource.getSeason());
+    }
+    
+    @Test
+    public void testProcessPlotLevelDataWithNumericSeasonVarVariable() {
+    	final MeasurementVariable instance1SeasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_VAR.getId(), "");
+		final MeasurementData instance1SeasonMD = this.measurementDataTDI.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_ID, instance1SeasonMV);
+
+		final MeasurementVariable instance1MV = this.measurementVarTDI.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
+		final MeasurementData instance1MD = this.measurementDataTDI.createMeasurementData("1", instance1MV);
+
+		final MeasurementRow trialInstanceObservation = new MeasurementRow();
+		trialInstanceObservation.setDataList(Lists.newArrayList(instance1MD, instance1SeasonMD));
+		
+		this.advancingSource.setStudyType(StudyType.T);
+		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
+		
+		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
+		Assert.assertEquals("The season should be " + SEASON_CATEGORY_VALUE, SEASON_CATEGORY_VALUE, advancingSource.getSeason());
+    }
+    
+    @Test
+    public void testProcessPlotLevelDataWithNoSeasonVariable() {
+    	final MeasurementVariable instance1MV = this.measurementVarTDI.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
+		final MeasurementData instance1MD = this.measurementDataTDI.createMeasurementData("1", instance1MV);
+
+		final MeasurementRow trialInstanceObservation = new MeasurementRow();
+		trialInstanceObservation.setDataList(Lists.newArrayList(instance1MD));
+		
+		this.advancingSource.setStudyType(StudyType.T);
+		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
+		
+		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
+		Assert.assertEquals("The season should be an empty String", EMPTY_STRING, advancingSource.getSeason());
+    }
+    
 }

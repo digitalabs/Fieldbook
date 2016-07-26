@@ -13,15 +13,20 @@ package com.efficio.fieldbook.web.label.printing.controller;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.FieldMapInfoTestDataInitializer;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.CropType;
@@ -33,31 +38,50 @@ import org.generationcp.middleware.reports.WLabels21;
 import org.generationcp.middleware.service.api.ReportService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 import net.sf.jasperreports.engine.JRException;
 
 public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
+	private static final String EMPTY_STRING = "";
 	public static final int SUCCESS_VAL = 1;
 	public static final String TEST_JASPER_REPORT_FILE_TXT = "TEST_JASPER_REPORT_FILE.txt";
 	public static final int SAMPLE_STUDY_ID = 25004;
 	public static final String WLBL_21_JASPER_REPORT = "WLBL21";
+	public static final String RETURN_VALUE = "/template/base-template";
+	public static final String FILE_NAME = "Trial-Field-Map-Labels-";
 	public static final int FAIL_VAL = 0;
+
+	@Resource
+	private UserFieldmap userFieldmap;
+
 	@Resource
 	private LabelPrintingController labelPrintingController;
+
+	private static FieldMapInfoTestDataInitializer fieldMapInfoTDI;
+
+	@BeforeClass
+	public static void setUpClass() {
+		LabelPrintingControllerTest.fieldMapInfoTDI = new FieldMapInfoTestDataInitializer();
+	}
 
 	@Test
 	public void testGenerationOfPDFLabels() {
@@ -142,7 +166,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
 		// we create a nonsense userLabelPrinting obj with an invalid generate type
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		userLabelPrinting.setGenerateType("");
+		userLabelPrinting.setGenerateType(LabelPrintingControllerTest.EMPTY_STRING);
 
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 
@@ -217,10 +241,48 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 		this.labelPrintingController.setWorkbenchService(workbenchService);
 		final List<CustomReportType> presets = this.labelPrintingController.getLabelPrintingCustomReports();
+
 		Assert.assertEquals("Should return no preset since there is not study", 0, presets.size());
 	}
 
 	@Test
+	public void testShowFieldmapLabelDetails() {
+		final UserLabelPrinting userLabelPrinting =
+				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
+		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
+		this.userFieldmap.setSelectedFieldMaps(LabelPrintingControllerTest.fieldMapInfoTDI.createFieldMapInfoList(true, 1));
+		this.userFieldmap.setTrial(true);
+		final LabelPrintingForm form = Mockito.mock(LabelPrintingForm.class);
+		final Model model = Mockito.mock(Model.class);
+		final HttpSession session = Mockito.mock(HttpSession.class);
+		final Locale locale = LocaleContextHolder.getLocale();
+
+		final String returnValue = this.labelPrintingController.showFieldmapLabelDetails(form, model, session, locale);
+		final UserLabelPrinting resultUserLabelPrinting = this.labelPrintingController.getUserLabelPrinting();
+
+		Assert.assertEquals("The return value should be " + LabelPrintingControllerTest.RETURN_VALUE,
+				LabelPrintingControllerTest.RETURN_VALUE, returnValue);
+		Assert.assertNull("The filename should be null.", resultUserLabelPrinting.getStudyId());
+		Assert.assertEquals("The field map info's value should be " + this.userFieldmap.getSelectedFieldMaps().get(0),
+				this.userFieldmap.getSelectedFieldMaps().get(0), resultUserLabelPrinting.getFieldMapInfo());
+		Assert.assertEquals("The Barcode Needed's Value should be '0'.", "0", resultUserLabelPrinting.getBarcodeNeeded());
+		Assert.assertEquals("The Include Column Heading in Non Pdf's Value should be '1'.", "1",
+				resultUserLabelPrinting.getIncludeColumnHeadinginNonPdf());
+		Assert.assertEquals("The Number of Labels per row should be 3.", "3", resultUserLabelPrinting.getNumberOfLabelPerRow());
+		Assert.assertEquals("The First Barcode Field's value should be an empty String.", LabelPrintingControllerTest.EMPTY_STRING,
+				resultUserLabelPrinting.getFirstBarcodeField());
+		Assert.assertEquals("The Second Barcode Field's value should be an empty String.", LabelPrintingControllerTest.EMPTY_STRING,
+				resultUserLabelPrinting.getSecondBarcodeField());
+		Assert.assertEquals("The Third Barcode Field's value should be an empty.", LabelPrintingControllerTest.EMPTY_STRING,
+				resultUserLabelPrinting.getThirdBarcodeField());
+		Assert.assertTrue("The Field Maps should be existing.", resultUserLabelPrinting.isFieldMapsExisting());
+		Assert.assertEquals("The Settings name should be an empty String.", LabelPrintingControllerTest.EMPTY_STRING,
+				resultUserLabelPrinting.getSettingsName());
+
+		final String fileName = LabelPrintingControllerTest.FILE_NAME + new SimpleDateFormat("yyyyMMdd").format(new Date());
+		Assert.assertEquals("The file name should be " + fileName, fileName, resultUserLabelPrinting.getFilename());
+	}
+		
 	public void testExportFileInCSVFormat() throws UnsupportedEncodingException {
 		final UserLabelPrinting userLabelPrinting =
 				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());

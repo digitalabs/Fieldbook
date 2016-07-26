@@ -31,10 +31,11 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 	private ContextUtil contextUtil;
 
 	@Override
-	public void processEnvironmentLevelData(AdvancingSource source, Workbook workbook, AdvancingNursery nurseryInfo, Study study) {
-		Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
-		for (MeasurementVariable mv : workbook.getConditions()) {
-			if(StringUtils.isNotBlank(mv.getValue())){
+	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingNursery nurseryInfo,
+			final Study study) {
+		final Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
+		for (final MeasurementVariable mv : workbook.getConditions()) {
+			if (StringUtils.isNotBlank(mv.getValue())) {
 				measurementVariablesValues.put(mv.getTermId(), mv.getValue());
 			}
 		}
@@ -42,32 +43,31 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 	}
 
 	@Override
-	public void processPlotLevelData(AdvancingSource source, MeasurementRow row) {
-		if(source.getStudyType().equals(StudyType.T) && StringUtils.isBlank(source.getSeason()) && source.getTrailInstanceObservation() != null &&
-                source.getTrailInstanceObservation().getDataList() != null){
-			Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
-			for(MeasurementData measurementData : source.getTrailInstanceObservation().getDataList()){
-               if(StringUtils.isNotBlank(measurementData.getValue())){
-            	   measurementVariablesValues.put(measurementData.getMeasurementVariable().getTermId(), measurementData.getValue());
-               }
-            }
-            source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues));
-        }
+	public void processPlotLevelData(final AdvancingSource source, final MeasurementRow row) {
+		if (source.getStudyType().equals(StudyType.T) && StringUtils.isBlank(source.getSeason())
+				&& source.getTrailInstanceObservation() != null && source.getTrailInstanceObservation().getDataList() != null) {
+			final Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
+			for (final MeasurementData measurementData : source.getTrailInstanceObservation().getDataList()) {
+				if (StringUtils.isNotBlank(measurementData.getValue())) {
+					measurementVariablesValues.put(measurementData.getMeasurementVariable().getTermId(), measurementData.getValue());
+				}
+			}
+			source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues));
+		}
 	}
 
-	private String getValueOfPrioritySeasonVariable(Map<Integer, String> measurementVariablesValues) {
+	private String getValueOfPrioritySeasonVariable(final Map<Integer, String> measurementVariablesValues) {
 		String season = "";
-		if(measurementVariablesValues.get(TermId.SEASON_MONTH.getId()) != null){
+		if (measurementVariablesValues.get(TermId.SEASON_MONTH.getId()) != null) {
 			season = measurementVariablesValues.get(TermId.SEASON_MONTH.getId());
-		} else if(measurementVariablesValues.get(TermId.SEASON_VAR_TEXT.getId()) != null){
+		} else if (measurementVariablesValues.get(TermId.SEASON_VAR_TEXT.getId()) != null) {
 			season = measurementVariablesValues.get(TermId.SEASON_VAR_TEXT.getId());
-		} else if(measurementVariablesValues.get(TermId.SEASON_VAR.getId()) != null){
-			String seasonVarValue = measurementVariablesValues.get(TermId.SEASON_VAR.getId());
+		} else if (measurementVariablesValues.get(TermId.SEASON_VAR.getId()) != null) {
+			final String seasonVarValue = measurementVariablesValues.get(TermId.SEASON_VAR.getId());
 			if (StringUtils.isNumeric(seasonVarValue)) {
 				// season is the numeric code referring to the category
-				season =
-						this.ontologyVariableDataManager.retrieveVariableCategoricalValue(contextUtil.getCurrentProgramUUID(),
-								TermId.SEASON_VAR.getId(), Integer.parseInt(seasonVarValue));
+				season = this.ontologyVariableDataManager.retrieveVariableCategoricalValue(this.contextUtil.getCurrentProgramUUID(),
+						TermId.SEASON_VAR.getId(), Integer.parseInt(seasonVarValue));
 			} else {
 				// season captured is the description
 				season = seasonVarValue;

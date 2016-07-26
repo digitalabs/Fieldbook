@@ -2,8 +2,8 @@
 	<div class="modal fade review-details-out-of-bounds-data-window"
 		id="openCrossesListModal" role="dialog"
 		aria-labelledby="openCrossesListModal" aria-hidden="true">
-		<div class="modal-dialog modal-large">
-			<div class="modal-content">
+		<div class="modal-dialog modal-large" style="margin-left: 25px">
+			<div class="modal-content" style="width: 1300px">
 				<div class="modal-body" id="openCrossesListModalBody">
 					<div class="row form-group">
 						<div class="col-xs-11 col-md-11">
@@ -63,13 +63,16 @@
 			<tr>
 				<th nowrap="nowrap" class="factors">ENTRY</th>
 				<th nowrap="nowrap" class="factors">PARENTAGE</th>
-				<th nowrap="nowrap" class="factors">ENTRY CODE</th>
-				<th nowrap="nowrap" class="factors">FEMALE PARENT</th>
-				<th nowrap="nowrap" class="factors">FGID</th>
-				<th nowrap="nowrap" class="factors">MALE PARENT</th>
-				<th nowrap="nowrap" class="factors">MGID</th>
+				<th nowrap="nowrap" class="factors">DUPLICATES</th>
+				<th nowrap="nowrap" class="factors">BREEDING METHOD</th>
+				<th nowrap="nowrap" class="factors">FEMALE GID</th>
+				<th nowrap="nowrap" class="factors">FEMALE PLOT</th>
+				<th nowrap="nowrap" class="factors">MALE GID</th>
+				<th nowrap="nowrap" class="factors">MALE NURSERY NAME</th>
+				<th nowrap="nowrap" class="factors">MALE PLOT</th>
+				<th nowrap="nowrap" class="factors">CROSSING DATE</th>
+				<th nowrap="nowrap" class="factors">NOTES</th>
 				<th nowrap="nowrap" class="factors">SOURCE</th>
-				<th nowrap="nowrap" class="factors">DUPLICATE</th>
 			</tr>
 		</thead>
 	</table>
@@ -97,7 +100,10 @@
 					</div>
 					<div class="row form-group add_top_padding">
 						<div class="col-xs-12 col-md-12">
-							<input type="checkbox" />&nbsp;<label class="control-label" th:text="#{crossing.preserve.plot.duplicate}">Preserve Plot Duplicates</label>							
+							<input type="checkbox" />&nbsp;<label class="control-label" th:text="#{crossing.preserve.plot.duplicate}">Preserve Plot Duplicates</label>
+							<div>
+								&nbsp;<label class="control-label" th:text="#{crossing.preserve.plot.duplicate.note}">Note</label>
+							</div>
 						</div>
 					</div>
 				</div>

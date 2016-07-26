@@ -102,7 +102,7 @@ public class DuplicatesUtil {
 					final String femaleGidExcludingMain = possibleDuplicatesAndReciprocals.getFemaleGid();
 					final String maleGidExcludingMain = possibleDuplicatesAndReciprocals.getMaleGid();
 					final String femalePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getFemalePlotNo();
-					final String malePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getFemalePlotNo();
+					final String malePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getMalePlotNo();
 
 					// Duplicate scenario
 					if (femaleGidExcludingMain.equals(maleGidExcludingMain)) {

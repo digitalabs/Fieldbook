@@ -43,7 +43,16 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 
 	@Override
 	public void processPlotLevelData(AdvancingSource source, MeasurementRow row) {
-		// no implementation, SeasonExpression does not need plot level data
+		if(source.getStudyType().equals(StudyType.T) && StringUtils.isBlank(source.getSeason()) && source.getTrailInstanceObservation() != null &&
+                source.getTrailInstanceObservation().getDataList() != null){
+			Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
+			for(MeasurementData measurementData : source.getTrailInstanceObservation().getDataList()){
+               if(StringUtils.isNotBlank(measurementData.getValue())){
+            	   measurementVariablesValues.put(measurementData.getMeasurementVariable().getTermId(), measurementData.getValue());
+               }
+            }
+            source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues));
+        }
 	}
 
 	private String getValueOfPrioritySeasonVariable(Map<Integer, String> measurementVariablesValues) {

@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +29,8 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Experiment;
+import org.generationcp.middleware.domain.dms.Variable;
+import org.generationcp.middleware.domain.dms.VariableList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -52,6 +55,8 @@ public class CrossingTemplateExcelExporter {
 
 	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s.xls";
 	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
+	public static final String FIELDMAP_COLUMN = "FIELDMAP COLUMN";
+	public static final String FIELDMAP_RANGE = "FIELDMAP RANGE";
 
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -90,11 +95,10 @@ public class CrossingTemplateExcelExporter {
 
 			// 4. update codes
 			this.updateCodesSection(excelWorkbook.getSheetAt(2));
-			
+
 			// 5. write Nursery List Sheet
-			this.writeNurseryListSheet(excelWorkbook.getSheetAt(3),new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook), studyId,
+			this.writeNurseryListSheet(excelWorkbook.getSheetAt(3), new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook), studyId,
 					studyName);
-			
 
 			// return the resulting file back to the user
 			return this.createExcelOutputFile(studyName, excelWorkbook);
@@ -104,16 +108,24 @@ public class CrossingTemplateExcelExporter {
 		}
 	}
 
-	
-	void writeNurseryListSheet(Sheet nurseryListSheet, final ExcelCellStyleBuilder sheetStyles, final int studyId,
-			final String studyName) {
+	void writeNurseryListSheet(Sheet nurseryListSheet, final ExcelCellStyleBuilder sheetStyles, final int studyId, final String studyName) {
 
 		final int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
 		final List<Experiment> experiments = this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null);
-
 		int rowIndex = 1;
+		int columSheet = 6;
+		ArrayList<String> localNameList = new ArrayList<String>();
+
+		final CellStyle methodCellStyle = nurseryListSheet.getWorkbook().createCellStyle();
+		methodCellStyle.cloneStyleFrom(nurseryListSheet.getRow(0).getCell(0).getCellStyle());
+		final Row row = nurseryListSheet.getRow(0);
+
+		if (!experiments.isEmpty()) {
+			localNameList = getTermIdList(experiments.get(0).getFactors());
+		}
 
 		for (Experiment gpData : experiments) {
+			columSheet = 6;
 			PoiUtil.setCellValue(nurseryListSheet, 0, rowIndex, studyName);
 			PoiUtil.setCellValue(nurseryListSheet, 1, rowIndex, Integer.parseInt(gpData.getFactors().findById(TermId.PLOT_NO).getValue()));
 			if (gpData.getFactors().findById(TermId.ENTRY_TYPE) != null) {
@@ -124,14 +136,57 @@ public class CrossingTemplateExcelExporter {
 			PoiUtil.setCellValue(nurseryListSheet, 4, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
 			PoiUtil.setCellValue(nurseryListSheet, 5, rowIndex, gpData.getFactors().findById(TermId.DESIG).getValue());
 			PoiUtil.setCellValue(nurseryListSheet, 6, rowIndex, gpData.getFactors().findById(TermId.CROSS).getValue());
+
 			if (gpData.getFactors().findById(TermId.FIELDMAP_COLUMN) != null) {
+				if (rowIndex == 1) {
+					addHeaderToRow(row, methodCellStyle, FIELDMAP_COLUMN);
+				}
 				PoiUtil.setCellValue(nurseryListSheet, 7, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_COLUMN).getValue());
 			}
 			if (gpData.getFactors().findById(TermId.FIELDMAP_RANGE) != null) {
+				if (rowIndex == 1) {
+					addHeaderToRow(row, methodCellStyle, FIELDMAP_RANGE);
+				}
 				PoiUtil.setCellValue(nurseryListSheet, 8, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_RANGE).getValue());
+				columSheet = 8;
+			}
+			for (String localname : localNameList) {
+				if (rowIndex == 1) {
+					addHeaderToRow(row, methodCellStyle, localname);
+				}
+				PoiUtil.setCellValue(nurseryListSheet, ++columSheet, rowIndex, gpData.getFactors().findByLocalName(localname).getValue());
 			}
 			rowIndex++;
 		}
+		// AutoSizeColumn
+		for (int i = 0; i <= columSheet; i++) {
+			nurseryListSheet.autoSizeColumn(i);
+		}
+	}
+
+	private void addHeaderToRow(Row row, CellStyle methodCellStyle, String name) {
+		int column = row.getLastCellNum();
+		row.createCell(column).setCellValue(name);
+		row.getCell(column).setCellStyle(methodCellStyle);
+		row.setHeight((short) -1);
+
+	}
+	
+	private ArrayList<String> getTermIdList(VariableList factors) {
+		ArrayList<String> termIdList = new ArrayList<String>();
+		List<Variable> variables = factors.getVariables();
+		for (Variable vars : variables) {
+			String name = vars.getVariableType().getLocalName();
+			int termId = vars.getVariableType().getId();
+
+			if (termId != TermId.TRIAL_INSTANCE_FACTOR.getId() && termId != TermId.ENTRY_NO.getId() && termId != TermId.PLOT_NO.getId()
+					&& termId != TermId.ENTRY_TYPE.getId() && termId != TermId.GID.getId() && termId != TermId.DESIG.getId()
+					&& termId != TermId.CROSS.getId() && termId != TermId.FIELDMAP_COLUMN.getId()
+					&& termId != TermId.FIELDMAP_RANGE.getId()) {
+				termIdList.add(name);
+			}
+		}
+		return termIdList;
 	}
 
 	private String getEntryTypeName(final int entryType_ID) {

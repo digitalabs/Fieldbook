@@ -225,10 +225,13 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 	/**
 	 * Returns the ListProjectData given a female or male plot no using the current plot position on the template.
-	 *
+	 * Note that the designation should always be the preferred name of its germplasm
+	 * 
 	 * @param studyName - femaleNursery/maleNursery equivalent from the template
 	 * @param genderedPlotNo - femalePlot/malePlot equivalent from the template
-	 * @return ListDataProject - We need the Desig, and female/male gids information that we can retrive using this data structure
+	 * @param programUUID - unique ID of the program where the nursery can be found
+	 * @return ListDataProject - the entry associated to the nursery and plot no, 
+	 * with information about the germplasm's preferred name as designation
 	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
 	protected ListDataProject getCrossingListProjectData(String studyName, Integer genderedPlotNo, String programUUID)
@@ -243,7 +246,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		final StudyType studyType = this.studyDataManager.getStudyType(studyId);
 
-		// 2. retrieve the list id of the particular study
+		// 2. retrieve the entry of the particular study and plot no, with its germplasm's preferred name as designation
 		ListDataProject listdataResult =
 				this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId,
 						CrossingTemplateParser.STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType), genderedPlotNo);

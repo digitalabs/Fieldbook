@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -9,6 +10,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -29,14 +31,19 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 
 	@Resource
 	private ContextUtil contextUtil;
-
+	
 	@Override
 	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingNursery nurseryInfo,
 			final Study study) {
 		final Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
 		for (final MeasurementVariable mv : workbook.getConditions()) {
 			if (StringUtils.isNotBlank(mv.getValue())) {
-				measurementVariablesValues.put(mv.getTermId(), mv.getValue());
+				if(mv.getTermId() == TermId.SEASON_VAR.getId() && StringUtils.isNumeric(mv.getValue()) && !mv.getPossibleValues().isEmpty()){
+					String seasonVarValue = this.getSeasonVarValue(mv.getValue(), mv.getPossibleValues());
+					measurementVariablesValues.put(mv.getTermId(), seasonVarValue);
+				} else {
+					measurementVariablesValues.put(mv.getTermId(), mv.getValue());
+				}
 			}
 		}
 		source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues));
@@ -49,7 +56,14 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 			final Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
 			for (final MeasurementData measurementData : source.getTrailInstanceObservation().getDataList()) {
 				if (StringUtils.isNotBlank(measurementData.getValue())) {
-					measurementVariablesValues.put(measurementData.getMeasurementVariable().getTermId(), measurementData.getValue());
+					final int termId = measurementData.getMeasurementVariable().getTermId();
+					final List<ValueReference> possibleValues = measurementData.getMeasurementVariable().getPossibleValues();
+					if(termId == TermId.SEASON_VAR.getId() && StringUtils.isNumeric(measurementData.getValue()) && !possibleValues.isEmpty()){
+						String seasonVarValue = this.getSeasonVarValue(measurementData.getValue(), possibleValues);
+						measurementVariablesValues.put(termId, seasonVarValue);
+					} else {
+						measurementVariablesValues.put(termId, measurementData.getValue());
+					}
 				}
 			}
 			source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues));
@@ -63,16 +77,18 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 		} else if (measurementVariablesValues.get(TermId.SEASON_VAR_TEXT.getId()) != null) {
 			season = measurementVariablesValues.get(TermId.SEASON_VAR_TEXT.getId());
 		} else if (measurementVariablesValues.get(TermId.SEASON_VAR.getId()) != null) {
-			final String seasonVarValue = measurementVariablesValues.get(TermId.SEASON_VAR.getId());
-			if (StringUtils.isNumeric(seasonVarValue)) {
-				// season is the numeric code referring to the category
-				season = this.ontologyVariableDataManager.retrieveVariableCategoricalValue(this.contextUtil.getCurrentProgramUUID(),
-						TermId.SEASON_VAR.getId(), Integer.parseInt(seasonVarValue));
-			} else {
-				// season captured is the description
-				season = seasonVarValue;
-			}
+			season = measurementVariablesValues.get(TermId.SEASON_VAR.getId());
 		}
 		return season;
+	}
+	
+	private String getSeasonVarValue(String value, List<ValueReference> possibleValues) {
+		for(ValueReference valueReference: possibleValues){
+			if(valueReference.getId() == Integer.parseInt(value)){
+				return valueReference.getDescription();
+			}
+		}
+		//default
+		return value;
 	}
 }

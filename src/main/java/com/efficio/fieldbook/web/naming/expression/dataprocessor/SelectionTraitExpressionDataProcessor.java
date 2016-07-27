@@ -2,9 +2,7 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Resource;
@@ -44,13 +42,13 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 		}
 		for (final MeasurementVariable condition : possibleEnvironmentSources) {
 			if (condition.getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
-				setSelectionTraitValue(condition.getValue(), source, condition.getTermId(), condition.getPossibleValues(), new HashMap<String, String>());
+				setSelectionTraitValue(condition.getValue(), source, condition.getTermId(), condition.getPossibleValues());
 			}
 		}
 	}
 
 	@Override
-	public void processPlotLevelData(final AdvancingSource source, final MeasurementRow row, Map<String, String> possibleValuesMap) {
+	public void processPlotLevelData(final AdvancingSource source, final MeasurementRow row) {
 		final List<MeasurementData> rowData = row.getDataList();
 
 		if(source.getTrailInstanceObservation() != null){
@@ -59,40 +57,36 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 
 		for (final MeasurementData measurementData : rowData) {
 			if (measurementData.getMeasurementVariable().getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
-				setSelectionTraitValue(measurementData.getValue(), source, measurementData.getMeasurementVariable().getTermId(), measurementData.getMeasurementVariable().getPossibleValues(), possibleValuesMap);
+				setSelectionTraitValue(measurementData.getValue(), source, measurementData.getMeasurementVariable().getTermId(), measurementData.getMeasurementVariable().getPossibleValues());
 			}
 		}
 	}
 
-	protected void setSelectionTraitValue(final String categoricalValue, final AdvancingSource source, final int termID, List<ValueReference> possibleValuesForSelectionTraitProperty, Map<String, String> possibleValuesMap){
+	protected void setSelectionTraitValue(final String categoricalValue, final AdvancingSource source, final int termID, List<ValueReference> possibleValuesForSelectionTraitProperty){
 		if(StringUtils.isNumeric(categoricalValue)){
-			source.setSelectionTraitValue(extractValue(categoricalValue, termID, possibleValuesMap));
+			source.setSelectionTraitValue(extractValue(categoricalValue, termID));
 		}
 		else{
 			if(possibleValuesForSelectionTraitProperty != null && !possibleValuesForSelectionTraitProperty.isEmpty()){
 				for(ValueReference valueReference : possibleValuesForSelectionTraitProperty){
 					if(Objects.equals(valueReference.getDescription(), categoricalValue)){
-						source.setSelectionTraitValue(extractValue(String.valueOf(valueReference.getId()), termID, possibleValuesMap));
+						source.setSelectionTraitValue(extractValue(String.valueOf(valueReference.getId()), termID));
 					}
 				}
 			}
 		}
 	}
 
-	protected String extractValue(final String value, final Integer variableTermID, Map<String, String> possibleValuesMap) {
+	protected String extractValue(final String value, final Integer variableTermID) {
 		if (!StringUtils.isNumeric(value)) {
 			// this case happens when a character value is provided as an out of bounds value
 			return value;
 		}
-		
-		final String categoricalValue;
-		if(possibleValuesMap.get(value) != null){
-			categoricalValue = possibleValuesMap.get(value);
-		} else{
-			categoricalValue = this.ontologyVariableDataManager.retrieveVariableCategoricalNameValue(contextUtil.getCurrentProgramUUID(), variableTermID,
+
+		final String categoricalValue =
+				this.ontologyVariableDataManager.retrieveVariableCategoricalNameValue(contextUtil.getCurrentProgramUUID(), variableTermID,
 						Integer.parseInt(value), true);
-			possibleValuesMap.put(value, categoricalValue);
-		}
+
 		if (categoricalValue == null) {
 			// this case happens when a numeric value is provided as an out of bounds value
 			return value;

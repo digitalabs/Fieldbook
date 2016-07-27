@@ -1,9 +1,8 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -15,9 +14,7 @@ import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.springframework.stereotype.Component;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import javax.annotation.Resource;
 
 @Component
 public class LocationAbbreviationExpressionDataProcessor implements ExpressionDataProcessor {
@@ -32,7 +29,7 @@ public class LocationAbbreviationExpressionDataProcessor implements ExpressionDa
     }
 
     @Override
-    public void processPlotLevelData(AdvancingSource source, MeasurementRow row, Map<String, String> possibleValuesMap) throws FieldbookException {
+    public void processPlotLevelData(AdvancingSource source, MeasurementRow row) throws FieldbookException {
         // Trial Advancing does not have Harvest location so setting harvestLocationAbbr at plot level
         if(source.getStudyType().equals(StudyType.T) && source.getTrailInstanceObservation() != null &&
                 source.getTrailInstanceObservation().getDataList() != null &&  !source.getTrailInstanceObservation().getDataList().isEmpty()){
@@ -42,13 +39,8 @@ public class LocationAbbreviationExpressionDataProcessor implements ExpressionDa
                     String locationIdString = measurementData.getValue();
                     Integer locationId = StringUtils.isEmpty(locationIdString) ? null : Integer.valueOf(locationIdString);
                     if(locationId != null){
-                        if(possibleValuesMap.get(locationIdString) != null){
-                        	locationAbbreviation = possibleValuesMap.get(locationIdString);
-                        } else{
-                        	Location location = locationDataManager.getLocationByID(locationId);
-                            locationAbbreviation = location.getLabbr();
-                            possibleValuesMap.put(locationIdString, locationAbbreviation);
-                        }
+                        Location location = locationDataManager.getLocationByID(locationId);
+                        locationAbbreviation = location.getLabbr();
                     }
                     source.setLocationAbbreviation(locationAbbreviation);
                     break;

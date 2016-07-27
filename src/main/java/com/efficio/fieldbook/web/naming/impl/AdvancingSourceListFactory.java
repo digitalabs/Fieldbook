@@ -8,9 +8,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
+import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.Study;
@@ -28,13 +33,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
-import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 
 @Service
 @Transactional
@@ -74,7 +72,7 @@ public class AdvancingSourceListFactory {
 		dataProcessor.processEnvironmentLevelData(environmentLevel, workbook, advanceInfo, nursery);
 
 		List<Integer> gids = new ArrayList<>();
-		Map<String, String> possibleValuesMap = new HashMap<>();
+
 		if (workbook != null && workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
 			for (MeasurementRow row : workbook.getObservations()) {
                 AdvancingSource source = environmentLevel.copy();
@@ -170,7 +168,7 @@ public class AdvancingSourceListFactory {
 					source.setCheck(isCheck);
 					source.setNurseryName(nurseryName);
 
-                    dataProcessor.processPlotLevelData(source, row, possibleValuesMap);
+                    dataProcessor.processPlotLevelData(source, row);
 
 					rows.add(source);
 				}

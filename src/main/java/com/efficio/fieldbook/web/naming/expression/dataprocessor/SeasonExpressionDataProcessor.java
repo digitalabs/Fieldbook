@@ -39,12 +39,11 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 				measurementVariablesValues.put(mv.getTermId(), mv.getValue());
 			}
 		}
-		//this method is only called once so we don't need to store the possible values of Season Var
-		source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues, new HashMap<String, String>()));
+		source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues));
 	}
 
 	@Override
-	public void processPlotLevelData(final AdvancingSource source, final MeasurementRow row, Map<String, String> seasonVarValuesMap) {
+	public void processPlotLevelData(final AdvancingSource source, final MeasurementRow row) {
 		if (source.getStudyType().equals(StudyType.T) && StringUtils.isBlank(source.getSeason())
 				&& source.getTrailInstanceObservation() != null && source.getTrailInstanceObservation().getDataList() != null) {
 			final Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
@@ -53,13 +52,12 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 					measurementVariablesValues.put(measurementData.getMeasurementVariable().getTermId(), measurementData.getValue());
 				}
 			}
-			source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues, seasonVarValuesMap));
+			source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues));
 		}
 	}
 
-	private String getValueOfPrioritySeasonVariable(final Map<Integer, String> measurementVariablesValues, Map<String, String> seasonVarValuesMap) {
+	private String getValueOfPrioritySeasonVariable(final Map<Integer, String> measurementVariablesValues) {
 		String season = "";
-		//SEASON_MONTH, SEASON_VAR_TEXT, and SEASON_VAR are the only season variables that can be added to a study.
 		if (measurementVariablesValues.get(TermId.SEASON_MONTH.getId()) != null) {
 			season = measurementVariablesValues.get(TermId.SEASON_MONTH.getId());
 		} else if (measurementVariablesValues.get(TermId.SEASON_VAR_TEXT.getId()) != null) {
@@ -68,13 +66,8 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 			final String seasonVarValue = measurementVariablesValues.get(TermId.SEASON_VAR.getId());
 			if (StringUtils.isNumeric(seasonVarValue)) {
 				// season is the numeric code referring to the category
-				if(seasonVarValuesMap.get(seasonVarValue) != null){
-					season = seasonVarValuesMap.get(seasonVarValue);
-				} else {
-					season = this.ontologyVariableDataManager.retrieveVariableCategoricalValue(this.contextUtil.getCurrentProgramUUID(),
+				season = this.ontologyVariableDataManager.retrieveVariableCategoricalValue(this.contextUtil.getCurrentProgramUUID(),
 						TermId.SEASON_VAR.getId(), Integer.parseInt(seasonVarValue));
-					seasonVarValuesMap.put(seasonVarValue, season);
-				}
 			} else {
 				// season captured is the description
 				season = seasonVarValue;

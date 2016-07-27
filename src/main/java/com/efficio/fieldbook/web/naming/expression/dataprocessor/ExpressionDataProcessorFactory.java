@@ -1,17 +1,15 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.generationcp.commons.spring.util.ComponentFactory;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExpressionDataProcessorFactory implements ComponentFactory<ExpressionDataProcessor> {
     
@@ -46,9 +44,9 @@ public class ExpressionDataProcessorFactory implements ComponentFactory<Expressi
         }
 
         @Override
-        public void processPlotLevelData(AdvancingSource source, MeasurementRow row, Map<String, String> possibleValues) throws FieldbookException {
+        public void processPlotLevelData(AdvancingSource source, MeasurementRow row) throws FieldbookException {
             for (ExpressionDataProcessor expressionDataProcessor : dataProcessorList) {
-                expressionDataProcessor.processPlotLevelData(source, row, possibleValues);
+                expressionDataProcessor.processPlotLevelData(source, row);
             }
         }
     }

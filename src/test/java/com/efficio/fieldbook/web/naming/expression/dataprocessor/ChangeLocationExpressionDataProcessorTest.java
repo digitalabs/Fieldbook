@@ -1,8 +1,8 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import java.util.HashMap;
-import java.util.List;
-
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.google.common.collect.Lists;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -12,9 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.google.common.collect.Lists;
+import java.util.List;
 
 public class ChangeLocationExpressionDataProcessorTest {
 
@@ -63,7 +61,7 @@ public class ChangeLocationExpressionDataProcessorTest {
         Mockito.when(source.getTrailInstanceObservation()).thenReturn(measurementRow);
 
 
-        changeLocationExpressionDataProcessor.processPlotLevelData(source, null, new HashMap<String, String>());
+        changeLocationExpressionDataProcessor.processPlotLevelData(source, null);
 
         Mockito.verify(source).setHarvestLocationId(205);
     }
@@ -87,7 +85,7 @@ public class ChangeLocationExpressionDataProcessorTest {
         Mockito.when(source.getTrailInstanceObservation()).thenReturn(measurementRow);
 
 
-        changeLocationExpressionDataProcessor.processPlotLevelData(source, null, new HashMap<String, String>());
+        changeLocationExpressionDataProcessor.processPlotLevelData(source, null);
 
         Mockito.verify(source, Mockito.never()).setHarvestLocationId(205);
     }
@@ -103,7 +101,7 @@ public class ChangeLocationExpressionDataProcessorTest {
         Mockito.when(source.getTrailInstanceObservation()).thenReturn(measurementRow);
 
 
-        changeLocationExpressionDataProcessor.processPlotLevelData(source, null, new HashMap<String, String>());
+        changeLocationExpressionDataProcessor.processPlotLevelData(source, null);
 
         Mockito.verify(source, Mockito.never()).setHarvestLocationId(205);
     }

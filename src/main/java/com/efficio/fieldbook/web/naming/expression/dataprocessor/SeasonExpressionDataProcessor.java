@@ -39,7 +39,7 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 				measurementVariablesValues.put(mv.getTermId(), mv.getValue());
 			}
 		}
-		//the method processEnvironmentLevelData() is only called once so we don't need to store the possible values of Season Var
+		//this method is only called once so we don't need to store the possible values of Season Var
 		source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues, new HashMap<String, String>()));
 	}
 

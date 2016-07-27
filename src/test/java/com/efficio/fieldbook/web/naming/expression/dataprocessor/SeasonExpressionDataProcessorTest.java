@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
@@ -142,7 +141,7 @@ public class SeasonExpressionDataProcessorTest {
 		this.advancingSource.setStudyType(StudyType.T);
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
-		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation, new HashMap<String, String>());
+		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
 		Assert.assertEquals("The season should be " + SeasonExpressionDataProcessorTest.SEASON_MONTH_VALUE,
 				SeasonExpressionDataProcessorTest.SEASON_MONTH_VALUE, this.advancingSource.getSeason());
 	}
@@ -162,7 +161,7 @@ public class SeasonExpressionDataProcessorTest {
 		this.advancingSource.setStudyType(StudyType.T);
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
-		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation, new HashMap<String, String>());
+		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
 		Assert.assertEquals("The season should be " + SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE,
 				SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE, this.advancingSource.getSeason());
 	}
@@ -182,7 +181,7 @@ public class SeasonExpressionDataProcessorTest {
 		this.advancingSource.setStudyType(StudyType.T);
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
-		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation, new HashMap<String, String>());
+		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
 		Assert.assertEquals("The season should be " + SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE,
 				SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE, this.advancingSource.getSeason());
 	}
@@ -202,7 +201,7 @@ public class SeasonExpressionDataProcessorTest {
 		this.advancingSource.setStudyType(StudyType.T);
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
-		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation, new HashMap<String, String>());
+		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
 		Assert.assertEquals("The season should be " + SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE,
 				SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE, this.advancingSource.getSeason());
 	}
@@ -218,7 +217,7 @@ public class SeasonExpressionDataProcessorTest {
 		this.advancingSource.setStudyType(StudyType.T);
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
-		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation, new HashMap<String, String>());
+		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
 		Assert.assertEquals("The season should be an empty String", SeasonExpressionDataProcessorTest.EMPTY_STRING,
 				this.advancingSource.getSeason());
 	}

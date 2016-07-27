@@ -1,9 +1,6 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -24,9 +21,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.google.common.collect.Lists;
-
 import junit.framework.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SelectionTraitExpressionDataProcessorTest {
@@ -103,7 +101,7 @@ public class SelectionTraitExpressionDataProcessorTest {
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(testCategoricalValueID))).thenReturn(categoricalValue);
 		Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(testCategoricalValueID), true)).thenReturn(categoricalValue);
 
-        String output = unitUnderTest.extractValue(testCategoricalValueID, TEST_TERM_ID, new HashMap<String, String>());
+        String output = unitUnderTest.extractValue(testCategoricalValueID, TEST_TERM_ID);
 
         Assert.assertEquals("Unable to properly extract the value of a categorical value given the categorical value ID", categoricalValue, output);
     }
@@ -115,7 +113,7 @@ public class SelectionTraitExpressionDataProcessorTest {
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(categoricalValue))).thenReturn(null);
 		Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(categoricalValue), true)).thenReturn(categoricalValue);
 
-        String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID, new HashMap<String, String>());
+        String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID);
 
         Assert.assertEquals("Unable to properly return the value of a numeric out of bounds value for a categorical variable", categoricalValue, output);
     }
@@ -124,7 +122,7 @@ public class SelectionTraitExpressionDataProcessorTest {
     public void testExtractCategoricalValueOutOfBoundsNonNumeric() {
         String categoricalValue = "OK";
 
-        String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID, new HashMap<String, String>());
+        String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID);
 
         Assert.assertEquals("Unable to properly return the value of a non numeric out of bounds value for a categorical variable", categoricalValue, output);
     }
@@ -150,7 +148,7 @@ public class SelectionTraitExpressionDataProcessorTest {
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt("1"), true)).thenReturn(testValue);
 
-        unitUnderTest.processPlotLevelData(source, measurementRow, new HashMap<String, String>());
+        unitUnderTest.processPlotLevelData(source, measurementRow);
         Mockito.verify(source).setSelectionTraitValue(testValue);
 
     }

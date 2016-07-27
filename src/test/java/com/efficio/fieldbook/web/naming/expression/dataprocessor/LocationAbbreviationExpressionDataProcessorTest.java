@@ -1,9 +1,8 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.google.common.collect.Lists;
+import java.util.HashMap;
+import java.util.List;
+
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -18,7 +17,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.List;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocationAbbreviationExpressionDataProcessorTest {
@@ -74,7 +76,7 @@ public class LocationAbbreviationExpressionDataProcessorTest {
         Mockito.when(source.getTrailInstanceObservation()).thenReturn(measurementRow);
         Mockito.when(locationDataManager.getLocationByID(11)).thenReturn(location);
 
-        locationAbbreviationExpressionDataProcessor.processPlotLevelData(source, null);
+        locationAbbreviationExpressionDataProcessor.processPlotLevelData(source, null, new HashMap<String, String>());
 
         Mockito.verify(source).setLocationAbbreviation("IND");
     }
@@ -97,7 +99,7 @@ public class LocationAbbreviationExpressionDataProcessorTest {
         Mockito.when(measurementRow.getDataList()).thenReturn(listMeasurementData);
         Mockito.when(source.getTrailInstanceObservation()).thenReturn(measurementRow);
 
-        locationAbbreviationExpressionDataProcessor.processPlotLevelData(source, null);
+        locationAbbreviationExpressionDataProcessor.processPlotLevelData(source, null, new HashMap<String, String>());
 
         Mockito.verify(source, Mockito.never()).setLocationAbbreviation("IND");
     }
@@ -112,7 +114,7 @@ public class LocationAbbreviationExpressionDataProcessorTest {
         Mockito.when(measurementRow.getDataList()).thenReturn(null);
         Mockito.when(source.getTrailInstanceObservation()).thenReturn(measurementRow);
 
-        locationAbbreviationExpressionDataProcessor.processPlotLevelData(source, null);
+        locationAbbreviationExpressionDataProcessor.processPlotLevelData(source, null, new HashMap<String, String>());
 
         Mockito.verify(source, Mockito.never()).setLocationAbbreviation("IND");
     }

@@ -2,10 +2,12 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -20,7 +22,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
@@ -46,6 +47,7 @@ public class SeasonExpressionDataProcessorTest {
 	private WorkbookTestDataInitializer workbookTDI;
 	private MeasurementVariableTestDataInitializer measurementVarTDI;
 	private MeasurementDataTestDataInitializer measurementDataTDI;
+	private ValueReferenceTestDataInitializer valueReferenceTDI;
 	private AdvancingSource advancingSource;
 
 	@Before
@@ -53,11 +55,8 @@ public class SeasonExpressionDataProcessorTest {
 		this.workbookTDI = new WorkbookTestDataInitializer();
 		this.measurementVarTDI = new MeasurementVariableTestDataInitializer();
 		this.measurementDataTDI = new MeasurementDataTestDataInitializer();
-
+		this.valueReferenceTDI = new ValueReferenceTestDataInitializer();
 		this.advancingSource = new AdvancingSource();
-		Mockito.when(this.ontologyVariableDataManager.retrieveVariableCategoricalValue(this.contextUtil.getCurrentProgramUUID(),
-				TermId.SEASON_VAR.getId(), Integer.parseInt(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_ID)))
-				.thenReturn(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE);
 	}
 
 	@Test
@@ -108,6 +107,7 @@ public class SeasonExpressionDataProcessorTest {
 
 		final MeasurementVariable seasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_VAR.getId(),
 				SeasonExpressionDataProcessorTest.SEASON_CATEGORY_ID);
+		seasonMV.setPossibleValues(Arrays.asList(this.valueReferenceTDI.createValueReference(Integer.parseInt(SEASON_CATEGORY_ID), SEASON_CATEGORY_VALUE)));
 
 		workbook.setConditions(Lists.newArrayList(seasonMV));
 
@@ -189,6 +189,7 @@ public class SeasonExpressionDataProcessorTest {
 	@Test
 	public void testProcessPlotLevelDataWithNumericSeasonVarVariable() {
 		final MeasurementVariable instance1SeasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_VAR.getId(), "");
+		instance1SeasonMV.setPossibleValues(Arrays.asList(this.valueReferenceTDI.createValueReference(Integer.parseInt(SEASON_CATEGORY_ID), SEASON_CATEGORY_VALUE)));
 		final MeasurementData instance1SeasonMD =
 				this.measurementDataTDI.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_ID, instance1SeasonMV);
 

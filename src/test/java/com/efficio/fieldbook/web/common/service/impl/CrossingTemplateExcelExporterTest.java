@@ -213,6 +213,27 @@ public class CrossingTemplateExcelExporterTest {
 		Assert.assertEquals(String.valueOf("FIELDMAP RANGE"), sheet.getRow(0).getCell(8).getStringCellValue());
 
 	}
+	
+	@Test
+	public void testChangeInvalidaCharacterExportFilename() throws Exception {
+		final String studyName="Nueva Nursery \\ / : * ? \" \\&quot; &lt; &gt; | ,";
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
+				GermplasmListType.NURSERY)).thenReturn(this.initializeCrossesList());
+
+		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
+		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager).getExperiments(Matchers.anyInt(), Matchers.anyInt(),
+				Matchers.anyInt(), Matchers.any(VariableTypeList.class));
+		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
+		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
+		Project projectMock = Mockito.mock(Project.class);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(projectMock);
+		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<User>());
+
+		// to test
+		final File exportFile = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID,
+				studyName, CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
+		Assert.assertEquals("CrossingTemplate-Nueva Nursery _ _ _ _ _ _ __ _ _ _ _.xls",exportFile.getName());
+	}
 
 	@Test(expected = CrossingTemplateExportException.class)
 	@SuppressWarnings("unchecked")

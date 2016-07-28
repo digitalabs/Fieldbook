@@ -289,7 +289,7 @@ public class CrossingTemplateExcelExporter {
 
 	private File createExcelOutputFile(final String studyName, final Workbook excelWorkbook) throws IOException {
 		String outputFileName =
-				String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT, StringUtil.cleanNameValueCommas(studyName));
+				String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT, StringUtil.replaceInvalidChacaracterFileName(studyName,"_"));
 
         outputFileName = FileUtils.sanitizeFileName(outputFileName);
 

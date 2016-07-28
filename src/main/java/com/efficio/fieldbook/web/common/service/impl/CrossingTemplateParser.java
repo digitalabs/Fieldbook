@@ -260,7 +260,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		// 2. retrieve the entry of the particular study and plot no, with its germplasm's preferred name as designation
 		final ListDataProject listdataResult =
-				this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId,
+				this.fieldbookMiddlewareService.getListDataProjectByStudyListTypeAndPlotNo(studyId,
 						CrossingTemplateParser.STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType), genderedPlotNo);
 
 		if (null == listdataResult) {

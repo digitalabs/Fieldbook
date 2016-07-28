@@ -263,23 +263,7 @@ public class CrossingSettingsController extends SettingsController {
 	public ResponseEntity<FileSystemResource> download(final HttpServletRequest req) throws UnsupportedEncodingException {
 		final String outputFilename = new String(req.getParameter("outputFilename").getBytes("iso-8859-1"), "UTF-8");
 
-		try {
-			final File resource = new File(outputFilename);
-			final FileSystemResource fileSystemResource = new FileSystemResource(resource);
-
-			final HttpHeaders respHeaders = new HttpHeaders();
-			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			respHeaders.setContentLength(fileSystemResource.contentLength());
-
-			FieldbookUtil.resolveContentDisposition(resource.getName(), respHeaders, req.getHeader("User-Agent"));
-
-			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
-
-		} catch (final IOException e) {
-			CrossingSettingsController.LOG.error("Cannot download file " + outputFilename, e);
-
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
+		return FieldbookUtil.createResponseEntityForFileDownload(new File(outputFilename));
 	}
 
 	@ResponseBody

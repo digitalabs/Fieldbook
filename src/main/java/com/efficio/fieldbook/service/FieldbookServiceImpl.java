@@ -311,7 +311,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			DataType dataType = variable.getScale().getDataType();
 
 			// hacks to override the dataType(s)
-			if (TermId.BREEDING_METHOD_CODE.getId() == variable.getId()) {
+			if (TermId.BREEDING_METHOD_CODE.getId() == variable.getId() || TermId.BREEDING_METHOD_VARIATE_CODE.getId() == variable.getId()) {
 				dataType = DataType.BREEDING_METHOD;
 			}
 
@@ -393,7 +393,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		final Variable variable = this.ontologyVariableDataManager.getVariable(programUUID, id, true, false);
 		assert !Objects.equals(variable, null);
 
-		List<ValueReference> possibleValuesFavorite = null;
+		List<ValueReference> possibleValuesFavorite = new ArrayList<ValueReference>();
 		DataType dataType = variable.getScale().getDataType();
 
 		// hacks to override the dataType(s)
@@ -406,12 +406,19 @@ public class FieldbookServiceImpl implements FieldbookService {
 			final List<ValueReference> list = new ArrayList<>();
 			list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
 			possibleValuesFavorite = list;
-			possibleValuesFavorite.addAll(this.getFavoriteBreedingMethods(methodIds, filtered));
+
+			if (methodIds != null && !methodIds.isEmpty()) {
+				possibleValuesFavorite.addAll(this.getFavoriteBreedingMethods(methodIds, filtered));
+			}
 
 		} else if (DataType.LOCATION.equals(dataType)) {
 			final List<Integer> locationIds = this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID);
-			possibleValuesFavorite = this.convertLocationsToValueReferences(
-					this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationIds, filtered));
+
+			if (locationIds != null && !locationIds.isEmpty()) {
+				possibleValuesFavorite = this.convertLocationsToValueReferences(
+						this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationIds, filtered));
+
+			}
 
 		}
 		return possibleValuesFavorite;
@@ -781,7 +788,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			}
 
 			SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-					this.ontologyService);
+					this.ontologyService, contextUtil.getCurrentProgramUUID());
 		}
 	}
 

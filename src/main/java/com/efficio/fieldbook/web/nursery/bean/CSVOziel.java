@@ -54,11 +54,11 @@ public class CSVOziel {
 	private MeasurementVariable selectedTrait;
 	private final List<MeasurementRow> trialObservations;
 
-	public CSVOziel(Workbook workbook, List<MeasurementRow> observations, List<MeasurementRow> trialObservations) {
+	public CSVOziel(final Workbook workbook, final List<MeasurementRow> observations, final List<MeasurementRow> trialObservations) {
 		this(workbook, observations, trialObservations, false);
 	}
 
-	public CSVOziel(Workbook workbook, List<MeasurementRow> observations, List<MeasurementRow> trialObservations, boolean isDataKapture) {
+	public CSVOziel(final Workbook workbook, final List<MeasurementRow> observations, final List<MeasurementRow> trialObservations, final boolean isDataKapture) {
 		this.workbook = workbook;
 		this.headers = workbook.getMeasurementDatasetVariables();
 		this.observations = observations;
@@ -67,32 +67,32 @@ public class CSVOziel {
 		this.isDataKapture = isDataKapture;
 	}
 
-	public void writeColums(CsvWriter csvOutput, int columnas) {
+	public void writeColums(final CsvWriter csvOutput, final int columnas) {
 		for (int i = 0; i < columnas; i++) {
-			String cad = null;
+			final String cad = null;
 			try {
 				csvOutput.write(cad);
-			} catch (IOException ex) {
+			} catch (final IOException ex) {
 			}
 
 		}
 	}
 
-	public void writeRows(CsvWriter csvOutput, int rows) {
+	public void writeRows(final CsvWriter csvOutput, final int rows) {
 		try {
 			for (int j = 0; j < rows; j++) {
 				this.writeColums(csvOutput, 129);
 				csvOutput.endRecord();
 			}
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 		}
 	}
 
-	public void writeTraitsFromObservations(CsvWriter csvOutput) {
+	public void writeTraitsFromObservations(final CsvWriter csvOutput) {
 		try {
 			int tot = 0;
 
-			for (MeasurementVariable variate : this.variateHeaders) {
+			for (final MeasurementVariable variate : this.variateHeaders) {
 				csvOutput.write(variate.getName());
 				tot++;
 			}
@@ -102,13 +102,13 @@ public class CSVOziel {
 				csvOutput.write("IBFB");
 			}
 
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 		}
 	}
 
-	public void writeTraitsR(CsvWriter csvOutput) {
+	public void writeTraitsR(final CsvWriter csvOutput) {
 		try {
-			for (MeasurementVariable variate : this.variateHeaders) {
+			for (final MeasurementVariable variate : this.variateHeaders) {
 				String valor = variate.getName();
 				if (!valor.equals(this.stringTraitToEvaluate)) {
 
@@ -119,22 +119,22 @@ public class CSVOziel {
 				}
 			}
 
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 		}
 	}
 
-	public void writeDATA(CsvWriter csvOutput, OntologyService ontologyService) {
-		int tot = this.variateHeaders.size();
+	public void writeDATA(final CsvWriter csvOutput, final OntologyService ontologyService) {
+		final int tot = this.variateHeaders.size();
 
 		try {
 
-			Map<Long, String> map = new HashMap<Long, String>();
-			for (MeasurementRow row : this.trialObservations) {
+			final Map<Long, String> map = new HashMap<>();
+			for (final MeasurementRow row : this.trialObservations) {
 				map.put(row.getLocationId(),
 						WorkbookUtil.getValueByIdInRow(row.getMeasurementVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId(), row));
 			}
 
-			for (MeasurementRow row : this.observations) {
+			for (final MeasurementRow row : this.observations) {
 				csvOutput.write(this.getDisplayValue(map.get(row.getLocationId())));
 				if (this.workbook.isNursery()) {
 					csvOutput.write("1");
@@ -159,12 +159,12 @@ public class CSVOziel {
 				String propertyName = "";
 				try {
 					propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
-				} catch (MiddlewareQueryException e) {
+				} catch (final MiddlewareQueryException e) {
 					CSVOziel.LOG.error("Write data was not successful", e);
 				}
 
-				for (MeasurementVariable variate : this.variateHeaders) {
-					String valor = variate.getName();
+				for (final MeasurementVariable variate : this.variateHeaders) {
+					final String valor = variate.getName();
 					if (!valor.equals(this.stringTraitToEvaluate)) {
 						try {
 							if (variate.getPossibleValues() != null && !variate.getPossibleValues().isEmpty()
@@ -176,8 +176,8 @@ public class CSVOziel {
 							} else {
 								csvOutput.write(row.getMeasurementDataValue(valor));
 							}
-						} catch (NullPointerException ex) {
-							String cad = ".";
+						} catch (final NullPointerException ex) {
+							final String cad = ".";
 							csvOutput.write(cad);
 						}
 					}
@@ -188,16 +188,16 @@ public class CSVOziel {
 				csvOutput.write("END");
 				csvOutput.endRecord();
 			}
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 		}
 
 	}
 
-	public void writeDATAR(CsvWriter csvOutput, OntologyService ontologyService) {
+	public void writeDATAR(final CsvWriter csvOutput, final OntologyService ontologyService) {
 		try {
 
-			Map<Long, String> map = new HashMap<Long, String>();
-			for (MeasurementRow row : this.trialObservations) {
+			final Map<Long, String> map = new HashMap<>();
+			for (final MeasurementRow row : this.trialObservations) {
 				map.put(row.getLocationId(),
 						WorkbookUtil.getValueByIdInRow(row.getMeasurementVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId(), row));
 			}
@@ -205,11 +205,11 @@ public class CSVOziel {
 			String propertyName = "";
 			try {
 				propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
-			} catch (MiddlewareQueryException e) {
+			} catch (final MiddlewareQueryException e) {
 				CSVOziel.LOG.error("Write property data name was not successful", e);
 			}
 
-			for (MeasurementRow mRow : this.observations) {
+			for (final MeasurementRow mRow : this.observations) {
 				csvOutput.write(this.getDisplayValue(map.get(mRow.getLocationId())));
 				if (this.workbook.isNursery()) {
 					csvOutput.write("1");
@@ -223,10 +223,10 @@ public class CSVOziel {
 				try {
 					if (this.selectedTrait != null) {
 						if (this.selectedTrait.getProperty().equals(propertyName)) {
-							String value = WorkbookUtil.getCodeValueByIdInRow(this.headers, this.selectedTrait.getTermId(), mRow);
+							final String value = WorkbookUtil.getCodeValueByIdInRow(this.headers, this.selectedTrait.getTermId(), mRow);
 							csvOutput.write(value);
 						} else {
-							String value = WorkbookUtil.getValueByIdInRow(this.headers, this.selectedTrait.getTermId(), mRow);
+							final String value = WorkbookUtil.getValueByIdInRow(this.headers, this.selectedTrait.getTermId(), mRow);
 							if (this.selectedTrait != null && this.selectedTrait.getPossibleValues() != null
 									&& !this.selectedTrait.getPossibleValues().isEmpty()) {
 								csvOutput
@@ -236,14 +236,14 @@ public class CSVOziel {
 							}
 						}
 					}
-				} catch (NullPointerException ex) {
-					String cad = ".";
+				} catch (final NullPointerException ex) {
+					final String cad = ".";
 
 					csvOutput.write(cad);
 				}
 
-				for (MeasurementVariable variate : this.variateHeaders) {
-					String valor = variate.getName();
+				for (final MeasurementVariable variate : this.variateHeaders) {
+					final String valor = variate.getName();
 
 					if (!valor.equals(this.stringTraitToEvaluate)) {
 						try {
@@ -256,8 +256,8 @@ public class CSVOziel {
 							} else {
 								csvOutput.write(mRow.getMeasurementDataValue(variate.getName()));
 							}
-						} catch (NullPointerException ex) {
-							String cad = ".";
+						} catch (final NullPointerException ex) {
+							final String cad = ".";
 							csvOutput.write(cad);
 						}
 					}
@@ -266,25 +266,25 @@ public class CSVOziel {
 
 				csvOutput.endRecord();
 			}
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 		}
 
 	}
 
-	public void readDATAnew(File file, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService) {
+	public void readDATAnew(final File file, final OntologyService ontologyService, final FieldbookService fieldbookMiddlewareService) {
 
-		List<String> titulos = new ArrayList<String>();
+		final List<String> titulos = new ArrayList<>();
 		int add = 0;
-		String before = "";
+		String before;
 		String actual = "";
 
 		try {
-			CsvReader csvReader = new CsvReader(file.toString());
+			final CsvReader csvReader = new CsvReader(file.toString());
 			csvReader.readHeaders();
-			String[] headers = csvReader.getHeaders();
+			final String[] headers = csvReader.getHeaders();
 
 			for (int i = 26; i < headers.length - 1; i++) {
-				String titulo = headers[i];
+				final String titulo = headers[i];
 				if (!titulo.equals("")) {
 					titulos.add(titulo);
 				}
@@ -294,14 +294,14 @@ public class CSVOziel {
 				csvReader.skipRecord();
 			}
 
-			int myrow = 0;
+			int myrow;
 			while (csvReader.readRecord()) {
 
 				String dataOfTraits = "";
 				before = actual;
-				String trial = csvReader.get("Trial");
-				String plot = csvReader.get("Plot");
-				String entry = csvReader.get("Entry");
+				final String trial = csvReader.get("Trial");
+				final String plot = csvReader.get("Plot");
+				final String entry = csvReader.get("Entry");
 
 				actual = entry;
 
@@ -314,58 +314,56 @@ public class CSVOziel {
 				try {
 					int trialNumber = 1;
 					if (trial != null && NumberUtils.isNumber(trial)) {
-						if (trial.indexOf(".") > -1) {
+						if (trial.contains(".")) {
 							trialNumber = Integer.parseInt(trial.substring(0, trial.indexOf(".")));
 						} else {
 							trialNumber = Integer.parseInt(trial);
 						}
 					}
 					myrow = this.findRow(trialNumber, Integer.parseInt(plot));
-				} catch (NumberFormatException ex) {
+				} catch (final NumberFormatException ex) {
 					return;
 				}
 
 				// get name of breeding method property and get all methods
 				String propertyName = "";
-				List<Method> methods = new ArrayList<Method>();
+				List<Method> methods = new ArrayList<>();
 				try {
 					methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
 					propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
-				} catch (MiddlewareQueryException e) {
+				} catch (final MiddlewareQueryException e) {
 					CSVOziel.LOG.error("Read data of breeding method was not successful", e);
 				}
 
 				// create a map for methods
-				HashMap<String, Method> methodMap = new HashMap<String, Method>();
+				final HashMap<String, Method> methodMap = new HashMap<>();
 				if (methods != null) {
-					for (Method method : methods) {
+					for (final Method method : methods) {
 						methodMap.put(method.getMcode(), method);
 					}
 				}
 
-				for (int i = 0; i < titulos.size(); i++) {
-					String head = titulos.get(i).toString();
-					int col = this.buscaCol(head);
-					if (col >= 0) {
-						String data = csvReader.get(head);
-						this.setObservationData(head, myrow + add, data, propertyName, methodMap);
-						dataOfTraits = dataOfTraits + " " + data;
-					} else {
-						col = this.buscaCol(head);
-						String data = csvReader.get(head);
-						this.setObservationData(head, myrow + add, data, propertyName, methodMap);
-						dataOfTraits = dataOfTraits + " " + data;
-					}
-				}
+                for (final String titulo : titulos) {
+                    final int col = this.buscaCol(titulo);
+                    if (col >= 0) {
+                        final String data = csvReader.get(titulo);
+                        this.setObservationData(titulo, myrow + add, data, propertyName, methodMap);
+                        dataOfTraits = dataOfTraits + " " + data;
+                    } else {
+                        final String data = csvReader.get(titulo);
+                        this.setObservationData(titulo, myrow + add, data, propertyName, methodMap);
+                        dataOfTraits = dataOfTraits + " " + data;
+                    }
+                }
 			}
 			csvReader.close();
-		} catch (FileNotFoundException ex) {
+		} catch (final FileNotFoundException ex) {
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 		}
 	}
 
-	private int findRow(int trial, int plot) {
+	private int findRow(final int trial, final int plot) {
 		int row = 0;
 
 		String plotLabel = this.getLabel(TermId.PLOT_NO.getId());
@@ -375,19 +373,19 @@ public class CSVOziel {
 
 		if (this.observations != null) {
 			boolean match = false;
-			List<MeasurementVariable> variables = this.observations.get(0).getMeasurementVariables();
-			for (MeasurementRow mRow : this.observations) {
-				String plotValueStr = mRow.getMeasurementDataValue(plotLabel);
-				String trialValueStr = WorkbookUtil.getValueByIdInRow(variables, TermId.TRIAL_INSTANCE_FACTOR.getId(), mRow);
+			final List<MeasurementVariable> variables = this.observations.get(0).getMeasurementVariables();
+			for (final MeasurementRow mRow : this.observations) {
+				final String plotValueStr = mRow.getMeasurementDataValue(plotLabel);
+				final String trialValueStr = WorkbookUtil.getValueByIdInRow(variables, TermId.TRIAL_INSTANCE_FACTOR.getId(), mRow);
 				if (plotValueStr != null && NumberUtils.isNumber(plotValueStr)) {
-					int plotValue = Integer.valueOf(plotValueStr);
+					final int plotValue = Integer.valueOf(plotValueStr);
 					if (plotValue == plot) {
 						match = true;
 					}
 				}
 				if (match) {
 					if (trialValueStr != null && NumberUtils.isNumber(trialValueStr)) {
-						int trialValue = Integer.valueOf(trialValueStr);
+						final int trialValue = Integer.valueOf(trialValueStr);
 						if (trialValue == trial) {
 							return row;
 						} else {
@@ -404,28 +402,24 @@ public class CSVOziel {
 		return row;
 	}
 
-	public boolean isValid(File file) {
+	public boolean isValid(final File file) {
 		boolean isvalid = false;
 		try {
-			CsvReader csvReader = new CsvReader(file.toString());
+			final CsvReader csvReader = new CsvReader(file.toString());
 			csvReader.readHeaders();
-			String[] headers = csvReader.getHeaders();
+			final String[] headers = csvReader.getHeaders();
 
-			if (headers[headers.length - 1].equals("IBFB")) {
-				isvalid = true;
-			} else {
-				isvalid = false;
-			}
-		} catch (IOException ex) {
+            isvalid = headers[headers.length - 1].equals("IBFB");
+		} catch (final IOException ex) {
 		}
 		return isvalid;
 	}
 
-	private int buscaCol(String head) {
-		int col = -1;
+	private int buscaCol(final String head) {
+		final int col = -1;
 
 		int index = 0;
-		for (MeasurementVariable mVar : this.headers) {
+		for (final MeasurementVariable mVar : this.headers) {
 			if (mVar.getName().equalsIgnoreCase(head)) {
 				return index;
 			}
@@ -435,14 +429,14 @@ public class CSVOziel {
 		return col;
 	}
 
-	public void defineTraitToEvaluate(String stringTraitToEval) {
+	public void defineTraitToEvaluate(final String stringTraitToEval) {
 		this.stringTraitToEvaluate = stringTraitToEval;
 	}
 
-	private void setObservationData(String label, int rowIndex, String value, String propertyName, HashMap<String, Method> methodMap) {
+	private void setObservationData(final String label, final int rowIndex, final String value, final String propertyName, final HashMap<String, Method> methodMap) {
 		if (rowIndex < this.observations.size()) {
-			MeasurementRow row = this.observations.get(rowIndex);
-			for (MeasurementData data : row.getDataList()) {
+			final MeasurementRow row = this.observations.get(rowIndex);
+			for (final MeasurementData data : row.getDataList()) {
 				if (data.getLabel().equals(label)) {
 					if (data.getMeasurementVariable().getPossibleValues() != null
 							&& !data.getMeasurementVariable().getPossibleValues().isEmpty()) {
@@ -453,7 +447,7 @@ public class CSVOziel {
 							data.setValue(value);
 						} else if (data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()
 								|| data.getMeasurementVariable().getProperty().equals(propertyName)) {
-							String newValue = methodMap.get(value) == null ? "" : String.valueOf(methodMap.get(value).getMid());
+							final String newValue = methodMap.get(value) == null ? "" : String.valueOf(methodMap.get(value).getMid());
 							data.setValue(newValue);
 						} else {
 							data.setValue(ExportImportStudyUtil.getCategoricalIdCellValue(value, data.getMeasurementVariable()
@@ -487,8 +481,8 @@ public class CSVOziel {
 		}
 	}
 
-	private String getLabel(int termId) {
-		for (MeasurementVariable mVar : this.headers) {
+	private String getLabel(final int termId) {
+		for (final MeasurementVariable mVar : this.headers) {
 			if (mVar.getTermId() == termId) {
 				return mVar.getName();
 			}
@@ -496,11 +490,11 @@ public class CSVOziel {
 		return null;
 	}
 
-	public void setSelectedTrait(MeasurementVariable selectedTrait) {
+	public void setSelectedTrait(final MeasurementVariable selectedTrait) {
 		this.selectedTrait = selectedTrait;
 	}
 
-	private String getDisplayValue(String value) {
+	private String getDisplayValue(final String value) {
 		return value != null ? value : "";
 	}
 
@@ -509,9 +503,9 @@ public class CSVOziel {
 	}
 
 	// Start copied from CSVFileManager (old Fb)
-	public void writeDataDataKapture(CsvWriter csvOutput) {
-		Map<Long, String> map = new HashMap<Long, String>();
-		for (MeasurementRow row : this.trialObservations) {
+	public void writeDataDataKapture(final CsvWriter csvOutput) {
+		final Map<Long, String> map = new HashMap<>();
+		for (final MeasurementRow row : this.trialObservations) {
 			map.put(row.getLocationId(),
 					WorkbookUtil.getValueByIdInRow(row.getMeasurementVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId(), row));
 		}
@@ -519,7 +513,7 @@ public class CSVOziel {
 		/**
 		 * Type
 		 */
-		String strStudyType = this.workbook.getStudyDetails().getStudyType().toString();
+		final String strStudyType = this.workbook.getStudyDetails().getStudyType().toString();
 		String trialNumber = "";
 		String strLocationName = "";
 		String strCycle = "";
@@ -527,7 +521,7 @@ public class CSVOziel {
 		/**
 		 * TrialNumber, Location Name, Cycle
 		 */
-		for (MeasurementVariable condition : this.workbook.getStudyConditions()) {
+		for (final MeasurementVariable condition : this.workbook.getStudyConditions()) {
 			if ("TID".equalsIgnoreCase(condition.getName())) {
 				trialNumber = condition.getValue();
 			} else if ("LID".equalsIgnoreCase(condition.getName())) {
@@ -538,7 +532,7 @@ public class CSVOziel {
 		}
 
 		try {
-			for (MeasurementRow row : this.observations) {
+			for (final MeasurementRow row : this.observations) {
 
 				/**
 				 * Site
@@ -580,7 +574,7 @@ public class CSVOziel {
 				/**
 				 * GID
 				 */
-				String gid = WorkbookUtil.getValueByIdInRow(this.headers, TermId.GID.getId(), row);
+				final String gid = WorkbookUtil.getValueByIdInRow(this.headers, TermId.GID.getId(), row);
 				csvOutput.write(gid);
 
 				/**
@@ -592,7 +586,7 @@ public class CSVOziel {
 				/**
 				 * Pedigree
 				 */
-				String desig = WorkbookUtil.getValueByIdInRow(this.headers, TermId.DESIG.getId(), row);
+				final String desig = WorkbookUtil.getValueByIdInRow(this.headers, TermId.DESIG.getId(), row);
 				csvOutput.write(desig);
 
 				/**
@@ -603,7 +597,7 @@ public class CSVOziel {
 				if (this.workbook.isNursery()) {
 					csvOutput.write("1");
 				} else {
-					String rep = WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), row);
+					final String rep = WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), row);
 					csvOutput.write(rep);
 				}
 
@@ -613,19 +607,19 @@ public class CSVOziel {
 
 				csvOutput.endRecord();
 			}
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			CSVOziel.LOG.error("ERROR AL GENERAR DATA CSV " + ex, ex);
 		}
 	}
 
-	public void writeTraitsDataKapture(CsvWriter csvOutput) {
+	public void writeTraitsDataKapture(final CsvWriter csvOutput) {
 
 		try {
 
-			for (MeasurementVariable variate : this.variateHeaders) {
-				String strTraitName = "";
+			for (final MeasurementVariable variate : this.variateHeaders) {
+				final String strTraitName;
 				String strTrailValRule = "";
-				String strDataType = "";
+				final String strDataType;
 
 				strDataType = variate.getDataTypeDisplay();
 				strTraitName = variate.getName();
@@ -671,40 +665,40 @@ public class CSVOziel {
 
 				csvOutput.endRecord();
 			}
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			CSVOziel.LOG.error("Error al generar el archivo csv: " + ex, ex);
 		}
 	}
 
-	public void readDATACapture(File file, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService) {
+	public void readDATACapture(final File file, final OntologyService ontologyService, final FieldbookService fieldbookMiddlewareService) {
 
 		try {
-			CsvReader csvReader = new CsvReader(file.toString());
+			final CsvReader csvReader = new CsvReader(file.toString());
 			csvReader.readHeaders();
 			
 			while (csvReader.readRecord()) {
 
 				// get name of breeding method property and get all methods
 				String propertyName = "";
-				List<Method> methods = new ArrayList<Method>();
+				List<Method> methods = new ArrayList<>();
 				try {
 					methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
 					propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
-				} catch (MiddlewareQueryException e) {
+				} catch (final MiddlewareQueryException e) {
 					CSVOziel.LOG.error("Read data of breeding method was not successful", e);
 				}
 
 				// create a map for methods
-				HashMap<String, Method> methodMap = new HashMap<String, Method>();
+				final HashMap<String, Method> methodMap = new HashMap<>();
 				if (methods != null) {
-					for (Method method : methods) {
+					for (final Method method : methods) {
 						methodMap.put(method.getMcode(), method);
 					}
 				}
 
-				for (MeasurementVariable variate : this.variateHeaders) {
-					String csvTrial = csvReader.get("TrialNumber");
-					String csvPlot = csvReader.get("PlotBarCode");
+				for (final MeasurementVariable variate : this.variateHeaders) {
+					final String csvTrial = csvReader.get("TrialNumber");
+					final String csvPlot = csvReader.get("PlotBarCode");
 					int trial = 1;
 					if (csvTrial != null && NumberUtils.isNumber(csvTrial)) {
 						trial = Integer.parseInt(csvTrial);
@@ -713,9 +707,9 @@ public class CSVOziel {
 					if (csvPlot != null && NumberUtils.isNumber(csvPlot)) {
 						plot = Integer.parseInt(csvPlot);
 					}
-					int rowNum = this.findRow(trial, plot);
+					final int rowNum = this.findRow(trial, plot);
 					if (rowNum > -1) {
-						String value = csvReader.get(variate.getName());
+						final String value = csvReader.get(variate.getName());
 						this.setObservationData(variate.getName(), rowNum, value, propertyName, methodMap);
 					}
 				}
@@ -723,10 +717,10 @@ public class CSVOziel {
 			}
 			csvReader.close();
 
-		} catch (FileNotFoundException ex) {
+		} catch (final FileNotFoundException ex) {
 			CSVOziel.LOG.error("FILE NOT FOUND. readDATAcsv. " + ex);
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			CSVOziel.LOG.error("IO EXCEPTION. readDATAcsv. " + e);
 		}
 	}

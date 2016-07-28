@@ -1,0 +1,470 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="etl/base-template" ng:app="di-consolidatedStep">
+<head>
+    <title th:inline="text">[[#{page.title.open.sheet}]]</title>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script th:src="@{/static/js/html5shiv.js}" type="text/javascript"></script>
+    <script th:src="@{/static/js/respond.min.js}" type="text/javascript"></script>
+    <script th:src="@{/static/js/angular-ui-ieshiv.min.js}" type="text/javascript"></script>
+
+    <![endif]-->
+
+</head>
+<body>
+
+<section layout:fragment="content" ng:controller="ConsolidatedStepJSController">
+    <div class="content-header">
+        <h2 th:utext="#{page.title.study.name}">
+            Study Details
+        </h2>
+
+        <div th:utext="#{open.sheet.desc}"></div>
+        <div th:utext="#{study.name.desc}"></div>
+    </div>
+
+
+    <!-- Separate div for client side errors -->
+    <div id="message-div" style="visibility: hidden">
+        <div ng:repeat="message in messages" >
+            <div class="alert alert-danger" ng:bind="message"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 col-md-offset-1">
+
+            <form class="form-horizontal" role="form" action="#" method="post"
+                  name="selectSheetForm" id="selectSheetForm">
+                <input type="hidden" name="headerRow" ng:model="selected.headerRowIndex"/>
+
+                <!-- Select Sheet -->
+                <div class="form-group"
+                     ng:class="{'has-error' : showError(selectSheetForm.selectedSheetIndex)}">
+                    <label for="selectSheetIndex" class="col-md-2 control-label required" th:text="#{select.sheet.label}">Observation Sheet</label>
+
+                    <div class="col-md-10">
+                        <select name="selectedSheetIndex" class="form-control"
+                                ng:model="selected.selectedSheetIndex"
+                                ng:options="sheet.sheetIndex as sheet.sheetName for sheet in data.sheetList"
+                                ng:disabled="selected.noSelectedSheet"
+                                ng:required="!selected.noSelectedSheet">
+                            <option value="" th:text="#{form.select.text}">-SELECT-</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group"
+                     ng:class="{'has-error' : showError(selectSheetForm.headerRowDisplayText)}">
+                    <label for="headerRowDisplayText" class="col-md-2 control-label required" th:text="#{open.sheet.row.header.label}">Row
+                        Header:</label>
+
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" ng:click="selectRow('Header')" ng:disabled="selectedSheetInvalid()"
+                               ng:model="selected.headerRowDisplayText" name="headerRowDisplayText" id="headerRowDisplayText"
+                               size="80" />
+                    </div>
+                </div>
+
+
+                <!-- Study Detail -->
+                <div class="form-group" ng:class="{'has-error' : showError(selectSheetForm.studyName)}">
+                    <label for="comboStudyName" class="col-md-2 control-label required" th:text="#{study.name.label}">Study Name</label>
+
+                    <div ng:class="{'col-md-10' : existingStudySelected(), 'col-md-3' : !existingStudySelected()}">
+                    	<select name="selectStudyName" class="form-control"
+                                ng:model="selected.studyDetails.studyId"
+                                ng:options="study.id as study.label for study in data.previousStudyList"
+                                ng:change="updateStudyDetails()">
+                        </select>
+                   	</div>
+                   	<div ng:class="{'col-md-7' : !existingStudySelected()}" ng:hide="existingStudySelected()">    
+                        <input id="newStudyName" name="newStudyName" ng:model="selected.studyDetails.studyName" class="form-control"/>
+                    </div>
+                </div>
+
+                <div class="form-group" ng:class="{'has-error' : showError(selectSheetForm.studyTitle)}">
+                    <label for="txtStudyTitle" class="col-md-2 control-label required" th:text="#{study.name.title.label}">Study Title</label>
+
+                    <div class="col-md-10">
+                        <input id="txtStudyTitle" type="text" name="studyTitle" ng:model="selected.studyDetails.studyTitle"
+                               class="form-control" ng:disabled="existingStudySelected()"/>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="txtObjective" class="col-md-2 control-label" th:text="#{study.name.objective.label}">Objective</label>
+
+                    <div class="col-md-10">
+                        <textarea class="form-control" id="txtObjective" ng:model="selected.studyDetails.objective" size="10" ng:disabled="existingStudySelected()"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtStartDate" class="col-md-2 control-label" th:text="#{study.name.start.date.label}">Start Date</label>
+
+                    <div class="col-md-10 date-picker">
+                        <input id="txtStartDate" jq-datepicker="" type="text" class="form-control" ng-model="selected.studyDetails.startDate"
+                               ng:disabled="existingStudySelected()"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtEndDate" class="col-md-2 control-label" th:text="#{study.name.end.date.label}">End Date</label>
+
+                    <div class="col-md-10 date-picker">
+                        <input id="txtEndDate" jq-datepicker="" type="text" class="form-control" ng-model="selected.studyDetails.endDate"
+                                ng:disabled="existingStudySelected()"/>
+                    </div>
+                </div>
+
+                <div class="form-group" ng:class="{'has-error' : showError(selectSheetForm.studyType)}">
+                    <label for="selectStudyType" class="col-md-2 control-label required" th:text="#{study.name.type.label}">Study Type</label>
+
+                    <div class="col-md-10">
+                        <select name="studyType" id="selectStudyType" ng:model="selected.studyDetails.studyType" class="form-control" ng:disabled="existingStudySelected()">
+                            <option value="">Please choose one</option>
+                            <option ng:repeat="(key, value) in data.studyTypeList" value="{{key}}" ng:selected="selected.studyDetails.studyType == key">{{value}}</option>
+
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group" ng:show="trialIsSelected()">
+                    <label for="selectDatasetType" class="col-md-2 control-label required" th:text="#{study.name.dataset.type.label}">Dataset Type</label>
+
+                    <div class="col-md-10">
+                        <select name="datasetType" id="selectDatasetType" ng:model="selected.datasetType" class="form-control">
+                            <option ng:repeat="(key, value) in data.datasetTypeList" value="{{key}}" ng:selected="selected.datasetType == key">{{value}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <a th:text="#{form.prev.text}" th:href="@{/etl}" class="btn btn-default btn-sm"></a>
+                        <input type="button" name="action" th:value="#{form.next.text}" class="btn btn-primary btn-sm"
+                               ng:click="validateAndSubmit()" ng-disabled="userAttemptedSubmission"/>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+
+    </div>
+
+    <!-- Modal -->
+    <script type="text/ng-template" id="listModal.html">
+        <div class="modal-header">
+            <h3 id="myModalLabel" ng-bind="label">Select Row Containing Column Headers</h3>
+        </div>
+        <div class="modal-body text-center">
+
+            <table class="table table-condensed table-bordered table-hover table-modal-content text-left">
+                <tbody>
+                <tr ng:repeat="row in items" ng:click="selectRow(row)">
+                    <td>{{row.rowContent}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <pagination total-items="pagination.totalItems" page="pagination.currentPage" max-size="pagination.maxSize"
+                        class="pagination-small" boundary-links="true" rotate="false" num-pages="numPages"
+                        items-per-page="pagination.pageItems" on-select-page="setPage(page)"
+                        previous-text="&lsaquo;" next-text="&rsaquo;"
+                    ></pagination>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default btn-sm" th:text="#{form.close.text}" ng:click="close()">Close</button>
+        </div>
+    </script>
+    <!-- Placed at the end of the document so the pages load faster -->
+
+</section>
+<!-- /container -->
+
+<div layout:fragment="page-script">
+
+<script type="text/javascript" th:src="@{/static/js/angular/angular1.0.8.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/angular-bootstrap3/ui-bootstrap-tpls-0.6.0-SNAPSHOT.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/angular/angular-select2.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/select2.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
+<script type="text/javascript" th:src="@{/dynamic/js/digitalabs-utils.js}"></script>
+<script type="text/javascript" th:src="@{/dynamic/js/digitalabs-data.js}"></script>
+
+
+<script type="text/javascript" th:inline="javascript">
+
+$(document).ready(function () {
+    $("#message-div").css('visibility','visible');
+});
+//<![CDATA[
+
+    if(typeof String.prototype.trim !== 'function') {
+        String.prototype.trim = function() {
+            return this.replace(/^\s+|\s+$/g, '');
+        }
+    }
+
+    angular.module('di-directives',[])
+            .directive('jqDatepicker', function() {
+                return {
+                    require: '?ngModel',
+                    link: function(scope, el, attr, ngModel) {
+                        if (!ngModel) {
+                            $(el).datepicker() ;
+                            return;
+                        }
+
+
+                        $(el).datepicker().on('changeDate', function(e){
+                            scope.$apply(function () {
+                                ngModel.$setViewValue(el.val());
+                            });
+                        });
+                        ngModel.$render = function () {
+                            $(el).datepicker("update", ngModel.$viewValue);
+                        };
+
+
+                    }
+                };
+            });
+
+
+
+
+angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digitalabs-data', 'ui.bootstrap', 'ui.select2', 'ui.bootstrap.datepicker'])
+            .constant('DISPLAY_ROWS', /*[[${T(com.efficio.etl.web.controller.angular.AngularOpenSheetController).ROW_COUNT_PER_SCREEN}]]*/
+            ).controller('ConsolidatedStepJSController', ['$scope', '$modal', 'myHttp', '$q', 'Rows', function ($scope, $modal, myHttp, $q, Rows) {
+                $scope.selected = [[${form}]];
+                $scope.data = {};
+                $scope.data.sheetList = [[${sheetList}]];
+                $scope.data.previousStudyList = [[${previousStudies}]];
+                $scope.data.studyTypeList = [[${studyTypeList}]];
+                $scope.data.datasetTypeList = [[${datasetTypeList}]];
+                $scope.filteredStudyTitleList = [];
+                $scope.messages = [];
+                $scope.userAttemptedSubmission = false;
+                $scope.currentErrorField = null;
+                $scope.studyObject = null;
+
+                if (! $scope.selected.studyDetails.studyId) {
+                    $scope.selected.studyDetails.studyId = 0;
+                }
+                
+                // if the selected sheet has changed, invalidate the previous selection for the header row index
+                $scope.$watch('selected.selectedSheetIndex', function (newVal, oldVal) {
+                    if (newVal !== oldVal) {
+                        $scope.selected.headerRowIndex = null;
+                        $scope.selected.headerRowDisplayText = '';
+
+                        if (!$scope.selectedSheetInvalid()) {
+                            $scope.initialItems = Rows.getPagedList(1, {selectedSheetIndex: $scope.selected.selectedSheetIndex});
+                        }
+                    }
+
+                });
+
+                $scope.selectedSheetInvalid = function () {
+                    return $scope.selected.selectedSheetIndex === null || $scope.selected.selectedSheetIndex === undefined
+                };
+                
+                if(!$scope.selectedSheetInvalid()) {
+                    $scope.initialItems = Rows.getPagedList(1, {selectedSheetIndex: $scope.selected.selectedSheetIndex});
+                }
+
+                $scope.selectRow = function () {
+                    var modalInstance = null;
+                    var handlerFunction = $scope.setHeaderRow;
+                    var modalLabel = [[#{open.sheet.select.header.label}]];
+
+                    modalInstance = $modal.open({
+                        templateUrl: 'listModal.html',
+                        controller: 'ListDisplayPaginatedModalController',
+                        resolve: {
+                            label: function () {
+                                return modalLabel;
+                            },
+                            initialItems: function () {
+                                return $scope.initialItems;
+                            },
+                            RowRetrievalService: function () {
+                                return Rows;
+                            },
+                            rowRetrievalParams : function () {
+                                return {selectedSheetIndex : $scope.selected.selectedSheetIndex};
+                            }
+
+                        }
+                    });
+
+                    modalInstance.result.then(handlerFunction);
+                };
+
+                $scope.setHeaderRow = function (selectedRow) {
+                    if (selectedRow.rowIndex != $scope.selected.headerRow) {
+                        $scope.selected.headerRowDisplayText = selectedRow.rowContent;
+                        $scope.selected.headerRowIndex = selectedRow.rowIndex;
+                    }
+                };
+
+
+                $scope.isValid = function () {
+                    var valid = true;
+                    if (! $scope.selected.headerRowDisplayText || $scope.selected.headerRowDisplayText.trim() === '') {
+                        $scope.currentErrorField = $scope.selectSheetForm.headerRowDisplayText;
+                        $scope.messages.push([[#{open.sheet.validation.no.header.row}]]);
+                        valid = false;
+                    }
+
+                    if (valid) {
+                    if (! $scope.selected.studyDetails.studyName || $scope.selected.studyDetails.studyName.trim() === '') {
+                        $scope.currentErrorField = $scope.selectSheetForm.studyName;
+                        $scope.messages.push([[#{error.blank.study.name}]]);
+                        valid = false;
+                    }}
+
+                    if (valid) {
+                    if (! $scope.selected.studyDetails.studyTitle || $scope.selected.studyDetails.studyTitle.trim() === '') {
+                        $scope.currentErrorField = $scope.selectSheetForm.studyTitle;
+                        $scope.messages.push([[#{error.blank.study.title}]]);
+                        valid = false;
+                    }}
+
+                    if (valid) {
+                    if (! $scope.selected.studyDetails.studyType || $scope.selected.studyDetails.studyType.trim() === '') {
+                        $scope.currentErrorField = $scope.selectSheetForm.studyType;
+                        $scope.messages.push([[#{error.blank.study.type}]]);
+                        valid = false;
+                    }}
+
+                    return $scope.messages.length == 0;
+                };
+
+                $scope.validateAndSubmit = function () {
+                    // clear previous messages
+                    $scope.messages = [];
+                    // set flag to let components know that they should start showing form validation errors if any
+                    $scope.userAttemptedSubmission = true;
+                    if ($scope.isValid()) {
+
+                        myHttp.post("step2", $scope.selected).success(function (data) {
+                            if (data.success) {
+                                Spinner.play();
+                                window.location = data.redirectUrl;
+                            } else {
+                                $scope.messages = data.messages;
+                                $scope.userAttemptedSubmission = false;
+                            }
+                        });
+                    } else {
+                        $scope.userAttemptedSubmission = false;
+                    }
+                };
+
+                /*$scope.showError = function (ngModelController) {
+                    return ngModelController.$invalid && $scope.userAttemptedSubmission && $scope.currentErrorField === ngModelController;
+                };*/
+
+                $scope.studyNameDropdownOptions = {
+                    data : function() { return {results : $scope.data.previousStudyList}},
+                    formatResult : function(item) {return item.studyName},
+                    formatSelection : function(item) { return item.studyName},
+                    initSelection : function (element, callback) {
+                        $.each($scope.data.previousStudyList, function(key, value) {
+                            if (value.id === $scope.selected.studyDetails.studyId) {
+                                callback(value);
+                            }
+                        });
+                    },
+                    query : function (query) {
+
+                        // this allows searching via study name, as well as allowing the search term to be the actual data (for cases where user wants to input new study name instead of selecting existing)
+                        var data = {results: $scope.data.previousStudyList};
+                        // return the array that matches
+                        data.results = $.grep(data.results, function (item, index) {
+                            return ($.fn.select2.defaults.matcher(query.term.trim(), item.studyName));
+
+                        });
+
+                        if (query.term && query.term.trim() !== '' &&( (data.results.length > 0 && query.term.trim() !== data.results[0].studyName)) || data.results.length === 0) {
+
+                            var blank =
+                                    {
+                                        id: 0,
+                                        studyName : query.term,
+                                        title : null,
+                                        /*pmKey : null,*/
+                                        objective : null,
+                                        startDate : null,
+                                        endDate : null,
+                                        studyType : null
+                                    };
+                            data.results.unshift(blank);
+
+                        }
+
+
+                        query.callback(data);
+                    }
+                };
+
+                $scope.updateStudyDetails = function() {
+                	
+                	$.each($scope.data.previousStudyList, function(key, value) {
+                        if (value.id === $scope.selected.studyDetails.studyId) {
+                        	$scope.studyObject = value;
+                        }
+                    });
+                	
+                    var studyDetails = $scope.studyObject;
+                    $scope.selected.studyDetails.studyId = studyDetails.id;
+                    $scope.selected.studyDetails.studyName = studyDetails.studyName;
+                    $scope.selected.studyDetails.studyTitle = studyDetails.title;
+                    /*$scope.selected.studyDetails.pmKey = studyDetails.pmKey;*/
+                    $scope.selected.studyDetails.objective = studyDetails.objective;
+                    $scope.selected.studyDetails.startDate = studyDetails.startDate;
+                    $scope.selected.studyDetails.endDate = studyDetails.endDate;
+
+                    if (studyDetails.studyType) {
+                        /*$scope.selected.studyDetails.studyType = studyDetails.studyType.$name;*/
+                        $.each($scope.data.studyTypeList, function(key, value) {
+                            if (key === studyDetails.studyType.$name) {
+                                $scope.selected.studyDetails.studyType = key;
+                            }
+                        })
+                    } else {
+                        $scope.selected.studyDetails.studyType = null;
+                    }
+
+                };
+
+                $scope.existingStudySelected = function () {
+                    return $scope.selected.studyDetails.studyId && $scope.selected.studyDetails.studyId !== 0 && $scope.selected.studyDetails.studyId !== 1;
+                };
+
+                $scope.showError = function (ngModelController) {
+                    return $scope.userAttemptedSubmission && $scope.currentErrorField === ngModelController;
+                };
+                
+                $scope.trialIsSelected = function () {
+                    return $scope.selected.studyDetails.studyType && $scope.selected.studyDetails.studyType == 'T';
+                };
+            }])
+            .factory('Rows', ['resourceFactory', function (resourceFactory) {
+                return resourceFactory('step2/displayRow');
+            }]);
+    //]]>
+</script>
+
+</div>
+</body>
+</html>

@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -246,12 +246,12 @@ public class ExportGermplasmListServiceTest {
 		Assert.assertTrue(exportColumnHeaders.get(4).isDisplay());
 		Assert.assertTrue(exportColumnHeaders.get(5).isDisplay());
 
-		Assert.assertEquals(ExportGermplasmListServiceTest.DESIGNATION, exportColumnHeaders.get(0).getName());
-		Assert.assertEquals(ExportGermplasmListServiceTest.SEED_SOURCE, exportColumnHeaders.get(1).getName());
-		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE, exportColumnHeaders.get(2).getName());
-		Assert.assertEquals(ExportGermplasmListServiceTest.PARENTAGE, exportColumnHeaders.get(3).getName());
-		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_NO, exportColumnHeaders.get(4).getName());
-		Assert.assertEquals(ExportGermplasmListServiceTest.GID, exportColumnHeaders.get(5).getName());
+		Assert.assertEquals(ExportGermplasmListServiceTest.GID, exportColumnHeaders.get(0).getName());
+		Assert.assertEquals(ExportGermplasmListServiceTest.PARENTAGE, exportColumnHeaders.get(1).getName());
+		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_NO, exportColumnHeaders.get(2).getName());
+		Assert.assertEquals(ExportGermplasmListServiceTest.DESIGNATION, exportColumnHeaders.get(3).getName());
+		Assert.assertEquals(ExportGermplasmListServiceTest.SEED_SOURCE, exportColumnHeaders.get(4).getName());
+		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE, exportColumnHeaders.get(5).getName());
 
 	}
 
@@ -403,7 +403,7 @@ public class ExportGermplasmListServiceTest {
 	}
 
 	private Map<String, Boolean> getVisibleColumnMap() {
-		final Map<String, Boolean> visibleColumnMap = new HashMap<String, Boolean>();
+		final Map<String, Boolean> visibleColumnMap = new LinkedHashMap<String, Boolean>();
 
 		visibleColumnMap.put(String.valueOf(TermId.GID.getId()), true);
 		visibleColumnMap.put(String.valueOf(TermId.CROSS.getId()), true);

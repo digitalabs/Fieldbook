@@ -137,6 +137,8 @@ $(document).ready(function() {
 	$('#showFavoriteLocationInventory').on('change', function() {
 		showCorrectLocationInventoryCombo();
 	});
+	
+	recreateLocationCombo('showFavoriteLocationInventory');
 	// remove any other listeners for the location update
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);

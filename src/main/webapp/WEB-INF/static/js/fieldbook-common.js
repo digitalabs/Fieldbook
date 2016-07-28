@@ -2122,7 +2122,7 @@ function generateGenericLocationSuggestions(genericLocationJson) {
 	});
 	return genericLocationSuggestion;
 }
-function recreateLocationCombo() {
+function recreateLocationCombo(possibleFavorite) {
 	var selectedLocationAll = $('#harvestLocationIdAll').val();
 	var selectedLocationBreeding = $('#harvestLocationIdBreeding').val();
 	var selectedLocationBreedingFavorites = $('#harvestLocationIdBreedingFavorites').val();
@@ -2167,23 +2167,40 @@ function recreateLocationCombo() {
 						refreshImportLocationCombo(data);
 						refreshLocationComboInSettings(data);
 					} else if (inventoryPopup) {
-						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations); // Favorites
 						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allLocations); //All locations
-						recreateLocationComboAfterClose('inventoryLocationIdBreeding', data.allBreedingLocations);//All locations
-						recreateLocationComboAfterClose('inventoryLocationIdAllSeedStorage', data.allSeedStorageLocations);//All seed Storage ??
-						
+						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations); // Favorites
+						recreateLocationComboAfterClose('inventoryLocationIdSeedStorage', data.allSeedStorageLocations);//All seed Storage
+						recreateLocationComboAfterClose('inventoryLocationIdFavoriteSeedStorage', data.allSeedStorageFavoritesLocations); //All Favorites seed Storage
 						showCorrectLocationInventoryCombo();
 						// set previously selected value of location
 						if ($('#showFavoriteLocationInventory').prop('checked')) {
-							setComboValues(generateGenericLocationSuggestions(data.favoriteLocations), $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
+							if ($('#showSeedStorageLocationInventory').prop('checked')) {
+								setComboValues(generateGenericLocationSuggestions(data.allSeedStorageFavoritesLocations), $(
+									'#inventoryLocationIdFavoriteSeedStorage').val(), 'inventoryLocationIdFavoriteSeedStorage');
+							} else {
+								setComboValues(generateGenericLocationSuggestions(data.favoriteLocations),
+									$('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
+							}
 						} else {
-							setComboValues(generateGenericLocationSuggestions(data.allLocations), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
+							if ($('#showSeedStorageLocationInventory').prop('checked')) {
+								setComboValues(generateGenericLocationSuggestions(data.allSeedStorageLocations), $(
+									'#inventoryLocationIdSeedStorage').val(), 'inventoryLocationIdSeedStorage');
+							} else {
+								setComboValues(generateGenericLocationSuggestions(data.allLocations), $('#inventoryLocationIdAll').val(),
+									'inventoryLocationIdAll');
+
+							}
 						}
 						refreshLocationComboInSettings(data);
 					} else if (advancePopup === true
 						|| selectedLocationAll != null) {
 						// recreate the select2 combos to get updated list
 						// of locations
+
+						if (data.allBreedingFavoritesLocations && data.allBreedingFavoritesLocations.length > 0) {
+							$('#showFavoriteLocation').prop('checked', true);
+						}
+
 						recreateLocationComboAfterClose('harvestLocationIdAll', data.allLocations);
 						recreateLocationComboAfterClose('harvestLocationIdBreeding', data.allBreedingLocations);
 						recreateLocationComboAfterClose('harvestLocationIdBreedingFavorites', data.allBreedingFavoritesLocations);
@@ -2218,6 +2235,12 @@ function recreateLocationCombo() {
 						}
 						if (createGermplasm) {
 							refreshImportLocationCombo(data);
+						}
+
+					} 
+					if(possibleFavorite === 'showFavoriteLocationInventory'){
+						if(data.allSeedStorageFavoritesLocations.length !== 0){
+							$('#' + possibleFavorite).prop('checked', true);
 						}
 					}
 				} else {
@@ -2424,14 +2447,39 @@ function createFolder() {
 function deleteFolder(object) {
 	'use strict';
 
-	var currentFolderName,
-		isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder,
-		deleteConfirmationText;
-
 	if (!$(object).hasClass('disable-image')) {
+		var currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title,
+		isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder,
+		deleteConfirmationText,
+		studyType = isNursery()?'N':'T',
+		folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key,
+		folderName = JSON.stringify({'folderName': currentFolderName});
+		
 		if (isFolder) {
-			$('#delete-heading-modal').text(deleteFolderTitle);
-			deleteConfirmationText = deleteConfirmation;
+			$.ajax({
+				url: '/Fieldbook/StudyTreeManager/isFolderEmpty/'+folderId+'/'+studyType,
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				type: 'POST',
+				data: folderName,
+				cache: false,
+				success: function(data) {
+					var node;
+					if (data.isSuccess === '1') {
+						$('#delete-heading-modal').text(deleteFolderTitle);
+						deleteConfirmationText = deleteConfirmation;
+						showDeleteStudyFolderDiv(deleteConfirmationText);
+					} else {
+						hideAddFolderDiv();
+						hideRenameFolderDiv();
+						$('#cant-delete-heading-modal').text(deleteFolderTitle);
+						$('#cant-delete-message').html(data.message);
+						$('#cantDeleteFolder').modal('show');
+					}
+				}
+			});
 		} else {
 			if (isNursery()) {
 				$('#delete-heading-modal').text(deleteNurseryTitle);
@@ -2440,14 +2488,18 @@ function deleteFolder(object) {
 				$('#delete-heading-modal').text(deleteTrialTitle);
 				deleteConfirmationText = deleteTrialConfirmation;
 			}
+			showDeleteStudyFolderDiv(deleteConfirmationText);
 		}
-		$('#deleteStudyFolder').modal('show');
-		hideAddFolderDiv();
-		hideRenameFolderDiv();
-		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
-		$('#delete-confirmation').html(deleteConfirmationText + ' ' + currentFolderName + '?');
-		$('#page-delete-study-folder-message-modal').html('');
 	}
+}
+
+function showDeleteStudyFolderDiv(deleteConfirmationText) {
+	hideAddFolderDiv();
+	hideRenameFolderDiv();
+	var currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
+	$('#delete-confirmation').html(deleteConfirmationText + ' ' + currentFolderName + '?');
+	$('#deleteStudyFolder').modal('show');
+	$('#page-delete-study-folder-message-modal').html('');
 }
 
 function submitDeleteFolder() {
@@ -3131,6 +3183,7 @@ function reloadCheckListTable() {
 			$('#imported-germplasm-list').html(html);
 			$('#entries-details').css('display', 'block');
 			$('#numberOfEntries').html($('#totalGermplasms').val());
+			$('#txtStartingEntryNo').prop('disabled', false);
 		});
 	}
 }
@@ -3231,6 +3284,7 @@ function makeGermplasmListDraggable(isDraggable) {
         $('.germplasm-list-items tbody tr').off('click');
     }
 
+    SaveAdvanceList.setSelectedEntries();
     // Change background of selected rows
     $('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
 }

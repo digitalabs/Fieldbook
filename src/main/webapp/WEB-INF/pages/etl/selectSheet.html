@@ -1,0 +1,68 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorator="etl/base-template">
+  <head>
+    <title th:inline="text">[[#{page.title.select.sheet}]]</title>
+      <!--[if lte IE 8]>
+      <script type="text/javascript" th:src="@{/static/js/respond.min.js}"></script>
+      <![endif]-->
+
+
+  </head>
+  <body>
+
+<section layout:fragment="content">
+
+	<div class="content-header">
+		<h2 th:utext="#{page.title.select.sheet}">
+            [[#{page.title.select.sheet}]]
+		</h2>
+		
+		<div th:utext="#{select.sheet.desc}"></div>
+		
+		 
+	</div>
+
+    <div id="page-message">
+        <form th:object="${sheetSelectForm}" th:remove="tag">
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+        </form>
+    </div>
+
+	<form class="form-horizontal" onsubmit="return do_validation()" role="form" action="#" th:action="@{/workbook/selectSheet}" method="post" th:object="${sheetSelectForm}">
+        
+        <div class="form-group">
+        	<div class="col-lg-6">
+	        <select class="form-control " th:field="*{selectedSheetIndex}">
+	            <option th:each="sheet : ${sheetList}"
+	                    th:value="${sheet.sheetIndex}"
+	                    th:text="${sheet.sheetName}">Sheets
+	            </option>
+	        </select>
+			</div>
+			
+        </div>
+        
+        
+         <div class="form-group">
+	        <div class="col-lg-12">
+	         	<input type="submit" name="action" th:value="#{form.prev.text}" class="btn btn-default btn-sm"/>
+	         	<input type="submit" name="action" th:value="#{form.next.text}" class="btn btn-primary btn-sm"/>
+	        </div>
+		</div>
+    </form>
+
+</section>
+  
+<script type="text/javascript" th:inline="javascript">
+    //<![CDATA[
+    function do_validation() {
+        return true;
+    }
+    //]]>
+</script>
+</body>
+
+</html>

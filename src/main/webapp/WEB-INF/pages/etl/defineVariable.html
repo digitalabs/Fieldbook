@@ -1,0 +1,910 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="etl/base-template">
+<head>
+    <title th:inline="text">[[#{page.title.define.variables}]]</title>
+
+    <!--[if lte IE 8]>
+    <script type="text/javascript" th:src="@{/static/js/respond.min.js}"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/bootstrap-fileupload.css}"/>
+
+    <style type="text/css">
+        @media screen and (max-width: 1024px) {
+            .jumbotron {
+                width: 1054px;
+            }
+        }
+
+        .container {
+            max-width: none !important;
+            width: 1024px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+
+<section layout:fragment="content">
+<div id="divMessage"></div>
+<div class="page-header">
+    <h1>
+        Step 6
+    </h1>
+
+    <div class="progress">
+        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="75" aria-valuemin="0"
+             aria-valuemax="100" style="width: 75%;">
+            <span class="sr-only">75% Complete</span>
+        </div>
+    </div>
+
+    <h1>
+        <small>Define the variables</small>
+    </h1>
+</div>
+
+<form class="form-horizontal" role="form" action="#" th:action="@{/workbook/studyName}"
+      th:object="${defineVariableForm}" method="post">
+
+<div class="container-fixed">
+<input type="hidden" id="selectedVariable" value=""/>
+<input type="hidden" id="currentPhenoType" value=""/>
+
+<div class="row">
+<div class="col-xs-5">
+    <div class="row shadow-top"></div>
+    <div class="row define-vars-headers-pane">
+        <div class="panel panel-default">
+            <div class="panel-heading">Trial Environment</div>
+            <table class="table">
+                <tr class="header-rows" th:each="match : ${trialEnvironmentHeaders}"
+                    th:attr="header=${match.headerName},matchedid=${match.matchedID},phenotypicType=${T(com.efficio.etl.web.util.AppConstants).TYPE_TRIAL_ENVIRONMENT}"
+                    dataRow="true">
+                    <td><label class="col-xs-4 control-label" th:text="${match.headerName}">Environment Header</label>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <input type="text" th:id="${match.headerName} + 'VariableField'" class="form-control"
+                                   disabled="true"
+                                   th:value="${match.matchedName}"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" icon-button="true">
+                                <span th:class="${match.matchedName == null} ? 'glyphicon glyphicon-question-sign' : 'glyphicon glyphicon-exclamation-sign'"
+                                      th:id="${match.headerName} + 'ButtonField'"/>
+                            </button>
+                        </span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Germplasm Entry</div>
+            <table class="table">
+                <tr class="header-rows" th:each="match : ${germplasmHeaders}"
+                    th:attr="header=${match.headerName},matchedid=${match.matchedID},phenotypicType=${T(com.efficio.etl.web.util.AppConstants).TYPE_GERMPLASM_ENTRY}"
+                    dataRow="true">
+                    <td><label class="col-xs-4 control-label" th:text="${match.headerName}">Environment Header</label>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <input type="text" th:id="${match.headerName} + 'VariableField'" class="form-control"
+                                   disabled="true"
+                                   th:value="${match.matchedName}"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" icon-button="true">
+                                    <span th:class="${match.matchedName == null} ? 'glyphicon glyphicon-question-sign' : 'glyphicon glyphicon-exclamation-sign'"
+                                          th:id="${match.headerName} + 'ButtonField'"/>
+                                </button>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Trial Design</div>
+            <table class="table">
+                <tr class="header-rows" th:each="match : ${trialDesignHeaders}"
+                    th:attr="header=${match.headerName},matchedid=${match.matchedID},phenotypicType=${T(com.efficio.etl.web.util.AppConstants).TYPE_TRIAL_DESIGN}"
+                    dataRow="true">
+                    <td><label class="col-xs-4 control-label" th:text="${match.headerName}">Environment Header</label>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <input type="text" th:id="${match.headerName} + 'VariableField'" class="form-control"
+                                   disabled="true"
+                                   th:value="${match.matchedName}"/>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" icon-button="true">
+                                        <span th:class="${match.matchedName == null} ? 'glyphicon glyphicon-question-sign' : 'glyphicon glyphicon-exclamation-sign'"
+                                              th:id="${match.headerName} + 'ButtonField'"/>
+                                    </button>
+                                </span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Variate</div>
+            <table class="table">
+                <tr class="header-rows" th:each="match : ${variateHeaders}"
+                    th:attr="header=${match.headerName},matchedid=${match.matchedID},phenotypicType=${T(com.efficio.etl.web.util.AppConstants).TYPE_VARIATE}"
+                    dataRow="true">
+                    <td><label class="col-xs-4 control-label" th:text="${match.headerName}">Environment Header</label>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <input type="text" th:id="${match.headerName} + 'VariableField'" class="form-control"
+                                   disabled="true"
+                                   th:value="${match.matchedName}"/>
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-default" type="button" icon-button="true">
+                                                        <span th:class="${match.matchedName == null} ? 'glyphicon glyphicon-question-sign' : 'glyphicon glyphicon-exclamation-sign'"
+                                                              th:id="${match.headerName} + 'ButtonField'"></span>
+                                                    </button>
+                                                </span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</div>
+<div class="col-xs-7">
+    <div class=" panel panel-default">
+        <div class="panel-heading" id="variableDefinition">Variable Definition</div>
+        <div class="panel-body">
+
+            <div class="col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <p>Search for the previously defined variables to get a clue of the ontology to
+                            use.</p>
+
+
+                        <div class="input-group">
+                            <input type="text" id="txtSearchOntology" class="form-control"/>
+								 			<span class="input-group-btn">
+									       <button class="btn btn-default" type="button" id="btnSearchOntology"><span
+                                                   class="glyphicon glyphicon-search"></span></button></span>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-8">
+                <div class="form-group">
+                    <label for="txtVariable" class="col-xs-4 control-label">Variable:</label>
+
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" id="txtVariable" class="form-control col-xs-8"/>
+			                                <span class="input-group-btn" id="variableAddSpan">
+                                                <button class="btn btn-default" type="button"
+                                                        id="btnAddVariable">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                </button>
+                                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtDescription" class="col-xs-4 control-label">Description:</label>
+
+                    <div class="col-xs-8">
+                        <textarea id="txtDescription" class="form-control" rows="2"
+                                ></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtProperty" class="col-xs-4 control-label">Property:</label>
+
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" id="txtProperty" class="form-control"/>
+											    <span class="input-group-btn"><button class="btn btn-default"
+                                                                                      type="button" id="btnAddProperty">
+                                                    <span class="glyphicon glyphicon-plus"></span></button></span></div>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtPropertyDesc" class="col-xs-4 control-label">Property Description:</label>
+
+                    <div class="col-xs-8">
+                        <textarea id="txtPropertyDesc" class="form-control" rows="2"
+                                  disabled="true"></textarea>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtScale" class="col-xs-4 control-label">Scale:</label>
+
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" id="txtScale" class="form-control"/>
+			                                
+			                                 <span class="input-group-btn"><button class="btn btn-default" type="button"
+                                                                                   id="btnAddScale"><span
+                                                     class="glyphicon glyphicon-plus"></span></button></span></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtScaleDesc" class="col-xs-4 control-label">Scale Description:</label>
+
+                    <div class="col-xs-8">
+                        <textarea id="txtScaleDesc" class="form-control" rows="2"
+                                  disabled="true"></textarea>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtMethod" class="col-xs-4 control-label">Method:</label>
+
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" id="txtMethod" class="form-control"/>
+			                                 <span class="input-group-btn"><button class="btn btn-default" type="button"
+                                                                                   id="btnAddMethod"><span
+                                                     class="glyphicon glyphicon-plus"></span></button></span></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtMethodDesc" class="col-xs-4 control-label">Method Description:</label>
+
+                    <div class="col-xs-8">
+                        <textarea id="txtMethodDesc" class="form-control" rows="2"
+                                  disabled="true"></textarea>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="comboDataType" class="col-xs-4 control-label">Data Type:</label>
+
+                    <div class="col-xs-8">
+                        <select class="form-control" id="comboDataType">
+                            <option value="">Select one...</option>
+                            <option th:each="type : ${dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtClass" class="col-xs-4 control-label">Class:</label>
+
+                    <div class="col-xs-8">
+                        <input type="text" id="txtClass" class="form-control" disabled="true"/>
+                    </div>
+                </div>
+                <div class="form-group" id="storedInDiv">
+                    <label for="txtClass" class="col-xs-4 control-label">Stored In:</label>
+
+                    <div class="col-xs-8">
+                        <select class="form-control" id="storedInValues">
+                            <option value="">Select one...</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="varSearchResults" class="col-xs-4 control-label">Standard Variables:</label>
+
+                    <div class="col-xs-8">
+                        <select class="form-control" id="varSearchResults">
+                            <option value="">Select one...</option>
+
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="form-group">
+                    <label for="comboValues" class="col-xs-12">Values:</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <select id="comboValues" class="form-control" size="35"></select>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</div>
+
+
+</div>
+
+<div class="form-group">
+    <div class="text-center">
+        <a th:text="#{form.prev.text}" th:href="@{categorizeHeaders}" class="btn btn-default btn-sm"></a>
+        <input id="okButton" type="button" name="action" value="Import" class="btn btn-primary btn-sm"/>
+    </div>
+</div>
+
+</form>
+
+<div id="termModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="termModal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="myModalLabel">Select Property</h3>
+            </div>
+            <div class="modal-body">
+                <div id="termModalBody"></div>
+                <div class="table-pager"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div id="addOntologyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addOntologyModal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 name="myModalLabel">Add Ontology</h3>
+            </div>
+            <div class="modal-body" id="addOntologyModalBody">
+                <form class="form-horizontal" role="form">
+                    <input type='hidden' id="ontologyCvId"/>
+
+                    <div class="form-group">
+                        <label for="txtNewOntologyName" class="col-xs-4 control-label">Name:</label>
+
+                        <div class="col-xs-5">
+                            <input type="text" id="txtNewOntologyName" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtNewOntologyName" class="col-xs-4 control-label">Description:</label>
+
+                        <div class="col-xs-5">
+                            <textarea id="txtNewOntologyDescription" class="form-control" size="10"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" id="classValueDiv">
+                        <label for="txtNewOntologyName" class="col-xs-4 control-label">Class:</label>
+
+                        <div class="col-xs-5">
+                            <select id="comboClassValue" class="form-control">
+                                <option th:each="term : ${classList}" th:value="${term.id}" th:text="${term.name}">class
+                                    name
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="ontologyModalSaveButton" class="btn btn-default" data-dismiss="modal">Save
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+</section>
+
+<div layout:fragment="page-script">
+
+<script type="text/javascript" th:src="@{/static/js/bootstrap-pagination.js}"></script>
+<script th:inline="javascript">
+
+var ROW_SIZE = 10;
+//<![CDATA[
+$(function () {
+    $('table tbody tr[dataRow=true]').click(function (event) {
+        $('table tbody tr[dataRow=true]').removeClass('highlight');
+        $(this).addClass('highlight');
+        $("#currentPhenoType").val($(this).attr("phenotypicType"));
+        showVariableDetails($(this).attr("header"), $(this).attr("matchedid"));
+
+    });
+
+    $("#txtProperty").click(function () {
+        $(".table-pager").bootstrapPaginator({"startPage": 1});
+        replaceRowData('termModalBody', 'updateProperty', 0, ROW_SIZE,
+                /*[[${T(org.generationcp.middleware.domain.oms.CvId).PROPERTIES.id}]]*/
+        );
+
+        $("#termModal").find("[name='myModalLabel']").text("Select Property");
+        $("#termModal").modal({
+            show: true,
+            keyboard: false
+        });
+    });
+
+    $("#txtScale").click(function () {
+        $(".table-pager").bootstrapPaginator({"startPage": 1});
+        replaceRowData('termModalBody', 'updateScale', 0, ROW_SIZE,
+                /*[[${T(org.generationcp.middleware.domain.oms.CvId).SCALES.id}]]*/
+        );
+
+        $("#termModal").find("[name='myModalLabel']").text("Select Scale");
+        $("#termModal").modal({
+            show: true,
+            keyboard: false
+        });
+    });
+
+    $("#txtMethod").click(function () {
+        $(".table-pager").bootstrapPaginator({"startPage": 1});
+        replaceRowData('termModalBody', 'updateMethod', 0, ROW_SIZE,
+                /*[[${T(org.generationcp.middleware.domain.oms.CvId).METHODS.id}]]*/
+        );
+
+        $("#termModal").find("[name='myModalLabel']").text("Select Method");
+        $("#termModal").modal({
+            show: true,
+            keyboard: false
+        });
+    });
+
+    $("#btnAddProperty").click(function () {
+        $("#addOntologyModal").find("[name='myModalLabel']").text("Add New Property");
+        $("#ontologyCvId").val(
+                /*[[${T(org.generationcp.middleware.domain.oms.CvId).PROPERTIES.id}]]*/
+        );
+        $("#classValueDiv").show();
+        $("#addOntologyModal").modal({
+            show: true,
+            keyboard: false
+        });
+    });
+
+    $("#btnAddVariable").click(function () {
+        addStandardVariable();
+    });
+
+    $("#btnAddScale").click(function () {
+        $("#addOntologyModal").find("[name='myModalLabel']").text("Add New Scale");
+        $("#ontologyCvId").val(
+                /*[[${T(org.generationcp.middleware.domain.oms.CvId).SCALES.id}]]*/
+        );
+        $("#classValueDiv").hide();
+        $("#addOntologyModal").modal({
+            show: true,
+            keyboard: false
+        });
+    });
+
+    $("#btnAddMethod").click(function () {
+        $("#addOntologyModal").find("[name='myModalLabel']").text("Add New Method");
+        $("#ontologyCvId").val(
+                /*[[${T(org.generationcp.middleware.domain.oms.CvId).METHODS.id}]]*/
+        );
+        $("#classValueDiv").hide();
+        $("#addOntologyModal").modal({
+            show: true,
+            keyboard: false
+        });
+    });
+
+    $("#okButton").click(function () {
+        onBeforeSubmit();
+    });
+
+    $("#btnSearchOntology").click(function () {
+        performSearchByName();
+    });
+
+    $("#varSearchResults").change(function () {
+        showVariableDetails($("#selectedVariable").val(), $(this).val());
+        $('#variableDefinition').data($("#selectedVariable").val()).confirmed = true;
+    });
+
+    $("#ontologyModalSaveButton").click(function () {
+        $("#addOntologyModal").modal('hide');
+        var ontologyName = $("#txtNewOntologyName").val();
+        var ontologyDescription = $("#txtNewOntologyDescription").val();
+        var cvId = $("#ontologyCvId").val();
+        var classId = $("#comboClassValue").val();
+        var classDescription = $("#comboClassValue").find(":selected").text();
+
+        $.post(/*[[@{/workbook/defineVariable/ontology}]]*/
+                ,
+                {name: ontologyName, description: ontologyDescription, cvId: cvId, classId: classId},
+                function (data) {
+                    if (data == true) {
+                        alert(ontologyName + ' successfully added');
+                        if (cvId == /*[[${T(org.generationcp.middleware.domain.oms.CvId).PROPERTIES.id}]]*/
+                                ) {
+                            $("#txtProperty").val(ontologyName);
+                            $("#txtPropertyDesc").val(ontologyDescription);
+                            $("#txtClass").val(classDescription);
+                        } else if (cvId == /*[[${T(org.generationcp.middleware.domain.oms.CvId).SCALES.id}]]*/
+                                ) {
+                            $("#txtScale").val(ontologyName);
+                            $("#txtScaleDesc").val(ontologyDescription);
+                        } else if (cvId == /*[[${T(org.generationcp.middleware.domain.oms.CvId).METHODS.id}]]*/
+                                ) {
+                            $("#txtMethod").val(ontologyName);
+                            $("#txtMethodDesc").val(ontologyDescription);
+                        }
+                    }
+                }, 'json');
+
+        markCurrentDataDirty();
+    });
+
+    $('table tbody tr[dataRow=true]').each(function (index) {
+        var varid = $(this).attr("matchedid");
+        var headername = $(this).attr("header");
+        var phenotype = $(this).attr("phenotypicType");
+        if (varid != 0) {
+            $.getJSON(/*[[@{/workbook/defineVariable/standardVariable}]]*/
+                    +'/' + varid,
+                    function (data) {
+                        if (data.id != 0) {
+                            $("#variableDefinition").data(headername, data);
+                            $("#variableDefinition").data(headername).valid = true;
+                            $("#variableDefinition").data(headername).headerName = headername;
+                            $("#variableDefinition").data(headername).phenotype = phenotype;
+                        }
+                    }
+            );
+        }
+    });
+
+    $('button[icon-button=true]').click(function () {
+        var spanElement = $(this).find('span');
+        var parentTr = $(this).parents('tr[dataRow=true]');
+        var headerName = parentTr.attr("header");
+        if (spanElement.hasClass('glyphicon-exclamation-sign')) {
+            spanElement.removeClass('glyphicon-exclamation-sign');
+            spanElement.addClass('glyphicon-ok');
+            $('#variableDefinition').data(headerName).confirmed = true;
+        }
+    });
+
+    $(".define-vars-headers-pane").scroll(function () {
+        var y = $(".define-vars-headers-pane").scrollTop();
+        if (y > 0) {
+            $(".shadow-top").show();
+        } else {
+            $(".shadow-top").hide();
+        }
+    });
+
+});
+
+function performSearchByName() {
+    var param = $("#txtSearchOntology").val();
+
+    if (param != '') {
+        $.getJSON(/*[[@{/workbook/defineVariable/search/name}]]*/
+                ,
+                {name: param},
+                function (data) {
+                    updateSearchResult(data);
+                }
+        );
+    }
+}
+
+function performSearchByPropertyScaleMethod() {
+    var prop = $("#txtProperty").val();
+    var scale = $("#txtScale").val();
+    var method = $("#txtMethod").val();
+    $.getJSON(/*[[@{/workbook/defineVariable/search/other}]]*/
+            ,
+            {property: prop, scale: scale, method: method},
+            function (data) {
+                updateSearchResult(data);
+            }
+    );
+
+}
+
+function updateSearchResult(data) {
+    var options = '<option value="0">Select One ...</option>';
+    if (data.length != undefined && data.length > 0) {
+        for (var i = 0; i < data.length; i++) {
+            options += '<option value="' + data[i].id + '">' + data[i].variable + '</option>';
+        }
+        $("#varSearchResults").html(options);
+    }
+}
+
+function showVariableDetails(headername, variableid) {
+
+
+    var selectedVariable = $("#selectedVariable").val();
+
+    if (selectedVariable != "") {
+        // a variable was previously selected. store current field contents
+        $("#variableDefinition").data(selectedVariable, convertCurrentDataToObject());
+    }
+
+    $("#selectedVariable").val(headername);
+    updateStoredIn(variableid);
+
+    /*if (typeof newVar === "undefined") {*/
+    $.getJSON(/*[[@{/workbook/defineVariable/standardVariable}]]*/
+            +'/' + variableid,
+            function (data) {
+                var confirmed = false;
+                if ($("#variableDefinition").data(headername) != undefined) {
+                    confirmed = $("#variableDefinition").data(headername).confirmed;
+                }
+                handleNewVariableData(headername, data);
+                if (data.id != 0) {
+                    $("#variableDefinition").data(headername).valid = true;
+                    $("#" + headername + "VariableField").val(data.variable);
+                    $("#" + headername + "ButtonField").removeClass('glyphicon-question-sign');
+
+                    if (!$("#" + headername + "ButtonField").hasClass('glyphicon-ok')) {
+                        $("#" + headername + "ButtonField").addClass('glyphicon-ok');
+                    }
+
+                    updatePropertyClass(data.property);
+                    updateEnumeration(variableid);
+                }
+
+                $("#variableDefinition").data(headername).confirmed = confirmed;
+            }
+    );
+
+
+    /*} else {
+     convertObjectToFormData(newVar);
+     }*/
+}
+
+function clearVariableSelection(headername) {
+    $("#" + headername + "VariableField").val('');
+    if (!$("#" + headername + "ButtonField").hasClass('glyphicon-question-sign')) {
+        $("#" + headername + "ButtonField").addClass('glyphicon-question-sign');
+    }
+    $("#" + headername + "ButtonField").removeClass('glyphicon-ok');
+
+}
+
+function handleNewVariableData(variablename, data) {
+    convertObjectToFormData(data);
+    $("#variableDefinition").data(variablename, data);
+}
+
+function convertCurrentDataToObject() {
+    var variableName = $("#txtVariable").val();
+    var description = $("#txtDescription").val();
+    var property = $("#txtProperty").val();
+    var propertyDesc = $("#txtPropertyDesc").val();
+    var scale = $("#txtScale").val();
+    var scaleDesc = $("#txtScaleDesc").val();
+    var method = $("#txtMethod").val();
+    var methodDesc = $("#txtMethodDesc").val();
+    var dataType = $("#comboDataType").val();
+    var headerName = $("#selectedVariable").val();
+    var storedInId = $("#storedInValues").val();
+    var phenotype = $("#currentPhenoType").val();
+    var valid = false;
+    var confirmed = false;
+
+    if ($("#variableDefinition").data(headerName) != undefined) {
+        valid = $("#variableDefinition").data(headerName).valid;
+        confirmed = $("#variableDefinition").data(headerName).confirmed;
+    }
+
+    return {variable: variableName, description: description, property: property, propertyDescription: propertyDesc, scale: scale,
+        scaleDescription: scaleDesc, method: method, methodDescription: methodDesc, dataType: dataType, headerName: headerName,
+        storedInValue: storedInId, valid: valid, phenotype: phenotype, confirmed: confirmed};
+}
+
+function convertObjectToFormData(data) {
+    $("#txtVariable").val(data.variable);
+    $("#txtDescription").val(data.description);
+    $("#txtProperty").val(data.property);
+    $("#txtPropertyDesc").val(data.propertyDescription);
+    $("#txtScale").val(data.scale);
+    $("#txtScaleDesc").val(data.scaleDescription);
+    $("#txtMethod").val(data.method);
+    $("#txtMethodDesc").val(data.methodDescription);
+    $("#comboDataType").val(data.dataType);
+    $("#storedInValues").val(data.storedInValue);
+}
+
+function replaceRowData(targetDiv, clickFunction, startRow, endRow, cvid) {
+    $.get(/*[[@{/workbook/defineVariable/cv}]]*/
+            +'/' + cvid,
+            {clickFunction: clickFunction, startRow: startRow, endRow: endRow},
+            function (data) {
+                $("#" + targetDiv).html(data);
+
+                // setup pager
+                $(".table-pager").bootstrapPaginator({
+                    totalPages: $(".table-modal-content").data("pageInfo"),
+                    alignment: "center",
+                    onPageClicked: function (event, originalEvent, type, page) {
+                    },
+                    onPageChanged: function (event, oldPage, newPage) {
+                        replaceRowData(targetDiv, clickFunction, (newPage - 1) * ROW_SIZE, newPage * ROW_SIZE, cvid);
+                    }
+                });
+            });
+}
+
+function updatePropertyClass(propertyName) {
+    $.get(/*[[@{/workbook/defineVariable/retrievePropertyClass}]]*/
+            +'/' + propertyName,
+            function (data) {
+                $("#txtClass").val(data);
+            }
+    );
+}
+
+function addStandardVariable() {
+    var standardVariable = convertCurrentDataToObject();
+    var jsonVersion = JSON.stringify(standardVariable);
+    var phenotype = $("#currentPhenoType").val();
+    $.ajax({
+        url: /*[[@{/workbook/defineVariable/saveStandardVariable}]]*/,
+        type: 'post',
+        success: function (data) {
+            var headername = $("#selectedVariable").val();
+            $("#" + headername + "ButtonField").addClass('glyphicon-ok');
+            $("#" + headername + "ButtonField").removeClass('glyphicon-question-sign');
+            $("#" + headername + "VariableField").val($("#txtVariable").val());
+            $("#variableDefinition").data(headername, convertCurrentDataToObject());
+            $("#variableDefinition").data(headername).valid = true;
+            $("#variableDefinition").data(headername).confirmed = true;
+            $("#variableDefinition").data(headername).phenotype = phenotype;
+        },
+        data: jsonVersion,
+        contentType: "application/json"
+    });
+
+}
+
+function updateStoredIn(variableid) {
+    $.get(/*[[@{/workbook/defineVariable/retrieveStoredIn}]]*/
+            ,
+            {phenotypicType: $("#currentPhenoType").val()},
+            function (data) {
+                if (data.length != undefined && data.length > 0) {
+                    options = '<option value="0">Select One</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        options += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                    }
+                }
+
+                $("#storedInValues").html(options);
+            }
+    );
+}
+
+function markCurrentDataDirty() {
+
+    var currentHeader = $("#selectedVariable").val();
+    if ($("#variableDefinition").data(currentHeader) != undefined) {
+        $("#variableDefinition").data(currentHeader).valid = false;
+    }
+    $("#" + currentHeader + "VariableField").val('');
+
+    if (!$("#" + currentHeader + "ButtonField").hasClass('glyphicon-question-sign')) {
+        $("#" + currentHeader + "ButtonField").addClass('glyphicon-question-sign');
+    }
+
+    $("#" + currentHeader + "ButtonField").removeClass('glyphicon-ok');
+}
+
+function updateProperty(value, id, description) {
+    $("#txtProperty").val(value);
+    $("#txtPropertyDesc").val(description);
+    $("#termModal").modal('hide');
+    performSearchByPropertyScaleMethod();
+    updatePropertyClass(value);
+    markCurrentDataDirty();
+}
+
+function updateScale(value, id, description) {
+    $("#txtScale").val(value);
+    $("#txtScaleDesc").val(description);
+    $("#termModal").modal('hide');
+    performSearchByPropertyScaleMethod();
+    markCurrentDataDirty();
+}
+
+function updateMethod(value, id, description) {
+    $("#txtMethod").val(value);
+    $("#txtMethodDesc").val(description);
+    $("#termModal").modal('hide');
+    performSearchByPropertyScaleMethod();
+    markCurrentDataDirty();
+}
+
+function updateEnumeration(id) {
+    $.getJSON(/*[[@{/workbook/defineVariable/enumeration}]]*/
+            +'/' + id,
+            function (data) {
+                var options = '';
+                for (var i = 0; i < data.length; i++) {
+                    options += '<option value="' + data[i] + '">' + data[i] + '</option>';
+                }
+                $("#comboValues").html(options);
+            }
+    )
+}
+
+function onBeforeSubmit() {
+    var variableName = $("#selectedVariable").val();
+    var shouldContinue = true;
+    if (variableName == undefined || variableName != '') {
+        $("#variableDefinition").data(variableName, convertCurrentDataToObject());
+    }
+
+    // TODO fix assignation to phenotypic type so that confirmation logic won't result in bug
+    // show an alert if there are still unconfirmed standard variables
+    /*$.each($("#variableDefinition").data(), function () {
+        if (shouldContinue && ($(this)[0].confirmed == undefined || $(this)[0].confirmed != true)) {
+            alert([[#{error.unconfirmed.variable.exists}]]);
+            shouldContinue = false;
+
+        }
+    });*/
+
+    if (shouldContinue) {
+
+        var jsonData = '[';
+        $.each($("#variableDefinition").data(), function (index) {
+            if ($(this)[0].valid == true) {
+                jsonData += JSON.stringify(this) + ',';
+            }
+        });
+
+        jsonData = jsonData.substring(0, jsonData.length - 1);
+        jsonData += ']';
+        console.log(jsonData);
+        $.ajax({
+            url: 'defineVariable?action=Ok',
+            type: 'post',
+            /*dataType: 'json',*/
+            success: function (data) {
+                //alert(data);
+                $("#divMessage").html(data);
+            },
+            data: jsonData,
+            contentType: "application/json"
+        });
+    }
+}
+//]]>
+</script>
+
+</div>
+
+</body>
+
+</html>

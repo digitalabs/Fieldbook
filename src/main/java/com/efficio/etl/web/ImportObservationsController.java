@@ -120,6 +120,11 @@ public class ImportObservationsController extends AbstractBaseETLController {
 				}
 			}
 
+			List<Message> messages = new ArrayList<Message>();
+			this.etlService.checkForInvalidGids(importData, messages);
+			errors.addAll(this.etlService.convertMessageList(messages));
+
+
 		} catch (Exception e) {
 			ImportObservationsController.LOG.error(e.getMessage(), e);
 			List<Message> error = new ArrayList<Message>();

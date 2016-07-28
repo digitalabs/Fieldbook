@@ -41,9 +41,11 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
@@ -102,6 +104,9 @@ public class ETLServiceImpl implements ETLService {
 
 	@Resource
 	private WorkbenchDataManager workbenchDataManager;
+
+	@Resource
+	private GermplasmDataManager germplasmDataManager;
 
   	@Resource
   	private ResourceBundleMessageSource messageSource;
@@ -938,6 +943,12 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	@Override
+	public void checkForInvalidGids(org.generationcp.middleware.domain.etl.Workbook workbook, List<Message> errors) {
+
+		dataImportService.checkForInvalidGids(germplasmDataManager, ontologyDataManager, workbook, errors);
+
+	}
+
 	public boolean checkOutOfBoundsData(final UserSelection userSelection) throws IOException {
 
 		org.generationcp.middleware.domain.etl.Workbook importData = null;

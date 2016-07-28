@@ -85,6 +85,11 @@ public class DuplicatesUtil {
 		}
 	}
 
+	/**
+	 * Function to detect Plot Dupe, Pedigree Dupe, Plot Recip and Pedigree Recip
+	 * It will set duplications & reciprocals information in duplicate element of imported crosses object
+	 * @param importedCrossesList list of imported crosses
+	 */
 	private static void detectDuplicationsAndReciprocalsFromImportedCrosses(ImportedCrossesList importedCrossesList) {
 		for (ImportedCrosses importedCrossesMain : importedCrossesList.getImportedCrosses()) {
 			if (importedCrossesMain.getDuplicate() != null) {
@@ -95,6 +100,11 @@ public class DuplicatesUtil {
 			final String nMalePlotNo = importedCrossesMain.getMalePlotNo();
 			final String nFemaleGid = importedCrossesMain.getFemaleGid();
 			final String nMaleGid = importedCrossesMain.getMaleGid();
+
+			String plotDupePrefix = ImportedCrosses.PLOT_DUPE_PREFIX;
+			String pedigreeDupePrefix = ImportedCrosses.PEDIGREE_DUPE_PREFIX;
+			String plotRecipPrefix = ImportedCrosses.PLOT_RECIP_PREFIX;
+			String pedigreeRecipPrefix = ImportedCrosses.PEDIGREE_RECIP_PREFIX;
 
 			for (ImportedCrosses possibleDuplicatesAndReciprocals : importedCrossesList.getImportedCrosses()) {
 				if (!Objects.equals(importedCrossesMain.getEntryId(), possibleDuplicatesAndReciprocals.getEntryId())) {
@@ -110,10 +120,12 @@ public class DuplicatesUtil {
 							// Plot Dupe
 							DuplicatesUtil.setDuplicatePrefixAndEntriesForDuplicates(Lists.newArrayList(possibleDuplicatesAndReciprocals),
 									ImportedCrosses.PLOT_DUPE_PREFIX);
+							plotDupePrefix = plotDupePrefix + possibleDuplicatesAndReciprocals.getEntryId() + ", ";
 						} else {
 							// Pedigree Dupe
 							DuplicatesUtil.setDuplicatePrefixAndEntriesForDuplicates(Lists.newArrayList(possibleDuplicatesAndReciprocals),
 									ImportedCrosses.PEDIGREE_DUPE_PREFIX);
+							pedigreeDupePrefix = pedigreeDupePrefix + possibleDuplicatesAndReciprocals.getEntryId() + ", ";
 						}
 						if (importedCrossesMain.getDuplicateEntries() == null) {
 							importedCrossesMain.setDuplicateEntries(new TreeSet<Integer>());
@@ -129,12 +141,14 @@ public class DuplicatesUtil {
 							DuplicatesUtil.getAllEntries(Lists.newArrayList(possibleDuplicatesAndReciprocals), plotReciprocalEntries);
 							importedCrossesMain.setDuplicatePrefix(ImportedCrosses.PLOT_RECIP_PREFIX);
 							DuplicatesUtil.setDuplicateEntries(possibleDuplicatesAndReciprocals, plotReciprocalEntries);
+							plotRecipPrefix = plotRecipPrefix + possibleDuplicatesAndReciprocals.getEntryId() + ", " ;
 						} else {
 							// Pedigree Reciprocal
 							List<Integer> pedigreeReciprocalEntries = new ArrayList<>();
 							DuplicatesUtil.getAllEntries(Lists.newArrayList(possibleDuplicatesAndReciprocals), pedigreeReciprocalEntries);
 							importedCrossesMain.setDuplicatePrefix(ImportedCrosses.PEDIGREE_RECIP_PREFIX);
 							DuplicatesUtil.setDuplicateEntries(possibleDuplicatesAndReciprocals, pedigreeReciprocalEntries);
+							pedigreeRecipPrefix = pedigreeRecipPrefix + possibleDuplicatesAndReciprocals.getEntryId() + ", ";
 						}
 						if (importedCrossesMain.getDuplicateEntries() == null) {
 							importedCrossesMain.setDuplicateEntries(new TreeSet<Integer>());
@@ -144,6 +158,56 @@ public class DuplicatesUtil {
 					}
 				}
 			}
+
+			plotDupePrefix = DuplicatesUtil.removeCommaAndPipeFromEnd(plotDupePrefix);
+			pedigreeDupePrefix = DuplicatesUtil.removeCommaAndPipeFromEnd(pedigreeDupePrefix);
+			plotRecipPrefix = DuplicatesUtil.removeCommaAndPipeFromEnd(plotRecipPrefix);
+			pedigreeRecipPrefix = DuplicatesUtil.removeCommaAndPipeFromEnd(pedigreeRecipPrefix);
+
+			String duplicateString = "";
+
+			duplicateString = DuplicatesUtil.buildDuplicateString(plotDupePrefix ,ImportedCrosses.PLOT_DUPE_PREFIX);
+			duplicateString = duplicateString + DuplicatesUtil.buildDuplicateString(pedigreeDupePrefix ,ImportedCrosses.PEDIGREE_DUPE_PREFIX);
+			duplicateString = duplicateString + DuplicatesUtil.buildDuplicateString(plotRecipPrefix ,ImportedCrosses.PLOT_RECIP_PREFIX);
+			duplicateString = duplicateString + DuplicatesUtil.buildDuplicateString(pedigreeRecipPrefix ,ImportedCrosses.PEDIGREE_RECIP_PREFIX);
+
+			duplicateString = DuplicatesUtil.removeCommaAndPipeFromEnd(duplicateString);
+
+			importedCrossesMain.setDuplicate(duplicateString);
 		}
+	}
+
+	/**
+	 * Function to remove comma ',' or pipe '|' character at the end of the string
+	 * Ex. last recip info will contain pipe like this Pedigree Recip: 5, 6 |
+	 * @param prefixString string which contains comma or pipe character at the end
+	 * @return string from which we have removed comma or pipe from end
+	 */
+	private static String removeCommaAndPipeFromEnd(String prefixString) {
+		if(prefixString.endsWith(", ")) {
+			int lastIndexOfComma = prefixString.lastIndexOf(", ");
+			prefixString = prefixString.substring(0, lastIndexOfComma);
+		} else if(prefixString.endsWith(" | ")) {
+			int lastIndexOfPipe = prefixString.lastIndexOf(" | ");
+			prefixString = prefixString.substring(0, lastIndexOfPipe);
+		}
+
+		return prefixString;
+	}
+
+	/**
+	 * Function to build duplicate string which will be set in duplicate element of imported crosses object
+	 * @param prefix contains information about duplication and reciprocals ex. Plot Dupe: 2, 3
+	 * @param compareValue will decide if we need to append pipe character at the end or not
+	 * If compareValue has no information then no need to append pipe character
+	 * @return duplicateString which contains information about duplication & reciprocals ex. Plot Dupe: 2 | Pedigree Recip: 5, 6
+	 */
+	private static String buildDuplicateString(String prefix, String compareValue) {
+		String duplicateString = "";
+		if (!prefix.equals(compareValue)) {
+			duplicateString = prefix + " | ";
+		}
+
+		return duplicateString;
 	}
 }

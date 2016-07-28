@@ -233,6 +233,7 @@ public class CrossingTemplateExcelExporterTest {
 		final File exportFile = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID,
 				studyName, CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
 		Assert.assertEquals("CrossingTemplate-Nueva Nursery _ _ _ _ _ _ __ _ _ _ _.xls",exportFile.getName());
+		exportFile.deleteOnExit();
 	}
 
 	@Test(expected = CrossingTemplateExportException.class)

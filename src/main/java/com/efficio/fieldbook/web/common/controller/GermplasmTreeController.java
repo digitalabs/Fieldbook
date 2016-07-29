@@ -530,6 +530,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final String entryCode = importedCrosses.getEntryCode();
 			final String seedSource = importedCrosses.getSource();
 			final String designation = importedCrosses.getDesig();
+			final String notes = importedCrosses.getNotes();
+			final String crossingDate = importedCrosses.getCrossingDate();
 			String groupName = importedCrosses.getCross();
 
 			// Common germplasm list data fields
@@ -542,9 +544,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				groupName = "-";
 			}
 
-			final GermplasmListData listData =
-					new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource, designation, groupName,
-							listDataStatus, localRecordId);
+			final GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource,
+					designation, groupName, listDataStatus, localRecordId, notes, crossingDate);
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));
 		}

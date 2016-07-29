@@ -531,7 +531,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final String seedSource = importedCrosses.getSource();
 			final String designation = importedCrosses.getDesig();
 			final String notes = importedCrosses.getNotes();
-			final String crossingDate = importedCrosses.getCrossingDate();
+			final Integer crossingDate = importedCrosses.getCrossingDate();
 			String groupName = importedCrosses.getCross();
 
 			// Common germplasm list data fields

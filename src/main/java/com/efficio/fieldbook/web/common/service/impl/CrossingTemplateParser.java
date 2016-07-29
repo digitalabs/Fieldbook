@@ -144,14 +144,23 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 					this.observationColumnMap.get(AppConstants.MALE_PLOT.getString()));
 			final String breedingMethod = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 					this.observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
-			final String crossingDate = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
+			final String strCrossingDate = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 					this.observationColumnMap.get(AppConstants.CROSSING_DATE.getString()));
 			final String notes = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 					this.observationColumnMap.get(AppConstants.NOTES.getString()));
 
-			if (!this.isObservationRowValid(femalePlotNo, malePlotNo, crossingDate)) {
+			if (!this.isObservationRowValid(femalePlotNo, malePlotNo)) {
 				throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row",
 						new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
+			}
+			
+			Integer crossingDate = null;
+			if (!StringUtils.isBlank(strCrossingDate)) {
+				if (!DateUtil.isValidDate(strCrossingDate)) {
+					throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row.crossing.date",
+							new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
+				}
+				crossingDate = Integer.valueOf(strCrossingDate);
 			}
 
 			if (StringUtils.isBlank(maleNursery)) {
@@ -184,9 +193,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-	protected boolean isObservationRowValid(final String femalePlot, final String malePlot, final String crossingDate) {
+	protected boolean isObservationRowValid(final String femalePlot, final String malePlot) {
 		return StringUtils.isNotBlank(femalePlot) && StringUtils.isNotBlank(malePlot) && StringUtils.isNumeric(femalePlot)
-				&& StringUtils.isNumeric(malePlot) && (!StringUtils.isNotBlank(crossingDate) || DateUtil.isValidDate(crossingDate));
+				&& StringUtils.isNumeric(malePlot);
 	}
 
 	/**

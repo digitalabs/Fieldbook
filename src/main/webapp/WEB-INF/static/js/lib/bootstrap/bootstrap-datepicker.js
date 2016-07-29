@@ -296,7 +296,7 @@ return this.date;
 
 setDate: function(d) {
 // Putting null check as it causes to create date like 1970-01-01
-if(d != null) {
+if(d !== null) {
     d = new Date(d);
 
     if (!isNaN(d)) {

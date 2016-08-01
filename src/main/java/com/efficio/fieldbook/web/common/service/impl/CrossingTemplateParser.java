@@ -120,15 +120,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			}
 		}
 
-		if (femaleNursery == null || femaleNursery == "") {
-			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.nursery.empty", new String[] {},
-					LocaleContextHolder.getLocale()));
-		}
-
-		if (!femaleNursery.equals(this.studySelection.getWorkbook().getStudyName())) {
-			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.nursery.match", new String[] {},
-					LocaleContextHolder.getLocale()));
-		}
+		validateFemaleNursery(femaleNursery);
 
 		int currentRow = 1;
 		final int headerSize = this.getLastCellNum(CrossingTemplateParser.OBSERVATION_SHEET_NO, 0);
@@ -148,18 +140,11 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 					this.observationColumnMap.get(AppConstants.CROSSING_DATE.getString()));
 			final String notes = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 					this.observationColumnMap.get(AppConstants.NOTES.getString()));
-
-			if (!this.isObservationRowValid(femalePlotNo, malePlotNo)) {
-				throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row",
-						new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
-			}
 			
+			validateObservationRow(femalePlotNo, malePlotNo, currentRow, strCrossingDate);
+
 			Integer crossingDate = null;
 			if (!StringUtils.isBlank(strCrossingDate)) {
-				if (!DateUtil.isValidDate(strCrossingDate)) {
-					throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row.crossing.date",
-							new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
-				}
 				crossingDate = Integer.valueOf(strCrossingDate);
 			}
 
@@ -193,9 +178,38 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-	protected boolean isObservationRowValid(final String femalePlot, final String malePlot) {
-		return StringUtils.isNotBlank(femalePlot) && StringUtils.isNotBlank(malePlot) && StringUtils.isNumeric(femalePlot)
-				&& StringUtils.isNumeric(malePlot);
+	protected void validateFemaleNursery(String femaleNursery) throws FileParsingException {
+
+		if (femaleNursery == null || femaleNursery == "") {
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.nursery.empty", new String[] {},
+					LocaleContextHolder.getLocale()));
+		}
+
+		if (!femaleNursery.equals(this.studySelection.getWorkbook().getStudyName())) {
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.nursery.match", new String[] {},
+					LocaleContextHolder.getLocale()));
+		}
+	}
+
+	protected void validateObservationRow(final String femalePlotNo, final String malePlotNo, int currentRow, String strCrossingDate)
+			throws FileParsingException {
+
+		if (!(StringUtils.isNotBlank(femalePlotNo) && StringUtils.isNumeric(femalePlotNo))) {
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row.femalePlot",
+					new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
+		}
+
+		if (!(StringUtils.isNotBlank(malePlotNo) && StringUtils.isNumeric(malePlotNo))) {
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row.malePlot",
+					new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
+		}
+
+		if (!StringUtils.isBlank(strCrossingDate)) {
+			if (!DateUtil.isValidDate(strCrossingDate)) {
+				throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row.crossing.date",
+						new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
+			}
+		}
 	}
 
 	/**

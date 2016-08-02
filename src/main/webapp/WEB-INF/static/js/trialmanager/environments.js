@@ -165,6 +165,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			$scope.deleteEnvironment = function(index, locationId) {
+				if(TrialManagerDataService.applicationData.hasNewEnvironmentAdded) {
+					var warningMessage = 'An environment is added but the changes are not yet saved. Please save the trial before deleting this environment.';
+					showAlertMessage('', warningMessage);
+					return;
+				}
 				if (!TrialManagerDataService.isOpenTrial() ||
 						(TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement)) {
 					// For New Trial and Existing Trial w/o measurement data
@@ -234,10 +239,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
 				} else if (oldVal < newVal) {
-					addNewEnvironments(newVal - oldVal);
+					var success = addNewEnvironments(newVal - oldVal);
 
 					// should not be equal to 1 since the default number of environment for a trial is 1
-					if(newVal !== 1 && oldVal !== 1){
+					if(success && newVal !== 1 && oldVal !== 1){
 						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 					}
 				}
@@ -258,6 +263,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				var modalInstance = $scope.getModalInstance();
 				modalInstance.result.then(function(shouldContinue) {
 					if (shouldContinue) {
+						TrialManagerDataService.applicationData.hasEnvironmentDeleted = true;
 						updateDeletedEnvironment(index);
 					}
 				});
@@ -309,6 +315,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			}
 
 			function addNewEnvironments(noOfEnvironments, displayWarningMessage) {
+				if(TrialManagerDataService.applicationData.hasEnvironmentDeleted) {
+					var warningMessage = 'An environment is deleted but the changes are not yet saved. Please save the trial before adding a new environment.';
+					showAlertMessage('', warningMessage);
+					return false;
+				}
 				for (var ctr = 0; ctr < noOfEnvironments; ctr++) {
 					$scope.data.environments.push({
 						managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
@@ -324,6 +335,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					}
 				}
 				TrialManagerDataService.indicateUnappliedChangesAvailable(displayWarningMessage);
+				return true;
 			}
 
 			function updateEnvironmentVariables(type, entriesIncreased) {

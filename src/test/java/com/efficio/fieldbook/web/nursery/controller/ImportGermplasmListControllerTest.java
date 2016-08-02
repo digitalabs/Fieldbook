@@ -600,7 +600,8 @@ public class ImportGermplasmListControllerTest {
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.isA(Long.class), Matchers.isA(Integer.class))).thenReturn(1);
 		final Integer studyIdInSaveDataset = 3;
 
-		Mockito.when(this.dataImportService.saveDataset(workbook, true, true, project.getUniqueID())).thenReturn(studyIdInSaveDataset);
+		final boolean isDeleteObservations = false;
+		Mockito.when(this.dataImportService.saveDataset(workbook, true, isDeleteObservations, project.getUniqueID())).thenReturn(studyIdInSaveDataset);
 		Mockito.doNothing().when(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyList(), Matchers.isA(Integer.class));
 
 		final List<ListDataProject> listDataProjects = new ArrayList<>();
@@ -618,7 +619,7 @@ public class ImportGermplasmListControllerTest {
 		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.isA(Workbook.class), Matchers.anyList(),
 				Matchers.isA(String.class), Matchers.anyBoolean());
 		Mockito.verify(this.workbenchService).getCurrentIbdbUserId(Matchers.isA(Long.class), Matchers.isA(Integer.class));
-		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID());
+		Mockito.verify(this.dataImportService).saveDataset(workbook, true, isDeleteObservations, project.getUniqueID());
 		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyList(), Matchers.isA(Integer.class));
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
 

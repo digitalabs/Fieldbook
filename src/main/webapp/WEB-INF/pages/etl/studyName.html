@@ -1,0 +1,225 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorator="etl/base-template">
+  <head>
+    <title th:inline="text">[[#{page.title.study.name}]]</title>
+
+      <!--[if lte IE 8]>
+      <script type="text/javascript" th:src="@{/static/js/respond.min.js}"></script>
+      <![endif]-->
+
+
+  </head>
+  <body>
+
+<section layout:fragment="content">
+
+	<div class="content-header">
+		<h2 th:utext="#{page.title.study.name}">
+            [[#{page.title.study.name}]]
+		</h2>
+		<div th:utext="#{study.name.desc}"></div>
+	</div>
+	
+	<div id="page-message">
+        <form th:object="${studyDetails}" th:remove="tag">
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+            	<ul>
+            		<li th:each="err : ${#fields.errors('*')}" th:text="#{${err}}"></li>
+            	</ul>
+            </div>
+        </form>
+    </div>
+
+	<form class="form-horizontal" role="form" th:action="@{/workbook/studyName}"
+		th:object="${studyDetails}" method="post" onsubmit="onBeforeSubmit();" >
+	 	 
+        <div class="form-group" th:class="${#fields.hasErrors('studyName')}? 'form-group has-error': 'form-group'">
+	    <label for="comboStudyName" class="col-lg-2 control-label" th:text="#{study.name.label}">Study Name</label>
+
+	    <div class="col-lg-6">
+	    	<input id="comboStudyName" th:field="*{studyName}" type="hidden"  class="form-control select2" placeholder=""/>
+
+
+            </div>
+        </div>
+        <div class="form-group" th:class="${#fields.hasErrors('studyTitle')}? 'form-group has-error': 'form-group'">
+	    <label for="comboStudyTitle" class="col-lg-2 control-label" th:text="#{study.name.title.label}">Study Title</label>
+
+	    <div class="col-lg-6">
+	    	<input id="comboStudyTitle" th:field="*{studyTitle}" type="hidden" class="form-control select2" placeholder=""/>
+	    </div>
+	  </div>
+	  
+	   <div class="form-group">
+	    <label for="txtPmKey" class="col-lg-2 control-label" th:text="#{study.name.pm.key.label}">PM Key</label>
+
+	    <div class="col-lg-6">
+                <input type="text" class="form-control" id="txtPmKey" th:field="*{pmKey}"/>
+	    </div>
+	  </div>
+	    <div class="form-group">
+	    <label for="txtPmKey" class="col-lg-2 control-label" th:text="#{study.name.objective.label}">Objective</label>
+
+	    <div class="col-lg-6">
+                <textarea class="form-control" id="txtPmKey" th:field="*{objective}" size="10"></textarea>
+	    </div>
+	  </div>
+	  
+	   <div class="form-group">
+	    <label for="txtStartDate" class="col-lg-2 control-label" th:text="#{study.name.start.date.label}">Start Date</label>
+	    
+
+	   <div class="col-lg-6 input-group date" id="dp3" data-date="12-02-2012" data-date-format="dd-mm-yyyy">
+                <input id="txtStartDate" name="txtStartDate" th:field="*{startDate}" class="form-control" type="text" readonly="readonly" size="16" value="12-02-2012"/>
+			 <label for="txtStartDate" class="input-group-addon btn"><i class="glyphicon glyphicon-list-alt"></i></label>
+		
+		</div>
+       
+	  </div>
+	  
+	   <div class="form-group">
+	    <label for="txtEndDate" class="col-lg-2 control-label" th:text="#{study.name.end.date.label}">End Date</label>
+	    
+	    <div class="col-lg-6 input-group date" id="dp3" data-date="12-02-2012" data-date-format="dd-mm-yyyy">
+                <input id="txtEndDate" name="txtEndDate" th:field="*{endDate}" class="form-control" type="text" readonly="readonly" size="16" value="12-02-2012"/>
+			<label for="txtEndDate" class="input-group-addon btn"><i class="glyphicon glyphicon-list-alt"></i></label>
+		</div>
+	    
+	  </div>
+	  
+	   <div th:class="${#fields.hasErrors('studyType')}? 'form-group has-error': 'form-group'">
+	    <label for="comboStudyType" class="col-lg-2 control-label" th:text="#{study.name.type.label}" >Study Type</label>
+
+	    <div class="col-lg-6">
+	    <select class="form-control" id="comboStudyTitle" th:field="*{studyType}">
+		    <option value="" th:text="#{form.select.text}">Select one...</option>
+		    <option th:each="studyType : ${studyTypes}"
+                            th:value="${studyType.key}"
+                            th:text="${studyType.value}">
+		    </option>
+		</select>
+	    </div>
+	  </div>
+	  
+	    
+	    <div class="form-group">
+	    	<div class="col-lg-offset-2 col-lg-10">
+	    		<input type="submit" name="action" th:value="#{form.prev.text}" class="btn btn-default btn-sm"/>
+			    <input type="submit" name="action" th:value="#{form.next.text}" class="btn btn-primary btn-sm"/>
+	    	</div>
+		</div>
+	</form>
+
+</section>
+
+<div layout:fragment="page-script">
+
+<script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
+
+<script type="text/javascript" th:inline="javascript">
+        //<![CDATA[
+	    $(function () {
+	    	var suggestions = /*[[${suggestionList}]]*/ null;
+	    	
+			var suggestions_obj = [];
+	    	
+            var previousStudyNameValue = /*[[${studyDetails.studyName}]]*/ null;
+            if (!previousStudyNameValue) {
+                previousStudyNameValue = '';
+            }
+
+            var previousStudyTitleValue = /*[[${studyDetails.studyTitle}]]*/ null;
+            if (!previousStudyTitleValue) {
+                previousStudyTitleValue = '';
+            }
+
+			$.each(suggestions, function( index, value ) {
+				  suggestions_obj.push({ 'id' : value,
+    				  'text' : value
+  				});
+				  
+			});
+			
+			$("#comboStudyName").select2({
+	            query: function (query) {
+                    var data = {results: suggestions_obj};
+	              // return the array that matches
+                    data.results = $.grep(data.results, function (item, index) {
+                        return ($.fn.select2.defaults.matcher(query.term, item.text));
+	              
+	              });
+	              
+                    if (data.results.length === 0) data.results.unshift({id: query.term, text: query.term});
+	              
+	                query.callback(data);
+                },
+                initSelection: function (element, callback) {
+                    callback(
+                            {
+                                'id': previousStudyNameValue,
+                                'text': previousStudyNameValue
+	            }
+                    );
+                },
+                placeholder: ''
+	        });
+	    	
+            if (previousStudyNameValue && previousStudyNameValue !== '') {
+                $("#comboStudyName").select2('val', previousStudyNameValue);
+            }
+
+	    	$("#comboStudyTitle").select2({
+	            query: function (query) {
+                    var data = {results: suggestions_obj};
+	              // return the array that matches
+                    data.results = $.grep(data.results, function (item, index) {
+                        return ($.fn.select2.defaults.matcher(query.term, item.text));
+	              
+	              });
+	              
+                    if (data.results.length === 0) data.results.unshift({id: query.term, text: query.term});
+	              
+	              
+	                query.callback(data);
+                },
+                initSelection: function (element, callback) {
+                    callback(
+                            {
+                                'id': previousStudyTitleValue,
+                                'text': previousStudyTitleValue
+	            }
+                    );
+                },
+                placeholder: ''
+
+	        });
+	        
+            if (previousStudyTitleValue && previousStudyTitleValue !== '') {
+                $("#comboStudyTitle").select2('val', previousStudyTitleValue);
+            }
+
+	        $('#txtStartDate').datepicker();
+	        $('#txtEndDate').datepicker();
+	        
+	        //$("#comboStudyName").data("ui-combobox").value($("#hidStudyName").val());
+	        //$("#comboStudyTitle").data("ui-combobox").value($("#hidStudyTitle").val());
+	    });
+	
+	    function onBeforeSubmit() {
+	        //$("#hidStudyName").val($("#comboStudyName").data("ui-combobox").value());
+	        //$("#hidStudyTitle").val($("#comboStudyTitle").data("ui-combobox").value());
+	        
+	    	$('#submitButton').attr('disabled', 'disabled');
+	    }
+        //]]>
+</script>
+
+</div>
+
+  
+</body>
+
+</html>

@@ -877,6 +877,9 @@ public class ImportGermplasmListController extends SettingsController {
 					this.getGermplasmTableHeader(type, this.userSelection.getPlotsLevelList()));
 			model.addAttribute("hasMeasurement", this.hasMeasurement());
 
+			if (list.size() != 0) {
+				form.setStartingEntryNo(list.get(0).getEntryId().toString());
+			}
 			form.setImportedGermplasmMainInfo(this.getUserSelection().getImportedGermplasmMainInfo());
 			form.setImportedGermplasm(list);
 			form.setStartingEntryNo(Integer.toString(this.getUserSelection().getStartingEntryNo()));

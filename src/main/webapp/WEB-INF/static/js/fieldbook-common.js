@@ -2122,7 +2122,7 @@ function generateGenericLocationSuggestions(genericLocationJson) {
 	});
 	return genericLocationSuggestion;
 }
-function recreateLocationCombo() {
+function recreateLocationCombo(possibleFavorite) {
 	var selectedLocationAll = $('#harvestLocationIdAll').val();
 	var selectedLocationBreeding = $('#harvestLocationIdBreeding').val();
 	var selectedLocationBreedingFavorites = $('#harvestLocationIdBreedingFavorites').val();
@@ -2174,15 +2174,33 @@ function recreateLocationCombo() {
 						showCorrectLocationInventoryCombo();
 						// set previously selected value of location
 						if ($('#showFavoriteLocationInventory').prop('checked')) {
-							setComboValues(generateGenericLocationSuggestions(data.favoriteLocations), $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
+							if ($('#showSeedStorageLocationInventory').prop('checked')) {
+								setComboValues(generateGenericLocationSuggestions(data.allSeedStorageFavoritesLocations), $(
+									'#inventoryLocationIdFavoriteSeedStorage').val(), 'inventoryLocationIdFavoriteSeedStorage');
+							} else {
+								setComboValues(generateGenericLocationSuggestions(data.favoriteLocations),
+									$('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
+							}
 						} else {
-							setComboValues(generateGenericLocationSuggestions(data.allLocations), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
+							if ($('#showSeedStorageLocationInventory').prop('checked')) {
+								setComboValues(generateGenericLocationSuggestions(data.allSeedStorageLocations), $(
+									'#inventoryLocationIdSeedStorage').val(), 'inventoryLocationIdSeedStorage');
+							} else {
+								setComboValues(generateGenericLocationSuggestions(data.allLocations), $('#inventoryLocationIdAll').val(),
+									'inventoryLocationIdAll');
+
+							}
 						}
 						refreshLocationComboInSettings(data);
 					} else if (advancePopup === true
 						|| selectedLocationAll != null) {
 						// recreate the select2 combos to get updated list
 						// of locations
+
+						if (data.allBreedingFavoritesLocations && data.allBreedingFavoritesLocations.length > 0) {
+							$('#showFavoriteLocation').prop('checked', true);
+						}
+
 						recreateLocationComboAfterClose('harvestLocationIdAll', data.allLocations);
 						recreateLocationComboAfterClose('harvestLocationIdBreeding', data.allBreedingLocations);
 						recreateLocationComboAfterClose('harvestLocationIdBreedingFavorites', data.allBreedingFavoritesLocations);
@@ -2217,6 +2235,12 @@ function recreateLocationCombo() {
 						}
 						if (createGermplasm) {
 							refreshImportLocationCombo(data);
+						}
+
+					} 
+					if(possibleFavorite === 'showFavoriteLocationInventory'){
+						if(data.allSeedStorageFavoritesLocations.length !== 0){
+							$('#' + possibleFavorite).prop('checked', true);
 						}
 					}
 				} else {
@@ -3260,6 +3284,7 @@ function makeGermplasmListDraggable(isDraggable) {
         $('.germplasm-list-items tbody tr').off('click');
     }
 
+    SaveAdvanceList.setSelectedEntries();
     // Change background of selected rows
     $('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
 }

@@ -96,8 +96,8 @@ public class UserLabelPrinting implements Serializable {
 	/** The order. */
 	private String order;
 
-	/** The filename dl. */
-	private String filenameDL;
+	/** The filename with extension */
+	private String filenameWithExtension;
 
 	/** The filename dl location. */
 	private String filenameDLLocation;
@@ -129,21 +129,21 @@ public class UserLabelPrinting implements Serializable {
 	}
 
 	/**
-	 * Gets the filename dl.
+	 * Gets the filename with extension
 	 *
-	 * @return the filename dl
+	 * @return the filename with extension
 	 */
-	public String getFilenameDL() {
-		return this.filenameDL;
+	public String getFilenameWithExtension() {
+		return this.filenameWithExtension;
 	}
 
 	/**
-	 * Sets the filename dl.
+	 * Sets the filename with extension
 	 *
-	 * @param filenameDL the new filename dl
+	 * @param filenameWithExtension the new filename with extension
 	 */
-	public void setFilenameDL(String filenameDL) {
-		this.filenameDL = filenameDL;
+	public void setFilenameWithExtension(String filenameWithExtension) {
+		this.filenameWithExtension = filenameWithExtension;
 	}
 
 	/**

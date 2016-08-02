@@ -24,13 +24,14 @@
 
 	<!-- AppConstants property -->
 	<util:properties id="appConstantsProperties" location="classpath:appconstants.properties" />
+	<util:properties id="configProperties" location="classpath:fieldbook.properties" />
 
 	<!-- **************************************************************** -->
 	<!-- RESOURCE FOLDERS CONFIGURATION -->
 	<!-- Dispatcher configuration for serving static resources -->
 	<!-- **************************************************************** -->
 	<mvc:resources mapping="/static/**" location="/WEB-INF/static/" />
-
+	<mvc:resources mapping="/dynamic/**" location="/WEB-INF/dynamic/" />
 
 	<mvc:interceptors>
 		<bean
@@ -53,6 +54,7 @@
 	<!-- **************************************************************** -->
 	<mvc:annotation-driven/>
 	<context:component-scan base-package="com.efficio.fieldbook" />
+	<context:component-scan base-package="com.efficio.etl" />
 
 	<!-- **************************************************************** -->
 	<!-- MESSAGE EXTERNALIZATION/INTERNATIONALIZATION -->
@@ -79,6 +81,9 @@
 		<property name="characterEncoding" value="UTF-8" />
 	</bean>
 
+	<bean id="nonCachableMessageResolver"
+		  class="org.thymeleaf.spring3.messageresolver.SpringNonCacheableMessageResolver" />
+
 	<bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
 		<property name="templateResolver" ref="templateResolver" />
 		<property name="additionalDialects">
@@ -87,8 +92,12 @@
 					class="com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect" />
 				<bean
 					class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect" />
+				<bean
+						class="org.thymeleaf.extras.conditionalcomments.dialect.ConditionalCommentsDialect" />
+				<bean class="nz.net.ultraq.thymeleaf.LayoutDialect" />
 			</set>
 		</property>
+		<property name="messageResolver" ref="nonCachableMessageResolver"></property>
 	</bean>
 
 	<bean class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
@@ -117,6 +126,11 @@
 
 	<bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"
 		init-method="init">
+		<constructor-arg value="${upload.directory}" />
+	</bean>
+
+	<bean id="etlFileService" class="com.efficio.etl.service.impl.FileServiceImpl"
+		  init-method="init">
 		<constructor-arg value="${upload.directory}" />
 	</bean>
 
@@ -200,6 +214,11 @@
 
 	<bean id="userSelection" class="com.efficio.fieldbook.web.common.bean.UserSelection"
 		scope="session">
+		<aop:scoped-proxy />
+	</bean>
+
+	<bean id="etlUserSelection" class="com.efficio.etl.web.bean.UserSelection"
+		  scope="session">
 		<aop:scoped-proxy />
 	</bean>
 
@@ -327,6 +346,7 @@
 	<bean id="dataImportService" factory-bean="managerFactory"
 		factory-method="getDataImportService" scope="request">
 		<aop:scoped-proxy />
+		<property name="maxRowLimit" value="${dataset.import.maximum.row.limit}" />
 	</bean>
 
 	<bean id="fieldbookMiddlewareService" factory-bean="managerFactory"
@@ -579,6 +599,13 @@
     <bean id="userTreeStateService" class="org.generationcp.commons.service.impl.UserTreeStateServiceImpl"/>
     
     <bean id="resourceFinder" class="org.generationcp.middleware.util.ResourceFinder"/>
+
+	<bean id="etlService" class="com.efficio.etl.service.impl.ETLServiceImpl" >
+		<property name="maxRowLimit" value="${dataset.import.maximum.row.limit}" />
+	</bean>
+
+	<bean id="httpSessionUtil" class="org.generationcp.commons.util.HTTPSessionUtil" />
+
 
     <bean id="keySequenceRegisterService" factory-bean="managerFactory"
           factory-method="getKeySequenceRegisterService" scope="request">

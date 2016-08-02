@@ -1,0 +1,885 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="etl/base-template"
+      ng-app="di-defineVariable">
+<head>
+    <title th:inline="text">[[#{page.title.define.variables}]]</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/bootstrap-fileupload.css}"/>
+
+    <style type="text/css">
+        @media screen and (max-width: 1024px) {
+            .jumbotron {
+                width: 1054px;
+            }
+        }
+
+        .container {
+            max-width: none !important;
+            width: 1024px;
+        }
+
+
+    </style>
+
+</head>
+<body>
+
+
+<section layout:fragment="content" ng-controller="DefineVariableJSController">
+<div class="alert alert-danger" ng-show="showMessages()">
+ 	There are errors detected:<br/>
+ 	 <ul>
+	 <li ng:repeat="message in data.serverMessage">{{message}}</li>
+	 </ul>
+</div>
+
+<div class="page-header">
+    <h2>
+        Step 6
+    </h2>
+
+    <div class="progress">
+        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="75" aria-valuemin="0"
+             aria-valuemax="100" style="width: 75%;">
+            <span class="sr-only">75% Complete</span>
+        </div>
+    </div>
+
+    <h6>
+        Define the variables
+    </h6>
+</div>
+
+<form class="form-horizontal" role="form" action="#" th:action="@{/workbook/studyName}"
+      th:object="${defineVariableForm}" method="post" name="defineVariableForm">
+
+<div class="container-fixed">
+
+
+<div class="row">
+<div class="col-xs-5">
+    <div class="row shadow-top"></div>
+    <div class="row define-vars-headers-pane">
+        <div class="panel panel-default">
+            <div class="panel-heading">Trial Environment</div>
+            <table class="table">
+                <tbody>
+                <tr class="header-rows" ng:class="{'highlight' : header == currentFormData}" ng:repeat="header in variableData.tEnvironment" ng:click="selectHeader(header, 'trialEnvironment')">
+                    <td><label class="col-xs-4 control-label">{{header.headerName}}</label></td>
+                    <td>
+                        <div class="input-group">
+                            <input type="text" class="form-control" disabled="true" ng:value="displayedVariableName(header)" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" ng:click="confirmHeader(header)">
+                                    <span class="glyphicon" ng:class="computeClass(header)"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Germplasm Entry</div>
+            <table class="table">
+                <tbody>
+                <tr class="header-rows" ng:class="{'highlight' : header == currentFormData}" ng:repeat="header in variableData.germplasmEntries" ng:click="selectHeader(header, 'germplasmEntry')">
+                    <td><label class="col-xs-4 control-label">{{header.headerName}}</label></td>
+                    <td>
+                        <div class="input-group">
+                            <input type="text" class="form-control" disabled="true" ng:value="displayedVariableName(header)"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" ng:click="confirmHeader(header)">
+                                    <span class="glyphicon" ng:class="computeClass(header)"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Trial Design</div>
+            <table class="table">
+                <tbody>
+                <tr class="header-rows" ng:class="{'highlight' : header == currentFormData}" ng:repeat="header in variableData.tDesign" ng:click="selectHeader(header, 'trialDesign')">
+                    <td ><label class="col-xs-4 control-label">{{header.headerName}}</label></td>
+                    <td>
+                        <div class="input-group">
+                            <input type="text" class="form-control" disabled="true" ng:value="displayedVariableName(header)"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" ng:click="confirmHeader(header)">
+                                    <span class="glyphicon" ng:class="computeClass(header)"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Variate</div>
+            <table class="table">
+                <tbody>
+                <tr class="header-rows"  ng:click="selectHeader(header, 'variate')" ng:class="{'highlight' : header == currentFormData}" ng:repeat="header in variableData.variates">
+                    <td><label class="col-xs-4 control-label">{{header.headerName}}</label></td>
+                    <td>
+                        <div class="input-group">
+                            <input type="text" class="form-control" disabled="true" ng:value="displayedVariableName(header)"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" ng:click="confirmHeader(header)">
+                                    <span class="glyphicon" ng:class="computeClass(header)"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+<div class="col-xs-7">
+	<div class=" panel panel-default">
+        <div class="panel-heading" id="variableDefinition">Variable Definition</div>
+        <div class="panel-body">
+
+            <div class="col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <p>Search for the previously defined variables to get a clue of the ontology to use.</p>
+
+                        <div class="input-group">
+                            <input type="text" class="form-control" ng:model="data.searchParam"/>
+							<span class="input-group-btn">
+							    <button class="btn btn-default" type="button" id="btnSearchOntology" ng:click="performSearchByName()">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </span>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-8">
+                <div class="form-group">
+                    <label for="txtVariable" class="col-xs-4 control-label">Variable:</label>
+
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" id="txtVariable" class="form-control col-xs-8" ng:model="currentFormData.variable" ng:change="invalidateData(currentFormData)"/>
+			                <span class="input-group-btn" id="variableAddSpan">
+                                <button class="btn btn-default" type="button" id="btnAddVariable" ng:click="addVariable()" ng:disabled="disableAddVariable()"><span class="glyphicon glyphicon-plus"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtDescription" class="col-xs-4 control-label">Description:</label>
+
+                    <div class="col-xs-8">
+                        <textarea id="txtDescription" ng:model="currentFormData.description" class="form-control" rows="2" ></textarea>
+                    </div>
+                </div>
+                <!--TODO : implement searching of standard variable via property, scale, method values-->
+                <div class="form-group">
+                    <label for="txtProperty" class="col-xs-4 control-label">Property:</label>
+
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" id="txtProperty" class="form-control" ng:model="currentFormData.property" ng:click="selectOntology('Property')"/>
+							<span class="input-group-btn">
+                                <button class="btn btn-default" type="button" ng:click="addOntology('Property')"><span class="glyphicon glyphicon-plus"/></button>
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtPropertyDesc" class="col-xs-4 control-label">Property Description:</label>
+
+                    <div class="col-xs-8">
+                        <textarea id="txtPropertyDesc" class="form-control" rows="2" disabled="true" ng:model="currentFormData.propertyDescription"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtScale" class="col-xs-4 control-label">Scale:</label>
+
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" id="txtScale" class="form-control" ng:model="currentFormData.scale" ng:click="selectOntology('Scale')"/>
+			                <span class="input-group-btn"><button class="btn btn-default" type="button" id="btnAddScale" ng:click="addOntology('Scale')">
+                                <span class="glyphicon glyphicon-plus"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtScaleDesc" class="col-xs-4 control-label">Scale Description:</label>
+
+                    <div class="col-xs-8">
+                        <textarea id="txtScaleDesc" class="form-control" rows="2" disabled="true" ng:model="currentFormData.scaleDescription"></textarea>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtMethod" class="col-xs-4 control-label">Method:</label>
+
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" id="txtMethod" class="form-control" ng:model="currentFormData.method" ng:click="selectOntology('Method')"/>
+			                <span class=" input-group-btn"><button class="btn btn-default" type="button" id="btnAddMethod" ng:click="addOntology('Method')">
+                                <span class="glyphicon glyphicon-plus"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtMethodDesc" class="col-xs-4 control-label">Method Description:</label>
+
+                    <div class="col-xs-8">
+                        <textarea id="txtMethodDesc" class="form-control" rows="2" disabled="true" ng:model="currentFormData.methodDescription"></textarea>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="comboDataType" class="col-xs-4 control-label">Data Type:</label>
+
+                    <div class="col-xs-8">
+                        <select class="form-control" id="comboDataType" ng:model="currentFormData.dataType" ng:options="term.id as term.name for term in data.dataTypes" ng:change="invalidateData(currentFormData)">
+                            <option value="">Select one...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="txtClass" class="col-xs-4 control-label">Class:</label>
+
+                    <div class="col-xs-8">
+                        <input type="text" id="txtClass" class="form-control" disabled="true" ng:value="currentFormData.propertyClass"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtClass" class="col-xs-4 control-label">Stored In:</label>
+
+                    <div class="col-xs-8">
+                        <select class="form-control" id="storedInValues" ng:model="currentFormData.storedInId" ng:options="term.id as term.name for term in data.currentStoredIn" ng:change="invalidateData(currentFormData)">
+                            <option value="">Select one...</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="varSearchResults" class="col-xs-4 control-label">Standard Variables:</label>
+
+                    <div class="col-xs-8">
+                        <!--The parenthesized expression in the ngoptions maps the key-value pair in the data structure to local variables id and var respectively-->
+                        <select class="form-control" id="varSearchResults" ng:options="id as var.variable for (id, var) in data.searchResults" ng:model="data.selectedStandardVarId" ng:change="selectStandardVariable()">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="form-group">
+                    <label for="comboValues" class="col-xs-12">Values:</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <select id="comboValues" class="form-control" size="35" ng:options="label for entry in data.enumerations"></select>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</div>
+
+
+</div>
+
+<div class="form-group">
+    <div class="text-center">
+        <a th:text="#{form.prev.text}" th:href="@{categorizeHeaders}" class="btn btn-default btn-sm"></a>
+        <input type="button" name="action" value="Import" ng:click="performImport()" class="btn btn-primary btn-sm"/>
+    </div>
+</div>
+
+</form>
+
+<!-- Modal -->
+<script type="text/ng-template" id="listModal.html">
+    <div class="modal-header">
+        <h3 id="myModalLabel" ng-bind="label"></h3>
+    </div>
+    <div class="modal-body">
+
+        <table class="table table-bordered table-condensed table-hover table-modal-content">
+            <tbody>
+            <tr ng:click="selectRow(row)" ng:repeat="row in items">
+                <td>{{row.name}}</td>
+                <td>{{row.definition}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <pagination total-items="pagination.totalItems" page="pagination.currentPage" max-size="pagination.maxSize"
+                    class="pagination-small" boundary-links="true" rotate="false" num-pages="numPages"
+                    items-per-page="pagination.pageItems" on-select-page="setPage(page)"></pagination>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default btn-sm" th:text="#{form.close.text}" ng:click="close()">Close</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="addTermModal.html">
+    <div class="modal-header">
+        <h3 id="myModalLabel">{{label}}</h3>
+    </div>
+    <div class="modal-body" id="addOntologyModalBody">
+        <div ng:repeat="message in messages">
+            <div class="alert alert-danger">{{message}}</div>
+        </div>
+
+        <form class="form-horizontal" role="form" name="addTermForm" id="addTermForm" action="#" method="POST" ng:controller="AddOntologyFormController">
+            <div class="form-group" ng:class="{'has-error' : showError(addTermForm.termName)}">
+                <label for="txtNewOntologyName" class="col-xs-4 control-label">Name:</label>
+
+                <div class="col-xs-5">
+                    <input type="text" id="txtNewOntologyName" class="form-control" name="termName"
+                           ng:model="termData.name" ng:required/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="txtNewOntologyDescription" class="col-xs-4 control-label">Description:</label>
+
+                <div class="col-xs-5">
+                    <textarea id="txtNewOntologyDescription" class="form-control" size="10"
+                              ng:model="termData.description" name="description" ng:required></textarea>
+                </div>
+            </div>
+            <div class="form-group" ng:show="showClassFormFields()" ng:class="{'has-error' : showError(addTermForm.classId)}">
+                <label for="comboClassValue" class="col-xs-4 control-label">Class:</label>
+
+                <div class="col-xs-5">
+                    <select id="comboClassValue" name="classId" class="form-control" ng:model="termData.classId" ng:options="term.id as term.name for term in data.availablePropertyClasses" ng:required="showClassFormFields()"></select>
+                </div>
+            </div>
+            <div class="form-group text-center">
+                <button type="button" class="btn btn-primary btn-sm" ng:click="finalizeOntology()">Save</button>
+                <button type="button" class="btn btn-default btn-sm" ng:click="close()">Cancel</button>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <!--<button type="button" class="btn btn-primary" ng:click="finalizeOntology()">Save</button>
+        <button type="button" class="btn btn-default" ng:click="close()">Cancel</button>-->
+    </div>
+</script>
+
+</section>
+
+<div layout:fragment="page-script">
+
+<script type="text/javascript" th:src="@{/static/js/angular/angular1.0.8.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/angular-bootstrap3/ui-bootstrap-tpls-0.6.0-SNAPSHOT.js}"></script>
+<script type="text/javascript" th:src="@{/dynamic/js/digitalabs-utils.js}"></script>
+<script type="text/javascript" th:src="@{/dynamic/js/digitalabs-data.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+angular.module('di-defineVariable', ['digitalabs-util', 'digitalabs-data', 'ui.bootstrap'])
+    // define constants to be used in the rest of the Javascript. values are populated during page / response creation via Thymeleaf
+        .constant('DISPLAY_ROWS', [[${T(com.efficio.etl.web.controller.angular.AngularOpenSheetController).ROW_COUNT_PER_SCREEN}]])
+        .constant('CV_IDS', {
+            property: [[${T(org.generationcp.middleware.domain.oms.CvId).PROPERTIES.id}]],
+            scale: [[${T(org.generationcp.middleware.domain.oms.CvId).SCALES.id}]],
+            method: [[${T(org.generationcp.middleware.domain.oms.CvId).METHODS.id}]]
+        })
+        .controller('DefineVariableJSController', ['$scope', 'myHttp', '$q', '$modal', 'Properties', 'Scales', 'Methods', 'CV_IDS', 'PropertyClassService', 'StandardVariables',
+            function ($scope, myHttp, $q, $modal, Properties, Scales, Methods, CV_IDS, PropertyClassService, StandardVariables) {
+            $scope.variableData = {};
+            $scope.variableData.tEnvironment = [[${trialEnvironmentHeaders}]];
+            $scope.variableData.tDesign = [[${trialDesignHeaders}]];
+            $scope.variableData.variates = [[${variateHeaders}]];
+            $scope.variableData.germplasmEntries = [[${germplasmHeaders}]];
+            $scope.data = {
+                dataTypes : [[${dataTypes}]],
+                currentStoredIn : {},
+                searchParam : '',
+                searchResults : [],
+                selectedStandardVarId : '',
+                enumerations : [],
+                serverMessage : ''
+            };
+
+            $scope.currentFormData = {};
+
+            $scope.cached = {};
+
+            $scope.selectedPhenoType = '';
+
+            // used to display a blank in the left pane if the current data is not valid
+            $scope.displayedVariableName = function (data) {
+                if (data.valid) {
+                    return data.variable;
+                } else {
+                    return '';
+                }
+            };
+
+            $scope.selectHeader = function (header, type) {
+                $scope.currentFormData = header;
+                $scope.selectedPhenoType = type;
+                $scope.data.searchResults = [];
+            };
+
+            $scope.computeClass = function(header) {
+                if (!header.valid) {
+                    return 'glyphicon-question-sign';
+                } else {
+                    if (header.confirmed) {
+                        return 'glyphicon-ok';
+                    } else {
+                        return 'glyphicon-exclamation-sign';
+                    }
+                }
+            };
+
+            $scope.confirmHeader = function(header) {
+                if (header.valid && ! header.confirmed) {
+                    header.confirmed = true;
+                }
+            };
+
+            // this function is used to update the value of the enumerations list whenever the current variable id changes
+            $scope.$watch('currentFormData.id', function(newVal, oldVal) {
+                $scope.updateEnumerations(newVal);
+            });
+
+            $scope.updateEnumerations = function(variableId) {
+                if (variableId) {
+                    myHttp.get("defineVariable/variableEnumeration/" + variableId).then(function (response) {
+                        $scope.data.enumerations = response.data;
+                    });
+                }
+            };
+
+            // used to change the options for Stored In whenever user switches phenotypic types. Implemented with caching to reduce back end calls
+            $scope.$watch('selectedPhenoType', function(newVal, oldVal) {
+                if (newVal && newVal !== '') {
+                    if (! $scope.cached[newVal]) {
+                        myHttp.get("defineVariable/storedIn", {
+                            params : {
+                                query : true,
+                                phenotypicType : newVal
+                            }
+                        }).then(function(response) {
+                            $scope.data.currentStoredIn = response.data;
+                            $scope.cached[newVal] = response.data;
+                        });
+                    } else {
+                        $scope.data.currentStoredIn = $scope.cached[newVal];
+                    }
+                }
+            });
+
+
+            // used to display a modal window that lists available Property, Scale, or Method, depending on the passed parameter
+            $scope.selectOntology = function (type) {
+                var modalInstance = null;
+                var service = null;
+                var handlerFunction = null;
+                if (type === 'Property') {
+                    service = Properties;
+                    handlerFunction = $scope.setProperty;
+                } else if (type === 'Scale') {
+                    service = Scales;
+                    handlerFunction = $scope.setScale;
+                } else if (type === 'Method') {
+                    service = Methods;
+                    handlerFunction = $scope.setMethod;
+                }
+
+                modalInstance = $modal.open({
+                    templateUrl: 'listModal.html',
+                    controller: 'ListDisplayPaginatedModalController',
+                    resolve: {
+                        label: function () {
+                            return 'Select ' + type;
+                        },
+                        initialItems: function () {
+                            return service.getPagedList(1);
+                        },
+                        RowRetrievalService: function () {
+                            return service;
+                        }
+                    }
+                });
+
+                // define a chain indicating what to do when the modal window has resolved. Handling functions are passed a copy of the selected item in the modal window
+                modalInstance.result.then(handlerFunction).then(function () {
+                    $scope.invalidateData($scope.currentFormData);
+                }).then($scope.performSearchByPMSR);
+            };
+
+            // function that specifies what to do if a user has selected a property from the modal window
+            $scope.setProperty = function (selectedProperty) {
+                $scope.currentFormData.property = selectedProperty.name;
+                $scope.currentFormData.propertyDescription = selectedProperty.definition;
+                $scope.currentFormData.propertyClass = PropertyClassService.getPropertyClassNameByPropertyId(selectedProperty.id);
+            };
+
+            // function that specifies what to do if a user has selected a scale from the modal window
+            $scope.setScale = function (selectedScale) {
+                $scope.currentFormData.scale = selectedScale.name;
+                $scope.currentFormData.scaleDescription = selectedScale.definition;
+            };
+
+            // function that specifies what to do if a user has selected a method from the modal window
+            $scope.setMethod = function (selectedMethod) {
+                $scope.currentFormData.method = selectedMethod.name;
+                $scope.currentFormData.methodDescription = selectedMethod.definition;
+            };
+
+            // used to display a modal window that can be used to display a form for adding a new property, scale, or method
+            $scope.addOntology = function (type) {
+                var modalInstance = null;
+                var cvId;
+                var handlerFunction;
+
+                if (type === 'Property') {
+                    cvId = CV_IDS.property;
+                    handlerFunction = $scope.saveProperty;
+                } else if (type === 'Scale') {
+                    cvId = CV_IDS.scale;
+                    handlerFunction = $scope.saveScale;
+                } else if (type === 'Method') {
+                    cvId = CV_IDS.method;
+                    handlerFunction = $scope.saveMethod;
+                }
+                modalInstance = $modal.open({
+                    templateUrl: 'addTermModal.html',
+                    controller: 'AddOntologyModalController',
+                    resolve: {
+                        label: function () {
+                            return 'Add ' + type;
+                        },
+                        cvId: function () {
+                            return cvId;
+                        }
+                    }
+                });
+
+                // define a chain indicating what to do when the modal window has resolved. Handling functions are passed a copy of form data from the modal window
+                modalInstance.result.then(handlerFunction).then(function () {
+                    $scope.invalidateData($scope.currentFormData);
+                });
+
+            };
+
+            // function that specifies what to do once user has attempted to submit an add property form.
+            $scope.saveProperty = function (data) {
+                Properties.save(data).then(function() {
+                    //success condition
+                    $scope.currentFormData.property = data.name;
+                    $scope.currentFormData.propertyDescription = data.description;
+                    // data.propertyClass returns an ID. A call to PropertyClassService is necessary to get the text String name
+                    $scope.currentFormData.propertyClass = PropertyClassService.getPropertyClassNameById(data.classId);
+                }, function() {
+                    // error condition
+                    alert('Error saving property');
+                });
+            };
+
+            // function that specifies what to do once user has attempted to submit an add scale form.
+            $scope.saveScale = function (data) {
+                Scales.save(data).then(function() {
+                    //success condition
+                    $scope.currentFormData.scale = data.name;
+                    $scope.currentFormData.scaleDescription = data.description;
+                },  function() {
+                    // error condition
+                    alert('Error saving scale');
+                });
+            };
+
+            // function that specifies what to do once user has attempted to submit an add method form.
+            $scope.saveMethod = function (data) {
+                Methods.save(data).then(function() {
+                    //success condition
+                    $scope.currentFormData.method = data.name;
+                    $scope.currentFormData.methodDescription = data.description;
+                }, function() {
+                    // error condition
+                    alert('Error saving method');
+                });
+            };
+
+            $scope.performSearchByName = function() {
+                StandardVariables.find({
+                    searchType : 'name',
+                    name : $scope.data.searchParam
+                }).then(function(data) {
+                    $scope.data.searchResults = data;
+                });
+            };
+
+            $scope.performSearchByPMSR = function() {
+                StandardVariables.find({
+                    searchType : 'PMS',
+                    property : $scope.currentFormData.property,
+                    scale : $scope.currentFormData.scale,
+                    method : $scope.currentFormData.method,
+                    phenoType : $scope.currentFormData.phenotype
+                }).then(function(data) {
+                    $scope.data.searchResults = data;
+                });
+            };
+
+            $scope.selectStandardVariable = function() {
+                var temp = $scope.currentFormData.headerName;
+                var typeTemp = $scope.currentFormData.phenotype;
+                angular.extend($scope.currentFormData, $scope.data.searchResults[$scope.data.selectedStandardVarId]);
+
+                // retain the previous header name and phenotype (phenotype of header should change only due to Step #5
+                $scope.currentFormData.headerName = temp;
+                $scope.currentFormData.phenotype = typeTemp;
+
+                // selected standard variables are from database, so we can assume that they are valid, and their selection should make them confirmed
+                $scope.currentFormData.valid = true;
+                $scope.currentFormData.confirmed = true;
+
+                $scope.currentFormData.propertyClass = PropertyClassService.getPropertyClassNameByPropertyName($scope.currentFormData.property);
+            };
+
+            $scope.invalidateData = function(data) {
+                data.valid = false;
+            };
+
+            $scope.addVariable = function() {
+                var shouldContinue = true;
+                $scope.data.serverMessage = [];
+                if (!$scope.currentFormData.variable || $scope.currentFormData.variable === '') {
+                    $scope.data.serverMessage.push('Variable name is required');
+                shouldContinue = false;
+                                }
+
+                if (!$scope.currentFormData.property || $scope.currentFormData.property === '') {
+                    $scope.data.serverMessage.push('Property is required');
+                    shouldContinue = false;
+                }
+
+                if (!$scope.currentFormData.method || $scope.currentFormData.method === '') {
+                    $scope.data.serverMessage.push('Method is required');
+                    shouldContinue = false;
+                }
+
+                if (!$scope.currentFormData.scale || $scope.currentFormData.scale === '') {
+                    $scope.data.serverMessage.push('Scale is required');
+                    shouldContinue = false;
+                }
+
+                if (!$scope.currentFormData.dataType || $scope.currentFormData.dataType === '') {
+                    $scope.data.serverMessage.push('Data type is required');
+                    shouldContinue = false;
+                }
+
+                if (!$scope.currentFormData.storedInId || $scope.currentFormData.storedInId === '') {
+                    $scope.data.serverMessage.push('Stored in is required');
+                    shouldContinue = false;
+                }
+
+                if (shouldContinue) {
+                    StandardVariables.save($scope.currentFormData).then(function() {
+                        $scope.currentFormData.valid = true;
+                        $scope.currentFormData.confirmed = true;
+                        alert('Standard variable successfully added');
+                    }, function(messageList) {
+                        $scope.data.serverMessage = messageList;
+                    });
+                }
+            };
+
+            $scope.performImport = function() {
+                var forSubmission = [];
+                var shouldContinue = true;
+                angular.forEach($scope.variableData, function(variableDataList, key) {
+                    angular.forEach(variableDataList, function(value, key) {
+                        if (value.valid) {
+                            forSubmission.push(value);
+                        }
+                    })
+                });
+
+                angular.forEach(forSubmission, function(value, key) {
+                    if (shouldContinue && !value.confirmed) {
+                        alert([[#{error.unconfirmed.variable.exists}]]);
+                        shouldContinue = false;
+                    }
+                });
+
+                if (shouldContinue) {
+                    myHttp.post("defineVariable/", forSubmission).then(function(response) {
+                        if (response.data.success) {
+                            window.location.href = response.data.redirectUrl;
+                        } else {
+                            if (response.data.messages) {
+                                $scope.data.serverMessage = response.data.messages;
+                            }
+                        }
+                    }, function(response) {
+                        alert('Problem occurred while sending to server');
+                    });
+                }
+
+            };
+
+            $scope.showMessages = function() {
+                return ($scope.data.serverMessage && $scope.data.serverMessage.length > 0);
+            };
+
+            $scope.disableAddVariable = function() {
+                return $scope.selectedPhenoType === '';
+            }
+        }])
+        .factory('Properties', ['resourceFactory', 'CV_IDS', function (resourceFactory, CV_IDS) {
+            return resourceFactory("defineVariable/ontologyItem/", {
+                cvId: CV_IDS.property
+            });
+        }])
+        .factory('Methods', ['resourceFactory', 'CV_IDS', function (resourceFactory, CV_IDS) {
+            return resourceFactory("defineVariable/ontologyItem/", {
+                cvId: CV_IDS.method
+            });
+        }])
+        .factory('Scales', ['resourceFactory', 'CV_IDS', function (resourceFactory, CV_IDS) {
+            return resourceFactory("defineVariable/ontologyItem/", {
+                cvId: CV_IDS.scale
+            });
+        }])
+        .factory('StandardVariables', ['resourceFactory', function(resourceFactory) {
+            return resourceFactory("defineVariable/standardVariable");
+        }])
+        .controller('AddOntologyModalController', ['$scope', '$modalInstance', 'label', 'cvId', function ($scope, $modalInstance, label, cvId) {
+            // defines functionality available in the modal window for adding a new property, scale, or method
+            $scope.termData = {
+                cvId: cvId
+            };
+
+            $scope.label = label;
+
+            $scope.messages = [];
+
+            $scope.modalInstance = $modalInstance;
+            $scope.formSubmissionAttempted = false;
+
+            $scope.close = function () {
+                $modalInstance.dismiss('Cancelled');
+            }
+        }])
+        .controller('AddOntologyFormController', ['$scope', 'CV_IDS', 'PropertyClassService', function ($scope, CV_IDS, PropertyClassService) {
+
+            $scope.showClassFormFields = function () {
+                return $scope.termData.cvId === CV_IDS.property;
+            };
+
+            if ($scope.showClassFormFields()) {
+                $scope.data = {
+                    availablePropertyClasses : PropertyClassService.getPropertyClasses()
+                };
+            }
+
+            // TODO : standardize on how modal form validation should be accomplished
+            // options : create separate controller object for form, or have manual validation
+            // possible dependent on complexity of situation?
+            $scope.finalizeOntology = function () {
+                $scope.formSubmissionAttempted = true;
+                $scope.messages = [];
+
+                if ($scope.addTermForm.termName.$invalid) {
+                    $scope.messages.push([[#{error.field.required('Name')}]]);
+                }
+
+                if ($scope.addTermForm.classId.$invalid) {
+                    $scope.messages.push([[#{error.field.required('Property Class')}]]);
+                }
+
+                if ($scope.addTermForm.description.$invalid) {
+                    $scope.messages.push([[#{error.field.required('Description')}]]);
+                }
+
+                if ($scope.addTermForm.$valid) {
+                    $scope.modalInstance.close($scope.termData);
+                    $scope.formSubmissionAttempted = false;
+                }
+            };
+
+            $scope.showError = function(formController) {
+                return $scope.formSubmissionAttempted && formController.$invalid;
+            };
+        }])
+        .service('PropertyClassService', ['myHttp', function(myHttp) {
+            // this service provides a stable of way for multiple controllers to share property class data
+            var service =  {
+                propertyClasses : [[${classList}]],
+                temp : [],
+
+                getPropertyClasses : function() {
+                    return service.propertyClasses;
+                },
+
+                getPropertyClassNameById : function(id) {
+                    if (service.temp.length === 0) {
+                        angular.forEach(service.propertyClasses, function (value, key) {
+                            service.temp[value.id] = value;
+                        });
+                    }
+                    return service.temp[id].name;
+                },
+
+                getPropertyClassNameByPropertyId : function (propertyId) {
+                    return myHttp.get("defineVariable/propertyClass/" + propertyId)
+                            .then(function(response) {
+                                return response.data.value;
+                            })
+                },
+
+                getPropertyClassNameByPropertyName : function (propertyName) {
+                    return myHttp.get("defineVariable/propertyClass/", {
+                        params : {
+                            byName : true,
+                            propertyName : propertyName
+                        }
+                    } )
+                        .then(function(response) {
+                            return response.data.value;
+                            })
+                }
+
+            };
+
+            return service;
+        }]);
+
+//]]>
+</script>
+
+</div>
+
+</body>
+
+</html>

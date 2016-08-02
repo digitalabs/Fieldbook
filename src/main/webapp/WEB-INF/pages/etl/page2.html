@@ -1,0 +1,8 @@
+<div class="span12" xmlns:th="http://www.thymeleaf.org">
+	<p th:text="${message}"></p>
+	<select th:field="*{mySheets}">
+	   <option th:each="sheet : ${mySheets}" 
+	          th:value="${mySheets}" 
+	          th:text="${mySheets}"></option>
+	</select>
+</div>

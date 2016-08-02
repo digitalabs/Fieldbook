@@ -226,11 +226,12 @@ function showCorrectLocationCombo() {
 			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
 		}
 
-        //In case of trial we have to set selected location
-        if(!isNursery()){
-            setSelectedLocation();
-        }
 	}
+
+	//In case of trial we have to set selected location
+    if(!isNursery()){
+        setSelectedLocation();
+    }
 }
 
 function showCorrectMethodCombo() {

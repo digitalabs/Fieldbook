@@ -8,7 +8,8 @@
                 <div class="modal-body" id="chooseListOwnerModalBody">
                     <div class="row form-group">
                         <div class="col-xs-11 col-md-11">
-                            <label class="modal-title fbk-modal-title" id="heading-modal">Choose List Owner</label>
+                            <label class="modal-title fbk-modal-title" id="heading-modal"
+                                   th:text="#{choose.user.list.owner.header}">Choose List Owner</label>
                         </div>
                         <div class="col-xs-1 col-md-1">
                             <button id="close" type="button"
@@ -18,7 +19,7 @@
                     </div>
                     <div class="row form-group add_top_padding">
                         <div class="col-xs-6 col-md-6 text-right">
-                            <span class="label-bold">Select cross list owner</span>
+                            <span class="label-bold" th:text="#{choose.user.select.list.owner}">Select cross list owner</span>
                         </div>
                         <div class="col-xs-6 col-md-6 text-left">
                             <select id="listOwner" class="long-dropdown fbk-choose-list-owner" ng-model="selectedUserId"

@@ -1,0 +1,8 @@
+<table class="table table-bordered table-striped table-hover table-modal-content" data:page-info="${pageInfos.size()}">
+    <tr th:each="row,iterationStatus : ${rowList}"
+        th:onclick="${clickFunction} + '(&quot;' + ${row.rowIndex} + '&quot;, &quot;' + ${row.rowContent} + '&quot;)'"
+            >
+        <td th:text="${row.rowContent}">Text here</td>
+    </tr>
+</table>
+

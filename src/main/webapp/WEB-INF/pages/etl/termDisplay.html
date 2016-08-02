@@ -1,0 +1,19 @@
+<table class="table table-bordered table-striped table-hover table-modal-content" data:page-info="${pageCount}">
+    <thead>
+    <tr>
+        <td>Name</td>
+        <td>Definition</td>
+    </tr>
+    </thead>
+
+    <tr th:onclick="${clickFunction} + '(&quot;&quot;)'">
+        <td>Empty</td>
+        <td>Empty</td>
+    </tr>
+
+    <tr th:each="term,iterationStatus : ${termList}"
+        th:onclick="${clickFunction} + '(&quot;' + ${term.name} + '&quot;, &quot;' + ${term.id} + '&quot;, &quot;' + ${term.definition} + '&quot;)'">
+        <td th:text="${term.name}">Text here</td>
+        <td th:text="${term.definition}">Description here</td>
+    </tr>
+</table>

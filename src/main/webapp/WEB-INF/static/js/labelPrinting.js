@@ -88,7 +88,7 @@ LabelPrinting = {
 			var selectedPreset = LabelPrinting.getSelectedPreset();
 
 			if (selectedPreset.length > 1 && LabelPrinting.TYPES.PROGRAM.toString() === selectedPreset[0]) {
-				var presetNameInput = $safeId('input[name=userLabelPrinting.settingsName]').val();
+				var presetNameInput = $("#savedSettings").children("option").filter(":selected").text();
 
 				var deleteModalElm = $('#fbk-lbl-printing-delete-preset-confirm');
 				var deleteModalDialogTxtElm = deleteModalElm.find('.modal-dialog-text');

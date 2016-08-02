@@ -39,7 +39,23 @@ var ImportCrosses = {
 			$('#openCrossesListModal').data('hasPlotDuplicate', resp.hasPlotDuplicate);
 			// show review crosses page
 			ImportCrosses.isFileCrossesImport = true;
-			setTimeout(ImportCrosses.openCrossesList, 500);
+			if (resp.isChoosingListOwnerNeeded) {
+				$('#chooseListOwner').one('shown.bs.modal', function() {
+                	$('body').addClass('modal-open');
+                }).modal({ backdrop: 'static', keyboard: true });
+                $('#chooseListOwner').addClass('import-crosses-from-file');
+
+                $('#chooseListOwnerNextButton').on('click', function() {
+                    if (ImportCrosses.isFileCrossesImport) {
+                        $('#crossSettingsModal').addClass('import-crosses-from-file');
+                    }
+                    $('#chooseListOwner').modal('hide');
+                    setTimeout(ImportCrosses.openCrossesList, 500);
+                });
+
+			} else {
+				setTimeout(ImportCrosses.openCrossesList, 500);
+			}
 
 		});
 

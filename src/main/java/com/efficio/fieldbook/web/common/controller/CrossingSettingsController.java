@@ -26,8 +26,12 @@ import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.manager.api.UserDataManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +74,7 @@ public class CrossingSettingsController extends SettingsController {
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
 	private static final String IS_SUCCESS = "isSuccess";
 	private static final String HAS_PLOT_DUPLICATE = "hasPlotDuplicate";
+	public static final String CHOOSING_LIST_OWNER_NEEDED = "isChoosingListOwnerNeeded";
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -97,6 +102,12 @@ public class CrossingSettingsController extends SettingsController {
 
 	@Resource
 	private CrossesListUtil crossesListUtil;
+
+	@Resource
+	private WorkbenchDataManager workbenchDataManager;
+
+	@Resource
+	private UserDataManager userDataManager;
 
 	/**
 	 * The germplasm list manager.
@@ -287,6 +298,13 @@ public class CrossingSettingsController extends SettingsController {
 				resultsMap.put("warnings", parseResults.getWarningMessages());
 			}
 
+			// if no User is set we need to ask the User for the input via chooseUser modal dialog
+			if (parseResults.getUserId() == null) {
+				resultsMap.put(CrossingSettingsController.CHOOSING_LIST_OWNER_NEEDED, 1);
+			} else {
+				resultsMap.put(CrossingSettingsController.CHOOSING_LIST_OWNER_NEEDED, 0);
+			}
+
 		} catch (final FileParsingException e) {
 			CrossingSettingsController.LOG.error(e.getMessage(), e);
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 0);
@@ -318,6 +336,42 @@ public class CrossingSettingsController extends SettingsController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/getCurrentProgramMembers", method = RequestMethod.GET, produces = "application/json")
+	public Map<String, Person> getCurrentProgramMembers() {
+		// we need to convert Integer to String because angular doest work with numbers as options for select
+		final Map<String, Person> currentProgramMembers = new HashMap<>();
+		final Long projectId = this.workbenchDataManager.getProjectByUuid(this.getCurrentProgramID()).getProjectId();
+		final Map<Integer, Person> programMembers = this.workbenchDataManager.getPersonsByProjectId(projectId);
+		for (final Map.Entry<Integer, Person> member : programMembers.entrySet()) {
+			currentProgramMembers.put(String.valueOf(member.getKey()), member.getValue());
+		}
+		return currentProgramMembers;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getCurrentUser", method = RequestMethod.GET)
+	public String getCurrentWorkbenchUser() {
+		return String.valueOf(this.contextUtil.getCurrentWorkbenchUserId());
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/submitListOwner", method = RequestMethod.POST)
+	public Map<String, Object> submitListOwner(@RequestBody final String workbenchUserId) {
+		final Map<String, Object> returnVal = new HashMap<>();
+		final int workbenchUID;
+		try {
+			workbenchUID = Integer.parseInt(workbenchUserId);
+		} catch (final Exception e){
+			throw new IllegalStateException("Could not associate User id with the list.");
+		}
+
+		final Integer userId = this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), workbenchUID);
+		this.studySelection.getImportedCrossesList().setUserId(userId);
+		returnVal.put(CrossingSettingsController.SUCCESS_KEY, 1);
+		return returnVal;
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList/{createdCrossesListId}", method = RequestMethod.GET)
 	public Map<String, Object> getImportedCrossesList(@PathVariable final String createdCrossesListId) {
 
@@ -338,7 +392,8 @@ public class CrossingSettingsController extends SettingsController {
 
 			if (importedCross.getGid() == null) {
 				throw new IllegalStateException(
-						"Cross germplsam record must already exist in database when using crossing manager to create crosses in Nurseries.");
+						"Cross germplasm record must already exist in database when using crossing manager to create crosses in Nurseries"
+								+ ".");
 			}
 			importedCrosses.add(importedCross);
 		}

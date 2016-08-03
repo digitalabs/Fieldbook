@@ -17,6 +17,8 @@ public class DuplicatesUtilTest {
 	 * This will build required test data and assert each imported crosses.
 	 * Each Imported crosses should have valid duplicate string.
 	 * Ex. For EntryId=1, Plot Dupe: 15 | Pedigree Dupe: 12, 13 | Pedigree Recip: 10, 14
+	 * 
+	 * SEE src/test/resources/DowntonDupesRecipsResults.png for explanation of test case
 	 */
 	@Test
 	public void testProcessDuplicates() {
@@ -33,61 +35,29 @@ public class DuplicatesUtilTest {
 		for (ImportedCrosses importedCrosses : parseResults.getImportedCrosses()) {
 			switch (entryId) {
 				case 1:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PEDIGREE_RECIP_PREFIX + "10, 14", importedCrosses.getDuplicate());
+					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "2" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "5" + pipeCharacter +
+							ImportedCrosses.PLOT_RECIP_PREFIX + "3", importedCrosses.getDuplicate());
 					break;
 				case 2:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PEDIGREE_RECIP_PREFIX + "10, 14", importedCrosses.getDuplicate());
-					break;
+					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "1" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "5" + pipeCharacter +
+							ImportedCrosses.PLOT_RECIP_PREFIX + "3", importedCrosses.getDuplicate());
+				break;
 				case 3:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PEDIGREE_RECIP_PREFIX + "10, 14", importedCrosses.getDuplicate());
-					break;
+					Assert.assertEquals(ImportedCrosses.PLOT_RECIP_PREFIX + "1, 2"+ pipeCharacter + ImportedCrosses.PEDIGREE_RECIP_PREFIX + "5", importedCrosses.getDuplicate());
+				break;
 				case 4:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PEDIGREE_RECIP_PREFIX + "10, 14", importedCrosses.getDuplicate());
+					Assert.assertEquals(ImportedCrosses.PEDIGREE_DUPE_PREFIX + "6" + pipeCharacter + ImportedCrosses.PEDIGREE_RECIP_PREFIX + "7", importedCrosses.getDuplicate());
 					break;
 				case 5:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PLOT_RECIP_PREFIX + "6" + pipeCharacter + ImportedCrosses.PEDIGREE_RECIP_PREFIX + "11", importedCrosses.getDuplicate());
+					Assert.assertEquals(ImportedCrosses.PEDIGREE_DUPE_PREFIX + "1, 2" + pipeCharacter + ImportedCrosses.PEDIGREE_RECIP_PREFIX + "3", importedCrosses.getDuplicate());
 					break;
 				case 6:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PLOT_RECIP_PREFIX + "5", importedCrosses.getDuplicate());
+					Assert.assertEquals(ImportedCrosses.PEDIGREE_DUPE_PREFIX + "4" + pipeCharacter + ImportedCrosses.PLOT_RECIP_PREFIX + "7", importedCrosses.getDuplicate());
 					break;
 				case 7:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PEDIGREE_RECIP_PREFIX + "10, 14", importedCrosses.getDuplicate());
+					Assert.assertEquals(ImportedCrosses.PLOT_RECIP_PREFIX + "6" + pipeCharacter + ImportedCrosses.PEDIGREE_RECIP_PREFIX + "4", importedCrosses.getDuplicate());
 					break;
-				case 8:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PEDIGREE_RECIP_PREFIX + "9", importedCrosses.getDuplicate());
-					break;
-				case 9:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PEDIGREE_RECIP_PREFIX + "8", importedCrosses.getDuplicate());
-					break;
-				case 10:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PEDIGREE_RECIP_PREFIX + "1, 2, 3, 4, 7", importedCrosses.getDuplicate());
-					break;
-				case 11:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PEDIGREE_RECIP_PREFIX + "5", importedCrosses.getDuplicate());
-					break;
-				case 12:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "13" + pipeCharacter +
-							ImportedCrosses.PLOT_RECIP_PREFIX + "13", importedCrosses.getDuplicate());
-					break;
-				case 13:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12" + pipeCharacter +
-							ImportedCrosses.PLOT_RECIP_PREFIX + "12", importedCrosses.getDuplicate());
-					break;
-				case 14:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "15" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13" + pipeCharacter +
-							ImportedCrosses.PEDIGREE_RECIP_PREFIX + "1, 2, 3, 4, 7", importedCrosses.getDuplicate());
-					break;
+
 				default:
 					Assert.assertEquals(ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13", importedCrosses.getDuplicate());
 			}
@@ -101,21 +71,10 @@ public class DuplicatesUtilTest {
 	 */
 	private Map<String, String> createPlotNoToGidTestData() {
 		Map<String, String> plotNoToGidTestData = new HashMap<String, String>();
-		plotNoToGidTestData.put("1", "1");
-		plotNoToGidTestData.put("2", "1");
-		plotNoToGidTestData.put("3", "3");
-		plotNoToGidTestData.put("4", "3");
-		plotNoToGidTestData.put("5", "5");
-		plotNoToGidTestData.put("6", "6");
-		plotNoToGidTestData.put("7", "3");
-		plotNoToGidTestData.put("8", "4");
-		plotNoToGidTestData.put("9", "4");
-		plotNoToGidTestData.put("10", "1");
-		plotNoToGidTestData.put("11", "2");
-		plotNoToGidTestData.put("12", "1");
-		plotNoToGidTestData.put("13", "2");
-		plotNoToGidTestData.put("14", "1");
-		plotNoToGidTestData.put("15", "6");
+		plotNoToGidTestData.put("1", "Cora");
+		plotNoToGidTestData.put("8", "MrCarson");
+		plotNoToGidTestData.put("11", "LadyMary");
+		plotNoToGidTestData.put("16", "MrCarson");
 		return plotNoToGidTestData;
 	}
 
@@ -127,53 +86,37 @@ public class DuplicatesUtilTest {
 	 */
 	private ImportedCrossesList createImportedCrossesListTestData(Map<String, String> plotNoToGidTestData) {
 		ImportedCrossesList importedCrossesList = new ImportedCrossesList();
-		for (int i = 1; i <= 15; i++) {
+		for (int i = 1; i <= 7; i++) {
 			String femalePlotNo = Integer.toString(i);
 			String malePlotNo = Integer.toString(i);
 			switch (i) {
 				case 1:
-				case 2:
-					femalePlotNo = "3";
-					break;
-				case 3:
-					femalePlotNo = "4";
-					malePlotNo = "2";
-					break;
-				case 4:
+					femalePlotNo = "16";
 					malePlotNo = "1";
 					break;
+				case 2:
+					femalePlotNo = "16";
+					malePlotNo = "1";
+					break;
+				case 3:
+					femalePlotNo = "1";
+					malePlotNo = "16";
+					break;
+				case 4:
+					femalePlotNo = "16";
+					malePlotNo = "11";
+					break;
 				case 5:
-					malePlotNo = "6";
+					femalePlotNo = "8";
+					malePlotNo = "1";
 					break;
 				case 6:
-					malePlotNo = "5";
+					femalePlotNo = "8";
+					malePlotNo = "11";
 					break;
 				case 7:
-					malePlotNo = "12";
-					break;
-				case 8:
-					femalePlotNo = "13";
-					break;
-				case 9:
-					malePlotNo = "11";
-					break;
-				case 10:
-					malePlotNo = "7";
-					break;
-				case 11:
-					femalePlotNo = "15";
-					malePlotNo = "5";
-					break;
-				case 12:
-					femalePlotNo = "13";
-					malePlotNo = "11";
-					break;
-				case 13:
 					femalePlotNo = "11";
-					malePlotNo = "13";
-					break;
-				case 14:
-					malePlotNo = "7";
+					malePlotNo = "8";
 					break;
 
 			}
@@ -181,8 +124,8 @@ public class DuplicatesUtilTest {
 			String maleGid = plotNoToGidTestData.get(malePlotNo);
 			String femaleStudyName = "FNursery";
 			String maleStudyName = "MNursery";
-			String femaleDesig = "DESIG" + femaleGid;
-			String maleDesig = "DESIG" + maleGid;
+			String femaleDesig = femaleGid;
+			String maleDesig = maleGid;
 			String source = femaleStudyName + ":" + i + " " + DuplicatesUtil.SEPARATOR + " " + maleStudyName + ":" + (i + 10);
 			importedCrossesList.addImportedCrosses(this.createImportedCrossesTestData(femaleDesig, maleDesig, femaleGid, maleGid, i,
 					source, femalePlotNo, malePlotNo));

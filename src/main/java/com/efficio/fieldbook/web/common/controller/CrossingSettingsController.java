@@ -277,7 +277,7 @@ public class CrossingSettingsController extends SettingsController {
 		try {
 			final ImportedCrossesList parseResults = this.crossingService.parseFile(form.getFile());
 			// 2. Process duplicates and set to ImportedCrossesList
-			DuplicatesUtil.processDuplicates(parseResults);
+			DuplicatesUtil.processDuplicatesAndReciprocals(parseResults);
 			// 3. Store the crosses to study selection if all validated
 
 			this.studySelection.setImportedCrossesList(parseResults);

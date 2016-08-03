@@ -25,7 +25,7 @@ public class DuplicatesUtilTest {
 
 		Debug.println("BEFORE: ");
 		this.debugTestData(parseResults);
-		DuplicatesUtil.processDuplicates(parseResults);
+		DuplicatesUtil.processDuplicatesAndReciprocals(parseResults);
 		Debug.println("AFTER: ");
 		this.debugTestData(parseResults);
 		int entryId = 1;

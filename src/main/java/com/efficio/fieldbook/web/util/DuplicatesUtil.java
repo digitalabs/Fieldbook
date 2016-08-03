@@ -19,7 +19,7 @@ public class DuplicatesUtil {
 		// private constructor for utility class
 	}
 
-	public static void processDuplicates(ImportedCrossesList parseResults) {
+	public static void processDuplicatesAndReciprocals(ImportedCrossesList parseResults) {
 		if (parseResults != null) {
 			DuplicatesUtil.detectDuplicationsAndReciprocalsFromImportedCrosses(parseResults);
 		}

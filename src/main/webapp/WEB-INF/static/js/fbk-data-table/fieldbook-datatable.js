@@ -532,7 +532,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 		https://datatables.net/reference/option/columnDefs*/
 		columnsDef = [
 				{
-					targets: [-2,-3,-4,-5,-7,-9],
+					targets: [-2,-3,-4,-5,-7],
 					visible: isImport
 				},
 			],

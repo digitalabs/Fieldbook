@@ -724,17 +724,6 @@ function toggleDropdownImportStudy(allCheckId, comboId, favoriteCheckId, suffix,
 
 }
 
-//method checkbox selection
-function checkMethodFavorite(){	
-	if ($.parseJSON($('#possibleValuesFavoriteJson0').text()).length > 1) {
-		$('#' + getJquerySafeId('study-level-method-checkbox')).prop( 'checked', true );
-		toggleMethodDropdown(0);
-	}
-	else{
-		$('#' + getJquerySafeId('study-level-method-checkbox')).prop( 'checked', false );
-	}
-}
-
 function toggleMethodDropdown(rowIndex) {
 	var possibleValues;
 	var showFavorite = $('#' + getJquerySafeId('study-level-method-checkbox')).is(':checked');
@@ -2046,14 +2035,20 @@ function checkFavoritesIfValIsAFavorite(rowIndex) {
 	var valueOfDropdown = parseInt($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).val(), 10);
 	var possibleValuesElm = $('#possibleValuesFavoriteJson' + rowIndex);
 	var possibleValuesFavoriteArr = $.parseJSON(possibleValuesElm.text());
+	
+	if (valueOfDropdown) {
+		$('.filter_selectors_' + rowIndex).prop("checked", false);
+		$('.filter_selectors_all_' + rowIndex).prop("checked", true);
+		return;
+	}
 
 	if ('' === possibleValuesElm.text().trim()) {
 		return false;
 	}
-	if (possibleValuesFavoriteArr !== null) {
+	if (possibleValuesFavoriteArr) {
 		$.each(possibleValuesFavoriteArr, function(index, val) {
-			if (val.id === valueOfDropdown || possibleValuesFavoriteArr.length > 0) {
-				$('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.favorite1')).click();
+			if (val.id > 0) {
+				$('[name="' + getJquerySafeId('studyLevelVariables[' + rowIndex + '].favorite') + '"]').click();
 				return false;
 			}
 		});

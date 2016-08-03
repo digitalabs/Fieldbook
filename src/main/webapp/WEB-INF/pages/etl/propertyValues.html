@@ -1,0 +1,18 @@
+<table class="table table-bordered table-striped table-hover">
+    <tr th:each="value,iterationStatus : ${dataList}"
+        th:onclick="${clickFunction} + '(&quot;' + ${value} + '&quot;)'"
+            >
+        <td th:text="${value}">Text here</td>
+    </tr>
+</table>
+
+<div class="text-center">
+	<ul class="pagination">
+		<li th:each="pageInfo : ${pageInfos}">
+	            <a th:text="${pageInfo.pageNumber}"
+	               th:href="${pageInfo.pageClickFunction}">Number</a>
+	    </li>
+    </ul>
+</div>
+
+<!-- pagination //-->

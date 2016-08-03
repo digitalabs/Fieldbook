@@ -88,7 +88,7 @@ LabelPrinting = {
 			var selectedPreset = LabelPrinting.getSelectedPreset();
 
 			if (selectedPreset.length > 1 && LabelPrinting.TYPES.PROGRAM.toString() === selectedPreset[0]) {
-				var presetNameInput = $safeId('input[name=userLabelPrinting.settingsName]').val();
+				var presetNameInput = $("#savedSettings").children("option").filter(":selected").text();
 
 				var deleteModalElm = $('#fbk-lbl-printing-delete-preset-confirm');
 				var deleteModalDialogTxtElm = deleteModalElm.find('.modal-dialog-text');
@@ -518,10 +518,10 @@ LabelPrinting = {
 
 		}
 		var data = $safeId('#userLabelPrinting.filename').val();
-		var isValid = /[:\\\\/*?|<>]*$/i.test(data);
+		var isValid = /^[^\\\/\:\*\?\"\<\>\|\.]+$/.test(data);
 
 		if (!isValid) {
-			showInvalidInputMessage(filenameErrorCharacter);
+			showInvalidInputMessage(filenameIsInvalid);
 			moveToTopScreen();
 			return false;
 		}
@@ -541,11 +541,16 @@ LabelPrinting = {
 
 		var formElm = $('#specifyLabelDetailsForm');
 		$('#customReport').val(isCustomReport);
+		
 		if (isCustomReport) {
 			LabelPrinting.updateAdditionalLabelSettingsFormDetails(type);
 			LabelPrinting.proceedExport(formElm);
 		} else {
-
+			if ($safeId('input[name=userLabelPrinting.filename]').val().length >= 100  ) {
+				showErrorMessage('', 'File name should not exceed 100 characters');
+				return false;
+			}
+			
 			var selectedPreset = LabelPrinting.getSelectedPreset();
 
 			if (selectedPreset.length == 0) {

@@ -1,0 +1,35 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="etl/base-template">
+  <head>
+    <title>Import Success</title>
+      <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+      <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+      <!--[if lt IE 9]>
+      <script th:src="@{/static/js/html5shiv.js}" type="text/javascript"></script>
+      <script th:src="@{/static/js/respond.min.js}" type="text/javascript"></script>
+      <![endif]-->
+
+
+  </head>
+  <body>
+
+<section layout:fragment="content">
+
+	<div class="content-header">
+		<h2>
+            Import Success!
+		</h2>
+
+	</div>
+
+	 <div class="alert alert-success" id="page-message">
+		<h3>Import is successful! You may now close this page or go back to the <a href='../fileUpload'>upload page</a>.</h3>
+ 	</div>
+
+</section>
+  
+</body>
+
+</html>

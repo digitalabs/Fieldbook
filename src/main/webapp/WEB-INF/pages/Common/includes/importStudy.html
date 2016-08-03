@@ -434,6 +434,7 @@ function doSaveImportedData() {
 
 			if (isNursery()) {
 				doRefreshNurserySettings();
+				updateMeasurementDataExistingValue(!hasMeasurementData());
 				displayEditFactorsAndGermplasmSection();
 			} else {
 				displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
@@ -451,7 +452,7 @@ function doMeasurementsReload(hasDataOverwrite) {
 			$('#measurementsDiv').html(html);
 			$('.fbk-discard-imported-data').removeClass('fbk-hide');
 			if (hasDataOverwrite === '1') {
-				showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage);
+				showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
 			} else {
 				showSuccessfulMessage('', importSuccessReminderToSaveMessage);
 			}
@@ -568,7 +569,7 @@ function showDesignationConfirmationMessage() {
 function showDesigConfirmation(hasDataOverwrite) {
 	'use strict';
 	if (hasDataOverwrite === '1') {
-		showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage);
+		showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
 	}
 
 	$('#importStudyModal').modal('hide');

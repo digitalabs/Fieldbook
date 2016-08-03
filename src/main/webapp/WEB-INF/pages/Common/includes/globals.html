@@ -10,7 +10,7 @@
 	addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
 	addSelectionVariates = /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
 	addNurseryConditions = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
-	addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/ '',
+	addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/ '', 
 	addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/ '',
 	reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
 	reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
@@ -91,11 +91,9 @@
 	idNameVariables = /*[[${T(com.efficio.fieldbook.web.util.AppConstants).ID_NAME_COMBINATION.getString()}]]*/ '',
 	idCodeNameCombination = /*[[${T(com.efficio.fieldbook.web.util.AppConstants).ID_CODE_NAME_COMBINATION_STUDY.getString()+","+T(com.efficio.fieldbook.web.util.AppConstants).ID_CODE_NAME_COMBINATION_VARIATE.getString()}]]*/ '',
 	saveSuccessMessage = /*[[#{common.form.save.successful.text}]]*/ '',
-	measurementWarningNeedGenExpDesign = /*[[#{experiment.design.measurements.warning}]]*/ '',
 	unpairedTreatmentFactor = /*[[#{treatment.factor.invalid.unpaired}]]*/ '',
 	invalidTreatmentFactorPair = /*[[#{treatment.factor.invalid.usedpair}]]*/ '',
 	unsavedTreatmentFactor = /*[[#{treatment.factor.invalid.unsaved}]]*/ '',
-	measurementsTraitsChangeWarning = /*[[#{trial.measurement.traits.changes.warning}]]*/ '',
 	modalConfirmationTitle = /*[[#{common.form.confirmation.text}]]*/ '',
 	environmentModalConfirmationText = /*[[#{trial.change.environment.confirmation}]]*/ '',
 	measurementModalConfirmationText = /*[[#{nursery.edit.nursery.confirm.delete.variate}]]*/ '',
@@ -123,6 +121,7 @@
 	selectedFieldsError = /*[[#{label.printing.selected.fields.error}]]*/ '',
 	trialInstanceRequired = /*[[#{fieldmap.no.selected.trial.instance}]]*/ '',
 	filenameErrorCharacter = /*[[#{label.printing.filename.fields.error.character}]]*/ '',
+	filenameIsInvalid = /*[[#{label.printing.filename.fields.error.invalid}]]*/ '',
 	standardVariableMaxLength = /*[[${T(com.efficio.fieldbook.web.util.AppConstants).STANDARD_VARIABLE_NAME_LIMIT.getInt()}]]*/ '',
 	variableNoValidValueNotification = /*[[#{common.warning.variable.no.valid.values}]]*/ '',
 	redirectErrorMessage = /*[[${redirectErrorMessage}]]*/ '',
@@ -192,7 +191,9 @@
 	folderNameAlreadyExistsNewNursery = /*[[#{folder.name.already.exists.new.nursery}]]*/ '',
 	studyNameAlreadyExistsNewNursery = /*[[#{study.name.already.exists.new.nursery}]]*/ '',
 	folderNameAlreadyExistsNewTrial = /*[[#{folder.name.already.exists.new.trial}]]*/ '',
-	studyNameAlreadyExistsNewTrial = /*[[#{study.name.already.exists.new.trial}]]*/ '';
+	studyNameAlreadyExistsNewTrial = /*[[#{study.name.already.exists.new.trial}]]*/ '',
+    crossingSettingsSaved = /*[[#{study.import.crosses.settings.saved}]]*/ '',
+    stockIdGenerationPrefixError = /*[[#{stock.generate.id.breeder.identifier.error.numbers.found}]]*/ '',
 	addEnvironmentsImportDesignWarning = /*[[#{trial.add.environments.import.design.warning}]]*/ '',
 	addEnvironmentsImportDesignMessage = /*[[#{trial.add.environments.import.design.message}]]*/ '';
 
@@ -209,6 +210,12 @@
 	$.fieldbookMessages.errorNoParentageDesignationSeparator = /*[[#{error.no.parentage.designation.separator}]]*/ '';
 	$.fieldbookMessages.advanceListUnableToGenerateWarningMessage = /*[[#{trial.advance.trial.must.contain.EXPT_DESIGN.variable}]]*/ '';
 	$.fieldbookMessages.determinedFromParentalLines = /*[[#{nursery.crosses.method.determined.from.parental.lines}]]*/ '';
+    $.fieldbookMessages.errorMethodMissing = /*[[#{nursery.import.method.missing}]]*/ '';
+	$.fieldbookMessages.measurementWarningNeedGenExpDesign = /*[[#{experiment.design.measurements.warning}]]*/ '',
+	$.fieldbookMessages.measurementsTraitsChangeWarning = /*[[#{trial.measurement.traits.changes.warning}]]*/ '',
+	$.fieldbookMessages.errorServerError = /*[[#{common.error.server.error}]]*/ '';
+	$.fieldbookMessages.errorDesignGenerationFailed = /*[[#{common.design.generation.failed}]]*/ '';
+	$.fieldbookMessages.showFavoriteLocationHeader = /*[[#{show.favorite.location.header}]]*/ '';
 
     // Measurement observation messages
     window.measurementObservationMessages = {

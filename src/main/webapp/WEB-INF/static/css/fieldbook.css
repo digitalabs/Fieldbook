@@ -1865,6 +1865,10 @@ td.accepted-value {
 .fbk-left-padding{
 	padding-left: 10px;
 }
+.fbk-filter-header {
+	font-weight: bold;
+	padding-right: 1em;
+}
 
 .short-dropdown {
     width:100px;
@@ -1894,6 +1898,12 @@ td.accepted-value {
 }
 input.review-select-all{
 	margin-left: 52px;
+}
+
+input.select-all-margin{
+    margin-right: 10px;
+    margin-top: 15px;
+    margin-left: 15px;
 }
 
 .vertical-spacer {

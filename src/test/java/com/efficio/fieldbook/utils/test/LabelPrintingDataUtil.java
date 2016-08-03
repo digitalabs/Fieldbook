@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -25,6 +24,7 @@ import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.google.common.collect.Maps;
 
 /**
  * The Class SettingsUtil.
@@ -97,7 +97,7 @@ public class LabelPrintingDataUtil {
 
 		return fieldMapInfoList;
 	}
-
+	
 	public static UserLabelPrinting createUserLabelPrinting(final String type) {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 
@@ -122,21 +122,21 @@ public class LabelPrintingDataUtil {
 			userLabelPrinting.setRightSelectedLabelFields(LabelPrintingDataUtil.RIGHT_LABEL_FIELDS);
 			userLabelPrinting.setMainSelectedLabelFields("");
 
-			userLabelPrinting.setFilenameDL(LabelPrintingDataUtil.FILE_NAME_DL_PDF);
+			userLabelPrinting.setFilenameWithExtension(LabelPrintingDataUtil.FILE_NAME_DL_PDF);
 			userLabelPrinting.setFilenameDLLocation(LabelPrintingDataUtil.FILE_NAME_DDL_PDF);
 		} else if (type.equals(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
 			userLabelPrinting.setLeftSelectedLabelFields("");
 			userLabelPrinting.setRightSelectedLabelFields("");
 			userLabelPrinting.setMainSelectedLabelFields(LabelPrintingDataUtil.MAIN_LABEL_FIELDS);
 
-			userLabelPrinting.setFilenameDL(LabelPrintingDataUtil.FILE_NAME_DL_XLS);
+			userLabelPrinting.setFilenameWithExtension(LabelPrintingDataUtil.FILE_NAME_DL_XLS);
 			userLabelPrinting.setFilenameDLLocation(LabelPrintingDataUtil.FILE_NAME_DDL_XLS);
 		} else {
 			userLabelPrinting.setLeftSelectedLabelFields("");
 			userLabelPrinting.setRightSelectedLabelFields("");
 			userLabelPrinting.setMainSelectedLabelFields(LabelPrintingDataUtil.MAIN_LABEL_FIELDS);
 
-			userLabelPrinting.setFilenameDL(LabelPrintingDataUtil.FILE_NAME_DL_CSV);
+			userLabelPrinting.setFilenameWithExtension(LabelPrintingDataUtil.FILE_NAME_DL_CSV);
 			userLabelPrinting.setFilenameDLLocation(LabelPrintingDataUtil.FILE_NAME_DDL_CSV);
 		}
 

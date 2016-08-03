@@ -117,6 +117,8 @@
 					cell.data(newEntryNo);
 				}
 				dataTable.fnDraw();
+				var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
+				trialManager.updateStartingEntryNoCount($.trim($('#txtStartingEntryNo').val()));
 			},
 			validateEntryAndPlotNo: function(inputNo) {
 				var validNo = '^(?=.*[1-9].*)[0-9]{1,5}$';

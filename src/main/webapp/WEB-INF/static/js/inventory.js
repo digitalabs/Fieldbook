@@ -163,11 +163,13 @@ function initializePossibleValuesComboInventory(possibleValues, name, showAllLoc
 
 				query.callback(data);
 			}
-		}).on('change', function() {
-			if ($('#' + getJquerySafeId('inventoryLocationId')).length !== 0) {
-				$('#' + getJquerySafeId('inventoryLocationId')).val($('#' + getJquerySafeId('inventoryLocationIdFavorite')).select2('data').id);
-			}
-		});
+		}).on(
+			'change',
+			function() {
+				if ($('#' + getJquerySafeId('inventoryLocationId')).length !== 0) {
+					$('#' + getJquerySafeId('inventoryLocationId')).val($(name).select2('data').id);
+				}
+			});
 	}
 
 	if (defaultJsonVal != null) {
@@ -190,26 +192,53 @@ function displayAdvanceGermplasmDetails(listId) {
 function showCorrectLocationInventoryCombo() {
 	'use strict';
 	var isChecked = $('#showFavoriteLocationInventory').is(':checked');
-	//if show favorite location is checked, hide all field locations, else, show only favorite locations
-	if (isChecked) {
-		$('#s2id_inventoryLocationIdFavorite').show();
-		$('#s2id_inventoryLocationIdAll').hide();
-		if ($('#' + getJquerySafeId('inventoryLocationIdFavorite')).select2('data') != null) {
-			$('#' + getJquerySafeId('inventoryLocationId')).val($('#' + getJquerySafeId('inventoryLocationIdFavorite')).select2('data').id);
+	var seedStorageLocations = $('#showSeedStorageLocationInventory').is(':checked');
+	var allLocations = $('#showAllLocationInventory').is(':checked');
 
-		} else {
-			$('#' + getJquerySafeId('inventoryLocationId')).val(0);
+	// if show favorite location is checked, hide all field locations, else, show only favorite locations
+	$('#s2id_inventoryLocationIdFavorite').hide();
+	$('#s2id_inventoryLocationIdAll').hide();
+	$('#s2id_inventoryLocationIdSeedStorage').hide();
+	$('#s2id_inventoryLocationIdFavoriteSeedStorage').hide();
+	if (isChecked){
+		if(seedStorageLocations) {
+			$('#s2id_inventoryLocationIdFavoriteSeedStorage').show();
+			if ($('#' + getJquerySafeId('inventoryLocationIdFavoriteSeedStorage')).select2('data') != null) {
+				$('#' + getJquerySafeId('inventoryLocationId')).val($('#' + getJquerySafeId('inventoryLocationIdFavoriteSeedStorage')).select2('data').id);
+
+			} else {
+				$('#' + getJquerySafeId('inventoryLocationId')).val(0);
+			}
+		}else{
+			$('#s2id_inventoryLocationIdFavorite').show();
+			if ($('#' + getJquerySafeId('inventoryLocationIdFavorite')).select2('data') != null) {
+				$('#' + getJquerySafeId('inventoryLocationId')).val($('#' + getJquerySafeId('inventoryLocationIdFavorite')).select2('data').id);
+
+			} else {
+				$('#' + getJquerySafeId('inventoryLocationId')).val(0);
+			}
 		}
+
 	} else {
-		$('#s2id_inventoryLocationIdFavorite').hide();
-		$('#s2id_inventoryLocationIdAll').show();
-		if ($('#' + getJquerySafeId('inventoryLocationIdAll')).select2('data') != null) {
-			$('#' + getJquerySafeId('inventoryLocationId')).val($('#' + getJquerySafeId('inventoryLocationIdAll')).select2('data').id);
+		if (allLocations) {
+			$('#s2id_inventoryLocationIdAll').show();
+			if ($('#' + getJquerySafeId('inventoryLocationIdAll')).select2('data') != null) {
+				$('#' + getJquerySafeId('inventoryLocationId')).val($('#' + getJquerySafeId('inventoryLocationIdAll')).select2('data').id);
+
+			} else {
+				$('#' + getJquerySafeId('inventoryLocationId')).val(0);
+
+			}
 
 		} else {
-			$('#' + getJquerySafeId('inventoryLocationId')).val(0);
+			$('#s2id_inventoryLocationIdSeedStorage').show();
+			if ($('#' + getJquerySafeId('inventoryLocationIdSeedStorage')).select2('data') != null) {
+				$('#' + getJquerySafeId('inventoryLocationId')).val($('#' + getJquerySafeId('inventoryLocationIdSeedStorage')).select2('data').id);
 
+			} else {
+				$('#' + getJquerySafeId('inventoryLocationId')).val(0);
+
+			}
 		}
-
 	}
 }

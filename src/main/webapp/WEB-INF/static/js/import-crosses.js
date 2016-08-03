@@ -72,7 +72,7 @@ var ImportCrosses = {
 
 		ImportCrosses.getImportedCrossesTable(createdCrossesListId).done(function(response) {
 			setTimeout(function() {
-				new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response);
+				new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList);
 			}, 240);
 		});
 
@@ -143,6 +143,7 @@ var ImportCrosses = {
 
 		return deferred.promise();
 	},
+
 	displayCrossesGermplasmDetails: function(listId) {
 		'use strict';
 		$.ajax({
@@ -182,10 +183,14 @@ var ImportCrosses = {
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
 
-		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
-			ImportCrosses.showFavoriteMethodsOnly);
+		if (ImportCrosses.showFavoriteLoationsOnly) {
+			$safeId('#favoritesCheckboxID').prop('checked', true);
+		}
+
+		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(selectedBreedingMethodId, 'breedingMethodDropdown', 
+			'showFavoritesOnlyCheckbox', ImportCrosses.showFavoriteMethodsOnly);
 		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
-			ImportCrosses.showFavoriteLoationsOnly);
+			'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio');
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 		ImportCrosses.updateSampleParentageDesignation();
 
@@ -193,6 +198,9 @@ var ImportCrosses = {
 		if (selectedBreedingMethodId) {
 			ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
 		}
+
+		$('#useSelectedMethodCheckbox').off('change');
+		$('#useSelectedMethodCheckbox').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
 
 		$('.cross-import-name-setting').off('change');
 		$('.cross-import-name-setting').on('change', ImportCrosses.updateDisplayedSequenceNameValue);
@@ -202,16 +210,32 @@ var ImportCrosses = {
 
 		ImportCrosses.populateHarvestMonthDropdown('harvestMonthDropdown');
 		ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
-
+		
+		$('#settingsNextButton').off('click');
 		$('#settingsNextButton').click(false, ImportCrosses.submitCrossImportSettings);
+		
+		$('#settingsNextButtonUpdateList').off('click');
 		$('#settingsNextButtonUpdateList').click(true, ImportCrosses.submitCrossImportSettings);
 
 		$('#goBackToOpenCrossesButton').off('click');
 		$('#goBackToOpenCrossesButton').on('click', function() {
 				ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(':checked');
 				ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(':checked');
+				ImportCrosses.showAllLocationOnly = $('#showAllLocationOnlyRadio').is(':checked');
+				ImportCrosses.showBreedingLocationOnly = $('#showBreedingLocationOnlyRadio').is(':checked');
 				ImportCrosses.goBackToPage('#crossSettingsModal', '#openCrossesListModal');
 			});
+	},
+
+	enableDisableBreedingMethodDropdown : function() {
+		var checkboxValue = $('#useSelectedMethodCheckbox').prop('checked');
+		if (checkboxValue) {
+			$('#breedingMethodSelectionDiv').show();
+		} else {
+			$('#breedingMethodSelectionDiv').hide();
+
+			$('#breedingMethodDropdown').select2('val', null);
+		}
 	},
 
 	validateStartingSequenceNumber: function(value) {
@@ -226,7 +250,7 @@ var ImportCrosses = {
 	updateSampleParentageDesignation: function() {
 		'use strict';
 		var value = $('#parentageDesignationSeparator').val();
-		$('#sampleParentageDesignation').text('ABC-123' + value + 'DEF-456');
+		$('#sampleParentageDesignation').text('FEMALE-123' + value + 'MALE-456');
 	},
 
 	processImportSettingsDropdown: function(dropdownID, useSettingsCheckboxID) {
@@ -359,19 +383,19 @@ var ImportCrosses = {
 			if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
 				return;
 			}
-		} else {
-			// if automated names generation was selected the breeding method is required
-			if (!settingData.breedingMethodSetting.methodId || settingData.breedingMethodSetting.methodId === '') {
-				showErrorMessage('', $.fieldbookMessages.errorImportMethodRequired);
-				return;
-			}
+		} else if (!settingData.breedingMethodSetting.basedOnStatusOfParentalLines && !settingData.breedingMethodSetting.methodId) {
+			showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
+			return;
 		}
 
 		var targetURL;
+		var settingsForSaving;
 		if ($('#presetName').val().trim() !== '') {
 			targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
+					settingsForSaving = true;
 		} else {
 			targetURL = ImportCrosses.CROSSES_URL + '/submit';
+					settingsForSaving = false;
 		}
 
 		$.ajax({
@@ -388,10 +412,18 @@ var ImportCrosses = {
 					showErrorMessage('', $.fieldbookMessages.errorImportFailed);
 				} else {
 					$('#crossSettingsModal').modal('hide');
+					selectedBreedingMethodId = 0;
 					if (isUpdateCrossesList.data) {
 						SaveAdvanceList.updateGermplasmList();
 					} else {
 						ImportCrosses.openSaveListModal();
+
+							if (settingsForSaving) {
+								// as per UI requirements, we also display a success message regarding the saving of the settings
+								// if an error in the settings saving has occurred, program flow would have continued in the data.success === '0' branch
+								// hence, we can safely assume that settings have been properly saved at this point
+								showSuccessfulMessage('', crossingSettingsSaved);
+							}
 					}
 				}
 			},
@@ -464,7 +496,7 @@ var ImportCrosses = {
 			settingObject.breedingMethodSetting.methodId = null;
 		}
 
-		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').is(':checked');
+		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').prop('checked');
 
 		settingObject.crossNameSetting = {};
 		settingObject.crossNameSetting.prefix = $('#crossPrefix').val();

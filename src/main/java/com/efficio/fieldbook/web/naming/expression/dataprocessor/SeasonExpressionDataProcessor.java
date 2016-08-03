@@ -21,7 +21,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
 public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
-	
+
 	@Override
 	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingNursery nurseryInfo,
 			final Study study) {
@@ -57,21 +57,22 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 		}
 		return season;
 	}
-	
-	private String getSeasonVarValue(String value, List<ValueReference> possibleValues) {
-		for(ValueReference valueReference: possibleValues){
-			if(valueReference.getId() == Integer.parseInt(value)){
+
+	private String getSeasonVarValue(final String value, final List<ValueReference> possibleValues) {
+		for (final ValueReference valueReference : possibleValues) {
+			if (valueReference.getId() == Integer.parseInt(value)) {
 				return valueReference.getDescription();
 			}
 		}
-		//default
+		// default
 		return value;
 	}
-	
-	private void addValueToMeasurementVariablesValues(String value, List<ValueReference> possibleValues, int termId, Map<Integer, String> measurementVariablesValues) {
+
+	private void addValueToMeasurementVariablesValues(final String value, final List<ValueReference> possibleValues, final int termId,
+			final Map<Integer, String> measurementVariablesValues) {
 		if (StringUtils.isNotBlank(value)) {
-			if(termId == TermId.SEASON_VAR.getId() && StringUtils.isNumeric(value) && !possibleValues.isEmpty()){
-				String seasonVarValue = this.getSeasonVarValue(value, possibleValues);
+			if (termId == TermId.SEASON_VAR.getId() && StringUtils.isNumeric(value) && !possibleValues.isEmpty()) {
+				final String seasonVarValue = this.getSeasonVarValue(value, possibleValues);
 				measurementVariablesValues.put(termId, seasonVarValue);
 			} else {
 				measurementVariablesValues.put(termId, value);

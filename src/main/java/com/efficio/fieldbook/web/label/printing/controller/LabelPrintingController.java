@@ -287,6 +287,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setThirdBarcodeField("");
 		this.userLabelPrinting.setFieldMapsExisting(true);
 
+		this.userLabelPrinting.setSettingsName("");
+
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, this.userFieldmap.isTrial()));
 		form.setUserLabelPrinting(this.userLabelPrinting);
 
@@ -403,7 +405,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final String absoluteLocation = this.userLabelPrinting.getFilenameDLLocation();
 
 		return FieldbookUtil.createResponseEntityForFileDownload(absoluteLocation, filename);
-
 	}
 
 	/**
@@ -896,4 +897,11 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.reportService = reportService;
 	}
 
+	void setUserFieldMap(final UserFieldmap userFieldmap) {
+		this.userFieldmap = userFieldmap;
+	}
+
+	UserLabelPrinting getUserLabelPrinting() {
+		return this.userLabelPrinting;
+	}
 }

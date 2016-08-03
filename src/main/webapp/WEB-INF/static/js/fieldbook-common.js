@@ -3284,6 +3284,7 @@ function makeGermplasmListDraggable(isDraggable) {
         $('.germplasm-list-items tbody tr').off('click');
     }
 
+    SaveAdvanceList.setSelectedEntries();
     // Change background of selected rows
     $('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
 }
@@ -3637,6 +3638,20 @@ function hasMeasurementData() {
 		return $('#measurementDataExisting').val() === 'true' ? true : false;
 	} else {
 		return angular.element('#mainApp').injector().get('TrialManagerDataService').trialMeasurement.hasMeasurement;
+	}
+}
+
+function updateMeasurementDataExistingValue(updateMeasurementData) {
+	if(updateMeasurementData) {
+		$.ajax({
+			url: '/Fieldbook/NurseryManager/editNursery/isMeasurementDataExisting',
+			type: 'GET',
+			data: '',
+			async: false,
+			success: function(data) {
+				$('#measurementDataExisting').val(data.hasMeasurementData);
+			}
+		});
 	}
 }
 

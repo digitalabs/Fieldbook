@@ -1,0 +1,388 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorator="etl/base-template">
+  <head>
+        <title th:inline="text">[[#{page.title.open.sheet}]]</title>
+
+      <!--[if lte IE 8]>
+      <script type="text/javascript" th:src="@{/static/js/respond.min.js}"></script>
+      <![endif]-->
+
+
+  </head>
+  <body>
+
+<section layout:fragment="content">
+    <div class="content-header">
+        <h1 th:utext="#{open.sheet.desc}">
+            [[#{page.title.open.sheet}]]
+        </h1>
+        <div th:utext="#{open.sheet.desc}"></div>
+    </div>
+
+	<!-- Server side errors will display here -->
+	<div id="page-message">
+		<form  th:object="${selectRowsForm}" th:remove="tag">	
+	        <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+		</form>	
+	</div>
+
+    <form class="form-horizontal" role="form" action="#" th:action="@{/etl/workbook/openSheet}" method="post" onsubmit="return beforeSubmit()"
+          th:object="${selectRowsForm}">
+        <input type="hidden" th:field="*{headerRow}"/>
+        <input type="hidden" th:field="*{contentRow}"/>
+
+        <div class="form-group">
+            <label for="rowHeaderSelectRow" class="col-md-2 control-label" th:text="#{open.sheet.row.header.label}">Row Header:</label>
+
+            <div class="col-md-6">
+                <input type="text" class="form-control" id="rowHeaderSelectRow" onclick="rowheader()" th:field="*{headerRowDisplayText}" size="80"></input>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="firstRowSelect" class="col-md-2 control-label" th:text="#{open.sheet.first.row.label}">First Row Data:</label>
+
+            <div class="col-md-6">
+                <input type="text" class="form-control" id="firstRowSelect" onclick="firstRow()" th:field="*{contentRowDisplayText}" size="80"></input>
+                <br/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="indexColumn" class="col-md-2 control-label" th:text="#{open.sheet.index.col.label}">Index Column:</label>
+
+            <div class="col-md-6">
+                <select th:field="*{indexColumn}" id="indexColumn" class="form-control">
+                    <option value="-1" th:text="#{form.select.text}">-SELECT-</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+			<div class="col-md-offset-2 col-md-1">
+				<div class="checkbox-inline">
+					<label><input type="checkbox" id="checkboxField" th:field="*{}" th:text="#{open.sheet.none.label}"/></label>
+				</div>
+			</div>
+			
+			<div class="col-md-4 text-right">
+                <label for="observationRows" class="control-label" th:text="#{open.sheet.observation.rows.label}">Total number of observations is</label>
+
+			</div>
+            <div class="col-md-1" style="min-width:95px; text-align: right">
+                <input id="observationRows" class="form-control" style="display: inline-block; max-width:95px;" type="text" maxlength="4" th:field="*{observationRows}" size="3"  disabled="disabled" />
+            </div>
+        </div>
+			</div>
+
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+            	<a th:text="#{form.prev.text}" th:href="@{selectSheet}" class="btn btn-default btn-sm"></a>
+                <input type="submit" name="action" th:value="#{form.next.text}" class="btn btn-primary btn-sm"/>
+            </div>
+        </div>
+    </form>
+
+<!-- Modal -->
+<div id="rowHeaderModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="myModalLabel" th:text="#{open.sheet.select.header.label}">Select Header Row</h3>
+        </div>
+        <div class="modal-body">
+			<div id="rowHeaderModalBody"></div>
+			<div class="table-pager" ></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default btn-sm" data-dismiss="modal" th:text="#{form.close.text}">Close</button>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+<!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="firstRowSelectModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="firstRowSelectModal"
+     aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="myModalLabel" th:text="#{open.sheet.first.row.select.label}">Select First Row</h3>
+        </div>
+        <div class="modal-body">
+        	<div id="contentRowModalBody"></div>
+        	<div class="table-pager"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" th:text="#{form.close.text}">Close</button>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+<!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!-- Placed at the end of the document so the pages load faster -->
+
+</section>
+<!-- /container -->
+
+<div layout:fragment="page-script">
+
+<script type="text/javascript" th:src="@{/static/js/bootstrap-pagination.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+
+var ROW_SIZE = 10;
+           
+$(function () {
+	
+	
+	// limit the observation row textbox to numbers only
+	$("#observationRows").keypress(function (e) {
+		
+		if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) { return false; }
+		
+	});
+	
+	
+    $("#checkboxField").click(function () {
+        if (this.checked === true) {
+            $("#indexColumn").prop("disabled", true);
+            $("#observationRows").prop("disabled", false);
+        } else {
+            $("#indexColumn").prop("disabled", false);
+            $("#observationRows").prop("disabled", true);
+            updateObservationRowCount();
+        }
+    });
+
+    $("#indexColumn").change(function () {
+        updateObservationRowCount();
+    });
+    
+    var headerRowIndex = /*[[${selectRowsForm.headerRow}]]*/ -1;
+    var indexColumn = /*[[${selectRowsForm.indexColumn}]]*/ -1;
+    if (headerRowIndex != null && headerRowIndex != -1){
+    	replaceColumnIndexInfo(headerRowIndex);
+    }
+
+    var manualObservationInput = /*[[${selectRowsForm.manualObservationInput}]]*/ false;
+    if (manualObservationInput) {
+        $("#indexColumn").attr("disabled", "true");
+    }
+
+});
+
+function updateObservationRowCount() {
+    $.getJSON("openSheet/observationCount",
+            {columnIndex: $("#indexColumn")[0].value, contentIndex: $("#contentRow").val()},
+            function (data) {
+                $("#observationRows").val(data);
+            }
+    )
+}
+
+function replaceColumnIndexInfo(rowIndex) {
+    $.getJSON("openSheet/updateColumn/" + rowIndex,
+            function (data) {
+    			var select_text = /*[[#{form.select.text}]]*/;
+                var options = '<option value=-1>' + select_text + '</option>';
+                var indexColumn = /*[[${selectRowsForm.indexColumn}]]*/ -1;
+                for (var i = 0; i < data.length; i++) {
+                	if (indexColumn == i) 
+                		 options += '<option value="' + data[i].index + '" selected>' + data[i].value + '</option>';
+                	else
+                    	 options += '<option value="' + data[i].index + '">' + data[i].value + '</option>';
+                }
+                $("#indexColumn").html(options);
+            });
+}
+
+function replaceRowData(targetDiv, clickFunction, startRow, endRow) {
+    $.get("openSheet/updateRowDisplay/" + endRow,
+            {html: "true", onClickFunction: clickFunction, rowIndex: startRow, updateTarget: targetDiv, pageFunction: 'replaceRowData'},
+            function (data) {
+                $("#" + targetDiv).html(data);
+                
+                
+                // setup pager
+                $(".table-pager").bootstrapPaginator({
+                	totalPages: $(".table-modal-content").data("pageInfo"),
+                	alignment: "center",
+                	onPageClicked: function(event, originalEvent, type,page) {
+                	},
+                	onPageChanged: function(event, oldPage, newPage) {
+                		replaceRowData(targetDiv, clickFunction, (newPage - 1) * ROW_SIZE,newPage * ROW_SIZE);
+                	}
+                });
+            });
+}
+
+function rowheader() {
+    $(".table-pager").bootstrapPaginator({"startPage":1});
+	
+    replaceRowData('rowHeaderModalBody', 'onchangeSelectedRow', 0, ROW_SIZE);
+    $("#rowHeaderModal").modal({
+        show: true,
+        keyboard: false
+    });
+    
+    
+    
+}
+
+function firstRow() {
+    $(".table-pager").bootstrapPaginator({"startPage":1});
+	
+    replaceRowData('contentRowModalBody', 'onchangeFirstRow', 0, ROW_SIZE);
+    $("#firstRowSelectModal").modal({
+        show: true,
+        keyboard: false
+    });
+}
+
+function firstRowModalclose() {
+    $("#firstRowSelectModal").modal('hide')
+}
+
+function rowHeaderModalclose() {
+    $("#rowHeaderModal").modal('hide')
+}
+
+function changeClass(object, classnameko) {
+    object.className = classnameko;
+}
+
+function onchangeFirstRow(index, value) {
+    $("#contentRow").val(index);
+    $("#firstRowSelect").val(value);
+    firstRowModalclose();
+}
+
+function onchangeSelectedRow(index, value) {
+    $("#headerRow").val(index);
+    replaceColumnIndexInfo(index);
+    $("#rowHeaderSelectRow").val(value);
+    rowHeaderModalclose();
+}
+
+function beforeSubmit() {
+    //$("#observationRows").prop("disabled", false);
+	return do_validation();
+}
+
+function do_validation() {
+	
+	// clear error classes on this fields first
+	$('#rowHeaderSelectRow').parent().parent().removeClass('has-error');
+	$('#firstRowSelect').parent().parent().removeClass('has-error');
+	$('#observationRows').parent().parent().removeClass('has-error');
+	$('#indexColumn').parent().parent().removeClass('has-error');
+	
+	is_valid = true;
+	
+	if ($('#rowHeaderSelectRow').val() == '') {
+		
+		message = /*[[#{open.sheet.validation.no.header.row}]]*/;
+		
+		is_valid = false;
+		
+		// display message
+    	$("#page-message").html(
+    			"<div class='alert alert-danger'>"+ message +"</div>"
+    		);
+		
+    	$('#rowHeaderSelectRow').parent().parent().addClass('has-error');
+		
+		return is_valid;
+	}
+	
+	if ($('#firstRowSelect').val() == '') {
+		
+		message = /*[[#{open.sheet.validation.no.first.row}]]*/;
+		
+		is_valid = false;
+		
+		// display message
+    	$("#page-message").html(
+    			"<div class='alert alert-danger'>"+ message +"</div>"
+    		);
+		
+    	$('#firstRowSelect').parent().parent().addClass('has-error');
+		
+		return is_valid;
+	}
+	
+	
+	if($('#indexColumn').val() == -1 && !$("#checkboxField").is(":checked")) {
+		message = /*[[#{open.sheet.validation.no.index.row}]]*/;
+		
+		// display message
+    	$("#page-message").html(
+    			"<div class='alert alert-danger'>"+ message +"</div>"
+    		);
+		
+		$('#indexColumn').parent().parent().addClass('has-error');
+		
+		is_valid = false;
+		
+		return is_valid;
+	}
+	
+	if ($("#observationRows").val() <= 0) {
+    	//console.log("obeservation count == 0, this is a validation error");
+    	
+    	if ($("#checkboxField").is(":checked")) {
+    		// set up a warning message "Observervation count must be > 0"
+    		message = /*[[#{open.sheet.validation.no.observation}]]*/;
+    		
+    		$('#observationRows').parent().parent().addClass('has-error');
+    		
+    	} else {
+    		// set up a warning message "Select an index row"
+    		message = /*[[#{open.sheet.validation.no.index.row}]]*/;
+    		
+    		$('#indexColumn').parent().parent().addClass('has-error');
+    	}
+    	
+    	
+    	is_valid = false;
+    }
+	
+	if (!is_valid) {
+		// display message
+    	$("#page-message").html(
+    			"<div class='alert alert-danger'>"+ message +"</div>"
+    		);
+	}
+	
+    if (is_valid) {
+        $("#observationRows").prop("disabled", false);
+    }
+
+    return is_valid;
+}
+
+//]]>
+</script>
+
+</div>
+
+
+</body>
+
+</html>
+
+

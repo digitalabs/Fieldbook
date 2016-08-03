@@ -1,0 +1,11 @@
+<!--deprecated. no longer used in angular implementation-->
+
+<div class="alert alert-danger" id="page-message" th:if="${!importResult.success}">
+ 	There are errors detected:<br/>
+ 	 <ul>
+	 <li th:each="message : ${importResult.errorMessages}" th:text="${#messages.msgWithParams(message.messageKey, message.messageParams)}"></li>
+	 </ul>
+</div>
+<script type="text/javascript-loaded" th:if="${importResult.success}">
+	window.location.href="importSuccess";
+</script>

@@ -37,14 +37,7 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 			final Study study) {
 		final Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
 		for (final MeasurementVariable mv : workbook.getConditions()) {
-			if (StringUtils.isNotBlank(mv.getValue())) {
-				if(mv.getTermId() == TermId.SEASON_VAR.getId() && StringUtils.isNumeric(mv.getValue()) && !mv.getPossibleValues().isEmpty()){
-					String seasonVarValue = this.getSeasonVarValue(mv.getValue(), mv.getPossibleValues());
-					measurementVariablesValues.put(mv.getTermId(), seasonVarValue);
-				} else {
-					measurementVariablesValues.put(mv.getTermId(), mv.getValue());
-				}
-			}
+			this.addValueToMeasurementVariablesValues(mv.getValue(), mv.getPossibleValues(), mv.getTermId(), measurementVariablesValues);
 		}
 		source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues));
 	}
@@ -55,16 +48,9 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 				&& source.getTrailInstanceObservation() != null && source.getTrailInstanceObservation().getDataList() != null) {
 			final Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
 			for (final MeasurementData measurementData : source.getTrailInstanceObservation().getDataList()) {
-				if (StringUtils.isNotBlank(measurementData.getValue())) {
-					final int termId = measurementData.getMeasurementVariable().getTermId();
-					final List<ValueReference> possibleValues = measurementData.getMeasurementVariable().getPossibleValues();
-					if(termId == TermId.SEASON_VAR.getId() && StringUtils.isNumeric(measurementData.getValue()) && !possibleValues.isEmpty()){
-						String seasonVarValue = this.getSeasonVarValue(measurementData.getValue(), possibleValues);
-						measurementVariablesValues.put(termId, seasonVarValue);
-					} else {
-						measurementVariablesValues.put(termId, measurementData.getValue());
-					}
-				}
+				final int termId = measurementData.getMeasurementVariable().getTermId();
+				final List<ValueReference> possibleValues = measurementData.getMeasurementVariable().getPossibleValues();
+				this.addValueToMeasurementVariablesValues(measurementData.getValue(), possibleValues, termId, measurementVariablesValues);
 			}
 			source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues));
 		}
@@ -90,5 +76,16 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 		}
 		//default
 		return value;
+	}
+	
+	private void addValueToMeasurementVariablesValues(String value, List<ValueReference> possibleValues, int termId, Map<Integer, String> measurementVariablesValues) {
+		if (StringUtils.isNotBlank(value)) {
+			if(termId == TermId.SEASON_VAR.getId() && StringUtils.isNumeric(value) && !possibleValues.isEmpty()){
+				String seasonVarValue = this.getSeasonVarValue(value, possibleValues);
+				measurementVariablesValues.put(termId, seasonVarValue);
+			} else {
+				measurementVariablesValues.put(termId, value);
+			}
+		}
 	}
 }

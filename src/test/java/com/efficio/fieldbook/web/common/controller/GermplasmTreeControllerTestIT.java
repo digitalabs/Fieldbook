@@ -195,8 +195,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 
 	private void mockGermplasmListManagerAndItsMethods() throws MiddlewareQueryException {
 		GermplasmListManager germplasmListManager = Mockito.mock(GermplasmListManager.class);
-		Mockito.when(germplasmListManager.getAllTopLevelListsBatched(GermplasmTreeControllerTestIT.PROGRAM_UUID,
-				GermplasmTreeController.BATCH_SIZE)).thenReturn(GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA);
+		Mockito.when(germplasmListManager.getAllTopLevelLists(GermplasmTreeControllerTestIT.PROGRAM_UUID)).thenReturn(GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA);
 		Mockito.when(
 				germplasmListManager.getGermplasmListByParentFolderIdBatched(Matchers.anyInt(), Matchers.anyString(), Matchers.anyInt()))
 				.thenReturn(GermplasmTreeControllerTestIT.EMPTY_GERMPLASM_LIST_TEST_DATA);

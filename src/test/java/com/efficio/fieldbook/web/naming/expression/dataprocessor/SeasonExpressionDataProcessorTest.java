@@ -4,7 +4,6 @@ package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
@@ -15,13 +14,11 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
@@ -34,12 +31,6 @@ public class SeasonExpressionDataProcessorTest {
 	private static final String SEASON_CATEGORY_ID = "10290";
 	private static final String SEASON_CATEGORY_VALUE = "Dry Season";
 	private static final String SEASON_MONTH_VALUE = "201608";
-
-	@Mock
-	private ContextUtil contextUtil;
-
-	@Mock
-	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@InjectMocks
 	private SeasonExpressionDataProcessor seasonExpressionDataProcessor;

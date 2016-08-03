@@ -115,7 +115,7 @@ public class DuplicatesUtil {
 					final String malePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getMalePlotNo();
 
 					// Duplicate scenario
-					if (femaleGidExcludingMain.equals(maleGidExcludingMain)) {
+					if (femaleGidExcludingMain.equals(nFemaleGid) && maleGidExcludingMain.equals(nMaleGid)) {
 						if (Objects.equals(femalePlotNoExcludingMain, malePlotNoExcludingMain)) {
 							// Plot Dupe
 							DuplicatesUtil.setDuplicatePrefixAndEntriesForDuplicates(Lists.newArrayList(possibleDuplicatesAndReciprocals),

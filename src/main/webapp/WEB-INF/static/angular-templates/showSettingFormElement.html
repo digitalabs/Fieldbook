@@ -11,7 +11,7 @@
                 <span th:text="#{show.all.location}">All locations types</span>
             </div>
             <div class="possibleValuesDiv">            
-                <input type="checkbox" ng-model="localData.useFavorites" ng-checked="true" ng-change="updateDropdownValuesFavorites()"> &nbsp;
+                <input type="checkbox" ng-model="localData.useFavorites" ng-change="updateDropdownValuesFavorites()"> &nbsp;
                 <span th:text="#{show.favorite.location}">Show only favorite locations </span> &nbsp;
 	            <span>
 	                <a href="javascript: void(0)" th:text="#{nursery.managesettings.manage.location}" ng-click="blockInput || initiateManageLocationModal()">Manage Location</a>

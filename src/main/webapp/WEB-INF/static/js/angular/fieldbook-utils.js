@@ -295,8 +295,9 @@
 						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
 					$scope.localData = {};
-					$scope.localData.useFavorites = true;
-					$scope.lookupLocation = 1;
+					var showAll = $scope.valuecontainer[$scope.targetkey];
+					$scope.localData.useFavorites = !showAll;
+					$scope.lookupLocation =  showAll ? 2 : 1;
 					
 					$scope.updateDropdownValuesFavorites = function() {
 						if ($scope.localData.useFavorites) {
@@ -327,10 +328,10 @@
 					// if the value of the dropdown from existing data matches from the list of favorites, we set the checkbox as true
 					var useFavorites = function(currentVal) {
 
-						if (!$scope.variableDefinition.existingData && null !== $scope.variableDefinition.possibleValuesFavorite) {
+						if (currentVal) {
+							return false;
+						} else if ($scope.variableDefinition.possibleValuesFavorite) {
 							return $scope.variableDefinition.possibleValuesFavorite.length > 0;
-						} else if (currentVal !== null && !isNaN(currentVal) && null !== $scope.variableDefinition.possibleValuesFavorite) {
-							return $scope.localData.useFavorites || _.where($scope.variableDefinition.possibleValuesFavorite, {'id':parseInt(currentVal, 10)}).length > 0;
 						}
 
 						return $scope.localData.useFavorites;

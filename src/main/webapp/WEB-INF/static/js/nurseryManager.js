@@ -2079,14 +2079,15 @@ function selectedLocation(location, possibleValues) {
 function setSelectedLocation() {
     //Trial passes preferred values in which location abbreviation available in bracket.
     //We need to split value to get actual abbreviation for selected location
-    if (possibleLocationsForTrail != null && selectedLocationForTrail != null && selectedLocationForTrail !='') {
-        $('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
-        var locationName = $.grep(possibleLocationsForTrail, function (e) {
-            return e.key == selectedLocationForTrail.id;
-        });
-        $('#' + getJquerySafeId('harvestLocationName')).val(locationName[0].name);
-        var locAbbreviation = locationName[0].name.split("(");
-        locAbbreviation[1] = locAbbreviation[1].replace(")", '');
-        $('#' + getJquerySafeId('harvestLocationAbbreviation')).val(locAbbreviation[1]);
-    }
+	if (possibleLocationsForTrail != null && selectedLocationForTrail != null && selectedLocationForTrail != '' &&
+		selectedLocationForTrail.id != undefined) {
+		$('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
+		var locationName = $.grep(possibleLocationsForTrail, function(e) {
+			return e.key == selectedLocationForTrail.id;
+		});
+		$('#' + getJquerySafeId('harvestLocationName')).val(locationName[0].name);
+		var locAbbreviation = locationName[0].name.split("(");
+		locAbbreviation[1] = locAbbreviation[1].replace(")", '');
+		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val(locAbbreviation[1]);
+	}
 }

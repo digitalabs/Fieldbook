@@ -40,35 +40,44 @@
 
     					$scope.isLocation = parseInt(LOCATION_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
                         if($scope.isLocation){
-                            selectedLocation('', $scope.variableDefinition.possibleValues);
-                            angular.forEach($scope.variableDefinition.possibleValues, function(val, index){
+                            selectedLocation('', $scope.variableDefinition.allValues);
+                            angular.forEach($scope.variableDefinition.allValues, function(val, index){
                                 if(val.id == $scope.valuecontainer[$scope.targetkey]){
-                                    selectedLocation(val , $scope.variableDefinition.possibleValues);
+                                    selectedLocation(val , $scope.variableDefinition.allValues);
                                 }
                             });
                         }
     					$scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
     						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
-    					$scope.localData = {};
+    					$scope.localData = {};					
+						var showAll = $scope.valuecontainer[$scope.targetkey];
+						if (showAll != null && showAll !='' && showAll != undefined) {
+							$scope.localData.useFavorites = false;
+							$scope.locationLookup =  2;
+						}
+						else{
+							$scope.locationLookup =  1;
+						}
 						
-						$scope.locationLookup = 1;
 
 						$scope.updateDropdownValuesFavorites = function() { // Change state for favorite checkbox
-							if ($scope.localData.useFavorites) {
-								if ($scope.locationLookup == 1) {
-									$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
-								} else {
-									$scope.dropdownValues = $scope.variableDefinition.allFavoriteValues;
-								}
+							
+								if ($scope.localData.useFavorites) {
+									if ($scope.locationLookup == 1) {
+										$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
+									} else {
+										$scope.dropdownValues = $scope.variableDefinition.allFavoriteValues;
+									}
 
-							} else {
-								if ($scope.locationLookup == 1) {
-									$scope.dropdownValues = $scope.variableDefinition.possibleValues;
 								} else {
-									$scope.dropdownValues = $scope.variableDefinition.allValues;
+									if ($scope.locationLookup == 1) {
+										$scope.dropdownValues = $scope.variableDefinition.possibleValues;
+									} else {
+										$scope.dropdownValues = $scope.variableDefinition.allValues;
+									}
 								}
-							}
+					
 						};
 
 						$scope.updateDropdownValuesBreedingLocation = function() { // Change state for breeding
@@ -86,6 +95,9 @@
 
 						// if the list of favorites has any element, we set the checkbox
 						var useFavorites = function(currentVal) {
+							if(currentVal){
+								return false;
+							}
 
 							if ($scope.variableDefinition.possibleValuesFavorite !== null) {
 								return $scope.variableDefinition.possibleValuesFavorite.length > 0;

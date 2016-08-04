@@ -3641,6 +3641,20 @@ function hasMeasurementData() {
 	}
 }
 
+function updateMeasurementDataExistingValue(updateMeasurementData) {
+	if(updateMeasurementData) {
+		$.ajax({
+			url: '/Fieldbook/NurseryManager/editNursery/isMeasurementDataExisting',
+			type: 'GET',
+			data: '',
+			async: false,
+			success: function(data) {
+				$('#measurementDataExisting').val(data.hasMeasurementData);
+			}
+		});
+	}
+}
+
 function displayStudyGermplasmSection(hasData, observationCount) {
 	'use strict';
 	if (hasData) {

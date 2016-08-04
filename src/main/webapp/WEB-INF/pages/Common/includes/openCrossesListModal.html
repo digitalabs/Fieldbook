@@ -7,8 +7,8 @@
 				<div class="modal-body" id="openCrossesListModalBody">
 					<div class="row form-group">
 						<div class="col-xs-11 col-md-11">
-							<label class="modal-title fbk-modal-title" id="heading-modal">Import
-								Crosses</label>
+							<label class="modal-title fbk-modal-title" id="heading-modal"
+								   th:text="#{open.crosses.import.crosses.header}">Import Crosses</label>
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<button id="close" type="button"
@@ -19,7 +19,8 @@
 
 					<div class="row add_top_padding">
 						<div class="col-xs-12 col-md-12">
-							<strong class="sub-content-heading">REVIEW IMPORTED CROSSES</strong>
+							<strong class="sub-content-heading" th:text="#{open.crosses.review.imported.crosses}">REVIEW IMPORTED
+								CROSSES</strong>
 						</div>
 					</div>
 					<div class="row form-group add_top_padding">
@@ -28,15 +29,16 @@
 								class="table-curved table-condensed">
 								<thead>
 									<tr>
-										<th nowrap="nowrap" class="factors">ENTRY</th>
-										<th nowrap="nowrap" class="factors">PARENTAGE</th>
-										<th nowrap="nowrap" class="factors">ENTRY CODE</th>
-										<th nowrap="nowrap" class="factors">FEMALE PARENT</th>
-										<th nowrap="nowrap" class="factors">FGID</th>
-										<th nowrap="nowrap" class="factors">MALE PARENT</th>
-										<th nowrap="nowrap" class="factors">MGID</th>
-										<th nowrap="nowrap" class="factors">SOURCE</th>
-										<th nowrap="nowrap" class="factors">DUPLICATE</th>
+										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.entry}">ENTRY</th>
+										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.parentage}">PARENTAGE</th>
+										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.entrycode}">ENTRY CODE</th>
+										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.femaleparent}">FEMALE
+											PARENT</th>
+										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.fgid}">FGID</th>
+										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.maleparent}">MALE PARENT</th>
+										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.mgid}">MGID</th>
+										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.source}">SOURCE</th>
+										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.duplicate}">DUPLICATE</th>
 									</tr>
 								</thead>
 							</table>
@@ -58,15 +60,15 @@
 		class="table-curved table-condensed fbk-hide">
 		<thead>
 			<tr>
-				<th nowrap="nowrap" class="factors">ENTRY</th>
-				<th nowrap="nowrap" class="factors">PARENTAGE</th>
-				<th nowrap="nowrap" class="factors">ENTRY CODE</th>
-				<th nowrap="nowrap" class="factors">FEMALE PARENT</th>
-				<th nowrap="nowrap" class="factors">FGID</th>
-				<th nowrap="nowrap" class="factors">MALE PARENT</th>
-				<th nowrap="nowrap" class="factors">MGID</th>
-				<th nowrap="nowrap" class="factors">SOURCE</th>
-				<th nowrap="nowrap" class="factors">DUPLICATE</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.entry}">ENTRY</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.parentage}">PARENTAGE</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.entrycode}">ENTRY CODE</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.femaleparent}">FEMALE PARENT</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.fgid}">FGID</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.maleparent}">MALE PARENT</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.mgid}">MGID</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.source}">SOURCE</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.duplicate}">DUPLICATE</th>
 			</tr>
 		</thead>
 	</table>

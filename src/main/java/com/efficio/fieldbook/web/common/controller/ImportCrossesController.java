@@ -46,9 +46,9 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/germplasm", method = RequestMethod.POST, produces = "application/json")
-	public Map<String, Object> importFile(Model model, @ModelAttribute("importCrossesForm") ImportCrossesForm form) {
+	public Map<String, Object> importFile(final Model model, @ModelAttribute("importCrossesForm") final ImportCrossesForm form) {
 
-		Map<String, Object> resultsMap = new HashMap<>();
+		final Map<String, Object> resultsMap = new HashMap<>();
 
 		// 1. PARSE the file into an ImportCrosses List 
 		ImportedCrossesList parseResults = null;
@@ -71,20 +71,20 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
 	public List<Map<String, Object>> getImportedCrossesList() {
 
-		List<Map<String, Object>> masterList = new ArrayList<>();
+		final List<Map<String, Object>> masterList = new ArrayList<>();
 
 		if (null == this.studySelection.getImportedCrossesList()) {
 			return masterList;
 		}
 
-		for (ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
+		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
 			masterList.add(crossesListUtil.generateDatatableDataMap(cross));
 		}
 
 		return masterList;
 	}
 
-	public String show(Model model, boolean isTrial) {
+	public String show(final Model model, final boolean isTrial) {
 		this.setupModelInfo(model);
 		model.addAttribute(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, this.getContentName(isTrial));
 		return AbstractBaseFieldbookController.BASE_TEMPLATE_NAME;

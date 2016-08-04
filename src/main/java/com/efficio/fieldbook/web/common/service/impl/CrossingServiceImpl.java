@@ -380,24 +380,22 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	/**
-	 * This method will set germplasm gdate from given date as per rules. 1. If harvested date is provided then it will be used as gdate. 2.
-	 * If harvested date and crossing date is provided then harvested date will be used as gdate. 3. If only crossing date is provided then
-	 * it will be used as gdate. 4. If both dates are not provided then current date will be used as gdate.
+	 * <p>
+	 * This method will set germplasm gdate from given date as per rules.
+	 * </p>
+	 * <ol>
+	 * <li>If harvested date is provided then it will be used as gdate.</li>
+	 * <li>If not then current date will be used as gdate.</li>
+	 * </ol>
 	 *
 	 * @param germplasm germplasm instance into which gdate need to be set.
-	 * @param crossingDate date from import cross sheet.
 	 * @param harvestDate date given using user form.
 	 */
-	public void populateGermplasmDate(final Germplasm germplasm, final String crossingDate, final String harvestDate) {
+	public void populateGermplasmDate(final Germplasm germplasm, final String harvestDate) {
 		final Integer formattedHarvestDate = this.getFormattedHarvestDate(harvestDate);
 
 		if (formattedHarvestDate != 0) {
 			germplasm.setGdate(formattedHarvestDate);
-			return;
-		}
-
-		if (!StringUtil.isEmpty(crossingDate)) {
-			germplasm.setGdate(Integer.valueOf(crossingDate));
 			return;
 		}
 
@@ -451,7 +449,7 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 
 			// Set germplasm date based on user input or information from source data.
-			this.populateGermplasmDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
+			this.populateGermplasmDate(germplasm, additionalDetailsSetting.getHarvestDate());
 			// Set the location based on what is selected as harvest location in both cases of crossing.
 			germplasm.setLocationId(harvestLocationId);
 

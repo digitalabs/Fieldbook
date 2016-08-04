@@ -375,7 +375,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		final Integer userId = this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), workbenchUID);
 		this.studySelection.getImportedCrossesList().setUserId(userId);
-		returnVal.put(CrossingSettingsController.SUCCESS_KEY, 1);
+		returnVal.put(CrossingSettingsController.IS_SUCCESS, 1);
 		return returnVal;
 	}
 
@@ -414,7 +414,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
-		responseMap.put(CrossingSettingsController.SUCCESS_KEY, 1);
+		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);
 		return responseMap;
 	}
 

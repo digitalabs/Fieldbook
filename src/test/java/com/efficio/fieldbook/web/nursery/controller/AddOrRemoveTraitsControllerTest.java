@@ -82,8 +82,8 @@ public class AddOrRemoveTraitsControllerTest extends AbstractBaseIntegrationTest
 	 */
 	@Test
 	public void testAddOrRemoveTraitTest() throws Exception {
-		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-		ImportGermplasmListForm form = new ImportGermplasmListForm();
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		try {
 			this.importGermplasmFileService.doProcessNow(this.workbookAdvance, mainInfo);
 			form.setImportedGermplasmMainInfo(mainInfo);
@@ -91,25 +91,25 @@ public class AddOrRemoveTraitsControllerTest extends AbstractBaseIntegrationTest
 		} catch (Exception e) {
 			AddOrRemoveTraitsControllerTest.LOG.error(e.getMessage(), e);
 		}
-		UserSelection userSelection = new UserSelection();
+		final UserSelection userSelection = new UserSelection();
 		userSelection.setWorkbook(new org.generationcp.middleware.domain.etl.Workbook());
-		StudyDetails details = new StudyDetails();
+		final StudyDetails details = new StudyDetails();
 		details.setStudyType(StudyType.N);
 		userSelection.getWorkbook().setStudyDetails(details);
-		List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
-		MeasurementVariable checkVariable =
+		final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
+		final MeasurementVariable checkVariable =
 				new MeasurementVariable("CHECK", "TYPE OF ENTRY", "CODE", "ASSIGNED", "CHECK", "C", "", "ENTRY");
 		factors.add(checkVariable);
 		userSelection.getWorkbook().setFactors(factors);
 		userSelection.getWorkbook().setVariates(new ArrayList<MeasurementVariable>());
 		userSelection.setImportedGermplasmMainInfo(mainInfo);
-		MeasurementsGeneratorService service = Mockito.mock(MeasurementsGeneratorService.class);
-		List<MeasurementRow> measurementRowsTemp = new ArrayList<MeasurementRow>();
+		final MeasurementsGeneratorService service = Mockito.mock(MeasurementsGeneratorService.class);
+		final List<MeasurementRow> measurementRowsTemp = new ArrayList<MeasurementRow>();
 		for (int i = 0; i < 29; i++) {
 			measurementRowsTemp.add(new MeasurementRow());
 		}
 		Mockito.when(service.generateRealMeasurementRows(userSelection)).thenReturn(measurementRowsTemp);
-		List<MeasurementRow> measurementRows = service.generateRealMeasurementRows(userSelection);
+		final List<MeasurementRow> measurementRows = service.generateRealMeasurementRows(userSelection);
 		Assert.assertEquals(29, measurementRows.size());
 	}
 

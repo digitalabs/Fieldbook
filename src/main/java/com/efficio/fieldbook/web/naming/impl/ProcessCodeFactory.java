@@ -16,7 +16,7 @@ public class ProcessCodeFactory {
 
 	}
 
-	public Expression create(String key) {
+	public Expression create(final String key) {
 		return this.expressionMap.get(key.toUpperCase());
 	}
 

@@ -20,6 +20,7 @@ import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -96,6 +97,8 @@ public class CrossingSettingsControllerTest {
 	private GermplasmListManager germplasmListManager;
 	@Mock
 	private OntologyDataManager ontologyDataManager;
+	@Mock
+	private ContextUtil contextUtil;
 
 	private CrossesListUtil crossesListUtil;
 
@@ -301,7 +304,8 @@ public class CrossingSettingsControllerTest {
 
 		final File file = Mockito.mock(File.class);
 		Mockito.when(file.getAbsolutePath()).thenReturn(CrossingSettingsControllerTest.DUMMY_ABS_PATH);
-		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), Matchers.anyString())).thenReturn(file);
+		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), Matchers.anyString(), Matchers.anyInt())).thenReturn(file);
+		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
 
 		final Map<String, Object> jsonResult = this.dut.doCrossingExport();
 
@@ -322,7 +326,7 @@ public class CrossingSettingsControllerTest {
 
 		final File file = Mockito.mock(File.class);
 		Mockito.when(file.getAbsolutePath()).thenReturn(CrossingSettingsControllerTest.DUMMY_ABS_PATH);
-		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), Matchers.anyString())).thenThrow(
+		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), Matchers.anyString(), Matchers.anyInt())).thenThrow(
 				new CrossingTemplateExportException("export.error"));
 
 		Mockito.when(

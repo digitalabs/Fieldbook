@@ -85,6 +85,11 @@ public class FileUploadController extends AbstractBaseETLController {
 		return super.show(model);
 	}
 
+	@RequestMapping(method = RequestMethod.GET, value = "/importFromExternalSystem")
+	public String showImportFromExternalSystem() {
+		return "etl/importFromExternalSystem";
+	}
+
 	@RequestMapping(method = RequestMethod.POST)
 	public String uploadFile(@ModelAttribute("uploadForm") FileUploadForm uploadForm, BindingResult result, Model model) {
 		FileUploadFormValidator validator = new FileUploadFormValidator();

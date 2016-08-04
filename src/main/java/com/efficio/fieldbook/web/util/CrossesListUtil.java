@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -19,6 +20,7 @@ public class CrossesListUtil {
 	public static final String TABLE_HEADER_LIST = "tableHeaderList";
 	public static final String LIST_DATA_TABLE = "listDataTable";
 	public static final String IS_IMPORT = "isImport";
+	public static final String BREEDING_METHOD_PENDING = "Pending";
 	public static final int ENTRY_INDEX = 0;
 	public static final int PARENTAGE_INDEX = 1;
 	public static final int DUPLICATE_INDEX = 2;
@@ -90,7 +92,12 @@ public class CrossesListUtil {
 		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), importedCrosses.getEntryId());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX), importedCrosses.getCross());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX), importedCrosses.getDuplicate());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX),importedCrosses.getRawBreedingMethod());
+		//shows BREEDING_METHOD as "Pending" if method is not defined in import crossing file
+		String breedingMethodName = importedCrosses.getRawBreedingMethod();
+		if(StringUtils.isEmpty(breedingMethodName)){
+			breedingMethodName = BREEDING_METHOD_PENDING;
+		}
+		dataMap.put(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX),breedingMethodName);
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FGID_INDEX), importedCrosses.getFemaleGid());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_PLOT_INDEX), importedCrosses.getFemalePlotNo());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.MGID_INDEX), importedCrosses.getMaleGid());

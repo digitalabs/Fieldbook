@@ -41,7 +41,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 	public static final String NO_REFERENCES_ERROR_DESC = "study.import.crosses.error.no.references";
 	protected static final int OBSERVATION_SHEET_NO = 1;
-	public static final String BREEDING_METHOD_PENDING = "Pending";
+
 	/**
 	 * The Constant LOG.
 	 */
@@ -148,10 +148,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			// Show sounrce as "Pending" in initial dialogue. 
 			// Source (Plot Code) string is generated later in the proces and will be displayed in the final list generated.
 			importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
-			//shows BREEDING_METHOD as "Pending" if method is not defined in import crossing file
-			if(StringUtils.isEmpty(breedingMethod)) {
-				breedingMethod = CrossingTemplateParser.BREEDING_METHOD_PENDING;
-			}
+
 			importedCrosses.setOptionalFields(breedingMethod, crossingDate, seedsHarvested, notes);
 			// this would set the correct cross string depending if the use is cimmyt wheat
 			Germplasm germplasm = new Germplasm();

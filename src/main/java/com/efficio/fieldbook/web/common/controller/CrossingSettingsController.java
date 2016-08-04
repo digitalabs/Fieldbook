@@ -332,6 +332,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
+		responseMap.put(CrossingSettingsController.SUCCESS_KEY, 1);
 
 		return responseMap;
 	}
@@ -398,9 +399,12 @@ public class CrossingSettingsController extends SettingsController {
 			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData);
 
 			if (importedCross.getGid() == null) {
-				throw new IllegalStateException(
-						"Cross germplasm record must already exist in database when using crossing manager to create crosses in Nurseries"
-								+ ".");
+				responseMap.put(CrossingSettingsController.IS_SUCCESS, 0);
+				final String localisedErrorMessage = this.messageSource.getMessage("error.germplasm.record.already.exists", new String[] {},
+						"Cross germplasm record must already exist in database when using crossing manager to create crosses in Nurseries",
+						LocaleContextHolder.getLocale());
+				responseMap.put(ERROR, new String[] {localisedErrorMessage});
+				return responseMap;
 			}
 			importedCrosses.add(importedCross);
 		}
@@ -410,6 +414,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
+		responseMap.put(CrossingSettingsController.SUCCESS_KEY, 1);
 		return responseMap;
 	}
 

@@ -92,9 +92,11 @@ var ImportCrosses = {
 			});
 
 		ImportCrosses.getImportedCrossesTable(createdCrossesListId).done(function(response) {
-			setTimeout(function() {
-				new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList);
-			}, 240);
+			if (response.isSuccess === 0) {
+            	showErrorMessage('', response.error);
+            	return;
+            }
+			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList);
 		});
 
 		$('#openCrossListNextButton').off('click');
@@ -144,7 +146,8 @@ var ImportCrosses = {
 			{
 				url: crossesURL,
 				type: 'GET',
-				cache: false
+				cache: false,
+				timeout: 3000
 			});
 		},
 

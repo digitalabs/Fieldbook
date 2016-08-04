@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
@@ -27,16 +26,18 @@ import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.manager.api.UserDataManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -73,6 +74,8 @@ public class CrossingSettingsController extends SettingsController {
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
 	private static final String IS_SUCCESS = "isSuccess";
 	private static final String HAS_PLOT_DUPLICATE = "hasPlotDuplicate";
+	public static final String CHOOSING_LIST_OWNER_NEEDED = "isChoosingListOwnerNeeded";
+	public static final String ERROR = "error";
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -93,9 +96,6 @@ public class CrossingSettingsController extends SettingsController {
 	private CrossNameService crossNameService;
 
 	@Resource
-	private ContextUtil contextUtil;
-
-	@Resource
 	private CrossingTemplateExcelExporter crossingTemplateExcelExporter;
 
 	@Resource
@@ -103,6 +103,12 @@ public class CrossingSettingsController extends SettingsController {
 
 	@Resource
 	private CrossesListUtil crossesListUtil;
+
+	@Resource
+	private WorkbenchDataManager workbenchDataManager;
+
+	@Resource
+	private UserDataManager userDataManager;
 
 	/**
 	 * The germplasm list manager.
@@ -241,7 +247,11 @@ public class CrossingSettingsController extends SettingsController {
 			if (studyId == null && this.studySelection.getWorkbook().getStudyDetails() != null) {
 				studyId = this.studySelection.getWorkbook().getStudyDetails().getId();
 			}
-			final File result = this.crossingTemplateExcelExporter.export(studyId, this.studySelection.getWorkbook().getStudyName());
+
+			final Integer currentUserId = this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
+					this.contextUtil.getCurrentWorkbenchUserId());
+
+			final File result = this.crossingTemplateExcelExporter.export(studyId, this.studySelection.getWorkbook().getStudyName(), currentUserId);
 
 			out.put(CrossingSettingsController.IS_SUCCESS, Boolean.TRUE);
 			out.put("outputFilename", result.getAbsolutePath());
@@ -284,11 +294,22 @@ public class CrossingSettingsController extends SettingsController {
 
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 1);
 			resultsMap.put(CrossingSettingsController.HAS_PLOT_DUPLICATE, parseResults.hasPlotDuplicate());
+			
+			if (!parseResults.getWarningMessages().isEmpty()) {
+				resultsMap.put("warnings", parseResults.getWarningMessages());
+			}
+
+			// if no User is set we need to ask the User for the input via chooseUser modal dialog
+			if (parseResults.getUserId() == null) {
+				resultsMap.put(CrossingSettingsController.CHOOSING_LIST_OWNER_NEEDED, 1);
+			} else {
+				resultsMap.put(CrossingSettingsController.CHOOSING_LIST_OWNER_NEEDED, 0);
+			}
 
 		} catch (final FileParsingException e) {
 			CrossingSettingsController.LOG.error(e.getMessage(), e);
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 0);
-			resultsMap.put("error", new String[] {e.getMessage()});
+			resultsMap.put(ERROR, new String[] {e.getMessage()});
 		}
 		return super.convertObjectToJson(resultsMap);
 	}
@@ -311,8 +332,51 @@ public class CrossingSettingsController extends SettingsController {
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
+		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);
 
 		return responseMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getCurrentProgramMembers", method = RequestMethod.GET, produces = "application/json")
+	public Map<String, Person> getCurrentProgramMembers() {
+		// we need to convert Integer to String because angular doest work with numbers as options for select
+		final Map<String, Person> currentProgramMembers = new HashMap<>();
+		final Long projectId = this.workbenchDataManager.getProjectByUuid(this.getCurrentProgramID()).getProjectId();
+		final Map<Integer, Person> programMembers = this.workbenchDataManager.getPersonsByProjectId(projectId);
+		for (final Map.Entry<Integer, Person> member : programMembers.entrySet()) {
+			currentProgramMembers.put(String.valueOf(member.getKey()), member.getValue());
+		}
+		return currentProgramMembers;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getCurrentUser", method = RequestMethod.GET)
+	public String getCurrentWorkbenchUser() {
+		return String.valueOf(this.contextUtil.getCurrentWorkbenchUserId());
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/submitListOwner", method = RequestMethod.POST)
+	public Map<String, Object> submitListOwner(@RequestBody final String workbenchUserId) {
+		final Map<String, Object> returnVal = new HashMap<>();
+		final int workbenchUID;
+		try {
+			workbenchUID = Integer.parseInt(workbenchUserId);
+		} catch (final Exception e){
+			CrossingSettingsController.LOG.error(e.getMessage(), e);
+			final Map<String, Object> resultsMap = new HashMap<>();
+			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 0);
+			final String localisedErrorMessage = this.messageSource.getMessage("error.submit.list.owner.wrong.format", new String[] {},
+					"Could not associate User id with the list", LocaleContextHolder.getLocale());
+			resultsMap.put(ERROR, new String[] {localisedErrorMessage});
+			return resultsMap;
+		}
+
+		final Integer userId = this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), workbenchUID);
+		this.studySelection.getImportedCrossesList().setUserId(userId);
+		returnVal.put(CrossingSettingsController.IS_SUCCESS, 1);
+		return returnVal;
 	}
 
 	@ResponseBody
@@ -335,8 +399,12 @@ public class CrossingSettingsController extends SettingsController {
 			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData);
 
 			if (importedCross.getGid() == null) {
-				throw new IllegalStateException(
-						"Cross germplsam record must already exist in database when using crossing manager to create crosses in Nurseries.");
+				responseMap.put(CrossingSettingsController.IS_SUCCESS, 0);
+				final String localisedErrorMessage = this.messageSource.getMessage("error.germplasm.record.already.exists", new String[] {},
+						"Cross germplasm record must already exist in database when using crossing manager to create crosses in Nurseries",
+						LocaleContextHolder.getLocale());
+				responseMap.put(ERROR, new String[] {localisedErrorMessage});
+				return responseMap;
 			}
 			importedCrosses.add(importedCross);
 		}
@@ -346,6 +414,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
+		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);
 		return responseMap;
 	}
 

@@ -50,6 +50,8 @@ public class ListDataProjectUtil {
 				listDataProj.setEntryCode(aData.getEntryCode());
 				listDataProj.setSeedSource(aData.getSeedSource());
 				listDataProj.setGroupName(aData.getGroupName());
+				listDataProj.setNotes(aData.getNotes());
+				listDataProj.setCrossingDate(aData.getCrossingDate());
 
 				listDataProject.add(listDataProj);
 			}

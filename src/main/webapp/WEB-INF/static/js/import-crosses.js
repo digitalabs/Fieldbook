@@ -29,12 +29,33 @@ var ImportCrosses = {
 				createErrorNotification(crossingImportErrorHeader, resp.error.join('<br/>'));
 				return;
 			}
+			
+			if (resp.warnings) {
+				createWarningNotification(warningMsgHeader, resp.warnings.join('<br/>'), 10000);
+			}
+
 			ImportCrosses.preservePlotDuplicates = false;
 			$('.import-crosses-section .modal').modal('hide');
 			$('#openCrossesListModal').data('hasPlotDuplicate', resp.hasPlotDuplicate);
 			// show review crosses page
 			ImportCrosses.isFileCrossesImport = true;
-			setTimeout(ImportCrosses.openCrossesList, 500);
+			if (resp.isChoosingListOwnerNeeded) {
+				$('#chooseListOwner').one('shown.bs.modal', function() {
+                	$('body').addClass('modal-open');
+                }).modal({ backdrop: 'static', keyboard: true });
+                $('#chooseListOwner').addClass('import-crosses-from-file');
+
+                $('#chooseListOwnerNextButton').on('click', function() {
+                    if (ImportCrosses.isFileCrossesImport) {
+                        $('#crossSettingsModal').addClass('import-crosses-from-file');
+                    }
+                    $('#chooseListOwner').modal('hide');
+                    setTimeout(ImportCrosses.openCrossesList, 500);
+                });
+
+			} else {
+				setTimeout(ImportCrosses.openCrossesList, 500);
+			}
 
 		});
 
@@ -71,9 +92,11 @@ var ImportCrosses = {
 			});
 
 		ImportCrosses.getImportedCrossesTable(createdCrossesListId).done(function(response) {
-			setTimeout(function() {
-				new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList, response.isImport);
-			}, 240);
+			if (response.isSuccess === 0) {
+            	showErrorMessage('', response.error);
+            	return;
+            }
+			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
 		});
 
 		$('#openCrossListNextButton').off('click');
@@ -123,7 +146,8 @@ var ImportCrosses = {
 			{
 				url: crossesURL,
 				type: 'GET',
-				cache: false
+				cache: false,
+				timeout: 3000
 			});
 		},
 

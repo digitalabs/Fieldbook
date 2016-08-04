@@ -87,13 +87,14 @@ public class GenerateFieldmapControllerTest {
 	}
 
 	@Test
-	public void makeSafeFileName() throws Exception {
-		String out = this.generateFieldmapCtrlToTest.makeSafeFileName(GenerateFieldmapControllerTest.BLOCK_NAME);
-
-		Assert.assertTrue("Contains the BLOCK_NAME without spaces",
-				out.contains(GenerateFieldmapControllerTest.BLOCK_NAME.replace(" ", "")));
-		Assert.assertTrue("No spaces, ends with \"-<current_date>.xls\"",
-				!out.contains(" ") && out.endsWith("-" + DateUtil.getCurrentDateAsStringValue() + ".xls"));
+	public void testMakeSafeFileName() throws Exception {
+		String sanitizedBlockNameWithoutSpace = GenerateFieldmapControllerTest.BLOCK_NAME.replace("*", "_");
+		sanitizedBlockNameWithoutSpace = sanitizedBlockNameWithoutSpace.replace(" ", "");
+		
+		String fileName = this.generateFieldmapCtrlToTest.makeSafeFileName(GenerateFieldmapControllerTest.BLOCK_NAME);
+		Assert.assertTrue("Filename should contain the sanitized BLOCK_NAME without spaces",
+				fileName.contains(sanitizedBlockNameWithoutSpace));
+		Assert.assertTrue("Filename should end with \"-<current_date>.xls\"", fileName.endsWith("-" + DateUtil.getCurrentDateAsStringValue() + ".xls"));
 
 	}
 

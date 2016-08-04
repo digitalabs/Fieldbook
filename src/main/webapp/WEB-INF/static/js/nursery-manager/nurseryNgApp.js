@@ -61,8 +61,10 @@
 		});
 
 		$scope.saveSelectedUser = function() {
-			$http.post('/Fieldbook/crosses/submitListOwner', $scope.selectedUserId, {timeout: 3000}).success(function() {
-				//do nothing or success message?
+			$http.post('/Fieldbook/crosses/submitListOwner', $scope.selectedUserId, {timeout: 3000}).success(function(data) {
+				if (data.isSuccess === 0) {
+					showErrorMessage('', data.error);
+				}
 			}).error(function() {
 				showErrorMessage('', $.fieldbookMessages.errorSubmittingListOwner);
 			});

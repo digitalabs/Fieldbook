@@ -75,6 +75,7 @@ public class CrossingSettingsController extends SettingsController {
 	private static final String IS_SUCCESS = "isSuccess";
 	private static final String HAS_PLOT_DUPLICATE = "hasPlotDuplicate";
 	public static final String CHOOSING_LIST_OWNER_NEEDED = "isChoosingListOwnerNeeded";
+	public static final String ERROR = "error";
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -308,7 +309,7 @@ public class CrossingSettingsController extends SettingsController {
 		} catch (final FileParsingException e) {
 			CrossingSettingsController.LOG.error(e.getMessage(), e);
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 0);
-			resultsMap.put("error", new String[] {e.getMessage()});
+			resultsMap.put(ERROR, new String[] {e.getMessage()});
 		}
 		return super.convertObjectToJson(resultsMap);
 	}
@@ -362,7 +363,13 @@ public class CrossingSettingsController extends SettingsController {
 		try {
 			workbenchUID = Integer.parseInt(workbenchUserId);
 		} catch (final Exception e){
-			throw new IllegalStateException("Could not associate User id with the list.");
+			CrossingSettingsController.LOG.error(e.getMessage(), e);
+			final Map<String, Object> resultsMap = new HashMap<>();
+			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 0);
+			final String localisedErrorMessage = this.messageSource.getMessage("error.submit.list.owner.wrong.format", new String[] {},
+					"Could not associate User id with the list", LocaleContextHolder.getLocale());
+			resultsMap.put(ERROR, new String[] {localisedErrorMessage});
+			return resultsMap;
 		}
 
 		final Integer userId = this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), workbenchUID);

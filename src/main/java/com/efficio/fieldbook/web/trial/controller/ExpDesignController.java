@@ -228,9 +228,9 @@ public class ExpDesignController extends BaseTrialController {
 					// we call the actual process
 					if (expParameterOutput.isValid()) {
 
-						boolean designHasChanged = isDesignChanged(expDesign);
+						this.userSelection.setDesignChanged(isDesignChanged(expDesign));
 
-						if (!designHasChanged){
+						if (!this.userSelection.isDesignChanged()){
 							// If the design is not changed, just compute for new environments added by the user.
 							expDesign.setNoOfEnvironmentsToAdd(this.countNewEnvironments(expDesign.getNoOfEnvironments(), this.userSelection));
 						}else{
@@ -265,7 +265,7 @@ public class ExpDesignController extends BaseTrialController {
 						this.userSelection.setExpDesignParams(expDesign);
 						this.userSelection.setExpDesignVariables(designService.getExperimentalDesignVariables(expDesign));
 
-						if (designHasChanged){
+						if (this.userSelection.isDesignChanged()){
 							// If the design is changed, we shoud overwrite the existing observation with new
 							// observations from the new design.
 							workbook.setObservations(measurementRows);

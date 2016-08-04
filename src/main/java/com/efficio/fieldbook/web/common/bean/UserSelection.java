@@ -141,6 +141,8 @@ public class UserSelection implements Serializable {
 	/* The data from imported Design file (CSV/Excel) */
 	private DesignImportData designImportData;
 
+	private boolean designChanged;
+
 	/** The current page. */
 	private int currentPage;
 
@@ -966,5 +968,13 @@ public class UserSelection implements Serializable {
 
 	public void setStartingPlotNo(Integer startingPlotNo) {
 		this.startingPlotNo = startingPlotNo;
+	}
+
+	public boolean isDesignChanged() {
+		return designChanged;
+	}
+
+	public void setDesignChanged(final boolean designChanged) {
+		this.designChanged = designChanged;
 	}
 }

@@ -270,6 +270,11 @@ public class ImportGermplasmListController extends SettingsController {
 
 			hasTemporaryWorkbook = true;
 
+			if (this.userSelection.isDesignChanged()) {
+				// If the design is changed, make sure that during saving of a trial, the old observations are deleted.
+				isDeleteObservations = true;
+			}
+
 		}
 
 		// if we have no germplasm list available for the nursery, skip this validation flow
@@ -302,7 +307,7 @@ public class ImportGermplasmListController extends SettingsController {
 		this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
 				AppConstants.ID_NAME_COMBINATION.getString(), true);
 		final int studyId =
-				this.dataImportService.saveDataset(this.userSelection.getWorkbook(), true, false, this.getCurrentProject()
+				this.dataImportService.saveDataset(this.userSelection.getWorkbook(), true, isDeleteObservations, this.getCurrentProject()
 						.getUniqueID());
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 

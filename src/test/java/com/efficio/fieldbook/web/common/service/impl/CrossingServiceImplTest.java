@@ -286,18 +286,10 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
-	public void testPopulateGermplasmdateWithCrossingDate() {
-		final Germplasm germplasm = new Germplasm();
-		final String crossingDate = "20150303";
-		this.crossingService.populateGermplasmDate(germplasm, crossingDate, "");
-		Assert.assertEquals(germplasm.getGdate(), new Integer(crossingDate));
-	}
-
-	@Test
 	public void testPopulateGermplasmdateWithHarvestDate() {
 		final Germplasm germplasm = new Germplasm();
 		String harvestedDate = "2015-06";
-		this.crossingService.populateGermplasmDate(germplasm, "", harvestedDate);
+		this.crossingService.populateGermplasmDate(germplasm, harvestedDate);
 		harvestedDate = harvestedDate.replace("-", "");
 		harvestedDate += "00";
 		Assert.assertEquals(germplasm.getGdate(), new Integer(harvestedDate));
@@ -306,18 +298,8 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testPopulateGermplasmdateWithCurrentDate() {
 		final Germplasm germplasm = new Germplasm();
-		this.crossingService.populateGermplasmDate(germplasm, "", "");
+		this.crossingService.populateGermplasmDate(germplasm, "");
 		Assert.assertEquals(germplasm.getGdate(), DateUtil.getCurrentDateAsIntegerValue());
-	}
-
-	@Test
-	public void testPopulateGermplasmdateWithBothDateReturnHarvestedDate() {
-		final Germplasm germplasm = new Germplasm();
-		String harvestedDate = "2015-06";
-		this.crossingService.populateGermplasmDate(germplasm, "201509", harvestedDate);
-		harvestedDate = harvestedDate.replace("-", "");
-		harvestedDate += "00";
-		Assert.assertEquals(germplasm.getGdate(), new Integer(harvestedDate));
 	}
 
 	@Test

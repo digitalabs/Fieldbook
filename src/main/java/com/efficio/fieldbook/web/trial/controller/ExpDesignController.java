@@ -227,7 +227,18 @@ public class ExpDesignController extends BaseTrialController {
 					expParameterOutput = designService.validate(expDesign, germplasmList);
 					// we call the actual process
 					if (expParameterOutput.isValid()) {
-						expDesign.setNoOfEnvironmentsToAdd(this.countNewEnvironments(expDesign.getNoOfEnvironments(), this.userSelection));
+
+						boolean designHasChanged = isDesignChanged(expDesign);
+
+						if (!designHasChanged){
+							// If the design is not changed, just compute for new environments added by the user.
+							expDesign.setNoOfEnvironmentsToAdd(this.countNewEnvironments(expDesign.getNoOfEnvironments(), this.userSelection));
+						}else{
+							// If the design is changed, the NoOfEnvironmentsToAdd should be
+							// the same as the NoOfEnvironments so that the design generator will create measurement rows
+							// for all environments.
+							expDesign.setNoOfEnvironmentsToAdd(expDesign.getNoOfEnvironments());
+						}
 
 						// Setting starting plot number in user selection
 						if (expDesign.getStartingPlotNo() != null && !expDesign.getStartingPlotNo().isEmpty()) {
@@ -254,7 +265,16 @@ public class ExpDesignController extends BaseTrialController {
 						this.userSelection.setExpDesignParams(expDesign);
 						this.userSelection.setExpDesignVariables(designService.getExperimentalDesignVariables(expDesign));
 
-						workbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection));
+						if (designHasChanged){
+							// If the design is changed, we shoud overwrite the existing observation with new
+							// observations from the new design.
+							workbook.setObservations(measurementRows);
+						} else {
+							// If the design is still the same, just append the new observations
+							// to the existing observation.
+							workbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection));
+						}
+
 						// should have at least 1 record
 						final List<MeasurementVariable> currentNewFactors = new ArrayList<>();
 						final List<MeasurementVariable> oldFactors = workbook.getFactors();
@@ -373,6 +393,17 @@ public class ExpDesignController extends BaseTrialController {
 			return this.resolvableRowColumnDesign;
 		}
 		return null;
+	}
+
+	boolean isDesignChanged(ExpDesignParameterUi expDesignParameterUi) {
+
+		ExpDesignParameterUi oldExpDesignParameterUi = this.userSelection.getExpDesignParams();
+
+		if (oldExpDesignParameterUi != null && oldExpDesignParameterUi.getDesignType() != expDesignParameterUi.getDesignType()) {
+			return true;
+		}
+
+		return false;
 	}
 
 	void setFieldbookProperties(FieldbookProperties fieldbookProperties) {

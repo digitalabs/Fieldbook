@@ -10,10 +10,14 @@ import java.util.TreeSet;
 import com.google.common.collect.Lists;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DuplicatesUtil {
 
 	public static final String SEPARATOR = "/";
+	
+	public static final Logger LOG = LoggerFactory.getLogger(DuplicatesUtil.class);
 
 	private DuplicatesUtil() {
 		// private constructor for utility class
@@ -172,6 +176,8 @@ public class DuplicatesUtil {
 			duplicateString = duplicateString + DuplicatesUtil.buildDuplicateString(pedigreeRecipPrefix ,ImportedCrosses.PEDIGREE_RECIP_PREFIX);
 
 			duplicateString = DuplicatesUtil.removeCommaAndPipeFromEnd(duplicateString);
+			
+			LOG.info("EntryID : " + importedCrossesMain.getEntryId() + " : " + duplicateString);
 
 			importedCrossesMain.setDuplicate(duplicateString);
 		}

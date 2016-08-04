@@ -1056,8 +1056,8 @@ function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUse
 /* ADVANCING NURSERY SPECIFIC FUNCTIONS */
 
 function advanceNursery(){
-	var hashGermplasmList = $('#totalGermplasms').val() !== '0';
-	if(!hashGermplasmList){
+	var hasGermplasmList = $('#totalGermplasms').val() !== '0';
+	if(!hasGermplasmList){
 		showErrorMessage('', nurseryHasNoGermplasmList);
 	} else{
 		var idVal = $('#createNurseryMainForm #studyId').val();

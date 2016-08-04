@@ -332,7 +332,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
-		responseMap.put(CrossingSettingsController.SUCCESS_KEY, 1);
+		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);
 
 		return responseMap;
 	}

@@ -28,7 +28,7 @@ import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 @RunWith(MockitoJUnitRunner.class)
 public class GenerateFieldmapControllerTest {
 
-	public static final String BLOCK_NAME = "block semi-colon;";
+	public static final String BLOCK_NAME = "block* semi-colon;";
 	@Mock
 	private FieldmapForm fieldmapForm;
 

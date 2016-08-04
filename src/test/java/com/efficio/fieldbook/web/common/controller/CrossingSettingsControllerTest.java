@@ -82,7 +82,7 @@ public class CrossingSettingsControllerTest {
 	public static final String BREEDING_METHOD = "Test Method";
 	public static final String MALE_PLOT = "2";
 	public static final String MALE_NURSERY_NAME = "maleNursery";
-	public static final String CROSSING_DATE = "20161212";
+	public static final Integer CROSSING_DATE = 20161212;
 	public static final String NOTES = "Test notes";
 
 	@Mock

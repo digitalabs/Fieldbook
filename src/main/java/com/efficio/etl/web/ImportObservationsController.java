@@ -90,8 +90,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 
 			importData = this.etlService.createWorkbookFromUserSelection(this.userSelection, isMeansDataImport);
 
-			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getVariates(), programUUID,
-					this.ontologyDataManager);
+			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getVariates(), programUUID);
 
 			List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection);
 			List<MeasurementVariable> studyHeaders = importData.getAllVariables();

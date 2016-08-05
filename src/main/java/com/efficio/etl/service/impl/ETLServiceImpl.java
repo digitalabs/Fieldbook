@@ -971,7 +971,7 @@ public class ETLServiceImpl implements ETLService {
 		if (isWorkbookHasObservationRecords && !isObservationOverMaxLimit) {
 
 			importData.setObservations(this.extractExcelFileData(workbook, userSelection, importData, false));
-			hasOutOfBoundsData = this.dataImportService.checkForOutOfBoundsData(this.ontologyDataManager, importData, programUUID);
+			hasOutOfBoundsData = this.dataImportService.checkForOutOfBoundsData(importData, programUUID);
 		}
 
 		return hasOutOfBoundsData;

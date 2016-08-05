@@ -150,7 +150,7 @@ public class FileUploadController extends AbstractBaseETLController {
 
 			wb =
 					this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
-							confirmDiscard == 1 ? true : false, this.ontologyDataManager, new WorkbookParser());
+							confirmDiscard == 1 ? true : false, new WorkbookParser());
 
 			this.dataImportService.saveDataset(wb, programUUID);
 

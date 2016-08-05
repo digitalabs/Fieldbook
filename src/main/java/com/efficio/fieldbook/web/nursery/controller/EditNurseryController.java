@@ -821,6 +821,11 @@ public class EditNurseryController extends SettingsController {
 		return new ArrayList<>();
 	}
 
+	@ModelAttribute("contextInfo")
+	public ContextInfo getContextInfo() {
+		return this.contextUtil.getContextInfoFromSession();
+	}
+
 	@ModelAttribute("programLocationURL")
 	public String getProgramLocation() {
 		return this.fieldbookProperties.getProgramLocationsUrl();

@@ -552,16 +552,64 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					targets: columns.length - 1,
 					createdCell: function(td, cellData, rowData, row, col) {
 
-						if ($(td).text().indexOf('Plot Dupe') != -1) {
-							$(td).addClass('plotDupe');
-						} else if ($(td).text().indexOf('Pedigree Dupe') != -1) {
-							$(td).addClass('pedigreeDupe');
-						} else if ($(td).text().indexOf('Plot Recip') != -1) {
-							$(td).addClass('plotRecip');
-						} else if ($(td).text().indexOf('Pedigree Recip') != -1) {
-							$(td).addClass('pedigreeRecip');
-						}
+                        var possibleDupeOrRecip = $(td).text();
+                        var displayOfDuplicateColumn = possibleDupeOrRecip;
+                        // Clearing html of td which does not contain color code for duplication string
+                        $(td).html('');
+                        var plotDupe = "";
+                        var pedigreeDupe = "";
+                        var plotRecip = "";
+                        var pedigreeRecip = "";
 
+                        // Bifurcate possibleDupeOrRecip text as per pipe character and distribute its text to its desired variable
+                        // ex. plotDupe variable will get Plot Dupe: 4, 7
+                        var indexOfPipe = possibleDupeOrRecip.indexOf(" | ");
+                        while(indexOfPipe > 0) {
+                            if(possibleDupeOrRecip.indexOf("Plot Dupe:") > -1) {
+                                plotDupe = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
+                                possibleDupeOrRecip = possibleDupeOrRecip.replace(plotDupe + " | ", "");
+                            } else if(possibleDupeOrRecip.indexOf("Pedigree Dupe:") > -1) {
+                                pedigreeDupe = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
+                                possibleDupeOrRecip = possibleDupeOrRecip.replace(pedigreeDupe + " | ", "");
+                            } else if(possibleDupeOrRecip.indexOf("Plot Recip:") > -1) {
+                                plotRecip = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
+                                possibleDupeOrRecip = possibleDupeOrRecip.replace(plotRecip + " | ", "");
+                            } else if(possibleDupeOrRecip.indexOf("Pedigree Recip:") > -1) {
+                                pedigreeRecip = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
+                                possibleDupeOrRecip = possibleDupeOrRecip.replace(pedigreeRecip + " | ", "");
+                            }
+                            indexOfPipe = possibleDupeOrRecip.indexOf(" | ");
+                        }
+
+                        // If our possibleDupeOrRecip string is Plot Dupe: 4, 7 | Pedigree Dupe: 2, 6 | Plot Recip: 9, 8
+                        // then plotDupe and pedigreeDupe variables will get their information but last plotRecip will not get
+                        // For getting information of last dupe/recip we write following condition
+                        if(possibleDupeOrRecip != "") {
+                            if(possibleDupeOrRecip.indexOf("Plot Dupe:") > -1) {
+                                plotDupe = possibleDupeOrRecip;
+                            } else if(possibleDupeOrRecip.indexOf("Pedigree Dupe:") > -1) {
+                                pedigreeDupe = possibleDupeOrRecip;
+                            } else if(possibleDupeOrRecip.indexOf("Plot Recip:") > -1) {
+                                plotRecip = possibleDupeOrRecip;
+                            } else if(possibleDupeOrRecip.indexOf("Pedigree Recip:") > -1) {
+                                pedigreeRecip = possibleDupeOrRecip;
+                            }
+                        }
+
+                        // Previously, only one dupe/recip information and its color was displayed
+                        // To overcome this situation, we added different spans to one td so that it will set different colors to different spans
+                        if (displayOfDuplicateColumn.indexOf('Plot Dupe') != -1) {
+                            $(td).append("<span class='plotDupe'>" + plotDupe + "</span> ");
+                        }
+                        if (displayOfDuplicateColumn.indexOf('Pedigree Dupe') != -1) {
+                            $(td).append("<span class='pedigreeDupe'>" + pedigreeDupe + "</span> ");
+                        }
+                        if (displayOfDuplicateColumn.indexOf('Plot Recip') != -1) {
+                            $(td).append("<span class='plotRecip'>" + plotRecip + "</span> ");
+                        }
+                        if (displayOfDuplicateColumn.indexOf('Pedigree Recip') != -1) {
+                            $(td).append("<span class='pedigreeRecip'>" + pedigreeRecip + "</span> ");
+                        }
 					}
 				});
 			}

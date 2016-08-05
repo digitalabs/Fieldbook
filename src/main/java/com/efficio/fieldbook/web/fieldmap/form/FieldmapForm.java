@@ -37,6 +37,12 @@ public class FieldmapForm {
 	/** The field location id favorite. */
 	private String fieldLocationIdFavorite;
 
+	/** The field location id breeding. */
+	private String fieldLocationIdBreeding;
+
+	/** The field location id breeding. */
+	private String fieldLocationIdBreedingFavorites;
+
 	/** The save and redirect to create label. */
 	private String saveAndRedirectToCreateLabel;
 
@@ -174,6 +180,42 @@ public class FieldmapForm {
 	 */
 	public void setFieldLocationIdFavorite(String fieldLocationIdFavorite) {
 		this.fieldLocationIdFavorite = fieldLocationIdFavorite;
+	}
+
+	/**
+	 * Gets the field location id breeding.
+	 *
+	 * @return the field location id breeding
+	 */
+	public String getFieldLocationIdBreeding() {
+		return this.fieldLocationIdBreeding;
+	}
+
+	/**
+	 * Sets the field location id breeding.
+	 *
+	 * @param fieldLocationIdBreeding the new field location id breeding
+	 */
+	public void setFieldLocationIdBreeding(String fieldLocationIdBreeding) {
+		this.fieldLocationIdBreeding = fieldLocationIdBreeding;
+	}
+
+	/**
+	 * Gets the field location id breeding favorites.
+	 *
+	 * @return the field location id breeding favorites
+	 */
+	public String getFieldLocationIdBreedingFavorites() {
+		return this.fieldLocationIdBreedingFavorites;
+	}
+
+	/**
+	 * Sets the field location id breeding favorites.
+	 *
+	 * @param fieldLocationIdBreedingFavorites the new field location id breeding favorites
+	 */
+	public void setFieldLocationIdBreedingFavorites(String fieldLocationIdBreedingFavorites) {
+		this.fieldLocationIdBreedingFavorites = fieldLocationIdBreedingFavorites;
 	}
 
 	/**

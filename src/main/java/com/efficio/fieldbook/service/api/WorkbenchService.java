@@ -134,7 +134,7 @@ public interface WorkbenchService {
 	 * @return the current ibdb user id
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	Integer getCurrentIbdbUserId(Long projectId, Integer workbenchUserId) throws MiddlewareQueryException;
+	Integer getCurrentIbdbUserId(Long projectId, Integer workbenchUserId);
 
 	/**
 	 * Gets the project by id.

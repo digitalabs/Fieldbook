@@ -49,6 +49,9 @@ if (typeof (LocationsFunctions) === 'undefined') {
 					possibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allSeedStorageLocations, locationConversionFunction);
 				}
 
+				$('#locationFavoritesOnlyCheckbox').prop('checked',
+					data && data.allBreedingFavoritesLocations && data.allBreedingFavoritesLocations.length > 0);
+
 				var allPossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allLocations, locationConversionFunction);
 				var favoritePossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.favoriteLocations, locationConversionFunction);
 				var favoriteBreedingPossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allBreedingFavoritesLocations, locationConversionFunction);
@@ -70,7 +73,7 @@ if (typeof (LocationsFunctions) === 'undefined') {
 					} else {
 						LocationsFunctions.createSelect2Dropdown(possibleValues, locationSelectID);
 					}
-				}
+				};
 				applyFilter();
 
 				$filters.on('change', function() {
@@ -85,8 +88,11 @@ if (typeof (LocationsFunctions) === 'undefined') {
 
 				});
 
-				$(document).on('location-update', function() {
-					LocationsFunctions.processLocationDropdownAndFavoritesCheckbox(locationSelectID, favoritesCheckboxID, favoritesDefault, locationType, locationConversionFunction);
+				$(document).on(
+					'location-update',
+					function() {
+						LocationsFunctions.processLocationDropdownAndFavoritesCheckbox(locationSelectID, favoritesCheckboxID,
+							allRadioButtonId, breedingLocationOnlyRadio, locationType, locationConversionFunction);
 				});
 			});
 		},

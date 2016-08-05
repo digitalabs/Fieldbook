@@ -52,18 +52,20 @@
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 
-				<!-- radio buttons for filtering -->
-				<div class="possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}">
-					<label class="radio-inline">
-									<input id="filterLocations" name="locationFilter" type="radio" checked="checked"
-										th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'"/>
-									<span >All breeding locations</span>
-									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-									<input id="allLocations" name="locationFilter" type="radio" 
-										th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'"/>
-									<span >All locations</span>
-					</label>
-				</div>
+						<!-- radio buttons for filtering -->
+						<div class="possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}">
+							<label class="radio-inline">
+								<input id="filterLocations" name="locationFilter" type="radio" checked="checked"
+									th:class="'filter_selectors_' + ${rowStat.index}"
+									th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'"/>
+								<span >All breeding locations</span>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+								<input id="allLocations" name="locationFilter" type="radio" 
+									th:class="'filter_selectors_all filter_selectors_all_' + ${rowStat.index}"
+									th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'"/>
+								<span >All locations</span>
+							</label>
+						</div>
 						<!-- Show Favorite Location -->
 						<div style="width: 100%" th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
 							<input
@@ -267,10 +269,12 @@
 				<div class="possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
 					<label class="radio-inline">
 									<input id="filterMethods" name="methodFilter" type="radio" checked="checked"
+										th:class="'filter_selectors_' + ${rowStat.index}"
 										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
 									<span >Derivative and Maintenance methods</span>
 									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 									<input id="allMethods" name="methodFilter" type="radio"
+										th:class="'filter_selectors_all filter_selectors_all_' + ${rowStat.index}"
 										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
 									<span >All methods</span>
 					</label>
@@ -526,6 +530,8 @@ $(document).ready(function() {
 	// remove any other listeners for the location update
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);
+	$(document).off('method-update');
+	$(document).on('method-update', recreateMethodCombo);
 	$('#variateDeleteConfirmationModal').on('click', '#cancelDelete', function() {
 		if (document.initialEnabledStat && document.enableActions !== undefined) {
 			document.enableActions();
@@ -555,14 +561,20 @@ $(document).ready(function() {
 		hideDummyRow('selectionVariatesSettings');
 	}
 	checkShowSettingsFormReminder();
-	// toggle favorites by default on edit if value is a favorite
+
+	// Perform some logic depending on the presence
+	// of favorites or saved values
 	if ($('.edit-nursery-page-identifier').length) {
 		$.each(possibleValuesJsonElm, function(index, divElem) {
 			var select2Index = $(divElem).attr('id').split('possibleValuesJson')[1];
 			checkFavoritesIfValIsAFavorite(select2Index);
 		});
 	}
-	checkMethodFavorite();
+
+	// Call on-change handlers associated with
+	// the "show all Location/Methods" input
+	$('.filter_selectors_all:checked').click();
+
 	checkNurseryIfShowRemoveVariableLinks();
 	$('.remove-btn').on('click', function() {
 		var sectionDiv = $(this).data('section');

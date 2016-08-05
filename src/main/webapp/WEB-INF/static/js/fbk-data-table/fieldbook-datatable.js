@@ -522,11 +522,20 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 	 * @param {string} tableIdentifier the id of the table container
 	 * @param {string} ajaxUrl the URL from which to retrieve table data
 	 */
-	var dataTableConstructor = function PreviewCrossesDataTable(tableIdentifier, dataList, tableHeaderList) {
+	var dataTableConstructor = function PreviewCrossesDataTable(tableIdentifier, dataList, tableHeaderList, isImport) {
 		'use strict';
 
 		var columns = [],
-			columnsDef = [],
+
+		/*Column defs for female plot,male plot,crossing date,notes, breeding method,male nursery name(hide if cross is created)
+		From Datatable API, using negative index counts from the last index of the columns (n-1)
+		https://datatables.net/reference/option/columnDefs*/
+		columnsDef = [
+				{
+					targets: [-2,-3,-4,-5,-7],
+					visible: isImport
+				},
+			],
 			table;
 		
 		$.each( tableHeaderList, function( index, value ){

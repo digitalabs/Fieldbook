@@ -96,7 +96,7 @@ var ImportCrosses = {
             	showErrorMessage('', response.error);
             	return;
             }
-			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList);
+			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
 		});
 
 		$('#openCrossListNextButton').off('click');

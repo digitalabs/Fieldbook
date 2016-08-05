@@ -294,7 +294,7 @@ public class CrossingSettingsController extends SettingsController {
 
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 1);
 			resultsMap.put(CrossingSettingsController.HAS_PLOT_DUPLICATE, parseResults.hasPlotDuplicate());
-			
+
 			if (!parseResults.getWarningMessages().isEmpty()) {
 				resultsMap.put("warnings", parseResults.getWarningMessages());
 			}
@@ -334,6 +334,7 @@ public class CrossingSettingsController extends SettingsController {
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
 		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);
 
+		responseMap.put(CrossesListUtil.IS_IMPORT, true);
 		return responseMap;
 	}
 
@@ -415,6 +416,7 @@ public class CrossingSettingsController extends SettingsController {
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
 		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);
+		responseMap.put(CrossesListUtil.IS_IMPORT, false);
 		return responseMap;
 	}
 

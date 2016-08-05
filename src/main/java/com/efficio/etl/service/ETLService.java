@@ -151,6 +151,4 @@ public interface ETLService {
    */
   org.generationcp.middleware.domain.etl.Workbook createWorkbookFromUserSelection(UserSelection userSelection, boolean isMeansDataImport);
 
-  void checkForInvalidGids(org.generationcp.middleware.domain.etl.Workbook workbook, List<Message> errors);
-
 }

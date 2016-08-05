@@ -942,13 +942,6 @@ public class ETLServiceImpl implements ETLService {
 		return hasMeasurementEffectDataset;
 	}
 
-	@Override
-	public void checkForInvalidGids(org.generationcp.middleware.domain.etl.Workbook workbook, List<Message> errors) {
-
-		dataImportService.checkForInvalidGids(germplasmDataManager, ontologyDataManager, workbook, errors);
-
-	}
-
 	public boolean checkOutOfBoundsData(final UserSelection userSelection) throws IOException {
 
 		org.generationcp.middleware.domain.etl.Workbook importData = null;

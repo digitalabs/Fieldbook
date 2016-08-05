@@ -34,7 +34,8 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 	private MessageSource messageSource;
 
 	@Override
-	public ImportedInventoryList parseFile(MultipartFile file, Map<String, Object> additionalParams) throws FileParsingException {
+	public ImportedInventoryList parseFile(final MultipartFile file, final Map<String, Object> additionalParams)
+			throws FileParsingException {
 		return this.parser.parseFile(file, additionalParams);
 	}
 

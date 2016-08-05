@@ -1,6 +1,8 @@
 
 package com.efficio.fieldbook.web.util.parsing;
 
+import java.util.Objects;
+
 import javax.annotation.Resource;
 
 import org.generationcp.commons.parsing.FileParsingException;
@@ -27,13 +29,13 @@ public class DesignImportParser {
 	 * @return
 	 * @throws FileParsingException
 	 */
-	public DesignImportData parseFile(Integer fileType, MultipartFile file) throws FileParsingException {
+	public DesignImportData parseFile(final Integer fileType, final MultipartFile file) throws FileParsingException {
 
 		DesignImportData designImportData = null;
 
-		if (fileType == FILE_TYPE_CSV) {
+		if (Objects.equals(fileType, FILE_TYPE_CSV)) {
 			designImportData = this.csvParser.parseFile(file);
-		} else if (fileType == FILE_TYPE_EXCEL) {
+		} else if (Objects.equals(fileType, FILE_TYPE_EXCEL)) {
 			designImportData = this.excelParser.parseFile(file, null);
 		}
 
@@ -48,13 +50,13 @@ public class DesignImportParser {
 	 * @return
 	 * @throws FileParsingException
 	 */
-	public DesignImportData parseFile(Integer fileType, String absoluteFilename) throws FileParsingException {
+	public DesignImportData parseFile(final Integer fileType, final String absoluteFilename) throws FileParsingException {
 
 		DesignImportData designImportData = null;
 
-		if (fileType == FILE_TYPE_CSV) {
+		if (Objects.equals(fileType, FILE_TYPE_CSV)) {
 			designImportData = this.csvParser.parseFile(absoluteFilename);
-		} else if (fileType == FILE_TYPE_EXCEL) {
+		} else if (Objects.equals(fileType, FILE_TYPE_EXCEL)) {
 			designImportData = this.excelParser.parseFile(absoluteFilename, null);
 		}
 

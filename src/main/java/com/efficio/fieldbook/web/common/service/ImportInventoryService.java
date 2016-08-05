@@ -17,7 +17,8 @@ import com.efficio.fieldbook.util.FieldbookException;
  */
 public interface ImportInventoryService {
 
-	ImportedInventoryList parseFile(MultipartFile file, Map<String, Object> additionalParams) throws FileParsingException;
+	ImportedInventoryList parseFile(MultipartFile file, Map<String, Object> additionalParams)
+			throws FileParsingException;
 
 	boolean mergeImportedData(List<InventoryDetails> originalList, ImportedInventoryList imported);
 

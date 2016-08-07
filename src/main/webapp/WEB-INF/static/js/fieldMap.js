@@ -125,72 +125,36 @@ function showEnterFieldDetailsMessage(msg) {
 	createErrorNotification(errorMsgHeader, msg);
 }
 
-function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj) {
+function initializeFieldLocationsSelect2(_locationSuggestions, _locationSuggestions_obj, fieldName) {
 	'use strict';
-	$.each(locationSuggestions, function(index, value) {
+	fieldName = '#' + fieldName;
+	$.each(_locationSuggestions, function(index, value) {
 		var locNameDisplay = value.lname;
 		if (value.labbr != null && value.labbr != '') {
 			locNameDisplay  += ' - (' + value.labbr + ')';
 		}
-		locationSuggestions_obj.push({
+		_locationSuggestions_obj.push({
 			'id': value.locid,
 			'text': locNameDisplay
 		});
 
 	});
 
-	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('fieldLocationIdAll')).select2({
-		minimumResultsForSearch: locationSuggestions_obj.length == 0 ? -1 : 20,
+	$(fieldName).select2({
+		minimumResultsForSearch: _locationSuggestions_obj.length == 0 ? -1 : 20,
 		query: function(query) {
-			var data = {results: locationSuggestions_obj}, i, j, s;
+			var data = {results: _locationSuggestions_obj}, i, j, s;
 			// return the array that matches
 			data.results = $.grep(data.results, function(item, index) {
 				return ($.fn.select2.defaults.matcher(query.term, item.text));
 
 			});
 			query.callback(data);
-
 		}
-
 	}).on('change', function() {
-		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
-		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
-	});
-
-}
-
-function initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
-	'use strict';
-	$.each(locationSuggestionsFav, function(index, value) {
-		var locNameDisplay = value.lname;
-		if (value.labbr != null && value.labbr != '') {
-			locNameDisplay  += ' - (' + value.labbr + ')';
-		}
-		locationSuggestionsFav_obj.push({
-			'id': value.locid,
-			'text': locNameDisplay
-		});
-	});
-
-	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('fieldLocationIdFavorite')).select2({
-		minimumResultsForSearch: locationSuggestionsFav_obj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: locationSuggestionsFav_obj}, i, j, s;
-			// return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-
-			});
-			query.callback(data);
-
-		}
-
-	}).on('change', function() {
-		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').id);
-		$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
+		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($(fieldName).select2('data').id);
+		$('#' + getJquerySafeId('userFieldmap.locationName')).val($(fieldName).select2('data').text);
+		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($(fieldName).select2('data').abbr);
 		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
 	});
 
@@ -593,37 +557,6 @@ function recreatePopupFieldCombo() {
  );
 }
 
-function showCorrectLocationCombo() {
-	var isChecked = $('#showFavoriteLocation').is(':checked');
-	//if show favorite location is checked, hide all field locations, else, show only favorite locations
-	if (isChecked) {
-		$('#s2id_fieldLocationIdFavorite').show();
-		$('#s2id_fieldLocationIdAll').hide();
-		if ($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data') != null) {
-			$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').id);
-			$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
-			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').abbr);
-
-		} else {
-			$('#' + getJquerySafeId('fieldLocationId')).val(0);
-			$('#' + getJquerySafeId('fieldLocationName')).val('');
-			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val('');
-		}
-	} else {
-		$('#s2id_fieldLocationIdFavorite').hide();
-		$('#s2id_fieldLocationIdAll').show();
-		if ($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data') != null) {
-			$('#' + getJquerySafeId('fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
-			$('#' + getJquerySafeId('fieldLocationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').abbr);
-		} else {
-			$('#' + getJquerySafeId('fieldLocationId')).val(0);
-			$('#' + getJquerySafeId('fieldLocationName')).val('');
-			$('#' + getJquerySafeId('fieldLocationAbbreviation')).val('');
-		}
-
-	}
-}
 function setComboValues(suggestions_obj, id, name) {
 	'use strict';
 	var dataVal = {id:'', text:'', description:''}; //default value
@@ -639,29 +572,6 @@ function setComboValues(suggestions_obj, id, name) {
 	}
 	//set the selected value of the combo
 	$('#' + name).select2('data', dataVal);
-}
-
-function recreateLocationComboAfterClose(comboName, data) {
-	'use strict';
-	if (comboName == 'fieldLocationIdAll') {
-		//clear all locations dropdown
-		locationSuggestions = [];
-		locationSuggestions_obj = [];
-
-		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
-		//reload the data retrieved
-		locationSuggestions = data;
-		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
-	} else {
-		//clear the favorite locations dropdown
-		locationSuggestionsFav = [];
-		locationSuggestionsFav_obj = [];
-		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
-		//reload the data
-		locationSuggestionsFav = data;
-		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
-	}
-
 }
 
 function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId) {
@@ -895,8 +805,7 @@ function doEnterFieldDetailsPageLoad() {
 	setSelectedTrialsAsDraggable();
 	calculateTotalPlots();
 
-	initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
-	initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+	recreateLocationCombo();
 
 	initializeFieldSelect2({}, [], true);
 	initializeBlockSelect2({}, [], true);
@@ -907,81 +816,65 @@ function doEnterFieldDetailsPageLoad() {
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);
 
-	$('#s2id_fieldLocationIdFavorite').hide();
-	$('#s2id_fieldLocationIdAll').show();
-	$('#showFavoriteLocation').removeAttr('checked');
-	$('#showFavoriteLocation').on('change', function() {
-		var isChecked = $('#showFavoriteLocation').is(':checked');
-		//if show favorite location is checked, hide all field locations, else, show only favorite locations
-		if (isChecked) {
-			$('#s2id_fieldLocationIdFavorite').show();
-			$('#s2id_fieldLocationIdAll').hide();
-			if ($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data') != null) {
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').id);
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
-			} else {
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val('');
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val('');
-			}
-		} else {
-			$('#s2id_fieldLocationIdFavorite').hide();
-			$('#s2id_fieldLocationIdAll').show();
-			if ($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data') != null) {
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-			} else {
-				$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val('');
-				$('#' + getJquerySafeId('userFieldmap.locationName')).val('');
-			}
-
-		}
-		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val());
+	$('#showFavoriteLocation, #showAllLocationRadio, #showBreedingLocationOnlyRadio').on('change', function() {
+		showCorrectFieldLocationCombo();
+		initializeFieldSelect2({}, [], true);
+		initializeBlockSelect2({}, [], true);
+		showBlockDetails(true, null);
 	});
 
 	var numRowPerPlot = $('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val();
 	$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
 
-	if ($('#' + getJquerySafeId('userFieldmap.fieldId')).val() != '') {
+	if (prevFieldId != '') {
 		var favLocationChkElem =  $('#showFavoriteLocation');
-		favLocationChkElem.prop('checked',!favLocationChkElem.prop('checked'));
-
 		var isChecked = favLocationChkElem.is(':checked');
-		var locId = $('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val();
 
 		$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(numRowPerPlot);
 
 		if (isChecked) {
-			$('#s2id_fieldLocationIdFavorite').show();
-			$('#s2id_fieldLocationIdAll').hide();
-			for (var index in locationSuggestionsFav_obj) {
-				if (locationSuggestionsFav_obj[index].id == locId) {
 
-					$('#fieldLocationIdFavorite').select2('data', locationSuggestionsFav_obj[index]);
-					$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').id);
-					$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
-					break;
-				}
-			}
+			if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
+				$('#s2id_fieldLocationIdBreedingFavorites').show();
+				$('#s2id_fieldLocationIdFavorite').hide();
+				$('#s2id_fieldLocationIdAll').hide();
+				$('#s2id_fieldLocationIdBreeding').hide();
+				setCorrectValueToFieldCombo (locationSuggestionsBreedingFav_obj, prevFieldLocationId, 'fieldLocationIdBreedingFavorite')
+			} else {
+				$('#s2id_fieldLocationIdBreedingFavorites').hide();
+				$('#s2id_fieldLocationIdFavorite').show();
+				$('#s2id_fieldLocationIdAll').hide();
+				$('#s2id_fieldLocationIdBreeding').hide();
+				setCorrectValueToFieldCombo (locationSuggestionsFav_obj, prevFieldLocationId, 'fieldLocationIdFavorite');
+			};
 
 		} else {
-			//not checked
-			$('#s2id_fieldLocationIdFavorite').hide();
-			$('#s2id_fieldLocationIdAll').show();
-			for (var index in locationSuggestions_obj) {
-				if (locationSuggestions_obj[index].id == locId) {
-					$('#fieldLocationIdAll').select2('data', locationSuggestions_obj[index]);
-					$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').id);
-					$('#' + getJquerySafeId('userFieldmap.locationName')).val($('#' + getJquerySafeId('fieldLocationIdAll')).select2('data').text);
-					break;
-				}
-			}
 
+			if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
+				$('#s2id_fieldLocationIdBreedingFavorites').hide();
+				$('#s2id_fieldLocationIdFavorite').hide();
+				$('#s2id_fieldLocationIdAll').hide();
+				$('#s2id_fieldLocationIdBreeding').show();
+				setCorrectValueToFieldCombo (locationSuggestionsBreeding_obj, prevFieldLocationId, 'fieldLocationIdBreeding')
+			} else {
+				$('#s2id_fieldLocationIdBreedingFavorites').hide();
+				$('#s2id_fieldLocationIdFavorite').hide();
+				$('#s2id_fieldLocationIdAll').show();
+				$('#s2id_fieldLocationIdBreeding').hide();
+				setCorrectValueToFieldCombo (locationSuggestions, prevFieldLocationId, 'fieldLocationIdAll');
+			};
+		}
+	} else {
+		if (Object.keys(locationSuggestionsBreedingFav_obj).length > 0) {
+			$('#showFavoriteLocation').prop('checked', true);
+			$('#s2id_fieldLocationIdFavorite').hide();
+			$('#s2id_fieldLocationIdAll').hide();
+			$('#s2id_fieldLocationIdBreedingFavorites').show();
+			$('#s2id_fieldLocationIdBreeding').hide();
 		}
 	}
 
-	$('#' + getJquerySafeId('fieldLocationIdAll')).val('');
-	$('#' + getJquerySafeId('fieldLocationIdFavorite')).val('');
-	if ($('#' + getJquerySafeId('userFieldmap.fieldId')).val() != '') {
+	if (prevFieldId != '') {
 		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val());
 	}
 
@@ -1001,6 +894,63 @@ function doEnterFieldDetailsPageLoad() {
 	doPreselectValues(prevFieldLocationId, prevFieldId, prevBlockId);
 }
 
+function setCorrectValueToFieldCombo (ls_obj, locId, fieldInputId) {
+	for (var index in ls_obj) {
+		if (ls_obj[index].id == locId) {
+			$('#' + getJquerySafeId(fieldInputId)).select2('data', ls_obj[index]);
+			$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(ls_obj[index].id);
+			$('#' + getJquerySafeId('userFieldmap.locationName')).val(ls_obj[index].text);
+			break;
+		}
+	}
+}
+
+
+function showCorrectFieldLocationCombo() {
+	var isChecked = $('#showFavoriteLocation').is(':checked');
+	// if show favorite location is checked, hide all field locations, else,
+	// show only favorite locations
+	if (isChecked) {
+
+		if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
+			$('#s2id_fieldLocationIdBreedingFavorites').show();
+			$('#s2id_fieldLocationIdFavorite').hide();
+		} else {
+			$('#s2id_fieldLocationIdBreedingFavorites').hide();
+			$('#s2id_fieldLocationIdFavorite').show();
+		}
+
+		$('#s2id_fieldLocationIdAll').hide();
+		$('#s2id_fieldLocationIdBreeding').hide();
+		if ($('#fieldLocationIdFavorite').select2('data') != null) {
+			$('#fieldLocationId').val($('#fieldLocationIdFavorite').select2('data').id);
+			$('#fieldLocationName').val($('#fieldLocationIdFavorite').select2('data').text);
+			$('#fieldLocationAbbreviation').val($('#fieldLocationIdFavorite').select2('data').abbr);
+		} else {
+			$('#fieldLocationId').val(0);
+			$('#fieldLocationName').val('');
+		}
+	} else {
+		$('#s2id_fieldLocationIdFavorite').hide();
+		$('#s2id_fieldLocationIdBreedingFavorites').hide();
+
+		if ($('#showAllLocationRadio').is(':checked')) {
+			$('#s2id_fieldLocationIdAll').show();
+			$('#s2id_fieldLocationIdBreeding').hide();
+		} else {
+			$('#s2id_fieldLocationIdBreeding').show();
+			$('#s2id_fieldLocationIdAll').hide();
+		}
+
+		// LocationIdAll is not null but it contains blank value so put AND condition
+		if ($('#fieldLocationIdAll').select2('data') != null && $('#fieldLocationIdAll').select2('data').id != "" ) {
+			$('#fieldLocationId').val($('#fieldLocationIdAll').select2('data').id);
+			$('#fieldLocationName').val($('#fieldLocationIdAll').select2('data').text);
+		}
+	}
+}
+
+
 function doPreselectValues(locationId, fieldId, blockId) {
 	'use strict';
 	var prevNumberOfRowsPerPlot = $('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data').id,
@@ -1008,49 +958,13 @@ function doPreselectValues(locationId, fieldId, blockId) {
 		prevNumberOfRangesInBlock = $('#' + getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val();
 
 	if (locationId !== '' && locationId !== '0') {
-		//we preload it
-		var isFound = false,
-			isFoundInFav = false,
-			locationDefaultData = [];
-		for (var index = 0 ; index < locationSuggestions_obj.length ; index++) {
-			if (locationSuggestions_obj[index].id == locationId) {
-				isFound = true;
-				locationDefaultData = locationSuggestions_obj[index];
-				break;
-			}
-		}
-		if (!isFound) {
-			for (var index = 0 ; index < locationSuggestionsFav_obj.length ; index++) {
-				if (locationSuggestionsFav_obj[index].id == locationId) {
-					isFound = true;
-					isFoundInFav = true;
-					locationDefaultData = locationSuggestionsFav_obj[index];
-					break;
-				}
-			}
-		}
-		//we now pre select it
-		if (isFound) {
-			if (isFoundInFav) {
-				$('#' + getJquerySafeId('fieldLocationIdFavorite')).select2('data', locationDefaultData);
-				$('#showFavoriteLocation').prop('checked', true);
-				$('#showFavoriteLocation').change();
-			} else {
-				$('#' + getJquerySafeId('fieldLocationIdAll')).select2('data', locationDefaultData);
-				$('#showFavoriteLocation').prop('checked', false);
-				$('#showFavoriteLocation').change();
-			}
-			$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(locationDefaultData.id);
-			//we preselect the fieldId
-			loadFieldsDropdown(locationId, fieldId);
-			loadBlockDropdown(fieldId, blockId);
-			$('body').data('previousFmapData', '1');
-			var rowsPerPlotData = {'id': prevNumberOfRowsPerPlot, 'text': prevNumberOfRowsPerPlot};
-			$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
-			$('#' + getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(prevNumberOfRowsInBlock);
-			$('#' + getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val(prevNumberOfRangesInBlock);
-			calculateTotalPlots();
-
-		}
+		loadFieldsDropdown(locationId, fieldId);
+		loadBlockDropdown(fieldId, blockId);
+		$('body').data('previousFmapData', '1');
+		var rowsPerPlotData = {'id': prevNumberOfRowsPerPlot, 'text': prevNumberOfRowsPerPlot};
+		$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
+		$('#' + getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(prevNumberOfRowsInBlock);
+		$('#' + getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val(prevNumberOfRangesInBlock);
+		calculateTotalPlots();
 	}
 }

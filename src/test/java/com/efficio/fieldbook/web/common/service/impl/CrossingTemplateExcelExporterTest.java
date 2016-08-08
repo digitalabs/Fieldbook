@@ -200,17 +200,82 @@ public class CrossingTemplateExcelExporterTest {
 		final Sheet sheet = this.workbook.getSheetAt(3);
 		this.exporter.writeNurseryListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
 				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+		
 		Assert.assertEquals(String.valueOf("studyname"), sheet.getRow(1).getCell(0).getStringCellValue());
 		Assert.assertEquals(1, (int) sheet.getRow(1).getCell(1).getNumericCellValue());
-		Assert.assertEquals(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName(), sheet.getRow(1).getCell(2).getStringCellValue());
 		Assert.assertEquals(String.valueOf("1"), sheet.getRow(1).getCell(3).getStringCellValue());
 		Assert.assertEquals(String.valueOf("1"), sheet.getRow(1).getCell(4).getStringCellValue());
 		Assert.assertEquals(String.valueOf("ABC"), sheet.getRow(1).getCell(5).getStringCellValue());
 		Assert.assertEquals(String.valueOf("abc/def"), sheet.getRow(1).getCell(6).getStringCellValue());
-		Assert.assertEquals(String.valueOf("4"), sheet.getRow(1).getCell(7).getStringCellValue());
-		Assert.assertEquals(String.valueOf("100"), sheet.getRow(1).getCell(8).getStringCellValue());
+		Assert.assertEquals(null, sheet.getRow(0).getCell(7));
+		Assert.assertEquals(null, sheet.getRow(0).getCell(8));
+
+	}
+	
+	@Test
+	public void testwriteNurseryListSectionWithAddUserDescriptors() throws IOException {
+
+		final int measurementDataSetId = 10101;
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString()))
+				.thenReturn(measurementDataSetId);
+
+		final List<Experiment> experiments = new ArrayList<>();
+		VariableList factors = new VariableList();
+		factors.add(createTestVariable(TermId.PLOT_NO.getId(), "1"));
+		factors.add(createTestVariable(TermId.GID.getId(), "801"));
+		factors.add(createTestVariable(TermId.DESIG.getId(), "CML502A"));
+		factors.add(createTestVariable(TermId.CROSS.getId(), "-"));
+		factors.add(createTestVariable(TermId.ENTRY_TYPE.getId(), "10170"));
+		factors.add(createTestVariable(TermId.FIELDMAP_COLUMN.getId(), "FIELDMAP COLUMN", "1"));
+		factors.add(createTestVariable(TermId.FIELDMAP_RANGE.getId(), "FIELDMAP RANGE", "100"));
+		factors.add(createTestVariable(TermId.STOCKID.getId(), "StockID", "8269"));
+		experiments.add(intializeExperiments(factors, 0));
+
+		factors = new VariableList();
+		factors.add(createTestVariable(TermId.PLOT_NO.getId(), "2"));
+		factors.add(createTestVariable(TermId.GID.getId(), "802"));
+		factors.add(createTestVariable(TermId.DESIG.getId(), "CLQRCWQ109"));
+		factors.add(createTestVariable(TermId.CROSS.getId(), "-"));
+		factors.add(createTestVariable(TermId.ENTRY_TYPE.getId(), "10170"));
+		factors.add(createTestVariable(TermId.FIELDMAP_COLUMN.getId(), "FIELDMAP COLUMN", "2"));
+		factors.add(createTestVariable(TermId.FIELDMAP_RANGE.getId(), "FIELDMAP RANGE", "100"));
+		factors.add(createTestVariable(TermId.STOCKID.getId(), "StockID", "8269"));
+
+		experiments.add(intializeExperiments(factors, 1));
+
+		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null)).thenReturn(experiments);
+
+		final Sheet sheet = this.workbook.getSheetAt(3);
+		this.exporter.writeNurseryListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
+				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+
+		// Header added//
 		Assert.assertEquals(String.valueOf("FIELDMAP COLUMN"), sheet.getRow(0).getCell(7).getStringCellValue());
 		Assert.assertEquals(String.valueOf("FIELDMAP RANGE"), sheet.getRow(0).getCell(8).getStringCellValue());
+		Assert.assertEquals(String.valueOf("StockID"), sheet.getRow(0).getCell(9).getStringCellValue());
+		Assert.assertEquals(String.valueOf("studyname"), sheet.getRow(1).getCell(0).getStringCellValue());
+
+		// Row 1//
+		Assert.assertEquals(1, (int) sheet.getRow(1).getCell(1).getNumericCellValue());
+		Assert.assertEquals(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName(), sheet.getRow(1).getCell(2).getStringCellValue());
+		Assert.assertEquals(String.valueOf("801"), sheet.getRow(1).getCell(3).getStringCellValue());
+		Assert.assertEquals(String.valueOf("801"), sheet.getRow(1).getCell(4).getStringCellValue());
+		Assert.assertEquals(String.valueOf("CML502A"), sheet.getRow(1).getCell(5).getStringCellValue());
+		Assert.assertEquals(String.valueOf("-"), sheet.getRow(1).getCell(6).getStringCellValue());
+		Assert.assertEquals(String.valueOf("1"), sheet.getRow(1).getCell(7).getStringCellValue());
+		Assert.assertEquals(String.valueOf("100"), sheet.getRow(1).getCell(8).getStringCellValue());
+		Assert.assertEquals(String.valueOf("8269"), sheet.getRow(1).getCell(9).getStringCellValue());
+
+		// Row 2//
+		Assert.assertEquals(2, (int) sheet.getRow(2).getCell(1).getNumericCellValue());
+		Assert.assertEquals(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName(), sheet.getRow(2).getCell(2).getStringCellValue());
+		Assert.assertEquals(String.valueOf("802"), sheet.getRow(2).getCell(3).getStringCellValue());
+		Assert.assertEquals(String.valueOf("802"), sheet.getRow(2).getCell(4).getStringCellValue());
+		Assert.assertEquals(String.valueOf("CLQRCWQ109"), sheet.getRow(2).getCell(5).getStringCellValue());
+		Assert.assertEquals(String.valueOf("-"), sheet.getRow(2).getCell(6).getStringCellValue());
+		Assert.assertEquals(String.valueOf("2"), sheet.getRow(2).getCell(7).getStringCellValue());
+		Assert.assertEquals(String.valueOf("100"), sheet.getRow(2).getCell(8).getStringCellValue());
+		Assert.assertEquals(String.valueOf("8269"), sheet.getRow(2).getCell(9).getStringCellValue());
 
 	}
 	
@@ -267,14 +332,20 @@ public class CrossingTemplateExcelExporterTest {
 		factors.add(createTestVariable(TermId.GID.getId(), "1"));
 		factors.add(createTestVariable(TermId.DESIG.getId(), "ABC"));
 		factors.add(createTestVariable(TermId.CROSS.getId(), "abc/def"));
-		factors.add(createTestVariable(TermId.ENTRY_TYPE.getId(), "10170"));
-		factors.add(createTestVariable(TermId.FIELDMAP_COLUMN.getId(), "FIELDMAP COLUMN", "4"));
-		factors.add(createTestVariable(TermId.FIELDMAP_RANGE.getId(), "FIELDMAP RANGE", "100"));
 
 		experiment.setFactors(factors);
 		list.add(experiment);
 
 		return list;
+	}
+
+	private Experiment intializeExperiments(final VariableList factors, int id) {
+		final Experiment experiment = new Experiment();
+
+		experiment.setFactors(factors);
+		experiment.setId(id);
+
+		return experiment;
 	}
 
 	private Variable createTestVariable(final Integer termId, final String value) {

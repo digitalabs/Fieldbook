@@ -90,8 +90,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 
 			importData = this.etlService.createWorkbookFromUserSelection(this.userSelection, isMeansDataImport);
 
-			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getVariates(), programUUID,
-					this.ontologyDataManager);
+			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getVariates(), programUUID);
 
 			List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection);
 			List<MeasurementVariable> studyHeaders = importData.getAllVariables();
@@ -119,6 +118,11 @@ public class ImportObservationsController extends AbstractBaseETLController {
 					}
 				}
 			}
+
+			List<Message> messages = new ArrayList<Message>();
+			this.dataImportService.checkForInvalidGids(importData, messages);
+			errors.addAll(this.etlService.convertMessageList(messages));
+
 
 		} catch (Exception e) {
 			ImportObservationsController.LOG.error(e.getMessage(), e);

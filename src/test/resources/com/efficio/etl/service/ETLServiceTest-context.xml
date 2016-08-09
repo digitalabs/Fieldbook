@@ -35,6 +35,7 @@
 
     <mockito:mock class="org.generationcp.middleware.manager.api.WorkbenchDataManager" id="workbenchDataManager"/>
 
+    <mockito:mock class="org.generationcp.middleware.manager.api.GermplasmDataManager" id="germplasmDataManager"/>
 
     <bean id="messageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource">

@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -298,7 +299,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final List<Pair<Germplasm, List<Name>>> germplasms = new ArrayList<>();
 			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
 
-			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingNurseryForm, form, germplasms, listDataItems, currentUserId,
+			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingNurseryForm, germplasms, listDataItems, currentUserId,
 					germplasmAttributes);
 			return this.fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList,
 					germplasmAttributes);
@@ -560,8 +561,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * @return the germplasm list
 	 */
 
-	private void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList, final AdvancingNurseryForm form,
-			final SaveListForm saveListForm, final List<Pair<Germplasm, List<Name>>> germplasms,
+	private void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList,
+			final AdvancingNurseryForm form, final List<Pair<Germplasm, List<Name>>> germplasms,
 			final List<Pair<Germplasm, GermplasmListData>> listDataItems, final Integer currentUserID,
 			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) {
 

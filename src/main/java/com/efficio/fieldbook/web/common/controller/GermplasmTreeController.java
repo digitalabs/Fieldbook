@@ -646,48 +646,49 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			List<Attribute> attributesPerGermplasm = Lists.newArrayList();
 			// Add the seed source/origin attribute (which is generated based on format strings configured in crossing.properties) to the
 			// germplasm in FieldbookServiceImpl.advanceNursery().
-			final Attribute originAttribute = new Attribute();
-			originAttribute.setAval(importedGermplasm.getSource());
-			originAttribute.setTypeId(this.germplasmDataManager.getPlotCodeField().getFldno());
-			originAttribute.setUserId(currentUserID);
-			originAttribute.setAdate(gDate);
-			originAttribute.setLocationId(locationId);
 			// originAttribute gid will be set when saving once gid is known
+			final Attribute originAttribute = createAttributeObject(currentUserID, importedGermplasm.getSource(),
+					this.germplasmDataManager.getPlotCodeField().getFldno(), locationId, gDate);
 			attributesPerGermplasm.add(originAttribute);
 
 			//Adding Instance number, plot number and replication number as attributes of germplasm for trial advancing
 			if(this.userSelection.isTrial()){
-				final Attribute plotNumberAttribute = new Attribute();
-				plotNumberAttribute.setAval(importedGermplasm.getPlotNumber());
-				plotNumberAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","PLOT_NUMBER").getFldno());
-				plotNumberAttribute.setUserId(currentUserID);
-				plotNumberAttribute.setAdate(gDate);
-				plotNumberAttribute.setLocationId(locationId);
+				final Attribute plotNumberAttribute = createAttributeObject(currentUserID,
+						importedGermplasm.getPlotNumber(), getPassportAttributeForCode("PLOT_NUMBER"), locationId,
+						gDate);
 				attributesPerGermplasm.add(plotNumberAttribute);
 
 				String replicationNumber = importedGermplasm.getReplicationNumber();
-				if (StringUtils.isNotBlank(replicationNumber)){					
-					final Attribute repNoAttribute = new Attribute();
-					repNoAttribute.setAval(replicationNumber);
-					repNoAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","REP_NUMBER").getFldno());
-					repNoAttribute.setUserId(currentUserID);
-					repNoAttribute.setAdate(gDate);
-					repNoAttribute.setLocationId(locationId);
+				if (StringUtils.isNotBlank(replicationNumber)) {
+					final Attribute repNoAttribute = createAttributeObject(currentUserID, replicationNumber,
+							getPassportAttributeForCode("REP_NUMBER"), locationId, gDate);
 					attributesPerGermplasm.add(repNoAttribute);
 				}
 
-				final Attribute instanceNoAttribute = new Attribute();
-				instanceNoAttribute.setAval(importedGermplasm.getTrialInstanceNumber());
-				instanceNoAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","INSTANCE_NUMBER").getFldno());
-				instanceNoAttribute.setUserId(currentUserID);
-				instanceNoAttribute.setAdate(gDate);
-				instanceNoAttribute.setLocationId(locationId);
+				final Attribute instanceNoAttribute = createAttributeObject(currentUserID,
+						importedGermplasm.getTrialInstanceNumber(), getPassportAttributeForCode("INSTANCE_NUMBER"),
+						locationId, gDate);
 				attributesPerGermplasm.add(instanceNoAttribute);
 			}
 
 
 			germplasmAttributes.add(new ImmutablePair<Germplasm, List<Attribute>>(germplasm, Lists.newArrayList(attributesPerGermplasm)));
 		}
+	}
+
+	private Integer getPassportAttributeForCode(String code) {
+		return this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT",code).getFldno();
+	}
+
+	private Attribute createAttributeObject(final Integer currentUserID, String attributeValue, Integer typeId,
+			Integer locationId, final Integer gDate) {
+		final Attribute originAttribute = new Attribute();
+		originAttribute.setAval(attributeValue);
+		originAttribute.setTypeId(typeId);
+		originAttribute.setUserId(currentUserID);
+		originAttribute.setAdate(gDate);
+		originAttribute.setLocationId(locationId);
+		return originAttribute;
 	}
 
 	/**

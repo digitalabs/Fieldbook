@@ -64,7 +64,6 @@ public class OntologyDetailsControllerTest extends AbstractBaseIntegrationTest {
 		StandardVariable stdvar = this.createStandardVariableTestData();
 		Mockito.when(ontologyService.getStandardVariable(8050, this.contextUtil.getCurrentProgramUUID())).thenReturn(stdvar);
 		Mockito.when(ontologyService.countProjectsByVariable(8050)).thenReturn(123456L);
-		Mockito.when(ontologyService.countExperimentsByVariable(8050, 1010)).thenReturn(789000L);
 		this.controller.setOntologyService(ontologyService);
 
 		Assert.assertEquals(stdvar, form.getVariable());

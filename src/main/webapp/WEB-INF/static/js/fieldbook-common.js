@@ -2017,7 +2017,7 @@ function checkIfNull(object) {
 	}
 }
 
-function recreateMethodCombo() {
+function recreateMethodCombo(possibleFavorite) {
 	var selectedMethodAll = $('#methodIdAll').val(),
 		selectedMethodFavorite = $('#methodIdFavorite').val();
 	var createGermplasm = false;
@@ -2041,11 +2041,16 @@ function recreateMethodCombo() {
 				if (createGermplasmOpened) {
 					refreshImportMethodCombo(data);
 					refreshMethodComboInSettings(data);
+					refreshGermplasMethodCombo(data);
 				} else if (selectedMethodAll != null) {
 
 					//recreate the select2 combos to get updated list of methods
-					recreateMethodComboAfterClose('methodIdAll', data.allNonGenerativeMethods);
-					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdAll', data.allMethods);
+					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteMethods);
+
+					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenance', data.allNonGenerativeMethods);
+					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenanceFavorite', data.favoriteNonGenerativeMethods);
+
 					showCorrectMethodCombo();
 					//set previously selected value of method
 					if ($('#showFavoriteMethod').prop('checked')) {
@@ -2063,7 +2068,12 @@ function recreateMethodCombo() {
 					}
 					if (createGermplasm) {
 						refreshImportMethodCombo(data);
+						refreshGermplasMethodCombo(data);
 					}
+				}
+				if(possibleFavorite){
+					ValidateValueCheckBoxFavorite(possibleFavorite,data);
+					refreshGermplasMethodCombo(data);
 				}
 			} else {
 				showErrorMessage('page-message', data.errorMessage);
@@ -2083,14 +2093,40 @@ function refreshImportMethodCombo(data) {
 		selectedValue = $('#importMethodId').select2('data').id;
 	}
 	if ($('#importFavoriteMethod').is(':checked')) {
-
-		initializePossibleValuesCombo(data.favoriteMethods,
-				'#importMethodId', false, selectedValue);
+		if ($('#showAllMethodOnlyRadio').is(':checked')) {
+			initializePossibleValuesCombo(data.favoriteMethods, '#importMethodId', false, selectedValue);
+		} else {
+			initializePossibleValuesCombo(data.favoriteGenerativeMethods, '#importMethodId', false, selectedValue);
+		}
+	} else if ($('#showAllMethodOnlyRadio').is(':checked')) {
+		initializePossibleValuesCombo(data.allMethods, '#importMethodId', false, selectedValue);
 	} else {
-		initializePossibleValuesCombo(data.allMethods,
-				'#importMethodId', false, selectedValue);
+		initializePossibleValuesCombo(data.allGenerativeMethods, '#importMethodId', false, selectedValue);
 	}
-	replacePossibleJsonValues(data.favoriteMethods, data.allMethods, 'Method');
+}
+
+function refreshGermplasMethodCombo(data) {
+	var selectedValue = null;
+	if ($('#importMethodId').select2('data')) {
+		selectedValue = $('#importMethodId').select2('data').id;
+	}
+	if ($('#importFavoriteMethod').is(':checked')) {
+		if ($('#showDerivateAndMaintenanceMethodImportStudyOnlyRadio').is(':checked')) {
+			initializePossibleValuesCombo(data.favoriteNonGenerativeMethods, '#importMethodId', true, selectedValue);
+		} else {
+			initializePossibleValuesCombo(data.favoriteMethods, '#importMethodId', true, selectedValue);
+		}
+
+	} else {
+		if ($('#showDerivateAndMaintenanceMethodImportStudyOnlyRadio').is(':checked')) {
+			initializePossibleValuesCombo(data.allNonGenerativeMethods, '#importMethodId', true, selectedValue);
+		} else {
+			initializePossibleValuesCombo(data.allMethods, '#importMethodId', true, selectedValue);
+		}
+
+	}
+	replacePossibleJsonValuesImportGermPlasm(data.allNonGenerativeMethods, data.favoriteNonGenerativeMethods, data.allMethods, data.favoriteMethods,
+		'Method');
 }
 
 function refreshImportLocationCombo(data) {
@@ -2105,7 +2141,32 @@ function refreshImportLocationCombo(data) {
 		initializePossibleValuesCombo(data.allBreedingLocations,
 				'#importLocationId', true, selectedValue);
 	}
-	replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, 'Location');
+	replacePossibleJsonValues(data.allBreedingLocations, data.allBreedingFavoritesLocations, data.allLocations, data.favoriteLocations,
+		'Location');
+}
+
+function refreshGermplasLocationCombo(data) {
+	var selectedValue = null;
+	if ($('#importLocationId').select2('data')) {
+		selectedValue = $('#importLocationId').select2('data').id;
+	}
+	if ($('#importFavoriteLocation').is(':checked')) {
+		if ($('#showBreedingLocationImportStudyOnlyRadio').is(':checked')) {
+			initializePossibleValuesCombo(data.allBreedingFavoritesLocations, '#importLocationId', true, selectedValue);
+		} else {
+			initializePossibleValuesCombo(data.favoriteLocations, '#importLocationId', true, selectedValue);
+		}
+
+	} else {
+		if ($('#showBreedingLocationImportStudyOnlyRadio').is(':checked')) {
+			initializePossibleValuesCombo(data.allBreedingLocations, '#importLocationId', true, selectedValue);
+		} else {
+			initializePossibleValuesCombo(data.allLocations, '#importLocationId', true, selectedValue);
+		}
+
+	}
+	replacePossibleJsonValuesImportGermPlasm(data.allBreedingLocations, data.allBreedingFavoritesLocations, data.allLocations, data.favoriteLocations,
+		'Location');
 }
 
 function generateGenericLocationSuggestions(genericLocationJson) {
@@ -2166,11 +2227,14 @@ function recreateLocationCombo(possibleFavorite) {
 					if (createGermplasmOpened) {
 						refreshImportLocationCombo(data);
 						refreshLocationComboInSettings(data);
+						refreshGermplasLocationCombo(data);
 					} else if (inventoryPopup) {
-						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allLocations); //All locations
+						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allLocations); // All locations
 						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations); // Favorites
-						recreateLocationComboAfterClose('inventoryLocationIdSeedStorage', data.allSeedStorageLocations);//All seed Storage
-						recreateLocationComboAfterClose('inventoryLocationIdFavoriteSeedStorage', data.allSeedStorageFavoritesLocations); //All Favorites seed Storage
+						recreateLocationComboAfterClose('inventoryLocationIdSeedStorage', data.allSeedStorageLocations);// All seed Storage
+						recreateLocationComboAfterClose('inventoryLocationIdFavoriteSeedStorage', data.allSeedStorageFavoritesLocations); // All Favorites
+																																			// seed
+																																			// Storage
 						showCorrectLocationInventoryCombo();
 						// set previously selected value of location
 						if ($('#showFavoriteLocationInventory').prop('checked')) {
@@ -2219,15 +2283,20 @@ function recreateLocationCombo(possibleFavorite) {
 						refreshLocationComboInSettings(data);
 
 					} else if (fieldmapScreen === true) {
-						//recreate the select2 combos to get updated list of locations
-						recreateLocationComboAfterClose('fieldLocationIdAll', data.allBreedingLocations);
-						recreateLocationComboAfterClose('fieldLocationIdFavorite', data.favoriteLocations);
-						showCorrectLocationCombo();
+						recreateFieldLocationComboAfterClose('fieldLocationIdAll', data.allLocations);
+						recreateFieldLocationComboAfterClose('fieldLocationIdFavorite', data.favoriteLocations);
+						recreateFieldLocationComboAfterClose('fieldLocationIdBreeding', data.allBreedingLocations);
+						recreateFieldLocationComboAfterClose('fieldLocationIdBreedingFavorites', data.allBreedingFavoritesLocations);
+						showCorrectFieldLocationCombo();
 						//set previously selected value of location
-						if ($('#showFavoriteLocation').prop('checked')) {
+						if ($('#showFavoriteLocation').prop('checked') && $('#showBreedingLocationOnlyRadio').prop('checked')) {
+							setComboValues(locationSuggestionsBreedingFav_obj, $('#fieldLocationIdBreedingFavorites').val(), 'fieldLocationIdBreedingFavorites');
+						} else if ($('#showFavoriteLocation').prop('checked')) {
 							setComboValues(locationSuggestionsFav_obj, $('#fieldLocationIdFavorite').val(), 'fieldLocationIdFavorite');
-						} else {
+						} else if ($('#showAllLocationRadio').prop('checked')) {
 							setComboValues(locationSuggestions_obj, $('#fieldLocationIdAll').val(), 'fieldLocationIdAll');
+						} else {
+							setComboValues(locationSuggestionsBreeding_obj, $('#fieldLocationIdBreeding').val(), 'fieldLocationIdBreeding');
 						}
 					} else {
 						if (hasCreateGermplasm) {
@@ -2237,11 +2306,10 @@ function recreateLocationCombo(possibleFavorite) {
 							refreshImportLocationCombo(data);
 						}
 
-					} 
-					if(possibleFavorite === 'showFavoriteLocationInventory'){
-						if(data.allSeedStorageFavoritesLocations.length !== 0){
-							$('#' + possibleFavorite).prop('checked', true);
-						}
+					}
+					if(possibleFavorite){
+						ValidateValueCheckBoxFavorite(possibleFavorite,data);
+						refreshGermplasLocationCombo(data);
 					}
 				} else {
 					showErrorMessage('page-message', data.errorMessage);
@@ -2277,7 +2345,8 @@ function refreshMethodComboInSettings(data) {
 					'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		}
 
-		replacePossibleJsonValues(data.favoriteNonGenerativeMethods, data.allNonGenerativeMethods, index);
+		replacePossibleJsonValues(data.allNonGenerativeMethods, data.favoriteNonGenerativeMethods, data.allMethods, data.favoriteMethods,
+			index);
 	}
 }
 
@@ -2285,19 +2354,27 @@ function refreshLocationComboInSettings(data) {
 	var selectedVal = null;
 	var index = getLocationRowIndex();
 	if (index > -1) {
-		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data')) {
-			selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
+		var id = '#' + getJquerySafeId('studyLevelVariables' + index + '.value');
+		if ($(id).select2('data')) {
+			selectedVal = $(id).select2('data').id;
 		}
-		initializePossibleValuesCombo([], '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
+		initializePossibleValuesCombo([], id, true, selectedVal);
 
 		// update values in combo
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
-			initializePossibleValuesCombo(data.favoriteLocations, '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+			if ($("#allLocations").is(':checked')) {
+				initializePossibleValuesCombo(data.favoriteLocations, id, false, selectedVal);
+			} else {
+				initializePossibleValuesCombo(data.allBreedingFavoritesLocations, id, false, selectedVal);
+			}
+		} else if ($("#allLocations").is(':checked')) {
+			initializePossibleValuesCombo(data.allLocations, id, true, selectedVal);
 		} else {
-			initializePossibleValuesCombo(data.allBreedingLocations, '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
+			initializePossibleValuesCombo(data.allBreedingLocations, id, true, selectedVal);
 		}
 
-		replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, index);
+		replacePossibleJsonValues(data.allBreedingLocations, data.allBreedingFavoritesLocations, data.allLocations, data.favoriteLocations,
+			index);
 	}
 }
 
@@ -2343,8 +2420,41 @@ function recreateLocationComboAfterClose(comboName, data) {
 		//reload the data
 		locationSuggestionsFav = data;
 		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFavObj);
+	//	locSug = [];
 	}
+}
 
+
+function recreateFieldLocationComboAfterClose(comboName, data) {
+	if (comboName == 'fieldLocationIdAll') {
+		locationSuggestions = [];
+		locationSuggestions_obj = [];
+		initializeFieldLocationsSelect2(locationSuggestions, locationSuggestions_obj,comboName);
+		//reload the data retrieved
+		locationSuggestions = data;
+		initializeFieldLocationsSelect2(locationSuggestions, locationSuggestions_obj,comboName);
+	} else if (comboName == 'fieldLocationIdBreeding') {
+		locationSuggestionsBreeding = [];
+		locationSuggestionsBreeding_obj = [];
+		initializeFieldLocationsSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj, comboName);
+		//reload the data retrieved
+		locationSuggestionsBreeding = data;
+		initializeFieldLocationsSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj, comboName);
+	} else if (comboName == 'fieldLocationIdBreedingFavorites') {
+		locationSuggestionsBreedingFav = [];
+		locationSuggestionsBreedingFav_obj = [];
+		initializeFieldLocationsSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj,comboName);
+		//reload the data retrieved
+		locationSuggestionsBreedingFav = data;
+		initializeFieldLocationsSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj,comboName);
+	} else if (comboName=="fieldLocationIdFavorite") {
+		locationSuggestionsFav = [];
+		locationSuggestionsFav_obj = [];
+		initializeFieldLocationsSelect2(locationSuggestionsFav, locationSuggestionsFav_obj,comboName);
+		//reload the data retrieved
+		locationSuggestionsFav = data;
+		initializeFieldLocationsSelect2(locationSuggestionsFav, locationSuggestionsFav_obj,comboName);
+	}
 }
 
 function recreateMethodComboAfterClose(comboName, data) {
@@ -2454,7 +2564,7 @@ function deleteFolder(object) {
 		studyType = isNursery()?'N':'T',
 		folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key,
 		folderName = JSON.stringify({'folderName': currentFolderName});
-		
+
 		if (isFolder) {
 			$.ajax({
 				url: '/Fieldbook/StudyTreeManager/isFolderEmpty/'+folderId+'/'+studyType,
@@ -4182,6 +4292,27 @@ function onMeasurementsObservationLoad(isCategoricalDisplay) {
 		new BMS.Fieldbook.MeasurementsDataTable('#measurement-table', response);
 	});
 
+}
+
+function ValidateValueCheckBoxFavorite(checkFavorite,data){
+	
+	if(checkFavorite === 'showFavoriteLocationInventory'){
+		if(data.allSeedStorageFavoritesLocations.length !== 0){
+			$('#' + checkFavorite).prop('checked', true);
+		}
+	}
+	
+	if(checkFavorite === 'importFavoriteMethod'){
+		if(data.favoriteNonGenerativeMethods.length !== 0){
+			$('#' + checkFavorite).prop('checked', true);
+		}
+	}
+	
+	if(checkFavorite === 'importFavoriteLocation'){
+		if(data.allBreedingFavoritesLocations.length !== 0){
+			$('#' + checkFavorite).prop('checked', true);
+		}
+	}
 }
 
 /**

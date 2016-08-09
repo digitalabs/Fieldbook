@@ -212,7 +212,7 @@ public class TreeViewUtil {
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
 			
 			List<UserDefinedField> listTypes = germplasmListManager.getGermplasmListTypes();
-			Map<Integer, GermplasmListMetadata> allListMetaData = germplasmListManager.getAllGermplasmListMetadata();
+			Map<Integer, GermplasmListMetadata> allListMetaData = germplasmListManager.getGermplasmListMetadata(germplasmLists);
 			
 			for (GermplasmList germplasmList : germplasmLists) {
 				TreeTableNode node =

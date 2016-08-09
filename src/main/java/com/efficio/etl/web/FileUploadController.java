@@ -113,7 +113,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			} else {
 				try {
 					this.etlService.retrieveCurrentWorkbookWithValidation(this.userSelection);
-					return "redirect: workbook/step2";
+					return "redirect:workbook/step2";
 				} catch (IOException e) {
 					FileUploadController.LOG.error(e.getMessage(), e);
 					result.reject(FileUploadController.UPLOAD_FORM_FILE, "Error occurred while reading Excel file");
@@ -150,7 +150,7 @@ public class FileUploadController extends AbstractBaseETLController {
 
 			wb =
 					this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
-							confirmDiscard == 1 ? true : false, this.ontologyDataManager, new WorkbookParser());
+							confirmDiscard == 1 ? true : false, new WorkbookParser());
 
 			this.dataImportService.saveDataset(wb, programUUID);
 

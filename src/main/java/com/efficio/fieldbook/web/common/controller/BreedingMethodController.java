@@ -1,8 +1,12 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.ListUtils;
 import org.generationcp.commons.context.ContextConstants;
@@ -14,14 +18,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -31,7 +33,7 @@ import java.util.Map;
 @RequestMapping(BreedingMethodController.URL)
 public class BreedingMethodController extends AbstractBaseFieldbookController {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BreedingMethodController.class);
 	public static final String URL = "/breedingMethod";
 
 	@Resource
@@ -74,16 +76,34 @@ public class BreedingMethodController extends AbstractBaseFieldbookController {
 			List<Integer> methodIds = this.fieldbookMiddlewareService.getFavoriteProjectMethods(this.contextUtil.getCurrentProgramUUID());
 			List<Method> favoriteMethods = this.fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);
 			List<Method> allNonGenerativeMethods = this.fieldbookMiddlewareService.getAllBreedingMethods(true);
+			List<Method> allGenerativeMethods = this.fieldbookMiddlewareService.getAllGenerativeMethods(this.contextUtil.getCurrentProgramUUID());
 
 			result.put("success", "1");
 			result.put("allMethods", breedingMethods);
 			result.put("favoriteMethods", favoriteMethods);
 			result.put("allNonGenerativeMethods", allNonGenerativeMethods);
+			result.put("allGenerativeMethods", allGenerativeMethods);
 			result.put("favoriteNonGenerativeMethods", ListUtils.intersection(favoriteMethods, allNonGenerativeMethods));
+			result.put("favoriteGenerativeMethods", ListUtils.intersection(favoriteMethods, allGenerativeMethods));
 		} catch (MiddlewareQueryException e) {
 			BreedingMethodController.LOG.error(e.getMessage(), e);
 			result.put("success", "-1");
 			result.put("errorMessage", e.getMessage());
+		}
+
+		return result;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getBreedingMethodById", method = RequestMethod.GET)
+	public String getBreedingMethodById(@RequestParam(value = "data") String id) {
+		String result = new String();
+		try {
+			Method method = this.fieldbookMiddlewareService.getBreedingMethodById(Integer.parseInt(id.replace("\"", "")));
+			result = method.getMname() + " - " + method.getMcode();
+		} catch (MiddlewareQueryException e) {
+			BreedingMethodController.LOG.error(e.getMessage(), e);
+			result = "-1";
 		}
 
 		return result;

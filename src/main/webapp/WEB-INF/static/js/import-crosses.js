@@ -96,7 +96,7 @@ var ImportCrosses = {
             	showErrorMessage('', response.error);
             	return;
             }
-			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList);
+			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
 		});
 
 		$('#openCrossListNextButton').off('click');
@@ -119,12 +119,10 @@ var ImportCrosses = {
 		if (breedingMethodId !== '0') {
 			// in addition, if the user has already selected a breeding method, we should pre select that
 			var breedingMethodText = '';
-			$('#breedingMethodId').val(breedingMethodId);
-			$('#breedingMethodDropdown').select2('val', parseInt(breedingMethodId));
-			if ($('#breedingMethodDropdown').select2('data')) {
-				breedingMethodText = $('#breedingMethodDropdown').select2('data').text;
-				$('#preSelectedBreedingMethodDropdown').val(breedingMethodText);
-			}
+			breedingMethodText = BreedingMethodsFunctions.getBreedingMethodById(breedingMethodId).done(function(response) {
+				$('#preSelectedBreedingMethodDropdown').val(response);
+			});
+
 		} else {
 			$('#preSelectedBreedingMethodDropdown').val($.fieldbookMessages.determinedFromParentalLines);
 		}
@@ -207,12 +205,8 @@ var ImportCrosses = {
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
 
-		if (ImportCrosses.showFavoriteLoationsOnly) {
-			$safeId('#favoritesCheckboxID').prop('checked', true);
-		}
-
-		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(selectedBreedingMethodId, 'breedingMethodDropdown', 
-			'showFavoritesOnlyCheckbox', ImportCrosses.showFavoriteMethodsOnly);
+		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
+			'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
 		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
 			'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio');
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
@@ -409,8 +403,8 @@ var ImportCrosses = {
 			}
 		} else if (!settingData.breedingMethodSetting.basedOnStatusOfParentalLines && !settingData.breedingMethodSetting.methodId) {
 			showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
-			return;
-		}
+				return;
+			}
 
 		var targetURL;
 		var settingsForSaving;
@@ -516,7 +510,10 @@ var ImportCrosses = {
 		settingObject.breedingMethodSetting = {};
 		settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
 
-		if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
+		if(selectedBreedingMethodId != ''){
+			settingObject.breedingMethodSetting.methodId = selectedBreedingMethodId;
+		}
+		else if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
 			settingObject.breedingMethodSetting.methodId = null;
 		}
 

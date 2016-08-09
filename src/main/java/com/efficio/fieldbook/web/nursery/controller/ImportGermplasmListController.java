@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.constant.ColumnLabels;
+import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -1453,6 +1454,11 @@ public class ImportGermplasmListController extends SettingsController {
 	@ModelAttribute("checkTypes")
 	public List<Enumeration> getCheckTypes() {
 		return this.fieldbookService.getCheckTypeList();
+	}
+
+	@ModelAttribute("contextInfo")
+	public ContextInfo getContextInfo() {
+		return this.contextUtil.getContextInfoFromSession();
 	}
 
 	private boolean validateEnumerationDescription(final List<Enumeration> enumerations, final Enumeration newEnumeration) {

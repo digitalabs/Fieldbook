@@ -384,8 +384,7 @@ public class ETLServiceTest {
 
 		// Accept any workbook when checkForOutOfBoundsData is called. It will be captured and verified later.
 		Mockito.when(
-				this.dataImportService.checkForOutOfBoundsData(Mockito.eq(this.ontologyDataManager),
-						Mockito.any(org.generationcp.middleware.domain.etl.Workbook.class), Mockito.eq(PROGRAM_UUID))).thenReturn(true);
+				this.dataImportService.checkForOutOfBoundsData(Mockito.any(org.generationcp.middleware.domain.etl.Workbook.class), Mockito.eq(PROGRAM_UUID))).thenReturn(true);
 
 		final int datasetType = DataSetType.PLOT_DATA.getId();
 		this.fillStudyDetailsOfUserSelection(this.userSelection, STUDY_ID);
@@ -398,7 +397,7 @@ public class ETLServiceTest {
 		Assert.assertTrue(this.etlService.checkOutOfBoundsData(this.userSelection));
 
 		// Make sure the dataImportService.checkForOutOfBoundsData is called
-		Mockito.verify(this.dataImportService, Mockito.times(1)).checkForOutOfBoundsData(Mockito.eq(this.ontologyDataManager),
+		Mockito.verify(this.dataImportService, Mockito.times(1)).checkForOutOfBoundsData(
 				workbookCaptor.capture(), Mockito.eq(PROGRAM_UUID));
 		Assert.assertNotNull(workbookCaptor.getValue());
 	}
@@ -408,7 +407,7 @@ public class ETLServiceTest {
 
 		// Accept any workbook when checkForOutOfBoundsData is called. It will be captured and verified later.
 		Mockito.when(
-				this.dataImportService.checkForOutOfBoundsData(Mockito.eq(this.ontologyDataManager),
+				this.dataImportService.checkForOutOfBoundsData(
 						Mockito.any(org.generationcp.middleware.domain.etl.Workbook.class), Mockito.eq(PROGRAM_UUID))).thenReturn(false);
 
 		final int datasetType = DataSetType.PLOT_DATA.getId();
@@ -422,7 +421,7 @@ public class ETLServiceTest {
 		Assert.assertFalse(this.etlService.checkOutOfBoundsData(this.userSelection));
 
 		// Make sure the dataImportService.checkForOutOfBoundsData is called
-		Mockito.verify(this.dataImportService, Mockito.times(1)).checkForOutOfBoundsData(Mockito.eq(this.ontologyDataManager),
+		Mockito.verify(this.dataImportService, Mockito.times(1)).checkForOutOfBoundsData(
 				workbookCaptor.capture(), Mockito.eq(PROGRAM_UUID));
 		Assert.assertNotNull(workbookCaptor.getValue());
 

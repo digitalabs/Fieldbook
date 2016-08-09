@@ -665,13 +665,16 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				plotNumberAttribute.setLocationId(locationId);
 				attributesPerGermplasm.add(plotNumberAttribute);
 
-				final Attribute repNoAttribute = new Attribute();
-				repNoAttribute.setAval(importedGermplasm.getReplicationNumber());
-				repNoAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","REP_NUMBER").getFldno());
-				repNoAttribute.setUserId(currentUserID);
-				repNoAttribute.setAdate(gDate);
-				repNoAttribute.setLocationId(locationId);
-				attributesPerGermplasm.add(repNoAttribute);
+				String replicationNumber = importedGermplasm.getReplicationNumber();
+				if (StringUtils.isNotBlank(replicationNumber)){					
+					final Attribute repNoAttribute = new Attribute();
+					repNoAttribute.setAval(replicationNumber);
+					repNoAttribute.setTypeId(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS","PASSPORT","REP_NUMBER").getFldno());
+					repNoAttribute.setUserId(currentUserID);
+					repNoAttribute.setAdate(gDate);
+					repNoAttribute.setLocationId(locationId);
+					attributesPerGermplasm.add(repNoAttribute);
+				}
 
 				final Attribute instanceNoAttribute = new Attribute();
 				instanceNoAttribute.setAval(importedGermplasm.getTrialInstanceNumber());

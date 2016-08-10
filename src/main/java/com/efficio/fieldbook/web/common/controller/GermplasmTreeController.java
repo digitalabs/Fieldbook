@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -719,17 +720,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/loadInitGermplasmTree/{isFolderOnly}", method = RequestMethod.GET)
 	public String loadInitialGermplasmTree(@PathVariable final String isFolderOnly) {
-		try {
-			final List<TreeNode> rootNodes = new ArrayList<>();
-			rootNodes.add(new TreeNode(GermplasmTreeController.LISTS, AppConstants.LISTS.getString(), true, "lead",
-					AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID()));
-			return TreeViewUtil.convertTreeViewToJson(rootNodes);
+		final List<TreeNode> rootNodes = new ArrayList<>();
+		rootNodes.add(new TreeNode(GermplasmTreeController.LISTS, AppConstants.LISTS.getString(), true, "lead",
+				AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID()));
+		return TreeViewUtil.convertTreeViewToJson(rootNodes);
 
-		} catch (final Exception e) {
-			GermplasmTreeController.LOG.error(e.getMessage(), e);
-		}
-
-		return "[]";
 	}
 
 	/**
@@ -739,22 +734,12 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 */
 	@RequestMapping(value = "/loadInitGermplasmTreeTable", method = RequestMethod.GET)
 	public String loadInitialGermplasmTreeTable(final Model model) {
-		try {
-			final List<TreeTableNode> rootNodes = new ArrayList<>();
-			final TreeTableNode localNode =
-					new TreeTableNode(GermplasmTreeController.LISTS, AppConstants.LISTS.getString(), null, null, null, null, "1");
-			rootNodes.add(localNode);
-			rootNodes.addAll(this.getGermplasmListFolderChildNodes(localNode, this.getCurrentProgramUUID()));
-			model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_ROOT_NODES, rootNodes);
-		} catch (final Exception e) {
-			GermplasmTreeController.LOG.error(e.getMessage(), e);
-		}
+		final List<TreeTableNode> rootNodes = new ArrayList<>();
+		final TreeTableNode localNode =
+				new TreeTableNode(GermplasmTreeController.LISTS, AppConstants.LISTS.getString(), null, null, null, null, "1");
+		rootNodes.add(localNode);
+		model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_ROOT_NODES, rootNodes);
 		return super.showAjaxPage(model, GermplasmTreeController.GERMPLASM_LIST_TABLE_PAGE);
-	}
-
-	protected void markIfHasChildren(final TreeTableNode node, final String programUUID) {
-		final List<GermplasmList> children = this.getGermplasmListChildren(node.getId(), programUUID);
-		node.setNumOfChildren(Integer.toString(children.size()));
 	}
 
 	protected List<GermplasmList> getGermplasmListChildren(final String id, final String programUUID) {
@@ -786,10 +771,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		List<TreeTableNode> childNodes = new ArrayList<>();
 		if (id != null && !"".equals(id)) {
 			childNodes = this.getGermplasmFolderChildrenNode(id, programUUID);
-			for (final TreeTableNode newNode : childNodes) {
-				this.markIfHasChildren(newNode, programUUID);
-
-			}
 		}
 		return childNodes;
 	}

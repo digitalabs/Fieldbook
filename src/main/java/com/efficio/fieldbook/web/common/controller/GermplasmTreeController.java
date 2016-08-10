@@ -561,7 +561,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * @return the germplasm list
 	 */
 
-	private void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList,
+	void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList,
 			final AdvancingNurseryForm form, final List<Pair<Germplasm, List<Name>>> germplasms,
 			final List<Pair<Germplasm, GermplasmListData>> listDataItems, final Integer currentUserID,
 			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) {

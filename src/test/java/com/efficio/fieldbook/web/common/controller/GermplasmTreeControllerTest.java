@@ -142,8 +142,7 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getGermplasmIdByName(Matchers.anyString());
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_GERMPLASM_ID).when(this.fieldbookMiddlewareService)
 				.saveGermplasmList(Matchers.anyList(), Matchers.any(GermplasmList.class));
-		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_LISTPROJECT_ID)
-				.when(this.fieldbookMiddlewareService)
+		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_LISTPROJECT_ID).when(this.fieldbookMiddlewareService)
 				.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class), Matchers.anyInt(),
 						Matchers.anyList(), Matchers.anyInt());
 
@@ -160,16 +159,16 @@ public class GermplasmTreeControllerTest {
 		} catch (final Exception e) {
 
 		}
-		Mockito.when(this.messageSource.getMessage("error.save.cross.rules.not.configured", null,
-				"The rules" + " were not configured", LocaleContextHolder.getLocale()))
-				.thenReturn(GermplasmTreeControllerTest.ERROR_RULES_NOT_CONFIGURED);
-		Mockito.when(this.germplasmDataManager.getPlotCodeField()).thenReturn(new UserDefinedField(PLOT_CODE_FIELD_NO));
-		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS",
-				"PASSPORT", "PLOT_NUMBER")).thenReturn(new UserDefinedField(PLOT_FIELD_NO));
-		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS",
-				"PASSPORT", "REP_NUMBER")).thenReturn(new UserDefinedField(REP_FIELD_NO));
-		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS",
-				"PASSPORT", "INSTANCE_NUMBER")).thenReturn(new UserDefinedField(TRIAL_INSTANCE_FIELD_NO));
+		Mockito.when(this.messageSource.getMessage("error.save.cross.rules.not.configured", null, "The rules" + " were not configured",
+				LocaleContextHolder.getLocale())).thenReturn(GermplasmTreeControllerTest.ERROR_RULES_NOT_CONFIGURED);
+		Mockito.when(this.germplasmDataManager.getPlotCodeField())
+				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.PLOT_CODE_FIELD_NO));
+		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "PLOT_NUMBER"))
+				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.PLOT_FIELD_NO));
+		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "REP_NUMBER"))
+				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.REP_FIELD_NO));
+		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "INSTANCE_NUMBER"))
+				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.TRIAL_INSTANCE_FIELD_NO));
 	}
 
 	private Project getProject() {
@@ -181,8 +180,7 @@ public class GermplasmTreeControllerTest {
 	@Test
 	public void testSaveAdvanceListPostSuccessful() {
 		final PaginationListSelection paginationListSelection = new PaginationListSelection();
-		paginationListSelection.addAdvanceDetails(GermplasmTreeControllerTest.LIST_IDENTIFIER,
-				this.createAdvancingNurseryForm(true));
+		paginationListSelection.addAdvanceDetails(GermplasmTreeControllerTest.LIST_IDENTIFIER, this.createAdvancingNurseryForm(true));
 
 		this.form = new SaveListForm();
 		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME);
@@ -237,8 +235,8 @@ public class GermplasmTreeControllerTest {
 		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
 		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
-		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-				.getGermplasmListByName(Matchers.anyString(), Matchers.anyString());
+		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService).getGermplasmListByName(Matchers.anyString(),
+				Matchers.anyString());
 
 		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
@@ -258,10 +256,10 @@ public class GermplasmTreeControllerTest {
 		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
 		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
-		Mockito.when(this.germplasmDataManager.getMethodByName(Matchers.anyString())).thenThrow(
-				new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListByName(Matchers.anyString(), Matchers.anyString())).thenThrow(
-				new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
+		Mockito.when(this.germplasmDataManager.getMethodByName(Matchers.anyString()))
+				.thenThrow(new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListByName(Matchers.anyString(), Matchers.anyString()))
+				.thenThrow(new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
 
 		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
@@ -273,21 +271,22 @@ public class GermplasmTreeControllerTest {
 	public void testSaveTreeState() throws MiddlewareQueryException {
 		final String[] expandedNodes = {"2", "5", "6"};
 
-		Mockito.doReturn(TEST_USER_ID).when(this.contextUtil).getCurrentUserLocalId();
-		Mockito.doReturn(TEST_PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+		Mockito.doReturn(GermplasmTreeControllerTest.TEST_USER_ID).when(this.contextUtil).getCurrentUserLocalId();
+		Mockito.doReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
 		final String response = this.controller.saveTreeState(ListTreeState.GERMPLASM_LIST.toString(), expandedNodes);
 		Assert.assertEquals("Should return ok", "OK", response);
 	}
 
 	@Test
 	public void testLoadTreeStateNonSaveDialog() throws MiddlewareQueryException {
-		Mockito.doReturn(TEST_USER_ID).when(this.contextUtil).getCurrentUserLocalId();
-		Mockito.doReturn(TEST_PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+		Mockito.doReturn(GermplasmTreeControllerTest.TEST_USER_ID).when(this.contextUtil).getCurrentUserLocalId();
+		Mockito.doReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
 		final List<String> response = new ArrayList<String>();
 		response.add("1");
 		response.add("2");
-		Mockito.doReturn(response).when(this.userTreeStateService)
-				.getUserProgramTreeStateByUserIdProgramUuidAndType(TEST_USER_ID, TEST_PROGRAM_UUID, ListTreeState.GERMPLASM_LIST.name());
+		Mockito.doReturn(response).when(this.userTreeStateService).getUserProgramTreeStateByUserIdProgramUuidAndType(
+				GermplasmTreeControllerTest.TEST_USER_ID, GermplasmTreeControllerTest.TEST_PROGRAM_UUID,
+				ListTreeState.GERMPLASM_LIST.name());
 
 		final String returnData = this.controller.retrieveTreeState(ListTreeState.GERMPLASM_LIST.name(), false);
 
@@ -296,16 +295,18 @@ public class GermplasmTreeControllerTest {
 
 	@Test
 	public void testLoadTreeStateSaveDialog() throws MiddlewareQueryException {
-		Mockito.doReturn(TEST_USER_ID).when(this.contextUtil).getCurrentUserLocalId();
-		Mockito.doReturn(TEST_PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+		Mockito.doReturn(GermplasmTreeControllerTest.TEST_USER_ID).when(this.contextUtil).getCurrentUserLocalId();
+		Mockito.doReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
 		final List<String> response = new ArrayList<String>();
 		response.add("1");
 		response.add("2");
-		Mockito.doReturn(response).when(this.userTreeStateService).getUserProgramTreeStateForSaveList(TEST_USER_ID, TEST_PROGRAM_UUID);
+		Mockito.doReturn(response).when(this.userTreeStateService).getUserProgramTreeStateForSaveList(
+				GermplasmTreeControllerTest.TEST_USER_ID, GermplasmTreeControllerTest.TEST_PROGRAM_UUID);
 
 		final String returnData = this.controller.retrieveTreeState(ListTreeState.GERMPLASM_LIST.name(), true);
 
-		Mockito.verify(this.userTreeStateService).getUserProgramTreeStateForSaveList(TEST_USER_ID, TEST_PROGRAM_UUID);
+		Mockito.verify(this.userTreeStateService).getUserProgramTreeStateForSaveList(GermplasmTreeControllerTest.TEST_USER_ID,
+				GermplasmTreeControllerTest.TEST_PROGRAM_UUID);
 
 		Assert.assertEquals("Should return [1, 2]", "[\"1\",\"2\"]", returnData);
 	}
@@ -318,13 +319,12 @@ public class GermplasmTreeControllerTest {
 		final int listId = 10;
 		Mockito.doReturn(parentID).when(req).getParameter("parentFolderId");
 		Mockito.doReturn(folderName).when(req).getParameter("folderName");
-		Mockito.doReturn(listId).when(this.germplasmListManager).addGermplasmList(Mockito.any(GermplasmList.class));
+		Mockito.doReturn(listId).when(this.germplasmListManager).addGermplasmList(Matchers.any(GermplasmList.class));
 
 		final Map<String, Object> resultsMap = this.controller.addGermplasmFolder(req);
 		Assert.assertTrue("Expecting that Germplasm Folder is added successfully.",
 				resultsMap.get(GermplasmTreeController.IS_SUCCESS).equals("1"));
-		Assert.assertTrue("Expecting that Germplasm Folder is added has id " + listId,
-				resultsMap.get("id").equals(listId));
+		Assert.assertTrue("Expecting that Germplasm Folder is added has id " + listId, resultsMap.get("id").equals(listId));
 	}
 
 	@Test
@@ -333,54 +333,66 @@ public class GermplasmTreeControllerTest {
 		final List<Pair<Germplasm, List<Name>>> germplasmNames = new ArrayList<>();
 		final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
 		final Integer currentDate = DateUtil.getCurrentDateAsIntegerValue();
-		AdvancingNurseryForm advancingForm = this.createAdvancingNurseryForm(true);
+		final AdvancingNurseryForm advancingForm = this.createAdvancingNurseryForm(true);
 
-		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm,
-				germplasmNames, listDataItems, TEST_USER_ID, germplasmAttributes);
-		
+		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems,
+				GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
+
 		// Check List Data objects created
-		List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
-		Iterator<ImportedGermplasm> germplasmIterator = inputGermplasmList.iterator();
-		Assert.assertEquals("Expecting # of list data objects equals input germplasm size", listDataItems.size(), inputGermplasmList.size());
-		for (Pair<Germplasm, GermplasmListData> listDataPair: listDataItems){		
-			GermplasmListData listData = listDataPair.getRight();
-			ImportedGermplasm germplasm = germplasmIterator.next();
-			Assert.assertEquals("Expecting list data GID is same as germplasm's GID", germplasm.getGid(), listData.getGermplasmId().toString());
-			Assert.assertEquals("Expecting list data Entry ID is same as germplasm's Entry ID", germplasm.getEntryId(), listData.getEntryId());
-			Assert.assertEquals("Expecting list data Entry Code is same as germplasm's Entry Code", germplasm.getEntryCode(), listData.getEntryCode());
-			Assert.assertEquals("Expecting list data Designation is same as germplasm's Designation", germplasm.getDesig(), listData.getDesignation());
-			Assert.assertEquals("Expecting list data Seed Source is same as germplasm's Seed Source", germplasm.getSource(), listData.getSeedSource());
+		final List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
+		final Iterator<ImportedGermplasm> germplasmIterator = inputGermplasmList.iterator();
+		Assert.assertEquals("Expecting # of list data objects equals input germplasm size", listDataItems.size(),
+				inputGermplasmList.size());
+		for (final Pair<Germplasm, GermplasmListData> listDataPair : listDataItems) {
+			final GermplasmListData listData = listDataPair.getRight();
+			final ImportedGermplasm germplasm = germplasmIterator.next();
+			Assert.assertEquals("Expecting list data GID is same as germplasm's GID", germplasm.getGid(),
+					listData.getGermplasmId().toString());
+			Assert.assertEquals("Expecting list data Entry ID is same as germplasm's Entry ID", germplasm.getEntryId(),
+					listData.getEntryId());
+			Assert.assertEquals("Expecting list data Entry Code is same as germplasm's Entry Code", germplasm.getEntryCode(),
+					listData.getEntryCode());
+			Assert.assertEquals("Expecting list data Designation is same as germplasm's Designation", germplasm.getDesig(),
+					listData.getDesignation());
+			Assert.assertEquals("Expecting list data Seed Source is same as germplasm's Seed Source", germplasm.getSource(),
+					listData.getSeedSource());
 			Assert.assertEquals("Expecting list data Cross is same as germplasm's Cross", germplasm.getCross(), listData.getGroupName());
 		}
-		
+
 		// Check Name objects created
 		Assert.assertEquals("Expecting # of Name objects equals input germplasm size", germplasmNames.size(), inputGermplasmList.size());
-		for (int i=0; i<inputGermplasmList.size(); i++){
-			List<Name> names = germplasmNames.get(i).getRight();
-			ImportedGermplasm germplasm = inputGermplasmList.get(i);
-			for (Name name : names){
+		for (int i = 0; i < inputGermplasmList.size(); i++) {
+			final List<Name> names = germplasmNames.get(i).getRight();
+			final ImportedGermplasm germplasm = inputGermplasmList.get(i);
+			for (final Name name : names) {
 				Assert.assertEquals("Expecting Name GID is same as germplasm's GID", germplasm.getGid(), name.getGermplasmId().toString());
 				Assert.assertEquals("Expecting Name Designation is same as germplasm's Designation", germplasm.getDesig(), name.getNval());
-				Assert.assertEquals("Expecting Name Location ID is same as form's Location ID", advancingForm.getHarvestLocationId(), name.getLocationId().toString());
-				Assert.assertEquals("Expecting Name User ID is same as germplasm's User ID", TEST_USER_ID, name.getUserId());
+				Assert.assertEquals("Expecting Name Location ID is same as form's Location ID", advancingForm.getHarvestLocationId(),
+						name.getLocationId().toString());
+				Assert.assertEquals("Expecting Name User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
+						name.getUserId());
 				Assert.assertEquals("Expecting Name Date is current date", currentDate, name.getNdate());
 			}
 		}
-		
+
 		// Check Attribute objects created
-		for (int i=0; i<inputGermplasmList.size(); i++){
-			List<Attribute> attributes = germplasmAttributes.get(i).getRight();
+		for (int i = 0; i < inputGermplasmList.size(); i++) {
+			final List<Attribute> attributes = germplasmAttributes.get(i).getRight();
 
 			Assert.assertEquals("Expecting 1 Attribute object per germplasm", 1, attributes.size());
-			Attribute attribute = attributes.get(0);
+			final Attribute attribute = attributes.get(0);
 			// GID in Attribute is null at this point. It will be set after saving of germplasm
 			Assert.assertNull("Expecting Attribute GID to be null", attribute.getGermplasmId());
-			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(), attribute.getLocationId().toString());
-			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", TEST_USER_ID, attribute.getUserId());
+			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
+					attribute.getLocationId().toString());
+			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
+					attribute.getUserId());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, attribute.getAdate());
-			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(PLOT_CODE_FIELD_NO), attribute.getTypeId());
-			Assert.assertEquals("Expecting Attribute Value is germplasm's source", inputGermplasmList.get(i).getSource(), attribute.getAval());
-			
+			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id",
+					Integer.valueOf(GermplasmTreeControllerTest.PLOT_CODE_FIELD_NO), attribute.getTypeId());
+			Assert.assertEquals("Expecting Attribute Value is germplasm's source", inputGermplasmList.get(i).getSource(),
+					attribute.getAval());
+
 		}
 	}
 
@@ -390,105 +402,132 @@ public class GermplasmTreeControllerTest {
 		final List<Pair<Germplasm, List<Name>>> germplasmNames = new ArrayList<>();
 		final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
 		final Integer currentDate = DateUtil.getCurrentDateAsIntegerValue();
-		
-		AdvancingNurseryForm advancingForm = this.createAdvancingNurseryForm(true);
+
+		final AdvancingNurseryForm advancingForm = this.createAdvancingNurseryForm(true);
 		Mockito.doReturn(true).when(this.userSelection).isTrial();
 
-		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm,
-				germplasmNames, listDataItems, TEST_USER_ID, germplasmAttributes);
-		
+		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems,
+				GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
+
 		// Check Attribute Objects created. Additional attributes are created for trials only
-		List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
-		for (int i=0; i<inputGermplasmList.size(); i++){
-			List<Attribute> attributes = germplasmAttributes.get(i).getRight();
-			Iterator<Attribute> attributeIterator = attributes.iterator();
-			ImportedGermplasm importedGermplasm = inputGermplasmList.get(i);
+		final List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
+		for (int i = 0; i < inputGermplasmList.size(); i++) {
+			final List<Attribute> attributes = germplasmAttributes.get(i).getRight();
+			final Iterator<Attribute> attributeIterator = attributes.iterator();
+			final ImportedGermplasm importedGermplasm = inputGermplasmList.get(i);
 
 			// Expecting REP_NUMBER, PLOTCODE, PLOT_NUMBER and INSTANCE_NUMBER attributes to be created per germplasm
 			// GIDs in Attributes are null at this point. It will be set after saving of germplasm
 			Assert.assertEquals("Expecting # of Attribute objects per germplasm is 4", 4, attributes.size());
-			Attribute originAttribute = attributeIterator.next();
+			final Attribute originAttribute = attributeIterator.next();
 			Assert.assertNull("Expecting Attribute GID to be null", originAttribute.getGermplasmId());
-			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(), originAttribute.getLocationId().toString());
-			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", TEST_USER_ID, originAttribute.getUserId());
+			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
+					originAttribute.getLocationId().toString());
+			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
+					originAttribute.getUserId());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, originAttribute.getAdate());
-			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(PLOT_CODE_FIELD_NO), originAttribute.getTypeId());
-			Assert.assertEquals("Expecting Attribute Value is germplasm's source", importedGermplasm.getSource(), originAttribute.getAval());
-			
-			Attribute plotAttribute = attributeIterator.next();
-			Assert.assertNull("Expecting Attribute GID to be null", plotAttribute.getGermplasmId());
-			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(), plotAttribute.getLocationId().toString());
-			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", TEST_USER_ID, plotAttribute.getUserId());
-			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, plotAttribute.getAdate());
-			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(PLOT_FIELD_NO), plotAttribute.getTypeId());
-			Assert.assertEquals("Expecting Attribute Value is germplasm's plot number", importedGermplasm.getPlotNumber(), plotAttribute.getAval());
+			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id",
+					Integer.valueOf(GermplasmTreeControllerTest.PLOT_CODE_FIELD_NO), originAttribute.getTypeId());
+			Assert.assertEquals("Expecting Attribute Value is germplasm's source", importedGermplasm.getSource(),
+					originAttribute.getAval());
 
-			Attribute repAttribute = attributeIterator.next();
+			final Attribute plotAttribute = attributeIterator.next();
+			Assert.assertNull("Expecting Attribute GID to be null", plotAttribute.getGermplasmId());
+			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
+					plotAttribute.getLocationId().toString());
+			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
+					plotAttribute.getUserId());
+			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, plotAttribute.getAdate());
+			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(GermplasmTreeControllerTest.PLOT_FIELD_NO),
+					plotAttribute.getTypeId());
+			Assert.assertEquals("Expecting Attribute Value is germplasm's plot number", importedGermplasm.getPlotNumber(),
+					plotAttribute.getAval());
+
+			final Attribute repAttribute = attributeIterator.next();
 			Assert.assertNull("Expecting Attribute GID to be null", repAttribute.getGermplasmId());
-			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(), repAttribute.getLocationId().toString());
-			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", TEST_USER_ID, repAttribute.getUserId());
+			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
+					repAttribute.getLocationId().toString());
+			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
+					repAttribute.getUserId());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, repAttribute.getAdate());
-			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(REP_FIELD_NO), repAttribute.getTypeId());
-			Assert.assertEquals("Expecting Attribute Value is germplasm's plot number", importedGermplasm.getReplicationNumber(), repAttribute.getAval());
-		
-			Attribute instanceAttribute = attributeIterator.next();
+			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(GermplasmTreeControllerTest.REP_FIELD_NO),
+					repAttribute.getTypeId());
+			Assert.assertEquals("Expecting Attribute Value is germplasm's plot number", importedGermplasm.getReplicationNumber(),
+					repAttribute.getAval());
+
+			final Attribute instanceAttribute = attributeIterator.next();
 			Assert.assertNull("Expecting Attribute GID to be null", instanceAttribute.getGermplasmId());
-			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(), instanceAttribute.getLocationId().toString());
-			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", TEST_USER_ID, instanceAttribute.getUserId());
+			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
+					instanceAttribute.getLocationId().toString());
+			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
+					instanceAttribute.getUserId());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, instanceAttribute.getAdate());
-			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(TRIAL_INSTANCE_FIELD_NO), instanceAttribute.getTypeId());
-			Assert.assertEquals("Expecting Attribute Value is germplasm's plot number", importedGermplasm.getTrialInstanceNumber(), instanceAttribute.getAval());
+			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id",
+					Integer.valueOf(GermplasmTreeControllerTest.TRIAL_INSTANCE_FIELD_NO), instanceAttribute.getTypeId());
+			Assert.assertEquals("Expecting Attribute Value is germplasm's plot number", importedGermplasm.getTrialInstanceNumber(),
+					instanceAttribute.getAval());
 		}
-		
+
 	}
-		
-		
+
 	@Test
 	public void testPopulateGermplasmListDataFromAdvancedForTrialWithImportedBasicDesign() {
 		final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 		final List<Pair<Germplasm, List<Name>>> germplasmNames = new ArrayList<>();
 		final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
 		final Integer currentDate = DateUtil.getCurrentDateAsIntegerValue();
-		
-		AdvancingNurseryForm advancingForm = this.createAdvancingNurseryForm(false);
+
+		final AdvancingNurseryForm advancingForm = this.createAdvancingNurseryForm(false);
 		Mockito.doReturn(true).when(this.userSelection).isTrial();
 
-		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm,
-				germplasmNames, listDataItems, TEST_USER_ID, germplasmAttributes);
-		
-		// Check Attribute Objects created. Additional attributes are created for trials only
-		List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
-		for (int i=0; i<inputGermplasmList.size(); i++){
-			List<Attribute> attributes = germplasmAttributes.get(i).getRight();
-			Iterator<Attribute> attributeIterator = attributes.iterator();
-			ImportedGermplasm importedGermplasm = inputGermplasmList.get(i);
+		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems,
+				GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
 
-			// Expecting PLOTCODE, PLOT_NUMBER and INSTANCE_NUMBER attributes to be created per germplasm. 
+		// Check Attribute Objects created. Additional attributes are created for trials only
+		final List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
+		for (int i = 0; i < inputGermplasmList.size(); i++) {
+			final List<Attribute> attributes = germplasmAttributes.get(i).getRight();
+			final Iterator<Attribute> attributeIterator = attributes.iterator();
+			final ImportedGermplasm importedGermplasm = inputGermplasmList.get(i);
+
+			// Expecting PLOTCODE, PLOT_NUMBER and INSTANCE_NUMBER attributes to be created per germplasm.
 			// REP_NUMBER should not be created since basic import design only contains TRIAL_INSTANCE, ENTRY_NO and PLOT_NO variables
 			Assert.assertEquals("Expecting # of Attribute objects per germplasm is 3", 3, attributes.size());
-			Attribute originAttribute = attributeIterator.next();
+			final Attribute originAttribute = attributeIterator.next();
 			Assert.assertNull("Expecting Attribute GID to be null", originAttribute.getGermplasmId());
-			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(), originAttribute.getLocationId().toString());
-			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", TEST_USER_ID, originAttribute.getUserId());
+			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
+					originAttribute.getLocationId().toString());
+			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
+					originAttribute.getUserId());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, originAttribute.getAdate());
-			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(PLOT_CODE_FIELD_NO), originAttribute.getTypeId());
-			Assert.assertEquals("Expecting Attribute Value is germplasm's source", importedGermplasm.getSource(), originAttribute.getAval());
-			
-			Attribute plotAttribute = attributeIterator.next();
-			Assert.assertNull("Expecting Attribute GID to be null", plotAttribute.getGermplasmId());
-			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(), plotAttribute.getLocationId().toString());
-			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", TEST_USER_ID, plotAttribute.getUserId());
-			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, plotAttribute.getAdate());
-			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(PLOT_FIELD_NO), plotAttribute.getTypeId());
-			Assert.assertEquals("Expecting Attribute Value is germplasm's plot number", importedGermplasm.getPlotNumber(), plotAttribute.getAval());
+			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id",
+					Integer.valueOf(GermplasmTreeControllerTest.PLOT_CODE_FIELD_NO), originAttribute.getTypeId());
+			Assert.assertEquals("Expecting Attribute Value is germplasm's source", importedGermplasm.getSource(),
+					originAttribute.getAval());
 
-			Attribute instanceAttribute = attributeIterator.next();
+			final Attribute plotAttribute = attributeIterator.next();
+			Assert.assertNull("Expecting Attribute GID to be null", plotAttribute.getGermplasmId());
+			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
+					plotAttribute.getLocationId().toString());
+			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
+					plotAttribute.getUserId());
+			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, plotAttribute.getAdate());
+			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(GermplasmTreeControllerTest.PLOT_FIELD_NO),
+					plotAttribute.getTypeId());
+			Assert.assertEquals("Expecting Attribute Value is germplasm's plot number", importedGermplasm.getPlotNumber(),
+					plotAttribute.getAval());
+
+			final Attribute instanceAttribute = attributeIterator.next();
 			Assert.assertNull("Expecting Attribute GID to be null", instanceAttribute.getGermplasmId());
-			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(), instanceAttribute.getLocationId().toString());
-			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", TEST_USER_ID, instanceAttribute.getUserId());
+			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
+					instanceAttribute.getLocationId().toString());
+			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
+					instanceAttribute.getUserId());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, instanceAttribute.getAdate());
-			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(TRIAL_INSTANCE_FIELD_NO), instanceAttribute.getTypeId());
-			Assert.assertEquals("Expecting Attribute Value is germplasm's plot number", importedGermplasm.getTrialInstanceNumber(), instanceAttribute.getAval());
+			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id",
+					Integer.valueOf(GermplasmTreeControllerTest.TRIAL_INSTANCE_FIELD_NO), instanceAttribute.getTypeId());
+			Assert.assertEquals("Expecting Attribute Value is germplasm's plot number", importedGermplasm.getTrialInstanceNumber(),
+					instanceAttribute.getAval());
 		}
 
 	}
@@ -588,11 +627,11 @@ public class GermplasmTreeControllerTest {
 		return germplasmList;
 	}
 
-	private AdvancingNurseryForm createAdvancingNurseryForm(boolean withReplicationNumber) {
+	private AdvancingNurseryForm createAdvancingNurseryForm(final boolean withReplicationNumber) {
 		final AdvancingNurseryForm advancingNurseryForm = new AdvancingNurseryForm();
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
-		for (int i=1; i<=3; i++){
-			importedGermplasmList.add(createImportedGermplasm(i, withReplicationNumber));
+		for (int i = 1; i <= 3; i++) {
+			importedGermplasmList.add(this.createImportedGermplasm(i, withReplicationNumber));
 		}
 		advancingNurseryForm.setHarvestYear("2015");
 		advancingNurseryForm.setHarvestMonth("08");
@@ -600,26 +639,26 @@ public class GermplasmTreeControllerTest {
 		advancingNurseryForm.setGermplasmList(importedGermplasmList);
 		return advancingNurseryForm;
 	}
-	
-	private ImportedGermplasm createImportedGermplasm(int gid, boolean withReplicationNumber){
-		String gidString = String.valueOf(gid);
-		String desig = GERMPLASM_NAME_PREFIX + gid;
 
-		ImportedGermplasm germplasm = new ImportedGermplasm();
+	private ImportedGermplasm createImportedGermplasm(final int gid, final boolean withReplicationNumber) {
+		final String gidString = String.valueOf(gid);
+		final String desig = GermplasmTreeControllerTest.GERMPLASM_NAME_PREFIX + gid;
+
+		final ImportedGermplasm germplasm = new ImportedGermplasm();
 		germplasm.setGid(gidString);
 		germplasm.setEntryId(gid);
 		germplasm.setEntryCode(gidString);
 		germplasm.setDesig(desig);
-		germplasm.setSource(LIST_NAME + ":" + gid);
-		germplasm.setCross(gid + "/" + (gid+1));
+		germplasm.setSource(GermplasmTreeControllerTest.LIST_NAME + ":" + gid);
+		germplasm.setCross(gid + "/" + (gid + 1));
 		germplasm.setSource("Import file");
 		germplasm.setTrialInstanceNumber("1");
 		germplasm.setPlotNumber(gidString);
-		if (withReplicationNumber){
+		if (withReplicationNumber) {
 			germplasm.setReplicationNumber("2");
 		}
-		
-		Name name = new Name();
+
+		final Name name = new Name();
 		name.setGermplasmId(gid);
 		name.setNval(desig);
 		name.setNstat(1);

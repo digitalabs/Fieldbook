@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -45,7 +46,6 @@ import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
@@ -744,17 +744,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final TreeTableNode localNode =
 					new TreeTableNode(GermplasmTreeController.LISTS, AppConstants.LISTS.getString(), null, null, null, null, "1");
 			rootNodes.add(localNode);
-			rootNodes.addAll(this.getGermplasmListFolderChildNodes(localNode, this.getCurrentProgramUUID()));
 			model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_ROOT_NODES, rootNodes);
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
 		}
 		return super.showAjaxPage(model, GermplasmTreeController.GERMPLASM_LIST_TABLE_PAGE);
-	}
-
-	protected void markIfHasChildren(final TreeTableNode node, final String programUUID) {
-		final List<GermplasmList> children = this.getGermplasmListChildren(node.getId(), programUUID);
-		node.setNumOfChildren(Integer.toString(children.size()));
 	}
 
 	protected List<GermplasmList> getGermplasmListChildren(final String id, final String programUUID) {
@@ -786,10 +780,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		List<TreeTableNode> childNodes = new ArrayList<>();
 		if (id != null && !"".equals(id)) {
 			childNodes = this.getGermplasmFolderChildrenNode(id, programUUID);
-			for (final TreeTableNode newNode : childNodes) {
-				this.markIfHasChildren(newNode, programUUID);
-
-			}
 		}
 		return childNodes;
 	}

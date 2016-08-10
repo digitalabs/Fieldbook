@@ -32,6 +32,7 @@ import org.generationcp.middleware.pojos.UserDefinedField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TreeTableNode;
 import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
@@ -370,10 +371,15 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertTreeViewToJson(List<TreeNode> treeNodes) throws IOException {
+	public static String convertTreeViewToJson(List<TreeNode> treeNodes) {
 		if (treeNodes != null && !treeNodes.isEmpty()) {
 			ObjectMapper mapper = new ObjectMapper();
-			return mapper.writeValueAsString(treeNodes);
+			try {
+				return mapper.writeValueAsString(treeNodes);
+			} catch (IOException e) {
+				throw new IllegalStateException("Error converting tree node to JSON. "
+						+ "Please contact administrator for further assistance.", e);
+			}
 		}
 		return "[]";
 	}

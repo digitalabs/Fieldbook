@@ -195,8 +195,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 
 	private void mockGermplasmListManagerAndItsMethods() throws MiddlewareQueryException {
 		GermplasmListManager germplasmListManager = Mockito.mock(GermplasmListManager.class);
-		Mockito.when(germplasmListManager.getAllTopLevelListsBatched(GermplasmTreeControllerTestIT.PROGRAM_UUID,
-				GermplasmTreeController.BATCH_SIZE)).thenReturn(GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA);
+		Mockito.when(germplasmListManager.getAllTopLevelLists(GermplasmTreeControllerTestIT.PROGRAM_UUID)).thenReturn(GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA);
 		Mockito.when(
 				germplasmListManager.getGermplasmListByParentFolderIdBatched(Matchers.anyInt(), Matchers.anyString(), Matchers.anyInt()))
 				.thenReturn(GermplasmTreeControllerTestIT.EMPTY_GERMPLASM_LIST_TEST_DATA);
@@ -222,13 +221,11 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	public void testMarkIfHasChildren() throws MiddlewareQueryException {
 		TreeTableNode anyChildNode = new TreeTableNode(Integer.toString(EasyMock.anyInt()),
 				GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST, null, null, null, null, "1");
-		this.controller.markIfHasChildren(anyChildNode, PROGRAM_UUID);
 		Assert.assertTrue(GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should not have children",
 				anyChildNode.getNumOfChildren().equals("0"));
 
 		TreeTableNode localRootNode =
 				new TreeTableNode(GermplasmTreeControllerTestIT.LISTS, AppConstants.LISTS.getString(), null, null, null, null, "1");
-		this.controller.markIfHasChildren(localRootNode, PROGRAM_UUID);
 		Assert.assertFalse(AppConstants.LISTS.getString() + " should have children", localRootNode.getNumOfChildren().equals("0"));
 	}
 

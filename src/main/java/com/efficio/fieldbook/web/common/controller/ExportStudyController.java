@@ -453,6 +453,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		} catch (final Exception e) {
 			// generic exception handling block needs to be added here so that the calling AJAX function receives proper notification that
 			// the operation was a failure
+			LOG.error("Error exporting study: " + e.getMessage(), e);
 			results.put(IS_SUCCESS, false);
 			results.put(ERROR_MESSAGE, this.messageSource.getMessage("export.study.error", null, Locale.ENGLISH));
 		}

@@ -18,13 +18,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -497,7 +496,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				&& variable.getTermId() != TermId.LOCATION_ID.getId()) {
 			cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(variable.getValue(), variable.getPossibleValues()));
 		} else if (variable.getDataTypeId() != null && variable.getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())) {
-			if (variable.getValue() != null && !"".equalsIgnoreCase(variable.getValue())) {
+			if (StringUtils.isNotBlank(variable.getValue()) && NumberUtils.isNumber(variable.getValue())) {
 				cell.setCellType(Cell.CELL_TYPE_BLANK);
 				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				cell.setCellValue(Double.valueOf(variable.getValue()));

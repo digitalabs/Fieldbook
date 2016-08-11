@@ -338,6 +338,9 @@ public class GermplasmTreeControllerTest {
 		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems,
 				GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
 
+		Mockito.verify(germplasmDataManager, Mockito.times(0)).getUserDefinedFieldByTableTypeAndCode(
+				Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
+		
 		// Check List Data objects created
 		final List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
 		final Iterator<ImportedGermplasm> germplasmIterator = inputGermplasmList.iterator();
@@ -408,6 +411,10 @@ public class GermplasmTreeControllerTest {
 
 		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems,
 				GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
+		
+		// Called 3x - for REP, TRIAL_INSTANCE and PLOT FieldNos - and not inside germplasm list loop
+		Mockito.verify(germplasmDataManager, Mockito.times(3)).getUserDefinedFieldByTableTypeAndCode(
+				Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
 
 		// Check Attribute Objects created. Additional attributes are created for trials only
 		final List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
@@ -482,6 +489,11 @@ public class GermplasmTreeControllerTest {
 
 		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems,
 				GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
+		
+		// Called 3x - for REP, TRIAL_INSTANCE and PLOT FieldNos - and not inside germplasm list loop
+		Mockito.verify(germplasmDataManager, Mockito.times(3)).getUserDefinedFieldByTableTypeAndCode(
+				Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
+
 
 		// Check Attribute Objects created. Additional attributes are created for trials only
 		final List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();

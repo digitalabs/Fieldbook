@@ -586,6 +586,17 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		// Common name fields
 		final Integer nRef = 0;
+	
+		Integer plotCodeFldNo = this.germplasmDataManager.getPlotCodeField().getFldno();
+		Integer plotFldNo = 0;
+		Integer trialInstanceFldNo = 0;
+		Integer repFldNo = 0;
+		// get FLDNOs for Attribute Objects to be created
+		if (userSelection.isTrial()){
+			plotFldNo = this.getPassportAttributeForCode("PLOT_NUMBER");
+			repFldNo = this.getPassportAttributeForCode("REP_NUMBER");
+			trialInstanceFldNo = this.getPassportAttributeForCode("INSTANCE_NUMBER");
+		}
 
 		// Create germplasms to save - Map<Germplasm, List<Name>>
 		for (final ImportedGermplasm importedGermplasm : form.getGermplasmList()) {
@@ -651,25 +662,25 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			// germplasm in FieldbookServiceImpl.advanceNursery().
 			// originAttribute gid will be set when saving once gid is known
 			final Attribute originAttribute = this.createAttributeObject(currentUserID, importedGermplasm.getSource(),
-					this.germplasmDataManager.getPlotCodeField().getFldno(), locationId, gDate);
+					plotCodeFldNo, locationId, gDate);
 			attributesPerGermplasm.add(originAttribute);
 
 			// Adding Instance number, plot number and replication number as
 			// attributes of germplasm for trial advancing
 			if (this.userSelection.isTrial()) {
 				final Attribute plotNumberAttribute = this.createAttributeObject(currentUserID, importedGermplasm.getPlotNumber(),
-						this.getPassportAttributeForCode("PLOT_NUMBER"), locationId, gDate);
+						plotFldNo, locationId, gDate);
 				attributesPerGermplasm.add(plotNumberAttribute);
 
 				final String replicationNumber = importedGermplasm.getReplicationNumber();
 				if (StringUtils.isNotBlank(replicationNumber)) {
 					final Attribute repNoAttribute = this.createAttributeObject(currentUserID, replicationNumber,
-							this.getPassportAttributeForCode("REP_NUMBER"), locationId, gDate);
+							repFldNo, locationId, gDate);
 					attributesPerGermplasm.add(repNoAttribute);
 				}
 
 				final Attribute instanceNoAttribute = this.createAttributeObject(currentUserID, importedGermplasm.getTrialInstanceNumber(),
-						this.getPassportAttributeForCode("INSTANCE_NUMBER"), locationId, gDate);
+						trialInstanceFldNo, locationId, gDate);
 				attributesPerGermplasm.add(instanceNoAttribute);
 			}
 

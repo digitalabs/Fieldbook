@@ -165,6 +165,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		this.studySelection = userSelection;
 	}
 
+	/**
+	 * This is the GET call to open the action dialog to edit one row.
+	 */
 	@RequestMapping(value = "/update/experiment/{index}", method = RequestMethod.GET)
 	public String editExperimentModal(@PathVariable int index, @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,
 			Model model) throws MiddlewareQueryException {
@@ -194,6 +197,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		return super.showAjaxPage(model, ObservationMatrixController.EDIT_EXPERIMENT_TEMPLATE);
 	}
 
+	/**
+	 * POST call once value has been entered in the table cell and user has blurred out or hit enter.
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/update/experiment/cell/data", method = RequestMethod.POST)
 	public Map<String, Object> updateExperimentCellData(@RequestBody Map<String, String> data, HttpServletRequest req) {
@@ -405,6 +411,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		return map;
 	}
 
+	/**
+	 * GET call on clicking the cell in table for entering measurement value inline.
+	 */
 	@RequestMapping(value = "/update/experiment/cell/{index}/{termId}", method = RequestMethod.GET)
 	public String editExperimentCells(@PathVariable int index, @PathVariable int termId, Model model) throws MiddlewareQueryException {
 
@@ -447,6 +456,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		model.addAttribute("possibleValues", possibleValues);
 	}
 
+	/**
+	 * This the call to get data required for measurement table in JSON format.
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/data/table/ajax", method = RequestMethod.GET)
 	public List<Map<String, Object>> getPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
@@ -499,6 +511,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		return isCategoricalDescriptionView;
 	}
 
+	/**
+	 * This is the POST call to save (in session) the data submitted from the action dialog to edit one row.
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/data/table/ajax/submit/{index}", method = RequestMethod.POST)
 	public Map<String, Object> dataTablesAjaxSubmit(@PathVariable int index,

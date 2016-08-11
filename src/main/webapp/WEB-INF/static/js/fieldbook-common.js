@@ -1832,7 +1832,10 @@ function validatePlantsSelected() {
 }
 
 function callAdvanceNursery() {
+
 	var lines = $('#lineSelected').val();
+	var methdodId = $('#advanceBreedingMethodId').val();
+
 	var repsSectionIsDisplayed = $('#reps-section').length;
     if(!isNursery() && repsSectionIsDisplayed) {
         var selectedReps = [];
@@ -1846,7 +1849,10 @@ function callAdvanceNursery() {
         }
     }
 
-	if (!lines.match(/^\s*(\+|-)?\d+\s*$/)) {
+	if (methdodId === '0') {
+		showErrorMessage('page-advance-modal-message', msgMethodError);
+		return false;
+	} else if (!lines.match(/^\s*(\+|-)?\d+\s*$/)) {
 		showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
 		return false;
 	} else if (validatePlantsSelected()) {

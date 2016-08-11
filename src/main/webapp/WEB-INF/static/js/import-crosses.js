@@ -509,11 +509,7 @@ var ImportCrosses = {
 
 		settingObject.breedingMethodSetting = {};
 		settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
-
-		if(selectedBreedingMethodId != ''){
-			settingObject.breedingMethodSetting.methodId = selectedBreedingMethodId;
-		}
-		else if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
+		if(!$('#useSelectedMethodCheckbox').prop('checked')){
 			settingObject.breedingMethodSetting.methodId = null;
 		}
 

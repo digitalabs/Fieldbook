@@ -2336,13 +2336,25 @@ function refreshMethodComboInSettings(data) {
 		initializePossibleValuesCombo([],
 				'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 
+		var allSelected = $('.filter_selectors_all_' + index).prop("checked");
+
 		//update values of combo
-		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
-			initializePossibleValuesCombo(data.favoriteNonGenerativeMethods,
-					'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+		if ($('[name="' + getJquerySafeId('studyLevelVariables[' + index + '].favorite') + '"]').is(':checked')) {
+			if (allSelected) {
+				initializePossibleValuesCombo(data.favoriteMethods, '#' +
+					getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+			} else {
+				initializePossibleValuesCombo(data.favoriteNonGenerativeMethods, '#' +
+					getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+			}
 		} else {
-			initializePossibleValuesCombo(data.allNonGenerativeMethods,
-					'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+			if (allSelected) {
+				initializePossibleValuesCombo(data.allMethods, '#' +
+					getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+			} else {
+				initializePossibleValuesCombo(data.allNonGenerativeMethods, '#' +
+					getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+			}
 		}
 
 		replacePossibleJsonValues(data.allNonGenerativeMethods, data.favoriteNonGenerativeMethods, data.allMethods, data.favoriteMethods,

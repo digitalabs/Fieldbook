@@ -183,7 +183,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			study = this.fieldbookMiddlewareService.getStudy(id);
 			final List<Integer> ids = new ArrayList<>();
 			ids.add(id);
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties, true);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
 
 			for (final FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
 				fieldMapInfo = fieldMapInfoDetail;
@@ -233,7 +233,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			study = this.fieldbookMiddlewareService.getStudy(id);
 			final List<Integer> ids = new ArrayList<>();
 			ids.add(id);
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties, true);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
 			for (final FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
 				fieldMapInfo = fieldMapInfoDetail;
 				hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
@@ -317,9 +317,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		List<FieldMapInfo> fieldMapInfoList;
 
 		if (Objects.equals(study.getType(), StudyType.T)) {
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties, true);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
 		} else {
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties, true);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
 		}
 
 		final List<InventoryDetails> inventoryDetails = this.labelPrintingService.getInventoryDetails(stockList.getId());

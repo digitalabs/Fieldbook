@@ -82,7 +82,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			}];
 
 			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp')
-				.withButtons($scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice());
+				.withButtons($scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice())
+				.withOption('scrollX', true)
+				.withOption('scrollCollapse', true);
 
 			$scope.dtOptions.drawCallback =  function() {
 				var api = $(this).DataTable();

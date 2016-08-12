@@ -280,17 +280,6 @@
 
 					$scope.isLocation = parseInt(LOCATION_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
-                    if($scope.isLocation){
-                        //Setting selected location is nothing is selected
-                        selectedLocation('', $scope.variableDefinition.possibleValues);
-                        //Setting selected location for selected value
-                        angular.forEach($scope.variableDefinition.possibleValues, function(val, index){
-                            if(val.id == $scope.valuecontainer[$scope.targetkey]){
-                                selectedLocation(val , $scope.variableDefinition.possibleValues);
-                            }
-                        });
-                    }
-
                     $scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
 						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
@@ -397,6 +386,9 @@
 
 									if (value.description === $scope.valuecontainer[$scope.targetkey] ||
 										value.id === idNumber) {
+										if ($scope.isLocation){
+											selectedLocation(value, $scope.dropdownValues);
+										}
 										callback(value);
 										return false;
 									}

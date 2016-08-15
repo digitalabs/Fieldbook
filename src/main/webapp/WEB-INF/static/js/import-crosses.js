@@ -509,7 +509,11 @@ var ImportCrosses = {
 
 		settingObject.breedingMethodSetting = {};
 		settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
-		if(!$('#useSelectedMethodCheckbox').prop('checked')){
+
+		if(selectedBreedingMethodId !== null && selectedBreedingMethodId !== 0){
+			settingObject.breedingMethodSetting.methodId = selectedBreedingMethodId;
+		}
+		else if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
 			settingObject.breedingMethodSetting.methodId = null;
 		}
 		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = $('#useSelectedMethodCheckbox').prop('checked');

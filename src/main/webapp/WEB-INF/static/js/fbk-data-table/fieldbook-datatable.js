@@ -550,7 +550,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 			if ($(this).html() === 'DUPLICATE') {
 				columnsDef.push({
 					defaultContent: '',
-					targets: columns.length - 1,
+					targets: index,
 					createdCell: function(td, cellData, rowData, row, col) {
 
                         var possibleDupeOrRecip = $(td).text();

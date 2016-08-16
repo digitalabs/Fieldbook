@@ -117,6 +117,7 @@ function setCorrectMethodValues(isCheckMethod) {
 		}
 		if (isFound) {
 			$('#methodIdAll').select2('data', dataVal).trigger('change');
+			$('#methodIdDerivativeAndMaintenance').select2('data', dataVal).trigger('change');
 		}
 	}
 }
@@ -309,10 +310,20 @@ function getIndexFromName(name) {
 	return name.split('[')[1].split(']')[0];
 }
 
-function replacePossibleJsonValues(favoriteJson, allJson, index) {
+function replacePossibleJsonValues(possibleValues, possibleValuesFavorite, allValues, allFavoriteValues, index) {
 	'use strict';
-	$('#possibleValuesJson' + index).text(allJson);
-	$('#possibleValuesFavoriteJson' + index).text(favoriteJson);
+	$('#possibleValuesJson' + index).text(JSON.stringify(possibleValues));
+	$('#possibleValuesFavoriteJson' + index).text(JSON.stringify(possibleValuesFavorite));
+	$('#allValuesJson' + index).text(JSON.stringify(allValues));
+	$('#allFavoriteValuesJson' + index).text(JSON.stringify(allFavoriteValues));
+}
+
+function replacePossibleJsonValuesImportGermPlasm(possibleValues, possibleValuesFavorite, allValues, allFavoriteValues, index) {
+	'use strict';
+	$('#possibleValuesJson' + index).text(JSON.stringify(possibleValues));
+	$('#possibleValuesFavoriteJson' + index).text(JSON.stringify(possibleValuesFavorite));
+	$('#allPossibleValuesJson' + index).text(JSON.stringify(allValues));
+	$('#allPossibleValuesFavoriteJson' + index).text(JSON.stringify(allFavoriteValues));
 }
 
 function setComboValues(suggestions_obj, id, name) {
@@ -505,7 +516,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 
 		if (parseInt(settingDetail.variable.cvTermId, 10) == parseInt(breedingMethodId, 10) ||
 				parseInt(settingDetail.variable.cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)) {
-			
+
 			// all values div
 			newRow = newRow
 					+ '<div class="possibleValuesDiv"> <label class="radio-inline"> <input id="filterMethods" name="methodFilter" type="radio" checked="checked"'
@@ -523,7 +534,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '<div id="allFavoriteValuesJson" class="allFavoriteValuesJson" style="display:none">'
 					+ JSON.stringify(settingDetail.allFavoriteValues)
 					+ '</div>';
-			
+
 			// show favorite method
 			locMethodCbxId = name + ctr;
 			newRow = newRow
@@ -561,9 +572,9 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '<span><a href="javascript: openManageMethods();">'
 					+ manageMethodLabel + '</a></span>';
 			newRow = newRow + '</div>';
-		
+
 		} else if (settingDetail.variable.cvTermId == locationId) {
-			
+
 			locMethodCbxId = name + ctr;
 			// all values div
 			newRow = newRow
@@ -582,7 +593,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ 'style="display:none">'
 					+ JSON.stringify(settingDetail.allValues)
 					+ '</div>';
-			
+
 			// all favorite values div
 			newRow = newRow
 					+ '<div id="allFavoriteValuesJson'
@@ -591,7 +602,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ 'style="display:none">'
 					+ JSON.stringify(settingDetail.allFavoriteValues)
 					+ '</div>';
-			
+
 			// show favorite location
 			locMethodCbxId = name + ctr;
 			newRow = newRow
@@ -629,7 +640,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '<span><a href="javascript: openManageLocations();">'
 					+ manageLocationLabel + '</a></span>';
 			newRow = newRow + '</div>';
-	
+
 
 		} else {
 			newRow = newRow + '<div id="possibleValuesJson'
@@ -676,9 +687,10 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 	checkNurseryIfShowRemoveVariableLinks();
 }
 
-function toggleDropdownGen(comboId, favoriteCheckId, suffix, isLocation) {
+function toggleDropdownImportStudy(allCheckId, comboId, favoriteCheckId, suffix, isLocation) {
 	var possibleValues;
 	var showFavorite = $('#' + favoriteCheckId).is(':checked');
+	var showAll = $('#' + allCheckId).is(':checked');
 	var selectedVal = '';
 
 	// get previously selected value
@@ -691,9 +703,17 @@ function toggleDropdownGen(comboId, favoriteCheckId, suffix, isLocation) {
 
 	// get possible values based on checkbox
 	if (showFavorite) {
-		possibleValues = $('#possibleValuesFavoriteJson' + suffix).text();
-		$($('#' + comboId).parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + comboId).parent().find('.selectedValueFave')).val();
+		if (showAll) {
+			possibleValues = $('#allPossibleValuesFavoriteJson' + suffix).text();
+		} else {
+			possibleValues = $('#possibleValuesFavoriteJson' + suffix).text();
+		}
+		$('#' + comboId).parent().find('.selectedValue').val(selectedVal);
+		selectedVal = $('#' + comboId).parent().find('.selectedValueFave').val();
+	} else if (showAll) {
+		possibleValues = $('#allPossibleValuesJson' + suffix).text();
+		$('#' + comboId).parent().find('.selectedValueFave').val(selectedVal);
+		selectedVal = $('#' + comboId).parent().find('.selectedValue').val();
 	} else {
 		possibleValues = $('#possibleValuesJson' + suffix).text();
 		$($('#' + comboId).parent().find('.selectedValueFave')).val(selectedVal);
@@ -704,17 +724,6 @@ function toggleDropdownGen(comboId, favoriteCheckId, suffix, isLocation) {
 	initializePossibleValuesCombo($.parseJSON(possibleValues), '#' + comboId,
 			showFavorite ? false : isLocation, selectedVal);
 
-}
-
-//method checkbox selection
-function checkMethodFavorite(){	
-	if ($.parseJSON($('#possibleValuesFavoriteJson0').text()).length > 1) {
-		$('#' + getJquerySafeId('study-level-method-checkbox')).prop( 'checked', true );
-		toggleMethodDropdown(0);
-	}
-	else{
-		$('#' + getJquerySafeId('study-level-method-checkbox')).prop( 'checked', false );
-	}
 }
 
 function toggleMethodDropdown(rowIndex) {
@@ -734,68 +743,26 @@ function toggleMethodDropdown(rowIndex) {
 	initializePossibleValuesCombo([], '#'
 			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),
 			false, null);
-	
+
 
 	// get possible values based on checkbox
 
 	if (showFavorite && !allMethod) {
-
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else if (allMethod && !showFavorite) {
-
 		possibleValues = $('#allValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else if (allMethod && showFavorite) {
 		possibleValues = $('#allFavoriteValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	}
 
 
@@ -826,63 +793,21 @@ function toggleLocationDropdown(rowIndex) {
 
 	// get possible values based on checkbox
 	if (showFavorite && !allLocations) {
-
 		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else if (allLocations && !showFavorite) {
-
 		possibleValues = $('#allValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else if (allLocations && showFavorite) {
 		possibleValues = $('#allFavoriteValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValue')).val(selectedVal);
-		selectedVal = $(
-				$(
-						'#'
-								+ getJquerySafeId('studyLevelVariables'
-										+ rowIndex + '.value')).parent().find(
-						'.selectedValueFave')).val();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	}
 	// recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
@@ -1931,8 +1856,8 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 					}
 
 					if (index > -1) {
-						replacePossibleJsonValues(data.favoriteNonGenerativeMethods,
-								data.allNonGenerativeMethods, index);
+						replacePossibleJsonValues(data.allNonGenerativeMethods, data.favoriteNonGenerativeMethods, data.allMethods,
+							data.favoriteMethods, index);
 					}
 				}
 			} else {
@@ -2117,14 +2042,20 @@ function checkFavoritesIfValIsAFavorite(rowIndex) {
 	var valueOfDropdown = parseInt($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).val(), 10);
 	var possibleValuesElm = $('#possibleValuesFavoriteJson' + rowIndex);
 	var possibleValuesFavoriteArr = $.parseJSON(possibleValuesElm.text());
+	
+	if (valueOfDropdown) {
+		$('.filter_selectors_' + rowIndex).prop("checked", false);
+		$('.filter_selectors_all_' + rowIndex).prop("checked", true);
+		return;
+	}
 
 	if ('' === possibleValuesElm.text().trim()) {
 		return false;
 	}
-	if (possibleValuesFavoriteArr !== null) {
+	if (possibleValuesFavoriteArr) {
 		$.each(possibleValuesFavoriteArr, function(index, val) {
-			if (val.id === valueOfDropdown || possibleValuesFavoriteArr.length > 0) {
-				$('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.favorite1')).click();
+			if (val.id > 0) {
+				$('[name="' + getJquerySafeId('studyLevelVariables[' + rowIndex + '].favorite') + '"]').click();
 				return false;
 			}
 		});
@@ -2155,14 +2086,15 @@ function selectedLocation(location, possibleValues) {
 function setSelectedLocation() {
     //Trial passes preferred values in which location abbreviation available in bracket.
     //We need to split value to get actual abbreviation for selected location
-    if (possibleLocationsForTrail != null && selectedLocationForTrail != null && selectedLocationForTrail !='') {
-        $('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
-        var locationName = $.grep(possibleLocationsForTrail, function (e) {
-            return e.key == selectedLocationForTrail.id;
-        });
-        $('#' + getJquerySafeId('harvestLocationName')).val(locationName[0].name);
-        var locAbbreviation = locationName[0].name.split("(");
-        locAbbreviation[1] = locAbbreviation[1].replace(")", '');
-        $('#' + getJquerySafeId('harvestLocationAbbreviation')).val(locAbbreviation[1]);
-    }
+	if (possibleLocationsForTrail != null && selectedLocationForTrail != null && selectedLocationForTrail != '' &&
+		selectedLocationForTrail.id != undefined) {
+		$('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
+		var locationName = $.grep(possibleLocationsForTrail, function(e) {
+			return e.key == selectedLocationForTrail.id;
+		});
+		$('#' + getJquerySafeId('harvestLocationName')).val(locationName[0].name);
+		var locAbbreviation = locationName[0].name.split("(");
+		locAbbreviation[1] = locAbbreviation[1].replace(")", '');
+		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val(locAbbreviation[1]);
+	}
 }

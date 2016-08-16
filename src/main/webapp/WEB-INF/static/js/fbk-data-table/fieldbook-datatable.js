@@ -241,6 +241,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			columnDefs: columnsDef,
 			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 			bAutoWidth: true,
+			deferRender: true,
 			iDisplayLength: 100,
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 

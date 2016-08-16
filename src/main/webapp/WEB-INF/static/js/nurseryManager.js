@@ -117,6 +117,7 @@ function setCorrectMethodValues(isCheckMethod) {
 		}
 		if (isFound) {
 			$('#methodIdAll').select2('data', dataVal).trigger('change');
+			$('#methodIdDerivativeAndMaintenance').select2('data', dataVal).trigger('change');
 		}
 	}
 }

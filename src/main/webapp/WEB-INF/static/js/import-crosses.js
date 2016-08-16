@@ -75,9 +75,9 @@ var ImportCrosses = {
 		$('#openCrossesListModal').one('shown.bs.modal', function() {
 
 			$('body').addClass('modal-open');
-
+			
 			// After the modal window is shown, make sure that the table header is properly adjusted.
-			$('#preview-crosses-table').dataTable().fnAdjustColumnSizing();
+			$('#preview-crosses-table').resize();
 
 		}).modal({ backdrop: 'static', keyboard: true });
 		if (ImportCrosses.isFileCrossesImport) {

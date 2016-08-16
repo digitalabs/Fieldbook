@@ -1192,10 +1192,17 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 
 		var columns = [],
 		aoColumnsDef = [],
-		stockTable;
+		stockTable,
+		bulkCompletedColumnIndex;
 
 		$(tableIdentifier + ' thead tr th').each(function(index) {
 			columns.push({data: $(this).data('col-name')});
+
+			if ($(this).html() === 'BULK COMPL?') {
+				// Get the column index of the BULK COMPL? column
+				bulkCompletedColumnIndex = index;
+			}
+
 			if (index === 0) {
 				aoColumnsDef.push({bSortable: false});
 			} else if ($(this).html() === 'DUPLICATE') {
@@ -1203,7 +1210,11 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 					defaultContent: '',
 					targets: index,
 					createdCell: function(td, cellData, rowData, row, col) {
-						transformDuplicateStringToColorCodedSpans(td);
+
+						// If Stock List has completed bulking, the highlighting of duplicates should not appear.
+						if (rowData[bulkCompletedColumnIndex] != 'Completed') {
+							transformDuplicateStringToColorCodedSpans(td);
+						}
 					}
 				});
 			} else {

@@ -516,9 +516,8 @@ var ImportCrosses = {
 		else if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
 			settingObject.breedingMethodSetting.methodId = null;
 		}
-
-		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').prop('checked');
-
+		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = $('#useSelectedMethodCheckbox').prop('checked');
+		
 		settingObject.crossNameSetting = {};
 		settingObject.crossNameSetting.prefix = $('#crossPrefix').val();
 		settingObject.crossNameSetting.suffix = $('#crossSuffix').val();

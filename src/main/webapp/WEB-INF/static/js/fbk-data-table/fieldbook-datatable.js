@@ -1103,7 +1103,6 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 		'use strict';
 
 		var columns = [],
-		columnsDef = [],
 		aoColumnsDef = [],
 		germplasmDataTable;
 
@@ -1113,31 +1112,6 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 				aoColumnsDef.push({bSortable: false});
 			} else {
 				aoColumnsDef.push(null);
-			}
-
-			if ($(this).data('col-name') == 'gid') {
-				// For GID
-				columnsDef.push({
-					targets: columns.length - 1,
-					data: $(this).html(),
-					width: '100px',
-					render: function(data, type, full, meta) {
-						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
-					}
-				});
-			} else if ($(this).data('col-name') == 'desig') {
-				// For designation
-				columnsDef.push({
-					targets: columns.length - 1,
-					data: $(this).html(),
-					render: function(data, type, full, meta) {
-						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
-					}
-				});
 			}
 		});
 

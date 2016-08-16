@@ -634,6 +634,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 				bAutoWidth: true,
 				iDisplayLength: 100,
+				retrieve: true,
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
 					// Assuming ID is in last column

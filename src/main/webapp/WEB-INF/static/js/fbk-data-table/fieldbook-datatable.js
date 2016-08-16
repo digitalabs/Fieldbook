@@ -1198,6 +1198,14 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 			columns.push({data: $(this).data('col-name')});
 			if (index === 0) {
 				aoColumnsDef.push({bSortable: false});
+			} else if ($(this).html() === 'DUPLICATE') {
+				aoColumnsDef.push({
+					defaultContent: '',
+					targets: index,
+					createdCell: function(td, cellData, rowData, row, col) {
+						transformDuplicateStringToColorCodedSpans(td);
+					}
+				});
 			} else {
 				aoColumnsDef.push(null);
 			}

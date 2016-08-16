@@ -50,8 +50,7 @@
                  <td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.groupId} == 0 ? '-' : ${germplasm.groupId}">.2</td>
 
 				<td th:if="*{listType == 'CROSSES'}"
-					th:class="${T(com.efficio.fieldbook.web.common.util.GermplasmListWebUIUtil).getCSSClassForDuplicateType(germplasm) + ' ' + (row.even ? 'even' : 'odd')}"
-
+					th:class="${row.even}? 'even' : 'odd'"
 					th:text="${germplasm.duplicate}">.2</td>
 			 </tr>
 		   </tbody>

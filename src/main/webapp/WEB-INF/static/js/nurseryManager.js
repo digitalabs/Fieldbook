@@ -1,4 +1,4 @@
-/*global getJquerySafeId, showErrorMessage, oldLineSelected, changeAdvanceBreedingMethod, setCorrecMethodValues, noMethodVariatesError, oldMethodSelected, msgSamplePlotError, msgHarvestDateError, noLineVariatesError, setCorrectMethodValues, methodSuggestionsFav_obj, isInt, breedingMethodId, oldMethodSelected*/
+/*global getJquerySafeId, showErrorMessage, oldLineSelected, changeAdvanceBreedingMethod, setCorrecMethodValues, noMethodVariatesError, oldMethodSelected, msgSamplePlotError, msgHarvestDateError, noLineVariatesError, methodSuggestionsFav_obj, isInt, breedingMethodId, oldMethodSelected*/
 /*global isStudyNameUnique, validateStartDateEndDateBasic*/
 
 //Used globle variable to selected location for trial
@@ -18,7 +18,6 @@ function checkMethod() {
 		$('#method-variates-section').hide();
 		$('.method-selection-div').find('input,select').prop('disabled', false);
 
-		setCorrectMethodValues(true);
 		changeAdvanceBreedingMethod();
 	} else {
 		$('#method-variates-section').show();
@@ -32,9 +31,7 @@ function checkMethod() {
 		if ($('#namingConvention').val() != 3) {
 			$('#showFavoriteMethod').prop('disabled', 'disabled');
 		}
-		oldMethodSelected = $('#' + getJquerySafeId('advanceBreedingMethodId')).val();
-		$('#methodSelected').val($('#defaultMethodId').val());
-		setCorrectMethodValues(false);
+		
 		// we show the bulk and lines section
 		$('.bulk-section').show();
 		$('.lines-section').show();
@@ -76,51 +73,6 @@ function displaySectionsPerMethodVariateValues() {
 	}
 }
 
-function setCorrectMethodValues(isCheckMethod) {
-	'use strict';
-	var isFound = false,
-		dataVal = null,
-		findId = $('#defaultMethodId').val(),
-		objKey = null;
-
-	if ($('#showFavoriteMethod').is(':checked')) {
-		// we check if the default is in the favorite method list or not
-		if (isCheckMethod) {
-			findId = oldMethodSelected;
-		}
-		for (objKey in methodSuggestionsFav_obj) {
-			if (methodSuggestionsFav_obj[objKey].id == findId) {
-				isFound = true;
-				dataVal = methodSuggestionsFav_obj[objKey];
-				break;
-			}
-		}
-		if (isFound) {
-			$('#methodIdFavorite').select2('data', dataVal).trigger('change');
-		} else if (methodSuggestionsFav_obj.length > 0) {
-			// we set the first
-			$('#methodIdFavorite').select2('data', methodSuggestionsFav_obj[0])
-					.trigger('change');
-		} else {
-			$('#' + getJquerySafeId('advanceBreedingMethodId')).val(0);
-		}
-	} else {
-		if (isCheckMethod) {
-			findId = oldMethodSelected;
-		}
-		for (objKey in methodSuggestions_obj) {
-			if (methodSuggestions_obj[objKey].id == findId) {
-				isFound = true;
-				dataVal = methodSuggestions_obj[objKey];
-				break;
-			}
-		}
-		if (isFound) {
-			$('#methodIdAll').select2('data', dataVal).trigger('change');
-			$('#methodIdDerivativeAndMaintenance').select2('data', dataVal).trigger('change');
-		}
-	}
-}
 function lineMethod() {
 	if ($('input[type=checkbox][name=lineChoice]:checked').val() == 1) {
 		$('#lineSelected').prop('disabled', false);
@@ -235,6 +187,15 @@ function showCorrectLocationCombo() {
     }
 }
 
+function setFavoriteMethodCheckbox(){
+	if (methodSuggestionsDerivativeAndMaintenanceFavorite.length > 0) {
+		$('#showFavoriteMethod').prop('checked', true);
+	}
+	else{
+		$('#showFavoriteMethod').prop('checked', false);
+	}
+}
+
 function showCorrectMethodCombo() {
 	var isChecked = $('#showFavoriteMethod').is(':checked');
 	// if show favorite Method is checked, hide all field locations, else, show
@@ -257,24 +218,11 @@ function showCorrectMethodCombo() {
 			$('#s2id_methodIdFavorite').show();
 		}
 
-		setCorrectMethodValues(methodSelect);
-		if ($('#' + getJquerySafeId('methodIdFavorite')).select2('data') != null) {
-			$('#' + getJquerySafeId('breedingMethodId')).val($('#' + getJquerySafeId('methodIdFavorite')).select2('data').id);
-		} else {
-			$('#' + getJquerySafeId('breedingMethodId')).val(0);
-		}
 	} else {
 		if ($('#showDerivativeAndMaintenanceRadio').is(':checked')) {
 			$('#s2id_methodIdDerivativeAndMaintenance').show();
 		} else {
 			$('#s2id_methodIdAll').show();
-		}
-
-		setCorrectMethodValues(methodSelect);
-		if ($('#' + getJquerySafeId('methodIdAll')).select2('data') != null) {
-			$('#' + getJquerySafeId('breedingMethodId')).val($('#' + getJquerySafeId('methodIdAll')).select2('data').id);
-		} else {
-			$('#' + getJquerySafeId('breedingMethodId')).val(0);
 		}
 	}
 }

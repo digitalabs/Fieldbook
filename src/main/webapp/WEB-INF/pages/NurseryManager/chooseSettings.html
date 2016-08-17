@@ -68,8 +68,11 @@
 						</div>
 						<!-- Show Favorite Location -->
 						<div style="width: 100%" th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
+							<div th:id="'favoriteLocationCheck' + ${rowStat.index}"
+								 class="favoriteLocationCheck" style="display:none" th:text="${nurseryLevelVariable.allFavoriteValuesJson}">
+							</div>
 							<input
-									type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
+									type="checkbox" class="studyLevelVariablesDetails" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
 									th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
 							&nbsp;&nbsp;
 											<span
@@ -569,6 +572,23 @@ $(document).ready(function() {
 			var select2Index = $(divElem).attr('id').split('possibleValuesJson')[1];
 			checkFavoritesIfValIsAFavorite(select2Index);
 		});
+	}
+
+	//Added logic for checkbox of location being selected if there is any favorite location
+	var favoriteLocationCheck = $('.favoriteLocationCheck'),
+			allFavoriteLocationsCheck;
+	$.each(favoriteLocationCheck, function(index, divElem) {
+		var allFavLocation = $(divElem);
+		var favLocationId = allFavLocation.attr('id');
+		if ( favLocationId ) {
+			allFavoriteLocationsCheck = $.parseJSON(allFavLocation.html());
+		}
+	});
+	if(typeof allFavoriteLocationsCheck != 'undefined')
+	{
+		if(allFavoriteLocationsCheck.length > 0 ){
+			$('.studyLevelVariablesDetails').click();
+		}
 	}
 
 	// Call on-change handlers associated with

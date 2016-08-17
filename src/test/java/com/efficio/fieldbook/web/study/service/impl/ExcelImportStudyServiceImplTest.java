@@ -156,7 +156,7 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
 		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
 
-		final MeasurementVariable var = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
+		final MeasurementVariable var = this.mvarTDI.createMeasurementVariable(this.termId, TermId.NUMERIC_VARIABLE.getId());
 
 		this.wData.setMeasurementVariable(var);
 		this.wData.setValue("test value");
@@ -173,7 +173,7 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_NUMERIC);
 		Mockito.when(this.cell.getNumericCellValue()).thenReturn(Double.valueOf("1.2"));
 
-		final MeasurementVariable var = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
+		final MeasurementVariable var = this.mvarTDI.createMeasurementVariable(this.termId, TermId.NUMERIC_VARIABLE.getId());
 
 		this.wData.setMeasurementVariable(var);
 		this.wData.setValue("test value");
@@ -190,7 +190,7 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_NUMERIC);
 		Mockito.when(this.cell.getNumericCellValue()).thenReturn(Double.valueOf("1.2"));
 
-		final MeasurementVariable var = this.createMeasurementVariable(TermId.CATEGORICAL_VARIABLE.getId());
+		final MeasurementVariable var = this.mvarTDI.createMeasurementVariable(this.termId, TermId.NUMERIC_VARIABLE.getId());
 
 		this.wData.setMeasurementVariable(var);
 		this.wData.setValue("test value");
@@ -207,7 +207,7 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
 		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
 
-		final MeasurementVariable var = this.createMeasurementVariable(TermId.CATEGORICAL_VARIABLE.getId());
+		final MeasurementVariable var = this.mvarTDI.createMeasurementVariable(this.termId, TermId.NUMERIC_VARIABLE.getId());
 
 		this.wData.setMeasurementVariable(var);
 		this.wData.setValue("test value");
@@ -428,33 +428,6 @@ public class ExcelImportStudyServiceImplTest {
 		Assert.assertFalse(
 				"Expecting to return false if at least 1 value from property, scale, method and label of two measurement variables are not the same.",
 				this.importStudy.isMatchingPropertyScaleMethodLabel(var, temp));
-	}
-
-	private MeasurementVariable createMeasurementVariable(final int dataTypeId) {
-
-		final MeasurementVariable var = new MeasurementVariable();
-		var.setProperty(PROPERTY);
-		var.setScale(SCALE);
-		var.setMethod(METHOD);
-		var.setLabel(LABEL);
-		var.setTermId(this.termId);
-		var.setDataTypeId(dataTypeId);
-
-		if (TermId.CATEGORICAL_VARIABLE.getId() == dataTypeId) {
-			final List<ValueReference> possibleValues = new ArrayList<ValueReference>();
-			possibleValues.add(new ValueReference(1, POSSIBLE_VALUE_NAME));
-			var.setPossibleValues(possibleValues);
-		}
-
-		return var;
-	}
-
-	private MeasurementData createMeasurementData() {
-		final MeasurementData wData = new MeasurementData();
-		wData.setEditable(true);
-		wData.setValue(this.currentValue);
-
-		return wData;
 	}
 
     @Test

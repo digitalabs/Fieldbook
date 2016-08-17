@@ -2,15 +2,17 @@
 package com.efficio.fieldbook.web.study.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
+import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -20,28 +22,37 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+
+import junit.framework.Assert;
 
 @RunWith(value = MockitoJUnitRunner.class)
 public class ExcelImportStudyServiceImplTest {
 
 	private static final String TRIAL_INSTANCE_NO = "1";
-	private static final String CATEGORICAL_ID = TRIAL_INSTANCE_NO;
+	private static final String CATEGORICAL_ID = ExcelImportStudyServiceImplTest.TRIAL_INSTANCE_NO;
 	private static final String POSSIBLE_VALUE_NAME = "Possible Value Name";
 	private static final String TEMPLATE_SECTION_CONDITION = "CONDITION";
 	private static final String TEMPLATE_SECTION_FACTOR = "FACTOR";
 	private static final String DUPLICATE_PSMR_ERROR_MESSAGE = "The system detected duplicate variable for CONDITION";
-	private static final String NON_EXISTENT_VARIATE_ERROR_MESSAGE = "The system detected a new variate CONDITION that does not exist.  Please use the Ontology Manager to add a new variate.";
-	private static final String EXISTING_VARIATE_ERROR_MESSAGE = "The system detected a new variate CONDITION that already exist in the study.";
+	private static final String NON_EXISTENT_VARIATE_ERROR_MESSAGE =
+			"The system detected a new variate CONDITION that does not exist.  Please use the Ontology Manager to add a new variate.";
+	private static final String EXISTING_VARIATE_ERROR_MESSAGE =
+			"The system detected a new variate CONDITION that already exist in the study.";
 
 	private static final String LABEL = "Label";
 	private static final String METHOD = "Method";
@@ -68,19 +79,19 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
-	
+
 	@Mock
 	private ContextUtil contextUtil;
-	
+
 	@Mock
 	private MessageSource messageSource;
-	
+
 	private ExcelImportStudyServiceImpl importStudy;
 
 	private MeasurementVariableTestDataInitializer mvarTDI;
-	
+
 	private MeasurementDataTestDataInitializer measurementDataTDI;
-	
+
 	@Before
 	public void setUp() {
 		this.mvarTDI = new MeasurementVariableTestDataInitializer();
@@ -96,7 +107,7 @@ public class ExcelImportStudyServiceImplTest {
 		this.xlsRow = Mockito.mock(Row.class);
 		this.cell = Mockito.mock(Cell.class);
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
-		
+
 		this.descriptionCell = Mockito.mock(Cell.class);
 		this.propertyCell = Mockito.mock(Cell.class);
 		this.scaleCell = Mockito.mock(Cell.class);
@@ -104,19 +115,19 @@ public class ExcelImportStudyServiceImplTest {
 		this.labelCell = Mockito.mock(Cell.class);
 		this.trialInstanceCell = Mockito.mock(Cell.class);
 
-		Mockito.doReturn(DESCRIPTION).when(this.descriptionCell).getStringCellValue();
-		Mockito.doReturn(PROPERTY).when(this.propertyCell).getStringCellValue();
-		Mockito.doReturn(SCALE).when(this.scaleCell).getStringCellValue();
-		Mockito.doReturn(METHOD).when(this.methodCell).getStringCellValue();
-		Mockito.doReturn(LABEL).when(this.labelCell).getStringCellValue();
-		
+		Mockito.doReturn(ExcelImportStudyServiceImplTest.DESCRIPTION).when(this.descriptionCell).getStringCellValue();
+		Mockito.doReturn(ExcelImportStudyServiceImplTest.PROPERTY).when(this.propertyCell).getStringCellValue();
+		Mockito.doReturn(ExcelImportStudyServiceImplTest.SCALE).when(this.scaleCell).getStringCellValue();
+		Mockito.doReturn(ExcelImportStudyServiceImplTest.METHOD).when(this.methodCell).getStringCellValue();
+		Mockito.doReturn(ExcelImportStudyServiceImplTest.LABEL).when(this.labelCell).getStringCellValue();
+
 		Mockito.doReturn("1001").when(this.contextUtil).getCurrentProgramUUID();
-		
+
 		this.xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
-		this.importStudy = new ExcelImportStudyServiceImpl(workbook, "", "");
-        this.importStudy.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-        this.importStudy.setContextUtil(contextUtil);
-        this.importStudy.setMessageSource(messageSource);
+		this.importStudy = new ExcelImportStudyServiceImpl(this.workbook, "", "");
+		this.importStudy.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
+		this.importStudy.setContextUtil(this.contextUtil);
+		this.importStudy.setMessageSource(this.messageSource);
 	}
 
 	@Test
@@ -286,8 +297,8 @@ public class ExcelImportStudyServiceImplTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 
 		final org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
-		Assert.assertEquals("Expecting to return 1 for the value of trialInstance in Nursery but didn't.", TRIAL_INSTANCE_NO,
-				this.importStudy.getTrialInstanceNumber(workbook, xlsBook));
+		Assert.assertEquals("Expecting to return 1 for the value of trialInstance in Nursery but didn't.",
+				ExcelImportStudyServiceImplTest.TRIAL_INSTANCE_NO, this.importStudy.getTrialInstanceNumber(workbook, xlsBook));
 	}
 
 	@Test
@@ -296,7 +307,9 @@ public class ExcelImportStudyServiceImplTest {
 
 		this.setUpXLSWorkbookTestData();
 		Mockito.doReturn(TermId.TRIAL_INSTANCE_FACTOR.getId()).when(this.fieldbookMiddlewareService)
-				.getStandardVariableIdByPropertyScaleMethodRole(PROPERTY, SCALE, METHOD, PhenotypicType.getPhenotypicTypeForLabel(LABEL));
+				.getStandardVariableIdByPropertyScaleMethodRole(ExcelImportStudyServiceImplTest.PROPERTY,
+						ExcelImportStudyServiceImplTest.SCALE, ExcelImportStudyServiceImplTest.METHOD,
+						PhenotypicType.getPhenotypicTypeForLabel(ExcelImportStudyServiceImplTest.LABEL));
 
 		final String toBeReturned = "2";
 		Mockito.doReturn(toBeReturned).when(this.trialInstanceCell).getStringCellValue();
@@ -315,13 +328,13 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.doReturn(conditionRow).when(descriptionSheet).getRow(1);
 		final Cell conditionCell = Mockito.mock(Cell.class);
 		Mockito.doReturn(conditionCell).when(conditionRow).getCell(0);
-		Mockito.doReturn(TEMPLATE_SECTION_CONDITION).when(conditionCell).getStringCellValue();
+		Mockito.doReturn(ExcelImportStudyServiceImplTest.TEMPLATE_SECTION_CONDITION).when(conditionCell).getStringCellValue();
 
 		final Row factorRow = Mockito.mock(Row.class);
 		Mockito.doReturn(factorRow).when(descriptionSheet).getRow(noOfRows);
 		final Cell factorCell = Mockito.mock(Cell.class);
 		Mockito.doReturn(factorCell).when(factorRow).getCell(0);
-		Mockito.doReturn(TEMPLATE_SECTION_FACTOR).when(factorCell).getStringCellValue();
+		Mockito.doReturn(ExcelImportStudyServiceImplTest.TEMPLATE_SECTION_FACTOR).when(factorCell).getStringCellValue();
 
 		Mockito.doReturn(conditionRow).when(descriptionSheet).getRow(2);
 		Mockito.doReturn(this.descriptionCell).when(conditionRow).getCell(1);
@@ -329,7 +342,7 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.doReturn(this.scaleCell).when(conditionRow).getCell(3);
 		Mockito.doReturn(this.methodCell).when(conditionRow).getCell(4);
 		Mockito.doReturn(this.labelCell).when(conditionRow).getCell(7);
-		
+
 		Mockito.doReturn(this.descriptionCell).when(factorRow).getCell(1);
 		Mockito.doReturn(this.propertyCell).when(factorRow).getCell(2);
 		Mockito.doReturn(this.scaleCell).when(factorRow).getCell(3);
@@ -345,8 +358,9 @@ public class ExcelImportStudyServiceImplTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
 
 		this.setUpXLSWorkbookTestData();
-		Mockito.doReturn(null).when(this.fieldbookMiddlewareService)
-				.getStandardVariableIdByPropertyScaleMethodRole(PROPERTY, SCALE, METHOD, PhenotypicType.getPhenotypicTypeForLabel(LABEL));
+		Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getStandardVariableIdByPropertyScaleMethodRole(
+				ExcelImportStudyServiceImplTest.PROPERTY, ExcelImportStudyServiceImplTest.SCALE, ExcelImportStudyServiceImplTest.METHOD,
+				PhenotypicType.getPhenotypicTypeForLabel(ExcelImportStudyServiceImplTest.LABEL));
 
 		try {
 			this.importStudy.getTrialInstanceNumber(workbook, this.xlsBook);
@@ -404,15 +418,15 @@ public class ExcelImportStudyServiceImplTest {
 		final MeasurementRow temp = new MeasurementRow();
 
 		final MeasurementVariable var = new MeasurementVariable();
-		var.setValue(POSSIBLE_VALUE_NAME);
+		var.setValue(ExcelImportStudyServiceImplTest.POSSIBLE_VALUE_NAME);
 
 		final MeasurementData data = new MeasurementData();
 
 		final MeasurementVariable origVar = this.mvarTDI.createMeasurementVariable(this.termId, TermId.CATEGORICAL_VARIABLE.getId());
-		origVar.setValue(POSSIBLE_VALUE_NAME);
+		origVar.setValue(ExcelImportStudyServiceImplTest.POSSIBLE_VALUE_NAME);
 
-		Assert.assertEquals("Expecting to return the value from getCategoricalIdCellValue() but didn't.", CATEGORICAL_ID,
-				this.importStudy.getXlsValue(var, temp, data, origVar));
+		Assert.assertEquals("Expecting to return the value from getCategoricalIdCellValue() but didn't.",
+				ExcelImportStudyServiceImplTest.CATEGORICAL_ID, this.importStudy.getXlsValue(var, temp, data, origVar));
 	}
 
 	@Test
@@ -437,101 +451,111 @@ public class ExcelImportStudyServiceImplTest {
 				this.importStudy.isMatchingPropertyScaleMethodLabel(var, temp));
 	}
 
-    @Test
-    public void testCreateMeasurementRowsMap() {
-        final List<MeasurementRow> observations = this.workbook.getObservations();
+	@Test
+	public void testCreateMeasurementRowsMap() {
+		final List<MeasurementRow> observations = this.workbook.getObservations();
 
-        final Map<String, MeasurementRow> measurementRowsMap = this.importStudy.createMeasurementRowsMap(observations, "1", true);
-        Assert.assertEquals("The number of measurements in the measurementRowsMap should be equal to the number of the observationss",
-                observations.size(), measurementRowsMap.size());
-    }
+		final Map<String, MeasurementRow> measurementRowsMap = this.importStudy.createMeasurementRowsMap(observations, "1", true);
+		Assert.assertEquals("The number of measurements in the measurementRowsMap should be equal to the number of the observationss",
+				observations.size(), measurementRowsMap.size());
+	}
 
-    @Test(expected = WorkbookParserException.class)
-    public void testGetTrialInstanceNumberOfNurseryWithError() throws WorkbookParserException {
-        this.workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyType.T);
-        this.importStudy.getTrialInstanceNo(this.workbook, "filename");
-    }
+	@Test(expected = WorkbookParserException.class)
+	public void testGetTrialInstanceNumberOfNurseryWithError() throws WorkbookParserException {
+		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyType.T);
+		this.importStudy.getTrialInstanceNo(this.workbook, "filename");
+	}
 
-    @Test
-    public void testGetTrialInstanceNumberOfNurseryOfTrial() throws WorkbookParserException {
-        this.workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyType.T);
-        final String trialInstanceNumber = importStudy.getTrialInstanceNo(this.workbook, "filename-11");
-        Assert.assertEquals("The trial instance number should be 11", "11", trialInstanceNumber);
-    }
+	@Test
+	public void testGetTrialInstanceNumberOfNurseryOfTrial() throws WorkbookParserException {
+		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyType.T);
+		final String trialInstanceNumber = this.importStudy.getTrialInstanceNo(this.workbook, "filename-11");
+		Assert.assertEquals("The trial instance number should be 11", "11", trialInstanceNumber);
+	}
 
-    @Test
-    public void testCopyConditionsAndConstantsWorkbook() {
-        this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
-        this.importStudy.copyConditionsAndConstants(workbook);
+	@Test
+	public void testCopyConditionsAndConstantsWorkbook() {
+		this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		this.importStudy.copyConditionsAndConstants(this.workbook);
 
-        Assert.assertNotNull("Conditions copy should not be emprt after copy operation", workbook.getImportConditionsCopy());
-        Assert.assertTrue("Unable to properly copy conditions portion of workbook", workbook.getImportConditionsCopy().size() == workbook.getConditions().size());
-    }
+		Assert.assertNotNull("Conditions copy should not be emprt after copy operation", this.workbook.getImportConditionsCopy());
+		Assert.assertTrue("Unable to properly copy conditions portion of workbook",
+				this.workbook.getImportConditionsCopy().size() == this.workbook.getConditions().size());
+	}
 
-    @Test
-    public void testValidateVariates() {
-    	this.setUpXLSWorkbookTestData();
-    	Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(PROPERTY, SCALE, METHOD,
-				PhenotypicType.VARIATE, this.contextUtil.getCurrentProgramUUID())).thenReturn(this.mvarTDI.createMeasurementVariable(termId, TermId.NUMERIC_VARIABLE.getId()));
-    	
-    	try {
-    		List<String> addedVariates = WorkbookUtil.getAddedTraits(this.workbook.getAllVariables(), this.workbook.getObservations());
-    		Assert.assertTrue("The added variates should be empty", addedVariates.isEmpty());
-    		this.importStudy.validateVariates(this.xlsBook, workbook);
-    		addedVariates = WorkbookUtil.getAddedTraits(this.workbook.getAllVariables(), this.workbook.getObservations());
-    		Assert.assertFalse("The added variates should not be empty", addedVariates.isEmpty());
-		} catch (WorkbookParserException e) {
+	@Test
+	public void testValidateVariates() {
+		this.setUpXLSWorkbookTestData();
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
+				ExcelImportStudyServiceImplTest.PROPERTY, ExcelImportStudyServiceImplTest.SCALE, ExcelImportStudyServiceImplTest.METHOD,
+				PhenotypicType.VARIATE, this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.mvarTDI.createMeasurementVariable(this.termId, TermId.NUMERIC_VARIABLE.getId()));
+
+		try {
+			List<String> addedVariates = WorkbookUtil.getAddedTraits(this.workbook.getAllVariables(), this.workbook.getObservations());
+			Assert.assertTrue("The added variates should be empty", addedVariates.isEmpty());
+			this.importStudy.validateVariates(this.xlsBook, this.workbook);
+			addedVariates = WorkbookUtil.getAddedTraits(this.workbook.getAllVariables(), this.workbook.getObservations());
+			Assert.assertFalse("The added variates should not be empty", addedVariates.isEmpty());
+		} catch (final WorkbookParserException e) {
 			Assert.fail("There should be no exceptions thrown.");
 		}
-    }
-    
-    @Test
-    public void testValidateVariatesWithMiddleWareException() {
-    	this.setUpXLSWorkbookTestData();
-    	Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(PROPERTY, SCALE, METHOD,
+	}
+
+	@Test
+	public void testValidateVariatesWithMiddleWareException() {
+		this.setUpXLSWorkbookTestData();
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
+				ExcelImportStudyServiceImplTest.PROPERTY, ExcelImportStudyServiceImplTest.SCALE, ExcelImportStudyServiceImplTest.METHOD,
 				PhenotypicType.VARIATE, this.contextUtil.getCurrentProgramUUID())).thenThrow(new MiddlewareException(""));
-    	Mockito.when(this.messageSource.getMessage(Matchers.eq("error.import.variate.duplicate.psmr"),
-				Matchers.eq(new Object[] {TEMPLATE_SECTION_CONDITION}), Matchers.eq(LocaleContextHolder.getLocale())))
-				.thenReturn(DUPLICATE_PSMR_ERROR_MESSAGE);
-    	try {
-    		this.importStudy.validateVariates(this.xlsBook, workbook);
-    		Assert.fail("A WorkbookParserException should be thrown.");
-    	} catch (WorkbookParserException e) {
-			Assert.assertEquals("The error message should be " + DUPLICATE_PSMR_ERROR_MESSAGE, DUPLICATE_PSMR_ERROR_MESSAGE, e.getMessage());
+		Mockito.when(this.messageSource.getMessage(Matchers.eq("error.import.variate.duplicate.psmr"),
+				Matchers.eq(new Object[] {ExcelImportStudyServiceImplTest.TEMPLATE_SECTION_CONDITION}),
+				Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn(ExcelImportStudyServiceImplTest.DUPLICATE_PSMR_ERROR_MESSAGE);
+		try {
+			this.importStudy.validateVariates(this.xlsBook, this.workbook);
+			Assert.fail("A WorkbookParserException should be thrown.");
+		} catch (final WorkbookParserException e) {
+			Assert.assertEquals("The error message should be " + ExcelImportStudyServiceImplTest.DUPLICATE_PSMR_ERROR_MESSAGE,
+					ExcelImportStudyServiceImplTest.DUPLICATE_PSMR_ERROR_MESSAGE, e.getMessage());
 		}
-    }
-    
-    @Test
-    public void testValidateVariatesWithNonExistentVariate() {
-    	this.setUpXLSWorkbookTestData();
-    	Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(PROPERTY, SCALE, METHOD,
+	}
+
+	@Test
+	public void testValidateVariatesWithNonExistentVariate() {
+		this.setUpXLSWorkbookTestData();
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
+				ExcelImportStudyServiceImplTest.PROPERTY, ExcelImportStudyServiceImplTest.SCALE, ExcelImportStudyServiceImplTest.METHOD,
 				PhenotypicType.VARIATE, this.contextUtil.getCurrentProgramUUID())).thenReturn(null);
-    	Mockito.when(this.messageSource.getMessage(Matchers.eq("error.import.variate.does.not.exist"),
-				Matchers.eq(new Object[] {TEMPLATE_SECTION_CONDITION}), Matchers.eq(LocaleContextHolder.getLocale())))
-				.thenReturn(NON_EXISTENT_VARIATE_ERROR_MESSAGE);
-    	try {
-    		this.importStudy.validateVariates(this.xlsBook, workbook);
-    		Assert.fail("A WorkbookParserException should be thrown.");
-    	} catch (WorkbookParserException e) {
-			Assert.assertEquals("The error message should be " + NON_EXISTENT_VARIATE_ERROR_MESSAGE, NON_EXISTENT_VARIATE_ERROR_MESSAGE, e.getMessage());
+		Mockito.when(this.messageSource.getMessage(Matchers.eq("error.import.variate.does.not.exist"),
+				Matchers.eq(new Object[] {ExcelImportStudyServiceImplTest.TEMPLATE_SECTION_CONDITION}),
+				Matchers.eq(LocaleContextHolder.getLocale())))
+				.thenReturn(ExcelImportStudyServiceImplTest.NON_EXISTENT_VARIATE_ERROR_MESSAGE);
+		try {
+			this.importStudy.validateVariates(this.xlsBook, this.workbook);
+			Assert.fail("A WorkbookParserException should be thrown.");
+		} catch (final WorkbookParserException e) {
+			Assert.assertEquals("The error message should be " + ExcelImportStudyServiceImplTest.NON_EXISTENT_VARIATE_ERROR_MESSAGE,
+					ExcelImportStudyServiceImplTest.NON_EXISTENT_VARIATE_ERROR_MESSAGE, e.getMessage());
 		}
-    }
-    
-    @Test
-    public void testValidateVariatesWithAlreadyExistingVariate() {
-    	this.setUpXLSWorkbookTestData();
-    	MeasurementVariable mvar = this.mvarTDI.createMeasurementVariable(termId, TermId.NUMERIC_VARIABLE.getId());
-    	Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(PROPERTY, SCALE, METHOD,
+	}
+
+	@Test
+	public void testValidateVariatesWithAlreadyExistingVariate() {
+		this.setUpXLSWorkbookTestData();
+		final MeasurementVariable mvar = this.mvarTDI.createMeasurementVariable(this.termId, TermId.NUMERIC_VARIABLE.getId());
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
+				ExcelImportStudyServiceImplTest.PROPERTY, ExcelImportStudyServiceImplTest.SCALE, ExcelImportStudyServiceImplTest.METHOD,
 				PhenotypicType.VARIATE, this.contextUtil.getCurrentProgramUUID())).thenReturn(mvar);
-    	workbook.setVariates(Arrays.asList(mvar));
-    	Mockito.when(this.messageSource.getMessage(Matchers.eq("error.import.variate.exists.in.study"),
-				Matchers.eq(new Object[] {TEMPLATE_SECTION_CONDITION}), Matchers.eq(LocaleContextHolder.getLocale())))
-				.thenReturn(EXISTING_VARIATE_ERROR_MESSAGE);
-    	try {
-    		this.importStudy.validateVariates(this.xlsBook, workbook);
-    		Assert.fail("A WorkbookParserException should be thrown.");
-    	} catch (WorkbookParserException e) {
-			Assert.assertEquals("The error message should be " + EXISTING_VARIATE_ERROR_MESSAGE, EXISTING_VARIATE_ERROR_MESSAGE, e.getMessage());
+		this.workbook.setVariates(Arrays.asList(mvar));
+		Mockito.when(this.messageSource.getMessage(Matchers.eq("error.import.variate.exists.in.study"),
+				Matchers.eq(new Object[] {ExcelImportStudyServiceImplTest.TEMPLATE_SECTION_CONDITION}),
+				Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn(ExcelImportStudyServiceImplTest.EXISTING_VARIATE_ERROR_MESSAGE);
+		try {
+			this.importStudy.validateVariates(this.xlsBook, this.workbook);
+			Assert.fail("A WorkbookParserException should be thrown.");
+		} catch (final WorkbookParserException e) {
+			Assert.assertEquals("The error message should be " + ExcelImportStudyServiceImplTest.EXISTING_VARIATE_ERROR_MESSAGE,
+					ExcelImportStudyServiceImplTest.EXISTING_VARIATE_ERROR_MESSAGE, e.getMessage());
 		}
-    }
+	}
 }

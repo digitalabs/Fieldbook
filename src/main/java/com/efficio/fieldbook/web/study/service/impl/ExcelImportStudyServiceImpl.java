@@ -560,12 +560,12 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 		}
 		return mvar;
 	}
-	
-	void setContextUtil(ContextUtil contextUtil){
+
+	void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}
-	
-	void setMessageSource(MessageSource messageSource){
+
+	void setMessageSource(final MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 }

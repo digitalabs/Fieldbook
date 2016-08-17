@@ -324,10 +324,17 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.doReturn(TEMPLATE_SECTION_FACTOR).when(factorCell).getStringCellValue();
 
 		Mockito.doReturn(conditionRow).when(descriptionSheet).getRow(2);
+		Mockito.doReturn(this.descriptionCell).when(conditionRow).getCell(1);
 		Mockito.doReturn(this.propertyCell).when(conditionRow).getCell(2);
 		Mockito.doReturn(this.scaleCell).when(conditionRow).getCell(3);
 		Mockito.doReturn(this.methodCell).when(conditionRow).getCell(4);
 		Mockito.doReturn(this.labelCell).when(conditionRow).getCell(7);
+		
+		Mockito.doReturn(this.descriptionCell).when(factorRow).getCell(1);
+		Mockito.doReturn(this.propertyCell).when(factorRow).getCell(2);
+		Mockito.doReturn(this.scaleCell).when(factorRow).getCell(3);
+		Mockito.doReturn(this.methodCell).when(factorRow).getCell(4);
+		Mockito.doReturn(this.labelCell).when(factorRow).getCell(7);
 
 		Mockito.doReturn(Cell.CELL_TYPE_STRING).when(this.trialInstanceCell).getCellType();
 		Mockito.doReturn(this.trialInstanceCell).when(conditionRow).getCell(6);

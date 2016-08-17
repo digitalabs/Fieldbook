@@ -408,7 +408,7 @@ public class ExcelImportStudyServiceImplTest {
 
 		final MeasurementData data = new MeasurementData();
 
-		final MeasurementVariable origVar = this.createMeasurementVariable(TermId.CATEGORICAL_VARIABLE.getId());
+		final MeasurementVariable origVar = this.mvarTDI.createMeasurementVariable(this.termId, TermId.CATEGORICAL_VARIABLE.getId());
 		origVar.setValue(POSSIBLE_VALUE_NAME);
 
 		Assert.assertEquals("Expecting to return the value from getCategoricalIdCellValue() but didn't.", CATEGORICAL_ID,
@@ -418,8 +418,8 @@ public class ExcelImportStudyServiceImplTest {
 	@Test
 	public void testIsMatchingPropertyScaleMethodLabel_ReturnsTrueIfAllFieldsValueAreMatched() {
 
-		final MeasurementVariable var = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
-		final MeasurementVariable temp = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
+		final MeasurementVariable var = this.mvarTDI.createMeasurementVariable(this.termId, TermId.NUMERIC_VARIABLE.getId());
+		final MeasurementVariable temp = this.mvarTDI.createMeasurementVariable(this.termId, TermId.NUMERIC_VARIABLE.getId());
 		Assert.assertTrue(
 				"Expecting to return true if all values of property, scale, method and label of two measurement variables are the same.",
 				this.importStudy.isMatchingPropertyScaleMethodLabel(var, temp));
@@ -428,8 +428,8 @@ public class ExcelImportStudyServiceImplTest {
 	@Test
 	public void testIsMatchingPropertyScaleMethodLabel_ReturnsFalseIfAtLeast1FromFieldsValueAreNotMatched() {
 
-		final MeasurementVariable var = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
-		final MeasurementVariable temp = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
+		final MeasurementVariable var = this.mvarTDI.createMeasurementVariable(this.termId, TermId.NUMERIC_VARIABLE.getId());
+		final MeasurementVariable temp = this.mvarTDI.createMeasurementVariable(this.termId, TermId.NUMERIC_VARIABLE.getId());
 		temp.setLabel(temp.getLabel() + "deviation");
 
 		Assert.assertFalse(

@@ -461,9 +461,12 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/data/table/ajax", method = RequestMethod.GET)
-	public List<Map<String, Object>> getPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
-		UserSelection userSelection = this.getUserSelection(false);
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+	public Map <String, Object> getPageDataTablesAjax(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
+			final HttpServletRequest req) {
+		final UserSelection userSelection = this.getUserSelection(false);
+		final List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		final List<Map<String, Object>> masterDataList = new ArrayList<Map<String, Object>>();
+		final Map <String, Object> masterMap = new HashMap<>();
 
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getMeasurementRowList() == null) {
 			tempList.addAll(userSelection.getTemporaryWorkbook().getObservations());
@@ -473,16 +476,21 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		form.setMeasurementRowList(tempList);
 
-		List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
-
 		for (MeasurementRow row : tempList) {
 
 			Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
 
-			masterList.add(dataMap);
+			masterDataList.add(dataMap);
 		}
 
-		return masterList;
+		//We need to pass back the draw number as an integer value to prevent Cross Site Scripting attacks
+		//The draw counter that this object is a response to, we echoing it back for the frontend
+		masterMap.put("draw", Integer.parseInt(req.getParameter("draw")));
+		masterMap.put("recordsTotal", tempList.size());
+		masterMap.put("recordsFiltered", tempList.size());
+		masterMap.put("data", masterDataList);
+
+		return masterMap;
 	}
 
 	/**

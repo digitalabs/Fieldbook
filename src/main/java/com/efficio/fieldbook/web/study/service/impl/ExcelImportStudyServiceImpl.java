@@ -38,8 +38,8 @@ import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.pojos.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
@@ -65,7 +65,7 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 	public static final int EXCEL_OBSERVATION_SHEET_NUMBER = 1;
 
 	@Resource
-	private ResourceBundleMessageSource messageSource;
+	private MessageSource messageSource;
 
 	private static final String STUDY = "STUDY";
 	private static final String TRIAL = "TRIAL";
@@ -524,14 +524,14 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 						} catch (final MiddlewareException e) {
 							ExcelImportStudyServiceImpl.LOG.error(e.getMessage(), e);
 							throw new WorkbookParserException(this.messageSource.getMessage("error.import.variate.duplicate.psmr",
-									new String[] {traitLabel}, LocaleContextHolder.getLocale()));
+									new Object[] {traitLabel}, LocaleContextHolder.getLocale()));
 						}
 						if (mvar == null) {
 							throw new WorkbookParserException(this.messageSource.getMessage("error.import.variate.does.not.exist",
-									new String[] {traitLabel}, LocaleContextHolder.getLocale()));
+									new Object[] {traitLabel}, LocaleContextHolder.getLocale()));
 						} else if (WorkbookUtil.getMeasurementVariable(workbookVariates, mvar.getTermId()) != null) {
 							throw new WorkbookParserException(this.messageSource.getMessage("error.import.variate.exists.in.study",
-									new String[] {traitLabel}, LocaleContextHolder.getLocale()));
+									new Object[] {traitLabel}, LocaleContextHolder.getLocale()));
 						} else {
 							// valid
 							WorkbookUtil.addVariateToObservations(mvar, workbook.getObservations());

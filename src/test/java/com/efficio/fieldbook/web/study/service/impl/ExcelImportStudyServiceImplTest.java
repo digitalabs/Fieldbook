@@ -468,6 +468,70 @@ public class ExcelImportStudyServiceImplTest {
         Assert.assertTrue("Unable to properly copy conditions portion of workbook", workbook.getImportConditionsCopy().size() == workbook.getConditions().size());
     }
 
-
-
+    @Test
+    public void testValidateVariates() {
+    	this.setUpXLSWorkbookTestData();
+    	Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(PROPERTY, SCALE, METHOD,
+				PhenotypicType.VARIATE, this.contextUtil.getCurrentProgramUUID())).thenReturn(this.mvarTDI.createMeasurementVariable(termId, TermId.NUMERIC_VARIABLE.getId()));
+    	
+    	try {
+    		List<String> addedVariates = WorkbookUtil.getAddedTraits(this.workbook.getAllVariables(), this.workbook.getObservations());
+    		Assert.assertTrue("The added variates should be empty", addedVariates.isEmpty());
+    		this.importStudy.validateVariates(this.xlsBook, workbook);
+    		addedVariates = WorkbookUtil.getAddedTraits(this.workbook.getAllVariables(), this.workbook.getObservations());
+    		Assert.assertFalse("The added variates should not be empty", addedVariates.isEmpty());
+		} catch (WorkbookParserException e) {
+			Assert.fail("There should be no exceptions thrown.");
+		}
+    }
+    
+    @Test
+    public void testValidateVariatesWithMiddleWareException() {
+    	this.setUpXLSWorkbookTestData();
+    	Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(PROPERTY, SCALE, METHOD,
+				PhenotypicType.VARIATE, this.contextUtil.getCurrentProgramUUID())).thenThrow(new MiddlewareException(""));
+    	Mockito.when(this.messageSource.getMessage(Matchers.eq("error.import.variate.duplicate.psmr"),
+				Matchers.eq(new Object[] {TEMPLATE_SECTION_CONDITION}), Matchers.eq(LocaleContextHolder.getLocale())))
+				.thenReturn(DUPLICATE_PSMR_ERROR_MESSAGE);
+    	try {
+    		this.importStudy.validateVariates(this.xlsBook, workbook);
+    		Assert.fail("A WorkbookParserException should be thrown.");
+    	} catch (WorkbookParserException e) {
+			Assert.assertEquals("The error message should be " + DUPLICATE_PSMR_ERROR_MESSAGE, DUPLICATE_PSMR_ERROR_MESSAGE, e.getMessage());
+		}
+    }
+    
+    @Test
+    public void testValidateVariatesWithNonExistentVariate() {
+    	this.setUpXLSWorkbookTestData();
+    	Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(PROPERTY, SCALE, METHOD,
+				PhenotypicType.VARIATE, this.contextUtil.getCurrentProgramUUID())).thenReturn(null);
+    	Mockito.when(this.messageSource.getMessage(Matchers.eq("error.import.variate.does.not.exist"),
+				Matchers.eq(new Object[] {TEMPLATE_SECTION_CONDITION}), Matchers.eq(LocaleContextHolder.getLocale())))
+				.thenReturn(NON_EXISTENT_VARIATE_ERROR_MESSAGE);
+    	try {
+    		this.importStudy.validateVariates(this.xlsBook, workbook);
+    		Assert.fail("A WorkbookParserException should be thrown.");
+    	} catch (WorkbookParserException e) {
+			Assert.assertEquals("The error message should be " + NON_EXISTENT_VARIATE_ERROR_MESSAGE, NON_EXISTENT_VARIATE_ERROR_MESSAGE, e.getMessage());
+		}
+    }
+    
+    @Test
+    public void testValidateVariatesWithAlreadyExistingVariate() {
+    	this.setUpXLSWorkbookTestData();
+    	MeasurementVariable mvar = this.mvarTDI.createMeasurementVariable(termId, TermId.NUMERIC_VARIABLE.getId());
+    	Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(PROPERTY, SCALE, METHOD,
+				PhenotypicType.VARIATE, this.contextUtil.getCurrentProgramUUID())).thenReturn(mvar);
+    	workbook.setVariates(Arrays.asList(mvar));
+    	Mockito.when(this.messageSource.getMessage(Matchers.eq("error.import.variate.exists.in.study"),
+				Matchers.eq(new Object[] {TEMPLATE_SECTION_CONDITION}), Matchers.eq(LocaleContextHolder.getLocale())))
+				.thenReturn(EXISTING_VARIATE_ERROR_MESSAGE);
+    	try {
+    		this.importStudy.validateVariates(this.xlsBook, workbook);
+    		Assert.fail("A WorkbookParserException should be thrown.");
+    	} catch (WorkbookParserException e) {
+			Assert.assertEquals("The error message should be " + EXISTING_VARIATE_ERROR_MESSAGE, EXISTING_VARIATE_ERROR_MESSAGE, e.getMessage());
+		}
+    }
 }

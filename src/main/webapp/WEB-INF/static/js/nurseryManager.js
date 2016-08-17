@@ -1805,6 +1805,8 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 				
 					if (data.favoriteNonGenerativeMethods && data.favoriteNonGenerativeMethods.length > 0) {
 						$('#showFavoriteMethod').prop('checked', true);
+					} else {
+						$('#showFavoriteMethod').prop('checked', false);
 					}
 
 					recreateMethodComboAfterClose('methodIdAll', data.allMethods);

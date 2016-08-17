@@ -39,11 +39,15 @@ public class ExcelImportStudyServiceImplTest {
 	private static final String POSSIBLE_VALUE_NAME = "Possible Value Name";
 	private static final String TEMPLATE_SECTION_CONDITION = "CONDITION";
 	private static final String TEMPLATE_SECTION_FACTOR = "FACTOR";
+	private static final String DUPLICATE_PSMR_ERROR_MESSAGE = "The system detected duplicate variable for CONDITION";
+	private static final String NON_EXISTENT_VARIATE_ERROR_MESSAGE = "The system detected a new variate CONDITION that does not exist.  Please use the Ontology Manager to add a new variate.";
+	private static final String EXISTING_VARIATE_ERROR_MESSAGE = "The system detected a new variate CONDITION that already exist in the study.";
 
 	private static final String LABEL = "Label";
 	private static final String METHOD = "Method";
 	private static final String SCALE = "Scale";
 	private static final String PROPERTY = "Property";
+	private static final String DESCRIPTION = "Description";
 	private final String testValue = "testValue";
 	private final String currentValue = "currentValue";
 
@@ -54,6 +58,7 @@ public class ExcelImportStudyServiceImplTest {
 	private Cell cell;
 	private Workbook workbook;
 
+	private Cell descriptionCell;
 	private Cell propertyCell;
 	private Cell scaleCell;
 	private Cell methodCell;
@@ -63,38 +68,55 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
-
+	
+	@Mock
+	private ContextUtil contextUtil;
+	
+	@Mock
+	private MessageSource messageSource;
+	
 	private ExcelImportStudyServiceImpl importStudy;
 
+	private MeasurementVariableTestDataInitializer mvarTDI;
+	
+	private MeasurementDataTestDataInitializer measurementDataTDI;
+	
 	@Before
 	public void setUp() {
-
+		this.mvarTDI = new MeasurementVariableTestDataInitializer();
+		this.measurementDataTDI = new MeasurementDataTestDataInitializer();
 		this.initTestVariables();
 	}
 
 	private void initTestVariables() {
-		this.wData = this.createMeasurementData();
+		this.wData = this.measurementDataTDI.createMeasurementData(this.currentValue);
 		this.columnIndex = 1;
 		this.termId = 2;
 
 		this.xlsRow = Mockito.mock(Row.class);
 		this.cell = Mockito.mock(Cell.class);
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
-
+		
+		this.descriptionCell = Mockito.mock(Cell.class);
 		this.propertyCell = Mockito.mock(Cell.class);
 		this.scaleCell = Mockito.mock(Cell.class);
 		this.methodCell = Mockito.mock(Cell.class);
 		this.labelCell = Mockito.mock(Cell.class);
 		this.trialInstanceCell = Mockito.mock(Cell.class);
 
+		Mockito.doReturn(DESCRIPTION).when(this.descriptionCell).getStringCellValue();
 		Mockito.doReturn(PROPERTY).when(this.propertyCell).getStringCellValue();
 		Mockito.doReturn(SCALE).when(this.scaleCell).getStringCellValue();
 		Mockito.doReturn(METHOD).when(this.methodCell).getStringCellValue();
 		Mockito.doReturn(LABEL).when(this.labelCell).getStringCellValue();
-
+		
+		Mockito.doReturn("1001").when(this.contextUtil).getCurrentProgramUUID();
+		
 		this.xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
-        importStudy = new ExcelImportStudyServiceImpl(workbook, "", "");
-        importStudy.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		this.importStudy = new ExcelImportStudyServiceImpl(workbook, "", "");
+        this.importStudy.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+        this.importStudy.setContextUtil(contextUtil);
+        this.importStudy.setMessageSource(messageSource);
 	}
 
 	@Test

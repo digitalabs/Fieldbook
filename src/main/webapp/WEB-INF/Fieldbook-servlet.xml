@@ -123,7 +123,7 @@
 	<bean id="designRunner" class="${design.runner}" />
 
 	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
-
+	
 	<bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"
 		init-method="init">
 		<constructor-arg value="${upload.directory}" />
@@ -609,6 +609,11 @@
 
     <bean id="keySequenceRegisterService" factory-bean="managerFactory"
           factory-method="getKeySequenceRegisterService" scope="request">
+        <aop:scoped-proxy />
+    </bean>
+    
+    <bean id="studyService" factory-bean="managerFactory"
+    	factory-method="getStudyService" scope="request">
         <aop:scoped-proxy />
     </bean>
 

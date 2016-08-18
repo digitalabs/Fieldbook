@@ -21,12 +21,20 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TermSummary;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.study.MeasurementDto;
+import org.generationcp.middleware.service.api.study.ObservationDto;
+import org.generationcp.middleware.service.api.study.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -76,6 +84,12 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 	@Resource
 	private ContextUtil contextUtil;
+
+	@Resource
+	private StudyService studyService;
+
+	@Resource
+	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@Override
 	public String getContentName() {
@@ -461,21 +475,16 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/data/table/ajax", method = RequestMethod.GET)
+	@Transactional
 	public List<Map<String, Object>> getPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+
 		UserSelection userSelection = this.getUserSelection(false);
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
-
-		if (userSelection.getTemporaryWorkbook() != null && userSelection.getMeasurementRowList() == null) {
-			tempList.addAll(userSelection.getTemporaryWorkbook().getObservations());
-		} else {
-			tempList.addAll(userSelection.getMeasurementRowList());
-		}
-
-		form.setMeasurementRowList(tempList);
+		final List<ObservationDto> allObservations =
+				this.studyService.getObservations(userSelection.getWorkbook().getStudyDetails().getId());
 
 		List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
 
-		for (MeasurementRow row : tempList) {
+		for (ObservationDto row : allObservations) {
 
 			Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
 
@@ -649,6 +658,61 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 				dataMap.put(data.getMeasurementVariable().getName(), data.getDisplayValue());
 			}
 		}
+
+		// generate measurement row data from newly added traits (no data yet)
+		UserSelection userSelection = this.getUserSelection(false);
+		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
+				&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {
+			for (MeasurementVariable var : userSelection.getMeasurementDatasetVariable()) {
+				if (!dataMap.containsKey(var.getName())) {
+					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
+						dataMap.put(var.getName(), new Object[] {"", "", true});
+					} else {
+						dataMap.put(var.getName(), "");
+					}
+				}
+			}
+		}
+		return dataMap;
+	}
+
+	private Map<String, Object> generateDatatableDataMap(ObservationDto row, String suffix) {
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		// the 4 attributes are needed always
+		dataMap.put("Action", Integer.toString(row.getMeasurementId()));
+		dataMap.put("experimentId", Integer.toString(row.getMeasurementId()));
+		dataMap.put("GID", row.getGid());
+		dataMap.put("DESIGNATION", row.getDesignation());
+
+		// initialize suffix as empty string if its null
+		suffix = null == suffix ? "" : suffix;
+
+		// generate measurement row data from dataList (existing / generated data)
+		for (MeasurementDto data : row.getTraitMeasurements()) {
+
+			Variable measurementVariable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+					data.getTrait().getTraitId(), true, false);
+
+			if (measurementVariable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
+				for (TermSummary category : measurementVariable.getScale().getCategories()) {
+					if (category.getName().equals(data.getTriatValue())) {
+						dataMap.put(data.getTrait().getTraitName(),
+								new Object[] {category.getName() + suffix, category.getDefinition() + suffix, true});
+						break;
+					}
+				}
+			} else if (measurementVariable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
+				dataMap.put(data.getTrait().getTraitName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "", true});
+			} else {
+				dataMap.put(data.getTrait().getTraitName(), data.getTriatValue() != null ? data.getTriatValue() : "");
+			}
+		}
+
+		dataMap.put(TermId.ENTRY_NO.name(), new Object[] {row.getEntryNo(), false});
+		dataMap.put(TermId.ENTRY_TYPE.name(), new Object[] {row.getEntryType(), row.getEntryType(), false});
+		dataMap.put(TermId.PLOT_NO.name(), new Object[] {row.getPlotNumber(), false});
+		dataMap.put(TermId.REP_NO.name(), new Object[] {row.getRepitionNumber(), false});
+		dataMap.put("TRIAL_INSTANCE", new Object[] {row.getTrialInstance(), false});
 
 		// generate measurement row data from newly added traits (no data yet)
 		UserSelection userSelection = this.getUserSelection(false);

@@ -15,6 +15,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			columnsDef = [],
 			table;
 
+		var studyId = $('#studyId').val();
+
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({
 				data: $(this).html(),
@@ -195,7 +197,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			serverSide: true,
 			processing: true,
 			ajax: {
-				url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax',
+				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId,
 				type: 'GET',
 				cache: false
 			},
@@ -285,7 +287,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		});
 
 
-		if ($('#studyId').val() != '') {
+		if (studyId != '') {
 			// Activate an inline edit on click of a table cell
 			$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
 				if (isAllowedEditMeasurementDataCell()) {

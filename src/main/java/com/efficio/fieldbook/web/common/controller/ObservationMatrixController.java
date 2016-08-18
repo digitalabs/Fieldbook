@@ -460,14 +460,16 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	 * This the call to get data required for measurement table in JSON format.
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/data/table/ajax", method = RequestMethod.GET)
-	public Map <String, Object> getPageDataTablesAjax(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
-			final HttpServletRequest req) {
+	@RequestMapping(value = "/plotMeasurements/{studyId}", method = RequestMethod.GET)
+	//FIXME Change to {studyid}/{instanceid}?pagenumber=1&pagesize=100
+	public Map <String, Object> getPageDataTablesAjax(@PathVariable final int studyId,
+			@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model, final HttpServletRequest req) {
 		final UserSelection userSelection = this.getUserSelection(false);
 		final List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 		final List<Map<String, Object>> masterDataList = new ArrayList<Map<String, Object>>();
 		final Map <String, Object> masterMap = new HashMap<>();
 
+		//TODO pass {environment number}, {study id}, {number of records per page}, {page number} here
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getMeasurementRowList() == null) {
 			tempList.addAll(userSelection.getTemporaryWorkbook().getObservations());
 		} else {
@@ -476,9 +478,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		form.setMeasurementRowList(tempList);
 
-		for (MeasurementRow row : tempList) {
+		for (final MeasurementRow row : tempList) {
 
-			Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
+			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
 
 			masterDataList.add(dataMap);
 		}

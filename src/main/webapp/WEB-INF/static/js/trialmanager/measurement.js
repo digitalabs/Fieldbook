@@ -12,6 +12,7 @@
 				$scope.isHideDelete = false;
 				$scope.updateOccurred = false;
 				$scope.addVariable = true;
+				$scope.numberOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;
 
 				/* Watchers */
 				$scope.$watch(function() {

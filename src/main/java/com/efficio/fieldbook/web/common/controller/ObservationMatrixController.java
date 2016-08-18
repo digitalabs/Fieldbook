@@ -34,7 +34,6 @@ import org.generationcp.middleware.service.api.study.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -474,24 +473,30 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	 * This the call to get data required for measurement table in JSON format.
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/data/table/ajax", method = RequestMethod.GET)
-	@Transactional
-	public List<Map<String, Object>> getPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+	@RequestMapping(value = "/plotMeasurements/{studyId}", method = RequestMethod.GET)
+	//FIXME Change to {studyid}/{instanceid}?pagenumber=1&pagesize=100
+	public Map <String, Object> getPageDataTablesAjax(@PathVariable final int studyId,
+			@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model, final HttpServletRequest req) {
+		final UserSelection userSelection = this.getUserSelection(false);
+		final List<Map<String, Object>> masterDataList = new ArrayList<Map<String, Object>>();
+		final Map <String, Object> masterMap = new HashMap<>();
 
-		UserSelection userSelection = this.getUserSelection(false);
 		final List<ObservationDto> allObservations =
 				this.studyService.getObservations(userSelection.getWorkbook().getStudyDetails().getId());
 
-		List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
-
 		for (ObservationDto row : allObservations) {
-
 			Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
-
-			masterList.add(dataMap);
+			masterDataList.add(dataMap);
 		}
 
-		return masterList;
+		//We need to pass back the draw number as an integer value to prevent Cross Site Scripting attacks
+		//The draw counter that this object is a response to, we echoing it back for the frontend
+		masterMap.put("draw", Integer.parseInt(req.getParameter("draw")));
+		masterMap.put("recordsTotal", allObservations.size());
+		masterMap.put("recordsFiltered", allObservations.size());
+		masterMap.put("data", masterDataList);
+
+		return masterMap;
 	}
 
 	/**

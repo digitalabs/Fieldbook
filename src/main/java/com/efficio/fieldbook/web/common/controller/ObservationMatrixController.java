@@ -477,13 +477,14 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/plotMeasurements/{studyId}", method = RequestMethod.GET)
 	@Transactional
 	//FIXME Change to {studyid}/{instanceid}?pagenumber=1&pagesize=100
-	public Map<String, Object> getPageDataTablesAjax(@PathVariable final int studyId,
+	public Map<String, Object> getPlotMeasurementsPaginated(@PathVariable final int studyId,
 			@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model, final HttpServletRequest req) {
 
 		final List<Map<String, Object>> masterDataList = new ArrayList<Map<String, Object>>();
 		final Map <String, Object> masterMap = new HashMap<>();
 
-		final List<ObservationDto> allObservations = this.studyService.getObservations(studyId);
+		// TODO pass the instance and paging paramaters when available from front-end
+		final List<ObservationDto> allObservations = this.studyService.getObservations(studyId, 1, 1, 100);
 
 		for (ObservationDto row : allObservations) {
 			Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");

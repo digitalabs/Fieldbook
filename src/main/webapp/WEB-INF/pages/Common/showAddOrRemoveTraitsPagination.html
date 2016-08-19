@@ -22,7 +22,9 @@
 </div>
 
 <label class="control-label label-bold">Choose environment number:</label>
-<input type="text" id="measurements-environment-number" name="measurements-environment-number" ng-model="numberOfEnvironments"/>
+<select id="measurements-environment-number" name="measurements-environment-number"
+		ng-options="environment.id for environment in environmentsList"
+		ng-model="selectedEnvironment"/>
 
 <table th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >
 	<thead>

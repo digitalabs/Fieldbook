@@ -14,6 +14,13 @@
 				$scope.addVariable = true;
 				$scope.numberOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;
 
+				$scope.environmentsList = [];
+				for (var i = 1; i <= $scope.numberOfEnvironments; i++) {
+					$scope.environmentsList.push({id: i});
+				}
+				//the first environment is selected by default
+                $scope.selectedEnvironment = $scope.environmentsList[0];
+
 				/* Watchers */
 				$scope.$watch(function() {
 					return TrialManagerDataService.settings.measurements;

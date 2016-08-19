@@ -472,28 +472,32 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 	/**
 	 * This the call to get data required for measurement table in JSON format.
+	 * The url is /plotMeasurements/{studyid}/{instanceid}?pagenumber=1&pagesize=100
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/plotMeasurements/{studyId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/plotMeasurements/{studyId}/{instanceId}", method = RequestMethod.POST, consumes = "application/json",
+			produces = "application/json")
 	@Transactional
-	//FIXME Change to {studyid}/{instanceid}?pagenumber=1&pagesize=100
-	public Map<String, Object> getPlotMeasurementsPaginated(@PathVariable final int studyId,
-			@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model, final HttpServletRequest req) {
+	public Map<String, Object> getPageDataTablesAjax(@PathVariable final int studyId, @PathVariable final int instanceId,
+			@RequestBody final Map<String, String> tableSettings, @ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+			final Model model, final HttpServletRequest req) {
 
 		final List<Map<String, Object>> masterDataList = new ArrayList<Map<String, Object>>();
 		final Map <String, Object> masterMap = new HashMap<>();
 
-		// TODO pass the instance and paging paramaters when available from front-end
-		final List<ObservationDto> allObservations = this.studyService.getObservations(studyId, 1, 1, 100);
+		// number of records per page
+		final Integer pageSize = Integer.parseInt(tableSettings.get("pageSize"));
+		final Integer pageNumber = Integer.parseInt(tableSettings.get("pageNumber"));
+		final List<ObservationDto> allObservations = this.studyService.getObservations(studyId, instanceId, pageNumber, pageSize);
 
-		for (ObservationDto row : allObservations) {
-			Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
+		for (final ObservationDto row : allObservations) {
+			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
 			masterDataList.add(dataMap);
 		}
 
 		//We need to pass back the draw number as an integer value to prevent Cross Site Scripting attacks
 		//The draw counter that this object is a response to, we echoing it back for the frontend
-		masterMap.put("draw", Integer.parseInt(req.getParameter("draw")));
+		masterMap.put("draw", tableSettings.get("draw"));
 		masterMap.put("recordsTotal", allObservations.size());
 		masterMap.put("recordsFiltered", allObservations.size());
 		masterMap.put("data", masterDataList);

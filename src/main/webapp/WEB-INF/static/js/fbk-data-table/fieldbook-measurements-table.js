@@ -15,7 +15,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			columnsDef = [],
 			table;
 
-		var studyId = $('#studyId').val();
+		var studyId = $('#studyId').val(),
+			environmentId = $("#fbk-measurements-controller-div").scope().numberOfEnvironments ? $("#fbk-measurements-controller-div")
+			.scope().numberOfEnvironments : 1;
 
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({
@@ -197,9 +199,18 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			serverSide: true,
 			processing: true,
 			ajax: {
-				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId,
-				type: 'GET',
-				cache: false
+				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
+				type: 'POST',
+				contentType: "application/json",
+				cache: false,
+				data: function (d) {
+					var parameters = {
+						draw: d.draw,
+						pageSize: d.length,
+						pageNumber: 1
+					};
+                    return JSON.stringify(parameters);
+                }
 			},
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 

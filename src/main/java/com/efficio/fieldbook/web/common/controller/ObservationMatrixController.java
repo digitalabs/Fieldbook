@@ -477,7 +477,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	@ResponseBody
 	@RequestMapping(value = "/plotMeasurements/{studyId}/{instanceId}", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
-	public Map<String, Object> getPageDataTablesAjax(@PathVariable final int studyId, @PathVariable final int instanceId,
+	public Map<String, Object> getPlotMeasurementsPaginated(@PathVariable final int studyId, @PathVariable final int instanceId,
 			@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
 			final Model model, final HttpServletRequest req) {
 
@@ -487,9 +487,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		// number of records per page
 		final Integer pageSize = Integer.parseInt(req.getParameter("pageSize"));
 		final Integer pageNumber = Integer.parseInt(req.getParameter("pageNumber"));
-		final List<ObservationDto> allObservations = this.studyService.getObservations(studyId, instanceId, pageNumber, pageSize);
+		final List<ObservationDto> pageResults = this.studyService.getObservations(studyId, instanceId, pageNumber, pageSize);
 
-		for (final ObservationDto row : allObservations) {
+		for (final ObservationDto row : pageResults) {
 			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
 			masterDataList.add(dataMap);
 		}
@@ -498,9 +498,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		//The draw counter that this object is a response to, we echoing it back for the frontend
 		masterMap.put("draw", req.getParameter("draw"));
 		//FIXME Get total number of records from DB for recordsTotal
-		masterMap.put("recordsTotal", allObservations.size());
+		masterMap.put("recordsTotal", this.studyService.countTotalObservationUnits(studyId, instanceId));
 		//FIXME Get total number of records from DB for recordsFiltered
-		masterMap.put("recordsFiltered", allObservations.size());
+		masterMap.put("recordsFiltered", pageResults.size());
 		masterMap.put("data", masterDataList);
 
 		return masterMap;

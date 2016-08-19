@@ -140,7 +140,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 					this.observationColumnMap.get(AppConstants.CROSSING_DATE.getString()));
 			final String notes = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 					this.observationColumnMap.get(AppConstants.NOTES.getString()));
-			
+
 			validateObservationRow(femalePlotNo, malePlotNo, currentRow, strCrossingDate);
 
 			Integer crossingDate = null;
@@ -214,7 +214,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 	/**
 	 * Add warnings for non standard columns.
-	 * 
+	 *
 	 * @return
 	 *
 	 * @see <a href=
@@ -231,7 +231,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 
 		final Set<String> importedVariates = new HashSet<>();
-		
+
 		for (final ImportedVariate variate : this.importedCrossesList.getImportedVariates()) {
 			importedVariates.add(variate.getVariate());
 		}

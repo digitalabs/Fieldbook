@@ -250,7 +250,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			if (advancingNursery.getMethodChoice() != null && !advancingNursery.getMethodChoice().isEmpty()) {
 				Method method = this.fieldbookMiddlewareService.getMethodById(Integer.valueOf(advancingNursery.getBreedingMethodId()));
 				if ("GEN".equals(method.getMtype())) {
-					form.setErrorInAdvance(this.messageSource.getMessage("nursery.save.advance.error.row.list.empty.generative.method",
+					form.setErrorInAdvance(this.messageSource.getMessage("nursery.save.advance.error.generative.method",
 							new String[] {}, LocaleContextHolder.getLocale()));
 					form.setGermplasmList(new ArrayList<ImportedGermplasm>());
 					form.setEntries(0);

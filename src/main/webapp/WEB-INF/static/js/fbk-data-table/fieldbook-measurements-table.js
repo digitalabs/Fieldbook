@@ -206,7 +206,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					var parameters = {
 						draw: d.draw,
 						pageSize: d.length,
-						pageNumber: 1
+						pageNumber: d.length === 0 ? 1 : d.start/d.length + 1
 					};
                     return parameters;
                 }

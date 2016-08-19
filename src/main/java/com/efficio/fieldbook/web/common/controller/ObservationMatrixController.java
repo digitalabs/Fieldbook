@@ -497,7 +497,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		//We need to pass back the draw number as an integer value to prevent Cross Site Scripting attacks
 		//The draw counter that this object is a response to, we echoing it back for the frontend
 		masterMap.put("draw", req.getParameter("draw"));
+		//FIXME Get total number of records from DB for recordsTotal
 		masterMap.put("recordsTotal", allObservations.size());
+		//FIXME Get total number of records from DB for recordsFiltered
 		masterMap.put("recordsFiltered", allObservations.size());
 		masterMap.put("data", masterDataList);
 

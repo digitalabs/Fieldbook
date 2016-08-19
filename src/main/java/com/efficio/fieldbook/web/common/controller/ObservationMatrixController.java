@@ -475,19 +475,18 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	 * The url is /plotMeasurements/{studyid}/{instanceid}?pagenumber=1&pagesize=100
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/plotMeasurements/{studyId}/{instanceId}", method = RequestMethod.POST, consumes = "application/json",
-			produces = "application/json")
+	@RequestMapping(value = "/plotMeasurements/{studyId}/{instanceId}", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
 	public Map<String, Object> getPageDataTablesAjax(@PathVariable final int studyId, @PathVariable final int instanceId,
-			@RequestBody final Map<String, String> tableSettings, @ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+			@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
 			final Model model, final HttpServletRequest req) {
 
 		final List<Map<String, Object>> masterDataList = new ArrayList<Map<String, Object>>();
 		final Map <String, Object> masterMap = new HashMap<>();
 
 		// number of records per page
-		final Integer pageSize = Integer.parseInt(tableSettings.get("pageSize"));
-		final Integer pageNumber = Integer.parseInt(tableSettings.get("pageNumber"));
+		final Integer pageSize = Integer.parseInt(req.getParameter("pageSize"));
+		final Integer pageNumber = Integer.parseInt(req.getParameter("pageNumber"));
 		final List<ObservationDto> allObservations = this.studyService.getObservations(studyId, instanceId, pageNumber, pageSize);
 
 		for (final ObservationDto row : allObservations) {
@@ -497,7 +496,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		//We need to pass back the draw number as an integer value to prevent Cross Site Scripting attacks
 		//The draw counter that this object is a response to, we echoing it back for the frontend
-		masterMap.put("draw", tableSettings.get("draw"));
+		masterMap.put("draw", req.getParameter("draw"));
 		masterMap.put("recordsTotal", allObservations.size());
 		masterMap.put("recordsFiltered", allObservations.size());
 		masterMap.put("data", masterDataList);

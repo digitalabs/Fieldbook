@@ -200,8 +200,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			processing: true,
 			ajax: {
 				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
-				type: 'POST',
-				contentType: "application/json",
+				type: 'GET',
 				cache: false,
 				data: function (d) {
 					var parameters = {
@@ -209,7 +208,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						pageSize: d.length,
 						pageNumber: 1
 					};
-                    return JSON.stringify(parameters);
+                    return parameters;
                 }
 			},
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {

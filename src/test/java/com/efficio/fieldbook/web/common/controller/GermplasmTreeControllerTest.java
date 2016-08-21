@@ -57,6 +57,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import com.google.common.collect.Lists;
 
 import junit.framework.Assert;
 
@@ -275,8 +276,24 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
 		final String response = this.controller.saveTreeState(ListTreeState.GERMPLASM_LIST.toString(), expandedNodes);
 		Assert.assertEquals("Should return ok", "OK", response);
+		Mockito.verify(userTreeStateService).saveOrUpdateUserProgramTreeState(GermplasmTreeControllerTest.TEST_USER_ID,
+				GermplasmTreeControllerTest.TEST_PROGRAM_UUID, ListTreeState.GERMPLASM_LIST.toString(), Lists.newArrayList("2", "5", "6"));
+
 	}
 
+	@Test
+	public void testSaveTreeStateDefaults() throws MiddlewareQueryException {
+		final String[] expandedNodes = {"None"};
+
+		Mockito.doReturn(GermplasmTreeControllerTest.TEST_USER_ID).when(this.contextUtil).getCurrentUserLocalId();
+		Mockito.doReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+		final String response = this.controller.saveTreeState(ListTreeState.GERMPLASM_LIST.toString(), expandedNodes);
+		Assert.assertEquals("Should return ok", "OK", response);
+		Mockito.verify(userTreeStateService).saveOrUpdateUserProgramTreeState(GermplasmTreeControllerTest.TEST_USER_ID,
+				GermplasmTreeControllerTest.TEST_PROGRAM_UUID, ListTreeState.GERMPLASM_LIST.toString(), 
+				Collections.singletonList(GermplasmTreeController.DEFAULT_STATE_SAVED_FOR_GERMPLASM_LIST));
+	}
+	
 	@Test
 	public void testLoadTreeStateNonSaveDialog() throws MiddlewareQueryException {
 		Mockito.doReturn(GermplasmTreeControllerTest.TEST_USER_ID).when(this.contextUtil).getCurrentUserLocalId();

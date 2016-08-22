@@ -33,7 +33,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
@@ -52,13 +51,8 @@ public class ObservationMatrixControllerTest {
 
 	@Before
 	public void setUp() {
-
-		MockitoAnnotations.initMocks(this);
-
-		this.observationMatrixController = Mockito.spy(new ObservationMatrixController());
-
+		this.observationMatrixController = new ObservationMatrixController();
 		this.measurementDataTestDataInitializer = new MeasurementDataTestDataInitializer();
-
 	}
 
 	@Test

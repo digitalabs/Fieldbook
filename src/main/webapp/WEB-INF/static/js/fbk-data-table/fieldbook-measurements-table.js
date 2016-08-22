@@ -175,18 +175,6 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
-			} else if ($(this).data('term-id') == 'Action') {
-				// For designation
-				columnsDef.push({
-					defaultContent: '',
-					targets: columns.length - 1,
-					data: $(this).html(),
-					width: '50px',
-					render: function(data, type, full, meta) {
-						return '<a href="javascript: editExperiment(&quot;' + tableIdentifier + '&quot;,' +
-							EscapeHTML.escape(data) + ',' + meta.row + ')" class="fbk-edit-experiment"></a>';
-					}
-				});
 			}
 		});
 

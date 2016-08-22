@@ -176,38 +176,6 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	}
 
 	/**
-	 * This is the GET call to open the action dialog to edit one row.
-	 */
-	@RequestMapping(value = "/update/experiment/{index}", method = RequestMethod.GET)
-	public String editExperimentModal(@PathVariable int index, @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,
-			Model model) throws MiddlewareQueryException {
-
-		UserSelection userSelection = this.getUserSelection(false);
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
-		tempList.addAll(userSelection.getMeasurementRowList());
-
-		MeasurementRow row = tempList.get(index);
-		MeasurementRow copyRow = row.copy();
-		this.copyMeasurementValue(copyRow, row);
-		if (copyRow != null && copyRow.getMeasurementVariables() != null) {
-			for (MeasurementData var : copyRow.getDataList()) {
-				if (var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null
-						&& var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
-					// we change the date to the UI format
-					var.setValue(DateUtil.convertToUIDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
-				}
-			}
-		}
-		form.setUpdateObservation(copyRow);
-		form.setExperimentIndex(index);
-		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
-		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
-		model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());
-		model.addAttribute("isNursery", userSelection.getWorkbook().isNursery());
-		return super.showAjaxPage(model, ObservationMatrixController.EDIT_EXPERIMENT_TEMPLATE);
-	}
-
-	/**
 	 * POST call once value has been entered in the table cell and user has blurred out or hit enter.
 	 */
 	@ResponseBody
@@ -643,8 +611,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		// the 4 attributes are needed always
-		dataMap.put("Action", Integer.toString(row.getExperimentId()));
+		// the 3 attributes are needed always
 		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
 		dataMap.put("GID", row.getMeasurementDataValue(TermId.GID.getId()));
 		dataMap.put("DESIGNATION", row.getMeasurementDataValue(TermId.DESIG.getId()));
@@ -686,8 +653,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 	private Map<String, Object> generateDatatableDataMap(ObservationDto row, String suffix) {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		// the 4 attributes are needed always
-		dataMap.put("Action", Integer.toString(row.getMeasurementId()));
+		// the 3 attributes are needed always
 		dataMap.put("experimentId", Integer.toString(row.getMeasurementId()));
 		dataMap.put("GID", row.getGid());
 		dataMap.put("DESIGNATION", row.getDesignation());

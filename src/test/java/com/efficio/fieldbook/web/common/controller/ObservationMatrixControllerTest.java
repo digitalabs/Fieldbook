@@ -629,7 +629,6 @@ public class ObservationMatrixControllerTest {
 		List<Map<String, Object>> allMeasurementData = (List<Map<String, Object>>) plotMeasurementsPaginated.get("data");
 		Map<String, Object> onePlotMeasurementData = allMeasurementData.get(0);
 
-		Assert.assertEquals(String.valueOf(observationDto.getMeasurementId()), onePlotMeasurementData.get("Action"));
 		Assert.assertEquals(String.valueOf(observationDto.getMeasurementId()), onePlotMeasurementData.get("experimentId"));
 		Assert.assertEquals(observationDto.getDesignation(), onePlotMeasurementData.get("DESIGNATION"));
 		Assert.assertEquals(observationDto.getGid(), onePlotMeasurementData.get("GID"));

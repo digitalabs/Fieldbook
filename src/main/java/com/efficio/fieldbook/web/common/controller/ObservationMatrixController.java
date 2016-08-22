@@ -494,13 +494,13 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			masterDataList.add(dataMap);
 		}
 
+		final int totalObservationUnits = this.studyService.countTotalObservationUnits(studyId, instanceId);
+
 		//We need to pass back the draw number as an integer value to prevent Cross Site Scripting attacks
 		//The draw counter that this object is a response to, we echoing it back for the frontend
 		masterMap.put("draw", req.getParameter("draw"));
-		//FIXME Get total number of records from DB for recordsTotal
-		masterMap.put("recordsTotal", this.studyService.countTotalObservationUnits(studyId, instanceId));
-		//FIXME Get total number of records from DB for recordsFiltered
-		masterMap.put("recordsFiltered", pageResults.size());
+		masterMap.put("recordsTotal", totalObservationUnits);
+		masterMap.put("recordsFiltered", totalObservationUnits);
 		masterMap.put("data", masterDataList);
 
 		return masterMap;

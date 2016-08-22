@@ -197,7 +197,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			scrollX: '100%',
 			scrollCollapse: true,
 			columnDefs: columnsDef,
-			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+			lengthMenu: [[50, 75, 100], [50, 75, 100]],
 			bAutoWidth: true,
 			iDisplayLength: 100,
 			serverSide: true,

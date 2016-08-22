@@ -21,10 +21,12 @@
 	</div>
 </div>
 
-<label class="control-label label-bold">Choose environment number:</label>
-<select id="measurements-environment-number" name="measurements-environment-number"
+<div id="mdt-environment-list" class="fbk-float-left">
+	<select id="measurements-environment-number" name="measurements-environment-number"
 		ng-options="environment.id for environment in environmentsList"
-		ng-model="selectedEnvironment"/>
+		ng-model="selectedEnvironment" class="input-sm form-control fbk-std-padding-right"
+			onchange="reloadMeasurementDataTable()"/>
+</div>
 
 <table th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >
 	<thead>

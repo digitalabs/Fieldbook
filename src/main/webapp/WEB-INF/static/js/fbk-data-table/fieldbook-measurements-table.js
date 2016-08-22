@@ -1,3 +1,8 @@
+var getCurrentEnvironmentNumber = function () {
+	return $("#fbk-measurements-controller-div").scope().selectedEnvironment ? $("#fbk-measurements-controller-div")
+    	.scope().selectedEnvironment.id : 1;
+};
+
 BMS.Fieldbook.MeasurementsDataTable = (function($) {
 
 	/**
@@ -16,8 +21,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			table;
 
 		var studyId = $('#studyId').val(),
-			environmentId = $("#fbk-measurements-controller-div").scope().numberOfEnvironments ? $("#fbk-measurements-controller-div")
-			.scope().numberOfEnvironments : 1;
+			environmentId = getCurrentEnvironmentNumber();
 
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({
@@ -199,7 +203,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			serverSide: true,
 			processing: true,
 			ajax: {
-				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
+				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + getCurrentEnvironmentNumber(),
 				type: 'GET',
 				cache: false,
 				data: function (d) {
@@ -337,6 +341,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 		});
 		$('#measurementsDiv .mdt-columns').detach().insertBefore('.mdt-filtering');
+		$('.dataTables_length').prepend($('#mdt-environment-list').detach());
 		$('.measurement-dropdown-menu a').click(function(e) {
 			var column;
 
@@ -366,3 +371,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 	return dataTableConstructor;
 
 })(jQuery);
+
+function reloadMeasurementDataTable() {
+	'use strict';
+	var studyId = $('#studyId').val();
+	$('#measurement-table').DataTable().ajax.url('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + getCurrentEnvironmentNumber()).load();
+}

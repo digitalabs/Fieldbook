@@ -1148,6 +1148,9 @@ a.fbk-edit-experiment{
 .fbk-float-right{
     float: right;
 }
+.fbk-float-left{
+    float: left;
+}
 .fbk-float-right-with-top-pos{
     float: right;
     position:relative;
@@ -1160,7 +1163,7 @@ a.fbk-edit-experiment{
 /* Measurements Tab */
 
 .mdt-header {
-    height: 46px;
+    height: 75px;
 }
 
 .mdt-header .dataTables_length,
@@ -2047,3 +2050,12 @@ input.select-all-margin{
     color:red;
     font-weight:bold
 }
+.fbk-std-padding-right {
+	padding-right: 10px;
+}
+
+.select2-container.form-control.fbk-std-padding-right {
+	padding-right: 10px;
+}
+
+

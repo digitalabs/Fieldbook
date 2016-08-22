@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,24 +11,39 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang3.StringUtils;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TermSummary;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Scale;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.service.api.study.MeasurementDto;
+import org.generationcp.middleware.service.api.study.ObservationDto;
+import org.generationcp.middleware.service.api.study.StudyService;
+import org.generationcp.middleware.service.api.study.TraitDto;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.google.common.collect.Lists;
+
+import junit.framework.Assert;
 
 public class ObservationMatrixControllerTest {
 
@@ -545,5 +561,112 @@ public class ObservationMatrixControllerTest {
 		Boolean result = this.observationMatrixController.setCategoricalDisplayType(Boolean.FALSE, session);
 		Mockito.verify(session, Mockito.times(1)).setAttribute("isCategoricalDescriptionView", Boolean.FALSE);
 		Assert.assertFalse("should be false", result);
+	}
+
+	@Test
+	public void testGetPlotMeasurementsPaginated() {
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		request.addParameter("pageNumber", "1");
+		request.addParameter("pageSize", "10");
+
+		String drawParam = "drawParamValue";
+		request.addParameter("draw", drawParam);
+
+		StudyService studyService = Mockito.mock(StudyService.class);
+		MeasurementDto measurementText = new MeasurementDto(new TraitDto(1, "Notes"), 1, "Text Notes");
+		MeasurementDto measurementNumeric = new MeasurementDto(new TraitDto(2, "Grain Yield"), 2, "500");
+		MeasurementDto mesaurementCategorical = new MeasurementDto(new TraitDto(3, "CategoricalTrait"), 3, "CategoryValue1");
+
+		List<MeasurementDto> measurements = Lists.newArrayList(measurementText, measurementNumeric, mesaurementCategorical);
+		ObservationDto observationDto =
+				new ObservationDto(123, "1", "Test Entry", 300, "CML123", "5", "CIMMYT Seed Bank", "2", "10", measurements);
+
+		List<ObservationDto> observations = Lists.newArrayList(observationDto);
+		Mockito.when(studyService.getObservations(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
+				.thenReturn(observations);
+
+		int recordsCount = 1;
+		Mockito.when(studyService.countTotalObservationUnits(Mockito.anyInt(), Mockito.anyInt())).thenReturn(recordsCount);
+		this.observationMatrixController.setStudyService(studyService);
+
+		OntologyVariableDataManager ontologyVariableDataManager = Mockito.mock(OntologyVariableDataManager.class);
+
+		Variable variableText = new Variable();
+		Scale scaleText = new Scale();
+		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
+		variableText.setScale(scaleText);
+		Mockito.when(ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(measurementText.getTrait().getTraitId()),
+				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableText);
+
+		Variable variableNumeric = new Variable();
+		Scale scaleNumeric = new Scale();
+		scaleNumeric.setDataType(DataType.NUMERIC_VARIABLE);
+		variableNumeric.setScale(scaleNumeric);
+		Mockito.when(ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(measurementNumeric.getTrait().getTraitId()),
+				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableNumeric);
+
+		Variable variableCategorical = new Variable();
+		Scale scaleCategorical = new Scale();
+		scaleCategorical.setDataType(DataType.CATEGORICAL_VARIABLE);
+		TermSummary category1 = new TermSummary(111, "CategoryValue1", "CategoryValue1Definition");
+		scaleCategorical.addCategory(category1);
+		variableCategorical.setScale(scaleCategorical);
+		Mockito.when(ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(mesaurementCategorical.getTrait().getTraitId()),
+				Matchers.eq(true), Matchers.eq(false)))
+				.thenReturn(variableCategorical);
+
+		this.observationMatrixController.setOntologyVariableDataManager(ontologyVariableDataManager);
+		this.observationMatrixController.setContextUtil(Mockito.mock(ContextUtil.class));
+
+		final Map<String, Object> plotMeasurementsPaginated = this.observationMatrixController.getPlotMeasurementsPaginated(1, 1,
+				new CreateNurseryForm(), Mockito.mock(Model.class), request);
+
+		Assert.assertNotNull("Expected a non-null map as return value.", plotMeasurementsPaginated);
+		Assert.assertEquals("Expected number of entries in the map did not match.", 4, plotMeasurementsPaginated.size());
+
+		Assert.assertEquals("'draw' parameter should be returned in map as per value of request parameter 'draw'.", drawParam,
+				plotMeasurementsPaginated.get("draw"));
+		Assert.assertEquals("Record count should be returned as per what is returned by studyService.countTotalObservationUnits()",
+				recordsCount, plotMeasurementsPaginated.get("recordsTotal"));
+		Assert.assertEquals("Records filtered should be returned as per number of plots on page.", observations.size(),
+				plotMeasurementsPaginated.get("recordsFiltered"));
+
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> allMeasurementData = (List<Map<String, Object>>) plotMeasurementsPaginated.get("data");
+		Map<String, Object> onePlotMeasurementData = allMeasurementData.get(0);
+
+		Assert.assertEquals(String.valueOf(observationDto.getMeasurementId()), onePlotMeasurementData.get("Action"));
+		Assert.assertEquals(String.valueOf(observationDto.getMeasurementId()), onePlotMeasurementData.get("experimentId"));
+		Assert.assertEquals(observationDto.getDesignation(), onePlotMeasurementData.get("DESIGNATION"));
+		Assert.assertEquals(observationDto.getGid(), onePlotMeasurementData.get("GID"));
+
+		Assert.assertTrue(
+				Arrays.equals(new Object[] {observationDto.getEntryNo(), false}, (Object[]) onePlotMeasurementData.get("ENTRY_NO")));
+
+		Assert.assertTrue(
+				Arrays.equals(new Object[] {observationDto.getEntryType(), observationDto.getEntryType(), false},
+						(Object[]) onePlotMeasurementData.get("ENTRY_TYPE")));
+
+		Assert.assertTrue(
+				Arrays.equals(new Object[] {observationDto.getPlotNumber(), false}, (Object[]) onePlotMeasurementData.get("PLOT_NO")));
+
+		Assert.assertTrue(
+				Arrays.equals(new Object[] {observationDto.getRepitionNumber(), false}, (Object[]) onePlotMeasurementData.get("REP_NO")));
+
+		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getTrialInstance(), false},
+				(Object[]) onePlotMeasurementData.get("TRIAL_INSTANCE")));
+
+
+		// Character Trait
+		Assert.assertEquals(measurementText.getTriatValue(), onePlotMeasurementData.get(measurementText.getTrait().getTraitName()));
+
+		// Numeric Trait
+		Assert.assertTrue(Arrays.equals(new Object[] {measurementNumeric.getTriatValue(), true},
+				(Object[]) onePlotMeasurementData.get(measurementNumeric.getTrait().getTraitName())));
+
+		// Categorical Trait
+		Assert.assertTrue(Arrays.equals(new Object[] {category1.getName(), category1.getDefinition(), true},
+				(Object[]) onePlotMeasurementData.get(mesaurementCategorical.getTrait().getTraitName())));
+
 	}
 }

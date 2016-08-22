@@ -12,7 +12,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.CategoricalDisplayValue;
@@ -81,9 +80,6 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 	@Resource
 	private PaginationListSelection paginationListSelection;
-
-	@Resource
-	private ContextUtil contextUtil;
 
 	@Resource
 	private StudyService studyService;
@@ -743,8 +739,15 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		return dataMap;
 	}
 
-	public void setValidationService(ValidationService validationService) {
+	void setValidationService(ValidationService validationService) {
 		this.validationService = validationService;
 	}
 
+	void setStudyService(StudyService studyService) {
+		this.studyService = studyService;
+	}
+
+	void setOntologyVariableDataManager(OntologyVariableDataManager ontologyVariableDataManager) {
+		this.ontologyVariableDataManager = ontologyVariableDataManager;
+	}
 }

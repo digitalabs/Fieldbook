@@ -21,7 +21,9 @@
 	</div>
 </div>
 
-<div id="mdt-environment-list" class="fbk-float-left">
+<div id="mdt-environment-list-label" class="dataTables_info fbk-std-padding-right" th:text="#{measurement.environment.list.label}"></div>
+
+<div id="mdt-environment-list" class="fbk-float-left">pho
 	<select id="measurements-environment-number" name="measurements-environment-number"
 		ng-options="environment.id for environment in environmentsList"
 		ng-model="selectedEnvironment" class="input-sm form-control fbk-std-padding-right"

@@ -342,6 +342,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		});
 		$('#measurementsDiv .mdt-columns').detach().insertBefore('.mdt-filtering');
 		$('.dataTables_length').prepend($('#mdt-environment-list').detach());
+		$('.dataTables_length').before($('#mdt-environment-list-label').detach());
 		$('.measurement-dropdown-menu a').click(function(e) {
 			var column;
 

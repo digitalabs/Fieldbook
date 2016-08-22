@@ -290,19 +290,22 @@ public class ExpDesignController extends BaseTrialController {
 							}
 							workbook.setMeasurementDatasetVariables(measurementDatasetVariables);
 						}
-						for (final MeasurementVariable var : oldFactors) {
-							// we do the cleanup of old variables
-							if (!currentNewFactors.isEmpty() && WorkbookUtil.getMeasurementVariable(currentNewFactors, var.getTermId()) == null && 
-									!isFieldMapVariable(var.getTermId())) {
-								// we remove it
-								deletedFactors.add(var);
+
+						if (this.userSelection.isDesignChanged()) {
+							for (final MeasurementVariable var : oldFactors) {
+								// we do the cleanup of old variables
+								if (!currentNewFactors.isEmpty() && WorkbookUtil.getMeasurementVariable(currentNewFactors, var.getTermId()) == null) {
+									// we remove it
+									deletedFactors.add(var);
+								}
+							}
+							if (oldFactors != null) {
+								for (final MeasurementVariable var : deletedFactors) {
+									oldFactors.remove(var);
+								}
 							}
 						}
-						if (oldFactors != null) {
-							for (final MeasurementVariable var : deletedFactors) {
-								oldFactors.remove(var);
-							}
-						}
+
 						workbook.setExpDesignVariables(designService.getRequiredVariable());
 					}
 				}

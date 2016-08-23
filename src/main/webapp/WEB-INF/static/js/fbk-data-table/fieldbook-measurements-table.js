@@ -275,6 +275,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				}
 			},
 			dom: '<"mdt-header"lir<"mdt-filtering dataTables_info"B>>tp',
+			language: {
+                 processing: '<span class="throbber throbber-2x"></span>'
+             },
 			// For column visibility
 			buttons: [
 				{

@@ -38,6 +38,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				columnsDef.push({
 					defaultContent: '',
 					targets: columns.length - 1,
+					visible: termId === 8170 ? false : true, // do not display TRIAL_INSTANCE column, [0] column
 					createdCell: function(td, cellData, rowData, row, col) {
 						if (isVariates) {
 							$(td).addClass('numeric-variable');
@@ -272,20 +273,16 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					$('#review-out-of-bounds-data-list').hide();
 				}
 			},
-			language: {
-				search: '<span class="mdt-filtering-label">Search:</span>'
-			},
-			dom: 'R<"mdt-header"rli<"mdt-filtering">r>tp',
+			dom: '<"mdt-header"lir<"mdt-filtering dataTables_info"B>>tp',
 			// For column visibility
-			colVis: {
-				exclude: [0],
-				restore: 'Restore',
-				showAll: 'Show all'
-			},
-			// Problem with reordering plugin and fixed column for column re-ordering
-			colReorder: {
-				fixedColumns: 1
-			}
+			buttons: [
+				{
+					extend: 'colvis',
+					columns: ':not(:first-child)',
+					className: 'fbk-buttons-no-border fbk-colvis-button',
+                    text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>'
+				}
+			]
 		});
 
 
@@ -328,7 +325,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		$(tableIdentifier).dataTable().bind('sort', function() {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 		});
-		$('#measurementsDiv .mdt-columns').detach().insertBefore('.mdt-filtering');
+		$('#measurementsDiv .mdt-columns').detach().insertAfter('.mdt-filtering');
 		$('.dataTables_length').prepend($('#mdt-environment-list').detach());
 		$('.dataTables_length').before($('#mdt-environment-list-label').detach());
 		$('.measurement-dropdown-menu a').click(function(e) {

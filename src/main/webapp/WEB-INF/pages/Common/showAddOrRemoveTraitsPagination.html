@@ -5,20 +5,8 @@
 </div>
 
 
-<div class="mdt-columns">
+<div class="mdt-columns dataTables_info">
 	<span class="btn btn-link fbk-toggle-categorical-display" th:text="#{measurements.show.categorical.description}">Show Categorical Description</span>
-	<div class="btn-group">
-		<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column" data-toggle="dropdown"></i>
-
-		<ul class="dropdown-menu measurement-dropdown-menu fbk-right-button-drop-down" role="menu"  th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}">
-			<li th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" >
-				<a href="javascript: void(0)"
-				   th:text="${measurementVariable.name}"
-				   th:attr="data-column-name=${measurementVariable.name}"
-				   th:attrappend="data-index=${rowIndex.index+1}">GID</a>
-			</li>
-		</ul>
-	</div>
 </div>
 
 <div id="mdt-environment-list-label" class="dataTables_info fbk-std-padding-right" th:text="#{measurement.environment.list.label}"></div>

@@ -651,7 +651,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		return dataMap;
 	}
 
-	private Map<String, Object> generateDatatableDataMap(ObservationDto row, String suffix) {
+	private Map<String, Object> generateDatatableDataMap(final ObservationDto row, String suffix) {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		// the 3 attributes are needed always
 		dataMap.put("experimentId", Integer.toString(row.getMeasurementId()));
@@ -689,7 +689,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		dataMap.put("TRIAL_INSTANCE", new Object[] {row.getTrialInstance(), false});
 
 		// generate measurement row data from newly added traits (no data yet)
-		UserSelection userSelection = this.getUserSelection(false);
+		final UserSelection userSelection = this.getUserSelection(false);
 		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
 				&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {
 			for (MeasurementVariable var : userSelection.getMeasurementDatasetVariable()) {

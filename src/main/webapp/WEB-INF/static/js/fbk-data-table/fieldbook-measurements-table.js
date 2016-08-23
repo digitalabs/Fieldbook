@@ -191,6 +191,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			iDisplayLength: 100,
 			serverSide: true,
 			processing: true,
+			deferRender: true,
 			ajax: {
 				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + getCurrentEnvironmentNumber(),
 				type: 'GET',

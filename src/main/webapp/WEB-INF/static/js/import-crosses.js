@@ -73,7 +73,12 @@ var ImportCrosses = {
 		'use strict';
 
 		$('#openCrossesListModal').one('shown.bs.modal', function() {
+
 			$('body').addClass('modal-open');
+			
+			// After the modal window is shown, make sure that the table header is properly adjusted.
+			$('#preview-crosses-table').resize();
+
 		}).modal({ backdrop: 'static', keyboard: true });
 		if (ImportCrosses.isFileCrossesImport) {
 			$('#openCrossesListModal').addClass('import-crosses-from-file');
@@ -510,7 +515,7 @@ var ImportCrosses = {
 		settingObject.breedingMethodSetting = {};
 		settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
 
-		if(selectedBreedingMethodId != ''){
+		if(selectedBreedingMethodId !== null && selectedBreedingMethodId !== 0){
 			settingObject.breedingMethodSetting.methodId = selectedBreedingMethodId;
 		}
 		else if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {

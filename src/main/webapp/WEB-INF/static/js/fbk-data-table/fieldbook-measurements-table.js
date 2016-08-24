@@ -58,10 +58,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						$(td).data('term-id', termId);
 					},
 					render: function(data, type, full, meta) {
-						var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '');
-						var hiddenData = EscapeHTML.escape(data[1]);
-
 						if (data !== undefined) {
+							var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '');
+							var hiddenData = EscapeHTML.escape(data[1]);
 							return displayData + '<input type="hidden" value="' + hiddenData + '" />';
 						}
 					}

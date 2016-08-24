@@ -30,6 +30,7 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.study.MeasurementDto;
 import org.generationcp.middleware.service.api.study.ObservationDto;
 import org.generationcp.middleware.service.api.study.StudyService;
+import org.generationcp.middleware.service.impl.study.StudyInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -468,6 +469,13 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		masterMap.put("data", masterDataList);
 
 		return masterMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/instanceMetadata/{studyId}", method = RequestMethod.GET)
+	@Transactional
+	public List<StudyInstance> getStudyInstanceMetaData(@PathVariable final int studyId) {
+		return this.studyService.getStudyInstances(studyId);
 	}
 
 	/**

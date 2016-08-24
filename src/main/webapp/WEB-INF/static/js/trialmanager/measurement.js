@@ -12,15 +12,16 @@
 				$scope.isHideDelete = false;
 				$scope.updateOccurred = false;
 				$scope.addVariable = true;
-				$scope.numberOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;
-
-				$scope.environmentsList = [];
-				for (var i = 1; i <= $scope.numberOfEnvironments; i++) {
-					$scope.environmentsList.push({id: i});
+				
+				// First environment is selected by default. At least one environment should always be there for any study.
+				$scope.selectedEnvironment = { instanceNumber: 1 };
+				
+				$scope.initEnvironmentList = function() {
+					$http.get('/Fieldbook/Common/addOrRemoveTraits/instanceMetadata/' + $('#studyId').val()).success(function(data) {
+						$scope.environmentsList = data;
+					});
 				}
-				//the first environment is selected by default
-                $scope.selectedEnvironment = $scope.environmentsList[0];
-
+				
 				/* Watchers */
 				$scope.$watch(function() {
 					return TrialManagerDataService.settings.measurements;
@@ -130,5 +131,7 @@
 						});
 					}
 				}
-			}]);
+				
+				$scope.initEnvironmentList();
+		}]);
 })();

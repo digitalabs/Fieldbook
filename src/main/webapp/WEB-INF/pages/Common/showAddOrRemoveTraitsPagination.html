@@ -11,11 +11,13 @@
 
 <div id="mdt-environment-list-label" class="dataTables_info fbk-std-padding-right" th:text="#{measurement.environment.list.label}"></div>
 
-<div id="mdt-environment-list" class="fbk-float-left">
-	<select id="measurements-environment-number" name="measurements-environment-number"
-		ng-options="environment.id for environment in environmentsList"
-		ng-model="selectedEnvironment" class="input-sm form-control fbk-std-padding-right"
-			onchange="reloadMeasurementDataTable()"/>
+<div id="mdt-environment-list" class="fbk-float-left">			
+    <select id="measurements-environment-number" name="measurements-environment-number" 
+		ng-model="selectedEnvironment"
+		class="input-sm form-control fbk-std-padding-right"
+		onchange="reloadMeasurementDataTable()"
+      	ng-options="(env.instanceNumber + ' - ' + (env.locationName || env.locationAbbreviation || env.instanceNumber)) for env in environmentsList track by env.instanceNumber">
+    </select>
 </div>
 
 <table th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >

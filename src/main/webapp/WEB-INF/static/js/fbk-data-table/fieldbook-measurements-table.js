@@ -1,6 +1,6 @@
 var getCurrentEnvironmentNumber = function () {
-	return $("#fbk-measurements-controller-div").scope().selectedEnvironment ? $("#fbk-measurements-controller-div")
-    	.scope().selectedEnvironment.id : 1;
+	var selEnv = $("#fbk-measurements-controller-div").scope().selectedEnvironment;
+	return selEnv ? selEnv.instanceNumber : 1;
 };
 
 BMS.Fieldbook.MeasurementsDataTable = (function($) {

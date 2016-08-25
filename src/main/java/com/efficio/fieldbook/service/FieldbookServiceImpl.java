@@ -166,6 +166,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	 */
 	@Override
 	public AdvanceResult advanceNursery(final AdvancingNursery advanceInfo, final Workbook workbook) throws RuleException, FieldbookException {
+		this.fieldbookMiddlewareService.loadAllObservations(workbook);
 		return this.namingConventionService.advanceNursery(advanceInfo, workbook);
 	}
 

@@ -79,7 +79,8 @@ public class OpenTrialController extends BaseTrialController {
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
 
 	@Resource
-	private StudyDataManager studyDataManagerImpl;
+	private StudyDataManager studyDataManager;
+
 	@Resource
 	private OntologyService ontologyService;
 
@@ -163,22 +164,16 @@ public class OpenTrialController extends BaseTrialController {
 				model.addAttribute(OpenTrialController.IS_EXP_DESIGN_PREVIEW, "0");
 			}
 
-			try {
-				this.userSelection.setMeasurementRowList(workbook.getObservations());
-				if (measurementDatasetId != null) {
-					form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(measurementDatasetId,
-							SettingsUtil.buildVariates(workbook.getVariates())));
-				} else {
-					form.setMeasurementDataExisting(false);
-				}
-
-				form.setMeasurementVariables(workbook.getMeasurementDatasetVariablesView());
-
-				model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, workbook.getObservations() != null ? workbook
-						.getObservations().size() : 0);
-			} catch (final MiddlewareQueryException e) {
-				OpenTrialController.LOG.error(e.getMessage(), e);
+			this.userSelection.setMeasurementRowList(workbook.getObservations());
+			if (measurementDatasetId != null) {
+				form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(measurementDatasetId,
+						SettingsUtil.buildVariates(workbook.getVariates())));
+			} else {
+				form.setMeasurementDataExisting(false);
 			}
+
+			form.setMeasurementVariables(workbook.getMeasurementDatasetVariablesView());
+			model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
 		}
 
 		return this.showAjaxPage(model, BaseTrialController.URL_MEASUREMENT);
@@ -190,7 +185,7 @@ public class OpenTrialController extends BaseTrialController {
 		this.clearSessionData(session);
 		try {
 			if (trialId != null && trialId != 0) {
-				final DmsProject dmsProject = this.studyDataManagerImpl.getProject(trialId);
+				final DmsProject dmsProject = this.studyDataManager.getProject(trialId);
 				if (dmsProject.getProgramUUID() == null) {
 					return "redirect:" + ManageTrialController.URL + "?summaryId=" + trialId + "&summaryName=" + dmsProject.getName();
 				}
@@ -267,7 +262,8 @@ public class OpenTrialController extends BaseTrialController {
 				this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
 						SettingsUtil.buildVariates(trialWorkbook.getVariates())));
 
-		model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());
+		model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT,
+				this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));
 		model.addAttribute("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
 
 		// so that we can reuse the same page being use for nursery
@@ -418,7 +414,7 @@ public class OpenTrialController extends BaseTrialController {
 						OpenTrialController.MEASUREMENT_DATA_EXISTING,
 						this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(),
 								SettingsUtil.buildVariates(workbook.getVariates())));
-				returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, workbook.getObservations().size());
+				returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
 
 				this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), workbook.getStudyName(),
 						data.getColumnOrders(), workbook);
@@ -475,7 +471,8 @@ public class OpenTrialController extends BaseTrialController {
 				OpenTrialController.MEASUREMENT_DATA_EXISTING,
 				this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
 						SettingsUtil.buildVariates(trialWorkbook.getVariates())));
-		returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());
+		returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT,
+				this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));
 		returnVal.put("measurementsData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));
 		returnVal.put("selectionVariableData",
 				this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
@@ -622,8 +619,7 @@ public class OpenTrialController extends BaseTrialController {
 		if (deletedEnvironments.length() > 0 && !"0".equals(deletedEnvironments)) {
 			final Workbook tempWorkbook = this.processDeletedEnvironments(deletedEnvironments, measurementDatasetVariables, workbook);
 			form.setMeasurementRowList(tempWorkbook.getObservations());
-			model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, tempWorkbook.getObservations() != null ? tempWorkbook
-					.getObservations().size() : 0);
+			model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
 		}
 
 		form.setMeasurementVariables(measurementDatasetVariables);

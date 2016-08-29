@@ -48,7 +48,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 
@@ -502,52 +501,6 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		session.setAttribute("isCategoricalDescriptionView", isCategoricalDescriptionView);
 
 		return isCategoricalDescriptionView;
-	}
-
-	/**
-	 * This is the POST call to save (in session) the data submitted from the action dialog to edit one row.
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/data/table/ajax/submit/{index}", method = RequestMethod.POST)
-	public Map<String, Object> dataTablesAjaxSubmit(@PathVariable int index,
-			@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		UserSelection userSelection = this.getUserSelection(false);
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
-		tempList.addAll(userSelection.getMeasurementRowList());
-
-		MeasurementRow row = form.getUpdateObservation();
-		MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
-		MeasurementRow copyRow = originalRow.copy();
-		this.copyMeasurementValue(copyRow, row);
-
-		try {
-			this.validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
-			// if there are no error, meaning everything is good, thats the time we copy it to the original
-			this.copyMeasurementValue(originalRow, row);
-			this.updateDates(originalRow);
-			map.put(ObservationMatrixController.SUCCESS, "1");
-			for (MeasurementData data : originalRow.getDataList()) {
-				// we set the data accepted automatically to true, if value is out out limit
-				if (data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())) {
-					Double minRange = data.getMeasurementVariable().getMinRange();
-					Double maxRange = data.getMeasurementVariable().getMaxRange();
-					if (minRange != null && maxRange != null && NumberUtils.isNumber(data.getValue())
-							&& (Double.parseDouble(data.getValue()) < minRange || Double.parseDouble(data.getValue()) > maxRange)) {
-						data.setAccepted(true);
-					}
-				}
-			}
-
-			Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
-			map.put(ObservationMatrixController.DATA, dataMap);
-		} catch (MiddlewareQueryException e) {
-			ObservationMatrixController.LOG.error(e.getMessage(), e);
-			map.put(ObservationMatrixController.SUCCESS, "0");
-			map.put(ObservationMatrixController.ERROR_MESSAGE, e.getMessage());
-		}
-
-		return map;
 	}
 
 	protected boolean isNumericalValueOutOfBounds(String value, MeasurementVariable var) {

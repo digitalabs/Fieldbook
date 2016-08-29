@@ -266,7 +266,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 
 	
 	/**
-	 * Creates a new MeasurementsDataTable.
+	 * Creates a new GermplasmListDataTable.
 	 *
 	 * @constructor
 	 * @alias module:fieldbook-datatable
@@ -524,7 +524,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 
 	
 	/**
-	 * Creates a new MeasurementsDataTable.
+	 * Creates a new SelectedCheckListDataTable.
 	 *
 	 * @constructor
 	 * @alias module:fieldbook-datatable

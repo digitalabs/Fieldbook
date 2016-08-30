@@ -60,7 +60,6 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
 	public static final String EDIT_EXPERIMENT_TEMPLATE = "/Common/updateExperimentModal";
 	public static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
-	private static final String TRIAL = "TRIAL";
 	private static final Logger LOG = LoggerFactory.getLogger(ObservationMatrixController.class);
 	private static final String STATUS = "status";
 	private static final String ERROR_MESSAGE = "errorMessage";
@@ -103,8 +102,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	public String getPaginatedListAfterImport(@PathVariable String studyType, @PathVariable int pageNum, @PathVariable int previewPageNum,
 			@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
 
-		boolean isTrial = studyType.equalsIgnoreCase(ObservationMatrixController.TRIAL);
-		UserSelection userSelection = this.getUserSelection(isTrial);
+		UserSelection userSelection = this.getUserSelection();
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
 		form.setMeasurementRowList(userSelection.getWorkbook().getObservations());
 		form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
@@ -118,8 +116,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	public String getPaginatedListViewOnly(@PathVariable String studyType, @PathVariable int pageNum,
 			@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, @RequestParam("listIdentifier") String datasetId) {
 
-		boolean isTrial = studyType.equalsIgnoreCase(ObservationMatrixController.TRIAL);
-		UserSelection userSelection = this.getUserSelection(isTrial);
+		UserSelection userSelection = this.getUserSelection();
 
 		List<MeasurementRow> rows = this.paginationListSelection.getReviewDetailsList(datasetId);
 		if (rows != null) {
@@ -140,8 +137,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	public Map<String, String> updateTraits(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable String studyType,
 			BindingResult result, Model model) {
 
-		boolean isTrial = studyType.equalsIgnoreCase(ObservationMatrixController.TRIAL);
-		UserSelection userSelection = this.getUserSelection(isTrial);
+		UserSelection userSelection = this.getUserSelection();
 
 		Map<String, String> resultMap = new HashMap<String, String>();
 
@@ -167,7 +163,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		return resultMap;
 	}
 
-	private UserSelection getUserSelection(boolean isTrial) {
+	private UserSelection getUserSelection() {
 		return this.studySelection;
 	}
 
@@ -193,7 +189,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		map.put(ObservationMatrixController.INDEX, index);
 
-		UserSelection userSelection = this.getUserSelection(false);
+		UserSelection userSelection = this.getUserSelection();
 		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
@@ -280,7 +276,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		map.put(ObservationMatrixController.INDEX, index);
 
-		UserSelection userSelection = this.getUserSelection(false);
+		UserSelection userSelection = this.getUserSelection();
 		MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
 
 		if (originalRow != null && originalRow.getMeasurementVariables() != null) {
@@ -318,7 +314,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		UserSelection userSelection = this.getUserSelection(false);
+		UserSelection userSelection = this.getUserSelection();
 		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
 			if (row != null && row.getMeasurementVariables() != null) {
 				this.markNonEmptyVariateValuesAsAccepted(row.getDataList());
@@ -379,7 +375,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/update/experiment/cell/missing/all", method = RequestMethod.GET)
 	public Map<String, Object> markAllExperimentDataAsMissing() {
 		Map<String, Object> map = new HashMap<String, Object>();
-		UserSelection userSelection = this.getUserSelection(false);
+		UserSelection userSelection = this.getUserSelection();
 		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
 			if (row != null && row.getMeasurementVariables() != null) {
 				this.markNonEmptyVariateValuesAsMissing(row.getDataList());
@@ -395,7 +391,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/update/experiment/cell/{index}/{termId}", method = RequestMethod.GET)
 	public String editExperimentCells(@PathVariable int index, @PathVariable int termId, Model model) throws MiddlewareQueryException {
 
-		UserSelection userSelection = this.getUserSelection(false);
+		UserSelection userSelection = this.getUserSelection();
 		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
@@ -596,7 +592,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		}
 
 		// generate measurement row data from newly added traits (no data yet)
-		UserSelection userSelection = this.getUserSelection(false);
+		UserSelection userSelection = this.getUserSelection();
 		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
 				&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {
 			for (MeasurementVariable var : userSelection.getMeasurementDatasetVariable()) {
@@ -650,7 +646,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		dataMap.put("TRIAL_INSTANCE", new Object[] {row.getTrialInstance(), false});
 
 		// generate measurement row data from newly added traits (no data yet)
-		final UserSelection userSelection = this.getUserSelection(false);
+		final UserSelection userSelection = this.getUserSelection();
 		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
 				&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {
 			for (MeasurementVariable var : userSelection.getMeasurementDatasetVariable()) {

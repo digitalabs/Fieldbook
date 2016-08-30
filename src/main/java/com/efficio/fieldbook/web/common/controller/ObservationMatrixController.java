@@ -69,7 +69,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	private static final String DATA = "data";
 
 	@Resource
-	private UserSelection studySelection;
+	private UserSelection userSelection;
 
 	@Resource
 	private ValidationService validationService;
@@ -164,11 +164,11 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	}
 
 	private UserSelection getUserSelection() {
-		return this.studySelection;
+		return this.userSelection;
 	}
 
-	protected void setStudySelection(UserSelection userSelection) {
-		this.studySelection = userSelection;
+	protected void setUserSelection(UserSelection userSelection) {
+		this.userSelection = userSelection;
 	}
 
 	/**

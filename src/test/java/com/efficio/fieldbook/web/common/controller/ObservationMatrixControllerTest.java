@@ -236,7 +236,7 @@ public class ObservationMatrixControllerTest {
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
-		this.observationMatrixController.setStudySelection(userSelection);
+		this.observationMatrixController.setUserSelection(userSelection);
 		this.observationMatrixController.editExperimentCells(1, termId, model);
 		MeasurementData data = (MeasurementData) model.get("measurementData");
 		Assert.assertEquals("Should be able to return a copy of the measurement data, so the value should be the same", "2nd",
@@ -265,7 +265,7 @@ public class ObservationMatrixControllerTest {
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
-		this.observationMatrixController.setStudySelection(userSelection);
+		this.observationMatrixController.setUserSelection(userSelection);
 		this.observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("index", "1");
@@ -302,7 +302,7 @@ public class ObservationMatrixControllerTest {
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
-		this.observationMatrixController.setStudySelection(userSelection);
+		this.observationMatrixController.setUserSelection(userSelection);
 		this.observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("index", "1");
@@ -338,7 +338,7 @@ public class ObservationMatrixControllerTest {
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
-		this.observationMatrixController.setStudySelection(userSelection);
+		this.observationMatrixController.setUserSelection(userSelection);
 		this.observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
 		Map<String, String> data = new HashMap<>();
 
@@ -373,7 +373,7 @@ public class ObservationMatrixControllerTest {
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
-		this.observationMatrixController.setStudySelection(userSelection);
+		this.observationMatrixController.setUserSelection(userSelection);
 		this.observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
 		Map<String, String> data = new HashMap<>();
 
@@ -416,7 +416,7 @@ public class ObservationMatrixControllerTest {
 		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
 
-		this.observationMatrixController.setStudySelection(userSelection);
+		this.observationMatrixController.setUserSelection(userSelection);
 		this.observationMatrixController.markAllExperimentDataAsAccepted();
 
 		for (MeasurementRow measurementRow : userSelection.getMeasurementRowList()) {
@@ -464,7 +464,7 @@ public class ObservationMatrixControllerTest {
 		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
 
-		this.observationMatrixController.setStudySelection(userSelection);
+		this.observationMatrixController.setUserSelection(userSelection);
 		this.observationMatrixController.markAllExperimentDataAsMissing();
 
 		for (MeasurementRow measurementRow : userSelection.getMeasurementRowList()) {

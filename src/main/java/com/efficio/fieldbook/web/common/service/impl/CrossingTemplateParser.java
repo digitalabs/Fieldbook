@@ -125,14 +125,17 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		int currentRow = 1;
 		final int headerSize = this.getLastCellNum(CrossingTemplateParser.OBSERVATION_SHEET_NO, 0);
 
+		Set<Integer> femalePlotNos = new HashSet<>();
+		// map key is male nursery name while map value is set of male plot nos for that male nursery
+		Map<String, Set<Integer>> maleNurseriesWithPlotNos = new HashMap<>();
 		while (!this.isRowEmpty(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 				headerSize)) {
 
-			final String femalePlotNo = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
+			final String femalePlotNoStr = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 					this.observationColumnMap.get(AppConstants.FEMALE_PLOT.getString()));
 			String maleNursery = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 					this.observationColumnMap.get(AppConstants.MALE_NURSERY.getString()));
-			final String malePlotNo = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
+			final String malePlotNoStr = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 					this.observationColumnMap.get(AppConstants.MALE_PLOT.getString()));
 			final String breedingMethod = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 					this.observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
@@ -141,7 +144,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			final String notes = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
 					this.observationColumnMap.get(AppConstants.NOTES.getString()));
 
-			validateObservationRow(femalePlotNo, malePlotNo, currentRow, strCrossingDate);
+			validateObservationRow(femalePlotNoStr, malePlotNoStr, currentRow, strCrossingDate);
 
 			Integer crossingDate = null;
 			if (!StringUtils.isBlank(strCrossingDate)) {
@@ -152,30 +155,35 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				maleNursery = femaleNursery;
 			}
 
-			// process female + male parent entries, will throw middleware query exception if no study valid or null
-			final ListDataProject femaleListData =
-					this.getCrossingListProjectData(femaleNursery, Integer.valueOf(femalePlotNo), programUUID);
-			final ListDataProject maleListData = this.getCrossingListProjectData(maleNursery, Integer.valueOf(malePlotNo), programUUID);
-
+			// collect female plot nos for one-off Middleware lookup
+			final Integer femalePlotNo = Integer.valueOf(femalePlotNoStr);
+			femalePlotNos.add(femalePlotNo);
+			
+			// group together male plots by male nursery for one-off Middleware lookup
+			final Integer malePlotNo = Integer.valueOf(malePlotNoStr);
+			if (maleNurseriesWithPlotNos.containsKey(maleNursery)){
+				maleNurseriesWithPlotNos.get(maleNursery).add(malePlotNo);
+			} else {
+				final Set<Integer> plotSet = new HashSet<>();
+				plotSet.add(malePlotNo);
+				maleNurseriesWithPlotNos.put(maleNursery, plotSet);
+			}
+			
 			final ImportedCrosses importedCrosses =
-					new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery, femalePlotNo, malePlotNo, currentRow);
+					new ImportedCrosses(femaleNursery, maleNursery, femalePlotNoStr, malePlotNoStr, currentRow);
 			// Show source as "Pending" in initial dialogue.
 			// Source (Plot Code) string is generated later in the proces and will be displayed in the final list generated.
 			importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
 			importedCrosses.setOptionalFields(breedingMethod, crossingDate, notes);
-			// this would set the correct cross string depending if the use is cimmyt wheat
-			final Germplasm germplasm = new Germplasm();
-			germplasm.setGnpgs(2);
-			germplasm.setGid(Integer.MAX_VALUE);
-			germplasm.setGpid1(femaleListData.getGermplasmId());
-			germplasm.setGpid2(maleListData.getGermplasmId());
-			final String crossString = this.crossingService.getCross(germplasm, importedCrosses, "/");
-			importedCrosses.setCross(crossString);
 
 			this.importedCrossesList.addImportedCrosses(importedCrosses);
 
 			currentRow++;
 		}
+		
+		lookupCrossParents(this.studySelection.getWorkbook().getStudyName(), 
+				femalePlotNos, maleNurseriesWithPlotNos, programUUID);
+
 	}
 
 	protected void validateFemaleNursery(String femaleNursery) throws FileParsingException {
@@ -280,36 +288,84 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-	/**
-	 * Returns the ListProjectData given a female or male plot no using the current plot position on the template.
-	 *
-	 * @param studyName - femaleNursery/maleNursery equivalent from the template
-	 * @param genderedPlotNo - femalePlot/malePlot equivalent from the template
-	 * @return ListDataProject - We need the Desig, and female/male gids information that we can retrive using this data structure
-	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
-	 */
-	protected ListDataProject getCrossingListProjectData(final String studyName, final Integer genderedPlotNo, final String programUUID)
+
+	void lookupCrossParents(final String femaleNurseryName, final Set<Integer> femalePlotNos,
+			final Map<String, Set<Integer>> maleNurseriesWithPlotNos, final String programUUID)
 					throws MiddlewareQueryException, FileParsingException {
-		// 1 get the particular study's list
-		final Integer studyId = this.studyDataManager.getStudyIdByNameAndProgramUUID(studyName, programUUID);
+		
+		final Map<Integer, ListDataProject> femalePlotMap = getPlotToListDataProjectMapForNursery(femaleNurseryName, femalePlotNos, programUUID);
+		// Create map of male nurseries to its plotToListDataProject lookup
+		// for each male nursery, lookup the associated ListDataProject of specified male plot #s
+		Map<String, Map<Integer, ListDataProject>> maleNurseriesPlotMap = new HashMap<>();
+		for (Map.Entry<String, Set<Integer>> entry : maleNurseriesWithPlotNos.entrySet()) {
+			final String maleNurseryName = entry.getKey();
+			maleNurseriesPlotMap.put(maleNurseryName, getPlotToListDataProjectMapForNursery(maleNurseryName, entry.getValue(), programUUID));
+		}
+		
+		
+		// Set looked up GIDs and names of parents to ImportedCrosses object
+		for (ImportedCrosses crosses : this.importedCrossesList.getImportedCrosses()){
+			final String crossMaleNursery = crosses.getMaleStudyName();
+			final Map<Integer, ListDataProject> malePlotMap = maleNurseriesPlotMap.get(crossMaleNursery);
+			final Integer crossFemalePlotNo = Integer.valueOf(crosses.getFemalePlotNo());
+			final Integer crossMalePlotNo = Integer.valueOf(crosses.getMalePlotNo());
+			
+			if (femalePlotMap.containsKey(crossFemalePlotNo)){
+				final ListDataProject femaleListData = femalePlotMap.get(crossFemalePlotNo);
+				crosses.setFemaleGid(femaleListData.getGermplasmId().toString());
+				crosses.setFemaleDesig(femaleListData.getDesignation());
+			} else {
+				throw new FileParsingException(this.messageSource.getMessage("no.list.data.for.plot",
+						new Object[] {femaleNurseryName, crossFemalePlotNo}, LocaleContextHolder.getLocale()));
+			}
+			if (malePlotMap != null && malePlotMap.containsKey(crossMalePlotNo)){
+				final ListDataProject maleListData = malePlotMap.get(crossMalePlotNo);
+				crosses.setMaleGid(maleListData.getGermplasmId().toString());
+				crosses.setMaleDesig(maleListData.getDesignation());
+			} else {
+				throw new FileParsingException(this.messageSource.getMessage("no.list.data.for.plot",
+						new Object[] {crossMaleNursery, crossMalePlotNo}, LocaleContextHolder.getLocale()));
+			}
+			
+			final Germplasm germplasm = new Germplasm();
+			germplasm.setGnpgs(2);
+			germplasm.setGid(Integer.MAX_VALUE);
+			germplasm.setGpid1(Integer.valueOf(crosses.getFemaleGid()));
+			germplasm.setGpid2(Integer.valueOf(crosses.getMaleGid()));
+			final String crossString = this.crossingService.getCross(germplasm, crosses, "/");
+			crosses.setCross(crossString);
+		}
+
+	}
+	
+	/**
+	 * Returns map of plot numbers to corresponding ListDataProject record from specified plot numbers
+	 * of given nursery 
+	 * 
+	 * @param nurseryName
+	 * @param plotNos
+	 * @param programUUID
+	 * @return
+	 * @throws FileParsingException
+	 */
+	Map<Integer, ListDataProject> getPlotToListDataProjectMapForNursery(final String nurseryName, final Set<Integer> plotNos,
+			final String programUUID) throws FileParsingException {
+		// 1. retrieve study ID of parent nursery
+		final Integer studyId =
+				this.studyDataManager.getStudyIdByNameAndProgramUUID(nurseryName, programUUID);
 
 		if (null == studyId) {
-			throw new FileParsingException(this.messageSource.getMessage("no.such.study.exists", new String[] {studyName},
+			throw new FileParsingException(this.messageSource.getMessage("no.such.study.exists", new String[] {nurseryName},
 					LocaleContextHolder.getLocale()));
 		}
 
+		// 2. Lookup Listdataproject of parent nursery and given plot #s
 		final StudyType studyType = this.studyDataManager.getStudyType(studyId);
-
-		// 2. retrieve the list id of the particular study
-		final ListDataProject listdataResult =
-				this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId,
-						CrossingTemplateParser.STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType), genderedPlotNo);
-
-		if (null == listdataResult) {
-			throw new FileParsingException(this.messageSource.getMessage("no.list.data.for.plot", new Object[] {studyName, genderedPlotNo},
-					LocaleContextHolder.getLocale()));
-		}
-
-		return listdataResult;
+		Map<Integer, ListDataProject> plotToGIDMap = this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId,
+				CrossingTemplateParser.STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType), plotNos);
+		
+		return plotToGIDMap;
 	}
+	
+
 }

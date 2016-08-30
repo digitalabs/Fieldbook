@@ -526,7 +526,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		trialIds.add(studyId);
 		List<FieldMapInfo> fieldMapInfoList = new ArrayList<FieldMapInfo>();
 
-		fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties, false);
+		fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties);
 
 		if (fieldMapInfoList != null && fieldMapInfoList.get(0).getDatasets() != null
 				&& fieldMapInfoList.get(0).getDatasets().get(0).getTrialInstances() != null) {

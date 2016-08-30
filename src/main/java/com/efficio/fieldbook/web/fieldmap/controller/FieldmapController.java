@@ -137,7 +137,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 				trialIds.add(Integer.parseInt(id));
 			}
 			List<FieldMapInfo> fieldMapInfoList =
-					this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties, true);
+					this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties);
 
 			this.clearFields();
 			this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, true);
@@ -353,7 +353,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 
 			this.clearFields();
 			List<FieldMapInfo> fieldMapInfoList =
-					this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(nurseryIds, this.crossExpansionProperties, true);
+					this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(nurseryIds, this.crossExpansionProperties);
 
 			this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, false);
 

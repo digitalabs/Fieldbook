@@ -288,7 +288,21 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-
+	/**
+	 * Query for cross parents by looking up male and female plots then update the imported crosses in importedCrossesList
+	 * with the values from parent germplasm. The values updated are:
+	 * 1. Female GID - from female parent's GID
+	 * 2. Male GID - from male parent's GID
+	 * 3. Female Designation - from female parent's designation
+	 * 4. Male Designation - from male parent's designation
+	 * 5. Cross - call crossing service to get crossname
+	 * 
+	 * @param femaleNurseryName - name of female nursery
+	 * @param femalePlotNos - plot numbers to look up for female nursery
+	 * @param maleNurseriesWithPlotNos - map of male nurseries to corresponsing male plot numbers
+	 * @param programUUID - program unique ID
+	 * @throws FileParsingException
+	 */
 	void lookupCrossParents(final String femaleNurseryName, final Set<Integer> femalePlotNos,
 			final Map<String, Set<Integer>> maleNurseriesWithPlotNos, final String programUUID) throws FileParsingException {
 		
@@ -360,10 +374,10 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		// 2. Lookup Listdataproject of parent nursery and given plot #s
 		final StudyType studyType = this.studyDataManager.getStudyType(studyId);
-		Map<Integer, ListDataProject> plotToGIDMap = this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId,
+		Map<Integer, ListDataProject> plotToListDataProjectMap = this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId,
 				CrossingTemplateParser.STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType), plotNos);
 		
-		return plotToGIDMap;
+		return plotToListDataProjectMap;
 	}
 	
 	public void setImportedCrossesList(ImportedCrossesList importedCrossesList){

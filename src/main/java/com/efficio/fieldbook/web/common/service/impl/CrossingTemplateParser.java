@@ -290,8 +290,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 
 	void lookupCrossParents(final String femaleNurseryName, final Set<Integer> femalePlotNos,
-			final Map<String, Set<Integer>> maleNurseriesWithPlotNos, final String programUUID)
-					throws MiddlewareQueryException, FileParsingException {
+			final Map<String, Set<Integer>> maleNurseriesWithPlotNos, final String programUUID) throws FileParsingException {
 		
 		final Map<Integer, ListDataProject> femalePlotMap = getPlotToListDataProjectMapForNursery(femaleNurseryName, femalePlotNos, programUUID);
 		// Create map of male nurseries to its plotToListDataProject lookup
@@ -365,6 +364,10 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				CrossingTemplateParser.STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType), plotNos);
 		
 		return plotToGIDMap;
+	}
+	
+	public void setImportedCrossesList(ImportedCrossesList importedCrossesList){
+		this.importedCrossesList = importedCrossesList;
 	}
 	
 

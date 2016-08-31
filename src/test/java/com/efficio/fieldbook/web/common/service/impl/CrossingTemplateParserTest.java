@@ -92,7 +92,7 @@ public class CrossingTemplateParserTest {
 		// setup mocks
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(Matchers.anyString(), Matchers.anyString())).thenReturn(1);
 		Mockito.when(this.studyDataManager.getStudyType(1)).thenReturn(StudyType.N);
-		Mockito.when(this.fieldbookService.getListDataProjectByStudy(Matchers.anyInt(), Matchers.any(GermplasmListType.class),
+		Mockito.when(this.fieldbookService.getListDataProjectByStudyTypeAndPlotNos(Matchers.anyInt(), Matchers.any(GermplasmListType.class),
 				Matchers.anySetOf(Integer.class))).thenReturn(new HashMap<Integer, ListDataProject>());
 
 		final Set<Integer> plotNumbers = new HashSet<>(Arrays.asList(1, 3, 5, 7, 9));
@@ -111,7 +111,7 @@ public class CrossingTemplateParserTest {
 
 			// 2. Verify arguments for getting ListDataProject of nursery for specific plot #s
 			final ArgumentCaptor<GermplasmListType> listTypeCaptor = ArgumentCaptor.forClass(GermplasmListType.class);
-			Mockito.verify(this.fieldbookService, Mockito.times(1)).getListDataProjectByStudy(Matchers.anyInt(), listTypeCaptor.capture(),
+			Mockito.verify(this.fieldbookService, Mockito.times(1)).getListDataProjectByStudyTypeAndPlotNos(Matchers.anyInt(), listTypeCaptor.capture(),
 					this.plotNosCaptor.capture());
 			Assert.assertEquals(GermplasmListType.NURSERY, listTypeCaptor.getValue());
 			Assert.assertEquals(plotNumbers, this.plotNosCaptor.getValue());
@@ -138,9 +138,9 @@ public class CrossingTemplateParserTest {
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(CrossingTemplateParserTest.MALE_NURSERY1,
 				CrossingTemplateParserTest.PROGRAM_UUID)).thenReturn(2);
 		Mockito.when(this.studyDataManager.getStudyType(Matchers.anyInt())).thenReturn(StudyType.N);
-		Mockito.when(this.fieldbookService.getListDataProjectByStudy(1, GermplasmListType.NURSERY, femalePlotNumbers))
+		Mockito.when(this.fieldbookService.getListDataProjectByStudyTypeAndPlotNos(1, GermplasmListType.NURSERY, femalePlotNumbers))
 				.thenReturn(this.createListDataProject(femalePlotNumbers, CrossingTemplateParserTest.FEMALE_NURSERY));
-		Mockito.when(this.fieldbookService.getListDataProjectByStudy(2, GermplasmListType.NURSERY, malePlotNumbers))
+		Mockito.when(this.fieldbookService.getListDataProjectByStudyTypeAndPlotNos(2, GermplasmListType.NURSERY, malePlotNumbers))
 				.thenReturn(this.createListDataProject(malePlotNumbers, CrossingTemplateParserTest.MALE_NURSERY1));
 
 		try {
@@ -149,7 +149,7 @@ public class CrossingTemplateParserTest {
 
 			// Verify Middleware call for looking up cross parents called twice
 			// - once for female plots, once for male nursery with its male plots
-			Mockito.verify(this.fieldbookService, Mockito.times(2)).getListDataProjectByStudy(Matchers.anyInt(),
+			Mockito.verify(this.fieldbookService, Mockito.times(2)).getListDataProjectByStudyTypeAndPlotNos(Matchers.anyInt(),
 					Matchers.any(GermplasmListType.class), Matchers.anySetOf(Integer.class));
 
 			// Verify that GID and Designation from parent crosses were set properly to crosses
@@ -189,11 +189,11 @@ public class CrossingTemplateParserTest {
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(CrossingTemplateParserTest.MALE_NURSERY2,
 				CrossingTemplateParserTest.PROGRAM_UUID)).thenReturn(3);
 		Mockito.when(this.studyDataManager.getStudyType(Matchers.anyInt())).thenReturn(StudyType.N);
-		Mockito.when(this.fieldbookService.getListDataProjectByStudy(1, GermplasmListType.NURSERY, femalePlotNumbers))
+		Mockito.when(this.fieldbookService.getListDataProjectByStudyTypeAndPlotNos(1, GermplasmListType.NURSERY, femalePlotNumbers))
 				.thenReturn(this.createListDataProject(femalePlotNumbers, CrossingTemplateParserTest.FEMALE_NURSERY));
-		Mockito.when(this.fieldbookService.getListDataProjectByStudy(2, GermplasmListType.NURSERY, malePlotNumbers1))
+		Mockito.when(this.fieldbookService.getListDataProjectByStudyTypeAndPlotNos(2, GermplasmListType.NURSERY, malePlotNumbers1))
 				.thenReturn(this.createListDataProject(malePlotNumbers1, CrossingTemplateParserTest.MALE_NURSERY1));
-		Mockito.when(this.fieldbookService.getListDataProjectByStudy(3, GermplasmListType.NURSERY, malePlotNumbers2))
+		Mockito.when(this.fieldbookService.getListDataProjectByStudyTypeAndPlotNos(3, GermplasmListType.NURSERY, malePlotNumbers2))
 				.thenReturn(this.createListDataProject(malePlotNumbers2, CrossingTemplateParserTest.MALE_NURSERY2));
 
 		try {
@@ -202,7 +202,7 @@ public class CrossingTemplateParserTest {
 
 			// Verify Middleware call for looking up cross parents called three times
 			// - once for female plots, twice for male nurseries with corresponding male plots
-			Mockito.verify(this.fieldbookService, Mockito.times(3)).getListDataProjectByStudy(Matchers.anyInt(),
+			Mockito.verify(this.fieldbookService, Mockito.times(3)).getListDataProjectByStudyTypeAndPlotNos(Matchers.anyInt(),
 					Matchers.any(GermplasmListType.class), Matchers.anySetOf(Integer.class));
 
 			// Verify that GID and Designation from parent crosses were set properly to crosses
@@ -242,9 +242,9 @@ public class CrossingTemplateParserTest {
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(CrossingTemplateParserTest.MALE_NURSERY1,
 				CrossingTemplateParserTest.PROGRAM_UUID)).thenReturn(2);
 		Mockito.when(this.studyDataManager.getStudyType(Matchers.anyInt())).thenReturn(StudyType.N);
-		Mockito.when(this.fieldbookService.getListDataProjectByStudy(1, GermplasmListType.NURSERY, femalePlotNumbers))
+		Mockito.when(this.fieldbookService.getListDataProjectByStudyTypeAndPlotNos(1, GermplasmListType.NURSERY, femalePlotNumbers))
 				.thenReturn(this.createListDataProject(new HashSet<>(Arrays.asList(1, 2, 3)), CrossingTemplateParserTest.FEMALE_NURSERY));
-		Mockito.when(this.fieldbookService.getListDataProjectByStudy(2, GermplasmListType.NURSERY, malePlotNumbers))
+		Mockito.when(this.fieldbookService.getListDataProjectByStudyTypeAndPlotNos(2, GermplasmListType.NURSERY, malePlotNumbers))
 				.thenReturn(this.createListDataProject(malePlotNumbers, CrossingTemplateParserTest.MALE_NURSERY1));
 
 		try {
@@ -281,9 +281,9 @@ public class CrossingTemplateParserTest {
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(CrossingTemplateParserTest.MALE_NURSERY1,
 				CrossingTemplateParserTest.PROGRAM_UUID)).thenReturn(2);
 		Mockito.when(this.studyDataManager.getStudyType(Matchers.anyInt())).thenReturn(StudyType.N);
-		Mockito.when(this.fieldbookService.getListDataProjectByStudy(1, GermplasmListType.NURSERY, femalePlotNumbers))
+		Mockito.when(this.fieldbookService.getListDataProjectByStudyTypeAndPlotNos(1, GermplasmListType.NURSERY, femalePlotNumbers))
 				.thenReturn(this.createListDataProject(femalePlotNumbers, CrossingTemplateParserTest.FEMALE_NURSERY));
-		Mockito.when(this.fieldbookService.getListDataProjectByStudy(2, GermplasmListType.NURSERY, malePlotNumbers))
+		Mockito.when(this.fieldbookService.getListDataProjectByStudyTypeAndPlotNos(2, GermplasmListType.NURSERY, malePlotNumbers))
 				.thenReturn(this.createListDataProject(new HashSet<>(Arrays.asList(1, 2, 3, 4)), CrossingTemplateParserTest.MALE_NURSERY1));
 
 		try {

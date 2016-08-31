@@ -374,8 +374,8 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		// 2. Lookup Listdataproject of parent nursery and given plot #s
 		final StudyType studyType = this.studyDataManager.getStudyType(studyId);
-		Map<Integer, ListDataProject> plotToListDataProjectMap = this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId,
-				CrossingTemplateParser.STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType), plotNos);
+		Map<Integer, ListDataProject> plotToListDataProjectMap = this.fieldbookMiddlewareService.getListDataProjectByStudyTypeAndPlotNos(
+				studyId, CrossingTemplateParser.STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType), plotNos);
 		
 		return plotToListDataProjectMap;
 	}

@@ -13,12 +13,10 @@
 				$scope.updateOccurred = false;
 				$scope.addVariable = true;
 				
-				// First environment is selected by default. At least one environment should always be there for any study.
-				$scope.selectedEnvironment = { instanceNumber: 1 };
-				
 				$scope.initEnvironmentList = function() {
 					$http.get('/Fieldbook/Common/addOrRemoveTraits/instanceMetadata/' + $('#studyId').val()).success(function(data) {
 						$scope.environmentsList = data;
+						$scope.selectedEnvironment = data[0];
 					});
 				}
 				

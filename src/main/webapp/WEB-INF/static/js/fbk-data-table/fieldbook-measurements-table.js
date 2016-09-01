@@ -1,6 +1,19 @@
 var getCurrentEnvironmentNumber = function () {
 	var selEnv = $("#fbk-measurements-controller-div").scope().selectedEnvironment;
-	return selEnv ? selEnv.instanceNumber : 1;
+	
+	if (!selEnv) {
+		var envList;
+		$.ajax({
+			url: '/Fieldbook/Common/addOrRemoveTraits/instanceMetadata/' + $('#studyId').val(),
+			async: false,
+			success: function(data) {
+				envList = data;
+			}
+		});
+		return envList[0].instanceDbId;
+	} else {
+		return selEnv.instanceDbId;
+	}
 };
 
 BMS.Fieldbook.MeasurementsDataTable = (function($) {
@@ -192,7 +205,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			processing: true,
 			deferRender: true,
 			ajax: {
-				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + getCurrentEnvironmentNumber(),
+				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
 				type: 'GET',
 				cache: false,
 				data: function (d) {
@@ -364,5 +377,6 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 function reloadMeasurementDataTable() {
 	'use strict';
 	var studyId = $('#studyId').val();
-	$('#measurement-table').DataTable().ajax.url('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + getCurrentEnvironmentNumber()).load();
+	var environmentId = getCurrentEnvironmentNumber();
+	$('#measurement-table').DataTable().ajax.url('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId).load();
 }

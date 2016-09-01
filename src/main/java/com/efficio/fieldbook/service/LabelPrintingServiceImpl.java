@@ -550,7 +550,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	}
 
-	private String populateStockListFromGermplasmDescriptorVariables(final Integer termID, final InventoryDetails row) {
+	String populateStockListFromGermplasmDescriptorVariables(final Integer termID, final InventoryDetails row) {
 		String value = null;
 		if (termID.equals(TermId.GID.getId())) {
 			value = this.getValueForStockList(row.getGid());
@@ -559,7 +559,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		} else if (termID.equals(TermId.ENTRY_NO.getId())) {
 			value = this.getValueForStockList(row.getEntryId());
 		} else if (termID.equals(TermId.CROSS.getId())) {
-			value = this.getValueForStockList(row.getCross());
+			value = this.getValueForStockList(row.getParentage());
 		} else if (termID.equals(TermId.SEED_SOURCE.getId())) {
 			value = this.getValueForStockList(row.getSource());
 		} else if (termID.equals(TermId.REP_NO.getId())) {

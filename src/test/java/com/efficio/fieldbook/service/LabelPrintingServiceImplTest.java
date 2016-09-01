@@ -506,6 +506,49 @@ public class LabelPrintingServiceImplTest {
 
 	}
 
+	@Test
+	public void testPopulateStockListFromGermplasmDescriptorVariables() {
+
+		int gid = 3;
+		int trialInstanceNumber = 1;
+		int repNo = 33;
+		int entryNo = 4;
+		int plotNo = 5;
+
+		String desigName = "DESIGN NAME";
+		String parentage = "AAA/BBB";
+		String seedSource = "SEED SOURCE";
+
+		final InventoryDetails inventoryDetails = new InventoryDetails();
+
+		inventoryDetails.setGid(gid);
+		inventoryDetails.setInstanceNumber(trialInstanceNumber);
+		inventoryDetails.setEntryId(entryNo);
+		inventoryDetails.setReplicationNumber(repNo);
+		inventoryDetails.setGermplasmName(desigName);
+		inventoryDetails.setParentage(parentage);
+		inventoryDetails.setSource(seedSource);
+		inventoryDetails.setPlotNumber(plotNo);
+
+		Assert.assertEquals(String.valueOf(gid),
+				labelPrintingServiceImpl.populateStockListFromGermplasmDescriptorVariables(TermId.GID.getId(), inventoryDetails));
+		Assert.assertEquals(desigName,
+				labelPrintingServiceImpl.populateStockListFromGermplasmDescriptorVariables(TermId.DESIG.getId(), inventoryDetails));
+		Assert.assertEquals(String.valueOf(entryNo),
+				labelPrintingServiceImpl.populateStockListFromGermplasmDescriptorVariables(TermId.ENTRY_NO.getId(), inventoryDetails));
+		Assert.assertEquals(parentage,
+				labelPrintingServiceImpl.populateStockListFromGermplasmDescriptorVariables(TermId.CROSS.getId(), inventoryDetails));
+		Assert.assertEquals(seedSource,
+				labelPrintingServiceImpl.populateStockListFromGermplasmDescriptorVariables(TermId.SEED_SOURCE.getId(), inventoryDetails));
+		Assert.assertEquals(String.valueOf(repNo),
+				labelPrintingServiceImpl.populateStockListFromGermplasmDescriptorVariables(TermId.REP_NO.getId(), inventoryDetails));
+		Assert.assertEquals(String.valueOf(plotNo),
+				labelPrintingServiceImpl.populateStockListFromGermplasmDescriptorVariables(TermId.PLOT_NO.getId(), inventoryDetails));
+		Assert.assertEquals(String.valueOf(trialInstanceNumber), labelPrintingServiceImpl
+				.populateStockListFromGermplasmDescriptorVariables(TermId.TRIAL_INSTANCE_FACTOR.getId(), inventoryDetails));
+
+	}
+
 	/**
 	 * Bulk the first two entries to the 3rd entry (for testing purposes)
 	 * 

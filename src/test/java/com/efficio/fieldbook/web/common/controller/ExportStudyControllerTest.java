@@ -321,7 +321,6 @@ public class ExportStudyControllerTest {
 		exportStudyController.setUserSelection(userSelection);
 		PaginationListSelection paginationListSelection = Mockito.mock(PaginationListSelection.class);
 		exportStudyController.setPaginationListSelection(paginationListSelection);
-		Mockito.doReturn(null).when(paginationListSelection).getReviewFullWorkbook("0");
 		userSelection.getWorkbook().getStudyDetails().setStudyName(generatedFilename);
 
 		Mockito.when(this.ontologyService.getProperty(Matchers.anyString())).thenReturn(this.getProperty());

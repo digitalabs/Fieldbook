@@ -339,49 +339,49 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		LOG.info("Export Nursery/Trial : doExport : getWorbook : start");
 
 		final UserSelection userSelection = this.getUserSelection();
+
 		final String studyId = this.getStudyId(data);
 		if (!"0".equalsIgnoreCase(studyId)) {
-			// we need to get the workbook and set it in the userSelectionObject
-			Workbook workbookSession = null;
-
-			if (this.getPaginationListSelection().getReviewFullWorkbook(studyId) == null) {
-				if (isTrial) {
-					workbookSession = this.fieldbookMiddlewareService.getTrialDataSet(Integer.valueOf(studyId));
-				} else {
-					workbookSession = this.fieldbookMiddlewareService.getNurseryDataSet(Integer.valueOf(studyId));
-				}
-				SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbookSession.getObservations(), false,
-						this.ontologyService, contextUtil.getCurrentProgramUUID());
-
-				this.getPaginationListSelection().addReviewFullWorkbook(studyId, workbookSession);
+			// If studyId is not 0 it means the export is being done form one of the multiple trials that may be open on "View Summary" page
+			// tabs. View summary page does not load entire workbook so we load here.
+			Workbook workbook = null;
+			if (isTrial) {
+				workbook = this.fieldbookMiddlewareService.getTrialDataSet(Integer.valueOf(studyId));
 			} else {
-				workbookSession = this.getPaginationListSelection().getReviewFullWorkbook(studyId);
+				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(Integer.valueOf(studyId));
 			}
-
-			userSelection.setWorkbook(workbookSession);
+			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
+					this.ontologyService, contextUtil.getCurrentProgramUUID());
+			userSelection.setWorkbook(workbook);
+		} else {
+			// Otherwise we are exporting from the main "Open Trial" page. Use the one in user session.
+			// workbook.observations() collection is no longer pre-loaded into user session when trial is opened. Load now as we need it to
+			// keep export functionality working.
+			this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());
 		}
 
 		LOG.info("Export Nursery/Trial : doExport : getWorbook : end");
 		LOG.info("Export Nursery/Trial : doExport : processWorbook : start");
 
-
 		final Map<String, Object> results = new HashMap<>();
-		try {
-			
-			final String breedingMethodPropertyName = this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();		
-			
-			excelExportStudyService.setBreeedingMethodPropertyName(breedingMethodPropertyName);
-			
-			final Workbook workbook = userSelection.getWorkbook();
 
-			SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), true,
+		try {
+
+			final String breedingMethodPropertyName =
+					this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
+			excelExportStudyService.setBreeedingMethodPropertyName(breedingMethodPropertyName);
+			SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, userSelection.getWorkbook().getObservations(),
+					true,
 					this.ontologyService, contextUtil.getCurrentProgramUUID());
 
-			exportDataCollectionService.reorderWorkbook(workbook);
+			exportDataCollectionService.reorderWorkbook(userSelection.getWorkbook());
 
 			String filename = FileUtils.sanitizeFileName(userSelection.getEscapedStudyName());
 			String outputFilename = null;
-			FieldbookUtil.setColumnOrderingOnWorkbook(workbook, data.get("columnOrders"));
+			FieldbookUtil.setColumnOrderingOnWorkbook(userSelection.getWorkbook(), data.get("columnOrders"));
+
+
+
 			if (AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType) {
 				filename = filename + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
 				outputFilename = this.fielddroidExportStudyService.export(userSelection.getWorkbook(), filename, instances);
@@ -399,7 +399,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 					filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
 					response.setContentType("application/zip");
 				} else {
-					filename = this.getOutputFileName(workbook.isNursery(), outputFilename, filename);
+					filename = this.getOutputFileName(userSelection.getWorkbook().isNursery(), outputFilename, filename);
 					response.setContentType(ExportStudyController.APPLICATION_VND_MS_EXCEL);
 				}
 			} else if (AppConstants.EXPORT_DATAKAPTURE.getInt() == exportType) {
@@ -427,7 +427,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 					filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
 					response.setContentType("application/zip");
 				} else {
-					filename = this.getOutputFileName(workbook.isNursery(), outputFilename, filename);
+					filename = this.getOutputFileName(userSelection.getWorkbook().isNursery(), outputFilename, filename);
 					response.setContentType(ExportStudyController.CSV_CONTENT_TYPE);
 				}
 			}
@@ -437,7 +437,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			results.put(FILENAME, filename);
 			results.put(CONTENT_TYPE, response.getContentType());
 
-			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), true,
+			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, userSelection.getWorkbook().getObservations(), true,
 					this.ontologyService, contextUtil.getCurrentProgramUUID());
 			
 			LOG.info("Export Nursery/Trial : doExport : processWorbook : end");
@@ -448,10 +448,12 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			LOG.error("Error exporting study: " + e.getMessage(), e);
 			results.put(IS_SUCCESS, false);
 			results.put(ERROR_MESSAGE, this.messageSource.getMessage("export.study.error", null, Locale.ENGLISH));
+		} finally {
+			// Important to clear out the observations collection from user session, once we are done with it to keep heap memory under
+			// control. For large trials/nurseries the observations collection can be huge.
+			userSelection.getWorkbook().getObservations().clear();
 		}
-
 		LOG.info("Exiting Export Nursery/Trial : doExport");
-
 		return super.convertObjectToJson(results);
 	}
 

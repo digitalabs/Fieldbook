@@ -350,8 +350,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			} else {
 				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(Integer.valueOf(studyId));
 			}
-			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-					this.ontologyService, contextUtil.getCurrentProgramUUID());
 			userSelection.setWorkbook(workbook);
 		} else {
 			// Otherwise we are exporting from the main "Open Trial" page. Use the one in user session.
@@ -379,8 +377,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			String filename = FileUtils.sanitizeFileName(userSelection.getEscapedStudyName());
 			String outputFilename = null;
 			FieldbookUtil.setColumnOrderingOnWorkbook(userSelection.getWorkbook(), data.get("columnOrders"));
-
-
 
 			if (AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType) {
 				filename = filename + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();

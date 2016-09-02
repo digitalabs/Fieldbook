@@ -9,15 +9,18 @@
 	<span class="btn btn-link fbk-toggle-categorical-display" th:text="#{measurements.show.categorical.description}">Show Categorical Description</span>
 </div>
 
-<div id="mdt-environment-list-label" class="dataTables_info fbk-std-padding-right" th:text="#{measurement.environment.list.label}"></div>
+<div id="mdt-environment-list-panel">
+	<div id="mdt-environment-list-label" class="dataTables_info fbk-std-padding-right"
+		 th:text="#{measurement.environment.list.label}"></div>
 
-<div id="mdt-environment-list" class="fbk-float-left">			
-    <select id="measurements-environment-number" name="measurements-environment-number" 
-		ng-model="selectedEnvironment"
-		class="input-sm form-control fbk-std-padding-right"
-		onchange="reloadMeasurementDataTable()"
-      	ng-options="(env.instanceNumber + ' - ' + (env.locationName || env.locationAbbreviation || env.instanceNumber)) for env in environmentsList track by env.instanceNumber">
-    </select>
+	<div id="mdt-environment-list" class="fbk-float-left">
+		<select id="measurements-environment-number" name="measurements-environment-number"
+				ng-model="selectedEnvironment"
+				class="input-sm form-control fbk-std-padding-right inline-select"
+				onchange="reloadMeasurementDataTable()"
+				ng-options="(env.instanceNumber + ' - ' + (env.locationName || env.locationAbbreviation || env.instanceNumber)) for env in environmentsList track by env.instanceNumber">
+		</select>
+	</div>
 </div>
 
 <table th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >

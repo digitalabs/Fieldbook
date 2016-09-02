@@ -286,9 +286,11 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					$('#review-out-of-bounds-data-list').hide();
 				}
 			},
-			dom: '<"mdt-header"lir<"mdt-filtering dataTables_info"B>>tp',
+			dom: '<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp',
+			//TODO localise messages
 			language: {
-                 processing: '<span class="throbber throbber-2x"></span>'
+                 processing: '<span class="throbber throbber-2x"></span>',
+                 lengthMenu: 'Records per page: _MENU_'
              },
 			// For column visibility
 			buttons: [
@@ -342,8 +344,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 		});
 		$('#measurementsDiv .mdt-columns').detach().insertAfter('.mdt-filtering');
-		$('.dataTables_length').prepend($('#mdt-environment-list').detach());
-		$('.dataTables_length').before($('#mdt-environment-list-label').detach());
+		$('.mdt-header').prepend($('#mdt-environment-list-panel').detach());
+		$('[name="measurement-table_length"]').addClass('inline-select mdt-table-length-selector');
 		$('.measurement-dropdown-menu a').click(function(e) {
 			var column;
 

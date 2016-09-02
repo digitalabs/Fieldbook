@@ -1187,11 +1187,6 @@ a.fbk-edit-experiment{
 .mdt-filtering input.form-control{
 	float: right;
 }
-.mdt-header .dataTables_info {
-    padding: 0;
-    position: relative;
-	top: 5px;
-}
 
 .mdt-header .mdt-filtering-label,
 .mdt-header .dataTables_info {
@@ -1204,12 +1199,6 @@ a.fbk-edit-experiment{
 .dataTables_wrapper .dataTables_length,
 .mdt-header .mdt-filtering-label {
     margin-right: 15px;
-}
-
-.mdt-header .dataTables_length,
-.dataTables_wrapper .dataTables_length {
-	position: relative;
-	top: 5px;
 }
 
 .mdt-header .dataTables_filter {
@@ -2058,8 +2047,31 @@ input.select-all-margin{
 	padding-right: 10px;
 }
 
+/* Styles for Measurements data table */
+
 #mdt-environment-list-label.dataTables_info.fbk-std-padding-right {
 	padding-right: 10px;
+}
+
+.inline-select {
+	width: auto !important;
+}
+.inline-select.select2-container.form-control {
+	display: inline-block;
+	width: auto !important;
+}
+
+.mdt-table-length-selector.inline-select.select2-container.form-control {
+	margin-left: 10px;
+    top: -9px;
+}
+
+.mdt-length {
+	padding-left: 10px;
+}
+
+#measurement-table_wrapper > div.mdt-header > div.mdt-length {
+	padding-top: 7px;
 }
 
 

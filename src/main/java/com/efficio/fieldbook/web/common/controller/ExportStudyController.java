@@ -23,7 +23,6 @@ import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.reports.service.JasperReportService;
 import org.generationcp.commons.service.GermplasmExportService;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -150,9 +149,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@Resource
 	private JasperReportService jasperReportService;
 	
-	@Resource
-	private ContextUtil contextUtil;
-
 	@Override
 	public String getContentName() {
 		return null;
@@ -684,10 +680,4 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	public void setCrossExpansionProperties(final CrossExpansionProperties crossExpansionProperties) {
 		this.crossExpansionProperties = crossExpansionProperties;
 	}
-
-	@Override
-	public void setContextUtil(final ContextUtil contextUtil) {
-		this.contextUtil = contextUtil;
-	}
-
 }

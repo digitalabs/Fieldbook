@@ -365,12 +365,11 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		try {
 
-			final String breedingMethodPropertyName =
-					this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
-			excelExportStudyService.setBreeedingMethodPropertyName(breedingMethodPropertyName);
+			final String breedingMethodPropertyName = this.ontologyService.getTermById(TermId.BREEDING_METHOD_PROP.getId()).getName();
+			this.excelExportStudyService.setBreeedingMethodPropertyName(breedingMethodPropertyName);
+
 			SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, userSelection.getWorkbook().getObservations(),
-					true,
-					this.ontologyService, contextUtil.getCurrentProgramUUID());
+					true, this.ontologyService, contextUtil.getCurrentProgramUUID());
 
 			exportDataCollectionService.reorderWorkbook(userSelection.getWorkbook());
 

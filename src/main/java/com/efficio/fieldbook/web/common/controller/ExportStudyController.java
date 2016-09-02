@@ -343,30 +343,26 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		LOG.info("Export Nursery/Trial : doExport : getWorbook : start");
 
 		final UserSelection userSelection = this.getUserSelection();
-		try {
-			final String studyId = this.getStudyId(data);
-			if (!"0".equalsIgnoreCase(studyId)) {
-				// we need to get the workbook and set it in the userSelectionObject
-				Workbook workbookSession = null;
+		final String studyId = this.getStudyId(data);
+		if (!"0".equalsIgnoreCase(studyId)) {
+			// we need to get the workbook and set it in the userSelectionObject
+			Workbook workbookSession = null;
 
-				if (this.getPaginationListSelection().getReviewFullWorkbook(studyId) == null) {
-					if (isTrial) {
-						workbookSession = this.fieldbookMiddlewareService.getTrialDataSet(Integer.valueOf(studyId));
-					} else {
-						workbookSession = this.fieldbookMiddlewareService.getNurseryDataSet(Integer.valueOf(studyId));
-					}
-					SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbookSession.getObservations(), false,
-							this.ontologyService, contextUtil.getCurrentProgramUUID());
-
-					this.getPaginationListSelection().addReviewFullWorkbook(studyId, workbookSession);
+			if (this.getPaginationListSelection().getReviewFullWorkbook(studyId) == null) {
+				if (isTrial) {
+					workbookSession = this.fieldbookMiddlewareService.getTrialDataSet(Integer.valueOf(studyId));
 				} else {
-					workbookSession = this.getPaginationListSelection().getReviewFullWorkbook(studyId);
+					workbookSession = this.fieldbookMiddlewareService.getNurseryDataSet(Integer.valueOf(studyId));
 				}
+				SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbookSession.getObservations(), false,
+						this.ontologyService, contextUtil.getCurrentProgramUUID());
 
-				userSelection.setWorkbook(workbookSession);
+				this.getPaginationListSelection().addReviewFullWorkbook(studyId, workbookSession);
+			} else {
+				workbookSession = this.getPaginationListSelection().getReviewFullWorkbook(studyId);
 			}
-		} catch (final NumberFormatException e) {
-			ExportStudyController.LOG.error(e.getMessage(), e);
+
+			userSelection.setWorkbook(workbookSession);
 		}
 
 		LOG.info("Export Nursery/Trial : doExport : getWorbook : end");

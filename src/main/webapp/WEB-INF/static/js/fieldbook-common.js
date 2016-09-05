@@ -3568,34 +3568,11 @@ function showSelectedTab(selectedTabName) {
 		if (tabs[i].id === selectedTabName) {
 			$('#' + tabs[i].id + '-li').addClass('active');
 			$('#' + tabs[i].id).show();
-			if (selectedTabName === 'ontology-usage-tab' && parseInt($('#ontology-usage-tab').data('usageloaded')) === 0) {
-				getUsageDetails();
-				$('#ontology-usage-tab').data('usageloaded', '1');
-			}
 		} else {
 			$('#' + tabs[i].id + '-li').removeClass('active');
 			$('#' + tabs[i].id).hide();
 		}
 	}
-}
-
-function getUsageDetails() {
-	var id = $('#ontology-tabs').data('selectedvariableid');
-	var variableTypeId = $('#ontology-tabs').data('selectedvariabletypeid');
-	$('#ontology-usage-tab').html('');
-	$.ajax({
-		url: '/Fieldbook/manageSettings/settings/details/usage/' + variableTypeId + '/' + id,
-		type: 'GET',
-		async: true,
-		success: function(html) {
-			$('#ontology-usage-tab').html(html);
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			console.log('The following error occured: ' + textStatus, errorThrown);
-		},
-		complete: function() {
-		}
-	});
 }
 
 function showSelectedTabNursery(selectedTabName) {

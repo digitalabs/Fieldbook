@@ -35,7 +35,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -125,63 +124,6 @@ public class OntologyManagerControllerTest extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testSaveNewVariableConfirmPreselectVariableIdIsMaintainedIfFromPopup() throws MiddlewareException {
-		int variableId = 10180;
-		String dataTypeId = "1";
-
-		Mockito.when(this.term.getName()).thenReturn("Categorical");
-		Mockito.when(this.mockOntologyService.getStandardVariable(10180,PROGRAM_UUID)).thenReturn(Mockito.mock(StandardVariable.class));
-		Mockito.when(this.mockOntologyService.getTermById(Integer.parseInt(dataTypeId))).thenReturn(this.term);
-
-		BindingResult result = Mockito.mock(BindingResult.class);
-		Model model = new ExtendedModelMap();
-		this.form.setIsDelete(0);
-		this.form.setFromPopup("1");
-		this.form.setPreselectVariableId(variableId);
-		this.form.setVariableId(variableId);
-		this.form.setDataTypeId(dataTypeId);
-		this.form.setProperty("1");
-		this.form.setMethod("1");
-		this.form.setScale("1");
-		this.form.setDataType("1");
-		this.form.setRole("1");
-
-		this.ontologyManagerController.setOntologyService(this.mockOntologyService);
-		this.ontologyManagerController.saveNewVariable(this.form, result, model);
-		Assert.assertEquals("Should return in model the same preselect variable id that was set in the form when it is a popup",
-				variableId, model.asMap().get("preselectVariableId"));
-	}
-
-	@Test
-	public void testSaveNewVariableConfirmPreselectVariableIdIsIsNotMaintainedIfNotFromPopup() throws MiddlewareException {
-		int variableId = 10180;
-		String dataTypeId = "1";
-
-		Mockito.when(this.term.getName()).thenReturn("Categorical");
-		Mockito.when(this.mockOntologyService.getStandardVariable(10180,PROGRAM_UUID)).thenReturn(Mockito.mock(StandardVariable.class));
-		Mockito.when(this.mockOntologyService.getTermById(Integer.parseInt(dataTypeId))).thenReturn(this.term);
-
-		BindingResult result = Mockito.mock(BindingResult.class);
-		Model model = new ExtendedModelMap();
-		this.form.setIsDelete(0);
-		this.form.setFromPopup("0");
-		this.form.setPreselectVariableId(variableId);
-		this.form.setVariableId(variableId);
-		this.form.setDataTypeId(dataTypeId);
-		this.form.setProperty("1");
-		this.form.setMethod("1");
-		this.form.setScale("1");
-		this.form.setDataType("1");
-		this.form.setRole("1");
-
-		this.ontologyManagerController.setOntologyService(this.mockOntologyService);
-		this.ontologyManagerController.saveNewVariable(this.form, result, model);
-
-		Assert.assertEquals("Should return in model the 0 as preselect variable id when it is not from a popup", 0,
-				model.asMap().get("preselectVariableId"));
-	}
-
-	@Test
 	public void testValidateNewVariableNameExisting() throws MiddlewareQueryException, Exception {
 
 		Term termWithValue =
@@ -249,15 +191,6 @@ public class OntologyManagerControllerTest extends AbstractBaseIntegrationTest {
 		}
 
 		Assert.assertEquals("Not expecting an error but encountered an error instead.", false, hasError);
-	}
-
-	@Test
-	public void testValidateDeleteIfVariableIdIsPositive() throws MiddlewareQueryException {
-		BindingResult result = Mockito.mock(BindingResult.class);
-		this.form.setVariableId(1);
-		this.ontologyManagerController.setOntologyService(this.mockOntologyService);
-		this.ontologyManagerController.validateDelete(this.form, result);
-		Mockito.verify(this.mockOntologyService, Mockito.times(1)).countProjectsByVariable(1);
 	}
 
 }

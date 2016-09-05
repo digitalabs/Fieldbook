@@ -10,7 +10,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.ListUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -63,7 +62,6 @@ public class ManageSettingsController extends SettingsController {
 	public static final String URL = "/manageSettings";
 
 	public static final String DETAILS_TEMPLATE = "/OntologyBrowser/detailTab";
-	public static final String USAGE_DETAILS_TEMPLATE = "/OntologyBrowser/usageTab";
 
 	/**
 	 * The Constant LOG.
@@ -195,27 +193,6 @@ public class ManageSettingsController extends SettingsController {
 			ManageSettingsController.LOG.error(e.getMessage(), e);
 		}
 		return super.showAjaxPage(model, ManageSettingsController.DETAILS_TEMPLATE);
-	}
-
-	@RequestMapping(value = "/settings/details/usage/{variableTypeId}/{variableId}", method = RequestMethod.GET)
-	public String getOntologyUsageDetails(@PathVariable Integer variableId, @PathVariable Integer variableTypeId,
-			@ModelAttribute("variableDetails") OntologyDetailsForm form, Model model) {
-		try {
-			Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, true, false);
-
-			if (variable != null && variable.getName() != null && !"".equals(variable.getName())) {
-				form.setProjectCount(ontologyService.countProjectsByVariable(variableId));
-				form.setCurrentVariableType(VariableType.getById(variableTypeId));
-				if (!Objects.equals(variableTypeId, null)) {
-					form.setObservationCount(ontologyService.countExperimentsByVariable(variableId, variableTypeId));
-				}
-
-				form.setVariable(variable);
-			}
-		} catch (MiddlewareException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		return super.showAjaxPage(model, USAGE_DETAILS_TEMPLATE);
 	}
 
 	private List<Integer> filterOutVariablesByVariableType(Set<VariableType> selectedVariableTypes, boolean isTrial) {

@@ -45,6 +45,14 @@ if (typeof StockIDFunctions === 'undefined') {
 		},
 
 		saveStockList: function() {
+			'use strict';
+			var breederIdentifier = $('#breederIdentifierField').val().trim();
+			
+			if(!StockIDFunctions.validatePrefix(breederIdentifier)){
+				showErrorMessage('', stockIdGenerationPrefixError);
+				return;
+			}
+			
 			var stockGenerationSettings = {
 				// use the default identifier of SID when user provides no value
 				breederIdentifier: $('#breederIdentifierField').val().trim() === '' ? 'SID' : $('#breederIdentifierField').val().trim(),
@@ -397,16 +405,18 @@ if (typeof StockIDFunctions === 'undefined') {
 			var entryIds = StockIDFunctions.getSelectedInventoryEntryIds();
 			$('#entryIdList').val(entryIds);
 			if ($('#showFavoriteLocationInventory').is(':checked')) {
-				if ($('#showFavoriteLocationInventory').is(':checked')) {
+				if ($('#showAllLocationInventory').is(':checked')) {
 					if ($('#inventoryLocationIdFavorite').select2('data')) {
 						$('#inventoryLocationId').val($('#inventoryLocationIdFavorite').select2('data').id);
-					} else if ($('#inventoryLocationIdFavoriteSeedStorage').select2('data')) {
-						$('#inventoryLocationId').val($('#inventoryLocationIdFavoriteSeedStorage').select2('data').id);
 					}
+				} else if ($('#inventoryLocationIdFavoriteSeedStorage').select2('data')) {
+					$('#inventoryLocationId').val($('#inventoryLocationIdFavoriteSeedStorage').select2('data').id);
 				}
 			} else {
-				if ($('#inventoryLocationIdAll').select2('data')) {
-					$('#inventoryLocationId').val($('#inventoryLocationIdAll').select2('data').id);
+				if ($('#showAllLocationInventory').is(':checked')) {
+					if ($('#inventoryLocationIdAll').select2('data')) {
+						$('#inventoryLocationId').val($('#inventoryLocationIdAll').select2('data').id);
+					}
 				} else if ($('#inventoryLocationIdSeedStorage').select2('data')) {
 					$('#inventoryLocationId').val($('#inventoryLocationIdSeedStorage').select2('data').id);
 				}

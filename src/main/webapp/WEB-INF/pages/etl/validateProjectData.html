@@ -1,0 +1,119 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorator="etl/base-template">
+  <head>
+    <title th:inline="text">[[#{page.title.validate.project.data}]]</title>
+
+      <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+      <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+      <!--[if lt IE 9]>
+      <script th:src="@{/static/js/html5shiv.js}" type="text/javascript"></script>
+      <script th:src="@{/static/js/respond.min.js}" type="text/javascript"></script>
+      <![endif]-->
+
+      <link rel="stylesheet" type="text/css" th:href="@{/static/css/bootstrap-fileupload.css}"/>
+
+
+    </head>
+    <body>
+
+  <section layout:fragment="content">
+      <div class="content-header">
+          <h2 th:utext="#{page.title.validate.project.data}">
+              [[#{page.title.validate.project.data}]]
+          </h2>
+          <div th:utext="#{project.data.error}"></div>
+
+      </div>
+
+      <div id="page-message">
+      
+      	  <div class="alert alert-danger" th:if="${hasErrors} " th:each="error : ${errors}" th:utext="${error}"></div>	
+          <form th:object="${uploadForm}" th:remove="tag">
+              <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+          </form>
+      </div>
+
+      <form role="form-horizontal" onsubmit="return do_validation()" class="form-horizontal" action="#" th:action="@{/etl/workbook/importObservations/upload}" method="post" th:object="${uploadForm}" enctype="multipart/form-data">
+
+      <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
+          <label for="fileupload" class="col-md-2 control-label" th:text="#{file.upload.upload.label}">Upload :</label>
+          <div class="col-lg-6">
+              <div class="fileupload fileupload-new" data-provides="fileupload">
+                  <div class="input-group">
+                      <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i>
+                          <span class="fileupload-preview"></span>
+                      </div>
+                      <div class="input-group-btn">
+                          <a class="btn btn-primary btn-file">
+                              <span class="fileupload-new" th:text="#{file.upload.select.label}">Select file</span>
+                              <span class="fileupload-exists" th:text="#{file.upload.change.label}">Change</span>
+                              <input id="fileupload" th:field="*{file}" type="file" class="file-input"/></a>
+                          <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload" th:text="#{file.upload.remove.label}">Remove</a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+
+      <div class="form-group">
+          <div class="col-lg-10 col-lg-offset-2">
+              <input type="submit" th:value="#{form.submit.text}" class="btn btn-primary btn-sm"/>
+          </div>
+      </div>
+
+      </form>
+
+  </section>
+
+  <!-- Scripts location, note that the div tag will be remove after merging to decorator -->
+<div layout:fragment="page-script">
+
+<script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+		//<![CDATA[
+			
+		           
+		$(function (){
+			$($("[name='importType']")[0]).attr('checked', 'checked');
+		});          
+		
+		var userSubmittingForm = false;
+		function do_validation() {
+			if (userSubmittingForm) {
+                return false;
+            }
+			
+			// moved setting of flag to here so as to prevent user from re-submitting the form regardless if submission is error condition or not.
+            Spinner.play();
+			
+			if ($('#fileupload').val() == "") {
+				userSubmittingForm = true;
+				
+				var message = /*[[#{error.file.no.file.selected}]]*/;
+				
+				$("#page-message").html(
+		    			"<div class='alert alert-danger'>"+ message +"</div>"
+		    		);
+				
+				$('div.fileupload').parent().parent().addClass('has-error');
+				
+				userSubmittingForm = false;
+				Spinner.stop();
+				return false;
+			}
+			
+			return true;
+		}
+			
+		//]]>
+</script>
+
+</div>
+
+</body>
+
+</html>

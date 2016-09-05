@@ -183,7 +183,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			study = this.fieldbookMiddlewareService.getStudy(id);
 			final List<Integer> ids = new ArrayList<>();
 			ids.add(id);
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties, true);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
 
 			for (final FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
 				fieldMapInfo = fieldMapInfoDetail;
@@ -233,7 +233,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			study = this.fieldbookMiddlewareService.getStudy(id);
 			final List<Integer> ids = new ArrayList<>();
 			ids.add(id);
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties, true);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
 			for (final FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
 				fieldMapInfo = fieldMapInfoDetail;
 				hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
@@ -287,6 +287,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setThirdBarcodeField("");
 		this.userLabelPrinting.setFieldMapsExisting(true);
 
+		this.userLabelPrinting.setSettingsName("");
+
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, this.userFieldmap.isTrial()));
 		form.setUserLabelPrinting(this.userLabelPrinting);
 
@@ -315,9 +317,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		List<FieldMapInfo> fieldMapInfoList;
 
 		if (Objects.equals(study.getType(), StudyType.T)) {
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties, true);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
 		} else {
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties, true);
+			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
 		}
 
 		final List<InventoryDetails> inventoryDetails = this.labelPrintingService.getInventoryDetails(stockList.getId());
@@ -403,7 +405,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final String absoluteLocation = this.userLabelPrinting.getFilenameDLLocation();
 
 		return FieldbookUtil.createResponseEntityForFileDownload(absoluteLocation, filename);
-
 	}
 
 	/**
@@ -896,4 +897,11 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.reportService = reportService;
 	}
 
+	void setUserFieldMap(final UserFieldmap userFieldmap) {
+		this.userFieldmap = userFieldmap;
+	}
+
+	UserLabelPrinting getUserLabelPrinting() {
+		return this.userLabelPrinting;
+	}
 }

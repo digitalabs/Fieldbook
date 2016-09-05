@@ -280,34 +280,47 @@
 
 					$scope.isLocation = parseInt(LOCATION_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
-                    if($scope.isLocation){
-                        //Setting selected location is nothing is selected
-                        selectedLocation('', $scope.variableDefinition.possibleValues);
-                        //Setting selected location for selected value
-                        angular.forEach($scope.variableDefinition.possibleValues, function(val, index){
-                            if(val.id == $scope.valuecontainer[$scope.targetkey]){
-                                selectedLocation(val , $scope.variableDefinition.possibleValues);
-                            }
-                        });
-                    }
-
                     $scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
 						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
 					$scope.localData = {};
-					$scope.localData.useFavorites = false;
-
-					$scope.updateDropdownValues = function() {
-						$scope.dropdownValues = (!$scope.localData.useFavorites) ? $scope.variableDefinition.possibleValues : $scope.variableDefinition.possibleValuesFavorite;
+					var showAll = $scope.valuecontainer[$scope.targetkey];
+					$scope.localData.useFavorites = !showAll;
+					$scope.lookupLocation =  showAll ? 2 : 1;
+					
+					$scope.updateDropdownValuesFavorites = function() {
+						if ($scope.localData.useFavorites) {
+							if ($scope.lookupLocation == 1) {
+								$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
+							} else {
+								$scope.dropdownValues = $scope.variableDefinition.allFavoriteValues;
+							}
+						} else {
+							if ($scope.lookupLocation == 1) {
+								$scope.dropdownValues = $scope.variableDefinition.possibleValues;
+							} else {
+								$scope.dropdownValues = $scope.variableDefinition.allValues;
+							}
+						}
+					};
+			
+					$scope.updateDropdownValuesBreedingLocation = function() { // Change state for breeding
+						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.possibleValuesFavorite : $scope.variableDefinition.possibleValues;
+						$scope.lookupLocation = 1;
+					};
+					
+					$scope.updateDropdownValuesAllLocation = function() { // Change state for all locations radio
+						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.allFavoriteValues : $scope.variableDefinition.allValues;
+						$scope.lookupLocation = 2;
 					};
 
 					// if the value of the dropdown from existing data matches from the list of favorites, we set the checkbox as true
 					var useFavorites = function(currentVal) {
 
-						if (!$scope.variableDefinition.existingData && null !== $scope.variableDefinition.possibleValuesFavorite) {
+						if (currentVal) {
+							return false;
+						} else if ($scope.variableDefinition.possibleValuesFavorite) {
 							return $scope.variableDefinition.possibleValuesFavorite.length > 0;
-						} else if (currentVal !== null && !isNaN(currentVal) && null !== $scope.variableDefinition.possibleValuesFavorite) {
-							return $scope.localData.useFavorites || _.where($scope.variableDefinition.possibleValuesFavorite, {'id':parseInt(currentVal, 10)}).length > 0;
 						}
 
 						return $scope.localData.useFavorites;
@@ -324,10 +337,12 @@
 
 						$scope.localData.useFavorites = useFavorites(currentVal);
 
-						$scope.updateDropdownValues();
+						$scope.updateDropdownValuesFavorites();
 
 						$scope.computeMinimumSearchResults = function() {
-							return ($scope.dropdownValues.length > 0) ? 20 : -1;
+							if($scope.dropdownValues != null)
+								return ($scope.dropdownValues.length > 0) ? 20 : -1;
+							return -1;
 						};
 
 						$scope.dropdownOptions = {
@@ -371,6 +386,9 @@
 
 									if (value.description === $scope.valuecontainer[$scope.targetkey] ||
 										value.id === idNumber) {
+										if ($scope.isLocation){
+											selectedLocation(value, $scope.dropdownValues);
+										}
 										callback(value);
 										return false;
 									}
@@ -390,23 +408,38 @@
 
 						$scope.updateLocationValues = function() {
 							if (!$scope.variableDefinition.locationUpdated) {
-								$http.get('/Fieldbook/locations/getLocations').then(function(returnVal) {
-									if (returnVal.data.success === '1') {
-										$scope.variableDefinition.locationUpdated = true;
-										// clear and copy of array is performed so as to preserve previous reference
-										// and have changes applied to all components with a copy of the previous reference
-										$scope.clearArray($scope.variableDefinition.possibleValues);
-										$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
-
-										$scope.variableDefinition.possibleValues.push.apply($scope.variableDefinition.possibleValues,
-											$scope.convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
-										$scope.variableDefinition.possibleValuesFavorite.push.apply(
-											$scope.variableDefinition.possibleValuesFavorite,
-											$scope.convertLocationsToPossibleValues(returnVal.data.favoriteLocations));
-										$scope.updateDropdownValues();
-									}
-								});
-
+								$http
+									.get('/Fieldbook/locations/getLocations')
+									.then(
+										function(returnVal) {
+											if (returnVal.data.success === '1') {
+												$scope.variableDefinition.locationUpdated = true;
+												// clear and copy of array is performed so as to preserve previous reference
+												// and have changes applied to all components with a copy of the previous
+												// reference
+												$scope.clearArray($scope.variableDefinition.allValues);
+												$scope.clearArray($scope.variableDefinition.possibleValues);
+												$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
+												$scope.clearArray($scope.variableDefinition.allFavoriteValues);
+	
+												$scope.variableDefinition.allValues.push.apply(
+													$scope.variableDefinition.allValues, $scope
+														.convertLocationsToPossibleValues(returnVal.data.allLocations));
+												$scope.variableDefinition.possibleValues.push.apply(
+													$scope.variableDefinition.possibleValues, $scope
+														.convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
+												$scope.variableDefinition.allFavoriteValues.push.apply(
+													$scope.variableDefinition.allFavoriteValues, $scope
+														.convertLocationsToPossibleValues(returnVal.data.favoriteLocations));
+												$scope.variableDefinition.possibleValuesFavorite.push
+													.apply(
+														$scope.variableDefinition.possibleValuesFavorite,
+														$scope
+															.convertLocationsToPossibleValues(returnVal.data.allBreedingFavoritesLocations));
+												$scope.updateDropdownValuesFavorites();
+											}
+										});
+	
 							}
 						};
 

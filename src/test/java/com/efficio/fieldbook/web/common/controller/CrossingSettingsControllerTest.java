@@ -20,6 +20,7 @@ import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -77,6 +78,12 @@ public class CrossingSettingsControllerTest {
 	public static final int MGID = 836;
 	public static final int FGID = 535;
 	private static final String TEST_DUPLICATE = "SID-1";
+	public static final String FEMALE_PLOT = "1";
+	public static final String BREEDING_METHOD = "Test Method";
+	public static final String MALE_PLOT = "2";
+	public static final String MALE_NURSERY_NAME = "maleNursery";
+	public static final Integer CROSSING_DATE = 20161212;
+	public static final String NOTES = "Test notes";
 
 	@Mock
 	private WorkbenchService workbenchService;
@@ -96,6 +103,8 @@ public class CrossingSettingsControllerTest {
 	private GermplasmListManager germplasmListManager;
 	@Mock
 	private OntologyDataManager ontologyDataManager;
+	@Mock
+	private ContextUtil contextUtil;
 
 	private CrossesListUtil crossesListUtil;
 
@@ -301,7 +310,8 @@ public class CrossingSettingsControllerTest {
 
 		final File file = Mockito.mock(File.class);
 		Mockito.when(file.getAbsolutePath()).thenReturn(CrossingSettingsControllerTest.DUMMY_ABS_PATH);
-		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), Matchers.anyString())).thenReturn(file);
+		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), Matchers.anyString(), Matchers.anyInt())).thenReturn(file);
+		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
 
 		final Map<String, Object> jsonResult = this.dut.doCrossingExport();
 
@@ -322,7 +332,7 @@ public class CrossingSettingsControllerTest {
 
 		final File file = Mockito.mock(File.class);
 		Mockito.when(file.getAbsolutePath()).thenReturn(CrossingSettingsControllerTest.DUMMY_ABS_PATH);
-		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), Matchers.anyString())).thenThrow(
+		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), Matchers.anyString(), Matchers.anyInt())).thenThrow(
 				new CrossingTemplateExportException("export.error"));
 
 		Mockito.when(
@@ -389,12 +399,8 @@ public class CrossingSettingsControllerTest {
 
 		Assert.assertEquals("The master list should contain 1 record: ", 1, testMasterList.size());
 		final Map<String, Object> data = testMasterList.get(0);
-		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX)));
-		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_ENTRY_CODE));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_SEED_SOURCE));
-		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX)));
-		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_MALE_PARENT));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.ENTRY_ID));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
@@ -406,8 +412,6 @@ public class CrossingSettingsControllerTest {
 		Assert.assertTrue(data.containsValue(""));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.MGID));
-		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX)));
-		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_FEMALE_PARENT));
 	}
 
 	@Test
@@ -428,12 +432,8 @@ public class CrossingSettingsControllerTest {
 		final List<Map<String, Object>> testMasterList = (List<Map<String, Object>>) testResponseMap.get(CrossesListUtil.LIST_DATA_TABLE);
 		final Map<String, Object> data = testMasterList.get(0);
 		Assert.assertEquals("The master list should contain 1 record: ", 1, testMasterList.size());
-		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_CODE_INDEX)));
-		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_ENTRY_CODE));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_SEED_SOURCE));
-		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MALE_PARENT_INDEX)));
-		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_MALE_PARENT));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.ENTRY_ID));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
@@ -445,8 +445,18 @@ public class CrossingSettingsControllerTest {
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_SEED_SOURCE));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
 		Assert.assertTrue(data.containsValue(Integer.toString(CrossingSettingsControllerTest.MGID)));
-		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FEMALE_PARENT_INDEX)));
-		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_FEMALE_PARENT));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FEMALE_PLOT_INDEX)));
+		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.FEMALE_PLOT));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MALE_PLOT_INDEX)));
+		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.MALE_PLOT));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX)));
+		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.BREEDING_METHOD));
+		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.CROSSING_DATE));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MALE_NURSERY_INDEX)));
+		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.MALE_NURSERY_NAME));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.NOTES_INDEX)));
+		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.NOTES));
+
 	}
 
 	private void fillUpUserSelectionWithImportedCrossTestData() {
@@ -462,6 +472,12 @@ public class CrossingSettingsControllerTest {
 		importedCrosses.setMaleGid(Integer.toString(CrossingSettingsControllerTest.MGID));
 		importedCrosses.setSource(CrossingSettingsControllerTest.TEST_SEED_SOURCE);
 		importedCrosses.setDuplicate(CrossingSettingsControllerTest.TEST_DUPLICATE);
+		importedCrosses.setFemalePlotNo(CrossingSettingsControllerTest.FEMALE_PLOT);
+		importedCrosses.setMalePlotNo(CrossingSettingsControllerTest.MALE_PLOT);
+		importedCrosses.setMaleStudyName(CrossingSettingsControllerTest.MALE_NURSERY_NAME);
+		importedCrosses.setRawBreedingMethod(CrossingSettingsControllerTest.BREEDING_METHOD);
+		importedCrosses.setCrossingDate(CrossingSettingsControllerTest.CROSSING_DATE);
+		importedCrosses.setNotes(CrossingSettingsControllerTest.NOTES);
 		importedCrossesList.add(importedCrosses);
 	}
 

@@ -1,77 +1,82 @@
 
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.springframework.stereotype.Component;
 
-import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
 public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 
-	@Resource
-	private OntologyVariableDataManager ontologyVariableDataManager;
-
-	@Resource
-	private ContextUtil contextUtil;
-
 	@Override
-	public void processEnvironmentLevelData(AdvancingSource source, Workbook workbook, AdvancingNursery nurseryInfo, Study study)
-			throws FieldbookException {
-		source.setSeason(getSeason(workbook));
+	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingNursery nurseryInfo,
+			final Study study) {
+		final Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
+		for (final MeasurementVariable mv : workbook.getConditions()) {
+			this.addValueToMeasurementVariablesValues(mv.getValue(), mv.getPossibleValues(), mv.getTermId(), measurementVariablesValues);
+		}
+		source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues));
 	}
 
 	@Override
-	public void processPlotLevelData(AdvancingSource source, MeasurementRow row) {
-		// no implementation, SeasonExpression does not need plot level data
-	}
-
-	String getSeason(Workbook workbook) throws FieldbookException {
-		String season = "";
-		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
-			for (MeasurementVariable mv : workbook.getConditions()) {
-				if (mv.getTermId() == TermId.SEASON.getId()) {
-					season = mv.getValue();
-				} else if (mv.getTermId() == TermId.SEASON_DRY.getId()) {
-					season = mv.getValue();
-				} else if (mv.getTermId() == TermId.SEASON_MONTH.getId()) {
-					season = mv.getValue();
-				} else if (mv.getTermId() == TermId.SEASON_VAR.getId()) {
-					// categorical variable - the value returned is the key to another term
-					if (mv.getValue().equals("")) {
-						// the user has failed to choose a season from the available choices
-						throw new FieldbookException("nursery.advance.no.code.selected.for.season");
-					}
-					// ambulance at the base of the cliff - we do not know if the season will be the numeric
-					// category code, or the text category description, so we will be safe here
-					if (StringUtils.isNumeric(mv.getValue())) {
-						// season is the numeric code referring to the category
-						season =
-								this.ontologyVariableDataManager.retrieveVariableCategoricalValue(contextUtil.getCurrentProgramUUID(),
-										mv.getTermId(), Integer.parseInt(mv.getValue()));
-					} else {
-						// season captured is the description
-						season = mv.getValue();
-					}
-				} else if (mv.getTermId() == TermId.SEASON_VAR_TEXT.getId()) {
-					season = mv.getValue();
-				} else if (mv.getTermId() == TermId.SEASON_WET.getId()) {
-					season = mv.getValue();
-				}
+	public void processPlotLevelData(final AdvancingSource source, final MeasurementRow row) {
+		if (source.getStudyType().equals(StudyType.T) && StringUtils.isBlank(source.getSeason())
+				&& source.getTrailInstanceObservation() != null && source.getTrailInstanceObservation().getDataList() != null) {
+			final Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
+			for (final MeasurementData measurementData : source.getTrailInstanceObservation().getDataList()) {
+				final int termId = measurementData.getMeasurementVariable().getTermId();
+				final List<ValueReference> possibleValues = measurementData.getMeasurementVariable().getPossibleValues();
+				this.addValueToMeasurementVariablesValues(measurementData.getValue(), possibleValues, termId, measurementVariablesValues);
 			}
+			source.setSeason(this.getValueOfPrioritySeasonVariable(measurementVariablesValues));
+		}
+	}
+
+	private String getValueOfPrioritySeasonVariable(final Map<Integer, String> measurementVariablesValues) {
+		String season = "";
+		if (measurementVariablesValues.get(TermId.SEASON_MONTH.getId()) != null) {
+			season = measurementVariablesValues.get(TermId.SEASON_MONTH.getId());
+		} else if (measurementVariablesValues.get(TermId.SEASON_VAR_TEXT.getId()) != null) {
+			season = measurementVariablesValues.get(TermId.SEASON_VAR_TEXT.getId());
+		} else if (measurementVariablesValues.get(TermId.SEASON_VAR.getId()) != null) {
+			season = measurementVariablesValues.get(TermId.SEASON_VAR.getId());
 		}
 		return season;
+	}
+
+	private String getSeasonVarValue(final String value, final List<ValueReference> possibleValues) {
+		for (final ValueReference valueReference : possibleValues) {
+			if (valueReference.getId() == Integer.parseInt(value)) {
+				return valueReference.getDescription();
+			}
+		}
+		// default
+		return value;
+	}
+
+	private void addValueToMeasurementVariablesValues(final String value, final List<ValueReference> possibleValues, final int termId,
+			final Map<Integer, String> measurementVariablesValues) {
+		if (StringUtils.isNotBlank(value)) {
+			if (termId == TermId.SEASON_VAR.getId() && StringUtils.isNumeric(value) && !possibleValues.isEmpty()) {
+				final String seasonVarValue = this.getSeasonVarValue(value, possibleValues);
+				measurementVariablesValues.put(termId, seasonVarValue);
+			} else {
+				measurementVariablesValues.put(termId, value);
+			}
+		}
 	}
 }

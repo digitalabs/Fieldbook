@@ -74,7 +74,7 @@
         <label class="control-label"><strong id="cpefifyCrossesLabel" class="sub-content-heading"
 												 th:text="#{germplasm.list.specify.crosses}">Specify Crosses</strong></label>
         <div th:if="*{germplasmListId > -1}">
-            <a th:href="@{~/BreedingManager/main/createcrosses(nurseryid=*{studyId},germplasmlistid=*{germplasmListId})}"
+            <a th:href="@{~/BreedingManager/main/createcrosses(nurseryid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${contextInfo.loggedInUserId},selectedProjectId=${contextInfo.selectedProjectId})}"
                th:text="#{nursery.managesettings.create.nursery.createcrosses.label} + ' ' ">.Create</a>
             <label class="control-label" th:text="#{germplasm.list.create.new.crosses}">. new crosses</label>
         </div>

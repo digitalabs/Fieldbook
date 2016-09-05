@@ -1315,6 +1315,10 @@ input::-ms-clear {
     display: none;
 }
 
+.fbk-inline {
+	display: inline;
+}
+
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
     display: none !important;
@@ -2095,15 +2099,27 @@ input.select-all-margin{
 	display:block;
 }
 
-.preview-measurements-only .no-measurements-table {
+.preview-measurements-only .no-measurements-table,
+.show-measurements-table {
 	display:none;
 }
 
-.show-measurements-table {
+/* Editing measurements is not allowed for a new not saved trial */
+.msrmnt-study-not-saved .edit-measurements-panel {
 	display: none;
 }
 
-.preview-measurements-only .show-measurements-table {
+/* Editing measurements allowed for the saved trial */
+.msrmnt-existing-study .edit-measurements-panel {
+	display: block;
+}
+
+/* Editing measurements is not allowed for existing trial in preview mode */
+.preview-measurements-only .msrmnt-existing-study .edit-measurements-panel {
+	display: none;
+}
+
+.preview-measurements-only .show-measurements-table .preview-measurements-panel {
 	display: block;
 }
 

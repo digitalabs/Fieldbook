@@ -9,6 +9,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService',
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService) {
 
+			var $body = $('body');
+
 			// if environments tab is triggered, we preload the measurements tab
 			$scope.loadMeasurementsTabInBackground();
 
@@ -271,6 +273,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			// on click generate design button
 			function refreshMeasurementTableAfterDeletingEnvironment() {
+				$body.addClass('preview-measurements-only');
 				// Make sure that the measurement table will only refresh if there is a selected design type for the current trial
 				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
 				if (designTypeId !== null && TrialManagerDataService.applicationData.designTypes[designTypeId].isPreset) {
@@ -290,12 +293,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 								TrialManagerDataService.clearUnappliedChangesFlag();
 								TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 								$('#chooseGermplasmAndChecks').data('replace', '1');
-								$('body').data('expDesignShowPreview', '1');
 							} else {
 								showErrorMessage('', response.message);
+								$body.removeClass('preview-measurements-only');
 							}
 						}, function(errResponse) {
                             showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+                            $body.removeClass('preview-measurements-only');
                         }
 					);
 				}

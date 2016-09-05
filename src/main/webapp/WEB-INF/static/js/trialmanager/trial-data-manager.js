@@ -177,7 +177,7 @@
 			};
 
 			var notifySaveEventListeners = function() {
-				$('body').data('expDesignShowPreview', '0');
+				$('body').removeClass('preview-measurements-only');
 				angular.forEach(saveEventListeners, function(saveListenerFunction) {
 					saveListenerFunction();
 				});
@@ -289,7 +289,6 @@
 					service.clearUnappliedChangesFlag();
 					service.applicationData.unsavedGeneratedDesign = true;
 					$('#chooseGermplasmAndChecks').data('replace', '1');
-					$('body').data('expDesignShowPreview', '1');
 				},
 
 				retrieveDesignType: function() {

@@ -223,9 +223,9 @@ var ImportDesign = (function() {
 				contentType: 'application/json; charset=utf-8'
 			}).done(function(resp) {
 				ImportDesign.updateEnvironmentAndMeasurements(resp);
-				//TODO Remove expDesignShowPreview global
-				$body.data('expDesignShowPreview', '1');
+				//TODO Remove expDesignShowPreview global, broadcast and update
 				angular.element('#mainApp').scope().$broadcast('designImportGenerated');
+				//TODO if error - remove preview class and show error
 
 			});
 		},

@@ -177,7 +177,6 @@
 						TrialManagerDataService.clearUnappliedChangesFlag();
 						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 						$('#chooseGermplasmAndChecks').data('replace', '1');
-						$body.data('expDesignShowPreview', '1');
 						$scope.toggleIsPresetWithGeneratedDesign();
 					};
 

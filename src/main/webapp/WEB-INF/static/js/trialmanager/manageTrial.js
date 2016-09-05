@@ -369,29 +369,6 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 							'Please regenerate the design on the Experimental Design tab', 10000);
 					}
 				}
-
-				if (targetState === 'createMeasurements' || targetState === 'editMeasurements') {
-					//TODO Remove this global
-					/*if ($('body').data('expDesignShowPreview') === '1') {
-						$.ajax({
-							url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
-							type: 'GET',
-							data: '',
-							cache: false,
-							success: function(html) {
-								setTimeout(function() {
-									$('#measurementsDiv').html(html);
-									//TODO Remove this global
-									$('body').data('expDesignShowPreview', '0');
-								}, 300);
-							},
-							error: function() {
-								//TODO Localise this
-								showErrorMessage('Server Error', 'Experimental design preview could not be generated.');
-							}
-						});
-					}*/
-				}
 			};
 
 			$scope.addAdvanceTabData = function(tabId, tabData, listName, isPageLoading) {

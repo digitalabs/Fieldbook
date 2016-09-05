@@ -12,9 +12,12 @@
 				$scope.isHideDelete = false;
 				$scope.updateOccurred = false;
 				$scope.addVariable = true;
+				$scope.isNewStudy = function() {
+					return ($('#studyId').val() == '')
+				};
 				
 				$scope.initEnvironmentList = function() {
-					if ($('#studyId').val() !== '') {
+					if (!$scope.isNewStudy()) {
 						$http.get('/Fieldbook/Common/addOrRemoveTraits/instanceMetadata/' + $('#studyId').val()).success(function(data) {
 							$scope.environmentsList = data;
 							$scope.selectedEnvironment = data[0];
@@ -23,7 +26,10 @@
 						$scope.environmentsList = [{}];
                         $scope.selectedEnvironment = $scope.environmentsList[0];
 					}
-				}
+				};
+
+				$scope.previewMeasurements = function() {
+				};
 				
 				/* Watchers */
 				$scope.$watch(function() {

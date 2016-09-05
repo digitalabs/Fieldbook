@@ -550,67 +550,9 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 			if ($(this).html() === 'DUPLICATE') {
 				columnsDef.push({
 					defaultContent: '',
-					targets: columns.length - 1,
+					targets: index,
 					createdCell: function(td, cellData, rowData, row, col) {
-
-                        var possibleDupeOrRecip = $(td).text();
-                        var displayOfDuplicateColumn = possibleDupeOrRecip;
-                        // Clearing html of td which does not contain color code for duplication string
-                        $(td).html('');
-                        var plotDupe = "";
-                        var pedigreeDupe = "";
-                        var plotRecip = "";
-                        var pedigreeRecip = "";
-
-                        // Bifurcate possibleDupeOrRecip text as per pipe character and distribute its text to its desired variable
-                        // ex. plotDupe variable will get Plot Dupe: 4, 7
-                        var indexOfPipe = possibleDupeOrRecip.indexOf(" | ");
-                        while(indexOfPipe > 0) {
-                            if(possibleDupeOrRecip.indexOf("Plot Dupe:") > -1) {
-                                plotDupe = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
-                                possibleDupeOrRecip = possibleDupeOrRecip.replace(plotDupe + " | ", "");
-                            } else if(possibleDupeOrRecip.indexOf("Pedigree Dupe:") > -1) {
-                                pedigreeDupe = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
-                                possibleDupeOrRecip = possibleDupeOrRecip.replace(pedigreeDupe + " | ", "");
-                            } else if(possibleDupeOrRecip.indexOf("Plot Recip:") > -1) {
-                                plotRecip = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
-                                possibleDupeOrRecip = possibleDupeOrRecip.replace(plotRecip + " | ", "");
-                            } else if(possibleDupeOrRecip.indexOf("Pedigree Recip:") > -1) {
-                                pedigreeRecip = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
-                                possibleDupeOrRecip = possibleDupeOrRecip.replace(pedigreeRecip + " | ", "");
-                            }
-                            indexOfPipe = possibleDupeOrRecip.indexOf(" | ");
-                        }
-
-                        // If our possibleDupeOrRecip string is Plot Dupe: 4, 7 | Pedigree Dupe: 2, 6 | Plot Recip: 9, 8
-                        // then plotDupe and pedigreeDupe variables will get their information but last plotRecip will not get
-                        // For getting information of last dupe/recip we write following condition
-                        if(possibleDupeOrRecip != "") {
-                            if(possibleDupeOrRecip.indexOf("Plot Dupe:") > -1) {
-                                plotDupe = possibleDupeOrRecip;
-                            } else if(possibleDupeOrRecip.indexOf("Pedigree Dupe:") > -1) {
-                                pedigreeDupe = possibleDupeOrRecip;
-                            } else if(possibleDupeOrRecip.indexOf("Plot Recip:") > -1) {
-                                plotRecip = possibleDupeOrRecip;
-                            } else if(possibleDupeOrRecip.indexOf("Pedigree Recip:") > -1) {
-                                pedigreeRecip = possibleDupeOrRecip;
-                            }
-                        }
-
-                        // Previously, only one dupe/recip information and its color was displayed
-                        // To overcome this situation, we added different spans to one td so that it will set different colors to different spans
-                        if (displayOfDuplicateColumn.indexOf('Plot Dupe') != -1) {
-                            $(td).append("<span class='plotDupe'>" + plotDupe + "</span> ");
-                        }
-                        if (displayOfDuplicateColumn.indexOf('Pedigree Dupe') != -1) {
-                            $(td).append("<span class='pedigreeDupe'>" + pedigreeDupe + "</span> ");
-                        }
-                        if (displayOfDuplicateColumn.indexOf('Plot Recip') != -1) {
-                            $(td).append("<span class='plotRecip'>" + plotRecip + "</span> ");
-                        }
-                        if (displayOfDuplicateColumn.indexOf('Pedigree Recip') != -1) {
-                            $(td).append("<span class='pedigreeRecip'>" + pedigreeRecip + "</span> ");
-                        }
+						transformDuplicateStringToColorCodedSpans(td);
 					}
 				});
 			}
@@ -634,6 +576,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 				bAutoWidth: true,
 				iDisplayLength: 100,
+				retrieve: true,
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
 					// Assuming ID is in last column
@@ -1161,7 +1104,6 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 		'use strict';
 
 		var columns = [],
-		columnsDef = [],
 		aoColumnsDef = [],
 		germplasmDataTable;
 
@@ -1169,33 +1111,16 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 			columns.push({data: $(this).data('col-name')});
 			if (index === 0) {
 				aoColumnsDef.push({bSortable: false});
+			} else if ($(this).html() === 'DUPLICATE') {
+				aoColumnsDef.push({
+					defaultContent: '',
+					targets: index,
+					createdCell: function(td, cellData, rowData, row, col) {
+						transformDuplicateStringToColorCodedSpans(td);
+					}
+				});
 			} else {
 				aoColumnsDef.push(null);
-			}
-
-			if ($(this).data('col-name') == 'gid') {
-				// For GID
-				columnsDef.push({
-					targets: columns.length - 1,
-					data: $(this).html(),
-					width: '100px',
-					render: function(data, type, full, meta) {
-						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
-					}
-				});
-			} else if ($(this).data('col-name') == 'desig') {
-				// For designation
-				columnsDef.push({
-					targets: columns.length - 1,
-					data: $(this).html(),
-					render: function(data, type, full, meta) {
-						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
-					}
-				});
 			}
 		});
 
@@ -1268,12 +1193,31 @@ BMS.Fieldbook.StockListDataTable = (function($) {
 
 		var columns = [],
 		aoColumnsDef = [],
-		stockTable;
+		stockTable,
+		bulkCompletedColumnIndex;
 
 		$(tableIdentifier + ' thead tr th').each(function(index) {
 			columns.push({data: $(this).data('col-name')});
+
+			if ($(this).html() === 'BULK COMPL?') {
+				// Get the column index of the BULK COMPL? column
+				bulkCompletedColumnIndex = index;
+			}
+
 			if (index === 0) {
 				aoColumnsDef.push({bSortable: false});
+			} else if ($(this).html() === 'DUPLICATE') {
+				aoColumnsDef.push({
+					defaultContent: '',
+					targets: index,
+					createdCell: function(td, cellData, rowData, row, col) {
+
+						// If Stock List has completed bulking, the highlighting of duplicates should not appear.
+						if (rowData[bulkCompletedColumnIndex] != 'Completed') {
+							transformDuplicateStringToColorCodedSpans(td);
+						}
+					}
+				});
 			} else {
 				aoColumnsDef.push(null);
 			}
@@ -1464,3 +1408,66 @@ $(function() {
 		}
 	});
 });
+
+function transformDuplicateStringToColorCodedSpans(td) {
+
+	var possibleDupeOrRecip = $(td).text();
+	var displayOfDuplicateColumn = possibleDupeOrRecip;
+	// Clearing html of td which does not contain color code for duplication string
+	$(td).html('');
+	var plotDupe = "";
+	var pedigreeDupe = "";
+	var plotRecip = "";
+	var pedigreeRecip = "";
+
+	// Bifurcate possibleDupeOrRecip text as per pipe character and distribute its text to its desired variable
+	// ex. plotDupe variable will get Plot Dupe: 4, 7
+	var indexOfPipe = possibleDupeOrRecip.indexOf(" | ");
+	while(indexOfPipe > 0) {
+		if(possibleDupeOrRecip.indexOf("Plot Dupe:") > -1) {
+			plotDupe = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
+			possibleDupeOrRecip = possibleDupeOrRecip.replace(plotDupe + " | ", "");
+		} else if(possibleDupeOrRecip.indexOf("Pedigree Dupe:") > -1) {
+			pedigreeDupe = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
+			possibleDupeOrRecip = possibleDupeOrRecip.replace(pedigreeDupe + " | ", "");
+		} else if(possibleDupeOrRecip.indexOf("Plot Recip:") > -1) {
+			plotRecip = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
+			possibleDupeOrRecip = possibleDupeOrRecip.replace(plotRecip + " | ", "");
+		} else if(possibleDupeOrRecip.indexOf("Pedigree Recip:") > -1) {
+			pedigreeRecip = possibleDupeOrRecip.substring(0, indexOfPipe).trim();
+			possibleDupeOrRecip = possibleDupeOrRecip.replace(pedigreeRecip + " | ", "");
+		}
+		indexOfPipe = possibleDupeOrRecip.indexOf(" | ");
+	}
+
+	// If our possibleDupeOrRecip string is Plot Dupe: 4, 7 | Pedigree Dupe: 2, 6 | Plot Recip: 9, 8
+	// then plotDupe and pedigreeDupe variables will get their information but last plotRecip will not get
+	// For getting information of last dupe/recip we write following condition
+	if(possibleDupeOrRecip != "") {
+		if(possibleDupeOrRecip.indexOf("Plot Dupe:") > -1) {
+			plotDupe = possibleDupeOrRecip;
+		} else if(possibleDupeOrRecip.indexOf("Pedigree Dupe:") > -1) {
+			pedigreeDupe = possibleDupeOrRecip;
+		} else if(possibleDupeOrRecip.indexOf("Plot Recip:") > -1) {
+			plotRecip = possibleDupeOrRecip;
+		} else if(possibleDupeOrRecip.indexOf("Pedigree Recip:") > -1) {
+			pedigreeRecip = possibleDupeOrRecip;
+		}
+	}
+
+	// Previously, only one dupe/recip information and its color was displayed
+	// To overcome this situation, we added different spans to one td so that it will set different colors to different spans
+	if (displayOfDuplicateColumn.indexOf('Plot Dupe') != -1) {
+		$(td).append("<span class='plotDupe'>" + plotDupe + "</span> ");
+	}
+	if (displayOfDuplicateColumn.indexOf('Pedigree Dupe') != -1) {
+		$(td).append("<span class='pedigreeDupe'>" + pedigreeDupe + "</span> ");
+	}
+	if (displayOfDuplicateColumn.indexOf('Plot Recip') != -1) {
+		$(td).append("<span class='plotRecip'>" + plotRecip + "</span> ");
+	}
+	if (displayOfDuplicateColumn.indexOf('Pedigree Recip') != -1) {
+		$(td).append("<span class='pedigreeRecip'>" + pedigreeRecip + "</span> ");
+	}
+
+}

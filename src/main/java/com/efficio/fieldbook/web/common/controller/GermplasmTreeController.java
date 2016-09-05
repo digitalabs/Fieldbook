@@ -90,6 +90,11 @@ import com.google.common.collect.Lists;
 @Transactional
 public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
+	/**
+	 * The default folder open state stored when closing the germplasm lists browser. 
+	 */
+	static final String DEFAULT_STATE_SAVED_FOR_GERMPLASM_LIST = "Lists";
+
 	private static final String COMMON_SAVE_GERMPLASM_LIST = "Common/saveGermplasmList";
 
 	private static final String GERMPLASM_LIST_TYPES = "germplasmListTypes";
@@ -1094,11 +1099,17 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final List<String> states = new ArrayList<>();
 		String status = "OK";
 		try {
+			
 			if (!GermplasmTreeController.NODE_NONE.equalsIgnoreCase(expandedNodes[0])) {
 				for (int index = 0; index < expandedNodes.length; index++) {
 					states.add(expandedNodes[index]);
 				}
 			}
+
+			if(states.isEmpty()) {
+				states.add(DEFAULT_STATE_SAVED_FOR_GERMPLASM_LIST);
+			}
+			
 			this.userTreeStateService.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentUserLocalId(),
 					this.getCurrentProgramUUID(), type, states);
 		} catch (final MiddlewareQueryException e) {
@@ -1120,7 +1131,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		} else {
 			stateList = this.userTreeStateService.getUserProgramTreeStateByUserIdProgramUuidAndType(userID, programUUID, type);
 		}
-
+		
 		return super.convertObjectToJson(stateList);
 	}
 

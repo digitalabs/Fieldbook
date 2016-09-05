@@ -9,6 +9,8 @@
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService', '$http',
 				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages) {
 
+					var $body = $('body');
+
 					$scope.applicationData = TrialManagerDataService.applicationData;
 					$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
 
@@ -175,12 +177,16 @@
 						TrialManagerDataService.clearUnappliedChangesFlag();
 						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 						$('#chooseGermplasmAndChecks').data('replace', '1');
-						$('body').data('expDesignShowPreview', '1');
+						$body.data('expDesignShowPreview', '1');
 						$scope.toggleIsPresetWithGeneratedDesign();
 					};
 
 					// on click generate design button
 					$scope.generateDesign = function() {
+
+                        //if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
+                        $body.addClass('preview-measurements-only');
+
 						if (!$scope.doValidate()) {
 							return;
 						}

@@ -1,10 +1,14 @@
 <div class="row form-group col-xs-12 col-md-12">
 <img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px;" width="22" height="22"/>
-<strong class="sub-content-heading" th:if="${isExpDesignPreview != '1'}" th:text="#{nursery.edit.nursery.measurements}"></strong>
-<strong class="sub-content-heading exp-design-preview" th:if="${isExpDesignPreview == '1'}" th:text="#{nursery.edit.nursery.preview.measurements}"></strong>
+<strong class="sub-content-heading measurements-header" th:text="#{nursery.edit.nursery.measurements}"></strong>
+<strong class="sub-content-heading preview-measurements-header" th:text="#{nursery.edit.nursery.preview.measurements}"></strong>
 </div>
 
+<div class="no-measurements-table">
+	<span>Please generate the design to see the measurements</span>
+</div>
 
+<div class="show-measurements-table">
 <div class="mdt-columns dataTables_info">
 	<span class="btn btn-link fbk-toggle-categorical-display" th:text="#{measurements.show.categorical.description}">Show Categorical Description</span>
 </div>
@@ -23,7 +27,9 @@
 	</div>
 </div>
 
-<table th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >
+<table th:if="${createNurseryForm != null || createTrialForm != null}"
+	   th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}" id="measurement-table" width="100%"
+		class="table-curved table-condensed" >
 	<thead>
 		<tr>
 			<th nowrap="nowrap" th:attr="data-term-id=${measurementVariable.termId},data-term-data-type-id=${measurementVariable.dataTypeId},data-term-valid-values=${measurementVariable.possibleValuesString},data-min-range=${measurementVariable.minRange},data-max-range=${measurementVariable.maxRange}"
@@ -64,6 +70,8 @@
 	</div>
 </div>
 
+</div>
+
 <script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/showAddOrRemoveTraitsPagination.js}"></script>
 <script type="text/javascript" th:inline="javascript">
@@ -72,7 +80,9 @@
 jQuery(function() {
 	'use strict';
 	var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
-	initializeTraitsPagination(isCategoricalDisplay);
+	if ($('#studyId').val() !== '') {
+		initializeTraitsPagination(isCategoricalDisplay);
+	}
 });
 
 //]]>

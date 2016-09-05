@@ -14,10 +14,15 @@
 				$scope.addVariable = true;
 				
 				$scope.initEnvironmentList = function() {
-					$http.get('/Fieldbook/Common/addOrRemoveTraits/instanceMetadata/' + $('#studyId').val()).success(function(data) {
-						$scope.environmentsList = data;
-						$scope.selectedEnvironment = data[0];
-					});
+					if ($('#studyId').val() !== '') {
+						$http.get('/Fieldbook/Common/addOrRemoveTraits/instanceMetadata/' + $('#studyId').val()).success(function(data) {
+							$scope.environmentsList = data;
+							$scope.selectedEnvironment = data[0];
+						});
+					} else {
+						$scope.environmentsList = [{}];
+                        $scope.selectedEnvironment = $scope.environmentsList[0];
+					}
 				}
 				
 				/* Watchers */

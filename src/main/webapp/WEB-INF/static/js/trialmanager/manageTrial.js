@@ -372,7 +372,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 				if (targetState === 'createMeasurements' || targetState === 'editMeasurements') {
 					//TODO Remove this global
-					if ($('body').data('expDesignShowPreview') === '1') {
+					/*if ($('body').data('expDesignShowPreview') === '1') {
 						$.ajax({
 							url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
 							type: 'GET',
@@ -390,7 +390,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 								showErrorMessage('Server Error', 'Experimental design preview could not be generated.');
 							}
 						});
-					}
+					}*/
 				}
 			};
 

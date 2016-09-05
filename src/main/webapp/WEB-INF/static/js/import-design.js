@@ -187,6 +187,11 @@ var ImportDesign = (function() {
 		},
 
 		generateDesign: function() {
+			var $body = $('body');
+
+			//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
+			$body.addClass('preview-measurements-only');
+			//TODO Clear the style on Nursery save
 
 			var environmentData = isNursery() ? ImportDesign.nurseryEnvironmentDetails
 					: angular.copy(ImportDesign.trialManagerCurrentData().environments);
@@ -219,7 +224,6 @@ var ImportDesign = (function() {
 			}).done(function(resp) {
 				ImportDesign.updateEnvironmentAndMeasurements(resp);
 				//TODO Remove expDesignShowPreview global
-				var $body = $('body');
 				$body.data('expDesignShowPreview', '1');
 				angular.element('#mainApp').scope().$broadcast('designImportGenerated');
 

@@ -1,6 +1,6 @@
 var getCurrentEnvironmentNumber = function () {
 	var selEnv = $("#fbk-measurements-controller-div").scope().selectedEnvironment;
-	
+
 	if (!selEnv) {
 		var envList;
 		$.ajax({
@@ -204,18 +204,41 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			serverSide: true,
 			processing: true,
 			deferRender: true,
-			ajax: {
-				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
-				type: 'GET',
-				cache: false,
-				data: function (d) {
-					var parameters = {
-						draw: d.draw,
-						pageSize: d.length,
-						pageNumber: d.length === 0 ? 1 : d.start/d.length + 1
-					};
-                    return parameters;
-                }
+			ajax: function(data, callback, settings) {
+				// make a decision if it is a preview or editable table
+				if (studyId !== '') {
+					$.ajax({
+						url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
+						type: 'GET',
+						cache: false,
+						data: {
+								draw: data.draw,
+								pageSize: data.length,
+								pageNumber: data.length === 0 ? 1 : data.start / data.length + 1
+						}
+					}).done(function(data) {
+						callback({
+							data: data
+						});
+					});
+				} else {
+					// preview ??? Or do we want another datatable? not server side ???
+					$.ajax({
+							url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
+							type: 'GET',
+							data: '',
+							cache: false,
+							success: function(data) {
+								callback({
+									data: data
+								});
+							},
+							error: function() {
+								//TODO Localise this
+								showErrorMessage('Server Error', 'Experimental design preview could not be generated.');
+							}
+						});
+				}
 			},
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
@@ -304,7 +327,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		});
 
 
-		if (studyId != '') {
+		if (studyId !== '') {
 			// Activate an inline edit on click of a table cell
 			$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
 				if (isAllowedEditMeasurementDataCell()) {

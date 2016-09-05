@@ -2074,4 +2074,37 @@ input.select-all-margin{
 	padding-top: 7px;
 }
 
+/* Preview Measurements view */
+.preview-measurements-only .preview-measurements-header {
+	display: inline-block;
+}
+
+.preview-measurements-only .measurements-header {
+	display: none;
+}
+
+.preview-measurements-header {
+	display: none;
+}
+
+.measurements-header {
+	display: inline-block;
+}
+
+.no-measurements-table {
+	display:block;
+}
+
+.preview-measurements-only .no-measurements-table {
+	display:none;
+}
+
+.show-measurements-table {
+	display: none;
+}
+
+.preview-measurements-only .show-measurements-table {
+	display: block;
+}
+
 

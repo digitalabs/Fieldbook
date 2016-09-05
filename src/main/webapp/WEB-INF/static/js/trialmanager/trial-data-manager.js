@@ -409,6 +409,10 @@
 				extractSettings: extractSettings,
 				extractTreatmentFactorSettings: extractTreatmentFactorSettings,
 				saveCurrentData: function() {
+
+					//After Save Measurements table is available in edit mode
+					$('body').removeClass('preview-measurements-only');
+
 					if (!processInlineEditInput()) {
 						return false;
 					}

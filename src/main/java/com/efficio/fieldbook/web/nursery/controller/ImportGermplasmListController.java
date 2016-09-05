@@ -182,7 +182,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName ()
 	 */
 	@Override
@@ -192,7 +192,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection ()
 	 */
 	/**
@@ -1529,6 +1529,20 @@ public class ImportGermplasmListController extends SettingsController {
 						importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(i)
 								.setEntryTypeCategoricalID(Integer.parseInt(selectedCheck[i]));
 					}
+				}
+			}
+		} else {
+			// we set the check to null
+			if (userSelection.getImportedGermplasmMainInfo() != null
+					&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList() != null
+					&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null) {
+
+				// this is to keep track of the original list before merging
+				// with the checks
+				for (final ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()
+						.getImportedGermplasms()) {
+					germplasm.setEntryTypeCategoricalID(null);
+					germplasm.setEntryTypeValue("");
 				}
 			}
 		}

@@ -156,6 +156,7 @@ public class ExportImportStudyUtil {
 		return false;
 	}
 
+	// FIXME : eliminate use - if this is called in a loop this is BAD
 	public static String getPropertyName(final OntologyService ontologyService) {
 		String propertyName = "";
 		try {

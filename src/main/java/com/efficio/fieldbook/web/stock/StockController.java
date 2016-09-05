@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.ListUtils;
 import org.generationcp.commons.exceptions.StockException;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
@@ -101,6 +102,46 @@ public class StockController extends AbstractBaseFieldbookController {
 	@Resource
 	private UserSelection userSelection;
 
+	
+
+	/**
+	 * Gets the data types.
+	 *
+	 * @return the data types
+	 */
+	@ModelAttribute("favoriteSeedStorageLocationList")
+	public List<Location> getFavoriteSeedStorageLocationList() {
+		try {
+			List<Integer> locationsIds =
+					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.contextUtil.getCurrentProgramUUID());
+			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds); //All Favorite
+
+			List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
+			return ListUtils.intersection(allSeedStorageLocations, faveLocations);
+
+		} catch (MiddlewareQueryException e) {
+			StockController.LOG.error(e.getMessage(), e);
+		}
+
+		return new ArrayList<>();
+	}
+	
+	/**
+	 * Gets the data types.
+	 *
+	 * @return the data types
+	 */
+	@ModelAttribute("allLocationList")
+	public List<Location> getAllLocationList() {
+		try {
+			return this.fieldbookMiddlewareService.getAllLocations();
+		} catch (MiddlewareQueryException e) {
+			StockController.LOG.error(e.getMessage(), e);
+		}
+
+		return new ArrayList<>();
+	}
+	
 	/**
 	 * Gets the data types.
 	 *

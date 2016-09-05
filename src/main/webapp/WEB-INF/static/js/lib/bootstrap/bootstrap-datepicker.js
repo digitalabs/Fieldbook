@@ -287,8 +287,7 @@ delete this.element.data().date;
 },
 
 getDate: function() {
-var d = this.getUTCDate();
-return new Date(d.getTime() + (d.getTimezoneOffset()*60000));
+return this.getUTCDate();
 },
 
 getUTCDate: function() {
@@ -296,10 +295,14 @@ return this.date;
 },
 
 setDate: function(d) {
-d = new Date(d);
-if (!isNaN(d)) {
-	this.setUTCDate(new Date(d.getTime() - (d.getTimezoneOffset()*60000)));
-	}
+// Putting null check as it causes to create date like 1970-01-01
+if(d !== null) {
+    d = new Date(d);
+
+    if (!isNaN(d)) {
+        this.setUTCDate(d);
+    }
+}
 },
 
 setUTCDate: function(d) {

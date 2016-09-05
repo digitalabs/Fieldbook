@@ -43,7 +43,7 @@
                             <input type="checkbox" class="crossingBreedingMethodInput" id="useSelectedMethodCheckbox"/>
                             <label class="label-bold" th:text="#{study.import.crosses.settings.breeding.method.label}"></label>
                         </div>
-                        <div class="col-xs-5 col-md-5 add-bottom-padding">
+                        <div class="col-xs-5 col-md-5 add-bottom-padding" id="breedingMethodSelectionDiv">
                             <div class="row">
                                 <div class="col-xs-12 col-md-12">
                                     <input type="hidden" name="breedingMethodID"
@@ -51,6 +51,20 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="col-xs-12 col-md-12">
+                                    <label class="radio-inline">
+                                        <input id="showBreedingMethodOnlyRadio" name="cross_import_method_filter" value="1" type="radio" checked="checked" />
+                                        <span th:text="#{show.generative.method}">Generative methods</span>
+                                        &nbsp;&nbsp;
+                                    </label>
+                                </div>
+                                <div class="col-xs-12 col-md-12">
+                                    <label class="radio-inline">
+                                        <input id="showAllMethodOnlyRadio" name="cross_import_method_filter" value="2" type="radio" />
+                                        <span th:text="#{show.all.methods}">All Methods</span>
+                                        &nbsp;&nbsp;
+                                    </label>
+                                </div>
                                 <div class="col-xs-12 col-md-12">
                                     <input type="checkbox" class="crossingBreedingMethodInput" id="showFavoritesOnlyCheckbox"/>
                                     <label th:text="#{show.favorite.method}"></label>
@@ -303,6 +317,16 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="col-xs-12 col-md-12">
+                                    <label class="radio-inline">
+                                        <input id="showBreedingLocationOnlyRadio" name="filter" value="1" type="radio" checked="checked" /> <span th:text="#{show.breeding.location}">Breeding locations</span>
+                                        &nbsp;&nbsp;
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input id="showAllLocationOnlyRadio" name="filter" value="2" type="radio" /> <span th:text="#{show.all.location}">All locations types</span>
+                                        &nbsp;&nbsp;
+                                    </label>
+                                </div>
                                 <div class="col-xs-12 col-md-12">
 
                                     <input type="checkbox" id="locationFavoritesOnlyCheckbox"/>

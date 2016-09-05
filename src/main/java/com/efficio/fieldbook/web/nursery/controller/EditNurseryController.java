@@ -11,17 +11,15 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -59,13 +57,17 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class CreateNurseryController.
@@ -171,7 +173,7 @@ public class EditNurseryController extends SettingsController {
 
 				// measurements part
 				SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-						this.ontologyService);
+						this.ontologyService, contextUtil.getCurrentProgramUUID());
 				this.setMeasurementsData(form, workbook);
 
 				// make factors non-editable if experiments exist already
@@ -819,6 +821,11 @@ public class EditNurseryController extends SettingsController {
 		return new ArrayList<>();
 	}
 
+	@ModelAttribute("contextInfo")
+	public ContextInfo getContextInfo() {
+		return this.contextUtil.getContextInfoFromSession();
+	}
+
 	@ModelAttribute("programLocationURL")
 	public String getProgramLocation() {
 		return this.fieldbookProperties.getProgramLocationsUrl();
@@ -890,5 +897,19 @@ public class EditNurseryController extends SettingsController {
 		nurseryTypeSettingVariable.setName(name);
 		nurseryTypeSettingVariable.setOperation(Operation.ADD);
 		nurseryTypeSettingDetail.setVariable(nurseryTypeSettingVariable);
+	}
+	
+	/**
+	 * Checks if the measurement data is existing
+	 *
+	 * @return the map
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/isMeasurementDataExisting", method = RequestMethod.GET)
+	public Map<String, Object> isMeasurementDataExisting() {
+		final Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put(EditNurseryController.HAS_MEASUREMENT_DATA_STR, this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(userSelection.getWorkbook()
+				.getMeasurementDatesetId(), SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));
+		return resultMap;
 	}
 }

@@ -23,8 +23,8 @@ public class FieldMapTrialInstanceInfoTestDataInitializer {
 	}
 
 	public static FieldMapTrialInstanceInfo createFieldMapTrialInstanceInfo() {
-		final FieldMapTrialInstanceInfo instanceInfo = new FieldMapTrialInstanceInfo();
-		instanceInfo.setFieldMapLabels(FieldMapLabelTestDataInitializer.createFieldMapLabelList());
-		return instanceInfo;
+			final FieldMapTrialInstanceInfo instanceInfo = new FieldMapTrialInstanceInfo();
+			instanceInfo.setFieldMapLabels(FieldMapLabelTestDataInitializer.createFieldMapLabelList());
+			return instanceInfo;
 	}
 }

@@ -1,7 +1,9 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import java.util.List;
-
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.google.common.collect.Lists;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -16,10 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.google.common.collect.Lists;
+import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocationAbbreviationExpressionDataProcessorTest {

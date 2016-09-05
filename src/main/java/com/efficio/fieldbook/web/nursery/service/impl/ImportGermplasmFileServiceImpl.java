@@ -497,24 +497,25 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 	 * @param followThisPosition the follow this position
 	 * @return the cell string value
 	 */
-	private String getCellStringValue(Integer sheetNumber, Integer rowNumber, Integer columnNumber, Boolean followThisPosition) {
+	private String getCellStringValue(final Integer sheetNumber, final Integer rowNumber, final Integer columnNumber,
+			final Boolean followThisPosition) {
 		if (followThisPosition) {
 			this.currentSheet = sheetNumber;
 			this.currentRow = rowNumber;
 		}
 
 		try {
-			Sheet sheet = this.wb.getSheetAt(sheetNumber);
-			Row row = sheet.getRow(rowNumber);
-			Cell cell = row.getCell(columnNumber);
+			final Sheet sheet = this.wb.getSheetAt(sheetNumber);
+			final Row row = sheet.getRow(rowNumber);
+			final Cell cell = row.getCell(columnNumber);
 			return cell.getStringCellValue();
-		} catch (IllegalStateException e) {
-			Sheet sheet = this.wb.getSheetAt(sheetNumber);
-			Row row = sheet.getRow(rowNumber);
-			Cell cell = row.getCell(columnNumber);
+		} catch (final IllegalStateException e) {
+			final Sheet sheet = this.wb.getSheetAt(sheetNumber);
+			final Row row = sheet.getRow(rowNumber);
+			final Cell cell = row.getCell(columnNumber);
 			ImportGermplasmFileServiceImpl.LOG.error(e.getMessage(), e);
 			return String.valueOf(Integer.valueOf((int) cell.getNumericCellValue()));
-		} catch (NullPointerException e) {
+		} catch (final NullPointerException e) {
 			ImportGermplasmFileServiceImpl.LOG.error(e.getMessage(), e);
 			return "";
 		}

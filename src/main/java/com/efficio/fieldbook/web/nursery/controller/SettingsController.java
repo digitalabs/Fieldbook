@@ -41,7 +41,6 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -360,15 +359,15 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			final SettingVariable svar =
 					new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
 							stdVar.getMethod().getName(), role, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
-							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints()
-									.getMinValue() : null,
-							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
-									.getMaxValue() : null);
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null
+									? stdVar.getConstraints().getMinValue() : null,
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null
+									? stdVar.getConstraints().getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 			svar.setOperation(Operation.ADD);
-			final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
+			final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id, true);
 			final SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
 			final PhenotypicType type = StringUtils.isEmpty(role) ? null : PhenotypicType.getPhenotypicTypeByName(role);
 			settingDetail.setRole(type);
@@ -382,9 +381,22 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			}
 			settingDetail.setPossibleValuesToJson(possibleValues);
 			final List<ValueReference> possibleValuesFavorite =
-					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID());
+					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), true);
 			settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 			settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+
+			final List<ValueReference> allValues = this.fieldbookService.getAllPossibleValuesWithFilter(svar.getCvTermId(), false);
+			settingDetail.setAllValues(allValues);
+			settingDetail.setAllValuesToJson(allValues);
+
+			final List<ValueReference> allFavoriteValues =
+					this.fieldbookService.getAllPossibleValuesFavorite(svar.getCvTermId(), this.getCurrentProject().getUniqueID(), null);
+			
+			final List<ValueReference>  intersection = SettingsUtil.intersection(allValues, allFavoriteValues);
+			
+			settingDetail.setAllFavoriteValues(intersection);
+			settingDetail.setAllFavoriteValuesToJson(intersection);
+
 			return settingDetail;
 		} else {
 			final SettingVariable svar = new SettingVariable();
@@ -392,7 +404,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			return new SettingDetail(svar, null, null, false);
 		}
 	}
-
+	
 	/**
 	 * Creates the setting detail.
 	 *
@@ -444,7 +456,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 		settingDetail.setPossibleValuesToJson(possibleValues);
 		final List<ValueReference> possibleValuesFavorite =
-				this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID());
+				this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), false);
 		settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 		settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 		return settingDetail;
@@ -656,7 +668,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 			// set value of breeding method code back to code after saving
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-					this.ontologyService);
+					this.ontologyService, contextUtil.getCurrentProgramUUID());
 			// remove selection variates from traits list
 			this.removeSelectionVariatesFromTraits(this.userSelection.getBaselineTraitsList());
 		}

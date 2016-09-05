@@ -52,10 +52,27 @@
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 
+						<!-- radio buttons for filtering -->
+						<div class="possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}">
+							<label class="radio-inline">
+								<input id="filterLocations" name="locationFilter" type="radio" checked="checked"
+									th:class="'filter_selectors_' + ${rowStat.index}"
+									th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'"/>
+								<span >All breeding locations</span>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+								<input id="allLocations" name="locationFilter" type="radio" 
+									th:class="'filter_selectors_all filter_selectors_all_' + ${rowStat.index}"
+									th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'"/>
+								<span >All locations</span>
+							</label>
+						</div>
 						<!-- Show Favorite Location -->
 						<div style="width: 100%" th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
+							<div th:id="'favoriteLocationCheck' + ${rowStat.index}"
+								 class="favoriteLocationCheck" style="display:none" th:text="${nurseryLevelVariable.allFavoriteValuesJson}">
+							</div>
 							<input
-									type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
+									type="checkbox" class="studyLevelVariablesDetails" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
 									th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
 							&nbsp;&nbsp;
 											<span
@@ -69,6 +86,16 @@
 						</div>
 						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
 							 class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
+						</div>
+						
+						<!-- all values -->						
+						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'allValuesJson' + ${rowStat.index}"
+							 class="allValuesJson" style="display:none" th:text="${nurseryLevelVariable.allValuesJson}">
+						</div>
+						
+						<!-- all favorite values -->						
+						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'allFavoriteValuesJson' + ${rowStat.index}"
+							 class="allFavoriteValuesJson" style="display:none" th:text="${nurseryLevelVariable.allFavoriteValuesJson}">
 						</div>
 
 						<input  maxlength="250"  th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}"
@@ -205,6 +232,7 @@
 
 			<div class=" row collapse in" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}" th:remove="tag">
 				<div class="form-group">
+					<br></br>
 					<span th:text="#{nursery.create.nursery.method.note}">If you plan to advance the nursery with a single method, please select it below</span>
 				</div>
 
@@ -216,6 +244,7 @@
 
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
+						
 						<!-- store possible values of variable -->
 						<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"></div>
 						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
@@ -224,14 +253,38 @@
 						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
 							 class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
 						</div>
+						<!-- all values -->						
+						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'allValuesJson' + ${rowStat.index}"
+							 class="allValuesJson" style="display:none" th:text="${nurseryLevelVariable.allValuesJson}">
+						</div>
+						
+						<!-- all favorite values -->						
+						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'allFavoriteValuesJson' + ${rowStat.index}"
+							 class="allFavoriteValuesJson" style="display:none" th:text="${nurseryLevelVariable.allFavoriteValuesJson}">
+						</div>
 					</div>
 					<div class="col-xs-4 breeding-method-note">
 						<span class="bms-fa-question-circle help-tooltip-nursery breeding-method-tooltip" data-placement="right" data-toggle="tooltip" data-container="body"></span>
 					</div>
 				</div>
+				
+				<!-- radio buttons for filtering -->
+				<div class="possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
+					<label class="radio-inline">
+									<input id="filterMethods" name="methodFilter" type="radio" checked="checked"
+										th:class="'filter_selectors_' + ${rowStat.index}"
+										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
+									<span >Derivative and Maintenance methods</span>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									<input id="allMethods" name="methodFilter" type="radio"
+										th:class="'filter_selectors_all filter_selectors_all_' + ${rowStat.index}"
+										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'"/>
+									<span >All methods</span>
+					</label>
+				</div>
 
 				<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
-					<input class="study-level-method-checkbox"
+					<input class="study-level-method-checkbox" id="study-level-method-checkbox"
 						   type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
 						   th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 					&nbsp;&nbsp;
@@ -480,6 +533,8 @@ $(document).ready(function() {
 	// remove any other listeners for the location update
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);
+	$(document).off('method-update');
+	$(document).on('method-update', recreateMethodCombo);
 	$('#variateDeleteConfirmationModal').on('click', '#cancelDelete', function() {
 		if (document.initialEnabledStat && document.enableActions !== undefined) {
 			document.enableActions();
@@ -509,13 +564,37 @@ $(document).ready(function() {
 		hideDummyRow('selectionVariatesSettings');
 	}
 	checkShowSettingsFormReminder();
-	// toggle favorites by default on edit if value is a favorite
+
+	// Perform some logic depending on the presence
+	// of favorites or saved values
 	if ($('.edit-nursery-page-identifier').length) {
 		$.each(possibleValuesJsonElm, function(index, divElem) {
 			var select2Index = $(divElem).attr('id').split('possibleValuesJson')[1];
 			checkFavoritesIfValIsAFavorite(select2Index);
 		});
 	}
+
+	//Added logic for checkbox of location being selected if there is any favorite location
+	var favoriteLocationCheck = $('.favoriteLocationCheck'),
+			allFavoriteLocationsCheck;
+	$.each(favoriteLocationCheck, function(index, divElem) {
+		var allFavLocation = $(divElem);
+		var favLocationId = allFavLocation.attr('id');
+		if ( favLocationId ) {
+			allFavoriteLocationsCheck = $.parseJSON(allFavLocation.html());
+		}
+	});
+	if(typeof allFavoriteLocationsCheck != 'undefined')
+	{
+		if(allFavoriteLocationsCheck.length > 0 ){
+			$('.studyLevelVariablesDetails').click();
+		}
+	}
+
+	// Call on-change handlers associated with
+	// the "show all Location/Methods" input
+	$('.filter_selectors_all:checked').click();
+
 	checkNurseryIfShowRemoveVariableLinks();
 	$('.remove-btn').on('click', function() {
 		var sectionDiv = $(this).data('section');

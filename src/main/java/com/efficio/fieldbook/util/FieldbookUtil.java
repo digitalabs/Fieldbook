@@ -1,13 +1,12 @@
-
 package com.efficio.fieldbook.util;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -20,7 +19,10 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -29,9 +31,11 @@ import com.efficio.fieldbook.web.util.AppConstants;
  */
 public class FieldbookUtil {
 
+	public static final String CONTENT_TYPE = "Content-Type";
+	public static final String CONTENT_DISPOSITION = "Content-Disposition";
+	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
 	private static FieldbookUtil instance;
 
-	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
 	static {
 		FieldbookUtil.instance = new FieldbookUtil();
 	}
@@ -42,15 +46,6 @@ public class FieldbookUtil {
 
 	public static FieldbookUtil getInstance() {
 		return FieldbookUtil.instance;
-	}
-
-	public List<Integer> buildVariableIDList(String idList) {
-		List<Integer> requiredVariables = new ArrayList<Integer>();
-		StringTokenizer token = new StringTokenizer(idList, ",");
-		while (token.hasMoreTokens()) {
-			requiredVariables.add(Integer.valueOf(token.nextToken()));
-		}
-		return requiredVariables;
 	}
 
 	public static List<Integer> getColumnOrderList(String columnOrders) {
@@ -69,7 +64,7 @@ public class FieldbookUtil {
 			}
 
 		}
-		return new ArrayList<Integer>();
+		return new ArrayList<>();
 	}
 
 	public static void setColumnOrderingOnWorkbook(Workbook workbook, String columnOrderDelimited) {
@@ -84,8 +79,8 @@ public class FieldbookUtil {
 	}
 
 	public static boolean isPlotDuplicateNonFirstInstance(ImportedCrosses crosses) {
-		if (crosses.isPlotDupe() && crosses.getDuplicateEntries() != null
-				&& crosses.getEntryId() > crosses.getDuplicateEntries().iterator().next()) {
+		if (crosses.isPlotDupe() && crosses.getDuplicateEntries() != null && crosses.getEntryId() > crosses.getDuplicateEntries().iterator()
+				.next()) {
 			return true;
 		}
 		return false;
@@ -120,7 +115,7 @@ public class FieldbookUtil {
 
 	public static List<Integer> getFilterForMeansAndStatisticalVars() {
 
-		List<Integer> isAIds = new ArrayList<Integer>();
+		List<Integer> isAIds = new ArrayList<>();
 		StringTokenizer token = new StringTokenizer(AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
 		while (token.hasMoreTokens()) {
 			isAIds.add(Integer.valueOf(token.nextToken()));
@@ -136,46 +131,45 @@ public class FieldbookUtil {
 	}
 
 	/**
-	 * Sets the Content Disposition response header based on the user agent.
-	 * 
-	 * @param filename
-	 * @param httpHeaders
-	 * @param userAgent
+	 * Creates ResponseEntity to download a file from a controller.
+	 *
+	 * @param fileWithFullPath  - path of the file to be downloaded
+	 * @param filename  - the filename that will be set in the http response header
+	 * @return
 	 */
-	public static void resolveContentDisposition(String filename, HttpHeaders httpHeaders, String userAgent) {
+	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(String fileWithFullPath, String filename) throws UnsupportedEncodingException {
+		final HttpHeaders respHeaders = new HttpHeaders();
 
-		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
+		final File resource = new File(fileWithFullPath);
+		final FileSystemResource fileSystemResource = new FileSystemResource(resource);
 
-		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
-			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
-			httpHeaders.set("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
-		} else {
-			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
-			httpHeaders.set("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
-					+ encodedFilename + "\";");
-		}
+		final String mimeType = FileUtils.detectMimeType(filename);
+		final String sanitizedFilename = FileUtils.sanitizeFileName(filename);
+
+		respHeaders.set(FieldbookUtil.CONTENT_TYPE,String.format("%s;charset=utf-8",mimeType));
+		respHeaders.set(FieldbookUtil.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"; filename*=utf-8\'\'%s", sanitizedFilename, FileUtils.encodeFilenameForDownload(sanitizedFilename)));
+
+		return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
 	}
 
 	/**
-	 * Sets the Content Disposition response header based on the user agent.
-	 * 
-	 * @param filename
-	 * @param response
-	 * @param userAgent
+	 * Creates ResponseEntity to download a file from a controller.
+	 *
+	 * @param file      - The file to be downloaded
+	 * @return
 	 */
-	public static void resolveContentDisposition(String filename, HttpServletResponse response, String userAgent) {
+	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(File file)
+			throws UnsupportedEncodingException {
+		return FieldbookUtil.createResponseEntityForFileDownload(file.getAbsoluteFile().toString(), file.getName());
+	}
 
-		String encodedFilename = FileUtils.encodeFilenameForDownload(filename);
-
-		if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
-			// Internet Explorer has problems reading the Content-disposition header if it contains "filename*"
-			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\";");
-		} else {
-			// Those user agents that do not support the RFC 5987 encoding ignore "filename*" when it occurs after "filename".
-			response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFilename + "\"; filename*=\"UTF-8''"
-					+ encodedFilename + "\";");
+	public List<Integer> buildVariableIDList(String idList) {
+		List<Integer> requiredVariables = new ArrayList<>();
+		StringTokenizer token = new StringTokenizer(idList, ",");
+		while (token.hasMoreTokens()) {
+			requiredVariables.add(Integer.valueOf(token.nextToken()));
 		}
-
+		return requiredVariables;
 	}
 }

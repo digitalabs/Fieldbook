@@ -81,7 +81,7 @@
 							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.nursery.name}"></b>: <span class="required">*</span></label>
 
 							<div class="col-sm-8">
-								<input maxlength="219" type="text" class="form-control character-input" th:field="*{basicDetails[0].value}" />
+								<input maxlength="225" type="text" class="form-control character-input" th:field="*{basicDetails[0].value}" />
 							</div>
 						</div>
 
@@ -90,7 +90,7 @@
 							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.description}" ></b>: <span class="required">*</span></label>
 
 							<div class="col-sm-8">
-								<input maxlength="250" type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
+								<input maxlength="225" type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
 							</div>
 						</div>
 
@@ -99,7 +99,7 @@
 							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.objective}"></b>:</label>
 
 							<div class="col-sm-8">
-								<textarea maxlength="250" class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
+								<textarea maxlength="255" class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
 							</div>
 						</div>
 
@@ -242,6 +242,8 @@
 
 <div id="open-crosses" th:include="/Common/includes/openCrossesListModal"></div>
 
+<div id="choose-user" th:include="/Common/includes/chooseUser"></div>
+
 <div id="crossImport" th:include="/Common/includes/crossingImportPresets"></div>
 
 <div th:include="/Common/includes/importInventory"></div>
@@ -341,6 +343,8 @@ $(document).ready(function() {
 		submitCreateForm();
 	});
 	// we check greater than 1 since theres a 'please choose' option
+	// FIXME: this is a strange solution to perform a click in code on document.ready
+	// We need to find out why it is needed and fix it properly
 	if ($.parseJSON($('#possibleValuesFavoriteJson0').text()).length > 1) {
 		$('.study-level-method-checkbox').click();
 	}

@@ -33,46 +33,67 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 
 		},
 
-		// function that prepares and initializes both the Select2 dropdown containing the method list as well as the checkbox that toggles between displaying only favorite
-		// methods or no. methodConversionFunction is provided as a parameter in case developers wish to change the construction of each select2 item, tho built-in function
+		// function that prepares and initializes both the Select2 dropdown containing the method list as well as the checkbox that toggles
+		// between displaying only favorite
+		// methods or no. methodConversionFunction is provided as a parameter in case developers wish to change the construction of each
+		// select2 item, tho built-in function
 		// will be used by default if this is not provided
-		processMethodDropdownAndFavoritesCheckbox: function(methodSelectID, favoritesCheckboxID, favoritesDefault, methodConversionFunction) {
-			BreedingMethodsFunctions.retrieveBreedingMethods().done(function(data) {
-				if (! methodConversionFunction) {
-					methodConversionFunction = BreedingMethodsFunctions.convertMethodToSelectItem;
-				}
-
-				var possibleValues = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.allMethods, methodConversionFunction);
-				var favoritePossibleValues = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.favoriteMethods, methodConversionFunction);
-
-				if (favoritesDefault) {
-					$safeId('#' + favoritesCheckboxID).prop('checked', true);
-					BreedingMethodsFunctions.createSelect2Dropdown(favoritePossibleValues, methodSelectID);
-				} else {
-					BreedingMethodsFunctions.createSelect2Dropdown(possibleValues, methodSelectID);
-				}
-
-				// attach change handler to checkbox for switching between favorite only and all breeding methods
-				$('#' + getJquerySafeId(favoritesCheckboxID)).on('change', function() {
-					// get previous value of dropdown first
-					var currentSelected = $('#' + getJquerySafeId(methodSelectID)).select2('data');
-
-					if (this.checked) {
-						BreedingMethodsFunctions.createSelect2Dropdown(favoritePossibleValues, methodSelectID);
-					} else {
-						BreedingMethodsFunctions.createSelect2Dropdown(possibleValues, methodSelectID);
+		processMethodDropdownAndFavoritesCheckbox: function(methodSelectID, favoritesCheckboxID, allRadioButtonId, filteredMethodOnlyRadio,
+			 methodConversionFunction) {
+			BreedingMethodsFunctions.retrieveBreedingMethods().done(
+				function(data) {
+					if (!methodConversionFunction) {
+						methodConversionFunction = BreedingMethodsFunctions.convertMethodToSelectItem;
 					}
 
-					if (currentSelected && currentSelected.id) {
-						$('#' + getJquerySafeId(methodSelectID)).select2('val', currentSelected.id);
-					}
-				});
+					$('#showFavoritesOnlyCheckbox').prop('checked',
+						data && data.favoriteGenerativeMethods && data.favoriteGenerativeMethods.length > 0);
 
-				$(document).on('breeding-method-update', function() {
-					BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(methodSelectID, favoritesCheckboxID, favoritesDefault, methodConversionFunction);
-				});
+					var allGenerativeMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.allGenerativeMethods, methodConversionFunction);
+					var allMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.allMethods, methodConversionFunction);
+					var favoriteMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.favoriteMethods, methodConversionFunction);
+					var favoriteGenerativeMethods = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.favoriteGenerativeMethods, methodConversionFunction);
 
-			});
+					var $favFilter = $('#' + getJquerySafeId(favoritesCheckboxID));
+					var $allFilter = $('#' + getJquerySafeId(allRadioButtonId));
+					var $filterMethodOnly = $('#' + getJquerySafeId(filteredMethodOnlyRadio));
+					var $filters = $favFilter.add($allFilter).add($filterMethodOnly);
+
+					var applyFilter = function() {
+						if ($favFilter.is(':checked')) {
+							if ($filterMethodOnly.is(':checked')) {
+								BreedingMethodsFunctions.createSelect2Dropdown(favoriteGenerativeMethods, methodSelectID);
+							} else {
+								BreedingMethodsFunctions.createSelect2Dropdown(favoriteMethods, methodSelectID);
+							}
+						} else if ($allFilter.is(':checked')) {
+							BreedingMethodsFunctions.createSelect2Dropdown(allMethods, methodSelectID);
+						} else {
+							BreedingMethodsFunctions.createSelect2Dropdown(allGenerativeMethods, methodSelectID);
+						}
+					};
+					applyFilter();
+
+					$filters.on('change', function() {
+						// get previous value of dropdown first
+						var currentSelected = $('#' + getJquerySafeId(methodSelectID)).select2('data');
+
+						applyFilter();
+
+						if (currentSelected && currentSelected.id) {
+							$('#' + getJquerySafeId(methodSelectID)).select2('val', currentSelected.id);
+						}
+
+					});
+
+					$(document).on(
+						'breeding-method-update',
+						function() {
+							BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(methodSelectID, favoritesCheckboxID,
+								allRadioButtonId, filteredMethodOnlyRadio, methodConversionFunction);
+					});
+
+				});
 		},
 
 		// FIXME : change declaration so function is not accessible to the outside
@@ -151,7 +172,22 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 
 		retrieveCurrentProjectID: function() {
 			return $.get('/Fieldbook/breedingMethod/programID');
+		},
+		
+		getBreedingMethodById: function() {
+			return $.ajax({
+				url: '/Fieldbook/breedingMethod/getBreedingMethodById',
+				type: 'GET',
+				data: 'data=' + selectedBreedingMethodId,
+				success: function(data) {
+					console.log("success");
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('The following error occurred: ' + textStatus, errorThrown);
+				},
+				complete: function() {
+				}
+			});
 		}
-
 	};
 }

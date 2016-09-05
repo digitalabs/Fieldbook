@@ -1,0 +1,256 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="etl/base-template" ng:app="di-openSheet">
+<head>
+    <title th:inline="text">[[#{page.title.open.sheet}]]</title>
+</head>
+<body>
+
+<section layout:fragment="content" ng:controller="OpenSheetJSController">
+    <div class="content-header">
+        <h2 th:utext="#{page.title.open.sheet}">
+            [[#{page.title.open.sheet}]]
+        </h2>
+        <div th:utext="#{open.sheet.desc}"></div>
+    </div>
+
+    <!-- Server side errors will display here -->
+    <div id="page-message">
+        <form th:object="${selectRowsForm}" th:remove="tag">
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}"
+                 th:text="${err}"></div>
+        </form>
+    </div>
+
+
+    <!-- Separate div for client side errors -->
+    <div ng:repeat="message in messages" id="message-div">
+        <div class="alert alert-danger" ng:bind="message"></div>
+    </div>
+
+    <form class="form-horizontal" role="form" action="#" method="post"
+          name="openSheetForm" id="openSheetForm">
+        <input type="hidden" name="headerRow" ng:model="selected.headerRow"/>
+
+        <div class="form-group"
+             ng:class="{'has-error' : showError(openSheetForm.headerRowDisplayText)}">
+            <label for="headerRowDisplayText" class="col-md-2 control-label" th:text="#{open.sheet.row.header.label}">Row
+                Header:</label>
+
+            <div class="col-md-6">
+                <input type="text" class="form-control" ng:click="selectRow('Header')"
+                       ng:model="selected.headerRowDisplayText" name="headerRowDisplayText" id="headerRowDisplayText"
+                       size="80"
+                       required></input>
+            </div>
+        </div>
+
+        <div class="form-group"">
+            <div class="col-md-offset-2 col-md-10">
+                <a th:text="#{form.prev.text}" th:href="@{selectSheet}" class="btn btn-default btn-sm"></a>
+                <input type="button" name="action" th:value="#{form.next.text}" class="btn btn-primary btn-sm"
+                       ng:click="validateAndSubmit()" ng:disabled="userAttemptedSubmission"/>
+            </div>
+        </div>
+    </form>
+
+    <!-- Modal -->
+    <script type="text/ng-template" id="listModal.html">
+        <div class="modal-header">
+            <h3 id="myModalLabel" ng-bind="label">Select Header Row</h3>
+        </div>
+        <div class="modal-body text-center">
+
+            <table class="table table-condensed table-bordered table-hover table-modal-content text-left">
+                <tbody>
+                <tr ng:repeat="row in items" ng:click="selectRow(row)">
+                    <td>{{row.rowContent}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <pagination total-items="pagination.totalItems" page="pagination.currentPage" max-size="pagination.maxSize"
+                        class="pagination-small" boundary-links="true" rotate="false" num-pages="numPages"
+                        items-per-page="pagination.pageItems" on-select-page="setPage(page)"
+                        previous-text="&lsaquo;" next-text="&rsaquo;"
+                    ></pagination>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default btn-sm" th:text="#{form.close.text}" ng:click="close()">Close</button>
+        </div>
+    </script>
+    <!-- Placed at the end of the document so the pages load faster -->
+
+</section>
+<!-- /container -->
+
+<div layout:fragment="page-script">
+
+    <script type="text/javascript" th:src="@{/static/js/angular/angular1.0.8.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/angular-bootstrap3/ui-bootstrap-tpls-0.6.0-SNAPSHOT.min.js}"></script>
+<script type="text/javascript" th:src="@{/dynamic/js/digitalabs-utils.js}"></script>
+<script type="text/javascript" th:src="@{/dynamic/js/digitalabs-data.js}"></script>
+
+
+<script type="text/javascript" th:inline="javascript">
+    //<![CDATA[
+    $(function () {
+
+
+        // limit the observation row textbox to numbers only
+        $("#observationRows").keypress(function (e) {
+
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) { return false; }
+
+        });
+
+    });
+
+
+    angular.module('di-openSheet', ['digitalabs-util', 'digitalabs-data', 'ui.bootstrap'])
+            .constant('DISPLAY_ROWS', /*[[${T(com.efficio.etl.web.controller.angular.AngularOpenSheetController).ROW_COUNT_PER_SCREEN}]]*/
+            ).controller('OpenSheetJSController', ['$scope', '$modal', 'myHttp', '$q', 'Rows', function ($scope, $modal, myHttp, $q, Rows) {
+                $scope.selected = /*[[${selectRowsForm}]]*/;
+                $scope.columnHeaders = [];
+                $scope.messages = [];
+                $scope.userAttemptedSubmission = false;
+                $scope.currentErrorField = null;
+
+                var promise = null;
+
+                // this performs an asynchronous call to retrieve initial items for display in the modal
+                if ($scope.initialItems == undefined) {
+                    promise = Rows.getPagedList(1);
+                    promise.then(function (items) {
+                        $scope.initialItems = items;
+                    });
+                } else {
+                    promise = $q.when($scope.initialItems);
+                }
+
+                $scope.selectRow = function (type) {
+                    var modalInstance = null;
+                    var handlerFunction;
+                    var modalLabel;
+
+                    if (type === 'Header') {
+                        handlerFunction = $scope.setHeaderRow;
+                        modalLabel = [[#{open.sheet.select.header.label}]];
+                    } else if (type === 'Content') {
+                        handlerFunction = $scope.setContentRow;
+                        modalLabel = [[#{open.sheet.first.row.select.label}]];
+                    }
+
+                    modalInstance = $modal.open({
+                        templateUrl: 'listModal.html',
+                        controller: 'ListDisplayPaginatedModalController',
+                        resolve: {
+                            label: function () {
+                                return modalLabel;
+                            },
+                            initialItems: function () {
+                                return promise;
+                            },
+                            RowRetrievalService: function () {
+                                return Rows;
+                            },
+                            rowRetrievalParams : function() {
+                                return null;
+                            }
+
+                        }
+                    });
+
+                    modalInstance.result.then(handlerFunction);
+                };
+
+                $scope.setHeaderRow = function (selectedRow) {
+                    if (selectedRow.rowIndex != $scope.selected.headerRow) {
+                        $scope.selected.headerRowDisplayText = selectedRow.rowContent;
+                        $scope.selected.headerRow = selectedRow.rowIndex;
+                    }
+                };
+
+                $scope.setContentRow = function (selectedRow) {
+                    $scope.selected.contentRowDisplayText = selectedRow.rowContent;
+                    $scope.selected.contentRow = selectedRow.rowIndex;
+
+                };
+
+                // trigger updates to the columnHeaders in the model whenever the selected header row changes
+                $scope.$watch('selected.headerRow', function (newVal, oldVal) {
+                    if (newVal != -1 && newVal != undefined) {
+                        myHttp.get('openSheetOld/columnInfo/' + newVal).success(function (data) {
+                            $scope.columnHeaders = data;
+                        })
+                    }
+                });
+
+                // trigger updates to the observation row count whenever the index column value changes
+                $scope.$watch('selected.indexColumn', function (newVal, oldVal) {
+                    $scope.updateObservationCount(newVal, $scope.selected.contentRow);
+                });
+
+                $scope.$watch('selected.contentRow', function (newVal, oldVal) {
+                    $scope.updateObservationCount($scope.selected.indexColumn, newVal);
+                });
+
+                $scope.updateObservationCount = function (columnIndex, contentIndex) {
+                    if (columnIndex != undefined && columnIndex != -1 && contentIndex != undefined && contentIndex != -1) {
+                        myHttp.get('openSheetOld/observationCount/', {
+                            params: {
+                                columnIndex: columnIndex,
+                                contentIndex: contentIndex
+                            }
+                        }).success(function (data) {
+                                    $scope.selected.observationRows = data.value;
+                                });
+                    }
+                };
+
+                $scope.isValid = function () {
+                    var valid = true;
+                    if ($scope.openSheetForm.headerRowDisplayText.$invalid) {
+                        $scope.currentErrorField = $scope.openSheetForm.headerRowDisplayText;
+                        $scope.messages.push([[#{open.sheet.validation.no.header.row}]]);
+                        valid = false;
+                    }
+
+                    return $scope.messages.length == 0;
+                };
+
+                $scope.validateAndSubmit = function () {
+                    // clear previous messages
+                    $scope.messages = [];
+                    // set flag to let components know that they should start showing form validation errors if any
+                    $scope.userAttemptedSubmission = true;
+                    if ($scope.isValid()) {
+
+                        myHttp.post("openSheetOld", $scope.selected).success(function (data) {
+                            if (data.success) {
+                                window.location = data.redirectUrl;
+                            } else {
+                                $scope.messages = data.messages;
+                            }
+                        });
+                    } else {
+                        $scope.$digest();
+                    }
+                    $scope.userAttemptedSubmission = false;
+                };
+
+                $scope.showError = function (ngModelController) {
+                    return ngModelController.$invalid && $scope.userAttemptedSubmission && $scope.currentErrorField === ngModelController;
+                }
+
+            }])
+            .factory('Rows', ['resourceFactory', function (resourceFactory) {
+                return resourceFactory('openSheetOld/displayRow');
+            }]);
+</script>
+
+</div>
+</body>
+</html>

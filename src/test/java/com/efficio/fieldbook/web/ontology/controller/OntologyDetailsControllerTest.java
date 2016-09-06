@@ -30,7 +30,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ui.ExtendedModelMap;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
@@ -63,8 +62,6 @@ public class OntologyDetailsControllerTest extends AbstractBaseIntegrationTest {
 		OntologyService ontologyService = Mockito.mock(OntologyService.class);
 		StandardVariable stdvar = this.createStandardVariableTestData();
 		Mockito.when(ontologyService.getStandardVariable(8050, this.contextUtil.getCurrentProgramUUID())).thenReturn(stdvar);
-		Mockito.when(ontologyService.countProjectsByVariable(8050)).thenReturn(123456L);
-		Mockito.when(ontologyService.countExperimentsByVariable(8050, 1010)).thenReturn(789000L);
 		this.controller.setOntologyService(ontologyService);
 
 		Assert.assertEquals(stdvar, form.getVariable());

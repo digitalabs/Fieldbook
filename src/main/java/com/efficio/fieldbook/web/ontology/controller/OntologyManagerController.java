@@ -45,7 +45,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,7 +61,6 @@ import com.efficio.fieldbook.web.ontology.form.OntologyModalForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyScaleForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyTraitClassForm;
-import com.efficio.fieldbook.web.ontology.validation.OntologyBrowserValidator;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 
 /**
@@ -272,74 +270,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 			OntologyManagerController.LOG.error(e.getMessage(), e);
 		}
 		return super.show(model);
-	}
-
-	/**
-	 * Save new variable.
-	 *
-	 * @param form the form
-	 * @param result the result
-	 * @param model the model
-	 * @return the string
-	 */
-	@RequestMapping(value = "variable", method = RequestMethod.POST)
-	public String saveNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, BindingResult result, Model model) {
-		OntologyBrowserValidator validator = new OntologyBrowserValidator();
-		boolean isPopup = false;
-		int preselectVariableId = 0;
-		// validations for delete and update
-		if (form.getIsDelete().equals(1)) {
-			this.validateDelete(form, result);
-		} else if (form.getIsDelete().equals(0)) {
-			OntologyManagerController.LOG.debug("hallow");
-			validator.validate(form, result);
-		}
-
-		form.setAddSuccessful("0");
-
-		if (result.hasErrors()) {
-			/**
-			 * Return the user back to form to show errors
-			 */
-			form.setHasError("1");
-			return this.show(form, model);
-		} else {
-			try {
-				if (form.getIsDelete().equals(1)) {
-					// delete
-					this.ontologyService.deleteStandardVariable(form.getVariableId());
-				} else {
-					// add or update
-					Operation operation = form.getVariableId() != null ? Operation.UPDATE : Operation.ADD;
-					StandardVariable standardVariable = new StandardVariable();
-					// if variable is from local, add/update the variable
-					// if it's from central, get the standard variable object only for update of valid value
-					standardVariable = this.createStandardVariableObject(form, operation);
-					this.ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
-					standardVariable = this.ontologyService.getStandardVariable(standardVariable.getId(),contextUtil.getCurrentProgramUUID());
-
-					this.saveConstraintsAndValidValues(form, standardVariable);
-					form.setVariableId(standardVariable.getId());
-					form.setVariableName(standardVariable.getName());
-				}
-				form.setAddSuccessful("1");
-				model.addAttribute("isPopup", form.getFromPopup());
-
-				if (form.getFromPopup() != null && form.getFromPopup().equalsIgnoreCase("1")) {
-					isPopup = true;
-					preselectVariableId = form.getPreselectVariableId();
-				}
-			} catch (MiddlewareQueryException e) {
-				OntologyManagerController.LOG.error(e.getMessage(), e);
-				form.setAddSuccessful("2");
-				form.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(e.getCode(), null, "\n"));
-			} catch (MiddlewareException e) {
-				OntologyManagerController.LOG.error(e.getMessage(), e);
-				form.setAddSuccessful("2");
-				form.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(e.getMessage(), null, "\n"));
-			}
-		}
-		return this.showManageVariable(form, isPopup, preselectVariableId, model);
 	}
 
 	/**
@@ -897,26 +827,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 	 */
 	private String checkIfNull(Term term) {
 		return term == null ? "" : String.valueOf(term.getId());
-	}
-
-	/**
-	 * Validate delete.
-	 *
-	 * @param o the o
-	 * @param errors the errors
-	 */
-	protected void validateDelete(Object o, Errors errors) {
-		OntologyBrowserForm form = (OntologyBrowserForm) o;
-		try {
-			if (this.ontologyService.countProjectsByVariable(form.getVariableId()) > 0) {
-				errors.rejectValue("variableName", "ontology.browser.cannot.delete.linked.variable", new String[] {
-						this.ontologyService.getStandardVariable(form.getVariableId(),
-								contextUtil.getCurrentProgramUUID()).getName()}, 
-						"ontology.browser.cannot.delete.linked.variable");
-			}
-		} catch (MiddlewareException e) {
-			OntologyManagerController.LOG.error(e.getMessage(), e);
-		}
 	}
 
 	/**

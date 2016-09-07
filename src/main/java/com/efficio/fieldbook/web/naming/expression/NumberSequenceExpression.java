@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.ArrayList;
@@ -11,13 +12,12 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public abstract class NumberSequenceExpression extends BaseExpression {
 
-	
 	@Resource
 	GermplasmDataManager germplasmDataManager;
-	
-	protected void applyNumberSequence(List<StringBuilder> values, AdvancingSource source) {
+
+	protected void applyNumberSequence(final List<StringBuilder> values, final AdvancingSource source) {
 		if (source.isForceUniqueNameGeneration()) {
-			for (StringBuilder container : values) {
+			for (final StringBuilder container : values) {
 				this.replaceExpressionWithValue(container, "(" + Integer.toString(source.getCurrentMaxSequence() + 1) + ")");
 
 			}
@@ -26,38 +26,40 @@ public abstract class NumberSequenceExpression extends BaseExpression {
 		}
 
 		if (source.isBulk()) {
-			for (StringBuilder container : values) {
+			for (final StringBuilder container : values) {
 				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 1) {
-                    Integer newValue = source.getPlantsSelected();
+					final Integer newValue = source.getPlantsSelected();
 					this.replaceExpressionWithValue(container, newValue != null ? newValue.toString() : "");
 				} else {
 					this.replaceExpressionWithValue(container, "");
 				}
 			}
 		} else {
-			List<StringBuilder> newNames = new ArrayList<StringBuilder>();
+			final List<StringBuilder> newNames = new ArrayList<StringBuilder>();
 			int startCount = 1;
 
 			if (source.getCurrentMaxSequence() > -1) {
-				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 0 && getExpressionKey().equals(SequenceExpression.KEY)){
-					StringBuilder value = new StringBuilder(values.get(0));
+				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 0
+						&& this.getExpressionKey().equals(SequenceExpression.KEY)) {
+					final StringBuilder value = new StringBuilder(values.get(0));
 					this.replaceExpressionWithValue(value, "");
-					startCount = Integer.parseInt(this.germplasmDataManager.getNextSequenceNumberForCrossName(value.toString())) + source.getCurrentMaxSequence();
+					startCount = Integer.parseInt(this.germplasmDataManager.getNextSequenceNumberForCrossName(value.toString()))
+							+ source.getCurrentMaxSequence();
 				} else {
 					startCount = source.getCurrentMaxSequence() + 1;
 				}
 			}
 
-			for (StringBuilder value : values) {
+			for (final StringBuilder value : values) {
 				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 0) {
 
 					for (int i = startCount; i < startCount + source.getPlantsSelected(); i++) {
-						StringBuilder newName = new StringBuilder(value);
-                        this.replaceExpressionWithValue(newName, String.valueOf(i));
+						final StringBuilder newName = new StringBuilder(value);
+						this.replaceExpressionWithValue(newName, String.valueOf(i));
 						newNames.add(newName);
 					}
 				} else {
-                    this.replaceExpressionWithValue(value, "");
+					this.replaceExpressionWithValue(value, "");
 					newNames.add(value);
 				}
 			}
@@ -66,7 +68,7 @@ public abstract class NumberSequenceExpression extends BaseExpression {
 			values.addAll(newNames);
 		}
 	}
-	
+
 	public void setGermplasmDataManager(final GermplasmDataManager germplasmDataManager) {
 		this.germplasmDataManager = germplasmDataManager;
 	}

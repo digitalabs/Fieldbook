@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
@@ -22,111 +23,137 @@ public class SequenceExpressionTest extends TestExpression {
 	private static final String SEPARATOR = "-";
 	private static final String GERMPLASM_NAME = "GERMPLASM_TEST";
 	private static final String RESULT_DESIG = "GERMPLASM_TEST-5";
-	
+
 	private SequenceExpression expression;
-	
+
 	@Mock
 	private GermplasmDataManager germplasmDataManager;
-	
+
 	@Before
 	public void setUp() {
-		expression = new SequenceExpression();
-		expression.setGermplasmDataManager(germplasmDataManager);
+		this.expression = new SequenceExpression();
+		this.expression.setGermplasmDataManager(this.germplasmDataManager);
 	}
-	
+
 	@Test
 	public void testSequence() throws Exception {
-		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, KEY, null, true);
+		final AdvancingSource source = this.createAdvancingSourceTestData(SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.SEPARATOR, null, SequenceExpressionTest.KEY, null, true);
 		source.setPlantsSelected(5);
-		List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
-		expression.apply(values, source);
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + RESULT_DESIG, RESULT_DESIG, values.get(0).toString());
+		final List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+		this.expression.apply(values, source);
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + SequenceExpressionTest.RESULT_DESIG,
+				SequenceExpressionTest.RESULT_DESIG, values.get(0).toString());
 	}
 
 	@Test
 	public void testNegativeNumber() throws Exception {
-		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, KEY, null, true);
+		final AdvancingSource source = this.createAdvancingSourceTestData(SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.SEPARATOR, null, SequenceExpressionTest.KEY, null, true);
 		source.setPlantsSelected(-2);
-		List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
-		expression.apply(values, source);
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + GERMPLASM_NAME + SEPARATOR, GERMPLASM_NAME + SEPARATOR, values.get(0).toString());
+		final List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+		this.expression.apply(values, source);
+		Assert.assertEquals(
+				"The value after applying the processcodes should be equal to " + SequenceExpressionTest.GERMPLASM_NAME
+						+ SequenceExpressionTest.SEPARATOR,
+				SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR, values.get(0).toString());
 	}
 
 	@Test
 	public void testCaseSensitive() throws Exception {
-		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, "[sequence]", null, true);
+		final AdvancingSource source = this.createAdvancingSourceTestData(SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.SEPARATOR, null, "[sequence]", null, true);
 		source.setPlantsSelected(5);
-		List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
-		expression.apply(values, source);
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + RESULT_DESIG, RESULT_DESIG, values.get(0).toString());
+		final List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+		this.expression.apply(values, source);
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + SequenceExpressionTest.RESULT_DESIG,
+				SequenceExpressionTest.RESULT_DESIG, values.get(0).toString());
 	}
 
 	@Test
 	public void testWithStartCount() throws Exception {
-		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, "[sequence]", null, true);
+		final AdvancingSource source = this.createAdvancingSourceTestData(SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.SEPARATOR, null, "[sequence]", null, true);
 		source.setPlantsSelected(5);
 		source.setCurrentMaxSequence(5);
-		List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
-		expression.apply(values, source);
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + RESULT_DESIG, RESULT_DESIG, values.get(0).toString());
+		final List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+		this.expression.apply(values, source);
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + SequenceExpressionTest.RESULT_DESIG,
+				SequenceExpressionTest.RESULT_DESIG, values.get(0).toString());
 	}
 
 	@Test
 	public void testNonBulkingSequenceGenerationWithSequenceNumberEqualsTo1() {
-		Mockito.when(germplasmDataManager.getNextSequenceNumberForCrossName(Matchers.anyString())).thenReturn("1");
+		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(Matchers.anyString())).thenReturn("1");
 		// final false refers to nonBulking
-		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, KEY, null, false);
+		final AdvancingSource source = this.createAdvancingSourceTestData(SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.SEPARATOR, null, SequenceExpressionTest.KEY, null, false);
 		source.setPlantsSelected(5);
 		source.setCurrentMaxSequence(5);
-		List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
-		expression.apply(values, source);
-		final String resultDesig = GERMPLASM_NAME + SEPARATOR + 6;
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig, values.get(0).toString());
+		final List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+		this.expression.apply(values, source);
+		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR + 6;
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig,
+				values.get(0).toString());
 	}
-	
+
 	@Test
 	public void testNonBulkingSequenceGenerationWithSequenceNumberEqualsTo5() {
-		Mockito.when(germplasmDataManager.getNextSequenceNumberForCrossName(Matchers.anyString())).thenReturn("5");
+		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(Matchers.anyString())).thenReturn("5");
 		// final false refers to nonBulking
-		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, KEY, null, false);
+		final AdvancingSource source = this.createAdvancingSourceTestData(SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.SEPARATOR, null, SequenceExpressionTest.KEY, null, false);
 		source.setPlantsSelected(5);
 		source.setCurrentMaxSequence(5);
-		List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
-		expression.apply(values, source);
-		final String resultDesig = GERMPLASM_NAME + SEPARATOR + 10;
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig, values.get(0).toString());
+		final List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+		this.expression.apply(values, source);
+		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR + 10;
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig,
+				values.get(0).toString());
 	}
-	
+
 	@Test
 	public void testNonBulkingSequenceGenerationWithNegativePlantsSelectedValue() {
-		Mockito.when(germplasmDataManager.getNextSequenceNumberForCrossName(Matchers.anyString())).thenReturn("5");
+		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(Matchers.anyString())).thenReturn("5");
 		// final false refers to nonBulking
-		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, KEY, null, false);
+		final AdvancingSource source = this.createAdvancingSourceTestData(SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.SEPARATOR, null, SequenceExpressionTest.KEY, null, false);
 		source.setPlantsSelected(-1);
 		source.setCurrentMaxSequence(5);
-		List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
-		expression.apply(values, source);
-		final String resultDesig = GERMPLASM_NAME + SEPARATOR;
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig, values.get(0).toString());
+		final List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+		this.expression.apply(values, source);
+		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR;
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig,
+				values.get(0).toString());
 	}
-	
+
 	@Test
 	public void testNonBulkingSequenceGenerationWithNegativeCurrentMaxSequencedValue() {
 		// final false refers to nonBulking
-		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, KEY, null, false);
+		final AdvancingSource source = this.createAdvancingSourceTestData(SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.SEPARATOR, null, SequenceExpressionTest.KEY, null, false);
 		source.setPlantsSelected(1);
 		source.setCurrentMaxSequence(-5);
-		List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
-		expression.apply(values, source);
-		final String resultDesig = GERMPLASM_NAME + SEPARATOR + 1;
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig, values.get(0).toString());
+		final List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+		this.expression.apply(values, source);
+		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR + 1;
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig,
+				values.get(0).toString());
 	}
 }

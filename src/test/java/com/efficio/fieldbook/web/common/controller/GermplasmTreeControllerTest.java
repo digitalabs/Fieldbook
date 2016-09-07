@@ -36,7 +36,6 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,9 +124,6 @@ public class GermplasmTreeControllerTest {
 	private AbstractBaseFieldbookController abstractFieldbookController;
 
 	@Mock
-	private WorkbenchRuntimeData workbenchRuntimeData;
-
-	@Mock
 	private UserTreeStateService userTreeStateService;
 
 	@InjectMocks
@@ -136,7 +132,6 @@ public class GermplasmTreeControllerTest {
 	@Before
 	public void setUp() throws MiddlewareQueryException {
 		Mockito.doReturn(this.getProject()).when(this.workbenchDataManager).getLastOpenedProjectAnyUser();
-		Mockito.doReturn(this.workbenchRuntimeData).when(this.workbenchDataManager).getWorkbenchRuntimeData();
 		Mockito.doReturn(this.createCrossSetting()).when(this.userSelection).getCrossSettings();
 		Mockito.doReturn(this.createImportedCrossesList()).when(this.userSelection).getImportedCrossesList();
 		Mockito.doReturn(this.createWorkBook()).when(this.userSelection).getWorkbook();

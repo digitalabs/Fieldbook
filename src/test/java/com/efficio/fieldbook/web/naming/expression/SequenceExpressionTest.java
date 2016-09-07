@@ -11,6 +11,10 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class SequenceExpressionTest extends TestExpression {
 
+	private static final String KEY = "[SEQUENCE]";
+	private static final String SEPARATOR = "-";
+	private static final String GERMPLASM_NAME = "GERMPLASM_TEST";
+	private static final String RESULT_DESIG = "GERMPLASM_TEST-5";
 	@Test
 	public void testSequence() throws Exception {
 		SequenceExpression expression = new SequenceExpression();

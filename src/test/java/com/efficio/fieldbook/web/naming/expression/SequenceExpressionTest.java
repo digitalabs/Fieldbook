@@ -36,57 +36,55 @@ public class SequenceExpressionTest extends TestExpression {
 	
 	@Test
 	public void testSequence() throws Exception {
-		SequenceExpression expression = new SequenceExpression();
-		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[SEQUENCE]", null, true);
+		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, KEY, null, true);
 		source.setPlantsSelected(5);
 		List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
 		expression.apply(values, source);
-		this.printResult(values, source);
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + RESULT_DESIG, RESULT_DESIG, values.get(0).toString());
 	}
 
 	@Test
 	public void testNegativeNumber() throws Exception {
-		SequenceExpression expression = new SequenceExpression();
-		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[SEQUENCE]", null, true);
+		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, KEY, null, true);
 		source.setPlantsSelected(-2);
 		List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
 		expression.apply(values, source);
-		this.printResult(values, source);
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + GERMPLASM_NAME + SEPARATOR, GERMPLASM_NAME + SEPARATOR, values.get(0).toString());
 	}
 
 	@Test
 	public void testCaseSensitive() throws Exception {
-		SequenceExpression expression = new SequenceExpression();
-		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[sequence]", null, true);
+		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, "[sequence]", null, true);
 		source.setPlantsSelected(5);
 		List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
 		expression.apply(values, source);
-		System.out.println("process code is in lower case");
-		this.printResult(values, source);
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + RESULT_DESIG, RESULT_DESIG, values.get(0).toString());
 	}
 
 	@Test
 	public void testWithStartCount() throws Exception {
-		SequenceExpression expression = new SequenceExpression();
-		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[sequence]", null, true);
+		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, "[sequence]", null, true);
 		source.setPlantsSelected(5);
 		source.setCurrentMaxSequence(5);
 		List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
 		expression.apply(values, source);
-		System.out.println("process code is in lower case");
-		this.printResult(values, source);
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + RESULT_DESIG, RESULT_DESIG, values.get(0).toString());
 	}
 
 	@Test
-	public void testNonBulkingSequenceGeneration() {
-		SequenceExpression expression = new SequenceExpression();
+	public void testNonBulkingSequenceGenerationWithSequenceNumberEqualsTo1() {
+		Mockito.when(germplasmDataManager.getNextSequenceNumberForCrossName(Matchers.anyString())).thenReturn("1");
 		// final false refers to nonBulking
-		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[SEQUENCE]", null, false);
+		AdvancingSource source = this.createAdvancingSourceTestData(GERMPLASM_NAME, SEPARATOR, null, KEY, null, false);
 		source.setPlantsSelected(5);
 		source.setCurrentMaxSequence(5);
 		List<StringBuilder> values = this.createInitialValues(source);
+		Assert.assertFalse("The value before applying the processcodes should not be equal to " + GERMPLASM_NAME, GERMPLASM_NAME.equals(values.get(0).toString()));
 		expression.apply(values, source);
-		Assert.assertEquals(5, values.size());
-		this.printResult(values, source);
+		final String resultDesig = GERMPLASM_NAME + SEPARATOR + 6;
+		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig, values.get(0).toString());
 	}
-}

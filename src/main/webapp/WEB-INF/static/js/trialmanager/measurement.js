@@ -3,8 +3,8 @@
 	'use strict';
 
 	angular.module('manageTrialApp').controller('MeasurementsCtrl',
-		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http',
-			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http) {
+		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http', 'DTOptionsBuilder',
+			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder) {
 				var DELAY = 1500; // 1.5 secs
 
 				$scope.settings = TrialManagerDataService.settings.measurements;
@@ -17,6 +17,11 @@
 				$scope.isNewStudy = function() {
 					return ($('#studyId').val() == '')
 				};
+
+				$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"li>rtp')
+					.withOption('scrollX', true)
+					.withOption('scrollCollapse', true)
+					.withOption('deferRender', true);
 				
 				$scope.initEnvironmentList = function() {
 					if (!$scope.isNewStudy()) {

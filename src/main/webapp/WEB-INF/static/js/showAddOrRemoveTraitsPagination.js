@@ -19,13 +19,11 @@ function onMeasurementsObservationLoad(isCategoricalDisplay) {
 	});
 
 	// display the measurements table
-	// TODO Add the parameters here to pass to the backend
 	return new BMS.Fieldbook.MeasurementsDataTable('#measurement-table');
 
 }
 
 function initializeTraitsPagination(isCategoricalDisplay) {
-
     'use strict';
     onMeasurementsObservationLoad(isCategoricalDisplay);
 

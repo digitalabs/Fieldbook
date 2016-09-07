@@ -521,6 +521,7 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	@RequestMapping(value = "/load/preview/measurement", method = RequestMethod.GET)
+	//TODO Use the same preview function for both Nursery and Trial
 	public String loadPreviewMeasurement(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
 		final Workbook originalWorkbook = this.userSelection.getWorkbook();

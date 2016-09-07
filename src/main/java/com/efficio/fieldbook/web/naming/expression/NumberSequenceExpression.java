@@ -32,7 +32,13 @@ public abstract class NumberSequenceExpression extends BaseExpression {
 			int startCount = 1;
 
 			if (source.getCurrentMaxSequence() > -1) {
-				startCount = source.getCurrentMaxSequence() + 1;
+				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 0 && getExpressionKey().equals(SequenceExpression.KEY)){
+					StringBuilder value = new StringBuilder(values.get(0));
+					this.replaceExpressionWithValue(value, "");
+					startCount = Integer.parseInt(this.germplasmDataManager.getNextSequenceNumberForCrossName(value.toString())) + source.getCurrentMaxSequence();
+				} else {
+					startCount = source.getCurrentMaxSequence() + 1;
+				}
 			}
 
 			for (StringBuilder value : values) {

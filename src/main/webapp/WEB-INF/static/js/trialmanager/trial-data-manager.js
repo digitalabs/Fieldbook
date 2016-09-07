@@ -357,6 +357,7 @@
 					return refreshMeasurementDeferred.promise;
 				},
 
+				//TODO Remove that function, we are not reloading the entire page
 				reloadMeasurementAjax: function(data) {
 					return $http({
 						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',

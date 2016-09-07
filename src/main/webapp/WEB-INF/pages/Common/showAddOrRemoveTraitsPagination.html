@@ -1,102 +1,104 @@
 <div ng-class="isNewStudy() ? 'msrmnt-study-not-saved' : 'msrmnt-existing-study'">
 	<div class="row form-group col-xs-12 col-md-12">
+		<!-- TODO Remove inlined styles-->
 		<img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px;" width="22" height="22"/>
 		<strong class="sub-content-heading measurements-header" th:text="#{nursery.edit.nursery.measurements}"></strong>
 		<strong class="sub-content-heading preview-measurements-header" th:text="#{nursery.edit.nursery.preview.measurements}"></strong>
 	</div>
 
 	<div class="no-measurements-table">
-		<!-- TODO Localise -->
-		<span>Please generate the design to see the measurements</span>
+		<span th:text="#{nursery.edit.nursery.preview.genearate.design.message}">Please generate the design to see the measurements</span>
 	</div>
 
-	<div class="show-measurements-table">
-		<div class="preview-measurements-panel">
-			<!-- TODO Localise -->
-			<span>Please save the study to be able to edit measurements</span>
-			<div>
-				<!-- TODO Localise -->
-				<a href="#" class="btn btn-primary fbk-inline" ng-click="previewMeasurements()">Preview Measurements</a>
-			</div>
-
-
+	<div class="preview-measurements-panel">
+		<div class="preview-measurements-message" ng-if="!isDisplayPreview">
+			<span th:text="#{nursery.edit.nursery.preview.save.message}">Please save the study to be able to edit measurements</span>
+			<a class="btn btn-primary fbk-inline" ng-click="previewMeasurements()" th:text="#{nursery.edit.nursery.preview.measurement.button}">Preview Measurements</a>
 		</div>
-
-		<div class="edit-measurements-panel">
-
-			<div class="mdt-columns dataTables_info">
-				<span class="btn btn-link fbk-toggle-categorical-display" th:text="#{measurements.show.categorical.description}">Show Categorical Description</span>
-			</div>
-
-			<div id="mdt-environment-list-panel">
-				<div id="mdt-environment-list-label" class="dataTables_info fbk-std-padding-right"
-					 th:text="#{measurement.environment.list.label}"></div>
-
-				<div id="mdt-environment-list" class="fbk-float-left">
-					<select id="measurements-environment-number" name="measurements-environment-number"
-							ng-model="selectedEnvironment"
-							class="input-sm form-control fbk-std-padding-right inline-select"
-							onchange="reloadMeasurementDataTable()"
-							ng-options="(env.instanceNumber + ' - ' + (env.locationName || env.locationAbbreviation || env.instanceNumber)) for env in environmentsList track by env.instanceNumber">
-					</select>
-				</div>
-			</div>
-
-			<table th:if="${createNurseryForm != null || createTrialForm != null}"
-				   th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}" id="measurement-table" width="100%"
-				   class="table-curved table-condensed">
+		<div class="preview-measurements-table" ng-if="isDisplayPreview">
+			<table datatable="" id="preview-measurement-table" width="100%" class="table-curved table-condensed">
 				<thead>
 				<tr>
-					<th nowrap="nowrap"
-						th:attr="data-term-id=${measurementVariable.termId},data-term-data-type-id=${measurementVariable.dataTypeId},data-term-valid-values=${measurementVariable.possibleValuesString},data-min-range=${measurementVariable.minRange},data-max-range=${measurementVariable.maxRange}"
-						th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
-						th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}"
-						th:utext="${measurementVariable.name}">.variable name
-					</th>
-
 				</tr>
 				</thead>
 			</table>
+		</div>
+	</div>
 
-			<div class="row edit-experiment-section">
+	<div class="edit-measurements-panel">
+
+		<div class="mdt-columns dataTables_info">
+			<span class="btn btn-link fbk-toggle-categorical-display" th:text="#{measurements.show.categorical.description}">Show Categorical Description</span>
+		</div>
+
+		<div id="mdt-environment-list-panel">
+			<div id="mdt-environment-list-label" class="dataTables_info fbk-std-padding-right"
+				 th:text="#{measurement.environment.list.label}"></div>
+
+			<div id="mdt-environment-list" class="fbk-float-left">
+				<select id="measurements-environment-number" name="measurements-environment-number"
+						ng-model="selectedEnvironment"
+						class="input-sm form-control fbk-std-padding-right inline-select"
+						onchange="reloadMeasurementDataTable()"
+						ng-options="(env.instanceNumber + ' - ' + (env.locationName || env.locationAbbreviation || env.instanceNumber)) for env in environmentsList track by env.instanceNumber">
+				</select>
 			</div>
+		</div>
 
-			<div class="modal fade" id="inlineEditConfirmationModal" role="dialog" aria-labelledby="inlineEditConfirmationModal"
-				 aria-hidden="true">
-				<div class="modal-dialog modal-medium">
-					<div class="modal-content">
-						<div class="modal-body" id="inlineEditConfirmationModalBody">
-							<div class="row form-group">
-								<div class="col-xs-11 col-md-11">
-									<label class="modal-title fbk-modal-title" id="heading-modal"
-										   th:text="#{common.form.confirmation.text}">Confirmation</label>
-								</div>
-								<div class="col-xs-1 col-md-1">
-									<button id="inlineEditConfirmationModalClose" type="button"
-											class="close pull-right glyphicon glyphicon-remove" aria-hidden="true"></button>
-								</div>
+		<table th:if="${createNurseryForm != null || createTrialForm != null}"
+			   th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}" id="measurement-table" width="100%"
+			   class="table-curved table-condensed">
+			<thead>
+			<tr>
+				<th nowrap="nowrap"
+					th:attr="data-term-id=${measurementVariable.termId},data-term-data-type-id=${measurementVariable.dataTypeId},data-term-valid-values=${measurementVariable.possibleValuesString},data-min-range=${measurementVariable.minRange},data-max-range=${measurementVariable.maxRange}"
+					th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
+					th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}"
+					th:utext="${measurementVariable.name}">.variable name
+				</th>
+
+			</tr>
+			</thead>
+		</table>
+
+		<div class="row edit-experiment-section">
+		</div>
+
+		<div class="modal fade" id="inlineEditConfirmationModal" role="dialog" aria-labelledby="inlineEditConfirmationModal"
+			 aria-hidden="true">
+			<div class="modal-dialog modal-medium">
+				<div class="modal-content">
+					<div class="modal-body" id="inlineEditConfirmationModalBody">
+						<div class="row form-group">
+							<div class="col-xs-11 col-md-11">
+								<label class="modal-title fbk-modal-title" id="heading-modal"
+									   th:text="#{common.form.confirmation.text}">Confirmation</label>
 							</div>
-							<div class="row form-group">
-								<div class="col-xs-12 col-md-12">
-									<label class="control-label">Data inputted is out of range, do you want to keep or discard the
-										value?</label>
-								</div>
+							<div class="col-xs-1 col-md-1">
+								<button id="inlineEditConfirmationModalClose" type="button"
+										class="close pull-right glyphicon glyphicon-remove" aria-hidden="true"></button>
 							</div>
 						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default inline-edit-confirmation" aria-hidden="true" data-inline-edit="0">
-								Discard
-							</button>
-							<button type="button" class="btn btn-primary inline-edit-confirmation" aria-hidden="true" data-inline-edit="1">
-								Keep
-							</button>
+						<div class="row form-group">
+							<div class="col-xs-12 col-md-12">
+								<label class="control-label">Data inputted is out of range, do you want to keep or discard the
+									value?</label>
+							</div>
 						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default inline-edit-confirmation" aria-hidden="true" data-inline-edit="0">
+							Discard
+						</button>
+						<button type="button" class="btn btn-primary inline-edit-confirmation" aria-hidden="true" data-inline-edit="1">
+							Keep
+						</button>
 					</div>
 				</div>
 			</div>
 		</div>
-
 	</div>
+
 </div>
 
 <script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>

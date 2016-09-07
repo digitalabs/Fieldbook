@@ -2100,7 +2100,8 @@ input.select-all-margin{
 }
 
 .preview-measurements-only .no-measurements-table,
-.show-measurements-table {
+.preview-measurements-panel,
+.edit-measurements-panel {
 	display:none;
 }
 
@@ -2119,8 +2120,13 @@ input.select-all-margin{
 	display: none;
 }
 
-.preview-measurements-only .show-measurements-table .preview-measurements-panel {
+.preview-measurements-only .preview-measurements-panel {
 	display: block;
+}
+
+/* FIXME for the existing study we need a proper check if the design was generated for that study or not previously before saving */
+.msrmnt-existing-study .no-measurements-table {
+	display: none;
 }
 
 

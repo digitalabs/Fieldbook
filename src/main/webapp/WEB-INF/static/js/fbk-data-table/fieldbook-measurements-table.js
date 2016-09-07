@@ -1,5 +1,5 @@
-var getCurrentEnvironmentNumber = function () {
-	var selEnv = $("#fbk-measurements-controller-div").scope().selectedEnvironment;
+var getCurrentEnvironmentNumber = function() {
+	var selEnv = $('#fbk-measurements-controller-div').scope().selectedEnvironment;
 
 	if (!selEnv) {
 		var envList;
@@ -81,7 +81,6 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			} else if ($(this).data('term-data-type-id') === 1120) {
 				// Column definition for Character data type
 
-
 				columnsDef.push({
 					defaultContent: '',
 					targets: columns.length - 1,
@@ -153,8 +152,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							var showDescription = window.isCategoricalDescriptionView ? 'style="display:none"' : '';
 							var showName = !window.isCategoricalDescriptionView ? 'style="display:none"' : '';
 
-							var categoricalNameDom = '<span class="fbk-measurement-categorical-name" '+ showName  + '>' + EscapeHTML.escape(data[1]) + '</span>';
-							var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" '+ showDescription  + '>' + EscapeHTML.escape(data[0]) + '</span>';
+							var categoricalNameDom = '<span class="fbk-measurement-categorical-name" ' + showName  + '>' + EscapeHTML.escape(data[1]) + '</span>';
+							var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" ' + showDescription  + '>' + EscapeHTML.escape(data[0]) + '</span>';
 
 							return (isVariates ? categoricalNameDom + categoricalDescDom : EscapeHTML.escape(data[1])) +
 								'<input type="hidden" value="' + EscapeHTML.escape(data[2]) + '" />';
@@ -204,40 +203,16 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			serverSide: true,
 			processing: true,
 			deferRender: true,
-			ajax: function(data, callback, settings) {
-				// make a decision if it is a preview or editable table
-				if (studyId !== '') {
-					$.ajax({
-						url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
-						type: 'GET',
-						cache: false,
-						data: {
-								draw: data.draw,
-								pageSize: data.length,
-								pageNumber: data.length === 0 ? 1 : data.start / data.length + 1
-						}
-					}).done(function(data) {
-						callback({
-							data: data
-						});
-					});
-				} else {
-					// preview ??? Or do we want another datatable? not server side ???
-					$.ajax({
-							url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
-							type: 'GET',
-							data: '',
-							cache: false,
-							success: function(data) {
-								callback({
-									data: data
-								});
-							},
-							error: function() {
-								//TODO Localise this
-								showErrorMessage('Server Error', 'Experimental design preview could not be generated.');
-							}
-						});
+			ajax: {
+				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
+				type: 'GET',
+				cache: false,
+				data: function(d) {
+					return {
+						draw: d.draw,
+						pageSize: d.length,
+						pageNumber: d.length === 0 ? 1 : d.start / d.length + 1
+					};
 				}
 			},
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -253,7 +228,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 
 					var termId = $(this).data('term-id');
 					var cellData = $(this).text();
-					if (termId != undefined) {
+					if (termId !== undefined) {
 						var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
 						var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
 						if (dataTypeId == '1110') {
@@ -274,7 +249,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 									}
 								}
 							}
-						}else if (possibleValues != undefined) {
+						} else if (possibleValues !== undefined) {
 							var values = possibleValues.split('|');
 
 							$(this).removeClass('accepted-value');
@@ -312,20 +287,19 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			dom: '<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp',
 			//TODO localise messages
 			language: {
-                 processing: '<span class="throbber throbber-2x"></span>',
-                 lengthMenu: 'Records per page: _MENU_'
-             },
+				processing: '<span class="throbber throbber-2x"></span>',
+				lengthMenu: 'Records per page: _MENU_'
+			},
 			// For column visibility
 			buttons: [
 				{
 					extend: 'colvis',
 					columns: ':not(:first-child)',
 					className: 'fbk-buttons-no-border fbk-colvis-button',
-                    text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>'
+					text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>'
 				}
 			]
 		});
-
 
 		if (studyId !== '') {
 			// Activate an inline edit on click of a table cell
@@ -401,7 +375,5 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 
 function reloadMeasurementDataTable() {
 	'use strict';
-	var studyId = $('#studyId').val();
-	var environmentId = getCurrentEnvironmentNumber();
-	$('#measurement-table').DataTable().ajax.url('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId).load();
+	$('#measurement-table').DataTable().ajax.reload();
 }

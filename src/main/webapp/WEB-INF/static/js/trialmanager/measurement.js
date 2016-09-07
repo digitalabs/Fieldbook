@@ -12,6 +12,8 @@
 				$scope.isHideDelete = false;
 				$scope.updateOccurred = false;
 				$scope.addVariable = true;
+				// controls if the user have chosen to display preview
+				$scope.isDisplayPreview = false;
 				$scope.isNewStudy = function() {
 					return ($('#studyId').val() == '')
 				};
@@ -29,6 +31,7 @@
 				};
 
 				$scope.previewMeasurements = function() {
+					$scope.isDisplayPreview = true;
 				};
 				
 				/* Watchers */
@@ -135,7 +138,9 @@
 						//we reload
 						return TrialManagerDataService.reloadMeasurementAjax(dataParam).success(function(data) {
 							$measurementContainer.html(data);
+							// TODO Change that global to the dirty study flag
 							$body.data('needToSave', '1');
+							//TODO Remove that global
 							$body.data('columnReordered', columnsOrder.length !== 0 ? '1' : '0');
 						});
 					}

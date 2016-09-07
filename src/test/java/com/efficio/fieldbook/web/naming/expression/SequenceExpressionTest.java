@@ -1,20 +1,39 @@
-
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
+import junit.framework.Assert;
+
+@RunWith(MockitoJUnitRunner.class)
 public class SequenceExpressionTest extends TestExpression {
 
 	private static final String KEY = "[SEQUENCE]";
 	private static final String SEPARATOR = "-";
 	private static final String GERMPLASM_NAME = "GERMPLASM_TEST";
 	private static final String RESULT_DESIG = "GERMPLASM_TEST-5";
+	
+	private SequenceExpression expression;
+	
+	@Mock
+	private GermplasmDataManager germplasmDataManager;
+	
+	@Before
+	public void setUp() {
+		expression = new SequenceExpression();
+		expression.setGermplasmDataManager(germplasmDataManager);
+	}
+	
 	@Test
 	public void testSequence() throws Exception {
 		SequenceExpression expression = new SequenceExpression();

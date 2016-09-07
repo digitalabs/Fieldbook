@@ -1,13 +1,20 @@
-
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
+
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public abstract class NumberSequenceExpression extends BaseExpression {
 
+	
+	@Resource
+	GermplasmDataManager germplasmDataManager;
+	
 	protected void applyNumberSequence(List<StringBuilder> values, AdvancingSource source) {
 		if (source.isForceUniqueNameGeneration()) {
 			for (StringBuilder container : values) {
@@ -58,5 +65,9 @@ public abstract class NumberSequenceExpression extends BaseExpression {
 			values.clear();
 			values.addAll(newNames);
 		}
+	}
+	
+	public void setGermplasmDataManager(final GermplasmDataManager germplasmDataManager) {
+		this.germplasmDataManager = germplasmDataManager;
 	}
 }

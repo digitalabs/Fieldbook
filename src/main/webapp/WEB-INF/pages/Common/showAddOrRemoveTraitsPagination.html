@@ -16,31 +16,7 @@
 			<a class="btn btn-primary fbk-inline" ng-click="previewMeasurements()" th:text="#{nursery.edit.nursery.preview.measurement.button}">Preview Measurements</a>
 		</div>
 		<div class="preview-measurements-table" ng-if="isDisplayPreview">
-			<table datatable="" id="preview-measurement-table" dt-options="dtOptions" width="100%" class="table-curved table-condensed">
-				<thead>
-				<tr>
-					<th>ID</th>
-					<th>First name</th>
-					<th>Last name</th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr>
-					<td>1</td>
-					<td>Foo</td>
-					<td>Bar</td>
-				</tr>
-				<tr>
-					<td>123</td>
-					<td>Someone</td>
-					<td>Youknow</td>
-				</tr>
-				<tr>
-					<td>987</td>
-					<td>Iamout</td>
-					<td>Ofinspiration</td>
-				</tr>
-				</tbody>
+			<table datatable="" id="preview-measurement-table" dt-options="dtOptions" dt-columns="dtColumns" width="100%" class="table-curved table-condensed">
 			</table>
 		</div>
 	</div>
@@ -59,7 +35,7 @@
 				<select id="measurements-environment-number" name="measurements-environment-number"
 						ng-model="selectedEnvironment"
 						class="input-sm form-control fbk-std-padding-right inline-select"
-						onchange="reloadMeasurementDataTable()"
+						ng-change="changeEnvironmentForMeasurementDataTable()"
 						ng-options="(env.instanceNumber + ' - ' + (env.locationName || env.locationAbbreviation || env.instanceNumber)) for env in environmentsList track by env.instanceNumber">
 				</select>
 			</div>

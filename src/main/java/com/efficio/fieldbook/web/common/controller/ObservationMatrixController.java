@@ -467,6 +467,28 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/plotMeasurements/preview", method = RequestMethod.GET, produces = "application/json")
+	public List<Map<String, Object>> getPreviewPlotMeasurements() {
+		final UserSelection userSelection = this.getUserSelection();
+		final List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+
+		if (userSelection.getTemporaryWorkbook() != null && userSelection.getMeasurementRowList() == null) {
+			tempList.addAll(userSelection.getTemporaryWorkbook().getObservations());
+		} else {
+			tempList.addAll(userSelection.getMeasurementRowList());
+		}
+
+		final List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
+
+		for (final MeasurementRow row : tempList) {
+			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
+			masterList.add(dataMap);
+		}
+
+		return masterList;
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/instanceMetadata/{studyId}", method = RequestMethod.GET)
 	@Transactional
 	public List<StudyInstance> getStudyInstanceMetaData(@PathVariable final int studyId) {

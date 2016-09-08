@@ -372,8 +372,3 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 	return dataTableConstructor;
 
 })(jQuery);
-
-function reloadMeasurementDataTable() {
-	'use strict';
-	$('#measurement-table').DataTable().ajax.reload();
-}

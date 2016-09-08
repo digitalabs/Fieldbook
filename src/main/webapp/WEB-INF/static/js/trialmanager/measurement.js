@@ -3,9 +3,10 @@
 	'use strict';
 
 	angular.module('manageTrialApp').controller('MeasurementsCtrl',
-		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http', 'DTOptionsBuilder',
-			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder) {
+		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http', 'DTOptionsBuilder', 'DTColumnBuilder',
+			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder, DTColumnBuilder) {
 				var DELAY = 1500; // 1.5 secs
+				var studyId = $('#studyId').val();
 
 				$scope.settings = TrialManagerDataService.settings.measurements;
 
@@ -18,14 +19,33 @@
 					return ($('#studyId').val() == '')
 				};
 
-				$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"li>rtp')
+				function serverData(sSource, aoData, fnCallback, oSettings) {
+                                            oSettings.jqXHR = $.ajax({
+                                                'dataType': 'json',
+                                                'type': 'Get',
+                                                'url': '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/preview',
+                                                'data': aoData,
+                                                'success': fnCallback
+                                            });
+                                        }
+
+				$scope.dtOptions = DTOptionsBuilder.fromSource('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/preview').withDOM('<"fbk-datatable-panel-top"li>rtp')
 					.withOption('scrollX', true)
 					.withOption('scrollCollapse', true)
 					.withOption('deferRender', true);
+
+				$scope.dtColumns = [
+                                    DTColumnBuilder.newColumn('ENTRY_TYPE').withTitle('ENTRY_TYPE'),
+                                    DTColumnBuilder.newColumn('GID').withTitle('GID'),
+                                    DTColumnBuilder.newColumn('DESIGNATION').withTitle('DESIGNATION'),
+                                    DTColumnBuilder.newColumn('ENTRY_NO').withTitle('ENTRY_NO'),
+                                    DTColumnBuilder.newColumn('REP_NO').withTitle('REP_NO'),
+                                    DTColumnBuilder.newColumn('PLOT_NO').withTitle('PLOT_NO')
+                                ];
 				
 				$scope.initEnvironmentList = function() {
 					if (!$scope.isNewStudy()) {
-						$http.get('/Fieldbook/Common/addOrRemoveTraits/instanceMetadata/' + $('#studyId').val()).success(function(data) {
+						$http.get('/Fieldbook/Common/addOrRemoveTraits/instanceMetadata/' + studyId).success(function(data) {
 							$scope.environmentsList = data;
 							$scope.selectedEnvironment = data[0];
 						});
@@ -34,6 +54,12 @@
                         $scope.selectedEnvironment = $scope.environmentsList[0];
 					}
 				};
+
+				$scope.changeEnvironmentForMeasurementDataTable = function() {
+                	//TODO page size should be taken from the dropdown, not hardcoded
+                	$('#measurement-table').DataTable().ajax.url('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/'
+                		+ $scope.selectedEnvironment.instanceDbId).load();
+                };
 
 				$scope.previewMeasurements = function() {
 					$scope.isDisplayPreview = true;

@@ -39,8 +39,10 @@ public abstract class NumberSequenceExpression extends BaseExpression {
 			int startCount = 1;
 
 			if (source.getCurrentMaxSequence() > -1) {
-				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 0
-						&& this.getExpressionKey().equals(SequenceExpression.KEY)) {
+				// Will only go to this if statement if: 
+				// count process code is [SEQUENCE] (the [NUMBER] process code does not require the count to be consecutive), 
+				// the current max sequence is 0 (to avoid multiple middleware calls), 
+				// and there is/are plant/s selected
 				if (this.getExpressionKey().equals(SequenceExpression.KEY) && source.getCurrentMaxSequence() == 0 && source.getPlantsSelected() != null && source.getPlantsSelected() > 0) {
 					final StringBuilder value = new StringBuilder(values.get(0));
 					this.replaceExpressionWithValue(value, "");

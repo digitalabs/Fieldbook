@@ -41,10 +41,13 @@ public abstract class NumberSequenceExpression extends BaseExpression {
 			if (source.getCurrentMaxSequence() > -1) {
 				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 0
 						&& this.getExpressionKey().equals(SequenceExpression.KEY)) {
+				if (this.getExpressionKey().equals(SequenceExpression.KEY) && source.getCurrentMaxSequence() == 0 && source.getPlantsSelected() != null && source.getPlantsSelected() > 0) {
 					final StringBuilder value = new StringBuilder(values.get(0));
 					this.replaceExpressionWithValue(value, "");
-					startCount = Integer.parseInt(this.germplasmDataManager.getNextSequenceNumberForCrossName(value.toString()))
-							+ source.getCurrentMaxSequence();
+					
+					startCount = Integer.parseInt(this.germplasmDataManager.getNextSequenceNumberForCrossName(value.toString()));
+					// The Next Sequence Number  is startCount, so the current max sequence is (startCount - 1)
+					source.setCurrentMaxSequence(startCount - 1);
 				} else {
 					startCount = source.getCurrentMaxSequence() + 1;
 				}

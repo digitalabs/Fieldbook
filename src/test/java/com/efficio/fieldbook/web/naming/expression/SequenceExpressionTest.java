@@ -121,6 +121,7 @@ public class SequenceExpressionTest extends TestExpression {
 		this.expression.apply(values, source);
 		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR + 10;
 		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig,
+		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR + 6;
 				values.get(0).toString());
 	}
 

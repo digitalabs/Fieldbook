@@ -98,9 +98,7 @@ public class SequenceExpressionTest extends TestExpression {
 	}
 
 	@Test
-
-	@Test
-	public void testNonBulkingSequenceGenerationWithSequenceNumberEqualsTo5() {
+	public void testNonBulkingSequenceGenerationWithNextSequenceNumberGreaterThan1() {
 		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(Matchers.anyString())).thenReturn("5");
 		// final false refers to nonBulking
 		final AdvancingSource source = this.createAdvancingSourceTestData(SequenceExpressionTest.GERMPLASM_NAME,

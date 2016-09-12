@@ -98,23 +98,6 @@ public class SequenceExpressionTest extends TestExpression {
 	}
 
 	@Test
-	public void testNonBulkingSequenceGenerationWithSequenceNumberEqualsTo1() {
-		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(Matchers.anyString())).thenReturn("1");
-		// final false refers to nonBulking
-		final AdvancingSource source = this.createAdvancingSourceTestData(SequenceExpressionTest.GERMPLASM_NAME,
-				SequenceExpressionTest.SEPARATOR, null, SequenceExpressionTest.KEY, null, false);
-		source.setPlantsSelected(5);
-		source.setCurrentMaxSequence(5);
-		final List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the process codes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
-				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
-
-		this.expression.apply(values, source);
-
-		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR + 6;
-		Assert.assertEquals("The value after applying the process codes should be equal to " + resultDesig, resultDesig,
-				values.get(0).toString());
-	}
 
 	@Test
 	public void testNonBulkingSequenceGenerationWithSequenceNumberEqualsTo5() {

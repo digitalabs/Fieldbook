@@ -41,10 +41,12 @@ public class SequenceExpressionTest extends TestExpression {
 				SequenceExpressionTest.SEPARATOR, null, SequenceExpressionTest.KEY, null, true);
 		source.setPlantsSelected(5);
 		final List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+		Assert.assertFalse("The value before applying the process codes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
 				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+
 		this.expression.apply(values, source);
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + SequenceExpressionTest.RESULT_DESIG,
+
+		Assert.assertEquals("The value after applying the process codes should be equal to " + SequenceExpressionTest.RESULT_DESIG,
 				SequenceExpressionTest.RESULT_DESIG, values.get(0).toString());
 	}
 
@@ -54,13 +56,14 @@ public class SequenceExpressionTest extends TestExpression {
 				SequenceExpressionTest.SEPARATOR, null, SequenceExpressionTest.KEY, null, true);
 		source.setPlantsSelected(-2);
 		final List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+		Assert.assertFalse("The value before applying the process codes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
 				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+
 		this.expression.apply(values, source);
-		Assert.assertEquals(
-				"The value after applying the processcodes should be equal to " + SequenceExpressionTest.GERMPLASM_NAME
-						+ SequenceExpressionTest.SEPARATOR,
-				SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR, values.get(0).toString());
+
+		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR;
+		Assert.assertEquals("The value after applying the process codes should be equal to " + resultDesig, resultDesig,
+				values.get(0).toString());
 	}
 
 	@Test
@@ -69,10 +72,12 @@ public class SequenceExpressionTest extends TestExpression {
 				SequenceExpressionTest.SEPARATOR, null, "[sequence]", null, true);
 		source.setPlantsSelected(5);
 		final List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+		Assert.assertFalse("The value before applying the process codes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
 				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+
 		this.expression.apply(values, source);
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + SequenceExpressionTest.RESULT_DESIG,
+
+		Assert.assertEquals("The value after applying the process codes should be equal to " + SequenceExpressionTest.RESULT_DESIG,
 				SequenceExpressionTest.RESULT_DESIG, values.get(0).toString());
 	}
 
@@ -83,10 +88,12 @@ public class SequenceExpressionTest extends TestExpression {
 		source.setPlantsSelected(5);
 		source.setCurrentMaxSequence(5);
 		final List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+		Assert.assertFalse("The value before applying the process codes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
 				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+
 		this.expression.apply(values, source);
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + SequenceExpressionTest.RESULT_DESIG,
+
+		Assert.assertEquals("The value after applying the process codes should be equal to " + SequenceExpressionTest.RESULT_DESIG,
 				SequenceExpressionTest.RESULT_DESIG, values.get(0).toString());
 	}
 
@@ -99,11 +106,13 @@ public class SequenceExpressionTest extends TestExpression {
 		source.setPlantsSelected(5);
 		source.setCurrentMaxSequence(5);
 		final List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+		Assert.assertFalse("The value before applying the process codes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
 				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+
 		this.expression.apply(values, source);
+
 		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR + 6;
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig,
+		Assert.assertEquals("The value after applying the process codes should be equal to " + resultDesig, resultDesig,
 				values.get(0).toString());
 	}
 
@@ -116,12 +125,13 @@ public class SequenceExpressionTest extends TestExpression {
 		source.setPlantsSelected(5);
 		source.setCurrentMaxSequence(5);
 		final List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+		Assert.assertFalse("The value before applying the process codes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
 				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+
 		this.expression.apply(values, source);
-		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR + 10;
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig,
+
 		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR + 6;
+		Assert.assertEquals("The value after applying the process codes should be equal to " + resultDesig, resultDesig,
 				values.get(0).toString());
 	}
 
@@ -134,11 +144,13 @@ public class SequenceExpressionTest extends TestExpression {
 		source.setPlantsSelected(-1);
 		source.setCurrentMaxSequence(5);
 		final List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+		Assert.assertFalse("The value before applying the process codes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
 				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+
 		this.expression.apply(values, source);
+
 		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR;
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig,
+		Assert.assertEquals("The value after applying the process codes should be equal to " + resultDesig, resultDesig,
 				values.get(0).toString());
 	}
 
@@ -150,11 +162,13 @@ public class SequenceExpressionTest extends TestExpression {
 		source.setPlantsSelected(1);
 		source.setCurrentMaxSequence(-5);
 		final List<StringBuilder> values = this.createInitialValues(source);
-		Assert.assertFalse("The value before applying the processcodes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
+		Assert.assertFalse("The value before applying the process codes should not be equal to " + SequenceExpressionTest.GERMPLASM_NAME,
 				SequenceExpressionTest.GERMPLASM_NAME.equals(values.get(0).toString()));
+
 		this.expression.apply(values, source);
+
 		final String resultDesig = SequenceExpressionTest.GERMPLASM_NAME + SequenceExpressionTest.SEPARATOR + 1;
-		Assert.assertEquals("The value after applying the processcodes should be equal to " + resultDesig, resultDesig,
+		Assert.assertEquals("The value after applying the process codes should be equal to " + resultDesig, resultDesig,
 				values.get(0).toString());
 	}
 }

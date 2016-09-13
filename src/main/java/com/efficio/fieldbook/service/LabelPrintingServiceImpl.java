@@ -1,12 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- *
+ * <p/>
  * Generation Challenge Programme (GCP)
- *
- *
+ * <p/>
+ * <p/>
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
  *******************************************************************************/
 
 package com.efficio.fieldbook.service;
@@ -93,9 +92,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY = "label.printing.available.fields.location";
 	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY = "label.printing.available.fields.block.name";
 
-	public static final Integer[] BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS = new Integer[] {
-			AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(),
-			AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
+	public static final Integer[] BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS =
+			new Integer[] {AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(),
+					AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
 	public static final String INCLUDE_NON_PDF_HEADERS = "1";
 	public static final String BARCODE_NEEDED = "1";
 
@@ -210,12 +209,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		final StudyType studyType = isTrial ? StudyType.T : StudyType.N;
 
 		if (isStockList) {
-			params.setAllFieldIDs(this.convertToListInteger(this.getAvailableLabelFieldsForStockList(this
-					.getStockListType(userLabelPrinting.getStockListTypeName()), Locale.ENGLISH, studyType, workbook.getStudyDetails()
-					.getId())));
+			params.setAllFieldIDs(this.convertToListInteger(
+					this.getAvailableLabelFieldsForStockList(this.getStockListType(userLabelPrinting.getStockListTypeName()),
+							Locale.ENGLISH, studyType, workbook.getStudyDetails().getId())));
 		} else {
-			params.setAllFieldIDs(this.convertToListInteger(this.getAvailableLabelFieldsForStudy(isTrial, true, Locale.ENGLISH, workbook
-					.getStudyDetails().getId())));
+			params.setAllFieldIDs(this.convertToListInteger(
+					this.getAvailableLabelFieldsForStudy(isTrial, true, Locale.ENGLISH, workbook.getStudyDetails().getId())));
 		}
 
 		Map<String, List<MeasurementRow>> measurementData = null;
@@ -550,7 +549,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	}
 
-	private String populateStockListFromGermplasmDescriptorVariables(final Integer termID, final InventoryDetails row) {
+	String populateStockListFromGermplasmDescriptorVariables(final Integer termID, final InventoryDetails row) {
 		String value = null;
 		if (termID.equals(TermId.GID.getId())) {
 			value = this.getValueForStockList(row.getGid());
@@ -559,7 +558,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		} else if (termID.equals(TermId.ENTRY_NO.getId())) {
 			value = this.getValueForStockList(row.getEntryId());
 		} else if (termID.equals(TermId.CROSS.getId())) {
-			value = this.getValueForStockList(row.getCross());
+			value = this.getValueForStockList(row.getParentage());
 		} else if (termID.equals(TermId.SEED_SOURCE.getId())) {
 			value = this.getValueForStockList(row.getSource());
 		} else if (termID.equals(TermId.REP_NO.getId())) {
@@ -763,33 +762,34 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt(), true));
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.germplasm.name", null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-				LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY, null, locale),
+		labelFieldsList.add(new LabelFields(
+				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY, null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-				LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_YEAR_KEY, null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_YEAR
-				.getInt(), false));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-				LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_SEASON_KEY, null, locale),
+		labelFieldsList.add(new LabelFields(
+				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_YEAR_KEY, null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt(), false));
+		labelFieldsList.add(new LabelFields(
+				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_SEASON_KEY, null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(), false));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-				LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY, null, locale),
+		labelFieldsList.add(new LabelFields(
+				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY, null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt(), false));
 
 		if (isTrial) {
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-					LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale),
+			labelFieldsList.add(new LabelFields(
+					this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale),
 					AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt(), false));
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.trial.instance.num", null,
-					locale), AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt(), false));
+			labelFieldsList
+					.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale),
+							AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt(), false));
 		} else {
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-					LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale),
+			labelFieldsList.add(new LabelFields(
+					this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale),
 					AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt(), false));
 		}
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-				LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT
-				.getInt(), false));
+		labelFieldsList.add(new LabelFields(
+				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt(), false));
 
 		this.addAvailableFieldsForFieldMap(hasFieldMap, locale, labelFieldsList);
 
@@ -803,12 +803,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		Workbook workbook = null;
 		if (isTrial) {
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-					LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale),
+			labelFieldsList.add(new LabelFields(
+					this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale),
 					AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt(), false));
 
-			labelFieldsList.add(new LabelFields(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager), TermId.REP_NO
-					.getId(), true));
+			labelFieldsList
+					.add(new LabelFields(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager), TermId.REP_NO.getId(),
+							true));
 
 			workbook = this.fieldbookMiddlewareService.getTrialDataSet(studyID);
 
@@ -818,8 +819,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		} else {
 
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-					LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale),
+			labelFieldsList.add(new LabelFields(
+					this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale),
 					AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt(), false));
 			try {
 				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(studyID);
@@ -832,18 +833,18 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			}
 		}
 
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-				LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY, null, locale),
+		labelFieldsList.add(new LabelFields(
+				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY, null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-				LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_YEAR_KEY, null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_YEAR
-				.getInt(), false));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-				LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_SEASON_KEY, null, locale),
+		labelFieldsList.add(new LabelFields(
+				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_YEAR_KEY, null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt(), false));
+		labelFieldsList.add(new LabelFields(
+				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_SEASON_KEY, null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(), false));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-				LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT
-				.getInt(), false));
+		labelFieldsList.add(new LabelFields(
+				this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt(), false));
 
 		// add trait fields
 		labelFieldsList.addAll(this.settingsService.retrieveTraitsAsLabels(workbook));
@@ -868,8 +869,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		if (studyType == StudyType.N) {
 
 			// Nursery Management Fields
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-					LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale),
+			labelFieldsList.add(new LabelFields(
+					this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale),
 					AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt(), false));
 
 			workbook = this.fieldbookMiddlewareService.getNurseryDataSet(studyID);
@@ -878,8 +879,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 		} else if (studyType == StudyType.T) {
 
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-					LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale),
+			labelFieldsList.add(new LabelFields(
+					this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale),
 					AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt(), false));
 
 			workbook = this.fieldbookMiddlewareService.getTrialDataSet(studyID);
@@ -888,8 +889,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			labelFieldsList.addAll(this.settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(workbook));
 			labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
-			labelFieldsList.add(new LabelFields(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager), TermId.REP_NO
-					.getId(), true));
+			labelFieldsList
+					.add(new LabelFields(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager), TermId.REP_NO.getId(),
+							true));
 
 		}
 
@@ -902,31 +904,35 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	private List<LabelFields> addStockListDetailsFields(final Locale locale, final GermplasmListType listType) {
 		final List<LabelFields> labelFieldList = new ArrayList<>();
 
-		labelFieldList.add(new LabelFields(ColumnLabels.STOCKID.getTermNameFromOntology(this.ontologyDataManager), TermId.STOCKID.getId(),
-				true));
+		labelFieldList
+				.add(new LabelFields(ColumnLabels.STOCKID.getTermNameFromOntology(this.ontologyDataManager), TermId.STOCKID.getId(), true));
 
 		labelFieldList.add(new LabelFields(ColumnLabels.LOT_LOCATION.getTermNameFromOntology(this.ontologyDataManager),
 				TermId.LOT_LOCATION_INVENTORY.getId(), true));
 
-		labelFieldList.add(new LabelFields(ColumnLabels.AMOUNT.getTermNameFromOntology(this.ontologyDataManager), TermId.AMOUNT_INVENTORY
-				.getId(), true));
+		labelFieldList
+				.add(new LabelFields(ColumnLabels.AMOUNT.getTermNameFromOntology(this.ontologyDataManager), TermId.AMOUNT_INVENTORY.getId(),
+						true));
 
-		labelFieldList.add(new LabelFields(ColumnLabels.UNITS.getTermNameFromOntology(this.ontologyDataManager), TermId.UNITS_INVENTORY
-				.getId(), true));
+		labelFieldList
+				.add(new LabelFields(ColumnLabels.UNITS.getTermNameFromOntology(this.ontologyDataManager), TermId.UNITS_INVENTORY.getId(),
+						true));
 
-		labelFieldList.add(new LabelFields(ColumnLabels.COMMENT.getTermNameFromOntology(this.ontologyDataManager), TermId.COMMENT_INVENTORY
-				.getId(), true));
+		labelFieldList.add(new LabelFields(ColumnLabels.COMMENT.getTermNameFromOntology(this.ontologyDataManager),
+				TermId.COMMENT_INVENTORY.getId(), true));
 
 		if (listType.equals(GermplasmListType.CROSSES)) {
 
-			labelFieldList.add(new LabelFields(ColumnLabels.DUPLICATE.getTermNameFromOntology(this.ontologyDataManager), TermId.DUPLICATE
-					.getId(), true));
+			labelFieldList
+					.add(new LabelFields(ColumnLabels.DUPLICATE.getTermNameFromOntology(this.ontologyDataManager), TermId.DUPLICATE.getId(),
+							true));
 
-			labelFieldList.add(new LabelFields(ColumnLabels.BULK_WITH.getTermNameFromOntology(this.ontologyDataManager), TermId.BULK_WITH
-					.getId(), true));
+			labelFieldList
+					.add(new LabelFields(ColumnLabels.BULK_WITH.getTermNameFromOntology(this.ontologyDataManager), TermId.BULK_WITH.getId(),
+							true));
 
-			labelFieldList.add(new LabelFields(ColumnLabels.BULK_COMPL.getTermNameFromOntology(this.ontologyDataManager), TermId.BULK_COMPL
-					.getId(), true));
+			labelFieldList.add(new LabelFields(ColumnLabels.BULK_COMPL.getTermNameFromOntology(this.ontologyDataManager),
+					TermId.BULK_COMPL.getId(), true));
 
 		}
 
@@ -935,14 +941,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	private void addAvailableFieldsForFieldMap(final boolean hasFieldMap, final Locale locale, final List<LabelFields> labelFieldsList) {
 		if (hasFieldMap) {
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-					LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY, null, locale),
+			labelFieldsList.add(new LabelFields(
+					this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY, null, locale),
 					AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(), false));
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-					LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES_KEY, null, locale),
+			labelFieldsList.add(new LabelFields(this.messageSource
+					.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES_KEY, null, locale),
 					AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), false));
-			labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
-					LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME_KEY, null, locale),
+			labelFieldsList.add(new LabelFields(
+					this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME_KEY, null, locale),
 					AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt(), false));
 		}
 	}
@@ -1042,8 +1048,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		final Project project = this.workbenchService.getProjectById(programId.longValue());
 
 		if (LabelPrintingPresets.PROGRAM_PRESET == presetType) {
-			final List<ProgramPreset> presets =
-					this.presetDataManager.getProgramPresetFromProgramAndToolByName(presetName, this.contextUtil.getCurrentProgramUUID(),
+			final List<ProgramPreset> presets = this.presetDataManager
+					.getProgramPresetFromProgramAndToolByName(presetName, this.contextUtil.getCurrentProgramUUID(),
 							this.workbenchService.getFieldbookWebTool().getToolId().intValue(), ToolSection.FBK_LABEL_PRINTING.name());
 
 			for (final ProgramPreset preset : presets) {
@@ -1052,9 +1058,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		} else {
 			final String cropName = project.getCropType().getCropName();
 
-			final List<StandardPreset> standardPresets =
-					this.workbenchService.getStandardPresetByCropAndPresetName(presetName, this.workbenchService.getFieldbookWebTool()
-							.getToolId().intValue(), cropName, ToolSection.FBK_LABEL_PRINTING.name());
+			final List<StandardPreset> standardPresets = this.workbenchService
+					.getStandardPresetByCropAndPresetName(presetName, this.workbenchService.getFieldbookWebTool().getToolId().intValue(),
+							cropName, ToolSection.FBK_LABEL_PRINTING.name());
 
 			for (final StandardPreset preset : standardPresets) {
 				out.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(), LabelPrintingPresets.STANDARD_PRESET));
@@ -1075,17 +1081,18 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			final Integer fieldbookToolId = this.workbenchService.getFieldbookWebTool().getToolId().intValue();
 
 			// 2. retrieve the standard presets
-			for (final StandardPreset preset : this.workbenchService.getStandardPresetByCrop(fieldbookToolId, cropName,
-					ToolSection.FBK_LABEL_PRINTING.name())) {
+			for (final StandardPreset preset : this.workbenchService
+					.getStandardPresetByCrop(fieldbookToolId, cropName, ToolSection.FBK_LABEL_PRINTING.name())) {
 				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(),
 						LabelPrintingPresets.STANDARD_PRESET));
 			}
 
 			// 3. add all program presets for fieldbook
-			for (final ProgramPreset preset : this.presetDataManager.getProgramPresetFromProgramAndTool(
-					this.contextUtil.getCurrentProgramUUID(), fieldbookToolId, ToolSection.FBK_LABEL_PRINTING.name())) {
-				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
-						LabelPrintingPresets.PROGRAM_PRESET));
+			for (final ProgramPreset preset : this.presetDataManager
+					.getProgramPresetFromProgramAndTool(this.contextUtil.getCurrentProgramUUID(), fieldbookToolId,
+							ToolSection.FBK_LABEL_PRINTING.name())) {
+				allLabelPrintingPresets
+						.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(), LabelPrintingPresets.PROGRAM_PRESET));
 			}
 
 			return allLabelPrintingPresets;

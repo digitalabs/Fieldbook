@@ -2047,10 +2047,6 @@ input.select-all-margin{
 	padding-right: 10px;
 }
 
-.select2-container.form-control.fbk-std-padding-right {
-	padding-right: 10px;
-}
-
 /* Styles for Measurements data table */
 
 #mdt-environment-list-label.dataTables_info.fbk-std-padding-right {
@@ -2127,6 +2123,10 @@ input.select-all-margin{
 /* FIXME for the existing study we need a proper check if the design was generated for that study or not previously before saving */
 .msrmnt-existing-study .no-measurements-table {
 	display: none;
+}
+
+.select2-result-label {
+    white-space: nowrap;
 }
 
 

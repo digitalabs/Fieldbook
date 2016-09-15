@@ -275,7 +275,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				return nRow;
 			},
 			fnInitComplete: function(oSettings, json) {
-				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
+				$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
 				if (this.$('.invalid-value').length !== 0) {

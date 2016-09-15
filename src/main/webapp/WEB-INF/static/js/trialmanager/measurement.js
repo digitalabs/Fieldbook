@@ -55,10 +55,9 @@
 					}
 				};
 
-				$scope.changeEnvironmentForMeasurementDataTable = function() {
-                	//TODO page size should be taken from the dropdown, not hardcoded
+				$scope.changeEnvironmentForMeasurementDataTable = function($item, $model) {
                 	$('#measurement-table').DataTable().ajax.url('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/'
-                		+ $scope.selectedEnvironment.instanceDbId).load();
+                		+ $item.instanceDbId).load();
                 };
 
 				$scope.previewMeasurements = function() {

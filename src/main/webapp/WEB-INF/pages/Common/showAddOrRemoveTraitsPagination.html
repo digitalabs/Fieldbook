@@ -33,7 +33,7 @@
 
 			<div id="mdt-environment-list" class="fbk-float-left">
 				<ui-select id="measurements-environment-number" name="measurements-environment-number" theme="select2"
-						   ng-model="selectedEnvironment"
+						   ng-model="selectedEnvironment" search-enabled="false"
 						   class="input-sm form-control fbk-std-padding-right inline-select"
 						   on-select="changeEnvironmentForMeasurementDataTable($item, $model)">
 					<ui-select-match placeholder="Select a report" class="ui-select-match">

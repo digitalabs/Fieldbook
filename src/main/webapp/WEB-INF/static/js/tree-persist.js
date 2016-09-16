@@ -93,7 +93,7 @@ var TreePersist = {
 			async : false,
 			success : function(data) {
 				var expandedNodes = $.parseJSON(data);
-				if(expandedNodes.length == 1 && expandedNodes[0] === ''){
+				if((expandedNodes.length == 1 && expandedNodes[0] === '') || expandedNodes.length == 0){
 					deferred.reject(expandedNodes);
 				} else {
 					deferred.resolve(expandedNodes);
@@ -104,10 +104,19 @@ var TreePersist = {
 		return deferred.promise();
 	},
 
+	collapseTopLevelListsNode : function () {
+		// We have to expand the node in order for us to collapse it.
+		$('#germplasmTreeTable').treetable('expandNode', 'LISTS');
+		$('#germplasmTreeTable').treetable('collapseNode', 'LISTS');
+	},
+
 	preLoadTreeTableState: function(listType, isSaveList) {
 		'use strict';
 		TreePersist.retrievePreviousTreeState(listType, isSaveList).done(function(expandedNodes) {
 			TreePersist.traverseNodes(expandedNodes, listType, expandGermplasmListInTreeTable);
+		}).fail(function () {
+			// If there's no previous tree state, the top level 'Lists' node should be collapsed by default.
+			TreePersist.collapseTopLevelListsNode();
 		});
 	},
 

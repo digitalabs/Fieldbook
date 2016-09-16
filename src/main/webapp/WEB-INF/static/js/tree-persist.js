@@ -93,7 +93,7 @@ var TreePersist = {
 			async : false,
 			success : function(data) {
 				var expandedNodes = $.parseJSON(data);
-				if((expandedNodes.length == 1 && expandedNodes[0] === '') || expandedNodes.length == 0){
+				if((expandedNodes.length === 1 && expandedNodes[0] === '') || expandedNodes.length === 0){
 					deferred.reject(expandedNodes);
 				} else {
 					deferred.resolve(expandedNodes);

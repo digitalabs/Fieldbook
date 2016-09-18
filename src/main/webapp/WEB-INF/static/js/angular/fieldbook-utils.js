@@ -101,13 +101,25 @@
 						if (typeof $scope.predeleteFunction() === 'undefined') {
 							$scope.doDeleteSelectedSettings();
 						} else {
-							var promise = $scope.predeleteFunction()($attrs.variableType, $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(), $scope.settings.vals()));
+							var checkedVariableTermIds = $scope.retrieveCheckedVariableTermIds($scope.settings);
+							var promise = $scope.predeleteFunction()($attrs.variableType, checkedVariableTermIds);
 							promise.then(function(doContinue) {
 								if (doContinue) {
 									$scope.doDeleteSelectedSettings();
 								}
 							});
 						}
+					};
+
+					$scope.retrieveCheckedVariableTermIds = function(_settings) {
+						var checkedCvtermIds = _.pairs(_settings.vals())
+							.filter(function(val) {
+								return _.last(val).isChecked;
+							})
+							.map(function(val) {
+								return parseInt(_.first(val));
+							});
+						return checkedCvtermIds;
 					};
 
 					$scope.doDeleteSelectedSettings = function() {

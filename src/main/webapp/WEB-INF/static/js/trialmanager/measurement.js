@@ -95,8 +95,8 @@
 					var deferred = $q.defer();
 
 					$http.post('/Fieldbook/manageSettings/hasMeasurementData/' + variableType, variableIds, {cache: false})
-						.success(function(data) {
-							if ('true' === data) {
+						.success(function(hasMeasurementData) {
+							if (hasMeasurementData) {
 								var modalInstance = $uibModal.open({
 									templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
 									controller: 'ConfirmModalController',

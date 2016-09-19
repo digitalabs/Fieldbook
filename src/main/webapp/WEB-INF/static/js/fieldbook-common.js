@@ -632,7 +632,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 
 			newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
 			checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
-			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.plotCount + '</td>';
+			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
 			if (trial) {
 				newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 			}

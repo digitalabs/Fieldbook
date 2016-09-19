@@ -93,7 +93,7 @@ var TreePersist = {
 			async : false,
 			success : function(data) {
 				var expandedNodes = $.parseJSON(data);
-				if(expandedNodes.length == 1 && expandedNodes[0] === ''){
+				if((expandedNodes.length === 1 && expandedNodes[0] === '') || expandedNodes.length === 0){
 					deferred.reject(expandedNodes);
 				} else {
 					deferred.resolve(expandedNodes);
@@ -108,6 +108,9 @@ var TreePersist = {
 		'use strict';
 		TreePersist.retrievePreviousTreeState(listType, isSaveList).done(function(expandedNodes) {
 			TreePersist.traverseNodes(expandedNodes, listType, expandGermplasmListInTreeTable);
+		}).fail(function () {
+			// If there's no previous tree state, the top level 'Lists' node should be expanded by default.
+			$('#germplasmTreeTable').treetable('expandNode', 'LISTS');
 		});
 	},
 

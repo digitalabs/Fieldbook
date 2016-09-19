@@ -221,7 +221,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			/* Watchers */
 			$scope.$watch('data.noOfEnvironments', function(newVal, oldVal) {
 				$scope.temp.noOfEnvironments = newVal;
-				if (newVal < oldVal) {
+				if (Number(newVal) < Number(oldVal)) {
 					// if new environment count is less than previous value, splice array
 					while ($scope.data.environments.length > newVal) {
 						$scope.data.environments.pop();
@@ -233,7 +233,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					}
 
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
-				} else if (oldVal < newVal) {
+				} else if (Number(newVal) > Number(oldVal)) {
 					addNewEnvironments(newVal - oldVal);
 
 					// should not be equal to 1 since the default number of environment for a trial is 1

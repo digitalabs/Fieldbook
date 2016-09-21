@@ -198,9 +198,22 @@
 							TrialManagerDataService.generateExpDesign(environmentData).then(
 								function(response) {
 									if (response.valid === true) {
+										if(response.message && response.message !== '') {
+											if(response.userConfirmationRequired) {
+												$scope.showConfirmDialog(response.message);
+											} else {
+												showSuccessfulMessage('', response.message);
+											}
+										}
 										$scope.updateAfterGeneratingDesignSuccessfully();
 									} else {
-										showErrorMessage('', response.message);
+										if(response.message && response.message !== '') {
+											if(response.userConfirmationRequired) {
+												$scope.showConfirmDialog(response.message);
+											} else {
+												showErrorMessage('', response.message);
+											}
+										}
 									}
 								}, function(errResponse) {
                                     showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
@@ -213,6 +226,28 @@
 								showErrorMessage('', data.error[0]);
 							});
 						}
+					};
+					
+					$scope.showConfirmDialog = function(message) {
+
+						var deferred = $q.defer();
+
+						bootbox.dialog({
+							message: message,
+							closeButton: false,
+							onEscape: false,
+							buttons: {
+								ok: {
+									label: Messages.OK,
+									className: 'btn-primary',
+									callback: function() {
+										deferred.resolve(true);
+									}
+								}
+							}
+						});
+
+						return deferred.promise;
 					};
 
 					// Register designImportGenerated handler that will activate when an importDesign is generated

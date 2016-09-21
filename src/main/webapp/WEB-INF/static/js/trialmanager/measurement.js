@@ -4,7 +4,8 @@
 
 	angular.module('manageTrialApp').controller('MeasurementsCtrl',
 		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http', 'DTOptionsBuilder', 'DTColumnBuilder',
-			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder, DTColumnBuilder) {
+		'DTColumnDefBuilder',
+			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder, DTColumnBuilder, DTColumnDefBuilder) {
 				var DELAY = 1500; // 1.5 secs
 				var studyId = $('#studyId').val();
 
@@ -16,33 +17,9 @@
 				// controls if the user have chosen to display preview
 				$scope.isDisplayPreview = false;
 				$scope.isNewStudy = function() {
-					return ($('#studyId').val() == '')
+					return ($('#studyId').val() === '');
 				};
 
-				function serverData(sSource, aoData, fnCallback, oSettings) {
-                                            oSettings.jqXHR = $.ajax({
-                                                'dataType': 'json',
-                                                'type': 'Get',
-                                                'url': '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/preview',
-                                                'data': aoData,
-                                                'success': fnCallback
-                                            });
-                                        }
-
-				$scope.dtOptions = DTOptionsBuilder.fromSource('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/preview').withDOM('<"fbk-datatable-panel-top"li>rtp')
-					.withOption('scrollX', true)
-					.withOption('scrollCollapse', true)
-					.withOption('deferRender', true);
-
-				$scope.dtColumns = [
-                                    DTColumnBuilder.newColumn('ENTRY_TYPE').withTitle('ENTRY_TYPE'),
-                                    DTColumnBuilder.newColumn('GID').withTitle('GID'),
-                                    DTColumnBuilder.newColumn('DESIGNATION').withTitle('DESIGNATION'),
-                                    DTColumnBuilder.newColumn('ENTRY_NO').withTitle('ENTRY_NO'),
-                                    DTColumnBuilder.newColumn('REP_NO').withTitle('REP_NO'),
-                                    DTColumnBuilder.newColumn('PLOT_NO').withTitle('PLOT_NO')
-                                ];
-				
 				$scope.initEnvironmentList = function() {
 					if (!$scope.isNewStudy()) {
 						$http.get('/Fieldbook/Common/addOrRemoveTraits/instanceMetadata/' + studyId).success(function(data) {
@@ -51,19 +28,31 @@
 						});
 					} else {
 						$scope.environmentsList = [{}];
-                        $scope.selectedEnvironment = $scope.environmentsList[0];
+						$scope.selectedEnvironment = $scope.environmentsList[0];
 					}
 				};
 
 				$scope.changeEnvironmentForMeasurementDataTable = function($item, $model) {
-                	$('#measurement-table').DataTable().ajax.url('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/'
-                		+ $item.instanceDbId).load();
-                };
+					$('#measurement-table').DataTable().ajax.url('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' +
+						$item.instanceDbId).load();
+				};
 
 				$scope.previewMeasurements = function() {
 					$scope.isDisplayPreview = true;
+					// The jquery is out of sync with angular changes, set this hack timeout, it will be removed once the table is in
+					// angular
+					// the jQuery datatable for preview needs a list of measurement variables used as columns, it gets them from the DOM
+					// the preview datatable could not start its construction until all variables in 'thead tr th' are loaded with
+					// arrangeMeasurementVariables() function
+					// FIXME this should be reimplemented properly
+					$http.get('/Fieldbook/TrialManager/createTrial/measurements/variables').success(function(data) {
+						debounce(function() {
+							new BMS.Fieldbook.PreviewMeasurementsDataTable('#preview-measurement-table', data);
+						}, DELAY, false)();
+					});
+
 				};
-				
+
 				/* Watchers */
 				$scope.$watch(function() {
 					return TrialManagerDataService.settings.measurements;
@@ -175,7 +164,7 @@
 						});
 					}
 				}
-				
+
 				$scope.initEnvironmentList();
-		}]);
+			}]);
 })();

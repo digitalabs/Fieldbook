@@ -208,9 +208,24 @@ public class CreateTrialController extends BaseTrialController {
 		return this.showAjaxPage(model, BaseTrialController.URL_EXPERIMENTAL_DESIGN);
 	}
 
+	//TODO Merge this method with the OpenTrialController.showMeasurements()
 	@RequestMapping(value = "/measurements", method = RequestMethod.GET)
-	public String showMeasurements(final Model model) {
+	public String showMeasurements(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model) {
+		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
+		if (workbook != null) {
+			form.setMeasurementVariables(workbook.getMeasurementDatasetVariablesView());
+		}
 		return this.showAjaxPage(model, BaseTrialController.URL_MEASUREMENT);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/measurements/variables", method = RequestMethod.GET, produces = "application/json")
+	public List<MeasurementVariable> showMeasurementsVariables() {
+		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
+		if (workbook != null) {
+			return workbook.getMeasurementDatasetVariablesView();
+		}
+		return new ArrayList<>();
 	}
 
 	@Override

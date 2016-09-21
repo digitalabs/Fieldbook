@@ -10,6 +10,7 @@ import java.util.Locale;
 import javax.annotation.Resource;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.spring.util.ToolLicenseUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -18,6 +19,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
@@ -67,6 +69,9 @@ public class ExpDesignController extends BaseTrialController {
 
 	@Resource
 	private DesignImportService designImportService;
+	
+	@Resource
+	private ToolLicenseUtil toolLicenseUtil;
 
 	@Override
 	public String getContentName() {
@@ -247,6 +252,14 @@ public class ExpDesignController extends BaseTrialController {
 								g.setEntryId(entryNo++);
 							}
 						}
+						
+						if(toolLicenseUtil.isToolExpired(ToolName.breeding_view.toString())) {
+							expParameterOutput =
+									new ExpDesignValidationOutput(false, 
+											this.messageSource.getMessage("experiment.design.license.expired", null,
+											locale));
+							return expParameterOutput;
+						}
 
 						final List<MeasurementRow> measurementRows =
 								designService.generateDesign(germplasmList, expDesign, workbook.getConditions(), workbook.getFactors(),
@@ -285,6 +298,16 @@ public class ExpDesignController extends BaseTrialController {
 							}
 						}
 						workbook.setExpDesignVariables(designService.getRequiredVariable());
+						
+						if(toolLicenseUtil.isToolExpiringWithinThirtyDays(ToolName.breeding_view.toString())) {
+							int daysBeforeExpiration = toolLicenseUtil.daysBeforeToolExpiration(ToolName.breeding_view.toString());
+							expParameterOutput =
+									new ExpDesignValidationOutput(true, 
+											this.messageSource.getMessage("experiment.design.license.expiring", 
+											new Integer[]{daysBeforeExpiration}, locale));
+							expParameterOutput.setUserConfirmationRequired(true);
+							return expParameterOutput;
+						}
 					}
 				}
 			}

@@ -179,25 +179,26 @@ public class SettingsUtil {
 		if (baselineTraits == null || baselineTraits.isEmpty()) {
 			return variateList;
 		}
-
+		
 		for (final SettingDetail settingDetail : baselineTraits) {
-			final SettingVariable variable = settingDetail.getVariable();
-
-			final StandardVariable standardVariable =
-					SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
-			variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
-
-			final Variate variate =
-					new Variate(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
-							variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
-							settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
-			if (settingDetail.getVariableType() != null) {
-				variate.setVariableType(settingDetail.getVariableType().getName());
+			if(settingDetail.getVariable() != null) {
+				final SettingVariable variable = settingDetail.getVariable();
+	
+				final StandardVariable standardVariable =
+						SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
+				variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
+	
+				final Variate variate =
+						new Variate(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
+								variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
+								settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
+				if (settingDetail.getVariableType() != null) {
+					variate.setVariableType(settingDetail.getVariableType().getName());
+				}
+				variate.setOperation(variable.getOperation());
+				variate.setId(variable.getCvTermId());
+				variateList.add(variate);
 			}
-			variate.setOperation(variable.getOperation());
-			variate.setId(variable.getCvTermId());
-			variateList.add(variate);
-
 		}
 
 		return variateList;
@@ -283,7 +284,7 @@ public class SettingsUtil {
 
 		for (final SettingDetail detailWithValue : listWithValue) {
 			for (final SettingDetail detailFromSession : listFromSession) {
-				if (detailFromSession.getVariable().getCvTermId().equals(detailWithValue.getVariable().getCvTermId())) {
+				if (detailFromSession.getVariable() != null && detailWithValue.getVariable() != null && detailFromSession.getVariable().getCvTermId().equals(detailWithValue.getVariable().getCvTermId())) {
 
 					final SettingVariable variable = detailWithValue.getVariable();
 					detailWithValue.setPossibleValues(detailFromSession.getPossibleValues());

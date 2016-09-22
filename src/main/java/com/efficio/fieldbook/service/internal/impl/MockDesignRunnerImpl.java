@@ -59,6 +59,9 @@ public class MockDesignRunnerImpl implements DesignRunner {
 			List<ListItem> levelList = expDesign.getParameterList(ExpDesignUtil.LEVELS_PARAM);
 			lines = Integer.parseInt(levelList.get(0).getValue());
 			replications = Integer.parseInt(expDesign.getParameterValue(ExpDesignUtil.NBLOCKS_PARAM));
+		} else if (expDesign.getName().equals(ExpDesignUtil.AUGMENTED_RANDOMIZED_BLOCK_DESIGN)) {
+			lines = Integer.valueOf(expDesign.getParameterValue(ExpDesignUtil.NTREATMENTS_PARAM));
+			replications = Integer.parseInt(expDesign.getParameterValue(ExpDesignUtil.NBLOCKS_PARAM));
 		} else {
 			lines = Integer.valueOf(expDesign.getParameterValue(ExpDesignUtil.NTREATMENTS_PARAM));
 			replications = Integer.parseInt(expDesign.getParameterValue(ExpDesignUtil.NREPLICATES_PARAM));

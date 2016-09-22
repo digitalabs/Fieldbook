@@ -81,6 +81,7 @@ public class ExpDesignController extends BaseTrialController {
 		designTypes.add(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK);
 		designTypes.add(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK);
 		designTypes.add(DesignTypeItem.ROW_COL);
+		designTypes.add(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK);
 		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
 
 		if (this.fieldbookProperties.getPresetDesignEnabledCrops().contains(this.contextUtil.getProjectInContext().getCropType().getCropName())) {

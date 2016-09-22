@@ -137,7 +137,8 @@
 							replatinGroups: '',
 							startingPlotNo: 1,
 							startingEntryNo: (typeof $scope.data.startingEntryNo !== 'undefined')? parseInt($scope.data.startingEntryNo,10) : 1 ,
-							hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement
+							hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement,
+							numberOfBlocks: null
 						}, $scope.data);
 					}
 
@@ -465,7 +466,15 @@
 
 								break;
 							}
-							case 4:
+							case 4: {
+
+								if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
+									showErrorMessage('page-message', 'Please specify the number of blocks.');
+									return false;
+								}
+								break;
+
+							}
 							case 5:
 							case 6:
 							{

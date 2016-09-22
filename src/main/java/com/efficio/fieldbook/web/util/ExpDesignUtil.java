@@ -64,11 +64,12 @@ public class ExpDesignUtil {
 	public static final String NBLOCKS_PARAM = "nblocks";
 	public static final String OUTPUTFILE_PARAM = "outputfile";
 	public static final String SEED_PARAM = "seed";
+	public static final String NCONTROLS_PARAM = "ncontrols";
 
 	public static String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
 	public static String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
 	public static String RESOLVABLE_ROW_COL_DESIGN = "ResolvableRowColumn";
-
+	public static String AUGMENTED_RANDOMIZED_BLOCK_DESIGN = "Augmented";
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignUtil.class);
 
 	private ExpDesignUtil() {
@@ -232,6 +233,26 @@ public class ExpDesignUtil {
 		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.OUTPUTFILE_PARAM, outputfile, null));
 
 		ExpDesign design = new ExpDesign(ExpDesignUtil.RESOLVABLE_ROW_COL_DESIGN, paramList);
+
+		return new MainDesign(design);
+	}
+
+	public static MainDesign createAugmentedRandomizedBlockDesign(final String nblks, final String ntreatments, final String ncontrols,
+			final String treatmentFactor, final String blockFactor, final String plotFactor, final String plotNo) {
+
+		List<ExpDesignParameter> paramList = new ArrayList<>();
+
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NTREATMENTS_PARAM, ntreatments, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NCONTROLS_PARAM, ncontrols, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.NBLOCKS_PARAM, nblks, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.TREATMENTFACTOR_PARAM, treatmentFactor, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.BLOCKFACTOR_PARAM, blockFactor, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.PLOTFACTOR_PARAM, plotFactor, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM, plotNo, null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.SEED_PARAM, "", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter(ExpDesignUtil.OUTPUTFILE_PARAM, "", null));
+
+		ExpDesign design = new ExpDesign(ExpDesignUtil.AUGMENTED_RANDOMIZED_BLOCK_DESIGN, paramList);
 
 		return new MainDesign(design);
 	}

@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.service.AugmentedRandomizedBlockDesignService;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -60,6 +61,8 @@ public class ExpDesignController extends BaseTrialController {
 	private ResolvableIncompleteBlockDesignService resolveIncompleteBlockDesign;
 	@Resource
 	private ResolvableRowColumnDesignService resolvableRowColumnDesign;
+	@Resource
+	private AugmentedRandomizedBlockDesignService augmentedRandomizedBlockDesignService;
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 	@Resource
@@ -364,6 +367,8 @@ public class ExpDesignController extends BaseTrialController {
 			return this.resolveIncompleteBlockDesign;
 		} else if (designType == 2) {
 			return this.resolvableRowColumnDesign;
+		} else if (designType == 4) {
+			return this.augmentedRandomizedBlockDesignService;
 		}
 		return null;
 	}

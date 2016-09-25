@@ -796,6 +796,22 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return labelFieldsList;
 	}
 
+	/**
+	 * Gets the available label fields.
+	 *
+	 * @param locale the locale
+	 * @return
+	 */
+	@Override
+	public List<LabelFields> getAvailableLabelFieldsForInventory(final Locale locale) {
+		final List<LabelFields> labelFieldsList = new ArrayList<>();
+
+		//TODO add the rest of the fields - {GID, Designation, Cross, Stock Id, Lot Id}
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.gid", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt(), true));
+		return labelFieldsList;
+	}
+
 	@Override
 	public List<LabelFields> getAvailableLabelFieldsForStudy(final boolean isTrial, final boolean hasFieldMap, final Locale locale,
 			final int studyID) {

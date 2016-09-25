@@ -360,6 +360,45 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		return super.show(model);
 	}
 
+	@RequestMapping(value = "/inventory/{id}", method = RequestMethod.GET)
+	public String showStockListLabelDetailsNew(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form, final Model model,
+			final HttpSession session, @PathVariable final int id, final Locale locale) {
+
+		SessionUtility.clearSessionData(session,
+				new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME, SessionUtility.FIELDMAP_SESSION_NAME,
+						SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+
+		// retrieve the stock list
+		final GermplasmList stockList = this.germplasmListManager.getGermplasmListById(id);
+
+		final List<InventoryDetails> inventoryDetails = this.labelPrintingService.getInventoryDetails(stockList.getId());
+
+		this.userLabelPrinting.setStudyId(null);
+		this.userLabelPrinting.setFieldMapInfo(null);
+		this.userLabelPrinting.setFieldMapInfoList(null);
+		this.userLabelPrinting.setBarcodeNeeded("0");
+		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
+		this.userLabelPrinting.setNumberOfLabelPerRow("3");
+		this.userLabelPrinting.setIsStockList(true);
+		this.userLabelPrinting.setStockListId(stockList.getId());
+		this.userLabelPrinting.setStockListTypeName(stockList.getType());
+		this.userLabelPrinting.setInventoryDetailsList(inventoryDetails);
+		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
+		this.userLabelPrinting.setFirstBarcodeField("");
+		this.userLabelPrinting.setSecondBarcodeField("");
+		this.userLabelPrinting.setThirdBarcodeField("");
+		this.userLabelPrinting.setSettingsName("");
+		form.setUserLabelPrinting(this.userLabelPrinting);
+		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS, this.labelPrintingService
+				.getAvailableLabelFieldsForInventory(locale));
+
+		form.setIsTrial(false);
+		this.userLabelPrinting.setIsTrial(false);
+		form.setIsStockList(true);
+
+		return super.show(model);
+	}
+
 	/**
 	 * Generate default filename.
 	 *

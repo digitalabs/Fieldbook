@@ -57,6 +57,8 @@ public interface LabelPrintingService {
 	 */
 	List<LabelFields> getAvailableLabelFieldsForFieldMap(boolean isTrial, boolean hasFieldMap, Locale locale);
 
+	List<LabelFields> getAvailableLabelFieldsForInventory(final Locale locale);
+
 	/**
 	 * Gets the available label fields for Nursery, Trial.
 	 *

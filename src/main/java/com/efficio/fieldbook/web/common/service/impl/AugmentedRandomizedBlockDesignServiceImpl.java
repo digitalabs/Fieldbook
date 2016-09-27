@@ -145,36 +145,40 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 	Map<Integer, Integer> createMapOfChecks(final List<ImportedGermplasm> importedGermplasmList) {
 
 		/**
-		 * The design engine assumes that the checks are at the end of the germplasm list
-		 * that is passed to it. This might or might not be the case in the list that the
-		 * user has specified for the trial. To make this simpler for the user, when processing
-		 * the design file that comes back from BVDesign, the BMS will re-map the output
-		 * into entry order.
+		 * The design engine assumes that the checks are at the end of the germplasm list that is passed to it. This might or might not be
+		 * the case in the list that the user has specified for the trial. To make this simpler for the user, when processing the design
+		 * file that comes back from BVDesign, the BMS will re-map the output into entry order.
+		 * 
+		 * In a design with 52 entries (48 test entries and 4 check entries), BVDesign assumes the checks are entry numbers 49,50, 51, and
+		 * 52. Since this may not be the case for the user's trial list, the BMS will sequentially map 49-52 to the four check entries in
+		 * the list.
 		 */
 
 		Map<Integer, Integer> mapOfChecks = new HashMap<>();
 
-		for (ImportedGermplasm importedGermplasm : importedGermplasmList) {
-			if (importedGermplasm.getEntryTypeValue().equals(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeValue())) {
-				mapOfChecks.put(importedGermplasm.getEntryId(), 0);
-			}
-		}
+		Set<Integer> entryIdsOfChecks = this.getEntryIdsOfChecks(importedGermplasmList);
 
-		/**
-		 * in a design with 48 test entries and 4 check entries, BVDesign assumes
-		 * the checks are entry numbers 49,50, 51, and 52.
-		 * Since this may not be the case for the user's trial list, the BMS will:
-		 * - sequentially map genotype numbers 1 to 48 coming back from BVDesign
-		 * to the non check entries in the Trial List
-		 * - then sequentially map 49-52 to the four check entries in the list.
-		 */
-		int index = importedGermplasmList.size() - mapOfChecks.size() - 1;
-		for (Map.Entry<Integer, Integer> entry : mapOfChecks.entrySet()) {
-			entry.setValue(importedGermplasmList.get(index).getEntryId());
+		// Map the last entries to the check entries in the list.
+		int index = importedGermplasmList.size() - entryIdsOfChecks.size();
+		for (Integer checkEntryId : entryIdsOfChecks) {
+			mapOfChecks.put(importedGermplasmList.get(index).getEntryId(), checkEntryId);
 			index++;
 		}
 
 		return mapOfChecks;
+	}
+
+	Set<Integer> getEntryIdsOfChecks(final List<ImportedGermplasm> importedGermplasmList) {
+
+		HashSet<Integer> entryIdsOfChecks = new HashSet<>();
+
+		for (ImportedGermplasm importedGermplasm : importedGermplasmList) {
+			if (importedGermplasm.getEntryTypeCategoricalID().equals(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())) {
+				entryIdsOfChecks.add(importedGermplasm.getEntryId());
+			}
+		}
+
+		return entryIdsOfChecks;
 	}
 
 	@Override

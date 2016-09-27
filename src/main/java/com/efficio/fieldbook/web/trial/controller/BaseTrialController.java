@@ -214,8 +214,13 @@ public abstract class BaseTrialController extends SettingsController {
 				} else if (TermId.OTHER_DESIGN.getId() == designTypeTermID) {
 					data.setDesignType(DesignTypeItem.CUSTOM_IMPORT.getId());
 					data.setUseLatenized(false);
+				} else if (TermId.AUGMENTED_RANDOMIZED_BLOCK.getId() == designTypeTermID) {
+					data.setDesignType(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId());
+					data.setUseLatenized(false);
 				}
 			}
+
+			data.setNumberOfBlocks(this.getExperimentalDesignData(xpDesignVariable.getNumberOfBlocks()));
 
 			tabInfo.setData(data);
 		}

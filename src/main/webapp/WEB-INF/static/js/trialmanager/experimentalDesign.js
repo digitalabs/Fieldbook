@@ -466,15 +466,7 @@
 
 								break;
 							}
-							case 4: {
-
-								if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
-									showErrorMessage('page-message', 'Please specify the number of blocks.');
-									return false;
-								}
-								break;
-
-							}
+							case 4: 
 							case 5:
 							case 6:
 							{
@@ -484,6 +476,15 @@
 									return false;
 								}
 								break;
+							}
+							case 7: {
+
+								if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
+									showErrorMessage('page-message', 'Please specify the number of blocks.');
+									return false;
+								}
+								break;
+
 							}
 						}
 

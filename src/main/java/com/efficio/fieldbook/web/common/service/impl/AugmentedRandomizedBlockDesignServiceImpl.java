@@ -238,12 +238,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 
 	@Override
 	public List<Integer> getExperimentalDesignVariables(ExpDesignParameterUi params) {
-		if (params.getUseLatenized() != null && params.getUseLatenized()) {
-			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.BLOCK_SIZE.getId(),
-					TermId.NO_OF_CBLKS_LATINIZE.getId(), TermId.REPLICATIONS_MAP.getId(), TermId.NO_OF_REPS_IN_COLS.getId());
-		} else {
-			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.BLOCK_SIZE.getId());
-		}
+		return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NBLKS.getId());
 	}
 
 	void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {

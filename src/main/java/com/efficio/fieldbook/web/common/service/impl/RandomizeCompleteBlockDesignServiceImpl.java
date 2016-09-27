@@ -175,7 +175,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			measurementRowList =
 					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
 							variates, treatmentVariables, reqVarList, germplasmList, mainDesign, this.workbenchService,
-							this.fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues, this.fieldbookService);
+							this.fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues, this.fieldbookService, new HashMap<Integer, Integer>());
 
 
 		} catch (BVDesignException e) {

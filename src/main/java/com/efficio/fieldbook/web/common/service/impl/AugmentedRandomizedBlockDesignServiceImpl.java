@@ -32,10 +32,12 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -94,7 +96,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 			measurementRowList = ExpDesignUtil
 					.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors, variates,
 							treatmentVariables, new ArrayList(standardVariableMap.values()), germplasmList, mainDesign,
-							this.workbenchService, this.fieldbookProperties, stdvarEntryNo.getName(), null, this.fieldbookService);
+							this.workbenchService, this.fieldbookProperties, stdvarEntryNo.getName(), null, this.fieldbookService, new HashMap<Integer, Integer>());
 
 		} catch (BVDesignException e) {
 			throw e;

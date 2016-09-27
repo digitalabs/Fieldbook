@@ -361,13 +361,13 @@ public class ExpDesignController extends BaseTrialController {
 	}
 
 	private ExperimentDesignService getExpDesignService(final int designType) {
-		if (designType == 0) {
+		if (designType == DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId()) {
 			return this.randomizeCompleteBlockDesign;
-		} else if (designType == 1) {
+		} else if (designType == DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId()) {
 			return this.resolveIncompleteBlockDesign;
-		} else if (designType == 2) {
+		} else if (designType == DesignTypeItem.ROW_COL.getId()) {
 			return this.resolvableRowColumnDesign;
-		} else if (designType == 4) {
+		} else if (designType == DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId()) {
 			return this.augmentedRandomizedBlockDesignService;
 		}
 		return null;

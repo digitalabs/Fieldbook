@@ -88,7 +88,7 @@ public class ExpDesignUtilTest {
 					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, workbook.getTrialVariables(),
 							workbook.getFactors(), workbook.getNonTrialFactors(), workbook.getVariates(), null, requiredExpDesignVariable,
 							germplasmList, mainDesign, this.workbenchService, this.fieldbookProperties, ExpDesignUtilTest.ENTRY_NO,
-							treatmentFactorValues, this.fieldbookService);
+							treatmentFactorValues, this.fieldbookService, new HashMap<Integer, Integer>());
 
 			Assert.assertTrue("Expected trial nos. from " + (environments - environmentsToAdd + 1) + "to " + environments
 					+ " for all measurement rows but found a different trial no.",

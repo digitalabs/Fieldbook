@@ -5,6 +5,7 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.AugmentedRandomizedBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
+import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
@@ -63,6 +64,11 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 	@Resource
 	public ContextUtil contextUtil;
 
+	@Resource
+	public ExperimentDesignGenerator experimentDesignGenerator;
+
+
+
 	@Override
 	public List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter,
 			List<MeasurementVariable> trialVariables, List<MeasurementVariable> factors, List<MeasurementVariable> nonTrialFactors,
@@ -89,14 +95,14 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 			Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
 			Integer entryNo = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
 
-			MainDesign mainDesign = ExpDesignUtil
+			MainDesign mainDesign = experimentDesignGenerator
 					.createAugmentedRandomizedBlockDesign(nblks, Integer.toString(nTreatments), ncontrols, stdvarEntryNo.getName(),
 							stdvarBlock.getName(), stdvarPlot.getName(), String.valueOf(plotNo));
 
-			measurementRowList = ExpDesignUtil
-					.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors, variates,
+			measurementRowList = experimentDesignGenerator
+					.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors, variates,
 							treatmentVariables, new ArrayList(standardVariableMap.values()), germplasmList, mainDesign,
-							this.workbenchService, this.fieldbookProperties, stdvarEntryNo.getName(), null, this.fieldbookService, new HashMap<Integer, Integer>());
+							stdvarEntryNo.getName(), null, new HashMap<Integer, Integer>());
 
 		} catch (BVDesignException e) {
 			throw e;
@@ -110,8 +116,6 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 	public List<StandardVariable> getRequiredVariable() {
 		List<StandardVariable> varList = new ArrayList<StandardVariable>();
 
-		//StandardVariable stdvarRep =
-		//		this.fieldbookMiddlewareService.getStandardVariable(TermId.NBLKS.getId(), contextUtil.getCurrentProgramUUID());
 		StandardVariable stdvarEntryNo =
 				this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), contextUtil.getCurrentProgramUUID());
 		StandardVariable stdvarBlock =
@@ -119,13 +123,12 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		StandardVariable stdvarPlot =
 				this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), contextUtil.getCurrentProgramUUID());
 
-		//stdvarRep.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
+
 		stdvarBlock.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 		stdvarPlot.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 		stdvarEntryNo.setPhenotypicType(PhenotypicType.GERMPLASM);
 
 		varList.add(stdvarEntryNo);
-		//varList.add(stdvarRep);
 		varList.add(stdvarBlock);
 		varList.add(stdvarPlot);
 

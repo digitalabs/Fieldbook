@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -58,6 +59,8 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 	public FieldbookService fieldbookService;
 	@Resource
 	public ContextUtil contextUtil;
+	@Resource
+	public ExperimentDesignGenerator experimentDesignGenerator;
 
 	@Override
 	public List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter,
@@ -119,14 +122,14 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 			}
 
 			MainDesign mainDesign =
-					ExpDesignUtil.createResolvableIncompleteBlockDesign(blockSize, Integer.toString(nTreatments), replicates,
+					experimentDesignGenerator.createResolvableIncompleteBlockDesign(blockSize, Integer.toString(nTreatments), replicates,
 							stdvarTreatment.getName(), stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(), plotNo,
 							entryNo, parameter.getNblatin(), parameter.getReplatinGroups(), "", parameter.getUseLatenized());
 
 			measurementRowList =
-					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
-							variates, treatmentVariables, reqVarList, germplasmList, mainDesign, this.workbenchService,
-							this.fieldbookProperties, stdvarTreatment.getName(), null, this.fieldbookService, new HashMap<Integer, Integer>());
+					experimentDesignGenerator.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
+							variates, treatmentVariables, reqVarList, germplasmList, mainDesign,
+							stdvarTreatment.getName(), null, new HashMap<Integer, Integer>());
 
 		} catch (BVDesignException e) {
 			throw e;

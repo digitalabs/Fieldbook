@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -24,6 +25,8 @@ import org.generationcp.middleware.pojos.workbench.Tool;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
@@ -59,20 +62,26 @@ public class ExpDesignUtilTest {
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignUtil.class);
 
+	@Mock
 	private WorkbenchService workbenchService;
 
+	@Mock
 	private FieldbookProperties fieldbookProperties;
 
+	@Mock
 	private FieldbookService fieldbookService;
 
+	@InjectMocks
+	private ExperimentDesignGenerator experimentDesignGenerator;
+
 	@Test
-	public void testGenerateExpDesignMeasurements() {
+	public void testGenerateExperimentDesignMeasurements() {
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
 
 		List<String> treatmentFactor = new ArrayList<String>();
 		List<String> levels = new ArrayList<String>();
 		MainDesign mainDesign =
-				ExpDesignUtil.createRandomizedCompleteBlockDesign("2", ExpDesignUtilTest.REP_NO, ExpDesignUtilTest.PLOT_NO,
+				experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", ExpDesignUtilTest.REP_NO, ExpDesignUtilTest.PLOT_NO,
 						301, 201, treatmentFactor, levels, "");
 
 		this.setMockValues(mainDesign);
@@ -85,10 +94,10 @@ public class ExpDesignUtilTest {
 
 		try {
 			List<MeasurementRow> measurementRowList =
-					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, workbook.getTrialVariables(),
+					experimentDesignGenerator.generateExperimentDesignMeasurements(environments, environmentsToAdd, workbook.getTrialVariables(),
 							workbook.getFactors(), workbook.getNonTrialFactors(), workbook.getVariates(), null, requiredExpDesignVariable,
-							germplasmList, mainDesign, this.workbenchService, this.fieldbookProperties, ExpDesignUtilTest.ENTRY_NO,
-							treatmentFactorValues, this.fieldbookService, new HashMap<Integer, Integer>());
+							germplasmList, mainDesign, ExpDesignUtilTest.ENTRY_NO,
+							treatmentFactorValues, new HashMap<Integer, Integer>());
 
 			Assert.assertTrue("Expected trial nos. from " + (environments - environmentsToAdd + 1) + "to " + environments
 					+ " for all measurement rows but found a different trial no.",
@@ -161,9 +170,6 @@ public class ExpDesignUtilTest {
 	}
 
 	private void setMockValues(MainDesign design) {
-		this.fieldbookService = Mockito.mock(FieldbookService.class);
-		this.workbenchService = Mockito.mock(WorkbenchService.class);
-		this.fieldbookProperties = Mockito.mock(FieldbookProperties.class);
 
 		try {
 			Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.REP_NO.getId())).thenReturn(null);

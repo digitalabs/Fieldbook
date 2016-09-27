@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,22 +56,22 @@ public class MockDesignRunnerImpl implements DesignRunner {
 		Integer lines = new Integer(0);
 		Integer replications = new Integer(1);
 
-		if (expDesign.getName().equals(ExpDesignUtil.RANDOMIZED_COMPLETE_BLOCK_DESIGN)) {
-			List<ListItem> levelList = expDesign.getParameterList(ExpDesignUtil.LEVELS_PARAM);
+		if (expDesign.getName().equals(ExperimentDesignGenerator.RANDOMIZED_COMPLETE_BLOCK_DESIGN)) {
+			List<ListItem> levelList = expDesign.getParameterList(ExperimentDesignGenerator.LEVELS_PARAM);
 			lines = Integer.parseInt(levelList.get(0).getValue());
-			replications = Integer.parseInt(expDesign.getParameterValue(ExpDesignUtil.NBLOCKS_PARAM));
-		} else if (expDesign.getName().equals(ExpDesignUtil.AUGMENTED_RANDOMIZED_BLOCK_DESIGN)) {
-			lines = Integer.valueOf(expDesign.getParameterValue(ExpDesignUtil.NTREATMENTS_PARAM));
-			replications = Integer.parseInt(expDesign.getParameterValue(ExpDesignUtil.NBLOCKS_PARAM));
+			replications = Integer.parseInt(expDesign.getParameterValue(ExperimentDesignGenerator.NBLOCKS_PARAM));
+		} else if (expDesign.getName().equals(ExperimentDesignGenerator.AUGMENTED_RANDOMIZED_BLOCK_DESIGN)) {
+			lines = Integer.valueOf(expDesign.getParameterValue(ExperimentDesignGenerator.NTREATMENTS_PARAM));
+			replications = Integer.parseInt(expDesign.getParameterValue(ExperimentDesignGenerator.NBLOCKS_PARAM));
 		} else {
-			lines = Integer.valueOf(expDesign.getParameterValue(ExpDesignUtil.NTREATMENTS_PARAM));
-			replications = Integer.parseInt(expDesign.getParameterValue(ExpDesignUtil.NREPLICATES_PARAM));
+			lines = Integer.valueOf(expDesign.getParameterValue(ExperimentDesignGenerator.NTREATMENTS_PARAM));
+			replications = Integer.parseInt(expDesign.getParameterValue(ExperimentDesignGenerator.NREPLICATES_PARAM));
 		}
 
-		final String initPlotNoParam = expDesign.getParameterValue(ExpDesignUtil.INITIAL_PLOT_NUMBER_PARAM);
+		final String initPlotNoParam = expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM);
 		int startingPlotNo = StringUtils.isNumeric(initPlotNoParam) ? Integer.valueOf(initPlotNoParam) : 1;
 		
-		final String initEntryNoParam = expDesign.getParameterValue(ExpDesignUtil.INITIAL_TREATMENT_NUMBER_PARAM);
+		final String initEntryNoParam = expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM);
 		int startingEntryNo = StringUtils.isNumeric(initEntryNoParam) ? Integer.valueOf(initEntryNoParam) : 1;
 
 		List<String[]> csvLines = new ArrayList<>();

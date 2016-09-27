@@ -122,6 +122,8 @@
 
 	<bean id="designRunner" class="${design.runner}" />
 
+	<bean id="experimentDesignGenerator" class="com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator" />
+
 	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
 
 	<bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"

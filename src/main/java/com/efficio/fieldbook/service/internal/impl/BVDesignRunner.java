@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
@@ -75,7 +76,7 @@ public class BVDesignRunner implements DesignRunner {
 		BVDesignOutput output = new BVDesignOutput(returnCode);
 		if (returnCode == 0) {
 
-			File outputFile = new File(design.getDesign().getParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM));
+			File outputFile = new File(design.getDesign().getParameterValue(ExperimentDesignGenerator.OUTPUTFILE_PARAM));
 			FileReader fileReader = new FileReader(outputFile);
 			CSVReader reader = new CSVReader(fileReader);
 			List<String[]> myEntries = reader.readAll();
@@ -93,8 +94,8 @@ public class BVDesignRunner implements DesignRunner {
 		Long currentTimeMillis = System.currentTimeMillis();
 		String outputFilePath = currentTimeMillis + BVDesignRunner.BV_PREFIX + BVDesignRunner.CSV_EXTENSION;
 
-		design.getDesign().setParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM, outputFilePath);
-		design.getDesign().setParameterValue(ExpDesignUtil.SEED_PARAM, this.getSeedValue(currentTimeMillis));
+		design.getDesign().setParameterValue(ExperimentDesignGenerator.OUTPUTFILE_PARAM, outputFilePath);
+		design.getDesign().setParameterValue(ExperimentDesignGenerator.SEED_PARAM, this.getSeedValue(currentTimeMillis));
 
 		try {
 			xml = ExpDesignUtil.getXmlStringForSetting(design);

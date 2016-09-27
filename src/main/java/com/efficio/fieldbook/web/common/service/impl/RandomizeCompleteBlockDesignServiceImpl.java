@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -66,6 +67,8 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	private UserSelection userSelection;
 	@Resource
 	private ContextUtil contextUtil;
+	@Resource
+	public ExperimentDesignGenerator experimentDesignGenerator;
 
 	@Override
 	public List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter,
@@ -170,12 +173,12 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			}
 
 			MainDesign mainDesign =
-					ExpDesignUtil.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, entryNo, treatmentFactor, levels, "");
+					experimentDesignGenerator.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, entryNo, treatmentFactor, levels, "");
 
 			measurementRowList =
-					ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
-							variates, treatmentVariables, reqVarList, germplasmList, mainDesign, this.workbenchService,
-							this.fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues, this.fieldbookService, new HashMap<Integer, Integer>());
+					experimentDesignGenerator.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
+							variates, treatmentVariables, reqVarList, germplasmList, mainDesign,
+							stdvarTreatment.getName(), treatmentFactorValues, new HashMap<Integer, Integer>());
 
 
 		} catch (BVDesignException e) {

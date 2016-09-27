@@ -3,6 +3,7 @@ package com.efficio.fieldbook.service.internal;
 
 import java.util.Arrays;
 
+import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -28,11 +29,13 @@ public class MockDesignRunnerImplTest {
 	@Mock
 	private FieldbookProperties fieldbookProperties;
 
+	private ExperimentDesignGenerator experimentDesignGenerator = new ExperimentDesignGenerator();
+
 	@Test
 	public void testMockDesignRunnerRCBD() {
 
 		MainDesign mainDesign =
-				ExpDesignUtil.createRandomizedCompleteBlockDesign("2", "REP_NO", "PLOT_NO", 200, 100, Arrays.asList("ENTRY_NO"),
+				experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", "REP_NO", "PLOT_NO", 200, 100, Arrays.asList("ENTRY_NO"),
 						Arrays.asList("20"), "mock-bv-out.csv");
 		try {
 			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
@@ -49,7 +52,7 @@ public class MockDesignRunnerImplTest {
 	public void testMockDesignRunnerRIBD() {
 
 		MainDesign mainDesign =
-				ExpDesignUtil.createResolvableIncompleteBlockDesign("2", "20", "2", "ENTRY_NO", "REP_NO", "BLOCK_NO", "PLOT_NO", 10, 5, "",
+				experimentDesignGenerator.createResolvableIncompleteBlockDesign("2", "20", "2", "ENTRY_NO", "REP_NO", "BLOCK_NO", "PLOT_NO", 10, 5, "",
 						"", "mock-bv-out.csv", false);
 		try {
 			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
@@ -66,7 +69,7 @@ public class MockDesignRunnerImplTest {
 	public void testMockDesignRunnerRRCD() {
 
 		MainDesign mainDesign =
-				ExpDesignUtil.createResolvableRowColDesign("20", "2", "2", "10", "ENTRY_NO", "REP_NO", "ROW", "COL", "PLOT_NO", 10, 2, "",
+				experimentDesignGenerator.createResolvableRowColDesign("20", "2", "2", "10", "ENTRY_NO", "REP_NO", "ROW", "COL", "PLOT_NO", 10, 2, "",
 						"", "", "mock-bv-out.csv", false);
 		try {
 			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);

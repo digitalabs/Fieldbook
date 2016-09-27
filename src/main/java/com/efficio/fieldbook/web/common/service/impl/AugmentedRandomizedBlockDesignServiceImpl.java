@@ -187,6 +187,10 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		ExpDesignValidationOutput output = new ExpDesignValidationOutput(true, "");
 		try {
 			if (expDesignParameter != null && germplasmList != null) {
+
+				int checkEntryCount = this.getEntryIdsOfChecks(germplasmList).size();
+				int treatmentSize = germplasmList.size();
+
 				if (!NumberUtils.isNumber(expDesignParameter.getNumberOfBlocks())) {
 					output = new ExpDesignValidationOutput(false, "Number of blocks should be a number");
 					return output;
@@ -200,9 +204,10 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 					output = new ExpDesignValidationOutput(false,
 							this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
 					return output;
+				} else if (checkEntryCount == 0) {
+					return new ExpDesignValidationOutput(false, this.messageSource.getMessage(
+							"germplasm.list.check.required.augmented.design", null, locale));
 				} else {
-
-					int treatmentSize = germplasmList.size();
 
 					final Integer entryNumber = StringUtil.parseInt(expDesignParameter.getStartingEntryNo(), null);
 					final Integer plotNumber = StringUtil.parseInt(expDesignParameter.getStartingPlotNo(), null);

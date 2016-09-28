@@ -375,6 +375,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		final List<InventoryDetails> inventoryDetails = this.labelPrintingService.getInventoryDetails(germplasmList.getId());
 
+		//this name is used to generate a filename for the labels output
+		this.userLabelPrinting.setName(germplasmList.getName());
+
 		this.userLabelPrinting.setStudyId(null);
 		this.userLabelPrinting.setFieldMapInfo(null);
 		this.userLabelPrinting.setFieldMapInfoList(null);

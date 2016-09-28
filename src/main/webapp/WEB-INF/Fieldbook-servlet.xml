@@ -122,8 +122,6 @@
 
 	<bean id="designRunner" class="${design.runner}" />
 
-	<bean id="experimentDesignGenerator" class="com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator" />
-
 	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
 
 	<bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"
@@ -492,6 +490,8 @@
 	
 	<!-- Including all beans used for generating Code Sheet when exporting Germplasm List excel file -->
 	<context:component-scan base-package="org.generationcp.commons.workbook.generator" />
+
+	<context:component-scan base-package="com.efficio.fieldbook.web.experimentdesign" />
 
 	<bean id="processCodeFactory"
 		class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory"

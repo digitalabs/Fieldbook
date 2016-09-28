@@ -3,9 +3,11 @@ package com.efficio.fieldbook.web.common.service.impl;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.service.AugmentedRandomizedBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
+import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignValidator;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
@@ -67,7 +69,8 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 	@Resource
 	public ExperimentDesignGenerator experimentDesignGenerator;
 
-
+	@Resource
+	public ExperimentDesignValidator experimentDesignValidator;
 
 	@Override
 	public List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter,
@@ -191,48 +194,12 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		Locale locale = LocaleContextHolder.getLocale();
 		ExpDesignValidationOutput output = new ExpDesignValidationOutput(true, "");
 		try {
-			if (expDesignParameter != null && germplasmList != null) {
 
-				int checkEntryCount = this.getEntryIdsOfChecks(germplasmList).size();
-				int treatmentSize = germplasmList.size();
+			experimentDesignValidator.validateAugmentedDesign(expDesignParameter, germplasmList);
 
-				if (!NumberUtils.isNumber(expDesignParameter.getNumberOfBlocks())) {
-					output = new ExpDesignValidationOutput(false, "Number of blocks should be a number");
-					return output;
-				} else if (expDesignParameter.getStartingPlotNo() != null && !NumberUtils
-						.isNumber(expDesignParameter.getStartingPlotNo())) {
-					output = new ExpDesignValidationOutput(false,
-							this.messageSource.getMessage("plot.number.should.be.in.range", null, locale));
-					return output;
-				} else if (expDesignParameter.getStartingEntryNo() != null && !NumberUtils
-						.isNumber(expDesignParameter.getStartingEntryNo())) {
-					output = new ExpDesignValidationOutput(false,
-							this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
-					return output;
-				} else if (checkEntryCount == 0) {
-					return new ExpDesignValidationOutput(false, this.messageSource.getMessage(
-							"germplasm.list.check.required.augmented.design", null, locale));
-				} else {
-
-					final Integer entryNumber = StringUtil.parseInt(expDesignParameter.getStartingEntryNo(), null);
-					final Integer plotNumber = StringUtil.parseInt(expDesignParameter.getStartingPlotNo(), null);
-
-					if (Objects.equals(entryNumber, 0)) {
-						output = new ExpDesignValidationOutput(false,
-								this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
-					} else if (Objects.equals(plotNumber, 0)) {
-						output = new ExpDesignValidationOutput(false,
-								this.messageSource.getMessage("plot.number.should.be.in.range", null, locale));
-					} else if (entryNumber != null && (treatmentSize + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO) {
-						output = new ExpDesignValidationOutput(false,
-								this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
-					} else if (entryNumber != null && plotNumber != null && ((treatmentSize + plotNumber)
-							> ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
-						output = new ExpDesignValidationOutput(false,
-								this.messageSource.getMessage("plot.number.should.be.in.range", null, locale));
-					}
-				}
-			}
+		} catch (DesignValidationException e) {
+			output = new ExpDesignValidationOutput(false,
+					e.getMessage());
 		} catch (Exception e) {
 			output = new ExpDesignValidationOutput(false,
 					this.messageSource.getMessage("experiment.design.invalid.generic.error", null, locale));

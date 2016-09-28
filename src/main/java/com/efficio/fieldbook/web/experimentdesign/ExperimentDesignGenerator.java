@@ -28,6 +28,7 @@ import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-@Configurable
+@Component
 public class ExperimentDesignGenerator {
 
 	public static final String NCLATIN_PARAM = "nclatin";

@@ -2047,3 +2047,15 @@ input.select-all-margin{
     color:red;
     font-weight:bold
 }
+
+/* Label Printing */
+.lblprnt-germplasm-list-details {
+	display: none;
+}
+
+.lblprnt-germplasm-list-inventory .lblprnt-germplasm-list-details {
+	display: block;
+}
+.lblprnt-germplasm-list-inventory .lblprnt-study-details {
+	display: none;
+}

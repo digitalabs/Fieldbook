@@ -59,7 +59,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 
 
 
-	<div class="row" th:if="*{userLabelPrinting.fieldMapInfoList == null}">
+	<div class="row lblprnt-study-details" th:if="*{userLabelPrinting.fieldMapInfoList == null}">
 		<div class="col-xs-6 col-md-6" >
 			<div class="form-group">
 				<div class="col-xs-12 col-md-12">
@@ -141,6 +141,29 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				<span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}"></span>
 			</div>
 		</div>
+	</div>
+
+	<div class="row lblprnt-germplasm-list-details" >
+			<div class="col-xs-6 col-md-6" >
+				<div class="form-group">
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label">
+							<strong  class="sub-content-heading" th:text="#{label.printing.selected.germplasmlist}">SELECTED GERMPLASM
+							LIST</strong>
+						</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label"><strong th:text="#{label.printing.germplasmlist.name}+':'"></strong></label>
+						<span th:text="*{userLabelPrinting.name}">Germplasm List Name</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-xs-6 col-md-6">
+
+			</div>
 	</div>
 	<div class="row" th:if="*{userLabelPrinting.fieldMapInfoList}">
 		<div class="col-xs-12 col-md-12" >

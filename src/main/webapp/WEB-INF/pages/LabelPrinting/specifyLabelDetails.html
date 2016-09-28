@@ -18,7 +18,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails/download}" method="GET" th:objec
 			</div>
 	</div>
 
-<form id="specifyLabelDetailsForm" role="form-horizontal" action="#"
+<form id="specifyLabelDetailsForm" role="form-horizontal" action="#" class="lblprnt-label-details"
+	  th:classappend="${labelPrintingForm.germplasmListId != null} ? lblprnt-germplasm-list-inventory : lblprnt-study-inventory"
 th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${labelPrintingForm}" enctype="multipart/form-data">
 <input type="hidden" th:field="*{userLabelPrinting.leftSelectedLabelFields}"/>
 <input type="hidden" th:field="*{userLabelPrinting.rightSelectedLabelFields}"/>

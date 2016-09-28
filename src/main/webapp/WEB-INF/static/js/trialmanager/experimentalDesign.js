@@ -1,4 +1,4 @@
-/* global angular, showErrorMessage, showSuccessfulMessage, expDesignMsgs */
+/* global angular, showErrorMessage, showAlertMessage, showSuccessfulMessage, expDesignMsgs */
 
 (function() {
 		'use strict';
@@ -483,6 +483,11 @@
 									showErrorMessage('page-message', 'Please specify the number of blocks.');
 									return false;
 								}
+
+								if ($scope.totalGermplasmEntryListCount % $scope.data.numberOfBlocks !== 0) {
+									showAlertMessage('page-message', 'The entries in this trial cannot be divided into evenly sized blocks. Augmented designs are most efficient when block sizes are constant.', 10000);
+								}
+
 								break;
 
 							}

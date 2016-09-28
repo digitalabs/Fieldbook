@@ -41,24 +41,24 @@ public class BVDesignRunner implements DesignRunner {
 	private static String BVDESIGN_EXE = "BVDesign.exe";
 
 	@Override
-	public BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design)
-			throws IOException {
+	public BVDesignOutput runBVDesign(final WorkbenchService workbenchService, final FieldbookProperties fieldbookProperties,
+			final MainDesign design) throws IOException {
 
-		String bvDesignLocation = BVDesignRunner.getBreedingViewExeLocation(workbenchService);
+		final String bvDesignLocation = BVDesignRunner.getBreedingViewExeLocation(workbenchService);
 		int returnCode = -1;
 		if (bvDesignLocation != null && design != null && design.getDesign() != null) {
-			String xml = this.getXMLStringForDesign(design);
+			final String xml = this.getXMLStringForDesign(design);
 
-			String filepath = BVDesignRunner.writeToFile(xml, fieldbookProperties);
+			final String filepath = BVDesignRunner.writeToFile(xml, fieldbookProperties);
 
-			ProcessBuilder pb = new ProcessBuilder(bvDesignLocation, "-i" + filepath);
-			Process p = pb.start();
+			final ProcessBuilder pb = new ProcessBuilder(bvDesignLocation, "-i" + filepath);
+			final Process p = pb.start();
 			// add a timeout for the design runner
 			final ProcessTimeoutThread processTimeoutThread = new ProcessTimeoutThread(p, BVDesignRunner.DESIGN_RUNNER_TIMEOUT_MILLIS);
 			processTimeoutThread.start();
 			try {
-				InputStreamReader isr = new InputStreamReader(p.getInputStream());
-				BufferedReader br = new BufferedReader(isr);
+				final InputStreamReader isr = new InputStreamReader(p.getInputStream());
+				final BufferedReader br = new BufferedReader(isr);
 
 				String lineRead;
 				while ((lineRead = br.readLine()) != null) {
@@ -67,7 +67,7 @@ public class BVDesignRunner implements DesignRunner {
 
 				returnCode = p.waitFor();
 				// add here the code to parse the csv file
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				BVDesignRunner.LOG.error(e.getMessage(), e);
 			} finally {
 				if (processTimeoutThread != null) {
@@ -82,13 +82,13 @@ public class BVDesignRunner implements DesignRunner {
 				}
 			}
 		}
-		BVDesignOutput output = new BVDesignOutput(returnCode);
+		final BVDesignOutput output = new BVDesignOutput(returnCode);
 		if (returnCode == 0) {
 
-			File outputFile = new File(design.getDesign().getParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM));
-			FileReader fileReader = new FileReader(outputFile);
-			CSVReader reader = new CSVReader(fileReader);
-			List<String[]> myEntries = reader.readAll();
+			final File outputFile = new File(design.getDesign().getParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM));
+			final FileReader fileReader = new FileReader(outputFile);
+			final CSVReader reader = new CSVReader(fileReader);
+			final List<String[]> myEntries = reader.readAll();
 			output.setResults(myEntries);
 			fileReader.close();
 			reader.close();
@@ -98,23 +98,23 @@ public class BVDesignRunner implements DesignRunner {
 		return output;
 	}
 
-	public String getXMLStringForDesign(MainDesign design) {
+	public String getXMLStringForDesign(final MainDesign design) {
 		String xml = "";
-		Long currentTimeMillis = System.currentTimeMillis();
-		String outputFilePath = currentTimeMillis + BVDesignRunner.BV_PREFIX + BVDesignRunner.CSV_EXTENSION;
+		final Long currentTimeMillis = System.currentTimeMillis();
+		final String outputFilePath = currentTimeMillis + BVDesignRunner.BV_PREFIX + BVDesignRunner.CSV_EXTENSION;
 
 		design.getDesign().setParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM, outputFilePath);
 		design.getDesign().setParameterValue(ExpDesignUtil.SEED_PARAM, this.getSeedValue(currentTimeMillis));
 
 		try {
 			xml = ExpDesignUtil.getXmlStringForSetting(design);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			BVDesignRunner.LOG.error(e.getMessage(), e);
 		}
 		return xml;
 	}
 
-	private String getSeedValue(Long currentTimeMillis) {
+	private String getSeedValue(final Long currentTimeMillis) {
 		String seedValue = Long.toString(currentTimeMillis);
 		if (currentTimeMillis > Integer.MAX_VALUE) {
 			seedValue = seedValue.substring(seedValue.length() - 9);
@@ -122,45 +122,45 @@ public class BVDesignRunner implements DesignRunner {
 		return seedValue;
 	}
 
-	private static String getBreedingViewExeLocation(WorkbenchService workbenchService) {
+	private static String getBreedingViewExeLocation(final WorkbenchService workbenchService) {
 		String bvDesignLocation = null;
 		Tool bvTool = null;
 		try {
 			bvTool = workbenchService.getToolWithName(AppConstants.TOOL_NAME_BREEDING_VIEW.getString());
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			BVDesignRunner.LOG.error(e.getMessage(), e);
 		}
 		if (bvTool != null) {
 			// write xml to temp file
-			File absoluteToolFile = new File(bvTool.getPath()).getAbsoluteFile();
+			final File absoluteToolFile = new File(bvTool.getPath()).getAbsoluteFile();
 			bvDesignLocation = absoluteToolFile.getAbsolutePath().replaceAll(BVDesignRunner.BREEDING_VIEW_EXE, BVDesignRunner.BVDESIGN_EXE);
 		}
 		return bvDesignLocation;
 	}
 
-	private static String writeToFile(String xml, FieldbookProperties fieldbookProperties) {
+	private static String writeToFile(final String xml, final FieldbookProperties fieldbookProperties) {
 		String filenamePath = BVDesignRunner.generateBVFilePath(BVDesignRunner.XML_EXTENSION, fieldbookProperties);
 		try {
 
-			File file = new File(filenamePath);
-			BufferedWriter output = new BufferedWriter(new FileWriter(file));
+			final File file = new File(filenamePath);
+			final BufferedWriter output = new BufferedWriter(new FileWriter(file));
 			output.write(xml);
 			output.close();
 			filenamePath = file.getAbsolutePath();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			BVDesignRunner.LOG.error(e.getMessage(), e);
 		}
 		return filenamePath;
 	}
 
-	private static String generateBVFilePath(String extensionFilename, FieldbookProperties fieldbookProperties) {
-		String filename = BVDesignRunner.generateBVFileName(extensionFilename);
-		String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator + filename;
-		File f = new File(filenamePath);
+	private static String generateBVFilePath(final String extensionFilename, final FieldbookProperties fieldbookProperties) {
+		final String filename = BVDesignRunner.generateBVFileName(extensionFilename);
+		final String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator + filename;
+		final File f = new File(filenamePath);
 		return f.getAbsolutePath();
 	}
 
-	private static String generateBVFileName(String extensionFileName) {
+	private static String generateBVFileName(final String extensionFileName) {
 		return System.currentTimeMillis() + BVDesignRunner.BV_PREFIX + extensionFileName;
 	}
 

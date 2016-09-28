@@ -99,8 +99,8 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 
 			measurementRowList = experimentDesignGenerator
 					.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors, variates,
-							treatmentVariables, new ArrayList(standardVariableMap.values()), germplasmList, mainDesign,
-							stdvarEntryNo.getName(), null, new HashMap<Integer, Integer>());
+							treatmentVariables, requiredDesignVariables, germplasmList, mainDesign,
+							stdvarEntryNo.getName(), null, mapOfChecks);
 
 		} catch (BVDesignException e) {
 			throw e;

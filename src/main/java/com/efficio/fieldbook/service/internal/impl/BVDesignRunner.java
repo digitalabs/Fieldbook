@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.generationcp.commons.pojo.ProcessTimeoutThread;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
@@ -33,6 +34,8 @@ public class BVDesignRunner implements DesignRunner {
 	public static final String CSV_EXTENSION = ".csv";
 
 	private static final Logger LOG = LoggerFactory.getLogger(BVDesignRunner.class);
+	// set 3 minutes for the design runner process to timeout
+	private static final long DESIGN_RUNNER_TIMEOUT_MILLIS = 3 * 60 * 1000;
 	private static String XML_EXTENSION = ".xml";
 	private static String BREEDING_VIEW_EXE = "BreedingView.exe";
 	private static String BVDESIGN_EXE = "BVDesign.exe";
@@ -50,6 +53,9 @@ public class BVDesignRunner implements DesignRunner {
 
 			ProcessBuilder pb = new ProcessBuilder(bvDesignLocation, "-i" + filepath);
 			Process p = pb.start();
+			// add a timeout for the design runner
+			final ProcessTimeoutThread processTimeoutThread = new ProcessTimeoutThread(p, BVDesignRunner.DESIGN_RUNNER_TIMEOUT_MILLIS);
+			processTimeoutThread.start();
 			try {
 				InputStreamReader isr = new InputStreamReader(p.getInputStream());
 				BufferedReader br = new BufferedReader(isr);
@@ -64,6 +70,10 @@ public class BVDesignRunner implements DesignRunner {
 			} catch (InterruptedException e) {
 				BVDesignRunner.LOG.error(e.getMessage(), e);
 			} finally {
+				if (processTimeoutThread != null) {
+					// Stop the thread if it's still running
+					processTimeoutThread.interrupt();
+				}
 				if (p != null) {
 					// missing these was causing the mass amounts of open 'files'
 					p.getInputStream().close();

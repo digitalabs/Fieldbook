@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 	protected FieldbookProperties fieldbookProperties;
 
 	@Resource
-	private ResourceBundleMessageSource messageSource;
+	private MessageSource messageSource;
 
 	@Resource
 	public FieldbookService fieldbookService;
@@ -85,7 +86,8 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 
 		try {
 
-			Map<Integer, StandardVariable> standardVariableMap = retrieveRequiredStandardVariablesMap();
+			List<StandardVariable> requiredDesignVariables = this.getRequiredVariable();
+			Map<Integer, StandardVariable> standardVariableMap = convertStandardVariableListToMap(requiredDesignVariables);
 
 			StandardVariable stdvarEntryNo = standardVariableMap.get(TermId.ENTRY_NO.getId());
 			StandardVariable stdvarBlock = standardVariableMap.get(TermId.BLOCK_NO.getId());
@@ -133,11 +135,11 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		return varList;
 	}
 
-	Map<Integer, StandardVariable> retrieveRequiredStandardVariablesMap() {
+	Map<Integer, StandardVariable> convertStandardVariableListToMap(List<StandardVariable> standardVariables) {
 
 		Map<Integer, StandardVariable> map = new HashMap<>();
 
-		for (StandardVariable stdvar : this.getRequiredVariable()) {
+		for (StandardVariable stdvar : standardVariables) {
 			map.put(stdvar.getId(), stdvar);
 		}
 

@@ -27,7 +27,6 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -86,36 +85,17 @@ public class ExperimentDesignGenerator {
 
 		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
-		String plotNumberStrValue = (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
-
 		List<ExpDesignParameter> paramList = new ArrayList<>();
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.SEED_PARAM, "", null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NBLOCKS_PARAM, nBlock, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.BLOCKFACTOR_PARAM, blockFactor, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.PLOTFACTOR_PARAM, plotFactor, null));
-		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM, plotNumberStrValue, null));
+		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM, getPlotNumberStringValueOrDefault(initialPlotNumber), null));
 
-		if(initialEntryNumber != null){
-			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM, String.valueOf(initialEntryNumber), null));
-		}
+		addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
 
-		List<ListItem> itemsTreatmentFactor = new ArrayList<ListItem>();
-		List<ListItem> itemsLevels = new ArrayList<ListItem>();
-		if (treatmentFactor != null) {
-			for (String treatment : treatmentFactor) {
-				ListItem listItem = new ListItem(treatment);
-				itemsTreatmentFactor.add(listItem);
-			}
-		}
-		if (levels != null) {
-			for (String level : levels) {
-				ListItem listItem = new ListItem(level);
-				itemsLevels.add(listItem);
-			}
-		}
-		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM, null, itemsTreatmentFactor));
-		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.LEVELS_PARAM, null, itemsLevels));
-
+		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM, null, convertToListItemList(treatmentFactor)));
+		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.LEVELS_PARAM, null, convertToListItemList(levels)));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TIMELIMIT_PARAM, timeLimit, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.OUTPUTFILE_PARAM, outputfile, null));
 
@@ -130,8 +110,6 @@ public class ExperimentDesignGenerator {
 
 		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
-		String plotNumberStrValue = (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
-
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.SEED_PARAM, "", null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.BLOCKSIZE_PARAM, blockSize, null));
@@ -139,30 +117,14 @@ public class ExperimentDesignGenerator {
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NREPLICATES_PARAM, nReplicates, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TREATMENTFACTOR_PARAM, treatmentFactor, null));
 
-		if(initialEntryNumber != null){
-			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM, String.valueOf(initialEntryNumber), null));
-		}
+		addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
 
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.REPLICATEFACTOR_PARAM, replicateFactor, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.BLOCKFACTOR_PARAM, blockFactor, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.PLOTFACTOR_PARAM, plotFactor, null));
-		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM, plotNumberStrValue, null));
+		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM, getPlotNumberStringValueOrDefault(initialPlotNumber), null));
 
-
-
-		if (useLatinize) {
-			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NBLATIN_PARAM, nBlatin, null));
-			// we add the string tokenize replating groups
-			// we tokenize the replating groups
-			StringTokenizer tokenizer = new StringTokenizer(replatingGroups, ",");
-			List<ListItem> replatingList = new ArrayList<ListItem>();
-			while (tokenizer.hasMoreTokens()) {
-				replatingList.add(new ListItem(tokenizer.nextToken()));
-			}
-			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.REPLATINGROUPS_PARAM, null, replatingList));
-		} else {
-			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NBLATIN_PARAM, "0", null));
-		}
+		addLatinizeParametersForResolvableIncompleteBlockDesign(useLatinize, paramList, nBlatin ,replatingGroups);
 
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TIMELIMIT_PARAM, timeLimit, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.OUTPUTFILE_PARAM, outputfile, null));
@@ -188,29 +150,16 @@ public class ExperimentDesignGenerator {
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NCOLUMNS_PARAM, nColumns, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TREATMENTFACTOR_PARAM, treatmentFactor, null));
 
-		if(initialEntryNumber != null){
-			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM, String.valueOf(initialEntryNumber), null));
-		}
+		addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
 
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.REPLICATEFACTOR_PARAM, replicateFactor, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.ROWFACTOR_PARAM, rowFactor, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.COLUMNFACTOR_PARAM, columnFactor, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.PLOTFACTOR_PARAM, plotFactor, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM, plotNumberStrValue, null));
-		if (useLatinize != null && useLatinize.booleanValue()) {
-			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NRLATIN_PARAM, nrLatin, null));
-			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NCLATIN_PARAM, ncLatin, null));
-			// we tokenize the replating groups
-			StringTokenizer tokenizer = new StringTokenizer(replatingGroups, ",");
-			List<ListItem> replatingList = new ArrayList<ListItem>();
-			while (tokenizer.hasMoreTokens()) {
-				replatingList.add(new ListItem(tokenizer.nextToken()));
-			}
-			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.REPLATINGROUPS_PARAM, null, replatingList));
-		} else {
-			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NRLATIN_PARAM, "0", null));
-			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NCLATIN_PARAM, "0", null));
-		}
+
+		addLatinizeParametersForResolvableRowAndColumnDesign(useLatinize, paramList ,replatingGroups, nrLatin, ncLatin);
+
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TIMELIMIT_PARAM, timeLimit, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.OUTPUTFILE_PARAM, outputfile, null));
 
@@ -515,6 +464,69 @@ public class ExperimentDesignGenerator {
 		}
 		measurementRow.setDataList(dataList);
 		return measurementRow;
+	}
+
+	String getPlotNumberStringValueOrDefault(Integer initialPlotNumber) {
+		return (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
+	}
+
+
+	void addInitialTreatmenNumberIfAvailable(final Integer initialEntryNumber, final List<ExpDesignParameter> paramList) {
+
+		if(initialEntryNumber != null){
+			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM, String.valueOf(initialEntryNumber), null));
+		}
+
+	}
+
+	void addLatinizeParametersForResolvableIncompleteBlockDesign(final boolean useLatinize, final List<ExpDesignParameter> paramList, final String nBlatin,
+			final String replatingGroups) {
+
+		if (useLatinize) {
+			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NBLATIN_PARAM, nBlatin, null));
+			// we add the string tokenize replating groups
+			// we tokenize the replating groups
+			StringTokenizer tokenizer = new StringTokenizer(replatingGroups, ",");
+			List<ListItem> replatingList = new ArrayList<ListItem>();
+			while (tokenizer.hasMoreTokens()) {
+				replatingList.add(new ListItem(tokenizer.nextToken()));
+			}
+			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.REPLATINGROUPS_PARAM, null, replatingList));
+		} else {
+			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NBLATIN_PARAM, "0", null));
+		}
+
+	}
+
+	void addLatinizeParametersForResolvableRowAndColumnDesign(final Boolean useLatinize, final List<ExpDesignParameter> paramList,
+			final String replatingGroups, final String nrLatin, final String ncLatin) {
+
+		if (useLatinize != null && useLatinize.booleanValue()) {
+			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NRLATIN_PARAM, nrLatin, null));
+			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NCLATIN_PARAM, ncLatin, null));
+			// we tokenize the replating groups
+			StringTokenizer tokenizer = new StringTokenizer(replatingGroups, ",");
+			List<ListItem> replatingList = new ArrayList<ListItem>();
+			while (tokenizer.hasMoreTokens()) {
+				replatingList.add(new ListItem(tokenizer.nextToken()));
+			}
+			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.REPLATINGROUPS_PARAM, null, replatingList));
+		} else {
+			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NRLATIN_PARAM, "0", null));
+			paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NCLATIN_PARAM, "0", null));
+		}
+
+	}
+
+	List<ListItem> convertToListItemList(List<String> listString) {
+
+		List<ListItem> listItemList = new ArrayList<ListItem>();
+		for (String value : listString) {
+			ListItem listItem = new ListItem(value);
+			listItemList.add(listItem);
+		}
+		return listItemList;
+
 	}
 
 }

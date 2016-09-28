@@ -20,6 +20,13 @@ public class ExperimentDesignValidator {
 	@Resource
 	private MessageSource messageSource;
 
+	/**
+	 * Validates the parameters and germplasm entries required for generating augmented design.
+	 *
+	 * @param expDesignParameterUi
+	 * @param importedGermplasmList
+	 * @throws DesignValidationException
+	 */
 	public void validateAugmentedDesign(ExpDesignParameterUi expDesignParameterUi, List<ImportedGermplasm> importedGermplasmList)
 			throws DesignValidationException {
 

@@ -77,12 +77,31 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
         final List<ExportColumnHeader> exportColumnHeaders =
                 this.generateColumnHeaders(selectedFieldIDs, labelHeaders);
 
-
         final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
-        //TODO get GID from germplasmList
         for (final GermplasmListData germplasmListData : germplasmListDataList){
             final Map<Integer, ExportColumnValue> exportColumnValueMap = Maps.newHashMap();
-            exportColumnValueMap.put(2, new ExportColumnValue(8240, germplasmListData.getGid().toString()));
+            exportColumnValueMap.put(selectedFieldIDs.get(0), new ExportColumnValue(selectedFieldIDs.get(0), germplasmListData.getGid().toString()));
+            //TODO Add barcode
+
+
+
+            final StringBuilder buffer = new StringBuilder();
+            final String fieldList = userLabelPrinting.getFirstBarcodeField() + "," + userLabelPrinting.getSecondBarcodeField() + "," + userLabelPrinting.getThirdBarcodeField();
+
+            final List<Integer> selectedBarcodeFieldIDs = SettingsUtil.parseFieldListAndConvert(fieldList);
+
+            for (final Integer selectedFieldID : selectedFieldIDs) {
+                if (!"".equalsIgnoreCase(buffer.toString())) {
+                    buffer.append(this.delimiter);
+                }
+
+                buffer.append(germplasmListData.getGid().toString());
+            }
+
+            final String barcodeLabel =  buffer.toString();
+            exportColumnValueMap.put(selectedFieldIDs.get(1), new ExportColumnValue(selectedFieldIDs.get(1), barcodeLabel));
+
+
             exportColumnValues.add(exportColumnValueMap);
         }
 

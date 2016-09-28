@@ -5,15 +5,12 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.service.AugmentedRandomizedBlockDesignService;
-import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignValidator;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -39,7 +36,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -96,7 +92,6 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 			StandardVariable stdvarPlot = standardVariableMap.get(TermId.PLOT_NO.getId());
 
 			Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
-			Integer entryNo = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
 
 			MainDesign mainDesign = experimentDesignGenerator
 					.createAugmentedRandomizedBlockDesign(nblks, Integer.toString(nTreatments), ncontrols, stdvarEntryNo.getName(),

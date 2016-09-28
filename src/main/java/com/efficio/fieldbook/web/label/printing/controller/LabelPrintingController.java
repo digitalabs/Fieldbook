@@ -55,6 +55,7 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.reports.BuildReportException;
 import org.generationcp.middleware.reports.Reporter;
@@ -367,11 +368,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		SessionUtility.clearSessionData(session,
 				new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME, SessionUtility.FIELDMAP_SESSION_NAME,
 						SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+		form.setGermplasmListId(id);
 
 		// retrieve the stock list
-		final GermplasmList stockList = this.germplasmListManager.getGermplasmListById(id);
+		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(id);
 
-		final List<InventoryDetails> inventoryDetails = this.labelPrintingService.getInventoryDetails(stockList.getId());
+		final List<InventoryDetails> inventoryDetails = this.labelPrintingService.getInventoryDetails(germplasmList.getId());
 
 		this.userLabelPrinting.setStudyId(null);
 		this.userLabelPrinting.setFieldMapInfo(null);
@@ -380,8 +382,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsStockList(true);
-		this.userLabelPrinting.setStockListId(stockList.getId());
-		this.userLabelPrinting.setStockListTypeName(stockList.getType());
+		this.userLabelPrinting.setStockListId(germplasmList.getId());
+		this.userLabelPrinting.setStockListTypeName(germplasmList.getType());
 		this.userLabelPrinting.setInventoryDetailsList(inventoryDetails);
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
 		this.userLabelPrinting.setFirstBarcodeField("");
@@ -446,15 +448,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		return FieldbookUtil.createResponseEntityForFileDownload(absoluteLocation, filename);
 	}
 
-	/**
-	 * Submits the details.
-	 *
-	 * @param form the form
-	 * @return the string
-	 */
-	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
+
+	public Map<String, Object> submitDetailsOLD(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
 
 		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
 		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
@@ -511,6 +506,104 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		return this.generateLabels(trialInstances, form.isCustomReport());
 	}
 
+
+
+
+
+
+
+	/**
+	 * Submits the details.
+	 *
+	 * @param form the form
+	 * @return the string
+	 */
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST)
+	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
+
+		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
+		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
+		this.userLabelPrinting.setNumberOfLabelPerRow(form.getUserLabelPrinting().getNumberOfLabelPerRow());
+		this.userLabelPrinting.setNumberOfRowsPerPageOfLabel(form.getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
+		this.userLabelPrinting.setLeftSelectedLabelFields(form.getUserLabelPrinting().getLeftSelectedLabelFields());
+		this.userLabelPrinting.setRightSelectedLabelFields(form.getUserLabelPrinting().getRightSelectedLabelFields());
+		this.userLabelPrinting.setMainSelectedLabelFields(form.getUserLabelPrinting().getMainSelectedLabelFields());
+		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf(form.getUserLabelPrinting().getIncludeColumnHeadinginNonPdf());
+		this.userLabelPrinting.setSettingsName(form.getUserLabelPrinting().getSettingsName());
+		this.userLabelPrinting.setFirstBarcodeField(form.getUserLabelPrinting().getFirstBarcodeField());
+		this.userLabelPrinting.setSecondBarcodeField(form.getUserLabelPrinting().getSecondBarcodeField());
+		this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
+		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
+		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
+
+		// add validation for the file name
+		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
+			final Map<String, Object> results = new HashMap<>();
+			results.put(LabelPrintingController.IS_SUCCESS, 0);
+			results.put(AppConstants.MESSAGE.getString(),
+					this.messageSource.getMessage("common.error.invalid.filename.windows", new Object[] {}, Locale.getDefault()));
+
+			return results;
+		}
+
+		/*this.labelPrintingService.populateUserSpecifiedLabelFields(
+					this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances(), workbook, selectedLabelFields,
+					form.getIsTrial(), form.getIsStockList(), this.userLabelPrinting);*/
+
+		final Integer germplasmListId = form.getGermplasmListId();
+		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
+		final List<GermplasmListData> germplasmListDataList =  this.germplasmListManager.getGermplasmListDataByListId(germplasmListId);
+		return this.generateLabels(germplasmListDataList);
+	}
+
+	private Map<String,Object> generateLabels(final List<GermplasmListData> germplasmListDataList) {
+		final Map<String, Object> results = new HashMap<>();
+
+		try {
+			final String fileName;
+			final LabelPrintingFileTypes selectedLabelPrintingType =
+					LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
+			final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+
+			if (selectedLabelPrintingType.isValid()) {
+				this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
+
+				fileName = this.labelPrintingService.generateLabelsForGermplasmList(selectedLabelPrintingType.getFormIndex(), germplasmListDataList,
+						this.userLabelPrinting, byteStream);
+
+				results.put(LabelPrintingController.IS_SUCCESS, 1);
+				results.put("fileName", fileName);
+
+			} else {
+				final String errorMsg = this.messageSource.getMessage("label.printing.cannot.generate.invalid.type", new String[] {},
+						LocaleContextHolder.getLocale());
+
+				LabelPrintingController.LOG.error(errorMsg);
+				results.put(LabelPrintingController.IS_SUCCESS, 0);
+				results.put(AppConstants.MESSAGE.getString(), errorMsg);
+			}
+
+		} catch ( MiddlewareException e) {
+			LabelPrintingController.LOG.error(e.getMessage(), e);
+			results.put(LabelPrintingController.IS_SUCCESS, 0);
+			results.put(AppConstants.MESSAGE.getString(), e.getMessage());
+		} catch (final LabelPrintingException e) {
+			LabelPrintingController.LOG.error(e.getMessage(), e);
+			results.put(LabelPrintingController.IS_SUCCESS, 0);
+			final Locale locale = LocaleContextHolder.getLocale();
+
+			if (e.getErrorCode() != null) {
+				results.put(AppConstants.MESSAGE.getString(),
+						this.messageSource.getMessage(e.getErrorCode(), new String[] {e.getLabelError()}, locale));
+			} else if (e.getCause() != null) {
+				results.put(AppConstants.MESSAGE.getString(), e.getCause().getMessage());
+			}
+
+		}
+		return results;
+	}
+
 	protected String getSelectedLabelFields(final UserLabelPrinting userLabelPrinting) {
 		String selectedLabelFields = "";
 		if (userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
@@ -550,6 +643,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		}
 		return results;
 	}
+
 
 	void generateLabelForLabelTypes(final List<StudyTrialInstanceInfo> trialInstances, final Map<String, Object> results)
 			throws LabelPrintingException {

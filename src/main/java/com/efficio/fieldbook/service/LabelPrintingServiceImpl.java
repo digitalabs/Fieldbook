@@ -42,6 +42,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -180,6 +181,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			}
 		}
 	};
+
+	@Override
+	public String generateLabelsForGermplasmList(String labelType, List<GermplasmListData> germplasmListDataList, UserLabelPrinting
+			userLabelPrinting, ByteArrayOutputStream baos) throws LabelPrintingException {
+		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabelsForGermplasmList(germplasmListDataList, userLabelPrinting,
+				baos);
+	}
 
 	@Override
 	public String generateLabels(final String labelType, final List<StudyTrialInstanceInfo> trialInstances,

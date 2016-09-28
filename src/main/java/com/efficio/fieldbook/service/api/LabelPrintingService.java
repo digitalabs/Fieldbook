@@ -29,12 +29,26 @@ import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 
 /**
  * The Interface LabelPrintingService.
  */
 public interface LabelPrintingService {
+
+	/**
+	 * Generate labels for germplasm list.
+	 *
+	 * @param germplasmListDataList the germplasm list data
+	 * @param userLabelPrinting the user label printing
+	 * @param baos the baos
+	 * @return the string
+	 * @throws LabelPrintingException the label printing exception
+	 */
+	String generateLabelsForGermplasmList(String labelType, List<GermplasmListData> germplasmListDataList, UserLabelPrinting
+			userLabelPrinting, ByteArrayOutputStream baos) throws LabelPrintingException;
+
 
 	/**
 	 * Generate pdf labels.
@@ -46,7 +60,9 @@ public interface LabelPrintingService {
 	 * @throws LabelPrintingException the label printing exception
 	 */
 	String generateLabels(String labelType, List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
-					throws LabelPrintingException;
+			throws LabelPrintingException;
+
+
 	/**
 	 * Gets the available label fields for FieldMap.
 	 *

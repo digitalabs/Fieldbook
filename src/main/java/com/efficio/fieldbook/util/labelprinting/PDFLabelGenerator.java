@@ -23,6 +23,8 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -301,7 +303,13 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
         return fileName;
     }
 
-
+    @Override
+    public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream
+            baos)
+            throws LabelPrintingException {
+        //TODO Implement
+        return null;
+    }
 
     /**
      * Generate barcode label.

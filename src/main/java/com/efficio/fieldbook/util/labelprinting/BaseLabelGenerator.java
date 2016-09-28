@@ -14,6 +14,8 @@ import com.google.common.collect.Maps;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -41,6 +43,10 @@ public abstract class BaseLabelGenerator {
 
     public abstract String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
                                           final ByteArrayOutputStream baos) throws LabelPrintingException;
+
+    public abstract String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting
+            userLabelPrinting,
+            final ByteArrayOutputStream baos) throws LabelPrintingException;
 
     protected Map<String, String> generateAddedInformationField(final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo,
                                                                 final StudyTrialInstanceInfo trialInstance, final String barCode) {

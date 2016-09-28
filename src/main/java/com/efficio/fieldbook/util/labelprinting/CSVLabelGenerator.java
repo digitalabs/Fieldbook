@@ -5,11 +5,15 @@ import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.google.common.collect.Maps;
+
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +51,44 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
         try {
             this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName, includeHeader);
         } catch (IOException e) {
+            throw new LabelPrintingException(e);
+        }
+
+        return fileName;
+    }
+
+    @Override
+    public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting
+            userLabelPrinting, final ByteArrayOutputStream baos) throws LabelPrintingException {
+        final String fileName = userLabelPrinting.getFilenameDLLocation();
+        String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
+        final boolean includeHeader =
+                LabelPrintingServiceImpl.INCLUDE_NON_PDF_HEADERS.equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf());
+        final boolean isBarcodeNeeded = LabelPrintingServiceImpl.BARCODE_NEEDED.equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded());
+
+        mainSelectedFields = this.appendBarcode(isBarcodeNeeded, mainSelectedFields);
+
+        final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
+
+        //Label Headers
+        final Map<Integer, String> labelHeaders = Maps.newHashMap();
+        labelHeaders.put(8240, "GID");
+
+        final List<ExportColumnHeader> exportColumnHeaders =
+                this.generateColumnHeaders(selectedFieldIDs, labelHeaders);
+
+
+        final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
+        //TODO get GID from germplasmList
+        for (final GermplasmListData germplasmListData : germplasmListDataList){
+            final Map<Integer, ExportColumnValue> exportColumnValueMap = Maps.newHashMap();
+            exportColumnValueMap.put(2, new ExportColumnValue(8240, germplasmListData.getGid().toString()));
+            exportColumnValues.add(exportColumnValueMap);
+        }
+
+        try {
+            this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName, includeHeader);
+        } catch (final IOException e) {
             throw new LabelPrintingException(e);
         }
 

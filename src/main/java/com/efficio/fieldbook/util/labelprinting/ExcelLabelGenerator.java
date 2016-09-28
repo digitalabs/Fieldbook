@@ -17,6 +17,8 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,6 +139,14 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
             ExcelLabelGenerator.LOG.error(e.getMessage(), e);
         }
         return fileName;
+    }
+
+    @Override
+    public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream
+            baos)
+            throws LabelPrintingException {
+        //TODO Implement
+        return null;
     }
 
     protected void printHeaderFields(final Map<Integer, String> labelHeaders, final boolean includeHeader,

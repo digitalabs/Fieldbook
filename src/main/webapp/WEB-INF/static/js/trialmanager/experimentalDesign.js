@@ -483,7 +483,8 @@
 								}
 
 								if ($scope.totalGermplasmEntryListCount % $scope.data.numberOfBlocks !== 0) {
-									showAlertMessage('page-message', 'The entries in this trial cannot be divided into evenly sized blocks. Augmented designs are most efficient when block sizes are constant.', 10000);
+									showErrorMessage('page-message', 'The entries in this trial cannot be divided into evenly sized blocks. Augmented designs are most efficient when block sizes are constant.');
+									return false;
 								}
 
 								break;
@@ -491,6 +492,7 @@
 							}
 							case 5:
 							case 6:
+							case 7:
 							{
 								var actualNoOfGermplasmListEntries = $scope.currentDesignType.totalNoOfEntries;
 								if ($scope.totalGermplasmEntryListCount > 0 && $scope.totalGermplasmEntryListCount !== actualNoOfGermplasmListEntries) {

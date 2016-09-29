@@ -515,17 +515,25 @@
 			// FILTERS USED FOR EXP DESIGN
 
 			.filter('filterFactors', ['_', function(_) {
-				return function(factorList, designTypeIndex) {
+				return function(factorList, designTypeId) {
 
-					var excludes = [
-						[8230, 8220, 8581, 8582],
-						[8581, 8582],
-						[8220, 8200]
-					];
+					var excludeTermIds;
+
+					// FIXME: Find a way to detect the design type by not using hard coded design ids, if the design type id changed in the backend, this will break.
+					if (designTypeId === 0) {
+						excludeTermIds = [8230, 8220, 8581, 8582];
+					} else if (designTypeId === 1) {
+						excludeTermIds = [8581, 8582];
+					} else if (designTypeId === 2) {
+						excludeTermIds = [8220, 8200];
+					} else if (designTypeId === 4) {
+						excludeTermIds = [8210, 8581, 8582];
+					}
 
 					return _.filter(factorList, function(value) {
-						return !_.contains(excludes[designTypeIndex], value);
+							return !_.contains(excludeTermIds, value);
 					});
+
 
 				};
 			}]);

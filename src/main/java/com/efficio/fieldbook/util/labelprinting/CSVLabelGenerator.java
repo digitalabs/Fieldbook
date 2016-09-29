@@ -4,6 +4,7 @@ import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.google.common.collect.Maps;
 
@@ -16,6 +17,7 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class CSVLabelGenerator extends BaseLabelGenerator{
@@ -60,6 +63,9 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
     @Override
     public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting
             userLabelPrinting, final ByteArrayOutputStream baos) throws LabelPrintingException {
+
+        final Locale locale = LocaleContextHolder.getLocale();
+
         final String fileName = userLabelPrinting.getFilenameDLLocation();
         String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
         final boolean includeHeader =
@@ -72,35 +78,52 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
 
         //Label Headers
         final Map<Integer, String> labelHeaders = Maps.newHashMap();
-        labelHeaders.put(8240, "GID");
+        for (final Integer selectedFieldId : selectedFieldIDs) {
+            if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+                labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.gid", null, locale));
+            } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
+                labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.designation", null, locale));
+            } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
+                labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.cross", null, locale));
+            }
+        }
 
         final List<ExportColumnHeader> exportColumnHeaders =
                 this.generateColumnHeaders(selectedFieldIDs, labelHeaders);
-
         final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
+
         for (final GermplasmListData germplasmListData : germplasmListDataList){
             final Map<Integer, ExportColumnValue> exportColumnValueMap = Maps.newHashMap();
-            exportColumnValueMap.put(selectedFieldIDs.get(0), new ExportColumnValue(selectedFieldIDs.get(0), germplasmListData.getGid().toString()));
-            //TODO Add barcode
 
+            for (final Integer selectedFieldId : selectedFieldIDs) {
+                if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+                    // GID
+                    exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getGid().toString()));
+                } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
+                    // Barcode
+                    final StringBuilder buffer = new StringBuilder();
+                    final String fieldList = userLabelPrinting.getFirstBarcodeField() + "," + userLabelPrinting.getSecondBarcodeField() + "," + userLabelPrinting.getThirdBarcodeField();
 
+                    final List<Integer> selectedBarcodeFieldIDs = SettingsUtil.parseFieldListAndConvert(fieldList);
 
-            final StringBuilder buffer = new StringBuilder();
-            final String fieldList = userLabelPrinting.getFirstBarcodeField() + "," + userLabelPrinting.getSecondBarcodeField() + "," + userLabelPrinting.getThirdBarcodeField();
+                    for (final Integer selectedBarcodeFieldID : selectedBarcodeFieldIDs) {
+                        if (!"".equalsIgnoreCase(buffer.toString())) {
+                            buffer.append(this.delimiter);
+                        }
+                        //TODO Fix barcode to use the rest of the fields
+                        buffer.append(germplasmListData.getGid().toString());
+                    }
 
-            final List<Integer> selectedBarcodeFieldIDs = SettingsUtil.parseFieldListAndConvert(fieldList);
-
-            for (final Integer selectedFieldID : selectedFieldIDs) {
-                if (!"".equalsIgnoreCase(buffer.toString())) {
-                    buffer.append(this.delimiter);
+                    final String barcodeLabel =  buffer.toString();
+                    exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, barcodeLabel));
+                } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
+                    //Designation
+                    exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getDesignation()));
+                } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
+                    // Cross
+                    exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getGroupName()));
                 }
-
-                buffer.append(germplasmListData.getGid().toString());
             }
-
-            final String barcodeLabel =  buffer.toString();
-            exportColumnValueMap.put(selectedFieldIDs.get(1), new ExportColumnValue(selectedFieldIDs.get(1), barcodeLabel));
-
 
             exportColumnValues.add(exportColumnValueMap);
         }

@@ -33,7 +33,7 @@ public abstract class BaseLabelGenerator {
 
     /** The message source. */
     @Resource
-    private MessageSource messageSource;
+    protected MessageSource messageSource;
 
     @Resource
     protected FieldbookService fieldbookService;

@@ -817,6 +817,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		//TODO add the rest of the fields - {GID, Designation, Cross, Stock Id, Lot Id}
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.gid", null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.designation", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.cross", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt(), true));
 		return labelFieldsList;
 	}
 

@@ -399,7 +399,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		form.setIsTrial(false);
 		this.userLabelPrinting.setIsTrial(false);
-		form.setIsStockList(true);
+		form.setIsStockList(false);
 
 		return super.show(model);
 	}

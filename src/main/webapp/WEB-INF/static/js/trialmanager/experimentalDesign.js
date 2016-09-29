@@ -16,24 +16,35 @@
 					$scope.designTypeView = [];
 
 					$scope.generateDesignView = function() {
-						// BV design
+
+						// Add Breeding View Engine Designs except for for Custom Import Design
 						$.each($scope.designTypes, function(index, designType){
 							if(!designType.isPreset && designType.name !== 'Custom Import Design'){
 								$scope.designTypeView.push(designType);
 							}
 						});
 
-						// separator
-						if($scope.designTypes.length  > 4){
+						// Add separator only if there are preset designs.
+						if($scope.isTherePresetDesign($scope.designTypes)){
 							$scope.designTypeView.push({id:	null, name: '----------------------------------------------', isDisabled: true });
 						}
 
-						// Preset
+						// Add preset designs.
 						$.each($scope.designTypes, function(index, designType){
 							if(designType.isPreset && designType.name !== 'Custom Import Design'){
 								$scope.designTypeView.push(designType);
 							}
 						});
+					};
+
+					$scope.isTherePresetDesign = function(designTypes) {
+						var presetExists = false;
+						$.each(designTypes, function(index, designType){
+							if(designType.isPreset){
+								presetExists = true;
+							}
+						});
+						return presetExists;
 					};
 
 					$scope.generateDesignView();

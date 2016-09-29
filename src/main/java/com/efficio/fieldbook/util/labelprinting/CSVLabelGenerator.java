@@ -78,6 +78,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
         final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
 
         //Label Headers
+        //TODO move this block to separate function
         final Map<Integer, String> labelHeaders = Maps.newHashMap();
         for (final Integer selectedFieldId : selectedFieldIDs) {
             if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
@@ -88,6 +89,8 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
                 labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.cross", null, locale));
             } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
                 labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale));
+            } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+                labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale));
             }
         }
 
@@ -128,8 +131,15 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
                 } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
                     // Stock ID
                     //TODO iterate through all the lots
-                    exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getInventoryInfo().getLotRows().get(0).getStockIds()));
+                    exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getInventoryInfo()
+                            .getLotRows() == null ? "" : germplasmListData.getInventoryInfo().getLotRows().get(0).getStockIds()));
+                } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+                    // Lot ID
+                    //TODO iterate through all the lots
+                    exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getInventoryInfo()
+                            .getLotRows() == null ? "" : germplasmListData.getInventoryInfo().getLotRows().get(0).getLotId().toString()));
                 }
+
             }
 
             exportColumnValues.add(exportColumnValueMap);

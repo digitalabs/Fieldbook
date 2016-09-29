@@ -806,16 +806,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	/**
-	 * Gets the available label fields.
+	 * Gets the available label fields for the inventory. The following options: {GID, Designation, Cross, Stock Id, Lot Id}
 	 *
 	 * @param locale the locale
-	 * @return
+	 * @return the list of available label fields
 	 */
 	@Override
 	public List<LabelFields> getAvailableLabelFieldsForInventory(final Locale locale) {
 		final List<LabelFields> labelFieldsList = new ArrayList<>();
 
-		//TODO add the rest of the fields - {GID, Designation, Cross, Stock Id, Lot Id}
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.gid", null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt(), true));
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.designation", null, locale),
@@ -824,6 +823,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt(), true));
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale),
+				AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt(), true));
+
 		return labelFieldsList;
 	}
 

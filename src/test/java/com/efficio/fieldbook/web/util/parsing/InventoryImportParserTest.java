@@ -165,7 +165,7 @@ public class InventoryImportParserTest {
 	}
 
 	@Test
-	public void testObejectConversionAllInventoryItemsMissing() throws Exception {
+	public void testObjectConversionAllInventoryItemsMissing() throws Exception {
 		final GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
 		this.generateHeaders(germplasmListType);
 		final InventoryImportParser.InventoryRowConverter rowConverter =
@@ -182,7 +182,7 @@ public class InventoryImportParserTest {
 		Assert.assertNull(details.getScaleName());
 	}
 
-	public void testObejectConversionSomeInventoryItemsMissing() throws Exception {
+	public void testObjectConversionSomeInventoryItemsMissing() throws Exception {
 		final GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
 		this.generateHeaders(germplasmListType);
 		final InventoryImportParser.InventoryRowConverter rowConverter =

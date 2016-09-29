@@ -414,7 +414,7 @@ th:action="@{${labelPrintingForm.germplasmListId != null} ? '/LabelPrinting/spec
 				</div>
 			</div>
 			<br /><br /><br />
-			<div class="col-xs-12 col-md-12" >
+			<div class="col-xs-12 col-md-12 lblprnt-study-choose-fields-label" >
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
 						<label class="control-label" th:utext="*{isStockList} ?
@@ -423,12 +423,19 @@ th:action="@{${labelPrintingForm.germplasmListId != null} ? '/LabelPrinting/spec
 					</div>
 				</div>
 			</div>
+			<div class="col-xs-12 col-md-12 lblprnt-germplasm-list-choose-fields-label" >
+				<div class="form-group">
+					<div class="col-xs-6 col-md-6">
+						<label class="control-label" th:utext="#{label.printing.choose.option.fields.csv.xls.germplasm.list}">.</label>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="row non-pdf-fields">
 			<div class="col-xs-12 col-md-12" >
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
-						<div class="col-xs-6 col-md-6">
+						<div class="col-xs-6 col-md-6 lblprnt-study-details-fields">
 							<ul class="list-group field-group"  >
 							  <li class="list-group-item"><label class="control-label label-bold" th:text="(*{isTrial})? #{label.printing.trial.details}: #{label.printing.nursery.details}">Study Details</label></li>
 							</ul>

@@ -2049,13 +2049,17 @@ input.select-all-margin{
 }
 
 /* Label Printing */
-.lblprnt-germplasm-list-details {
+.lblprnt-germplasm-list-details,
+.lblprnt-germplasm-list-choose-fields-label{
 	display: none;
 }
 
-.lblprnt-germplasm-list-inventory .lblprnt-germplasm-list-details {
+.lblprnt-germplasm-list-inventory .lblprnt-germplasm-list-details,
+.lblprnt-germplasm-list-inventory .lblprnt-germplasm-list-choose-fields-label{
 	display: block;
 }
-.lblprnt-germplasm-list-inventory .lblprnt-study-details {
+.lblprnt-germplasm-list-inventory .lblprnt-study-details,
+.lblprnt-germplasm-list-inventory .lblprnt-study-choose-fields-label,
+.lblprnt-germplasm-list-inventory .lblprnt-study-details-fields{
 	display: none;
 }

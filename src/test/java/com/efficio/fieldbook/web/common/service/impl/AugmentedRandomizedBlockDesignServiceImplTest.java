@@ -41,9 +41,9 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	private static final String PROGRAM_UUID = "2191a54c-7d98-40d0-ae6f-6a400e4546ce";
 	public static final String DESIGN_ERROR_MESSAGE = "design error message";
 
-	private StandardVariable entryNoVariable = StandardVariableInitializer.createStdVariable(TermId.ENTRY_NO.getId(), "Entry No");
-	private StandardVariable blockNoVariable = StandardVariableInitializer.createStdVariable(TermId.BLOCK_NO.getId(), "Block No");
-	private StandardVariable plotNoVariable = StandardVariableInitializer.createStdVariable(TermId.PLOT_NO.getId(), "Plot No");
+	private final StandardVariable entryNoVariable = StandardVariableInitializer.createStdVariable(TermId.ENTRY_NO.getId(), "Entry No");
+	private final StandardVariable blockNoVariable = StandardVariableInitializer.createStdVariable(TermId.BLOCK_NO.getId(), "Block No");
+	private final StandardVariable plotNoVariable = StandardVariableInitializer.createStdVariable(TermId.PLOT_NO.getId(), "Plot No");
 
 	@Mock
 	private ExperimentDesignGenerator experimentDesignGenerator;
@@ -84,23 +84,23 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		final String noOfEnvironments = "1";
 		final String noOfEnvironmentsToAdd = "0";
 
-		ExpDesignParameterUi experimentDesignParameterFromUI = new ExpDesignParameterUi();
+		final ExpDesignParameterUi experimentDesignParameterFromUI = new ExpDesignParameterUi();
 
 		experimentDesignParameterFromUI.setNoOfEnvironments(noOfEnvironments);
 		experimentDesignParameterFromUI.setNoOfEnvironmentsToAdd(noOfEnvironmentsToAdd);
 		experimentDesignParameterFromUI.setNumberOfBlocks(numberOfBlocks);
 		experimentDesignParameterFromUI.setStartingPlotNo(startingPlotNo);
 
-		List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
-		List<MeasurementVariable> trialVariables = new ArrayList<>();
-		List<MeasurementVariable> factors = new ArrayList<>();
-		List<MeasurementVariable> nonTrialFactors = new ArrayList<>();
-		List<MeasurementVariable> variates = new ArrayList<>();
-		List<TreatmentVariable> treatmentVariables = new ArrayList<>();
-		List<StandardVariable> requiredVariables = augmentedRandomizedBlockDesignServiceImpl.getRequiredVariable();
-		Map<Integer, Integer> mapOfChecks = augmentedRandomizedBlockDesignServiceImpl.createMapOfChecks(importedGermplasmList);
+		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
+		final List<MeasurementVariable> trialVariables = new ArrayList<>();
+		final List<MeasurementVariable> factors = new ArrayList<>();
+		final List<MeasurementVariable> nonTrialFactors = new ArrayList<>();
+		final List<MeasurementVariable> variates = new ArrayList<>();
+		final List<TreatmentVariable> treatmentVariables = new ArrayList<>();
+		final List<StandardVariable> requiredVariables = augmentedRandomizedBlockDesignServiceImpl.getRequiredVariable();
+		final Map<Integer, Integer> mapOfChecks = augmentedRandomizedBlockDesignServiceImpl.createMapOfChecks(importedGermplasmList);
 
-		MainDesign mainDesign = new MainDesign();
+		final MainDesign mainDesign = new MainDesign();
 
 		Mockito.when(this.experimentDesignGenerator
 				.createAugmentedRandomizedBlockDesign(numberOfBlocks, String.valueOf(importedGermplasmList.size()),
@@ -126,7 +126,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	@Test
 	public void testConvertStandardVariableListToMap() {
 
-		Map<Integer, StandardVariable> result = augmentedRandomizedBlockDesignServiceImpl
+		final Map<Integer, StandardVariable> result = augmentedRandomizedBlockDesignServiceImpl
 				.convertStandardVariableListToMap(augmentedRandomizedBlockDesignServiceImpl.getRequiredVariable());
 
 		Assert.assertTrue(result.containsKey(TermId.ENTRY_NO.getId()));
@@ -138,11 +138,11 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	@Test
 	public void testGetRequiredVariable() {
 
-		List<StandardVariable> result = augmentedRandomizedBlockDesignServiceImpl.getRequiredVariable();
+		final List<StandardVariable> result = augmentedRandomizedBlockDesignServiceImpl.getRequiredVariable();
 
 		Assert.assertEquals("There should be 3 required variable for augmented design", 3, result.size());
 
-		Map<Integer, StandardVariable> standardVariableMap =
+		final Map<Integer, StandardVariable> standardVariableMap =
 				augmentedRandomizedBlockDesignServiceImpl.convertStandardVariableListToMap(result);
 
 		Assert.assertEquals(standardVariableMap.get(TermId.BLOCK_NO.getId()).getPhenotypicType(), PhenotypicType.TRIAL_DESIGN);
@@ -160,7 +160,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		importedGermplasmList.get(0).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
 		importedGermplasmList.get(2).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
 
-		Map<Integer, Integer> result = augmentedRandomizedBlockDesignServiceImpl.createMapOfChecks(importedGermplasmList);
+		final Map<Integer, Integer> result = augmentedRandomizedBlockDesignServiceImpl.createMapOfChecks(importedGermplasmList);
 
 		Assert.assertEquals("Check Entry no 1 should be mapped to Test entry no 9", 1, result.get(9).intValue());
 		Assert.assertEquals("Check Entry no 3 should be mapped to Test entry no 10", 3, result.get(10).intValue());
@@ -176,7 +176,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		importedGermplasmList.get(0).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
 		importedGermplasmList.get(2).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
 
-		Set<Integer> result = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfChecks(importedGermplasmList);
+		final Set<Integer> result = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfChecks(importedGermplasmList);
 
 		Assert.assertEquals("There are only 2 checks in the germplasm list", 2, result.size());
 
@@ -189,7 +189,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	@Test
 	public void testGetExperimentalDesignVariables() {
 
-		List<Integer> result = augmentedRandomizedBlockDesignServiceImpl.getExperimentalDesignVariables(null);
+		final List<Integer> result = augmentedRandomizedBlockDesignServiceImpl.getExperimentalDesignVariables(null);
 
 		Assert.assertEquals("There are only two experiment design variables are assigned to augmented design.", 2, result.size());
 
@@ -201,12 +201,12 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	@Test
 	public void testValidateDesignValidationSuccessful() throws DesignValidationException {
 
-		ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
-		List<ImportedGermplasm> germplasmList = new ArrayList<>();
+		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
+		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
 
 		Mockito.doNothing().when(experimentDesignValidator).validateAugmentedDesign(expDesignParameterUi, germplasmList);
 
-		ExpDesignValidationOutput result = augmentedRandomizedBlockDesignServiceImpl.validate(expDesignParameterUi, germplasmList);
+		final ExpDesignValidationOutput result = augmentedRandomizedBlockDesignServiceImpl.validate(expDesignParameterUi, germplasmList);
 
 		Assert.assertTrue(result.isValid());
 
@@ -215,15 +215,15 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	@Test
 	public void testValidateDesignValidationExceptionError() throws DesignValidationException {
 
-		ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
-		List<ImportedGermplasm> germplasmList = new ArrayList<>();
+		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
+		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
 
-		DesignValidationException designValidationException = new DesignValidationException(DESIGN_ERROR_MESSAGE);
+		final DesignValidationException designValidationException = new DesignValidationException(DESIGN_ERROR_MESSAGE);
 
 		Mockito.doThrow(designValidationException).when(experimentDesignValidator)
 				.validateAugmentedDesign(expDesignParameterUi, germplasmList);
 
-		ExpDesignValidationOutput result = augmentedRandomizedBlockDesignServiceImpl.validate(expDesignParameterUi, germplasmList);
+		final ExpDesignValidationOutput result = augmentedRandomizedBlockDesignServiceImpl.validate(expDesignParameterUi, germplasmList);
 
 		Assert.assertEquals(DESIGN_ERROR_MESSAGE, result.getMessage());
 		Assert.assertFalse(result.isValid());
@@ -233,12 +233,12 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	@Test
 	public void testValidateGenericError() throws DesignValidationException {
 
-		ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
-		List<ImportedGermplasm> germplasmList = new ArrayList<>();
+		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
+		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
 
 		Mockito.doThrow(Exception.class).when(experimentDesignValidator).validateAugmentedDesign(expDesignParameterUi, germplasmList);
 
-		ExpDesignValidationOutput result = augmentedRandomizedBlockDesignServiceImpl.validate(expDesignParameterUi, germplasmList);
+		final ExpDesignValidationOutput result = augmentedRandomizedBlockDesignServiceImpl.validate(expDesignParameterUi, germplasmList);
 
 		Assert.assertEquals(GENERIC_ERROR_MESSAGE, result.getMessage());
 		Assert.assertFalse(result.isValid());

@@ -6,7 +6,6 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -27,12 +26,12 @@ public class ExperimentDesignValidator {
 	 * @param importedGermplasmList
 	 * @throws DesignValidationException
 	 */
-	public void validateAugmentedDesign(ExpDesignParameterUi expDesignParameterUi, List<ImportedGermplasm> importedGermplasmList)
+	public void validateAugmentedDesign(final ExpDesignParameterUi expDesignParameterUi, final List<ImportedGermplasm> importedGermplasmList)
 			throws DesignValidationException {
 
 		if (expDesignParameterUi != null && importedGermplasmList != null) {
 
-			int treatmentSize = importedGermplasmList.size();
+			final int treatmentSize = importedGermplasmList.size();
 
 			validateIfCheckEntriesExistInGermplasmList(importedGermplasmList);
 			validateStartingPlotNo(expDesignParameterUi, treatmentSize);
@@ -43,9 +42,9 @@ public class ExperimentDesignValidator {
 
 	}
 
-	void validateIfCheckEntriesExistInGermplasmList(List<ImportedGermplasm> importedGermplasmList) throws DesignValidationException {
+	void validateIfCheckEntriesExistInGermplasmList(final List<ImportedGermplasm> importedGermplasmList) throws DesignValidationException {
 
-		for (ImportedGermplasm importedGermplasm : importedGermplasmList) {
+		for (final ImportedGermplasm importedGermplasm : importedGermplasmList) {
 			if (importedGermplasm.getEntryTypeCategoricalID().equals(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())) {
 				return;
 			}
@@ -56,12 +55,12 @@ public class ExperimentDesignValidator {
 
 	}
 
-	void validateStartingPlotNo(ExpDesignParameterUi expDesignParameterUi, int treatmentSize) throws DesignValidationException {
+	void validateStartingPlotNo(final ExpDesignParameterUi expDesignParameterUi, final int treatmentSize) throws DesignValidationException {
 
-		String startingPlotNo = expDesignParameterUi.getStartingPlotNo();
+		final String startingPlotNo = expDesignParameterUi.getStartingPlotNo();
 
 		if (startingPlotNo != null && NumberUtils.isNumber(startingPlotNo)) {
-			Integer plotNumber = Integer.valueOf(startingPlotNo);
+			final Integer plotNumber = Integer.valueOf(startingPlotNo);
 			if (plotNumber != 0 && ((treatmentSize + plotNumber) <= ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
 				return;
 			}
@@ -72,12 +71,12 @@ public class ExperimentDesignValidator {
 
 	}
 
-	void validateStartingEntryNo(ExpDesignParameterUi expDesignParameterUi, int treatmentSize) throws DesignValidationException {
+	void validateStartingEntryNo(final ExpDesignParameterUi expDesignParameterUi, final int treatmentSize) throws DesignValidationException {
 
-		String startingEntryNo = expDesignParameterUi.getStartingEntryNo();
+		final String startingEntryNo = expDesignParameterUi.getStartingEntryNo();
 
 		if (startingEntryNo != null && NumberUtils.isNumber(startingEntryNo)) {
-			Integer entryNumber = Integer.valueOf(startingEntryNo);
+			final Integer entryNumber = Integer.valueOf(startingEntryNo);
 			if (entryNumber != 0 && ((treatmentSize + entryNumber) <= ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
 				return;
 			}
@@ -88,7 +87,7 @@ public class ExperimentDesignValidator {
 
 	}
 
-	void validateNumberOfBlocks(ExpDesignParameterUi expDesignParameterUi) throws DesignValidationException {
+	void validateNumberOfBlocks(final ExpDesignParameterUi expDesignParameterUi) throws DesignValidationException {
 
 		if (!NumberUtils.isNumber(expDesignParameterUi.getNumberOfBlocks())) {
 			throw new DesignValidationException(

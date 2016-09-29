@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,43 +69,43 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 	public ExperimentDesignValidator experimentDesignValidator;
 
 	@Override
-	public List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter,
-			List<MeasurementVariable> trialVariables, List<MeasurementVariable> factors, List<MeasurementVariable> nonTrialFactors,
-			List<MeasurementVariable> variates, List<TreatmentVariable> treatmentVariables) throws BVDesignException {
+	public List<MeasurementRow> generateDesign(final List<ImportedGermplasm> germplasmList, final ExpDesignParameterUi parameter,
+			final List<MeasurementVariable> trialVariables, final List<MeasurementVariable> factors, final List<MeasurementVariable> nonTrialFactors,
+			final List<MeasurementVariable> variates, final List<TreatmentVariable> treatmentVariables) throws BVDesignException {
 
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 
-		Map<Integer, Integer> mapOfChecks = this.createMapOfChecks(germplasmList);
+		final Map<Integer, Integer> mapOfChecks = this.createMapOfChecks(germplasmList);
 
-		String nblks = parameter.getNumberOfBlocks();
-		String ncontrols = String.valueOf(mapOfChecks.size());
-		int nTreatments = germplasmList.size();
-		int environments = Integer.valueOf(parameter.getNoOfEnvironments());
-		int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
+		final String nblks = parameter.getNumberOfBlocks();
+		final String ncontrols = String.valueOf(mapOfChecks.size());
+		final int nTreatments = germplasmList.size();
+		final int environments = Integer.valueOf(parameter.getNoOfEnvironments());
+		final int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
 
 		try {
 
-			List<StandardVariable> requiredDesignVariables = this.getRequiredVariable();
-			Map<Integer, StandardVariable> standardVariableMap = convertStandardVariableListToMap(requiredDesignVariables);
+			final List<StandardVariable> requiredDesignVariables = this.getRequiredVariable();
+			final Map<Integer, StandardVariable> standardVariableMap = convertStandardVariableListToMap(requiredDesignVariables);
 
-			StandardVariable stdvarEntryNo = standardVariableMap.get(TermId.ENTRY_NO.getId());
-			StandardVariable stdvarBlock = standardVariableMap.get(TermId.BLOCK_NO.getId());
-			StandardVariable stdvarPlot = standardVariableMap.get(TermId.PLOT_NO.getId());
+			final StandardVariable stdvarEntryNo = standardVariableMap.get(TermId.ENTRY_NO.getId());
+			final StandardVariable stdvarBlock = standardVariableMap.get(TermId.BLOCK_NO.getId());
+			final StandardVariable stdvarPlot = standardVariableMap.get(TermId.PLOT_NO.getId());
 
-			Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
+			final Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
 
-			MainDesign mainDesign = experimentDesignGenerator
+			final MainDesign mainDesign = experimentDesignGenerator
 					.createAugmentedRandomizedBlockDesign(nblks, Integer.toString(nTreatments), ncontrols, stdvarEntryNo.getName(),
 							stdvarBlock.getName(), stdvarPlot.getName(), String.valueOf(plotNo));
 
 			measurementRowList = experimentDesignGenerator
-					.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors, variates,
-							treatmentVariables, requiredDesignVariables, germplasmList, mainDesign,
-							stdvarEntryNo.getName(), null, mapOfChecks);
+					.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
+							variates, treatmentVariables, requiredDesignVariables, germplasmList, mainDesign, stdvarEntryNo.getName(), null,
+							mapOfChecks);
 
-		} catch (BVDesignException e) {
+		} catch (final BVDesignException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			AugmentedRandomizedBlockDesignServiceImpl.LOG.error(e.getMessage(), e);
 		}
 		return measurementRowList;
@@ -114,15 +113,14 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 
 	@Override
 	public List<StandardVariable> getRequiredVariable() {
-		List<StandardVariable> varList = new ArrayList<StandardVariable>();
+		final List<StandardVariable> varList = new ArrayList<StandardVariable>();
 
-		StandardVariable stdvarEntryNo =
+		final StandardVariable stdvarEntryNo =
 				this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), contextUtil.getCurrentProgramUUID());
-		StandardVariable stdvarBlock =
+		final StandardVariable stdvarBlock =
 				this.fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(), contextUtil.getCurrentProgramUUID());
-		StandardVariable stdvarPlot =
+		final StandardVariable stdvarPlot =
 				this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), contextUtil.getCurrentProgramUUID());
-
 
 		stdvarBlock.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 		stdvarPlot.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
@@ -135,11 +133,11 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		return varList;
 	}
 
-	Map<Integer, StandardVariable> convertStandardVariableListToMap(List<StandardVariable> standardVariables) {
+	Map<Integer, StandardVariable> convertStandardVariableListToMap(final List<StandardVariable> standardVariables) {
 
-		Map<Integer, StandardVariable> map = new HashMap<>();
+		final Map<Integer, StandardVariable> map = new HashMap<>();
 
-		for (StandardVariable stdvar : standardVariables) {
+		for (final StandardVariable stdvar : standardVariables) {
 			map.put(stdvar.getId(), stdvar);
 		}
 
@@ -153,19 +151,19 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		 * The design engine assumes that the checks are at the end of the germplasm list that is passed to it. This might or might not be
 		 * the case in the list that the user has specified for the trial. To make this simpler for the user, when processing the design
 		 * file that comes back from BVDesign, the BMS will re-map the output into entry order.
-		 * 
+		 *
 		 * In a design with 52 entries (48 test entries and 4 check entries), BVDesign assumes the checks are entry numbers 49,50, 51, and
 		 * 52. Since this may not be the case for the user's trial list, the BMS will sequentially map 49-52 to the four check entries in
 		 * the list.
 		 */
 
-		Map<Integer, Integer> mapOfChecks = new HashMap<>();
+		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
 
-		Set<Integer> entryIdsOfChecks = this.getEntryIdsOfChecks(importedGermplasmList);
+		final Set<Integer> entryIdsOfChecks = this.getEntryIdsOfChecks(importedGermplasmList);
 
 		// Map the last entries to the check entries in the list.
 		int index = importedGermplasmList.size() - entryIdsOfChecks.size();
-		for (Integer checkEntryId : entryIdsOfChecks) {
+		for (final Integer checkEntryId : entryIdsOfChecks) {
 			mapOfChecks.put(importedGermplasmList.get(index).getEntryId(), checkEntryId);
 			index++;
 		}
@@ -175,9 +173,9 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 
 	Set<Integer> getEntryIdsOfChecks(final List<ImportedGermplasm> importedGermplasmList) {
 
-		HashSet<Integer> entryIdsOfChecks = new HashSet<>();
+		final HashSet<Integer> entryIdsOfChecks = new HashSet<>();
 
-		for (ImportedGermplasm importedGermplasm : importedGermplasmList) {
+		for (final ImportedGermplasm importedGermplasm : importedGermplasmList) {
 			if (importedGermplasm.getEntryTypeCategoricalID().equals(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())) {
 				entryIdsOfChecks.add(importedGermplasm.getEntryId());
 			}
@@ -187,17 +185,16 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 	}
 
 	@Override
-	public ExpDesignValidationOutput validate(ExpDesignParameterUi expDesignParameter, List<ImportedGermplasm> germplasmList) {
-		Locale locale = LocaleContextHolder.getLocale();
+	public ExpDesignValidationOutput validate(final ExpDesignParameterUi expDesignParameter, final List<ImportedGermplasm> germplasmList) {
+		final Locale locale = LocaleContextHolder.getLocale();
 		ExpDesignValidationOutput output = new ExpDesignValidationOutput(true, "");
 		try {
 
 			experimentDesignValidator.validateAugmentedDesign(expDesignParameter, germplasmList);
 
-		} catch (DesignValidationException e) {
-			output = new ExpDesignValidationOutput(false,
-					e.getMessage());
-		} catch (Exception e) {
+		} catch (final DesignValidationException e) {
+			output = new ExpDesignValidationOutput(false, e.getMessage());
+		} catch (final Exception e) {
 			output = new ExpDesignValidationOutput(false,
 					this.messageSource.getMessage("experiment.design.invalid.generic.error", null, locale));
 		}
@@ -206,11 +203,11 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 	}
 
 	@Override
-	public List<Integer> getExperimentalDesignVariables(ExpDesignParameterUi params) {
+	public List<Integer> getExperimentalDesignVariables(final ExpDesignParameterUi params) {
 		return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NBLKS.getId());
 	}
 
-	void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+	void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 

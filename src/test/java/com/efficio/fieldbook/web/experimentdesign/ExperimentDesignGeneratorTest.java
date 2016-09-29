@@ -50,16 +50,16 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testCreateRandomizedCompleteBlockDesign() {
 
-		List<String> treatmentFactor = new ArrayList(Arrays.asList("FACTOR_1", "FACTOR_2"));
-		List<String> levels = new ArrayList(Arrays.asList("Level1", "Level2"));
-		Integer initialPlotNumber = 99;
-		Integer initialEntryNumber = 100;
+		final List<String> treatmentFactor = new ArrayList(Arrays.asList("FACTOR_1", "FACTOR_2"));
+		final List<String> levels = new ArrayList(Arrays.asList("Level1", "Level2"));
+		final Integer initialPlotNumber = 99;
+		final Integer initialEntryNumber = 100;
 
-		MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = experimentDesignGenerator
 				.createRandomizedCompleteBlockDesign(NBLOCK, BLOCK_NO, PLOT_NO, initialPlotNumber, initialEntryNumber, treatmentFactor,
 						levels, OUTPUT_FILE);
 
-		ExpDesign expDesign = mainDesign.getDesign();
+		final ExpDesign expDesign = mainDesign.getDesign();
 
 		Assert.assertEquals(ExperimentDesignGenerator.RANDOMIZED_COMPLETE_BLOCK_DESIGN, expDesign.getName());
 		Assert.assertEquals("", expDesign.getParameterValue(ExperimentDesignGenerator.SEED_PARAM));
@@ -81,21 +81,21 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testCreateResolvableIncompleteBlockDesign() {
 
-		String numberOfTreatments = "30";
-		String numberOfReplicates = "31";
-		String blockSize = "22";
-		List<String> treatmentFactor = new ArrayList(Arrays.asList("FACTOR_1", "FACTOR_2"));
-		List<String> levels = new ArrayList(Arrays.asList("Level1", "Level2"));
-		Integer initialPlotNumber = 99;
-		Integer initialEntryNumber = 100;
-		String nBLatin = "";
-		String replatinGroups = "sample1,sample2";
+		final String numberOfTreatments = "30";
+		final String numberOfReplicates = "31";
+		final String blockSize = "22";
+		final List<String> treatmentFactor = new ArrayList(Arrays.asList("FACTOR_1", "FACTOR_2"));
+		final List<String> levels = new ArrayList(Arrays.asList("Level1", "Level2"));
+		final Integer initialPlotNumber = 99;
+		final Integer initialEntryNumber = 100;
+		final String nBLatin = "";
+		final String replatinGroups = "sample1,sample2";
 
-		MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = experimentDesignGenerator
 				.createResolvableIncompleteBlockDesign(blockSize, numberOfTreatments, numberOfReplicates, ENTRY_NO, REP_NO, BLOCK_NO,
 						PLOT_NO, initialPlotNumber, initialEntryNumber, nBLatin, replatinGroups, OUTPUT_FILE, false);
 
-		ExpDesign expDesign = mainDesign.getDesign();
+		final ExpDesign expDesign = mainDesign.getDesign();
 
 		Assert.assertEquals(ExperimentDesignGenerator.RESOLVABLE_INCOMPLETE_BLOCK_DESIGN, expDesign.getName());
 		Assert.assertEquals("", expDesign.getParameterValue(ExperimentDesignGenerator.SEED_PARAM));
@@ -121,21 +121,21 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testCreateResolvableIncompleteBlockDesignLatinized() {
 
-		String numberOfTreatments = "30";
-		String numberOfReplicates = "31";
-		String blockSize = "22";
-		List<String> treatmentFactor = new ArrayList(Arrays.asList("FACTOR_1", "FACTOR_2"));
-		List<String> levels = new ArrayList(Arrays.asList("Level1", "Level2"));
-		Integer initialPlotNumber = 99;
-		Integer initialEntryNumber = 100;
-		String nBLatin = "";
-		String replatinGroups = "sample1,sample2";
+		final String numberOfTreatments = "30";
+		final String numberOfReplicates = "31";
+		final String blockSize = "22";
+		final List<String> treatmentFactor = new ArrayList(Arrays.asList("FACTOR_1", "FACTOR_2"));
+		final List<String> levels = new ArrayList(Arrays.asList("Level1", "Level2"));
+		final Integer initialPlotNumber = 99;
+		final Integer initialEntryNumber = 100;
+		final String nBLatin = "";
+		final String replatinGroups = "sample1,sample2";
 
-		MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = experimentDesignGenerator
 				.createResolvableIncompleteBlockDesign(blockSize, numberOfTreatments, numberOfReplicates, ENTRY_NO, REP_NO, BLOCK_NO,
 						PLOT_NO, initialPlotNumber, initialEntryNumber, nBLatin, replatinGroups, OUTPUT_FILE, true);
 
-		ExpDesign expDesign = mainDesign.getDesign();
+		final ExpDesign expDesign = mainDesign.getDesign();
 
 		Assert.assertEquals(ExperimentDesignGenerator.RESOLVABLE_INCOMPLETE_BLOCK_DESIGN, expDesign.getName());
 		Assert.assertEquals("", expDesign.getParameterValue(ExperimentDesignGenerator.SEED_PARAM));
@@ -163,15 +163,15 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testcCeateAugmentedRandomizedBlockDesign() {
 
-		String nblks = "2";
-		String numberOfTreatments = "22";
-		String nControls = "11";
-		String plotNumber = "1";
+		final String nblks = "2";
+		final String numberOfTreatments = "22";
+		final String nControls = "11";
+		final String plotNumber = "1";
 
-		MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = experimentDesignGenerator
 				.createAugmentedRandomizedBlockDesign(nblks, numberOfTreatments, nControls, ENTRY_NO, BLOCK_NO, PLOT_NO, plotNumber);
 
-		ExpDesign expDesign = mainDesign.getDesign();
+		final ExpDesign expDesign = mainDesign.getDesign();
 
 		Assert.assertEquals(ExperimentDesignGenerator.AUGMENTED_RANDOMIZED_BLOCK_DESIGN, expDesign.getName());
 		Assert.assertEquals(numberOfTreatments, expDesign.getParameterValue(ExperimentDesignGenerator.NTREATMENTS_PARAM));
@@ -186,9 +186,9 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testAddInitialTreatmenNumberIfAvailableInitialEntryNumberIsNull() {
 
-		List<ExpDesignParameter> paramList = new ArrayList<>();
+		final List<ExpDesignParameter> paramList = new ArrayList<>();
 
-		Integer initialEntryNumber = null;
+		final Integer initialEntryNumber = null;
 
 		experimentDesignGenerator.addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
 
@@ -199,9 +199,9 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testAddInitialTreatmenNumberIfAvailableInitialEntryNumberHasValue() {
 
-		List<ExpDesignParameter> paramList = new ArrayList<>();
+		final List<ExpDesignParameter> paramList = new ArrayList<>();
 
-		Integer initialEntryNumber = 2;
+		final Integer initialEntryNumber = 2;
 
 		experimentDesignGenerator.addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
 
@@ -213,7 +213,7 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testConvertToListItemList() {
 
-		List<String> listOfString = new LinkedList<String>();
+		final List<String> listOfString = new LinkedList<String>();
 
 		final String sampleText1 = "sample text 1";
 		final String sampleText2 = "sample text 2";
@@ -221,7 +221,7 @@ public class ExperimentDesignGeneratorTest {
 		listOfString.add(sampleText1);
 		listOfString.add(sampleText2);
 
-		List<ListItem> listItems = experimentDesignGenerator.convertToListItemList(listOfString);
+		final List<ListItem> listItems = experimentDesignGenerator.convertToListItemList(listOfString);
 
 		Assert.assertEquals(2, listItems.size());
 		Assert.assertEquals(sampleText1, listItems.get(0).getValue());
@@ -240,15 +240,15 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testFindImportedGermplasmByEntryNumberAndChecksEntryNumberExistsInImportedGermplasmMap() {
 
-		Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
+		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
 
-		Map<Integer, Integer> mapOfChecks = new HashMap<>();
+		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
 		mapOfChecks.put(9, 3);
 		// Test Entry No 10 is mapped to Check Entry No 5
 		mapOfChecks.put(10, 5);
 
-		Optional<ImportedGermplasm> optionalImportedGermplasm =
+		final Optional<ImportedGermplasm> optionalImportedGermplasm =
 				experimentDesignGenerator.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 1, mapOfChecks);
 
 		Assert.assertTrue(optionalImportedGermplasm.isPresent());
@@ -259,15 +259,15 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testFindImportedGermplasmByEntryNumberAndChecksEntryNumberIsGeneratedFromDesignEngine() {
 
-		Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
+		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
 
-		Map<Integer, Integer> mapOfChecks = new HashMap<>();
+		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
 		mapOfChecks.put(9, 3);
 		// Test Entry No 10 is mapped to Check Entry No 5
 		mapOfChecks.put(10, 5);
 
-		Optional<ImportedGermplasm> optionalImportedGermplasm =
+		final Optional<ImportedGermplasm> optionalImportedGermplasm =
 				experimentDesignGenerator.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 11, mapOfChecks);
 
 		Assert.assertTrue(optionalImportedGermplasm.isPresent());
@@ -278,15 +278,15 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testFindImportedGermplasmByEntryNumberAndChecksEntryNumberIsOutsideTheRangeOfGermplasmList() {
 
-		Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
+		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
 
-		Map<Integer, Integer> mapOfChecks = new HashMap<>();
+		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
 		mapOfChecks.put(9, 3);
 		// Test Entry No 10 is mapped to Check Entry No 5
 		mapOfChecks.put(10, 5);
 
-		Optional<ImportedGermplasm> optionalImportedGermplasm =
+		final Optional<ImportedGermplasm> optionalImportedGermplasm =
 				experimentDesignGenerator.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 999, mapOfChecks);
 
 		Assert.assertFalse(optionalImportedGermplasm.isPresent());
@@ -296,18 +296,18 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testFindImportedGermplasmByEntryNumberGeneratedByDesignEngine() {
 
-		Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
+		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
 
-		Map<Integer, Integer> mapOfChecks = new HashMap<>();
+		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
 		mapOfChecks.put(9, 3);
 		// Test Entry No 10 is mapped to Check Entry No 5
 		mapOfChecks.put(10, 5);
 
 		// This is mapped to Test Entry No 9
-		Integer entryNoGeneratedFromDesignEngine = 11;
+		final Integer entryNoGeneratedFromDesignEngine = 11;
 
-		Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
+		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
 				.findImportedGermplasmByEntryNumberGeneratedByDesignEngine(importedGermplasmMap, entryNoGeneratedFromDesignEngine,
 						mapOfChecks);
 
@@ -319,31 +319,31 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testResolveMappedEntryNumber() {
 
-		Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
+		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
 
-		Map<Integer, Integer> mapOfChecks = new HashMap<>();
+		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
 		mapOfChecks.put(9, 3);
 		// Test Entry No 10 is mapped to Check Entry No 5
 		mapOfChecks.put(10, 5);
 
 		// This is mapped to Test Entry No 9
-		Integer entryNoGeneratedFromDesignEngine1 = 11;
+		final Integer entryNoGeneratedFromDesignEngine1 = 11;
 		// This is mapped to Test Entry No 10
-		Integer entryNoGeneratedFromDesignEngine2 = 12;
+		final Integer entryNoGeneratedFromDesignEngine2 = 12;
 
-		Optional<Integer> result1 =
+		final Optional<Integer> result1 =
 				experimentDesignGenerator.resolveMappedEntryNumber(importedGermplasmMap, entryNoGeneratedFromDesignEngine1, mapOfChecks);
 		Assert.assertEquals(Integer.valueOf(3), result1.get());
 
-		Optional<Integer> result2 =
+		final Optional<Integer> result2 =
 				experimentDesignGenerator.resolveMappedEntryNumber(importedGermplasmMap, entryNoGeneratedFromDesignEngine2, mapOfChecks);
 		Assert.assertEquals(Integer.valueOf(5), result2.get());
 	}
 
 	private Map<Integer, ImportedGermplasm> createImportedGermplasmMap() {
 
-		Map<Integer, ImportedGermplasm> map = new HashMap<>();
+		final Map<Integer, ImportedGermplasm> map = new HashMap<>();
 
 		for (int i = 1; i <= 10; i++) {
 			map.put(i, ImportedGermplasmMainInfoInitializer.createImportedGermplasm(i));

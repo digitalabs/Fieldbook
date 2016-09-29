@@ -656,7 +656,7 @@ public class OpenTrialControllerTest {
 				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be Alpha Lattice using preset E30-Rep2-Block6-5Ind", 4, data.getDesignType().intValue());
+		Assert.assertEquals("Design type should be Alpha Lattice using preset E30-Rep2-Block6-5Ind", 5, data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
@@ -678,7 +678,7 @@ public class OpenTrialControllerTest {
 				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be Alpha Lattice using preset E30-Rep3-Block6-5Ind", 5, data.getDesignType().intValue());
+		Assert.assertEquals("Design type should be Alpha Lattice using preset E30-Rep3-Block6-5Ind", 6, data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
@@ -700,7 +700,7 @@ public class OpenTrialControllerTest {
 				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be Alpha Lattice using preset E50-Rep2-Block5-10Ind", 6, data.getDesignType().intValue());
+		Assert.assertEquals("Design type should be Alpha Lattice using preset E50-Rep2-Block5-10Ind", 7, data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());

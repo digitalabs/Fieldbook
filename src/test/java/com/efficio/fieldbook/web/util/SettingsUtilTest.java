@@ -288,7 +288,7 @@ public class SettingsUtilTest {
 
 		ExpDesignParameterUi result;
 		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
-		Assert.assertEquals(4, result.getDesignType().intValue());
+		Assert.assertEquals(5, result.getDesignType().intValue());
 
 	}
 
@@ -302,7 +302,7 @@ public class SettingsUtilTest {
 
 		ExpDesignParameterUi result;
 		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
-		Assert.assertEquals(5, result.getDesignType().intValue());
+		Assert.assertEquals(6, result.getDesignType().intValue());
 
 	}
 
@@ -316,7 +316,7 @@ public class SettingsUtilTest {
 
 		ExpDesignParameterUi result;
 		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
-		Assert.assertEquals(6, result.getDesignType().intValue());
+		Assert.assertEquals(7, result.getDesignType().intValue());
 
 	}
 
@@ -408,16 +408,20 @@ public class SettingsUtilTest {
 		Assert.assertEquals(String.valueOf(TermId.OTHER_DESIGN.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
-		expDesignParameterUi.setUseLatenized(false);
 		expDesignParameterUi.setDesignType(4);
-		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
+		Assert.assertEquals(String.valueOf(TermId.AUGMENTED_RANDOMIZED_BLOCK.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
+		expDesignParameterUi.setUseLatenized(false);
 		expDesignParameterUi.setDesignType(5);
 		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
 		expDesignParameterUi.setDesignType(6);
+		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
+				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
+
+		expDesignParameterUi.setDesignType(7);
 		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 

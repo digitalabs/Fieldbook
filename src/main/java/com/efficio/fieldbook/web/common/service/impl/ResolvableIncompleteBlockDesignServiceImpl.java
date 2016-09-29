@@ -312,4 +312,9 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 	void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}
+
+
+	public void setExperimentDesignGenerator(final ExperimentDesignGenerator experimentDesignGenerator) {
+		this.experimentDesignGenerator = experimentDesignGenerator;
+	}
 }

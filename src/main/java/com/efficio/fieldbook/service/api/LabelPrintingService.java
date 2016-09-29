@@ -38,10 +38,11 @@ import org.generationcp.middleware.pojos.presets.ProgramPreset;
 public interface LabelPrintingService {
 
 	/**
-	 * Generate labels for germplasm list.
+	 * Generate labels for seed preparation.
 	 *
+	 * @param labelType (xls, pdf or csv)
 	 * @param germplasmListDataList the germplasm list data
-	 * @param userLabelPrinting the user label printing
+	 * @param userLabelPrinting the user label printing settings
 	 * @param baos the baos
 	 * @return the string
 	 * @throws LabelPrintingException the label printing exception

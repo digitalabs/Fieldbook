@@ -81,7 +81,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
         final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
 
         //Label Headers
-        //TODO move this block to separate function
+        //TODO move this block to separate utility function
         final Map<Integer, String> labelHeaders = Maps.newHashMap();
         for (final Integer selectedFieldId : selectedFieldIDs) {
             if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
@@ -101,8 +101,12 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
                 this.generateColumnHeaders(selectedFieldIDs, labelHeaders);
         final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
 
+        // Values in the columns
+        //TODO move this block to separate utility function
         for (final GermplasmListData germplasmListData : germplasmListDataList){
             final Map<Integer, ExportColumnValue> exportColumnValueMap = Maps.newHashMap();
+            @SuppressWarnings("unchecked")
+            final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
 
             for (final Integer selectedFieldId : selectedFieldIDs) {
                 if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
@@ -119,8 +123,30 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
                         if (!"".equalsIgnoreCase(buffer.toString())) {
                             buffer.append(this.delimiter);
                         }
-                        //TODO Fix barcode to use the rest of the fields
-                        buffer.append(germplasmListData.getGid().toString());
+                        //TODO Move barcode implementation to separate utility function
+                        // GID
+                        if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+                            buffer.append(germplasmListData.getGid().toString());
+                        } else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
+                            buffer.append(germplasmListData.getDesignation());
+                        } else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
+                            buffer.append(germplasmListData.getGroupName());
+                        } else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
+                            if (lotRows != null) {
+                                buffer.append(this.getStockIDs(lotRows));
+                            } else {
+                                buffer.append(" ");
+                            }
+                        } else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+                            if (lotRows != null) {
+                                buffer.append(getLotIDs(lotRows));
+                            } else {
+                                buffer.append(" ");
+                            }
+                        }
+
+
+
                     }
 
                     final String barcodeLabel =  buffer.toString();
@@ -131,40 +157,20 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
                 } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
                     // Cross
                     exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getGroupName()));
-                } else {
-                    final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
-                    if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
-						// Stock ID
-                        if (lotRows != null){
-                            String stockIds = "";
-                            for ( int i = 0; i < lotRows.size(); i++) {
-                                final ListEntryLotDetails lotRow = lotRows.get(i);
-                                stockIds += lotRow.getStockIds();
-                                if (i != (lotRows.size() - 1)) {
-                                    stockIds +=  ", ";
-                                }
-                            }
-                            exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, stockIds));
-                        } else {
-                            exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, ""));
-                        }
-						exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, lotRows == null ? "" : lotRows.get(0).getStockIds()));
-					} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
-						// Lot ID
-						if (lotRows != null){
-                            String lotIds = "";
-						    for ( int i = 0; i < lotRows.size(); i++) {
-                                final ListEntryLotDetails lotRow = lotRows.get(i);
-                                lotIds += lotRow.getLotId().toString();
-                                if (i != (lotRows.size() - 1)) {
-                                    lotIds +=  ", ";
-                                }
-                            }
-                            exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, lotIds));
-                        } else {
-                            exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, ""));
-                        }
-					}
+                } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
+                    // Stock ID
+                    if (lotRows != null) {
+                        exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, this.getStockIDs(lotRows)));
+                    } else {
+                        exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, ""));
+                    }
+                } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+                    // Lot ID
+                    if (lotRows != null) {
+                        exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, getLotIDs(lotRows)));
+                    } else {
+                        exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, ""));
+                    }
                 }
 
             }
@@ -179,6 +185,40 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
         }
 
         return fileName;
+    }
+
+    /**
+     * Iterate trough all the lotRows and construct coma separated string of lotIds
+     * @param lotRows
+     * @return coma separated string of lotIds
+     */
+    private String getLotIDs(List<ListEntryLotDetails> lotRows) {
+        String lotIds = "";
+        for (int i = 0; i < lotRows.size(); i++) {
+			final ListEntryLotDetails lotRow = lotRows.get(i);
+			lotIds += lotRow.getLotId().toString();
+			if (i != (lotRows.size() - 1)) {
+				lotIds += ", ";
+			}
+		}
+        return lotIds;
+    }
+
+    /**
+     * Iterate trough all the lotRows and construct coma separated string of stockIds
+     * @param lotRows
+     * @return coma separated string of stockIds
+     */
+    private String getStockIDs(final List<ListEntryLotDetails> lotRows) {
+        String stockIds = "";
+        for (int i = 0; i < lotRows.size(); i++) {
+			final ListEntryLotDetails lotRow = lotRows.get(i);
+			stockIds += lotRow.getStockIds();
+			if (i != (lotRows.size() - 1)) {
+				stockIds += ", ";
+			}
+		}
+        return stockIds;
     }
 
     private List<Map<Integer, ExportColumnValue>> generateColumnValues(final List<StudyTrialInstanceInfo> trialInstances,

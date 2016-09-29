@@ -54,6 +54,7 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
@@ -159,6 +160,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private GermplasmListManager germplasmListManager;
+	@Resource
+	private InventoryDataManager inventoryDataManager;
 
 	/**
 	 * Show trial label details.
@@ -451,8 +454,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		return FieldbookUtil.createResponseEntityForFileDownload(absoluteLocation, filename);
 	}
 
-
-	public Map<String, Object> submitDetailsOLD(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
+	/* Submits the details.
+	*
+	* @param form the form
+	* @return the string
+	*/
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST)
+	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
 
 		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
 		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
@@ -509,12 +518,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		return this.generateLabels(trialInstances, form.isCustomReport());
 	}
 
-
-
-
-
-
-
 	/**
 	 * Submits the details.
 	 *
@@ -522,8 +525,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * @return the string
 	 */
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
+	@RequestMapping(value = "/inventory", method = RequestMethod.POST)
+	public Map<String, Object> submitDetailsOfInventory(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
 
 		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
 		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
@@ -550,13 +553,11 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			return results;
 		}
 
-		/*this.labelPrintingService.populateUserSpecifiedLabelFields(
-					this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances(), workbook, selectedLabelFields,
-					form.getIsTrial(), form.getIsStockList(), this.userLabelPrinting);*/
-
 		final Integer germplasmListId = form.getGermplasmListId();
 		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
-		final List<GermplasmListData> germplasmListDataList =  this.germplasmListManager.getGermplasmListDataByListId(germplasmListId);
+		//final List<GermplasmListData> germplasmListDataList =  this.germplasmListManager.getGermplasmListDataByListId(germplasmListId);
+		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(germplasmListId, 0, Integer
+				.MAX_VALUE); // TODO Find better way than max value?
 		return this.generateLabels(germplasmListDataList);
 	}
 

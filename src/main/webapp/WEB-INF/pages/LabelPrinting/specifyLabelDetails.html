@@ -250,9 +250,11 @@ th:action="@{${labelPrintingForm.germplasmListId != null} ? '/LabelPrinting/spec
 			<div class="col-xs-8 col-md-8">
 				<select name="label-format" id="label-format">
 					<option value="">Please Choose</option>
-					<option value="2">Excel Data</option>
+					<!-- TODO Remove germplasmListId condition after this format of label generation is implemented-->
+					<option th:if="${labelPrintingForm.germplasmListId == null}" value="2">Excel Data</option>
 					<option value="3">CSV Data</option>
-					<option value="1">Formatted PDF Label Sheets</option>
+					<!-- TODO Remove germplasmListId condition after this format of label generation is implemented-->
+					<option th:if="${labelPrintingForm.germplasmListId == null}" value="1">Formatted PDF Label Sheets</option>
 				</select>
 			</div>
 		</div>

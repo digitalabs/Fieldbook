@@ -13,9 +13,12 @@ import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.inventory.ListEntryLotDetails;
+import org.generationcp.middleware.domain.inventory.LotDetails;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.report.LotReportRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -128,16 +131,40 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
                 } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
                     // Cross
                     exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getGroupName()));
-                } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
-                    // Stock ID
-                    //TODO iterate through all the lots
-                    exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getInventoryInfo()
-                            .getLotRows() == null ? "" : germplasmListData.getInventoryInfo().getLotRows().get(0).getStockIds()));
-                } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
-                    // Lot ID
-                    //TODO iterate through all the lots
-                    exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getInventoryInfo()
-                            .getLotRows() == null ? "" : germplasmListData.getInventoryInfo().getLotRows().get(0).getLotId().toString()));
+                } else {
+                    final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
+                    if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
+						// Stock ID
+                        if (lotRows != null){
+                            String stockIds = "";
+                            for ( int i = 0; i < lotRows.size(); i++) {
+                                final ListEntryLotDetails lotRow = lotRows.get(i);
+                                stockIds += lotRow.getStockIds();
+                                if (i != (lotRows.size() - 1)) {
+                                    stockIds +=  ", ";
+                                }
+                            }
+                            exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, stockIds));
+                        } else {
+                            exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, ""));
+                        }
+						exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, lotRows == null ? "" : lotRows.get(0).getStockIds()));
+					} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+						// Lot ID
+						if (lotRows != null){
+                            String lotIds = "";
+						    for ( int i = 0; i < lotRows.size(); i++) {
+                                final ListEntryLotDetails lotRow = lotRows.get(i);
+                                lotIds += lotRow.getLotId().toString();
+                                if (i != (lotRows.size() - 1)) {
+                                    lotIds +=  ", ";
+                                }
+                            }
+                            exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, lotIds));
+                        } else {
+                            exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, ""));
+                        }
+					}
                 }
 
             }

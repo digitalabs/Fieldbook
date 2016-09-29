@@ -2247,8 +2247,8 @@ public class SettingsUtil {
 				if (param.getDesignType() != null) {
 					if (param.getDesignType().equals(0)) {
 						return String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId());
-					} else if (param.getDesignType().equals(1) || param.getDesignType().equals(4) || param.getDesignType().equals(5)
-							|| param.getDesignType().equals(6)) {
+					} else if (param.getDesignType().equals(1) || param.getDesignType().equals(5) || param.getDesignType().equals(6)
+							|| param.getDesignType().equals(7)) {
 						if (param.getUseLatenized() != null && param.getUseLatenized()) {
 							return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId());
 						} else {
@@ -2262,7 +2262,7 @@ public class SettingsUtil {
 						}
 					} else if (param.getDesignType().equals(3)) {
 						return String.valueOf(TermId.OTHER_DESIGN.getId());
-					} else if (param.getDesignType().equals(7)) {
+					} else if (param.getDesignType().equals(4)) {
 						return String.valueOf(TermId.AUGMENTED_RANDOMIZED_BLOCK.getId());
 					}
 				}
@@ -2377,7 +2377,7 @@ public class SettingsUtil {
 		// currently the UI follows this sequence for the presets: 4, 5, 6
 		// (this can be changed in the future so that constants are used)
 		Collections.sort(presetTemplates);
-		int presetDesignType = DesignTypeItem.CUSTOM_IMPORT.getId() + 1;
+		int presetDesignType = DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId() + 1;
 		for (final File designTemplateFile : presetTemplates) {
 			final String templateFileName = designTemplateFile.getName();
 			if (templateFileName.equals(fileName)) {

@@ -88,8 +88,8 @@ public class ExpDesignController extends BaseTrialController {
 		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
 
 		if (this.fieldbookProperties.getPresetDesignEnabledCrops().contains(this.contextUtil.getProjectInContext().getCropType().getCropName())) {
-			// There are four (0-3) fixed designe types, so the preset designs get id 4 and onwards. 
-			designTypes.addAll(this.generatePresetDesignTypes(4));
+			// There are five (0-4) fixed design types, so the preset designs get id 5 and onwards.
+			designTypes.addAll(this.generatePresetDesignTypes(5));
 		}
 
 		return designTypes;

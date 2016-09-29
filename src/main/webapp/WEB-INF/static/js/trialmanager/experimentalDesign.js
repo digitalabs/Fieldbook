@@ -308,6 +308,8 @@
 
 					$scope.doValidate = function() {
 
+						// FIXME: Find a way to detect the design type by not using hard coded design ids, if the design type id changed in the backend, this will break.
+
 						switch ($scope.currentDesignType.id) {
 							case 0:
 							{
@@ -466,18 +468,7 @@
 
 								break;
 							}
-							case 4: 
-							case 5:
-							case 6:
-							{
-								var actualNoOfGermplasmListEntries = $scope.currentDesignType.totalNoOfEntries;
-								if ($scope.totalGermplasmEntryListCount > 0 && $scope.totalGermplasmEntryListCount !== actualNoOfGermplasmListEntries) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[28]);
-									return false;
-								}
-								break;
-							}
-							case 7: {
+							case 4: {
 
 								if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
 									showErrorMessage('page-message', 'Please specify the number of blocks.');
@@ -491,6 +482,17 @@
 								break;
 
 							}
+							case 5:
+							case 6:
+							{
+								var actualNoOfGermplasmListEntries = $scope.currentDesignType.totalNoOfEntries;
+								if ($scope.totalGermplasmEntryListCount > 0 && $scope.totalGermplasmEntryListCount !== actualNoOfGermplasmListEntries) {
+									showErrorMessage('page-message', EXP_DESIGN_MSGS[28]);
+									return false;
+								}
+								break;
+							}
+
 						}
 
 						if ($scope.totalGermplasmEntryListCount <= 0) {

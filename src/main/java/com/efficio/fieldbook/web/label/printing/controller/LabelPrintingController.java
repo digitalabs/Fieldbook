@@ -365,7 +365,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/inventory/{id}", method = RequestMethod.GET)
-	public String showStockListLabelDetailsNew(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form, final Model model,
+	public String showSeedPreparationLabelDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form, final Model model,
 			final HttpSession session, @PathVariable final int id, final Locale locale) {
 
 		SessionUtility.clearSessionData(session,
@@ -554,10 +554,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		}
 
 		final Integer germplasmListId = form.getGermplasmListId();
-		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
-		//final List<GermplasmListData> germplasmListDataList =  this.germplasmListManager.getGermplasmListDataByListId(germplasmListId);
 		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(germplasmListId, 0, Integer
-				.MAX_VALUE); // TODO Find better way than max value?
+				.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
 		return this.generateLabels(germplasmListDataList);
 	}
 

@@ -42,12 +42,8 @@
 						return $scope.data.designType;
 					}, function(newValue) {
 						// If Design Type is Preset Design
-						$scope.currentDesignType = $scope.getDesignTypeById(newValue);
+						$scope.currentDesignType = TrialManagerDataService.getDesignTypeById(newValue, $scope.designTypes);
 					});
-
-					$scope.getDesignTypeById = function(designTypeId) {
-						return _.find($scope.designTypes, function (designType) { return designType.id === Number(designTypeId) });
-					};
 
 					// TODO : re run computeLocalData after loading of previous trial as template
 					$scope.computeLocalData = function() {
@@ -59,11 +55,11 @@
 						// user has a treatment factor, if previous exp design is not RCBD, then set selection to RCBD
 						// may need to clear non RCBD input
 						if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-							$scope.data.designType = $scope.getDesignTypeById(0).id;
+							$scope.data.designType = TrialManagerDataService.getDesignTypeById(0, $scope.designTypes).id;
 						}
 
 						if ($scope.data.designType != null && $scope.data.designType !== '') {
-							$scope.currentDesignType = $scope.getDesignTypeById($scope.data.designType);
+							$scope.currentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 
 							if ($scope.currentDesignType.params !== null) {
 								$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
@@ -77,7 +73,7 @@
 
 							// loading for existing trial
 							if($scope.studyID != null && !TrialManagerDataService.applicationData.unappliedChangesAvailable){
-								var selectedDesignType = $scope.getDesignTypeById($scope.data.designType);
+								var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 								$scope.applicationData.hasGeneratedDesignPreset = selectedDesignType.isPreset
 									&& $scope.studyID != null && TrialManagerDataService.trialMeasurement.count > 0;
 							}
@@ -154,7 +150,7 @@
 					$scope.onSwitchDesignTypes = function(newId) {
 						if (newId !== '') {
 
-							$scope.currentDesignType = $scope.getDesignTypeById(newId);
+							$scope.currentDesignType = TrialManagerDataService.getDesignTypeById(newId, $scope.designTypes);
 							$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 							$scope.data.designType = $scope.currentDesignType.id;
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
@@ -173,7 +169,7 @@
 					};
 
 					$scope.toggleIsPresetWithGeneratedDesign = function() {
-						var selectedDesignType = $scope.getDesignTypeById($scope.data.designType);
+						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						$scope.applicationData.hasGeneratedDesignPreset =  $scope.applicationData.unsavedGeneratedDesign && selectedDesignType.isPreset;
 					};
 
@@ -202,7 +198,7 @@
 						}
 						
 						// non-preset design type
-						var selectedDesignType = $scope.getDesignTypeById($scope.data.designType);
+						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						if (!selectedDesignType.isPreset) {
 							TrialManagerDataService.generateExpDesign(environmentData).then(
 								function(response) {
@@ -284,7 +280,7 @@
 					};
 
 					$scope.toggleDesignView = function() {
-						var selectedDesignType = $scope.getDesignTypeById($scope.data.designType);
+						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign
 							|| ($scope.data.designType != null
 							&& $scope.data.designType !== ''
@@ -293,14 +289,14 @@
 					};
 
 					$scope.isImportedDesign = function() {
-						var selectedDesignType = $scope.getDesignTypeById($scope.data.designType);
+						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return $scope.data.designType != null
 							&& $scope.data.designType !== ''
 							&& selectedDesignType.name === 'Custom Import Design';
 					};
 
 					$scope.isBVDesign = function() {
-						var selectedDesignType = $scope.getDesignTypeById($scope.data.designType);
+						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return $scope.data.designType != null
 							&& $scope.data.designType !== ''
 							&& !selectedDesignType.isPreset && selectedDesignType.name !== 'Custom Import Design';

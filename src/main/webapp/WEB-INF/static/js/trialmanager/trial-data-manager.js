@@ -298,6 +298,10 @@
 					});
 				},
 
+				getDesignTypeById : function(designTypeId, designTypes) {
+					return _.find(designTypes, function (designType) { return designType.id === Number(designTypeId) });
+				},
+
 				retrieveGenerateDesignInput: function(designType) {
 					var environmentData = angular.copy(service.currentData.environments);
 
@@ -311,7 +315,7 @@
 
 					var data = {
 						environmentData: environmentData,
-						selectedDesignType: angular.copy(service.applicationData.designTypes[designType]),
+						selectedDesignType: angular.copy(service.getDesignTypeById(designType, service.applicationData.designTypes)),
 						startingEntryNo: service.currentData.experimentalDesign.startingEntryNo,
 						startingPlotNo: service.currentData.experimentalDesign.startingPlotNo,
 						hasNewEnvironmentAdded: service.applicationData.hasNewEnvironmentAdded

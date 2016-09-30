@@ -241,8 +241,9 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			}
 
 			details.setAmount(StringUtils.isEmpty(amountString) ? null : Double.parseDouble(amountString));
-
-			if (details.getAmount() != null) {
+			
+			//Set the scale name if both the location and amount for the detail has value.
+			if (details.getLocationAbbr() != null && details.getAmount() != null) {
 				details.setScaleName(this.scale.getName());
 				details.setScaleId(this.scale.getId());
 			}

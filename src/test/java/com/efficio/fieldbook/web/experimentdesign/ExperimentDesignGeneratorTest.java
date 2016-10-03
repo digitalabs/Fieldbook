@@ -10,6 +10,8 @@ import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.google.common.base.Optional;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import junit.framework.Assert;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.junit.Test;
@@ -248,8 +250,12 @@ public class ExperimentDesignGeneratorTest {
 		// Test Entry No 10 is mapped to Check Entry No 5
 		mapOfChecks.put(10, 5);
 
-		final Optional<ImportedGermplasm> optionalImportedGermplasm =
-				experimentDesignGenerator.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 1, mapOfChecks);
+		final BiMap<Integer, Integer> lastEntriesToCheckEntriesMap = HashBiMap.create(mapOfChecks);
+		final BiMap<Integer, Integer> checkEntriesToLastEntriesMap = lastEntriesToCheckEntriesMap.inverse();
+
+		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
+				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 1, lastEntriesToCheckEntriesMap,
+						checkEntriesToLastEntriesMap);
 
 		Assert.assertTrue(optionalImportedGermplasm.isPresent());
 		Assert.assertEquals(Integer.valueOf(1), optionalImportedGermplasm.get().getEntryId());
@@ -257,7 +263,7 @@ public class ExperimentDesignGeneratorTest {
 	}
 
 	@Test
-	public void testFindImportedGermplasmByEntryNumberAndChecksEntryNumberIsGeneratedFromDesignEngine() {
+	public void testFindImportedGermplasmByEntryNumberAndChecksEntryNumberDoesNotExistInImportedGermplasmMap() {
 
 		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
 
@@ -267,78 +273,48 @@ public class ExperimentDesignGeneratorTest {
 		// Test Entry No 10 is mapped to Check Entry No 5
 		mapOfChecks.put(10, 5);
 
-		final Optional<ImportedGermplasm> optionalImportedGermplasm =
-				experimentDesignGenerator.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 11, mapOfChecks);
+		final BiMap<Integer, Integer> lastEntriesToCheckEntriesMap = HashBiMap.create(mapOfChecks);
+		final BiMap<Integer, Integer> checkEntriesToLastEntriesMap = lastEntriesToCheckEntriesMap.inverse();
 
-		Assert.assertTrue(optionalImportedGermplasm.isPresent());
-		Assert.assertEquals(Integer.valueOf(3), optionalImportedGermplasm.get().getEntryId());
-
-	}
-
-	@Test
-	public void testFindImportedGermplasmByEntryNumberAndChecksEntryNumberIsOutsideTheRangeOfGermplasmList() {
-
-		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
-
-		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
-		// Test Entry No 9 is mapped to Check Entry No 3
-		mapOfChecks.put(9, 3);
-		// Test Entry No 10 is mapped to Check Entry No 5
-		mapOfChecks.put(10, 5);
-
-		final Optional<ImportedGermplasm> optionalImportedGermplasm =
-				experimentDesignGenerator.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 999, mapOfChecks);
+		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
+				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 9999, lastEntriesToCheckEntriesMap,
+						checkEntriesToLastEntriesMap);
 
 		Assert.assertFalse(optionalImportedGermplasm.isPresent());
 
 	}
 
 	@Test
-	public void testFindImportedGermplasmByEntryNumberGeneratedByDesignEngine() {
-
-		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
-
-		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
-		// Test Entry No 9 is mapped to Check Entry No 3
-		mapOfChecks.put(9, 3);
-		// Test Entry No 10 is mapped to Check Entry No 5
-		mapOfChecks.put(10, 5);
-
-		// This is mapped to Test Entry No 9
-		final Integer entryNoGeneratedFromDesignEngine = 11;
-
-		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
-				.findImportedGermplasmByEntryNumberGeneratedByDesignEngine(importedGermplasmMap, entryNoGeneratedFromDesignEngine,
-						mapOfChecks);
-
-		Assert.assertTrue(optionalImportedGermplasm.isPresent());
-		Assert.assertEquals(Integer.valueOf(3), optionalImportedGermplasm.get().getEntryId());
-
-	}
-
-	@Test
 	public void testResolveMappedEntryNumber() {
 
-		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
-
 		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
 		mapOfChecks.put(9, 3);
 		// Test Entry No 10 is mapped to Check Entry No 5
 		mapOfChecks.put(10, 5);
 
-		// This is mapped to Test Entry No 9
-		final Integer entryNoGeneratedFromDesignEngine1 = 11;
-		// This is mapped to Test Entry No 10
-		final Integer entryNoGeneratedFromDesignEngine2 = 12;
+		final BiMap<Integer, Integer> lastEntriesToCheckEntriesMap = HashBiMap.create(mapOfChecks);
+		final BiMap<Integer, Integer> checkEntriesToLastEntriesMap = lastEntriesToCheckEntriesMap.inverse();
 
-		final Optional<Integer> result1 =
-				experimentDesignGenerator.resolveMappedEntryNumber(importedGermplasmMap, entryNoGeneratedFromDesignEngine1, mapOfChecks);
-		Assert.assertEquals(Integer.valueOf(3), result1.get());
+		final Integer result1 =
+				experimentDesignGenerator.resolveMappedEntryNumber(9, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
+		Assert.assertEquals("Lookup value 9 should return 3", Integer.valueOf(3), result1);
 
-		final Optional<Integer> result2 =
-				experimentDesignGenerator.resolveMappedEntryNumber(importedGermplasmMap, entryNoGeneratedFromDesignEngine2, mapOfChecks);
-		Assert.assertEquals(Integer.valueOf(5), result2.get());
+		final Integer result2 =
+				experimentDesignGenerator.resolveMappedEntryNumber(10, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
+		Assert.assertEquals("Lookup value 10 should return 5", Integer.valueOf(5), result2);
+
+		final Integer result3 =
+				experimentDesignGenerator.resolveMappedEntryNumber(3, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
+		Assert.assertEquals("Lookup value 3 should return 9", Integer.valueOf(9), result3);
+
+		final Integer result4 =
+				experimentDesignGenerator.resolveMappedEntryNumber(5, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
+		Assert.assertEquals("Lookup value 5 should return 10", Integer.valueOf(10), result4);
+
+		final Integer result5 =
+				experimentDesignGenerator.resolveMappedEntryNumber(9999, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
+		Assert.assertEquals("9999 is not in map of checks, the return value should be the same number", Integer.valueOf(9999), result5);
 	}
 
 	private Map<Integer, ImportedGermplasm> createImportedGermplasmMap() {

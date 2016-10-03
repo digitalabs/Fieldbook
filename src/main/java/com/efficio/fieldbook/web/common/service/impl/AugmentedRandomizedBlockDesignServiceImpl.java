@@ -79,7 +79,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 
 		final String nblks = parameter.getNumberOfBlocks();
 		final String ncontrols = String.valueOf(mapOfChecks.size());
-		final int nTreatments = germplasmList.size();
+		final int nTreatments = germplasmList.size() - mapOfChecks.size();
 		final int environments = Integer.valueOf(parameter.getNoOfEnvironments());
 		final int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
 

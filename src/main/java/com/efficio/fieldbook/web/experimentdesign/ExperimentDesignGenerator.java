@@ -13,6 +13,8 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Optional;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.util.DateUtil;
@@ -80,8 +82,9 @@ public class ExperimentDesignGenerator {
 	@Resource
 	private FieldbookService fieldbookService;
 
-	public MainDesign createRandomizedCompleteBlockDesign(final String nBlock, final String blockFactor, final String plotFactor, final Integer initialPlotNumber,
-			final Integer initialEntryNumber, final List<String> treatmentFactor, final List<String> levels, final String outputfile) {
+	public MainDesign createRandomizedCompleteBlockDesign(final String nBlock, final String blockFactor, final String plotFactor,
+			final Integer initialPlotNumber, final Integer initialEntryNumber, final List<String> treatmentFactor,
+			final List<String> levels, final String outputfile) {
 
 		final String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
@@ -107,8 +110,9 @@ public class ExperimentDesignGenerator {
 	}
 
 	public MainDesign createResolvableIncompleteBlockDesign(final String blockSize, final String nTreatments, final String nReplicates,
-			final String treatmentFactor, final String replicateFactor, final String blockFactor, final String plotFactor, final Integer initialPlotNumber,
-			final Integer initialEntryNumber, final String nBlatin, final String replatingGroups, final String outputfile, final boolean useLatinize) {
+			final String treatmentFactor, final String replicateFactor, final String blockFactor, final String plotFactor,
+			final Integer initialPlotNumber, final Integer initialEntryNumber, final String nBlatin, final String replatingGroups,
+			final String outputfile, final boolean useLatinize) {
 
 		final String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
@@ -137,10 +141,10 @@ public class ExperimentDesignGenerator {
 		return new MainDesign(design);
 	}
 
-	public MainDesign createResolvableRowColDesign(final String nTreatments, final String nReplicates, final String nRows, final String nColumns,
-			final String treatmentFactor, final String replicateFactor, final String rowFactor, final String columnFactor, final String plotFactor,
-			final Integer initialPlotNumber, final Integer initialEntryNumber, final String nrLatin, final String ncLatin, final String replatingGroups,
-			final String outputfile, final Boolean useLatinize) {
+	public MainDesign createResolvableRowColDesign(final String nTreatments, final String nReplicates, final String nRows,
+			final String nColumns, final String treatmentFactor, final String replicateFactor, final String rowFactor,
+			final String columnFactor, final String plotFactor, final Integer initialPlotNumber, final Integer initialEntryNumber,
+			final String nrLatin, final String ncLatin, final String replatingGroups, final String outputfile, final Boolean useLatinize) {
 
 		final String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
@@ -193,11 +197,11 @@ public class ExperimentDesignGenerator {
 	}
 
 	public List<MeasurementRow> generateExperimentDesignMeasurements(final int environments, final int environmentsToAdd,
-			final List<MeasurementVariable> trialVariables, final List<MeasurementVariable> factors, final List<MeasurementVariable> nonTrialFactors,
-			final List<MeasurementVariable> variates, final List<TreatmentVariable> treatmentVariables,
-			final List<StandardVariable> requiredExpDesignVariable, final List<ImportedGermplasm> germplasmList, final MainDesign mainDesign,
-			final String entryNumberIdentifier, final Map<String, List<String>> treatmentFactorValues, final Map<Integer, Integer> mapOfChecks)
-			throws BVDesignException {
+			final List<MeasurementVariable> trialVariables, final List<MeasurementVariable> factors,
+			final List<MeasurementVariable> nonTrialFactors, final List<MeasurementVariable> variates,
+			final List<TreatmentVariable> treatmentVariables, final List<StandardVariable> requiredExpDesignVariable,
+			final List<ImportedGermplasm> germplasmList, final MainDesign mainDesign, final String entryNumberIdentifier,
+			final Map<String, List<String>> treatmentFactorValues, final Map<Integer, Integer> mapOfChecks) throws BVDesignException {
 
 		//Converting germplasm List to map
 		final Map<Integer, ImportedGermplasm> importedGermplasmMap = new HashMap<>();
@@ -221,6 +225,7 @@ public class ExperimentDesignGenerator {
 		}
 
 		if (treatmentVariables != null) {
+
 			for (int i = 0; i < treatmentVariables.size(); i++) {
 				varList.add(treatmentVariables.get(i).getLevelVariable());
 				varList.add(treatmentVariables.get(i).getValueVariable());
@@ -237,6 +242,9 @@ public class ExperimentDesignGenerator {
 		}
 
 		varList.addAll(variates);
+
+		final BiMap<Integer, Integer> lastEntriesToCheckEntriesMap = HashBiMap.create(mapOfChecks);
+		final BiMap<Integer, Integer> checkEntriesToLastEntriesMap = lastEntriesToCheckEntriesMap.inverse();
 
 		final int trialInstanceStart = environments - environmentsToAdd + 1;
 		for (int trialNo = trialInstanceStart; trialNo <= environments; trialNo++) {
@@ -260,7 +268,8 @@ public class ExperimentDesignGenerator {
 					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
 				}
 				final Optional<ImportedGermplasm> importedGermplasm =
-						findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, mapOfChecks);
+						findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, lastEntriesToCheckEntriesMap,
+								checkEntriesToLastEntriesMap);
 
 				if (!importedGermplasm.isPresent()) {
 					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
@@ -284,94 +293,71 @@ public class ExperimentDesignGenerator {
 	}
 
 	Optional<ImportedGermplasm> findImportedGermplasmByEntryNumberAndChecks(final Map<Integer, ImportedGermplasm> importedGermplasmMap,
-			final Integer entryNumber, final Map<Integer, Integer> mapOfChecks) {
+			final Integer entryNumber, final Map<Integer, Integer> lastEntriesToCheckEntriesMap,
+			final Map<Integer, Integer> checkEntriesToLastEntriesMap) {
 
-		if (importedGermplasmMap.containsKey(entryNumber)) {
-			return Optional.of(importedGermplasmMap.get(entryNumber));
-		} else {
-			// If the entryNumber does not exist in importedGermplasmMap, then it is an entryNumber generated by the design engine.
-			return findImportedGermplasmByEntryNumberGeneratedByDesignEngine(importedGermplasmMap, entryNumber, mapOfChecks);
+		final Integer resolvedEntryNumber =
+				this.resolveMappedEntryNumber(entryNumber, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
+
+		if (importedGermplasmMap.containsKey(resolvedEntryNumber)) {
+			return Optional.of(importedGermplasmMap.get(resolvedEntryNumber));
 		}
 
-	}
-
-	Optional<ImportedGermplasm> findImportedGermplasmByEntryNumberGeneratedByDesignEngine(
-			final Map<Integer, ImportedGermplasm> importedGermplasmMap, final Integer entryNumber, final Map<Integer, Integer> mapOfChecks) {
-
-		final Optional<Integer> resolvedEntryNumber = resolveMappedEntryNumber(importedGermplasmMap, entryNumber, mapOfChecks);
-		if (resolvedEntryNumber.isPresent()) {
-			return Optional.of(importedGermplasmMap.get(resolvedEntryNumber.get()));
-		}
 		return Optional.absent();
 
 	}
 
 	/**
-	 * Returns the original check entry no mapped to the last entries of a germplasm list.
+	 * Gets the check entry number associated to last entry number and vice versa.
 	 * <p/>
 	 * <pre>
-	 * Given a trial has a total of 6 entries and 2 of them are check entries (Entry no. 1 and 2).
-	 * But the design engine assumes that the two check entries are at the end of the germplasm list. As
-	 * a workaround, we will sequentially map the last two entries to the check entries in the list. The
-	 * map will be as follows:
 	 *
-	 * (Last Entry No) : (Original Check Entry No)
-	 * 4 : 1
-	 * 5 : 2
+	 * In a design with 48 test entries and 4 check entries, BVDesign assumes the checks are entry numbers 49,50, 51, and 52.
+	 * Since this may not be the case for the user's trial list, the BMS will:
+	 * sequentially map genotype numbers 1 to 48 coming back from BVDesign to the non check entries in the Trial List
+	 * then sequentially map 49-52 to the four check entries in the list.
 	 *
-	 * After the design is generated, the output file will have the following design:
+	 * Given the following check entries map:
+	 * (Last Entry No) : (Check Entry No)
+	 * 49 : 1
+	 * 50 : 3
+	 * 51 : 7
+	 * 52 : 9
 	 *
-	 * Plot_No	Block_No	Entry_No
-	 * 1		1			7
-	 * 2		1			6
-	 * 3		1			4
-	 * 4		1			6
-	 * 5		1			7
-	 * 6		1			3
-	 * 7		1			5
-	 *
-	 * Notice that there are extra 6 and 7 entry numbers generated by design engine to indicate the inserted
-	 * checks. We will sequentially map the extra entry numbers to the last two entries:
-	 *
-	 * 6 : 4
-	 * 7 : 5
-	 *
-	 * In order to get the original check entry numbers we will use the following logic:
-	 *
-	 * (Generated Entry no) - (No of checks) = (Entry no from last two entries)
-	 *
-	 * 6 - 2 = 4
-	 * If 4 : 1, then 1 is the original check entry no of 6.
+	 * If the entryNumber is 49, it will return 1;
+	 * if the entryNumber is 7, it will return 51;
+	 * If the entryNumber is 53, it will return 53;
 	 *
 	 * </pre>
 	 *
-	 * @param importedGermplasmMap
-	 * @param entryNumberGeneratedFromDesignEngine
-	 * @param mapOfChecks
+	 * @param entryNumber
+	 * @param lastEntriesToCheckEntriesMap
+	 * @param checkEntriesToLastEntriesMap
 	 * @return
 	 */
-	Optional<Integer> resolveMappedEntryNumber(final Map<Integer, ImportedGermplasm> importedGermplasmMap,
-			final Integer entryNumberGeneratedFromDesignEngine, final Map<Integer, Integer> mapOfChecks) {
+	Integer resolveMappedEntryNumber(final Integer entryNumber, final Map<Integer, Integer> lastEntriesToCheckEntriesMap,
+			final Map<Integer, Integer> checkEntriesToLastEntriesMap) {
 
-		final Integer lastEntryNo = entryNumberGeneratedFromDesignEngine - mapOfChecks.size();
-
-		if (mapOfChecks.containsKey(lastEntryNo)) {
-			return Optional.of(mapOfChecks.get(lastEntryNo));
+		if (lastEntriesToCheckEntriesMap.containsKey(entryNumber)) {
+			return lastEntriesToCheckEntriesMap.get(entryNumber);
+		} else if (checkEntriesToLastEntriesMap.containsKey(entryNumber)) {
+			return checkEntriesToLastEntriesMap.get(entryNumber);
 		} else {
-			return Optional.absent();
+			return entryNumber;
 		}
 
 	}
 
 	MeasurementRow createMeasurementRow(final List<MeasurementVariable> headerVariable, final ImportedGermplasm germplasm,
-			final Map<String, String> bvEntryMap, final Map<String, List<String>> treatmentFactorValues, final List<MeasurementVariable> trialVariables,
-			final int trialNo) {
+			final Map<String, String> bvEntryMap, final Map<String, List<String>> treatmentFactorValues,
+			final List<MeasurementVariable> trialVariables, final int trialNo) {
 		final MeasurementRow measurementRow = new MeasurementRow();
 		final List<MeasurementData> dataList = new ArrayList<MeasurementData>();
 		MeasurementData treatmentLevelData = null;
 		MeasurementData measurementData = null;
 
-		final MeasurementVariable trialInstanceVar = WorkbookUtil.getMeasurementVariable(trialVariables, TermId.TRIAL_INSTANCE_FACTOR.getId());
+		final MeasurementVariable trialInstanceVar =
+				WorkbookUtil.getMeasurementVariable(trialVariables, TermId.TRIAL_INSTANCE_FACTOR.getId());
 		measurementData = new MeasurementData(trialInstanceVar.getName(), Integer.toString(trialNo), false, trialInstanceVar.getDataType(),
 				trialInstanceVar);
 		dataList.add(measurementData);

@@ -177,7 +177,7 @@ public class ExperimentDesignGenerator {
 	}
 
 	public MainDesign createAugmentedRandomizedBlockDesign(final Integer numberOfBlocks, final Integer numberOfTreatments,
-			final Integer numberOfControls, final Integer startingPlotNumber, final String treatmentFactor, final String blockFactor,
+			final Integer numberOfControls, final Integer startingPlotNumber, final Integer startingEntryNumber, final String treatmentFactor, final String blockFactor,
 			final String plotFactor) {
 
 		final List<ExpDesignParameter> paramList = new ArrayList<>();
@@ -192,6 +192,8 @@ public class ExperimentDesignGenerator {
 				getPlotNumberStringValueOrDefault(startingPlotNumber), null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.SEED_PARAM, "", null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.OUTPUTFILE_PARAM, "", null));
+
+		addInitialTreatmenNumberIfAvailable(startingEntryNumber, paramList);
 
 		final ExpDesign design = new ExpDesign(ExperimentDesignGenerator.AUGMENTED_RANDOMIZED_BLOCK_DESIGN, paramList);
 

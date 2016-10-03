@@ -81,6 +81,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		final Integer numberOfControls = mapOfChecks.size();
 		final Integer numberOfTreatments = germplasmList.size() - numberOfControls;
 		final Integer startingPlotNumber = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
+		final Integer startingEntryNumber = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
 
 		final int noOfExistingEnvironments = Integer.valueOf(parameter.getNoOfEnvironments());
 		final int noOfEnvironmentsToBeAdded = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
@@ -93,7 +94,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		final StandardVariable stdvarPlot = standardVariableMap.get(TermId.PLOT_NO.getId());
 
 		final MainDesign mainDesign = experimentDesignGenerator
-				.createAugmentedRandomizedBlockDesign(numberOfBlocks, numberOfTreatments, numberOfControls, startingPlotNumber, stdvarEntryNo.getName(),
+				.createAugmentedRandomizedBlockDesign(numberOfBlocks, numberOfTreatments, numberOfControls, startingPlotNumber, startingEntryNumber, stdvarEntryNo.getName(),
 						stdvarBlock.getName(), stdvarPlot.getName());
 
 		measurementRowList = experimentDesignGenerator

@@ -80,6 +80,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	public void testGenerateDesign() throws BVDesignException {
 
 		final Integer startingPlotNo = 1;
+		final Integer startingEntryNo = 1;
 		final Integer numberOfBlocks = 2;
 		final Integer noOfExistingEnvironments = 1;
 		final Integer noOfEnvironmentsToBeAdded = 0;
@@ -90,6 +91,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		experimentDesignParameterFromUI.setNoOfEnvironmentsToAdd(String.valueOf(noOfEnvironmentsToBeAdded));
 		experimentDesignParameterFromUI.setNumberOfBlocks(String.valueOf(numberOfBlocks));
 		experimentDesignParameterFromUI.setStartingPlotNo(String.valueOf(startingPlotNo));
+		experimentDesignParameterFromUI.setStartingEntryNo(String.valueOf(startingEntryNo));
 
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
 		final List<MeasurementVariable> trialVariables = new ArrayList<>();
@@ -104,7 +106,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 
 		Mockito.when(this.experimentDesignGenerator
 				.createAugmentedRandomizedBlockDesign(numberOfBlocks, importedGermplasmList.size(), importedGermplasmList.size(),
-						startingPlotNo, entryNoVariable.getName(), blockNoVariable.getName(), plotNoVariable.getName()))
+						startingPlotNo, startingEntryNo, entryNoVariable.getName(), blockNoVariable.getName(), plotNoVariable.getName()))
 				.thenReturn(mainDesign);
 
 		augmentedRandomizedBlockDesignServiceImpl
@@ -113,7 +115,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 
 		Mockito.verify(this.experimentDesignGenerator)
 				.createAugmentedRandomizedBlockDesign(numberOfBlocks, importedGermplasmList.size(), importedGermplasmList.size(),
-						startingPlotNo, entryNoVariable.getName(), blockNoVariable.getName(), plotNoVariable.getName());
+						startingPlotNo, startingEntryNo, entryNoVariable.getName(), blockNoVariable.getName(), plotNoVariable.getName());
 
 		Mockito.verify(this.experimentDesignGenerator)
 				.generateExperimentDesignMeasurements(noOfExistingEnvironments, noOfEnvironmentsToBeAdded, trialVariables, factors,

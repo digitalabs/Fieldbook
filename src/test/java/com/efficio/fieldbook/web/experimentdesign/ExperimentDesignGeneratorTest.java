@@ -169,9 +169,10 @@ public class ExperimentDesignGeneratorTest {
 		final Integer numberOfTreatments = 22;
 		final Integer numberOfControls = 11;
 		final Integer startingPlotNumber = 1;
+		final Integer startingEntryNumber = 2;
 
 		final MainDesign mainDesign = experimentDesignGenerator
-				.createAugmentedRandomizedBlockDesign(numberOfBlocks, numberOfTreatments, numberOfControls, startingPlotNumber, ENTRY_NO, BLOCK_NO, PLOT_NO);
+				.createAugmentedRandomizedBlockDesign(numberOfBlocks, numberOfTreatments, numberOfControls, startingPlotNumber, startingEntryNumber, ENTRY_NO, BLOCK_NO, PLOT_NO);
 
 		final ExpDesign expDesign = mainDesign.getDesign();
 
@@ -182,7 +183,8 @@ public class ExperimentDesignGeneratorTest {
 		Assert.assertEquals(ENTRY_NO, expDesign.getParameterValue(ExperimentDesignGenerator.TREATMENTFACTOR_PARAM));
 		Assert.assertEquals(BLOCK_NO, expDesign.getParameterValue(ExperimentDesignGenerator.BLOCKFACTOR_PARAM));
 		Assert.assertEquals(PLOT_NO, expDesign.getParameterValue(ExperimentDesignGenerator.PLOTFACTOR_PARAM));
-
+		Assert.assertEquals(String.valueOf(startingEntryNumber), expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM));
+		Assert.assertEquals(String.valueOf(startingPlotNumber), expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM));
 	}
 
 	@Test

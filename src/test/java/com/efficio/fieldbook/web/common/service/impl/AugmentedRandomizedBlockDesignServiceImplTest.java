@@ -97,7 +97,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		final List<MeasurementVariable> nonTrialFactors = new ArrayList<>();
 		final List<MeasurementVariable> variates = new ArrayList<>();
 		final List<TreatmentVariable> treatmentVariables = new ArrayList<>();
-		final List<StandardVariable> requiredVariables = augmentedRandomizedBlockDesignServiceImpl.getRequiredVariable();
+		final List<StandardVariable> requiredVariables = augmentedRandomizedBlockDesignServiceImpl.getRequiredDesignVariables();
 		final Map<Integer, Integer> mapOfChecks = augmentedRandomizedBlockDesignServiceImpl.createMapOfChecks(importedGermplasmList);
 
 		final MainDesign mainDesign = new MainDesign();
@@ -127,7 +127,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	public void testConvertStandardVariableListToMap() {
 
 		final Map<Integer, StandardVariable> result = augmentedRandomizedBlockDesignServiceImpl
-				.convertStandardVariableListToMap(augmentedRandomizedBlockDesignServiceImpl.getRequiredVariable());
+				.convertStandardVariableListToMap(augmentedRandomizedBlockDesignServiceImpl.getRequiredDesignVariables());
 
 		Assert.assertTrue(result.containsKey(TermId.ENTRY_NO.getId()));
 		Assert.assertTrue(result.containsKey(TermId.BLOCK_NO.getId()));
@@ -138,7 +138,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	@Test
 	public void testGetRequiredVariable() {
 
-		final List<StandardVariable> result = augmentedRandomizedBlockDesignServiceImpl.getRequiredVariable();
+		final List<StandardVariable> result = augmentedRandomizedBlockDesignServiceImpl.getRequiredDesignVariables();
 
 		Assert.assertEquals("There should be 3 required variable for augmented design", 3, result.size());
 

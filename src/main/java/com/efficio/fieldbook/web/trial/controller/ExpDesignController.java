@@ -285,7 +285,7 @@ public class ExpDesignController extends BaseTrialController {
 								oldFactors.remove(var);
 							}
 						}
-						workbook.setExpDesignVariables(designService.getRequiredVariable());
+						workbook.setExpDesignVariables(designService.getRequiredDesignVariables());
 					}
 				}
 			}

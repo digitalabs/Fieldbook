@@ -152,7 +152,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			StandardVariable stdvarRep = null;
 			StandardVariable stdvarPlot = null;
 
-			final List<StandardVariable> reqVarList = this.getRequiredVariable();
+			final List<StandardVariable> reqVarList = this.getRequiredDesignVariables();
 
 			for (final StandardVariable var : reqVarList) {
 				if (var.getId() == TermId.REP_NO.getId()) {
@@ -188,7 +188,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	}
 
 	@Override
-	public List<StandardVariable> getRequiredVariable() {
+	public List<StandardVariable> getRequiredDesignVariables() {
 		final List<StandardVariable> varList = new ArrayList<>();
 		try {
 			final StandardVariable stdvarRep =

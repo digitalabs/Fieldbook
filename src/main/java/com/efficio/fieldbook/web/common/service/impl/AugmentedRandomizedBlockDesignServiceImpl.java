@@ -85,7 +85,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 
 		try {
 
-			final List<StandardVariable> requiredDesignVariables = this.getRequiredVariable();
+			final List<StandardVariable> requiredDesignVariables = this.getRequiredDesignVariables();
 			final Map<Integer, StandardVariable> standardVariableMap = convertStandardVariableListToMap(requiredDesignVariables);
 
 			final StandardVariable stdvarEntryNo = standardVariableMap.get(TermId.ENTRY_NO.getId());
@@ -112,7 +112,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 	}
 
 	@Override
-	public List<StandardVariable> getRequiredVariable() {
+	public List<StandardVariable> getRequiredDesignVariables() {
 		final List<StandardVariable> varList = new ArrayList<StandardVariable>();
 
 		final StandardVariable stdvarEntryNo =

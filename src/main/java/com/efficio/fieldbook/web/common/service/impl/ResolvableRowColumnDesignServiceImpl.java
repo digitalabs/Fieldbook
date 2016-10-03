@@ -80,7 +80,7 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 			StandardVariable stdvarRows = null;
 			StandardVariable stdvarCols = null;
 
-			final List<StandardVariable> reqVarList = this.getRequiredVariable();
+			final List<StandardVariable> reqVarList = this.getRequiredDesignVariables();
 
 			for (final StandardVariable var : reqVarList) {
 				if (var.getId() == TermId.REP_NO.getId()) {
@@ -141,7 +141,7 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 	}
 
 	@Override
-	public List<StandardVariable> getRequiredVariable() {
+	public List<StandardVariable> getRequiredDesignVariables() {
 		final List<StandardVariable> varList = new ArrayList<StandardVariable>();
 		try {
 			final StandardVariable stdvarRep =

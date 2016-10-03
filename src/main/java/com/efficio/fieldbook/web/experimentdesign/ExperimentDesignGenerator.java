@@ -328,7 +328,7 @@ public class ExperimentDesignGenerator {
 	 *
 	 * If the entryNumber is 49, it will return 1;
 	 * if the entryNumber is 7, it will return 51;
-	 * If the entryNumber is 53, it will return 53;
+	 * If the entryNumber is 23, it will return 23;
 	 *
 	 * </pre>
 	 *

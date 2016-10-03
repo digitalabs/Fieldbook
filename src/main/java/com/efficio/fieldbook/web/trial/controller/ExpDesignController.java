@@ -69,7 +69,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	@Resource
 	private DesignImportService designImportService;
-	
+
 	@Resource
 	private ToolLicenseUtil toolLicenseUtil;
 
@@ -88,8 +88,9 @@ public class ExpDesignController extends BaseTrialController {
 		designTypes.add(DesignTypeItem.ROW_COL);
 		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
 
-		if (this.fieldbookProperties.getPresetDesignEnabledCrops().contains(this.contextUtil.getProjectInContext().getCropType().getCropName())) {
-			// There are four (0-3) fixed designe types, so the preset designs get id 4 and onwards. 
+		if (this.fieldbookProperties.getPresetDesignEnabledCrops().contains(
+				this.contextUtil.getProjectInContext().getCropType().getCropName())) {
+			// There are four (0-3) fixed designe types, so the preset designs get id 4 and onwards.
 			designTypes.addAll(this.generatePresetDesignTypes(4));
 		}
 
@@ -114,7 +115,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	/**
 	 * Generates a design type item from template file name
-	 * 
+	 *
 	 * @param templateFileName
 	 * @param index
 	 * @return
@@ -123,13 +124,12 @@ public class ExpDesignController extends BaseTrialController {
 		final int noOfreps = this.getNoOfReps(templateFileName);
 		final int totalNoOfEntries = this.getTotalNoOfEntries(templateFileName);
 		final String templateName = this.getTemplateName(templateFileName);
-		return new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, noOfreps, totalNoOfEntries,
-				false);
+		return new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, noOfreps, totalNoOfEntries, false);
 	}
 
 	/***
 	 * Removed the .csv extension from the filename
-	 * 
+	 *
 	 * @param templateFileName
 	 * @return
 	 */
@@ -139,7 +139,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	/**
 	 * Checks if the filename follows the expected preset template filename i.e. E30-Rep2-Block6-5Ind.csv
-	 * 
+	 *
 	 * @param fileName
 	 * @return
 	 */
@@ -149,7 +149,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	/**
 	 * Retrieves the no of entries from the design preset template name
-	 * 
+	 *
 	 * @param name - preset template filename
 	 * @return
 	 */
@@ -161,7 +161,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	/**
 	 * Retrieves the no of replications from the design preset template name
-	 * 
+	 *
 	 * @param name - preset template filename
 	 * @return
 	 */
@@ -202,7 +202,7 @@ public class ExpDesignController extends BaseTrialController {
 
 		final Dataset dataset =
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
-						this.userSelection.getPlotsLevelList(), variatesList , this.userSelection,
+						this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,
 						this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
 						this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID());
 
@@ -252,12 +252,11 @@ public class ExpDesignController extends BaseTrialController {
 								g.setEntryId(entryNo++);
 							}
 						}
-						
-						if(toolLicenseUtil.isToolExpired(ToolName.breeding_view.toString())) {
+
+						if (this.toolLicenseUtil.isToolExpired(ToolName.breeding_view.toString())) {
 							expParameterOutput =
-									new ExpDesignValidationOutput(false, 
-											this.messageSource.getMessage("experiment.design.license.expired", null,
-											locale));
+									new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.license.expired",
+											null, locale));
 							return expParameterOutput;
 						}
 
@@ -298,13 +297,13 @@ public class ExpDesignController extends BaseTrialController {
 							}
 						}
 						workbook.setExpDesignVariables(designService.getRequiredVariable());
-						
-						if(toolLicenseUtil.isToolExpiringWithinThirtyDays(ToolName.breeding_view.toString())) {
-							int daysBeforeExpiration = toolLicenseUtil.daysBeforeToolExpiration(ToolName.breeding_view.toString());
+
+						if (this.toolLicenseUtil.isToolExpiringWithinThirtyDays(ToolName.breeding_view.toString())) {
+							final int daysBeforeExpiration =
+									this.toolLicenseUtil.daysBeforeToolExpiration(ToolName.breeding_view.toString());
 							expParameterOutput =
-									new ExpDesignValidationOutput(true, 
-											this.messageSource.getMessage("experiment.design.license.expiring", 
-											new Integer[]{daysBeforeExpiration}, locale));
+									new ExpDesignValidationOutput(true, this.messageSource.getMessage("experiment.design.license.expiring",
+											new Integer[] {daysBeforeExpiration}, locale));
 							expParameterOutput.setUserConfirmationRequired(true);
 							return expParameterOutput;
 						}
@@ -390,14 +389,12 @@ public class ExpDesignController extends BaseTrialController {
 		return null;
 	}
 
-	void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
+	void setFieldbookProperties(final FieldbookProperties fieldbookProperties) {
 		this.fieldbookProperties = fieldbookProperties;
 	}
 
-	
-	void setMessageSource(ResourceBundleMessageSource messageSource) {
+	void setMessageSource(final ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
-	
-	
+
 }

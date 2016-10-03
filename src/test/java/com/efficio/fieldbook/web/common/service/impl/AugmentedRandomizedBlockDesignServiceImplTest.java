@@ -79,17 +79,17 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	@Test
 	public void testGenerateDesign() throws BVDesignException {
 
-		final String startingPlotNo = "1";
-		final String numberOfBlocks = "2";
-		final String noOfEnvironments = "1";
-		final String noOfEnvironmentsToAdd = "0";
+		final Integer startingPlotNo = 1;
+		final Integer numberOfBlocks = 2;
+		final Integer noOfExistingEnvironments = 1;
+		final Integer noOfEnvironmentsToBeAdded = 0;
 
 		final ExpDesignParameterUi experimentDesignParameterFromUI = new ExpDesignParameterUi();
 
-		experimentDesignParameterFromUI.setNoOfEnvironments(noOfEnvironments);
-		experimentDesignParameterFromUI.setNoOfEnvironmentsToAdd(noOfEnvironmentsToAdd);
-		experimentDesignParameterFromUI.setNumberOfBlocks(numberOfBlocks);
-		experimentDesignParameterFromUI.setStartingPlotNo(startingPlotNo);
+		experimentDesignParameterFromUI.setNoOfEnvironments(String.valueOf(noOfExistingEnvironments));
+		experimentDesignParameterFromUI.setNoOfEnvironmentsToAdd(String.valueOf(noOfEnvironmentsToBeAdded));
+		experimentDesignParameterFromUI.setNumberOfBlocks(String.valueOf(numberOfBlocks));
+		experimentDesignParameterFromUI.setStartingPlotNo(String.valueOf(startingPlotNo));
 
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
 		final List<MeasurementVariable> trialVariables = new ArrayList<>();
@@ -103,23 +103,22 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		final MainDesign mainDesign = new MainDesign();
 
 		Mockito.when(this.experimentDesignGenerator
-				.createAugmentedRandomizedBlockDesign(numberOfBlocks, String.valueOf(importedGermplasmList.size()),
-						String.valueOf(importedGermplasmList.size()), entryNoVariable.getName(), blockNoVariable.getName(),
-						plotNoVariable.getName(), startingPlotNo)).thenReturn(mainDesign);
+				.createAugmentedRandomizedBlockDesign(numberOfBlocks, importedGermplasmList.size(), importedGermplasmList.size(),
+						startingPlotNo, entryNoVariable.getName(), blockNoVariable.getName(), plotNoVariable.getName()))
+				.thenReturn(mainDesign);
 
 		augmentedRandomizedBlockDesignServiceImpl
 				.generateDesign(importedGermplasmList, experimentDesignParameterFromUI, trialVariables, factors, nonTrialFactors, variates,
 						treatmentVariables);
 
 		Mockito.verify(this.experimentDesignGenerator)
-				.createAugmentedRandomizedBlockDesign(numberOfBlocks, String.valueOf(importedGermplasmList.size()),
-						String.valueOf(importedGermplasmList.size()), entryNoVariable.getName(), blockNoVariable.getName(),
-						plotNoVariable.getName(), startingPlotNo);
+				.createAugmentedRandomizedBlockDesign(numberOfBlocks, importedGermplasmList.size(), importedGermplasmList.size(),
+						startingPlotNo, entryNoVariable.getName(), blockNoVariable.getName(), plotNoVariable.getName());
 
 		Mockito.verify(this.experimentDesignGenerator)
-				.generateExperimentDesignMeasurements(Integer.valueOf(noOfEnvironments), Integer.valueOf(noOfEnvironmentsToAdd),
-						trialVariables, factors, nonTrialFactors, variates, treatmentVariables, requiredVariables, importedGermplasmList,
-						mainDesign, entryNoVariable.getName(), null, mapOfChecks);
+				.generateExperimentDesignMeasurements(noOfExistingEnvironments, noOfEnvironmentsToBeAdded, trialVariables, factors,
+						nonTrialFactors, variates, treatmentVariables, requiredVariables, importedGermplasmList, mainDesign,
+						entryNoVariable.getName(), null, mapOfChecks);
 
 	}
 

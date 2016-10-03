@@ -77,37 +77,30 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 
 		final Map<Integer, Integer> mapOfChecks = this.createMapOfChecks(germplasmList);
 
-		final String nblks = parameter.getNumberOfBlocks();
-		final String ncontrols = String.valueOf(mapOfChecks.size());
-		final int nTreatments = germplasmList.size() - mapOfChecks.size();
-		final int environments = Integer.valueOf(parameter.getNoOfEnvironments());
-		final int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
+		final Integer numberOfBlocks = StringUtil.parseInt(parameter.getNumberOfBlocks(), null);
+		final Integer numberOfControls = mapOfChecks.size();
+		final Integer numberOfTreatments = germplasmList.size() - numberOfControls;
+		final Integer startingPlotNumber = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
 
-		try {
+		final int noOfExistingEnvironments = Integer.valueOf(parameter.getNoOfEnvironments());
+		final int noOfEnvironmentsToBeAdded = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
 
-			final List<StandardVariable> requiredDesignVariables = this.getRequiredDesignVariables();
-			final Map<Integer, StandardVariable> standardVariableMap = convertStandardVariableListToMap(requiredDesignVariables);
+		final List<StandardVariable> requiredDesignVariables = this.getRequiredDesignVariables();
+		final Map<Integer, StandardVariable> standardVariableMap = convertStandardVariableListToMap(requiredDesignVariables);
 
-			final StandardVariable stdvarEntryNo = standardVariableMap.get(TermId.ENTRY_NO.getId());
-			final StandardVariable stdvarBlock = standardVariableMap.get(TermId.BLOCK_NO.getId());
-			final StandardVariable stdvarPlot = standardVariableMap.get(TermId.PLOT_NO.getId());
+		final StandardVariable stdvarEntryNo = standardVariableMap.get(TermId.ENTRY_NO.getId());
+		final StandardVariable stdvarBlock = standardVariableMap.get(TermId.BLOCK_NO.getId());
+		final StandardVariable stdvarPlot = standardVariableMap.get(TermId.PLOT_NO.getId());
 
-			final Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
+		final MainDesign mainDesign = experimentDesignGenerator
+				.createAugmentedRandomizedBlockDesign(numberOfBlocks, numberOfTreatments, numberOfControls, startingPlotNumber, stdvarEntryNo.getName(),
+						stdvarBlock.getName(), stdvarPlot.getName());
 
-			final MainDesign mainDesign = experimentDesignGenerator
-					.createAugmentedRandomizedBlockDesign(nblks, Integer.toString(nTreatments), ncontrols, stdvarEntryNo.getName(),
-							stdvarBlock.getName(), stdvarPlot.getName(), String.valueOf(plotNo));
+		measurementRowList = experimentDesignGenerator
+				.generateExperimentDesignMeasurements(noOfExistingEnvironments, noOfEnvironmentsToBeAdded, trialVariables, factors, nonTrialFactors,
+						variates, treatmentVariables, requiredDesignVariables, germplasmList, mainDesign, stdvarEntryNo.getName(), null,
+						mapOfChecks);
 
-			measurementRowList = experimentDesignGenerator
-					.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
-							variates, treatmentVariables, requiredDesignVariables, germplasmList, mainDesign, stdvarEntryNo.getName(), null,
-							mapOfChecks);
-
-		} catch (final BVDesignException e) {
-			throw e;
-		} catch (final Exception e) {
-			AugmentedRandomizedBlockDesignServiceImpl.LOG.error(e.getMessage(), e);
-		}
 		return measurementRowList;
 	}
 

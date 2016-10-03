@@ -176,18 +176,20 @@ public class ExperimentDesignGenerator {
 		return new MainDesign(design);
 	}
 
-	public MainDesign createAugmentedRandomizedBlockDesign(final String nblks, final String ntreatments, final String ncontrols,
-			final String treatmentFactor, final String blockFactor, final String plotFactor, final String plotNo) {
+	public MainDesign createAugmentedRandomizedBlockDesign(final Integer numberOfBlocks, final Integer numberOfTreatments,
+			final Integer numberOfControls, final Integer startingPlotNumber, final String treatmentFactor, final String blockFactor,
+			final String plotFactor) {
 
 		final List<ExpDesignParameter> paramList = new ArrayList<>();
 
-		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NTREATMENTS_PARAM, ntreatments, null));
-		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NCONTROLS_PARAM, ncontrols, null));
-		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NBLOCKS_PARAM, nblks, null));
+		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NTREATMENTS_PARAM, String.valueOf(numberOfTreatments), null));
+		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NCONTROLS_PARAM, String.valueOf(numberOfControls), null));
+		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.NBLOCKS_PARAM, String.valueOf(numberOfBlocks), null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TREATMENTFACTOR_PARAM, treatmentFactor, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.BLOCKFACTOR_PARAM, blockFactor, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.PLOTFACTOR_PARAM, plotFactor, null));
-		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM, plotNo, null));
+		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM,
+				getPlotNumberStringValueOrDefault(startingPlotNumber), null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.SEED_PARAM, "", null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.OUTPUTFILE_PARAM, "", null));
 
@@ -196,7 +198,7 @@ public class ExperimentDesignGenerator {
 		return new MainDesign(design);
 	}
 
-	public List<MeasurementRow> generateExperimentDesignMeasurements(final int environments, final int environmentsToAdd,
+	public List<MeasurementRow> generateExperimentDesignMeasurements(final int noOfExistingEnvironments, final int noOfEnvironmentsToAdded,
 			final List<MeasurementVariable> trialVariables, final List<MeasurementVariable> factors,
 			final List<MeasurementVariable> nonTrialFactors, final List<MeasurementVariable> variates,
 			final List<TreatmentVariable> treatmentVariables, final List<StandardVariable> requiredExpDesignVariable,
@@ -246,8 +248,8 @@ public class ExperimentDesignGenerator {
 		final BiMap<Integer, Integer> lastEntriesToCheckEntriesMap = HashBiMap.create(mapOfChecks);
 		final BiMap<Integer, Integer> checkEntriesToLastEntriesMap = lastEntriesToCheckEntriesMap.inverse();
 
-		final int trialInstanceStart = environments - environmentsToAdd + 1;
-		for (int trialNo = trialInstanceStart; trialNo <= environments; trialNo++) {
+		final int trialInstanceStart = noOfExistingEnvironments - noOfEnvironmentsToAdded + 1;
+		for (int trialNo = trialInstanceStart; trialNo <= noOfExistingEnvironments; trialNo++) {
 
 			BVDesignOutput bvOutput = null;
 			try {

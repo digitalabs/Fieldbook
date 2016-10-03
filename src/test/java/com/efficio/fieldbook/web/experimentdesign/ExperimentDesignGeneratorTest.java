@@ -165,20 +165,20 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testcCeateAugmentedRandomizedBlockDesign() {
 
-		final String nblks = "2";
-		final String numberOfTreatments = "22";
-		final String nControls = "11";
-		final String plotNumber = "1";
+		final Integer numberOfBlocks = 2;
+		final Integer numberOfTreatments = 22;
+		final Integer numberOfControls = 11;
+		final Integer startingPlotNumber = 1;
 
 		final MainDesign mainDesign = experimentDesignGenerator
-				.createAugmentedRandomizedBlockDesign(nblks, numberOfTreatments, nControls, ENTRY_NO, BLOCK_NO, PLOT_NO, plotNumber);
+				.createAugmentedRandomizedBlockDesign(numberOfBlocks, numberOfTreatments, numberOfControls, startingPlotNumber, ENTRY_NO, BLOCK_NO, PLOT_NO);
 
 		final ExpDesign expDesign = mainDesign.getDesign();
 
 		Assert.assertEquals(ExperimentDesignGenerator.AUGMENTED_RANDOMIZED_BLOCK_DESIGN, expDesign.getName());
 		Assert.assertEquals(numberOfTreatments, expDesign.getParameterValue(ExperimentDesignGenerator.NTREATMENTS_PARAM));
-		Assert.assertEquals(nControls, expDesign.getParameterValue(ExperimentDesignGenerator.NCONTROLS_PARAM));
-		Assert.assertEquals(nblks, expDesign.getParameterValue(ExperimentDesignGenerator.NBLOCKS_PARAM));
+		Assert.assertEquals(numberOfControls, expDesign.getParameterValue(ExperimentDesignGenerator.NCONTROLS_PARAM));
+		Assert.assertEquals(numberOfBlocks, expDesign.getParameterValue(ExperimentDesignGenerator.NBLOCKS_PARAM));
 		Assert.assertEquals(ENTRY_NO, expDesign.getParameterValue(ExperimentDesignGenerator.TREATMENTFACTOR_PARAM));
 		Assert.assertEquals(BLOCK_NO, expDesign.getParameterValue(ExperimentDesignGenerator.BLOCKFACTOR_PARAM));
 		Assert.assertEquals(PLOT_NO, expDesign.getParameterValue(ExperimentDesignGenerator.PLOTFACTOR_PARAM));

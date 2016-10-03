@@ -393,4 +393,11 @@ public class ExpDesignController extends BaseTrialController {
 	void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
 		this.fieldbookProperties = fieldbookProperties;
 	}
+
+	
+	void setMessageSource(ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+	
+	
 }

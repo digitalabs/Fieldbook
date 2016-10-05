@@ -196,7 +196,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
         String lotIds = "";
         for (int i = 0; i < lotRows.size(); i++) {
 			final ListEntryLotDetails lotRow = lotRows.get(i);
-			lotIds += lotRow.getLotId().toString();
+			lotIds += lotRow.getLotId() == null ? "" : lotRow.getLotId().toString();
 			if (i != (lotRows.size() - 1)) {
 				lotIds += ", ";
 			}
@@ -213,7 +213,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
         String stockIds = "";
         for (int i = 0; i < lotRows.size(); i++) {
 			final ListEntryLotDetails lotRow = lotRows.get(i);
-			stockIds += lotRow.getStockIds();
+			stockIds += lotRow.getStockIds() == null ? "" : lotRow.getStockIds();
 			if (i != (lotRows.size() - 1)) {
 				stockIds += ", ";
 			}

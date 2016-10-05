@@ -1,6 +1,20 @@
-
 package com.efficio.fieldbook.service.internal.impl;
 
+import au.com.bytecode.opencsv.CSVReader;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.service.internal.DesignRunner;
+import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
+import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.workbench.Tool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.JAXBException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,23 +23,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
-
-import javax.xml.bind.JAXBException;
-
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.Tool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import au.com.bytecode.opencsv.CSVReader;
-
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.service.internal.DesignRunner;
-import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
-import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 public class BVDesignRunner implements DesignRunner {
 
@@ -75,7 +72,7 @@ public class BVDesignRunner implements DesignRunner {
 		BVDesignOutput output = new BVDesignOutput(returnCode);
 		if (returnCode == 0) {
 
-			File outputFile = new File(design.getDesign().getParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM));
+			File outputFile = new File(design.getDesign().getParameterValue(ExperimentDesignGenerator.OUTPUTFILE_PARAM));
 			FileReader fileReader = new FileReader(outputFile);
 			CSVReader reader = new CSVReader(fileReader);
 			List<String[]> myEntries = reader.readAll();
@@ -93,8 +90,8 @@ public class BVDesignRunner implements DesignRunner {
 		Long currentTimeMillis = System.currentTimeMillis();
 		String outputFilePath = currentTimeMillis + BVDesignRunner.BV_PREFIX + BVDesignRunner.CSV_EXTENSION;
 
-		design.getDesign().setParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM, outputFilePath);
-		design.getDesign().setParameterValue(ExpDesignUtil.SEED_PARAM, this.getSeedValue(currentTimeMillis));
+		design.getDesign().setParameterValue(ExperimentDesignGenerator.OUTPUTFILE_PARAM, outputFilePath);
+		design.getDesign().setParameterValue(ExperimentDesignGenerator.SEED_PARAM, this.getSeedValue(currentTimeMillis));
 
 		try {
 			xml = ExpDesignUtil.getXmlStringForSetting(design);

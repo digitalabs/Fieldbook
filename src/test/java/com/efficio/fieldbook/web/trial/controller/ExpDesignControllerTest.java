@@ -1,8 +1,10 @@
-
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.List;
-
+import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.pojos.workbench.CropType;
@@ -18,11 +20,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
-import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
-import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExpDesignControllerTest {
@@ -47,8 +46,8 @@ public class ExpDesignControllerTest {
 
 	@Mock
 	private DesignImportService designImportService;
-	
-	private FieldbookProperties fieldbookProperties = new FieldbookProperties();
+
+	private final FieldbookProperties fieldbookProperties = new FieldbookProperties();
 
 	@InjectMocks
 	ExpDesignController expDesignController;
@@ -119,6 +118,6 @@ public class ExpDesignControllerTest {
 	@Test
 	public void testRetrieveDesignTypes() {
 		final List<DesignTypeItem> designTypes = this.expDesignController.retrieveDesignTypes();
-		Assert.assertEquals("4 core design types are expected to be returned.", 4, designTypes.size());
+		Assert.assertEquals("5 core design types are expected to be returned.", 5, designTypes.size());
 	}
 }

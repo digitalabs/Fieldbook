@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -51,7 +52,13 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 	private ContextUtil contextUtil;
 
 	@Mock
+	private FieldbookProperties fieldbookProperties;
+
+	@Mock
 	private ResourceBundleMessageSource messageSource;
+
+	@InjectMocks
+	private ExperimentDesignGenerator experimentDesignGenerator;
 
 	@InjectMocks
 	private ResolvableIncompleteBlockDesignServiceImpl resolveIncompleteBlockDesignImpl;
@@ -65,7 +72,8 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 
 	@Before
 	public void beforeEachTest() throws IOException {
-		MockitoAnnotations.initMocks(this);
+
+		resolveIncompleteBlockDesignImpl.setExperimentDesignGenerator(experimentDesignGenerator);
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(ResolvableIncompleteBlockDesignServiceImplTest.PROGRAM_UUID);
 
@@ -154,6 +162,8 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 	 */
 	@Test
 	public void testGenerateDesign() throws Exception {
+
+
 
 		final int startingEntryNo = 5;
 		final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", startingEntryNo, 10);

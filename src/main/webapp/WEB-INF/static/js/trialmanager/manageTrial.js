@@ -291,7 +291,10 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			$scope.refreshEnvironmentsAndExperimentalDesign = function() {
 				var currentDesignType = TrialManagerDataService.currentData.experimentalDesign.designType;
 				var showIndicateUnappliedChangesWarning = true;
-				if (TrialManagerDataService.applicationData.designTypes[currentDesignType].name === 'Custom Import Design') {
+
+				var designTypes = TrialManagerDataService.applicationData.designTypes;
+
+				if (TrialManagerDataService.getDesignTypeById(currentDesignType, designTypes).name === 'Custom Import Design') {
 					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd = $scope.temp.noOfEnvironments;
 					showIndicateUnappliedChangesWarning = false;
 					ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());

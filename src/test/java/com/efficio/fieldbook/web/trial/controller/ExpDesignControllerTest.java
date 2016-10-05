@@ -1,9 +1,13 @@
-
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -26,14 +30,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
-import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
-import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExpDesignControllerTest {
@@ -140,7 +139,7 @@ public class ExpDesignControllerTest {
 	@Test
 	public void testRetrieveDesignTypes() {
 		final List<DesignTypeItem> designTypes = this.expDesignController.retrieveDesignTypes();
-		Assert.assertEquals("4 core design types are expected to be returned.", 4, designTypes.size());
+		Assert.assertEquals("5 core design types are expected to be returned.", 5, designTypes.size());
 	}
 
 	@Test

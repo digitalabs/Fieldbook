@@ -195,12 +195,13 @@ public class ImportGermplasmListControllerTest {
 
 		final List<Map<String, Object>> listDataTable =
 				(List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
-
+		
 		// Check if the content of list data table is equal to the GermplasmListData
 		Assert.assertEquals(5, listDataTable.size());
 
 		int x = 1;
 		for (final Map<String, Object> map : listDataTable) {
+			// Test the values set in the list data table
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
 			Assert.assertEquals(checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
@@ -212,7 +213,10 @@ public class ImportGermplasmListControllerTest {
 			Assert.assertEquals("", map.get(ImportGermplasmListController.CHECK));
 			x++;
 		}
-
+		
+		//Test values set in form
+		Assert.assertEquals("The starting entry number should be 1.",form.getStartingEntryNo(), 1);
+		Assert.assertEquals("The starting plot number should be 1.", form.getStartingPlotNo(), 1);
 	}
 
 	@Test
@@ -242,6 +246,7 @@ public class ImportGermplasmListControllerTest {
 
 		int x = 1;
 		for (final Map<String, Object> map : listDataTable) {
+			// Test the values set in the list data table
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
 			Assert.assertEquals(checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
@@ -253,7 +258,10 @@ public class ImportGermplasmListControllerTest {
 			Assert.assertEquals("1", map.get(ImportGermplasmListController.CHECK));
 			x++;
 		}
-
+		
+		//Test values set in form
+		Assert.assertEquals("The starting entry number should be 1.",form.getStartingEntryNo(), 1);
+		Assert.assertEquals("The starting plot number should be 1.", form.getStartingPlotNo(), 1);
 	}
 
 	@Test

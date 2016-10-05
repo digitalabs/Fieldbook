@@ -178,6 +178,7 @@ public class SettingsUtil {
 		}
 
 		for (final SettingDetail settingDetail : baselineTraits) {
+			//Setting Detail's variable becomes null when the trait it represents is deleted.
 			if (settingDetail.getVariable() != null) {
 				final SettingVariable variable = settingDetail.getVariable();
 
@@ -278,6 +279,7 @@ public class SettingsUtil {
 
 		for (final SettingDetail detailWithValue : listWithValue) {
 			for (final SettingDetail detailFromSession : listFromSession) {
+				//Setting Detail's variable becomes null when the trait it represents is deleted.
 				if (detailFromSession.getVariable() != null && detailWithValue.getVariable() != null
 						&& detailFromSession.getVariable().getCvTermId().equals(detailWithValue.getVariable().getCvTermId())) {
 

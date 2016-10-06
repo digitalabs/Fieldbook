@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -48,12 +49,15 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	@Resource
 	public FieldbookService fieldbookService;
+	@Resource
+	private ExperimentDesignGenerator experimentDesignGenerator;
+
 	private static final String PROGRAM_UUID = "12345678";
 
 	@Test
 	public void testResolvableIncompleteBlockExpDesignRunToBvDesign() {
 
-		MainDesign mainDesign = ExpDesignUtil.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps",
+		MainDesign mainDesign = experimentDesignGenerator.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps",
 				"Subblocks", "Plots", 301, null, "0", "", "", false);
 
 		try {
@@ -67,7 +71,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testResolvableRowColExpDesignRunToBvDesign() {
 
-		MainDesign mainDesign = ExpDesignUtil.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns",
+		MainDesign mainDesign = experimentDesignGenerator.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns",
 				"Plots", 301, null, "0", "0", "", "", false);
 
 		try {
@@ -89,7 +93,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 		levels.add("24");
 		levels.add("3");
 
-		MainDesign mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, treatmentFactor, levels, "");
+		MainDesign mainDesign = experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, treatmentFactor, levels, "");
 
 		try {
 			BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);

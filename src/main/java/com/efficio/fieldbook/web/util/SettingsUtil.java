@@ -2247,8 +2247,8 @@ public class SettingsUtil {
 				if (param.getDesignType() != null) {
 					if (param.getDesignType().equals(0)) {
 						return String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId());
-					} else if (param.getDesignType().equals(1) || param.getDesignType().equals(4) || param.getDesignType().equals(5)
-							|| param.getDesignType().equals(6)) {
+					} else if (param.getDesignType().equals(1) || param.getDesignType().equals(5) || param.getDesignType().equals(6)
+							|| param.getDesignType().equals(7)) {
 						if (param.getUseLatenized() != null && param.getUseLatenized()) {
 							return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId());
 						} else {
@@ -2262,6 +2262,8 @@ public class SettingsUtil {
 						}
 					} else if (param.getDesignType().equals(3)) {
 						return String.valueOf(TermId.OTHER_DESIGN.getId());
+					} else if (param.getDesignType().equals(4)) {
+						return String.valueOf(TermId.AUGMENTED_RANDOMIZED_BLOCK.getId());
 					}
 				}
 				break;
@@ -2296,6 +2298,8 @@ public class SettingsUtil {
 				return param.getNrlatin();
 			case EXPT_DESIGN_SOURCE:
 				return param.getFileName();
+			case NBLKS:
+				return param.getNumberOfBlocks();
 			default:
 		}
 		return "";
@@ -2325,6 +2329,8 @@ public class SettingsUtil {
 						param.setDesignType(DesignTypeItem.ROW_COL.getId());
 					} else if (String.valueOf(TermId.OTHER_DESIGN.getId()).equals(var.getValue())) {
 						param.setDesignType(DesignTypeItem.CUSTOM_IMPORT.getId());
+					} else if (String.valueOf(TermId.AUGMENTED_RANDOMIZED_BLOCK.getId()).equals(var.getValue())) {
+						param.setDesignType(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId());
 					}
 					if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())
 							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
@@ -2351,6 +2357,8 @@ public class SettingsUtil {
 				param.setReplicationsCount(var.getValue());
 			} else if (var.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
 				param.setFileName(var.getValue());
+			} else if (var.getTermId() == TermId.NBLKS.getId()) {
+				param.setNumberOfBlocks(var.getValue());
 			}
 		}
 		SettingsUtil.updateDesignTypeIfIncompleteBlockAndFileNameIsSet(param);
@@ -2369,7 +2377,7 @@ public class SettingsUtil {
 		// currently the UI follows this sequence for the presets: 4, 5, 6
 		// (this can be changed in the future so that constants are used)
 		Collections.sort(presetTemplates);
-		int presetDesignType = DesignTypeItem.CUSTOM_IMPORT.getId() + 1;
+		int presetDesignType = DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId() + 1;
 		for (final File designTemplateFile : presetTemplates) {
 			final String templateFileName = designTemplateFile.getName();
 			if (templateFileName.equals(fileName)) {

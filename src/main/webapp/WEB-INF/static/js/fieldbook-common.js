@@ -2269,6 +2269,8 @@ function recreateLocationCombo(possibleFavorite) {
 
 						if (data.allBreedingFavoritesLocations && data.allBreedingFavoritesLocations.length > 0) {
 							$('#showFavoriteLocation').prop('checked', true);
+						} else {
+							$('#showFavoriteLocation').prop('checked', false);
 						}
 
 						recreateLocationComboAfterClose('harvestLocationIdAll', data.allLocations);

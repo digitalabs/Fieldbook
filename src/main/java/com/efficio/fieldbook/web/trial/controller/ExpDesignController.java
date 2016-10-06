@@ -16,6 +16,7 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.spring.util.ToolLicenseUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -24,6 +25,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
@@ -68,6 +70,9 @@ public class ExpDesignController extends BaseTrialController {
 	@Resource
 	private DesignImportService designImportService;
 
+	@Resource
+	private ToolLicenseUtil toolLicenseUtil;
+
 	@Override
 	public String getContentName() {
 		return "TrialManager/openTrial";
@@ -84,10 +89,12 @@ public class ExpDesignController extends BaseTrialController {
 		designTypes.add(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK);
 		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
 
+
 		if (this.fieldbookProperties.getPresetDesignEnabledCrops()
 				.contains(this.contextUtil.getProjectInContext().getCropType().getCropName())) {
 			// There are five (0-4) fixed design types, so the preset designs get id 5 and onwards.
 			designTypes.addAll(this.generatePresetDesignTypes(5));
+
 		}
 
 		return designTypes;
@@ -196,11 +203,13 @@ public class ExpDesignController extends BaseTrialController {
 
 		final String name = "";
 
+
 		final Dataset dataset = (Dataset) SettingsUtil
 				.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
 						variatesList, this.userSelection, this.userSelection.getTrialLevelVariableList(),
 						this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), false,
 						this.contextUtil.getCurrentProgramUUID());
+
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.contextUtil.getCurrentProgramUUID());
 		final StudyDetails details = new StudyDetails();
@@ -248,8 +257,16 @@ public class ExpDesignController extends BaseTrialController {
 							}
 						}
 
-						final List<MeasurementRow> measurementRows = designService
-								.generateDesign(germplasmList, expDesign, workbook.getConditions(), workbook.getFactors(),
+
+						if (this.toolLicenseUtil.isToolExpired(ToolName.breeding_view.toString())) {
+							expParameterOutput =
+									new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.license.expired",
+											null, locale));
+							return expParameterOutput;
+						}
+
+						final List<MeasurementRow> measurementRows =
+								designService.generateDesign(germplasmList, expDesign, workbook.getConditions(), workbook.getFactors(),
 										workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
 
 						this.userSelection.setExpDesignParams(expDesign);
@@ -285,7 +302,19 @@ public class ExpDesignController extends BaseTrialController {
 								oldFactors.remove(var);
 							}
 						}
+
 						workbook.setExpDesignVariables(designService.getRequiredDesignVariables());
+
+						if (this.toolLicenseUtil.isToolExpiringWithinThirtyDays(ToolName.breeding_view.toString())) {
+							final int daysBeforeExpiration =
+									this.toolLicenseUtil.daysBeforeToolExpiration(ToolName.breeding_view.toString());
+							expParameterOutput =
+									new ExpDesignValidationOutput(true, this.messageSource.getMessage("experiment.design.license.expiring",
+											new Integer[] {daysBeforeExpiration}, locale));
+							expParameterOutput.setUserConfirmationRequired(true);
+							return expParameterOutput;
+						}
+
 					}
 				}
 			}
@@ -373,4 +402,9 @@ public class ExpDesignController extends BaseTrialController {
 	void setFieldbookProperties(final FieldbookProperties fieldbookProperties) {
 		this.fieldbookProperties = fieldbookProperties;
 	}
+
+	void setMessageSource(final ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
 }

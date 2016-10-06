@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -27,7 +28,6 @@ import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.mysql.jdbc.StringUtils;
 
 public class DesignImportValidator {
 
@@ -89,7 +89,7 @@ public class DesignImportValidator {
 		final Iterator<Entry<Integer, List<String>>> iterator = csvMap.entrySet().iterator();
 		while (iterator.hasNext()) {
 			final String value = iterator.next().getValue().get(entryNoHeaderItem.getColumnIndex());
-			if (StringUtils.isNullOrEmpty(value) && set.contains(value)) {
+			if (StringUtils.isEmpty(value) && set.contains(value)) {
 				throw new DesignValidationException(this.messageSource.getMessage("design.import.error.entry.number.unique.per.instance",
 						null, Locale.ENGLISH));
 			} else {
@@ -152,7 +152,7 @@ public class DesignImportValidator {
 		while (iterator.hasNext()) {
 			final String value = iterator.next().getValue().get(plotNoHeaderItem.getColumnIndex());
 
-			if (!StringUtils.isNullOrEmpty(value)) {
+			if (!StringUtils.isEmpty(value)) {
 				if (set.contains(value)) {
 					throw new DesignValidationException(this.messageSource.getMessage("design.import.error.plot.number.must.be.unique",
 							null, Locale.ENGLISH));

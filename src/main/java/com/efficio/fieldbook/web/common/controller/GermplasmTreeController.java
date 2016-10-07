@@ -45,8 +45,10 @@ import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
+import org.generationcp.middleware.pojos.GermplasmFolderMetadata;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.GermplasmListMetadata;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
@@ -795,41 +797,35 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	private List<TreeNode> getGermplasmChildNodes(final String parentKey, final boolean isFolderOnly, final String programUUID) {
-		List<TreeNode> childNodes = new ArrayList<>();
-		if (parentKey != null && !"".equals(parentKey)) {
-			try {
-				if (GermplasmTreeController.LISTS.equals(parentKey)) {
-					final List<GermplasmList> rootLists = this.germplasmListManager.getAllTopLevelLists(programUUID);
-					childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly);
-				} else if (NumberUtils.isNumber(parentKey)) {
-					childNodes = this.getGermplasmChildrenNode(parentKey, isFolderOnly, programUUID);
-				} else {
-					GermplasmTreeController.LOG.error("parentKey = " + parentKey + " is not a number");
-				}
-
-			} catch (final Exception e) {
-				GermplasmTreeController.LOG.error(e.getMessage(), e);
-			}
+		if (!(parentKey != null && !"".equals(parentKey))) {
+			return new ArrayList<>();
 		}
 
+		final List<GermplasmList> rootLists;
+		if (GermplasmTreeController.LISTS.equals(parentKey)) {
+			rootLists = this.germplasmListManager.getAllTopLevelLists(programUUID);
+		} else if (NumberUtils.isNumber(parentKey)) {
+			rootLists = this.getGermplasmChildrenNode(parentKey, isFolderOnly, programUUID);
+		} else {
+			throw new IllegalStateException("Add a message");
+		}
+		final List<TreeNode> childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly);
+
+		final Map<Integer, GermplasmFolderMetadata> allListMetaData = germplasmListManager.getGermplasmFolderMetadata(rootLists);
+
 		for (final TreeNode newNode : childNodes) {
-			final List<TreeNode> childOfChildNode = this.getGermplasmChildrenNode(newNode.getKey(), isFolderOnly, programUUID);
-			if (childOfChildNode.isEmpty()) {
-				newNode.setIsLazy(false);
-			} else {
+			GermplasmFolderMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));
+			if (nodeMetaData != null && nodeMetaData.getNumberOfChildren() > 0) {
 				newNode.setIsLazy(true);
 			}
 		}
 		return childNodes;
 	}
 
-	private List<TreeNode> getGermplasmChildrenNode(final String parentKey, final boolean isFolderOnly, final String programUUID) {
-		List<TreeNode> childNodes;
+	private List<GermplasmList> getGermplasmChildrenNode(final String parentKey, final boolean isFolderOnly, final String programUUID) {
 		final int parentId = Integer.valueOf(parentKey);
-		final List<GermplasmList> childLists = this.germplasmListManager.getGermplasmListByParentFolderIdBatched(parentId, programUUID,
+		return this.germplasmListManager.getGermplasmListByParentFolderIdBatched(parentId, programUUID,
 				GermplasmTreeController.BATCH_SIZE);
-		childNodes = TreeViewUtil.convertGermplasmListToTreeView(childLists, isFolderOnly);
-		return childNodes;
 	}
 
 	private List<TreeTableNode> getGermplasmFolderChildrenNode(final String id, final String programUUID) {
@@ -849,8 +845,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 			dataResults.put("name", germplasmList.getName());
 			dataResults.put("description", germplasmList.getDescription());
-			final GermplasmList parentGermplasmList = this.fieldbookMiddlewareService.getGermplasmListById(germplasmList.getListRef());
-			dataResults.put("type", this.getTypeString(parentGermplasmList.getType()));
+			Integer listRef = germplasmList.getListRef();
+			if(listRef != null) {
+				final GermplasmList parentGermplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listRef);
+				dataResults.put("type", this.getTypeString(parentGermplasmList.getType()));
+			} else {
+				dataResults.put("type", this.getTypeString(germplasmList.getType()));
+			}
 
 			String statusValue = "Unlocked List";
 			if (germplasmList.getStatus() >= 100) {

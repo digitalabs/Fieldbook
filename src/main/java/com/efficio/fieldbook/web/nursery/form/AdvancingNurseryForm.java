@@ -138,8 +138,6 @@ public class AdvancingNurseryForm {
 
 	private String errorInAdvance;
 
-	private String checkAdvanceLinesUnique;
-
 	private Set<String> selectedTrialInstances;
 
     private Set<String> selectedReplications;
@@ -149,8 +147,6 @@ public class AdvancingNurseryForm {
 		return this.selectedTrialInstances;
 	}
 
-	
-	
 	public void setSelectedTrialInstances(Set<String> selectedTrialInstances) {
 		this.selectedTrialInstances = selectedTrialInstances;
 	}
@@ -888,14 +884,6 @@ public class AdvancingNurseryForm {
 	 */
 	public void setErrorInAdvance(String errorInAdvance) {
 		this.errorInAdvance = errorInAdvance;
-	}
-
-	public String getCheckAdvanceLinesUnique() {
-		return this.checkAdvanceLinesUnique;
-	}
-
-	public void setCheckAdvanceLinesUnique(String checkAdvanceLinesUnique) {
-		this.checkAdvanceLinesUnique = checkAdvanceLinesUnique;
 	}
 
 	@Override

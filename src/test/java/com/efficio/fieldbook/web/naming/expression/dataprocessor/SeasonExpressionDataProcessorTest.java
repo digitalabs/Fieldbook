@@ -3,11 +3,13 @@ package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -28,6 +30,13 @@ import com.google.common.collect.Lists;
 public class SeasonExpressionDataProcessorTest {
 
 	private static final String EMPTY_STRING = "";
+	public static final String SEASON_NAME_WET = "1";
+	public static final String SEASON_NAME_DRY = "2";
+	public static final String SEASON_DESCRIPTION_DRY = "Dry Season";
+	public static final String SEASON_DESCRIPTION_WET = "Wet Season";
+	public static final int SEASON_ID_WET = 10101;
+	public static final int SEASON_ID_DRY = 20202;
+
 	private static final String SEASON_CATEGORY_ID = "10290";
 	private static final String SEASON_CATEGORY_VALUE = "Dry Season";
 	private static final String SEASON_MONTH_VALUE = "201608";
@@ -212,6 +221,45 @@ public class SeasonExpressionDataProcessorTest {
 		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
 		Assert.assertEquals("The season should be an empty String", SeasonExpressionDataProcessorTest.EMPTY_STRING,
 				this.advancingSource.getSeason());
+	}
+
+
+	@Test
+	public void testGetSeasonNameValueIsCategoricalId() {
+
+		List<ValueReference> possibleValues = this.createPossibleValues();
+
+		Assert.assertEquals(SEASON_NAME_WET, this.seasonExpressionDataProcessor.getSeasonName(String.valueOf(SEASON_ID_WET), possibleValues));
+		Assert.assertEquals(SEASON_NAME_DRY, this.seasonExpressionDataProcessor.getSeasonName(String.valueOf(SEASON_ID_DRY), possibleValues));
+
+	}
+
+	@Test
+	public void testGetSeasonNameValueIsCategoricalDescription() {
+
+		List<ValueReference> possibleValues = this.createPossibleValues();
+
+		Assert.assertEquals(SEASON_NAME_WET, this.seasonExpressionDataProcessor.getSeasonName(SEASON_DESCRIPTION_DRY, possibleValues));
+		Assert.assertEquals(SEASON_NAME_DRY, this.seasonExpressionDataProcessor.getSeasonName(SEASON_DESCRIPTION_WET, possibleValues));
+
+	}
+
+	@Test
+	public void testGetSeasonNamePossibleValuesIsNullOrEmpty() {
+
+		Assert.assertEquals(SEASON_NAME_WET, this.seasonExpressionDataProcessor.getSeasonName(SEASON_NAME_WET, null));
+		Assert.assertEquals(SEASON_NAME_WET, this.seasonExpressionDataProcessor.getSeasonName(SEASON_NAME_WET, new ArrayList<ValueReference>()));
+
+
+	}
+
+	private List<ValueReference> createPossibleValues() {
+
+		List<ValueReference> possibleValues = new ArrayList<>();
+		possibleValues.add(valueReferenceTDI.createValueReference(SEASON_ID_WET, SEASON_NAME_WET, SEASON_DESCRIPTION_DRY));
+		possibleValues.add(valueReferenceTDI.createValueReference(SEASON_ID_DRY, SEASON_NAME_DRY, SEASON_DESCRIPTION_WET));
+		return possibleValues;
+
 	}
 
 }

@@ -58,21 +58,29 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 		return season;
 	}
 
-	private String getSeasonVarValue(final String value, final List<ValueReference> possibleValues) {
-		for (final ValueReference valueReference : possibleValues) {
-			if (valueReference.getId() == Integer.parseInt(value)) {
-				return valueReference.getDescription();
+	String getSeasonName(final String value, final List<ValueReference> possibleValues) {
+
+		if (possibleValues != null && !possibleValues.isEmpty()) {
+			for (final ValueReference valueReference : possibleValues) {
+				// The Season Code variable is categorical type, it's value should be the id of the season (valid value).
+				if (StringUtils.isNumeric(value) && valueReference.getId().intValue() == Integer.parseInt(value)) {
+					return valueReference.getName();
+				} else if (valueReference.getDescription().equals(value)) {
+					// But Season Code's value can also be the text description of the season,
+					// so we need to find the valid value by description here and return it's name.
+					return valueReference.getName();
+				}
 			}
 		}
-		// default
+		// if the value is not in the possible values (valid values), just return it as is.
 		return value;
 	}
 
 	private void addValueToMeasurementVariablesValues(final String value, final List<ValueReference> possibleValues, final int termId,
 			final Map<Integer, String> measurementVariablesValues) {
 		if (StringUtils.isNotBlank(value)) {
-			if (termId == TermId.SEASON_VAR.getId() && StringUtils.isNumeric(value) && !possibleValues.isEmpty()) {
-				final String seasonVarValue = this.getSeasonVarValue(value, possibleValues);
+			if (termId == TermId.SEASON_VAR.getId()) {
+				final String seasonVarValue = this.getSeasonName(value, possibleValues);
 				measurementVariablesValues.put(termId, seasonVarValue);
 			} else {
 				measurementVariablesValues.put(termId, value);

@@ -42,6 +42,7 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,6 +108,10 @@ public class EditNurseryController extends SettingsController {
 	 */
 	@Resource
 	private FieldbookService fieldbookService;
+
+
+	@Resource
+	private DataImportService dataImportService;
 
 	/*
 	 * (non-Javadoc)
@@ -499,6 +504,7 @@ public class EditNurseryController extends SettingsController {
 		workbook.setMeasurementDatesetId(measurementDatasetId);
 		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
 		this.setTrialObservationsFromVariables(workbook);
+		this.dataImportService.populatePossibleValuesForCategoricalVariates(workbook.getConditions(), programUUID);
 		return workbook;
 	}
 

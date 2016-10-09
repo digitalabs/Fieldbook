@@ -25,12 +25,11 @@ public class CSVLabelGeneratorIT extends AbstractBaseIntegrationTest{
 
     @Test
     public void testGenerationOfCsvLabels() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-        UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
+        final List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+        final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
         String fileName = "";
         try {
-            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, baos);
+            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting);
 
             CsvReader csvReader = new CsvReader(fileName);
 

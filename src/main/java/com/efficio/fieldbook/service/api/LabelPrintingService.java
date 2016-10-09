@@ -29,6 +29,7 @@ import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 
 /**
@@ -37,16 +38,30 @@ import org.generationcp.middleware.pojos.presets.ProgramPreset;
 public interface LabelPrintingService {
 
 	/**
+	 * Generate labels for seed preparation.
+	 *
+	 * @param labelType (xls, pdf or csv)
+	 * @param germplasmListDataList the germplasm list data
+	 * @param userLabelPrinting the user label printing settings
+	 * @return the name of the file with labels being created
+	 * @throws LabelPrintingException the label printing exception
+	 */
+	String generateLabelsForGermplasmList(String labelType, List<GermplasmListData> germplasmListDataList, UserLabelPrinting
+			userLabelPrinting) throws LabelPrintingException;
+
+
+	/**
 	 * Generate pdf labels.
 	 *
 	 * @param trialInstances the trial instances
 	 * @param userLabelPrinting the user label printing
-	 * @param baos the baos
 	 * @return the string
 	 * @throws LabelPrintingException the label printing exception
 	 */
-	String generateLabels(String labelType, List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
-					throws LabelPrintingException;
+	String generateLabels(String labelType, List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting)
+			throws LabelPrintingException;
+
+
 	/**
 	 * Gets the available label fields for FieldMap.
 	 *
@@ -56,6 +71,8 @@ public interface LabelPrintingService {
 	 * @return the available label fields
 	 */
 	List<LabelFields> getAvailableLabelFieldsForFieldMap(boolean isTrial, boolean hasFieldMap, Locale locale);
+
+	List<LabelFields> getAvailableLabelFieldsForInventory(final Locale locale);
 
 	/**
 	 * Gets the available label fields for Nursery, Trial.

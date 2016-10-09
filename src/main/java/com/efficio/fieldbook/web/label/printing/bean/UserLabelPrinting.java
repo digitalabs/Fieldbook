@@ -90,7 +90,7 @@ public class UserLabelPrinting implements Serializable {
 	private String filename;
 
 	/** The generate type. */
-	// 1 - pdf, 2 - xls
+	// 1 - pdf, 2 - xls, 3- csv
 	private String generateType;
 
 	/** The order. */

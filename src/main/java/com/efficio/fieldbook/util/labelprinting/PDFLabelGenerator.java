@@ -23,6 +23,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +44,7 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
     private static final String ARIAL_UNI = "arialuni.ttf";
 
 
-    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
-                                    final ByteArrayOutputStream baos) throws LabelPrintingException {
+    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
         final int pageSizeId = Integer.parseInt(userLabelPrinting.getSizeOfLabelSheet());
         final int numberOfLabelPerRow = Integer.parseInt(userLabelPrinting.getNumberOfLabelPerRow());
@@ -192,7 +192,7 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
                         final PdfPTable innerTableInfo = new PdfPTable(2);
                         innerTableInfo.setWidths(new float[] {1, 1});
                         innerTableInfo.setWidthPercentage(85);
-                        final List<Integer> leftSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(leftSelectedFields);
+                        final List<Integer> leftSelectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(leftSelectedFields);
                         final String leftText = this.generateBarcodeLabel(moreFieldInfo, fieldMapLabel, leftSelectedFieldIDs,
                                 fieldMapTrialInstanceInfo.getLabelHeaders(), row);
                         final PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
@@ -204,7 +204,7 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
 
                         innerTableInfo.addCell(cellInnerLeft);
 
-                        final List<Integer> rightSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(rightSelectedFields);
+                        final List<Integer> rightSelectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(rightSelectedFields);
                         final String rightText = this.generateBarcodeLabel(moreFieldInfo, fieldMapLabel, rightSelectedFieldIDs,
                                 fieldMapTrialInstanceInfo.getLabelHeaders(), row);
                         final PdfPCell cellInnerRight = new PdfPCell(new Paragraph(rightText, fontNormal));
@@ -301,7 +301,12 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
         return fileName;
     }
 
-
+    @Override
+    public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting userLabelPrinting)
+            throws LabelPrintingException {
+        //FIXME Implement !!!!!
+        return null;
+    }
 
     /**
      * Generate barcode label.

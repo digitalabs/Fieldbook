@@ -14,6 +14,7 @@ import com.google.common.collect.Maps;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -31,7 +32,7 @@ public abstract class BaseLabelGenerator {
 
     /** The message source. */
     @Resource
-    private MessageSource messageSource;
+    protected MessageSource messageSource;
 
     @Resource
     protected FieldbookService fieldbookService;
@@ -39,8 +40,10 @@ public abstract class BaseLabelGenerator {
     /** The delimiter. */
     protected final String delimiter = " | ";
 
-    public abstract String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
-                                          final ByteArrayOutputStream baos) throws LabelPrintingException;
+    public abstract String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException;
+
+    public abstract String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting
+            userLabelPrinting) throws LabelPrintingException;
 
     protected Map<String, String> generateAddedInformationField(final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo,
                                                                 final StudyTrialInstanceInfo trialInstance, final String barCode) {
@@ -235,7 +238,7 @@ public abstract class BaseLabelGenerator {
         final StringBuilder buffer = new StringBuilder();
         final String fieldList = firstField + "," + secondField + "," + thirdField;
 
-        final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(fieldList);
+        final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(fieldList);
 
         for (final Integer selectedFieldID : selectedFieldIDs) {
             if (!"".equalsIgnoreCase(buffer.toString())) {

@@ -309,7 +309,6 @@ public class LabelPrintingServiceImplTest {
 	public void testGenerateLabelsSortLabelsEntryNumber() throws LabelPrintingException {
 		final BaseLabelGenerator labelGenerator = Mockito.mock(BaseLabelGenerator.class);
 		final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
-		final ByteArrayOutputStream baos = Mockito.mock(ByteArrayOutputStream.class);
 		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory)
 				.retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
 
@@ -317,7 +316,7 @@ public class LabelPrintingServiceImplTest {
 
 		// we randomize the arrangement of the list
 		Collections.shuffle(infoList.get(0).getTrialInstance().getFieldMapLabels());
-		this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList, labelPrinting, baos);
+		this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList, labelPrinting);
 
 		int currentEntryNumberValue = -1;
 		for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {
@@ -331,7 +330,6 @@ public class LabelPrintingServiceImplTest {
 	public void testGenerateLabelsSortLabelsPlotNumber() throws LabelPrintingException {
 		final BaseLabelGenerator labelGenerator = Mockito.mock(BaseLabelGenerator.class);
 		final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
-		final ByteArrayOutputStream baos = Mockito.mock(ByteArrayOutputStream.class);
 		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory)
 				.retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
 
@@ -345,7 +343,7 @@ public class LabelPrintingServiceImplTest {
 
 		// we randomize the arrangement of the list
 		Collections.shuffle(infoList.get(0).getTrialInstance().getFieldMapLabels());
-		this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList, labelPrinting, baos);
+		this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList, labelPrinting);
 
 		int currentPlotNumber = -1;
 		for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {

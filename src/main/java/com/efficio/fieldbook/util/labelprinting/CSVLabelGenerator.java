@@ -14,11 +14,7 @@ import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.inventory.ListEntryLotDetails;
-import org.generationcp.middleware.domain.inventory.LotDetails;
-import org.generationcp.middleware.manager.api.InventoryDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.report.LotReportRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -48,7 +44,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
 
         mainSelectedFields = this.appendBarcode(isBarcodeNeeded, mainSelectedFields);
 
-        final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
+        final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(mainSelectedFields);
         final List<ExportColumnHeader> exportColumnHeaders =
                 this.generateColumnHeaders(selectedFieldIDs, getLabelHeadersFromTrialInstances(trialInstances));
 
@@ -78,7 +74,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
 
         mainSelectedFields = this.appendBarcode(isBarcodeNeeded, mainSelectedFields);
 
-        final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
+        final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(mainSelectedFields);
 
         //Label Headers
         //TODO move this block to separate utility function
@@ -117,7 +113,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
                     final StringBuilder buffer = new StringBuilder();
                     final String fieldList = userLabelPrinting.getFirstBarcodeField() + "," + userLabelPrinting.getSecondBarcodeField() + "," + userLabelPrinting.getThirdBarcodeField();
 
-                    final List<Integer> selectedBarcodeFieldIDs = SettingsUtil.parseFieldListAndConvert(fieldList);
+                    final List<Integer> selectedBarcodeFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(fieldList);
 
                     for (final Integer selectedBarcodeFieldID : selectedBarcodeFieldIDs) {
                         if (!"".equalsIgnoreCase(buffer.toString())) {
@@ -190,9 +186,9 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
     /**
      * Iterate trough all the lotRows and construct coma separated string of lotIds
      * @param lotRows
-     * @return coma separated string of lotIds
+     * @return comma separated string of lotIds
      */
-    private String getLotIDs(List<ListEntryLotDetails> lotRows) {
+    private String getLotIDs(final List<ListEntryLotDetails> lotRows) {
         String lotIds = "";
         for (int i = 0; i < lotRows.size(); i++) {
 			final ListEntryLotDetails lotRow = lotRows.get(i);

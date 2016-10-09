@@ -39,7 +39,6 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -214,7 +213,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		final LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
 		params.setVariableMap(this.convertToMap(workbook.getConditions(), workbook.getFactors()));
-		params.setSelectedFieldIDs(SettingsUtil.parseFieldListAndConvert(selectedFields));
+		params.setSelectedFieldIDs(SettingsUtil.parseFieldListAndConvertToListOfIDs(selectedFields));
 
 		final StudyType studyType = isTrial ? StudyType.T : StudyType.N;
 

@@ -14,7 +14,6 @@ import com.google.common.collect.Maps;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -241,7 +240,7 @@ public abstract class BaseLabelGenerator {
         final StringBuilder buffer = new StringBuilder();
         final String fieldList = firstField + "," + secondField + "," + thirdField;
 
-        final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(fieldList);
+        final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(fieldList);
 
         for (final Integer selectedFieldID : selectedFieldIDs) {
             if (!"".equalsIgnoreCase(buffer.toString())) {

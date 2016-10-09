@@ -23,7 +23,6 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,7 +193,7 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
                         final PdfPTable innerTableInfo = new PdfPTable(2);
                         innerTableInfo.setWidths(new float[] {1, 1});
                         innerTableInfo.setWidthPercentage(85);
-                        final List<Integer> leftSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(leftSelectedFields);
+                        final List<Integer> leftSelectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(leftSelectedFields);
                         final String leftText = this.generateBarcodeLabel(moreFieldInfo, fieldMapLabel, leftSelectedFieldIDs,
                                 fieldMapTrialInstanceInfo.getLabelHeaders(), row);
                         final PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
@@ -206,7 +205,7 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
 
                         innerTableInfo.addCell(cellInnerLeft);
 
-                        final List<Integer> rightSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(rightSelectedFields);
+                        final List<Integer> rightSelectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(rightSelectedFields);
                         final String rightText = this.generateBarcodeLabel(moreFieldInfo, fieldMapLabel, rightSelectedFieldIDs,
                                 fieldMapTrialInstanceInfo.getLabelHeaders(), row);
                         final PdfPCell cellInnerRight = new PdfPCell(new Paragraph(rightText, fontNormal));

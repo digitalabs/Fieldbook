@@ -43,8 +43,8 @@ public interface LabelPrintingService {
 	 * @param labelType (xls, pdf or csv)
 	 * @param germplasmListDataList the germplasm list data
 	 * @param userLabelPrinting the user label printing settings
-	 * @param baos the baos
-	 * @return the string
+	 * @param baos ByteArrayOutputStream to write into the file
+	 * @return the name of the file with labels being created
 	 * @throws LabelPrintingException the label printing exception
 	 */
 	String generateLabelsForGermplasmList(String labelType, List<GermplasmListData> germplasmListDataList, UserLabelPrinting

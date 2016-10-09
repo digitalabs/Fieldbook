@@ -585,7 +585,7 @@ public class SettingsUtil {
 		return "";
 	}
 
-	public static List<Integer> parseFieldListAndConvert(final String selectedFieldList) {
+	public static List<Integer> parseFieldListAndConvertToListOfIDs(final String selectedFieldList) {
 		final List<Integer> selectedFieldIDs = new ArrayList<>();
 		final String[] split = selectedFieldList.split(",");
 		for (final String s : split) {

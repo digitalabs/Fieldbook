@@ -17,7 +17,6 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +92,7 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
             Row row = null;
             mainSelectedFields = this.appendBarcode(isBarcodeNeeded, mainSelectedFields);
 
-            final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
+            final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(mainSelectedFields);
 
             if (includeHeader) {
                 row = labelPrintingSheet.createRow(rowIndex++);

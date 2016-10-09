@@ -40,12 +40,10 @@ public abstract class BaseLabelGenerator {
     /** The delimiter. */
     protected final String delimiter = " | ";
 
-    public abstract String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
-                                          final ByteArrayOutputStream baos) throws LabelPrintingException;
+    public abstract String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException;
 
     public abstract String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting
-            userLabelPrinting,
-            final ByteArrayOutputStream baos) throws LabelPrintingException;
+            userLabelPrinting) throws LabelPrintingException;
 
     protected Map<String, String> generateAddedInformationField(final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo,
                                                                 final StudyTrialInstanceInfo trialInstance, final String barCode) {

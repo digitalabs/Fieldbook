@@ -566,13 +566,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			final String fileName;
 			final LabelPrintingFileTypes selectedLabelPrintingType =
 					LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
-			final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
 			if (selectedLabelPrintingType.isValid()) {
 				this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
 
 				fileName = this.labelPrintingService.generateLabelsForGermplasmList(selectedLabelPrintingType.getFormIndex(), germplasmListDataList,
-						this.userLabelPrinting, byteStream);
+						this.userLabelPrinting);
 
 				results.put(LabelPrintingController.IS_SUCCESS, 1);
 				results.put("fileName", fileName);
@@ -658,7 +657,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
 
 			fileName = this.labelPrintingService.generateLabels(selectedLabelPrintingType.getFormIndex(), trialInstances,
-					this.userLabelPrinting, byteStream);
+					this.userLabelPrinting);
 
 			results.put(LabelPrintingController.IS_SUCCESS, 1);
 			results.put("fileName", fileName);

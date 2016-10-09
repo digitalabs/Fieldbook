@@ -183,20 +183,19 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	};
 
 	@Override
-	public String generateLabelsForGermplasmList(String labelType, List<GermplasmListData> germplasmListDataList, UserLabelPrinting
-			userLabelPrinting, ByteArrayOutputStream baos) throws LabelPrintingException {
-		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabelsForGermplasmList(germplasmListDataList, userLabelPrinting,
-				baos);
+	public String generateLabelsForGermplasmList(final String labelType, final List<GermplasmListData> germplasmListDataList,
+			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
+		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabelsForGermplasmList(germplasmListDataList, userLabelPrinting);
 	}
 
 	@Override
 	public String generateLabels(final String labelType, final List<StudyTrialInstanceInfo> trialInstances,
-			final UserLabelPrinting userLabelPrinting, final ByteArrayOutputStream baos) throws LabelPrintingException {
+			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
 		// sort the labels contained inside the trial instances so that they are arranged from highest to lowest by entry number
 		this.sortTrialInstanceLabels(trialInstances);
 
-		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting, baos);
+		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting);
 	}
 
 	protected void sortTrialInstanceLabels(final List<StudyTrialInstanceInfo> trialInstances) {

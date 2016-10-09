@@ -30,8 +30,7 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
 
     private static final Logger LOG = LoggerFactory.getLogger(ExcelLabelGenerator.class);
 
-    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
-                                    final ByteArrayOutputStream baos) throws LabelPrintingException {
+    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
         String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
         final boolean includeHeader =
@@ -141,8 +140,7 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
     }
 
     @Override
-    public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream
-            baos)
+    public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting userLabelPrinting)
             throws LabelPrintingException {
         //FIXME Implement !!!!!!
         return null;

@@ -45,13 +45,12 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
 
 	@Test
 	public void testFieldmapFieldsInGeneratedXls() throws Exception {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-		UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
+		final List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+		final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
 		String labels = "";
 		String fileName = "";
 
-		fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, baos);
+		fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting);
 		org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
 
 		Sheet sheet = xlsBook.getSheetAt(0);
@@ -98,17 +97,16 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
 
     @Test
     public void testGenerationOfXlsLabels() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-        UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
+        final List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+        final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
         String fileName = "";
         try {
-            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, baos);
+            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting);
             org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
 
             Assert.assertNotNull("Expected a new workbook file was created but found none.", xlsBook);
 
-            Sheet sheet = xlsBook.getSheetAt(0);
+            final Sheet sheet = xlsBook.getSheetAt(0);
 
             Assert.assertNotNull("Expecting an xls file with 1 sheet but found none.", sheet);
 

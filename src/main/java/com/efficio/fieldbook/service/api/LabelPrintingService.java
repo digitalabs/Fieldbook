@@ -43,12 +43,11 @@ public interface LabelPrintingService {
 	 * @param labelType (xls, pdf or csv)
 	 * @param germplasmListDataList the germplasm list data
 	 * @param userLabelPrinting the user label printing settings
-	 * @param baos ByteArrayOutputStream to write into the file
 	 * @return the name of the file with labels being created
 	 * @throws LabelPrintingException the label printing exception
 	 */
 	String generateLabelsForGermplasmList(String labelType, List<GermplasmListData> germplasmListDataList, UserLabelPrinting
-			userLabelPrinting, ByteArrayOutputStream baos) throws LabelPrintingException;
+			userLabelPrinting) throws LabelPrintingException;
 
 
 	/**
@@ -56,11 +55,10 @@ public interface LabelPrintingService {
 	 *
 	 * @param trialInstances the trial instances
 	 * @param userLabelPrinting the user label printing
-	 * @param baos the baos
 	 * @return the string
 	 * @throws LabelPrintingException the label printing exception
 	 */
-	String generateLabels(String labelType, List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
+	String generateLabels(String labelType, List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting)
 			throws LabelPrintingException;
 
 

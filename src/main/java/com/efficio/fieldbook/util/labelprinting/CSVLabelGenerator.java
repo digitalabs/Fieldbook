@@ -34,8 +34,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
     @Resource
     private GermplasmExportService germplasmExportService;
 
-    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
-                                    final ByteArrayOutputStream baos) throws LabelPrintingException {
+    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
         final String fileName = userLabelPrinting.getFilenameDLLocation();
         String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
         final boolean includeHeader =
@@ -53,7 +52,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
 
         try {
             this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName, includeHeader);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new LabelPrintingException(e);
         }
 
@@ -62,7 +61,7 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
 
     @Override
     public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting
-            userLabelPrinting, final ByteArrayOutputStream baos) throws LabelPrintingException {
+            userLabelPrinting) throws LabelPrintingException {
 
         final Locale locale = LocaleContextHolder.getLocale();
 

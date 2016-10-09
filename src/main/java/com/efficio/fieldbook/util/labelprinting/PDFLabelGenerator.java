@@ -44,8 +44,7 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
     private static final String ARIAL_UNI = "arialuni.ttf";
 
 
-    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
-                                    final ByteArrayOutputStream baos) throws LabelPrintingException {
+    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
         final int pageSizeId = Integer.parseInt(userLabelPrinting.getSizeOfLabelSheet());
         final int numberOfLabelPerRow = Integer.parseInt(userLabelPrinting.getNumberOfLabelPerRow());
@@ -303,8 +302,7 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
     }
 
     @Override
-    public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream
-            baos)
+    public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting userLabelPrinting)
             throws LabelPrintingException {
         //FIXME Implement !!!!!
         return null;

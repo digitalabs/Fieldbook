@@ -129,20 +129,17 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
                             buffer.append(germplasmListData.getGroupName());
                         } else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
                             if (lotRows != null) {
-                                buffer.append(this.getStockIDs(lotRows));
+                                buffer.append(this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID));
                             } else {
                                 buffer.append(" ");
                             }
                         } else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
                             if (lotRows != null) {
-                                buffer.append(getLotIDs(lotRows));
+                                buffer.append(this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_SEED_LOT_ID));
                             } else {
                                 buffer.append(" ");
                             }
                         }
-
-
-
                     }
 
                     final String barcodeLabel =  buffer.toString();
@@ -156,14 +153,16 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
                 } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
                     // Stock ID
                     if (lotRows != null) {
-                        exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, this.getStockIDs(lotRows)));
+                        exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId,
+                                this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID)));
                     } else {
                         exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, ""));
                     }
                 } else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
                     // Lot ID
                     if (lotRows != null) {
-                        exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, getLotIDs(lotRows)));
+                        exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId,
+                                this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_SEED_LOT_ID)));
                     } else {
                         exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, ""));
                     }
@@ -184,37 +183,26 @@ public class CSVLabelGenerator extends BaseLabelGenerator{
     }
 
     /**
-     * Iterate trough all the lotRows and construct coma separated string of lotIds
+     * Iterate trough all the lotRows and construct coma separated string of ids (lotIds or stockIds)
+     *
      * @param lotRows
-     * @return comma separated string of lotIds
+     * @param listType the type of list to return. Available values: AVAILABLE_LABEL_SEED_LOT_ID, AVAILABLE_LABEL_FIELDS_STOCK_ID
+     * @return comma separated string of ids (lotIds or stockIds)
      */
-    private String getLotIDs(final List<ListEntryLotDetails> lotRows) {
-        String lotIds = "";
-        for (int i = 0; i < lotRows.size(); i++) {
-			final ListEntryLotDetails lotRow = lotRows.get(i);
-			lotIds += lotRow.getLotId() == null ? "" : lotRow.getLotId().toString();
-			if (i != (lotRows.size() - 1)) {
-				lotIds += ", ";
-			}
+    private String getListOfIDs(final List<ListEntryLotDetails> lotRows, final AppConstants listType) {
+        String listIds = "";
+        for (final ListEntryLotDetails lotDetails : lotRows) {
+            if (listType.equals(AppConstants.AVAILABLE_LABEL_SEED_LOT_ID)){
+                listIds += lotDetails.getLotId() == null ? "" : lotDetails.getLotId().toString();
+            } else if (listType.equals(AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID)) {
+                listIds += lotDetails.getStockIds() == null ? "" : lotDetails.getStockIds();
+            } else {
+                throw new IllegalArgumentException("No such type of list. The lists available are: lotId and stockId");
+            }
+            listIds += ", ";
 		}
-        return lotIds;
-    }
-
-    /**
-     * Iterate trough all the lotRows and construct coma separated string of stockIds
-     * @param lotRows
-     * @return coma separated string of stockIds
-     */
-    private String getStockIDs(final List<ListEntryLotDetails> lotRows) {
-        String stockIds = "";
-        for (int i = 0; i < lotRows.size(); i++) {
-			final ListEntryLotDetails lotRow = lotRows.get(i);
-			stockIds += lotRow.getStockIds() == null ? "" : lotRow.getStockIds();
-			if (i != (lotRows.size() - 1)) {
-				stockIds += ", ";
-			}
-		}
-        return stockIds;
+		// remove the trailing ', ' symbols if they were appended
+        return listIds.length() > 2 ? listIds.substring(0, listIds.length() - 2) : listIds;
     }
 
     private List<Map<Integer, ExportColumnValue>> generateColumnValues(final List<StudyTrialInstanceInfo> trialInstances,

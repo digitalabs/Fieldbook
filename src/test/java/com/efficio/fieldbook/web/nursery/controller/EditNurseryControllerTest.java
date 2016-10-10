@@ -1,4 +1,3 @@
-
 package com.efficio.fieldbook.web.nursery.controller;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
@@ -67,8 +66,6 @@ import java.util.Random;
 public class EditNurseryControllerTest {
 
 	public static final int ROOT_FOLDER_ID = 1;
-	public static final int PUBLIC_NURSERY_ID = 1;
-	public static final int LOCAL_NURSERY_ID = -1;
 	private static final int DEFAULT_TERM_ID = 1234;
 	private static final int NOT_EXIST_TERM_ID = 2345;
 	private static final int DEFAULT_TERM_ID_2 = 3456;
@@ -141,11 +138,11 @@ public class EditNurseryControllerTest {
 
 	@Mock
 	private DataImportService dataImportService;
-	
+
 	@InjectMocks
 	private EditNurseryController editNurseryController;
 
-	private MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer = new MeasurementVariableTestDataInitializer();
+	private final MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer = new MeasurementVariableTestDataInitializer();
 
 	@Before
 	public void beforeEachTest() {
@@ -174,15 +171,15 @@ public class EditNurseryControllerTest {
 		Mockito.when(workbook.getStudyDetails()).thenReturn(studyDetails);
 		Mockito.doReturn(project).when(this.abstractBaseFieldbookController).getCurrentProject();
 		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(Matchers.anyInt())).thenReturn(workbook);
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString())).thenReturn(
-				this.standardVariable);
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))
+				.thenReturn(this.standardVariable);
 		Mockito.when(this.workBenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(project);
 		Mockito.when(this.workBenchDataManager.getWorkbenchRuntimeData()).thenReturn(this.workbenchRD);
 
 		// test
-		final String out =
-				this.editNurseryController.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm,
-						EditNurseryControllerTest.NURSERY_ID, "context-info", this.model, this.request, this.redirectAttributes, "", "");
+		final String out = this.editNurseryController
+				.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm, EditNurseryControllerTest.NURSERY_ID,
+						"context-info", this.model, this.request, this.redirectAttributes, "", "");
 
 		Mockito.verify(this.fieldbookMiddlewareService).getNurseryDataSet(Matchers.anyInt());
 		Assert.assertEquals("Should return the URL of the base_template", AbstractBaseFieldbookController.BASE_TEMPLATE_NAME, out);
@@ -197,12 +194,12 @@ public class EditNurseryControllerTest {
 		Mockito.doReturn(dmsProject).when(this.studyDataManagerImpl).getProject(Matchers.anyInt());
 		Mockito.when(dmsProject.getProgramUUID()).thenReturn("1002");
 		Mockito.when(this.request.getCookies()).thenReturn(new Cookie[] {});
-		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(EditNurseryControllerTest.NURSERY_ID)).thenThrow(
-				MiddlewareQueryException.class);
+		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(EditNurseryControllerTest.NURSERY_ID))
+				.thenThrow(MiddlewareQueryException.class);
 
-		final String out =
-				this.editNurseryController.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm,
-						EditNurseryControllerTest.NURSERY_ID, "context-info", this.model, this.request, this.redirectAttributes, "", "");
+		final String out = this.editNurseryController
+				.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm, EditNurseryControllerTest.NURSERY_ID,
+						"context-info", this.model, this.request, this.redirectAttributes, "", "");
 		Assert.assertEquals("should redirect to manage nurseries page", "redirect:" + ManageNurseriesController.URL, out);
 
 		// assert that we should have produced a redirectErrorMessage
@@ -217,16 +214,14 @@ public class EditNurseryControllerTest {
 	public void testCheckMeasurementData() throws Exception {
 		this.initializeMeasurementRowList();
 
-		final Map<String, String> result1 =
-				this.editNurseryController.checkMeasurementData(this.createNurseryForm, this.model, 0,
-						Integer.toString(EditNurseryControllerTest.DEFAULT_TERM_ID));
+		final Map<String, String> result1 = this.editNurseryController
+				.checkMeasurementData(this.createNurseryForm, this.model, 0, Integer.toString(EditNurseryControllerTest.DEFAULT_TERM_ID));
 
 		Assert.assertTrue("the result of map with key HAS_MEASUREMENT_DATA_STR should be '1' ",
 				result1.get(EditNurseryController.HAS_MEASUREMENT_DATA_STR).equals(EditNurseryController.SUCCESS));
 
-		final Map<String, String> result2 =
-				this.editNurseryController.checkMeasurementData(this.createNurseryForm, this.model, 0,
-						Integer.toString(EditNurseryControllerTest.DEFAULT_TERM_ID_2));
+		final Map<String, String> result2 = this.editNurseryController
+				.checkMeasurementData(this.createNurseryForm, this.model, 0, Integer.toString(EditNurseryControllerTest.DEFAULT_TERM_ID_2));
 
 		Assert.assertTrue("the result of map with key HAS_MEASUREMENT_DATA_STR should be '0' ",
 				result2.get(EditNurseryController.HAS_MEASUREMENT_DATA_STR).equals(EditNurseryController.NO_MEASUREMENT));
@@ -393,8 +388,8 @@ public class EditNurseryControllerTest {
 		testWorkbook.setMeasurementDatesetId(2);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(testWorkbook);
 
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString())).thenReturn(
-				this.standardVariable);
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))
+				.thenReturn(this.standardVariable);
 
 		final Map<String, String> out = this.editNurseryController.submit(this.createNurseryForm, this.model);
 
@@ -458,14 +453,16 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testIsMeasurementDataExistingTrue() {
-		Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.anyInt(), Matchers.anyList())).thenReturn(true);
+		Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.anyInt(), Matchers.anyList()))
+				.thenReturn(true);
 		final Map<String, Object> resultMap = this.editNurseryController.isMeasurementDataExisting();
 		Assert.assertEquals("The study should have measurement data", true, resultMap.get(EditNurseryController.HAS_MEASUREMENT_DATA_STR));
 	}
-	
+
 	@Test
 	public void testIsMeasurementDataExistingFalse() {
-		Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.anyInt(), Matchers.anyList())).thenReturn(false);
+		Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.anyInt(), Matchers.anyList()))
+				.thenReturn(false);
 		final Map<String, Object> resultMap = this.editNurseryController.isMeasurementDataExisting();
 		Assert.assertEquals("The study should have measurement data", false, resultMap.get(EditNurseryController.HAS_MEASUREMENT_DATA_STR));
 	}
@@ -473,43 +470,44 @@ public class EditNurseryControllerTest {
 	@Test
 	public void testPrepareNewWorkbookForSaving() {
 
-		Workbook workbookFromUserSelection = WorkbookTestDataInitializer.createTestWorkbook(2, StudyType.N, "Nursery Name", 1, false);
+		final Workbook workbookFromUserSelection = WorkbookTestDataInitializer.createTestWorkbook(2, StudyType.N, "Nursery Name", 1, false);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbookFromUserSelection);
 
-		int trialDatasetId = 100;
-		int measurementDatasetId = 101;
+		final int trialDatasetId = 100;
+		final int measurementDatasetId = 101;
 
 		final Dataset dataset = new Dataset();
 		dataset.setConditions(new ArrayList<Condition>());
 		dataset.setFactors(new ArrayList<Factor>());
 		dataset.setVariates(new ArrayList<Variate>());
 
-		Workbook workbook = this.editNurseryController.prepareNewWorkbookForSaving(trialDatasetId, measurementDatasetId, dataset);
+		final Workbook workbook = this.editNurseryController.prepareNewWorkbookForSaving(trialDatasetId, measurementDatasetId, dataset);
 
 		Assert.assertEquals(trialDatasetId, workbook.getTrialDatasetId().intValue());
 		Assert.assertEquals(measurementDatasetId, workbook.getMeasurementDatesetId().intValue());
-		Assert.assertSame(workbook.getOriginalObservations() , workbookFromUserSelection.getOriginalObservations());
-		Assert.assertSame(workbook.getTrialObservations() , workbookFromUserSelection.getTrialObservations());
+		Assert.assertSame(workbook.getOriginalObservations(), workbookFromUserSelection.getOriginalObservations());
+		Assert.assertSame(workbook.getTrialObservations(), workbookFromUserSelection.getTrialObservations());
 
 		Mockito.verify(dataImportService).populatePossibleValuesForCategoricalVariates(workbook.getConditions(), PROGRAM_UUID);
-
 
 	}
 
 	@Test
 	public void testPopulateMeasurementDataUsingValuesFromVariables() {
 
-		String seasonCodeValue = "10180";
-		String seasonTextValue = "Wet Season";
+		final String seasonCodeValue = "10180";
+		final String seasonTextValue = "Wet Season";
 
-		MeasurementVariable seasonCodeVariable = measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), seasonCodeValue);
+		final MeasurementVariable seasonCodeVariable =
+				measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), seasonCodeValue);
 		seasonCodeVariable.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
-		MeasurementVariable seasonTextVariable = measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), seasonTextValue);
+		final MeasurementVariable seasonTextVariable =
+				measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), seasonTextValue);
 		seasonTextVariable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 
-		List<MeasurementVariable> measurementVariables = Arrays.asList(seasonCodeVariable, seasonTextVariable);
+		final List<MeasurementVariable> measurementVariables = Arrays.asList(seasonCodeVariable, seasonTextVariable);
 
-		MeasurementRow measurementRow = this.createTestMeasurementRowWithSeasonCodeAndText();
+		final MeasurementRow measurementRow = this.createTestMeasurementRowWithSeasonCodeAndText();
 
 		this.editNurseryController.populateMeasurementDataUsingValuesFromVariables(measurementVariables, measurementRow);
 
@@ -522,20 +520,22 @@ public class EditNurseryControllerTest {
 
 	private MeasurementRow createTestMeasurementRowWithSeasonCodeAndText() {
 
-		MeasurementVariable seasonCodeVariable = measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), "");
+		final MeasurementVariable seasonCodeVariable =
+				measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), "");
 		seasonCodeVariable.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
-		MeasurementVariable seasonTextVariable = measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(),"");
+		final MeasurementVariable seasonTextVariable =
+				measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), "");
 		seasonTextVariable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 
-		MeasurementRow measurementRow = new MeasurementRow();
+		final MeasurementRow measurementRow = new MeasurementRow();
 
-		MeasurementData measurementDataSeasonCode = new MeasurementData();
+		final MeasurementData measurementDataSeasonCode = new MeasurementData();
 		measurementDataSeasonCode.setMeasurementVariable(seasonCodeVariable);
 
-		MeasurementData measurementDataSeasonText = new MeasurementData();
+		final MeasurementData measurementDataSeasonText = new MeasurementData();
 		measurementDataSeasonText.setMeasurementVariable(seasonTextVariable);
 
-		List<MeasurementData> dataList = new ArrayList<>();
+		final List<MeasurementData> dataList = new ArrayList<>();
 
 		dataList.add(measurementDataSeasonCode);
 		dataList.add(measurementDataSeasonText);
@@ -544,9 +544,8 @@ public class EditNurseryControllerTest {
 
 		return measurementRow;
 
-
 	}
-	
+
 	private SettingDetail initializeSettingDetails(final boolean isAddNursery) {
 		final SettingDetail settingDetail = Mockito.mock(SettingDetail.class);
 
@@ -566,8 +565,7 @@ public class EditNurseryControllerTest {
 		final Random random = new Random(1000);
 		// random numbers generated up-to 3 digits only so as not to conflict with test data
 		final List<MeasurementData> measurementDataList =
-				Arrays.asList(
-						this.generateMockedMeasurementData(random.nextInt(100), Integer.toString(random.nextInt(100))),
+				Arrays.asList(this.generateMockedMeasurementData(random.nextInt(100), Integer.toString(random.nextInt(100))),
 						this.generateMockedMeasurementData(random.nextInt(100), Integer.toString(random.nextInt(100))),
 						this.generateMockedMeasurementData(EditNurseryControllerTest.DEFAULT_TERM_ID,
 								Integer.toString(EditNurseryControllerTest.DEFAULT_TERM_ID)),

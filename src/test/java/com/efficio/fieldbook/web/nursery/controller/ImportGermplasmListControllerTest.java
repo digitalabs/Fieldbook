@@ -71,6 +71,7 @@ import com.google.common.collect.Lists;
 public class ImportGermplasmListControllerTest {
 
 	private static final String STARTING_PLOT_NO = "1";
+	private static final String STARTING_ENTRY_NUMBER = "1";
 	private static final int EH_CM_TERMID = 20316;
 	private static final int CHECK_TYPE = 1;
 	private static final Integer PROJECT_ID = 97;
@@ -217,7 +218,7 @@ public class ImportGermplasmListControllerTest {
 
 		// Test values set in form
 		Assert.assertEquals("The starting entry number should be 1.", form.getStartingEntryNo(),
-				ImportGermplasmListControllerTest.STARTING_ENTRY_NO);
+				ImportGermplasmListControllerTest.STARTING_ENTRY_NUMBER);
 		Assert.assertEquals("The starting plot number should be 1.", form.getStartingPlotNo(),
 				ImportGermplasmListControllerTest.STARTING_PLOT_NO);
 	}
@@ -264,7 +265,7 @@ public class ImportGermplasmListControllerTest {
 
 		// Test values set in form
 		Assert.assertEquals("The starting entry number should be 1.", form.getStartingEntryNo(),
-				ImportGermplasmListControllerTest.STARTING_ENTRY_NO);
+				ImportGermplasmListControllerTest.STARTING_ENTRY_NUMBER);
 		Assert.assertEquals("The starting plot number should be 1.", form.getStartingPlotNo(),
 				ImportGermplasmListControllerTest.STARTING_PLOT_NO);
 	}

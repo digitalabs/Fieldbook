@@ -61,6 +61,8 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.labelprinting.CSVSeedPreparationLabelGenerator;
+import com.efficio.fieldbook.util.labelprinting.LabelGenerator;
 import com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
@@ -137,6 +139,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	@Resource
 	private OntologyDataManager ontologyDataManager;
 
+	private LabelGenerator labelGenerator;
+
 	public LabelPrintingServiceImpl() {
 		super();
 	}
@@ -183,9 +187,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	};
 
 	@Override
-	public String generateLabelsForGermplasmList(final String labelType, final List<GermplasmListData> germplasmListDataList,
-			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
-		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabelsForGermplasmList(germplasmListDataList, userLabelPrinting);
+	public String generateLabelsForGermplasmList(final String labelType, List<GermplasmListData> germplasmListDataList, final UserLabelPrinting
+			userLabelPrinting) throws LabelPrintingException {
+		if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
+			this.labelGenerator = this.labelGeneratorFactory.getCSVSeedPreparationLabelGenerator();
+			return this.labelGenerator.generateLabels(germplasmListDataList, userLabelPrinting);
+		}
+		throw new LabelPrintingException("There is no appropriate strategy provider for the given label type: " + labelType);
 	}
 
 	@Override

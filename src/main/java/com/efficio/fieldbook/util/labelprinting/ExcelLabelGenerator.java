@@ -139,13 +139,6 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
         return fileName;
     }
 
-    @Override
-    public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting userLabelPrinting)
-            throws LabelPrintingException {
-        //FIXME Implement !!!!!!
-        return null;
-    }
-
     protected void printHeaderFields(final Map<Integer, String> labelHeaders, final boolean includeHeader,
                                      final List<Integer> selectedFieldIDs, final Row row, final int columnIndex, final CellStyle labelStyle) {
         if (includeHeader) {

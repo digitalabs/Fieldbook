@@ -301,13 +301,6 @@ public class PDFLabelGenerator extends BaseLabelGenerator {
         return fileName;
     }
 
-    @Override
-    public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting userLabelPrinting)
-            throws LabelPrintingException {
-        //FIXME Implement !!!!!
-        return null;
-    }
-
     /**
      * Generate barcode label.
      *

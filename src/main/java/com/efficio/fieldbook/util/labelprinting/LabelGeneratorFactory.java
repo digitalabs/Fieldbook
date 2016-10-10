@@ -15,13 +15,20 @@ public class LabelGeneratorFactory {
     @Resource
     private ExcelLabelGenerator excelLabelGenerator;
 
+    @Resource
+    private CSVSeedPreparationLabelGenerator csvSeedPreparationLabelGenerator;
+
     public BaseLabelGenerator retrieveLabelGenerator(String labelType) {
         if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
-            return pdfLabelGenerator;
+            return this.pdfLabelGenerator;
         } else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
-            return excelLabelGenerator;
+            return this.excelLabelGenerator;
         } else {
-            return csvLabelGenerator;
+            return this.csvLabelGenerator;
         }
+    }
+
+    public CSVSeedPreparationLabelGenerator getCSVSeedPreparationLabelGenerator() {
+        return this.csvSeedPreparationLabelGenerator;
     }
 }

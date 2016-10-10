@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -29,6 +28,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -441,7 +441,7 @@ public class EditNurseryController extends SettingsController {
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 
-		final Workbook workbook = this.workbookSetUp(trialDatasetId, measurementDatasetId, dataset);
+		final Workbook workbook = this.prepareNewWorkbookForSaving(trialDatasetId, measurementDatasetId, dataset);
 
 		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
 		this.userSelection.setWorkbook(workbook);
@@ -497,14 +497,26 @@ public class EditNurseryController extends SettingsController {
 		}
 	}
 
-	private Workbook workbookSetUp(final int trialDatasetId, final int measurementDatasetId, final Dataset dataset) {
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, this.contextUtil.getCurrentProgramUUID());
+	Workbook prepareNewWorkbookForSaving(final int trialDatasetId, final int measurementDatasetId, final Dataset dataset) {
+
+		String programUUID = this.contextUtil.getCurrentProgramUUID();
+
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, programUUID);
+
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
+		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
+
 		workbook.setTrialDatasetId(trialDatasetId);
 		workbook.setMeasurementDatesetId(measurementDatasetId);
-		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
-		this.setTrialObservationsFromVariables(workbook);
+
+		// A nursery only has one trial observation. so we get the first measurement row from workbook.getTrialObservations()
+		MeasurementRow trialObservation =  !workbook.getTrialObservations().isEmpty() ? workbook.getTrialObservations().get(0) : null;
+
+		this.populateMeasurementDataUsingValuesFromVariables(workbook.getTrialConditions(), trialObservation);
+		this.populateMeasurementDataUsingValuesFromVariables(workbook.getTrialConstants(), trialObservation);
+
 		this.dataImportService.populatePossibleValuesForCategoricalVariates(workbook.getConditions(), programUUID);
+
 		return workbook;
 	}
 
@@ -645,37 +657,25 @@ public class EditNurseryController extends SettingsController {
 
 	}
 
-	private void setTrialObservationsFromVariables(final Workbook workbook) {
-		if (!workbook.getTrialObservations().isEmpty() && workbook.getTrialConditions() != null
-				&& !workbook.getTrialConditions().isEmpty()) {
-			for (final MeasurementVariable condition : workbook.getTrialConditions()) {
-				for (final MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {
-					if (data.getMeasurementVariable().getTermId() == condition.getTermId()) {
-						data.setValue(condition.getValue());
-						if (condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() && condition.getValue() != null
-								&& NumberUtils.isNumber(condition.getValue())) {
-							data.setcValueId(condition.getValue());
-						}
-					}
-				}
-			}
-		}
-		if (!workbook.getTrialObservations().isEmpty() && workbook.getTrialConstants() != null
-				&& !workbook.getTrialConstants().isEmpty()) {
-			for (final MeasurementVariable constant : workbook.getTrialConstants()) {
-				for (final MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {
-					if (data.getMeasurementVariable().getTermId() == constant.getTermId()) {
-						data.setValue(constant.getValue());
+	void populateMeasurementDataUsingValuesFromVariables(List<MeasurementVariable> variables, MeasurementRow measurementRow) {
 
-						if (constant.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() && constant.getValue() != null
-								&& NumberUtils.isNumber(constant.getValue())) {
-							data.setcValueId(constant.getValue());
-						}
+		if (measurementRow != null && variables != null && !variables.isEmpty()) {
+
+			for (final MeasurementVariable measurementVariable : variables) {
+				MeasurementData measurementData = measurementRow.getMeasurementData(measurementVariable.getTermId());
+				if (measurementData != null) {
+					measurementData.setValue(measurementVariable.getValue());
+					if (measurementData.isCategorical() && StringUtils.isNumeric(measurementVariable.getValue())) {
+						measurementData.setcValueId(measurementVariable.getValue());
 					}
 				}
+
 			}
+
 		}
+
 	}
+
 
 	/**
 	 * Sets the form static data.

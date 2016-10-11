@@ -17,6 +17,7 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +30,7 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
 
     private static final Logger LOG = LoggerFactory.getLogger(ExcelLabelGenerator.class);
 
-    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
-                                    final ByteArrayOutputStream baos) throws LabelPrintingException {
+    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
         String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
         final boolean includeHeader =
@@ -91,7 +91,7 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
             Row row = null;
             mainSelectedFields = this.appendBarcode(isBarcodeNeeded, mainSelectedFields);
 
-            final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
+            final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(mainSelectedFields);
 
             if (includeHeader) {
                 row = labelPrintingSheet.createRow(rowIndex++);
@@ -137,6 +137,13 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
             ExcelLabelGenerator.LOG.error(e.getMessage(), e);
         }
         return fileName;
+    }
+
+    @Override
+    public String generateLabelsForGermplasmList(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting userLabelPrinting)
+            throws LabelPrintingException {
+        //FIXME Implement !!!!!!
+        return null;
     }
 
     protected void printHeaderFields(final Map<Integer, String> labelHeaders, final boolean includeHeader,

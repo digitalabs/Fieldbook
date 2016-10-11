@@ -42,6 +42,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -182,13 +183,19 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	};
 
 	@Override
+	public String generateLabelsForGermplasmList(final String labelType, final List<GermplasmListData> germplasmListDataList,
+			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
+		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabelsForGermplasmList(germplasmListDataList, userLabelPrinting);
+	}
+
+	@Override
 	public String generateLabels(final String labelType, final List<StudyTrialInstanceInfo> trialInstances,
-			final UserLabelPrinting userLabelPrinting, final ByteArrayOutputStream baos) throws LabelPrintingException {
+			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
 		// sort the labels contained inside the trial instances so that they are arranged from highest to lowest by entry number
 		this.sortTrialInstanceLabels(trialInstances);
 
-		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting, baos);
+		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting);
 	}
 
 	protected void sortTrialInstanceLabels(final List<StudyTrialInstanceInfo> trialInstances) {
@@ -205,7 +212,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		final LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
 		params.setVariableMap(this.convertToMap(workbook.getConditions(), workbook.getFactors()));
-		params.setSelectedFieldIDs(SettingsUtil.parseFieldListAndConvert(selectedFields));
+		params.setSelectedFieldIDs(SettingsUtil.parseFieldListAndConvertToListOfIDs(selectedFields));
 
 		final StudyType studyType = isTrial ? StudyType.T : StudyType.N;
 
@@ -792,6 +799,30 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				.getInt(), false));
 
 		this.addAvailableFieldsForFieldMap(hasFieldMap, locale, labelFieldsList);
+
+		return labelFieldsList;
+	}
+
+	/**
+	 * Gets the available label fields for the inventory. The following options: {GID, Designation, Cross, Stock Id, Lot Id}
+	 *
+	 * @param locale the locale
+	 * @return the list of available label fields
+	 */
+	@Override
+	public List<LabelFields> getAvailableLabelFieldsForInventory(final Locale locale) {
+		final List<LabelFields> labelFieldsList = new ArrayList<>();
+
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.gid", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.designation", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.cross", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale),
+				AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt(), true));
 
 		return labelFieldsList;
 	}

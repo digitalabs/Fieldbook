@@ -84,9 +84,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp')
 				.withButtons($scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice())
 				.withOption('scrollX', true)
-				.withOption('scrollCollapse', true)
-				.withOption('deferRender', true);
-
+				.withOption('scrollCollapse', true);
+			
 			$scope.dtOptions.drawCallback =  function() {
 				var api = $(this).DataTable();
 
@@ -102,6 +101,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					});
 
 					$(this).parents('.dataTables_wrapper').find('.dt-buttons').replaceWith(api.buttons().container());
+					
+					var pageInfo = api.page.info();
+					angular.forEach($scope.data.environments, function(environment, index) {
+						environment.show = pageInfo.start <= index && pageInfo.end > index;
+				    });
 				}
 			};
 

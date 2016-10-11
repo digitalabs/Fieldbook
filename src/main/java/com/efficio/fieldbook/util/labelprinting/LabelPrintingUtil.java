@@ -140,9 +140,8 @@ class LabelPrintingUtil {
 
 			return buffer.toString();
 		} catch (final NumberFormatException e) {
-			// TODO throw proper exception
 			LOG.error(e.getMessage(), e);
-			return "";
+			throw new IllegalArgumentException("Could not find header id or it is not a number");
 		}
 	}
 

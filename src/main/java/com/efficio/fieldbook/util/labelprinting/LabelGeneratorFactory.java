@@ -21,11 +21,13 @@ public class LabelGeneratorFactory {
     public BaseLabelGenerator retrieveLabelGenerator(String labelType) {
         if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
             return this.pdfLabelGenerator;
-        } else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
-            return this.excelLabelGenerator;
         } else {
-            return this.csvLabelGenerator;
+            return this.excelLabelGenerator;
         }
+    }
+
+    public CSVLabelGenerator getCSVLabelGenerator() {
+        return this.csvLabelGenerator;
     }
 
     public CSVSeedPreparationLabelGenerator getCSVSeedPreparationLabelGenerator() {

@@ -52,6 +52,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.initializer.LabelPrintingServiceDataInitializer;
 import com.efficio.fieldbook.util.labelprinting.BaseLabelGenerator;
+import com.efficio.fieldbook.util.labelprinting.CSVLabelGenerator;
 import com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
@@ -307,10 +308,9 @@ public class LabelPrintingServiceImplTest {
 
 	@Test
 	public void testGenerateLabelsSortLabelsEntryNumber() throws LabelPrintingException {
-		final BaseLabelGenerator labelGenerator = Mockito.mock(BaseLabelGenerator.class);
+		final CSVLabelGenerator labelGenerator = Mockito.mock(CSVLabelGenerator.class);
 		final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
-		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory)
-				.retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
+		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory).getCSVLabelGenerator();
 
 		final List<StudyTrialInstanceInfo> infoList = LabelPrintingServiceDataInitializer.generateStudyTrialInstanceInfoList();
 
@@ -328,10 +328,9 @@ public class LabelPrintingServiceImplTest {
 
 	@Test
 	public void testGenerateLabelsSortLabelsPlotNumber() throws LabelPrintingException {
-		final BaseLabelGenerator labelGenerator = Mockito.mock(BaseLabelGenerator.class);
+		final CSVLabelGenerator labelGenerator = Mockito.mock(CSVLabelGenerator.class);
 		final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
-		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory)
-				.retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
+		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory).getCSVLabelGenerator();
 
 		final List<StudyTrialInstanceInfo> infoList = LabelPrintingServiceDataInitializer.generateStudyTrialInstanceInfoList();
 

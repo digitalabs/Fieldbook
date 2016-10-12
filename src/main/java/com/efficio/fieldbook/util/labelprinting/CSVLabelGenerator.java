@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class CSVLabelGenerator implements LabelGenerator{
+public class CSVLabelGenerator implements LabelGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(CSVLabelGenerator.class);
 
     @Resource

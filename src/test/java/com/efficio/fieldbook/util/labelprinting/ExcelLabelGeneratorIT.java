@@ -43,6 +43,9 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
     @Resource
     private ExcelLabelGenerator unitUnderTest;
 
+	@Resource
+	private LabelPrintingUtil labelPrintingUtil;
+
 	@Test
 	public void testFieldmapFieldsInGeneratedXls() throws Exception {
 		final List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
@@ -130,7 +133,7 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
 
         FieldMapTrialInstanceInfo fieldMapTrialInstanceInfoSecond = LabelPrintingDataUtil.createFieldMapTrialInstanceInfo();
         Map<Integer, String> labelHeadersForTrialStock = LabelPrintingDataUtil.createLabelHeadersForTrialStock();
-        //Setting LabelHeader in second Trial instance only
+        // Setting LabelHeader in second Trial instance only
         fieldMapTrialInstanceInfoSecond.setLabelHeaders(labelHeadersForTrialStock);
 
         final StudyTrialInstanceInfo trialInstanceSecond =
@@ -138,7 +141,7 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
         trialInstances.add(trialInstanceSecond);
 
 
-        Map<Integer, String> labelHeadersFromTrialInstances = this.unitUnderTest.getLabelHeadersFromTrialInstances(trialInstances);
+        Map<Integer, String> labelHeadersFromTrialInstances = this.labelPrintingUtil.getLabelHeadersFromTrialInstances(trialInstances);
 
         Assert.assertNotNull(labelHeadersFromTrialInstances);
         Assert.assertEquals("Number of Label Headers are not equal", 5, labelHeadersFromTrialInstances.size());
@@ -150,8 +153,7 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
             if(labelHeadersFromTrialInstances.containsKey(keyTermId)){
                 String actualHeaderText = labelHeadersFromTrialInstances.get(keyTermId);
                 Assert.assertEquals("Label Header Text is not equal", valueHeaderLabel , actualHeaderText);
-            }
-            else{
+            } else {
                 Assert.assertNull("Expected Label Header not found", keyTermId);
             }
 

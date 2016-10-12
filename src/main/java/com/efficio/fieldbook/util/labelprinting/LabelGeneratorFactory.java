@@ -21,9 +21,12 @@ public class LabelGeneratorFactory {
     public BaseLabelGenerator retrieveLabelGenerator(String labelType) {
         if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
             return this.pdfLabelGenerator;
-        } else {
-            return this.excelLabelGenerator;
         }
+        return null;
+    }
+
+    public ExcelLabelGenerator getExcelLabelGenerator() {
+        return this.excelLabelGenerator;
     }
 
     public CSVLabelGenerator getCSVLabelGenerator() {

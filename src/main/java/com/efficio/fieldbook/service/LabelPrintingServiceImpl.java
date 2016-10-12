@@ -205,6 +205,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
 			return this.labelGeneratorFactory.getCSVLabelGenerator().generateLabels(trialInstances, userLabelPrinting);
+		} else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
+			return this.labelGeneratorFactory.getExcelLabelGenerator().generateLabels(trialInstances, userLabelPrinting);
 		}
 
 		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting);

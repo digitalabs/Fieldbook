@@ -177,7 +177,10 @@ public class SettingsServiceImpl implements SettingsService {
 				details.add(field);
 			}
 		}
-
+		
+		//add Unique Nursery ID as nursery detail in label printing (nursery name + plot number + gid)
+		details.add(new LabelFields(LabelFields.UNIQUE_NURSERY_ID_NAME, LabelFields.UNIQUE_NURSERY_ID_ID, false));
+		
 		return details;
 	}
 
@@ -197,17 +200,17 @@ public class SettingsServiceImpl implements SettingsService {
 		List<LabelFields> detailList = new ArrayList<>();
 		FieldbookUtil util = FieldbookUtil.getInstance();
 
-		List<Integer> experimentalDesignVariables = util.buildVariableIDList(AppConstants.EXP_DESIGN_REQUIRED_VARIABLES.getString());
-
+		List<Integer> expDesignVariablesMinusPlotNumber = util.buildVariableIDList(AppConstants.EXP_DESIGN_REQUIRED_WITHOUT_PLOT_NO_VARIABLES.getString());
+		
 		for (MeasurementVariable var : workbook.getFactors()) {
-			// this condition is required so that treatment factors are not included in the list of factors for the germplasm tab
+			// don't include the following types as labels: treatment factor, trial instance, trial design except plot number
 			if (var.getTreatmentLabel() != null && !var.getTreatmentLabel().isEmpty()
-					|| experimentalDesignVariables.contains(var.getTermId()) || var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+					|| expDesignVariablesMinusPlotNumber.contains(var.getTermId()) || var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				continue;
 			}
 
-			// set all variables with trial design role to hidden
-			if (var.getRole() != PhenotypicType.TRIAL_DESIGN) {
+			// set all variables with trial design role to hidden except for PLOT_NO
+			if (var.getTermId() == TermId.PLOT_NO.getId() || var.getRole() != PhenotypicType.TRIAL_DESIGN) {
 
 				LabelFields field =
 						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));

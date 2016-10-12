@@ -512,19 +512,59 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			final Integer termID, final Map<Integer, String> values, final boolean populateHeaders) {
 		final List<MeasurementVariable> variables = new ArrayList<>();
 		variables.addAll(workbook.getConditions());
-
-		final Integer newTermId = this.getCounterpartTermId(termID);
-
-		final MeasurementVariable factorVariable = this.getMeasurementVariableByTermId(newTermId, variables);
-
-		if (factorVariable != null && values.get(newTermId) == null) {
-			values.put(newTermId, factorVariable.getValue());
-
+		
+		if(termID == LabelFields.UNIQUE_NURSERY_ID_ID) {
+			final String uniqueNurseryIdValue = this.getUniqueNurseryIdValue(workbook);
+			values.put(termID, uniqueNurseryIdValue);
 			if (populateHeaders) {
-				params.getLabelHeaders().put(newTermId, factorVariable.getName());
+				params.getLabelHeaders().put(termID, LabelFields.UNIQUE_NURSERY_ID_NAME);
 			}
+		} else if(termID == TermId.PLOT_NO.getId()) {
+			final MeasurementData plotNoMeasurementData = this.getMeasurementDataByTermId(TermId.PLOT_NO.getId(), workbook.getObservations());
+			values.put(termID, plotNoMeasurementData.getValue());
+			if (populateHeaders) {
+				params.getLabelHeaders().put(termID, plotNoMeasurementData.getLabel());
+			}
+		} else {
+			final Integer newTermId = this.getCounterpartTermId(termID);
 
+			final MeasurementVariable factorVariable = this.getMeasurementVariableByTermId(newTermId, variables);
+
+			if (factorVariable != null && values.get(newTermId) == null) {
+				values.put(newTermId, factorVariable.getValue());
+
+				if (populateHeaders) {
+					params.getLabelHeaders().put(newTermId, factorVariable.getName());
+				}
+
+			}
 		}
+	}
+
+	String getUniqueNurseryIdValue(final Workbook workbook) {
+		//the value will be derived from NURSERY NAME, PLOT NUMBER AND GID
+		final String nurseryName = workbook.getStudyName();
+		final String plotNumber = this.getMeasurementVariableValueByTermId(TermId.PLOT_NO.getId(), workbook.getObservations());
+		final String gid = this.getMeasurementVariableValueByTermId(TermId.GID.getId(), workbook.getObservations());
+		return nurseryName + " | " + plotNumber + " | " + gid;
+	}
+	
+	MeasurementData getMeasurementDataByTermId(final Integer termId, final List<MeasurementRow> observations) {
+		for (final MeasurementRow measurementRow : observations) {
+			for(final MeasurementData measurementData : measurementRow.getDataList())
+			if (measurementData.getMeasurementVariable().getTermId() == termId) {
+				return measurementData;
+			}
+		}
+		return null;
+	}
+	
+	String getMeasurementVariableValueByTermId(final Integer termId, final List<MeasurementRow> observations) {
+		final MeasurementData measurementData = this.getMeasurementDataByTermId(termId, observations);
+		if(measurementData != null) {
+			return measurementData.getValue();
+		}
+		return null;
 	}
 
 	private void populateValuesForStockList(final LabelPrintingProcessingParams params, final InventoryDetails inventoryDetails,

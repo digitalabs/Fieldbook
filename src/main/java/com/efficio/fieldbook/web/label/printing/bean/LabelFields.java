@@ -22,6 +22,10 @@ import java.io.Serializable;
 public class LabelFields implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String UNIQUE_NURSERY_ID_NAME = "Unique Nursery ID";
+	//use a number that is not possible to be an existing cvterm_id so it will not conflict during retrieval of label fields value
+	public static final int UNIQUE_NURSERY_ID_ID = -1000;
 
 	/** The name. */
 	private String name;

@@ -54,8 +54,11 @@ public class SettingsUtilTest {
 
 	private static final String PROGRAM_UUID = "123456789";
 
+	private SettingDetailTestDataInitializer settingDetailTestDataInitializer;
+	
 	@Before
 	public void setUp() {
+		this.settingDetailTestDataInitializer = new SettingDetailTestDataInitializer();
 	}
 
 	@Test
@@ -734,21 +737,13 @@ public class SettingsUtilTest {
 
 	private List<SettingDetail> createSettingDetailVariables() {
 		final List<SettingDetail> variables = new ArrayList<>();
-		variables.add(this.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME", "Study - assigned (DBCV)"));
-		variables.add(this.createSettingDetail(TermId.STUDY_TITLE.getId(), "STUDY_TITLE", "Study title - assigned (text)"));
-		variables.add(this.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)"));
-		variables.add(this.createSettingDetail(TermId.START_DATE.getId(), "START_DATE", "Start date - assigned (date)"));
-		variables.add(this.createSettingDetail(TermId.END_DATE.getId(), "END_DATE", "End date - assigned (date)"));
-		variables.add(this.createSettingDetail(TermId.BREEDING_METHOD_VARIATE_CODE.getId(), "BM_CODE_VTE",
-				"Breeding method observed on each plot(CODE)"));
+		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME", "Study - assigned (DBCV)", ""));
+		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.STUDY_TITLE.getId(), "STUDY_TITLE", "Study title - assigned (text)", ""));
+		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)", ""));
+		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.START_DATE.getId(), "START_DATE", "Start date - assigned (date)", ""));
+		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.END_DATE.getId(), "END_DATE", "End date - assigned (date)", ""));
+		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.BREEDING_METHOD_VARIATE_CODE.getId(), "BM_CODE_VTE",
+				"Breeding method observed on each plot(CODE)", ""));
 		return variables;
-	}
-
-	private SettingDetail createSettingDetail(final int cvTermId, final String name, final String value) {
-		final SettingVariable variable = new SettingVariable();
-		variable.setCvTermId(cvTermId);
-		variable.setName(name);
-
-		return new SettingDetail(variable, null, value, false);
 	}
 }

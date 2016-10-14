@@ -370,10 +370,7 @@ public class EditNurseryController extends SettingsController {
 		form.setBasicDetails(basicDetails);
 		form.setStudyLevelVariables(nurseryDefaults);
 		form.setPlotLevelVariables(plotDefaults);
-		nurseryDefaults =
-				this.buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(),
-						this.buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true),
-						VariableType.STUDY_DETAIL.getRole().name());
+		
 		plotDefaults =
 				this.buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(),
 						this.buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false),

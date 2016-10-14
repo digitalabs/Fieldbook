@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class SettingsUtilTest {
 	private static final String PROGRAM_UUID = "123456789";
 
 	private SettingDetailTestDataInitializer settingDetailTestDataInitializer;
-	
+
 	@Before
 	public void setUp() {
 		this.settingDetailTestDataInitializer = new SettingDetailTestDataInitializer();
@@ -69,17 +70,14 @@ public class SettingsUtilTest {
 		dataset.setFactors(new ArrayList<Factor>());
 		dataset.setVariates(new ArrayList<Variate>());
 
-		dataset.getConditions()
-				.add(new Condition("CONDITION1", "CONDITION1", "PERSON", "DBCV", "ASSIGNED", PhenotypicType.STUDY.toString(), "C", "Meeh",
-						null, null, null));
-		dataset.getFactors()
-				.add(new Factor("FACTOR1", "FACTOR1", "GERMPLASM ENTRY", "NUMBER", "ENUMERATED", PhenotypicType.GERMPLASM.toString(), "N",
-						0));
-		final Variate variate = new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N",
-				TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0);
+		dataset.getConditions().add(new Condition("CONDITION1", "CONDITION1", "PERSON", "DBCV", "ASSIGNED", PhenotypicType.STUDY.toString(),
+				"C", "Meeh", null, null, null));
+		dataset.getFactors().add(
+				new Factor("FACTOR1", "FACTOR1", "GERMPLASM ENTRY", "NUMBER", "ENUMERATED", PhenotypicType.GERMPLASM.toString(), "N", 0));
+		final Variate variate = new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice",
+				PhenotypicType.VARIATE.toString(), "N", TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0);
 		variate.setVariableType(VariableType.TRAIT.getName());
-		dataset.getVariates()
-				.add(variate);
+		dataset.getVariates().add(variate);
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, SettingsUtilTest.PROGRAM_UUID);
 		Debug.println(0, workbook);
@@ -113,7 +111,8 @@ public class SettingsUtilTest {
 
 	@Test
 	public void testIfCheckVariablesAreInFixedNurseryList() {
-		final String variableIds =AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString() + AppConstants.BREEDING_METHOD_ID_CODE_NAME_COMBINATION.getString();
+		final String variableIds = AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString()
+				+ AppConstants.BREEDING_METHOD_ID_CODE_NAME_COMBINATION.getString();
 		Assert.assertTrue(SettingsUtil.inVariableIds(TermId.CHECK_START.getId(), variableIds));
 		Assert.assertTrue(SettingsUtil.inVariableIds(TermId.CHECK_INTERVAL.getId(), variableIds));
 		Assert.assertTrue(SettingsUtil.inVariableIds(TermId.CHECK_PLAN.getId(), variableIds));
@@ -550,8 +549,8 @@ public class SettingsUtilTest {
 
 		final UserSelection userSelection = new UserSelection();
 
-		final List<Variate> baselineVariates = SettingsUtil
-				.convertBaselineTraitsToVariates(baselineTraits, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
+		final List<Variate> baselineVariates = SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, this.fieldbookMiddlewareService,
+				SettingsUtilTest.PROGRAM_UUID);
 
 		Assert.assertEquals(baselineTraits.size(), baselineVariates.size());
 	}
@@ -670,24 +669,21 @@ public class SettingsUtilTest {
 		variatesList.add(settingDetail);
 
 		final List<ValueReference> valueReferenceList = new ArrayList<>();
-		final Variate variate =
-				new Variate("BM_CODE_VTE", "Breeding method observed on each plot (CODE)", TestDataHelper.createProperty().getName(),
-						TestDataHelper.createScale().getName(), TestDataHelper.createMethod().getName(),
-						VariableType.SELECTION_METHOD.getRole().name(), "N", DataType.NUMERIC_VARIABLE.getId(), valueReferenceList, 50.00,
-						500.00);
+		final Variate variate = new Variate("BM_CODE_VTE", "Breeding method observed on each plot (CODE)",
+				TestDataHelper.createProperty().getName(), TestDataHelper.createScale().getName(), TestDataHelper.createMethod().getName(),
+				VariableType.SELECTION_METHOD.getRole().name(), "N", DataType.NUMERIC_VARIABLE.getId(), valueReferenceList, 50.00, 500.00);
 		variate.setVariableType("Selection Method");
 
 		Mockito.when(this.userSelection.getStudyLevelConditions()).thenReturn(studyLevelConditions);
 		Mockito.when(this.userSelection.getBasicDetails()).thenReturn(basicDetails);
 		Mockito.when(this.userSelection.getBaselineTraitsList()).thenReturn(variatesList);
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Mockito.anyInt(), Mockito.any(String.class)))
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.any(String.class)))
 				.thenReturn(standardVariable);
 		Mockito.when(this.userSelection.getPlotsLevelList()).thenReturn(basicDetails);
 		Mockito.when(this.userSelection.getNurseryConditions()).thenReturn(basicDetails);
 
-		final Dataset dataSet = (Dataset) SettingsUtil
-				.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, dataSetName, this.userSelection, treatmentFactorItems,
-						SettingsUtilTest.PROGRAM_UUID);
+		final Dataset dataSet = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, dataSetName,
+				this.userSelection, treatmentFactorItems, SettingsUtilTest.PROGRAM_UUID);
 
 		Assert.assertEquals("DataSet Name", dataSetName, dataSet.getName());
 		Assert.assertEquals("DataSet Trial Level Factor", 0, dataSet.getTrialLevelFactor().size());
@@ -734,27 +730,33 @@ public class SettingsUtilTest {
 			i++;
 		}
 	}
-	
+
 	@Test
-	public void testRemoveBasicDetailsVariables(){
-		List<SettingDetail> settingDetails = this.createSettingDetailVariables();
+	public void testRemoveBasicDetailsVariables() {
+		final List<SettingDetail> settingDetails = this.createSettingDetailVariables();
 		final int sizeBeforeRemovalOfBasicDetails = settingDetails.size();
+
 		SettingsUtil.removeBasicDetailsVariables(settingDetails, AppConstants.FIXED_NURSERY_VARIABLES.getString());
-		
 		final int sizeAfterRemovalOfBasicDetails = settingDetails.size();
-		Assert.assertFalse("The size before and after removal of basic details from the list should not be equal", sizeBeforeRemovalOfBasicDetails == sizeAfterRemovalOfBasicDetails);
-		//All the setting details inside the list are basic nursery details except for the BM_CODE_VTE
+		Assert.assertFalse("The size before and after removal of basic details from the list should not be equal",
+				sizeBeforeRemovalOfBasicDetails == sizeAfterRemovalOfBasicDetails);
+		// All the setting details inside the list are basic nursery details except for the BM_CODE_VTE
 		Assert.assertEquals("The size after removal of basic details should be one", 1, sizeAfterRemovalOfBasicDetails);
-		
+
 	}
 
 	private List<SettingDetail> createSettingDetailVariables() {
 		final List<SettingDetail> variables = new ArrayList<>();
-		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME", "Study - assigned (DBCV)", ""));
-		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.STUDY_TITLE.getId(), "STUDY_TITLE", "Study title - assigned (text)", ""));
-		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)", ""));
-		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.START_DATE.getId(), "START_DATE", "Start date - assigned (date)", ""));
-		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.END_DATE.getId(), "END_DATE", "End date - assigned (date)", ""));
+		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME",
+				"Study - assigned (DBCV)", ""));
+		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.STUDY_TITLE.getId(), "STUDY_TITLE",
+				"Study title - assigned (text)", ""));
+		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE",
+				"Objective - described (text)", ""));
+		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.START_DATE.getId(), "START_DATE",
+				"Start date - assigned (date)", ""));
+		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.END_DATE.getId(), "END_DATE",
+				"End date - assigned (date)", ""));
 		variables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.BREEDING_METHOD_VARIATE_CODE.getId(), "BM_CODE_VTE",
 				"Breeding method observed on each plot(CODE)", ""));
 		return variables;

@@ -28,7 +28,6 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -2089,11 +2088,12 @@ public class SettingsUtil {
 	 * Removes the basic details variables.
 	 * 
 	 * @param nurseryLevelConditions the nursery level conditions
+	 * @param variableIds the ids of the variables to be removed from the list
 	 */
-	public static void removeBasicDetailsVariables(final List<SettingDetail> nurseryLevelConditions) {
+	public static void removeBasicDetailsVariables(final List<SettingDetail> nurseryLevelConditions, final String variableIds) {
 		final Iterator<SettingDetail> iter = nurseryLevelConditions.iterator();
 		while (iter.hasNext()) {
-			if (SettingsUtil.inFixedNurseryList(iter.next().getVariable().getCvTermId())) {
+			if (SettingsUtil.inVariableIds(iter.next().getVariable().getCvTermId(), variableIds)) {
 				iter.remove();
 			}
 		}
@@ -2103,11 +2103,12 @@ public class SettingsUtil {
 	 * In fixed nursery list.
 	 * 
 	 * @param propertyId the property id
-	 * @return true, if successful
+	 * @param variableIds the ids of the variables to be removed from the list
+	 * @return true if the property id is included in the variable ids
 	 */
-	protected static boolean inFixedNurseryList(final int propertyId) {
+	protected static boolean inVariableIds(final int propertyId, final String variableIds) {
 		final StringTokenizer token =
-				new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString(), ",");
+				new StringTokenizer(variableIds, ",");
 		while (token.hasMoreTokens()) {
 			if (Integer.parseInt(token.nextToken()) == propertyId) {
 				return true;

@@ -655,7 +655,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 
 		// remove basic details & hidden variables from study level variables
-		SettingsUtil.removeBasicDetailsVariables(this.userSelection.getStudyLevelConditions());
+		final String variableIds =AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString() + AppConstants.BREEDING_METHOD_ID_CODE_NAME_COMBINATION.getString();
+		SettingsUtil.removeBasicDetailsVariables(this.userSelection.getStudyLevelConditions(), variableIds);
 
 		if (isNursery) {
 			this.removeHiddenVariables(this.userSelection.getStudyLevelConditions(), AppConstants.HIDE_NURSERY_FIELDS.getString());

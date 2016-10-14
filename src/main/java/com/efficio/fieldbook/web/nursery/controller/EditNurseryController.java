@@ -253,8 +253,9 @@ public class EditNurseryController extends SettingsController {
 				this.getSettingDetailsOfSection(nurseryLevelConditions, form, AppConstants.FIXED_NURSERY_VARIABLES.getString());
 
 		this.setCheckVariables(this.userSelection.getRemovedConditions(), form2, form);
-
-		SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions);
+		
+		final String variableIds =AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString() + AppConstants.BREEDING_METHOD_ID_CODE_NAME_COMBINATION.getString();
+		SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions, variableIds);
 
 		this.userSelection.setBasicDetails(basicDetails);
 

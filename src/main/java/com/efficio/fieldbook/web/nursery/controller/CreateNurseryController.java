@@ -137,7 +137,9 @@ public class CreateNurseryController extends SettingsController {
 								this.buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
 								this.userSelection.getStudyLevelConditions(), false,
 								AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString(), VariableType.NURSERY_CONDITION.getRole().name());
-				SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions);
+				
+				final String variableIds = AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.BREEDING_METHOD_ID_CODE_NAME_COMBINATION.getString();
+				SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions, variableIds);
 
 				// plot-level
 				final List<SettingDetail> plotLevelConditions =

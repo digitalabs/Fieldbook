@@ -734,6 +734,19 @@ public class SettingsUtilTest {
 			i++;
 		}
 	}
+	
+	@Test
+	public void testRemoveBasicDetailsVariables(){
+		List<SettingDetail> settingDetails = this.createSettingDetailVariables();
+		final int sizeBeforeRemovalOfBasicDetails = settingDetails.size();
+		SettingsUtil.removeBasicDetailsVariables(settingDetails, AppConstants.FIXED_NURSERY_VARIABLES.getString());
+		
+		final int sizeAfterRemovalOfBasicDetails = settingDetails.size();
+		Assert.assertFalse("The size before and after removal of basic details from the list should not be equal", sizeBeforeRemovalOfBasicDetails == sizeAfterRemovalOfBasicDetails);
+		//All the setting details inside the list are basic nursery details except for the BM_CODE_VTE
+		Assert.assertEquals("The size after removal of basic details should be one", 1, sizeAfterRemovalOfBasicDetails);
+		
+	}
 
 	private List<SettingDetail> createSettingDetailVariables() {
 		final List<SettingDetail> variables = new ArrayList<>();

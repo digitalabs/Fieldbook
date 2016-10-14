@@ -254,7 +254,7 @@ public class EditNurseryController extends SettingsController {
 
 		this.setCheckVariables(this.userSelection.getRemovedConditions(), form2, form);
 
-		this.removeBasicDetailsVariables(nurseryLevelConditions);
+		SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions);
 
 		this.userSelection.setBasicDetails(basicDetails);
 
@@ -281,10 +281,6 @@ public class EditNurseryController extends SettingsController {
 			return AppConstants.NURSERIES.getString();
 		}
 		return this.fieldbookMiddlewareService.getFolderNameById(folderId);
-	}
-
-	protected void removeBasicDetailsVariables(final List<SettingDetail> nurseryLevelConditions) {
-		SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions);
 	}
 
 	protected void convertToXmlDatasetPojo(final Workbook workbook) throws MiddlewareQueryException {

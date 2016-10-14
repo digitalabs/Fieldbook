@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -138,7 +137,7 @@ public class CreateNurseryController extends SettingsController {
 								this.buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
 								this.userSelection.getStudyLevelConditions(), false,
 								AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString(), VariableType.NURSERY_CONDITION.getRole().name());
-				this.removeBasicDetailsVariables(nurseryLevelConditions);
+				SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions);
 
 				// plot-level
 				final List<SettingDetail> plotLevelConditions =
@@ -195,25 +194,6 @@ public class CreateNurseryController extends SettingsController {
 		form.setHasError("1");
 		form.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(e.getCode(), new Object[] {param,
 				param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n"));
-	}
-
-	private void removeBasicDetailsVariables(final List<SettingDetail> nurseryLevelConditions) {
-		final Iterator<SettingDetail> iter = nurseryLevelConditions.iterator();
-		while (iter.hasNext()) {
-			if (this.inFixedNurseryList(iter.next().getVariable().getCvTermId())) {
-				iter.remove();
-			}
-		}
-	}
-
-	private boolean inFixedNurseryList(final int propertyId) {
-		final StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
-		while (token.hasMoreTokens()) {
-			if (Integer.parseInt(token.nextToken()) == propertyId) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

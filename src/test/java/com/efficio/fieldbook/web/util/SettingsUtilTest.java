@@ -1,13 +1,14 @@
+
 package com.efficio.fieldbook.web.util;
 
-import com.efficio.fieldbook.web.common.bean.PairedVariable;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.WidgetType;
-import com.efficio.fieldbook.web.trial.TestDataHelper;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -20,7 +21,6 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Constant;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -35,16 +35,13 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.web.util.HtmlUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 
 public class SettingsUtilTest {
 
@@ -78,14 +75,13 @@ public class SettingsUtilTest {
 		dataset.setFactors(new ArrayList<Factor>());
 		dataset.setVariates(new ArrayList<Variate>());
 
-		dataset.getConditions()
-				.add(new Condition("CONDITION1", "CONDITION1", "PERSON", "DBCV", "ASSIGNED", PhenotypicType.STUDY.toString(), "C", "Meeh",
-						null, null, null));
-		dataset.getFactors()
-				.add(new Factor("FACTOR1", "FACTOR1", "GERMPLASM ENTRY", "NUMBER", "ENUMERATED", PhenotypicType.GERMPLASM.toString(), "N",
-						0));
-		dataset.getVariates()
-				.add(new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N",
+		dataset.getConditions().add(
+				new Condition("CONDITION1", "CONDITION1", "PERSON", "DBCV", "ASSIGNED", PhenotypicType.STUDY.toString(), "C", "Meeh", null,
+						null, null));
+		dataset.getFactors().add(
+				new Factor("FACTOR1", "FACTOR1", "GERMPLASM ENTRY", "NUMBER", "ENUMERATED", PhenotypicType.GERMPLASM.toString(), "N", 0));
+		dataset.getVariates().add(
+				new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N",
 						TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0));
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, SettingsUtilTest.PROGRAM_UUID);
@@ -556,8 +552,9 @@ public class SettingsUtilTest {
 
 		final UserSelection userSelection = new UserSelection();
 
-		final List<Variate> baselineVariates = SettingsUtil
-				.convertBaselineTraitsToVariates(baselineTraits, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
+		final List<Variate> baselineVariates =
+				SettingsUtil
+						.convertBaselineTraitsToVariates(baselineTraits, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
 
 		Assert.assertEquals(baselineTraits.size(), baselineVariates.size());
 	}
@@ -678,22 +675,21 @@ public class SettingsUtilTest {
 		final List<ValueReference> valueReferenceList = new ArrayList<>();
 		final Variate variate =
 				new Variate("BM_CODE_VTE", "Breeding method observed on each plot (CODE)", TestDataHelper.createProperty().getName(),
-						TestDataHelper.createScale().getName(), TestDataHelper.createMethod().getName(),
-						VariableType.SELECTION_METHOD.getRole().name(), "N", DataType.NUMERIC_VARIABLE.getId(), valueReferenceList, 50.00,
-						500.00);
+						TestDataHelper.createScale().getName(), TestDataHelper.createMethod().getName(), VariableType.SELECTION_METHOD
+								.getRole().name(), "N", DataType.NUMERIC_VARIABLE.getId(), valueReferenceList, 50.00, 500.00);
 		variate.setVariableType("Selection Method");
 
 		Mockito.when(this.userSelection.getStudyLevelConditions()).thenReturn(studyLevelConditions);
 		Mockito.when(this.userSelection.getBasicDetails()).thenReturn(basicDetails);
 		Mockito.when(this.userSelection.getBaselineTraitsList()).thenReturn(variatesList);
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Mockito.anyInt(), Mockito.any(String.class)))
-				.thenReturn(standardVariable);
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.any(String.class))).thenReturn(
+				standardVariable);
 		Mockito.when(this.userSelection.getPlotsLevelList()).thenReturn(basicDetails);
 		Mockito.when(this.userSelection.getNurseryConditions()).thenReturn(basicDetails);
 
-		final Dataset dataSet = (Dataset) SettingsUtil
-				.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, dataSetName, this.userSelection, treatmentFactorItems,
-						SettingsUtilTest.PROGRAM_UUID);
+		final Dataset dataSet =
+				(Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, dataSetName, this.userSelection,
+						treatmentFactorItems, SettingsUtilTest.PROGRAM_UUID);
 
 		Assert.assertEquals("DataSet Name", dataSetName, dataSet.getName());
 		Assert.assertEquals("DataSet Trial Level Factor", 0, dataSet.getTrialLevelFactor().size());

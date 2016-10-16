@@ -167,6 +167,7 @@ public class SettingsUtil {
 							variable.getMinRange(), variable.getMaxRange());
 			condition.setOperation(variable.getOperation());
 			condition.setId(variable.getCvTermId());
+			condition.setPossibleValues(settingDetail.getPossibleValues());
 			conditions.add(condition);
 		}
 
@@ -1341,6 +1342,7 @@ public class SettingsUtil {
 		mvar.setTermId(condition.getId());
 		mvar.setFactor(true);
 		mvar.setDataTypeId(condition.getDataTypeId());
+		mvar.setPossibleValues(condition.getPossibleValues());
 		return mvar;
 	}
 

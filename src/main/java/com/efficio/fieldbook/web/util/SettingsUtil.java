@@ -1345,7 +1345,7 @@ public class SettingsUtil {
 	 * @param condition the condition
 	 * @return the measurement variable
 	 */
-	private static MeasurementVariable convertConditionToMeasurementVariable(final Condition condition) {
+	static MeasurementVariable convertConditionToMeasurementVariable(final Condition condition) {
 		String label = null;
 		label = PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0);
 		final MeasurementVariable mvar =

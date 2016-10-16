@@ -134,7 +134,7 @@ public class SettingsUtil {
 				baselineTraitsList, userSelection, null, null, null, nurseryConditions, null, true, programUUID);
 	}
 
-	protected static List<Condition> convertDetailsToConditions(final List<SettingDetail> details,
+	static List<Condition> convertDetailsToConditions(final List<SettingDetail> details,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 		final List<Condition> conditions = new ArrayList<>();
 

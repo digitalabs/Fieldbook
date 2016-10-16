@@ -1,12 +1,16 @@
 package com.efficio.fieldbook.web.util;
 
+import com.efficio.fieldbook.web.common.bean.PairedVariable;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.WidgetType;
 import com.efficio.fieldbook.web.trial.TestDataHelper;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+
 import junit.framework.Assert;
+
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -16,6 +20,7 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Constant;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -30,6 +35,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +55,14 @@ public class SettingsUtilTest {
 	private UserSelection userSelection;
 
 	private static final String PROGRAM_UUID = "123456789";
+
+	private static final int DUMMY_ID = 0;
+
+	private static final Term CATEGORICAL_DATATYPE_TERM = new Term(TermId.CATEGORICAL_VARIABLE.getId(), "Categorical Variable",
+			"Categorical Variable");
+	private static final Term C_DATATYPE_TERM = new Term(TermId.CHARACTER_VARIABLE.getId(), "C", "C");
+
+	private static final String C_DATATYPE = "C";
 
 	@Before
 	public void setUp() {
@@ -729,21 +743,163 @@ public class SettingsUtilTest {
 
 	private List<SettingDetail> createSettingDetailVariables() {
 		final List<SettingDetail> variables = new ArrayList<>();
-		variables.add(this.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME", "Study - assigned (DBCV)"));
-		variables.add(this.createSettingDetail(TermId.STUDY_TITLE.getId(), "STUDY_TITLE", "Study title - assigned (text)"));
-		variables.add(this.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)"));
-		variables.add(this.createSettingDetail(TermId.START_DATE.getId(), "START_DATE", "Start date - assigned (date)"));
-		variables.add(this.createSettingDetail(TermId.END_DATE.getId(), "END_DATE", "End date - assigned (date)"));
+		variables.add(this.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME", "Study - assigned (DBCV)",
+				SettingsUtilTest.C_DATATYPE));
+		variables.add(this.createSettingDetail(TermId.STUDY_TITLE.getId(), "STUDY_TITLE", "Study title - assigned (text)",
+				SettingsUtilTest.C_DATATYPE));
+		variables.add(this.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)",
+				SettingsUtilTest.C_DATATYPE));
+		variables.add(this.createSettingDetail(TermId.START_DATE.getId(), "START_DATE", "Start date - assigned (date)",
+				SettingsUtilTest.C_DATATYPE));
+		variables.add(this.createSettingDetail(TermId.END_DATE.getId(), "END_DATE", "End date - assigned (date)",
+				SettingsUtilTest.C_DATATYPE));
 		variables.add(this.createSettingDetail(TermId.BREEDING_METHOD_VARIATE_CODE.getId(), "BM_CODE_VTE",
-				"Breeding method observed on each plot(CODE)"));
+				"Breeding method observed on each plot(CODE)", SettingsUtilTest.C_DATATYPE));
 		return variables;
 	}
 
-	private SettingDetail createSettingDetail(final int cvTermId, final String name, final String value) {
+	private SettingDetail createSettingDetail(final int cvTermId, final String name, final String value, final String dataType) {
 		final SettingVariable variable = new SettingVariable();
 		variable.setCvTermId(cvTermId);
 		variable.setName(name);
-
-		return new SettingDetail(variable, null, value, false);
+		variable.setRole(PhenotypicType.STUDY.toString());
+		final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
+		settingDetail.setRole(PhenotypicType.STUDY);
+		return settingDetail;
 	}
+
+	@Test
+	public void testConvertDetailsToConditionsWithNullList() {
+		final List<Condition> conditions =
+				SettingsUtil.convertDetailsToConditions(null, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
+		Assert.assertNotNull("Conditions should not be null", conditions);
+		Assert.assertEquals("Conditions should be empty", 0, conditions.size());
+	}
+
+	@Test
+	public void testConvertDetailsToConditions() {
+		final List<SettingDetail> conditionSettingDetails = new ArrayList<>();
+		final List<SettingDetail> studyLevelConditions = this.createStudyLevelConditions();
+		final List<SettingDetail> basicDetails = this.createSettingDetailVariables();
+		conditionSettingDetails.addAll(basicDetails);
+		conditionSettingDetails.addAll(studyLevelConditions);
+
+		this.mockGetStandardVariable(conditionSettingDetails);
+
+		final List<Condition> conditions =
+				SettingsUtil.convertDetailsToConditions(conditionSettingDetails, this.fieldbookMiddlewareService,
+						SettingsUtilTest.PROGRAM_UUID);
+		Assert.assertNotNull("Conditions should not be null", conditions);
+
+		final int expectedSize = conditionSettingDetails.size();
+		Assert.assertEquals("Conditions should contain " + expectedSize + " items", expectedSize, conditions.size());
+
+		for (final Condition condition : conditions) {
+			if (TermId.STUDY_NAME.getId() == condition.getId()) {
+				Assert.assertEquals("The name should be 'STUDY_NAME'", "STUDY_NAME", condition.getName());
+				Assert.assertEquals("The value should be 'Study - assigned (DBCV)'", "Study - assigned (DBCV)", condition.getValue());
+			} else if (TermId.STUDY_TITLE.getId() == condition.getId()) {
+				Assert.assertEquals("The name should be 'STUDY_TITLE'", "STUDY_TITLE", condition.getName());
+				Assert.assertEquals("The value should be 'Study title - assigned (text)'", "Study title - assigned (text)",
+						condition.getValue());
+			} else if (TermId.STUDY_OBJECTIVE.getId() == condition.getId()) {
+				Assert.assertEquals("The name should be 'STUDY_OBJECTIVE'", "STUDY_OBJECTIVE", condition.getName());
+				Assert.assertEquals("The value should be 'Objective - described (text)'", "Objective - described (text)",
+						condition.getValue());
+			} else if (TermId.START_DATE.getId() == condition.getId()) {
+				Assert.assertEquals("The name should be 'START_DATE'", "START_DATE", condition.getName());
+				Assert.assertEquals("The value should be 'Start date - assigned (date)'", "Start date - assigned (date)",
+						condition.getValue());
+			} else if (TermId.END_DATE.getId() == condition.getId()) {
+				Assert.assertEquals("The name should be 'END_DATE'", "END_DATE", condition.getName());
+				Assert.assertEquals("The value should be 'End date - assigned (date)'", "End date - assigned (date)", condition.getValue());
+			} else if (TermId.BREEDING_METHOD_VARIATE_CODE.getId() == condition.getId()) {
+				Assert.assertEquals("The name should be 'BM_CODE_VTE'", "BM_CODE_VTE", condition.getName());
+				Assert.assertEquals("The value should be 'Breeding method observed on each plot(CODE)'",
+						"Breeding method observed on each plot(CODE)", condition.getValue());
+			} else if (TermId.SEASON_VAR.getId() == condition.getId()) {
+				Assert.assertEquals("The name should be 'Crop_season_Code'", "Crop_season_Code", condition.getName());
+				Assert.assertEquals("The description should be 'Season - Assigned (Code)'", "Season - Assigned (Code)",
+						condition.getDescription());
+				Assert.assertEquals("The property should be 'Season'", "Season", condition.getProperty());
+				Assert.assertEquals("The scale should be 'Code of Crop_season_Code'", "Code of Crop_season_Code", condition.getScale());
+				Assert.assertEquals("The methid should be 'Assigned'", "Assigned", condition.getMethod());
+				Assert.assertEquals("The role should be '" + PhenotypicType.STUDY.toString() + "'", PhenotypicType.STUDY.toString(),
+						condition.getRole());
+				Assert.assertEquals("The datatype should be 'C'", "C", condition.getDatatype());
+				Assert.assertEquals("The name should be '" + TermId.CATEGORICAL_VARIABLE.getId() + "'",
+						TermId.CATEGORICAL_VARIABLE.getId(), condition.getDataTypeId().intValue());
+			}
+		}
+	}
+
+	private void mockGetStandardVariable(final List<SettingDetail> conditionSettingDetails) {
+		for (final SettingDetail settingDetail : conditionSettingDetails) {
+
+			final SettingVariable settingVariable = settingDetail.getVariable();
+			final StandardVariable standardVariable = new StandardVariable();
+			standardVariable.setId(settingVariable.getCvTermId());
+			standardVariable.setName(settingVariable.getName());
+			standardVariable.setProperty(new Term(SettingsUtilTest.DUMMY_ID, settingVariable.getProperty(), settingVariable.getProperty()));
+			standardVariable.setScale(new Term(SettingsUtilTest.DUMMY_ID, settingVariable.getScale(), settingVariable.getScale()));
+			standardVariable.setMethod(new Term(SettingsUtilTest.DUMMY_ID, settingVariable.getMethod(), settingVariable.getMethod()));
+			standardVariable.setPhenotypicType(settingDetail.getRole());
+			standardVariable.setDescription(settingVariable.getDescription());
+			if (settingVariable.getDataTypeId() != null
+					&& settingVariable.getDataTypeId().intValue() == SettingsUtilTest.CATEGORICAL_DATATYPE_TERM.getId()) {
+				standardVariable.setDataType(SettingsUtilTest.CATEGORICAL_DATATYPE_TERM);
+			} else {
+				standardVariable.setDataType(SettingsUtilTest.C_DATATYPE_TERM);
+			}
+
+			Mockito.doReturn(standardVariable).when(this.fieldbookMiddlewareService)
+					.getStandardVariable(settingVariable.getCvTermId().intValue(), SettingsUtilTest.PROGRAM_UUID);
+		}
+
+	}
+
+	private List<SettingDetail> createStudyLevelConditions() {
+		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
+
+		final SettingDetail settingDetail = new SettingDetail();
+		studyLevelConditions.add(settingDetail);
+
+		final SettingVariable cropSeasonCodeVariable = this.createCropSeasonCodeSettingVariable();
+		settingDetail.setVariable(cropSeasonCodeVariable);
+
+		final List<ValueReference> cropSeasonCodePossibleValues = this.createCropSeasonPossibleValues();
+		settingDetail.setPossibleValues(cropSeasonCodePossibleValues);
+
+		// set value to the numeric value of the first categorical variable
+		settingDetail.setValue(cropSeasonCodePossibleValues.get(0).getId().toString());
+
+		settingDetail.setRole(PhenotypicType.STUDY);
+		settingDetail.setVariableType(VariableType.STUDY_DETAIL);
+
+		return studyLevelConditions;
+	}
+
+	private List<ValueReference> createCropSeasonPossibleValues() {
+		final List<ValueReference> cropSeasonCodePossibleValues = new ArrayList<>();
+		cropSeasonCodePossibleValues.add(new ValueReference(10290, "Dry season"));
+		cropSeasonCodePossibleValues.add(new ValueReference(10300, "Wet season"));
+		cropSeasonCodePossibleValues.add(new ValueReference(60084, "Main season"));
+		cropSeasonCodePossibleValues.add(new ValueReference(60085, "Off season"));
+		return cropSeasonCodePossibleValues;
+	}
+
+	private SettingVariable createCropSeasonCodeSettingVariable() {
+		final SettingVariable cropSeasonCodeVariable = new SettingVariable();
+		cropSeasonCodeVariable.setCvTermId(TermId.SEASON_VAR.getId());
+		cropSeasonCodeVariable.setName("Crop_season_Code");
+		cropSeasonCodeVariable.setDescription("Season - Assigned (Code)");
+		cropSeasonCodeVariable.setProperty("Season");
+		cropSeasonCodeVariable.setScale("Code of Crop_season_Code");
+		cropSeasonCodeVariable.setMethod("Assigned");
+		cropSeasonCodeVariable.setRole(PhenotypicType.STUDY.toString());
+		cropSeasonCodeVariable.setDataType("C");
+		cropSeasonCodeVariable.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
+		return cropSeasonCodeVariable;
+	}
+
 }

@@ -551,8 +551,6 @@ public class SettingsUtilTest {
 	public void testConvertBaselineTraitsToVariatesWithEmptyBaselineTraits() {
 		final List<SettingDetail> baselineTraits = new ArrayList<>();
 
-		final UserSelection userSelection = new UserSelection();
-
 		final List<Variate> baselineVariates =
 				SettingsUtil
 						.convertBaselineTraitsToVariates(baselineTraits, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
@@ -766,7 +764,7 @@ public class SettingsUtilTest {
 	}
 
 	@Test
-	public void testConvertDetailsToConditionsWithNullList() {
+	public void testConvertDetailsToConditionsWithNullSettingDetailsList() {
 		final List<Condition> conditions =
 				SettingsUtil.convertDetailsToConditions(null, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
 		Assert.assertNotNull("Conditions should not be null", conditions);

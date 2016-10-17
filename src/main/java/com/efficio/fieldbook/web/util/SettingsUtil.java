@@ -620,7 +620,6 @@ public class SettingsUtil {
 	 * @param programUUID the project id
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	@SuppressWarnings("unchecked")
 	private static void convertXmlNurseryDatasetToPojo(
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			final com.efficio.fieldbook.service.api.FieldbookService fieldbookService, final Dataset dataset,
@@ -1348,16 +1347,16 @@ public class SettingsUtil {
 	static MeasurementVariable convertConditionToMeasurementVariable(final Condition condition) {
 		String label = null;
 		label = PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0);
-		final MeasurementVariable mvar =
+		final MeasurementVariable measurementVariable =
 				new MeasurementVariable(condition.getName(), condition.getDescription(), condition.getScale(), condition.getMethod(),
 						condition.getProperty(), condition.getDatatype(), condition.getValue(), label, condition.getMinRange(),
 						condition.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(condition.getRole()));
-		mvar.setOperation(condition.getOperation());
-		mvar.setTermId(condition.getId());
-		mvar.setFactor(true);
-		mvar.setDataTypeId(condition.getDataTypeId());
-		mvar.setPossibleValues(condition.getPossibleValues());
-		return mvar;
+		measurementVariable.setOperation(condition.getOperation());
+		measurementVariable.setTermId(condition.getId());
+		measurementVariable.setFactor(true);
+		measurementVariable.setDataTypeId(condition.getDataTypeId());
+		measurementVariable.setPossibleValues(condition.getPossibleValues());
+		return measurementVariable;
 	}
 
 	private static MeasurementVariable convertConstantToMeasurementVariable(final Constant constant) {

@@ -1,12 +1,7 @@
 package com.efficio.fieldbook.util.labelprinting;
 
-import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
-import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.google.zxing.common.BitMatrix;
-import com.lowagie.text.pdf.PdfReader;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,10 +10,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PDFLabelGeneratorTest {
@@ -27,6 +18,8 @@ public class PDFLabelGeneratorTest {
 
     @InjectMocks
     private PDFLabelGenerator unitUnderTest;
+    @InjectMocks
+    private LabelPrintingUtil labelPrintingUtil;
 
     @Test
     public void testEncodeBardcodeInEnglishCharacters() {
@@ -45,21 +38,21 @@ public class PDFLabelGeneratorTest {
         String barcodeLabelForCode = "Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Year : 2015";
         barcodeLabelForCode = this.unitUnderTest.truncateBarcodeLabelForCode(barcodeLabelForCode);
 
-        String truncatedBarcodeLabelForCode = "Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Nursery Name : SUPER VERY ";
+        final String truncatedBarcodeLabelForCode = "Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Nursery Name : SUPER VERY ";
         Assert.assertEquals("Barcode Label For Code's value should be " + barcodeLabelForCode, truncatedBarcodeLabelForCode, barcodeLabelForCode);
     }
 
     @Test
     public void testAppendBarcodeIfBarcodeNeededTrue() {
-        String mainSelectedFields = "";
-        String newFields = unitUnderTest.appendBarcode(true, mainSelectedFields);
+        final String mainSelectedFields = "";
+        final String newFields = this.labelPrintingUtil.appendBarcode(true, mainSelectedFields);
         junit.framework.Assert.assertEquals("Should have the id of the Barcode fields", "," + AppConstants.AVAILABLE_LABEL_BARCODE.getInt(), newFields);
     }
 
     @Test
     public void testAppendBarcodeIfBarcodeNeededFalse() {
-        String mainSelectedFields = "";
-        String newFields = unitUnderTest.appendBarcode(false, mainSelectedFields);
+        final String mainSelectedFields = "";
+        final String newFields = this.labelPrintingUtil.appendBarcode(false, mainSelectedFields);
         junit.framework.Assert.assertEquals("Should have the NO id of the Barcode fields", "", newFields);
     }
 }

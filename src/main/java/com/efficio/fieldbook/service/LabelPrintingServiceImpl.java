@@ -202,13 +202,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		// sort the labels contained inside the trial instances so that they are arranged from highest to lowest by entry number
 		this.sortTrialInstanceLabels(trialInstances);
-
-		if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
-			return this.labelGeneratorFactory.getCSVLabelGenerator().generateLabels(trialInstances, userLabelPrinting);
-		} else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
-			return this.labelGeneratorFactory.getExcelLabelGenerator().generateLabels(trialInstances, userLabelPrinting);
-		}
-
 		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting);
 	}
 

@@ -18,19 +18,16 @@ public class LabelGeneratorFactory {
     @Resource
     private CSVSeedPreparationLabelGenerator csvSeedPreparationLabelGenerator;
 
-    public BaseLabelGenerator retrieveLabelGenerator(String labelType) {
-        if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
+    public LabelGenerator retrieveLabelGenerator(final String labelType) {
+
+        if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
+            return this.csvLabelGenerator;
+        } else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
+            return this.excelLabelGenerator;
+        } else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
             return this.pdfLabelGenerator;
         }
-        return null;
-    }
-
-    public ExcelLabelGenerator getExcelLabelGenerator() {
-        return this.excelLabelGenerator;
-    }
-
-    public CSVLabelGenerator getCSVLabelGenerator() {
-        return this.csvLabelGenerator;
+        throw new IllegalArgumentException("Could not recognise the following label type: " + labelType);
     }
 
     public CSVSeedPreparationLabelGenerator getCSVSeedPreparationLabelGenerator() {

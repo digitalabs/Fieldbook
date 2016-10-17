@@ -9,9 +9,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService',
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService) {
 
-			// if environments tab is triggered, we preload the measurements tab
-			$scope.loadMeasurementsTabInBackground();
-
 			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
 			var populateDatatableWithDefaultValues = function() {
 				$scope.data = TrialManagerDataService.currentData.environments;

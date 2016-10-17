@@ -876,15 +876,14 @@ public class OpenTrialControllerTest {
 		}
 	}
 
-
 	@Test
 	public void testSetUserSelectionImportedGermplasmMainInfoGermplasmListIsNotEmpty() {
 
-		int germplasmListId = 111;
-		int germplasmListRef = 222;
-		int trialId = 1;
-		long checkCount = 23;
-		int germplasmCount = 1;
+		final int germplasmListId = 111;
+		final int germplasmListRef = 222;
+		final int trialId = 1;
+		final long checkCount = 23;
+		final int germplasmCount = 1;
 
 		final GermplasmList germplasmList = new GermplasmList();
 		germplasmList.setId(germplasmListId);
@@ -893,18 +892,20 @@ public class OpenTrialControllerTest {
 		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
 		listOfGermplasmList.add(germplasmList);
 
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId,  GermplasmListType.TRIAL))
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.TRIAL))
 				.thenReturn(listOfGermplasmList);
-		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(this.createListDataProject(germplasmCount));
-		Mockito.when(this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryType(germplasmListId, SystemDefinedEntryType.CHECK_ENTRY)).thenReturn(checkCount);
+		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId))
+				.thenReturn(this.createListDataProject(germplasmCount));
+		Mockito.when(this.fieldbookMiddlewareService
+				.countListDataProjectByListIdAndEntryType(germplasmListId, SystemDefinedEntryType.CHECK_ENTRY)).thenReturn(checkCount);
 
-		Model model = new ExtendedModelMap();
+		final Model model = new ExtendedModelMap();
 
-		UserSelection userSelection = new UserSelection();
+		final UserSelection userSelection = new UserSelection();
 
 		this.openTrialController.setUserSelectionImportedGermplasmMainInfo(userSelection, 1, model);
 
-		ImportedGermplasmMainInfo importedGermplasmMainInfo = userSelection.getImportedGermplasmMainInfo();
+		final ImportedGermplasmMainInfo importedGermplasmMainInfo = userSelection.getImportedGermplasmMainInfo();
 
 		Assert.assertEquals(germplasmListRef, importedGermplasmMainInfo.getListId().intValue());
 		Assert.assertTrue(importedGermplasmMainInfo.isAdvanceImportType());
@@ -919,14 +920,15 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testSetUserSelectionImportedGermplasmMainInfoGermplasmListIsEmpty() {
 
-		int germplasmListId = 111;
-		int trialId = 1;
+		final int germplasmListId = 111;
+		final int trialId = 1;
 
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId,  GermplasmListType.TRIAL))
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.TRIAL))
 				.thenReturn(new ArrayList<GermplasmList>());
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryType(germplasmListId, SystemDefinedEntryType.CHECK_ENTRY);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0))
+				.countListDataProjectByListIdAndEntryType(germplasmListId, SystemDefinedEntryType.CHECK_ENTRY);
 
 		Assert.assertNull(userSelection.getImportedGermplasmMainInfo());
 		Assert.assertFalse(userSelection.isImportValid());
@@ -938,25 +940,25 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testSetUserSelectionImportedGermplasmMainInfoGermplasmListIsNotEmptyButListDataIsEmpty() {
 
-		int germplasmListId = 111;
-		int trialId = 1;
+		final int germplasmListId = 111;
+		final int trialId = 1;
 
 		final GermplasmList germplasmList = new GermplasmList();
 		germplasmList.setId(germplasmListId);
 
-
 		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
 		listOfGermplasmList.add(germplasmList);
 
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId,  GermplasmListType.TRIAL))
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.TRIAL))
 				.thenReturn(listOfGermplasmList);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(new ArrayList<ListDataProject>());
 
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId,  GermplasmListType.TRIAL))
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.TRIAL))
 				.thenReturn(new ArrayList<GermplasmList>());
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryType(germplasmListId, SystemDefinedEntryType.CHECK_ENTRY);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0))
+				.countListDataProjectByListIdAndEntryType(germplasmListId, SystemDefinedEntryType.CHECK_ENTRY);
 
 		Assert.assertNull(userSelection.getImportedGermplasmMainInfo());
 		Assert.assertFalse(userSelection.isImportValid());
@@ -965,14 +967,13 @@ public class OpenTrialControllerTest {
 
 	}
 
+	private List<ListDataProject> createListDataProject(final int germplasmCount) {
 
-	private List<ListDataProject> createListDataProject(int germplasmCount) {
-
-		List<ListDataProject> list =  new ArrayList<ListDataProject>();
+		final List<ListDataProject> list = new ArrayList<ListDataProject>();
 
 		for (int i = 0; i < germplasmCount; i++) {
 
-			ListDataProject listDataProject = new ListDataProject();
+			final ListDataProject listDataProject = new ListDataProject();
 
 			listDataProject.setCheckType(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
 			listDataProject.setGroupName("");

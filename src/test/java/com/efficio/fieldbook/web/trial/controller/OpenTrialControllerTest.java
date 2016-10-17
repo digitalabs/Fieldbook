@@ -12,6 +12,7 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.SessionUtility;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableInitializer;
@@ -25,6 +26,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -37,6 +39,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
@@ -871,6 +874,120 @@ public class OpenTrialControllerTest {
 			Assert.assertTrue("Expecting that the experimental variable's operation is now set to UPDATE",
 					var.getOperation().equals(Operation.UPDATE));
 		}
+	}
+
+
+	@Test
+	public void testSetUserSelectionImportedGermplasmMainInfoGermplasmListIsNotEmpty() {
+
+		int germplasmListId = 111;
+		int germplasmListRef = 222;
+		int trialId = 1;
+		long checkCount = 23;
+		int germplasmCount = 1;
+
+		final GermplasmList germplasmList = new GermplasmList();
+		germplasmList.setId(germplasmListId);
+		germplasmList.setListRef(germplasmListRef);
+
+		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
+		listOfGermplasmList.add(germplasmList);
+
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId,  GermplasmListType.TRIAL))
+				.thenReturn(listOfGermplasmList);
+		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(this.createListDataProject(germplasmCount));
+		Mockito.when(this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryType(germplasmListId, SystemDefinedEntryType.CHECK_ENTRY)).thenReturn(checkCount);
+
+		Model model = new ExtendedModelMap();
+
+		UserSelection userSelection = new UserSelection();
+
+		this.openTrialController.setUserSelectionImportedGermplasmMainInfo(userSelection, 1, model);
+
+		ImportedGermplasmMainInfo importedGermplasmMainInfo = userSelection.getImportedGermplasmMainInfo();
+
+		Assert.assertEquals(germplasmListRef, importedGermplasmMainInfo.getListId().intValue());
+		Assert.assertTrue(importedGermplasmMainInfo.isAdvanceImportType());
+		Assert.assertNotNull(importedGermplasmMainInfo.getImportedGermplasmList());
+		Assert.assertTrue(userSelection.isImportValid());
+
+		Assert.assertEquals(Integer.valueOf(germplasmCount), model.asMap().get("germplasmListSize"));
+		Assert.assertEquals(checkCount, model.asMap().get("germplasmChecksSize"));
+
+	}
+
+	@Test
+	public void testSetUserSelectionImportedGermplasmMainInfoGermplasmListIsEmpty() {
+
+		int germplasmListId = 111;
+		int trialId = 1;
+
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId,  GermplasmListType.TRIAL))
+				.thenReturn(new ArrayList<GermplasmList>());
+
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryType(germplasmListId, SystemDefinedEntryType.CHECK_ENTRY);
+
+		Assert.assertNull(userSelection.getImportedGermplasmMainInfo());
+		Assert.assertFalse(userSelection.isImportValid());
+		Assert.assertFalse(model.containsAttribute("germplasmListSize"));
+		Assert.assertFalse(model.containsAttribute("germplasmChecksSize"));
+
+	}
+
+	@Test
+	public void testSetUserSelectionImportedGermplasmMainInfoGermplasmListIsNotEmptyButListDataIsEmpty() {
+
+		int germplasmListId = 111;
+		int trialId = 1;
+
+		final GermplasmList germplasmList = new GermplasmList();
+		germplasmList.setId(germplasmListId);
+
+
+		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
+		listOfGermplasmList.add(germplasmList);
+
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId,  GermplasmListType.TRIAL))
+				.thenReturn(listOfGermplasmList);
+		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(new ArrayList<ListDataProject>());
+
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId,  GermplasmListType.TRIAL))
+				.thenReturn(new ArrayList<GermplasmList>());
+
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryType(germplasmListId, SystemDefinedEntryType.CHECK_ENTRY);
+
+		Assert.assertNull(userSelection.getImportedGermplasmMainInfo());
+		Assert.assertFalse(userSelection.isImportValid());
+		Assert.assertFalse(model.containsAttribute("germplasmListSize"));
+		Assert.assertFalse(model.containsAttribute("germplasmChecksSize"));
+
+	}
+
+
+	private List<ListDataProject> createListDataProject(int germplasmCount) {
+
+		List<ListDataProject> list =  new ArrayList<ListDataProject>();
+
+		for (int i = 0; i < germplasmCount; i++) {
+
+			ListDataProject listDataProject = new ListDataProject();
+
+			listDataProject.setCheckType(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
+			listDataProject.setGroupName("");
+			listDataProject.setDesignation("");
+			listDataProject.setEntryCode("");
+			listDataProject.setEntryId(i);
+			listDataProject.setGermplasmId(i);
+			listDataProject.setGroupId(i);
+			listDataProject.setSeedSource("");
+
+			list.add(listDataProject);
+		}
+
+		return list;
+
 	}
 
 	private List<StandardVariable> initExpDesignVariables() {

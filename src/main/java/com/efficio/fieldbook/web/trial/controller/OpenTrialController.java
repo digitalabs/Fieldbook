@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -215,7 +216,7 @@ public class OpenTrialController extends BaseTrialController {
 				form.setStudyId(trialId);
 
 				this.setModelAttributes(form, trialId, model, trialWorkbook);
-				this.setUserSelectionImportedGermplasmMainInfo(trialId, model);
+				this.setUserSelectionImportedGermplasmMainInfo(this.userSelection, trialId, model);
 			}
 			return this.showAngularPage(model);
 
@@ -230,7 +231,7 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
-	protected void setUserSelectionImportedGermplasmMainInfo(final Integer trialId, final Model model) {
+	protected void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer trialId, final Model model) {
 		final List<GermplasmList> germplasmLists =
 				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(trialId), GermplasmListType.TRIAL);
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
@@ -252,8 +253,9 @@ public class OpenTrialController extends BaseTrialController {
 				mainInfo.setListId(germplasmList.getListRef());
 				mainInfo.setAdvanceImportType(true);
 				mainInfo.setImportedGermplasmList(importedGermplasmList);
-				this.userSelection.setImportedGermplasmMainInfo(mainInfo);
-				this.userSelection.setImportValid(true);
+
+				userSelection.setImportedGermplasmMainInfo(mainInfo);
+				userSelection.setImportValid(true);
 			}
 		}
 	}

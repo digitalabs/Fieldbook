@@ -170,7 +170,6 @@ public enum AppConstants {
 	}
 
 	public static String getString(final String labelKey) {
-		final Properties configFile = new Properties();
 		String value = null;
 		try {
 			value = configFile.getProperty(labelKey);

@@ -31,6 +31,10 @@
 						block size</b>
 				</span>
 			</div>
+			<div class="add-bottom-padding" ng-show="currentDesignType.id == 4">
+				<b>Number of checks:</b>
+				<span>{{germplasmTotalCheckCount}}</span>
+			</div>
 			<div class="add-bottom-padding"
 				ng-repeat="key in settings.factors.keys() | filterFactors : currentDesignType.id">
 				<b>{{settings.factors.val(key).label}}</b> - <a

@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -234,10 +235,16 @@ public class OpenTrialController extends BaseTrialController {
 				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(trialId), GermplasmListType.TRIAL);
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
 			final GermplasmList germplasmList = germplasmLists.get(0);
-			final List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
-			if (data != null && !data.isEmpty()) {
-				model.addAttribute("germplasmListSize", data.size());
-				final List<ImportedGermplasm> list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
+
+			final List<ListDataProject> listDataProjects = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
+			final long germplasmListChecksSize = this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryType(germplasmList.getId(), SystemDefinedEntryType.CHECK_ENTRY);
+
+			if (listDataProjects != null && !listDataProjects.isEmpty()) {
+
+				model.addAttribute("germplasmListSize", listDataProjects.size());
+				model.addAttribute("germplasmChecksSize",  germplasmListChecksSize);
+
+				final List<ImportedGermplasm> list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(listDataProjects);
 				final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 				importedGermplasmList.setImportedGermplasms(list);
 				final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();

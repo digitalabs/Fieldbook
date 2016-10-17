@@ -125,6 +125,8 @@
 							experimentalDesign.germplasmTotalListCount = 0;
 					}
 
+					$scope.germplasmTotalCheckCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
+
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 
 					// the property "startingEntryNo" is at least part of the data object here when the germplasm tab is loaded first

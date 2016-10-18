@@ -9,6 +9,27 @@
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService', '$http',
 				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages) {
 
+					$scope.$on('$viewContentLoaded', function(){
+
+						refreshDesignDetailsForAugmentedDesign($scope.data.designType);
+
+					});
+
+					function refreshDesignDetailsForAugmentedDesign(designType) {
+
+						if (designType === 4) {
+							$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
+							$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
+							$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
+							$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmNumberOfTestEntriesPerBlock + $scope.germplasmTotalCheckEntriesCount;
+							$scope.germplasmTotalNumberOfPlots = $scope.totalGermplasmEntryListCount + $scope.germplasmNumberOfPlotsPerBlock;
+
+							validateNumberOfChecks();
+						}
+
+					}
+
+
 					$scope.applicationData = TrialManagerDataService.applicationData;
 					$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
 
@@ -125,8 +146,6 @@
 							experimentalDesign.germplasmTotalListCount = 0;
 					}
 
-					$scope.germplasmTotalCheckCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
-
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 
 					// the property "startingEntryNo" is at least part of the data object here when the germplasm tab is loaded first
@@ -169,9 +188,12 @@
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
 							$scope.applicationData.unappliedChangesAvailable = true;
 
+							refreshDesignDetailsForAugmentedDesign($scope.data.designType);
+
 							if ($scope.currentDesignType.isPreset) {
 								showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
 							}
+
 						} else {
 							$scope.currentDesignType = null;
 							$scope.data.designType = '';
@@ -514,16 +536,15 @@
 							}
 							case 4: {
 
-								if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
-									showErrorMessage('page-message', 'Please specify the number of blocks.');
+								if (!validateNumberOfBlocksIfSpecified()) {
 									return false;
 								}
-
-								if ($scope.totalGermplasmEntryListCount % $scope.data.numberOfBlocks !== 0) {
-									showErrorMessage('page-message', 'The entries in this trial cannot be divided into evenly sized blocks. Augmented designs are most efficient when block sizes are constant.');
+								if (!$scope.validateNumberOfBlocksForAugmentedDesign()) {
 									return false;
 								}
-
+								if (!validateNumberOfChecks()) {
+									return false;
+								}
 								break;
 
 							}
@@ -548,6 +569,64 @@
 
 						return true;
 					};
+
+					$scope.refreshDesignDetailsAfterUpdatingTheNumberOfBlocks = function() {
+
+						refreshDesignDetailsForAugmentedDesign($scope.data.designType);
+
+					};
+
+
+					$scope.validateNumberOfBlocksForAugmentedDesign = function() {
+						// Check if the Number of Test entries per block is a whole number
+						if ($scope.germplasmNumberOfTestEntriesPerBlock % 1 !== 0) {
+							showErrorMessage('page-message', 'The number of test entries must be divisible by number of blocks.');
+							return false;
+						}
+						return true;
+					};
+
+					$scope.showOnlyIfNumberOfBlocksIsSpecified = function() {
+
+						if ($scope.currentDesignType.id === 4) {
+							if (!$scope.data.numberOfBlocks && $scope.data.numberOfBlocks !== 0) {
+								return false;
+							}
+							return true;
+						}
+
+					};
+
+
+					function countCheckEntries() {
+
+						var checkCount = 0;
+
+						$.each($('.germplasm-list-items').DataTable().rows().data(), function(index, obj) {
+							if (obj['8255-key'] === '10180') {
+								checkCount++;
+							}
+						});
+
+						return checkCount;
+					}
+
+					function validateNumberOfBlocksIfSpecified() {
+						if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
+							showErrorMessage('page-message', 'Please specify the number of blocks.');
+							return false;
+						}
+						return true;
+					}
+
+					function validateNumberOfChecks() {
+
+						if ($scope.germplasmTotalCheckEntriesCount === 0) {
+							showErrorMessage('page-message', 'Please specify checks in germplasm list before generating augmented design.');
+							return false;
+						}
+						return true;
+					}
 
 				}])
 

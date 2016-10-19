@@ -102,7 +102,7 @@ public class ExcelLabelGenerator implements LabelGenerator {
             if (includeHeader) {
                 row = labelPrintingSheet.createRow(rowIndex++);
                 // we add all the selected fields header
-                this.printHeaderFields(this.labelPrintingUtil.getLabelHeadersFromTrialInstances(trialInstances), true,
+                this.labelPrintingUtil.printHeaderFields(this.labelPrintingUtil.getLabelHeadersFromTrialInstances(trialInstances), true,
                         selectedFieldIDs, row,
                         columnIndex, labelStyle);
             }
@@ -143,20 +143,10 @@ public class ExcelLabelGenerator implements LabelGenerator {
 
         } catch (final Exception e) {
             ExcelLabelGenerator.LOG.error(e.getMessage(), e);
+            throw new LabelPrintingException(e.getMessage());
         }
         return fileName;
     }
 
-    private void printHeaderFields(final Map<Integer, String> labelHeaders, final boolean includeHeader,
-            final List<Integer> selectedFieldIDs, final Row row, final int columnIndex, final CellStyle labelStyle) {
-        if (includeHeader) {
-            int currentIndex = columnIndex;
-            for (final Integer selectedFieldID : selectedFieldIDs) {
-                final String headerName = this.labelPrintingUtil.getColumnHeader(selectedFieldID, labelHeaders);
-                final Cell summaryCell = row.createCell(currentIndex++);
-                summaryCell.setCellValue(headerName);
-                summaryCell.setCellStyle(labelStyle);
-            }
-        }
-    }
+
 }

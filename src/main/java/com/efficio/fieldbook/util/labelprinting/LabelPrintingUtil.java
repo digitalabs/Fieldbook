@@ -8,6 +8,9 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
@@ -293,6 +296,38 @@ class LabelPrintingUtil {
 		moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barCode);
 
 		return moreFieldInfo;
+	}
+
+	void printHeaderFields(final Map<Integer, String> labelHeaders, final boolean includeHeader,
+			final List<Integer> selectedFieldIDs, final Row row, final int columnIndex, final CellStyle labelStyle) {
+		if (includeHeader) {
+			int currentIndex = columnIndex;
+			for (final Integer selectedFieldID : selectedFieldIDs) {
+				final String headerName = this.getColumnHeader(selectedFieldID, labelHeaders);
+				final Cell summaryCell = row.createCell(currentIndex++);
+				summaryCell.setCellValue(headerName);
+				summaryCell.setCellStyle(labelStyle);
+			}
+		}
+	}
+
+	Map<Integer, String> getLabelHeadersForSeedPreparation(final List<Integer> selectedFieldIDs) {
+		final Locale locale = LocaleContextHolder.getLocale();
+		final Map<Integer, String> labelHeaders = Maps.newHashMap();
+		for (final Integer selectedFieldId : selectedFieldIDs) {
+			if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.gid", null, locale));
+			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
+				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.designation", null, locale));
+			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
+				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.cross", null, locale));
+			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
+				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale));
+			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale));
+			}
+		}
+		return labelHeaders;
 	}
 
 }

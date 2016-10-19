@@ -60,21 +60,7 @@ public class CSVSeedPreparationLabelGenerator implements LabelGenerator {
 		final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(mainSelectedFields);
 
 		//Label Headers
-		//TODO move this block to separate utility function
-		final Map<Integer, String> labelHeaders = Maps.newHashMap();
-		for (final Integer selectedFieldId : selectedFieldIDs) {
-			if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.gid", null, locale));
-			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.designation", null, locale));
-			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.cross", null, locale));
-			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale));
-			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale));
-			}
-		}
+		final Map<Integer, String> labelHeaders = this.labelPrintingUtil.getLabelHeadersForSeedPreparation(selectedFieldIDs);
 
 		final List<ExportColumnHeader> exportColumnHeaders =
 				this.labelPrintingUtil.generateColumnHeaders(selectedFieldIDs, labelHeaders);
@@ -164,7 +150,5 @@ public class CSVSeedPreparationLabelGenerator implements LabelGenerator {
 
 		return fileName;
 	}
-
-
 
 }

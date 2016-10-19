@@ -192,6 +192,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
 			this.labelGenerator = this.labelGeneratorFactory.getCSVSeedPreparationLabelGenerator();
 			return this.labelGenerator.generateLabels(germplasmListDataList, userLabelPrinting);
+		} else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
+			this.labelGenerator = this.labelGeneratorFactory.getExcelSeedPreparationLabelGenerator();
+			return this.labelGenerator.generateLabels(germplasmListDataList, userLabelPrinting);
 		}
 		throw new LabelPrintingException("There is no appropriate strategy provider for the given label type: " + labelType);
 	}

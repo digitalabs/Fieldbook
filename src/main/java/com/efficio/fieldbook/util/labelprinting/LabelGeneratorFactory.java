@@ -18,6 +18,9 @@ public class LabelGeneratorFactory {
     @Resource
     private CSVSeedPreparationLabelGenerator csvSeedPreparationLabelGenerator;
 
+    @Resource
+    private ExcelSeedPreparationLabelGenerator excelSeedPreparationLabelGenerator;
+
     public LabelGenerator retrieveLabelGenerator(final String labelType) {
 
         if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
@@ -33,4 +36,5 @@ public class LabelGeneratorFactory {
     public CSVSeedPreparationLabelGenerator getCSVSeedPreparationLabelGenerator() {
         return this.csvSeedPreparationLabelGenerator;
     }
+    public ExcelSeedPreparationLabelGenerator getExcelSeedPreparationLabelGenerator() { return this.excelSeedPreparationLabelGenerator; }
 }

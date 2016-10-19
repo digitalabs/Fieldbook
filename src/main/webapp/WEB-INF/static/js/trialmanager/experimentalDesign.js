@@ -175,7 +175,7 @@
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
 							$scope.applicationData.unappliedChangesAvailable = true;
 
-							refreshDesignDetailsForAugmentedDesign($scope.data.designType);
+							refreshDesignDetailsForAugmentedDesign();
 
 							if ($scope.currentDesignType.isPreset) {
 								showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
@@ -556,13 +556,6 @@
 
 						return true;
 					};
-
-					$scope.refreshDesignDetailsAfterUpdatingTheNumberOfBlocks = function() {
-
-						refreshDesignDetailsForAugmentedDesign($scope.data.designType);
-
-					};
-
 
 					$scope.checkIfTheNumberOfTestEntriesPerBlockIsWholeNumber = function() {
 						// Check if the Number of Test entries per block is a whole number

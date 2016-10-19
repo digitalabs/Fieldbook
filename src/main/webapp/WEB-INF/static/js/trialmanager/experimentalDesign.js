@@ -10,25 +10,12 @@
 				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages) {
 
 					$scope.$on('$viewContentLoaded', function(){
-
-						refreshDesignDetailsForAugmentedDesign($scope.data.designType);
-
-					});
-
-					function refreshDesignDetailsForAugmentedDesign(designType) {
-
-						if (designType === 4) {
-							$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
-							$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
-							$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
-							$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmNumberOfTestEntriesPerBlock + $scope.germplasmTotalCheckEntriesCount;
-							$scope.germplasmTotalNumberOfPlots = $scope.totalGermplasmEntryListCount + $scope.germplasmNumberOfPlotsPerBlock;
-
-							validateNumberOfChecks();
+						// This is to automatically refresh the design details for augmented design
+						// whenever the Experimental tab is viewed
+						if ($scope.data.designType === 4) {
+							refreshDesignDetailsForAugmentedDesign();
 						}
-
-					}
-
+					});
 
 					$scope.applicationData = TrialManagerDataService.applicationData;
 					$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
@@ -536,10 +523,10 @@
 							}
 							case 4: {
 
-								if (!validateNumberOfBlocksIfSpecified()) {
+								if (!validateNumberOfBlocks()) {
 									return false;
 								}
-								if (!$scope.validateNumberOfBlocksForAugmentedDesign()) {
+								if (!$scope.checkIfTheNumberOfTestEntriesPerBlockIsWholeNumber()) {
 									return false;
 								}
 								if (!validateNumberOfChecks()) {
@@ -577,7 +564,7 @@
 					};
 
 
-					$scope.validateNumberOfBlocksForAugmentedDesign = function() {
+					$scope.checkIfTheNumberOfTestEntriesPerBlockIsWholeNumber = function() {
 						// Check if the Number of Test entries per block is a whole number
 						if ($scope.germplasmNumberOfTestEntriesPerBlock % 1 !== 0) {
 							showErrorMessage('page-message', 'The number of test entries must be divisible by number of blocks.');
@@ -596,6 +583,16 @@
 						}
 
 					};
+
+					function refreshDesignDetailsForAugmentedDesign() {
+
+						$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
+						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
+						$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
+						$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmNumberOfTestEntriesPerBlock + $scope.germplasmTotalCheckEntriesCount;
+						$scope.germplasmTotalNumberOfPlots = $scope.germplasmNumberOfPlotsPerBlock * $scope.germplasmNumberOfTestEntriesPerBlock;
+
+					}
 
 
 					function countCheckEntries() {
@@ -626,7 +623,7 @@
 
 					}
 
-					function validateNumberOfBlocksIfSpecified() {
+					function validateNumberOfBlocks() {
 						if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
 							showErrorMessage('page-message', 'Please specify the number of blocks.');
 							return false;

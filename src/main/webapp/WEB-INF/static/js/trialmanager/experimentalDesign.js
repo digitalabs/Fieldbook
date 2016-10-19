@@ -600,15 +600,30 @@
 
 					function countCheckEntries() {
 
-						var checkCount = 0;
+						// When the user changed the entry type of germplasm entries in Germplasm Tab, the changes are not yet saved in the database,
+						// so we can only count the number of checks through DataTable.
+						var germplasmListDataTable = $('.germplasm-list-items').DataTable();
 
-						$.each($('.germplasm-list-items').DataTable().rows().data(), function(index, obj) {
-							if (obj['8255-key'] === '10180') {
-								checkCount++;
-							}
-						});
+						if (germplasmListDataTable.rows().length !== 0) {
 
-						return checkCount;
+							var numberOfChecksEntries = 0;
+
+							$.each(germplasmListDataTable.rows().data(), function(index, obj) {
+								if (obj['8255-key'] === '10180') {
+									numberOfChecksEntries++;
+								}
+							});
+
+							return numberOfChecksEntries;
+
+						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
+							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
+							// when an existing trial is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
+							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
+						}
+
+						return 0;
+
 					}
 
 					function validateNumberOfBlocksIfSpecified() {

@@ -13,7 +13,7 @@
 						// This is to automatically refresh the design details for augmented design
 						// whenever the Experimental tab is viewed
 						if ($scope.data.designType === 4) {
-							refreshDesignDetailsForAugmentedDesign();
+							$scope.refreshDesignDetailsForAugmentedDesign();
 						}
 					});
 
@@ -175,7 +175,7 @@
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
 							$scope.applicationData.unappliedChangesAvailable = true;
 
-							refreshDesignDetailsForAugmentedDesign();
+							$scope.refreshDesignDetailsForAugmentedDesign();
 
 							if ($scope.currentDesignType.isPreset) {
 								showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
@@ -577,7 +577,7 @@
 
 					};
 
-					function refreshDesignDetailsForAugmentedDesign() {
+					$scope.refreshDesignDetailsForAugmentedDesign = function() {
 
 						$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
 						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;

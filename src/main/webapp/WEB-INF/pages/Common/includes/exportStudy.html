@@ -48,7 +48,6 @@
 								<option value="1" th:text="#{nursery.export.fieldlog.fieldroid}"></option>
 								<option value="6" th:text="#{nursery.export.ksu.fieldbook.csv}">KSU Fieldbook CSV</option>
 								<option value="5" th:text="#{nursery.export.ksu.fieldbook.excel}">KSU Fieldbook Excel</option>
-								<option value="2" th:text="#{nursery.export.r}"></option>
 							</select>
 						</div>
 					</div>
@@ -72,25 +71,6 @@
 						</div>
 						<div style="padding-top: 7px">
 							<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{study.export.data.collection.serpentine.tool.tip}"></span>
-						</div>
-					</div>
-
-					<div class="row form-group exportRSection" style="display: none">
-						<div class="col-xs-12 col-md-12">&nbsp;</div>
-						<div class="col-xs-12 col-md-12">
-							<label class="control-label h4" th:text="#{nursery.export.r.header}">Choose Trait to evaluate in R</label>
-						</div>
-						<div class="col-xs-12 col-md-12">
-							<label class="control-label" th:text="#{nursery.export.r.note}">Note: In your exported file, your trait will show as "GY"</label>
-						</div>
-						<div class="col-xs-12 col-md-12">&nbsp;</div>
-						<div class="col-xs-5 col-md-5">
-							<label class="control-label add_top_padding label-bold" th:text="#{nursery.export.r.select.trait}">Select Main Trait:</label>
-						</div>
-						<div class="col-xs-4 col-md-4">
-							<select name="selectedRTrait" id="selectedRTrait" class="form-control" style="width: 170px">
-
-							</select>
 						</div>
 					</div>
 
@@ -276,32 +256,8 @@ function showExportOptions() {
 	}
 
 	$('#exportStudyModal #heading-modal').html(exportHeader + " " + studyType + " " + exportBookHeader);
-	$('#selectedRTrait').empty();
-	$('#selectedRTrait').select2('destroy');
 	StudyCustomExportReports.showReports();
-	$.ajax({
-		url: '/Fieldbook/ExportManager/study/traits/?studyId=' + studyId,
-		type: 'GET',
-		cache: false,
-		success: function(data) {
-			var variatesList = $.parseJSON(data),
-				index,
-				id,
-				val;
-
-			// We build the R options
-			if (variatesList.length !== 0) {
-				for (index = 0 ; index < variatesList.length; index++) {
-					id = variatesList[index].termId;
-					val = variatesList[index].name + ' (' + variatesList[index].scale + ')';
-					$('#selectedRTrait').append($('<option></option>').attr('value', id).text(val));
-				}
-			}
-			$('#selectedRTrait').select2({minimumResultsForSearch: 20});
-			$('#exportStudyModal').modal({ backdrop: 'static', keyboard: true });
-
-		}
-	});
+	$('#exportStudyModal').modal({ backdrop: 'static', keyboard: true });
 
 	if (!isNursery()) {
 		//we call an ajax to display the table of instances

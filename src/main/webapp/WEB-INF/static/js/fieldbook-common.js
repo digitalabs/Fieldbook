@@ -1377,18 +1377,10 @@ function exportStudy() {
 		showMessage('Please choose export type');
 		return false;
 	}
-
-	if (type === '2') {
-		exportStudyToR(type);
-	} else {
-		doExportContinue(type, isNursery());
-	}
+	
+	doExportContinue(type, isNursery());
 }
 
-function exportStudyToR(type) {
-	'use strict';
-	doExportContinue(type + '/' + $('#selectedRTrait').val(), isNursery());
-}
 function getExportCheckedAdvancedList() {
 	'use strict';
 	var advancedLists = [];

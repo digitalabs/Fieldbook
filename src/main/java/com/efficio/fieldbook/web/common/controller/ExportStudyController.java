@@ -25,7 +25,6 @@ import org.generationcp.commons.reports.service.JasperReportService;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
@@ -64,7 +63,6 @@ import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
-import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
@@ -97,9 +95,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private FieldroidExportStudyService fielddroidExportStudyService;
-
-	@Resource
-	private RExportStudyService rExportStudyService;
 
 	@Resource
 	private ExcelExportStudyService excelExportStudyService;
@@ -169,18 +164,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/export/{exportType}/{selectedTraitTermId}/{exportWayType}", method = RequestMethod.POST)
-	public String exportRFileForNursery(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
-			@PathVariable final int selectedTraitTermId, @PathVariable final int exportWayType, final HttpServletRequest req,
-			final HttpServletResponse response) throws IOException {
-		final boolean isTrial = false;
-		final List<Integer> instancesList = new ArrayList<Integer>();
-		instancesList.add(1);
-		return this.doExport(exportType, selectedTraitTermId, response, isTrial, instancesList, exportWayType, data);
-
-	}
-
-	@ResponseBody
 	@RequestMapping(value = "/export/custom/report", method = RequestMethod.POST)
 	public String exportCustomReport(@RequestBody final Map<String, String> data, final HttpServletRequest req,
 			final HttpServletResponse response) {
@@ -231,20 +214,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/exportTrial/{exportType}/{selectedTraitTermId}/{instances}/{exportWayType}", method = RequestMethod.POST)
-	public String exportRFileForTrial(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
-			@PathVariable final int selectedTraitTermId, @PathVariable final String instances, @PathVariable final int exportWayType,
-			final HttpServletRequest req, final HttpServletResponse response) throws IOException {
-		final boolean isTrial = true;
-		final List<Integer> instancesList = new ArrayList<Integer>();
-		final StringTokenizer tokenizer = new StringTokenizer(instances, "|");
-		while (tokenizer.hasMoreTokens()) {
-			instancesList.add(Integer.valueOf(tokenizer.nextToken()));
-		}
-		return this.doExport(exportType, selectedTraitTermId, response, isTrial, instancesList, exportWayType, data);
-	}
-
-	@ResponseBody
 	@RequestMapping(value = "/exportTrial/{exportType}/{instances}/{exportWayType}", method = RequestMethod.POST)
 	public String exportFileTrial(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
 			@PathVariable final String instances, @PathVariable final int exportWayType, final HttpServletRequest req,
@@ -289,37 +258,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		userSelection.getWorkbook().getTotalNumberOfInstances();
 		final Integer datasetId = userSelection.getWorkbook().getMeasurementDatesetId();
 		return datasetId.toString();
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/study/traits", method = RequestMethod.GET)
-	public String getStudyTraits(final HttpServletRequest req, final HttpServletResponse response) {
-		final String studyId = req.getParameter("studyId");
-
-		final UserSelection userSelection = this.getUserSelection();
-		final List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
-		try {
-			List<MeasurementVariable> tempVariates = new ArrayList<MeasurementVariable>();
-			if ("0".equalsIgnoreCase(studyId)) {
-
-				tempVariates = userSelection.getWorkbook().getMeasurementDatasetVariables();
-
-			} else {
-				// meaning for the session
-				final Workbook workbook = this.getPaginationListSelection().getReviewWorkbook(studyId);
-				tempVariates = workbook.getVariates();
-			}
-
-			for (final MeasurementVariable var : tempVariates) {
-				if (var.isFactor() == false) {
-					variates.add(var);
-				}
-			}
-
-		} catch (final Exception e) {
-			ExportStudyController.LOG.error(e.getMessage(), e);
-		}
-		return super.convertObjectToJson(variates);
 	}
 
 	/**
@@ -393,10 +331,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			if (AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType) {
 				filename = filename + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
 				outputFilename = this.fielddroidExportStudyService.export(userSelection.getWorkbook(), filename, instances);
-				response.setContentType(ExportStudyController.CSV_CONTENT_TYPE);
-			} else if (AppConstants.EXPORT_NURSERY_R.getInt() == exportType) {
-				filename = filename + AppConstants.EXPORT_R_SUFFIX.getString();
-				outputFilename = this.rExportStudyService.exportToR(userSelection.getWorkbook(), filename, selectedTraitTermId, instances);
 				response.setContentType(ExportStudyController.CSV_CONTENT_TYPE);
 			} else if (AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType) {
 				final List<Integer> visibleColumns = this.getVisibleColumns(data.get("visibleColumns"));

@@ -79,6 +79,8 @@ public class OpenTrialControllerTest {
 	private static final String PROGRAM_UUID = "68f0d114-5b5b-11e5-885d-feff819cdc9f";
 	public static final String TEST_TRIAL_NAME = "dummyTrial";
 	private static final int BM_CODE_VTE = 8252;
+	public static final String GERMPLASM_LIST_SIZE = "germplasmListSize";
+	public static final String GERMPLASM_CHECKS_SIZE = "germplasmChecksSize";
 
 	@Mock
 	private HttpServletRequest httpRequest;
@@ -241,7 +243,7 @@ public class OpenTrialControllerTest {
 			Assert.assertTrue("Controller does not properly set into the model the data for the treatment factors tab",
 					model.containsAttribute("treatmentFactorsData"));
 			Assert.assertTrue("Controller does not properly set into the model the data for the germplasm list size",
-					model.containsAttribute("germplasmListSize"));
+					model.containsAttribute(GERMPLASM_LIST_SIZE));
 			Assert.assertTrue("Controller does not properly set into the model copy of the trial form",
 					model.containsAttribute("createNurseryForm"));
 			Assert.assertTrue("Controller does not properly set into the model special data required for experimental design tab",
@@ -912,8 +914,8 @@ public class OpenTrialControllerTest {
 		Assert.assertNotNull(importedGermplasmMainInfo.getImportedGermplasmList());
 		Assert.assertTrue(userSelection.isImportValid());
 
-		Assert.assertEquals(Integer.valueOf(germplasmCount), model.asMap().get("germplasmListSize"));
-		Assert.assertEquals(checkCount, model.asMap().get("germplasmChecksSize"));
+		Assert.assertEquals(Integer.valueOf(germplasmCount), model.asMap().get(GERMPLASM_LIST_SIZE));
+		Assert.assertEquals(checkCount, model.asMap().get(GERMPLASM_CHECKS_SIZE));
 
 	}
 
@@ -932,8 +934,8 @@ public class OpenTrialControllerTest {
 
 		Assert.assertNull(userSelection.getImportedGermplasmMainInfo());
 		Assert.assertFalse(userSelection.isImportValid());
-		Assert.assertFalse(model.containsAttribute("germplasmListSize"));
-		Assert.assertFalse(model.containsAttribute("germplasmChecksSize"));
+		Assert.assertFalse(model.containsAttribute(GERMPLASM_LIST_SIZE));
+		Assert.assertFalse(model.containsAttribute(GERMPLASM_CHECKS_SIZE));
 
 	}
 
@@ -962,8 +964,8 @@ public class OpenTrialControllerTest {
 
 		Assert.assertNull(userSelection.getImportedGermplasmMainInfo());
 		Assert.assertFalse(userSelection.isImportValid());
-		Assert.assertFalse(model.containsAttribute("germplasmListSize"));
-		Assert.assertFalse(model.containsAttribute("germplasmChecksSize"));
+		Assert.assertFalse(model.containsAttribute(GERMPLASM_LIST_SIZE));
+		Assert.assertFalse(model.containsAttribute(GERMPLASM_CHECKS_SIZE));
 
 	}
 

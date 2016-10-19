@@ -109,7 +109,6 @@ public class ExcelSeedPreparationLabelGenerator implements LabelGenerator {
 			// we populate the info now
 			// Values in the columns
 			// TODO leave this specific logic in class and remove the rest to the utility class
-			// **********************************
 			for (final GermplasmListData germplasmListData : germplasmListDataList){
 				@SuppressWarnings("unchecked")
 				final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
@@ -188,7 +187,6 @@ public class ExcelSeedPreparationLabelGenerator implements LabelGenerator {
 
 				}
 			}
-			// **********************************
 
 			for (int columnPosition = 0; columnPosition < columnIndex; columnPosition++) {
 				labelPrintingSheet.autoSizeColumn((short) columnPosition);

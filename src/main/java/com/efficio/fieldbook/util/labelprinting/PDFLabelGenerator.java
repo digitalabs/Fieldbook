@@ -8,11 +8,8 @@ import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.template.LabelPaper;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.oned.Code128Writer;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
@@ -44,12 +41,11 @@ public class PDFLabelGenerator implements LabelGenerator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PDFLabelGenerator.class);
 
-	private static final String UNSUPPORTED_CHARSET_IMG = "unsupported-char-set.png";
-
-	private static final String ARIAL_UNI = "arialuni.ttf";
-
 	@Resource
 	private LabelPrintingUtil labelPrintingUtil;
+
+	@Resource
+	private LabelPrintingPDFUtil labelPrintingPDFUtil;
 
 	/**
 	 * Generate barcode label.
@@ -76,24 +72,6 @@ public class PDFLabelGenerator implements LabelGenerator {
 		}
 
 		return buffer.toString();
-	}
-
-	//truncate the barcode label for code instead of throwing an error
-	protected String truncateBarcodeLabelForCode(String barcodeLabelForCode) {
-		if (barcodeLabelForCode != null && barcodeLabelForCode.length() > 79) {
-			barcodeLabelForCode = barcodeLabelForCode.substring(0, 79);
-		}
-		return barcodeLabelForCode;
-	}
-
-	protected BitMatrix encodeBarcode(final String barcodeLabelForCode, final int width, final int height) {
-		BitMatrix bitMatrix = null;
-		try {
-			bitMatrix = new Code128Writer().encode(barcodeLabelForCode, BarcodeFormat.CODE_128, width, height, null);
-		} catch (final WriterException | IllegalArgumentException e) {
-			PDFLabelGenerator.LOG.debug(e.getMessage(), e);
-		}
-		return bitMatrix;
 	}
 
 	@Override
@@ -178,13 +156,13 @@ public class PDFLabelGenerator implements LabelGenerator {
 								firstBarcodeField, secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), true);
 					}
 
-					barcodeLabelForCode = this.truncateBarcodeLabelForCode(barcodeLabelForCode);
+					barcodeLabelForCode = this.labelPrintingPDFUtil.truncateBarcodeLabelForCode(barcodeLabelForCode);
 
 					Image mainImage = Image.getInstance(
-							LabelPrintingServiceImpl.class.getClassLoader().getResource(PDFLabelGenerator.UNSUPPORTED_CHARSET_IMG));
+							LabelPrintingServiceImpl.class.getClassLoader().getResource(this.labelPrintingPDFUtil.UNSUPPORTED_CHARSET_IMG));
 					FileOutputStream fout = null;
 
-					final BitMatrix bitMatrix = this.encodeBarcode(barcodeLabelForCode, width, height);
+					final BitMatrix bitMatrix = this.labelPrintingPDFUtil.encodeBarcode(barcodeLabelForCode, width, height);
 					if (bitMatrix != null) {
 						final String imageLocation = System.getProperty("user.home") + "/" + Math.random() + ".png";
 						final File imageFile = new File(imageLocation);
@@ -218,7 +196,8 @@ public class PDFLabelGenerator implements LabelGenerator {
 
 					final float fontSize = paper.getFontSize();
 
-					final BaseFont unicode = BaseFont.createFont(PDFLabelGenerator.ARIAL_UNI, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+					final BaseFont unicode = BaseFont.createFont(LabelPrintingPDFUtil.ARIAL_UNI, BaseFont.IDENTITY_H, BaseFont
+							.EMBEDDED);
 					final Font fontNormal = new Font(unicode, fontSize);
 					fontNormal.setStyle(Font.NORMAL);
 
@@ -352,6 +331,7 @@ public class PDFLabelGenerator implements LabelGenerator {
 
 		} catch (final Exception e) {
 			PDFLabelGenerator.LOG.error(e.getMessage(), e);
+			throw new LabelPrintingException(e.getMessage());
 		}
 
 		return fileName;

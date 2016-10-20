@@ -21,6 +21,9 @@ public class LabelGeneratorFactory {
     @Resource
     private ExcelSeedPreparationLabelGenerator excelSeedPreparationLabelGenerator;
 
+    @Resource
+    private PDFSeedPreparationLabelGenerator pdfSeedPreparationLabelGenerator;
+
     public LabelGenerator retrieveLabelGenerator(final String labelType) {
 
         if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
@@ -33,8 +36,16 @@ public class LabelGeneratorFactory {
         throw new IllegalArgumentException("Could not recognise the following label type: " + labelType);
     }
 
-    public CSVSeedPreparationLabelGenerator getCSVSeedPreparationLabelGenerator() {
-        return this.csvSeedPreparationLabelGenerator;
+    public LabelGenerator retrieveSeedPreparationLabelGenerator(final String labelType) {
+
+        if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
+            return this.csvSeedPreparationLabelGenerator;
+        } else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
+            return this.excelSeedPreparationLabelGenerator;
+        } else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
+            return this.pdfSeedPreparationLabelGenerator;
+        }
+        throw new IllegalArgumentException("Could not recognise the following label type: " + labelType);
     }
-    public ExcelSeedPreparationLabelGenerator getExcelSeedPreparationLabelGenerator() { return this.excelSeedPreparationLabelGenerator; }
+
 }

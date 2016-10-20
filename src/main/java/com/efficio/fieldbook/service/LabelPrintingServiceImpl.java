@@ -187,22 +187,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	};
 
 	@Override
-	public String generateLabelsForGermplasmList(final String labelType, List<GermplasmListData> germplasmListDataList, final UserLabelPrinting
-			userLabelPrinting) throws LabelPrintingException {
-		if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
-			this.labelGenerator = this.labelGeneratorFactory.getCSVSeedPreparationLabelGenerator();
-			return this.labelGenerator.generateLabels(germplasmListDataList, userLabelPrinting);
-		} else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
-			this.labelGenerator = this.labelGeneratorFactory.getExcelSeedPreparationLabelGenerator();
-			return this.labelGenerator.generateLabels(germplasmListDataList, userLabelPrinting);
-		}
-		throw new LabelPrintingException("There is no appropriate strategy provider for the given label type: " + labelType);
+	public String generateLabelsForGermplasmList(final String labelType, final List<GermplasmListData> germplasmListDataList,
+			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
+		this.labelGenerator = this.labelGeneratorFactory.retrieveSeedPreparationLabelGenerator(labelType);
+		return this.labelGenerator.generateLabels(germplasmListDataList, userLabelPrinting);
 	}
 
 	@Override
 	public String generateLabels(final String labelType, final List<StudyTrialInstanceInfo> trialInstances,
 			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
-
 		// sort the labels contained inside the trial instances so that they are arranged from highest to lowest by entry number
 		this.sortTrialInstanceLabels(trialInstances);
 		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting);

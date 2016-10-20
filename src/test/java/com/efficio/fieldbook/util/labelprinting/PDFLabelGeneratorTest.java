@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.util.labelprinting;
 
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.google.zxing.common.BitMatrix;
 import org.junit.Assert;
@@ -17,26 +18,26 @@ public class PDFLabelGeneratorTest {
     private static final Logger LOG = LoggerFactory.getLogger(PDFLabelGeneratorTest.class);
 
     @InjectMocks
-    private PDFLabelGenerator unitUnderTest;
+    private LabelPrintingPDFUtil LabelPrintingPDFUtil;
     @InjectMocks
     private LabelPrintingUtil labelPrintingUtil;
 
     @Test
-    public void testEncodeBardcodeInEnglishCharacters() {
-        final BitMatrix bitMatrix = this.unitUnderTest.encodeBarcode("Test", 100, 200);
+    public void testEncodeBardcodeInEnglishCharacters() throws LabelPrintingException {
+        final BitMatrix bitMatrix = this.LabelPrintingPDFUtil.encodeBarcode("Test", 100, 200);
         Assert.assertNotNull("Bit Matrix Barcode should be not null since characters are in English ASCII", bitMatrix);
     }
 
     @Test
-    public void testEncodeBardcodeInNonEnglishCharacters() {
-        final BitMatrix bitMatrix = this.unitUnderTest.encodeBarcode("乙七九", 100, 200);
+    public void testEncodeBardcodeInNonEnglishCharacters() throws LabelPrintingException {
+        final BitMatrix bitMatrix = this.LabelPrintingPDFUtil.encodeBarcode("乙七九", 100, 200);
         Assert.assertNull("Bit Matrix Barcode should be null since parameter is non-english ascii", bitMatrix);
     }
 
     @Test
     public void testTruncateBarcodeLabelForCode(){
         String barcodeLabelForCode = "Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Year : 2015";
-        barcodeLabelForCode = this.unitUnderTest.truncateBarcodeLabelForCode(barcodeLabelForCode);
+        barcodeLabelForCode = this.LabelPrintingPDFUtil.truncateBarcodeLabelForCode(barcodeLabelForCode);
 
         final String truncatedBarcodeLabelForCode = "Nursery Name : SUPER VERY VERY VERY VERY LONG NAME | Nursery Name : SUPER VERY ";
         Assert.assertEquals("Barcode Label For Code's value should be " + barcodeLabelForCode, truncatedBarcodeLabelForCode, barcodeLabelForCode);

@@ -61,12 +61,10 @@ public class CSVSeedPreparationLabelGenerator implements LabelGenerator {
 		// Values in the columns
 		for (final GermplasmListData germplasmListData : germplasmListDataList){
 			final Map<Integer, ExportColumnValue> exportColumnValueMap = Maps.newHashMap();
-			@SuppressWarnings("unchecked")
-			final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
 
 			for (final Integer selectedFieldId : selectedFieldIDs) {
 				exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, this.labelPrintingUtil
-						.getSelectedFieldValue(selectedFieldId, germplasmListData, userLabelPrinting, lotRows)));
+						.getSelectedFieldValue(selectedFieldId, germplasmListData, userLabelPrinting)));
 			}
 
 			exportColumnValues.add(exportColumnValueMap);

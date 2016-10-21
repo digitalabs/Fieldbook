@@ -107,8 +107,7 @@ class ExcelSeedPreparationLabelGenerator implements LabelGenerator {
 			// Values in the columns
 			// TODO leave this specific logic in class and remove the rest to the utility class
 			for (final GermplasmListData germplasmListData : germplasmListDataList){
-				@SuppressWarnings("unchecked")
-				final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
+
 
 				// excel row
 				row = labelPrintingSheet.createRow(rowIndex++);
@@ -118,7 +117,7 @@ class ExcelSeedPreparationLabelGenerator implements LabelGenerator {
 					// excel cell setting the value
 					final Cell summaryCell = row.createCell(columnIndex++);
 					summaryCell.setCellValue(this.labelPrintingUtil.getSelectedFieldValue(selectedFieldId, germplasmListData,
-							userLabelPrinting, lotRows));
+							userLabelPrinting));
 				}
 			}
 

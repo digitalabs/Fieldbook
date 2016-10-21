@@ -5,9 +5,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.domain.inventory.ListEntryLotDetails;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +49,9 @@ class PDFSeedPreparationLabelGenerator implements LabelGenerator {
 	@Resource
 	private LabelPrintingPDFUtil labelPrintingPDFUtil;
 
+	@Resource
+	private LabelPrintingUtil labelPrintingUtil;
+
 	@Override
 	public String generateLabels(final List<?> dataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
@@ -58,10 +64,6 @@ class PDFSeedPreparationLabelGenerator implements LabelGenerator {
 		final String leftSelectedFields = userLabelPrinting.getLeftSelectedLabelFields();
 		final String rightSelectedFields = userLabelPrinting.getRightSelectedLabelFields();
 		final String barcodeNeeded = userLabelPrinting.getBarcodeNeeded();
-
-		final String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
-		final String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
-		final String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
 
 		final String fileName = userLabelPrinting.getFilenameDLLocation();
 
@@ -192,9 +194,7 @@ class PDFSeedPreparationLabelGenerator implements LabelGenerator {
 					innerTableInfo.setWidths(new float[] {1, 1});
 					innerTableInfo.setWidthPercentage(85);
 					final List<Integer> leftSelectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(leftSelectedFields);
-					//FIXME uncomment
-					/*final String leftText = this.generateBarcodeLabel(moreFieldInfo, fieldMapLabel, leftSelectedFieldIDs,
-							fieldMapTrialInstanceInfo.getLabelHeaders(), row);
+					final String leftText = this.generateBarcodeLabel(leftSelectedFieldIDs, row, germplasmListData, userLabelPrinting);
 					final PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
 
 					cellInnerLeft.setBorder(Rectangle.NO_BORDER);
@@ -205,8 +205,7 @@ class PDFSeedPreparationLabelGenerator implements LabelGenerator {
 					innerTableInfo.addCell(cellInnerLeft);
 
 					final List<Integer> rightSelectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(rightSelectedFields);
-					final String rightText = this.generateBarcodeLabel(moreFieldInfo, fieldMapLabel, rightSelectedFieldIDs,
-							fieldMapTrialInstanceInfo.getLabelHeaders(), row);
+					final String rightText = this.generateBarcodeLabel(rightSelectedFieldIDs, row, germplasmListData, userLabelPrinting);
 					final PdfPCell cellInnerRight = new PdfPCell(new Paragraph(rightText, fontNormal));
 
 					cellInnerRight.setBorder(Rectangle.NO_BORDER);
@@ -214,7 +213,7 @@ class PDFSeedPreparationLabelGenerator implements LabelGenerator {
 					cellInnerRight.setPaddingBottom(0.5f);
 					cellInnerRight.setPaddingTop(0.5f);
 
-					innerTableInfo.addCell(cellInnerRight);*/
+					innerTableInfo.addCell(cellInnerRight);
 
 					cell.addElement(innerTableInfo);
 				}
@@ -301,5 +300,19 @@ class PDFSeedPreparationLabelGenerator implements LabelGenerator {
 		}
 
 		return fileName;
+	}
+
+	private String generateBarcodeLabel(final List<Integer> selectedFieldIDs, final int rowNumber, final GermplasmListData
+			germplasmListData, final UserLabelPrinting userLabelPrinting) {
+		int i = 0;
+
+		for (final Integer selectedFieldID : selectedFieldIDs) {
+			if (i == rowNumber) {
+				return this.labelPrintingUtil.getSelectedFieldValue(selectedFieldID, germplasmListData, userLabelPrinting);
+			}
+			i++;
+		}
+
+		return "";
 	}
 }

@@ -58,20 +58,17 @@ public class PDFLabelGenerator implements LabelGenerator {
 	 */
 	private String generateBarcodeLabel(final Map<String, String> moreFieldInfo, final FieldMapLabel fieldMapLabel,
 			final List<Integer> selectedFieldIDs, final Map<Integer, String> labelHeaders, final int rowNumber) {
-		final StringBuilder buffer = new StringBuilder();
-
 		int i = 0;
 
 		for (final Integer selectedFieldID : selectedFieldIDs) {
 			if (i == rowNumber) {
-				buffer.append(this.labelPrintingUtil.getValueFromSpecifiedColumn(moreFieldInfo, fieldMapLabel, selectedFieldID,
-						labelHeaders, true));
-				break;
+				return this.labelPrintingUtil.getValueFromSpecifiedColumn(moreFieldInfo, fieldMapLabel, selectedFieldID,
+						labelHeaders, true);
 			}
 			i++;
 		}
 
-		return buffer.toString();
+		return "";
 	}
 
 	@Override

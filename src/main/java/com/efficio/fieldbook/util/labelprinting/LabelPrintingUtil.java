@@ -340,7 +340,10 @@ class LabelPrintingUtil {
 	 * @return
 	 */
 	String getSelectedFieldValue(final int selectedFieldId, final GermplasmListData germplasmListData, final UserLabelPrinting
-			userLabelPrinting, final List<ListEntryLotDetails> lotRows) {
+			userLabelPrinting) {
+
+		@SuppressWarnings("unchecked")
+		final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
 
 		if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
 			// GID

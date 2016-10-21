@@ -308,7 +308,7 @@ class PDFSeedPreparationLabelGenerator implements LabelGenerator {
 
 		for (final Integer selectedFieldID : selectedFieldIDs) {
 			if (i == rowNumber) {
-				return this.labelPrintingUtil.getSelectedFieldValue(selectedFieldID, germplasmListData, userLabelPrinting);
+				return this.labelPrintingUtil.getSelectedFieldValue(selectedFieldID, germplasmListData, userLabelPrinting, true);
 			}
 			i++;
 		}

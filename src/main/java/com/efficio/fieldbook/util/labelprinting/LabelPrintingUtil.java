@@ -47,7 +47,7 @@ class LabelPrintingUtil {
 	 * @param listType the type of list to return. Available values: AVAILABLE_LABEL_SEED_LOT_ID, AVAILABLE_LABEL_FIELDS_STOCK_ID
 	 * @return comma separated string of ids (lotIds or stockIds)
 	 */
-	String getListOfIDs(final List<ListEntryLotDetails> lotRows, final AppConstants listType) {
+	private String getListOfIDs(final List<ListEntryLotDetails> lotRows, final AppConstants listType) {
 		String listIds = "";
 		for (final ListEntryLotDetails lotDetails : lotRows) {
 			if (listType.equals(AppConstants.AVAILABLE_LABEL_SEED_LOT_ID)){
@@ -332,22 +332,51 @@ class LabelPrintingUtil {
 		return labelHeaders;
 	}
 
-	/**
-	 * *********Seed Preparation extract values for label fields ***********
-	 *
-	 * @param selectedFieldId
-	 * @param germplasmListData
-	 * @return
-	 */
+	private Map<Integer, String> getAllLabelHeadersForSeedPreparation() {
+		final Locale locale = LocaleContextHolder.getLocale();
+		final Map<Integer, String> labelHeaders = Maps.newHashMap();
+		labelHeaders.put(AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt(),
+				this.messageSource.getMessage("label.printing.available.fields.gid", null, locale));
+		labelHeaders.put(AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt(),
+				this.messageSource.getMessage("label.printing.available.fields.designation", null, locale));
+		labelHeaders.put(AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt(),
+				this.messageSource.getMessage("label.printing.available.fields.cross", null, locale));
+		labelHeaders.put(AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt(),
+				this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale));
+		labelHeaders.put(AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt(),
+				this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale));
+		return labelHeaders;
+	}
+
 	String getSelectedFieldValue(final int selectedFieldId, final GermplasmListData germplasmListData, final UserLabelPrinting
 			userLabelPrinting) {
+		return this.getSelectedFieldValue(selectedFieldId, germplasmListData, userLabelPrinting, false);
+	}
+
+	/**
+	 * *********Seed Preparation extract values for label fields ***********
+	 * @param selectedFieldId id of the field selected for printing
+	 * @param germplasmListData data for the germplasm list
+	 * @param userLabelPrinting data object with selected barcode fields
+	 * @param includeHeaderLabel true for pdf printing, label header gets prepended before the value (e.g. "GID: 664968" instead of "664968")
+	 * @return selected field value
+	 */
+	String getSelectedFieldValue(final int selectedFieldId, final GermplasmListData germplasmListData, final UserLabelPrinting
+			userLabelPrinting, final boolean includeHeaderLabel) {
 
 		@SuppressWarnings("unchecked")
 		final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
 
+		final StringBuilder selectedValueFieldBuffer = new StringBuilder();
+
+		if (includeHeaderLabel) {
+			final String headerName = this.getColumnHeader(selectedFieldId, this.getAllLabelHeadersForSeedPreparation());
+			selectedValueFieldBuffer.append(headerName).append(" : ");
+		}
+
 		if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
 			// GID
-			return germplasmListData.getGid().toString();
+			selectedValueFieldBuffer.append(germplasmListData.getGid().toString());
 		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
 			// Barcode
 			final StringBuilder buffer = new StringBuilder();
@@ -383,29 +412,30 @@ class LabelPrintingUtil {
 			}
 
 			// barcodeLabel
-			return buffer.toString();
+			selectedValueFieldBuffer.append(buffer.toString());
 		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
 			//Designation
-			return germplasmListData.getDesignation();
+			selectedValueFieldBuffer.append(germplasmListData.getDesignation());
 		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
 			// Cross
-			return germplasmListData.getGroupName();
+			selectedValueFieldBuffer.append(germplasmListData.getGroupName());
 		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
 			// Stock ID
 			if (lotRows != null) {
-				return this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID);
+				selectedValueFieldBuffer.append(this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID));
 			} else {
-				return "";
+				selectedValueFieldBuffer.append("");
 			}
 		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
 			// Lot ID
 			if (lotRows != null) {
-				return this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_SEED_LOT_ID);
+				selectedValueFieldBuffer.append(this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_SEED_LOT_ID));
 			} else {
-				return "";
+				selectedValueFieldBuffer.append("");
 			}
 		}
-		return "";
+
+		return selectedValueFieldBuffer.toString();
 	}
 
 }

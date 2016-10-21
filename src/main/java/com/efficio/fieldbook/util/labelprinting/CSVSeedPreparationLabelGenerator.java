@@ -15,14 +15,12 @@ import org.generationcp.middleware.domain.inventory.ListEntryLotDetails;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.google.common.collect.Maps;
 
@@ -30,14 +28,10 @@ import com.google.common.collect.Maps;
 public class CSVSeedPreparationLabelGenerator implements LabelGenerator {
 
 	@Resource
-	private MessageSource messageSource;
-	@Resource
 	private GermplasmExportService germplasmExportService;
 	@Resource
 	private LabelPrintingUtil labelPrintingUtil;
 
-	/** The delimiter for the barcode. */
-	private static final String DELIMITER = " | ";
 	private static final Logger LOG = LoggerFactory.getLogger(CSVSeedPreparationLabelGenerator.class);
 
 	@Override
@@ -46,8 +40,6 @@ public class CSVSeedPreparationLabelGenerator implements LabelGenerator {
 
 		@SuppressWarnings("unchecked")
 		final List<GermplasmListData> germplasmListDataList = (List<GermplasmListData>) dataList;
-
-		final Locale locale = LocaleContextHolder.getLocale();
 
 		final String fileName = userLabelPrinting.getFilenameDLLocation();
 		String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
@@ -67,76 +59,14 @@ public class CSVSeedPreparationLabelGenerator implements LabelGenerator {
 		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
 
 		// Values in the columns
-		//TODO move this block to separate utility function
 		for (final GermplasmListData germplasmListData : germplasmListDataList){
 			final Map<Integer, ExportColumnValue> exportColumnValueMap = Maps.newHashMap();
 			@SuppressWarnings("unchecked")
 			final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
 
 			for (final Integer selectedFieldId : selectedFieldIDs) {
-				if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
-					// GID
-					exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getGid().toString()));
-				} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
-					// Barcode
-					final StringBuilder buffer = new StringBuilder();
-					final String fieldList = userLabelPrinting.getFirstBarcodeField() + "," + userLabelPrinting.getSecondBarcodeField() + "," + userLabelPrinting.getThirdBarcodeField();
-
-					final List<Integer> selectedBarcodeFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(fieldList);
-
-					for (final Integer selectedBarcodeFieldID : selectedBarcodeFieldIDs) {
-						if (!"".equalsIgnoreCase(buffer.toString())) {
-							buffer.append(DELIMITER);
-						}
-						//TODO Move barcode implementation to separate utility function
-						// GID
-						if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
-							buffer.append(germplasmListData.getGid().toString());
-						} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
-							buffer.append(germplasmListData.getDesignation());
-						} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
-							buffer.append(germplasmListData.getGroupName());
-						} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
-							if (lotRows != null) {
-								buffer.append(this.labelPrintingUtil.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID));
-							} else {
-								buffer.append(" ");
-							}
-						} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
-							if (lotRows != null) {
-								buffer.append(this.labelPrintingUtil.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_SEED_LOT_ID));
-							} else {
-								buffer.append(" ");
-							}
-						}
-					}
-
-					final String barcodeLabel =  buffer.toString();
-					exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, barcodeLabel));
-				} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
-					//Designation
-					exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getDesignation()));
-				} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
-					// Cross
-					exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, germplasmListData.getGroupName()));
-				} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
-					// Stock ID
-					if (lotRows != null) {
-						exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId,
-								this.labelPrintingUtil.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID)));
-					} else {
-						exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, ""));
-					}
-				} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
-					// Lot ID
-					if (lotRows != null) {
-						exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId,
-								this.labelPrintingUtil.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_SEED_LOT_ID)));
-					} else {
-						exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, ""));
-					}
-				}
-
+				exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, this.labelPrintingUtil
+						.getSelectedFieldValue(selectedFieldId, germplasmListData, userLabelPrinting, lotRows)));
 			}
 
 			exportColumnValues.add(exportColumnValueMap);
@@ -145,6 +75,7 @@ public class CSVSeedPreparationLabelGenerator implements LabelGenerator {
 		try {
 			this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName, includeHeader);
 		} catch (final IOException e) {
+			LOG.debug(e.getMessage());
 			throw new LabelPrintingException(e);
 		}
 

@@ -16,6 +16,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.inventory.ListEntryLotDetails;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.google.common.collect.Maps;
@@ -328,6 +330,79 @@ class LabelPrintingUtil {
 			}
 		}
 		return labelHeaders;
+	}
+
+	/**
+	 * *********Seed Preparation extract values for label fields ***********
+	 *
+	 * @param selectedFieldId
+	 * @param germplasmListData
+	 * @return
+	 */
+	String getSelectedFieldValue(final int selectedFieldId, final GermplasmListData germplasmListData, final UserLabelPrinting
+			userLabelPrinting, final List<ListEntryLotDetails> lotRows) {
+
+		if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+			// GID
+			return germplasmListData.getGid().toString();
+		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
+			// Barcode
+			final StringBuilder buffer = new StringBuilder();
+			final String fieldList = userLabelPrinting.getFirstBarcodeField() + "," + userLabelPrinting.getSecondBarcodeField() + "," + userLabelPrinting.getThirdBarcodeField();
+
+			final List<Integer> selectedBarcodeFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(fieldList);
+
+			for (final Integer selectedBarcodeFieldID : selectedBarcodeFieldIDs) {
+				if (!"".equalsIgnoreCase(buffer.toString())) {
+					buffer.append(DELIMITER);
+				}
+				//TODO Move barcode implementation to separate utility function
+				// GID
+				if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+					buffer.append(germplasmListData.getGid().toString());
+				} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
+					buffer.append(germplasmListData.getDesignation());
+				} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
+					buffer.append(germplasmListData.getGroupName());
+				} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
+					if (lotRows != null) {
+						buffer.append(this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID));
+					} else {
+						buffer.append(" ");
+					}
+				} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+					if (lotRows != null) {
+						buffer.append(this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_SEED_LOT_ID));
+					} else {
+						buffer.append(" ");
+					}
+				}
+			}
+
+			// barcodeLabel
+			return buffer.toString();
+		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
+			//Designation
+			return germplasmListData.getDesignation();
+		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
+			// Cross
+			return germplasmListData.getGroupName();
+		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
+			// Stock ID
+			if (lotRows != null) {
+				return this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID);
+			} else {
+				return "";
+			}
+		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+			// Lot ID
+			if (lotRows != null) {
+				return this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_SEED_LOT_ID);
+			} else {
+				return "";
+			}
+		}
+		return "";
 	}
 
 }

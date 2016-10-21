@@ -247,9 +247,6 @@ public class ExperimentDesignGenerator {
 
 		varList.addAll(variates);
 
-		final BiMap<Integer, Integer> lastEntriesToCheckEntriesMap = HashBiMap.create(mapOfChecks);
-		final BiMap<Integer, Integer> checkEntriesToLastEntriesMap = lastEntriesToCheckEntriesMap.inverse();
-
 		final int trialInstanceStart = noOfExistingEnvironments - noOfEnvironmentsToAdded + 1;
 		for (int trialNo = trialInstanceStart; trialNo <= noOfExistingEnvironments; trialNo++) {
 
@@ -272,8 +269,7 @@ public class ExperimentDesignGenerator {
 					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
 				}
 				final Optional<ImportedGermplasm> importedGermplasm =
-						findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, lastEntriesToCheckEntriesMap,
-								checkEntriesToLastEntriesMap);
+						findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, mapOfChecks);
 
 				if (!importedGermplasm.isPresent()) {
 					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
@@ -297,11 +293,9 @@ public class ExperimentDesignGenerator {
 	}
 
 	Optional<ImportedGermplasm> findImportedGermplasmByEntryNumberAndChecks(final Map<Integer, ImportedGermplasm> importedGermplasmMap,
-			final Integer entryNumber, final Map<Integer, Integer> lastEntriesToCheckEntriesMap,
-			final Map<Integer, Integer> checkEntriesToLastEntriesMap) {
+			final Integer entryNumber, final Map<Integer, Integer> mapOfChecks) {
 
-		final Integer resolvedEntryNumber =
-				this.resolveMappedEntryNumber(entryNumber, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
+		final Integer resolvedEntryNumber = this.resolveMappedEntryNumber(entryNumber, mapOfChecks);
 
 		if (importedGermplasmMap.containsKey(resolvedEntryNumber)) {
 			return Optional.of(importedGermplasmMap.get(resolvedEntryNumber));
@@ -311,45 +305,14 @@ public class ExperimentDesignGenerator {
 
 	}
 
-	/**
-	 * Gets the check entry number associated to last entry number and vice versa.
-	 * <p/>
-	 * <pre>
-	 *
-	 * In a design with 48 test entries and 4 check entries, BVDesign assumes the checks are entry numbers 49,50, 51, and 52.
-	 * Since this may not be the case for the user's trial list, the BMS will:
-	 * sequentially map genotype numbers 1 to 48 coming back from BVDesign to the non check entries in the Trial List
-	 * then sequentially map 49-52 to the four check entries in the list.
-	 *
-	 * Given the following check entries map:
-	 * (Last Entry No) : (Check Entry No)
-	 * 49 : 1
-	 * 50 : 3
-	 * 51 : 7
-	 * 52 : 9
-	 *
-	 * If the entryNumber is 49, it will return 1;
-	 * if the entryNumber is 7, it will return 51;
-	 * If the entryNumber is 23, it will return 23;
-	 *
-	 * </pre>
-	 *
-	 * @param entryNumber
-	 * @param lastEntriesToCheckEntriesMap
-	 * @param checkEntriesToLastEntriesMap
-	 * @return
-	 */
-	Integer resolveMappedEntryNumber(final Integer entryNumber, final Map<Integer, Integer> lastEntriesToCheckEntriesMap,
-			final Map<Integer, Integer> checkEntriesToLastEntriesMap) {
+	Integer resolveMappedEntryNumber(final Integer entryNumber, final Map<Integer, Integer> mapOfChecks) {
 
-		if (lastEntriesToCheckEntriesMap.containsKey(entryNumber)) {
-			return lastEntriesToCheckEntriesMap.get(entryNumber);
-		} else if (checkEntriesToLastEntriesMap.containsKey(entryNumber)) {
-			return checkEntriesToLastEntriesMap.get(entryNumber);
-		} else {
-			return entryNumber;
-		}
-
+		if (mapOfChecks.containsKey(entryNumber)) {
+			return mapOfChecks.get(entryNumber);
+		} 
+		
+		return entryNumber;
+		
 	}
 
 	MeasurementRow createMeasurementRow(final List<MeasurementVariable> headerVariable, final ImportedGermplasm germplasm,

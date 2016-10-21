@@ -74,11 +74,14 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 			final List<MeasurementVariable> variates, final List<TreatmentVariable> treatmentVariables) throws BVDesignException {
 
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
+		
+		final Set<Integer> entryIdsOfChecks = this.getEntryIdsOfChecks(germplasmList);
+		final Set<Integer> entryIdsOfTestEntries = this.getEntryIdsOfTestEntries(germplasmList);
 
-		final Map<Integer, Integer> mapOfChecks = this.createMapOfChecks(germplasmList);
+		final Map<Integer, Integer> mapOfChecks = this.createMapOfChecks(germplasmList, entryIdsOfChecks, entryIdsOfTestEntries);
 
 		final Integer numberOfBlocks = StringUtil.parseInt(parameter.getNumberOfBlocks(), null);
-		final Integer numberOfControls = mapOfChecks.size();
+		final Integer numberOfControls = entryIdsOfChecks.size();
 		final Integer numberOfTreatments = germplasmList.size() - numberOfControls;
 		final Integer startingPlotNumber = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
 		final Integer startingEntryNumber = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
@@ -139,7 +142,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 
 	}
 
-	Map<Integer, Integer> createMapOfChecks(final List<ImportedGermplasm> importedGermplasmList) {
+	Map<Integer, Integer> createMapOfChecks(final List<ImportedGermplasm> importedGermplasmList, final Set<Integer> entryIdsOfChecks, final Set<Integer> entryIdsOfTestEntries) {
 
 		/**
 		 * The design engine assumes that the checks are at the end of the germplasm list that is passed to it. This might or might not be
@@ -153,11 +156,16 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 
 		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
 
-		final Set<Integer> entryIdsOfChecks = this.getEntryIdsOfChecks(importedGermplasmList);
-
 		// Map the last entries to the check entries in the list.
 		int index = importedGermplasmList.size() - entryIdsOfChecks.size();
 		for (final Integer checkEntryId : entryIdsOfChecks) {
+			mapOfChecks.put(importedGermplasmList.get(index).getEntryId(), checkEntryId);
+			index++;
+		}
+		
+		// Map the top entries to the test entries in the list.
+		index = 0;
+		for (final Integer checkEntryId : entryIdsOfTestEntries) {
 			mapOfChecks.put(importedGermplasmList.get(index).getEntryId(), checkEntryId);
 			index++;
 		}
@@ -176,6 +184,19 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		}
 
 		return entryIdsOfChecks;
+	}
+	
+	Set<Integer> getEntryIdsOfTestEntries(final List<ImportedGermplasm> importedGermplasmList) {
+
+		final HashSet<Integer> entryIdsOfTestEntries = new HashSet<>();
+
+		for (final ImportedGermplasm importedGermplasm : importedGermplasmList) {
+			if (!importedGermplasm.getEntryTypeCategoricalID().equals(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())) {
+				entryIdsOfTestEntries.add(importedGermplasm.getEntryId());
+			}
+		}
+
+		return entryIdsOfTestEntries;
 	}
 
 	@Override

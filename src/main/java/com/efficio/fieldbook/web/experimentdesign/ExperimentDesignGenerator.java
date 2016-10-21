@@ -13,8 +13,6 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Optional;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.util.DateUtil;
@@ -205,7 +203,7 @@ public class ExperimentDesignGenerator {
 			final List<MeasurementVariable> nonTrialFactors, final List<MeasurementVariable> variates,
 			final List<TreatmentVariable> treatmentVariables, final List<StandardVariable> requiredExpDesignVariable,
 			final List<ImportedGermplasm> germplasmList, final MainDesign mainDesign, final String entryNumberIdentifier,
-			final Map<String, List<String>> treatmentFactorValues, final Map<Integer, Integer> mapOfChecks) throws BVDesignException {
+			final Map<String, List<String>> treatmentFactorValues, final Map<Integer, Integer> designExpectedEntriesMap) throws BVDesignException {
 
 		//Converting germplasm List to map
 		final Map<Integer, ImportedGermplasm> importedGermplasmMap = new HashMap<>();
@@ -269,7 +267,7 @@ public class ExperimentDesignGenerator {
 					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
 				}
 				final Optional<ImportedGermplasm> importedGermplasm =
-						findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, mapOfChecks);
+						findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, designExpectedEntriesMap);
 
 				if (!importedGermplasm.isPresent()) {
 					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
@@ -293,9 +291,9 @@ public class ExperimentDesignGenerator {
 	}
 
 	Optional<ImportedGermplasm> findImportedGermplasmByEntryNumberAndChecks(final Map<Integer, ImportedGermplasm> importedGermplasmMap,
-			final Integer entryNumber, final Map<Integer, Integer> mapOfChecks) {
+			final Integer entryNumber, final Map<Integer, Integer> designExpectedEntriesMap) {
 
-		final Integer resolvedEntryNumber = this.resolveMappedEntryNumber(entryNumber, mapOfChecks);
+		final Integer resolvedEntryNumber = this.resolveMappedEntryNumber(entryNumber, designExpectedEntriesMap);
 
 		if (importedGermplasmMap.containsKey(resolvedEntryNumber)) {
 			return Optional.of(importedGermplasmMap.get(resolvedEntryNumber));
@@ -305,10 +303,10 @@ public class ExperimentDesignGenerator {
 
 	}
 
-	Integer resolveMappedEntryNumber(final Integer entryNumber, final Map<Integer, Integer> mapOfChecks) {
+	Integer resolveMappedEntryNumber(final Integer entryNumber, final Map<Integer, Integer> designExpectedEntriesMap) {
 
-		if (mapOfChecks.containsKey(entryNumber)) {
-			return mapOfChecks.get(entryNumber);
+		if (designExpectedEntriesMap.containsKey(entryNumber)) {
+			return designExpectedEntriesMap.get(entryNumber);
 		} 
 		
 		return entryNumber;

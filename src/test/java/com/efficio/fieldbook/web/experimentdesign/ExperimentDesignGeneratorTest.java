@@ -244,15 +244,15 @@ public class ExperimentDesignGeneratorTest {
 
 		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
 
-		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
+		final Map<Integer, Integer> designExpectedEntriesMap = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
-		mapOfChecks.put(9, 3);
+		designExpectedEntriesMap.put(9, 3);
 		// Test Entry No 10 is mapped to Check Entry No 5
-		mapOfChecks.put(10, 5);
+		designExpectedEntriesMap.put(10, 5);
 
 
 		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
-				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 1, mapOfChecks);
+				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 1, designExpectedEntriesMap);
 
 		Assert.assertTrue(optionalImportedGermplasm.isPresent());
 		Assert.assertEquals(Integer.valueOf(1), optionalImportedGermplasm.get().getEntryId());
@@ -264,14 +264,14 @@ public class ExperimentDesignGeneratorTest {
 
 		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
 
-		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
+		final Map<Integer, Integer> designExpectedEntriesMap = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
-		mapOfChecks.put(9, 3);
+		designExpectedEntriesMap.put(9, 3);
 		// Test Entry No 10 is mapped to Check Entry No 5
-		mapOfChecks.put(10, 5);
+		designExpectedEntriesMap.put(10, 5);
 
 		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
-				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 9999, mapOfChecks);
+				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 9999, designExpectedEntriesMap);
 
 		Assert.assertFalse(optionalImportedGermplasm.isPresent());
 
@@ -280,22 +280,22 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testResolveMappedEntryNumber() {
 
-		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
+		final Map<Integer, Integer> designExpectedEntriesMap = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
-		mapOfChecks.put(9, 3);
+		designExpectedEntriesMap.put(9, 3);
 		// Test Entry No 10 is mapped to Check Entry No 5
-		mapOfChecks.put(10, 5);
+		designExpectedEntriesMap.put(10, 5);
 
 		final Integer result1 =
-				experimentDesignGenerator.resolveMappedEntryNumber(9, mapOfChecks);
+				experimentDesignGenerator.resolveMappedEntryNumber(9, designExpectedEntriesMap);
 		Assert.assertEquals("Lookup value 9 should return 3", Integer.valueOf(3), result1);
 
 		final Integer result2 =
-				experimentDesignGenerator.resolveMappedEntryNumber(10, mapOfChecks);
+				experimentDesignGenerator.resolveMappedEntryNumber(10, designExpectedEntriesMap);
 		Assert.assertEquals("Lookup value 10 should return 5", Integer.valueOf(5), result2);
 
 		final Integer result5 =
-				experimentDesignGenerator.resolveMappedEntryNumber(9999, mapOfChecks);
+				experimentDesignGenerator.resolveMappedEntryNumber(9999, designExpectedEntriesMap);
 		Assert.assertEquals("9999 is not in map of checks, the return value should be the same number", Integer.valueOf(9999), result5);
 	}
 

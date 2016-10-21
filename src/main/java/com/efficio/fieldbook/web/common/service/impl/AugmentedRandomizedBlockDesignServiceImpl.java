@@ -78,7 +78,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		final Set<Integer> entryIdsOfChecks = this.getEntryIdsOfChecks(germplasmList);
 		final Set<Integer> entryIdsOfTestEntries = this.getEntryIdsOfTestEntries(germplasmList);
 
-		final Map<Integer, Integer> mapOfChecks = this.createMapOfChecks(germplasmList, entryIdsOfChecks, entryIdsOfTestEntries);
+		final Map<Integer, Integer> designExpectedEntriesMap = this.createMapOfDesignExpectedEntriesToGermplasmEntriesInTrial(germplasmList, entryIdsOfChecks, entryIdsOfTestEntries);
 
 		final Integer numberOfBlocks = StringUtil.parseInt(parameter.getNumberOfBlocks(), null);
 		final Integer numberOfControls = entryIdsOfChecks.size();
@@ -103,7 +103,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		measurementRowList = experimentDesignGenerator
 				.generateExperimentDesignMeasurements(noOfExistingEnvironments, noOfEnvironmentsToBeAdded, trialVariables, factors, nonTrialFactors,
 						variates, treatmentVariables, requiredDesignVariables, germplasmList, mainDesign, stdvarEntryNo.getName(), null,
-						mapOfChecks);
+						designExpectedEntriesMap);
 
 		return measurementRowList;
 	}
@@ -142,7 +142,7 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 
 	}
 
-	Map<Integer, Integer> createMapOfChecks(final List<ImportedGermplasm> importedGermplasmList, final Set<Integer> entryIdsOfChecks, final Set<Integer> entryIdsOfTestEntries) {
+	Map<Integer, Integer> createMapOfDesignExpectedEntriesToGermplasmEntriesInTrial(final List<ImportedGermplasm> importedGermplasmList, final Set<Integer> entryIdsOfChecks, final Set<Integer> entryIdsOfTestEntries) {
 
 		/**
 		 * The design engine assumes that the checks are at the end of the germplasm list that is passed to it. This might or might not be
@@ -154,23 +154,23 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		 * the list.
 		 */
 
-		final Map<Integer, Integer> mapOfChecks = new HashMap<>();
+		final Map<Integer, Integer> designExpectedEntriesMap = new HashMap<>();
 
 		// Map the last entries to the check entries in the list.
 		int index = importedGermplasmList.size() - entryIdsOfChecks.size();
 		for (final Integer checkEntryId : entryIdsOfChecks) {
-			mapOfChecks.put(importedGermplasmList.get(index).getEntryId(), checkEntryId);
+			designExpectedEntriesMap.put(importedGermplasmList.get(index).getEntryId(), checkEntryId);
 			index++;
 		}
 		
 		// Map the top entries to the test entries in the list.
 		index = 0;
 		for (final Integer checkEntryId : entryIdsOfTestEntries) {
-			mapOfChecks.put(importedGermplasmList.get(index).getEntryId(), checkEntryId);
+			designExpectedEntriesMap.put(importedGermplasmList.get(index).getEntryId(), checkEntryId);
 			index++;
 		}
 
-		return mapOfChecks;
+		return designExpectedEntriesMap;
 	}
 
 	Set<Integer> getEntryIdsOfChecks(final List<ImportedGermplasm> importedGermplasmList) {

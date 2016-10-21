@@ -104,7 +104,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		final Set<Integer> entryIdsOfCheckEntries = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfChecks(importedGermplasmList);
 		final Set<Integer> entryIdsOfTestEntries = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfTestEntries(importedGermplasmList);
 
-		final Map<Integer, Integer> mapOfChecks = augmentedRandomizedBlockDesignServiceImpl.createMapOfChecks(importedGermplasmList, entryIdsOfCheckEntries, entryIdsOfTestEntries);
+		final Map<Integer, Integer> designExpectedEntriesMap = augmentedRandomizedBlockDesignServiceImpl.createMapOfDesignExpectedEntriesToGermplasmEntriesInTrial(importedGermplasmList, entryIdsOfCheckEntries, entryIdsOfTestEntries);
 
 		final MainDesign mainDesign = new MainDesign();
 
@@ -124,7 +124,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		Mockito.verify(this.experimentDesignGenerator)
 				.generateExperimentDesignMeasurements(noOfExistingEnvironments, noOfEnvironmentsToBeAdded, trialVariables, factors,
 						nonTrialFactors, variates, treatmentVariables, requiredVariables, importedGermplasmList, mainDesign,
-						entryNoVariable.getName(), null, mapOfChecks);
+						entryNoVariable.getName(), null, designExpectedEntriesMap);
 
 	}
 
@@ -157,7 +157,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	}
 
 	@Test
-	public void testCreateMapOfChecks() {
+	public void testCreateMapOfBreedingViewExpectedEntriesToGermplasmEntriesInTrial() {
 
 		final List<ImportedGermplasm> importedGermplasmList = createImportedGermplasmList();
 
@@ -168,7 +168,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		final Set<Integer> entryIdsOfCheckEntries = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfChecks(importedGermplasmList);
 		final Set<Integer> entryIdsOfTestEntries = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfTestEntries(importedGermplasmList);
 
-		final Map<Integer, Integer> result = augmentedRandomizedBlockDesignServiceImpl.createMapOfChecks(importedGermplasmList, entryIdsOfCheckEntries, entryIdsOfTestEntries);
+		final Map<Integer, Integer> result = augmentedRandomizedBlockDesignServiceImpl.createMapOfDesignExpectedEntriesToGermplasmEntriesInTrial(importedGermplasmList, entryIdsOfCheckEntries, entryIdsOfTestEntries);
 
 		Assert.assertEquals("Entry Number 1 should be mapped to Test Entry 2", 2, result.get(1).intValue());
 		Assert.assertEquals("Entry Number 2 should be mapped to Test Entry 3", 4, result.get(2).intValue());

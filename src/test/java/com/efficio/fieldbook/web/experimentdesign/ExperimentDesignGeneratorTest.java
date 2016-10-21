@@ -10,8 +10,6 @@ import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.google.common.base.Optional;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import junit.framework.Assert;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.junit.Test;
@@ -252,12 +250,9 @@ public class ExperimentDesignGeneratorTest {
 		// Test Entry No 10 is mapped to Check Entry No 5
 		mapOfChecks.put(10, 5);
 
-		final BiMap<Integer, Integer> lastEntriesToCheckEntriesMap = HashBiMap.create(mapOfChecks);
-		final BiMap<Integer, Integer> checkEntriesToLastEntriesMap = lastEntriesToCheckEntriesMap.inverse();
 
 		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
-				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 1, lastEntriesToCheckEntriesMap,
-						checkEntriesToLastEntriesMap);
+				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 1, mapOfChecks);
 
 		Assert.assertTrue(optionalImportedGermplasm.isPresent());
 		Assert.assertEquals(Integer.valueOf(1), optionalImportedGermplasm.get().getEntryId());
@@ -275,12 +270,8 @@ public class ExperimentDesignGeneratorTest {
 		// Test Entry No 10 is mapped to Check Entry No 5
 		mapOfChecks.put(10, 5);
 
-		final BiMap<Integer, Integer> lastEntriesToCheckEntriesMap = HashBiMap.create(mapOfChecks);
-		final BiMap<Integer, Integer> checkEntriesToLastEntriesMap = lastEntriesToCheckEntriesMap.inverse();
-
 		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
-				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 9999, lastEntriesToCheckEntriesMap,
-						checkEntriesToLastEntriesMap);
+				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 9999, mapOfChecks);
 
 		Assert.assertFalse(optionalImportedGermplasm.isPresent());
 
@@ -295,27 +286,16 @@ public class ExperimentDesignGeneratorTest {
 		// Test Entry No 10 is mapped to Check Entry No 5
 		mapOfChecks.put(10, 5);
 
-		final BiMap<Integer, Integer> lastEntriesToCheckEntriesMap = HashBiMap.create(mapOfChecks);
-		final BiMap<Integer, Integer> checkEntriesToLastEntriesMap = lastEntriesToCheckEntriesMap.inverse();
-
 		final Integer result1 =
-				experimentDesignGenerator.resolveMappedEntryNumber(9, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
+				experimentDesignGenerator.resolveMappedEntryNumber(9, mapOfChecks);
 		Assert.assertEquals("Lookup value 9 should return 3", Integer.valueOf(3), result1);
 
 		final Integer result2 =
-				experimentDesignGenerator.resolveMappedEntryNumber(10, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
+				experimentDesignGenerator.resolveMappedEntryNumber(10, mapOfChecks);
 		Assert.assertEquals("Lookup value 10 should return 5", Integer.valueOf(5), result2);
 
-		final Integer result3 =
-				experimentDesignGenerator.resolveMappedEntryNumber(3, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
-		Assert.assertEquals("Lookup value 3 should return 9", Integer.valueOf(9), result3);
-
-		final Integer result4 =
-				experimentDesignGenerator.resolveMappedEntryNumber(5, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
-		Assert.assertEquals("Lookup value 5 should return 10", Integer.valueOf(10), result4);
-
 		final Integer result5 =
-				experimentDesignGenerator.resolveMappedEntryNumber(9999, lastEntriesToCheckEntriesMap, checkEntriesToLastEntriesMap);
+				experimentDesignGenerator.resolveMappedEntryNumber(9999, mapOfChecks);
 		Assert.assertEquals("9999 is not in map of checks, the return value should be the same number", Integer.valueOf(9999), result5);
 	}
 

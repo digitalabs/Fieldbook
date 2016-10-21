@@ -100,7 +100,11 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		final List<MeasurementVariable> variates = new ArrayList<>();
 		final List<TreatmentVariable> treatmentVariables = new ArrayList<>();
 		final List<StandardVariable> requiredVariables = augmentedRandomizedBlockDesignServiceImpl.getRequiredDesignVariables();
-		final Map<Integer, Integer> mapOfChecks = augmentedRandomizedBlockDesignServiceImpl.createMapOfChecks(importedGermplasmList);
+
+		final Set<Integer> entryIdsOfCheckEntries = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfChecks(importedGermplasmList);
+		final Set<Integer> entryIdsOfTestEntries = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfTestEntries(importedGermplasmList);
+
+		final Map<Integer, Integer> mapOfChecks = augmentedRandomizedBlockDesignServiceImpl.createMapOfChecks(importedGermplasmList, entryIdsOfCheckEntries, entryIdsOfTestEntries);
 
 		final MainDesign mainDesign = new MainDesign();
 
@@ -161,15 +165,27 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		importedGermplasmList.get(0).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
 		importedGermplasmList.get(2).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
 
-		final Map<Integer, Integer> result = augmentedRandomizedBlockDesignServiceImpl.createMapOfChecks(importedGermplasmList);
+		final Set<Integer> entryIdsOfCheckEntries = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfChecks(importedGermplasmList);
+		final Set<Integer> entryIdsOfTestEntries = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfTestEntries(importedGermplasmList);
 
-		Assert.assertEquals("Check Entry no 1 should be mapped to Test entry no 9", 1, result.get(9).intValue());
-		Assert.assertEquals("Check Entry no 3 should be mapped to Test entry no 10", 3, result.get(10).intValue());
+		final Map<Integer, Integer> result = augmentedRandomizedBlockDesignServiceImpl.createMapOfChecks(importedGermplasmList, entryIdsOfCheckEntries, entryIdsOfTestEntries);
+
+		Assert.assertEquals("Entry Number 1 should be mapped to Test Entry 2", 2, result.get(1).intValue());
+		Assert.assertEquals("Entry Number 2 should be mapped to Test Entry 3", 4, result.get(2).intValue());
+		Assert.assertEquals("Entry Number 3 should be mapped to Test Entry 4", 5, result.get(3).intValue());
+		Assert.assertEquals("Entry Number 4 should be mapped to Test Entry 5", 6, result.get(4).intValue());
+		Assert.assertEquals("Entry Number 5 should be mapped to Test Entry 6", 7, result.get(5).intValue());
+		Assert.assertEquals("Entry Number 6 should be mapped to Test Entry 7", 8, result.get(6).intValue());
+		Assert.assertEquals("Entry Number 7 should be mapped to Test Entry 8", 9, result.get(7).intValue());
+		Assert.assertEquals("Entry Number 8 should be mapped to Test Entry 10", 10, result.get(8).intValue());
+		Assert.assertEquals("Entry Number 9 should be mapped to Check Entry 1", 1, result.get(9).intValue());
+		Assert.assertEquals("Entry Number 10 should be mapped to Check Entry 3", 3, result.get(10).intValue());
+
 
 	}
 
 	@Test
-	public void testGetEntryIdsOfChecks() {
+	public void testGetEntryIdsOfCheckEntries() {
 
 		final List<ImportedGermplasm> importedGermplasmList = createImportedGermplasmList();
 
@@ -184,6 +200,25 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		// Entry Id 1 and 3 should exist in the result set.
 		Assert.assertTrue(result.contains(1));
 		Assert.assertTrue(result.contains(3));
+
+	}
+
+	@Test
+	public void testGetEntryIdsOfTestEntries() {
+
+		final List<ImportedGermplasm> importedGermplasmList = createImportedGermplasmList();
+
+		// Set the Entry no 1 and 3 as check entries
+		importedGermplasmList.get(0).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
+		importedGermplasmList.get(2).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
+
+		final Set<Integer> result = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfTestEntries(importedGermplasmList);
+
+		Assert.assertEquals("There should be 8 test entries in the list", 8, result.size());
+
+		// Entry Id 1 and 3 should not exist in the result set because they are check entries
+		Assert.assertTrue(!result.contains(1));
+		Assert.assertTrue(!result.contains(3));
 
 	}
 
@@ -252,6 +287,8 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 
 		// Create 10 imported germpasm entries
 		for (int i = 1; i <= 10; i++) {
+			ImportedGermplasm importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasm(i);
+			importedGermplasm.setEntryTypeCategoricalID(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId());
 			importedGermplasmList.add(ImportedGermplasmMainInfoInitializer.createImportedGermplasm(i));
 		}
 

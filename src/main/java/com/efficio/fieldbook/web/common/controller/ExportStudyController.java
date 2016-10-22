@@ -30,7 +30,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.reports.BuildReportException;
 import org.generationcp.middleware.reports.Reporter;
@@ -110,6 +109,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private KsuCsvExportStudyService ksuCsvExportStudyService;
+	
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
@@ -121,6 +121,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private ExportOrderingSerpentineOverRangeImpl exportOrderingSerpentineOverRangeService;
+	
 	@Resource
 	private ExportOrderingSerpentineOverColImpl exportOrderingSerpentineOverColumnService;
 
@@ -147,7 +148,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	
 	@Resource
 	private ContextUtil contextUtil;
-
+	
 	@Override
 	public String getContentName() {
 		return null;
@@ -313,10 +314,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		final Map<String, Object> results = new HashMap<>();
 		try {
-			
-			final String breedingMethodPropertyName = this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();		
-			
-			excelExportStudyService.setBreeedingMethodPropertyName(breedingMethodPropertyName);
 			
 			final Workbook workbook = userSelection.getWorkbook();
 

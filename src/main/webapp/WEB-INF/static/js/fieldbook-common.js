@@ -1469,7 +1469,7 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 		visibleColumns = getMeasurementTableVisibleColumns(isNursery);
 		var exportType = $('#exportType').val();
 		// excel or csv
-		if ((exportType == 7 || exportType == 3) && visibleColumns.length !== 0) {
+		if ((exportType == 6 || exportType == 2) && visibleColumns.length !== 0) {
 			showWarningMessageForRequiredColumns(visibleColumns);
 		}
 	}

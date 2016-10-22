@@ -21,41 +21,28 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.Assert;
-
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.generationcp.commons.constant.ToolSection;
-import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.domain.oms.Term;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.presets.StandardPreset;
-import org.generationcp.middleware.pojos.workbench.CropType;
-import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -64,6 +51,8 @@ import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.util.AppConstants;
+
+import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExportStudyControllerTest {
@@ -111,6 +100,17 @@ public class ExportStudyControllerTest {
 
 	private static final String CSV_CONTENT_TYPE = "text/csv";
 	private static final String ZIP_CONTENT_TYPE = "application/zip";
+	
+	private UserSelection userSelection;
+	
+	@Before
+	public void setUp() {
+		this.userSelection = new UserSelection();
+		this.exportStudyController.setUserSelection(userSelection);
+		PaginationListSelection paginationListSelection = Mockito.mock(PaginationListSelection.class);
+		exportStudyController.setPaginationListSelection(paginationListSelection);
+		Mockito.doReturn(null).when(paginationListSelection).getReviewFullWorkbook("0");
+	}
 
 	@Test
 	public void testGetOutputFileNameValueChanged() {
@@ -131,15 +131,12 @@ public class ExportStudyControllerTest {
 				this.exportAdvanceListService.exportAdvanceGermplasmList("1|2|3", "TempName", this.germplasmExportService,
 						AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new File("temp.zip"));
 
-		UserSelection userSelection = new UserSelection();
+		
 		Workbook workbook = new Workbook();
 		StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyName("TempName");
 		workbook.setStudyDetails(studyDetails);
 		userSelection.setWorkbook(workbook);
-		this.exportStudyController.setUserSelection(userSelection);
-		HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
-		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 		Mockito.when(req.getParameter("exportAdvanceListGermplasmIds")).thenReturn("1|2|3");
 		Mockito.when(req.getParameter("exportAdvanceListGermplasmType")).thenReturn("2");
 
@@ -159,15 +156,11 @@ public class ExportStudyControllerTest {
 				this.exportAdvanceListService.exportAdvanceGermplasmList("1", "TempName", this.germplasmExportService,
 						AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new File("temp.csv"));
 
-		UserSelection userSelection = new UserSelection();
 		Workbook workbook = new Workbook();
 		StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyName("TempName");
 		workbook.setStudyDetails(studyDetails);
 		userSelection.setWorkbook(workbook);
-		this.exportStudyController.setUserSelection(userSelection);
-		HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
-		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 		Mockito.when(req.getParameter("exportAdvanceListGermplasmIds")).thenReturn("1");
 		Mockito.when(req.getParameter("exportAdvanceListGermplasmType")).thenReturn("2");
 		this.exportStudyController.setExportAdvanceListService(this.exportAdvanceListService);
@@ -187,15 +180,11 @@ public class ExportStudyControllerTest {
 				this.exportAdvanceListService.exportAdvanceGermplasmList("1|2|3", "TempName", this.germplasmExportService,
 						AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new File("temp.zip"));
 
-		UserSelection userSelection = new UserSelection();
 		Workbook workbook = new Workbook();
 		StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyName("TempName");
 		workbook.setStudyDetails(studyDetails);
 		userSelection.setWorkbook(workbook);
-		this.exportStudyController.setUserSelection(userSelection);
-		HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
-		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 		Mockito.when(req.getParameter("exportAdvanceListGermplasmIds")).thenReturn("1|2|3");
 		Mockito.when(req.getParameter("exportAdvanceListGermplasmType")).thenReturn("1");
 
@@ -215,15 +204,11 @@ public class ExportStudyControllerTest {
 				this.exportAdvanceListService.exportAdvanceGermplasmList("1", "TempName", this.germplasmExportService,
 						AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new File("temp.xls"));
 
-		UserSelection userSelection = new UserSelection();
 		Workbook workbook = new Workbook();
 		StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyName("TempName");
 		workbook.setStudyDetails(studyDetails);
 		userSelection.setWorkbook(workbook);
-		this.exportStudyController.setUserSelection(userSelection);
-		HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
-		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 		Mockito.when(req.getParameter("exportAdvanceListGermplasmIds")).thenReturn("1");
 		Mockito.when(req.getParameter("exportAdvanceListGermplasmType")).thenReturn("1");
 
@@ -291,18 +276,13 @@ public class ExportStudyControllerTest {
 		Map<String, String> data = this.getData();
 
 		// Mock Object Method Calls
-		UserSelection userSelection = new UserSelection();
 		userSelection.setWorkbook(workbook);
-		this.exportStudyController.setUserSelection(userSelection);
-
-		this.mockOtherRelatedMethodCallsForExportStudyMethods(this.exportStudyController, generatedFilename, userSelection);
-
+		userSelection.getWorkbook().getStudyDetails().setStudyName(generatedFilename);
+		
 		Mockito.when(this.resp.getContentType()).thenReturn(ExportStudyControllerTest.CSV_CONTENT_TYPE);
 		Mockito.when(
 				this.csvExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.CSV_EXT, instances,
 						this.getVisibleColumns())).thenReturn(outputFilename + ExportStudyControllerTest.CSV_EXT);
-		
-		mockBreedingMethod();
 		
 		String returnedValue = this.exportStudyController.exportFile(data, exportType, exportWayType, this.req, this.resp);
 
@@ -317,32 +297,7 @@ public class ExportStudyControllerTest {
 				"Expected that the returned output filename is " + outputFilename + ".csv but returned " + result.get("outputFilename"),
 				outputFilename + ExportStudyControllerTest.CSV_EXT, result.get("outputFilename"));
 	}
-
-	private void mockBreedingMethod() {
-		final Property testProperty = this.getProperty();
-		testProperty.getTerm().setName("Single Cross");
-		Mockito.when(this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId())).thenReturn(testProperty);
-	}
-
-	private void mockOtherRelatedMethodCallsForExportStudyMethods(ExportStudyController exportStudyController,
-			String generatedFilename, UserSelection userSelection) throws MiddlewareQueryException {
-		exportStudyController.setUserSelection(userSelection);
-		PaginationListSelection paginationListSelection = Mockito.mock(PaginationListSelection.class);
-		exportStudyController.setPaginationListSelection(paginationListSelection);
-		Mockito.doReturn(null).when(paginationListSelection).getReviewFullWorkbook("0");
-		userSelection.getWorkbook().getStudyDetails().setStudyName(generatedFilename);
-
-		Mockito.when(this.ontologyService.getProperty(Matchers.anyString())).thenReturn(this.getProperty());
-	}
-
-	private Property getProperty() {
-		Property prop = new Property();
-		Term term = new Term();
-		term.setId(-1);
-		prop.setTerm(term);
-		return prop;
-	}
-
+	
 	private Map<String, String> getData() {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("visibleColumns", this.getVisibleColumnsString());
@@ -379,13 +334,8 @@ public class ExportStudyControllerTest {
 		Map<String, String> data = this.getData();
 
 		// Mock Object Method Calls
-		UserSelection userSelection = new UserSelection();
 		userSelection.setWorkbook(workbook);
-		this.exportStudyController.setUserSelection(userSelection);
-
-		this.mockOtherRelatedMethodCallsForExportStudyMethods(this.exportStudyController, generatedFilename, userSelection);
-		
-		mockBreedingMethod();
+		userSelection.getWorkbook().getStudyDetails().setStudyName(generatedFilename);
 		
 		Mockito.when(
 				this.csvExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.CSV_EXT, instances,
@@ -395,12 +345,11 @@ public class ExportStudyControllerTest {
 		String returnedValue = this.exportStudyController.exportFileTrial(data, exportType, "1", exportWayType, this.req, this.resp);
 		HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
 		Assert.assertTrue("Unable to properly generate export", (Boolean) result.get(ExportStudyController.IS_SUCCESS));
-		Assert.assertEquals("Expected that the returned content type is " + ExportStudyControllerTest.CSV_CONTENT_TYPE + " but returned "
-				+ result.get("contentType"), ExportStudyControllerTest.CSV_CONTENT_TYPE, result.get("contentType"));
-		Assert.assertEquals("Expected that the returned filename is " + outputFilename + ".csv but returned " + result.get("filename"),
+		Assert.assertEquals("Expected that the returned content type is " + ExportStudyControllerTest.CSV_CONTENT_TYPE, ExportStudyControllerTest.CSV_CONTENT_TYPE, result.get("contentType"));
+		Assert.assertEquals("Expected that the returned filename is " + outputFilename + ".csv",
 				outputFilename + ExportStudyControllerTest.CSV_EXT, result.get("filename"));
 		Assert.assertEquals(
-				"Expected that the returned output filename is " + outputFilename + ".csv but returned " + result.get("outputFilename"),
+				"Expected that the returned output filename is " + outputFilename + ".csv",
 				outputFilename + ExportStudyControllerTest.CSV_EXT, result.get("outputFilename"));
 	}
 
@@ -420,30 +369,24 @@ public class ExportStudyControllerTest {
 		Map<String, String> data = this.getData();
 
 		// Mock Object Method Calls
-		UserSelection userSelection = new UserSelection();
 		userSelection.setWorkbook(workbook);
-		this.exportStudyController.setUserSelection(userSelection);
-
-		this.mockOtherRelatedMethodCallsForExportStudyMethods(this.exportStudyController, generatedFilename, userSelection);
+		userSelection.getWorkbook().getStudyDetails().setStudyName(generatedFilename);
 
 		Mockito.when(
 				this.csvExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.CSV_EXT, instances,
 						this.getVisibleColumns())).thenReturn(outputFilename + ExportStudyControllerTest.ZIP_EXT);
 		Mockito.when(this.resp.getContentType()).thenReturn(ExportStudyControllerTest.ZIP_CONTENT_TYPE);
 		
-		mockBreedingMethod();
-		
 		String returnedValue =
 				this.exportStudyController.exportFileTrial(data, exportType, this.getTrialInstanceString(instances), exportWayType,
 						this.req, this.resp);
 		HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
 		Assert.assertTrue("Unable to properly generate export", (Boolean) result.get(ExportStudyController.IS_SUCCESS));
-		Assert.assertEquals("Expected that the returned content type is " + ExportStudyControllerTest.ZIP_CONTENT_TYPE + " but returned "
-				+ result.get("contentType"), ExportStudyControllerTest.ZIP_CONTENT_TYPE, result.get("contentType"));
-		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + ".zip but returned " + result.get("filename"),
+		Assert.assertEquals("Expected that the returned content type is " + ExportStudyControllerTest.ZIP_CONTENT_TYPE, ExportStudyControllerTest.ZIP_CONTENT_TYPE, result.get("contentType"));
+		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + ".zip",
 				generatedFilename + ExportStudyControllerTest.ZIP_EXT, result.get("filename"));
 		Assert.assertEquals(
-				"Expected that the returned output filename is " + outputFilename + ".zip but returned " + result.get("outputFilename"),
+				"Expected that the returned output filename is " + outputFilename + ".zip",
 				outputFilename + ExportStudyControllerTest.ZIP_EXT, result.get("outputFilename"));
 	}
 
@@ -451,15 +394,11 @@ public class ExportStudyControllerTest {
 	public void testDoStockExport() throws MiddlewareQueryException, JsonParseException, JsonMappingException, IOException {
 		Mockito.when(this.exportAdvanceListService.exportStockList(1, this.germplasmExportService)).thenReturn(new File("temp.xls"));
 
-		UserSelection userSelection = new UserSelection();
 		Workbook workbook = new Workbook();
 		StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyName("TempName");
 		workbook.setStudyDetails(studyDetails);
 		userSelection.setWorkbook(workbook);
-		this.exportStudyController.setUserSelection(userSelection);
-		HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
-		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 		Mockito.when(req.getParameter("exportStockListId")).thenReturn("1");
 
 		String ret = this.exportStudyController.doExportStockList(resp, req);

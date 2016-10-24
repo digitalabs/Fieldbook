@@ -378,41 +378,8 @@ class LabelPrintingUtil {
 			// GID
 			selectedValueFieldBuffer.append(germplasmListData.getGid().toString());
 		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
-			// Barcode
-			final StringBuilder buffer = new StringBuilder();
-			final String fieldList = userLabelPrinting.getFirstBarcodeField() + "," + userLabelPrinting.getSecondBarcodeField() + "," + userLabelPrinting.getThirdBarcodeField();
-
-			final List<Integer> selectedBarcodeFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(fieldList);
-
-			for (final Integer selectedBarcodeFieldID : selectedBarcodeFieldIDs) {
-				if (!"".equalsIgnoreCase(buffer.toString())) {
-					buffer.append(DELIMITER);
-				}
-				//TODO Move barcode implementation to separate utility function
-				// GID
-				if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
-					buffer.append(germplasmListData.getGid().toString());
-				} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
-					buffer.append(germplasmListData.getDesignation());
-				} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
-					buffer.append(germplasmListData.getGroupName());
-				} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
-					if (lotRows != null) {
-						buffer.append(this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID));
-					} else {
-						buffer.append(" ");
-					}
-				} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
-					if (lotRows != null) {
-						buffer.append(this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_SEED_LOT_ID));
-					} else {
-						buffer.append(" ");
-					}
-				}
-			}
-
-			// barcodeLabel
-			selectedValueFieldBuffer.append(buffer.toString());
+			// barcode Label
+			selectedValueFieldBuffer.append(this.getBarcodeString(germplasmListData, userLabelPrinting));
 		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
 			//Designation
 			selectedValueFieldBuffer.append(germplasmListData.getDesignation());
@@ -436,6 +403,57 @@ class LabelPrintingUtil {
 		}
 
 		return selectedValueFieldBuffer.toString();
+	}
+
+	String getBarcodeString(final GermplasmListData germplasmListData, final UserLabelPrinting userLabelPrinting) {
+		return this.getBarcodeString(germplasmListData, userLabelPrinting, false);
+	}
+
+	String getBarcodeString(final GermplasmListData germplasmListData, final UserLabelPrinting userLabelPrinting, final boolean
+			includeHeaders) {
+
+		@SuppressWarnings("unchecked")
+		final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
+
+		final StringBuilder buffer = new StringBuilder();
+
+		final String fieldList = userLabelPrinting.getFirstBarcodeField() + "," + userLabelPrinting.getSecondBarcodeField() + "," + userLabelPrinting.getThirdBarcodeField();
+
+		final List<Integer> selectedBarcodeFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(fieldList);
+
+		for (final Integer selectedBarcodeFieldID : selectedBarcodeFieldIDs) {
+
+			if (!"".equalsIgnoreCase(buffer.toString())) {
+				buffer.append(DELIMITER);
+			}
+
+			if (includeHeaders) {
+				final String headerName = this.getColumnHeader(selectedBarcodeFieldID, this.getAllLabelHeadersForSeedPreparation());
+				buffer.append(headerName).append(" : ");
+			}
+
+			// GID
+			if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+				buffer.append(germplasmListData.getGid().toString());
+			} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
+				buffer.append(germplasmListData.getDesignation());
+			} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
+				buffer.append(germplasmListData.getGroupName());
+			} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
+				if (lotRows != null) {
+					buffer.append(this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID));
+				} else {
+					buffer.append(" ");
+				}
+			} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+				if (lotRows != null) {
+					buffer.append(this.getListOfIDs(lotRows, AppConstants.AVAILABLE_LABEL_SEED_LOT_ID));
+				} else {
+					buffer.append(" ");
+				}
+			}
+		}
+		return buffer.toString();
 	}
 
 }

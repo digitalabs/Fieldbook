@@ -115,13 +115,8 @@ class PDFSeedPreparationLabelGenerator implements LabelGenerator {
 				String barcodeLabel = " ";
 
 				if (LabelPrintingServiceImpl.BARCODE_NEEDED.equalsIgnoreCase(barcodeNeeded)) {
-					//FIXME uncomment
-					/*barcodeLabel = this.labelPrintingUtil
-							.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField,
-									fieldMapTrialInstanceInfo.getLabelHeaders(), false);
-					barcodeLabelForCode = this.labelPrintingUtil
-							.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField,
-									fieldMapTrialInstanceInfo.getLabelHeaders(), true);*/
+					barcodeLabel = this.labelPrintingUtil.getBarcodeString(germplasmListData, userLabelPrinting);
+					barcodeLabelForCode = this.labelPrintingUtil.getBarcodeString(germplasmListData, userLabelPrinting, true);
 				}
 
 				barcodeLabelForCode = this.labelPrintingPDFUtil.truncateBarcodeLabelForCode(barcodeLabelForCode);

@@ -11,7 +11,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class PDFLabelGeneratorTest {
 
@@ -28,10 +27,9 @@ public class PDFLabelGeneratorTest {
         Assert.assertNotNull("Bit Matrix Barcode should be not null since characters are in English ASCII", bitMatrix);
     }
 
-    @Test
+    @Test (expected = LabelPrintingException.class)
     public void testEncodeBardcodeInNonEnglishCharacters() throws LabelPrintingException {
-        final BitMatrix bitMatrix = this.LabelPrintingPDFUtil.encodeBarcode("乙七九", 100, 200);
-        Assert.assertNull("Bit Matrix Barcode should be null since parameter is non-english ascii", bitMatrix);
+        this.LabelPrintingPDFUtil.encodeBarcode("乙七九", 100, 200);
     }
 
     @Test

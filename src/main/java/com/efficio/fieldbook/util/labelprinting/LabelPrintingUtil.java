@@ -163,13 +163,13 @@ class LabelPrintingUtil {
 
 	/**
 	 * This method returns retrieve Label headers to be printed in any of the trial instances having advance lines
-	 * @param trialInstances
-	 * @return Map<Integer, String> Map of label header with key as TermId and value as Label
+	 * @param trialInstances list of StudyTrialInstanceInfo objects
+	 * @return Map of label header with key as TermId and value as Label
 	 */
 	Map<Integer, String> getLabelHeadersFromTrialInstances(final List<StudyTrialInstanceInfo> trialInstances){
 		Map<Integer, String> labelHeaders = Maps.newHashMap();
 
-		for(StudyTrialInstanceInfo trialInstanceInfo : trialInstances){
+		for(final StudyTrialInstanceInfo trialInstanceInfo : trialInstances){
 			if(trialInstanceInfo.getTrialInstance() != null && trialInstanceInfo.getTrialInstance().getLabelHeaders() != null
 					&& !trialInstanceInfo.getTrialInstance().getLabelHeaders().isEmpty()){
 				labelHeaders = trialInstanceInfo.getTrialInstance().getLabelHeaders();
@@ -272,7 +272,7 @@ class LabelPrintingUtil {
 			}
 
 			String stemp = buffer.toString();
-			if (stemp != null && "null".equalsIgnoreCase(stemp)) {
+			if ("null".equalsIgnoreCase(stemp)) {
 				stemp = " ";
 			}
 
@@ -289,7 +289,7 @@ class LabelPrintingUtil {
 
 	Map<String, String> generateAddedInformationField(final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo,
 			final StudyTrialInstanceInfo trialInstance, final String barCode) {
-		final Map<String, String> moreFieldInfo = new HashMap<String, String>();
+		final Map<String, String> moreFieldInfo = new HashMap<>();
 		moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
 		moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
 		moreFieldInfo.put("fieldName", fieldMapTrialInstanceInfo.getFieldName());

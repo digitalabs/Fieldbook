@@ -109,19 +109,19 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private KsuCsvExportStudyService ksuCsvExportStudyService;
-	
+
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
 	@Resource
 	private OntologyService ontologyService;
-	
+
 	@Resource
 	private ExportOrderingRowColImpl exportOrderingRowColService;
 
 	@Resource
 	private ExportOrderingSerpentineOverRangeImpl exportOrderingSerpentineOverRangeService;
-	
+
 	@Resource
 	private ExportOrderingSerpentineOverColImpl exportOrderingSerpentineOverColumnService;
 
@@ -145,10 +145,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private JasperReportService jasperReportService;
-	
+
 	@Resource
 	private ContextUtil contextUtil;
-	
+
 	@Override
 	public String getContentName() {
 		return null;
@@ -157,8 +157,11 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/download/file", method = RequestMethod.GET)
 	public ResponseEntity<FileSystemResource> downloadFile(final HttpServletRequest req) throws UnsupportedEncodingException {
 
-		final String outputFilename = new String(req.getParameter(OUTPUT_FILENAME).getBytes(ISO_8859_1), UTF_8);
-		final String filename = new String(req.getParameter(FILENAME).getBytes(ISO_8859_1), UTF_8);
+		final String outputFilename =
+				new String(req.getParameter(ExportStudyController.OUTPUT_FILENAME).getBytes(ExportStudyController.ISO_8859_1),
+						ExportStudyController.UTF_8);
+		final String filename = new String(req.getParameter(ExportStudyController.FILENAME).getBytes(ExportStudyController.ISO_8859_1),
+				ExportStudyController.UTF_8);
 
 		return FieldbookUtil.createResponseEntityForFileDownload(outputFilename, filename);
 
@@ -177,9 +180,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final Map<String, Object> results = new HashMap<String, Object>();
 		try {
 
-			rep =
-					this.reportService.getStreamReport(reportCode, Integer.parseInt(studyId), this.contextUtil.getProjectInContext()
-							.getProjectName(), baos);
+			rep = this.reportService.getStreamReport(reportCode, Integer.parseInt(studyId),
+					this.contextUtil.getProjectInContext().getProjectName(), baos);
 
 			fileName = rep.getFileName();
 			outputFilename = this.fieldbookProperties.getUploadDirectory() + File.separator + fileName;
@@ -187,15 +189,15 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			final File reportFile = new File(outputFilename);
 			baos.writeTo(new FileOutputStream(reportFile));
 
-			results.put(IS_SUCCESS, true);
-			results.put(OUTPUT_FILENAME, outputFilename);
-			results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(fileName));
-			results.put(CONTENT_TYPE, response.getContentType());
+			results.put(ExportStudyController.IS_SUCCESS, true);
+			results.put(ExportStudyController.OUTPUT_FILENAME, outputFilename);
+			results.put(ExportStudyController.FILENAME, SettingsUtil.cleanSheetAndFileName(fileName));
+			results.put(ExportStudyController.CONTENT_TYPE, response.getContentType());
 
 		} catch (NumberFormatException | JRException | IOException | BuildReportException e) {
 			ExportStudyController.LOG.error(e.getMessage(), e);
-			results.put(IS_SUCCESS, false);
-			results.put(ERROR_MESSAGE, this.messageSource.getMessage("export.study.error", null, Locale.ENGLISH));
+			results.put(ExportStudyController.IS_SUCCESS, false);
+			results.put(ExportStudyController.ERROR_MESSAGE, this.messageSource.getMessage("export.study.error", null, Locale.ENGLISH));
 		}
 
 		return super.convertObjectToJson(results);
@@ -206,11 +208,11 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/export/{exportType}/{exportWayType}", method = RequestMethod.POST)
 	public String exportFile(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
 			@PathVariable final int exportWayType, final HttpServletRequest req, final HttpServletResponse response) throws IOException {
-		LOG.info("Entering Export Nursery:exportFile");
+		ExportStudyController.LOG.info("Entering Export Nursery:exportFile");
 		final boolean isTrial = false;
 		final List<Integer> instancesList = new ArrayList<Integer>();
 		instancesList.add(1);
-		LOG.info("Leaving Export Nursery:exportFile");
+		ExportStudyController.LOG.info("Leaving Export Nursery:exportFile");
 		return this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
 	}
 
@@ -219,14 +221,14 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	public String exportFileTrial(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
 			@PathVariable final String instances, @PathVariable final int exportWayType, final HttpServletRequest req,
 			final HttpServletResponse response) throws IOException {
-		LOG.info("Entering Export Trial:exportFileTrial");
+		ExportStudyController.LOG.info("Entering Export Trial:exportFileTrial");
 		final boolean isTrial = true;
 		final List<Integer> instancesList = new ArrayList<Integer>();
 		final StringTokenizer tokenizer = new StringTokenizer(instances, "|");
 		while (tokenizer.hasMoreTokens()) {
 			instancesList.add(Integer.valueOf(tokenizer.nextToken()));
 		}
-		LOG.info("Exiting Export Trial:exportFileTrial");
+		ExportStudyController.LOG.info("Exiting Export Trial:exportFileTrial");
 		return this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
 
 	}
@@ -263,7 +265,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Do export.
-	 * 
+	 *
 	 * @param exportType the export type
 	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response
@@ -276,10 +278,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		/*
 		 * exportWayType 1 - row column 2 - serpentine (range) 3 - serpentine (col)
 		 */
-		LOG.info("Entering Export Nursery/Trial : doExport");
+		ExportStudyController.LOG.info("Entering Export Nursery/Trial : doExport");
 		final ExportDataCollectionOrderService exportDataCollectionService = this.getExportOrderService(exportWayType);
 
-		LOG.info("Export Nursery/Trial : doExport : getWorbook : start");
+		ExportStudyController.LOG.info("Export Nursery/Trial : doExport : getWorbook : start");
 
 		final UserSelection userSelection = this.getUserSelection();
 		try {
@@ -295,7 +297,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 						workbookSession = this.fieldbookMiddlewareService.getNurseryDataSet(Integer.valueOf(studyId));
 					}
 					SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbookSession.getObservations(), false,
-							this.ontologyService, contextUtil.getCurrentProgramUUID());
+							this.ontologyService, this.contextUtil.getCurrentProgramUUID());
 
 					this.getPaginationListSelection().addReviewFullWorkbook(studyId, workbookSession);
 				} else {
@@ -308,17 +310,16 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			ExportStudyController.LOG.error(e.getMessage(), e);
 		}
 
-		LOG.info("Export Nursery/Trial : doExport : getWorbook : end");
-		LOG.info("Export Nursery/Trial : doExport : processWorbook : start");
-
+		ExportStudyController.LOG.info("Export Nursery/Trial : doExport : getWorbook : end");
+		ExportStudyController.LOG.info("Export Nursery/Trial : doExport : processWorbook : start");
 
 		final Map<String, Object> results = new HashMap<>();
 		try {
-			
+
 			final Workbook workbook = userSelection.getWorkbook();
 
 			SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), true,
-					this.ontologyService, contextUtil.getCurrentProgramUUID());
+					this.ontologyService, this.contextUtil.getCurrentProgramUUID());
 
 			exportDataCollectionService.reorderWorkbook(workbook);
 
@@ -333,7 +334,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 				final List<Integer> visibleColumns = this.getVisibleColumns(data.get("visibleColumns"));
 				filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
 				outputFilename = this.excelExportStudyService.export(userSelection.getWorkbook(), filename, instances, visibleColumns);
-				
+
 				if (instances != null && instances.size() > 1) {
 					final int extensionIndex = filename.lastIndexOf(".");
 					filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
@@ -371,31 +372,31 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 					response.setContentType(ExportStudyController.CSV_CONTENT_TYPE);
 				}
 			}
-			results.put(IS_SUCCESS, true);
-			results.put(OUTPUT_FILENAME, outputFilename);
-			results.put(FILENAME, filename);
-			results.put(CONTENT_TYPE, response.getContentType());
+			results.put(ExportStudyController.IS_SUCCESS, true);
+			results.put(ExportStudyController.OUTPUT_FILENAME, outputFilename);
+			results.put(ExportStudyController.FILENAME, filename);
+			results.put(ExportStudyController.CONTENT_TYPE, response.getContentType());
 
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), true,
-					this.ontologyService, contextUtil.getCurrentProgramUUID());
-			
-			LOG.info("Export Nursery/Trial : doExport : processWorbook : end");
-			
+					this.ontologyService, this.contextUtil.getCurrentProgramUUID());
+
+			ExportStudyController.LOG.info("Export Nursery/Trial : doExport : processWorbook : end");
+
 		} catch (final Exception e) {
 			// generic exception handling block needs to be added here so that the calling AJAX function receives proper notification that
 			// the operation was a failure
-			results.put(IS_SUCCESS, false);
-			results.put(ERROR_MESSAGE, this.messageSource.getMessage("export.study.error", null, Locale.ENGLISH));
+			results.put(ExportStudyController.IS_SUCCESS, false);
+			results.put(ExportStudyController.ERROR_MESSAGE, this.messageSource.getMessage("export.study.error", null, Locale.ENGLISH));
 		}
 
-		LOG.info("Exiting Export Nursery/Trial : doExport");
+		ExportStudyController.LOG.info("Exiting Export Nursery/Trial : doExport");
 
 		return super.convertObjectToJson(results);
 	}
 
 	/***
 	 * Return the list of headers's term id, otherwise null
-	 * 
+	 *
 	 * @param data
 	 * @return
 	 */
@@ -444,7 +445,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Load initial germplasm tree.
-	 * 
+	 *
 	 * @return the string
 	 */
 	@RequestMapping(value = "/trial/instances/{studyId}", method = RequestMethod.GET)
@@ -483,7 +484,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Do export.
-	 * 
+	 *
 	 * @param exportType the export type
 	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response
@@ -516,9 +517,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		response.setContentType(contentType);
 
 		final Map<String, Object> results = new HashMap<String, Object>();
-		results.put(OUTPUT_FILENAME, outputFilename);
-		results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(file.getName()));
-		results.put(CONTENT_TYPE, contentType);
+		results.put(ExportStudyController.OUTPUT_FILENAME, outputFilename);
+		results.put(ExportStudyController.FILENAME, SettingsUtil.cleanSheetAndFileName(file.getName()));
+		results.put(ExportStudyController.CONTENT_TYPE, contentType);
 
 		return super.convertObjectToJson(results);
 	}
@@ -550,7 +551,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Do export.
-	 * 
+	 *
 	 * @param exportType the export type
 	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response
@@ -570,9 +571,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final String contentType = ExportStudyController.APPLICATION_VND_MS_EXCEL;
 		response.setContentType(contentType);
 		final Map<String, Object> results = new HashMap<String, Object>();
-		results.put(OUTPUT_FILENAME, outputFilename);
-		results.put(FILENAME, SettingsUtil.cleanSheetAndFileName(file.getName()));
-		results.put(CONTENT_TYPE, contentType);
+		results.put(ExportStudyController.OUTPUT_FILENAME, outputFilename);
+		results.put(ExportStudyController.FILENAME, SettingsUtil.cleanSheetAndFileName(file.getName()));
+		results.put(ExportStudyController.CONTENT_TYPE, contentType);
 
 		return super.convertObjectToJson(results);
 	}

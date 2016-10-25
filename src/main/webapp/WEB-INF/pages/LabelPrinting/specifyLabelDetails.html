@@ -40,7 +40,7 @@ th:action="@{${labelPrintingForm.germplasmListId != null} ? '/LabelPrinting/spec
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 			<div class="col-xs-3 col-md-3">
-				<h2>Create Labels</h2>
+				<h2 th:text="#{label.printing.header.print.labels}">Print Labels</h2>
 			</div>
 
 			<div class="col-xs-9 col-md-9">
@@ -52,7 +52,7 @@ th:action="@{${labelPrintingForm.germplasmListId != null} ? '/LabelPrinting/spec
 			<div class="row " >
 			<div class="col-xs-12 col-md-12">
 				<div class="col-xs-12 col-md-12">
-				<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+					<h4 th:text="#{label.printing.header.create.labels}">Create labels</h4>
 				</div>
 			</div>
 		</div>
@@ -156,8 +156,28 @@ th:action="@{${labelPrintingForm.germplasmListId != null} ? '/LabelPrinting/spec
 				</div>
 				<div class="form-group">
 					<div class="col-xs-12 col-md-12">
-						<label class="control-label"><strong th:text="#{label.printing.germplasmlist.name}+':'"></strong></label>
+						<label class="control-label"><strong th:text="#{label.printing.germplasmlist.name}"></strong></label>
 						<span th:text="*{userLabelPrinting.name}">Germplasm List Name</span>
+					</div>
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label"><strong th:text="#{label.printing.germplasmlist.owner}"></strong></label>
+						<span th:text="*{userLabelPrinting.owner}">Germplasm List Owner</span>
+					</div>
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label"><strong th:text="#{label.printing.germplasmlist.description}"></strong></label>
+						<span th:text="*{userLabelPrinting.description}">Germplasm List Description</span>
+					</div>
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label"><strong th:text="#{label.printing.germplasmlist.type}"></strong></label>
+						<span th:text="*{userLabelPrinting.type}">Germplasm List Type</span>
+					</div>
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label"><strong th:text="#{label.printing.germplasmlist.date}"></strong></label>
+						<span th:text="*{userLabelPrinting.date}">Germplasm List Date</span>
+					</div>
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label"><strong th:text="#{label.printing.germplasmlist.noOfEntries}"></strong></label>
+						<span th:text="*{userLabelPrinting.numberOfEntries}">Germplasm List Number of Entries</span>
 					</div>
 				</div>
 			</div>

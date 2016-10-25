@@ -380,6 +380,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		//this name is used to generate a filename for the labels output
 		this.userLabelPrinting.setName(germplasmList.getName());
+		this.userLabelPrinting.setOwner(this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
+		this.userLabelPrinting.setDescription(germplasmList.getDescription());
+		this.userLabelPrinting.setType(germplasmList.getType());
+		this.userLabelPrinting.setDate(String.valueOf(germplasmList.getDate()));
+		this.userLabelPrinting.setNumberOfEntries(String.valueOf(this.fieldbookMiddlewareService.countGermplasmListDataByListId(
+				germplasmList.getId())));
 
 		this.userLabelPrinting.setStudyId(null);
 		this.userLabelPrinting.setFieldMapInfo(null);
@@ -605,7 +611,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	protected String getSelectedLabelFields(final UserLabelPrinting userLabelPrinting) {
+	String getSelectedLabelFields(final UserLabelPrinting userLabelPrinting) {
 		String selectedLabelFields = "";
 		if (userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
 			selectedLabelFields = userLabelPrinting.getLeftSelectedLabelFields() + "," + userLabelPrinting.getRightSelectedLabelFields();

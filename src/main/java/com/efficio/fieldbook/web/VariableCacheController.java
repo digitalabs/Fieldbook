@@ -19,7 +19,7 @@ public class VariableCacheController {
 	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@ResponseBody
-	@RequestMapping(value = "/deleteVariablesFromCache", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/deleteVariablesFromCache", method = RequestMethod.POST)
 	public String deleteVariablesFromCache(@RequestBody final List<Integer> variablesIds) {
 		this.ontologyVariableDataManager.deleteVariablesFromCache(variablesIds);
 		return "OK";

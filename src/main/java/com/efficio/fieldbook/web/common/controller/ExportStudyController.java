@@ -82,7 +82,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	private static final String OUTPUT_FILENAME = "outputFilename";
 	private static final String ERROR_MESSAGE = "errorMessage";
 	static final String IS_SUCCESS = "isSuccess";
-	private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
+	static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
 	private static final String CSV_CONTENT_TYPE = "text/csv";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportStudyController.class);
 	public static final String URL = "/ExportManager";
@@ -333,6 +333,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 				final List<Integer> visibleColumns = this.getVisibleColumns(data.get("visibleColumns"));
 				filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
 				outputFilename = this.excelExportStudyService.export(userSelection.getWorkbook(), filename, instances, visibleColumns);
+				
 				if (instances != null && instances.size() > 1) {
 					final int extensionIndex = filename.lastIndexOf(".");
 					filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
@@ -370,7 +371,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 					response.setContentType(ExportStudyController.CSV_CONTENT_TYPE);
 				}
 			}
-
 			results.put(IS_SUCCESS, true);
 			results.put(OUTPUT_FILENAME, outputFilename);
 			results.put(FILENAME, filename);

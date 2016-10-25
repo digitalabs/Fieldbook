@@ -102,13 +102,20 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 					$(this).parents('.dataTables_wrapper').find('.dt-buttons').replaceWith(api.buttons().container());
 					
-					var pageInfo = api.page.info();
-					angular.forEach($scope.data.environments, function(environment, index) {
-						environment.show = pageInfo.start <= index && pageInfo.end > index;
-				    });
+					$scope.showEnvironmentsOnCurrentPage();
 				}
 			};
-
+			
+			$scope.showEnvironmentsOnCurrentPage = function() {
+				var dataTable = $('#env-table').DataTable();
+				if(dataTable) {
+					var pageInfo = dataTable.page.info();
+					for(var index = pageInfo.start; index <= pageInfo.end; index++) {
+						$scope.data.environments[index].show = true;
+					}
+				}
+			};
+			
 			$scope.onAddVariable = function() {
 				$scope.nested.dtInstance.rerender();
 				// update the location flag, as it could have been added

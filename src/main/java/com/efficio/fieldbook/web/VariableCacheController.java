@@ -5,6 +5,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +22,8 @@ public class VariableCacheController {
 
 	@ResponseBody
 	@RequestMapping(value = "/deleteVariablesFromCache", method = RequestMethod.POST)
-	public String deleteVariablesFromCache(@RequestBody final List<Integer> variablesIds) {
+	public ResponseEntity<String> deleteVariablesFromCache(@RequestBody final List<Integer> variablesIds) {
 		this.ontologyVariableDataManager.deleteVariablesFromCache(variablesIds);
-		return "OK";
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

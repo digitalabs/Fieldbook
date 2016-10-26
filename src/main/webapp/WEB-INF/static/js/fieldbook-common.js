@@ -1615,23 +1615,6 @@ function moveToTopScreen() {
 
 }
 
-function openImportGermplasmList(type) {
-	'use strict';
-	$('.germplasmAndCheckSection').data('import-from', type);
-	$.ajax({
-		url: '/Fieldbook/ListTreeManager/germplasm/import/url',
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(html) {
-			setTimeout(function() {
-				$('#importFrame').attr('src', html);
-				$('#importGermplasmModal').modal({ backdrop: 'static', keyboard: true });
-			}, 500);
-		}
-	});
-}
-
 function doTreeHighlight(treeName, nodeKey) {
 
 	var count = 0,

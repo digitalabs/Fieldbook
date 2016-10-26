@@ -73,9 +73,6 @@ public class CreateNurseryForm {
 	/** The breeding method url. */
 	private String breedingMethodUrl;
 
-	/** The import location url. */
-	private String importLocationUrl;
-
 	/** The open germplasm url. */
 	private String openGermplasmUrl;
 
@@ -436,24 +433,6 @@ public class CreateNurseryForm {
 	 */
 	public void setBreedingMethodUrl(final String breedingMethodUrl) {
 		this.breedingMethodUrl = breedingMethodUrl;
-	}
-
-	/**
-	 * Gets the import location url.
-	 * 
-	 * @return the import location url
-	 */
-	public String getImportLocationUrl() {
-		return this.importLocationUrl;
-	}
-
-	/**
-	 * Sets the import location url.
-	 * 
-	 * @param importLocationUrl the new import location url
-	 */
-	public void setImportLocationUrl(final String importLocationUrl) {
-		this.importLocationUrl = importLocationUrl;
 	}
 
 	/**

@@ -728,18 +728,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * @return the string
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/germplasm/import/url", method = RequestMethod.GET)
-	public String getImportGermplasmUrl(final HttpServletRequest request) {
-		final String contextParams = org.generationcp.commons.util.ContextUtil.getContextParameterString(request);
-		return this.fieldbookProperties.getGermplasmImportUrl() + "?" + contextParams;
-	}
-
-	/**
-	 * Load initial germplasm tree.
-	 *
-	 * @return the string
-	 */
-	@ResponseBody
 	@RequestMapping(value = "/loadInitGermplasmTree/{isFolderOnly}", method = RequestMethod.GET)
 	public String loadInitialGermplasmTree(@PathVariable final String isFolderOnly) {
 		final List<TreeNode> rootNodes = new ArrayList<>();

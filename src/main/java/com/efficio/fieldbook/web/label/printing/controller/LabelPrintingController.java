@@ -50,6 +50,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.domain.inventory.LotDetails;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -387,6 +388,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setNumberOfEntries(String.valueOf(this.fieldbookMiddlewareService.countGermplasmListDataByListId(
 				germplasmList.getId())));
 
+		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(id, 0, Integer
+				.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
+		final List<GermplasmListData> listWithExistingReservations =  this.getGermplasmListDataListWithExistingReservations
+				(germplasmListDataList);
+		this.userLabelPrinting.setNumberOfLotsWithReservations(String.valueOf(listWithExistingReservations.size()));
+
 		this.userLabelPrinting.setStudyId(null);
 		this.userLabelPrinting.setFieldMapInfo(null);
 		this.userLabelPrinting.setFieldMapInfoList(null);
@@ -562,7 +569,22 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final Integer germplasmListId = form.getGermplasmListId();
 		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(germplasmListId, 0, Integer
 				.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
-		return this.generateLabels(germplasmListDataList);
+		return this.generateLabels(this.getGermplasmListDataListWithExistingReservations(germplasmListDataList));
+	}
+
+	private List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {
+		final List<GermplasmListData> germplasmListDataListWithReservations = new ArrayList<>();
+		for (final GermplasmListData germplasmListData : germplasmListDataList) {
+			if (germplasmListData.getInventoryInfo() != null && germplasmListData.getInventoryInfo().getLotRows() != null) {
+				for (final LotDetails lotDetails : germplasmListData.getInventoryInfo().getLotRows()) {
+					// We have reservations if withdrawal balance is more than 0
+					if (lotDetails.getWithdrawalBalance().compareTo(0.0) > 0 ) {
+						germplasmListDataListWithReservations.add(germplasmListData);
+					}
+				}
+			}
+		}
+		return germplasmListDataListWithReservations;
 	}
 
 	private Map<String,Object> generateLabels(final List<GermplasmListData> germplasmListDataList) {

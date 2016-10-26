@@ -206,9 +206,29 @@
                     </div>
 
                     <div class="col-xs-6 col-md-6">
+                        <div class="form-group">
+                            <div class="col-xs-12 col-md-12">
+                                <label class="control-label"><strong class="sub-content-heading"
+                                                                     th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS
+                                    NEEDED</strong></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12 col-md-12">
+                                <label class="control-label"><strong th:text="#{label.printing.lots.with.reservation.count}"></strong></label>
+                                <span id="lotsWithReservationsCount" th:text="*{userLabelPrinting.numberOfLotsWithReservations}"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12 col-md-12">
+                                <label class="control-label"><strong th:text="#{label.printing.total.number.of.labels}"></strong></label>
+                                <span id="germplasmListTotalLabelCount" th:text="*{userLabelPrinting.numberOfLotsWithReservations}"></span>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
+
                 <div class="row" th:if="*{userLabelPrinting.fieldMapInfoList}">
                     <div class="col-xs-12 col-md-12">
                         <div class="form-group">

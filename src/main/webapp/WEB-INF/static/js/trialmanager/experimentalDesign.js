@@ -6,13 +6,13 @@
 		angular.module('manageTrialApp')
 			.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
-			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages) {
+			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE', 'TrialManagerDataService', '$http',
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages) {
 
 					$scope.$on('$viewContentLoaded', function(){
 						// This is to automatically refresh the design details for augmented design
 						// whenever the Experimental tab is viewed
-						if ($scope.data.designType === 4) {
+						if ($scope.data.designType === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
 							$scope.refreshDesignDetailsForAugmentedDesign();
 						}
 					});
@@ -74,7 +74,7 @@
 						// user has a treatment factor, if previous exp design is not RCBD, then set selection to RCBD
 						// may need to clear non RCBD input
 						if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-							$scope.data.designType = TrialManagerDataService.getDesignTypeById(0, $scope.designTypes).id;
+							$scope.data.designType = TrialManagerDataService.getDesignTypeById(DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK, $scope.designTypes).id;
 						}
 
 						if ($scope.data.designType != null && $scope.data.designType !== '') {
@@ -361,10 +361,8 @@
 
 					$scope.doValidate = function() {
 
-						// FIXME: Find a way to detect the design type by not using hard coded design ids, if the design type id changed in the backend, this will break.
-
 						switch ($scope.currentDesignType.id) {
-							case 0:
+							case DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK:
 							{
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
 									showErrorMessage('page-message', EXP_DESIGN_MSGS[4]);
@@ -394,7 +392,7 @@
 
 								break;
 							}
-							case 1:
+							case DESIGN_TYPE.RESOLVABLE_INCOMPLETE_BLOCK:
 							{
 
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
@@ -456,7 +454,7 @@
 
 								break;
 							}
-							case 2:
+							case DESIGN_TYPE.ROW_COL:
 							{
 								if (!$scope.data.replicationsCount && $scope.expDesignForm.replicationsCount.$invalid) {
 									showErrorMessage('page-message', EXP_DESIGN_MSGS[5]);
@@ -521,7 +519,7 @@
 
 								break;
 							}
-							case 4: {
+							case DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK: {
 
 								if (!validateNumberOfBlocks()) {
 									return false;
@@ -568,7 +566,7 @@
 
 					$scope.showOnlyIfNumberOfBlocksIsSpecified = function() {
 
-						if ($scope.currentDesignType.id === 4) {
+						if ($scope.currentDesignType.id === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
 							if (!$scope.data.numberOfBlocks && $scope.data.numberOfBlocks !== 0) {
 								return false;
 							}
@@ -637,19 +635,18 @@
 
 			// FILTERS USED FOR EXP DESIGN
 
-			.filter('filterFactors', ['_', function(_) {
+			.filter('filterFactors', ['_','DESIGN_TYPE', function(_, DESIGN_TYPE) {
 				return function(factorList, designTypeId) {
 
 					var excludeTermIds;
 
-					// FIXME: Find a way to detect the design type by not using hard coded design ids, if the design type id changed in the backend, this will break.
-					if (designTypeId === 0) {
+					if (designTypeId === DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK) {
 						excludeTermIds = [8230, 8220, 8581, 8582];
-					} else if (designTypeId === 1) {
+					} else if (designTypeId === DESIGN_TYPE.RESOLVABLE_INCOMPLETE_BLOCK) {
 						excludeTermIds = [8581, 8582];
-					} else if (designTypeId === 2) {
+					} else if (designTypeId === DESIGN_TYPE.ROW_COL) {
 						excludeTermIds = [8220, 8200];
-					} else if (designTypeId === 4) {
+					} else if (designTypeId === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
 						excludeTermIds = [8210, 8581, 8582];
 					}
 

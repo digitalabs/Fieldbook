@@ -711,7 +711,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Load initial germplasm tree.
+	 * Get the Germplasm URL
 	 *
 	 * @return the string
 	 */
@@ -738,7 +738,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Load initial germplasm tree.
+	 * Load initial germplasm tree table.
 	 *
 	 * @return the string
 	 */

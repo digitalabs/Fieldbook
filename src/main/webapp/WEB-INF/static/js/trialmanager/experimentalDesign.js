@@ -6,8 +6,18 @@
 		angular.module('manageTrialApp')
 			.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
-			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages) {
+			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages) {
+
+					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
+
+					$scope.$on('$viewContentLoaded', function(){
+						// This is to automatically refresh the design details for augmented design
+						// whenever the Experimental tab is viewed
+						if ($scope.data.designType === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
+							$scope.refreshDesignDetailsForAugmentedDesign();
+						}
+					});
 
 					$scope.applicationData = TrialManagerDataService.applicationData;
 					$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
@@ -66,7 +76,7 @@
 						// user has a treatment factor, if previous exp design is not RCBD, then set selection to RCBD
 						// may need to clear non RCBD input
 						if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-							$scope.data.designType = TrialManagerDataService.getDesignTypeById(0, $scope.designTypes).id;
+							$scope.data.designType = TrialManagerDataService.getDesignTypeById(DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK, $scope.designTypes).id;
 						}
 
 						if ($scope.data.designType != null && $scope.data.designType !== '') {
@@ -167,9 +177,12 @@
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
 							$scope.applicationData.unappliedChangesAvailable = true;
 
+							$scope.refreshDesignDetailsForAugmentedDesign();
+
 							if ($scope.currentDesignType.isPreset) {
 								showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
 							}
+
 						} else {
 							$scope.currentDesignType = null;
 							$scope.data.designType = '';
@@ -350,10 +363,8 @@
 
 					$scope.doValidate = function() {
 
-						// FIXME: Find a way to detect the design type by not using hard coded design ids, if the design type id changed in the backend, this will break.
-
 						switch ($scope.currentDesignType.id) {
-							case 0:
+							case DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK:
 							{
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
 									showErrorMessage('page-message', EXP_DESIGN_MSGS[4]);
@@ -383,7 +394,7 @@
 
 								break;
 							}
-							case 1:
+							case DESIGN_TYPE.RESOLVABLE_INCOMPLETE_BLOCK:
 							{
 
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
@@ -445,7 +456,7 @@
 
 								break;
 							}
-							case 2:
+							case DESIGN_TYPE.ROW_COL:
 							{
 								if (!$scope.data.replicationsCount && $scope.expDesignForm.replicationsCount.$invalid) {
 									showErrorMessage('page-message', EXP_DESIGN_MSGS[5]);
@@ -510,18 +521,17 @@
 
 								break;
 							}
-							case 4: {
+							case DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK: {
 
-								if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
-									showErrorMessage('page-message', 'Please specify the number of blocks.');
+								if (!validateNumberOfBlocks()) {
 									return false;
 								}
-
-								if ($scope.totalGermplasmEntryListCount % $scope.data.numberOfBlocks !== 0) {
-									showErrorMessage('page-message', 'The entries in this trial cannot be divided into evenly sized blocks. Augmented designs are most efficient when block sizes are constant.');
+								if (!$scope.checkIfTheNumberOfTestEntriesPerBlockIsWholeNumber()) {
 									return false;
 								}
-
+								if (!validateNumberOfChecks()) {
+									return false;
+								}
 								break;
 
 							}
@@ -547,23 +557,98 @@
 						return true;
 					};
 
+					$scope.checkIfTheNumberOfTestEntriesPerBlockIsWholeNumber = function() {
+						// Check if the Number of Test entries per block is a whole number
+						if ($scope.germplasmNumberOfTestEntriesPerBlock % 1 !== 0) {
+							showErrorMessage('page-message', 'The number of test entries must be divisible by number of blocks.');
+							return false;
+						}
+						return true;
+					};
+
+					$scope.showOnlyIfNumberOfBlocksIsSpecified = function() {
+
+						if ($scope.currentDesignType.id === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
+							if (!$scope.data.numberOfBlocks && $scope.data.numberOfBlocks !== 0) {
+								return false;
+							}
+							return true;
+						}
+
+					};
+
+					$scope.refreshDesignDetailsForAugmentedDesign = function() {
+
+						$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
+						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
+						$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
+						$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmNumberOfTestEntriesPerBlock + $scope.germplasmTotalCheckEntriesCount;
+						$scope.germplasmTotalNumberOfPlots = $scope.germplasmNumberOfPlotsPerBlock * $scope.data.numberOfBlocks;
+
+					}
+
+
+					function countCheckEntries() {
+
+						// When the user changed the entry type of germplasm entries in Germplasm Tab, the changes are not yet saved in the database,
+						// so we can only count the number of checks through DataTable.
+						var germplasmListDataTable = $('.germplasm-list-items').DataTable();
+
+						if (germplasmListDataTable.rows().length !== 0) {
+
+							var numberOfChecksEntries = 0;
+
+							$.each(germplasmListDataTable.rows().data(), function(index, obj) {
+								if (parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]) === SYSTEM_DEFINED_ENTRY_TYPE.CHECK_ENTRY) {
+									numberOfChecksEntries++;
+								}
+							});
+
+							return numberOfChecksEntries;
+
+						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
+							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
+							// when an existing trial is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
+							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
+						}
+
+						return 0;
+
+					}
+
+					function validateNumberOfBlocks() {
+						if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
+							showErrorMessage('page-message', 'Please specify the number of blocks.');
+							return false;
+						}
+						return true;
+					}
+
+					function validateNumberOfChecks() {
+
+						if ($scope.germplasmTotalCheckEntriesCount === 0) {
+							showErrorMessage('page-message', 'Please specify checks in germplasm list before generating augmented design.');
+							return false;
+						}
+						return true;
+					}
+
 				}])
 
 			// FILTERS USED FOR EXP DESIGN
 
-			.filter('filterFactors', ['_', function(_) {
+			.filter('filterFactors', ['_','DESIGN_TYPE', function(_, DESIGN_TYPE) {
 				return function(factorList, designTypeId) {
 
 					var excludeTermIds;
 
-					// FIXME: Find a way to detect the design type by not using hard coded design ids, if the design type id changed in the backend, this will break.
-					if (designTypeId === 0) {
+					if (designTypeId === DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK) {
 						excludeTermIds = [8230, 8220, 8581, 8582];
-					} else if (designTypeId === 1) {
+					} else if (designTypeId === DESIGN_TYPE.RESOLVABLE_INCOMPLETE_BLOCK) {
 						excludeTermIds = [8581, 8582];
-					} else if (designTypeId === 2) {
+					} else if (designTypeId === DESIGN_TYPE.ROW_COL) {
 						excludeTermIds = [8220, 8200];
-					} else if (designTypeId === 4) {
+					} else if (designTypeId === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
 						excludeTermIds = [8210, 8581, 8582];
 					}
 

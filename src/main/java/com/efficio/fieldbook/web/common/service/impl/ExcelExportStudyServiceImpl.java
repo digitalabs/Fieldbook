@@ -18,10 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -619,10 +617,5 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
-	}
-
-	@Override
-	public void setBreeedingMethodPropertyName(String breedingMethodPropertyName) {
-		this.breedingMethodPropertyName = breedingMethodPropertyName;
 	}
 }

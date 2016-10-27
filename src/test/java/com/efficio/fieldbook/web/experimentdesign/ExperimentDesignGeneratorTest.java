@@ -35,6 +35,11 @@ public class ExperimentDesignGeneratorTest {
 	public static final String NBLOCK = "2";
 	public static final String OUTPUT_FILE = "outputfile.csv";
 
+	private static final int ENTRY_NO_9 = 9;
+	private static final int ENTRY_NO_3= 3;
+	private static final int ENTRY_NO_10 = 10;
+	private static final int ENTRY_NO_5 = 5;
+
 	@Mock
 	private WorkbenchService workbenchService;
 
@@ -246,9 +251,9 @@ public class ExperimentDesignGeneratorTest {
 
 		final Map<Integer, Integer> designExpectedEntriesMap = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
-		designExpectedEntriesMap.put(9, 3);
+		designExpectedEntriesMap.put(ENTRY_NO_9, ENTRY_NO_3);
 		// Test Entry No 10 is mapped to Check Entry No 5
-		designExpectedEntriesMap.put(10, 5);
+		designExpectedEntriesMap.put(ENTRY_NO_10, ENTRY_NO_5);
 
 
 		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
@@ -266,9 +271,9 @@ public class ExperimentDesignGeneratorTest {
 
 		final Map<Integer, Integer> designExpectedEntriesMap = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
-		designExpectedEntriesMap.put(9, 3);
+		designExpectedEntriesMap.put(ENTRY_NO_9, ENTRY_NO_3);
 		// Test Entry No 10 is mapped to Check Entry No 5
-		designExpectedEntriesMap.put(10, 5);
+		designExpectedEntriesMap.put(ENTRY_NO_10, ENTRY_NO_5);
 
 		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
 				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 9999, designExpectedEntriesMap);
@@ -282,9 +287,9 @@ public class ExperimentDesignGeneratorTest {
 
 		final Map<Integer, Integer> designExpectedEntriesMap = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
-		designExpectedEntriesMap.put(9, 3);
+		designExpectedEntriesMap.put(ENTRY_NO_9, ENTRY_NO_3);
 		// Test Entry No 10 is mapped to Check Entry No 5
-		designExpectedEntriesMap.put(10, 5);
+		designExpectedEntriesMap.put(ENTRY_NO_10, ENTRY_NO_5);
 
 		final Integer result1 =
 				experimentDesignGenerator.resolveMappedEntryNumber(9, designExpectedEntriesMap);

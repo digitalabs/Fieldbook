@@ -41,6 +41,9 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	private static final String PROGRAM_UUID = "2191a54c-7d98-40d0-ae6f-6a400e4546ce";
 	public static final String DESIGN_ERROR_MESSAGE = "design error message";
 
+	private static int FIRST_CHECK_ENTRY = 0;
+	private static int THIRD_CHECK_ENTRY = 2;
+
 	private final StandardVariable entryNoVariable = StandardVariableInitializer.createStdVariable(TermId.ENTRY_NO.getId(), "Entry No");
 	private final StandardVariable blockNoVariable = StandardVariableInitializer.createStdVariable(TermId.BLOCK_NO.getId(), "Block No");
 	private final StandardVariable plotNoVariable = StandardVariableInitializer.createStdVariable(TermId.PLOT_NO.getId(), "Plot No");
@@ -190,8 +193,8 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		final List<ImportedGermplasm> importedGermplasmList = createImportedGermplasmList();
 
 		// Set the Entry no 1 and 3 as check entries
-		importedGermplasmList.get(0).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
-		importedGermplasmList.get(2).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
+		importedGermplasmList.get(FIRST_CHECK_ENTRY).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
+		importedGermplasmList.get(THIRD_CHECK_ENTRY).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
 
 		final Set<Integer> result = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfChecks(importedGermplasmList);
 
@@ -209,8 +212,8 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		final List<ImportedGermplasm> importedGermplasmList = createImportedGermplasmList();
 
 		// Set the Entry no 1 and 3 as check entries
-		importedGermplasmList.get(0).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
-		importedGermplasmList.get(2).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
+		importedGermplasmList.get(FIRST_CHECK_ENTRY).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
+		importedGermplasmList.get(THIRD_CHECK_ENTRY).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
 
 		final Set<Integer> result = augmentedRandomizedBlockDesignServiceImpl.getEntryIdsOfTestEntries(importedGermplasmList);
 

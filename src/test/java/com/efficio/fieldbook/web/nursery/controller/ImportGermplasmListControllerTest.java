@@ -70,7 +70,6 @@ import com.google.common.collect.Lists;
 @RunWith(MockitoJUnitRunner.class)
 public class ImportGermplasmListControllerTest {
 
-	private static final String STARTING_PLOT_NO = "1";
 	private static final String STARTING_ENTRY_NUMBER = "1";
 	private static final int EH_CM_TERMID = 20316;
 	private static final int CHECK_TYPE = 1;
@@ -220,7 +219,7 @@ public class ImportGermplasmListControllerTest {
 		Assert.assertEquals("The starting entry number should be 1.", form.getStartingEntryNo(),
 				ImportGermplasmListControllerTest.STARTING_ENTRY_NUMBER);
 		Assert.assertEquals("The starting plot number should be 1.", form.getStartingPlotNo(),
-				ImportGermplasmListControllerTest.STARTING_PLOT_NO);
+				ImportGermplasmListController.STARTING_PLOT_NO);
 	}
 
 	@Test
@@ -267,7 +266,7 @@ public class ImportGermplasmListControllerTest {
 		Assert.assertEquals("The starting entry number should be 1.", form.getStartingEntryNo(),
 				ImportGermplasmListControllerTest.STARTING_ENTRY_NUMBER);
 		Assert.assertEquals("The starting plot number should be 1.", form.getStartingPlotNo(),
-				ImportGermplasmListControllerTest.STARTING_PLOT_NO);
+				ImportGermplasmListController.STARTING_PLOT_NO);
 	}
 
 	@Test

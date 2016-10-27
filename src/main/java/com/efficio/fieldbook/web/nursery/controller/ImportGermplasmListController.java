@@ -146,6 +146,8 @@ public class ImportGermplasmListController extends SettingsController {
 	public static final String CHECK_PAGINATION_TEMPLATE = "/NurseryManager/showCheckGermplasmPagination";
 
 	public static final int NO_ID = -1;
+	
+	static final String STARTING_PLOT_NO = "1";
 
 	/** The germplasm list manager. */
 	@Resource
@@ -518,7 +520,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			// Set the default value of starting plot number to 1
 			if (StringUtils.isEmpty(form.getStartingPlotNo())) {
-				form.setStartingPlotNo("1");
+				form.setStartingPlotNo(ImportGermplasmListController.STARTING_PLOT_NO);
 			}
 
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();

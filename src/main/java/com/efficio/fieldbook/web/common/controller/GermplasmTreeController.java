@@ -595,12 +595,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final Integer nRef = 0;
 	
 		Integer plotCodeFldNo = this.germplasmDataManager.getPlotCodeField().getFldno();
-		Integer plotFldNo = 0;
+		Integer plotFldNo = this.getPassportAttributeForCode("PLOT_NUMBER");
 		Integer trialInstanceFldNo = 0;
 		Integer repFldNo = 0;
 		// get FLDNOs for Attribute Objects to be created
 		if (userSelection.isTrial()){
-			plotFldNo = this.getPassportAttributeForCode("PLOT_NUMBER");
 			repFldNo = this.getPassportAttributeForCode("REP_NUMBER");
 			trialInstanceFldNo = this.getPassportAttributeForCode("INSTANCE_NUMBER");
 		}
@@ -672,13 +671,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					plotCodeFldNo, locationId, gDate);
 			attributesPerGermplasm.add(originAttribute);
 
-			// Adding Instance number, plot number and replication number as
+			final Attribute plotNumberAttribute = this.createAttributeObject(currentUserID, importedGermplasm.getPlotNumber(),
+					plotFldNo, locationId, gDate);
+			attributesPerGermplasm.add(plotNumberAttribute);
+
+			// Adding Instance number and replication number as
 			// attributes of germplasm for trial advancing
 			if (this.userSelection.isTrial()) {
-				final Attribute plotNumberAttribute = this.createAttributeObject(currentUserID, importedGermplasm.getPlotNumber(),
-						plotFldNo, locationId, gDate);
-				attributesPerGermplasm.add(plotNumberAttribute);
-
 				final String replicationNumber = importedGermplasm.getReplicationNumber();
 				if (StringUtils.isNotBlank(replicationNumber)) {
 					final Attribute repNoAttribute = this.createAttributeObject(currentUserID, replicationNumber,

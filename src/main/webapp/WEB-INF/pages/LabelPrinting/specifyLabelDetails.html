@@ -18,8 +18,10 @@ th:action="@{/LabelPrinting/specifyLabelDetails/download}" method="GET" th:objec
 			</div>
 	</div>
 
-<form id="specifyLabelDetailsForm" role="form-horizontal" action="#"
-th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${labelPrintingForm}" enctype="multipart/form-data">
+<form id="specifyLabelDetailsForm" role="form-horizontal" action="#" class="lblprnt-label-details"
+	  th:classappend="${labelPrintingForm.germplasmListId != null} ? lblprnt-germplasm-list-inventory : lblprnt-study-inventory"
+th:action="@{${labelPrintingForm.germplasmListId != null} ? '/LabelPrinting/specifyLabelDetails/inventory' : '/LabelPrinting/specifyLabelDetails'}"
+	  method="post" th:object="${labelPrintingForm}" enctype="multipart/form-data">
 <input type="hidden" th:field="*{userLabelPrinting.leftSelectedLabelFields}"/>
 <input type="hidden" th:field="*{userLabelPrinting.rightSelectedLabelFields}"/>
 <input type="hidden" th:field="*{userLabelPrinting.mainSelectedLabelFields}"/>
@@ -29,6 +31,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 <input type="hidden" th:field="*{isTrial}"/>
 <input type="hidden" th:field="*{isStockList}"/>
 <input type="hidden" th:field="*{customReport}"/>
+<input type="hidden" th:field="*{germplasmListId}"/>
 
 <div class="row">
 <div class="panel panel-default">
@@ -57,7 +60,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 
 
 
-	<div class="row" th:if="*{userLabelPrinting.fieldMapInfoList == null}">
+	<div class="row lblprnt-study-details" th:if="*{userLabelPrinting.fieldMapInfoList == null}">
 		<div class="col-xs-6 col-md-6" >
 			<div class="form-group">
 				<div class="col-xs-12 col-md-12">
@@ -139,6 +142,29 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				<span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}"></span>
 			</div>
 		</div>
+	</div>
+
+	<div class="row lblprnt-germplasm-list-details" >
+			<div class="col-xs-6 col-md-6" >
+				<div class="form-group">
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label">
+							<strong  class="sub-content-heading" th:text="#{label.printing.selected.germplasmlist}">SELECTED GERMPLASM
+							LIST</strong>
+						</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label"><strong th:text="#{label.printing.germplasmlist.name}+':'"></strong></label>
+						<span th:text="*{userLabelPrinting.name}">Germplasm List Name</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-xs-6 col-md-6">
+
+			</div>
 	</div>
 	<div class="row" th:if="*{userLabelPrinting.fieldMapInfoList}">
 		<div class="col-xs-12 col-md-12" >
@@ -224,9 +250,11 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			<div class="col-xs-8 col-md-8">
 				<select name="label-format" id="label-format">
 					<option value="">Please Choose</option>
-					<option value="2">Excel Data</option>
+					<!-- TODO Remove germplasmListId condition after this format of label generation is implemented-->
+					<option th:if="${labelPrintingForm.germplasmListId == null}" value="2">Excel Data</option>
 					<option value="3">CSV Data</option>
-					<option value="1">Formatted PDF Label Sheets</option>
+					<!-- TODO Remove germplasmListId condition after this format of label generation is implemented-->
+					<option th:if="${labelPrintingForm.germplasmListId == null}" value="1">Formatted PDF Label Sheets</option>
 				</select>
 			</div>
 		</div>
@@ -386,7 +414,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>
 			</div>
 			<br /><br /><br />
-			<div class="col-xs-12 col-md-12" >
+			<div class="col-xs-12 col-md-12 lblprnt-study-choose-fields-label" >
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
 						<label class="control-label" th:utext="*{isStockList} ?
@@ -395,12 +423,19 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					</div>
 				</div>
 			</div>
+			<div class="col-xs-12 col-md-12 lblprnt-germplasm-list-choose-fields-label" >
+				<div class="form-group">
+					<div class="col-xs-6 col-md-6">
+						<label class="control-label" th:utext="#{label.printing.choose.option.fields.csv.xls.germplasm.list}">.</label>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="row non-pdf-fields">
 			<div class="col-xs-12 col-md-12" >
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
-						<div class="col-xs-6 col-md-6">
+						<div class="col-xs-6 col-md-6 lblprnt-study-details-fields">
 							<ul class="list-group field-group"  >
 							  <li class="list-group-item"><label class="control-label label-bold" th:text="(*{isTrial})? #{label.printing.trial.details}: #{label.printing.nursery.details}">Study Details</label></li>
 							</ul>
@@ -410,12 +445,16 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 						<div class="col-xs-6 col-md-6">
 							<ul class="list-group field-group"  >
 							  <li class="list-group-item">
-								<label class="control-label label-bold"
-									th:text="(*{isStockList})? #{label.printing.stock.list.details} :
+								  <label class="control-label label-bold lblprnt-study-list-details-label"
+										 th:text="(*{isStockList})? #{label.printing.stock.list.details} :
 												(*{isTrial}? #{label.printing.trial.list.details} :
 													#{label.printing.nursery.list.details})">
-									Study List Details
-								</label>
+									  Study List Details
+								  </label>
+								  <label class="control-label label-bold lblprnt-germplasm-list-details-label"
+										 th:text="#{label.printing.germplasm.list.details}">
+									  Germplasm List Details
+								  </label>
 							  </li>
 							</ul>
 							<ul id="non-pdf-study-list-details-fields" class="list-group droptrue" >

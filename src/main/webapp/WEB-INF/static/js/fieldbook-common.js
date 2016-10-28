@@ -620,7 +620,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 		if (withFieldMap) {
 			// For view fieldmap
 			newRow = '<tr id="' + realId + '" class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
-			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + value.plotCount + '</td>';
+			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
 			if (trial) {
 				newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 			}
@@ -632,7 +632,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 
 			newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
 			checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
-			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.plotCount + '</td>';
+			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
 			if (trial) {
 				newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 			}
@@ -1377,18 +1377,10 @@ function exportStudy() {
 		showMessage('Please choose export type');
 		return false;
 	}
-
-	if (type === '2') {
-		exportStudyToR(type);
-	} else {
-		doExportContinue(type, isNursery());
-	}
+	
+	doExportContinue(type, isNursery());
 }
 
-function exportStudyToR(type) {
-	'use strict';
-	doExportContinue(type + '/' + $('#selectedRTrait').val(), isNursery());
-}
 function getExportCheckedAdvancedList() {
 	'use strict';
 	var advancedLists = [];
@@ -1477,7 +1469,7 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 		visibleColumns = getMeasurementTableVisibleColumns(isNursery);
 		var exportType = $('#exportType').val();
 		// excel or csv
-		if ((exportType == 7 || exportType == 3) && visibleColumns.length !== 0) {
+		if ((exportType == 6 || exportType == 2) && visibleColumns.length !== 0) {
 			showWarningMessageForRequiredColumns(visibleColumns);
 		}
 	}
@@ -1621,23 +1613,6 @@ function isFloat(value) {
 
 function moveToTopScreen() {
 
-}
-
-function openImportGermplasmList(type) {
-	'use strict';
-	$('.germplasmAndCheckSection').data('import-from', type);
-	$.ajax({
-		url: '/Fieldbook/ListTreeManager/germplasm/import/url',
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(html) {
-			setTimeout(function() {
-				$('#importFrame').attr('src', html);
-				$('#importGermplasmModal').modal({ backdrop: 'static', keyboard: true });
-			}, 500);
-		}
-	});
 }
 
 function doTreeHighlight(treeName, nodeKey) {
@@ -2269,6 +2244,8 @@ function recreateLocationCombo(possibleFavorite) {
 
 						if (data.allBreedingFavoritesLocations && data.allBreedingFavoritesLocations.length > 0) {
 							$('#showFavoriteLocation').prop('checked', true);
+						} else {
+							$('#showFavoriteLocation').prop('checked', false);
 						}
 
 						recreateLocationComboAfterClose('harvestLocationIdAll', data.allLocations);

@@ -4,7 +4,6 @@
 	<input type="hidden" th:field="*{locationId}"/>
 	<input type="hidden" th:field="*{breedingMethodId}"/>
 	<input type="hidden" th:field="*{breedingMethodUrl}"/>
-	<input type="hidden" th:field="*{importLocationUrl}"/>
 	<input type="hidden" th:field="*{studyNameTermId}"/>
 	<input type="hidden" th:field="*{startDateId}"/>
 	<input type="hidden" th:field="*{endDateId}"/>
@@ -446,8 +445,8 @@ var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '',
 		 * VariableType when saving the nursery.
 		 **/
 
-		selectionVariatesSegment = /*[[${selectionVariatesSegment}]]*/ 1807,
-		baselineTraitsSegment =  /*[[${baselineTraitsSegment}]]*/ 1808;
+		selectionVariatesSegment = /*[[${T(org.generationcp.middleware.domain.ontology.VariableType).SELECTION_METHOD.getId().toString()}]]*/ 1807,
+		baselineTraitsSegment =  /*[[${T(org.generationcp.middleware.domain.ontology.VariableType).TRAIT.getId().toString()}]]*/ 1808;
 		inputChange = false;
 
 // Labels for Entry No and Plot No
@@ -457,7 +456,6 @@ var entryNoShouldBeInRange = /*[[#{entry.number.should.be.in.range}]]*/ '',
 
 var locationId = '',
 		breedingMethodId = '',
-		importLocationUrl = '',
 		requiredFields = [],
 		startDateId = '',
 		endDateId = '',
@@ -496,7 +494,6 @@ $(document).ready(function() {
 	endDateId = $('#endDateId').val();
 	locationId = $('#locationId').val();
 	breedingMethodId = $('#breedingMethodId').val();
-	importLocationUrl = $('#importLocationUrl').val();
 	$('#folderNameSpan').html($('#folderName').val());
 	var possibleValuesJsonElm = $('.possibleValuesJson');
 	$.each(possibleValuesJsonElm, function(index, divElem) {

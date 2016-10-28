@@ -221,7 +221,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			/* Watchers */
 			$scope.$watch('data.noOfEnvironments', function(newVal, oldVal) {
 				$scope.temp.noOfEnvironments = newVal;
-				if (newVal < oldVal) {
+				if (Number(newVal) < Number(oldVal)) {
 					// if new environment count is less than previous value, splice array
 					while ($scope.data.environments.length > newVal) {
 						$scope.data.environments.pop();
@@ -233,7 +233,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					}
 
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
-				} else if (oldVal < newVal) {
+				} else if (Number(newVal) > Number(oldVal)) {
 					addNewEnvironments(newVal - oldVal);
 
 					// should not be equal to 1 since the default number of environment for a trial is 1
@@ -272,7 +272,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			function refreshMeasurementTableAfterDeletingEnvironment() {
 				// Make sure that the measurement table will only refresh if there is a selected design type for the current trial
 				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
-				if (designTypeId !== null && TrialManagerDataService.applicationData.designTypes[designTypeId].isPreset) {
+				var designTypes = TrialManagerDataService.applicationData.designTypes;
+				if (designTypeId !== null && TrialManagerDataService.getDesignTypeById(designTypeId, designTypes).isPreset) {
 					TrialManagerDataService.generatePresetExpDesign(designTypeId).then(function() {
 						TrialManagerDataService.updateAfterGeneratingDesignSuccessfully();
 						TrialManagerDataService.applicationData.hasGeneratedDesignPreset = true;

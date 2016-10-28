@@ -11,6 +11,7 @@ public class ExpDesignValidationOutput implements Serializable {
 	private static final long serialVersionUID = -2261802820353959484L;
 	private boolean isValid;
 	private String message;
+	private boolean userConfirmationRequired;
 
 	public ExpDesignValidationOutput() {
 		super();
@@ -36,6 +37,16 @@ public class ExpDesignValidationOutput implements Serializable {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	
+	public boolean isUserConfirmationRequired() {
+		return userConfirmationRequired;
+	}
+
+	
+	public void setUserConfirmationRequired(boolean userConfirmationRequired) {
+		this.userConfirmationRequired = userConfirmationRequired;
 	}
 
 }

@@ -409,6 +409,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setSecondBarcodeField("");
 		this.userLabelPrinting.setThirdBarcodeField("");
 		this.userLabelPrinting.setSettingsName("");
+		this.userLabelPrinting.setNumberOfCopies("1");
 		form.setUserLabelPrinting(this.userLabelPrinting);
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS, this.labelPrintingService
 				.getAvailableLabelFieldsForInventory(locale));
@@ -512,7 +513,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		final List<FieldMapInfo> fieldMapInfoList = this.userLabelPrinting.getFieldMapInfoList();
 
-		List<StudyTrialInstanceInfo> trialInstances;
+		final List<StudyTrialInstanceInfo> trialInstances;
 
 		if (fieldMapInfoList != null) {
 			trialInstances = this.generateTrialInstancesFromSelectedFieldMaps(fieldMapInfoList, form);
@@ -555,6 +556,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
+		this.userLabelPrinting.setNumberOfCopies(form.getUserLabelPrinting().getNumberOfCopies());
 
 		// add validation for the file name
 		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
@@ -569,7 +571,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final Integer germplasmListId = form.getGermplasmListId();
 		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(germplasmListId, 0, Integer
 				.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
-		return this.generateLabels(this.getGermplasmListDataListWithExistingReservations(germplasmListDataList));
+		final List<GermplasmListData> germplasmListDataListWithExistingReservations =
+				this.getGermplasmListDataListWithExistingReservations(germplasmListDataList);
+		final int numberOfCopies = Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
+		final List<GermplasmListData> fullGermplasmListWithExistingReservations = new ArrayList<>();
+		for (int i = 0; i < numberOfCopies; i++) {
+			fullGermplasmListWithExistingReservations.addAll(germplasmListDataListWithExistingReservations);
+		}
+		return this.generateLabels(fullGermplasmListWithExistingReservations);
 	}
 
 	private List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {

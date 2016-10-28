@@ -57,6 +57,8 @@ public class UserLabelPrinting implements Serializable {
 
 	private String numberOfLotsWithReservations;
 
+	private String numberOfCopies;
+
 	/** The title. */
 	private String title;
 
@@ -741,5 +743,13 @@ public class UserLabelPrinting implements Serializable {
 
 	public void setNumberOfLotsWithReservations(final String numberOfLotsWithReservations) {
 		this.numberOfLotsWithReservations = numberOfLotsWithReservations;
+	}
+
+	public String getNumberOfCopies() {
+		return this.numberOfCopies;
+	}
+
+	public void setNumberOfCopies(final String numberOfCopies) {
+		this.numberOfCopies = numberOfCopies;
 	}
 }

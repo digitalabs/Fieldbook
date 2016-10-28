@@ -237,10 +237,26 @@
                         </div>
                         <div class="form-group col-xs-12 col-md-12">
                             <div class="col-xs-3 col-md-3">
+                                <label class="control-label"><strong th:text="#{label.printing.number.of.copies.per.label}"></strong></label>
+                            </div>
+                            <div class="col-xs-3 col-md-3">
+                                <select name="label-format" id="label-copies" th:field="*{userLabelPrinting.numberOfCopies}"
+                                        onchange="LabelPrinting.changeTotalNumberOfLabels()">
+                                    <option value="1" selected="selected">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-xs-12 col-md-12">
+                            <div class="col-xs-3 col-md-3">
                                 <label class="control-label"><strong th:text="#{label.printing.lots.with.reservation.count}"></strong></label>
                             </div>
                             <div class="col-xs-3 col-md-3">
-                                <span id="lotsWithReservationsCount" th:text="*{userLabelPrinting.numberOfLotsWithReservations}"></span>
+                                <span id="lotsWithReservationsCount"
+                                      th:text="*{userLabelPrinting.numberOfLotsWithReservations}"></span>
                             </div>
                         </div>
                         <div class="form-group col-xs-12 col-md-12">
@@ -348,9 +364,9 @@
                         <div class="col-xs-8 col-md-8">
                             <select name="label-format" id="label-format">
                                 <option value="">Please Choose</option>
+                                <option value="1">Formatted PDF Label Sheets</option>
                                 <option value="2">Excel Data</option>
                                 <option value="3">CSV Data</option>
-                                <option value="1">Formatted PDF Label Sheets</option>
                             </select>
                         </div>
                     </div>
@@ -852,6 +868,7 @@ $(function() {
 	var unavailableFields = /*[[${unavailableFields}]]*/ [];
 
 	LabelPrinting.onPageLoad(isTrial, excelOption, availableFields, unavailableFields);
+
 });
 
 //]]>

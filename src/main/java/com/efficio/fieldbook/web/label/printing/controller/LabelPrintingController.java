@@ -121,6 +121,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * The Constant LOG.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
+
+	private static final String ENTRY = "entry";
+	private static final String DESIGNATION = "designation";
+	private static final String GID = "gid";
+	private static final String STOCK_ID = "stockId";
+
 	/**
 	 * The user label printing.
 	 */
@@ -410,6 +416,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setThirdBarcodeField("");
 		this.userLabelPrinting.setSettingsName("");
 		this.userLabelPrinting.setNumberOfCopies("1");
+		this.userLabelPrinting.setSorting("entry");
 		form.setUserLabelPrinting(this.userLabelPrinting);
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS, this.labelPrintingService
 				.getAvailableLabelFieldsForInventory(locale));
@@ -557,6 +564,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
 		this.userLabelPrinting.setNumberOfCopies(form.getUserLabelPrinting().getNumberOfCopies());
+		this.userLabelPrinting.setSorting(form.getUserLabelPrinting().getSorting());
 
 		// add validation for the file name
 		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
@@ -578,7 +586,29 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		for (int i = 0; i < numberOfCopies; i++) {
 			fullGermplasmListWithExistingReservations.addAll(germplasmListDataListWithExistingReservations);
 		}
-		return this.generateLabels(fullGermplasmListWithExistingReservations);
+
+		//Implement sorting
+		final String sortingType = this.userLabelPrinting.getSorting();
+		List<GermplasmListData> sortedList = fullGermplasmListWithExistingReservations;
+		if (sortingType.equalsIgnoreCase(ENTRY)) {
+			sortedList = this.sortByEntry(fullGermplasmListWithExistingReservations);
+		} else if (sortingType.equalsIgnoreCase(DESIGNATION)) {
+			//TODO implement sorting
+		} else if (sortingType.equalsIgnoreCase(GID)) {
+			//TODO implement sorting
+		} else if (sortingType.equalsIgnoreCase(STOCK_ID)) {
+			//TODO implement sorting
+		} else {
+			throw new IllegalArgumentException("No such type of sorting defined");
+		}
+
+
+		return this.generateLabels(sortedList);
+	}
+
+	private List<GermplasmListData> sortByEntry(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
+		//FIXME Implement comparator of Entry numbers in GermplasmListData and compare here
+		return fullGermplasmListWithExistingReservations;
 	}
 
 	private List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {

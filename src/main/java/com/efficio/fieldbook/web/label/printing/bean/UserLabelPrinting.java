@@ -59,6 +59,11 @@ public class UserLabelPrinting implements Serializable {
 
 	private String numberOfCopies;
 
+	/**
+	 * Possible values for inventory lists: Entry, Designation, GID, StockId
+	 */
+	private String sorting;
+
 	/** The title. */
 	private String title;
 
@@ -751,5 +756,13 @@ public class UserLabelPrinting implements Serializable {
 
 	public void setNumberOfCopies(final String numberOfCopies) {
 		this.numberOfCopies = numberOfCopies;
+	}
+
+	public String getSorting() {
+		return this.sorting;
+	}
+
+	public void setSorting(final String sorting) {
+		this.sorting = sorting;
 	}
 }

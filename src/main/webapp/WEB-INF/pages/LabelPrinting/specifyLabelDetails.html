@@ -362,13 +362,33 @@
                             <label class="control-label " th:text="#{label.printing.choose.label.use.formats}">Choose the format you would
                                 like to use for your labels:</label>
                         </div>
-                        <div class="col-xs-8 col-md-8">
-                            <select name="label-format" id="label-format">
-                                <option value="">Please Choose</option>
-                                <option value="1">Formatted PDF Label Sheets</option>
-                                <option value="2">Excel Data</option>
-                                <option value="3">CSV Data</option>
-                            </select>
+                        <div class="col-xs-12 col-md-12 form-group">
+                            <div class="col-xs-3 col-md-3">
+                                <label class="control-label"><strong th:text="#{label.printing.output.format}"></strong></label>
+                            </div>
+                            <div class="col-xs-8 col-md-8">
+                                <!--TODO localise select values -->
+                                <select name="label-format" id="label-format">
+                                    <option value="">Please Choose</option>
+                                    <option value="1">Formatted PDF Label Sheets</option>
+                                    <option value="2">Excel Data</option>
+                                    <option value="3">CSV Data</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-12 form-group">
+                            <div class="col-xs-3 col-md-3">
+                                <label class="control-label"><strong th:text="#{label.printing.sort.labels.by}"></strong></label>
+                            </div>
+                            <div class="col-xs-8 col-md-8">
+                                <!--TODO localise select values -->
+                                <select name="label-sorting" id="label-sorting" th:field="*{userLabelPrinting.sorting}">
+                                    <option value="entry">Entry</option>
+                                    <option value="designation">Designation</option>
+                                    <option value="gid">GID</option>
+                                    <option value="stockId">StockID</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -206,18 +206,38 @@ public class CrossingServiceImpl implements CrossingService {
 			final Integer newGid = germplasmIdIterator.next();
 			cross.setGid(newGid.toString());
 
+			final Integer currentUserID = this.contextUtil.getCurrentWorkbenchUserId();
+			final Integer plotFldCode = this.getPassportAttributeForCode("PLOTCODE");
+			final Integer plotFldNo = this.getPassportAttributeForCode("PLOT_NUMBER");
+			
 			// save Attribute for SeedSource as a PlotCode
-			final Attribute plotCodeAttribute = new Attribute();
-			plotCodeAttribute.setAdate(today);
-			plotCodeAttribute.setGermplasmId(newGid);
-			plotCodeAttribute.setTypeId(this.germplasmDataManager.getPlotCodeField().getFldno());
-			plotCodeAttribute.setAval(cross.getSource());
-			plotCodeAttribute.setUserId(this.contextUtil.getCurrentWorkbenchUserId());
-
+			final Attribute plotCodeAttribute = this.createAttributeObject(currentUserID, cross.getSource(),
+					plotFldCode, today, newGid);
 			attributeList.add(plotCodeAttribute);
+			
+			// save Attribute for female plot number
+			final Attribute plotNumberAttribute = this.createAttributeObject(currentUserID, cross.getFemalePlotNo(),
+					plotFldNo, today, newGid);
+			attributeList.add(plotNumberAttribute);
+			
 		}
 
 		this.germplasmDataManager.addAttributes(attributeList);
+	}
+	
+	private Integer getPassportAttributeForCode(final String code) {
+		return this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", code).getFldno();
+	}
+	
+	private Attribute createAttributeObject(final Integer currentUserID, final String attributeValue, 
+			final Integer typeId, final Integer gDate, final Integer gid) {
+		final Attribute originAttribute = new Attribute();
+		originAttribute.setAval(attributeValue);
+		originAttribute.setTypeId(typeId);
+		originAttribute.setUserId(currentUserID);
+		originAttribute.setAdate(gDate);
+		originAttribute.setGermplasmId(gid);
+		return originAttribute;
 	}
 
 	// FIXME the methods getPairs() and generateGermplasmNamePairs() should be combined into one

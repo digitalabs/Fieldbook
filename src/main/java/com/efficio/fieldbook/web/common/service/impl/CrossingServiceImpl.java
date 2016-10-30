@@ -209,28 +209,27 @@ public class CrossingServiceImpl implements CrossingService {
 			final Integer currentUserID = this.contextUtil.getCurrentWorkbenchUserId();
 			final Integer plotFldCode = this.getPassportAttributeForCode("PLOTCODE");
 			final Integer plotFldNo = this.getPassportAttributeForCode("PLOT_NUMBER");
-			
+
 			// save Attribute for SeedSource as a PlotCode
-			final Attribute plotCodeAttribute = this.createAttributeObject(currentUserID, cross.getSource(),
-					plotFldCode, today, newGid);
+			final Attribute plotCodeAttribute = this.createAttributeObject(currentUserID, cross.getSource(), plotFldCode, today, newGid);
 			attributeList.add(plotCodeAttribute);
-			
+
 			// save Attribute for female plot number
-			final Attribute plotNumberAttribute = this.createAttributeObject(currentUserID, cross.getFemalePlotNo(),
-					plotFldNo, today, newGid);
+			final Attribute plotNumberAttribute =
+					this.createAttributeObject(currentUserID, cross.getFemalePlotNo(), plotFldNo, today, newGid);
 			attributeList.add(plotNumberAttribute);
-			
+
 		}
 
 		this.germplasmDataManager.addAttributes(attributeList);
 	}
-	
+
 	private Integer getPassportAttributeForCode(final String code) {
 		return this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", code).getFldno();
 	}
-	
-	private Attribute createAttributeObject(final Integer currentUserID, final String attributeValue, 
-			final Integer typeId, final Integer gDate, final Integer gid) {
+
+	private Attribute createAttributeObject(final Integer currentUserID, final String attributeValue, final Integer typeId,
+			final Integer gDate, final Integer gid) {
 		final Attribute originAttribute = new Attribute();
 		originAttribute.setAval(attributeValue);
 		originAttribute.setTypeId(typeId);
@@ -309,10 +308,10 @@ public class CrossingServiceImpl implements CrossingService {
 
 			final Name parentageDesignationName = new Name();
 			parentageDesignationName.setGermplasmId(gid);
-			parentageDesignationName.setTypeId(PEDIGREE_NAME_TYPE);
+			parentageDesignationName.setTypeId(CrossingServiceImpl.PEDIGREE_NAME_TYPE);
 			parentageDesignationName.setUserId(this.contextUtil.getCurrentUserLocalId());
 			parentageDesignationName.setNval(parentageDesignation);
-			parentageDesignationName.setNstat(PREFERRED_NAME);
+			parentageDesignationName.setNstat(CrossingServiceImpl.PREFERRED_NAME);
 			parentageDesignationName.setLocationId(locationId);
 			parentageDesignationName.setNdate(Util.getCurrentDateAsIntegerValue());
 			parentageDesignationName.setReferenceId(0);
@@ -555,7 +554,7 @@ public class CrossingServiceImpl implements CrossingService {
 		try {
 			return (String) rule.runRule(crossingRuleExecutionContext);
 		} catch (final RuleException e) {
-			LOG.error(e.getMessage(), e);
+			CrossingServiceImpl.LOG.error(e.getMessage(), e);
 			return "";
 		}
 	}
@@ -612,10 +611,10 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList) {
+	public void processCrossBreedingMethod(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
 		final BreedingMethodSetting methodSetting = crossSetting.getBreedingMethodSetting();
 
-		for (ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
+		for (final ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
 			// if imported cross contains raw breeding method code we use that to populate the breeding method
 			if (!StringUtils.isEmpty(importedCrosses.getRawBreedingMethod())) {
 				final Method breedingMethod = this.germplasmDataManager.getMethodByCode(importedCrosses.getRawBreedingMethod());
@@ -623,24 +622,26 @@ public class CrossingServiceImpl implements CrossingService {
 				if (breedingMethod != null && breedingMethod.getMid() != null && breedingMethod.getMid() != 0) {
 					importedCrosses.setBreedingMethodId(breedingMethod.getMid());
 				} else {
-                    // TODO address case where breeding method does not exist in the parser level to avoid having this case during the saving flow
-                    importedCrosses.setBreedingMethodId(0);
-                }
+					// TODO address case where breeding method does not exist in the parser level to avoid having this case during the
+					// saving flow
+					importedCrosses.setBreedingMethodId(0);
+				}
 			}
 
-			// if at this point, there is already breeding method info available on the imported cross (from import file, etc, we proceed to next)
+			// if at this point, there is already breeding method info available on the imported cross (from import file, etc, we proceed to
+			// next)
 			if (importedCrosses.isBreedingMethodInformationAvailable()) {
 				continue;
 			}
 
 			// if breeding method is based on status of parental lines, we calculate the resulting breeding method per germplasm
-            // currently, the convention is that parental lines will be used as basis if user does not select any method
+			// currently, the convention is that parental lines will be used as basis if user does not select any method
 			if (methodSetting.getMethodId() == null || methodSetting.getMethodId() == 0) {
 				final Integer femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
 				final Integer maleGid = Integer.parseInt(importedCrosses.getMaleGid());
 
-				Triple<Germplasm, Germplasm, Germplasm> femaleLine = retrieveParentGermplasmObjects(femaleGid);
-				Triple<Germplasm, Germplasm, Germplasm> maleLine = retrieveParentGermplasmObjects(maleGid);
+				final Triple<Germplasm, Germplasm, Germplasm> femaleLine = this.retrieveParentGermplasmObjects(femaleGid);
+				final Triple<Germplasm, Germplasm, Germplasm> maleLine = this.retrieveParentGermplasmObjects(maleGid);
 
 				importedCrosses.setBreedingMethodId(CrossingUtil.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(),
 						maleLine.getLeft(), femaleLine.getMiddle(), femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));
@@ -653,13 +654,13 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	protected Triple<Germplasm, Germplasm, Germplasm> retrieveParentGermplasmObjects(final Integer germplasmID) {
-		final Germplasm parent = germplasmDataManager.getGermplasmByGID(germplasmID);
+		final Germplasm parent = this.germplasmDataManager.getGermplasmByGID(germplasmID);
 
 		Germplasm motherOfParent = null;
 		Germplasm fatherOfParent = null;
 		if (parent != null) {
-			motherOfParent = germplasmDataManager.getGermplasmByGID(parent.getGpid1());
-			fatherOfParent = germplasmDataManager.getGermplasmByGID(parent.getGpid2());
+			motherOfParent = this.germplasmDataManager.getGermplasmByGID(parent.getGpid1());
+			fatherOfParent = this.germplasmDataManager.getGermplasmByGID(parent.getGpid2());
 		}
 
 		return new ImmutableTriple<>(parent, motherOfParent, fatherOfParent);

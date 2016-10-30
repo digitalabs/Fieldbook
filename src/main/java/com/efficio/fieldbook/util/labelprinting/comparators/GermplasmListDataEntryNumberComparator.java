@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.util.labelprinting;
+package com.efficio.fieldbook.util.labelprinting.comparators;
 
 import java.util.Comparator;
 
@@ -11,13 +11,6 @@ public class GermplasmListDataEntryNumberComparator implements Comparator<Germpl
 		if (germplasmListData1 == null || germplasmListData2 == null) {
 			throw new IllegalArgumentException("Could not compare null values");
 		}
-		return compare(germplasmListData1.getEntryId(), germplasmListData2.getEntryId());
-	}
-
-	// I don't know why this isn't in Long...
-	private static int compare(final long a, final long b) {
-		return a < b ? -1
-				: a > b ? 1
-				: 0;
+		return ComparatorUtil.compareNumbers(germplasmListData1.getEntryId(), germplasmListData2.getEntryId());
 	}
 }

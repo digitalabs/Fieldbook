@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.util.labelprinting;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +25,10 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
+import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataDesignationComparator;
+import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataEntryNumberComparator;
+import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataGIDComparator;
+import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataStockIdComparator;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -31,11 +36,16 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.google.common.collect.Maps;
 
 @Component
-class LabelPrintingUtil {
+public class LabelPrintingUtil {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingUtil.class);
 	/** The delimiter for the barcode. */
 	private static final String DELIMITER = " | ";
+
+	private static final String ENTRY = "entry";
+	private static final String DESIGNATION = "designation";
+	private static final String GID = "gid";
+	private static final String STOCK_ID = "stockId";
 
 	@Resource
 	private MessageSource messageSource;
@@ -454,6 +464,49 @@ class LabelPrintingUtil {
 			}
 		}
 		return buffer.toString();
+	}
+
+	/**
+	 * Sort seed preparation levels by 1 of the 4 ways (by Entry number, Designation, GID, StockId)
+	 * @param fullGermplasmListWithExistingReservations collection to sort
+	 * @param sortingType how the collection should be sorted
+	 */
+	public void sortGermplasmListDataList(final List<GermplasmListData> fullGermplasmListWithExistingReservations, final String sortingType) {
+		if (sortingType.equalsIgnoreCase(ENTRY)) {
+			this.sortByEntry(fullGermplasmListWithExistingReservations);
+		} else if (sortingType.equalsIgnoreCase(DESIGNATION)) {
+			this.sortByDesignation(fullGermplasmListWithExistingReservations);
+		} else if (sortingType.equalsIgnoreCase(GID)) {
+			this.sortByGID(fullGermplasmListWithExistingReservations);
+		} else if (sortingType.equalsIgnoreCase(STOCK_ID)) {
+			this.sortByStockId(fullGermplasmListWithExistingReservations);
+		} else {
+			throw new IllegalArgumentException("No such type of sorting defined");
+		}
+	}
+
+	private List<GermplasmListData> sortByStockId(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
+		final GermplasmListDataStockIdComparator comparator = new GermplasmListDataStockIdComparator();
+		Collections.sort(fullGermplasmListWithExistingReservations, comparator);
+		return fullGermplasmListWithExistingReservations;
+	}
+
+	private List<GermplasmListData> sortByGID(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
+		final GermplasmListDataGIDComparator comparator = new GermplasmListDataGIDComparator();
+		Collections.sort(fullGermplasmListWithExistingReservations, comparator);
+		return fullGermplasmListWithExistingReservations;
+	}
+
+	private List<GermplasmListData> sortByDesignation(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
+		final GermplasmListDataDesignationComparator comparator = new GermplasmListDataDesignationComparator();
+		Collections.sort(fullGermplasmListWithExistingReservations, comparator);
+		return fullGermplasmListWithExistingReservations;
+	}
+
+	private List<GermplasmListData> sortByEntry(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
+		final GermplasmListDataEntryNumberComparator comparator = new GermplasmListDataEntryNumberComparator();
+		Collections.sort(fullGermplasmListWithExistingReservations, comparator);
+		return fullGermplasmListWithExistingReservations;
 	}
 
 }

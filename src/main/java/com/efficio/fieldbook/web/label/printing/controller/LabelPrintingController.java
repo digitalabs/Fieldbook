@@ -83,7 +83,7 @@ import org.springframework.web.util.WebUtils;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.util.labelprinting.GermplasmListDataEntryNumberComparator;
+import com.efficio.fieldbook.util.labelprinting.LabelPrintingUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
@@ -122,11 +122,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * The Constant LOG.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
-
-	private static final String ENTRY = "entry";
-	private static final String DESIGNATION = "designation";
-	private static final String GID = "gid";
-	private static final String STOCK_ID = "stockId";
 
 	/**
 	 * The user label printing.
@@ -170,6 +165,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	private GermplasmListManager germplasmListManager;
 	@Resource
 	private InventoryDataManager inventoryDataManager;
+
+	@Resource
+	private LabelPrintingUtil labelPrintingUtil;
 
 	/**
 	 * Show trial label details.
@@ -588,33 +586,21 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			fullGermplasmListWithExistingReservations.addAll(germplasmListDataListWithExistingReservations);
 		}
 
-		//Implement sorting
-		final String sortingType = this.userLabelPrinting.getSorting();
-		if (sortingType.equalsIgnoreCase(ENTRY)) {
-			this.sortByEntry(fullGermplasmListWithExistingReservations);
-		} else if (sortingType.equalsIgnoreCase(DESIGNATION)) {
-			this.sortByDesignation(fullGermplasmListWithExistingReservations);
-		} else if (sortingType.equalsIgnoreCase(GID)) {
-			//TODO implement sorting
-		} else if (sortingType.equalsIgnoreCase(STOCK_ID)) {
-			//TODO implement sorting
-		} else {
-			throw new IllegalArgumentException("No such type of sorting defined");
+		// GermplasmListData list sorting before printing
+		try {
+			this.labelPrintingUtil.sortGermplasmListDataList(fullGermplasmListWithExistingReservations, this.userLabelPrinting.getSorting());
+		} catch (final Exception ex) {
+			final Map<String, Object> results = new HashMap<>();
+			LabelPrintingController.LOG.error(ex.getMessage(), ex);
+			results.put(LabelPrintingController.IS_SUCCESS, 0);
+			results.put(AppConstants.MESSAGE.getString(), "Error sorting the entries");
+			return results;
 		}
-
 
 		return this.generateLabels(fullGermplasmListWithExistingReservations);
 	}
 
-	private void sortByDesignation(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
-		//FIXME Implement comparator of Designations in GermplasmListData and compare here
-	}
 
-	private List<GermplasmListData> sortByEntry(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
-		final GermplasmListDataEntryNumberComparator comparator = new GermplasmListDataEntryNumberComparator();
-		Collections.sort(fullGermplasmListWithExistingReservations, comparator);
-		return fullGermplasmListWithExistingReservations;
-	}
 
 	private List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {
 		final List<GermplasmListData> germplasmListDataListWithReservations = new ArrayList<>();

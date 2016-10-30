@@ -83,6 +83,7 @@ import org.springframework.web.util.WebUtils;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.util.labelprinting.GermplasmListDataEntryNumberComparator;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
@@ -589,11 +590,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		//Implement sorting
 		final String sortingType = this.userLabelPrinting.getSorting();
-		List<GermplasmListData> sortedList = fullGermplasmListWithExistingReservations;
 		if (sortingType.equalsIgnoreCase(ENTRY)) {
-			sortedList = this.sortByEntry(fullGermplasmListWithExistingReservations);
+			this.sortByEntry(fullGermplasmListWithExistingReservations);
 		} else if (sortingType.equalsIgnoreCase(DESIGNATION)) {
-			//TODO implement sorting
+			this.sortByDesignation(fullGermplasmListWithExistingReservations);
 		} else if (sortingType.equalsIgnoreCase(GID)) {
 			//TODO implement sorting
 		} else if (sortingType.equalsIgnoreCase(STOCK_ID)) {
@@ -603,11 +603,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		}
 
 
-		return this.generateLabels(sortedList);
+		return this.generateLabels(fullGermplasmListWithExistingReservations);
+	}
+
+	private void sortByDesignation(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
+		//FIXME Implement comparator of Designations in GermplasmListData and compare here
 	}
 
 	private List<GermplasmListData> sortByEntry(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
-		//FIXME Implement comparator of Entry numbers in GermplasmListData and compare here
+		final GermplasmListDataEntryNumberComparator comparator = new GermplasmListDataEntryNumberComparator();
+		Collections.sort(fullGermplasmListWithExistingReservations, comparator);
 		return fullGermplasmListWithExistingReservations;
 	}
 

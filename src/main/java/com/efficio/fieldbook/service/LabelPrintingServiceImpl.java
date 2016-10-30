@@ -136,6 +136,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 * This comparator first checks for the existence of a plot number variable to perform comparison. If that is not available, then values
 	 * for entry number are used. Comparison is done in ascending order
 	 */
+	//FIXME Move comparator to separate class
 	private final static Comparator<FieldMapLabel> PLOT_NUMBER_ENTRY_NUMBER_ASC_COMPARATOR = new Comparator<FieldMapLabel>() {
 
 		@Override

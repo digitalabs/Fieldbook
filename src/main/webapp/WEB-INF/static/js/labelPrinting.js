@@ -243,6 +243,10 @@ LabelPrinting = {
 		}
 	};
 
+	LabelPrinting.changeTotalNumberOfLabels = function() {
+		$('#germplasmListTotalLabelCount').text(Number.parseInt($('#label-copies').val()) * Number.parseInt($('#lotsWithReservationsCount').text()));
+	};
+
 	/**
 	 * action on saving presets
 	 */

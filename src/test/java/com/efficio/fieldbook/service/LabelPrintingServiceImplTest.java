@@ -1,7 +1,6 @@
 
 package com.efficio.fieldbook.service;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,7 +50,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.initializer.LabelPrintingServiceDataInitializer;
-import com.efficio.fieldbook.util.labelprinting.BaseLabelGenerator;
+import com.efficio.fieldbook.util.labelprinting.CSVLabelGenerator;
 import com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
@@ -68,15 +67,15 @@ public class LabelPrintingServiceImplTest {
 
 	private static final int NO_OF_STOCK_LIST_ENTRIES = 20;
 	private static final int NO_OF_GERMPLASM_LIST_OBSERVATION = 10;
-	public static final Long TEST_PROJECT_ID = 1L;
-	public static final String MAIZE_CROP_STR = "maize";
-	public static final String TEST_EXISTING_PRESET_NAME = "TEST_EXISTING_PRESET_NAME";
-	public static final String TEST_NON_EXISTING_PRESET_NAME = "TEST_NON_EXISTING_PRESET_NAME";
-	public static final int TEST_PRESET_ID = 1;
-	public static final String PROGRAM_PRESET_CONFIG = "program_preset_config";
-	public static final String STANDARD_PRESET_CONFIG = "standard_preset_config";
-	public static final String DUMMY_PROGRAM_UUID = "1234567890";
-	public static final int TEST_STUDY_ID = 1;
+	private static final Long TEST_PROJECT_ID = 1L;
+	private static final String MAIZE_CROP_STR = "maize";
+	private static final String TEST_EXISTING_PRESET_NAME = "TEST_EXISTING_PRESET_NAME";
+	private static final String TEST_NON_EXISTING_PRESET_NAME = "TEST_NON_EXISTING_PRESET_NAME";
+	private static final int TEST_PRESET_ID = 1;
+	private static final String PROGRAM_PRESET_CONFIG = "program_preset_config";
+	private static final String STANDARD_PRESET_CONFIG = "standard_preset_config";
+	private static final String DUMMY_PROGRAM_UUID = "1234567890";
+	private static final int TEST_STUDY_ID = 1;
 
 	private Map<String, List<MeasurementRow>> measurementData;
 	private Map<String, MeasurementRow> environmentData;
@@ -108,7 +107,7 @@ public class LabelPrintingServiceImplTest {
 	private OntologyDataManager ontologyDataManager;
 
 	@InjectMocks
-	private LabelPrintingServiceImpl labelPrintingServiceImpl = new LabelPrintingServiceImpl();
+	private LabelPrintingServiceImpl labelPrintingServiceImpl;
 
 	private GermplasmListTestDataInitializer germplasmListTestDataInitializer;
 
@@ -307,10 +306,9 @@ public class LabelPrintingServiceImplTest {
 
 	@Test
 	public void testGenerateLabelsSortLabelsEntryNumber() throws LabelPrintingException {
-		final BaseLabelGenerator labelGenerator = Mockito.mock(BaseLabelGenerator.class);
+		final CSVLabelGenerator labelGenerator = Mockito.mock(CSVLabelGenerator.class);
 		final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
-		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory)
-				.retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
+		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory).retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
 
 		final List<StudyTrialInstanceInfo> infoList = LabelPrintingServiceDataInitializer.generateStudyTrialInstanceInfoList();
 
@@ -328,10 +326,9 @@ public class LabelPrintingServiceImplTest {
 
 	@Test
 	public void testGenerateLabelsSortLabelsPlotNumber() throws LabelPrintingException {
-		final BaseLabelGenerator labelGenerator = Mockito.mock(BaseLabelGenerator.class);
+		final CSVLabelGenerator labelGenerator = Mockito.mock(CSVLabelGenerator.class);
 		final UserLabelPrinting labelPrinting = Mockito.mock(UserLabelPrinting.class);
-		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory)
-				.retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
+		Mockito.doReturn(labelGenerator).when(this.labelGeneratorFactory).retrieveLabelGenerator(AppConstants.LABEL_PRINTING_CSV.getString());
 
 		final List<StudyTrialInstanceInfo> infoList = LabelPrintingServiceDataInitializer.generateStudyTrialInstanceInfoList();
 

@@ -195,9 +195,9 @@ public class SettingsServiceImpl implements SettingsService {
 		final List<LabelFields> detailList = new ArrayList<>();
 		final FieldbookUtil util = FieldbookUtil.getInstance();
 
-		List<Integer> experimentalDesignVariables = util.buildVariableIDList(AppConstants.EXP_DESIGN_REQUIRED_VARIABLES.getString());
+		final List<Integer> experimentalDesignVariables = util.buildVariableIDList(AppConstants.EXP_DESIGN_REQUIRED_VARIABLES.getString());
 
-		for (MeasurementVariable var : workbook.getFactors()) {
+		for (final MeasurementVariable var : workbook.getFactors()) {
 			// this condition is required so that treatment factors are not included in the list of factors for the germplasm tab
 			if (var.getTreatmentLabel() != null && !var.getTreatmentLabel().isEmpty()
 					|| experimentalDesignVariables.contains(var.getTermId()) || var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
@@ -207,7 +207,7 @@ public class SettingsServiceImpl implements SettingsService {
 			// set all variables with trial design role to hidden
 			if (var.getRole() != PhenotypicType.TRIAL_DESIGN) {
 
-				LabelFields field =
+				final LabelFields field =
 						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));
 				detailList.add(field);
 			}

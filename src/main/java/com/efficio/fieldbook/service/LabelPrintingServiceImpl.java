@@ -11,7 +11,6 @@
 
 package com.efficio.fieldbook.service;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -185,7 +184,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	@Override
 	public String generateLabelsForGermplasmList(final String labelType, final List<GermplasmListData> germplasmListDataList,
 			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
-		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabelsForGermplasmList(germplasmListDataList, userLabelPrinting);
+		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabelsForGermplasmList(germplasmListDataList,
+				userLabelPrinting);
 	}
 
 	@Override
@@ -933,9 +933,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	private List<LabelFields> addStockListDetailsFields(final Locale locale, final GermplasmListType listType) {
 		final List<LabelFields> labelFieldList = new ArrayList<>();
 
-		labelFieldList.add(new LabelFields(ColumnLabels.PLOT_NO.getTermNameFromOntology(this.ontologyDataManager), TermId.PLOT_NO.getId(), 
+		labelFieldList.add(new LabelFields(ColumnLabels.PLOT_NO.getTermNameFromOntology(this.ontologyDataManager), TermId.PLOT_NO.getId(),
 				true));
-		
+
 		labelFieldList.add(new LabelFields(ColumnLabels.STOCKID.getTermNameFromOntology(this.ontologyDataManager), TermId.STOCKID.getId(),
 				true));
 

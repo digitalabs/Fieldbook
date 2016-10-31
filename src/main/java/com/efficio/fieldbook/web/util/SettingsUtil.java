@@ -76,10 +76,10 @@ import com.hazelcast.util.StringUtil;
 public class SettingsUtil {
 
 	public static final List<String> HIDDEN_FIELDS = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
-	public static final List<String> TRIAL_BASIC_REQUIRED_FIELDS = Arrays.asList(AppConstants.TRIAL_BASIC_REQUIRED_FIELDS.getString()
-			.split(","));
-	public static final List<String> NURSERY_BASIC_REQUIRED_FIELDS = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString()
-			.split(","));
+	public static final List<String> TRIAL_BASIC_REQUIRED_FIELDS =
+			Arrays.asList(AppConstants.TRIAL_BASIC_REQUIRED_FIELDS.getString().split(","));
+	public static final List<String> NURSERY_BASIC_REQUIRED_FIELDS =
+			Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
 	/**
 	 * The Constant LOG.
 	 */
@@ -159,11 +159,10 @@ public class SettingsUtil {
 				settingDetail.setValue("");
 			}
 
-			final Condition condition =
-					new Condition(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
-							variable.getMethod(), variable.getRole(), variable.getDataType(), DateUtil.convertToDBDateFormat(
-									variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(),
-							variable.getMinRange(), variable.getMaxRange());
+			final Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
+					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
+					DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())),
+					variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
 			condition.setOperation(variable.getOperation());
 			condition.setId(variable.getCvTermId());
 			condition.setPossibleValues(settingDetail.getPossibleValues());
@@ -181,23 +180,24 @@ public class SettingsUtil {
 		}
 
 		for (final SettingDetail settingDetail : baselineTraits) {
-			final SettingVariable variable = settingDetail.getVariable();
+			//Setting Detail's variable becomes null when the trait it represents is deleted.
+			if (settingDetail.getVariable() != null) {
+				final SettingVariable variable = settingDetail.getVariable();
 
-			final StandardVariable standardVariable =
-					SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
-			variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
+				final StandardVariable standardVariable =
+						SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
+				variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
 
-			final Variate variate =
-					new Variate(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
-							variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
-							settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
-			if (settingDetail.getVariableType() != null) {
-				variate.setVariableType(settingDetail.getVariableType().getName());
+				final Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
+						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
+						settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
+				if (settingDetail.getVariableType() != null) {
+					variate.setVariableType(settingDetail.getVariableType().getName());
+				}
+				variate.setOperation(variable.getOperation());
+				variate.setId(variable.getCvTermId());
+				variateList.add(variate);
 			}
-			variate.setOperation(variable.getOperation());
-			variate.setId(variable.getCvTermId());
-			variateList.add(variate);
-
 		}
 
 		return variateList;
@@ -232,10 +232,9 @@ public class SettingsUtil {
 	}
 
 	protected static Factor convertStandardVariableToFactor(final StandardVariable variable) {
-		final Factor factor =
-				new Factor(variable.getName(), variable.getDescription(), variable.getProperty().getName(), variable.getScale().getName(),
-						variable.getMethod().getName(), variable.getPhenotypicType().name(), variable.getDataType().getName(),
-						variable.getId());
+		final Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty().getName(),
+				variable.getScale().getName(), variable.getMethod().getName(), variable.getPhenotypicType().name(),
+				variable.getDataType().getName(), variable.getId());
 
 		factor.setId(variable.getId());
 		factor.setDataTypeId(variable.getDataType().getId());
@@ -261,11 +260,10 @@ public class SettingsUtil {
 			variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
 			// need to get the name from the session
 
-			final Constant constant =
-					new Constant(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
-							variable.getMethod(), variable.getRole(), variable.getDataType(), DateUtil.convertToDBDateFormat(
-									variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(),
-							variable.getMinRange(), variable.getMaxRange(), isTrial);
+			final Constant constant = new Constant(variable.getName(), variable.getDescription(), variable.getProperty(),
+					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
+					DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())),
+					variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange(), isTrial);
 			constant.setOperation(variable.getOperation());
 			constant.setId(variable.getCvTermId());
 			constants.add(constant);
@@ -275,15 +273,17 @@ public class SettingsUtil {
 		return constants;
 	}
 
-	protected static void setNameAndOperationFromSession(final List<SettingDetail> listWithValue,
-			final List<SettingDetail> listFromSession, final boolean isDesignGenerated) {
+	protected static void setNameAndOperationFromSession(final List<SettingDetail> listWithValue, final List<SettingDetail> listFromSession,
+			final boolean isDesignGenerated) {
 		if (listWithValue == null || listFromSession == null) {
 			return;
 		}
 
 		for (final SettingDetail detailWithValue : listWithValue) {
 			for (final SettingDetail detailFromSession : listFromSession) {
-				if (detailFromSession.getVariable().getCvTermId().equals(detailWithValue.getVariable().getCvTermId())) {
+				//Setting Detail's variable becomes null when the trait it represents is deleted.
+				if (detailFromSession.getVariable() != null && detailWithValue.getVariable() != null
+						&& detailFromSession.getVariable().getCvTermId().equals(detailWithValue.getVariable().getCvTermId())) {
 
 					final SettingVariable variable = detailWithValue.getVariable();
 					detailWithValue.setPossibleValues(detailFromSession.getPossibleValues());
@@ -380,12 +380,11 @@ public class SettingsUtil {
 		dataset.setConstants(SettingsUtil.convertConditionsToConstants(userSelection.getNurseryConditions(), fieldbookMiddlewareService,
 				false, programUUID));
 
-		dataset.setTrialLevelFactor(SettingsUtil.convertDetailsToFactors(userSelection.getTrialLevelVariableList(),
-				fieldbookMiddlewareService, programUUID));
+		dataset.setTrialLevelFactor(
+				SettingsUtil.convertDetailsToFactors(userSelection.getTrialLevelVariableList(), fieldbookMiddlewareService, programUUID));
 
-		final List<TreatmentFactor> treatmentFactors =
-				SettingsUtil.processTreatmentFactorItems(userSelection.getTreatmentFactors(), treatmentFactorItems, factors,
-						fieldbookMiddlewareService, programUUID);
+		final List<TreatmentFactor> treatmentFactors = SettingsUtil.processTreatmentFactorItems(userSelection.getTreatmentFactors(),
+				treatmentFactorItems, factors, fieldbookMiddlewareService, programUUID);
 
 		dataset.setTreatmentFactors(treatmentFactors);
 
@@ -441,9 +440,8 @@ public class SettingsUtil {
 		final List<Factor> trialLevelVariables =
 				SettingsUtil.convertDetailsToFactors(trialLevelVariablesList, fieldbookMiddlewareService, programUUID);
 
-		final List<TreatmentFactor> treatmentFactors =
-				SettingsUtil.processTreatmentFactorItems(treatmentFactorDetails, treatmentFactorItems, factors, fieldbookMiddlewareService,
-						programUUID);
+		final List<TreatmentFactor> treatmentFactors = SettingsUtil.processTreatmentFactorItems(treatmentFactorDetails,
+				treatmentFactorItems, factors, fieldbookMiddlewareService, programUUID);
 
 		constants.addAll(SettingsUtil.convertConditionsToConstants(trialLevelConditions, fieldbookMiddlewareService, true, programUUID));
 
@@ -936,24 +934,21 @@ public class SettingsUtil {
 			if (dataset.getConditions() != null) {
 				for (final Condition condition : dataset.getConditions()) {
 
-					final SettingVariable variable =
-							new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
-									condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(),
-									condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange());
-					final Integer stdVar =
-							fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-									HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-									HtmlUtils.htmlUnescape(variable.getMethod()),
-									PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+					final SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(),
+							condition.getProperty(), condition.getScale(), condition.getMethod(), condition.getRole(),
+							condition.getDatatype(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange());
+					final Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+							HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
+							HtmlUtils.htmlUnescape(variable.getMethod()),
+							PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 
 					if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())
 							|| !SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString())) {
 						variable.setCvTermId(stdVar);
 						final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
-						final SettingDetail settingDetail =
-								new SettingDetail(variable, possibleValues, HtmlUtils.htmlUnescape(condition.getValue()),
-										SettingsUtil.isSettingVariableDeletable(stdVar,
-												AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+						final SettingDetail settingDetail = new SettingDetail(variable, possibleValues,
+								HtmlUtils.htmlUnescape(condition.getValue()),
+								SettingsUtil.isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
 
 						settingDetail.setPossibleValuesToJson(possibleValues);
 						final List<ValueReference> possibleValuesFavorite =
@@ -981,19 +976,16 @@ public class SettingsUtil {
 					if (factor.getTreatmentLabel() == null || "".equals(factor.getTreatmentLabel()) && factor.getRole() != null
 							&& !factor.getRole().equals(PhenotypicType.TRIAL_ENVIRONMENT.name())) {
 
-						final SettingVariable variable =
-								new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(), factor.getScale(),
-										factor.getMethod(), factor.getRole(), factor.getDatatype());
-						final Integer stdVar =
-								fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-										HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-										HtmlUtils.htmlUnescape(variable.getMethod()),
-										PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+						final SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(),
+								factor.getProperty(), factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
+						final Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+								HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
+								HtmlUtils.htmlUnescape(variable.getMethod()),
+								PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 						if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
 							variable.setCvTermId(stdVar);
-							final SettingDetail settingDetail =
-									new SettingDetail(variable, null, null, SettingsUtil.isSettingVariableDeletable(stdVar,
-											AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString()));
+							final SettingDetail settingDetail = new SettingDetail(variable, null, null, SettingsUtil
+									.isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString()));
 							plotsLevelList.add(settingDetail);
 						}
 					}
@@ -1004,14 +996,12 @@ public class SettingsUtil {
 			if (dataset.getVariates() != null) {
 				for (final Variate variate : dataset.getVariates()) {
 
-					final SettingVariable variable =
-							new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(), variate.getScale(),
-									variate.getMethod(), variate.getRole(), variate.getDatatype());
-					final Integer stdVar =
-							fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-									HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-									HtmlUtils.htmlUnescape(variable.getMethod()),
-									PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+					final SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
+							variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
+					final Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+							HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
+							HtmlUtils.htmlUnescape(variable.getMethod()),
+							PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					variable.setCvTermId(stdVar);
 					final SettingDetail settingDetail = new SettingDetail(variable, null, null, true);
 					baselineTraitsList.add(settingDetail);
@@ -1021,21 +1011,18 @@ public class SettingsUtil {
 			if (dataset.getTrialLevelFactor() != null) {
 				for (final Factor factor : dataset.getTrialLevelFactor()) {
 					final String variableName = factor.getName();
-					final SettingVariable variable =
-							new SettingVariable(variableName, factor.getDescription(), factor.getProperty(), factor.getScale(),
-									factor.getMethod(), factor.getRole(), factor.getDatatype());
-					final Integer stdVar =
-							fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-									HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-									HtmlUtils.htmlUnescape(variable.getMethod()),
-									PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+					final SettingVariable variable = new SettingVariable(variableName, factor.getDescription(), factor.getProperty(),
+							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
+					final Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+							HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
+							HtmlUtils.htmlUnescape(variable.getMethod()),
+							PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString())) {
 						variable.setCvTermId(stdVar);
 
 						final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
-						final SettingDetail settingDetail =
-								new SettingDetail(variable, possibleValues, null, SettingsUtil.isSettingVariableDeletable(stdVar,
-										AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
+						final SettingDetail settingDetail = new SettingDetail(variable, possibleValues, null, SettingsUtil
+								.isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
 
 						settingDetail.setPossibleValuesToJson(possibleValues);
 						final List<ValueReference> possibleValuesFavorite =
@@ -1070,14 +1057,12 @@ public class SettingsUtil {
 
 			if (dataset.getConstants() != null && !dataset.getConstants().isEmpty()) {
 				for (final Constant constant : dataset.getConstants()) {
-					final SettingVariable variable =
-							new SettingVariable(constant.getName(), constant.getDescription(), constant.getProperty(), constant.getScale(),
-									constant.getMethod(), constant.getRole(), constant.getDatatype());
-					final Integer stdVar =
-							fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-									HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-									HtmlUtils.htmlUnescape(variable.getMethod()),
-									PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+					final SettingVariable variable = new SettingVariable(constant.getName(), constant.getDescription(),
+							constant.getProperty(), constant.getScale(), constant.getMethod(), constant.getRole(), constant.getDatatype());
+					final Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+							HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
+							HtmlUtils.htmlUnescape(variable.getMethod()),
+							PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					variable.setCvTermId(stdVar);
 					final SettingDetail settingDetail = new SettingDetail(variable, null, null, true);
 					trialConditions.add(settingDetail);
@@ -1142,8 +1127,8 @@ public class SettingsUtil {
 			if (workbook.getTreatmentFactors() == null) {
 				workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
 			}
-			workbook.getTreatmentFactors().addAll(
-					SettingsUtil.convertTreatmentFactorsToTreatmentVariables(studyDataSet.getTreatmentFactors()));
+			workbook.getTreatmentFactors()
+					.addAll(SettingsUtil.convertTreatmentFactorsToTreatmentVariables(studyDataSet.getTreatmentFactors()));
 			try {
 				SettingsUtil.setExperimentalDesignToWorkbook(param, variables, workbook, allExpDesignVariables, fieldbookMiddlewareService,
 						programUUID);
@@ -1214,10 +1199,9 @@ public class SettingsUtil {
 
 		if (mlist != null && !mlist.isEmpty()) {
 			for (final MeasurementVariable mvar : mlist) {
-				final Condition condition =
-						new Condition(mvar.getName(), mvar.getDescription(), mvar.getProperty(), mvar.getScale(), mvar.getMethod(),
-								PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), mvar.getDataType(), mvar.getValue(),
-								null, null, null);
+				final Condition condition = new Condition(mvar.getName(), mvar.getDescription(), mvar.getProperty(), mvar.getScale(),
+						mvar.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), mvar.getDataType(),
+						mvar.getValue(), null, null, null);
 				condition.setId(mvar.getTermId());
 				conditions.add(condition);
 			}
@@ -1232,10 +1216,9 @@ public class SettingsUtil {
 		if (mlist != null && !mlist.isEmpty()) {
 
 			for (final MeasurementVariable mvar : mlist) {
-				final Constant constant =
-						new Constant(mvar.getName(), mvar.getDescription(), mvar.getProperty(), mvar.getScale(), mvar.getMethod(),
-								PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), mvar.getDataType(), mvar.getValue(),
-								null, null, null, isTrial);
+				final Constant constant = new Constant(mvar.getName(), mvar.getDescription(), mvar.getProperty(), mvar.getScale(),
+						mvar.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), mvar.getDataType(),
+						mvar.getValue(), null, null, null, isTrial);
 				constant.setId(mvar.getTermId());
 				constants.add(constant);
 			}
@@ -1275,12 +1258,10 @@ public class SettingsUtil {
 			for (final TreatmentVariable var : mlist) {
 				final MeasurementVariable mvar = var.getLevelVariable();
 				final MeasurementVariable vvar = var.getValueVariable();
-				levelFactor =
-						new Factor(mvar.getName(), mvar.getDescription(), mvar.getProperty(), mvar.getScale(), mvar.getMethod(),
-								PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), mvar.getDataType(), mvar.getTermId());
-				valueFactor =
-						new Factor(vvar.getName(), vvar.getDescription(), vvar.getProperty(), vvar.getScale(), vvar.getMethod(),
-								PhenotypicType.getPhenotypicTypeForLabel(vvar.getLabel()).toString(), vvar.getDataType(), vvar.getTermId());
+				levelFactor = new Factor(mvar.getName(), mvar.getDescription(), mvar.getProperty(), mvar.getScale(), mvar.getMethod(),
+						PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), mvar.getDataType(), mvar.getTermId());
+				valueFactor = new Factor(vvar.getName(), vvar.getDescription(), vvar.getProperty(), vvar.getScale(), vvar.getMethod(),
+						PhenotypicType.getPhenotypicTypeForLabel(vvar.getLabel()).toString(), vvar.getDataType(), vvar.getTermId());
 				factors.add(new TreatmentFactor(levelFactor, valueFactor));
 			}
 		}
@@ -1299,10 +1280,9 @@ public class SettingsUtil {
 
 		if (mlist != null && !mlist.isEmpty()) {
 			for (final MeasurementVariable mvar : mlist) {
-				final Variate variate =
-						new Variate(mvar.getName(), mvar.getDescription(), mvar.getProperty(), mvar.getScale(), mvar.getMethod(),
-								PhenotypicType.VARIATE.toString(), mvar.getDataType(), mvar.getDataTypeId(), mvar.getPossibleValues(),
-								mvar.getMinRange(), mvar.getMaxRange());
+				final Variate variate = new Variate(mvar.getName(), mvar.getDescription(), mvar.getProperty(), mvar.getScale(),
+						mvar.getMethod(), PhenotypicType.VARIATE.toString(), mvar.getDataType(), mvar.getDataTypeId(),
+						mvar.getPossibleValues(), mvar.getMinRange(), mvar.getMaxRange());
 				variate.setVariableType(mvar.getVariableType().getName());
 				variate.setId(mvar.getTermId());
 				variates.add(variate);
@@ -1369,10 +1349,9 @@ public class SettingsUtil {
 			label = constant.getLabel();
 		}
 
-		final MeasurementVariable mvar =
-				new MeasurementVariable(constant.getName(), constant.getDescription(), constant.getScale(), constant.getMethod(),
-						constant.getProperty(), constant.getDatatype(), constant.getValue(), label, constant.getMinRange(),
-						constant.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(constant.getRole()));
+		final MeasurementVariable mvar = new MeasurementVariable(constant.getName(), constant.getDescription(), constant.getScale(),
+				constant.getMethod(), constant.getProperty(), constant.getDatatype(), constant.getValue(), label, constant.getMinRange(),
+				constant.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(constant.getRole()));
 
 		mvar.setOperation(constant.getOperation());
 		mvar.setTermId(constant.getId());
@@ -1405,10 +1384,9 @@ public class SettingsUtil {
 	 * @return the measurement variable
 	 */
 	private static MeasurementVariable convertFactorToMeasurementVariable(final Factor factor) {
-		final MeasurementVariable mvar =
-				new MeasurementVariable(factor.getName(), factor.getDescription(), factor.getScale(), factor.getMethod(),
-						factor.getProperty(), factor.getDatatype(), null, PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0),
-						PhenotypicType.getPhenotypicTypeByName(factor.getRole()));
+		final MeasurementVariable mvar = new MeasurementVariable(factor.getName(), factor.getDescription(), factor.getScale(),
+				factor.getMethod(), factor.getProperty(), factor.getDatatype(), null,
+				PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0), PhenotypicType.getPhenotypicTypeByName(factor.getRole()));
 		mvar.setFactor(true);
 		mvar.setOperation(factor.getOperation());
 		mvar.setTermId(factor.getId());
@@ -1467,10 +1445,9 @@ public class SettingsUtil {
 	 */
 	private static MeasurementVariable convertVariateToMeasurementVariable(final Variate variate) {
 		// because variates are mostly PLOT variables
-		final MeasurementVariable mvar =
-				new MeasurementVariable(variate.getName(), variate.getDescription(), variate.getScale(), variate.getMethod(),
-						variate.getProperty(), variate.getDatatype(), null, PhenotypicType.TRIAL_DESIGN.getLabelList().get(0),
-						variate.getMinRange(), variate.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(variate.getRole()));
+		final MeasurementVariable mvar = new MeasurementVariable(variate.getName(), variate.getDescription(), variate.getScale(),
+				variate.getMethod(), variate.getProperty(), variate.getDatatype(), null, PhenotypicType.TRIAL_DESIGN.getLabelList().get(0),
+				variate.getMinRange(), variate.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(variate.getRole()));
 		if (variate.getVariableType() != null) {
 			mvar.setVariableType(VariableType.getByName(variate.getVariableType()));
 		}
@@ -1486,9 +1463,8 @@ public class SettingsUtil {
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			final FieldbookService fieldbookService, final int group, final UserSelection userSelection, final String programUUID) {
 
-		final SettingVariable variable =
-				new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(), factor.getScale(), factor.getMethod(),
-						factor.getRole(), factor.getDatatype());
+		final SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
+				factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
 		final StandardVariable standardVariable =
 				SettingsUtil.getStandardVariable(factor.getTermId(), fieldbookMiddlewareService, programUUID);
 		variable.setPSMRFromStandardVariable(standardVariable, factor.getRole());
@@ -1512,8 +1488,8 @@ public class SettingsUtil {
 						userSelection, workbook.getStudyDetails().getId().toString(), programUUID, appConstantsProperties);
 
 		if (workbook.getTrialDatasetId() != null) {
-			studyDetails.setNumberOfEnvironments(Long.valueOf(fieldbookMiddlewareService.countObservations(workbook.getTrialDatasetId()))
-					.intValue());
+			studyDetails.setNumberOfEnvironments(
+					Long.valueOf(fieldbookMiddlewareService.countObservations(workbook.getTrialDatasetId())).intValue());
 		} else {
 			studyDetails.setNumberOfEnvironments(0);
 		}
@@ -1567,15 +1543,12 @@ public class SettingsUtil {
 			if (studyName != null) {
 				details.setName(studyName.getValue());
 			}
-			basicDetails =
-					SettingsUtil.convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService, fieldbookService,
-							userSelection, workbook, programUUID, appConstantsProperties);
-			managementDetails =
-					SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection,
-							fieldbookMiddlewareService, fieldbookService, programUUID);
-			nurseryConditionDetails =
-					SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(constants, 1, userSelection,
-							fieldbookMiddlewareService, fieldbookService, true, programUUID);
+			basicDetails = SettingsUtil.convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService,
+					fieldbookService, userSelection, workbook, programUUID, appConstantsProperties);
+			managementDetails = SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(),
+					userSelection, fieldbookMiddlewareService, fieldbookService, programUUID);
+			nurseryConditionDetails = SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(constants, 1, userSelection,
+					fieldbookMiddlewareService, fieldbookService, true, programUUID);
 		}
 
 		if (!workbook.isNursery()) {
@@ -1593,8 +1566,8 @@ public class SettingsUtil {
 			final int index, final UserSelection userSelection,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			final FieldbookService fieldbookService, final String programUUID) {
-		return SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, index, userSelection,
-				fieldbookMiddlewareService, fieldbookService, false, programUUID);
+		return SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, index, userSelection, fieldbookMiddlewareService,
+				fieldbookService, false, programUUID);
 	}
 
 	private static List<SettingDetail> convertWorkbookOtherStudyVariablesToSettingDetails(final List<MeasurementVariable> conditions,
@@ -1619,20 +1592,18 @@ public class SettingsUtil {
 			final String id = String.valueOf(condition.getTermId());
 			final String role = condition.getRole().name();
 			if (!SettingsUtil.isIdInFieldListForHiding(userSelection, id)
-			// do not show breeding method id if code exists
+					// do not show breeding method id if code exists
 					&& !SettingsUtil.breedingCodeExists(condition.getTermId(), variableMap)) {
 				// do not name if code or id exists
 
 				final SettingVariable variable =
-						SettingsUtil.getSettingVariable(
-								SettingsUtil.getDisplayName(conditions, condition.getTermId(), condition.getName()),
+						SettingsUtil.getSettingVariable(SettingsUtil.getDisplayName(conditions, condition.getTermId(), condition.getName()),
 								condition.getDescription(), condition.getProperty(), condition.getScale(), condition.getMethod(), role,
 								condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(),
 								userSelection, fieldbookMiddlewareService, programUUID);
 				variable.setCvTermId(condition.getTermId());
-				final String value =
-						fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()),
-								condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
+				final String value = fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()),
+						condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
 				final SettingDetail settingDetail = new SettingDetail(variable, null, HtmlUtils.htmlUnescape(value), false);
 				settingDetail.setPossibleValues(fieldbookService.getAllPossibleValues(condition.getTermId()));
 				index = SettingsUtil.addToList(details, settingDetail, index, null, null);
@@ -1654,11 +1625,9 @@ public class SettingsUtil {
 	}
 
 	protected static boolean breedingCodeExists(final Integer termId, final Map<String, MeasurementVariable> variableMap) {
-		return termId == TermId.BREEDING_METHOD_ID.getId()
-				&& variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null
-				|| termId == TermId.BREEDING_METHOD.getId()
-				&& (variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null || variableMap.get(String
-						.valueOf(TermId.BREEDING_METHOD_ID.getId())) != null);
+		return termId == TermId.BREEDING_METHOD_ID.getId() && variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null
+				|| termId == TermId.BREEDING_METHOD.getId() && (variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null
+						|| variableMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) != null);
 	}
 
 	private static String getDisplayName(final List<MeasurementVariable> variables, final int termId, final String name) {
@@ -1718,15 +1687,13 @@ public class SettingsUtil {
 						if (label == null || "".equals(label.trim())) {
 							label = condition.getName();
 						}
-						final SettingVariable variable =
-								SettingsUtil.getSettingVariable(label, condition.getDescription(), condition.getProperty(),
-										condition.getScale(), condition.getMethod(), condition.getRole().name(), condition.getDataType(),
-										condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection,
-										fieldbookMiddlewareService, programUUID);
+						final SettingVariable variable = SettingsUtil.getSettingVariable(label, condition.getDescription(),
+								condition.getProperty(), condition.getScale(), condition.getMethod(), condition.getRole().name(),
+								condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(),
+								userSelection, fieldbookMiddlewareService, programUUID);
 						variable.setCvTermId(Integer.valueOf(strFieldId));
-						final String value =
-								fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()),
-										condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
+						final String value = fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()),
+								condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
 						final SettingDetail settingDetail = new SettingDetail(variable, null, HtmlUtils.htmlUnescape(value), false);
 						index = SettingsUtil.addToList(details, settingDetail, index, fields, strFieldId);
 						found = true;
@@ -1738,9 +1705,8 @@ public class SettingsUtil {
 					final String value = SettingsUtil.getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
 					final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
 					if (strFieldId.equals(AppConstants.SPFLD_ENTRIES.getString())) {
-						final String plotValue =
-								SettingsUtil.getSpecialFieldValue(AppConstants.SPFLD_PLOT_COUNT.getString(), datasetId,
-										fieldbookMiddlewareService, workbook);
+						final String plotValue = SettingsUtil.getSpecialFieldValue(AppConstants.SPFLD_PLOT_COUNT.getString(), datasetId,
+								fieldbookMiddlewareService, workbook);
 						final PairedVariable pair =
 								new PairedVariable(variableAppConstantLabels.get(AppConstants.SPFLD_PLOT_COUNT.getString()), plotValue);
 						settingDetail.setPairedVariable(pair);
@@ -1808,24 +1774,20 @@ public class SettingsUtil {
 		}
 
 		for (final MeasurementVariable factor : factors) {
-			final SettingVariable variable =
-					new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(), factor.getScale(),
-							factor.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(factor.getLabel()).toString(),
-							factor.getDataType());
-			final Integer stdVar =
-					fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-							HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-							HtmlUtils.htmlUnescape(variable.getMethod()),
-							PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+			final SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
+					factor.getScale(), factor.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(factor.getLabel()).toString(),
+					factor.getDataType());
+			final Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+					HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
+					HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 
 			if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())
 					&& (factor.getTreatmentLabel() == null || "".equals(factor.getTreatmentLabel()))) {
 
 				variable.setCvTermId(stdVar);
 				variable.setRole(factor.getRole().name());
-				final SettingDetail settingDetail =
-						new SettingDetail(variable, null, null, SettingsUtil.isSettingVariableDeletable(stdVar,
-								AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
+				final SettingDetail settingDetail = new SettingDetail(variable, null, null,
+						SettingsUtil.isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
 				settingDetail.setRole(factor.getRole());
 				plotsLevelList.add(settingDetail);
 			}
@@ -1844,14 +1806,12 @@ public class SettingsUtil {
 		}
 
 		for (final MeasurementVariable variate : variates) {
-			final SettingVariable variable =
-					new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(), variate.getScale(),
-							variate.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variate.getLabel()).toString(),
-							variate.getDataType());
-			final Integer stdVar =
-					fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-							HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-							HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.VARIATE);
+			final SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
+					variate.getScale(), variate.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variate.getLabel()).toString(),
+					variate.getDataType());
+			final Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+					HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
+					HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.VARIATE);
 			variable.setCvTermId(stdVar);
 			final SettingDetail settingDetail = new SettingDetail(variable, null, null, true);
 			if (svProperties.contains(variate.getProperty())) {
@@ -1883,10 +1843,9 @@ public class SettingsUtil {
 		final SettingVariable variable =
 				new SettingVariable(name, description, property, scale, method, role, dataType, dataTypeId, minRange, maxRange);
 
-		Integer stdVar =
-				fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()),
-						HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()),
-						PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+		Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+				HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
+				HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 		variable.setCvTermId(stdVar);
 		if (userSelection != null) {
 			final StandardVariable standardVariable =
@@ -2053,11 +2012,10 @@ public class SettingsUtil {
 					amountFactor = factor.getValueVariable();
 					final int levels = factor.getValues() != null ? factor.getValues().size() : 0;
 
-					final TreatmentFactorDetail detail =
-							new TreatmentFactorDetail(levelFactor.getTermId(), amountFactor.getTermId(), String.valueOf(levels),
-									amountFactor.getValue(), levelFactor.getName(), amountFactor.getName(), amountFactor.getDataTypeId(),
-									objectMapper.writeValueAsString(amountFactor.getPossibleValues()), amountFactor.getMinRange(),
-									amountFactor.getMaxRange());
+					final TreatmentFactorDetail detail = new TreatmentFactorDetail(levelFactor.getTermId(), amountFactor.getTermId(),
+							String.valueOf(levels), amountFactor.getValue(), levelFactor.getName(), amountFactor.getName(),
+							amountFactor.getDataTypeId(), objectMapper.writeValueAsString(amountFactor.getPossibleValues()),
+							amountFactor.getMinRange(), amountFactor.getMaxRange());
 					detail.setLevelDescription(levelFactor.getDescription());
 					details.add(detail);
 
@@ -2183,12 +2141,11 @@ public class SettingsUtil {
 		if (mvar == null) {
 			final StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(termId.getId(), programUUID);
 			if (stdvar != null) {
-				mvar =
-						new MeasurementVariable(stdvar.getId(), stdvar.getName(), stdvar.getDescription(), stdvar.getScale().getName(),
-								stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(), value,
-								PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0), stdvar.getConstraints() != null ? stdvar
-										.getConstraints().getMinValue() : null, stdvar.getConstraints() != null ? stdvar.getConstraints()
-										.getMaxValue() : null, PhenotypicType.TRIAL_ENVIRONMENT);
+				mvar = new MeasurementVariable(stdvar.getId(), stdvar.getName(), stdvar.getDescription(), stdvar.getScale().getName(),
+						stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(), value,
+						PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0),
+						stdvar.getConstraints() != null ? stdvar.getConstraints().getMinValue() : null,
+						stdvar.getConstraints() != null ? stdvar.getConstraints().getMaxValue() : null, PhenotypicType.TRIAL_ENVIRONMENT);
 				mvar.setOperation(Operation.ADD);
 				mvar.setDataTypeId(stdvar.getDataType().getId());
 				workbook.getConditions().add(mvar);
@@ -2247,7 +2204,8 @@ public class SettingsUtil {
 			final List<Integer> excluded = new ArrayList<>();
 			if (workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
 				for (final MeasurementVariable var : workbook.getTrialConditions()) {
-					if (!included.contains(var.getTermId()) && AppConstants.EXP_DESIGN_VARIABLES.getIntegerList().contains(var.getTermId())) {
+					if (!included.contains(var.getTermId())
+							&& AppConstants.EXP_DESIGN_VARIABLES.getIntegerList().contains(var.getTermId())) {
 						excluded.add(var.getTermId());
 					}
 				}
@@ -2560,9 +2518,8 @@ public class SettingsUtil {
 				} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
 
 					if (settingDetail.getVariable().getVariableTypes() == null && fieldbookMiddlewareService != null) {
-						final StandardVariable standardVariable =
-								SettingsUtil.getStandardVariable(settingDetail.getVariable().getCvTermId(), fieldbookMiddlewareService,
-										programUUID);
+						final StandardVariable standardVariable = SettingsUtil
+								.getStandardVariable(settingDetail.getVariable().getCvTermId(), fieldbookMiddlewareService, programUUID);
 						settingDetail.getVariable().setVariableTypes(standardVariable.getVariableTypes());
 					}
 
@@ -2572,10 +2529,10 @@ public class SettingsUtil {
 					// only EXPERIMENTAL DESIGN then
 					// set the role as PhenotypicType.TRIAL_DESIGN
 					if (settingDetail.getVariable().getVariableTypes() != null
-							&& !SettingsUtil.hasVariableType(VariableType.GERMPLASM_DESCRIPTOR, settingDetail.getVariable()
-									.getVariableTypes())
-							&& SettingsUtil.hasVariableType(VariableType.EXPERIMENTAL_DESIGN, settingDetail.getVariable()
-									.getVariableTypes())) {
+							&& !SettingsUtil.hasVariableType(VariableType.GERMPLASM_DESCRIPTOR,
+									settingDetail.getVariable().getVariableTypes())
+							&& SettingsUtil.hasVariableType(VariableType.EXPERIMENTAL_DESIGN,
+									settingDetail.getVariable().getVariableTypes())) {
 						settingDetail.setRole(VariableType.EXPERIMENTAL_DESIGN.getRole());
 						settingDetail.setVariableType(VariableType.EXPERIMENTAL_DESIGN);
 					} else {

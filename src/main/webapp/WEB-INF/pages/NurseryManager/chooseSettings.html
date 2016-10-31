@@ -4,7 +4,6 @@
 	<input type="hidden" th:field="*{locationId}"/>
 	<input type="hidden" th:field="*{breedingMethodId}"/>
 	<input type="hidden" th:field="*{breedingMethodUrl}"/>
-	<input type="hidden" th:field="*{importLocationUrl}"/>
 	<input type="hidden" th:field="*{studyNameTermId}"/>
 	<input type="hidden" th:field="*{startDateId}"/>
 	<input type="hidden" th:field="*{endDateId}"/>
@@ -457,7 +456,6 @@ var entryNoShouldBeInRange = /*[[#{entry.number.should.be.in.range}]]*/ '',
 
 var locationId = '',
 		breedingMethodId = '',
-		importLocationUrl = '',
 		requiredFields = [],
 		startDateId = '',
 		endDateId = '',
@@ -496,7 +494,6 @@ $(document).ready(function() {
 	endDateId = $('#endDateId').val();
 	locationId = $('#locationId').val();
 	breedingMethodId = $('#breedingMethodId').val();
-	importLocationUrl = $('#importLocationUrl').val();
 	$('#folderNameSpan').html($('#folderName').val());
 	var possibleValuesJsonElm = $('.possibleValuesJson');
 	$.each(possibleValuesJsonElm, function(index, divElem) {

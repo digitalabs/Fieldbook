@@ -711,7 +711,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Load initial germplasm tree.
+	 * Get the Germplasm URL
 	 *
 	 * @return the string
 	 */
@@ -720,18 +720,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	public String getGermplasmUrl() {
 
 		return this.fieldbookProperties.getGermplasmDetailsUrl();
-	}
-
-	/**
-	 * Load initial germplasm tree.
-	 *
-	 * @return the string
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/germplasm/import/url", method = RequestMethod.GET)
-	public String getImportGermplasmUrl(final HttpServletRequest request) {
-		final String contextParams = org.generationcp.commons.util.ContextUtil.getContextParameterString(request);
-		return this.fieldbookProperties.getGermplasmImportUrl() + "?" + contextParams;
 	}
 
 	/**
@@ -750,7 +738,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Load initial germplasm tree.
+	 * Load initial germplasm tree table.
 	 *
 	 * @return the string
 	 */

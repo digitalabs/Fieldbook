@@ -183,7 +183,7 @@ public class CrossingServiceImpl implements CrossingService {
 		this.saveAttributes(crossSetting, importedCrossesList, savedGermplasmIds);
 	}
 
-	private void saveAttributes(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+	void saveAttributes(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final List<Integer> savedGermplasmIds) {
 		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
 			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);

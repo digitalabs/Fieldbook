@@ -677,4 +677,50 @@ public class CrossingServiceImplTest {
 		nameTypes.add(udf);
 		return nameTypes;
 	}
+	
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	@Test
+	public void testSaveAttributes() {
+		
+		final Integer plotFldCode = this.mockPassportAttributeForCode("PLOTCODE", 1552);
+		final Integer plotFldNo = this.mockPassportAttributeForCode("PLOT_NUMBER", 2003);
+		
+		this.crossingService.saveAttributes(this.crossSetting, this.importedCrossesList, this.savedGermplasmIds);
+		
+		Mockito.verify(this.germplasmDataManager, Mockito.times(this.savedGermplasmIds.size())).getUserDefinedFieldByTableTypeAndCode(
+				"ATRIBUTS", "PASSPORT", "PLOTCODE");
+		Mockito.verify(this.germplasmDataManager, Mockito.times(this.savedGermplasmIds.size())).getUserDefinedFieldByTableTypeAndCode(
+				"ATRIBUTS", "PASSPORT", "PLOT_NUMBER");
+
+		final ArgumentCaptor<List> attributesCaptor = ArgumentCaptor.forClass(List.class);
+		Mockito.verify(this.germplasmDataManager).addAttributes(attributesCaptor.capture());
+
+		// get attributes
+		final List attributes = attributesCaptor.getValue();
+		final Map<Integer, Map<Integer, String>> gidPlotDetailsMap = new HashMap<>();
+		for (final Object attrObj : attributes) {
+			final Attribute attribute = (Attribute) attrObj;
+			if (!gidPlotDetailsMap.containsKey(attribute.getGermplasmId())) {
+				gidPlotDetailsMap.put(attribute.getGermplasmId(), new HashMap<Integer, String>());
+			}
+			final Map<Integer, String> plotDetailsMap = gidPlotDetailsMap.get(attribute.getGermplasmId());
+			plotDetailsMap.put(attribute.getTypeId(), attribute.getAval());
+		}
+
+		// verify attributes
+		for (final ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
+			final String expectedPlotCode = importedCrosses.getSource();
+			final String expectedPlotNo = importedCrosses.getFemalePlotNo();
+			final Integer gid = Integer.parseInt(importedCrosses.getGid());
+
+			final Map<Integer, String> plotDetailsMap = gidPlotDetailsMap.get(gid);
+			Assert.assertNotNull("Plot details with gid " + gid + " should be found.", plotDetailsMap);
+
+			final String actualPlotCode = plotDetailsMap.get(plotFldCode);
+			Assert.assertEquals("The plot code should be " + expectedPlotCode, expectedPlotCode, actualPlotCode);
+
+			final String actualPlotNo = plotDetailsMap.get(plotFldNo);
+			Assert.assertEquals("The plot no should be " + expectedPlotNo, expectedPlotNo, actualPlotNo);
+		}
+	}
 }

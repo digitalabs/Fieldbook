@@ -2067,3 +2067,11 @@ input.select-all-margin{
 .lblprnt-germplasm-list-inventory .lblprnt-study-list-details-label {
 	display: none;
 }
+
+.lblprnt-germplasm-list-numbers-alignment {
+	padding-left: 13px;
+}
+
+.lblprnt-label-details hr {
+	margin: 0;
+}

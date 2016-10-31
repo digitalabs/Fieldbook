@@ -255,7 +255,7 @@
                                 <label class="control-label"><strong th:text="#{label.printing.lots.with.reservation.count}"></strong></label>
                             </div>
                             <div class="col-xs-3 col-md-3">
-                                <span id="lotsWithReservationsCount"
+                                <span id="lotsWithReservationsCount" class="lblprnt-germplasm-list-numbers-alignment"
                                       th:text="*{userLabelPrinting.numberOfLotsWithReservations}"></span>
                             </div>
                         </div>
@@ -265,7 +265,8 @@
                                 <label class="control-label"><strong th:text="#{label.printing.total.number.of.labels}"></strong></label>
                             </div>
                             <div class="col-xs-3 col-md-3">
-                                <span id="germplasmListTotalLabelCount" th:text="*{userLabelPrinting.numberOfLotsWithReservations}"></span>
+                                <span id="germplasmListTotalLabelCount" class="lblprnt-germplasm-list-numbers-alignment"
+                                      th:text="*{userLabelPrinting.numberOfLotsWithReservations}"></span>
                             </div>
                         </div>
 

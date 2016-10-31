@@ -23,13 +23,13 @@ public class PDFLabelGeneratorTest {
 
     @Test
     public void testEncodeBardcodeInEnglishCharacters() throws LabelPrintingException {
-        final BitMatrix bitMatrix = this.LabelPrintingPDFUtil.encodeBarcode("Test", 100, 200);
+        final BitMatrix bitMatrix = this.LabelPrintingPDFUtil.encodeBarcode("Test");
         Assert.assertNotNull("Bit Matrix Barcode should be not null since characters are in English ASCII", bitMatrix);
     }
 
     @Test (expected = LabelPrintingException.class)
     public void testEncodeBardcodeInNonEnglishCharacters() throws LabelPrintingException {
-        this.LabelPrintingPDFUtil.encodeBarcode("乙七九", 100, 200);
+        this.LabelPrintingPDFUtil.encodeBarcode("乙七九");
     }
 
     @Test

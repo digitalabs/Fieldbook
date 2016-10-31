@@ -36,7 +36,7 @@ public class LabelGeneratorFactory {
         throw new IllegalArgumentException("Could not recognise the following label type: " + labelType);
     }
 
-    public LabelGenerator retrieveSeedPreparationLabelGenerator(final String labelType) {
+    public SeedPreparationLabelGenerator retrieveSeedPreparationLabelGenerator(final String labelType) {
 
         if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
             return this.csvSeedPreparationLabelGenerator;

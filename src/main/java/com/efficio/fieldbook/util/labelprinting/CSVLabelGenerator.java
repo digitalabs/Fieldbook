@@ -32,10 +32,7 @@ public class CSVLabelGenerator implements LabelGenerator {
     private LabelPrintingUtil labelPrintingUtil;
 
     @Override
-    public String generateLabels(final List<?> dataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
-
-        @SuppressWarnings("unchecked")
-        final List<StudyTrialInstanceInfo> trialInstances = (List<StudyTrialInstanceInfo>) dataList;
+    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
         final String fileName = userLabelPrinting.getFilenameDLLocation();
         String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();

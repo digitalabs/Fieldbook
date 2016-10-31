@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 
 public interface LabelGenerator {
@@ -12,10 +13,10 @@ public interface LabelGenerator {
 	 * The strategy to create labels
 	 *
 	 * @param dataList data used to create labels
-	 * @param userLabelPrinting
+	 * @param userLabelPrinting the information needed for label printing
 	 * @return the name of the file with labels being created
-	 * @throws LabelPrintingException
+	 * @throws LabelPrintingException if labels could not be printed for some reasons
 	 */
-	String generateLabels(final List<?> dataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException;
+	String generateLabels(final List<StudyTrialInstanceInfo> dataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException;
 
 }

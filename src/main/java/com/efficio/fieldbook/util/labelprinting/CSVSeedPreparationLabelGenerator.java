@@ -25,7 +25,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.google.common.collect.Maps;
 
 @Component
-public class CSVSeedPreparationLabelGenerator implements LabelGenerator {
+public class CSVSeedPreparationLabelGenerator implements SeedPreparationLabelGenerator {
 
 	@Resource
 	private GermplasmExportService germplasmExportService;
@@ -35,11 +35,8 @@ public class CSVSeedPreparationLabelGenerator implements LabelGenerator {
 	private static final Logger LOG = LoggerFactory.getLogger(CSVSeedPreparationLabelGenerator.class);
 
 	@Override
-	public String generateLabels (final List<?> dataList, final UserLabelPrinting
+	public String generateLabels (final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting
 			userLabelPrinting) throws LabelPrintingException {
-
-		@SuppressWarnings("unchecked")
-		final List<GermplasmListData> germplasmListDataList = (List<GermplasmListData>) dataList;
 
 		final String fileName = userLabelPrinting.getFilenameDLLocation();
 		String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();

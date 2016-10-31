@@ -36,10 +36,7 @@ public class ExcelLabelGenerator implements LabelGenerator {
     private LabelPrintingUtil labelPrintingUtil;
 
     @Override
-    public String generateLabels(final List<?> dataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
-
-        @SuppressWarnings("unchecked")
-        final List<StudyTrialInstanceInfo> trialInstances = (List<StudyTrialInstanceInfo>) dataList;
+    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
         String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
         final boolean includeHeader =

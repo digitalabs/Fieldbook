@@ -72,15 +72,12 @@ public class PDFLabelGenerator implements LabelGenerator {
 	}
 
 	@Override
-	public String generateLabels(final List<?> dataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
-
-		@SuppressWarnings("unchecked")
-		final List<StudyTrialInstanceInfo> trialInstances = (List<StudyTrialInstanceInfo>) dataList;
+	public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
 		final int pageSizeId = Integer.parseInt(userLabelPrinting.getSizeOfLabelSheet());
 		final int numberOfLabelPerRow = Integer.parseInt(userLabelPrinting.getNumberOfLabelPerRow());
-		final int numberofRowsPerPageOfLabel = Integer.parseInt(userLabelPrinting.getNumberOfRowsPerPageOfLabel());
-		final int totalPerPage = numberOfLabelPerRow * numberofRowsPerPageOfLabel;
+		final int numberOfRowsPerPageOfLabel = Integer.parseInt(userLabelPrinting.getNumberOfRowsPerPageOfLabel());
+		final int totalPerPage = numberOfLabelPerRow * numberOfRowsPerPageOfLabel;
 		final String leftSelectedFields = userLabelPrinting.getLeftSelectedLabelFields();
 		final String rightSelectedFields = userLabelPrinting.getRightSelectedLabelFields();
 		final String barcodeNeeded = userLabelPrinting.getBarcodeNeeded();
@@ -94,7 +91,7 @@ public class PDFLabelGenerator implements LabelGenerator {
 		try {
 			final FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 
-			final LabelPaper paper = LabelPaperFactory.generateLabelPaper(numberOfLabelPerRow, numberofRowsPerPageOfLabel, pageSizeId);
+			final LabelPaper paper = LabelPaperFactory.generateLabelPaper(numberOfLabelPerRow, numberOfRowsPerPageOfLabel, pageSizeId);
 
 			Rectangle pageSize = PageSize.LETTER;
 
@@ -270,7 +267,7 @@ public class PDFLabelGenerator implements LabelGenerator {
 						}
 
 						table.completeRow();
-						if (numberofRowsPerPageOfLabel == 10) {
+						if (numberOfRowsPerPageOfLabel == 10) {
 							table.setSpacingAfter(paper.getSpacingAfter());
 						}
 
@@ -307,7 +304,7 @@ public class PDFLabelGenerator implements LabelGenerator {
 				}
 
 				table.completeRow();
-				if (numberofRowsPerPageOfLabel == 10) {
+				if (numberOfRowsPerPageOfLabel == 10) {
 
 					table.setSpacingAfter(paper.getSpacingAfter());
 				}

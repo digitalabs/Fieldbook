@@ -51,6 +51,7 @@ import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.labelprinting.LabelGenerator;
 import com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory;
+import com.efficio.fieldbook.util.labelprinting.SeedPreparationLabelGenerator;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
@@ -177,8 +178,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	@Override
 	public String generateLabelsForGermplasmList(final String labelType, final List<GermplasmListData> germplasmListDataList,
 			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
-		this.labelGenerator = this.labelGeneratorFactory.retrieveSeedPreparationLabelGenerator(labelType);
-		return this.labelGenerator.generateLabels(germplasmListDataList, userLabelPrinting);
+		final SeedPreparationLabelGenerator seedPreparationLabelGenerator =
+				this.labelGeneratorFactory.retrieveSeedPreparationLabelGenerator(labelType);
+		return seedPreparationLabelGenerator.generateLabels(germplasmListDataList, userLabelPrinting);
 	}
 
 	@Override

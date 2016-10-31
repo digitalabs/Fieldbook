@@ -35,7 +35,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
 @Component
-class PDFSeedPreparationLabelGenerator implements LabelGenerator {
+class PDFSeedPreparationLabelGenerator implements SeedPreparationLabelGenerator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PDFSeedPreparationLabelGenerator.class);
 
@@ -50,9 +50,7 @@ class PDFSeedPreparationLabelGenerator implements LabelGenerator {
 	private LabelPrintingUtil labelPrintingUtil;
 
 	@Override
-	public String generateLabels(final List<?> dataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
-
-		@SuppressWarnings("unchecked") final List<GermplasmListData> germplasmListDataList = (List<GermplasmListData>) dataList;
+	public String generateLabels(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
 		final int pageSizeId = Integer.parseInt(userLabelPrinting.getSizeOfLabelSheet());
 		final int numberOfLabelPerRow = Integer.parseInt(userLabelPrinting.getNumberOfLabelPerRow());

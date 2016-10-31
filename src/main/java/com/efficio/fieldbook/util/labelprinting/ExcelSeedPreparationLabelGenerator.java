@@ -26,7 +26,7 @@ import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Component
-class ExcelSeedPreparationLabelGenerator implements LabelGenerator {
+class ExcelSeedPreparationLabelGenerator implements SeedPreparationLabelGenerator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExcelSeedPreparationLabelGenerator.class);
 
@@ -34,10 +34,7 @@ class ExcelSeedPreparationLabelGenerator implements LabelGenerator {
 	private LabelPrintingUtil labelPrintingUtil;
 
 	@Override
-	public String generateLabels(final List<?> dataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
-
-		@SuppressWarnings("unchecked")
-		final List<GermplasmListData> germplasmListDataList = (List<GermplasmListData>) dataList;
+	public String generateLabels(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
 		String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
 		final boolean includeHeader =

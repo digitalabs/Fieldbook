@@ -581,20 +581,25 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final List<GermplasmListData> germplasmListDataListWithExistingReservations =
 				this.getGermplasmListDataListWithExistingReservations(germplasmListDataList);
 		final int numberOfCopies = Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
-		final List<GermplasmListData> fullGermplasmListWithExistingReservations = new ArrayList<>();
-		for (int i = 0; i < numberOfCopies; i++) {
-			fullGermplasmListWithExistingReservations.addAll(germplasmListDataListWithExistingReservations);
-		}
 
 		// GermplasmListData list sorting before printing
+		// Sort first and duplicate entries after that for performance
 		try {
-			this.labelPrintingUtil.sortGermplasmListDataList(fullGermplasmListWithExistingReservations, this.userLabelPrinting.getSorting());
+			this.labelPrintingUtil.sortGermplasmListDataList(germplasmListDataListWithExistingReservations, this.userLabelPrinting.getSorting());
 		} catch (final Exception ex) {
 			final Map<String, Object> results = new HashMap<>();
 			LabelPrintingController.LOG.error(ex.getMessage(), ex);
 			results.put(LabelPrintingController.IS_SUCCESS, 0);
 			results.put(AppConstants.MESSAGE.getString(), "Error sorting the entries");
 			return results;
+		}
+
+		final List<GermplasmListData> fullGermplasmListWithExistingReservations = new ArrayList<>();
+
+		for (final GermplasmListData listData : germplasmListDataListWithExistingReservations) {
+			for (int i = 0; i < numberOfCopies; i++) {
+				fullGermplasmListWithExistingReservations.add(listData);
+			}
 		}
 
 		return this.generateLabels(fullGermplasmListWithExistingReservations);

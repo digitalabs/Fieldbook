@@ -590,7 +590,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			final Map<String, Object> results = new HashMap<>();
 			LabelPrintingController.LOG.error(ex.getMessage(), ex);
 			results.put(LabelPrintingController.IS_SUCCESS, 0);
-			results.put(AppConstants.MESSAGE.getString(), "Error sorting the entries");
+			results.put(AppConstants.MESSAGE.getString(), ex.getMessage());
 			return results;
 		}
 

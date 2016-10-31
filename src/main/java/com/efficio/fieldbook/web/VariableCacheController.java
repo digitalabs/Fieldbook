@@ -25,6 +25,6 @@ public class VariableCacheController {
 	@RequestMapping(value = "/{variablesIds}", method = RequestMethod.DELETE)
 	public ResponseEntity<String> deleteVariablesFromCache(@PathVariable final Integer[] variablesIds) {
 		this.ontologyVariableDataManager.deleteVariablesFromCache(Arrays.asList(variablesIds));
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

@@ -52,6 +52,7 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.labelprinting.LabelGenerator;
 import com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory;
 import com.efficio.fieldbook.util.labelprinting.SeedPreparationLabelGenerator;
+import com.efficio.fieldbook.util.labelprinting.comparators.FieldMapLabelComparator;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
@@ -133,47 +134,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		super();
 	}
 
-	/**
-	 * This comparator first checks for the existence of a plot number variable to perform comparison. If that is not available, then values
-	 * for entry number are used. Comparison is done in ascending order
-	 */
-	//FIXME Move comparator to separate class
-	private final static Comparator<FieldMapLabel> PLOT_NUMBER_ENTRY_NUMBER_ASC_COMPARATOR = new Comparator<FieldMapLabel>() {
-
-		@Override
-		public int compare(final FieldMapLabel mapLabel1, final FieldMapLabel mapLabel2) {
-			Object plotNumber1 = mapLabel1.getPlotNo();
-			if (plotNumber1 == null) {
-				plotNumber1 = mapLabel1.getUserFields().get(TermId.PLOT_NO.getId());
-			}
-
-			Object plotNumber2 = mapLabel2.getPlotNo();
-			if (plotNumber2 == null) {
-				plotNumber2 = mapLabel2.getUserFields().get(TermId.PLOT_NO.getId());
-			}
-
-			final Object entryNumber1 = mapLabel1.getUserFields().get(TermId.ENTRY_NO.getId());
-			final Object entryNumber2 = mapLabel2.getUserFields().get(TermId.ENTRY_NO.getId());
-
-			if (plotNumber1 != null || plotNumber2 != null) {
-				return this.compareTermValues(plotNumber1, plotNumber2);
-			} else {
-				return this.compareTermValues(entryNumber1, entryNumber2);
-			}
-		}
-
-		protected int compareTermValues(final Object term1, final Object term2) {
-			if (term1 != null && term2 != null) {
-				return Integer.compare(Integer.parseInt(term1.toString()), Integer.parseInt(term2.toString()));
-			} else if (term1 == null && term2 == null) {
-				return 0;
-			} else if (term2 == null) {
-				return 1;
-			} else {
-				return -1;
-			}
-		}
-	};
+	private final Comparator<FieldMapLabel> plotNumberEntryNumberAscComparator = new FieldMapLabelComparator();
 
 	@Override
 	public String generateLabelsForGermplasmList(final String labelType, final List<GermplasmListData> germplasmListDataList,
@@ -191,10 +152,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting);
 	}
 
-	protected void sortTrialInstanceLabels(final List<StudyTrialInstanceInfo> trialInstances) {
+	private void sortTrialInstanceLabels(final List<StudyTrialInstanceInfo> trialInstances) {
 		for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
 			Collections.sort(trialInstance.getTrialInstance().getFieldMapLabels(),
-					LabelPrintingServiceImpl.PLOT_NUMBER_ENTRY_NUMBER_ASC_COMPARATOR);
+					this.plotNumberEntryNumberAscComparator);
 		}
 	}
 

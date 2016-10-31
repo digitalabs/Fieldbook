@@ -29,6 +29,7 @@ import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataDes
 import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataEntryNumberComparator;
 import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataGIDComparator;
 import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataStockIdComparator;
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -471,7 +472,8 @@ public class LabelPrintingUtil {
 	 * @param fullGermplasmListWithExistingReservations collection to sort
 	 * @param sortingType how the collection should be sorted
 	 */
-	public void sortGermplasmListDataList(final List<GermplasmListData> fullGermplasmListWithExistingReservations, final String sortingType) {
+	public void sortGermplasmListDataList(final List<GermplasmListData> fullGermplasmListWithExistingReservations, final String sortingType)
+			throws LabelPrintingException {
 		if (sortingType.equalsIgnoreCase(ENTRY)) {
 			this.sortByEntry(fullGermplasmListWithExistingReservations);
 		} else if (sortingType.equalsIgnoreCase(DESIGNATION)) {
@@ -481,7 +483,7 @@ public class LabelPrintingUtil {
 		} else if (sortingType.equalsIgnoreCase(STOCK_ID)) {
 			this.sortByStockId(fullGermplasmListWithExistingReservations);
 		} else {
-			throw new IllegalArgumentException("No such type of sorting defined");
+			throw new LabelPrintingException("No such type of sorting defined");
 		}
 	}
 

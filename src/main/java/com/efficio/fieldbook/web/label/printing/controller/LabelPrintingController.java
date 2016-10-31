@@ -586,7 +586,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		// Sort first and duplicate entries after that for performance
 		try {
 			this.labelPrintingUtil.sortGermplasmListDataList(germplasmListDataListWithExistingReservations, this.userLabelPrinting.getSorting());
-		} catch (final Exception ex) {
+		} catch (final LabelPrintingException ex) {
 			final Map<String, Object> results = new HashMap<>();
 			LabelPrintingController.LOG.error(ex.getMessage(), ex);
 			results.put(LabelPrintingController.IS_SUCCESS, 0);

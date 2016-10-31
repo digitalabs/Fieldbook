@@ -28,8 +28,6 @@ import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsServiceImplTest {
 
-	private static final int GERMPLASM_GROUP = VariableType.GERMPLASM_DESCRIPTOR.getId();
-
 	@Mock
 	private Workbook workbook;
 
@@ -43,7 +41,7 @@ public class SettingsServiceImplTest {
 	private ContextUtil contextUtil;
 
 	@InjectMocks
-	private SettingsServiceImpl serviceDUT;
+	private SettingsServiceImpl settingsServiceImpl;
 
 	@Test
 	public void testIsGermplasmListField_ReturnsTrueForExistingVariableInNursery() throws MiddlewareQueryException {
@@ -51,7 +49,7 @@ public class SettingsServiceImplTest {
 				.getStandardVariable(Matchers.anyInt(), Matchers.anyString());
 
 		Assert.assertTrue("Expecting to return true when the variable exists from germplasm descriptor.",
-				this.serviceDUT.isGermplasmListField(1, true));
+				this.settingsServiceImpl.isGermplasmListField(1, true));
 	}
 
 	@Test
@@ -60,7 +58,7 @@ public class SettingsServiceImplTest {
 				.getStandardVariable(Matchers.anyInt(), Matchers.anyString());
 
 		Assert.assertFalse("Expecting to return false when the variable does not exists from germplasm descriptor.",
-				this.serviceDUT.isGermplasmListField(1, true));
+				this.settingsServiceImpl.isGermplasmListField(1, true));
 	}
 
 	@Test
@@ -71,7 +69,7 @@ public class SettingsServiceImplTest {
 		Mockito.doReturn(this.createStandardVariableTestData(VariableType.GERMPLASM_DESCRIPTOR)).when(this.fieldbookMiddlewareService)
 				.getStandardVariable(Matchers.anyInt(), Matchers.anyString());
 
-		final List<LabelFields> result = this.serviceDUT.retrieveTraitsAsLabels(this.workbook);
+		final List<LabelFields> result = this.settingsServiceImpl.retrieveTraitsAsLabels(this.workbook);
 
 		Mockito.verify(this.workbook, Mockito.times(1)).getVariates();
 
@@ -107,18 +105,27 @@ public class SettingsServiceImplTest {
 		Mockito.doReturn(this.createStandardVariableTestData(VariableType.GERMPLASM_DESCRIPTOR)).when(this.fieldbookMiddlewareService)
 				.getStandardVariable(Matchers.anyInt(), Matchers.anyString());
 
-		final List<LabelFields> labelFields = this.serviceDUT.retrieveGermplasmDescriptorsAsLabels(this.workbook);
+		final List<LabelFields> labelFields = this.settingsServiceImpl.retrieveGermplasmDescriptorsAsLabels(this.workbook);
 		Assert.assertNotNull("Label fields should not be null", labelFields);
-		Assert.assertEquals("There should be 2 label fields returned", 2, labelFields.size());
+		Assert.assertEquals("There should be 1 label field returned", 1, labelFields.size());
 
-		// verify expected label fields based on the test data
+		// verify label fields based on the test data
+		boolean trialInstanceIsFound = false;
+		boolean blockNoIsFound = false;
 		boolean plotNoIsFound = false;
 		for (final LabelFields label : labelFields) {
-			if (label.getId() == TermId.PLOT_NO.getId()) {
+			if (label.getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				trialInstanceIsFound = true;
+			} else if (label.getId() == TermId.BLOCK_NO.getId()) {
+				blockNoIsFound = true;
+			} else if (label.getId() == TermId.PLOT_NO.getId()) {
 				plotNoIsFound = true;
 			}
+			Assert.assertTrue("The label should be a germplasm list field", label.isGermplasmListField());
 		}
-		Assert.assertTrue("The plot no should be found", plotNoIsFound);
+		Assert.assertFalse("The trial instance should not be found", trialInstanceIsFound);
+		Assert.assertFalse("The block no should not be found", blockNoIsFound);
+		Assert.assertFalse("The plot no should not be found", plotNoIsFound);
 	}
 
 	private List<MeasurementVariable> createFactorsTestData() {
@@ -128,8 +135,8 @@ public class SettingsServiceImplTest {
 		factors.add(this.createMeasurementVariable(TermId.BLOCK_NO.getId()));
 		factors.add(this.createTreatmentFactorMeasurementVariable());
 		factors.add(this.createMeasurementVariableWithRole(PhenotypicType.TRIAL_DESIGN));
-		// add variables that can be considered as germplasm descriptors
 		factors.add(this.createMeasurementVariable(TermId.PLOT_NO.getId()));
+		// add variables that can be considered as germplasm descriptors
 		factors.add(this.createMeasurementVariableWithRole(PhenotypicType.GERMPLASM));
 		return factors;
 	}

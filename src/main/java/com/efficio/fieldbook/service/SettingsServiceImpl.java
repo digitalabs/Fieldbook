@@ -195,21 +195,19 @@ public class SettingsServiceImpl implements SettingsService {
 		final List<LabelFields> detailList = new ArrayList<>();
 		final FieldbookUtil util = FieldbookUtil.getInstance();
 
-		final List<Integer> expDesignVariablesMinusPlotNumber =
-				util.buildVariableIDList(AppConstants.EXP_DESIGN_REQUIRED_WITHOUT_PLOT_NO_VARIABLES.getString());
+		List<Integer> experimentalDesignVariables = util.buildVariableIDList(AppConstants.EXP_DESIGN_REQUIRED_VARIABLES.getString());
 
-		for (final MeasurementVariable var : workbook.getFactors()) {
-			// don't include the following types as labels: treatment factor, trial instance, trial design except plot number
+		for (MeasurementVariable var : workbook.getFactors()) {
+			// this condition is required so that treatment factors are not included in the list of factors for the germplasm tab
 			if (var.getTreatmentLabel() != null && !var.getTreatmentLabel().isEmpty()
-					|| expDesignVariablesMinusPlotNumber.contains(var.getTermId())
-					|| var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+					|| experimentalDesignVariables.contains(var.getTermId()) || var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				continue;
 			}
 
-			// set all variables with trial design role to hidden except for PLOT_NO
-			if (var.getTermId() == TermId.PLOT_NO.getId() || var.getRole() != PhenotypicType.TRIAL_DESIGN) {
+			// set all variables with trial design role to hidden
+			if (var.getRole() != PhenotypicType.TRIAL_DESIGN) {
 
-				final LabelFields field =
+				LabelFields field =
 						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));
 				detailList.add(field);
 			}

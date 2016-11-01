@@ -299,6 +299,11 @@
 		factory-method="getOntologyMethodDataManager" scope="request">
 		<aop:scoped-proxy />
 	</bean>
+	
+	<bean id="termDataManager" factory-bean="managerFactory"
+		factory-method="getTermDataManager" scope="request">
+		<aop:scoped-proxy />
+	</bean>
 
 	<bean id="propertyDataManager" factory-bean="managerFactory"
 		factory-method="getOntologyPropertyDataManager" scope="request">
@@ -557,8 +562,8 @@
     <bean id="labelGeneratorFactory" class="com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory"/>
     <bean id="excelLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.ExcelLabelGenerator"/>
     <bean id="pdfLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.PDFLabelGenerator"/>
-    <bean id="csvLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.CSVLabelGenerator"/>
-	
+    <bean id="csvSeedPreparationLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.CSVSeedPreparationLabelGenerator"/>
+
 	<bean id="workbenchHibernateSessionProvider"
 		class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider"
 		scope="request" destroy-method="close">

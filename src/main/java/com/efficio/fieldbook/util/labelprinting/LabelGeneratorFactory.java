@@ -15,13 +15,37 @@ public class LabelGeneratorFactory {
     @Resource
     private ExcelLabelGenerator excelLabelGenerator;
 
-    public BaseLabelGenerator retrieveLabelGenerator(String labelType) {
-        if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
-            return pdfLabelGenerator;
+    @Resource
+    private CSVSeedPreparationLabelGenerator csvSeedPreparationLabelGenerator;
+
+    @Resource
+    private ExcelSeedPreparationLabelGenerator excelSeedPreparationLabelGenerator;
+
+    @Resource
+    private PDFSeedPreparationLabelGenerator pdfSeedPreparationLabelGenerator;
+
+    public LabelGenerator retrieveLabelGenerator(final String labelType) {
+
+        if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
+            return this.csvLabelGenerator;
         } else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
-            return excelLabelGenerator;
-        } else {
-            return csvLabelGenerator;
+            return this.excelLabelGenerator;
+        } else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
+            return this.pdfLabelGenerator;
         }
+        throw new IllegalArgumentException("Could not recognise the following label type: " + labelType);
     }
+
+    public SeedPreparationLabelGenerator retrieveSeedPreparationLabelGenerator(final String labelType) {
+
+        if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_CSV.getString())) {
+            return this.csvSeedPreparationLabelGenerator;
+        } else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
+            return this.excelSeedPreparationLabelGenerator;
+        } else if (labelType.equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
+            return this.pdfSeedPreparationLabelGenerator;
+        }
+        throw new IllegalArgumentException("Could not recognise the following label type: " + labelType);
+    }
+
 }

@@ -211,13 +211,17 @@ public class CrossingServiceImpl implements CrossingService {
 			final Integer plotFldNo = this.getPassportAttributeForCode("PLOT_NUMBER");
 
 			// save Attribute for SeedSource as a PlotCode
-			final Attribute plotCodeAttribute = this.createAttributeObject(currentUserID, cross.getSource(), plotFldCode, today, newGid);
-			attributeList.add(plotCodeAttribute);
+			if(cross.getSource() != null) {
+				final Attribute plotCodeAttribute = this.createAttributeObject(currentUserID, cross.getSource(), plotFldCode, today, newGid);
+				attributeList.add(plotCodeAttribute);
+			}
 
 			// save Attribute for female plot number
+			if(cross.getFemalePlotNo() != null) {
 			final Attribute plotNumberAttribute =
-					this.createAttributeObject(currentUserID, cross.getFemalePlotNo(), plotFldNo, today, newGid);
-			attributeList.add(plotNumberAttribute);
+				this.createAttributeObject(currentUserID, cross.getFemalePlotNo(), plotFldNo, today, newGid);
+				attributeList.add(plotNumberAttribute);
+			}
 
 		}
 

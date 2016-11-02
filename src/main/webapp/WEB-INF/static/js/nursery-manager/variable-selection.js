@@ -511,10 +511,9 @@ BMS.NurseryManager.VariableSelection = (function($) {
 					 *
 					 */
 					$.each(
-						['/BMSAPI/',
+						['/bmsapi/',
 						 '/BreedingManager/',
-						 '/Fieldbook/',
-						 '/Workbench/'],
+						 '/ibpworkbench/'],
 					 function (i, v) {
 						$.ajax({
 							url: v + 'variableCache/deleteVariablesFromCache/' + variableId,

@@ -22,15 +22,16 @@ public class CSVLabelGeneratorIT extends AbstractBaseIntegrationTest{
 
     @Resource
     private CSVLabelGenerator unitUnderTest;
+    @Resource
+    private LabelPrintingUtil labelPrintingUtil;
 
     @Test
     public void testGenerationOfCsvLabels() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-        UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
+        final List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+        final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
         String fileName = "";
         try {
-            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, baos);
+            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting);
 
             CsvReader csvReader = new CsvReader(fileName);
 
@@ -85,7 +86,7 @@ public class CSVLabelGeneratorIT extends AbstractBaseIntegrationTest{
         fieldMapTrialInstanceInfo.setTrialInstanceNo("1");
 
         Map<String, String> dataResults =
-                unitUnderTest.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, barCode);
+                this.labelPrintingUtil.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, barCode);
         Assert.assertEquals("Should have the same location name", fieldMapTrialInstanceInfo.getLocationName(),
                 dataResults.get("locationName"));
         Assert.assertEquals("Should have the same Block name", fieldMapTrialInstanceInfo.getBlockName(), dataResults.get("blockName"));

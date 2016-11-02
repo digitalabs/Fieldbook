@@ -141,9 +141,6 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				{   name: 'Germplasm',
 					state: 'germplasm'
 				},
-				{   name: 'Treatment Factors',
-					state: 'treatment'
-				},
 				{   name: 'Environments',
 					state: 'environment'
 				},

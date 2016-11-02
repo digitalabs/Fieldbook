@@ -34,6 +34,7 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -302,6 +303,8 @@ public class OntologyControllerTest extends AbstractBaseIntegrationTest {
 	 * Test save new variable.
 	 */
 	@Test
+	@Ignore
+	// This test was ignored because it is saving a new scale in the DB with no rollback and no asserts
 	public void testSaveNewVariable() {
 		try {
 			List<TermProperty> termProperties = new ArrayList<TermProperty>();

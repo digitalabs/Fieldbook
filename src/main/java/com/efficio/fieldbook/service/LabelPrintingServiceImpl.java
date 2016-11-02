@@ -1,17 +1,5 @@
-/*******************************************************************************
- * Copyright (c) 2013, All Rights Reserved.
- *
- * Generation Challenge Programme (GCP)
- *
- *
- * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
- * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
- *******************************************************************************/
-
 package com.efficio.fieldbook.service;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,6 +30,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -60,7 +49,10 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.labelprinting.LabelGenerator;
 import com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory;
+import com.efficio.fieldbook.util.labelprinting.SeedPreparationLabelGenerator;
+import com.efficio.fieldbook.util.labelprinting.comparators.FieldMapLabelComparator;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
@@ -136,65 +128,34 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	@Resource
 	private OntologyDataManager ontologyDataManager;
 
+	private LabelGenerator labelGenerator;
+
 	public LabelPrintingServiceImpl() {
 		super();
 	}
 
-	/**
-	 * This comparator first checks for the existence of a plot number variable to perform comparison. If that is not available, then values
-	 * for entry number are used. Comparison is done in ascending order
-	 */
-	private final static Comparator<FieldMapLabel> PLOT_NUMBER_ENTRY_NUMBER_ASC_COMPARATOR = new Comparator<FieldMapLabel>() {
+	private final Comparator<FieldMapLabel> plotNumberEntryNumberAscComparator = new FieldMapLabelComparator();
 
-		@Override
-		public int compare(final FieldMapLabel mapLabel1, final FieldMapLabel mapLabel2) {
-			Object plotNumber1 = mapLabel1.getPlotNo();
-			if (plotNumber1 == null) {
-				plotNumber1 = mapLabel1.getUserFields().get(TermId.PLOT_NO.getId());
-			}
-
-			Object plotNumber2 = mapLabel2.getPlotNo();
-			if (plotNumber2 == null) {
-				plotNumber2 = mapLabel2.getUserFields().get(TermId.PLOT_NO.getId());
-			}
-
-			final Object entryNumber1 = mapLabel1.getUserFields().get(TermId.ENTRY_NO.getId());
-			final Object entryNumber2 = mapLabel2.getUserFields().get(TermId.ENTRY_NO.getId());
-
-			if (plotNumber1 != null || plotNumber2 != null) {
-				return this.compareTermValues(plotNumber1, plotNumber2);
-			} else {
-				return this.compareTermValues(entryNumber1, entryNumber2);
-			}
-		}
-
-		protected int compareTermValues(final Object term1, final Object term2) {
-			if (term1 != null && term2 != null) {
-				return Integer.compare(Integer.parseInt(term1.toString()), Integer.parseInt(term2.toString()));
-			} else if (term1 == null && term2 == null) {
-				return 0;
-			} else if (term2 == null) {
-				return 1;
-			} else {
-				return -1;
-			}
-		}
-	};
+	@Override
+	public String generateLabelsForGermplasmList(final String labelType, final List<GermplasmListData> germplasmListDataList,
+			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
+		final SeedPreparationLabelGenerator seedPreparationLabelGenerator =
+				this.labelGeneratorFactory.retrieveSeedPreparationLabelGenerator(labelType);
+		return seedPreparationLabelGenerator.generateLabels(germplasmListDataList, userLabelPrinting);
+	}
 
 	@Override
 	public String generateLabels(final String labelType, final List<StudyTrialInstanceInfo> trialInstances,
-			final UserLabelPrinting userLabelPrinting, final ByteArrayOutputStream baos) throws LabelPrintingException {
-
+			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 		// sort the labels contained inside the trial instances so that they are arranged from highest to lowest by entry number
 		this.sortTrialInstanceLabels(trialInstances);
-
-		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting, baos);
+		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting);
 	}
 
-	protected void sortTrialInstanceLabels(final List<StudyTrialInstanceInfo> trialInstances) {
+	private void sortTrialInstanceLabels(final List<StudyTrialInstanceInfo> trialInstances) {
 		for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
 			Collections.sort(trialInstance.getTrialInstance().getFieldMapLabels(),
-					LabelPrintingServiceImpl.PLOT_NUMBER_ENTRY_NUMBER_ASC_COMPARATOR);
+					this.plotNumberEntryNumberAscComparator);
 		}
 	}
 
@@ -205,7 +166,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		final LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
 		params.setVariableMap(this.convertToMap(workbook.getConditions(), workbook.getFactors()));
-		params.setSelectedFieldIDs(SettingsUtil.parseFieldListAndConvert(selectedFields));
+		params.setSelectedFieldIDs(SettingsUtil.parseFieldListAndConvertToListOfIDs(selectedFields));
 
 		final StudyType studyType = isTrial ? StudyType.T : StudyType.N;
 
@@ -792,6 +753,30 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				.getInt(), false));
 
 		this.addAvailableFieldsForFieldMap(hasFieldMap, locale, labelFieldsList);
+
+		return labelFieldsList;
+	}
+
+	/**
+	 * Gets the available label fields for the inventory. The following options: {GID, Designation, Cross, Stock Id, Lot Id}
+	 *
+	 * @param locale the locale
+	 * @return the list of available label fields
+	 */
+	@Override
+	public List<LabelFields> getAvailableLabelFieldsForInventory(final Locale locale) {
+		final List<LabelFields> labelFieldsList = new ArrayList<>();
+
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.gid", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.designation", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.cross", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale),
+				AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt(), true));
 
 		return labelFieldsList;
 	}

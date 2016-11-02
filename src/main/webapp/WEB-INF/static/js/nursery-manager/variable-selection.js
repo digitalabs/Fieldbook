@@ -501,6 +501,29 @@ BMS.NurseryManager.VariableSelection = (function($) {
 					.possibleValues.length === 0) {
 						showAlertMessage('', variableNoValidValueNotification);
 					}
+
+					/**
+					 * Remove variable from VariableCache
+					 * across all BMS applications
+					 * It's straightforward to do this here
+					 * while doing it at the moment of saving
+					 * could be a bit more tricky
+					 *
+					 */
+					$.each(
+						['/BMSAPI/',
+						 '/BreedingManager/',
+						 '/Fieldbook/',
+						 '/Workbench/'],
+					 function (i, v) {
+						$.ajax({
+							url: v + 'variableCache/deleteVariablesFromCache/' + variableId,
+							type: 'DELETE',
+							global: false // avoid global ajaxError
+						});
+					 });
+
+
 				}, this),
 				error: function(jqxhr, textStatus, error) {
 

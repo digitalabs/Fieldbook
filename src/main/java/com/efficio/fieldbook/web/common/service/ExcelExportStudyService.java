@@ -19,7 +19,5 @@ import org.generationcp.middleware.domain.etl.Workbook;
 public interface ExcelExportStudyService extends ExportStudyService {
 
 	String export(Workbook workbook, String filename, List<Integer> instances, List<Integer> visibleColumns) throws IOException;
-
-	void setBreeedingMethodPropertyName(String breedingMethodPropertyName);
 	
 }

@@ -110,7 +110,6 @@
 	<bean id="fieldbookProperties" class="com.efficio.fieldbook.web.util.FieldbookProperties">
 		<property name="programLocationsUrl" value="${url.program.locations}" />
 		<property name="programBreedingMethodsUrl" value="${url.program.breeding.methods}" />
-		<property name="germplasmImportUrl" value="${url.germplasm.import}" />
 		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />
 		<property name="uploadDirectory" value="${upload.directory}" />
 		<property name="presetDesignEnabledCrops" value="#{'${preset.design.enabled.crops}'.split(',')}" />
@@ -298,6 +297,11 @@
 
 	<bean id="methodDataManager" factory-bean="managerFactory"
 		factory-method="getOntologyMethodDataManager" scope="request">
+		<aop:scoped-proxy />
+	</bean>
+	
+	<bean id="termDataManager" factory-bean="managerFactory"
+		factory-method="getTermDataManager" scope="request">
 		<aop:scoped-proxy />
 	</bean>
 
@@ -558,8 +562,8 @@
     <bean id="labelGeneratorFactory" class="com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory"/>
     <bean id="excelLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.ExcelLabelGenerator"/>
     <bean id="pdfLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.PDFLabelGenerator"/>
-    <bean id="csvLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.CSVLabelGenerator"/>
-	
+    <bean id="csvSeedPreparationLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.CSVSeedPreparationLabelGenerator"/>
+
 	<bean id="workbenchHibernateSessionProvider"
 		class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider"
 		scope="request" destroy-method="close">

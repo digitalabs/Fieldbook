@@ -440,7 +440,6 @@ public class CreateNurseryController extends SettingsController {
 		form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
 		form.setLocationId(AppConstants.LOCATION_ID.getString());
 		form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
-		form.setImportLocationUrl(this.fieldbookProperties.getGermplasmImportUrl() + "?" + contextParams);
 		form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
 		form.setStartDateId(AppConstants.START_DATE_ID.getString());
 		form.setEndDateId(AppConstants.END_DATE_ID.getString());

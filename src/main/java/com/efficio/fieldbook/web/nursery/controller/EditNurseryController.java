@@ -682,7 +682,6 @@ public class EditNurseryController extends SettingsController {
 		form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
 		form.setLocationUrl(this.fieldbookProperties.getProgramLocationsUrl());
 		form.setProjectId(this.getCurrentProjectId());
-		form.setImportLocationUrl(this.fieldbookProperties.getGermplasmImportUrl() + "?" + contextParams);
 		form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
 		form.setStartDateId(AppConstants.START_DATE_ID.getString());
 		form.setEndDateId(AppConstants.END_DATE_ID.getString());

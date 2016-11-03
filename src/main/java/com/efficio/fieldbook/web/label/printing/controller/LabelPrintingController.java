@@ -50,6 +50,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.domain.inventory.LotDetails;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -82,6 +83,7 @@ import org.springframework.web.util.WebUtils;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.util.labelprinting.LabelPrintingUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
@@ -120,6 +122,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * The Constant LOG.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
+
 	/**
 	 * The user label printing.
 	 */
@@ -162,6 +165,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	private GermplasmListManager germplasmListManager;
 	@Resource
 	private InventoryDataManager inventoryDataManager;
+
+	@Resource
+	private LabelPrintingUtil labelPrintingUtil;
 
 	/**
 	 * Show trial label details.
@@ -380,6 +386,18 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		//this name is used to generate a filename for the labels output
 		this.userLabelPrinting.setName(germplasmList.getName());
+		this.userLabelPrinting.setOwner(this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
+		this.userLabelPrinting.setDescription(germplasmList.getDescription());
+		this.userLabelPrinting.setType(germplasmList.getType());
+		this.userLabelPrinting.setDate(String.valueOf(germplasmList.getDate()));
+		this.userLabelPrinting.setNumberOfEntries(String.valueOf(this.fieldbookMiddlewareService.countGermplasmListDataByListId(
+				germplasmList.getId())));
+
+		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(id, 0, Integer
+				.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
+		final List<GermplasmListData> listWithExistingReservations =  this.getGermplasmListDataListWithExistingReservations
+				(germplasmListDataList);
+		this.userLabelPrinting.setNumberOfLotsWithReservations(String.valueOf(listWithExistingReservations.size()));
 
 		this.userLabelPrinting.setStudyId(null);
 		this.userLabelPrinting.setFieldMapInfo(null);
@@ -396,6 +414,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setSecondBarcodeField("");
 		this.userLabelPrinting.setThirdBarcodeField("");
 		this.userLabelPrinting.setSettingsName("");
+		this.userLabelPrinting.setNumberOfCopies("1");
+		this.userLabelPrinting.setSorting("entry");
 		form.setUserLabelPrinting(this.userLabelPrinting);
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS, this.labelPrintingService
 				.getAvailableLabelFieldsForInventory(locale));
@@ -499,7 +519,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		final List<FieldMapInfo> fieldMapInfoList = this.userLabelPrinting.getFieldMapInfoList();
 
-		List<StudyTrialInstanceInfo> trialInstances;
+		final List<StudyTrialInstanceInfo> trialInstances;
 
 		if (fieldMapInfoList != null) {
 			trialInstances = this.generateTrialInstancesFromSelectedFieldMaps(fieldMapInfoList, form);
@@ -542,6 +562,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
+		this.userLabelPrinting.setNumberOfCopies(form.getUserLabelPrinting().getNumberOfCopies());
+		this.userLabelPrinting.setSorting(form.getUserLabelPrinting().getSorting());
 
 		// add validation for the file name
 		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
@@ -556,7 +578,51 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final Integer germplasmListId = form.getGermplasmListId();
 		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(germplasmListId, 0, Integer
 				.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
-		return this.generateLabels(germplasmListDataList);
+		final List<GermplasmListData> germplasmListDataListWithExistingReservations =
+				this.getGermplasmListDataListWithExistingReservations(germplasmListDataList);
+		final int numberOfCopies = Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
+
+		// GermplasmListData list sorting before printing
+		// Sort first and duplicate entries after that for performance
+		try {
+			this.labelPrintingUtil.sortGermplasmListDataList(germplasmListDataListWithExistingReservations, this.userLabelPrinting.getSorting());
+		} catch (final LabelPrintingException ex) {
+			final Map<String, Object> results = new HashMap<>();
+			LabelPrintingController.LOG.error(ex.getMessage(), ex);
+			results.put(LabelPrintingController.IS_SUCCESS, 0);
+			results.put(AppConstants.MESSAGE.getString(), ex.getMessage());
+			return results;
+		}
+
+		final List<GermplasmListData> fullGermplasmListWithExistingReservations = new ArrayList<>();
+
+		for (final GermplasmListData listData : germplasmListDataListWithExistingReservations) {
+			for (int i = 0; i < numberOfCopies; i++) {
+				fullGermplasmListWithExistingReservations.add(listData);
+			}
+		}
+
+		return this.generateLabels(fullGermplasmListWithExistingReservations);
+	}
+
+	/**
+	 * Get a list with seed reservations out of the list of germplasms
+	 * @param germplasmListDataList list of germplasms
+	 * @return a list with existing saved seed reservations
+	 */
+	private List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {
+		final List<GermplasmListData> germplasmListDataListWithReservations = new ArrayList<>();
+		for (final GermplasmListData germplasmListData : germplasmListDataList) {
+			if (germplasmListData.getInventoryInfo() != null && germplasmListData.getInventoryInfo().getLotRows() != null) {
+				for (final LotDetails lotDetails : germplasmListData.getInventoryInfo().getLotRows()) {
+					// We have reservations if withdrawal balance is more than 0
+					if (lotDetails.getWithdrawalBalance() > 0 ) {
+						germplasmListDataListWithReservations.add(germplasmListData);
+					}
+				}
+			}
+		}
+		return germplasmListDataListWithReservations;
 	}
 
 	private Map<String,Object> generateLabels(final List<GermplasmListData> germplasmListDataList) {
@@ -605,7 +671,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	protected String getSelectedLabelFields(final UserLabelPrinting userLabelPrinting) {
+	String getSelectedLabelFields(final UserLabelPrinting userLabelPrinting) {
 		String selectedLabelFields = "";
 		if (userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
 			selectedLabelFields = userLabelPrinting.getLeftSelectedLabelFields() + "," + userLabelPrinting.getRightSelectedLabelFields();

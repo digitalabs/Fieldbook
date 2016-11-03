@@ -44,26 +44,26 @@ public class SeasonExpressionDataProcessorTest {
 	@InjectMocks
 	private SeasonExpressionDataProcessor seasonExpressionDataProcessor;
 
-	private WorkbookTestDataInitializer workbookTDI;
-	private MeasurementVariableTestDataInitializer measurementVarTDI;
-	private MeasurementDataTestDataInitializer measurementDataTDI;
-	private ValueReferenceTestDataInitializer valueReferenceTDI;
+	private WorkbookTestDataInitializer workbookTestDataInitializer;
+	private MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer;
+	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
+	private ValueReferenceTestDataInitializer valueReferenceTestDataInitializer;
 	private AdvancingSource advancingSource;
 
 	@Before
 	public void setUp() {
-		this.workbookTDI = new WorkbookTestDataInitializer();
-		this.measurementVarTDI = new MeasurementVariableTestDataInitializer();
-		this.measurementDataTDI = new MeasurementDataTestDataInitializer();
-		this.valueReferenceTDI = new ValueReferenceTestDataInitializer();
+		this.workbookTestDataInitializer = new WorkbookTestDataInitializer();
+		this.measurementVariableTestDataInitializer = new MeasurementVariableTestDataInitializer();
+		this.measurementDataTestDataInitializer = new MeasurementDataTestDataInitializer();
+		this.valueReferenceTestDataInitializer = new ValueReferenceTestDataInitializer();
 		this.advancingSource = new AdvancingSource();
 	}
 
 	@Test
 	public void testProcessEnvironmentLevelDataWithSeasonMonthVariable() {
-		final Workbook workbook = this.workbookTDI.createWorkbook(StudyType.N);
+		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(StudyType.N);
 
-		final MeasurementVariable seasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_MONTH.getId(),
+		final MeasurementVariable seasonMV = this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_MONTH.getId(),
 				SeasonExpressionDataProcessorTest.SEASON_MONTH_VALUE);
 
 		workbook.setConditions(Lists.newArrayList(seasonMV));
@@ -75,9 +75,9 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessEnvironmentLevelDataWithSeasonVarTextVariable() {
-		final Workbook workbook = this.workbookTDI.createWorkbook(StudyType.N);
+		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(StudyType.N);
 
-		final MeasurementVariable seasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(),
+		final MeasurementVariable seasonMV = this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(),
 				SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE);
 
 		workbook.setConditions(Lists.newArrayList(seasonMV));
@@ -89,9 +89,9 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessEnvironmentLevelDataWithSeasonVarVariable() {
-		final Workbook workbook = this.workbookTDI.createWorkbook(StudyType.N);
+		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(StudyType.N);
 
-		final MeasurementVariable seasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_VAR.getId(),
+		final MeasurementVariable seasonMV = this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR.getId(),
 				SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE);
 
 		workbook.setConditions(Lists.newArrayList(seasonMV));
@@ -103,11 +103,12 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessEnvironmentLevelDataWithNumericSeasonVarVariable() {
-		final Workbook workbook = this.workbookTDI.createWorkbook(StudyType.N);
+		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(StudyType.N);
 
-		final MeasurementVariable seasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_VAR.getId(),
+		final MeasurementVariable seasonMV = this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR.getId(),
 				SeasonExpressionDataProcessorTest.SEASON_CATEGORY_ID);
-		seasonMV.setPossibleValues(Arrays.asList(this.valueReferenceTDI.createValueReference(Integer.parseInt(SEASON_CATEGORY_ID), SEASON_CATEGORY_VALUE)));
+		seasonMV.setPossibleValues(Arrays.asList(this.valueReferenceTestDataInitializer
+				.createValueReference(Integer.parseInt(SEASON_CATEGORY_ID), SEASON_CATEGORY_VALUE)));
 
 		workbook.setConditions(Lists.newArrayList(seasonMV));
 
@@ -118,7 +119,7 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessEnvironmentLevelDataWithNoSeasonVariable() {
-		final Workbook workbook = this.workbookTDI.createWorkbook(StudyType.N);
+		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(StudyType.N);
 		workbook.setConditions(new ArrayList<MeasurementVariable>());
 
 		this.seasonExpressionDataProcessor.processEnvironmentLevelData(this.advancingSource, workbook, null, null);
@@ -128,12 +129,15 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessPlotLevelDataWithSeasonMonthVariable() {
-		final MeasurementVariable instance1SeasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_MONTH.getId(), "");
+		final MeasurementVariable instance1SeasonMV = this.measurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.SEASON_MONTH.getId(), "");
 		final MeasurementData instance1SeasonMD =
-				this.measurementDataTDI.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_MONTH_VALUE, instance1SeasonMV);
+				this.measurementDataTestDataInitializer
+						.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_MONTH_VALUE, instance1SeasonMV);
 
-		final MeasurementVariable instance1MV = this.measurementVarTDI.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
-		final MeasurementData instance1MD = this.measurementDataTDI.createMeasurementData("1", instance1MV);
+		final MeasurementVariable instance1MV = this.measurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
+		final MeasurementData instance1MD = this.measurementDataTestDataInitializer.createMeasurementData("1", instance1MV);
 
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(instance1MD, instance1SeasonMD));
@@ -148,12 +152,15 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessPlotLevelDataWithSeasonVarTextVariable() {
-		final MeasurementVariable instance1SeasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), "");
+		final MeasurementVariable instance1SeasonMV = this.measurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), "");
 		final MeasurementData instance1SeasonMD =
-				this.measurementDataTDI.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE, instance1SeasonMV);
+				this.measurementDataTestDataInitializer
+						.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE, instance1SeasonMV);
 
-		final MeasurementVariable instance1MV = this.measurementVarTDI.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
-		final MeasurementData instance1MD = this.measurementDataTDI.createMeasurementData("1", instance1MV);
+		final MeasurementVariable instance1MV = this.measurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
+		final MeasurementData instance1MD = this.measurementDataTestDataInitializer.createMeasurementData("1", instance1MV);
 
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(instance1MD, instance1SeasonMD));
@@ -168,12 +175,15 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessPlotLevelDataWithSeasonVarVariable() {
-		final MeasurementVariable instance1SeasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_VAR.getId(), "");
+		final MeasurementVariable instance1SeasonMV = this.measurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.SEASON_VAR.getId(), "");
 		final MeasurementData instance1SeasonMD =
-				this.measurementDataTDI.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE, instance1SeasonMV);
+				this.measurementDataTestDataInitializer
+						.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE, instance1SeasonMV);
 
-		final MeasurementVariable instance1MV = this.measurementVarTDI.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
-		final MeasurementData instance1MD = this.measurementDataTDI.createMeasurementData("1", instance1MV);
+		final MeasurementVariable instance1MV = this.measurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
+		final MeasurementData instance1MD = this.measurementDataTestDataInitializer.createMeasurementData("1", instance1MV);
 
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(instance1MD, instance1SeasonMD));
@@ -188,13 +198,17 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessPlotLevelDataWithNumericSeasonVarVariable() {
-		final MeasurementVariable instance1SeasonMV = this.measurementVarTDI.createMeasurementVariable(TermId.SEASON_VAR.getId(), "");
-		instance1SeasonMV.setPossibleValues(Arrays.asList(this.valueReferenceTDI.createValueReference(Integer.parseInt(SEASON_CATEGORY_ID), SEASON_CATEGORY_VALUE)));
+		final MeasurementVariable instance1SeasonMV = this.measurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.SEASON_VAR.getId(), "");
+		instance1SeasonMV.setPossibleValues(Arrays.asList(this.valueReferenceTestDataInitializer
+				.createValueReference(Integer.parseInt(SEASON_CATEGORY_ID), SEASON_CATEGORY_VALUE)));
 		final MeasurementData instance1SeasonMD =
-				this.measurementDataTDI.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_ID, instance1SeasonMV);
+				this.measurementDataTestDataInitializer
+						.createMeasurementData(SeasonExpressionDataProcessorTest.SEASON_CATEGORY_ID, instance1SeasonMV);
 
-		final MeasurementVariable instance1MV = this.measurementVarTDI.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
-		final MeasurementData instance1MD = this.measurementDataTDI.createMeasurementData("1", instance1MV);
+		final MeasurementVariable instance1MV = this.measurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
+		final MeasurementData instance1MD = this.measurementDataTestDataInitializer.createMeasurementData("1", instance1MV);
 
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(instance1MD, instance1SeasonMD));
@@ -209,8 +223,9 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessPlotLevelDataWithNoSeasonVariable() {
-		final MeasurementVariable instance1MV = this.measurementVarTDI.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
-		final MeasurementData instance1MD = this.measurementDataTDI.createMeasurementData("1", instance1MV);
+		final MeasurementVariable instance1MV = this.measurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "");
+		final MeasurementData instance1MD = this.measurementDataTestDataInitializer.createMeasurementData("1", instance1MV);
 
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(instance1MD));
@@ -256,8 +271,8 @@ public class SeasonExpressionDataProcessorTest {
 	private List<ValueReference> createPossibleValues() {
 
 		List<ValueReference> possibleValues = new ArrayList<>();
-		possibleValues.add(valueReferenceTDI.createValueReference(SEASON_ID_WET, SEASON_NAME_WET, SEASON_DESCRIPTION_DRY));
-		possibleValues.add(valueReferenceTDI.createValueReference(SEASON_ID_DRY, SEASON_NAME_DRY, SEASON_DESCRIPTION_WET));
+		possibleValues.add(valueReferenceTestDataInitializer.createValueReference(SEASON_ID_WET, SEASON_NAME_WET, SEASON_DESCRIPTION_DRY));
+		possibleValues.add(valueReferenceTestDataInitializer.createValueReference(SEASON_ID_DRY, SEASON_NAME_DRY, SEASON_DESCRIPTION_WET));
 		return possibleValues;
 
 	}

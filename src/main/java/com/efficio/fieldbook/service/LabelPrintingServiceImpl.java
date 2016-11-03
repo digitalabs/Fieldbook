@@ -777,6 +777,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt(), true));
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale),
 				AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.source", null, locale),
+				AppConstants.AVAILABLE_LABEL_SEED_SOURCE.getInt(), true));
 
 		return labelFieldsList;
 	}

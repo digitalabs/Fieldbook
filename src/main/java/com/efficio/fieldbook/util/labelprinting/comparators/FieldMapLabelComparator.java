@@ -34,11 +34,12 @@ public class FieldMapLabelComparator implements Comparator<FieldMapLabel> {
 	}
 
 	private int compareTermValues(final Object term1, final Object term2) {
-		if (term1 != null && term2 != null) {
+		if (term1 != null && term2 != null && !term1.toString().isEmpty() && !term2.toString().isEmpty()) {
 			return Integer.compare(Integer.parseInt(term1.toString()), Integer.parseInt(term2.toString()));
-		} else if (term1 == null && term2 == null) {
+		} else if (term1 == null && term2 == null || (
+				term1 != null && term2 != null && term1.toString().isEmpty() && term2.toString().isEmpty())) {
 			return 0;
-		} else if (term2 == null) {
+		} else if (term2 == null || term2.toString().isEmpty()) {
 			return 1;
 		} else {
 			return -1;

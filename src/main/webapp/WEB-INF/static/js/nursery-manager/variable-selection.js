@@ -516,7 +516,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 						 '/ibpworkbench/'],
 					 function (i, v) {
 						$.ajax({
-							url: v + 'variableCache/deleteVariablesFromCache/' + variableId,
+							url: v + 'variableCache/deleteVariablesFromCache/' + variableId
+							       + '?authToken=' + authToken
+							       + '&selectedProjectId=' + selectedProjectId
+							       + '&loggedInUserId=' + loggedInUserId,
 							type: 'DELETE',
 							global: false // avoid global ajaxError
 						});

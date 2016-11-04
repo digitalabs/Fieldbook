@@ -510,17 +510,17 @@ BMS.NurseryManager.VariableSelection = (function($) {
 					 * could be a bit more tricky
 					 *
 					 */
-					var authParam =
-					   + '?authToken=' + authToken
+					var authParams =
+					   'authToken=' + authToken
 					   + '&selectedProjectId=' + selectedProjectId
 					   + '&loggedInUserId=' + loggedInUserId;
 
 					var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 					$.each(
-						['/bmsapi/' + 'ontology/' + cropName + '/variableCache/' + variableId,
-						 '/BreedingManager/' + 'variableCache/deleteVariablesFromCache/' + variableId + authParam,
-						 '/ibpworkbench/' + 'variableCache/deleteVariablesFromCache/' + variableId + authParam],
+						['/bmsapi/' + 'variableCache/' + cropName + '/' + variableId,
+						 '/BreedingManager/main/'    + 'variableCache/' + variableId + '?' + authParams,
+						 '/ibpworkbench/controller/' + 'variableCache/' + variableId + '?' + authParams],
 					 function (i, v) {
 						$.ajax({
 							url: v,

@@ -22,6 +22,8 @@ public class CSVLabelGeneratorIT extends AbstractBaseIntegrationTest{
 
     @Resource
     private CSVLabelGenerator unitUnderTest;
+    @Resource
+    private LabelPrintingUtil labelPrintingUtil;
 
     @Test
     public void testGenerationOfCsvLabels() {
@@ -84,7 +86,7 @@ public class CSVLabelGeneratorIT extends AbstractBaseIntegrationTest{
         fieldMapTrialInstanceInfo.setTrialInstanceNo("1");
 
         Map<String, String> dataResults =
-                unitUnderTest.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, barCode);
+                this.labelPrintingUtil.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, barCode);
         Assert.assertEquals("Should have the same location name", fieldMapTrialInstanceInfo.getLocationName(),
                 dataResults.get("locationName"));
         Assert.assertEquals("Should have the same Block name", fieldMapTrialInstanceInfo.getBlockName(), dataResults.get("blockName"));

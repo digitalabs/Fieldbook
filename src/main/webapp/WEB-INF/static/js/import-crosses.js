@@ -188,7 +188,8 @@ var ImportCrosses = {
 	showPlotDuplicateConfirmation: function() {
 			'use strict';
 			if (ImportCrosses.hasPlotDuplicate()) {
-				//show the confirmation now
+			/** Functionality temporarily suppress by the v4 public release.  See issue: BMS-3514 **/
+			/*	//show the confirmation now
 				$('#duplicate-crosses-modal input[type=checkbox]').prop('checked', ImportCrosses.preservePlotDuplicates);
 
 				$('#duplicate-crosses-modal').modal({ backdrop: 'static', keyboard: true });
@@ -200,6 +201,12 @@ var ImportCrosses = {
 					$('#duplicate-crosses-modal').modal('hide');
 					setTimeout(ImportCrosses.showImportSettingsPopup, 500);
 				});
+				*/
+				/** End Functionality temporarily suppress **/
+				/** Palliative for BMS-3514 **/
+				ImportCrosses.preservePlotDuplicates = true;
+				setTimeout(ImportCrosses.showImportSettingsPopup, 500);
+				/** End Palliative **/
 			} else {
 				ImportCrosses.showImportSettingsPopup();
 			}

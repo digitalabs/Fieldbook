@@ -31,7 +31,7 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.context.MessageSource;
-
+import org.apache.commons.lang3.StringUtils;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
@@ -46,6 +46,12 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 public class DesignImportServiceImpl implements DesignImportService {
 
 	private static final String ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS = "noOfAddedEnvironments";
+
+	public static final String ZERO = "0";
+
+	public static final String ENTRY_TYPE = "ENTRY_TYPE";
+
+	public static final String TEST_ENTRY = "10170";
 
 	@Resource
 	private UserSelection userSelection;
@@ -100,6 +106,17 @@ public class DesignImportServiceImpl implements DesignImportService {
 		this.createMeasurementRows(environmentData.getNoOfEnvironments(), isPreset, csvData, measurements, measurementRowGenerator,
 				additionalParams);
 
+		for(MeasurementRow measurementRow: measurements){
+			List<MeasurementData> measurementDatas =measurementRow.getDataList();
+			for (MeasurementData measurementData: measurementDatas){
+				if(DesignImportServiceImpl.ENTRY_TYPE.equals(measurementData.getLabel())){
+					String val = measurementData.getValue();
+					if(StringUtils.isEmpty(val) || DesignImportServiceImpl.ZERO.equals(val)){
+						measurementData.setValue(DesignImportServiceImpl.TEST_ENTRY);
+					}
+				}
+			}
+		}
 		// add factor data to the list of measurement row
 		measurementRowGenerator.addFactorsToMeasurementRows(measurements);
 

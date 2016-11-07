@@ -48,6 +48,7 @@ import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.inventory.LotDetails;
@@ -497,6 +498,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
+		this.userLabelPrinting.setNumberOfCopies(form.getUserLabelPrinting().getNumberOfCopies());
 
 		// add validation for the file name
 		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
@@ -521,7 +523,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		final List<StudyTrialInstanceInfo> trialInstances;
 
+		final int numberOfCopies = Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
+
 		if (fieldMapInfoList != null) {
+			//FIXME Number of copies here implement
 			trialInstances = this.generateTrialInstancesFromSelectedFieldMaps(fieldMapInfoList, form);
 		} else {
 			// initial implementation of BMS-186 will be for single studies
@@ -532,6 +537,15 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
 				final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
 				fieldMapTrialInstanceInfo.setLocationName(fieldMapTrialInstanceInfo.getSiteName());
+
+				// number of copies
+				final List<FieldMapLabel> fullTrialInstancesList = new ArrayList<>();
+				for (final FieldMapLabel fieldMapLabel : trialInstance.getTrialInstance().getFieldMapLabels()) {
+					for (int i = 0; i < numberOfCopies; i++){
+						fullTrialInstancesList.add(fieldMapLabel);
+					}
+					trialInstance.getTrialInstance().setFieldMapLabels(fullTrialInstancesList);
+				}
 			}
 		}
 

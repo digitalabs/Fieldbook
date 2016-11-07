@@ -523,10 +523,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		final List<StudyTrialInstanceInfo> trialInstances;
 
-		final int numberOfCopies = Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
+		int numberOfCopies = 1;
+		if (this.userLabelPrinting.getNumberOfCopies() != null) {
+			numberOfCopies = Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
+		}
 
 		if (fieldMapInfoList != null) {
-			//FIXME Number of copies here implement
 			trialInstances = this.generateTrialInstancesFromSelectedFieldMaps(fieldMapInfoList, form);
 		} else {
 			// initial implementation of BMS-186 will be for single studies
@@ -537,19 +539,25 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
 				final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
 				fieldMapTrialInstanceInfo.setLocationName(fieldMapTrialInstanceInfo.getSiteName());
-
-				// number of copies
-				final List<FieldMapLabel> fullTrialInstancesList = new ArrayList<>();
-				for (final FieldMapLabel fieldMapLabel : trialInstance.getTrialInstance().getFieldMapLabels()) {
-					for (int i = 0; i < numberOfCopies; i++){
-						fullTrialInstancesList.add(fieldMapLabel);
-					}
-					trialInstance.getTrialInstance().setFieldMapLabels(fullTrialInstancesList);
+				if (numberOfCopies > 1){
+					this.multiplyRecordsByNumberOfCopies(numberOfCopies, trialInstance);
 				}
+
 			}
 		}
 
 		return this.generateLabels(trialInstances, form.isCustomReport());
+	}
+
+	private void multiplyRecordsByNumberOfCopies(int numberOfCopies, StudyTrialInstanceInfo trialInstance) {
+		// number of copies
+		final List<FieldMapLabel> fullTrialInstancesList = new ArrayList<>();
+		for (final FieldMapLabel fieldMapLabel : trialInstance.getTrialInstance().getFieldMapLabels()) {
+			for (int i = 0; i < numberOfCopies; i++){
+				fullTrialInstancesList.add(fieldMapLabel);
+			}
+			trialInstance.getTrialInstance().setFieldMapLabels(fullTrialInstancesList);
+		}
 	}
 
 	/**

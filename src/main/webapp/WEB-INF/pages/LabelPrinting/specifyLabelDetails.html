@@ -397,17 +397,20 @@
                         field to get number of copies-->
                         <div class="col-xs-12 col-md-12 form-group lblprnt-study-list-details-label"
                              th:if="${labelPrintingForm.germplasmListId == null}">
-                            <div class="col-xs-3 col-md-3">
-                                <label class="control-label"><strong th:text="#{label.printing.number.of.copies.per.label}"></strong></label>
-                            </div>
-                            <div class="col-xs-8 col-md-8">
-                                <select name="label-format" id="label-study-list-copies" th:field="*{userLabelPrinting.numberOfCopies}">
-                                    <option value="1" selected="selected">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                </select>
+                            <!-- This feature of Number of Copies will not be available for fieldMap label printing-->
+                            <div th:if="*{userLabelPrinting.fieldMapInfoList == null}">
+                                <div class="col-xs-3 col-md-3">
+                                    <label class="control-label"><strong th:text="#{label.printing.number.of.copies.per.label}"></strong></label>
+                                </div>
+                                <div class="col-xs-8 col-md-8">
+                                    <select name="label-format" id="label-study-list-copies" th:field="*{userLabelPrinting.numberOfCopies}">
+                                        <option value="1" selected="selected">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>

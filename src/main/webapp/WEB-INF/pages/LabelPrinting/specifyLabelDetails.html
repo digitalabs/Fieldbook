@@ -235,7 +235,9 @@
                                     NEEDED</strong></label>
                             </div>
                         </div>
-                        <div class="form-group col-xs-12 col-md-12">
+                        <!-- We need to remove that from the DOM in case of studies, because studies use the same field to get number of
+                        copies-->
+                        <div class="form-group col-xs-12 col-md-12" th:if="${labelPrintingForm.germplasmListId != null}">
                             <div class="col-xs-6 col-md-6">
                                 <label class="control-label"><strong th:text="#{label.printing.number.of.copies.per.label}"></strong></label>
                             </div>
@@ -391,7 +393,10 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-12 form-group lblprnt-study-list-details-label">
+                        <!-- We need to remove that from the DOM in case of germplasm list label printing, because it uses the same
+                        field to get number of copies-->
+                        <div class="col-xs-12 col-md-12 form-group lblprnt-study-list-details-label"
+                             th:if="${labelPrintingForm.germplasmListId == null}">
                             <div class="col-xs-3 col-md-3">
                                 <label class="control-label"><strong th:text="#{label.printing.number.of.copies.per.label}"></strong></label>
                             </div>

@@ -602,9 +602,22 @@ public abstract class BaseTrialController extends SettingsController {
 		return output;
 	}
 
-	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final boolean isUsePrevious, final int trialID) {
+	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final List<MeasurementVariable> studyConditions,
+			final boolean isUsePrevious, final int trialID) {
 		final Map<String, String> basicDetails = new HashMap<String, String>();
 		final List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
+
+		// find out who created the study
+		// if no owner found default to the current user
+		Integer studyOwnerPersonId = this.getCurrentIbdbUserId();
+		for (final MeasurementVariable measurementVariable : studyConditions) {
+			if (measurementVariable.getTermId() == TermId.STUDY_UID.getId()) {
+				studyOwnerPersonId = Integer.parseInt(measurementVariable.getValue());
+			}
+		}
+		final String studyOwnerPersonName = this.fieldbookService.getPersonByUserId(studyOwnerPersonId);
+
+
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
@@ -646,8 +659,8 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setFolderId(folderId);
 		basic.setFolderName(folderName);
 		basic.setFolderNameLabel(folderName);
-		basic.setUserID(this.getCurrentIbdbUserId());
-		basic.setUserName(this.fieldbookService.getPersonByUserId(basic.getUserID()));
+		basic.setUserID(studyOwnerPersonId);
+		basic.setUserName(studyOwnerPersonName);
 
 		final TabInfo tab = new TabInfo();
 		tab.setData(basic);

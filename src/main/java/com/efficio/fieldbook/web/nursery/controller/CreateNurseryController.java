@@ -447,8 +447,7 @@ public class CreateNurseryController extends SettingsController {
 		form.setBaselineTraitsSegment(VariableType.TRAIT.getId().toString());
 		form.setSelectionVariatesSegment(VariableType.SELECTION_METHOD.getId().toString());
 		form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
-		form.setRequiredFields(
-				AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
+		form.setRequiredFields(AppConstants.FIXED_NURSERY_VARIABLES.getString());
 		form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
 
 		try {

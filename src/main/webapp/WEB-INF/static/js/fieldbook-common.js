@@ -4,15 +4,17 @@ $(function() {
 	'use strict';
 
 	// attach spinner operations to ajax events
-	//TODO Review the usage of that Spinner, there should not be global spinners in the ajax apps
+	// TODO Review the usage of that Spinner, there should not be global spinners in the ajax apps
 	$(document).ajaxStart(function() {
 		SpinnerManager.addActive();
 	}).ajaxStop(function() {
 		SpinnerManager.resolveActive();
 	}).ajaxError(function(xhr, error) {
-		//TODO find out why do we do that here and ==
+		// TODO find out why do we do that here and ==
 		if (error.status == 500) {
 			showErrorMessage('', ajaxGenericErrorMsg);
+		} else if (error.status == 401) {
+			bmsAuth.handleReAuthentication();
 		} else {
 			showErrorMessage('INVALID INPUT', error.responseText);
 		}

@@ -527,8 +527,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 							type: 'DELETE',
 							beforeSend: function(xhr) {
 								xhr.setRequestHeader('X-Auth-Token', xAuthToken);
-							},
-							global: false // avoid global ajaxError
+							}
 						});
 					 });
 

@@ -138,6 +138,7 @@ var ImportCrosses = {
 		$(hiddenModalSelector).modal('hide');
 		$(shownModalSelector).one('shown.bs.modal', function() {
 			$('body').addClass('modal-open');
+			$(shownModalSelector).addClass('remove-excess-padding');
 		}).modal({ backdrop: 'static', keyboard: true });
 	},
 

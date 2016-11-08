@@ -611,7 +611,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * @param germplasmListDataList list of germplasms
 	 * @return a list with existing saved seed reservations
 	 */
-	private List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {
+	List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {
 		final List<GermplasmListData> germplasmListDataListWithReservations = new ArrayList<>();
 		for (final GermplasmListData germplasmListData : germplasmListDataList) {
 			if (germplasmListData.getInventoryInfo() != null && germplasmListData.getInventoryInfo().getLotRows() != null) {

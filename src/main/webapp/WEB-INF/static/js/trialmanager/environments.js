@@ -9,6 +9,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService',
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService) {
 
+			// preload the measurements tab, if the measurements tab is not yet loaded 
+			// to make sure deleting environments will still works
+		    // since environments are directly correlated to their measurement rows
+			if (!angular.element('#measurementsDiv').length) {
+				$scope.loadMeasurementsTabInBackground();
+			}	
+
 			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
 			var populateDatatableWithDefaultValues = function() {
 				$scope.data = TrialManagerDataService.currentData.environments;

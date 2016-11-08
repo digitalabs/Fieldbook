@@ -49,6 +49,7 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.inventory.GermplasmInventory;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.inventory.LotDetails;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -615,8 +616,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		for (final GermplasmListData germplasmListData : germplasmListDataList) {
 			if (germplasmListData.getInventoryInfo() != null && germplasmListData.getInventoryInfo().getLotRows() != null) {
 				for (final LotDetails lotDetails : germplasmListData.getInventoryInfo().getLotRows()) {
-					// We have reservations if withdrawal balance is more than 0
-					if (lotDetails.getWithdrawalBalance() > 0 ) {
+					// We have reservations if withdrawal balance is more than 0 and status "Reserved"
+					if (lotDetails.getWithdrawalBalance() > 0 &&
+							lotDetails.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) {
 						germplasmListDataListWithReservations.add(germplasmListData);
 					}
 				}

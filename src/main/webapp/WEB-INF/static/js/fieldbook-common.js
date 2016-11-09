@@ -13,8 +13,6 @@ $(function() {
 		// TODO find out why do we do that here and ==
 		if (error.status == 500) {
 			showErrorMessage('', ajaxGenericErrorMsg);
-		} else if (error.status == 401) {
-			bmsAuth.handleReAuthentication();
 		} else {
 			showErrorMessage('INVALID INPUT', error.responseText);
 		}

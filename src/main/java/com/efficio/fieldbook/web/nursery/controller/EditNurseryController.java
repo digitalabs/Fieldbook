@@ -825,6 +825,11 @@ public class EditNurseryController extends SettingsController {
 		return this.contextUtil.getContextInfoFromSession();
 	}
 
+	@ModelAttribute("cropName")
+	public String getCropName() {
+		return this.contextUtil.getProjectInContext().getCropType().getCropName();
+	}
+
 	@ModelAttribute("programLocationURL")
 	public String getProgramLocation() {
 		return this.fieldbookProperties.getProgramLocationsUrl();

@@ -500,7 +500,9 @@ public class CrossingServiceImpl implements CrossingService {
 
 	protected String buildDesignationNameInSequence(final ImportedCrosses importedCrosses, final Integer number, final CrossSetting setting) {
 		final CrossNameSetting nameSetting = setting.getCrossNameSetting();
-		final Pattern pattern = Pattern.compile(ExpressionHelper.PROCESS_CODE_PATTERN);
+		final Pattern processCodePattern = Pattern.compile(ExpressionHelper.PROCESS_CODE_PATTERN);
+		final Pattern processCodePatternWithAlphabetPrefix = Pattern.compile(ExpressionHelper.PROCESS_CODE_PATTERN_WITH_AN_ALPHABET_CHARACTER_PREFIX);
+
 		final StringBuilder sb = new StringBuilder();
 		final String uDSuffix = nameSetting.getSuffix();
 		sb.append(this.buildPrefixString(nameSetting));
@@ -514,14 +516,21 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 
 		if (!StringUtils.isEmpty(nameSetting.getSuffix())) {
-			String suffix = nameSetting.getSuffix().trim();
-			final Matcher matcher = pattern.matcher(suffix);
 
-			if (matcher.find()) {
-				suffix = this.evaluateSuffixProcessCode(importedCrosses, setting, matcher.group());
+			String suffix = nameSetting.getSuffix().trim();
+			String processCodePrefix = "";
+			final Matcher matcherProcessCode = processCodePattern.matcher(suffix);
+			final Matcher matcherProcessCodeAlphabetPrefix = processCodePatternWithAlphabetPrefix.matcher(suffix);
+
+			if (matcherProcessCode.find()) {
+				suffix = this.evaluateSuffixProcessCode(importedCrosses, setting, matcherProcessCode.group());
+			}
+			if (matcherProcessCodeAlphabetPrefix.find()) {
+				int processCodePrefixGroupNameIndex = 1;
+				processCodePrefix = matcherProcessCodeAlphabetPrefix.group(processCodePrefixGroupNameIndex);
 			}
 
-			sb.append(this.buildSuffixString(nameSetting, suffix));
+			sb.append(processCodePrefix + this.buildSuffixString(nameSetting, suffix));
 		}
 		nameSetting.setSuffix(uDSuffix);
 		return sb.toString();

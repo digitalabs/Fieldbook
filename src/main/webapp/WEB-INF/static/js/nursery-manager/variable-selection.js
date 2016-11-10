@@ -501,6 +501,42 @@ BMS.NurseryManager.VariableSelection = (function($) {
 					.possibleValues.length === 0) {
 						showAlertMessage('', variableNoValidValueNotification);
 					}
+
+					/**
+					 * Remove variable from VariableCache
+					 * across all BMS applications
+					 * It's straightforward to do this here
+					 * while doing it at the moment of saving
+					 * could be a bit more tricky
+					 *
+					 */
+					var authParams =
+					   'authToken=' + authToken
+					   + '&selectedProjectId=' + selectedProjectId
+					   + '&loggedInUserId=' + loggedInUserId;
+
+					var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+
+					$.each(
+						['/bmsapi/' + 'variableCache/' + cropName + '/' + variableId,
+						 '/BreedingManager/main/'    + 'variableCache/' + variableId + '?' + authParams,
+						 '/ibpworkbench/controller/' + 'variableCache/' + variableId + '?' + authParams],
+					 function (i, v) {
+						$.ajax({
+							url: v,
+							type: 'DELETE',
+							beforeSend: function(xhr) {
+								xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+							},
+							error: function(jqxhr, textStatus, error) {
+								if (jqxhr.status == 401) {
+									bmsAuth.handleReAuthentication();
+								}
+							}
+						});
+					 });
+
+
 				}, this),
 				error: function(jqxhr, textStatus, error) {
 

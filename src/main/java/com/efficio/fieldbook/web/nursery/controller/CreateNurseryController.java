@@ -537,7 +537,7 @@ public class CreateNurseryController extends SettingsController {
 
 				final List<TraitClassReference> traitRefList = this.userSelection.getTraitRefList();
 
-				// we convert it to map so that it would be easier to chekc if there is a record or not
+				// we convert it to map so that it would be easier to check if there is a record or not
 				final HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
 				if (standardVariableList != null && !standardVariableList.isEmpty()) {
 					for (final StandardVariableReference varRef : standardVariableList) {

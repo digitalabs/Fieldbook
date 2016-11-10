@@ -684,7 +684,7 @@
                                                         choose
                                                     </option>
                                                     <option th:each="fields: ${availableFields}" th:text="${fields.name}"
-                                                            th:value="${fields.id}">8
+                                                            th:value="${fields.id}">
                                                     </option>
                                                 </select>
                                             </div>
@@ -727,50 +727,50 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row save-label-settings">
-                        <br/>
-                        <div class="col-xs-12 col-md-12">
-                            <div class="form-group">
-                                <div class="col-xs-12 col-md-12">
+                    <div class="row">
+                        <div class="label-filename col-xs-6 col-md-6">
+                            <br/>
+                            <div class="col-xs-12 col-md-12">
+                                <div class="form-group">
                                     <label class="control-label"><strong class="sub-content-heading"
-                                                                         th:text="#{label.printing.save.label.settings}"></strong></label>
+                                                                         th:text="#{label.printing.set.the.filename}"></strong></label>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-12 nopadding-right">
+                                <div class="form-group">
+                                    <div class="pull-left">
+                                        <label class="control-label label-bold add_top_padding"
+                                               th:text="#{label.printing.filename}+':'"></label><span class="required">*</span>
+                                    </div>
+                                    <div class="pull-left" style="width: 300px; padding-left: 10px">
+                                        <input type="text" class="form-control" th:field="*{userLabelPrinting.filename}"
+                                               placeholder="Filename"/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-12">
-                            <div class="form-group">
-                                <div style="padding-right: 0px" class="col-xs-12 col-md-12">
+                        <div class="save-label-settings col-xs-6 col-md-6">
+                            <br/>
+                            <div class="col-xs-12 col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        <strong class="sub-content-heading"
+                                                th:text="#{label.printing.save.label.settings}"></strong></label>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-12 nopadding-right">
+                                <label class="control-label " th:text="#{label.printing.choose.preset.text}"></label>
+                            </div>
+                            <div class="col-xs-12 col-md-12  nopadding-right">
+                                <div class="form-group">
                                     <div class="pull-left ">
                                         <label class="control-label label-bold add_top_padding"
                                                th:text="#{label.printing.save.label.settings.name.note}"></label>
                                     </div>
                                     <div class="pull-left" style="width: 300px; padding-left: 10px">
                                         <input type="text" class="form-control" th:field="*{userLabelPrinting.settingsName}"
-                                               placeholder="Settings Name"/>
+                                               th:placeholder="${labelPrintingForm.germplasmListId != null} ? 'Seed Shipment Labels' : 'Settings Name'"/>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row label-filename">
-                        <br/>
-                        <div class="col-xs-12 col-md-12">
-                            <div class="form-group">
-                                <div class="col-xs-12 col-md-12">
-                                    <label class="control-label"><strong class="sub-content-heading"
-                                                                         th:text="#{label.printing.set.the.filename}"></strong></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-12">
-                            <div class="form-group">
-                                <div style="padding-right: 0px" class="col-xs-1 col-md-1">
-                                    <label class="control-label label-bold add_top_padding"
-                                           th:text="#{label.printing.filename}+':'"></label><span class="required">*</span>
-                                </div>
-                                <div class="col-xs-5 col-md-5">
-                                    <input type="text" class="form-control" th:field="*{userLabelPrinting.filename}"
-                                           placeholder="Filename"/>
                                 </div>
                             </div>
                         </div>

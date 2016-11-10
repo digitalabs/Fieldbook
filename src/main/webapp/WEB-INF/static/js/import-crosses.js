@@ -138,6 +138,9 @@ var ImportCrosses = {
 		$(hiddenModalSelector).modal('hide');
 		$(shownModalSelector).one('shown.bs.modal', function() {
 			$('body').addClass('modal-open');
+			// The bootstrap modal intermittently adds extra padding from the left that makes the layout of dialog content inconsistent when loading.
+			// We add this line to prevent that inconsistency with padding.
+			$(shownModalSelector).addClass('remove-excess-padding');
 		}).modal({ backdrop: 'static', keyboard: true });
 	},
 

@@ -185,7 +185,7 @@ public class LabelPrintingServiceTest {
 	}
 
 	@Test
-	public void testGetAvaiableFieldsForCrossStockList() {
+	public void testGetAvailableFieldsForCrossStockList() {
 		final List<LabelFields> nurserySettingLabels = this.createDummyNurseryManagementLabels();
 		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
 
@@ -204,6 +204,7 @@ public class LabelPrintingServiceTest {
 		this.verifyLabelByTermID(TermId.DUPLICATE.getId(), retrieved);
 		this.verifyLabelByTermID(TermId.BULK_WITH.getId(), retrieved);
 		this.verifyLabelByTermID(TermId.BULK_COMPL.getId(), retrieved);
+		this.verifyLabelByTermID(TermId.PLOT_NO.getId(), retrieved);
 	}
 
 	protected void verifyFieldMapLabelsPresent(final List<LabelFields> forVerification) {

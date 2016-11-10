@@ -804,13 +804,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	public LabelPrintingSetting getLabelPrintingSetting(@PathVariable final int presetType, @PathVariable final int presetId,
 			final HttpServletRequest request) {
 		try {
-			final Unmarshaller parseXML = JAXBContext.newInstance(LabelPrintingSetting.class).createUnmarshaller();
-
-			// retrieve appropriate setting
-			final String xmlToRead = this.labelPrintingService.getLabelPrintingPresetConfig(presetId, presetType);
-
-			return (LabelPrintingSetting) parseXML.unmarshal(new StringReader(xmlToRead));
-
+			return this.getLabelPrintingSetting(presetType, presetId);
 		} catch (final JAXBException e) {
 			LabelPrintingController.LOG.error(this.messageSource.getMessage("label.printing.error.parsing.preset.xml", new String[] {},
 					LocaleContextHolder.getLocale()), e);
@@ -823,6 +817,15 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		}
 
 		return new LabelPrintingSetting();
+	}
+
+	private LabelPrintingSetting getLabelPrintingSetting(final int presetType, final int presetId) throws JAXBException, LabelPrintingException {
+		final Unmarshaller parseXML = JAXBContext.newInstance(LabelPrintingSetting.class).createUnmarshaller();
+
+		// retrieve appropriate setting
+		final String xmlToRead = this.labelPrintingService.getLabelPrintingPresetConfig(presetId, presetType);
+
+		return (LabelPrintingSetting) parseXML.unmarshal(new StringReader(xmlToRead));
 	}
 
 	/**
@@ -910,8 +913,13 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/presets/isModified/{presetType}/{presetId}", method = RequestMethod.POST)
 	public Boolean isLabelPrintingIsModified(@ModelAttribute("labelPrintingForm") final LabelPrintingForm labelPrintingPresetSetting,
 			@PathVariable final Integer presetType, @PathVariable final Integer presetId, final HttpServletRequest request) {
-		final LabelPrintingSetting lbSetting = this.getLabelPrintingSetting(presetType, presetId, request);
-		LabelPrintingSetting modifiedSetting;
+		final LabelPrintingSetting lbSetting;
+		try {
+			lbSetting = this.getLabelPrintingSetting(presetType, presetId);
+		} catch (JAXBException | LabelPrintingException e) {
+			return true;
+		}
+		final LabelPrintingSetting modifiedSetting;
 		final Unmarshaller parseXML;
 		try {
 

@@ -2075,3 +2075,7 @@ input.select-all-margin{
 .lblprnt-label-details hr {
 	margin: 0;
 }
+
+.remove-excess-padding[style] {
+    padding-left:0 !important;
+}

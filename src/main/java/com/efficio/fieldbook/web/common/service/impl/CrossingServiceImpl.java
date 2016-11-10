@@ -279,6 +279,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 		final List<Name> parentageDesignationNames = new ArrayList<Name>();
 		final Iterator<Integer> germplasmIdIterator = germplasmIDs.iterator();
+		final Integer nstatValue = crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString() ? 0 : PREFERRED_NAME;
 
 		for (final ImportedCrosses entry : importedCrossesList.getImportedCrosses()) {
 
@@ -292,7 +293,7 @@ public class CrossingServiceImpl implements CrossingService {
 			parentageDesignationName.setTypeId(PEDIGREE_NAME_TYPE);
 			parentageDesignationName.setUserId(this.contextUtil.getCurrentUserLocalId());
 			parentageDesignationName.setNval(parentageDesignation);
-			parentageDesignationName.setNstat(PREFERRED_NAME);
+			parentageDesignationName.setNstat(nstatValue);
 			parentageDesignationName.setLocationId(locationId);
 			parentageDesignationName.setNdate(Util.getCurrentDateAsIntegerValue());
 			parentageDesignationName.setReferenceId(0);

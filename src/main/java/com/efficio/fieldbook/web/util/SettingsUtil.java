@@ -1888,8 +1888,8 @@ public class SettingsUtil {
 			stdVar = varCache.get(data.getMeasurementVariable().getTermId());
 			if (stdVar != null) {
 				if (stdVar.getId() != TermId.BREEDING_METHOD_VARIATE.getId()
-						&& stdVar.getProperty().getId() == TermId.BREEDING_METHOD_PROP.getId() && isResetAll || !isResetAll
-						&& stdVar.getId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
+						&& stdVar.getProperty().getId() == TermId.BREEDING_METHOD_PROP.getId() && isResetAll
+						|| !isResetAll && stdVar.getId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
 					indices.add(index);
 				}
 			}
@@ -2060,28 +2060,37 @@ public class SettingsUtil {
 	}
 
 	/**
+<<<<<<< HEAD
+	 * Removes the setting details from the list if its tem id is in the given bariable ids
+=======
 	 * Removes the basic details variables.
+>>>>>>> master
 	 *
 	 * @param nurseryLevelConditions the nursery level conditions
+	 * @param variableIds the ids of the variables to be removed from the list
 	 */
-	public static void removeBasicDetailsVariables(final List<SettingDetail> nurseryLevelConditions) {
+	public static void removeBasicDetailsVariables(final List<SettingDetail> nurseryLevelConditions, final String variableIds) {
 		final Iterator<SettingDetail> iter = nurseryLevelConditions.iterator();
 		while (iter.hasNext()) {
-			if (SettingsUtil.inFixedNurseryList(iter.next().getVariable().getCvTermId())) {
+			if (SettingsUtil.inVariableIds(iter.next().getVariable().getCvTermId(), variableIds)) {
 				iter.remove();
 			}
 		}
 	}
 
 	/**
+<<<<<<< HEAD
+	 * Check if the property id is in the given variable ids
+=======
 	 * In fixed nursery list.
+>>>>>>> master
 	 *
 	 * @param propertyId the property id
-	 * @return true, if successful
+	 * @param variableIds the ids of the variables to be removed from the list
+	 * @return true if the property id is included in the variable ids
 	 */
-	protected static boolean inFixedNurseryList(final int propertyId) {
-		final StringTokenizer token =
-				new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString(), ",");
+	protected static boolean inVariableIds(final int propertyId, final String variableIds) {
+		final StringTokenizer token = new StringTokenizer(variableIds, ",");
 		while (token.hasMoreTokens()) {
 			if (Integer.parseInt(token.nextToken()) == propertyId) {
 				return true;

@@ -119,6 +119,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				// update the location flag, as it could have been deleted
 				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			});
+			
+			$scope.$on('reloadEnvironmentTable', function(event, args) {
+				$scope.nested.dtInstance.rerender();
+			});
 
 			$scope.initiateManageLocationModal = function() {
 				//TODO $scope.variableDefinition.locationUpdated = false;

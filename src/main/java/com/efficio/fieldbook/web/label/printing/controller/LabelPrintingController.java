@@ -616,9 +616,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		for (final GermplasmListData germplasmListData : germplasmListDataList) {
 			if (germplasmListData.getInventoryInfo() != null && germplasmListData.getInventoryInfo().getLotRows() != null) {
 				for (final LotDetails lotDetails : germplasmListData.getInventoryInfo().getLotRows()) {
-					// We have reservations if withdrawal balance is more than 0 and status "Reserved"
-					if (lotDetails.getWithdrawalBalance() > 0 &&
-							lotDetails.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) {
+					// We have reservations if withdrawal status is "Reserved"
+					if (lotDetails.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) {
 						germplasmListDataListWithReservations.add(germplasmListData);
 					}
 				}

@@ -518,7 +518,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 					var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 					$.each(
-						['/bmsapi/' + 'variableCache/' + cropName + '/' + variableId,
+						['/bmsapi/' + 'variableCache/' + cropName + '/' + variableId + '?programId=' + currentProgramId,
 						 '/BreedingManager/main/'    + 'variableCache/' + variableId + '?' + authParams,
 						 '/ibpworkbench/controller/' + 'variableCache/' + variableId + '?' + authParams],
 					 function (i, v) {

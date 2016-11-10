@@ -191,6 +191,11 @@ public class CreateTrialController extends BaseTrialController {
 		return this.contextUtil.getProjectInContext().getCropType().getCropName();
 	}
 
+	@ModelAttribute("currentProgramId")
+	public String getCurrentProgramId() {
+		return this.contextUtil.getProjectInContext().getUniqueID();
+	}
+
 	@ModelAttribute("trialEnvironmentHiddenFields")
 	public List<Integer> getTrialEnvironmentHiddenFields() {
 		return this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());

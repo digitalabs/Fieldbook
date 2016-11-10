@@ -113,6 +113,11 @@ public class OpenTrialController extends BaseTrialController {
 		return this.contextUtil.getProjectInContext().getCropType().getCropName();
 	}
 
+	@ModelAttribute("currentProgramId")
+	public String getCurrentProgramId() {
+		return this.contextUtil.getProjectInContext().getUniqueID();
+	}
+
 	@ModelAttribute("programMethodURL")
 	public String getProgramMethod() {
 		return this.fieldbookProperties.getProgramBreedingMethodsUrl();

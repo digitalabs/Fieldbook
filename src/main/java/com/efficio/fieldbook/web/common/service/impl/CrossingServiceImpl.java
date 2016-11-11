@@ -535,7 +535,7 @@ public class CrossingServiceImpl implements CrossingService {
 			if (matcherProcessCode.find()) {
 				suffix = this.evaluateSuffixProcessCode(importedCrosses, setting, matcherProcessCode.group());
 			}
-			if (matcherProcessCodeAlphabetPrefix.find()) {
+			if (!StringUtils.isEmpty(suffix) && matcherProcessCodeAlphabetPrefix.find()) {
 				final int processCodePrefixGroupNameIndex = 1;
 				processCodePrefix = matcherProcessCodeAlphabetPrefix.group(processCodePrefixGroupNameIndex);
 			}

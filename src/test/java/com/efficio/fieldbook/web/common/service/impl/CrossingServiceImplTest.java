@@ -405,7 +405,29 @@ public class CrossingServiceImplTest {
 
 		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses, sequenceNumber, crossSetting);
 
-		Assert.assertEquals(sequenceNumber + TEST_PROCESS_CODE_PREFIX +  resolvedSuffixString, designationName);
+		Assert.assertEquals("The designation name should contain the process code prefix if there's a resolved suffix string.", sequenceNumber + TEST_PROCESS_CODE_PREFIX +  resolvedSuffixString, designationName);
+	}
+
+	@Test
+	public void testBuildDesignationNameInSequenceMethodSuffixIsAvailableAndHasAlphabetPrefixResolvedSuffixIsEmpty() throws RuleException {
+
+		final String resolvedSuffixString = "";
+		final int sequenceNumber = 1;
+
+		final Method breedingMethod = new Method(TEST_BREEDING_METHOD_ID);
+		breedingMethod.setSuffix(TEST_PROCESS_CODE_PREFIX + TEST_PROCESS_CODE);
+
+		Mockito.when(this.germplasmDataManager.getMethodByCode(TEST_BREEDING_METHOD_CODE)).thenReturn(breedingMethod);
+		Mockito.when(this.processCodeOrderedRule.runRule(Mockito.any(RuleExecutionContext.class))).thenReturn(resolvedSuffixString);
+
+		final CrossSetting crossSetting = new CrossSetting();
+		crossSetting.setCrossNameSetting(new CrossNameSetting());
+		final ImportedCrosses importedCrosses = new ImportedCrosses();
+		importedCrosses.setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
+
+		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses, sequenceNumber, crossSetting);
+
+		Assert.assertEquals("The designation name should not contain the process code prefix if the resolved suffix string is empty.", sequenceNumber + resolvedSuffixString, designationName);
 	}
 
 	@Test

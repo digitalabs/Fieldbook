@@ -118,10 +118,29 @@ public class CrossingServiceImpl implements CrossingService {
 	public void applyCrossSettingWithNamingRules(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final Integer userId, final Workbook workbook) {
 
+		// apply the source and designation string here, before we save germplasm if there is no existing source
+		this.applyNamingRulesForSeedSourceAndDesignationName(crossSetting, importedCrossesList, workbook);
+
+		final List<Pair<Germplasm, Name>> germplasmPairs =
+				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
+						importedCrossesList.hasPlotDuplicate());
+
+		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
+		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
+
+		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmPairs, crossingNameTypeId);
+
+		this.verifyGermplasmMethodPresent(germplasmList);
+		this.save(crossSetting, importedCrossesList, germplasmPairs);
+	}
+
+
+	void applyNamingRulesForSeedSourceAndDesignationName(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+			final Workbook workbook) {
 
 		Integer nextNumberInSequence = this.getNextNumberInSequence(crossSetting.getCrossNameSetting());
 		int entryIdCounter = 1;
-		// apply the source string and designation here, before we save germplasm if there is no existing source
+
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
 
 			String malePlotNo = "";
@@ -148,23 +167,13 @@ public class CrossingServiceImpl implements CrossingService {
 			final String generatedSource =
 					this.seedSourceGenerator.generateSeedSourceForCross(workbook, malePlotNo, femalePlotNo, workbook.getStudyName(),
 							workbook.getStudyName());
+
 			importedCross.setSource(generatedSource);
 			importedCross.setEntryId(entryIdCounter);
 			importedCross.setEntryCode(String.valueOf(entryIdCounter++));
 			importedCross.setDesig(this.buildDesignationNameInSequence(importedCross, nextNumberInSequence++, crossSetting));
 		}
 
-		final List<Pair<Germplasm, Name>> germplasmPairs =
-				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
-						importedCrossesList.hasPlotDuplicate());
-
-		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
-		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
-
-		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmPairs, crossingNameTypeId);
-
-		this.verifyGermplasmMethodPresent(germplasmList);
-		this.save(crossSetting, importedCrossesList, germplasmPairs);
 	}
 
 	/**

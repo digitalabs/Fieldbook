@@ -370,7 +370,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 					}
 				} else if (targetState === 'environment'){
 					// reload environment table to make sure that the header always has proper layout
-					$rootScope.$broadcast('reloadEnvironmentTable');
+					$rootScope.$broadcast('rerenderEnvironmentTable');
 				}
 
 				if (targetState === 'createMeasurements' || targetState === 'editMeasurements') {

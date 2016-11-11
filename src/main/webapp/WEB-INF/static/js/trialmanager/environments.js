@@ -120,7 +120,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			});
 			
-			$scope.$on('reloadEnvironmentTable', function(event, args) {
+			$scope.$on('rerenderEnvironmentTable', function(event, args) {
 				$scope.nested.dtInstance.rerender();
 			});
 

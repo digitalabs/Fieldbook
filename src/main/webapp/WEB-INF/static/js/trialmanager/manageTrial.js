@@ -119,7 +119,6 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				$rootScope.stateSuccessfullyLoaded = {};
 				$rootScope.$on('$stateChangeSuccess',
 					function(event, toState, toParams, fromState, fromParams) {
-						console.log("$stateChangeSuccess for toState = " + toState.name);
 						$rootScope.stateSuccessfullyLoaded[toState.name] = true;
 					});
 

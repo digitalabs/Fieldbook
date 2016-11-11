@@ -49,6 +49,7 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.inventory.GermplasmInventory;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.inventory.LotDetails;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -610,13 +611,13 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * @param germplasmListDataList list of germplasms
 	 * @return a list with existing saved seed reservations
 	 */
-	private List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {
+	List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {
 		final List<GermplasmListData> germplasmListDataListWithReservations = new ArrayList<>();
 		for (final GermplasmListData germplasmListData : germplasmListDataList) {
 			if (germplasmListData.getInventoryInfo() != null && germplasmListData.getInventoryInfo().getLotRows() != null) {
 				for (final LotDetails lotDetails : germplasmListData.getInventoryInfo().getLotRows()) {
-					// We have reservations if withdrawal balance is more than 0
-					if (lotDetails.getWithdrawalBalance() > 0 ) {
+					// We have reservations if withdrawal status is "Reserved"
+					if (lotDetails.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) {
 						germplasmListDataListWithReservations.add(germplasmListData);
 					}
 				}

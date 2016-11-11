@@ -284,6 +284,12 @@ var selectionDetailsType = /*[[${selectionVariatesSegment}]]*/ 1807;
 var nurseryConditionsType = /*[[${nurseryConditionsType}]]*/ 1803;
 /* jshint ignore:end */
 
+var loggedInUserId = /*[[${contextInfo.loggedInUserId}]]*/ '',
+    authToken = /*[[${contextInfo.authToken}]]*/ '',
+    selectedProjectId = /*[[${contextInfo.selectedProjectId}]]*/ '',
+    currentProgramId = /*[[${currentProgramId}]]*/ '',
+    cropName = /*[[${cropName}]]*/ '';
+
 /*globals Spinner, submitGermplasmAndCheck, loadNurserySettingsForCreate, validateCreateNursery*/
 /*globals validateStartEndDate, changeBuildOption, getJquerySafeId*/
 /*exported submitCreateWorkbook, submitCreateForm*/
@@ -342,12 +348,7 @@ $(document).ready(function() {
 	$('body').on('DO_AUTO_SAVE', function() {
 		submitCreateForm();
 	});
-	// we check greater than 1 since theres a 'please choose' option
-	// FIXME: this is a strange solution to perform a click in code on document.ready
-	// We need to find out why it is needed and fix it properly
-	if ($.parseJSON($('#possibleValuesFavoriteJson0').text()).length > 1) {
-		$('.study-level-method-checkbox').click();
-	}
+
 	$('body').data('doAutoSave', '0');
 
 	if ($('#experimentTypeId').val() !== '') {

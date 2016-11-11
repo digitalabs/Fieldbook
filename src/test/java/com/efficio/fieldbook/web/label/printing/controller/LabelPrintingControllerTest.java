@@ -27,7 +27,13 @@ import javax.servlet.http.HttpSession;
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.FieldMapInfoTestDataInitializer;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.inventory.GermplasmInventory;
+import org.generationcp.middleware.domain.inventory.ListDataInventory;
+import org.generationcp.middleware.domain.inventory.LotDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -349,5 +355,69 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
 		final String responseEntityFileName = reponseEntity.getBody().getFilename();
 		Assert.assertEquals("The file name should be " + filenameWithExtension, filenameWithExtension, responseEntityFileName);
+	}
+
+	@Test
+	public void testGetGermplasmListDataListWithExistingReservations() {
+		final List<GermplasmListData> dataToTest = new ArrayList<>();
+
+		final GermplasmList germplasmList = getTestGermplasmList();
+
+		final GermplasmListData listEntry1 = getTestGermplasmListData(germplasmList, 1, 665036, "", 0.0);
+		dataToTest.add(listEntry1);
+		final GermplasmListData listEntry2 = getTestGermplasmListData(germplasmList, 2, 665037, "", 0.0);
+		dataToTest.add(listEntry2);
+		final GermplasmListData listEntry3 = getTestGermplasmListData(germplasmList, 3, 665036, GermplasmInventory.RESERVED, 1.0);
+		dataToTest.add(listEntry3);
+		final GermplasmListData listEntry4 = getTestGermplasmListData(germplasmList, 4, 665037, GermplasmInventory.WITHDRAWN, 1.0);
+		dataToTest.add(listEntry4);
+
+		Assert.assertEquals(1, this.labelPrintingController.getGermplasmListDataListWithExistingReservations(dataToTest).size());
+	}
+
+	private GermplasmListData getTestGermplasmListData(final GermplasmList germplasmList, final Integer listDataId, final Integer gid,
+			final String withdrawalStatus, final Double withdrawalBalance) {
+		final GermplasmListData listEntry = new GermplasmListData();
+		listEntry.setId(listDataId);
+		listEntry.setList(germplasmList);
+		listEntry.setDesignation("Designation " + listDataId);
+		listEntry.setEntryCode("EntryCode " + listDataId);
+		listEntry.setEntryId(listDataId);
+		listEntry.setGroupName("GroupName " + listDataId);
+		listEntry.setStatus(listDataId);
+		listEntry.setSeedSource("SeedSource " + listDataId);
+		listEntry.setGid(gid);
+		// Default MGID(GROUP ID) is 0
+		listEntry.setMgid(0);
+
+		final ListDataInventory listDataInventory = new ListDataInventory(listDataId, gid);
+		listDataInventory.setLotCount(0);
+		listDataInventory.setActualInventoryLotCount(0);
+
+		final ArrayList<LotDetails> lotRows = new ArrayList<>();
+		final LotDetails lotDetails = new LotDetails();
+		lotDetails.setWithdrawalBalance(withdrawalBalance);
+		lotDetails.setWithdrawalStatus(withdrawalStatus);
+		lotRows.add(lotDetails);
+
+		listDataInventory.setLotRows(lotRows);
+		listDataInventory.setReservedLotCount(0);
+		listDataInventory.setStockIDs("SID:" + listDataId);
+
+		listEntry.setInventoryInfo(listDataInventory);
+		return listEntry;
+	}
+
+	private GermplasmList getTestGermplasmList() {
+		final GermplasmList germplasmList = new GermplasmList();
+		germplasmList.setId(5578);
+		germplasmList.setName("List " + 5578);
+		germplasmList.setDescription("List " + 5578 + " Description");
+		germplasmList.setDate(20150101L);
+		germplasmList.setUserId(1);
+		germplasmList.setType(GermplasmListType.LST.name());
+		germplasmList.setStatus(1);
+		germplasmList.setNotes("Some notes here");
+		return germplasmList;
 	}
 }

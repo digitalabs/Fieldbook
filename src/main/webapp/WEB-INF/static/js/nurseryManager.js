@@ -403,9 +403,6 @@ function getLastRowIndex(name, hasTBody) {
 function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 		posValSuffix) {
 	var ctr = $('.' + rowClass).length;
-	if (name === 'studyLevelVariables') {
-		ctr++;
-	}
 
 	$.each(
 	data,

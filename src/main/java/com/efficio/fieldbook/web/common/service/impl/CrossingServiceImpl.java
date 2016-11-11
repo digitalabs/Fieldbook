@@ -536,7 +536,7 @@ public class CrossingServiceImpl implements CrossingService {
 				suffix = this.evaluateSuffixProcessCode(importedCrosses, setting, matcherProcessCode.group());
 			}
 			if (matcherProcessCodeAlphabetPrefix.find()) {
-				int processCodePrefixGroupNameIndex = 1;
+				final int processCodePrefixGroupNameIndex = 1;
 				processCodePrefix = matcherProcessCodeAlphabetPrefix.group(processCodePrefixGroupNameIndex);
 			}
 
@@ -614,10 +614,10 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList) {
+	public void processCrossBreedingMethod(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
 		final BreedingMethodSetting methodSetting = crossSetting.getBreedingMethodSetting();
 
-		for (ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
+		for (final ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
 			// if imported cross contains raw breeding method code we use that to populate the breeding method
 			if (!StringUtils.isEmpty(importedCrosses.getRawBreedingMethod())) {
 				final Method breedingMethod = this.germplasmDataManager.getMethodByCode(importedCrosses.getRawBreedingMethod());
@@ -641,8 +641,8 @@ public class CrossingServiceImpl implements CrossingService {
 				final Integer femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
 				final Integer maleGid = Integer.parseInt(importedCrosses.getMaleGid());
 
-				Triple<Germplasm, Germplasm, Germplasm> femaleLine = retrieveParentGermplasmObjects(femaleGid);
-				Triple<Germplasm, Germplasm, Germplasm> maleLine = retrieveParentGermplasmObjects(maleGid);
+				final Triple<Germplasm, Germplasm, Germplasm> femaleLine = retrieveParentGermplasmObjects(femaleGid);
+				final Triple<Germplasm, Germplasm, Germplasm> maleLine = retrieveParentGermplasmObjects(maleGid);
 
 				importedCrosses.setBreedingMethodId(CrossingUtil.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(),
 						maleLine.getLeft(), femaleLine.getMiddle(), femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));

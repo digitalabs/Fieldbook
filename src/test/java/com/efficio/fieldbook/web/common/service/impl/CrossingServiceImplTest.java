@@ -246,7 +246,7 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
-	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToTrue() {
+	public void testApplyCrossSettingWhenSavingOfParentageDesignationNameIsSetToTrue() {
 		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
 
 		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
@@ -268,7 +268,7 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
-	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToFalse() {
+	public void testApplyCrossSettingWhenSavingOfParentageDesignationNameIsSetToFalse() {
 		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
 
 		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
@@ -595,8 +595,8 @@ public class CrossingServiceImplTest {
 
 		Assert.assertTrue(true);
 
-		Iterator<ImportedCrosses> importedCrossIterator = this.importedCrossesList.getImportedCrosses().iterator();
-		ImportedCrosses firstImportedCrosses = importedCrossIterator.next();
+		final Iterator<ImportedCrosses> importedCrossIterator = this.importedCrossesList.getImportedCrosses().iterator();
+		final ImportedCrosses firstImportedCrosses = importedCrossIterator.next();
 
 		// Make sure that the following fields in ImportCrosses are properly set.
 
@@ -605,7 +605,7 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals("1", firstImportedCrosses.getEntryCode());
 		Assert.assertEquals("PREFIX 0000100 SUFFIX", firstImportedCrosses.getDesig());
 
-		ImportedCrosses secondImportedCrosses = importedCrossIterator.next();
+		final ImportedCrosses secondImportedCrosses = importedCrossIterator.next();
 
 		Assert.assertEquals("generatedSourceString", secondImportedCrosses.getSource());
 		Assert.assertEquals(2, secondImportedCrosses.getEntryId().intValue());
@@ -714,13 +714,13 @@ public class CrossingServiceImplTest {
 		final List<MeasurementRow> measurementRows = new ArrayList<>();
 
 		final MeasurementRow measurementRow1 = new MeasurementRow();
-		List<MeasurementData> dataList1 = new ArrayList<>();
+		final List<MeasurementData> dataList1 = new ArrayList<>();
 		dataList1.add(MeasurementDataTestDataInitializer.createMeasurementData(TermId.GID.getId(),"", TEST_FEMALE_GID_1));
 		dataList1.add(MeasurementDataTestDataInitializer.createMeasurementData(TermId.PLOT_NO.getId(),"", "1"));
 		measurementRow1.setDataList(dataList1);
 
 		final MeasurementRow measurementRow2 = new MeasurementRow();
-		List<MeasurementData> dataList2 = new ArrayList<>();
+		final List<MeasurementData> dataList2 = new ArrayList<>();
 		dataList2.add(MeasurementDataTestDataInitializer.createMeasurementData(TermId.GID.getId(),"", TEST_MALE_GID_1));
 		dataList2.add(MeasurementDataTestDataInitializer.createMeasurementData(TermId.PLOT_NO.getId(),"", "2"));
 		measurementRow2.setDataList(dataList2);

@@ -259,7 +259,8 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	protected void setModelAttributes(final CreateTrialForm form, final Integer trialId, final Model model, final Workbook trialWorkbook) {
-		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
+		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(),
+				trialWorkbook.getStudyConditions(), false, trialId));
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, false));
 		model.addAttribute("trialSettingsData", this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
@@ -484,7 +485,7 @@ public class OpenTrialController extends BaseTrialController {
 		returnVal.put("selectionVariableData",
 				this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
 
-		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, id);
+		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), trialWorkbook.getStudyConditions(), false, id);
 		this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false);
 		this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false);
 

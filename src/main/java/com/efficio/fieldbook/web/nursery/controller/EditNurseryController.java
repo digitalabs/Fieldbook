@@ -256,8 +256,9 @@ public class EditNurseryController extends SettingsController {
 				this.getSettingDetailsOfSection(nurseryLevelConditions, form, AppConstants.FIXED_NURSERY_VARIABLES.getString());
 
 		this.setCheckVariables(this.userSelection.getRemovedConditions(), form2, form);
-
-		this.removeBasicDetailsVariables(nurseryLevelConditions);
+		
+		final String variableIds =AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString() + AppConstants.BREEDING_METHOD_ID_CODE_NAME_COMBINATION.getString();
+		SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions, variableIds);
 
 		this.userSelection.setBasicDetails(basicDetails);
 
@@ -284,10 +285,6 @@ public class EditNurseryController extends SettingsController {
 			return AppConstants.NURSERIES.getString();
 		}
 		return this.fieldbookMiddlewareService.getFolderNameById(folderId);
-	}
-
-	protected void removeBasicDetailsVariables(final List<SettingDetail> nurseryLevelConditions) {
-		SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions);
 	}
 
 	protected void convertToXmlDatasetPojo(final Workbook workbook) throws MiddlewareQueryException {
@@ -373,13 +370,12 @@ public class EditNurseryController extends SettingsController {
 		form.setBasicDetails(basicDetails);
 		form.setStudyLevelVariables(nurseryDefaults);
 		form.setPlotLevelVariables(plotDefaults);
-		nurseryDefaults = this.buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(),
-				this.buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true),
-				VariableType.STUDY_DETAIL.getRole().name());
-		plotDefaults = this.buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(),
-				this.buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false),
-				VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
 
+		plotDefaults =
+				this.buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(),
+						this.buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false),
+						VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
+		
 		this.userSelection.setBasicDetails(basicDetails);
 		this.userSelection.setStudyLevelConditions(nurseryDefaults);
 		this.userSelection.setPlotsLevelList(plotDefaults);

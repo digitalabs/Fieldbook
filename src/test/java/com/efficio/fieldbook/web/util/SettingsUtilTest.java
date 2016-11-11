@@ -29,21 +29,25 @@ import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.util.Debug;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import com.efficio.fieldbook.web.trial.TestDataHelper;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 
+import junit.framework.Assert;
+
+@RunWith(MockitoJUnitRunner.class)
 public class SettingsUtilTest {
 
 	@Mock
@@ -54,6 +58,7 @@ public class SettingsUtilTest {
 
 	private static final String PROGRAM_UUID = "123456789";
 
+	private SettingDetailTestDataInitializer settingDetailTestDataInitializer;
 	private static final int DUMMY_ID = 0;
 
 	private static final Term CATEGORICAL_DATATYPE_TERM = new Term(TermId.CATEGORICAL_VARIABLE.getId(), "Categorical Variable",
@@ -64,10 +69,9 @@ public class SettingsUtilTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		this.settingDetailTestDataInitializer = new SettingDetailTestDataInitializer();
 	}
 
-	@Ignore(value = "BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testConvertXmlDatasetToWorkbookAndBack() {
 		final Dataset dataset = new Dataset();
@@ -76,14 +80,14 @@ public class SettingsUtilTest {
 		dataset.setFactors(new ArrayList<Factor>());
 		dataset.setVariates(new ArrayList<Variate>());
 
-		dataset.getConditions().add(
-				new Condition("CONDITION1", "CONDITION1", "PERSON", "DBCV", "ASSIGNED", PhenotypicType.STUDY.toString(), "C", "Meeh", null,
-						null, null));
+		dataset.getConditions().add(new Condition("CONDITION1", "CONDITION1", "PERSON", "DBCV", "ASSIGNED", PhenotypicType.STUDY.toString(),
+				"C", "Meeh", null, null, null));
 		dataset.getFactors().add(
 				new Factor("FACTOR1", "FACTOR1", "GERMPLASM ENTRY", "NUMBER", "ENUMERATED", PhenotypicType.GERMPLASM.toString(), "N", 0));
-		dataset.getVariates().add(
-				new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N",
-						TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0));
+		final Variate variate = new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice",
+				PhenotypicType.VARIATE.toString(), "N", TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0);
+		variate.setVariableType(VariableType.TRAIT.getName());
+		dataset.getVariates().add(variate);
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, SettingsUtilTest.PROGRAM_UUID);
 		Debug.println(0, workbook);
@@ -117,9 +121,11 @@ public class SettingsUtilTest {
 
 	@Test
 	public void testIfCheckVariablesAreInFixedNurseryList() {
-		Assert.assertTrue(SettingsUtil.inFixedNurseryList(TermId.CHECK_START.getId()));
-		Assert.assertTrue(SettingsUtil.inFixedNurseryList(TermId.CHECK_INTERVAL.getId()));
-		Assert.assertTrue(SettingsUtil.inFixedNurseryList(TermId.CHECK_PLAN.getId()));
+		final String variableIds = AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString()
+				+ AppConstants.BREEDING_METHOD_ID_CODE_NAME_COMBINATION.getString();
+		Assert.assertTrue(SettingsUtil.inVariableIds(TermId.CHECK_START.getId(), variableIds));
+		Assert.assertTrue(SettingsUtil.inVariableIds(TermId.CHECK_INTERVAL.getId(), variableIds));
+		Assert.assertTrue(SettingsUtil.inVariableIds(TermId.CHECK_PLAN.getId(), variableIds));
 	}
 
 	@Test
@@ -551,10 +557,10 @@ public class SettingsUtilTest {
 	public void testConvertBaselineTraitsToVariatesWithEmptyBaselineTraits() {
 		final List<SettingDetail> baselineTraits = new ArrayList<>();
 
-		final List<Variate> baselineVariates =
-				SettingsUtil
-						.convertBaselineTraitsToVariates(baselineTraits, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
+		final UserSelection userSelection = new UserSelection();
 
+		final List<Variate> baselineVariates = SettingsUtil.convertBaselineTraitsToVariates(baselineTraits, this.fieldbookMiddlewareService,
+				SettingsUtilTest.PROGRAM_UUID);
 		Assert.assertEquals(baselineTraits.size(), baselineVariates.size());
 	}
 
@@ -734,6 +740,20 @@ public class SettingsUtilTest {
 			Assert.assertEquals("Constant Role", basicDetails.get(i).getVariable().getRole(), constant.getRole());
 			i++;
 		}
+	}
+
+	@Test
+	public void testRemoveBasicDetailsVariables() {
+		final List<SettingDetail> settingDetails = this.createSettingDetailVariables();
+		final int sizeBeforeRemovalOfBasicDetails = settingDetails.size();
+
+		SettingsUtil.removeBasicDetailsVariables(settingDetails, AppConstants.FIXED_NURSERY_VARIABLES.getString());
+		final int sizeAfterRemovalOfBasicDetails = settingDetails.size();
+		Assert.assertFalse("The size before and after removal of basic details from the list should not be equal",
+				sizeBeforeRemovalOfBasicDetails == sizeAfterRemovalOfBasicDetails);
+		// All the setting details inside the list are basic nursery details except for the BM_CODE_VTE
+		Assert.assertEquals("The size after removal of basic details should be one", 1, sizeAfterRemovalOfBasicDetails);
+
 	}
 
 	private List<SettingDetail> createSettingDetailVariables() {

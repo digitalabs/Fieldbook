@@ -154,6 +154,8 @@ public class LabelPrintingUtil {
 				buffer.append(this.messageSource.getMessage("label.printing.seed.inventory.scale", null, locale));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
 				buffer.append(this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_SOURCE.getInt()) {
+				buffer.append(this.messageSource.getMessage("label.printing.seed.inventory.source", null, locale));
 			} else {
 				String headerName = labelHeaders.get(headerID);
 				if (headerName == null) {
@@ -338,6 +340,8 @@ public class LabelPrintingUtil {
 				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale));
 			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
 				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale));
+			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_SOURCE.getInt()) {
+				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.seed.inventory.source", null, locale));
 			}
 		}
 		return labelHeaders;
@@ -356,6 +360,8 @@ public class LabelPrintingUtil {
 				this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale));
 		labelHeaders.put(AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt(),
 				this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale));
+		labelHeaders.put(AppConstants.AVAILABLE_LABEL_SEED_SOURCE.getInt(),
+				this.messageSource.getMessage("label.printing.seed.inventory.source", null, locale));
 		return labelHeaders;
 	}
 
@@ -411,6 +417,9 @@ public class LabelPrintingUtil {
 			} else {
 				selectedValueFieldBuffer.append("");
 			}
+		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_SOURCE.getInt()) {
+			// Seed Source
+			selectedValueFieldBuffer.append(germplasmListData.getSeedSource());
 		}
 
 		return selectedValueFieldBuffer.toString();
@@ -462,6 +471,9 @@ public class LabelPrintingUtil {
 				} else {
 					buffer.append(" ");
 				}
+			} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_SEED_SOURCE.getInt()) {
+				// Seed Source
+				buffer.append(germplasmListData.getSeedSource());
 			}
 		}
 		return buffer.toString();

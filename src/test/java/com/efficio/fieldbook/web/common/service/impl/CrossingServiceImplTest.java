@@ -1,12 +1,13 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
+import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
+import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
@@ -14,7 +15,11 @@ import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -35,6 +40,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingServiceImplTest {
 
@@ -48,6 +57,9 @@ public class CrossingServiceImplTest {
     public static final String TEST_MALE_GID_1 = "54321";
     public static final String TEST_FEMALE_GID_2 = "9999";
     public static final String TEST_MALE_GID_2 = "8888";
+	public static final String TEST_PROCESS_CODE = "[RCRPRNT]";
+	public static final String TEST_PROCESS_CODE_PREFIX = "B";
+
 
     private ImportedCrossesList importedCrossesList;
 
@@ -66,6 +78,12 @@ public class CrossingServiceImplTest {
 	@Mock
 	private SeedSourceGenerator seedSourceGenertor;
 
+	@Mock
+	private ProcessCodeRuleFactory processCodeRuleFactory;
+
+	@Mock
+	private ProcessCodeOrderedRule processCodeOrderedRule;
+
 	@InjectMocks
 	private CrossingServiceImpl crossingService;
 
@@ -77,6 +95,7 @@ public class CrossingServiceImplTest {
 		this.importedCrossesList = this.createImportedCrossesList();
 		this.importedCrossesList.setImportedGermplasms(this.createImportedCrosses());
 
+		Mockito.when(this.processCodeRuleFactory.getRuleByProcessCode(Mockito.anyString())).thenReturn(this.processCodeOrderedRule);
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
@@ -346,6 +365,50 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
+	public void testBuildDesignationNameInSequenceMethodSuffixIsAvailable() throws RuleException {
+
+		final String resolvedSuffixString = "AAA";
+		final int sequenceNumber = 1;
+
+		final Method breedingMethod = new Method(TEST_BREEDING_METHOD_ID);
+		breedingMethod.setSuffix(TEST_PROCESS_CODE);
+
+		Mockito.when(this.germplasmDataManager.getMethodByCode(TEST_BREEDING_METHOD_CODE)).thenReturn(breedingMethod);
+		Mockito.when(this.processCodeOrderedRule.runRule(Mockito.any(RuleExecutionContext.class))).thenReturn(resolvedSuffixString);
+
+		final CrossSetting crossSetting = new CrossSetting();
+		crossSetting.setCrossNameSetting(new CrossNameSetting());
+		final ImportedCrosses importedCrosses = new ImportedCrosses();
+		importedCrosses.setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
+
+		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses, sequenceNumber, crossSetting);
+
+		Assert.assertEquals(sequenceNumber + resolvedSuffixString, designationName);
+	}
+
+	@Test
+	public void testBuildDesignationNameInSequenceMethodSuffixIsAvailableAndHasAlphabetPrefix() throws RuleException {
+
+		final String resolvedSuffixString = "AAA";
+		final int sequenceNumber = 1;
+
+		final Method breedingMethod = new Method(TEST_BREEDING_METHOD_ID);
+		breedingMethod.setSuffix(TEST_PROCESS_CODE_PREFIX + TEST_PROCESS_CODE);
+
+		Mockito.when(this.germplasmDataManager.getMethodByCode(TEST_BREEDING_METHOD_CODE)).thenReturn(breedingMethod);
+		Mockito.when(this.processCodeOrderedRule.runRule(Mockito.any(RuleExecutionContext.class))).thenReturn(resolvedSuffixString);
+
+		final CrossSetting crossSetting = new CrossSetting();
+		crossSetting.setCrossNameSetting(new CrossNameSetting());
+		final ImportedCrosses importedCrosses = new ImportedCrosses();
+		importedCrosses.setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
+
+		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses, sequenceNumber, crossSetting);
+
+		Assert.assertEquals(sequenceNumber + TEST_PROCESS_CODE_PREFIX +  resolvedSuffixString, designationName);
+	}
+
+	@Test
 	public void testBuildPrefixStringDefault() {
 		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setPrefix(" A  ");
@@ -519,6 +582,39 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals("00000001", formattedString);
 	}
 
+
+	@Test
+	public void testApplyNamingRulesForSeedSourceAndDesignationName() {
+
+		Mockito.doReturn("1").when(this.germplasmDataManager).getNextSequenceNumberForCrossName(Matchers.anyString());
+
+		final Workbook workbook = new Workbook();
+		workbook.setObservations(this.createMeasurementRows());
+
+		this.crossingService.applyNamingRulesForSeedSourceAndDesignationName(this.crossSetting, this.importedCrossesList, workbook);
+
+		Assert.assertTrue(true);
+
+		Iterator<ImportedCrosses> importedCrossIterator = this.importedCrossesList.getImportedCrosses().iterator();
+		ImportedCrosses firstImportedCrosses = importedCrossIterator.next();
+
+		// Make sure that the following fields in ImportCrosses are properly set.
+
+		Assert.assertEquals("generatedSourceString", firstImportedCrosses.getSource());
+		Assert.assertEquals(1, firstImportedCrosses.getEntryId().intValue());
+		Assert.assertEquals("1", firstImportedCrosses.getEntryCode());
+		Assert.assertEquals("PREFIX 0000100 SUFFIX", firstImportedCrosses.getDesig());
+
+		ImportedCrosses secondImportedCrosses = importedCrossIterator.next();
+
+		Assert.assertEquals("generatedSourceString", secondImportedCrosses.getSource());
+		Assert.assertEquals(2, secondImportedCrosses.getEntryId().intValue());
+		Assert.assertEquals("2", secondImportedCrosses.getEntryCode());
+		Assert.assertEquals("PREFIX 0000101 SUFFIX", secondImportedCrosses.getDesig());
+
+	}
+
+
 	private ImportedCrossesList createImportedCrossesList() {
 
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
@@ -612,5 +708,29 @@ public class CrossingServiceImplTest {
 		ids.add(Integer.valueOf(CrossingServiceImplTest.SAVED_CROSSES_GID2));
 		return ids;
 	}
+
+	private List<MeasurementRow> createMeasurementRows() {
+
+		final List<MeasurementRow> measurementRows = new ArrayList<>();
+
+		final MeasurementRow measurementRow1 = new MeasurementRow();
+		List<MeasurementData> dataList1 = new ArrayList<>();
+		dataList1.add(MeasurementDataTestDataInitializer.createMeasurementData(TermId.GID.getId(),"", TEST_FEMALE_GID_1));
+		dataList1.add(MeasurementDataTestDataInitializer.createMeasurementData(TermId.PLOT_NO.getId(),"", "1"));
+		measurementRow1.setDataList(dataList1);
+
+		final MeasurementRow measurementRow2 = new MeasurementRow();
+		List<MeasurementData> dataList2 = new ArrayList<>();
+		dataList2.add(MeasurementDataTestDataInitializer.createMeasurementData(TermId.GID.getId(),"", TEST_MALE_GID_1));
+		dataList2.add(MeasurementDataTestDataInitializer.createMeasurementData(TermId.PLOT_NO.getId(),"", "2"));
+		measurementRow2.setDataList(dataList2);
+
+		measurementRows.add(measurementRow1);
+		measurementRows.add(measurementRow2);
+
+		return measurementRows;
+	}
+
+
 
 }

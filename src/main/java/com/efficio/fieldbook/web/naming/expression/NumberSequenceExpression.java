@@ -4,9 +4,15 @@ package com.efficio.fieldbook.web.naming.expression;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.generationcp.middleware.service.api.KeySequenceRegisterService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public abstract class NumberSequenceExpression extends BaseExpression {
+
+	@Autowired
+	protected KeySequenceRegisterService keySequenceRegisterService;
 
 	protected void applyNumberSequence(List<StringBuilder> values, AdvancingSource source) {
 		if (source.isForceUniqueNameGeneration()) {
@@ -35,12 +41,20 @@ public abstract class NumberSequenceExpression extends BaseExpression {
 				startCount = source.getCurrentMaxSequence() + 1;
 			}
 
+			String prefix = source.getBreedingMethod().getPrefix();
+
+			if (prefix == null) {
+				prefix = "";
+			}
+
 			for (StringBuilder value : values) {
-				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 0) {
+				if (this.getExpressionKey().equals(SequenceExpression.KEY) && source.getPlantsSelected() != null && source.getPlantsSelected
+						() > 0) {
 
 					for (int i = startCount; i < startCount + source.getPlantsSelected(); i++) {
 						StringBuilder newName = new StringBuilder(value);
-                        this.replaceExpressionWithValue(newName, String.valueOf(i));
+						int nextSequence = this.keySequenceRegisterService.incrementAndGetNextSequence(prefix);
+                        this.replaceExpressionWithValue(newName, String.valueOf(nextSequence));
 						newNames.add(newName);
 					}
 				} else {

@@ -361,7 +361,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					this.userSelection.getWorkbook());
 			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
 		} else {
-			final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(crossSetting, importedCrossesList);
+			ImportedCrossesList importedCrossesListWithNamingSettings = null;
+			synchronized (GermplasmTreeController.class) {
+				importedCrossesListWithNamingSettings = this.applyNamingRules(crossSetting, importedCrossesList);
+			}
 			// this line of code is where the creation of new germplasm takes
 			// place
 			this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesListWithNamingSettings,

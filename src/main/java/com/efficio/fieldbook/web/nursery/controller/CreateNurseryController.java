@@ -810,6 +810,11 @@ public class CreateNurseryController extends SettingsController {
 		return this.contextUtil.getProjectInContext().getCropType().getCropName();
 	}
 
+	@ModelAttribute("currentProgramId")
+	public String getCurrentProgramId() {
+		return this.contextUtil.getProjectInContext().getUniqueID();
+	}
+
 	@RequestMapping(value = "/refresh/settings/tab", method = RequestMethod.GET)
 	public String refreshSettingsTab(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
 			final HttpSession session, final HttpServletRequest request) throws MiddlewareQueryException {

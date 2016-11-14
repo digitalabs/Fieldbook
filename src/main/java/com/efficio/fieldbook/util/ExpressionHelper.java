@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 public class ExpressionHelper {
 
 	public static final String PROCESS_CODE_PATTERN = "\\[([^\\]]*)]";
+	public static final String PROCESS_CODE_PATTERN_WITH_AN_ALPHABET_CHARACTER_PREFIX = "([A-Z]{1})" + PROCESS_CODE_PATTERN;
 
 	private ExpressionHelper() {
 

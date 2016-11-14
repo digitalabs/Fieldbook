@@ -118,8 +118,29 @@ public class CrossingServiceImpl implements CrossingService {
 	public void applyCrossSettingWithNamingRules(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final Integer userId, final Workbook workbook) {
 
+		// apply the source and designation string here, before we save germplasm if there is no existing source
+		this.applyNamingRulesForSeedSourceAndDesignationName(crossSetting, importedCrossesList, workbook);
+
+		final List<Pair<Germplasm, Name>> germplasmPairs =
+				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
+						importedCrossesList.hasPlotDuplicate());
+
+		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
+		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
+
+		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmPairs, crossingNameTypeId);
+
+		this.verifyGermplasmMethodPresent(germplasmList);
+		this.save(crossSetting, importedCrossesList, germplasmPairs);
+	}
+
+
+	void applyNamingRulesForSeedSourceAndDesignationName(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+			final Workbook workbook) {
+
+		Integer nextNumberInSequence = this.getNextNumberInSequence(crossSetting.getCrossNameSetting());
 		int entryIdCounter = 1;
-		// apply the source string here, before we save germplasm if there is no existing source
+
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
 
 			String malePlotNo = "";
@@ -146,22 +167,13 @@ public class CrossingServiceImpl implements CrossingService {
 			final String generatedSource =
 					this.seedSourceGenerator.generateSeedSourceForCross(workbook, malePlotNo, femalePlotNo, workbook.getStudyName(),
 							workbook.getStudyName());
+
 			importedCross.setSource(generatedSource);
 			importedCross.setEntryId(entryIdCounter);
 			importedCross.setEntryCode(String.valueOf(entryIdCounter++));
+			importedCross.setDesig(this.buildDesignationNameInSequence(importedCross, nextNumberInSequence++, crossSetting));
 		}
 
-		final List<Pair<Germplasm, Name>> germplasmPairs =
-				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
-						importedCrossesList.hasPlotDuplicate());
-
-		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
-		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
-
-		CrossingUtil.applyMethodNameType(this.germplasmDataManager, germplasmPairs, crossingNameTypeId);
-
-		this.verifyGermplasmMethodPresent(germplasmList);
-		this.save(crossSetting, importedCrossesList, germplasmPairs);
 	}
 
 	/**
@@ -498,7 +510,9 @@ public class CrossingServiceImpl implements CrossingService {
 
 	protected String buildDesignationNameInSequence(final ImportedCrosses importedCrosses, final Integer number, final CrossSetting setting) {
 		final CrossNameSetting nameSetting = setting.getCrossNameSetting();
-		final Pattern pattern = Pattern.compile(ExpressionHelper.PROCESS_CODE_PATTERN);
+		final Pattern processCodePattern = Pattern.compile(ExpressionHelper.PROCESS_CODE_PATTERN);
+		final Pattern processCodePatternWithAlphabetPrefix = Pattern.compile(ExpressionHelper.PROCESS_CODE_PATTERN_WITH_AN_ALPHABET_CHARACTER_PREFIX);
+
 		final StringBuilder sb = new StringBuilder();
 		final String uDSuffix = nameSetting.getSuffix();
 		sb.append(this.buildPrefixString(nameSetting));
@@ -512,14 +526,21 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 
 		if (!StringUtils.isEmpty(nameSetting.getSuffix())) {
-			String suffix = nameSetting.getSuffix().trim();
-			final Matcher matcher = pattern.matcher(suffix);
 
-			if (matcher.find()) {
-				suffix = this.evaluateSuffixProcessCode(importedCrosses, setting, matcher.group());
+			String suffix = nameSetting.getSuffix().trim();
+			String processCodePrefix = "";
+			final Matcher matcherProcessCode = processCodePattern.matcher(suffix);
+			final Matcher matcherProcessCodeAlphabetPrefix = processCodePatternWithAlphabetPrefix.matcher(suffix);
+
+			if (matcherProcessCode.find()) {
+				suffix = this.evaluateSuffixProcessCode(importedCrosses, setting, matcherProcessCode.group());
+			}
+			if (!StringUtils.isEmpty(suffix) && matcherProcessCodeAlphabetPrefix.find()) {
+				final int processCodePrefixGroupNameIndex = 1;
+				processCodePrefix = matcherProcessCodeAlphabetPrefix.group(processCodePrefixGroupNameIndex);
 			}
 
-			sb.append(this.buildSuffixString(nameSetting, suffix));
+			sb.append(processCodePrefix + this.buildSuffixString(nameSetting, suffix));
 		}
 		nameSetting.setSuffix(uDSuffix);
 		return sb.toString();
@@ -593,10 +614,10 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList) {
+	public void processCrossBreedingMethod(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
 		final BreedingMethodSetting methodSetting = crossSetting.getBreedingMethodSetting();
 
-		for (ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
+		for (final ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
 			// if imported cross contains raw breeding method code we use that to populate the breeding method
 			if (!StringUtils.isEmpty(importedCrosses.getRawBreedingMethod())) {
 				final Method breedingMethod = this.germplasmDataManager.getMethodByCode(importedCrosses.getRawBreedingMethod());
@@ -620,8 +641,8 @@ public class CrossingServiceImpl implements CrossingService {
 				final Integer femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
 				final Integer maleGid = Integer.parseInt(importedCrosses.getMaleGid());
 
-				Triple<Germplasm, Germplasm, Germplasm> femaleLine = retrieveParentGermplasmObjects(femaleGid);
-				Triple<Germplasm, Germplasm, Germplasm> maleLine = retrieveParentGermplasmObjects(maleGid);
+				final Triple<Germplasm, Germplasm, Germplasm> femaleLine = retrieveParentGermplasmObjects(femaleGid);
+				final Triple<Germplasm, Germplasm, Germplasm> maleLine = retrieveParentGermplasmObjects(maleGid);
 
 				importedCrosses.setBreedingMethodId(CrossingUtil.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(),
 						maleLine.getLeft(), femaleLine.getMiddle(), femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));

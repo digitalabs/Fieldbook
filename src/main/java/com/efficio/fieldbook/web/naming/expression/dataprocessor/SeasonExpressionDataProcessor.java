@@ -63,11 +63,8 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 		if (possibleValues != null && !possibleValues.isEmpty()) {
 			for (final ValueReference valueReference : possibleValues) {
 				// The Season Code variable is categorical type, it's value should be the id of the season (valid value).
-				if (StringUtils.isNumeric(value) && valueReference.getId().intValue() == Integer.parseInt(value)) {
-					return valueReference.getName();
-				} else if (valueReference.getDescription().equals(value)) {
-					// But Season Code's value can also be the text description of the season,
-					// so we need to find the valid value by description here and return it's name.
+				// But Season Code's value can also be the text description of the season, so we also need to find the valid value by description.
+				if ((StringUtils.isNumeric(value) && valueReference.getId().intValue() == Integer.parseInt(value)) || valueReference.getDescription().equals(value)) {
 					return valueReference.getName();
 				}
 			}

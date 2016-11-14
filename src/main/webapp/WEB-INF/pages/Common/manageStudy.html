@@ -64,6 +64,9 @@ var openStudyError = /*[[#{common.error.open.study(#{fieldmap.nursery})}]]*/ '',
 		if ($('#preloadSummaryId').val() !== '') {
 			addDetailsTab($('#preloadSummaryId').val(), $('#preloadSummaryName').val());
 		}
+		if (!bmsAuth.isValidToken()) {
+			bmsAuth.handleReAuthentication();
+		}
 	});
 })();
 

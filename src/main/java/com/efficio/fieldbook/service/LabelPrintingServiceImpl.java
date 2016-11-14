@@ -777,6 +777,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt(), true));
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale),
 				AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.source", null, locale),
+				AppConstants.AVAILABLE_LABEL_SEED_SOURCE.getInt(), true));
 
 		return labelFieldsList;
 	}
@@ -1089,15 +1091,18 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	public String getLabelPrintingPresetConfig(final int presetId, final int presetType) throws LabelPrintingException {
 		try {
 			if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
+				if (this.workbenchService.getStandardPresetById(presetId) == null) {
+					throw new LabelPrintingException("label.printing.preset.does.not.exists");
+				}
 				return this.workbenchService.getStandardPresetById(presetId).getConfiguration();
 			} else {
+				if (this.presetDataManager.getProgramPresetById(presetId) == null) {
+					throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "label.printing.preset.does.not.exists", "");
+				}
 				return this.presetDataManager.getProgramPresetById(presetId).getConfiguration();
 			}
 		} catch (final MiddlewareQueryException e) {
 			throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "database.connectivity.error", e.getMessage());
-		} catch (final NullPointerException e) {
-			throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "label.printing.preset.does.not.exists",
-					e.getMessage());
 		}
 	}
 

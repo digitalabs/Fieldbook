@@ -1,20 +1,17 @@
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
+import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -54,14 +51,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
@@ -98,6 +101,21 @@ public class OpenTrialController extends BaseTrialController {
 	@ModelAttribute("projectID")
 	public String getProgramID() {
 		return this.getCurrentProjectId();
+	}
+
+	@ModelAttribute("contextInfo")
+	public ContextInfo getContextInfo() {
+		return this.contextUtil.getContextInfoFromSession();
+	}
+
+	@ModelAttribute("cropName")
+	public String getCropName() {
+		return this.contextUtil.getProjectInContext().getCropType().getCropName();
+	}
+
+	@ModelAttribute("currentProgramId")
+	public String getCurrentProgramId() {
+		return this.contextUtil.getProjectInContext().getUniqueID();
 	}
 
 	@ModelAttribute("programMethodURL")
@@ -259,7 +277,8 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	protected void setModelAttributes(final CreateTrialForm form, final Integer trialId, final Model model, final Workbook trialWorkbook) {
-		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
+		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(),
+				trialWorkbook.getStudyConditions(), false, trialId));
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, false));
 		model.addAttribute("trialSettingsData", this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
@@ -484,7 +503,7 @@ public class OpenTrialController extends BaseTrialController {
 		returnVal.put("selectionVariableData",
 				this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
 
-		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, id);
+		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), trialWorkbook.getStudyConditions(), false, id);
 		this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false);
 		this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false);
 

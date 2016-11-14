@@ -50,6 +50,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.inventory.GermplasmInventory;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.inventory.LotDetails;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -617,13 +618,13 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * @param germplasmListDataList list of germplasms
 	 * @return a list with existing saved seed reservations
 	 */
-	private List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {
+	List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {
 		final List<GermplasmListData> germplasmListDataListWithReservations = new ArrayList<>();
 		for (final GermplasmListData germplasmListData : germplasmListDataList) {
 			if (germplasmListData.getInventoryInfo() != null && germplasmListData.getInventoryInfo().getLotRows() != null) {
 				for (final LotDetails lotDetails : germplasmListData.getInventoryInfo().getLotRows()) {
-					// We have reservations if withdrawal balance is more than 0
-					if (lotDetails.getWithdrawalBalance() > 0 ) {
+					// We have reservations if withdrawal status is "Reserved"
+					if (lotDetails.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) {
 						germplasmListDataListWithReservations.add(germplasmListData);
 					}
 				}
@@ -811,13 +812,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	public LabelPrintingSetting getLabelPrintingSetting(@PathVariable final int presetType, @PathVariable final int presetId,
 			final HttpServletRequest request) {
 		try {
-			final Unmarshaller parseXML = JAXBContext.newInstance(LabelPrintingSetting.class).createUnmarshaller();
-
-			// retrieve appropriate setting
-			final String xmlToRead = this.labelPrintingService.getLabelPrintingPresetConfig(presetId, presetType);
-
-			return (LabelPrintingSetting) parseXML.unmarshal(new StringReader(xmlToRead));
-
+			return this.getLabelPrintingSetting(presetType, presetId);
 		} catch (final JAXBException e) {
 			LabelPrintingController.LOG.error(this.messageSource.getMessage("label.printing.error.parsing.preset.xml", new String[] {},
 					LocaleContextHolder.getLocale()), e);
@@ -830,6 +825,15 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		}
 
 		return new LabelPrintingSetting();
+	}
+
+	private LabelPrintingSetting getLabelPrintingSetting(final int presetType, final int presetId) throws JAXBException, LabelPrintingException {
+		final Unmarshaller parseXML = JAXBContext.newInstance(LabelPrintingSetting.class).createUnmarshaller();
+
+		// retrieve appropriate setting
+		final String xmlToRead = this.labelPrintingService.getLabelPrintingPresetConfig(presetId, presetType);
+
+		return (LabelPrintingSetting) parseXML.unmarshal(new StringReader(xmlToRead));
 	}
 
 	/**
@@ -917,8 +921,13 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/presets/isModified/{presetType}/{presetId}", method = RequestMethod.POST)
 	public Boolean isLabelPrintingIsModified(@ModelAttribute("labelPrintingForm") final LabelPrintingForm labelPrintingPresetSetting,
 			@PathVariable final Integer presetType, @PathVariable final Integer presetId, final HttpServletRequest request) {
-		final LabelPrintingSetting lbSetting = this.getLabelPrintingSetting(presetType, presetId, request);
-		LabelPrintingSetting modifiedSetting;
+		final LabelPrintingSetting lbSetting;
+		try {
+			lbSetting = this.getLabelPrintingSetting(presetType, presetId);
+		} catch (JAXBException | LabelPrintingException e) {
+			return true;
+		}
+		final LabelPrintingSetting modifiedSetting;
 		final Unmarshaller parseXML;
 		try {
 

@@ -115,6 +115,12 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 						}
 						// a 'transition prevented' error
 					});
+				
+				$rootScope.stateSuccessfullyLoaded = {};
+				$rootScope.$on('$stateChangeSuccess',
+					function(event, toState, toParams, fromState, fromParams) {
+						$rootScope.stateSuccessfullyLoaded[toState.name] = true;
+					});
 
 				// It's very handy to add references to $state and $stateParams to the $rootScope
 				// so that you can access them from any scope within your applications.For example,
@@ -368,11 +374,16 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
 					}
+				} else if (targetState === 'environment'){
+					// reload environment table to make sure that the header always has proper layout
+					$rootScope.$broadcast('rerenderEnvironmentTable');
 				}
 
 				if (targetState === 'createMeasurements' || targetState === 'editMeasurements') {
 					//TODO Remove this global
-					if ($('body').data('expDesignShowPreview') === '1') {
+					if ($('body').data('expDesignShowPreview') === '1' && $rootScope.stateSuccessfullyLoaded[targetState]) {
+						//only refresh the measurements table if the state has not yet successfully loaded
+						//this is because the stateProvider displays the measurements table if it has measurements on the first time the Measurements tab is clicked 
 						$.ajax({
 							url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
 							type: 'GET',

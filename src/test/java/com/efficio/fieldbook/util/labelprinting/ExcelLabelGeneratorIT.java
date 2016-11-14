@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
 import javax.annotation.Resource;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +52,7 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
 		String labels = "";
 		String fileName = "";
 
-		fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting);
+		fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, 1);
 		org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
 
 		Sheet sheet = xlsBook.getSheetAt(0);
@@ -104,7 +103,7 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
         final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
         String fileName = "";
         try {
-            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting);
+            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, 1);
             org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
 
             Assert.assertNotNull("Expected a new workbook file was created but found none.", xlsBook);

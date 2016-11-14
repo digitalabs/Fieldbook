@@ -13,7 +13,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +30,9 @@ public class CSVLabelGeneratorIT extends AbstractBaseIntegrationTest{
         final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
         String fileName = "";
         try {
-            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting);
+            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, 1);
 
-            CsvReader csvReader = new CsvReader(fileName);
+            final CsvReader csvReader = new CsvReader(fileName);
 
             csvReader.readHeaders();
             String[] headers = csvReader.getHeaders();
@@ -48,27 +47,27 @@ public class CSVLabelGeneratorIT extends AbstractBaseIntegrationTest{
     }
 
     private boolean areHeadersEqual(String[] headers, UserLabelPrinting userLabelPrinting) {
-        String calculatedHeader =
+        final String calculatedHeader =
                 userLabelPrinting.getMainSelectedLabelFields()
                         + (userLabelPrinting.getBarcodeNeeded().equals("1") ? "," + AppConstants.AVAILABLE_LABEL_BARCODE.getInt() : "");
-        int headerLength = calculatedHeader.split(",").length;
+        final int headerLength = calculatedHeader.split(",").length;
         return headers.length == headerLength;
     }
 
-    private boolean areRowsEqual(CsvReader csvReader, String[] headers, UserLabelPrinting userLabelPrinting) {
+    private boolean areRowsEqual(final CsvReader csvReader, final String[] headers, final UserLabelPrinting userLabelPrinting) {
         try {
             int rowNum = 0, rowNum2 = 0;
             while (csvReader.readRecord()) {
                 rowNum++;
             }
 
-            for (FieldMapDatasetInfo dataset : userLabelPrinting.getFieldMapInfo().getDatasets()) {
-                for (FieldMapTrialInstanceInfo trialInstance : dataset.getTrialInstancesWithFieldMap()) {
+            for (final FieldMapDatasetInfo dataset : userLabelPrinting.getFieldMapInfo().getDatasets()) {
+                for (final FieldMapTrialInstanceInfo trialInstance : dataset.getTrialInstancesWithFieldMap()) {
                     rowNum2 += trialInstance.getFieldMapLabels().size();
                 }
             }
             return rowNum == rowNum2;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Assert.fail("Error encountered while reading the file.");
             return false;
         }
@@ -76,9 +75,9 @@ public class CSVLabelGeneratorIT extends AbstractBaseIntegrationTest{
 
     @Test
     public void testGenerateAddedInformationField() {
-        FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = new FieldMapTrialInstanceInfo();
+        final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = new FieldMapTrialInstanceInfo();
         StudyTrialInstanceInfo trialInstance = new StudyTrialInstanceInfo(fieldMapTrialInstanceInfo, "TestStudy");
-        String barCode = "testBarcode";
+        final String barCode = "testBarcode";
         fieldMapTrialInstanceInfo.setLocationName("Loc1");
         fieldMapTrialInstanceInfo.setBlockName("Block1");
         fieldMapTrialInstanceInfo.setFieldName("Field1");

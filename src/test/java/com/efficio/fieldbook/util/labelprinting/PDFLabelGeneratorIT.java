@@ -10,7 +10,6 @@ import com.lowagie.text.pdf.PdfReader;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +24,7 @@ public class PDFLabelGeneratorIT extends AbstractBaseIntegrationTest {
         final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
         String fileName = "";
         try {
-            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting);
+            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, 1);
 
             PdfReader reader = new PdfReader(fileName);
             junit.framework.Assert.assertNotNull("Expected a new pdf file was created but found none.", reader);

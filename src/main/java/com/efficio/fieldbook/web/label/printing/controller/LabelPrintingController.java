@@ -539,25 +539,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
 				final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
 				fieldMapTrialInstanceInfo.setLocationName(fieldMapTrialInstanceInfo.getSiteName());
-				if (numberOfCopies > 1){
-					this.multiplyRecordsByNumberOfCopies(numberOfCopies, trialInstance);
-				}
-
 			}
 		}
 
-		return this.generateLabels(trialInstances, form.isCustomReport());
-	}
-
-	private void multiplyRecordsByNumberOfCopies(int numberOfCopies, StudyTrialInstanceInfo trialInstance) {
-		// number of copies
-		final List<FieldMapLabel> fullTrialInstancesList = new ArrayList<>();
-		for (final FieldMapLabel fieldMapLabel : trialInstance.getTrialInstance().getFieldMapLabels()) {
-			for (int i = 0; i < numberOfCopies; i++){
-				fullTrialInstancesList.add(fieldMapLabel);
-			}
-			trialInstance.getTrialInstance().setFieldMapLabels(fullTrialInstancesList);
-		}
+		return this.generateLabels(trialInstances, form.isCustomReport(), numberOfCopies);
 	}
 
 	/**
@@ -703,14 +688,15 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		return selectedLabelFields;
 	}
 
-	Map<String, Object> generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final boolean isCustomReport) {
+	Map<String, Object> generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final boolean isCustomReport, final int
+			numberOfCopies) {
 		final Map<String, Object> results = new HashMap<>();
 
 		try {
 			if (isCustomReport) {
 				this.generateLabelForCustomReports(results);
 			} else {
-				this.generateLabelForLabelTypes(trialInstances, results);
+				this.generateLabelForLabelTypes(trialInstances, results, numberOfCopies);
 			}
 
 		} catch (IOException | MiddlewareException | JRException | BuildReportException e) {
@@ -734,18 +720,17 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 
-	void generateLabelForLabelTypes(final List<StudyTrialInstanceInfo> trialInstances, final Map<String, Object> results)
+	void generateLabelForLabelTypes(final List<StudyTrialInstanceInfo> trialInstances, final Map<String, Object> results, final int numberOfCopies)
 			throws LabelPrintingException {
 		final String fileName;
 		final LabelPrintingFileTypes selectedLabelPrintingType =
 				LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
-		final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
 		if (selectedLabelPrintingType.isValid()) {
 			this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
 
 			fileName = this.labelPrintingService.generateLabels(selectedLabelPrintingType.getFormIndex(), trialInstances,
-					this.userLabelPrinting);
+					this.userLabelPrinting, numberOfCopies);
 
 			results.put(LabelPrintingController.IS_SUCCESS, 1);
 			results.put("fileName", fileName);

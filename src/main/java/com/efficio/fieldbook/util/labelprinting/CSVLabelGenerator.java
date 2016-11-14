@@ -32,7 +32,8 @@ public class CSVLabelGenerator implements LabelGenerator {
     private LabelPrintingUtil labelPrintingUtil;
 
     @Override
-    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
+    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting, final int numberOfCopies)
+            throws LabelPrintingException {
 
         final String fileName = userLabelPrinting.getFilenameDLLocation();
         String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
@@ -47,7 +48,7 @@ public class CSVLabelGenerator implements LabelGenerator {
                 this.generateColumnHeaders(selectedFieldIDs, this.labelPrintingUtil.getLabelHeadersFromTrialInstances(trialInstances));
 
         final List<Map<Integer, ExportColumnValue>> exportColumnValues =
-                this.generateColumnValues(trialInstances, selectedFieldIDs, userLabelPrinting);
+                this.generateColumnValues(trialInstances, selectedFieldIDs, userLabelPrinting, numberOfCopies);
 
         try {
             this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName, includeHeader);
@@ -59,7 +60,7 @@ public class CSVLabelGenerator implements LabelGenerator {
     }
 
     private List<Map<Integer, ExportColumnValue>> generateColumnValues(final List<StudyTrialInstanceInfo> trialInstances,
-                                                                       final List<Integer> selectedFieldIDs, final UserLabelPrinting userLabelPrinting) {
+            final List<Integer> selectedFieldIDs, final UserLabelPrinting userLabelPrinting, final int numberOfCopies) {
         final List<Map<Integer, ExportColumnValue>> columnValues = new ArrayList<>();
 
         final String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
@@ -78,7 +79,9 @@ public class CSVLabelGenerator implements LabelGenerator {
 
                 final Map<Integer, ExportColumnValue> rowMap =
                         this.generateRowMap(fieldMapTrialInstanceInfo.getLabelHeaders(), selectedFieldIDs, moreFieldInfo, fieldMapLabel);
-                columnValues.add(rowMap);
+                for (int i = 0; i < numberOfCopies; i++) {
+                    columnValues.add(rowMap);
+                }
             }
         }
 

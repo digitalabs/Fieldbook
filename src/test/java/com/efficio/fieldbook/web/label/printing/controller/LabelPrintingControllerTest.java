@@ -91,7 +91,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		userLabelPrinting.setGenerateType(AppConstants.LABEL_PRINTING_PDF.getString());
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 
-		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false);
+		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false, 1);
 
 		Assert.assertNotNull("Expected results but found none", results);
 		Assert.assertTrue("Expected pdf file generated but found " + results.get("fileName").toString(),
@@ -106,7 +106,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		userLabelPrinting.setGenerateType(AppConstants.LABEL_PRINTING_EXCEL.getString());
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 
-		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false);
+		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false, 1);
 
 		Assert.assertNotNull("Expected results but found none", results);
 		Assert.assertTrue("Expected xls file generated but found " + results.get("fileName").toString(),
@@ -121,7 +121,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		userLabelPrinting.setGenerateType(AppConstants.LABEL_PRINTING_CSV.getString());
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 
-		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false);
+		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false, 1);
 
 		Assert.assertNotNull("Expected results but found none", results);
 		Assert.assertTrue("Expected csv file generated but found " + results.get("fileName").toString(),
@@ -151,7 +151,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 
 		// Method to test
-		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, true);
+		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, true, 1);
 
 		// Assertions
 		Assert.assertNotNull("We expect that results has value", results);
@@ -171,7 +171,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
 
 		// Method to test
-		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false);
+		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false, 1);
 
 		// Assertions
 		Assert.assertNotNull("We expect that results has value", results);

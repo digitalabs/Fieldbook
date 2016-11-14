@@ -14,9 +14,11 @@ public interface LabelGenerator {
 	 *
 	 * @param dataList data used to create labels
 	 * @param userLabelPrinting the information needed for label printing
+	 * @param numberOfCopies how many times the same label should be printed
 	 * @return the name of the file with labels being created
 	 * @throws LabelPrintingException if labels could not be printed for some reasons
 	 */
-	String generateLabels(final List<StudyTrialInstanceInfo> dataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException;
+	String generateLabels(final List<StudyTrialInstanceInfo> dataList, final UserLabelPrinting userLabelPrinting, final int numberOfCopies) throws
+			LabelPrintingException;
 
 }

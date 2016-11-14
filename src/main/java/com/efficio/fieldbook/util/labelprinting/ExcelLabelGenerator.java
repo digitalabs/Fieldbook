@@ -36,7 +36,8 @@ public class ExcelLabelGenerator implements LabelGenerator {
     private LabelPrintingUtil labelPrintingUtil;
 
     @Override
-    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
+    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
+            final int numberOfCopies) throws LabelPrintingException {
 
         String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
         final boolean includeHeader =
@@ -113,18 +114,21 @@ public class ExcelLabelGenerator implements LabelGenerator {
 
                 for (final FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
 
-                    row = labelPrintingSheet.createRow(rowIndex++);
-                    columnIndex = 0;
+                    for (int i = 0; i < numberOfCopies; i++) {
 
-                    final String barcodeLabelForCode = this.labelPrintingUtil.generateBarcodeField(moreFieldInfo, fieldMapLabel,
-                            firstBarcodeField, secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
-                    moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
+                        row = labelPrintingSheet.createRow(rowIndex++);
+                        columnIndex = 0;
 
-                    for (final Integer selectedFieldID : selectedFieldIDs) {
-                        final String leftText = this.labelPrintingUtil.getValueFromSpecifiedColumn(moreFieldInfo, fieldMapLabel,
-                                selectedFieldID, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
-                        final Cell summaryCell = row.createCell(columnIndex++);
-                        summaryCell.setCellValue(leftText);
+                        final String barcodeLabelForCode = this.labelPrintingUtil.generateBarcodeField(moreFieldInfo, fieldMapLabel,
+                                firstBarcodeField, secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
+                        moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
+
+                        for (final Integer selectedFieldID : selectedFieldIDs) {
+                            final String leftText = this.labelPrintingUtil
+                                    .getValueFromSpecifiedColumn(moreFieldInfo, fieldMapLabel, selectedFieldID, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
+                            final Cell summaryCell = row.createCell(columnIndex++);
+                            summaryCell.setCellValue(leftText);
+                        }
                     }
                 }
             }

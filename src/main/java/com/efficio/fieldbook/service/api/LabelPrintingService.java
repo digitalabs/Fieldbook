@@ -58,7 +58,7 @@ public interface LabelPrintingService {
 	 * @return the string
 	 * @throws LabelPrintingException the label printing exception
 	 */
-	String generateLabels(String labelType, List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting)
+	String generateLabels(String labelType, List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, int numberOfCopies)
 			throws LabelPrintingException;
 
 

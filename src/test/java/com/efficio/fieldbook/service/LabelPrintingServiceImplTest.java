@@ -314,7 +314,7 @@ public class LabelPrintingServiceImplTest {
 
 		// we randomize the arrangement of the list
 		Collections.shuffle(infoList.get(0).getTrialInstance().getFieldMapLabels());
-		this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList, labelPrinting);
+		this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList, labelPrinting, 1);
 
 		int currentEntryNumberValue = -1;
 		for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {
@@ -340,7 +340,7 @@ public class LabelPrintingServiceImplTest {
 
 		// we randomize the arrangement of the list
 		Collections.shuffle(infoList.get(0).getTrialInstance().getFieldMapLabels());
-		this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList, labelPrinting);
+		this.labelPrintingServiceImpl.generateLabels(AppConstants.LABEL_PRINTING_CSV.getString(), infoList, labelPrinting, 1);
 
 		int currentPlotNumber = -1;
 		for (final FieldMapLabel fieldMapLabel : infoList.get(0).getTrialInstance().getFieldMapLabels()) {

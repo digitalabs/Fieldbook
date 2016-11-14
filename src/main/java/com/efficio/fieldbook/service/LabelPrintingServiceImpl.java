@@ -146,10 +146,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	@Override
 	public String generateLabels(final String labelType, final List<StudyTrialInstanceInfo> trialInstances,
-			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
+			final UserLabelPrinting userLabelPrinting, final int numberOfCopies) throws LabelPrintingException {
 		// sort the labels contained inside the trial instances so that they are arranged from highest to lowest by entry number
 		this.sortTrialInstanceLabels(trialInstances);
-		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting);
+		return this.labelGeneratorFactory.retrieveLabelGenerator(labelType).generateLabels(trialInstances, userLabelPrinting, numberOfCopies);
 	}
 
 	private void sortTrialInstanceLabels(final List<StudyTrialInstanceInfo> trialInstances) {

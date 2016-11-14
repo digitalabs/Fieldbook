@@ -6,13 +6,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService) {
+	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService','$rootScope',
+		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService, $rootScope) {
 
 			// preload the measurements tab, if the measurements tab is not yet loaded 
 			// to make sure deleting environments will still works
 		    // since environments are directly correlated to their measurement rows
-			if (!angular.element('#measurementsDiv').length) {
+		    if($rootScope.stateSuccessfullyLoaded['createMeasurements'] || $rootScope.stateSuccessfullyLoaded['editMeasurements']){
 				$scope.loadMeasurementsTabInBackground();
 			}	
 

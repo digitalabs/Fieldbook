@@ -374,6 +374,9 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
 					}
+				} else if (targetState === 'environment'){
+					// reload environment table to make sure that the header always has proper layout
+					$rootScope.$broadcast('rerenderEnvironmentTable');
 				}
 
 				if (targetState === 'createMeasurements' || targetState === 'editMeasurements') {

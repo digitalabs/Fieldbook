@@ -67,4 +67,8 @@ public abstract class NumberSequenceExpression extends BaseExpression {
 			values.addAll(newNames);
 		}
 	}
+
+	public void setKeySequenceRegisterService(KeySequenceRegisterService keySequenceRegisterService) {
+		this.keySequenceRegisterService = keySequenceRegisterService;
+	}
 }

@@ -72,6 +72,8 @@ public class CrossingServiceImpl implements CrossingService {
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingServiceImpl.class);
 	private static final Integer PEDIGREE_NAME_TYPE = 18;
 	private static final Integer PREFERRED_NAME = 1;
+	public static final int MAX_CROSS_NAME_SIZE = 240;
+	public static final String TRUNCATED = "(truncated)";
 
 	@Autowired
 	private GermplasmDataManager germplasmDataManager;
@@ -107,15 +109,17 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public void applyCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final Integer userId,
+	public boolean applyCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final Integer userId,
 			final Workbook workbook) throws MiddlewareQueryException {
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
-		final List<Pair<Germplasm, Name>> germplasmPairs = this.getPairs(crossSetting, importedCrossesList, userId, workbook);
+		boolean isTrimed = false;
+		final List<Pair<Germplasm, Name>> germplasmPairs = this.getPairs(crossSetting, importedCrossesList, userId, workbook, isTrimed);
 		this.save(crossSetting, importedCrossesList, germplasmPairs);
+		return isTrimed;
 	}
 
 	@Override
-	public void applyCrossSettingWithNamingRules(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+	public boolean applyCrossSettingWithNamingRules(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final Integer userId, final Workbook workbook) {
 
 		int entryIdCounter = 1;
@@ -151,9 +155,10 @@ public class CrossingServiceImpl implements CrossingService {
 			importedCross.setEntryCode(String.valueOf(entryIdCounter++));
 		}
 
+		boolean isTrimed = false;
 		final List<Pair<Germplasm, Name>> germplasmPairs =
 				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
-						importedCrossesList.hasPlotDuplicate());
+						importedCrossesList.hasPlotDuplicate(), isTrimed );
 
 		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmPairs);
 		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
@@ -162,6 +167,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 		this.verifyGermplasmMethodPresent(germplasmList);
 		this.save(crossSetting, importedCrossesList, germplasmPairs);
+		return isTrimed;
 	}
 
 	/**
@@ -222,7 +228,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	// FIXME the methods getPairs() and generateGermplasmNamePairs() should be combined into one
 	private List<Pair<Germplasm, Name>> getPairs(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
-			final Integer userId, final Workbook workbook) {
+			final Integer userId, final Workbook workbook, boolean isTrimed) {
 
 		// apply the source string here, before we save germplasm if there is no existing source
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
@@ -237,7 +243,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 		final List<Pair<Germplasm, Name>> germplasmNamePairs =
 				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
-						importedCrossesList.hasPlotDuplicate());
+						importedCrossesList.hasPlotDuplicate(), isTrimed);
 
 		final List<Germplasm> germplasmList = this.extractGermplasmList(germplasmNamePairs);
 		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
@@ -405,7 +411,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	// FIXME the methods getPairs() and generateGermplasmNamePairs() should be combined into one
 	protected List<Pair<Germplasm, Name>> generateGermplasmNamePairs(final CrossSetting crossSetting,
-			final List<ImportedCrosses> importedCrosses, final Integer userId, final boolean hasPlotDuplicate)
+			final List<ImportedCrosses> importedCrosses, final Integer userId, final boolean hasPlotDuplicate, boolean isTrimed)
 			throws MiddlewareQueryException {
 
 		final List<Pair<Germplasm, Name>> pairList = new ArrayList<>();
@@ -455,7 +461,15 @@ public class CrossingServiceImpl implements CrossingService {
 			germplasm.setLocationId(harvestLocationId);
 
 			// Common name updates
-			name.setNval(cross.getDesig());
+			String designation = cross.getDesig();
+			
+			if(designation.length() > MAX_CROSS_NAME_SIZE){
+				designation = designation.substring(0, MAX_CROSS_NAME_SIZE - 1);
+				designation = designation + TRUNCATED;
+				isTrimed = true;
+			}
+			
+			name.setNval(designation);
 			name.setUserId(userId);
 			name.setNdate(germplasm.getGdate());
 			name.setLocationId(harvestLocationId);

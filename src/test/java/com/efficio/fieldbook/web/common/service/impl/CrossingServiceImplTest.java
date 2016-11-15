@@ -395,9 +395,10 @@ public class CrossingServiceImplTest {
 		crossSetting.setBreedingMethodSetting(breedingMethodSetting);
 		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
 
+		boolean isTrimed = false;
 		final List<Pair<Germplasm, Name>> germplasmPairs =
 				this.crossingService.generateGermplasmNamePairs(crossSetting, this.importedCrossesList.getImportedCrosses(),
-						CrossingServiceImplTest.USER_ID, false);
+						CrossingServiceImplTest.USER_ID, false, isTrimed );
 
 		Pair<Germplasm, Name> germplasmNamePair = germplasmPairs.get(0);
 		final Germplasm germplasm1 = germplasmNamePair.getLeft();

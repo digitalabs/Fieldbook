@@ -13,8 +13,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			// to make sure deleting environments will still works
 		    // since environments are directly correlated to their measurement rows
 			// NOTE: $rootScope.stateSuccessfullyLoaded will only have value once the specific tab is successfully loaded
-		    if( $rootScope.stateSuccessfullyLoaded['createMeasurements'] == undefined 
-		    		&& $rootScope.stateSuccessfullyLoaded['editMeasurements'] == undefined){
+		    if( $rootScope.stateSuccessfullyLoaded['createMeasurements'] === undefined 
+		    		&& $rootScope.stateSuccessfullyLoaded['editMeasurements'] === undefined){
 				$scope.loadMeasurementsTabInBackground();
 			}	
 

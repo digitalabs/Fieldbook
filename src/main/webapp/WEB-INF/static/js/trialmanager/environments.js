@@ -6,11 +6,15 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService) {
+	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService','$rootScope',
+		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService, $rootScope) {
 
-			// if environments tab is triggered, we preload the measurements tab
-			$scope.loadMeasurementsTabInBackground();
+			// preload the measurements tab, if the measurements tab is not yet loaded 
+			// to make sure deleting environments will still works
+		    // since environments are directly correlated to their measurement rows
+		    if($rootScope.stateSuccessfullyLoaded['createMeasurements'] || $rootScope.stateSuccessfullyLoaded['editMeasurements']){
+				$scope.loadMeasurementsTabInBackground();
+			}	
 
 			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
 			var populateDatatableWithDefaultValues = function() {
@@ -114,6 +118,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.nested.dtInstance.rerender();
 				// update the location flag, as it could have been deleted
 				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
+			});
+			
+			$scope.$on('rerenderEnvironmentTable', function(event, args) {
+				$scope.nested.dtInstance.rerender();
 			});
 
 			$scope.initiateManageLocationModal = function() {

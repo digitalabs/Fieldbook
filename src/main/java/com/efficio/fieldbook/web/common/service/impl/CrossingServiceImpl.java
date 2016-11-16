@@ -513,16 +513,27 @@ public class CrossingServiceImpl implements CrossingService {
 
 		if (!StringUtils.isEmpty(nameSetting.getSuffix())) {
 			String suffix = nameSetting.getSuffix().trim();
+			String processCodeValue = "";
 			final Matcher matcher = pattern.matcher(suffix);
 
 			if (matcher.find()) {
-				suffix = this.evaluateSuffixProcessCode(importedCrosses, setting, matcher.group());
+				processCodeValue = this.evaluateSuffixProcessCode(importedCrosses, setting, matcher.group());
+				suffix = replaceExpressionWithValue(new StringBuilder(suffix), matcher.group(), processCodeValue);
 			}
 
 			sb.append(this.buildSuffixString(nameSetting, suffix));
 		}
 		nameSetting.setSuffix(uDSuffix);
 		return sb.toString();
+	}
+
+	protected String replaceExpressionWithValue(StringBuilder container, String processCode, String value) {
+		int startIndex = container.toString().toUpperCase().indexOf(processCode);
+		int endIndex = startIndex + processCode.length();
+
+		String replaceValue = value == null ? "" : value;
+		container.replace(startIndex, endIndex, replaceValue);
+		return container.toString();
 	}
 
 	protected String evaluateSuffixProcessCode(final ImportedCrosses crosses, final CrossSetting setting, final String processCode) {

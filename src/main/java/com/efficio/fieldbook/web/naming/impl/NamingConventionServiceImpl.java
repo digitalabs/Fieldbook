@@ -9,9 +9,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
@@ -23,6 +25,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -72,6 +75,12 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@Resource
 	private SeedSourceGenerator seedSourceGenerator;
+
+	@Resource
+	private ProcessCodeRuleFactory processCodeRuleFactory;
+
+	@Resource
+	private PedigreeDataManager pedigreeDataManager;
 
 	@Override
 	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException,
@@ -272,6 +281,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		// interaction for advancing. There is no user interaction in case of cross list.
 		int previousMaxSequence = 0;
 		for (final AdvancingSource advancingSource : rows.getRows()) {
+
+			ImportedCrosses importedCross = importedCrosses.get(index++);
 			final List<String> names;
 			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 
@@ -288,13 +299,17 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			//default plants selected value to 1 for list of crosses because sequence is not working if plants selected value is not set
 			advancingSource.setPlantsSelected(1);
 
+			// pass the parent gids (female and male) of the imported cross, this is required to properly resolve the Backcross and RecurringParent process codes.
+			advancingSource.setFemaleGid(StringUtils.isNumeric(importedCross.getFemaleGid()) ? Integer.valueOf(importedCross.getFemaleGid()) : 0);
+			advancingSource.setMaleGid(StringUtils.isNumeric(importedCross.getMaleGid()) ? Integer.valueOf(importedCross.getMaleGid()) : 0);
+
 			final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
 			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
 			// Save away the current max sequence once rules have been run for this entry.
 			previousMaxSequence = advancingSource.getCurrentMaxSequence() + 1;
 			for (final String name : names) {
-				importedCrosses.get(index++).setDesig(name);
+				importedCross.setDesig(name);
 			}
 		}
 		timer.stop();

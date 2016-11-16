@@ -1631,11 +1631,6 @@ function validateCreateNursery() {
 				showInvalidInputMessage(checkIntervalGreaterThanZeroError);
 				return false;
 			}
-			var totalNumberOfChecks = selectedCheckListDataTable.getDataTable().$('.check-hidden').length;
-			if (parseInt(checkInterval, 10) <= totalNumberOfChecks) {
-				showInvalidInputMessage(checkIntervalError);
-				return false;
-			}
 		}
 	}
 

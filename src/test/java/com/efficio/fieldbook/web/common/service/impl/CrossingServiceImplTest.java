@@ -7,6 +7,10 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
+import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
+import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
@@ -48,6 +52,8 @@ public class CrossingServiceImplTest {
     public static final String TEST_MALE_GID_1 = "54321";
     public static final String TEST_FEMALE_GID_2 = "9999";
     public static final String TEST_MALE_GID_2 = "8888";
+	public static final String TEST_PROCESS_CODE = "[BC]";
+	public static final String TEST_PROCESS_CODE_WITH_PREFIX = "B[RCRPRNT]";
 
     private ImportedCrossesList importedCrossesList;
 
@@ -66,6 +72,12 @@ public class CrossingServiceImplTest {
 	@Mock
 	private SeedSourceGenerator seedSourceGenertor;
 
+	@Mock
+	private ProcessCodeRuleFactory processCodeRuleFactory;
+
+	@Mock
+	private ProcessCodeOrderedRule processCodeOrderedRule;
+
 	@InjectMocks
 	private CrossingServiceImpl crossingService;
 
@@ -77,6 +89,7 @@ public class CrossingServiceImplTest {
 		this.importedCrossesList = this.createImportedCrossesList();
 		this.importedCrossesList.setImportedGermplasms(this.createImportedCrosses());
 
+		Mockito.when(this.processCodeRuleFactory.getRuleByProcessCode(Mockito.anyString())).thenReturn(this.processCodeOrderedRule);
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
@@ -343,6 +356,51 @@ public class CrossingServiceImplTest {
 
 		final String designationName = this.crossingService.buildDesignationNameInSequence(null, 1, crossSetting);
 		Assert.assertEquals("A 001 B", designationName);
+	}
+
+
+	@Test
+	public void testBuildDesignationNameInSequenceMethodSuffixProcessCodeIsAvailable() throws RuleException {
+
+		final String resolvedSuffixString = "AAA";
+		final int sequenceNumber = 1;
+
+		final Method breedingMethod = new Method(TEST_BREEDING_METHOD_ID);
+		breedingMethod.setSuffix(TEST_PROCESS_CODE);
+
+		Mockito.when(this.germplasmDataManager.getMethodByCode(TEST_BREEDING_METHOD_CODE)).thenReturn(breedingMethod);
+		Mockito.when(this.processCodeOrderedRule.runRule(Mockito.any(RuleExecutionContext.class))).thenReturn(resolvedSuffixString);
+
+		final CrossSetting crossSetting = new CrossSetting();
+		crossSetting.setCrossNameSetting(new CrossNameSetting());
+		final ImportedCrosses importedCrosses = new ImportedCrosses();
+		importedCrosses.setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
+
+		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses, sequenceNumber, crossSetting);
+
+		Assert.assertEquals(sequenceNumber + resolvedSuffixString, designationName);
+	}
+
+	@Test
+	public void testBuildDesignationNameInSequenceMethodSuffixProcessCodeWithPrefix() throws RuleException {
+
+		final String resolvedSuffixString = "AAA";
+		final int sequenceNumber = 1;
+
+		final Method breedingMethod = new Method(TEST_BREEDING_METHOD_ID);
+		breedingMethod.setSuffix(TEST_PROCESS_CODE_WITH_PREFIX);
+
+		Mockito.when(this.germplasmDataManager.getMethodByCode(TEST_BREEDING_METHOD_CODE)).thenReturn(breedingMethod);
+		Mockito.when(this.processCodeOrderedRule.runRule(Mockito.any(RuleExecutionContext.class))).thenReturn(resolvedSuffixString);
+
+		final CrossSetting crossSetting = new CrossSetting();
+		crossSetting.setCrossNameSetting(new CrossNameSetting());
+		final ImportedCrosses importedCrosses = new ImportedCrosses();
+		importedCrosses.setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
+
+		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses, sequenceNumber, crossSetting);
+
+		Assert.assertEquals(sequenceNumber + "B" +resolvedSuffixString, designationName);
 	}
 
 	@Test

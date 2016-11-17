@@ -82,7 +82,7 @@ LabelPrinting = {
 			}
 		});
 
-		$('#saved-settings').on('change', LabelPrinting.doSelectPreset);
+		$('.saved-settings').on('change', LabelPrinting.doSelectPreset);
 
 		$('.fb-delete-settings').on('click', function() {
 			var selectedPreset = LabelPrinting.getSelectedPreset();

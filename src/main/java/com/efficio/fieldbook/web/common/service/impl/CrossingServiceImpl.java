@@ -144,8 +144,8 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 
 			final String generatedSource =
-					this.seedSourceGenerator.generateSeedSourceForCross(workbook, malePlotNo, femalePlotNo, workbook.getStudyName(),
-							workbook.getStudyName());
+					this.seedSourceGenerator.generateSeedSourceForCross(workbook, malePlotNo, femalePlotNo, importedCross.getMaleStudyName(),
+							importedCross.getFemaleStudyName());
 			importedCross.setSource(generatedSource);
 			importedCross.setEntryId(entryIdCounter);
 			importedCross.setEntryCode(String.valueOf(entryIdCounter++));

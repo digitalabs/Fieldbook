@@ -31,10 +31,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StringUtil;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -121,30 +118,9 @@ public class CrossingServiceImpl implements CrossingService {
 		int entryIdCounter = 1;
 		// apply the source string here, before we save germplasm if there is no existing source
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-
-			String malePlotNo = "";
-			String femalePlotNo = "";
-
-			// Look at the observation rows of Nursery to find plot number assigned to the male/female parent germplasm of the cross.
-			for (final MeasurementRow row : workbook.getObservations()) {
-				final MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
-				final MeasurementData plotNumberData = row.getMeasurementData(TermId.PLOT_NO.getId());
-
-				if (gidData != null && gidData.getValue().equals(importedCross.getFemaleGid())) {
-					if (plotNumberData != null) {
-						femalePlotNo = plotNumberData.getValue();
-					}
-				}
-
-				if (gidData != null && gidData.getValue().equals(importedCross.getMaleGid())) {
-					if (plotNumberData != null) {
-						malePlotNo = plotNumberData.getValue();
-					}
-				}
-			}
-
 			final String generatedSource =
-					this.seedSourceGenerator.generateSeedSourceForCross(workbook, malePlotNo, femalePlotNo, importedCross.getMaleStudyName(),
+					this.seedSourceGenerator.generateSeedSourceForCross(workbook, importedCross.getMalePlotNo(),
+							importedCross.getFemalePlotNo(), importedCross.getMaleStudyName(),
 							importedCross.getFemaleStudyName());
 			importedCross.setSource(generatedSource);
 			importedCross.setEntryId(entryIdCounter);

@@ -527,27 +527,24 @@ function showImportResponse(responseText) {
 		if (resp.conditionConstantsImportErrorMessage !== null && resp.conditionConstantsImportErrorMessage !== '') {
 			showAlertMessage('', resp.conditionConstantsImportErrorMessage);
 		}
-		if (resp.modes != null && resp.modes.length === 0) {
-			confirmStudyImport(resp.hasDataOverwrite);
-		} else {
-			$('#importStudyModal').modal('hide');
-			setTimeout(function() {$('#importStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });}, 300);
-			importError = resp.message;
-			if (resp.detailErrorMessage != null && resp.detailErrorMessage.length !== 0) {
-				importError += '<ul>';
-				for (errorIndex = 0 ; errorIndex < resp.detailErrorMessage.length ; errorIndex++) {
-					importError += '<li>' + resp.detailErrorMessage[errorIndex] + '</li>';
-				}
-				importError += '</ul>';
-				importError += '<br />';
-				importError += resp.confirmMessage;
+
+		$('#importStudyModal').modal('hide');
+		setTimeout(function() {$('#importStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });}, 300);
+		importError = resp.message;
+		if (resp.detailErrorMessage != null && resp.detailErrorMessage.length !== 0) {
+			importError += '<ul>';
+			for (errorIndex = 0 ; errorIndex < resp.detailErrorMessage.length ; errorIndex++) {
+				importError += '<p>' + resp.detailErrorMessage[errorIndex] + '</p>';
 			}
-			$('#importStudyConfirmationModal .import-confirmation').html(importError);
-            $('#studyConfirmationButton').off('click');
-            $('#studyConfirmationButton').on('click', function() {
-                confirmStudyImport(resp.hasDataOverwrite);
-            })
+			importError += '</ul>';
+			importError += '<br />';
+			importError += resp.confirmMessage;
 		}
+		$('#importStudyConfirmationModal .import-confirmation').html(importError);
+           $('#studyConfirmationButton').off('click');
+           $('#studyConfirmationButton').on('click', function() {
+               confirmStudyImport(resp.hasDataOverwrite);
+           })
 	} else {
 		showErrorMessage('page-import-study-message-modal', resp.error);
 		$('#importStudyModal').modal('hide');

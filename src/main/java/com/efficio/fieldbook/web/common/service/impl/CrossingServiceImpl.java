@@ -315,7 +315,8 @@ public class CrossingServiceImpl implements CrossingService {
 			parentageDesignationName.setGermplasmId(gid);
 			parentageDesignationName.setTypeId(PEDIGREE_NAME_TYPE);
 			parentageDesignationName.setUserId(this.contextUtil.getCurrentUserLocalId());
-			parentageDesignationName.setNval(parentageDesignation);
+			
+			parentageDesignationName.setNval(truncateName(parentageDesignation));
 			parentageDesignationName.setNstat(nstatValue);
 			parentageDesignationName.setLocationId(locationId);
 			parentageDesignationName.setNdate(Util.getCurrentDateAsIntegerValue());
@@ -325,6 +326,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 		}
 
+		
 		this.germplasmDataManager.addGermplasmName(parentageDesignationNames);
 	}
 
@@ -479,14 +481,9 @@ public class CrossingServiceImpl implements CrossingService {
 
 			// Common name updates
 			String designation = cross.getDesig();
-
-			if (designation.length() > MAX_CROSS_NAME_SIZE) {
-				designation = designation.substring(0, MAX_CROSS_NAME_SIZE - 1);
-				designation = designation + TRUNCATED;
-				isTrimed = true;
-			}
-
-			name.setNval(designation);
+			
+			name.setNval(truncateName(designation));
+			isTrimed = designation.length() > MAX_CROSS_NAME_SIZE;
 			name.setUserId(userId);
 			name.setNdate(germplasm.getGdate());
 			name.setLocationId(harvestLocationId);
@@ -500,6 +497,15 @@ public class CrossingServiceImpl implements CrossingService {
 
 		GermplasmListResult result = new GermplasmListResult(pairList, isTrimed);
 		return result;
+	}
+
+	private String truncateName(String designation) {
+		if (designation.length() > MAX_CROSS_NAME_SIZE) {
+			designation = designation.substring(0, MAX_CROSS_NAME_SIZE - 1);
+			designation = designation + TRUNCATED;
+		}
+
+		return designation;
 	}
 
 	protected void updateConstantFields(final Germplasm germplasm, final Integer userId) {

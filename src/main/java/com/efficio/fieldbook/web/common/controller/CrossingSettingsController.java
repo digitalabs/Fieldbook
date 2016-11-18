@@ -392,7 +392,7 @@ public class CrossingSettingsController extends SettingsController {
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 
-		final String studyName = this.userSelection.getWorkbook().getStudyDetails().getStudyName();
+		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		for (final GermplasmListData listData : germplasmListDataList) {
 			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, listData));

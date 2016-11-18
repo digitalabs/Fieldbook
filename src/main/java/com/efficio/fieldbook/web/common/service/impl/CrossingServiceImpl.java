@@ -135,7 +135,7 @@ public class CrossingServiceImpl implements CrossingService {
 		this.save(crossSetting, importedCrossesList, germplasmPairs);
 	}
 
-	private void generateSeedSource(ImportedCrosses importedCross, Workbook workbook) {
+	void generateSeedSource(ImportedCrosses importedCross, Workbook workbook) {
 		if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource())
 				|| importedCross.getSource().equalsIgnoreCase(ImportedCrosses.SEED_SOURCE_PENDING)) {
 

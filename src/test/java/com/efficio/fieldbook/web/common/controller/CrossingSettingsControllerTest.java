@@ -120,6 +120,12 @@ public class CrossingSettingsControllerTest {
 		this.crossesListUtil.setOntologyDataManager(this.ontologyDataManager);
 		this.crossingSettingsController.setCrossesListUtil(this.crossesListUtil);
 		this.mockMappingOfHeadersToOntology();
+
+		final Workbook workbook = new Workbook();
+		final StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setId(CrossingSettingsControllerTest.DUMMY_STUDY_ID);
+		workbook.setStudyDetails(studyDetails);
+		Mockito.when(this.studySelection.getWorkbook()).thenReturn(workbook);
 	}
 
 	private void mockMappingOfHeadersToOntology() {
@@ -300,13 +306,7 @@ public class CrossingSettingsControllerTest {
 
 	@Test
 	public void testDoCrossingExportSuccess() throws Exception {
-		final Workbook wb = Mockito.mock(Workbook.class);
-		final StudyDetails studyDetails = Mockito.mock(StudyDetails.class);
 
-		Mockito.when(wb.getStudyDetails()).thenReturn(studyDetails);
-		Mockito.when(studyDetails.getId()).thenReturn(CrossingSettingsControllerTest.DUMMY_STUDY_ID);
-		Mockito.when(wb.getStudyName()).thenReturn("dummy study name");
-		Mockito.when(this.studySelection.getWorkbook()).thenReturn(wb);
 
 		final File file = Mockito.mock(File.class);
 		Mockito.when(file.getAbsolutePath()).thenReturn(CrossingSettingsControllerTest.DUMMY_ABS_PATH);

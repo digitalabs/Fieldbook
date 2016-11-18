@@ -112,13 +112,13 @@ public class CrossingSettingsControllerTest {
 	private final SettingsPresetService settingsPresetService = new SettingsPresetServiceImpl();
 
 	@InjectMocks
-	private CrossingSettingsController dut;
+	private CrossingSettingsController crossingSettingsController;
 
 	@Before
 	public void setup() {
 		this.crossesListUtil = new CrossesListUtil();
 		this.crossesListUtil.setOntologyDataManager(this.ontologyDataManager);
-		this.dut.setCrossesListUtil(this.crossesListUtil);
+		this.crossingSettingsController.setCrossesListUtil(this.crossesListUtil);
 		this.mockMappingOfHeadersToOntology();
 	}
 
@@ -151,7 +151,7 @@ public class CrossingSettingsControllerTest {
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_SEQUENCE_NAME_VALUE).when(this.crossNameService)
 					.getNextNameInSequence(Matchers.any(CrossNameSetting.class));
 
-			final Map<String, String> output = this.dut.generateSequenceValue(Mockito.mock(CrossSetting.class), this.request);
+			final Map<String, String> output = this.crossingSettingsController.generateSequenceValue(Mockito.mock(CrossSetting.class), this.request);
 
 			Assert.assertNotNull(output);
 			Assert.assertEquals(CrossingSettingsControllerTest.SUCCESS_VALUE, output.get("success"));
@@ -181,7 +181,7 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testSubmitCrossingSetting() {
 		final CrossSetting setting = Mockito.mock(CrossSetting.class);
-		final Map<String, Object> output = this.dut.submitCrossSettings(setting);
+		final Map<String, Object> output = this.crossingSettingsController.submitCrossSettings(setting);
 
 		Mockito.verify(this.studySelection).setCrossSettings(setting);
 
@@ -192,7 +192,7 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testSaveAndSubmitCrossSettingNewSetting() {
 		try {
-			final CrossingSettingsController mole = Mockito.spy(this.dut);
+			final CrossingSettingsController mole = Mockito.spy(this.crossingSettingsController);
 			final CrossSetting sampleSetting = this.constructCrossSetting();
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
 			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
@@ -221,7 +221,7 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testSaveAndSubmitCrossSettingPreviousSetting() {
 		try {
-			final CrossingSettingsController mole = Mockito.spy(this.dut);
+			final CrossingSettingsController mole = Mockito.spy(this.crossingSettingsController);
 			final CrossSetting sampleSetting = this.constructCrossSetting();
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
 			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
@@ -249,7 +249,7 @@ public class CrossingSettingsControllerTest {
 
 	@Test
 	public void testGetHarvestMonth() {
-		final List<Map<String, String>> harvestMonths = this.dut.getHarvestMonths();
+		final List<Map<String, String>> harvestMonths = this.crossingSettingsController.getHarvestMonths();
 
 		Assert.assertNotNull(harvestMonths);
 		Assert.assertEquals(CrossingSettingsControllerTest.NUMBER_OF_MONTHS, harvestMonths.size());
@@ -264,7 +264,7 @@ public class CrossingSettingsControllerTest {
 
 	@Test
 	public void testGetHarvestYears() {
-		final List<String> harvestYears = this.dut.getHarvestYears();
+		final List<String> harvestYears = this.crossingSettingsController.getHarvestYears();
 
 		Assert.assertNotNull(harvestYears);
 		Assert.assertEquals(CrossingSettingsController.YEAR_INTERVAL, harvestYears.size());
@@ -278,7 +278,7 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testRetrieveImportSettings() {
 		try {
-			final CrossingSettingsController mole = Mockito.spy(this.dut);
+			final CrossingSettingsController mole = Mockito.spy(this.crossingSettingsController);
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
 			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
 
@@ -313,7 +313,7 @@ public class CrossingSettingsControllerTest {
 		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), Matchers.anyString(), Matchers.anyInt())).thenReturn(file);
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
 
-		final Map<String, Object> jsonResult = this.dut.doCrossingExport();
+		final Map<String, Object> jsonResult = this.crossingSettingsController.doCrossingExport();
 
 		Assert.assertEquals("should return success", Boolean.TRUE, jsonResult.get("isSuccess"));
 		Assert.assertEquals("should return the correct output path", CrossingSettingsControllerTest.DUMMY_ABS_PATH,
@@ -339,7 +339,7 @@ public class CrossingSettingsControllerTest {
 				this.messageSource.getMessage(Matchers.anyString(), Matchers.any(String[].class), Matchers.anyString(),
 						Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn("export.error");
 
-		final Map<String, Object> jsonResult = this.dut.doCrossingExport();
+		final Map<String, Object> jsonResult = this.crossingSettingsController.doCrossingExport();
 
 		Assert.assertEquals("should return success", Boolean.FALSE, jsonResult.get("isSuccess"));
 		Assert.assertEquals("should return the correct error message", "export.error", jsonResult.get("errorMessage"));
@@ -393,7 +393,7 @@ public class CrossingSettingsControllerTest {
 		Mockito.when(this.germplasmListManager.retrieveListDataWithParents(80)).thenReturn(germplasmListDatas);
 		Mockito.when(this.germplasmListManager.getGermplasmListById(80)).thenReturn(germplasmList);
 
-		final Map<String, Object> testResponseMap = this.dut.getImportedCrossesList("80");
+		final Map<String, Object> testResponseMap = this.crossingSettingsController.getImportedCrossesList("80");
 		final List<String> tableHeaderList = (List<String>) testResponseMap.get(CrossesListUtil.TABLE_HEADER_LIST);
 		final List<Map<String, Object>> testMasterList = (List<Map<String, Object>>) testResponseMap.get(CrossesListUtil.LIST_DATA_TABLE);
 
@@ -416,7 +416,7 @@ public class CrossingSettingsControllerTest {
 
 	@Test
 	public void testGetImportedCrossesListEmpty() throws Exception {
-		final Map<String, Object> testResponseMap = this.dut.getImportedCrossesList();
+		final Map<String, Object> testResponseMap = this.crossingSettingsController.getImportedCrossesList();
 		Assert.assertTrue("The response map should be empty", testResponseMap.isEmpty());
 	}
 
@@ -425,7 +425,7 @@ public class CrossingSettingsControllerTest {
 	public void testGetImportedCrossesListWithSessionData() throws Exception {
 		this.fillUpUserSelectionWithImportedCrossTestData();
 
-		final Map<String, Object> testResponseMap = this.dut.getImportedCrossesList();
+		final Map<String, Object> testResponseMap = this.crossingSettingsController.getImportedCrossesList();
 		Assert.assertFalse("The response map should not be empty", testResponseMap.isEmpty());
 
 		final List<String> tableHeaderList = (List<String>) testResponseMap.get(CrossesListUtil.TABLE_HEADER_LIST);

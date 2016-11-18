@@ -116,15 +116,10 @@ public class CrossingServiceImpl implements CrossingService {
 			final Integer userId, final Workbook workbook) {
 
 		int entryIdCounter = 1;
-		// apply the source string here, before we save germplasm if there is no existing source
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-			final String generatedSource =
-					this.seedSourceGenerator.generateSeedSourceForCross(workbook, importedCross.getMalePlotNo(),
-							importedCross.getFemalePlotNo(), importedCross.getMaleStudyName(),
-							importedCross.getFemaleStudyName());
-			importedCross.setSource(generatedSource);
-			importedCross.setEntryId(entryIdCounter);
+			generateSeedSource(importedCross, workbook);
 			importedCross.setEntryCode(String.valueOf(entryIdCounter++));
+			importedCross.setEntryId(entryIdCounter);
 		}
 
 		final List<Pair<Germplasm, Name>> germplasmPairs =
@@ -138,6 +133,16 @@ public class CrossingServiceImpl implements CrossingService {
 
 		this.verifyGermplasmMethodPresent(germplasmList);
 		this.save(crossSetting, importedCrossesList, germplasmPairs);
+	}
+
+	private void generateSeedSource(ImportedCrosses importedCross, Workbook workbook) {
+		if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource())
+				|| importedCross.getSource().equalsIgnoreCase(ImportedCrosses.SEED_SOURCE_PENDING)) {
+
+			final String generatedSource = this.seedSourceGenerator.generateSeedSourceForCross(workbook, importedCross.getMalePlotNo(),
+					importedCross.getFemalePlotNo(), importedCross.getMaleStudyName(), importedCross.getFemaleStudyName());
+			importedCross.setSource(generatedSource);
+		}
 	}
 
 	/**
@@ -200,15 +205,8 @@ public class CrossingServiceImpl implements CrossingService {
 	private List<Pair<Germplasm, Name>> getPairs(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final Integer userId, final Workbook workbook) {
 
-		// apply the source string here, before we save germplasm if there is no existing source
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-			if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource())
-					|| importedCross.getSource().equalsIgnoreCase(ImportedCrosses.SEED_SOURCE_PENDING)) {
-				final String generatedSource =
-						this.seedSourceGenerator.generateSeedSourceForCross(workbook, importedCross.getMalePlotNo(),
-								importedCross.getFemalePlotNo(), importedCross.getMaleStudyName(), importedCross.getFemaleStudyName());
-				importedCross.setSource(generatedSource);
-			}
+			generateSeedSource(importedCross, workbook);
 		}
 
 		final List<Pair<Germplasm, Name>> germplasmNamePairs =

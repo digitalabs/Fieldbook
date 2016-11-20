@@ -48,7 +48,6 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmFolderMetadata;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.GermplasmListMetadata;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
@@ -72,6 +71,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
@@ -182,6 +182,25 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);
 	}
+	
+	private class GermplasmListResult {
+		private Integer germplasmListId;
+		private Boolean isTrimed;
+		
+		public GermplasmListResult(Integer germplasmListId, Boolean isTrimed) {
+			super();
+			this.germplasmListId = germplasmListId;
+			this.isTrimed = isTrimed;
+		}
+		public Boolean getIsTrimed() {
+			return isTrimed;
+		}
+
+		public Integer getGermplasmListId() {
+			return germplasmListId;
+		}
+
+	}
 
 	/**
 	 * Load initial germplasm tree.
@@ -198,7 +217,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					this.fieldbookMiddlewareService.getGermplasmListByName(form.getListName(), this.getCurrentProgramUUID());
 			if (germplasmListIsNew == null && !this.isSimilarToRootFolderName(form.getListName())) {
 				final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
-				final Integer germplasmListId = this.saveGermplasmList(form, listDataItems);
+				
+				GermplasmListResult result = this.saveGermplasmList(form, listDataItems);
+				final Integer germplasmListId = result.getGermplasmListId();
 
 				final List<GermplasmListData> data = new ArrayList<>();
 				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
@@ -210,6 +231,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				results.put("germplasmListId", germplasmListId);
 				results.put("uniqueId", form.getListIdentifier());
 				results.put("listName", form.getListName());
+				results.put("isTrimed", result.getIsTrimed() ? 1 : 0);
 
 				if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
 					results.put("advancedGermplasmListId", listDataProjectListId);
@@ -243,15 +265,16 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/updateCrossesList", method = RequestMethod.POST)
 	public Map<String, Object> updateCrossesList(final Model model, final HttpSession session) {
 		final Map<String, Object> results = new HashMap<>();
-
+		
 		try {
 			final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 			final String crossesListId = (String) session.getAttribute("createdCrossesListId");
 
 			if (crossesListId != null) {
+				boolean isTrimed = false;
 				final Integer germplasmListId = Integer.parseInt(crossesListId);
 				final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
-				this.updateGermplasmList(germplasmListId, listDataItems);
+				isTrimed = this.updateGermplasmList(germplasmListId, listDataItems);
 				session.removeAttribute("createdCrossesListId");
 
 				final List<GermplasmListData> data = new ArrayList<>();
@@ -264,6 +287,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				results.put("germplasmListId", germplasmListId);
 				results.put("listName", germplasmList.getName());
 				results.put("crossesListId", listDataProjectListId);
+				results.put("isTrimed", isTrimed ? 1 : 0);
 			} else {
 				results.put(GermplasmTreeController.IS_SUCCESS, 0);
 				results.put(GermplasmTreeController.MESSAGE,
@@ -287,18 +311,23 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	private Integer updateGermplasmList(final Integer germplasmListId, final List<Pair<Germplasm, GermplasmListData>> listDataItems)
+	private boolean updateGermplasmList(final Integer germplasmListId, final List<Pair<Germplasm, GermplasmListData>> listDataItems)
 			throws RuleException {
+		boolean isTrimed = false;
 		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
 		final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 		final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
 
-		this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
-		return this.fieldbookMiddlewareService.updateGermplasmList(listDataItems, germplasmList);
+		isTrimed = this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
+		this.fieldbookMiddlewareService.updateGermplasmList(listDataItems, germplasmList);
+		
+		return isTrimed;
 	}
 
-	protected Integer saveGermplasmList(final SaveListForm form, final List<Pair<Germplasm, GermplasmListData>> listDataItems)
+	protected GermplasmListResult saveGermplasmList(final SaveListForm form, final List<Pair<Germplasm, GermplasmListData>> listDataItems)
 			throws RuleException {
+		
+		Boolean isTrimed = false;
 		final Integer currentUserId = this.getCurrentIbdbUserId();
 		final GermplasmList germplasmList = this.createGermplasmList(form, currentUserId);
 		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
@@ -308,16 +337,21 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingNurseryForm, germplasms, listDataItems, currentUserId,
 					germplasmAttributes);
-			return this.fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList,
+			Integer germplasmListId =  this.fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList,
 					germplasmAttributes);
+			return new GermplasmListResult(germplasmListId, false);
+			
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
 			final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 			final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
 
-			this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
+			isTrimed = this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
 			// Set imported user as owner of the list
 			germplasmList.setUserId(importedCrossesList.getUserId());
-			return this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList);
+			
+			Integer germplasmListId = this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList);
+			
+			return  new GermplasmListResult(germplasmListId, isTrimed);
 		} else {
 			throw new IllegalArgumentException("Unknown germplasm list type supplied when saving germplasm list");
 		}
@@ -343,9 +377,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * @param germplasmList
 	 * @param crossSetting
 	 * @param importedCrossesList
+	 * @return 
 	 * @throws RuleException
 	 */
-	private void applyNamingSettingToCrosses(final List<Pair<Germplasm, GermplasmListData>> listDataItems,
+	private Boolean applyNamingSettingToCrosses(final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			final GermplasmList germplasmList, final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList)
 			throws RuleException {
 
@@ -353,22 +388,25 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		// method to be used for each imported cross
 		// so that the correct information is available for further operations
 		this.crossingService.processCrossBreedingMethod(crossSetting, importedCrossesList);
-
+		
+		
+		Boolean isTrimed;
 		if (crossSetting.isUseManualSettingsForNaming()) {
 			// this line of code is where the creation of new germplasm takes
 			// place
-			this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
+			isTrimed = this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
 					this.userSelection.getWorkbook());
-			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
+			isTrimed = isTrimed || this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
 		} else {
 			final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(crossSetting, importedCrossesList);
 			// this line of code is where the creation of new germplasm takes
 			// place
-			this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesListWithNamingSettings,
+			isTrimed = this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesListWithNamingSettings,
 					this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
-			this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesListWithNamingSettings.getImportedCrosses());
+			isTrimed = isTrimed || this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesListWithNamingSettings.getImportedCrosses());
 		}
 		this.checkForEmptyDesigNames(importedCrossesList.getImportedCrosses());
+		return isTrimed;
 	}
 
 	private ImportedCrossesList applyNamingRules(final CrossSetting setting, final ImportedCrossesList importedCrossesList)
@@ -523,9 +561,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	}
 
-	private void populateGermplasmListData(final GermplasmList germplasmList, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
+	private boolean populateGermplasmListData(final GermplasmList germplasmList, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			final List<ImportedCrosses> importedGermplasmList) {
-
+		
+		Boolean isTrimed = false;
 		// Create germplasms to save - Map<Germplasm, List<Name>>
 		for (final ImportedCrosses importedCrosses : importedGermplasmList) {
 			final Integer gid = importedCrosses.getGid() != null ? Integer.valueOf(importedCrosses.getGid()) : null;
@@ -555,11 +594,18 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				groupName = "-";
 			}
 
+			if(groupName.length() > CrossingServiceImpl.MAX_CROSS_NAME_SIZE){
+				groupName = groupName.substring(0, CrossingServiceImpl.MAX_CROSS_NAME_SIZE - 1);
+				groupName = groupName + CrossingServiceImpl.TRUNCATED;
+				isTrimed  = true;
+			}
+			
 			final GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource,
 					designation, groupName, listDataStatus, localRecordId, notes, crossingDate);
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));
 		}
+		return isTrimed;
 	}
 
 	/**

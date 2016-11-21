@@ -142,7 +142,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 		int entryIdCounter = 1;
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-			generateSeedSource(importedCross, workbook);
+			populateSeedSource(importedCross, workbook);
 			importedCross.setEntryCode(String.valueOf(entryIdCounter++));
 			importedCross.setEntryId(entryIdCounter);
 		}
@@ -160,7 +160,7 @@ public class CrossingServiceImpl implements CrossingService {
 		return pairsResult.isTrimed;
 	}
 
-	void generateSeedSource(ImportedCrosses importedCross, Workbook workbook) {
+	void populateSeedSource(ImportedCrosses importedCross, Workbook workbook) {
 		if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource())
 				|| importedCross.getSource().equalsIgnoreCase(ImportedCrosses.SEED_SOURCE_PENDING)) {
 
@@ -231,7 +231,7 @@ public class CrossingServiceImpl implements CrossingService {
 			final Integer userId, final Workbook workbook) {
 
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-			generateSeedSource(importedCross, workbook);
+			populateSeedSource(importedCross, workbook);
 		}
 
 		final GermplasmListResult pairsResult = this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(),

@@ -69,6 +69,9 @@ var SaveAdvanceList = {};
 				} else {
 					showErrorMessage('page-save-list-message-modal', data.message);
 				}
+				if (data.isTrimed === 1) {
+					showAlertMessage('page-save-list-message-modal', crossesWarningMessage, 10000);
+				}
 			},
 			error: function() {
 				showErrorMessage('page-save-list-message-modal', $.fieldbookMessages.errorImportFailed);
@@ -139,6 +142,9 @@ var SaveAdvanceList = {};
 					if (isCrosses) {
 						ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  data.listName);
 						$('#saveListTreeModal').data('is-save-crosses', '0');
+						if (data.isTrimed === 1) {
+							showAlertMessage('page-save-list-message-modal', crossesWarningMessage, 10000);
+						}
 					} else if (isStock) {
 						$('#saveListTreeModal').data('is-save-stock', '0');
 					} else {

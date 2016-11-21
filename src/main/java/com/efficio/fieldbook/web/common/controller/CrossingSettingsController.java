@@ -325,7 +325,7 @@ public class CrossingSettingsController extends SettingsController {
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 
 		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
-			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, cross));
+			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, cross));
 		}
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
@@ -395,7 +395,7 @@ public class CrossingSettingsController extends SettingsController {
 		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		for (final GermplasmListData listData : germplasmListDataList) {
-			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, listData));
+			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, listData));
 			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData);
 
 			if (importedCross.getGid() == null) {

@@ -521,6 +521,39 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals("00000001", formattedString);
 	}
 
+	@Test
+	public void testGenerateSeedSource() {
+		final String newSeedSource = "newSeedSource";
+		Mockito.doReturn(newSeedSource).when(this.seedSourceGenertor).generateSeedSourceForCross(Mockito.any(Workbook.class),
+				Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+
+		// Case 1 - No seed source present. Generate new.
+		ImportedCrosses importedCross1 = new ImportedCrosses();
+		importedCross1.setSource(null);
+		this.crossingService.populateSeedSource(importedCross1, Mockito.mock(Workbook.class));
+		Assert.assertEquals(newSeedSource, importedCross1.getSource());
+
+		// Case 2 - Seed source is present. Keep.
+		ImportedCrosses importedCross2 = new ImportedCrosses();
+		final String existingSeedSource = "existingSeedSource";
+		importedCross2.setSource(existingSeedSource);
+		this.crossingService.populateSeedSource(importedCross2, Mockito.mock(Workbook.class));
+		Assert.assertEquals(existingSeedSource, importedCross2.getSource());
+
+		// Case 3 - Seed source is presend but is PENDING indicator. Generate new.
+		ImportedCrosses importedCross3 = new ImportedCrosses();
+		importedCross3.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
+		this.crossingService.populateSeedSource(importedCross3, Mockito.mock(Workbook.class));
+		Assert.assertEquals(newSeedSource, importedCross3.getSource());
+
+		// Case 4 - Seed source is present but empty string. Generate new.
+		ImportedCrosses importedCross4 = new ImportedCrosses();
+		importedCross4.setSource("");
+		this.crossingService.populateSeedSource(importedCross4, Mockito.mock(Workbook.class));
+		Assert.assertEquals(newSeedSource, importedCross4.getSource());
+
+	}
+
 	private ImportedCrossesList createImportedCrossesList() {
 
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();

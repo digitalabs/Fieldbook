@@ -25,7 +25,6 @@ import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class ManageSettingsControllerTest {
 
 	private static final int NO_OF_TRIAL_INSTANCES = 2;
@@ -43,6 +42,7 @@ public class ManageSettingsControllerTest {
 	private ManageSettingsController controller;
 
 	@Test
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	public void testDeleteVariableMultiple() throws Exception {
 		// we just have to make sure that the original deleteVariable(@PathVariable int mode, @PathVariable int variableId) is called
 		// unit test for that method should be done separately

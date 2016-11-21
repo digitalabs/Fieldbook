@@ -767,6 +767,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	public List<LabelFields> getAvailableLabelFieldsForInventory(final Locale locale) {
 		final List<LabelFields> labelFieldsList = new ArrayList<>();
 
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.list.name", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_LIST_NAME.getInt(), true));
+		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.entry.num", null, locale),
+				AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt(), true));
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.gid", null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt(), true));
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.designation", null, locale),

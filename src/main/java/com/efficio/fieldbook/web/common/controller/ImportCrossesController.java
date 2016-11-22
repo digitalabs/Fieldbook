@@ -78,7 +78,7 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 		}
 
 		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
-			masterList.add(crossesListUtil.generateDatatableDataMap(cross));
+			masterList.add(crossesListUtil.generateCrossesTableDataMap(cross));
 		}
 
 		return masterList;

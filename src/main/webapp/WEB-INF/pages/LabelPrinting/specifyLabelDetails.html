@@ -775,22 +775,19 @@
                             </div>
                         </div>
                     </div>
-
-
-                    <div class="row">
-
-                    </div>
-
-                    <div class="form-group">&nbsp;</div>
-                    <div class="form-group">
-                        <div class="col-xs-12 col-md-12 fbk-center">
-                            <input type="button" onclick="javascript: window.history.back();" value="Cancel" class="btn btn-default"/>
-                            <input type="button" id="fbk-lbl-printing-save-preset" value="Save Preset" class="btn btn-info"/>
-                            <input type="button" id="export-label-data" value="Export Label" th:value="#{common.form.export.label.text}"
-                                   class="btn btn-primary"/>
-                        </div>
+                </div>
+                
+				<!-- Navigation Buttons -->
+				<div class="form-group">&nbsp;</div>
+                <div class="form-group">
+                    <div class="col-xs-12 col-md-12 fbk-center">
+                        <input type="button" onclick="javascript: window.history.back();" value="Cancel" class="btn btn-default"/>
+                        <input type="button" id="fbk-lbl-printing-save-preset" value="Save Preset" class="btn btn-info fbk-hide"/>
+                        <input type="button" id="export-label-data" value="Export Label" th:value="#{common.form.export.label.text}"
+                               class="btn btn-primary fbk-hide"/>
                     </div>
                 </div>
+                
                 <div class="form-group">&nbsp;</div>
             </div>
         </div>

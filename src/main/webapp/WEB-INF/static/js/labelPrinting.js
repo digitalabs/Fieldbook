@@ -134,6 +134,10 @@ LabelPrinting = {
 				$('.label-printing-details').show();
 				$('#fbk-lbl-printing-save-preset').show();
 				$('.label-filename').show();
+				
+				// show save preset and export label buttons
+				$('#fbk-lbl-printing-save-preset').show();
+				$('#export-label-data').show();
 			} else if ($('#label-format').val() !== '') {
 				$('.pdf-fields').hide();
 				$('.non-pdf-fields').show();
@@ -142,6 +146,11 @@ LabelPrinting = {
 				$('.label-printing-details').show();
 				$('#fbk-lbl-printing-save-preset').show();
 				$('.label-filename').show();
+				
+				// show save preset and export label buttons by default
+				$('#fbk-lbl-printing-save-preset').show();
+				$('#export-label-data').show();
+				
 				if ($('#label-format').val() === '2') {
 					$('.non-pdf-type').html('XLS');
 				} else if ($('#label-format').val() === '3') {
@@ -157,6 +166,10 @@ LabelPrinting = {
 				}
 			} else {
 				$('.label-printing-details').hide();
+				
+				// hide save preset and export label buttons
+				$('#fbk-lbl-printing-save-preset').hide();
+				$('#export-label-data').hide();
 			}
 		});
 

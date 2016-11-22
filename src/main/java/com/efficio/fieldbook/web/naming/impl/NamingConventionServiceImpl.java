@@ -299,7 +299,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			//default plants selected value to 1 for list of crosses because sequence is not working if plants selected value is not set
 			advancingSource.setPlantsSelected(1);
 
-			// pass the parent gids (female and male) of the imported cross, this is required to properly resolve the Backcross and RecurringParent process codes.
+			// pass the parent gids (female and male) of the imported cross, this is required to properly resolve the Backcross process codes.
 			advancingSource.setFemaleGid(StringUtils.isNumeric(importedCross.getFemaleGid()) ? Integer.valueOf(importedCross.getFemaleGid()) : 0);
 			advancingSource.setMaleGid(StringUtils.isNumeric(importedCross.getMaleGid()) ? Integer.valueOf(importedCross.getMaleGid()) : 0);
 

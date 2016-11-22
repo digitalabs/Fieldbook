@@ -545,7 +545,7 @@ LabelPrinting = {
 
 		var formElm = $('#specifyLabelDetailsForm');
 		$('#customReport').val(isCustomReport);
-		
+
 		if (isCustomReport) {
 			LabelPrinting.updateAdditionalLabelSettingsFormDetails(type);
 			LabelPrinting.proceedExport(formElm);
@@ -554,7 +554,7 @@ LabelPrinting = {
 				showErrorMessage('', 'File name should not exceed 100 characters');
 				return false;
 			}
-			
+
 			var selectedPreset = LabelPrinting.getSelectedPreset();
 
 			if (selectedPreset.length == 0) {
@@ -765,9 +765,15 @@ LabelPrinting = {
 				/** @namespace data.csvExcelSetting */
 				/** @namespace data.pdfSetting */
 				/** @namespace data.barcodeSetting */
+				/** @namespace data.sorting */
+				/** @namespace data.numberOfCopies */
 
 				// set the label output
 				$('#label-format').val(LabelPrinting.labelFormat[data.outputType]).change();
+				// set sorting
+				$('#label-sorting').val(data.sorting).change();
+				// set number of copies
+				$('#label-copies').val(data.numberOfCopies).change();
 
 				if (data.outputType === 'PDF') {
 					LabelPrinting.updatePDFFields(data.pdfSetting);

@@ -966,7 +966,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		try {
 			xmlConfig = this.generateXMLFromLabelPrintingSettings(rawSettings.getSettingsName(),
 					LabelPrintingFileTypes.getFileTypeByIndex(rawSettings.getGenerateType()).getType(), nonPDFSettings, pdfSettings,
-					barcodeSettings);
+					barcodeSettings, rawSettings.getSorting(), rawSettings.getNumberOfCopies());
 		} catch (final JAXBException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
 		}
@@ -976,9 +976,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	private String generateXMLFromLabelPrintingSettings(final String name, final String outputType,
 			final CSVExcelLabelPrintingSetting csvSettings, final PDFLabelPrintingSetting pdfSettings,
-			final BarcodeLabelPrintingSetting barcodeSettings) throws JAXBException {
+			final BarcodeLabelPrintingSetting barcodeSettings, final String sorting, final String numberOfCopies) throws JAXBException {
 		final LabelPrintingSetting labelPrintingSetting =
-				new LabelPrintingSetting(name, outputType, csvSettings, pdfSettings, barcodeSettings);
+				new LabelPrintingSetting(name, outputType, csvSettings, pdfSettings, barcodeSettings, sorting, numberOfCopies);
 
 		final JAXBContext context = JAXBContext.newInstance(LabelPrintingSetting.class);
 		final Marshaller marshaller = context.createMarshaller();

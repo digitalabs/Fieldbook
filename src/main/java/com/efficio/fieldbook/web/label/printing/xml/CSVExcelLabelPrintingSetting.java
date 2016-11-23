@@ -21,7 +21,7 @@ public class CSVExcelLabelPrintingSetting implements Serializable {
 
 	}
 
-	public CSVExcelLabelPrintingSetting(boolean isIncludeColumnHeadingsInOutput, String selectedFieldsString) {
+	public CSVExcelLabelPrintingSetting(final boolean isIncludeColumnHeadingsInOutput, final String selectedFieldsString) {
 		super();
 		this.isIncludeColumnHeadingsInOutput = isIncludeColumnHeadingsInOutput;
 		this.selectedFieldsString = selectedFieldsString;
@@ -32,12 +32,12 @@ public class CSVExcelLabelPrintingSetting implements Serializable {
 		return this.isIncludeColumnHeadingsInOutput;
 	}
 
-	public void setIncludeColumnHeadingsInOutput(boolean isIncludeColumnHeadingsInOutput) {
+	public void setIncludeColumnHeadingsInOutput(final boolean isIncludeColumnHeadingsInOutput) {
 		this.isIncludeColumnHeadingsInOutput = isIncludeColumnHeadingsInOutput;
 	}
 
 	public List<Integer> getSelectedFieldsList() {
-		List<Integer> selectedFieldsList = new ArrayList<Integer>();
+		final List<Integer> selectedFieldsList = new ArrayList<Integer>();
 		if (!this.selectedFieldsString.isEmpty()) {
 			for (String traitId : this.selectedFieldsString.split(CSVExcelLabelPrintingSetting.DELIMITER)) {
 				if (NumberUtils.isNumber(traitId)) {
@@ -53,7 +53,7 @@ public class CSVExcelLabelPrintingSetting implements Serializable {
 		return this.selectedFieldsString;
 	}
 
-	public void setSelectedFieldsString(String selectedFieldsString) {
+	public void setSelectedFieldsString(final String selectedFieldsString) {
 		this.selectedFieldsString = selectedFieldsString;
 	}
 

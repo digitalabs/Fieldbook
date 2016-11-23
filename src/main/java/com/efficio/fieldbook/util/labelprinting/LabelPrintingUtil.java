@@ -106,7 +106,10 @@ public class LabelPrintingUtil {
 		final StringBuilder buffer = new StringBuilder();
 
 		try {
-			if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
+
+			if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_LIST_NAME.getInt()) {
+				buffer.append(this.messageSource.getMessage("label.printing.available.fields.list.name", null, locale));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
 				buffer.append(this.messageSource.getMessage("label.printing.available.fields.entry.num", null, locale));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
 				buffer.append(this.messageSource.getMessage("label.printing.available.fields.gid", null, locale));
@@ -330,7 +333,11 @@ public class LabelPrintingUtil {
 		final Locale locale = LocaleContextHolder.getLocale();
 		final Map<Integer, String> labelHeaders = Maps.newHashMap();
 		for (final Integer selectedFieldId : selectedFieldIDs) {
-			if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+			if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_LIST_NAME.getInt()) {
+				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.list.name", null, locale));
+			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
+				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.entry.num", null, locale));
+			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
 				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.gid", null, locale));
 			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
 				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.designation", null, locale));
@@ -350,6 +357,10 @@ public class LabelPrintingUtil {
 	private Map<Integer, String> getAllLabelHeadersForSeedPreparation() {
 		final Locale locale = LocaleContextHolder.getLocale();
 		final Map<Integer, String> labelHeaders = Maps.newHashMap();
+		labelHeaders.put(AppConstants.AVAILABLE_LABEL_FIELDS_LIST_NAME.getInt(),
+				this.messageSource.getMessage("label.printing.available.fields.list.name", null, locale));
+		labelHeaders.put(AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt(),
+				this.messageSource.getMessage("label.printing.available.fields.entry.num", null, locale));
 		labelHeaders.put(AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt(),
 				this.messageSource.getMessage("label.printing.available.fields.gid", null, locale));
 		labelHeaders.put(AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt(),
@@ -391,7 +402,11 @@ public class LabelPrintingUtil {
 			selectedValueFieldBuffer.append(headerName).append(" : ");
 		}
 
-		if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+		if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_LIST_NAME.getInt()) {
+			selectedValueFieldBuffer.append(userLabelPrinting.getName());
+		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
+			selectedValueFieldBuffer.append(germplasmListData.getEntryId());
+		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
 			// GID
 			selectedValueFieldBuffer.append(germplasmListData.getGid().toString());
 		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
@@ -452,8 +467,11 @@ public class LabelPrintingUtil {
 				buffer.append(headerName).append(" : ");
 			}
 
-			// GID
-			if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+			if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_LIST_NAME.getInt()) {
+				buffer.append(userLabelPrinting.getName());
+			} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
+				buffer.append(germplasmListData.getEntryId());
+			} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
 				buffer.append(germplasmListData.getGid().toString());
 			} else if (selectedBarcodeFieldID == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
 				buffer.append(germplasmListData.getDesignation());

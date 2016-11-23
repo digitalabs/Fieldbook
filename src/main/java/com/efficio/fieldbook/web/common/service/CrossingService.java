@@ -15,11 +15,11 @@ public interface CrossingService {
 
 	String getCross(Germplasm germplasm, ImportedCrosses crosses, String separator);
 
-	void applyCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId, Workbook workbook);
+	boolean applyCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId, Workbook workbook);
 
 	void updateCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList);
 
-	void applyCrossSettingWithNamingRules(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId, Workbook
+	boolean applyCrossSettingWithNamingRules(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId, Workbook
 			workbook);
 
 	void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList);

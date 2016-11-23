@@ -71,7 +71,7 @@ public class CrossesListUtilTest {
 	public void testGenerateDatatableDataMap_returnsTheValueFromOntology() throws MiddlewareQueryException {
 
 		this.fromOntology.setName("Ontology Name");
-		final Map<String, Object> tableHeaderList = this.crossesListUtil.generateDatatableDataMap(this.importedCrosses);
+		final Map<String, Object> tableHeaderList = this.crossesListUtil.generateCrossesTableDataMap(this.importedCrosses);
 
 		for (final Map.Entry<String, Object> tableHeader : tableHeaderList.entrySet()) {
 			Assert.assertEquals("Expecting name from ontology but didn't.", this.fromOntology.getName(), tableHeader.getKey());
@@ -82,7 +82,7 @@ public class CrossesListUtilTest {
 	public void testGenerateDatatableDataMap_returnsTheValueFromColumLabelDefaultName() throws MiddlewareQueryException {
 
 		this.fromOntology = new Term();
-		final Map<String, Object> tableHeaderList = this.crossesListUtil.generateDatatableDataMap(this.importedCrosses);
+		final Map<String, Object> tableHeaderList = this.crossesListUtil.generateCrossesTableDataMap(this.importedCrosses);
 
 		Assert.assertTrue("Expecting to have a column name ENTRY_ID.", this.hasColumnHeader(tableHeaderList, "ENTRY_ID"));
 		Assert.assertTrue("Expecting to have a column name PARENTAGE.", this.hasColumnHeader(tableHeaderList, "PARENTAGE"));
@@ -99,7 +99,7 @@ public class CrossesListUtilTest {
 	public void testGenerateDatatableDataMapWithDups_importedCrosses() {
 
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
-		final Map<String, Object> dataMap = this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, this.importedCrosses);
+		final Map<String, Object> dataMap = this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCrosses);
 
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
 				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
@@ -131,7 +131,7 @@ public class CrossesListUtilTest {
 	public void testGenerateDatatableDataMapWithDupsGermplasmListData() {
 
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
-		final Map<String, Object> dataMap = this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, this.crossesData);
+		final Map<String, Object> dataMap = this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.crossesData);
 
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
 				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));

@@ -1004,6 +1004,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * @return the list
 	 */
 	private List<StudyTrialInstanceInfo> generateTrialInstancesFromFieldMap() {
+		// TODO add multiple instances ??????? for multiple studies ??????
 		final List<FieldMapTrialInstanceInfo> trialInstances =
 				this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances();
 		final List<StudyTrialInstanceInfo> studyTrial = new ArrayList<>();

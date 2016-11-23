@@ -30,6 +30,7 @@ import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.commons.util.ExpressionHelper;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -52,7 +53,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.util.ExpressionHelper;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 
@@ -521,23 +521,34 @@ public class CrossingServiceImpl implements CrossingService {
 
 		if (importedCrosses != null && !StringUtils.isEmpty(importedCrosses.getRawBreedingMethod())) {
 			final Method method = this.germplasmDataManager.getMethodByCode(importedCrosses.getRawBreedingMethod());
-			if (!StringUtils.isEmpty(method.getSuffix())) {
+			if (StringUtils.isEmpty(nameSetting.getSuffix()) && !StringUtils.isEmpty(method.getSuffix())) {
 				nameSetting.setSuffix(method.getSuffix());
 			}
 		}
 
 		if (!StringUtils.isEmpty(nameSetting.getSuffix())) {
 			String suffix = nameSetting.getSuffix().trim();
+			String processCodeValue = "";
 			final Matcher matcher = pattern.matcher(suffix);
 
 			if (matcher.find()) {
-				suffix = this.evaluateSuffixProcessCode(importedCrosses, setting, matcher.group());
+				processCodeValue = this.evaluateSuffixProcessCode(importedCrosses, setting, matcher.group());
+				suffix = replaceExpressionWithValue(new StringBuilder(suffix), matcher.group(), processCodeValue);
 			}
 
 			sb.append(this.buildSuffixString(nameSetting, suffix));
 		}
 		nameSetting.setSuffix(uDSuffix);
 		return sb.toString();
+	}
+
+	protected String replaceExpressionWithValue(StringBuilder container, String processCode, String value) {
+		int startIndex = container.toString().toUpperCase().indexOf(processCode);
+		int endIndex = startIndex + processCode.length();
+
+		String replaceValue = value == null ? "" : value;
+		container.replace(startIndex, endIndex, replaceValue);
+		return container.toString();
 	}
 
 	protected String evaluateSuffixProcessCode(final ImportedCrosses crosses, final CrossSetting setting, final String processCode) {

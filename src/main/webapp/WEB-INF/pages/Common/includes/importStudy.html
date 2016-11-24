@@ -532,6 +532,7 @@ function showImportResponse(responseText) {
 		setTimeout(function() {$('#importStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });}, 300);
 		importError = resp.message;
 		if (resp.detailErrorMessage != null && resp.detailErrorMessage.length !== 0) {
+			importError += '<p> </p>';
 			importError += '<ul>';
 			for (errorIndex = 0 ; errorIndex < resp.detailErrorMessage.length ; errorIndex++) {
 				importError += '<p>' + resp.detailErrorMessage[errorIndex] + '</p>';

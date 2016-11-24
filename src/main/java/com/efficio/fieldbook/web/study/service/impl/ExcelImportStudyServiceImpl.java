@@ -81,7 +81,7 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
     }
 
     @Override
-    protected void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes) throws WorkbookParserException {
+    protected void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes) {
         final List<String> xlsVariates = new ArrayList<>();
         final Sheet descriptionSheet = parsedData.getSheetAt(0);
         final int variateRow = this.findRow(descriptionSheet, ExcelImportStudyServiceImpl.TEMPLATE_SECTION_VARIATE);
@@ -110,11 +110,9 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
         }
         if (!xlsVariates.isEmpty()) {
             modes.add(ChangeType.ADDED_TRAITS);
-            //throw new WorkbookParserException(ChangeType.ADDED_TRAITS.getMessageCode());
         }
         if (!wbVariates.isEmpty()) {
             modes.add(ChangeType.DELETED_TRAITS);
-            //throw new WorkbookParserException(ChangeType.DELETED_TRAITS.getMessageCode());
         }
     }
 

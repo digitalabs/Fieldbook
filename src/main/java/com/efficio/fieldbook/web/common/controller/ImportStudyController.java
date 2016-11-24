@@ -174,6 +174,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 							
 						}else if(mode == ChangeType.DELETED_TRAITS){
 							message += " " + this.messageSource.getMessage("confirmation.import.missing.cols", null, locale);
+							detailErrorMessage.add(message);
 						}
 					}
 				}

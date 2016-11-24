@@ -65,4 +65,10 @@ public class FieldroidImportStudyServiceImpl extends AbstractImportStudyService<
 		parsedData.readDATAnew(file, ontologyService, fieldbookMiddlewareService);
 	}
 
+	@Override
+	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
+			List<String> removedVariates) {
+		// TODO Auto-generated method stub
+		
+	}
 }

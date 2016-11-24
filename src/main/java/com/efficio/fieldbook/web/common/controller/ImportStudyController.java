@@ -150,37 +150,43 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				this.populateConfirmationMessages(importResult.getChangeDetails());
 				resultsMap.put("changeDetails", importResult.getChangeDetails());
 				resultsMap.put("errorMessage", importResult.getErrorMessage());
-				final List<String> detailErrorMessage = new ArrayList<>();
+				final List<String> detailWarningMessage = new ArrayList<>();
 				final String reminderConfirmation = this.messageSource.getMessage("confirmation.import.text.modify.measurements", null, locale);
 
 				if (importResult.getModes() != null && !importResult.getModes().isEmpty()) {
+					resultsMap.put("confirmMessageTrais", this.messageSource.getMessage("confirmation.import.add.or.delete.traits", null, locale));
 					for (final ChangeType mode : importResult.getModes()) {
 						String message = " ";
 						if (ImportStudyType.IMPORT_NURSERY_EXCEL == importStudyType) {
 							message += this.messageSource.getMessage(mode.getMessageCode(), null, locale);
 
 							if (mode == ChangeType.ADDED_TRAITS) {
-								message += " " + 
-										StringUtils.join(WorkbookUtil.getAddedTraits(userSelection.getWorkbook().getVariates(),
-												userSelection.getWorkbook().getObservations()), ", ");
+								for(final String variable : importResult.getVariablesAdded()) {
+									message += " " + 
+											StringUtils.join(variable,", ");
+								}
 
 							}else if(mode == ChangeType.DELETED_TRAITS){
-								message += " " + this.messageSource.getMessage("confirmation.import.missing.cols", null, locale);
+								for(final String variable : importResult.getVariablesRemoved()) {
+									message += " " + 
+											StringUtils.join(variable,", ");
+								}
 							}
-							detailErrorMessage.add(message);
+							
+							detailWarningMessage.add(message);
 						} else if (mode == ChangeType.ADDED_TRAITS) {
 							message += " " + this.messageSource.getMessage("confirmation.import.text.traits.added", null, locale);
-							detailErrorMessage.add(message);
+							detailWarningMessage.add(message);
 							
 						}else if(mode == ChangeType.DELETED_TRAITS){
 							message += " " + this.messageSource.getMessage("confirmation.import.missing.cols", null, locale);
-							detailErrorMessage.add(message);
+							detailWarningMessage.add(message);
 						}
 					}
 				}
 				resultsMap.put("message", reminderConfirmation);
 				resultsMap.put("confirmMessage", this.messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));
-				resultsMap.put("detailErrorMessage", detailErrorMessage);
+				resultsMap.put("detailErrorMessage", detailWarningMessage);
 				resultsMap.put("conditionConstantsImportErrorMessage", importResult.getConditionsAndConstantsErrorMessage());
 			}
 

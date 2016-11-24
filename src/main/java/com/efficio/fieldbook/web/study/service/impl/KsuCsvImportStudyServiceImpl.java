@@ -1,11 +1,15 @@
 
 package com.efficio.fieldbook.web.study.service.impl;
 
+import java.util.List;
+import java.util.Set;
+
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 
@@ -31,4 +35,11 @@ public class KsuCsvImportStudyServiceImpl extends AbstractCSVImportStudyService 
     protected String getLabelFromRequiredColumn(MeasurementVariable variable) {
         return KsuFieldbookUtil.getLabelFromKsuRequiredColumn(variable);
     }
+    
+	@Override
+	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
+			List<String> removedVariates) {
+		// TODO Auto-generated method stub
+		
+	}
 }

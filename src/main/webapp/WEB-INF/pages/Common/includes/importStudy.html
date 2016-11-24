@@ -530,8 +530,9 @@ function showImportResponse(responseText) {
 
 		$('#importStudyModal').modal('hide');
 		setTimeout(function() {$('#importStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });}, 300);
-		importError = resp.message;
 		if (resp.detailErrorMessage != null && resp.detailErrorMessage.length !== 0) {
+		importError = resp.confirmMessageTrais;
+
 			importError += '<p> </p>';
 			importError += '<ul>';
 			for (errorIndex = 0 ; errorIndex < resp.detailErrorMessage.length ; errorIndex++) {
@@ -540,9 +541,10 @@ function showImportResponse(responseText) {
 			importError += '</ul>';
 			importError += '<br />';
 		}else{
+			importError = resp.message;
 			importError += '<p> </p>';
 		}
-		importError += resp.confirmMessage;
+		//importError += resp.confirmMessage;
 		$('#importStudyConfirmationModal .import-confirmation').html(importError);
         $('#studyConfirmationButton').off('click');
         $('#studyConfirmationButton').on('click', function() {
@@ -553,6 +555,7 @@ function showImportResponse(responseText) {
 		$('#importStudyModal').modal('hide');
 	}
 }
+
 function applyChangeDetails() {
 	'use strict';
 	var data = JSON.stringify(changeConfirmationDetails);

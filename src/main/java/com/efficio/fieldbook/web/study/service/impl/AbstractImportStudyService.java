@@ -77,8 +77,13 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			this.validateImportMetadata();
 
 			final Set<ChangeType> modes = new HashSet<>();
-			this.detectAddedTraitsAndPerformRename(modes);
+			//this.detectAddedTraitsAndPerformRename(modes);
 
+			final List<String> addedTraits = new ArrayList();
+			final List<String> removedTraits = new ArrayList();
+			
+			this.detectAddedTraitsAndPerformRename(modes,addedTraits,removedTraits);
+			
 			final String trialInstanceNo = this.retrieveTrialInstanceNumber();
 			final List<GermplasmChangeDetail> changeDetailsList = new ArrayList<>();
 
@@ -110,6 +115,8 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 
 			final ImportResult res = new ImportResult(modes, changeDetailsList);
 			res.setConditionsAndConstantsErrorMessage(conditionsAndConstantsErrorMessage);
+			res.setVariablesAdded(addedTraits);
+			res.setVariablesRemoved(removedTraits);
 			return res;
 		} catch (final Exception e) {
 			throw new WorkbookParserException(e.getMessage(), e);
@@ -143,6 +150,12 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
      */
 	protected abstract void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes) throws IOException, WorkbookParserException;
 
+	/**
+    *
+    */
+	protected abstract void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes, final List<String> addedVariates, final List<String> removedVariates);
+
+	
 	/**
 	 * Provides an implementation of retrieving the trial instance number by calling another method. Can be overridden in cases where study
 	 * import service needs a different logic with a different set of working parameters for calculating the trial instance number

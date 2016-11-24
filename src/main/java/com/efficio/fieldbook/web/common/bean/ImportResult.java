@@ -8,6 +8,8 @@ public class ImportResult {
 
 	private Set<ChangeType> modes;
 	private List<GermplasmChangeDetail> changeDetails;
+	private List<String> variablesAdded;
+	private List<String> variablesRemoved;
 	private String errorMessage;
 	private String conditionsAndConstantsErrorMessage;
 
@@ -68,6 +70,22 @@ public class ImportResult {
 
 	public void setConditionsAndConstantsErrorMessage(String conditionsAndConstantsErrorMessage) {
 		this.conditionsAndConstantsErrorMessage = conditionsAndConstantsErrorMessage;
+	}
+
+	public List<String> getVariablesAdded() {
+		return variablesAdded;
+	}
+
+	public void setVariablesAdded(List<String> variablesAdded) {
+		this.variablesAdded = variablesAdded;
+	}
+
+	public List<String> getVariablesRemoved() {
+		return variablesRemoved;
+	}
+
+	public void setVariablesRemoved(List<String> variablesRemoved) {
+		this.variablesRemoved = variablesRemoved;
 	}
 
 }

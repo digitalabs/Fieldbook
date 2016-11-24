@@ -95,7 +95,7 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 				if (key != null) {
 					final MeasurementRow wRow = rowsMap.get(key);
 					if (wRow == null) {
-						modes.add(ChangeType.ADDED_ROWS);
+						throw new WorkbookParserException("confirmation.import.add.or.delete.rows");
 					} else {
 						rowsMap.remove(key);
 
@@ -142,7 +142,7 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 			}
 			if (!rowsMap.isEmpty()) {
 				// meaning there are items in the original list, so there are items deleted
-				modes.add(ChangeType.DELETED_ROWS);
+				throw new WorkbookParserException("confirmation.import.add.or.delete.rows");
 			}
 
 		}

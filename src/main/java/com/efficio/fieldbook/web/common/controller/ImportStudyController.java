@@ -10,9 +10,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
-import com.efficio.fieldbook.web.study.ImportStudyType;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -57,6 +54,8 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
+import com.efficio.fieldbook.web.study.ImportStudyType;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -150,23 +149,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				resultsMap.put("errorMessage", importResult.getErrorMessage());
 				final List<String> detailErrorMessage = new ArrayList<>();
 				String reminderConfirmation = "";
-				if (importResult.getModes() != null && !importResult.getModes().isEmpty()) {
-					for (final ChangeType mode : importResult.getModes()) {
-						if (ImportStudyType.IMPORT_NURSERY_EXCEL == importStudyType) {
-							String message = this.messageSource.getMessage(mode.getMessageCode(), null, locale);
-							if (mode == ChangeType.ADDED_TRAITS) {
-								message +=
-										StringUtils.join(WorkbookUtil.getAddedTraits(userSelection.getWorkbook().getVariates(),
-												userSelection.getWorkbook().getObservations()), ", ");
 
-							}
-							detailErrorMessage.add(message);
-							reminderConfirmation = this.messageSource.getMessage("confirmation.import.text", null, locale);
-						} else if (mode == ChangeType.ADDED_TRAITS) {
-							reminderConfirmation = this.messageSource.getMessage("confirmation.import.text.traits.added", null, locale);
-						}
-					}
-				}
+				final String message = this.messageSource.getMessage("confirmation.import.text.modify.measurements", null, locale);
+				detailErrorMessage.add(message);
 				resultsMap.put("message", reminderConfirmation);
 				resultsMap.put("confirmMessage", this.messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));
 				resultsMap.put("detailErrorMessage", detailErrorMessage);

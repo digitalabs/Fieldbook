@@ -64,7 +64,7 @@ public class DataKaptureImportStudyServiceImpl extends AbstractImportStudyServic
 	@Override
 	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
 			List<String> removedVariates) {
-		// TODO Auto-generated method stub
+		// NO-OP
 		
 	}
 

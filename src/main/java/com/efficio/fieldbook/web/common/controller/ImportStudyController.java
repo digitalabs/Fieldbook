@@ -152,38 +152,62 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				resultsMap.put("errorMessage", importResult.getErrorMessage());
 				final List<String> detailWarningMessage = new ArrayList<>();
 				final String reminderConfirmation = this.messageSource.getMessage("confirmation.import.text.modify.measurements", null, locale);
-
+				String addedTraits = " ";
+				String deletedTraits = " ";
 				if (importResult.getModes() != null && !importResult.getModes().isEmpty()) {
-					resultsMap.put("confirmMessageTrais", this.messageSource.getMessage("confirmation.import.add.or.delete.traits", null, locale));
+					resultsMap.put("confirmMessageTrais",
+							this.messageSource.getMessage("confirmation.import.add.or.delete.traits", null, locale));
 					for (final ChangeType mode : importResult.getModes()) {
 						String message = " ";
 						if (ImportStudyType.IMPORT_NURSERY_EXCEL == importStudyType) {
-							message += this.messageSource.getMessage(mode.getMessageCode(), null, locale);
-
 							if (mode == ChangeType.ADDED_TRAITS) {
-								for(final String variable : importResult.getVariablesAdded()) {
-									message += " " + 
-											StringUtils.join(variable,", ");
-								}
+								for (final String variable : importResult.getVariablesAdded()) {
+									if (message.equals(" ")) {
+										message = variable;
+									} else {
+										message += StringUtils.join(", ", variable);
+									}
 
-							}else if(mode == ChangeType.DELETED_TRAITS){
-								for(final String variable : importResult.getVariablesRemoved()) {
-									message += " " + 
-											StringUtils.join(variable,", ");
 								}
+								addedTraits = message;
+							} else if (mode == ChangeType.DELETED_TRAITS) {
+								for (final String variable : importResult.getVariablesRemoved()) {
+									if (message.equals(" ")) {
+										message = variable;
+									} else {
+										message += StringUtils.join(", ", variable);
+									}
+								}
+								deletedTraits = message;
 							}
-							
+
 							detailWarningMessage.add(message);
 						} else if (mode == ChangeType.ADDED_TRAITS) {
-							message += " " + this.messageSource.getMessage("confirmation.import.text.traits.added", null, locale);
-							detailWarningMessage.add(message);
-							
-						}else if(mode == ChangeType.DELETED_TRAITS){
-							message += " " + this.messageSource.getMessage("confirmation.import.missing.cols", null, locale);
-							detailWarningMessage.add(message);
+							for (final String variable : importResult.getVariablesAdded()) {
+								if (message.equals(" ")) {
+									message = variable;
+								} else {
+									message += StringUtils.join(", ", variable);
+								}
+
+							}
+							addedTraits = message;
+
+						} else if (mode == ChangeType.DELETED_TRAITS) {
+							for (final String variable : importResult.getVariablesRemoved()) {
+								if (message.equals(" ")) {
+									message = variable;
+								} else {
+									message += StringUtils.join(", ", variable);
+								}
+							}
+							deletedTraits = message;
 						}
 					}
 				}
+				
+				resultsMap.put("addedTraits", addedTraits);
+				resultsMap.put("deletedTraits", deletedTraits);
 				resultsMap.put("message", reminderConfirmation);
 				resultsMap.put("confirmMessage", this.messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));
 				resultsMap.put("detailErrorMessage", detailWarningMessage);

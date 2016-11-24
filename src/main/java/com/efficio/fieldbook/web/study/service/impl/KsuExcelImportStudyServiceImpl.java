@@ -147,8 +147,8 @@ public class KsuExcelImportStudyServiceImpl extends AbstractExcelImportStudyServ
     
 	@Override
 	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
-			List<String> removedVariates) {
-		// TODO Auto-generated method stub
+			List<String> removedVariates) throws WorkbookParserException {
+		this.detectAddedTraitsAndPerformRename(modes);
 		
 	}
 	

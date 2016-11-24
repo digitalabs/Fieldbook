@@ -79,8 +79,8 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			final Set<ChangeType> modes = new HashSet<>();
 			//this.detectAddedTraitsAndPerformRename(modes);
 
-			final List<String> addedTraits = new ArrayList();
-			final List<String> removedTraits = new ArrayList();
+			final List<String> addedTraits = new ArrayList<String>();
+			final List<String> removedTraits = new ArrayList<String>();
 			
 			this.detectAddedTraitsAndPerformRename(modes,addedTraits,removedTraits);
 			
@@ -153,7 +153,7 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 	/**
     *
     */
-	protected abstract void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes, final List<String> addedVariates, final List<String> removedVariates);
+	protected abstract void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes, final List<String> addedVariates, final List<String> removedVariates) throws IOException, WorkbookParserException;
 
 	
 	/**

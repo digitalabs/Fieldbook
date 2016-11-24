@@ -39,7 +39,7 @@ public class KsuCsvImportStudyServiceImpl extends AbstractCSVImportStudyService 
 	@Override
 	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
 			List<String> removedVariates) {
-		// TODO Auto-generated method stub
+		// NO-OP
 		
 	}
 }

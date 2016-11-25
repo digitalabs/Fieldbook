@@ -570,9 +570,6 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 						} else if (WorkbookUtil.getMeasurementVariable(workbookVariates, mvar.getTermId()) != null) {
 							throw new WorkbookParserException(this.messageSource.getMessage("error.import.variate.exists.in.study",
 									new String[] {traitLabel}, LocaleContextHolder.getLocale()));
-//						} else {
-//							// valid
-//							WorkbookUtil.addVariateToObservations(mvar, workbook.getObservations());
 						}
 					}
 

@@ -526,7 +526,7 @@ function showImportResponse(responseText) {
     	}
 
     	$('#importStudyModal').modal('hide');
-    	if (resp.detailErrorMessage != null && resp.detailErrorMessage.length !== 0) {
+    	if (resp.deletedTraits !== ' ' || resp.addedTraits !== ' ') {
 			showWarningTraitsImport(resp);
     	} else {
 			showWarningImport(resp);

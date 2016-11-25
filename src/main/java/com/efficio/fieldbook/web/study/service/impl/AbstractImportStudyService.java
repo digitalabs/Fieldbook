@@ -77,7 +77,6 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			this.validateImportMetadata();
 
 			final Set<ChangeType> modes = new HashSet<>();
-			//this.detectAddedTraitsAndPerformRename(modes);
 
 			final List<String> addedTraits = new ArrayList<String>();
 			final List<String> removedTraits = new ArrayList<String>();

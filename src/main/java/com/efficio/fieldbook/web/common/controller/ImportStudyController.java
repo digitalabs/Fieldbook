@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -128,7 +127,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 		final Locale locale = LocaleContextHolder.getLocale();
 		final Map<String, Object> resultsMap = new HashMap<>();
-		//resultsMap.put("hasDataOverwrite", userSelection.getWorkbook().hasExistingDataOverwrite() ? "1" : "0");
 		resultsMap.put("hasDataOverwrite", "0");
 		if (!result.hasErrors()) {
 			userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
@@ -150,7 +148,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				this.populateConfirmationMessages(importResult.getChangeDetails());
 				resultsMap.put("changeDetails", importResult.getChangeDetails());
 				resultsMap.put("errorMessage", importResult.getErrorMessage());
-				final List<String> detailWarningMessage = new ArrayList<>();
 				final String reminderConfirmation = this.messageSource.getMessage("confirmation.import.text.modify.measurements", null, locale);
 				String addedTraits = " ";
 				String deletedTraits = " ";
@@ -158,50 +155,11 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 					resultsMap.put("confirmMessageTrais",
 							this.messageSource.getMessage("confirmation.import.add.or.delete.traits", null, locale));
 					for (final ChangeType mode : importResult.getModes()) {
-						String message = " ";
-						if (ImportStudyType.IMPORT_NURSERY_EXCEL == importStudyType) {
-							if (mode == ChangeType.ADDED_TRAITS) {
-								for (final String variable : importResult.getVariablesAdded()) {
-									if (message.equals(" ")) {
-										message = variable;
-									} else {
-										message += StringUtils.join(", ", variable);
-									}
-
-								}
-								addedTraits = message;
-							} else if (mode == ChangeType.DELETED_TRAITS) {
-								for (final String variable : importResult.getVariablesRemoved()) {
-									if (message.equals(" ")) {
-										message = variable;
-									} else {
-										message += StringUtils.join(", ", variable);
-									}
-								}
-								deletedTraits = message;
-							}
-
-							detailWarningMessage.add(message);
-						} else if (mode == ChangeType.ADDED_TRAITS) {
-							for (final String variable : importResult.getVariablesAdded()) {
-								if (message.equals(" ")) {
-									message = variable;
-								} else {
-									message += StringUtils.join(", ", variable);
-								}
-
-							}
-							addedTraits = message;
+						if (mode == ChangeType.ADDED_TRAITS) {
+							addedTraits = StringUtils.join(importResult.getVariablesAdded(), ", ");
 
 						} else if (mode == ChangeType.DELETED_TRAITS) {
-							for (final String variable : importResult.getVariablesRemoved()) {
-								if (message.equals(" ")) {
-									message = variable;
-								} else {
-									message += StringUtils.join(", ", variable);
-								}
-							}
-							deletedTraits = message;
+							deletedTraits = StringUtils.join(importResult.getVariablesRemoved(), ", ");
 						}
 					}
 				}
@@ -210,7 +168,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				resultsMap.put("deletedTraits", deletedTraits);
 				resultsMap.put("message", reminderConfirmation);
 				resultsMap.put("confirmMessage", this.messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));
-				resultsMap.put("detailErrorMessage", detailWarningMessage);
 				resultsMap.put("conditionConstantsImportErrorMessage", importResult.getConditionsAndConstantsErrorMessage());
 			}
 

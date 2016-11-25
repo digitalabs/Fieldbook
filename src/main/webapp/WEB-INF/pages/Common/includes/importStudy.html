@@ -551,7 +551,7 @@ function showWarningTraitsImport(resp) {
 	warningTraitsMessage += '<p> </p>';
 	warningTraitsMessage += '<ul>';
 
-	if (resp.addedTraits) {
+	if (resp.deletedTraits !== ' ') {
 		warningTraitsMessage += '<li>';
 		warningTraitsMessage += '<b>' + 'Missing traits: ' + '</b>';
 		warningTraitsMessage += resp.deletedTraits + ' in the nursery are not present in the file.';
@@ -559,23 +559,23 @@ function showWarningTraitsImport(resp) {
 		warningTraitsMessage += '<p>' + '</p>';
 	}
 
-	if (resp.deletedTraits) {
+	if (resp.addedTraits !== ' ') {
 		warningTraitsMessage += '<li>';
 		warningTraitsMessage += '<b>' + 'Additional traits: ' + '</b>';
 		warningTraitsMessage += 'the file contains the trait(s) ' + resp.addedTraits + ', that are not present in the nursery. ';
 		warningTraitsMessage += 'This data will be discarded. if you wish to import additional traits, please add them to the nursery before ';
 		warningTraitsMessage += 'importing the data file.';
 		warningTraitsMessage += '</li>';
-	  }
+	}
 
-	  warningTraitsMessage += '</ul>';
-	  warningTraitsMessage += '<br />';
+	warningTraitsMessage += '</ul>';
+	warningTraitsMessage += '<br />';
 
-	  $('#importStudyConfirmationModal .import-confirmation').html(warningTraitsMessage);
-	  $('#studyConfirmationButton').off('click');
-	  $('#studyConfirmationButton').on('click', function() {
+	$('#importStudyConfirmationModal .import-confirmation').html(warningTraitsMessage);
+	$('#studyConfirmationButton').off('click');
+	$('#studyConfirmationButton').on('click', function() {
 	    showWarningImport(resp);
-	  })
+	})
 
 }
 

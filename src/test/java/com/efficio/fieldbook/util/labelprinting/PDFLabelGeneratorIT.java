@@ -21,12 +21,11 @@ public class PDFLabelGeneratorIT extends AbstractBaseIntegrationTest {
 
     @Test
     public void testGenerationOfPdfLabels() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-        UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
+        final List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+        final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
         String fileName = "";
         try {
-            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, baos);
+            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting);
 
             PdfReader reader = new PdfReader(fileName);
             junit.framework.Assert.assertNotNull("Expected a new pdf file was created but found none.", reader);

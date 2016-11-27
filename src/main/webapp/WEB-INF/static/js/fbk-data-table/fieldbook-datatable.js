@@ -969,6 +969,15 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
+			} else if ($(this).data('term-id') == '8255' ) {
+				columnsDef.push({
+					targets: columns.length - 1,
+					render: function(data, type, full, meta) {
+						if(!!$(full).attr('ENTRY_TYPE')){
+							return full.ENTRY_TYPE[0];
+						}
+					}
+				})
 			} else {
 				columnsDef.push({
 					targets: columns.length - 1,

@@ -29,6 +29,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String startingPlotNo;
 	private String startingEntryNo;
 	private String fileName;
+	private String numberOfBlocks;
 	/*
 	 * 1 - single col 2 - single row 3 - adjacent
 	 */
@@ -192,5 +193,13 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 
 	public void setFileName(final String fileName) {
 		this.fileName = fileName;
+	}
+
+	public String getNumberOfBlocks() {
+		return numberOfBlocks;
+	}
+
+	public void setNumberOfBlocks(final String numberOfBlocks) {
+		this.numberOfBlocks = numberOfBlocks;
 	}
 }

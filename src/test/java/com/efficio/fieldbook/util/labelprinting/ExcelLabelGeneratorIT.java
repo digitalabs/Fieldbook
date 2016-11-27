@@ -43,15 +43,17 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
     @Resource
     private ExcelLabelGenerator unitUnderTest;
 
+	@Resource
+	private LabelPrintingUtil labelPrintingUtil;
+
 	@Test
 	public void testFieldmapFieldsInGeneratedXls() throws Exception {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-		UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
+		final List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+		final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
 		String labels = "";
 		String fileName = "";
 
-		fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, baos);
+		fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting);
 		org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
 
 		Sheet sheet = xlsBook.getSheetAt(0);
@@ -98,17 +100,16 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
 
     @Test
     public void testGenerationOfXlsLabels() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-        UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
+        final List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+        final UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
         String fileName = "";
         try {
-            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting, baos);
+            fileName = this.unitUnderTest.generateLabels(trialInstances, userLabelPrinting);
             org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
 
             Assert.assertNotNull("Expected a new workbook file was created but found none.", xlsBook);
 
-            Sheet sheet = xlsBook.getSheetAt(0);
+            final Sheet sheet = xlsBook.getSheetAt(0);
 
             Assert.assertNotNull("Expecting an xls file with 1 sheet but found none.", sheet);
 
@@ -132,7 +133,7 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
 
         FieldMapTrialInstanceInfo fieldMapTrialInstanceInfoSecond = LabelPrintingDataUtil.createFieldMapTrialInstanceInfo();
         Map<Integer, String> labelHeadersForTrialStock = LabelPrintingDataUtil.createLabelHeadersForTrialStock();
-        //Setting LabelHeader in second Trial instance only
+        // Setting LabelHeader in second Trial instance only
         fieldMapTrialInstanceInfoSecond.setLabelHeaders(labelHeadersForTrialStock);
 
         final StudyTrialInstanceInfo trialInstanceSecond =
@@ -140,7 +141,7 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
         trialInstances.add(trialInstanceSecond);
 
 
-        Map<Integer, String> labelHeadersFromTrialInstances = this.unitUnderTest.getLabelHeadersFromTrialInstances(trialInstances);
+        Map<Integer, String> labelHeadersFromTrialInstances = this.labelPrintingUtil.getLabelHeadersFromTrialInstances(trialInstances);
 
         Assert.assertNotNull(labelHeadersFromTrialInstances);
         Assert.assertEquals("Number of Label Headers are not equal", 5, labelHeadersFromTrialInstances.size());
@@ -152,8 +153,7 @@ public class ExcelLabelGeneratorIT extends AbstractBaseIntegrationTest{
             if(labelHeadersFromTrialInstances.containsKey(keyTermId)){
                 String actualHeaderText = labelHeadersFromTrialInstances.get(keyTermId);
                 Assert.assertEquals("Label Header Text is not equal", valueHeaderLabel , actualHeaderText);
-            }
-            else{
+            } else {
                 Assert.assertNull("Expected Label Header not found", keyTermId);
             }
 

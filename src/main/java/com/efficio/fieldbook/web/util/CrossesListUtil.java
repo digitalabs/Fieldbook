@@ -41,7 +41,7 @@ public class CrossesListUtil {
 
 	public static final String DEFAULT_SEPARATOR = "/";
 
-	public Map<String, Object> generateDatatableDataMap(final ImportedCrosses importedCrosses) {
+	public Map<String, Object> generateCrossesTableDataMap(final ImportedCrosses importedCrosses) {
 
 		final Map<String, Object> dataMap = new HashMap<>();
 
@@ -57,7 +57,7 @@ public class CrossesListUtil {
 		return dataMap;
 	}
 
-	public Map<String, Object> generateDatatableDataMapWithDups(final List<String> tableHeaderList, final GermplasmListData crossesData) {
+	public Map<String, Object> generateCrossesTableWithDuplicationNotes(final List<String> tableHeaderList, final GermplasmListData crossesData) {
 		final Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), crossesData.getEntryId());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX), crossesData.getFemaleParent() + CrossesListUtil.DEFAULT_SEPARATOR
@@ -85,7 +85,7 @@ public class CrossesListUtil {
 		return importedCrosses;
 	}
 
-	public Map<String, Object> generateDatatableDataMapWithDups(final List<String> tableHeaderList, final ImportedCrosses importedCrosses) {
+	public Map<String, Object> generateCrossesTableWithDuplicationNotes(final List<String> tableHeaderList, final ImportedCrosses importedCrosses) {
 
 		final Map<String, Object> dataMap = new HashMap<>();
 

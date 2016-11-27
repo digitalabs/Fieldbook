@@ -3,12 +3,12 @@
  invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates, showErrorMessage*/
 (function() {
 	'use strict';
-	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
+	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','GERMPLASM_CHECKS_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
             'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
 		'TrialSettingsManager', '_', '$localStorage','$rootScope',
-		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
+		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
 					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage, $rootScope) {
@@ -260,6 +260,7 @@
 
 						})(),
 						germplasmTotalListCount: GERMPLASM_LIST_SIZE,
+						germplasmTotalCheckCount: GERMPLASM_CHECKS_SIZE,
 
 						showAdvancedOptions: [false, false, false]
 					},
@@ -297,6 +298,10 @@
 					});
 				},
 
+				getDesignTypeById : function(designTypeId, designTypes) {
+					return _.find(designTypes, function (designType) { return designType.id === Number(designTypeId) });
+				},
+
 				retrieveGenerateDesignInput: function(designType) {
 					var environmentData = angular.copy(service.currentData.environments);
 
@@ -310,7 +315,7 @@
 
 					var data = {
 						environmentData: environmentData,
-						selectedDesignType: angular.copy(service.applicationData.designTypes[designType]),
+						selectedDesignType: angular.copy(service.getDesignTypeById(designType, service.applicationData.designTypes)),
 						startingEntryNo: service.currentData.experimentalDesign.startingEntryNo,
 						startingPlotNo: service.currentData.experimentalDesign.startingPlotNo,
 						hasNewEnvironmentAdded: service.applicationData.hasNewEnvironmentAdded

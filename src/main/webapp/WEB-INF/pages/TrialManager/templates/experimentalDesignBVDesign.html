@@ -32,9 +32,32 @@
 						block size</b>
 				</span>
 			</div>
+			<div class="add-bottom-padding" ng-show="currentDesignType.id == 4">
+				<b>Number of Test entries:</b>
+				<span>{{germplasmTotalTestEntriesCount}}</span>
+			</div>
+			<div class="add-bottom-padding" ng-show="currentDesignType.id == 4">
+				<b>Number of Check entries:</b>
+				<span>{{germplasmTotalCheckEntriesCount}}</span>
+			</div>
+			<div class="add-bottom-padding" ng-show="showOnlyIfNumberOfBlocksIsSpecified()">
+				<b>Number of Test entries per block:</b>
+				<span ng-show="germplasmNumberOfTestEntriesPerBlock % 1 === 0">{{germplasmNumberOfTestEntriesPerBlock}}</span>
+				<span ng-show="germplasmNumberOfTestEntriesPerBlock % 1 !== 0">
+					<b class="text-danger">The number of test entries must be divisible by number of blocks.</b>
+				</span>
+			</div>
+			<div class="add-bottom-padding" ng-show="showOnlyIfNumberOfBlocksIsSpecified()">
+				<b>Number of plots per block:</b>
+				<span ng-show="germplasmNumberOfTestEntriesPerBlock % 1 === 0">{{germplasmNumberOfPlotsPerBlock}}</span>
+			</div>
+			<div class="add-bottom-padding" ng-show="showOnlyIfNumberOfBlocksIsSpecified()">
+				<b>Total number of plots:</b>
+				<span ng-show="germplasmNumberOfTestEntriesPerBlock % 1 === 0">{{germplasmTotalNumberOfPlots}}</span>
+			</div>
 			<div class="add-bottom-padding"
 				ng-repeat="key in settings.factors.keys() | filterFactors : currentDesignType.id">
-				<b>{{settings.factors.val(key).label}}</b> - <a
+				<b>{{settings.factors.val(key).label}}</b>: <a
 					show-details-modal="key"
 					variable-type="{{VARIABLE_TYPES.TREATMENT_FACTOR}}">{{settings.factors.val(key).variable.name}}</a>
 			</div>

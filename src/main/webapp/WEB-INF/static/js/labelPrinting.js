@@ -134,6 +134,10 @@ LabelPrinting = {
 				$('.label-printing-details').show();
 				$('#fbk-lbl-printing-save-preset').show();
 				$('.label-filename').show();
+				
+				// show save preset and export label buttons
+				$('#fbk-lbl-printing-save-preset').show();
+				$('#export-label-data').show();
 			} else if ($('#label-format').val() !== '') {
 				$('.pdf-fields').hide();
 				$('.non-pdf-fields').show();
@@ -142,6 +146,11 @@ LabelPrinting = {
 				$('.label-printing-details').show();
 				$('#fbk-lbl-printing-save-preset').show();
 				$('.label-filename').show();
+				
+				// show save preset and export label buttons by default
+				$('#fbk-lbl-printing-save-preset').show();
+				$('#export-label-data').show();
+				
 				if ($('#label-format').val() === '2') {
 					$('.non-pdf-type').html('XLS');
 				} else if ($('#label-format').val() === '3') {
@@ -157,6 +166,10 @@ LabelPrinting = {
 				}
 			} else {
 				$('.label-printing-details').hide();
+				
+				// hide save preset and export label buttons
+				$('#fbk-lbl-printing-save-preset').hide();
+				$('#export-label-data').hide();
 			}
 		});
 
@@ -241,6 +254,10 @@ LabelPrinting = {
 		if ($('.includeTrial').length === 1) {
 			$('.includeTrial').trigger('click');
 		}
+	};
+
+	LabelPrinting.changeTotalNumberOfLabels = function() {
+		$('#germplasmListTotalLabelCount').text(Number.parseInt($('#label-copies').val()) * Number.parseInt($('#lotsWithReservationsCount').text()));
 	};
 
 	/**
@@ -541,7 +558,7 @@ LabelPrinting = {
 
 		var formElm = $('#specifyLabelDetailsForm');
 		$('#customReport').val(isCustomReport);
-		
+
 		if (isCustomReport) {
 			LabelPrinting.updateAdditionalLabelSettingsFormDetails(type);
 			LabelPrinting.proceedExport(formElm);
@@ -550,7 +567,7 @@ LabelPrinting = {
 				showErrorMessage('', 'File name should not exceed 100 characters');
 				return false;
 			}
-			
+
 			var selectedPreset = LabelPrinting.getSelectedPreset();
 
 			if (selectedPreset.length == 0) {
@@ -761,9 +778,15 @@ LabelPrinting = {
 				/** @namespace data.csvExcelSetting */
 				/** @namespace data.pdfSetting */
 				/** @namespace data.barcodeSetting */
+				/** @namespace data.sorting */
+				/** @namespace data.numberOfCopies */
 
 				// set the label output
 				$('#label-format').val(LabelPrinting.labelFormat[data.outputType]).change();
+				// set sorting
+				$('#label-sorting').val(data.sorting).change();
+				// set number of copies
+				$('#label-copies').val(data.numberOfCopies).change();
 
 				if (data.outputType === 'PDF') {
 					LabelPrinting.updatePDFFields(data.pdfSetting);

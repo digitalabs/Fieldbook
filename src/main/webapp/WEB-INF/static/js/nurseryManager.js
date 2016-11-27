@@ -403,9 +403,6 @@ function getLastRowIndex(name, hasTBody) {
 function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 		posValSuffix) {
 	var ctr = $('.' + rowClass).length;
-	if (name === 'studyLevelVariables') {
-		ctr++;
-	}
 
 	$.each(
 	data,
@@ -1632,11 +1629,6 @@ function validateCreateNursery() {
 
 			if (parseInt(checkInterval, 10) < 0) {
 				showInvalidInputMessage(checkIntervalGreaterThanZeroError);
-				return false;
-			}
-			var totalNumberOfChecks = selectedCheckListDataTable.getDataTable().$('.check-hidden').length;
-			if (parseInt(checkInterval, 10) <= totalNumberOfChecks) {
-				showInvalidInputMessage(checkIntervalError);
 				return false;
 			}
 		}

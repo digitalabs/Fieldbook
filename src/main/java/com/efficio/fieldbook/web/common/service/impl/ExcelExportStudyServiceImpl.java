@@ -619,9 +619,4 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
-
-	@Override
-	public void setBreeedingMethodPropertyName(String breedingMethodPropertyName) {
-		this.breedingMethodPropertyName = breedingMethodPropertyName;
-	}
 }

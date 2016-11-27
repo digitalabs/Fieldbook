@@ -10,7 +10,6 @@ public class FieldbookProperties {
 
 	private String programLocationsUrl;
 	private String programBreedingMethodsUrl;
-	private String germplasmImportUrl;
 	private String germplasmDetailsUrl;
 	
 	private Set<String> presetDesignEnabledCrops = new HashSet<>();
@@ -31,14 +30,6 @@ public class FieldbookProperties {
 
 	public void setProgramBreedingMethodsUrl(String programBreedingMethodsUrl) {
 		this.programBreedingMethodsUrl = programBreedingMethodsUrl;
-	}
-
-	public String getGermplasmImportUrl() {
-		return WorkbenchAppPathResolver.getFullWebAddress(this.germplasmImportUrl);
-	}
-
-	public void setGermplasmImportUrl(String germplasmImportUrl) {
-		this.germplasmImportUrl = germplasmImportUrl;
 	}
 
 	public String getGermplasmDetailsUrl() {

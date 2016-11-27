@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.easymock.internal.matchers.Matches;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
+import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
+import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
@@ -48,6 +53,8 @@ public class CrossingServiceImplTest {
     public static final String TEST_MALE_GID_1 = "54321";
     public static final String TEST_FEMALE_GID_2 = "9999";
     public static final String TEST_MALE_GID_2 = "8888";
+	public static final String TEST_PROCESS_CODE = "[BC]";
+	public static final String TEST_PROCESS_CODE_WITH_PREFIX = "B[RCRPRNT]";
 
     private ImportedCrossesList importedCrossesList;
 
@@ -66,6 +73,12 @@ public class CrossingServiceImplTest {
 	@Mock
 	private SeedSourceGenerator seedSourceGenertor;
 
+	@Mock
+	private ProcessCodeRuleFactory processCodeRuleFactory;
+
+	@Mock
+	private ProcessCodeOrderedRule processCodeOrderedRule;
+
 	@InjectMocks
 	private CrossingServiceImpl crossingService;
 
@@ -77,6 +90,7 @@ public class CrossingServiceImplTest {
 		this.importedCrossesList = this.createImportedCrossesList();
 		this.importedCrossesList.setImportedGermplasms(this.createImportedCrosses());
 
+		Mockito.when(this.processCodeRuleFactory.getRuleByProcessCode(Mockito.anyString())).thenReturn(this.processCodeOrderedRule);
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
@@ -345,6 +359,51 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals("A 001 B", designationName);
 	}
 
+
+	@Test
+	public void testBuildDesignationNameInSequenceMethodSuffixProcessCodeIsAvailable() throws RuleException {
+
+		final String resolvedSuffixString = "AAA";
+		final int sequenceNumber = 1;
+
+		final Method breedingMethod = new Method(TEST_BREEDING_METHOD_ID);
+		breedingMethod.setSuffix(TEST_PROCESS_CODE);
+
+		Mockito.when(this.germplasmDataManager.getMethodByCode(TEST_BREEDING_METHOD_CODE)).thenReturn(breedingMethod);
+		Mockito.when(this.processCodeOrderedRule.runRule(Mockito.any(RuleExecutionContext.class))).thenReturn(resolvedSuffixString);
+
+		final CrossSetting crossSetting = new CrossSetting();
+		crossSetting.setCrossNameSetting(new CrossNameSetting());
+		final ImportedCrosses importedCrosses = new ImportedCrosses();
+		importedCrosses.setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
+
+		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses, sequenceNumber, crossSetting);
+
+		Assert.assertEquals(sequenceNumber + resolvedSuffixString, designationName);
+	}
+
+	@Test
+	public void testBuildDesignationNameInSequenceMethodSuffixProcessCodeWithPrefix() throws RuleException {
+
+		final String resolvedSuffixString = "AAA";
+		final int sequenceNumber = 1;
+
+		final Method breedingMethod = new Method(TEST_BREEDING_METHOD_ID);
+		breedingMethod.setSuffix(TEST_PROCESS_CODE_WITH_PREFIX);
+
+		Mockito.when(this.germplasmDataManager.getMethodByCode(TEST_BREEDING_METHOD_CODE)).thenReturn(breedingMethod);
+		Mockito.when(this.processCodeOrderedRule.runRule(Mockito.any(RuleExecutionContext.class))).thenReturn(resolvedSuffixString);
+
+		final CrossSetting crossSetting = new CrossSetting();
+		crossSetting.setCrossNameSetting(new CrossNameSetting());
+		final ImportedCrosses importedCrosses = new ImportedCrosses();
+		importedCrosses.setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
+
+		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses, sequenceNumber, crossSetting);
+
+		Assert.assertEquals(sequenceNumber + "B" +resolvedSuffixString, designationName);
+	}
+
 	@Test
 	public void testBuildPrefixStringDefault() {
 		final CrossNameSetting setting = new CrossNameSetting();
@@ -395,15 +454,16 @@ public class CrossingServiceImplTest {
 		crossSetting.setBreedingMethodSetting(breedingMethodSetting);
 		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
 
-		final List<Pair<Germplasm, Name>> germplasmPairs =
+		final CrossingServiceImpl.GermplasmListResult result =
 				this.crossingService.generateGermplasmNamePairs(crossSetting, this.importedCrossesList.getImportedCrosses(),
 						CrossingServiceImplTest.USER_ID, false);
 
-		Pair<Germplasm, Name> germplasmNamePair = germplasmPairs.get(0);
+		Pair<Germplasm, Name> germplasmNamePair = result.getGermplasmPairs().get(0);
 		final Germplasm germplasm1 = germplasmNamePair.getLeft();
 		final Name name1 = germplasmNamePair.getRight();
 		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
+		Assert.assertTrue(result.getIsTrimed());
 		Assert.assertNull(germplasm1.getGid());
 		Assert.assertEquals(20150101, germplasm1.getGdate().intValue());
 		Assert.assertEquals(2, germplasm1.getGnpgs().intValue());
@@ -425,12 +485,12 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(20150101, name1.getNdate().intValue());
 		Assert.assertEquals(null, name1.getNid());
 		Assert.assertEquals(null, name1.getNstat());
-		Assert.assertEquals(null, name1.getNval());
+		Assert.assertFalse(name1.getNval().contains("(truncated)"));
 		Assert.assertEquals(0, name1.getReferenceId().intValue());
 		Assert.assertEquals(null, name1.getTypeId());
 		Assert.assertEquals(CrossingServiceImplTest.USER_ID, name1.getUserId());
 
-		germplasmNamePair = germplasmPairs.get(1);
+		germplasmNamePair = result.getGermplasmPairs().get(1);
 		final Germplasm germplasm2 = germplasmNamePair.getLeft();
 		final Name name2 = germplasmNamePair.getRight();
 		final ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
@@ -456,7 +516,7 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(20150101, name2.getNdate().intValue());
 		Assert.assertEquals(null, name2.getNid());
 		Assert.assertEquals(null, name2.getNstat());
-		Assert.assertEquals(null, name1.getNval());
+		Assert.assertTrue(name2.getNval().contains("(truncated)"));
 		Assert.assertEquals(0, name2.getReferenceId().intValue());
 		Assert.assertEquals(null, name2.getTypeId());
 		Assert.assertEquals(CrossingServiceImplTest.USER_ID, name2.getUserId());
@@ -519,6 +579,39 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals("00000001", formattedString);
 	}
 
+	@Test
+	public void testGenerateSeedSource() {
+		final String newSeedSource = "newSeedSource";
+		Mockito.doReturn(newSeedSource).when(this.seedSourceGenertor).generateSeedSourceForCross(Mockito.any(Workbook.class),
+				Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+
+		// Case 1 - No seed source present. Generate new.
+		ImportedCrosses importedCross1 = new ImportedCrosses();
+		importedCross1.setSource(null);
+		this.crossingService.populateSeedSource(importedCross1, Mockito.mock(Workbook.class));
+		Assert.assertEquals(newSeedSource, importedCross1.getSource());
+
+		// Case 2 - Seed source is present. Keep.
+		ImportedCrosses importedCross2 = new ImportedCrosses();
+		final String existingSeedSource = "existingSeedSource";
+		importedCross2.setSource(existingSeedSource);
+		this.crossingService.populateSeedSource(importedCross2, Mockito.mock(Workbook.class));
+		Assert.assertEquals(existingSeedSource, importedCross2.getSource());
+
+		// Case 3 - Seed source is presend but is PENDING indicator. Generate new.
+		ImportedCrosses importedCross3 = new ImportedCrosses();
+		importedCross3.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
+		this.crossingService.populateSeedSource(importedCross3, Mockito.mock(Workbook.class));
+		Assert.assertEquals(newSeedSource, importedCross3.getSource());
+
+		// Case 4 - Seed source is present but empty string. Generate new.
+		ImportedCrosses importedCross4 = new ImportedCrosses();
+		importedCross4.setSource("");
+		this.crossingService.populateSeedSource(importedCross4, Mockito.mock(Workbook.class));
+		Assert.assertEquals(newSeedSource, importedCross4.getSource());
+
+	}
+
 	private ImportedCrossesList createImportedCrossesList() {
 
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
@@ -538,6 +631,8 @@ public class CrossingServiceImplTest {
 		cross.setMaleGid(TEST_MALE_GID_1);
 		cross.setCross("CROSS");
 		cross.setSource("MALE:1:FEMALE:1");
+		cross.setDesig(
+				"G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML1612345");
 		importedCrosses.add(cross);
 		final ImportedCrosses cross2 = new ImportedCrosses();
 		cross2.setFemaleDesig("FEMALE-9999");
@@ -546,6 +641,8 @@ public class CrossingServiceImplTest {
 		cross2.setMaleGid(TEST_MALE_GID_2);
 		cross2.setCross("CROSS");
 		cross2.setSource("MALE:2:FEMALE:2");
+		cross2.setDesig(
+				"((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML161");
 		importedCrosses.add(cross2);
 
 		return importedCrosses;
@@ -558,6 +655,7 @@ public class CrossingServiceImplTest {
 		cross.setFemaleGid("12345");
 		cross.setMaleDesig("MALE-54321");
 		cross.setMaleGid("54321");
+		cross.setDesig("Cros12345");
 		return cross;
 	}
 

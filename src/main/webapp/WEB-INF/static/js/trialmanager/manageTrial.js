@@ -115,6 +115,12 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 						}
 						// a 'transition prevented' error
 					});
+				
+				$rootScope.stateSuccessfullyLoaded = {};
+				$rootScope.$on('$stateChangeSuccess',
+					function(event, toState, toParams, fromState, fromParams) {
+						$rootScope.stateSuccessfullyLoaded[toState.name] = true;
+					});
 
 				// It's very handy to add references to $state and $stateParams to the $rootScope
 				// so that you can access them from any scope within your applications.For example,
@@ -140,9 +146,6 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				},
 				{   name: 'Germplasm',
 					state: 'germplasm'
-				},
-				{   name: 'Treatment Factors',
-					state: 'treatment'
 				},
 				{   name: 'Environments',
 					state: 'environment'
@@ -266,7 +269,8 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 						//Added-selectionVariates
 						TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
 							data.trialSettingsData));
-
+						TrialManagerDataService.updateSettings('selectionVariables', TrialManagerDataService.extractSettings(
+							data.selectionVariableData));
 						TrialManagerDataService.updateSettings('environments', environmentSettings);
 						TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
 						TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
@@ -291,7 +295,10 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			$scope.refreshEnvironmentsAndExperimentalDesign = function() {
 				var currentDesignType = TrialManagerDataService.currentData.experimentalDesign.designType;
 				var showIndicateUnappliedChangesWarning = true;
-				if (TrialManagerDataService.applicationData.designTypes[currentDesignType].name === 'Custom Import Design') {
+
+				var designTypes = TrialManagerDataService.applicationData.designTypes;
+
+				if (TrialManagerDataService.getDesignTypeById(currentDesignType, designTypes).name === 'Custom Import Design') {
 					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd = $scope.temp.noOfEnvironments;
 					showIndicateUnappliedChangesWarning = false;
 					ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());

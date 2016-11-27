@@ -14,6 +14,8 @@ public class LabelPrintingSetting implements Serializable {
 
 	private String name;
 	private String outputType;
+	private String sorting;
+	private String numberOfCopies;
 	private CSVExcelLabelPrintingSetting csvExcelSetting;
 	private PDFLabelPrintingSetting pdfSetting;
 	private BarcodeLabelPrintingSetting barcodeSetting;
@@ -22,14 +24,17 @@ public class LabelPrintingSetting implements Serializable {
 
 	}
 
-	public LabelPrintingSetting(String name, String outputType, CSVExcelLabelPrintingSetting csvExcelSetting,
-			PDFLabelPrintingSetting pdfSetting, BarcodeLabelPrintingSetting barcodeSetting) {
+	public LabelPrintingSetting(final String name, final String outputType, final CSVExcelLabelPrintingSetting csvExcelSetting,
+			final PDFLabelPrintingSetting pdfSetting, final BarcodeLabelPrintingSetting barcodeSetting, final String sorting, final
+			String numberOfCopies) {
 		super();
 		this.name = name;
 		this.outputType = outputType;
 		this.csvExcelSetting = csvExcelSetting;
 		this.pdfSetting = pdfSetting;
 		this.barcodeSetting = barcodeSetting;
+		this.sorting = sorting;
+		this.numberOfCopies = numberOfCopies;
 	}
 
 	@XmlAttribute
@@ -37,7 +42,7 @@ public class LabelPrintingSetting implements Serializable {
 		return this.name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -46,7 +51,7 @@ public class LabelPrintingSetting implements Serializable {
 		return this.outputType;
 	}
 
-	public void setOutputType(String outputType) {
+	public void setOutputType(final String outputType) {
 		this.outputType = outputType;
 	}
 
@@ -55,7 +60,7 @@ public class LabelPrintingSetting implements Serializable {
 		return this.csvExcelSetting;
 	}
 
-	public void setCsvExcelSetting(CSVExcelLabelPrintingSetting csvExcelSetting) {
+	public void setCsvExcelSetting(final CSVExcelLabelPrintingSetting csvExcelSetting) {
 		this.csvExcelSetting = csvExcelSetting;
 	}
 
@@ -64,7 +69,7 @@ public class LabelPrintingSetting implements Serializable {
 		return this.pdfSetting;
 	}
 
-	public void setPdfSetting(PDFLabelPrintingSetting pdfSetting) {
+	public void setPdfSetting(final PDFLabelPrintingSetting pdfSetting) {
 		this.pdfSetting = pdfSetting;
 	}
 
@@ -73,8 +78,26 @@ public class LabelPrintingSetting implements Serializable {
 		return this.barcodeSetting;
 	}
 
-	public void setBarcodeSetting(BarcodeLabelPrintingSetting barcodeSetting) {
+	public void setBarcodeSetting(final BarcodeLabelPrintingSetting barcodeSetting) {
 		this.barcodeSetting = barcodeSetting;
+	}
+
+	@XmlAttribute
+	public String getSorting() {
+		return this.sorting;
+	}
+
+	public void setSorting(final String sorting) {
+		this.sorting = sorting;
+	}
+
+	@XmlAttribute
+	public String getNumberOfCopies() {
+		return this.numberOfCopies;
+	}
+
+	public void setNumberOfCopies(final String numberOfCopies) {
+		this.numberOfCopies = numberOfCopies;
 	}
 
 	@Override
@@ -86,11 +109,13 @@ public class LabelPrintingSetting implements Serializable {
 		result = prime * result + (this.name == null ? 0 : this.name.hashCode());
 		result = prime * result + (this.outputType == null ? 0 : this.outputType.hashCode());
 		result = prime * result + (this.pdfSetting == null ? 0 : this.pdfSetting.hashCode());
+		result = prime * result + (this.sorting == null ? 0 : this.sorting.hashCode());
+		result = prime * result + (this.numberOfCopies == null ? 0 : this.numberOfCopies.hashCode());
 		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -146,12 +171,31 @@ public class LabelPrintingSetting implements Serializable {
 			return false;
 		}
 
+		if (this.sorting == null) {
+			if (other.sorting != null) {
+				return false;
+			}
+
+		} else if (!this.sorting.equals(other.sorting)) {
+			return false;
+		}
+
+		if (this.numberOfCopies == null) {
+			if (other.numberOfCopies != null) {
+				return false;
+			}
+
+		} else if (!this.numberOfCopies.equals(other.numberOfCopies)) {
+			return false;
+		}
+
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "LabelPrintingSetting [name=" + this.name + ", outputType=" + this.outputType + ", csvExcelSetting=" + this.csvExcelSetting
+		return "LabelPrintingSetting [name=" + this.name + ", outputType=" + this.outputType + ", sorting =" + this.sorting
+				+ ", number of copies =" + this.numberOfCopies + ", csvExcelSetting=" + this.csvExcelSetting
 				+ ", pdfSetting=" + this.pdfSetting + ", barcodeSetting=" + this.barcodeSetting + "]";
 	}
 

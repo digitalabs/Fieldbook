@@ -17,10 +17,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.efficio.fieldbook.web.common.bean.ChangeType;
+import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 import com.efficio.fieldbook.web.study.service.ImportStudyService;
 
@@ -57,5 +60,12 @@ public class DataKaptureImportStudyServiceImpl extends AbstractImportStudyServic
         final File file = new File(currentFile);
         parsedData.readDATACapture(file, ontologyService, fieldbookMiddlewareService);
     }
+
+	@Override
+	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
+			List<String> removedVariates) {
+		// NO-OP
+		
+	}
 
 }

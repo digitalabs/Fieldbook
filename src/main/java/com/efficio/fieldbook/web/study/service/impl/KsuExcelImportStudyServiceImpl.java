@@ -144,4 +144,12 @@ public class KsuExcelImportStudyServiceImpl extends AbstractExcelImportStudyServ
     void setContextUtil(ContextUtil contextUtil) {
         this.contextUtil = contextUtil;
     }
+    
+	@Override
+	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
+			List<String> removedVariates) throws WorkbookParserException {
+		this.detectAddedTraitsAndPerformRename(modes);
+		
+	}
+	
 }

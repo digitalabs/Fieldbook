@@ -23,13 +23,20 @@ public class FieldMapLabelComparator implements Comparator<FieldMapLabel> {
 			plotNumber2 = mapLabel2.getUserFields().get(TermId.PLOT_NO.getId());
 		}
 
-		final Object entryNumber1 = mapLabel1.getUserFields().get(TermId.ENTRY_NO.getId());
-		final Object entryNumber2 = mapLabel2.getUserFields().get(TermId.ENTRY_NO.getId());
+		Object entryNumber1 = null;
+		Object entryNumber2 = null;
+
+		if (mapLabel1.getUserFields() != null) {
+			entryNumber1 = mapLabel1.getUserFields().get(TermId.ENTRY_NO.getId());
+			entryNumber2 = mapLabel2.getUserFields().get(TermId.ENTRY_NO.getId());
+		}
 
 		if (plotNumber1 != null || plotNumber2 != null) {
 			return this.compareTermValues(plotNumber1, plotNumber2);
-		} else {
+		} else if (entryNumber1 != null || entryNumber2 != null) {
 			return this.compareTermValues(entryNumber1, entryNumber2);
+		} else {
+			return -1;
 		}
 	}
 

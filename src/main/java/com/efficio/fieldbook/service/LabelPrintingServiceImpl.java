@@ -153,10 +153,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	private void sortTrialInstanceLabels(final List<StudyTrialInstanceInfo> trialInstances) {
-		for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
-			Collections.sort(trialInstance.getTrialInstance().getFieldMapLabels(),
-					this.plotNumberEntryNumberAscComparator);
-		}
+			for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
+				Collections.sort(trialInstance.getTrialInstance().getFieldMapLabels(), this.plotNumberEntryNumberAscComparator);
+			}
 	}
 
 	@Override
@@ -373,12 +372,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			for (final MeasurementRow measurement : params.getInstanceMeasurements()) {
 				final FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(measurement.getExperimentId());
 
-				final Map<Integer, String> userSpecifiedLabels =
-						this.extractDataForUserSpecifiedLabels(params, measurement, null, firstEntry, workbook);
-
-				params.setUserSpecifiedLabels(userSpecifiedLabels);
-
-				label.setUserFields(userSpecifiedLabels);
+				if (label != null) {
+					final Map<Integer, String> userSpecifiedLabels =
+							this.extractDataForUserSpecifiedLabels(params, measurement, null, firstEntry, workbook);
+					params.setUserSpecifiedLabels(userSpecifiedLabels);
+					label.setUserFields(userSpecifiedLabels);
+				}
 
 				if (firstEntry) {
 					firstEntry = false;

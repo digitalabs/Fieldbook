@@ -511,13 +511,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		final Workbook workbook = this.userSelection.getWorkbook();
 
-		if (workbook != null) {
-			final String selectedLabelFields = this.getSelectedLabelFields(this.userLabelPrinting);
-			this.labelPrintingService.populateUserSpecifiedLabelFields(
-					this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances(), workbook, selectedLabelFields,
-					form.getIsTrial(), form.getIsStockList(), this.userLabelPrinting);
-		}
-
 		final List<FieldMapInfo> fieldMapInfoList = this.userLabelPrinting.getFieldMapInfoList();
 
 		final List<StudyTrialInstanceInfo> trialInstances;
@@ -536,6 +529,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			}
 		}
 
+		if (workbook != null) {
+			final String selectedLabelFields = this.getSelectedLabelFields(this.userLabelPrinting);
+			for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
+				final List<FieldMapTrialInstanceInfo> trialInstanceListWrapper = new ArrayList<>();
+				trialInstanceListWrapper.add(trialInstance.getTrialInstance());
+				this.labelPrintingService.populateUserSpecifiedLabelFields(trialInstanceListWrapper, workbook, selectedLabelFields,
+						form.getIsTrial(), form.getIsStockList(), this.userLabelPrinting);
+			}
+
+		}
 		return this.generateLabels(trialInstances, form.isCustomReport());
 	}
 
@@ -718,7 +721,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final String fileName;
 		final LabelPrintingFileTypes selectedLabelPrintingType =
 				LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
-		final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
 		if (selectedLabelPrintingType.isValid()) {
 			this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());

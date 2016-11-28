@@ -278,11 +278,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			for (final MeasurementRow measurement : params.getInstanceMeasurements()) {
 				final FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(measurement.getExperimentId());
 
-				final InventoryDetails inventoryDetails = inventoryDetailsMap.get(label.getGid());
-				if (inventoryDetails != null) {
-					label.setInventoryAmount(inventoryDetails.getAmount());
-					label.setScaleName(inventoryDetails.getScaleName());
-					label.setLotId(inventoryDetails.getLotId());
+				if (label != null) {
+					final InventoryDetails inventoryDetails = inventoryDetailsMap.get(label.getGid());
+					if (inventoryDetails != null) {
+						label.setInventoryAmount(inventoryDetails.getAmount());
+						label.setScaleName(inventoryDetails.getScaleName());
+						label.setLotId(inventoryDetails.getLotId());
+					}
 				}
 			}
 		}

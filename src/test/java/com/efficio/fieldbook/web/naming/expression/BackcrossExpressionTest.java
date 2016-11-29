@@ -37,7 +37,7 @@ public class BackcrossExpressionTest extends TestExpression {
 
 		expression.apply(values, source);
 
-		Assert.assertEquals("GERMPLASM_TEST-BF", values.get(0).toString());
+		Assert.assertEquals("GERMPLASM_TEST-F", values.get(0).toString());
 
 	}
 
@@ -57,7 +57,27 @@ public class BackcrossExpressionTest extends TestExpression {
 
 		expression.apply(values, source);
 
-		Assert.assertEquals("GERMPLASM_TEST-BM", values.get(0).toString());
+		Assert.assertEquals("GERMPLASM_TEST-M", values.get(0).toString());
+
+	}
+
+	@Test
+	public void testResolveBackcrossParentMaleWithLiteralStringBeforeAndAfterTheProcessCode() {
+
+		int maleParentGid = 1;
+		int femaleParentGid = 2;
+
+		Mockito.when(pedigreeDataManager.calculateRecurrentParent(maleParentGid, femaleParentGid))
+				.thenReturn(PedigreeDataManager.MALE_RECURRENT);
+
+		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "AA[BC]CC", null, true);
+		List<StringBuilder> values = this.createInitialValues(source);
+		source.setFemaleGid(femaleParentGid);
+		source.setMaleGid(maleParentGid);
+
+		expression.apply(values, source);
+
+		Assert.assertEquals("GERMPLASM_TEST-AAMCC", values.get(0).toString());
 
 	}
 
@@ -79,5 +99,6 @@ public class BackcrossExpressionTest extends TestExpression {
 		Assert.assertEquals("GERMPLASM_TEST-", values.get(0).toString());
 
 	}
+
 
 }

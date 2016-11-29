@@ -11,8 +11,8 @@ import java.util.List;
 public class BackcrossExpression extends BaseExpression {
 
 	public static final String KEY = "[BC]";
-	static final String MALE_RECURRENT_SUFFIX = "BM";
-	static final String FEMALE_RECURRENT_SUFFIX = "BF";
+	static final String MALE_RECURRENT_SUFFIX = "M";
+	static final String FEMALE_RECURRENT_SUFFIX = "F";
 
 	@Autowired
 	private PedigreeDataManager pedigreeDataManager;

@@ -202,7 +202,7 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
 		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
 
-		this.wData.setValue(null);
+		this.wData.setValue(this.testValue);
 
 		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
 				new HashMap<Integer, MeasurementVariable>());

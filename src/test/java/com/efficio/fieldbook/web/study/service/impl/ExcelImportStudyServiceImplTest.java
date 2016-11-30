@@ -1,10 +1,15 @@
 
 package com.efficio.fieldbook.web.study.service.impl;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -30,10 +35,13 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.bean.ChangeType;
+import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 
 @RunWith(value = MockitoJUnitRunner.class)
 public class ExcelImportStudyServiceImplTest {
 
+	private final static int TEST_COLUMN_HEADER_COUNT = 5;
 	private static final String TRIAL_INSTANCE_NO = "1";
 	private static final String CATEGORICAL_ID = TRIAL_INSTANCE_NO;
 	private static final String POSSIBLE_VALUE_NAME = "Possible Value Name";
@@ -53,6 +61,8 @@ public class ExcelImportStudyServiceImplTest {
 	private Row xlsRow;
 	private Cell cell;
 	private Workbook workbook;
+	private Sheet sheet;
+    private Row row;
 
 	private Cell propertyCell;
 	private Cell scaleCell;
@@ -468,4 +478,46 @@ public class ExcelImportStudyServiceImplTest {
 
 
 
+    @Test
+    public void testDetectAddedTraitsNoTraitsAdded() throws WorkbookParserException{
+        final Set<ChangeType> modes = new HashSet<>();
+        final org.apache.poi.ss.usermodel.Workbook workbook2 = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
+
+        this.setupColumnHeaderMocks();
+		final List<String> addedTraits = new ArrayList<String>();
+		final List<String> removedTraits = new ArrayList<String>();
+
+        Mockito.doReturn(sheet).when(workbook2).getSheetAt(0);
+
+        this.importStudy.setParsedData(workbook2);
+        this.importStudy.detectAddedTraitsAndPerformRename(modes,addedTraits,removedTraits);
+
+        assertThat(modes,hasSize(1));
+        assertThat(modes.iterator().next() ,equalTo(ChangeType.DELETED_TRAITS));
+        assertThat(removedTraits,hasSize(3));
+        assertThat(addedTraits,hasSize(0));
+    }
+    
+    protected void setupColumnHeaderMocks() {
+        sheet = Mockito.mock(Sheet.class);
+        row = Mockito.mock(Row.class);
+        Mockito.doReturn(row).when(sheet).getRow(0);
+
+        Mockito.doReturn((short) (TEST_COLUMN_HEADER_COUNT + 1)).when(row).getLastCellNum();
+
+        for (int i = 0; i < TEST_COLUMN_HEADER_COUNT; i++) {
+            final Cell cell = Mockito.mock(Cell.class);
+            Mockito.doReturn(cell).when(row).getCell(i);
+            Mockito.doReturn(constructHeaderName(i)).when(cell).getStringCellValue();
+        }
+
+        Cell cell = Mockito.mock(Cell.class);
+        Mockito.doReturn(cell).when(row).getCell(TEST_COLUMN_HEADER_COUNT);
+        Mockito.doReturn(KsuFieldbookUtil.PLOT).when(cell).getStringCellValue();
+    }
+    
+    String constructHeaderName(final int columnNumber) {
+        return "TempValue" + columnNumber;
+    }
+    
 }

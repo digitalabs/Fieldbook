@@ -223,11 +223,6 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 								ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable()
 										.getPossibleValues(), true);
 					}
-//					final Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : 0;
-//					if (!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)) {
-//						workbook.setHasExistingDataOverwrite(true);
-//						System.err.println("WRITE THE MEASUREMENTS");
-//					}
 
 					if (wData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() && !xlsValue.equals(tempVal)) {
 						wData.setcValueId(xlsValue);
@@ -247,17 +242,12 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 					} else {
 						xlsValue = cell.getStringCellValue();
 					}
-//					final Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : 0;
-//					if (!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)) {
-//						workbook.setHasExistingDataOverwrite(true);
-//						System.err.println("WRITE THE MEASUREMENTS");
-//					}
 				}
 				
 				if(!wData.getValue().equals(xlsValue)){
-				wData.setValue(xlsValue);
-                wData.setOldValue(xlsValue);
-                workbook.setHasExistingDataOverwrite(true);
+					wData.setValue(xlsValue);
+	                wData.setOldValue(xlsValue);
+	                workbook.setHasExistingDataOverwrite(true);
 				}
 			}
 		}

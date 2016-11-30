@@ -226,7 +226,6 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 
 					if (wData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() && !xlsValue.equals(tempVal)) {
 						wData.setcValueId(xlsValue);
-						workbook.setHasExistingDataOverwrite(true);
 					} else {
 						wData.setcValueId(null);
 					}
@@ -245,9 +244,11 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 				}
 				
 				if(!wData.getValue().equals(xlsValue)){
+					if(!wData.getValue().isEmpty()){
+		                workbook.setHasExistingDataOverwrite(true);
+					} 
 					wData.setValue(xlsValue);
 	                wData.setOldValue(xlsValue);
-	                workbook.setHasExistingDataOverwrite(true);
 				}
 			}
 		}

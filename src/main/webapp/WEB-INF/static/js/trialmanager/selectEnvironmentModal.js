@@ -38,12 +38,6 @@
 
 		$scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.replicationsCount;
 
-		if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
-			$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
-		} else if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
-			$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
-		}
-
 		//NOTE: Continue action for navigate from Locations to Advance Study Modal
 		$scope.trialSelectEnvironmentContinue = function() {
 
@@ -107,6 +101,15 @@
 			});
 
 		};
+
+		$scope.init = function() {
+			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
+				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
+			} else if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
+				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
+			}
+		};
+		$scope.init();
 
 	}]);
 

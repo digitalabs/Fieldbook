@@ -262,6 +262,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsTrial(false);
+		this.userLabelPrinting.setCropCodePrefix(cropId);
 
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
 		form.setUserLabelPrinting(this.userLabelPrinting);

@@ -195,6 +195,9 @@ public class CrossingSettingsController extends SettingsController {
 
 		final Calendar cal = DateUtil.getCalendarInstance();
 
+		//add next year
+		cal.roll(Calendar.YEAR, true);
+		
 		for (int i = 0; i < CrossingSettingsController.YEAR_INTERVAL; i++) {
 			years.add(Integer.toString(cal.get(Calendar.YEAR)));
 			cal.roll(Calendar.YEAR, false);

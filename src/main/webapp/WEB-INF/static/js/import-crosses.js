@@ -587,7 +587,7 @@ var ImportCrosses = {
 				data: dropdownData
 			});
 
-			dropdownSelect.select2('val', yearData[0]);
+			dropdownSelect.select2('val', yearData[1]);
 		});
 	},
 

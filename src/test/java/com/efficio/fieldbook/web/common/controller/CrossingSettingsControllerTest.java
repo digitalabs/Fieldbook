@@ -276,9 +276,10 @@ public class CrossingSettingsControllerTest {
 		Assert.assertEquals(CrossingSettingsController.YEAR_INTERVAL, harvestYears.size());
 
 		final String firstDisplayed = harvestYears.get(0);
+		final String secondDisplayed = harvestYears.get(1);
 		final Calendar cal = DateUtil.getCalendarInstance();
-
-		Assert.assertEquals(Integer.toString(cal.get(Calendar.YEAR)), firstDisplayed);
+		Assert.assertEquals(Integer.toString(cal.get(Calendar.YEAR) + 1), firstDisplayed);
+		Assert.assertEquals(Integer.toString(cal.get(Calendar.YEAR)), secondDisplayed);
 	}
 
 	@Test

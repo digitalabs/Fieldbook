@@ -64,7 +64,7 @@ import com.efficio.fieldbook.web.util.DuplicatesUtil;
 public class CrossingSettingsController extends SettingsController {
 
 	public static final String URL = "/crosses";
-	public static final int YEAR_INTERVAL = 30;
+	public static final int YEAR_INTERVAL = 10;
 	public static final String ID = "id";
 	public static final String TEXT = "text";
 	public static final String SUCCESS_KEY = "success";
@@ -195,12 +195,11 @@ public class CrossingSettingsController extends SettingsController {
 
 		final Calendar cal = DateUtil.getCalendarInstance();
 
-		//add next year
-		cal.roll(Calendar.YEAR, true);
+		int currentYear = cal.get(Calendar.YEAR);
 		
-		for (int i = 0; i < CrossingSettingsController.YEAR_INTERVAL; i++) {
-			years.add(Integer.toString(cal.get(Calendar.YEAR)));
-			cal.roll(Calendar.YEAR, false);
+		//the years should include + 10 years, current year and - 10 years
+		for (int year = currentYear + YEAR_INTERVAL; year >= currentYear - YEAR_INTERVAL; year--) {
+			years.add(Integer.toString(year));
 		}
 
 		return years;

@@ -236,12 +236,15 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			final HttpServletRequest req, final HttpSession session, @PathVariable final int id, final Locale locale) {
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
 				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+		String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
+		String cropId = null;
 		Study study = null;
 		List<FieldMapInfo> fieldMapInfoList = null;
 		FieldMapInfo fieldMapInfo = null;
 		boolean hasFieldMap = false;
 		try {
 			study = this.fieldbookMiddlewareService.getStudy(id);
+			cropId = this.fieldbookMiddlewareService.getCropId(cropName);
 			final List<Integer> ids = new ArrayList<>();
 			ids.add(id);
 			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);

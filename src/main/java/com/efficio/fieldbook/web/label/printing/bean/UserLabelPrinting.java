@@ -141,6 +141,8 @@ public class UserLabelPrinting implements Serializable {
 
 	private List<InventoryDetails> inventoryDetailsList;
 
+	private boolean barcodeGeneratedAutomatically;
+
 	/**
 	 * Gets the field map info.
 	 *
@@ -775,5 +777,13 @@ public class UserLabelPrinting implements Serializable {
 
 	public void setCropCodePrefix(final String cropCodePrefix) {
 		this.cropCodePrefix = cropCodePrefix;
+	}
+
+	public boolean isBarcodeGeneratedAutomatically() {
+		return barcodeGeneratedAutomatically;
+	}
+
+	public void setBarcodeGeneratedAutomatically(final boolean barcodeGeneratedAutomatically) {
+		this.barcodeGeneratedAutomatically = barcodeGeneratedAutomatically;
 	}
 }

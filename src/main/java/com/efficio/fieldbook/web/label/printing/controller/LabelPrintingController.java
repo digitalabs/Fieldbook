@@ -237,14 +237,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
 				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 		String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
-		String cropId = null;
+		String cropPrefix = null;
 		Study study = null;
 		List<FieldMapInfo> fieldMapInfoList = null;
 		FieldMapInfo fieldMapInfo = null;
 		boolean hasFieldMap = false;
 		try {
 			study = this.fieldbookMiddlewareService.getStudy(id);
-			cropId = this.fieldbookMiddlewareService.getCropId(cropName);
+			cropPrefix = this.fieldbookMiddlewareService.getCropId(cropName);
 			final List<Integer> ids = new ArrayList<>();
 			ids.add(id);
 			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
@@ -262,7 +262,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsTrial(false);
-		this.userLabelPrinting.setCropCodePrefix(cropId);
+		this.userLabelPrinting.setCropCodePrefix(cropPrefix);
 
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
 		form.setUserLabelPrinting(this.userLabelPrinting);
@@ -502,6 +502,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically(form.getUserLabelPrinting().isBarcodeGeneratedAutomatically());
 
 		// add validation for the file name
 		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {

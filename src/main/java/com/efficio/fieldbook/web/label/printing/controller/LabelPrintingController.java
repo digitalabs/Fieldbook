@@ -207,6 +207,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setStudy(study);
 		this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
 		this.userLabelPrinting.setBarcodeNeeded("0");
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsTrial(true);
@@ -259,6 +260,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setStudy(study);
 		this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
 		this.userLabelPrinting.setBarcodeNeeded("0");
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsTrial(false);
@@ -294,6 +296,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
 		this.userLabelPrinting.setFieldMapInfoList(fieldMapInfoList);
 		this.userLabelPrinting.setBarcodeNeeded("0");
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 
@@ -351,6 +354,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		this.userLabelPrinting.setStudy(study);
 		this.userLabelPrinting.setBarcodeNeeded("0");
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsStockList(true);
@@ -408,6 +412,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setFieldMapInfo(null);
 		this.userLabelPrinting.setFieldMapInfoList(null);
 		this.userLabelPrinting.setBarcodeNeeded("0");
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsStockList(true);
@@ -489,6 +494,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
 
 		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically(form.getUserLabelPrinting().getBarcodeGeneratedAutomatically());
 		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
 		this.userLabelPrinting.setNumberOfLabelPerRow(form.getUserLabelPrinting().getNumberOfLabelPerRow());
 		this.userLabelPrinting.setNumberOfRowsPerPageOfLabel(form.getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
@@ -555,6 +561,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	public Map<String, Object> submitDetailsOfInventory(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
 
 		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically(form.getUserLabelPrinting().getBarcodeGeneratedAutomatically());
 		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
 		this.userLabelPrinting.setNumberOfLabelPerRow(form.getUserLabelPrinting().getNumberOfLabelPerRow());
 		this.userLabelPrinting.setNumberOfRowsPerPageOfLabel(form.getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());

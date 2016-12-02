@@ -87,7 +87,7 @@ public class UserLabelPrinting implements Serializable {
 
 	/** The barcode needed. */
 	private String barcodeNeeded;
-
+	
 	/** The left selected label fields. */
 	private String leftSelectedLabelFields;
 
@@ -141,6 +141,7 @@ public class UserLabelPrinting implements Serializable {
 
 	private List<InventoryDetails> inventoryDetailsList;
 
+	/** The automatically barcode. */
 	private String barcodeGeneratedAutomatically;
 
 	/**
@@ -771,6 +772,7 @@ public class UserLabelPrinting implements Serializable {
 		this.sorting = sorting;
 	}
 
+
 	public String getCropCodePrefix() {
 		return cropCodePrefix;
 	}
@@ -786,4 +788,5 @@ public class UserLabelPrinting implements Serializable {
 	public void setBarcodeGeneratedAutomatically(final String barcodeGeneratedAutomatically) {
 		this.barcodeGeneratedAutomatically = barcodeGeneratedAutomatically;
 	}
+
 }

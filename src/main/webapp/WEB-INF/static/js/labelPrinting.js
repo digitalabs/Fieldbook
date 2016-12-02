@@ -72,6 +72,7 @@ LabelPrinting = {
 		LabelPrinting.initializeCustomExportReports();
 		LabelPrinting.initializeUserPresets();
 		LabelPrinting.showOrHideBarcodeFields();
+		LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
 
 		$('.loadSavedSettings').on('change', function() {
 			if ($(this).is(':checked')) {
@@ -115,6 +116,10 @@ LabelPrinting = {
 			LabelPrinting.showOrHideBarcodeFields();
 		});
 
+		$safeId('input[name=userLabelPrinting.barcodeGeneratedAutomatically]').on('change', function() {
+			LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
+		});
+		
 		$('#export-label-data').on('click', function() {
 			LabelPrinting.doExportLabel($('#label-format').val());
 		});
@@ -403,12 +408,24 @@ LabelPrinting = {
 	LabelPrinting.showOrHideBarcodeFields = function() {
 		var barcodeNeeded = $safeId('input[name=userLabelPrinting.barcodeNeeded]:checked').val();
 		if (barcodeNeeded === '1') {
+			$('.automatically-barcode-fields').show();
+		} else {
+			$('.automatically-barcode-fields').hide();
+		}
+		LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
+	};
+
+	/**
+	 * Toggle for Automatically barcode fields
+	 */
+	LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields = function() {
+		var barcodeNeeded = $safeId('input[name=userLabelPrinting.barcodeGeneratedAutomatically]:checked').val();
+		if (barcodeNeeded === '0') {
 			$('.barcode-fields').show();
 		} else {
 			$('.barcode-fields').hide();
 		}
 	};
-
 	/**
 	 * returns the currently selected values already parsed into preset type and id (still string)
 	 * @returns {Array}
@@ -519,7 +536,7 @@ LabelPrinting = {
 				return false;
 			}
 		}
-
+		
 		if ($('#selectedTrials .includeTrial:checked').length == 0 && $('#selectedTrials .includeTrial').length > 0) {
 			showMessage(trialInstanceRequired);
 			moveToTopScreen();

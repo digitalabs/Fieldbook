@@ -667,7 +667,22 @@
                                         <span th:text="#{label.printing.do.you.need.bar.codes.no}">No</span>
                                     </label>
                                 </div>
-
+                                <div class="col-xs-6 col-md-6"><label>&nbsp;</label></div>
+                                
+                                <div class="col-xs-6 col-md-6 automatically-barcode-fields">
+                                    <label class="control-label label-bold" th:text="#{label.printing.do.you.want.automatically.unique.bar.codes}">Do you want 
+                                    	to use automatically generated unique barcodes?</label>
+                                    &nbsp;
+                                    <label class="radio-inline">
+                                        <input checked="checked" type="radio" value="1" th:field="*{userLabelPrinting.barcodeGeneratedAutomatically}"/>
+                                        <span th:text="#{label.printing.do.you.want.automatic.unique.bar.codes.yes}">Yes</span>
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" value="0" th:field="*{userLabelPrinting.barcodeGeneratedAutomatically}"/>
+                                        <span th:text="#{label.printing.do.you.want.automatic.unique.bar.codes.no}">No</span>
+                                    </label>
+                                </div>
+                                
                                 <div class="col-xs-6 col-md-6 barcode-fields">
                                     <div class="form-group">
                                         <div class="col-xs-12 col-md-12">

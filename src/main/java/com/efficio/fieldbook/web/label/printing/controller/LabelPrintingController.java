@@ -508,7 +508,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
-		this.userLabelPrinting.setBarcodeGeneratedAutomatically(form.getUserLabelPrinting().getBarcodeGeneratedAutomatically());
 
 		// add validation for the file name
 		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {

@@ -730,7 +730,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final String fileName;
 		final LabelPrintingFileTypes selectedLabelPrintingType =
 				LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
-		final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
 		if (selectedLabelPrintingType.isValid()) {
 			this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
@@ -960,10 +959,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		// Preparation, convert the form into appropriate pojos for easy access
 		CSVExcelLabelPrintingSetting nonPDFSettings = null;
 		PDFLabelPrintingSetting pdfSettings = null;
+		String barcodeGeneratedAutomatically = rawSettings.getBarcodeGeneratedAutomatically();
+		boolean isPlotCodePrefix = barcodeGeneratedAutomatically.equals("0") ? false : true;
 		final BarcodeLabelPrintingSetting barcodeSettings = new BarcodeLabelPrintingSetting(
 				"1".equals(rawSettings.getBarcodeNeeded()), "Barcode", StringUtil.stringify(new String[] {
 						rawSettings.getFirstBarcodeField(), rawSettings.getSecondBarcodeField(), rawSettings.getThirdBarcodeField()}, ","),
-				false);
+				isPlotCodePrefix);
 
 		if (AppConstants.LABEL_PRINTING_PDF.getString().equals(rawSettings.getGenerateType())) {
 			pdfSettings = new PDFLabelPrintingSetting(rawSettings.getSizeOfLabelSheet(),

@@ -407,6 +407,7 @@ LabelPrinting = {
 	 */
 	LabelPrinting.showOrHideBarcodeFields = function() {
 		var barcodeNeeded = $safeId('input[name=userLabelPrinting.barcodeNeeded]:checked').val();
+		// isPlotCodePrefix
 		if (barcodeNeeded === '1') {
 			$('.automatically-barcode-fields').show();
 		} else {
@@ -892,7 +893,12 @@ LabelPrinting = {
 		//set the radio btns
 		var selectedValue = (barcodeSetting.barcodeNeeded) ? '1' : '0';
 		$('input[name="userLabelPrinting.barcodeNeeded"][value="' + selectedValue + '"]').prop('checked', true).change();
+		
 
+		var isPlotCodePrefix = (barcodeSetting.plotCodePrefix) ? '1' : '0';
+		$('input[name="userLabelPrinting.barcodeGeneratedAutomatically"][value="' + isPlotCodePrefix + '"]').
+					prop('checked', true).change();
+		
 		// set the fields
 		doUISafeSelect($safeId('#userLabelPrinting.firstBarcodeField'), barcodeSetting.barcodeFieldsList[0]);
 		doUISafeSelect($safeId('#userLabelPrinting.secondBarcodeField'), barcodeSetting.barcodeFieldsList[1]);

@@ -410,10 +410,11 @@ LabelPrinting = {
 		// isPlotCodePrefix
 		if (barcodeNeeded === '1') {
 			$('.automatically-barcode-fields').show();
+			LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
 		} else {
 			$('.automatically-barcode-fields').hide();
+			$('.barcode-fields').hide();
 		}
-		LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
 	};
 
 	/**

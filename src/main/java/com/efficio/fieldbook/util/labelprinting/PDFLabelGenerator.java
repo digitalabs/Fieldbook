@@ -81,6 +81,7 @@ public class PDFLabelGenerator implements LabelGenerator {
 		final String leftSelectedFields = userLabelPrinting.getLeftSelectedLabelFields();
 		final String rightSelectedFields = userLabelPrinting.getRightSelectedLabelFields();
 		final String barcodeNeeded = userLabelPrinting.getBarcodeNeeded();
+		final String barcodeGeneratedAutomatically = userLabelPrinting.getBarcodeGeneratedAutomatically();
 
 		final String fileName = userLabelPrinting.getFilenameDLLocation();
 
@@ -116,10 +117,16 @@ public class PDFLabelGenerator implements LabelGenerator {
 						barcodeLabel = " ";
 						barcodeLabelForCode = " ";
 					} else {
-						barcodeLabel = this.labelPrintingUtil.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField,
-								secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
-						barcodeLabelForCode = this.labelPrintingUtil.generateBarcodeField(moreFieldInfo, fieldMapLabel,
-								firstBarcodeField, secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), true);
+						if (!LabelPrintingServiceImpl.BARCODE_GENERATED_AUTOMATICALLY.equalsIgnoreCase(barcodeGeneratedAutomatically)) {
+							barcodeLabel = this.labelPrintingUtil
+									.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField,
+											thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
+							barcodeLabelForCode = this.labelPrintingUtil
+									.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField,
+											thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), true);
+						} else {
+
+						}
 					}
 
 					barcodeLabelForCode = this.labelPrintingPDFUtil.truncateBarcodeLabelForCode(barcodeLabelForCode);

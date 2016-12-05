@@ -18,6 +18,7 @@ import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.slf4j.Logger;
@@ -83,6 +84,8 @@ public class PDFLabelGenerator implements LabelGenerator {
 		final String barcodeNeeded = userLabelPrinting.getBarcodeNeeded();
 		final String barcodeGeneratedAutomatically = userLabelPrinting.getBarcodeGeneratedAutomatically();
 
+		final String cropCodePrefix = userLabelPrinting.getCropCodePrefix();
+
 		final String fileName = userLabelPrinting.getFilenameDLLocation();
 
 		try {
@@ -125,7 +128,8 @@ public class PDFLabelGenerator implements LabelGenerator {
 									.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField,
 											thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), true);
 						} else {
-
+							barcodeLabel = StringUtils.join(cropCodePrefix, fieldMapLabel.getExperimentId());
+							barcodeLabelForCode = barcodeLabel;
 						}
 					}
 

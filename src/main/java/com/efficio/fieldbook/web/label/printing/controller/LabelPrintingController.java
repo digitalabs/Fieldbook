@@ -36,6 +36,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -186,15 +187,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
 				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-		String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
-		String cropPrefix = null;
 		Study study = null;
 		List<FieldMapInfo> fieldMapInfoList = null;
 		FieldMapInfo fieldMapInfo = null;
 		boolean hasFieldMap = false;
 		try {
 			study = this.fieldbookMiddlewareService.getStudy(id);
-			cropPrefix = this.fieldbookMiddlewareService.getCropId(cropName);
 			final List<Integer> ids = new ArrayList<>();
 			ids.add(id);
 			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
@@ -214,7 +212,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsTrial(true);
-		this.userLabelPrinting.setCropCodePrefix(cropPrefix);
 
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, true));
 		form.setUserLabelPrinting(this.userLabelPrinting);
@@ -241,15 +238,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			final HttpServletRequest req, final HttpSession session, @PathVariable final int id, final Locale locale) {
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
 				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-		String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
-		String cropPrefix = null;
 		Study study = null;
 		List<FieldMapInfo> fieldMapInfoList = null;
 		FieldMapInfo fieldMapInfo = null;
 		boolean hasFieldMap = false;
 		try {
 			study = this.fieldbookMiddlewareService.getStudy(id);
-			cropPrefix = this.fieldbookMiddlewareService.getCropId(cropName);
 			final List<Integer> ids = new ArrayList<>();
 			ids.add(id);
 			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
@@ -268,7 +262,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsTrial(false);
-		this.userLabelPrinting.setCropCodePrefix(cropPrefix);
 
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
 		form.setUserLabelPrinting(this.userLabelPrinting);
@@ -512,6 +505,17 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
+
+		if (this.userLabelPrinting.getBarcodeGeneratedAutomatically().equalsIgnoreCase(LabelPrintingServiceImpl.BARCODE_GENERATED_AUTOMATICALLY)) {
+			String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
+			String cropPrefix = null;
+			try {
+				cropPrefix = this.fieldbookMiddlewareService.getCropId(cropName);
+			} catch (final MiddlewareException e) {
+				LabelPrintingController.LOG.error(e.getMessage(), e);
+			}
+			this.userLabelPrinting.setCropCodePrefix(cropPrefix);
+		}
 
 		// add validation for the file name
 		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {

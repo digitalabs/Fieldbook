@@ -89,7 +89,7 @@
 				</div>
 				<div class="row form-group">
 					<div class="col-xs-12 col-md-12">
-						<label class="control-label import-confirmation label-bold"></label>
+						<label class="control-label import-confirmation"></label>
 					</div>
 				</div>
 
@@ -509,50 +509,100 @@ function confirmStudyImport(hasDataOverwrite) {
 }
 
 function showImportResponse(responseText) {
-	//reload the screen
+//reload the screen
 	'use strict';
-	var resp = $.parseJSON(responseText),
-		importError = '',
-		errorIndex = 0;
-	changeConfirmationDetails = [];
-	currentConfirmationIndex = 0;
-	if (resp.changeDetails != null && resp.changeDetails.length !== 0) {
-		for (var index = 0 ; index < resp.changeDetails.length ; index++) {
-			changeConfirmationDetails.push(resp.changeDetails[index]);
-		}
+  	var resp = $.parseJSON(responseText);
+  	changeConfirmationDetails = [];
+  	currentConfirmationIndex = 0;
+  	if (resp.changeDetails != null && resp.changeDetails.length !== 0) {
+   		for (var index = 0; index < resp.changeDetails.length; index++) {
+      	changeConfirmationDetails.push(resp.changeDetails[index]);
+    	}
 
 	}
-
 	if (resp.isSuccess === 1) {
-		if (resp.conditionConstantsImportErrorMessage !== null && resp.conditionConstantsImportErrorMessage !== '') {
-			showAlertMessage('', resp.conditionConstantsImportErrorMessage);
-		}
-		if (resp.modes != null && resp.modes.length === 0) {
-			confirmStudyImport(resp.hasDataOverwrite);
-		} else {
-			$('#importStudyModal').modal('hide');
-			setTimeout(function() {$('#importStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });}, 300);
-			importError = resp.message;
-			if (resp.detailErrorMessage != null && resp.detailErrorMessage.length !== 0) {
-				importError += '<ul>';
-				for (errorIndex = 0 ; errorIndex < resp.detailErrorMessage.length ; errorIndex++) {
-					importError += '<li>' + resp.detailErrorMessage[errorIndex] + '</li>';
-				}
-				importError += '</ul>';
-				importError += '<br />';
-				importError += resp.confirmMessage;
-			}
-			$('#importStudyConfirmationModal .import-confirmation').html(importError);
-            $('#studyConfirmationButton').off('click');
-            $('#studyConfirmationButton').on('click', function() {
-                confirmStudyImport(resp.hasDataOverwrite);
-            })
-		}
+    	if (resp.conditionConstantsImportErrorMessage !== null && resp.conditionConstantsImportErrorMessage !== '') {
+      	showAlertMessage('', resp.conditionConstantsImportErrorMessage);
+    	}
+
+    	$('#importStudyModal').modal('hide');
+    	if (resp.deletedTraits !== ' ' || resp.addedTraits !== ' ') {
+			showWarningTraitsImport(resp);
+    	} else {
+			showWarningImport(resp);
+    	}
 	} else {
 		showErrorMessage('page-import-study-message-modal', resp.error);
 		$('#importStudyModal').modal('hide');
 	}
 }
+
+function showWarningTraitsImport(resp) {
+	'use strict';
+	setTimeout(function() {
+	$('#importStudyConfirmationModal').modal({
+	      backdrop: 'static',
+	      keyboard: true
+	    });
+	  }, 300);
+	var warningTraitsMessage = '', errorIndex = 0;
+	warningTraitsMessage = resp.confirmMessageTrais;
+
+	warningTraitsMessage += '<p> </p>';
+	warningTraitsMessage += '<ul>';
+
+	if (resp.deletedTraits !== ' ') {
+		warningTraitsMessage += '<li>';
+		warningTraitsMessage += '<b>' + 'Missing traits: ' + '</b>';
+		warningTraitsMessage += resp.deletedTraits + ' in the nursery are not present in the file.';
+		warningTraitsMessage += '</li>';
+		warningTraitsMessage += '<p>' + '</p>';
+	}
+
+	if (resp.addedTraits !== ' ') {
+		warningTraitsMessage += '<li>';
+		warningTraitsMessage += '<b>' + 'Additional traits: ' + '</b>';
+		warningTraitsMessage += 'the file contains the trait(s) ' + resp.addedTraits + ', that are not present in the nursery. ';
+		warningTraitsMessage += 'This data will be discarded. if you wish to import additional traits, please add them to the nursery before ';
+		warningTraitsMessage += 'importing the data file.';
+		warningTraitsMessage += '</li>';
+	}
+
+	warningTraitsMessage += '</ul>';
+	warningTraitsMessage += '<br />';
+
+	$('#importStudyConfirmationModal .import-confirmation').html(warningTraitsMessage);
+	$('#studyConfirmationButton').off('click');
+	$('#studyConfirmationButton').on('click', function() {
+	    showWarningImport(resp);
+	})
+
+}
+
+function showWarningImport(resp) {
+	'use strict';
+	if (resp.hasDataOverwrite === '1') {
+		  setTimeout(function() {
+		    $('#importStudyConfirmationModal').modal({
+		      backdrop: 'static',
+		      keyboard: true
+		    });
+		  }, 300);
+		var confirmMessage = '', errorIndex = 0;
+	
+		confirmMessage = resp.message;
+		confirmMessage += '<p> </p>';
+		confirmMessage += resp.confirmMessage;
+		$('#importStudyConfirmationModal .import-confirmation').html(confirmMessage);
+		$('#studyConfirmationButton').off('click');
+		$('#studyConfirmationButton').on('click', function() {
+		    confirmStudyImport('0');
+		})
+	}else{
+		confirmStudyImport('0');
+	}
+}
+
 function applyChangeDetails() {
 	'use strict';
 	var data = JSON.stringify(changeConfirmationDetails);

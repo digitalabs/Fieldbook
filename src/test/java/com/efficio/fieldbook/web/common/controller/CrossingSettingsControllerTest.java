@@ -273,12 +273,16 @@ public class CrossingSettingsControllerTest {
 		final List<String> harvestYears = this.crossingSettingsController.getHarvestYears();
 
 		Assert.assertNotNull(harvestYears);
-		Assert.assertEquals(CrossingSettingsController.YEAR_INTERVAL, harvestYears.size());
+		Assert.assertEquals(CrossingSettingsController.YEAR_INTERVAL * 2 + 1, harvestYears.size());
 
 		final String firstDisplayed = harvestYears.get(0);
+		
+		int currentYearIndex = harvestYears.size() / 2;
+		final String currentYearDisplayed = harvestYears.get(currentYearIndex);
+		
 		final Calendar cal = DateUtil.getCalendarInstance();
-
-		Assert.assertEquals(Integer.toString(cal.get(Calendar.YEAR)), firstDisplayed);
+		Assert.assertEquals(Integer.toString(cal.get(Calendar.YEAR) + 10), firstDisplayed);
+		Assert.assertEquals(Integer.toString(cal.get(Calendar.YEAR)), currentYearDisplayed);
 	}
 
 	@Test

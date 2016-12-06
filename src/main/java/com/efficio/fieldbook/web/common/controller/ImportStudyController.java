@@ -10,8 +10,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
-import com.efficio.fieldbook.web.study.ImportStudyType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -57,6 +55,8 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
+import com.efficio.fieldbook.web.study.ImportStudyType;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -148,28 +148,26 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				this.populateConfirmationMessages(importResult.getChangeDetails());
 				resultsMap.put("changeDetails", importResult.getChangeDetails());
 				resultsMap.put("errorMessage", importResult.getErrorMessage());
-				final List<String> detailErrorMessage = new ArrayList<>();
-				String reminderConfirmation = "";
+				final String reminderConfirmation = this.messageSource.getMessage("confirmation.import.text.modify.measurements", null, locale);
+				String addedTraits = " ";
+				String deletedTraits = " ";
 				if (importResult.getModes() != null && !importResult.getModes().isEmpty()) {
+					resultsMap.put("confirmMessageTrais",
+							this.messageSource.getMessage("confirmation.import.add.or.delete.traits", null, locale));
 					for (final ChangeType mode : importResult.getModes()) {
-						if (ImportStudyType.IMPORT_NURSERY_EXCEL == importStudyType) {
-							String message = this.messageSource.getMessage(mode.getMessageCode(), null, locale);
-							if (mode == ChangeType.ADDED_TRAITS) {
-								message +=
-										StringUtils.join(WorkbookUtil.getAddedTraits(userSelection.getWorkbook().getVariates(),
-												userSelection.getWorkbook().getObservations()), ", ");
+						if (mode == ChangeType.ADDED_TRAITS) {
+							addedTraits = StringUtils.join(importResult.getVariablesAdded(), ", ");
 
-							}
-							detailErrorMessage.add(message);
-							reminderConfirmation = this.messageSource.getMessage("confirmation.import.text", null, locale);
-						} else if (mode == ChangeType.ADDED_TRAITS) {
-							reminderConfirmation = this.messageSource.getMessage("confirmation.import.text.traits.added", null, locale);
+						} else if (mode == ChangeType.DELETED_TRAITS) {
+							deletedTraits = StringUtils.join(importResult.getVariablesRemoved(), ", ");
 						}
 					}
 				}
+				
+				resultsMap.put("addedTraits", addedTraits);
+				resultsMap.put("deletedTraits", deletedTraits);
 				resultsMap.put("message", reminderConfirmation);
 				resultsMap.put("confirmMessage", this.messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));
-				resultsMap.put("detailErrorMessage", detailErrorMessage);
 				resultsMap.put("conditionConstantsImportErrorMessage", importResult.getConditionsAndConstantsErrorMessage());
 			}
 

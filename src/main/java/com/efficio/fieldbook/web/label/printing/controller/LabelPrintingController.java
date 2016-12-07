@@ -506,7 +506,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
 
-		if (this.userLabelPrinting.getBarcodeGeneratedAutomatically().equalsIgnoreCase(LabelPrintingServiceImpl.BARCODE_GENERATED_AUTOMATICALLY)) {
+		if ( !form.getIsStockList() && this.userLabelPrinting.getBarcodeGeneratedAutomatically().equalsIgnoreCase(LabelPrintingServiceImpl.BARCODE_GENERATED_AUTOMATICALLY)) {
 			String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
 			String cropPrefix = null;
 			try {
@@ -967,7 +967,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		CSVExcelLabelPrintingSetting nonPDFSettings = null;
 		PDFLabelPrintingSetting pdfSettings = null;
 		String barcodeGeneratedAutomatically = rawSettings.getBarcodeGeneratedAutomatically();
-		boolean isPlotCodePrefix = barcodeGeneratedAutomatically.equals("0") ? false : true;
+		boolean isPlotCodePrefix = barcodeGeneratedAutomatically == null || barcodeGeneratedAutomatically.equals("0") ? false : true;
 		final BarcodeLabelPrintingSetting barcodeSettings = new BarcodeLabelPrintingSetting(
 				"1".equals(rawSettings.getBarcodeNeeded()), "Barcode", StringUtil.stringify(new String[] {
 						rawSettings.getFirstBarcodeField(), rawSettings.getSecondBarcodeField(), rawSettings.getThirdBarcodeField()}, ","),

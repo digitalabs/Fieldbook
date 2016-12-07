@@ -116,7 +116,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            									// this is the case where a=x format is retrieved directly from ontology DB
 
            									return true;
-           								} else if (value !== '' && value.indexOf('=') === -1) {
+           								} else if (value !== '' && value.indexOf('=') === -1 && cellData[1]) {
            									// this is the case where categorical ref values (possibleValues) retrieved is not in a=x format
 
            									// since currentValue contains both name and description, we need to retrieve
@@ -476,7 +476,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            									// this is the case where a=x format is retrieved directly from ontology DB
 
            									return true;
-           								} else if (value !== '' && value.indexOf('=') === -1) {
+           								} else if (value !== '' && value.indexOf('=') === -1 && cellData[1]) {
            									// this is the case where categorical ref values (possibleValues) retrieved is not in a=x format
 
            									// since currentValue contains both name and description, we need to retrieve

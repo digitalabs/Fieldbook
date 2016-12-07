@@ -25,7 +25,9 @@ import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.study.MeasurementDto;
 import org.generationcp.middleware.service.api.study.ObservationDto;
@@ -78,10 +80,16 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	private FieldbookService fieldbookMiddlewareService;
 
 	@Resource
+	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+
+	@Resource
 	private PaginationListSelection paginationListSelection;
 
 	@Resource
 	private StudyService studyService;
+
+	@Resource
+	private StudyDataManager studyDataManager;
 
 	@Resource
 	private OntologyVariableDataManager ontologyVariableDataManager;
@@ -180,20 +188,33 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		int index = Integer.valueOf(data.get(ObservationMatrixController.INDEX));
+		int experimentId = Integer.valueOf(data.get("experimentId"));
+
+		Integer phenotypeId = null;
+		if (StringUtils.isNotBlank(data.get("phenotypeId"))) {
+			phenotypeId = Integer.valueOf(data.get("phenotypeId"));
+		}
 		int termId = Integer.valueOf(data.get(ObservationMatrixController.TERM_ID));
 		String value = data.get("value");
 		// for categorical
 		int isNew = Integer.valueOf(data.get("isNew"));
 		boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard")) ? true : false;
 
-		map.put(ObservationMatrixController.INDEX, index);
+		map.put("experimentId", experimentId);
+		map.put("phenotypeId", phenotypeId != null ? phenotypeId : "");
 
+		// TODO Here on is work in progress..... RESTFul save of rows and their cell data required for the page in view.
 		UserSelection userSelection = this.getUserSelection();
 		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
-		MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+		MeasurementRow originalRow = null;
+		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+			if (experimentId == row.getExperimentId()) {
+				originalRow = row;
+				break;
+			}
+		}
 
 		try {
 			if (!isDiscard) {
@@ -225,13 +246,6 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			for (MeasurementData var : originalRow.getDataList()) {
 				this.convertToDBDateIfDate(var);
 			}
-		}
-	}
-
-	private void convertToUIDateIfDate(MeasurementData var) {
-		if (var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null
-				&& var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
-			var.setValue(DateUtil.convertToUIDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
 		}
 	}
 
@@ -388,46 +402,32 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	/**
 	 * GET call on clicking the cell in table for entering measurement value inline.
 	 */
-	@RequestMapping(value = "/update/experiment/cell/{index}/{termId}", method = RequestMethod.GET)
-	public String editExperimentCells(@PathVariable int index, @PathVariable int termId, Model model) throws MiddlewareQueryException {
+	@RequestMapping(value = "/edit/experiment/cell/{experimentId}/{termId}", method = RequestMethod.GET)
+	public String editExperimentCells(@PathVariable int experimentId, @PathVariable int termId,
+			@RequestParam(required = false) Integer phenotypeId, Model model) throws MiddlewareQueryException {
 
-		UserSelection userSelection = this.getUserSelection();
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
-		tempList.addAll(userSelection.getMeasurementRowList());
-
-		MeasurementRow row = tempList.get(index);
-		MeasurementRow copyRow = row.copy();
-		this.copyMeasurementValue(copyRow, row);
-		MeasurementData editData = null;
-		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
-		if (copyRow != null && copyRow.getMeasurementVariables() != null) {
-			for (MeasurementData var : copyRow.getDataList()) {
-				this.convertToUIDateIfDate(var);
-				if (var != null
-						&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var
-								.getMeasurementVariable().getPossibleValues().isEmpty())) {
-					possibleValues = var.getMeasurementVariable().getPossibleValues();
-				}
-				if (var != null && var.getMeasurementVariable().getTermId() == termId) {
-					editData = var;
-					break;
-				}
-			}
+		if (phenotypeId != null) {
+			Phenotype phenotype = studyDataManager.getPhenotypeById(phenotypeId);
+			model.addAttribute("phenotypeId", phenotype.getPhenotypeId());
+			model.addAttribute("phenotypeValue", phenotype.getValue());
+		} else {
+			model.addAttribute("phenotypeId", "");
+			model.addAttribute("phenotypeValue", "");
 		}
-		this.updateModel(model, userSelection.getWorkbook().isNursery(), editData, index, termId, possibleValues);
-		return super.showAjaxPage(model, ObservationMatrixController.EDIT_EXPERIMENT_CELL_TEMPLATE);
-	}
 
-	private void updateModel(Model model, boolean isNursery, MeasurementData measurementData, int index, int termId,
-			List<ValueReference> possibleValues) {
+		Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
+
 		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
 		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
 		model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());
-		model.addAttribute("isNursery", isNursery);
-		model.addAttribute("measurementData", measurementData);
-		model.addAttribute(ObservationMatrixController.INDEX, index);
+		model.addAttribute("isNursery", !this.getUserSelection().isTrial());
+		model.addAttribute("variable", variable);
+		model.addAttribute("experimentId", experimentId);
+
 		model.addAttribute(ObservationMatrixController.TERM_ID, termId);
-		model.addAttribute("possibleValues", possibleValues);
+		model.addAttribute("possibleValues", this.fieldbookService.getAllPossibleValues(variable));
+
+		return super.showAjaxPage(model, ObservationMatrixController.EDIT_EXPERIMENT_CELL_TEMPLATE);
 	}
 
 	/**
@@ -655,7 +655,8 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 					}
 				}
 			} else if (measurementVariable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
-				dataMap.put(data.getTrait().getTraitName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "", true});
+				dataMap.put(data.getTrait().getTraitName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "", true,
+						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 			} else {
 				dataMap.put(data.getTrait().getTraitName(), data.getTriatValue() != null ? data.getTriatValue() : "");
 			}

@@ -3878,8 +3878,9 @@ function showExportAdvanceResponse(responseText, statusText, xhr, $form) {
 function processInlineEditInput() {
 	'use strict';
 	if ($('.inline-input').length !== 0) {
-		var indexElem = $('.data-hidden-value-index').val();
-		var indexTermId = $('.data-hidden-value-term-id').val();
+		var experimentId = $('.data-hidden-value-experimentId').val();
+		var phenotypeId = $('.data-hidden-value-phenotypeId').val();
+		var termId = $('.data-hidden-value-term-id').val();
 		var indexDataVal = '';
 		var isNew = '0';
 		if ($('.data-value').hasClass('variates-select')) {
@@ -3910,8 +3911,9 @@ function processInlineEditInput() {
 		}
 
 		var currentInlineEdit = {
-			index: indexElem,
-			termId: indexTermId,
+			experimentId: experimentId,
+			phenotypeId: phenotypeId,
+			termId: termId,
 			value: indexDataVal,
 			isNew: isNew
 		};

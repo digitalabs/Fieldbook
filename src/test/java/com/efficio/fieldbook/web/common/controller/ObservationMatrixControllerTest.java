@@ -237,7 +237,7 @@ public class ObservationMatrixControllerTest {
 		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
 		this.observationMatrixController.setUserSelection(userSelection);
-		this.observationMatrixController.editExperimentCells(1, termId, model);
+		this.observationMatrixController.editExperimentCells(1, 1, termId, model);
 		MeasurementData data = (MeasurementData) model.get("measurementData");
 		Assert.assertEquals("Should be able to return a copy of the measurement data, so the value should be the same", "2nd",
 				data.getValue());

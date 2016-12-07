@@ -69,10 +69,11 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            							}
            						}
            						$(td).data('term-id', termId);
+           						$(td).data('phenotype-id', cellData[2]);
            					},
            					render: function(data, type, full, meta) {
            						if (data !== undefined) {
-           							var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '');
+           							var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '') + ' - ' + data[2];
            							var hiddenData = EscapeHTML.escape(data[1]);
            							return displayData + '<input type="hidden" value="' + hiddenData + '" />';
            						}
@@ -308,9 +309,12 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            					var $tdCell = $(this);
            					var cellTdIndex =  $(this).index();
            					var rowIndex = $(this).parent('tr').data('row-index');
-
            					var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq(' + cellTdIndex + ')');
            					$(tableIdentifier).data('show-inline-edit', '1');
+           					
+           					var experimentId = $(this).parent('tr').attr('id');
+           					var phenotypeId = $(this).data('phenotype-id');
+        					
            					if ($colHeader.hasClass('variates')) {
            						$('body').data('last-td-time-clicked', new Date().getTime());
            					}
@@ -321,7 +325,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            						processInlineEditInput();
            						if ($('#measurement-table').data('show-inline-edit') === '1') {
            							$.ajax({
-           								url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/' + rowIndex + '/' + $colHeader.data('term-id'),
+           								url: '/Fieldbook/Common/addOrRemoveTraits/edit/experiment/cell/' + experimentId + '/' + $colHeader.data('term-id') + '?phenotypeId=' + phenotypeId,
            								type: 'GET',
            								success: function(data) {
            									$tdCell.html(data);

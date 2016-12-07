@@ -587,7 +587,9 @@ var ImportCrosses = {
 				data: dropdownData
 			});
 
-			dropdownSelect.select2('val', yearData[0]);
+			//select the current year; the current year is the middle with the options as -10, current, +10 years
+			var currentYearIndex = parseInt(yearData.length/2);
+			dropdownSelect.select2('val', yearData[currentYearIndex]);
 		});
 	},
 

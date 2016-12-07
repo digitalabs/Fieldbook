@@ -536,7 +536,7 @@ LabelPrinting = {
 
 		//we checked if something was checked
 		if ($safeId('#userLabelPrinting.barcodeNeeded1').is(':checked') &&
-			($safeId('#userLabelPrinting.barcodeGeneratedAutomatically0').is(':checked') || isStockList === 'false')) {
+			($safeId('#userLabelPrinting.barcodeGeneratedAutomatically2').is(':checked') || isStockList === 'true')) {
 			//we need to check if either one is chosen in the drop downs
 			if ($safeId('#userLabelPrinting.firstBarcodeField').val() == ''
 				&& $safeId('#userLabelPrinting.secondBarcodeField').val() == ''

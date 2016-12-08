@@ -364,13 +364,8 @@
 
 				//TODO Remove that function, we are not reloading the entire page
 				reloadMeasurementAjax: function(data) {
-					return $http({
-						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
-						method: 'POST',
-						headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-						data: data,
-						transformResponse: undefined
-					});
+					return $http.post('/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement', data,
+						{headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
 				},
 
 				indicateUnappliedChangesAvailable: function(displayWarningMessage) {

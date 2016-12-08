@@ -118,6 +118,10 @@
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
 
 					debounce(reloadMeasurementPage, DELAY, false)();
+
+					$scope.isDisplayPreview = false;
+					$('body').addClass('preview-measurements-only');
+					$('body').addClass('measurements-traits-changed');
 				});
 
 				$scope.$on('onDeleteEnvironment', function(event, result) {
@@ -138,6 +142,10 @@
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
 
 					debounce(reloadMeasurementPage, DELAY, false)();
+
+					$scope.isDisplayPreview = false;
+                    $('body').addClass('preview-measurements-only');
+                    $('body').addClass('measurements-traits-changed');
 				});
 
 				/* Controller Utility functions */
@@ -154,9 +162,9 @@
 						var dataParam = 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys +
 							'&deletedEnvironment=' + deletedEnvironmentIndex + addedData;
 
-						//we reload
-						return TrialManagerDataService.reloadMeasurementAjax(dataParam).success(function(data) {
-							$measurementContainer.html(data);
+						return $http.post('/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement', dataParam,
+                            {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).success(function(data) {
+							//$measurementContainer.html(data);
 							// TODO Change that global to the dirty study flag
 							$body.data('needToSave', '1');
 							//TODO Remove that global

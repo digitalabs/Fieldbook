@@ -36,6 +36,8 @@ import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.study.StudyService;
+import org.generationcp.middleware.service.impl.study.StudyInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -89,6 +91,9 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
+
+	@Resource
+	private StudyService studyService;
 
 	@Override
 	public String getContentName() {
@@ -563,8 +568,9 @@ public class OpenTrialController extends BaseTrialController {
 		return isPreviewEditable;
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/load/dynamic/change/measurement", method = RequestMethod.POST)
-	public String loadDynamicChangeMeasurement(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
+	public Map<String, Object> loadDynamicChangeMeasurement(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
 			final HttpServletRequest request) {
 		Workbook workbook = this.userSelection.getWorkbook();
 		if (this.userSelection.getTemporaryWorkbook() != null) {
@@ -611,19 +617,22 @@ public class OpenTrialController extends BaseTrialController {
 
 		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
 		measurementDatasetVariables = workbook.arrangeMeasurementVariables(measurementDatasetVariables);
-		return this.loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, model,
-				request.getParameter("deletedEnvironment"));
+		final Map<String, Object> result = new HashMap<>();
+		result.put("success", "1");
+		return result;
 	}
 
 	private String loadMeasurementDataPage(final boolean isTemporary, final CreateNurseryForm form, final Workbook workbook,
 			final List<MeasurementVariable> measurementDatasetVariables, final Model model, final String deletedEnvironments) {
 
-		final List<MeasurementRow> observations = workbook.getObservations();
+		//List<StudyInstance> studyInstances =  this.studyService.getStudyInstances(studyId);
+		//final List<MeasurementRow> observations = this.studyService.getObservations(studyId, studyInstances.get(0).getInstanceDbId(),
+		//		1, 100);;
 		final Integer measurementDatasetId = workbook.getMeasurementDatesetId();
 		final List<MeasurementVariable> variates = workbook.getVariates();
 
 		// set measurements data
-		this.userSelection.setMeasurementRowList(observations);
+		//this.userSelection.setMeasurementRowList(observations);
 		if (!isTemporary) {
 			this.userSelection.setWorkbook(workbook);
 		}
@@ -634,16 +643,17 @@ public class OpenTrialController extends BaseTrialController {
 			form.setMeasurementDataExisting(false);
 		}
 		// we do a matching of the name here so there won't be a problem in the data table
-		if (observations != null && !observations.isEmpty()) {
+		/*if (observations != null && !observations.isEmpty()) {
 			final List<MeasurementData> dataList = observations.get(0).getDataList();
 			for (final MeasurementData data : dataList) {
 				this.processMeasurementVariable(measurementDatasetVariables, data);
 			}
 			this.userSelection.setMeasurementRowList(observations);
-		}
+		}*/
 		// remove deleted environment from existing observation
 		if (deletedEnvironments.length() > 0 && !"0".equals(deletedEnvironments)) {
 			final Workbook tempWorkbook = this.processDeletedEnvironments(deletedEnvironments, measurementDatasetVariables, workbook);
+			//FIXME
 			form.setMeasurementRowList(tempWorkbook.getObservations());
 			model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
 		}

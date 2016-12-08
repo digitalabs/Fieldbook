@@ -184,6 +184,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/update/experiment/cell/data", method = RequestMethod.POST)
+	@Transactional
 	public Map<String, Object> updateExperimentCellData(@RequestBody Map<String, String> data, HttpServletRequest req) {
 
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -203,6 +204,12 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		map.put("experimentId", experimentId);
 		map.put("phenotypeId", phenotypeId != null ? phenotypeId : "");
 
+		Phenotype existingPhenotype = null;
+		if (phenotypeId != null) {
+			existingPhenotype = this.studyDataManager.getPhenotypeById(phenotypeId);
+		}
+		this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, termId, value, existingPhenotype, TermId.NUMERIC_VARIABLE.getId());
+
 		// TODO Here on is work in progress..... RESTFul save of rows and their cell data required for the page in view.
 		UserSelection userSelection = this.getUserSelection();
 		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
@@ -217,20 +224,21 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		}
 
 		try {
-			if (!isDiscard) {
-				MeasurementRow copyRow = originalRow.copy();
-				this.copyMeasurementValue(copyRow, originalRow, isNew == 1 ? true : false);
-				// we set the data to the copy row
-				if (copyRow != null && copyRow.getMeasurementVariables() != null) {
-					this.updatePhenotypeValues(copyRow.getDataList(), value, termId, isNew);
-				}
-				this.validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
-				// if there are no error, meaning everything is good, thats the time we copy it to the original
-				this.copyMeasurementValue(originalRow, copyRow, isNew == 1 ? true : false);
-				this.updateDates(originalRow);
-			}
+			// if (!isDiscard) {
+			// MeasurementRow copyRow = originalRow.copy();
+			// this.copyMeasurementValue(copyRow, originalRow, isNew == 1 ? true : false);
+			// // we set the data to the copy row
+			// if (copyRow != null && copyRow.getMeasurementVariables() != null) {
+			// this.updatePhenotypeValues(copyRow.getDataList(), value, termId, isNew);
+			// }
+			// this.validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
+			// // if there are no error, meaning everything is good, thats the time we copy it to the original
+			// this.copyMeasurementValue(originalRow, copyRow, isNew == 1 ? true : false);
+			// this.updateDates(originalRow);
+			// }
 			map.put(ObservationMatrixController.SUCCESS, "1");
-			Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
+			Map<String, Object> dataMap = new HashMap<String, Object>();
+			// this.generateDatatableDataMap(originalRow, "");
 			map.put(ObservationMatrixController.DATA, dataMap);
 		} catch (MiddlewareQueryException e) {
 			ObservationMatrixController.LOG.error(e.getMessage(), e);

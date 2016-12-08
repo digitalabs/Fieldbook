@@ -73,7 +73,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            					},
            					render: function(data, type, full, meta) {
            						if (data !== undefined) {
-           							var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '') + ' - ' + data[2];
+           							var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '');
            							var hiddenData = EscapeHTML.escape(data[1]);
            							return displayData + '<input type="hidden" value="' + hiddenData + '" />';
            						}

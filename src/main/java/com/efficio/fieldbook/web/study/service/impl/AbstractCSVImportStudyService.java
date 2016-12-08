@@ -297,4 +297,11 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
     public List<Integer> getGermplasmIdsByName(final String newDesig) {
         return this.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
     }
+    
+	@Override
+	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
+			List<String> removedVariates) throws IOException {
+		this.detectAddedTraitsAndPerformRename(modes);
+		
+	}
 }

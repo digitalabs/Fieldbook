@@ -28,6 +28,8 @@ public class LabelPrintingForm {
 	/** Determine if it is a stock list */
 	private boolean isStockList;
 
+	private Integer germplasmListId;
+
 	/**
 	 * Gets the user label printing.
 	 *
@@ -60,7 +62,7 @@ public class LabelPrintingForm {
 	 *
 	 * @param isTrial the new checks if is trial
 	 */
-	public void setIsTrial(boolean isTrial) {
+	public void setIsTrial(final boolean isTrial) {
 		this.isTrial = isTrial;
 	}
 
@@ -78,7 +80,7 @@ public class LabelPrintingForm {
 	 * 
 	 * @param isStockList
 	 */
-	public void setIsStockList(boolean isStockList) {
+	public void setIsStockList(final boolean isStockList) {
 		this.isStockList = isStockList;
 	}
 
@@ -86,8 +88,15 @@ public class LabelPrintingForm {
 		return this.isCustomReport;
 	}
 
-	public void setCustomReport(boolean isCustomReport) {
+	public void setCustomReport(final boolean isCustomReport) {
 		this.isCustomReport = isCustomReport;
 	}
 
+	public Integer getGermplasmListId() {
+		return this.germplasmListId;
+	}
+
+	public void setGermplasmListId(final Integer germplasmListId) {
+		this.germplasmListId = germplasmListId;
+	}
 }

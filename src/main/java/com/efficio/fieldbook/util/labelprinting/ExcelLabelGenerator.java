@@ -19,18 +19,24 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 
-public class ExcelLabelGenerator extends BaseLabelGenerator{
+import javax.annotation.Resource;
+
+@Component
+public class ExcelLabelGenerator implements LabelGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExcelLabelGenerator.class);
 
-    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
-                                    final ByteArrayOutputStream baos) throws LabelPrintingException {
+    @Resource
+    private LabelPrintingUtil labelPrintingUtil;
+
+    @Override
+    public String generateLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
         String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
         final boolean includeHeader =
@@ -44,10 +50,7 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
         try {
 
             final HSSFWorkbook workbook = new HSSFWorkbook();
-            String sheetName = WorkbookUtil.createSafeSheetName(userLabelPrinting.getName());
-            if (sheetName == null) {
-                sheetName = "Labels";
-            }
+            final String sheetName = WorkbookUtil.createSafeSheetName(userLabelPrinting.getName());
             final Sheet labelPrintingSheet = workbook.createSheet(sheetName);
 
             final CellStyle labelStyle = workbook.createCellStyle();
@@ -88,15 +91,16 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
             // Create Header Information
 
             // Row 1: SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS
-            Row row = null;
-            mainSelectedFields = this.appendBarcode(isBarcodeNeeded, mainSelectedFields);
+            Row row;
+            mainSelectedFields = this.labelPrintingUtil.appendBarcode(isBarcodeNeeded, mainSelectedFields);
 
-            final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
+            final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(mainSelectedFields);
 
             if (includeHeader) {
                 row = labelPrintingSheet.createRow(rowIndex++);
                 // we add all the selected fields header
-                this.printHeaderFields(getLabelHeadersFromTrialInstances(trialInstances), includeHeader, selectedFieldIDs, row,
+                this.labelPrintingUtil.printHeaderFields(this.labelPrintingUtil.getLabelHeadersFromTrialInstances(trialInstances), true,
+                        selectedFieldIDs, row,
                         columnIndex, labelStyle);
             }
 
@@ -104,20 +108,21 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
             for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
                 final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
 
-                final Map<String, String> moreFieldInfo = this.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, "");
+                final Map<String, String> moreFieldInfo = this.labelPrintingUtil.generateAddedInformationField(fieldMapTrialInstanceInfo,
+                        trialInstance, "");
 
                 for (final FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
 
                     row = labelPrintingSheet.createRow(rowIndex++);
                     columnIndex = 0;
 
-                    final String barcodeLabelForCode = this.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField,
-                            secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
+                    final String barcodeLabelForCode = this.labelPrintingUtil.generateBarcodeField(moreFieldInfo, fieldMapLabel,
+                            firstBarcodeField, secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
                     moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
 
                     for (final Integer selectedFieldID : selectedFieldIDs) {
-                        final String leftText = this.getValueFromSpecifiedColumn(moreFieldInfo, fieldMapLabel, selectedFieldID,
-                                fieldMapTrialInstanceInfo.getLabelHeaders(), false);
+                        final String leftText = this.labelPrintingUtil.getValueFromSpecifiedColumn(moreFieldInfo, fieldMapLabel,
+                                selectedFieldID, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
                         final Cell summaryCell = row.createCell(columnIndex++);
                         summaryCell.setCellValue(leftText);
                     }
@@ -135,20 +140,10 @@ public class ExcelLabelGenerator extends BaseLabelGenerator{
 
         } catch (final Exception e) {
             ExcelLabelGenerator.LOG.error(e.getMessage(), e);
+            throw new LabelPrintingException(e.getMessage());
         }
         return fileName;
     }
 
-    protected void printHeaderFields(final Map<Integer, String> labelHeaders, final boolean includeHeader,
-                                     final List<Integer> selectedFieldIDs, final Row row, final int columnIndex, final CellStyle labelStyle) {
-        if (includeHeader) {
-            int currentIndex = columnIndex;
-            for (final Integer selectedFieldID : selectedFieldIDs) {
-                final String headerName = this.getColumnHeader(selectedFieldID, labelHeaders);
-                final Cell summaryCell = row.createCell(currentIndex++);
-                summaryCell.setCellValue(headerName);
-                summaryCell.setCellStyle(labelStyle);
-            }
-        }
-    }
+
 }

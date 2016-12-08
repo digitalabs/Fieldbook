@@ -10,21 +10,25 @@ public class LabelPrintingException extends Exception {
 	private String errorCode;
 	private String labelError;
 
-	public LabelPrintingException(String errorCode, String labelError, String message) {
+	public LabelPrintingException(final String errorCode, final String labelError, final String message) {
 		super(message);
 		this.errorCode = errorCode;
 		this.labelError = labelError;
 	}
 
-    public LabelPrintingException(Throwable cause) {
+    public LabelPrintingException(final Throwable cause) {
         super(cause);
     }
+
+	public LabelPrintingException(final String message) {
+		super(message);
+	}
 
 	public String getErrorCode() {
 		return this.errorCode;
 	}
 
-	public void setErrorCode(String errorCode) {
+	public void setErrorCode(final String errorCode) {
 		this.errorCode = errorCode;
 	}
 
@@ -32,7 +36,7 @@ public class LabelPrintingException extends Exception {
 		return this.labelError;
 	}
 
-	public void setLabelError(String labelError) {
+	public void setLabelError(final String labelError) {
 		this.labelError = labelError;
 	}
 

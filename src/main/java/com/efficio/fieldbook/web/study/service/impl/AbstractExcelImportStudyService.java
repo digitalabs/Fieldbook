@@ -95,7 +95,7 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 				if (key != null) {
 					final MeasurementRow wRow = rowsMap.get(key);
 					if (wRow == null) {
-						modes.add(ChangeType.ADDED_ROWS);
+						throw new WorkbookParserException("confirmation.import.add.or.delete.rows");
 					} else {
 						rowsMap.remove(key);
 
@@ -142,7 +142,7 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 			}
 			if (!rowsMap.isEmpty()) {
 				// meaning there are items in the original list, so there are items deleted
-				modes.add(ChangeType.DELETED_ROWS);
+				throw new WorkbookParserException("confirmation.import.add.or.delete.rows");
 			}
 
 		}
@@ -189,16 +189,16 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 		return null;
 	}
 
-	protected void importDataCellValues(final MeasurementData wData, final Row xlsRow, final int columnIndex,
+	protected void importDataCellValues(final MeasurementData workbookMeasurementData, final Row xlsRow, final int columnIndex,
 			final org.generationcp.middleware.domain.etl.Workbook workbook, final Map<Integer, MeasurementVariable> factorVariableMap) {
-		if (wData != null && wData.isEditable()) {
+		if (workbookMeasurementData != null && workbookMeasurementData.isEditable()) {
 			final Cell cell = xlsRow.getCell(columnIndex);
 			final String xlsValue;
 			if (cell != null && this.hasCellValue(cell)) {
-				if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
-						&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
+				if (workbookMeasurementData.getMeasurementVariable() != null && workbookMeasurementData.getMeasurementVariable().getPossibleValues() != null
+						&& !workbookMeasurementData.getMeasurementVariable().getPossibleValues().isEmpty()) {
 
-					wData.setAccepted(false);
+					workbookMeasurementData.setAccepted(false);
 
 					String tempVal;
 
@@ -214,45 +214,41 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 						if (getDoubleVal) {
 							tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()));
 						}
-						xlsValue =
-								ExportImportStudyUtil.getCategoricalIdCellValue(tempVal,
-										wData.getMeasurementVariable().getPossibleValues(), true);
+						xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(tempVal,
+								workbookMeasurementData.getMeasurementVariable().getPossibleValues(), true);
 					} else {
 						tempVal = cell.getStringCellValue();
-						xlsValue =
-								ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable()
-										.getPossibleValues(), true);
-					}
-					final Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : 0;
-					if (!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)) {
-						workbook.setHasExistingDataOverwrite(true);
+						xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(),
+								workbookMeasurementData.getMeasurementVariable().getPossibleValues(), true);
 					}
 
-					if (wData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() && !xlsValue.equals(tempVal)) {
-						wData.setcValueId(xlsValue);
+					if (workbookMeasurementData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
+							&& !xlsValue.equals(tempVal)) {
+						workbookMeasurementData.setcValueId(xlsValue);
 					} else {
-						wData.setcValueId(null);
+						workbookMeasurementData.setcValueId(null);
 					}
 
 				} else {
 
-					if (wData.getMeasurementVariable() != null
-							&& wData.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
-						wData.setAccepted(false);
+					if (workbookMeasurementData.getMeasurementVariable() != null
+							&& workbookMeasurementData.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
+						workbookMeasurementData.setAccepted(false);
 					}
 					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
 						xlsValue = this.getRealNumericValue(cell);
 					} else {
 						xlsValue = cell.getStringCellValue();
 					}
-					final Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : 0;
-					if (!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)) {
+				}
+
+				if (!workbookMeasurementData.getValue().equals(xlsValue)) {
+					if (!workbookMeasurementData.getValue().isEmpty()) {
 						workbook.setHasExistingDataOverwrite(true);
 					}
+					workbookMeasurementData.setValue(xlsValue);
+					workbookMeasurementData.setOldValue(xlsValue);
 				}
-				wData.setValue(xlsValue);
-
-                wData.setOldValue(xlsValue);
 			}
 		}
 	}

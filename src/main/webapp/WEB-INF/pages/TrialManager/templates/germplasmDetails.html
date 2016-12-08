@@ -9,10 +9,11 @@
 				<span class="btn btn-primary" ng-show="displayUpdateButton()" ng-click="updateDataTable()">
 					<span class="glyphicon glyphicon-refresh"></span> Update
 				</span>
-
-				<span select-standard-variable="" ng-show="!trialMeasurement.hasMeasurement" modeldata="settings" variable-type="1804"
-					  class="btn btn-info">Add</span>
-			</span>
+				<!-- NOTE: This is just a temporary hiding of Add Germplasm Descriptor as part of BMS-3637. 
+				It will be shown again once the bug in adding germplasm descriptors is fixed -->
+				<!-- <span select-standard-variable="" ng-show="!trialMeasurement.hasMeasurement" modeldata="settings" variable-type="1804"
+					  class="btn btn-info" style="display: none !important">Add</span> -->
+			</span> 
 
 			<section-container icon="bms-factors" name="content" th:attr="heading=#{trial.trialdetails.germplasm.descriptors},help-tooltip=#{trial.reminder.add.germplasm.factors}">
 				<display-settings hide-delete="trialMeasurement.hasMeasurement" settings="settings" variable-type="1804"
@@ -66,7 +67,7 @@
 
 		</div>
 		<div class="browse-import-link">
-			<label class="control-label"><a href="javascript: void(0)" ng-click="openGermplasmTree()">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
+			<label class="control-label"><a href="javascript: void(0)" ng-click="openGermplasmTree()">Browse</a> a list to work with.</label>
 		</div>
 	</div>
 

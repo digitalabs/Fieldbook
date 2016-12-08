@@ -47,14 +47,14 @@ public interface ExperimentDesignService {
 			List<MeasurementVariable> variates, List<TreatmentVariable> treatmentVariables) throws BVDesignException;
 
 	/**
-	 * Gets the required variable.
+	 * Gets the list of  variables necessary for generating a design (e.g. PLOT_NO, ENTRY_NO, REP_NO).
 	 *
-	 * @return the required variable
+	 * @return list of standard variables.
 	 */
-	List<StandardVariable> getRequiredVariable();
+	List<StandardVariable> getRequiredDesignVariables();
 
 	/**
-	 * Validate.
+	 * Validates the design parameters and germplasm list entries.
 	 *
 	 * @param expDesignParameter the exp design parameter
 	 * @return the exp design validation output
@@ -62,7 +62,7 @@ public interface ExperimentDesignService {
 	ExpDesignValidationOutput validate(ExpDesignParameterUi expDesignParameter, List<ImportedGermplasm> germplasmList);
 
 	/**
-	 * Return the list of variables in exp design used by this design.
+	 * Gets the list of variables in experimental design (e.g. NUMBER_OF_REPLICATES, NUMBER_OF_REPLICATES, NBLKS)
 	 * 
 	 * @return
 	 */

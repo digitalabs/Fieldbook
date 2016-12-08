@@ -21,7 +21,6 @@ import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -31,7 +30,6 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +64,7 @@ import com.efficio.fieldbook.web.util.DuplicatesUtil;
 public class CrossingSettingsController extends SettingsController {
 
 	public static final String URL = "/crosses";
-	public static final int YEAR_INTERVAL = 30;
+	public static final int YEAR_INTERVAL = 10;
 	public static final String ID = "id";
 	public static final String TEXT = "text";
 	public static final String SUCCESS_KEY = "success";
@@ -197,9 +195,11 @@ public class CrossingSettingsController extends SettingsController {
 
 		final Calendar cal = DateUtil.getCalendarInstance();
 
-		for (int i = 0; i < CrossingSettingsController.YEAR_INTERVAL; i++) {
-			years.add(Integer.toString(cal.get(Calendar.YEAR)));
-			cal.roll(Calendar.YEAR, false);
+		int currentYear = cal.get(Calendar.YEAR);
+		
+		//the years should include + 10 years, current year and - 10 years
+		for (int year = currentYear + YEAR_INTERVAL; year >= currentYear - YEAR_INTERVAL; year--) {
+			years.add(Integer.toString(year));
 		}
 
 		return years;
@@ -327,7 +327,7 @@ public class CrossingSettingsController extends SettingsController {
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 
 		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
-			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, cross));
+			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, cross));
 		}
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
@@ -394,9 +394,10 @@ public class CrossingSettingsController extends SettingsController {
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 
+		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		for (final GermplasmListData listData : germplasmListDataList) {
-			masterList.add(this.crossesListUtil.generateDatatableDataMapWithDups(tableHeaderList, listData));
+			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, listData));
 			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData);
 
 			if (importedCross.getGid() == null) {
@@ -407,6 +408,10 @@ public class CrossingSettingsController extends SettingsController {
 				responseMap.put(ERROR, new String[] {localisedErrorMessage});
 				return responseMap;
 			}
+			// When crossing using crossing manager (as opposed to crossing spreadsheet import),
+			// both female and male nursery is the current nursery.
+			importedCross.setMaleStudyName(studyName);
+			importedCross.setFemaleStudyName(studyName);
 			importedCrosses.add(importedCross);
 		}
 		importedCrossesList.setImportedGermplasms(importedCrosses);

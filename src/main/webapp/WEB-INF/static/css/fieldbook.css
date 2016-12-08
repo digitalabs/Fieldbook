@@ -479,9 +479,7 @@ td.validValueDesc {
     margin-right: 10px; background: #eee; padding: 5px; width: 100%;
     min-height: 50px;
 }
-.field-group .list-group-item label{
-	text-transform: uppercase;
-}
+
 #availableFields li, #leftSelectedFields li, #rightSelectedFields li, .non-pdf-selected-fields li
 { margin: 5px; padding: 5px; font-size: 13px; }
 
@@ -2046,4 +2044,38 @@ input.select-all-margin{
 .fbk-mandatory-field {
     color:red;
     font-weight:bold
+}
+
+/* Label Printing */
+.lblprnt-germplasm-list-details,
+.lblprnt-germplasm-list-choose-fields-label,
+.lblprnt-germplasm-choose-option-fields-label,
+.lblprnt-germplasm-list-details-label {
+	display: none;
+}
+
+.lblprnt-germplasm-list-inventory .lblprnt-germplasm-list-details,
+.lblprnt-germplasm-list-inventory .lblprnt-germplasm-list-choose-fields-label,
+.lblprnt-germplasm-list-inventory .lblprnt-germplasm-choose-option-fields-label,
+.lblprnt-germplasm-list-inventory .lblprnt-germplasm-list-details-label{
+	display: block;
+}
+.lblprnt-germplasm-list-inventory .lblprnt-study-details,
+.lblprnt-germplasm-list-inventory .lblprnt-study-choose-fields-label,
+.lblprnt-germplasm-list-inventory .lblprnt-study-details-fields,
+.lblprnt-germplasm-list-inventory .lblprnt-study-choose-option-fields-label,
+.lblprnt-germplasm-list-inventory .lblprnt-study-list-details-label {
+	display: none;
+}
+
+.lblprnt-germplasm-list-numbers-alignment {
+	padding-left: 13px;
+}
+
+.lblprnt-label-details hr {
+	margin: 0;
+}
+
+.remove-excess-padding[style] {
+    padding-left:0 !important;
 }

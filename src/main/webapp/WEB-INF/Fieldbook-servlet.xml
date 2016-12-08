@@ -110,7 +110,6 @@
 	<bean id="fieldbookProperties" class="com.efficio.fieldbook.web.util.FieldbookProperties">
 		<property name="programLocationsUrl" value="${url.program.locations}" />
 		<property name="programBreedingMethodsUrl" value="${url.program.breeding.methods}" />
-		<property name="germplasmImportUrl" value="${url.germplasm.import}" />
 		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />
 		<property name="uploadDirectory" value="${upload.directory}" />
 		<property name="presetDesignEnabledCrops" value="#{'${preset.design.enabled.crops}'.split(',')}" />
@@ -298,6 +297,11 @@
 
 	<bean id="methodDataManager" factory-bean="managerFactory"
 		factory-method="getOntologyMethodDataManager" scope="request">
+		<aop:scoped-proxy />
+	</bean>
+	
+	<bean id="termDataManager" factory-bean="managerFactory"
+		factory-method="getTermDataManager" scope="request">
 		<aop:scoped-proxy />
 	</bean>
 
@@ -491,6 +495,8 @@
 	<!-- Including all beans used for generating Code Sheet when exporting Germplasm List excel file -->
 	<context:component-scan base-package="org.generationcp.commons.workbook.generator" />
 
+	<context:component-scan base-package="com.efficio.fieldbook.web.experimentdesign" />
+
 	<bean id="processCodeFactory"
 		class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory"
 		init-method="init" />
@@ -513,6 +519,9 @@
 	<bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
 		scope="request">
 		<aop:scoped-proxy />
+	</bean>
+	
+	<bean id="toolLicenseUtil" class="org.generationcp.commons.spring.util.ToolLicenseUtil" factory-method="getInstance">
 	</bean>
 	
 	<bean id="seedSourceGenerator" class="org.generationcp.commons.service.impl.SeedSourceGenerator">
@@ -553,8 +562,8 @@
     <bean id="labelGeneratorFactory" class="com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory"/>
     <bean id="excelLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.ExcelLabelGenerator"/>
     <bean id="pdfLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.PDFLabelGenerator"/>
-    <bean id="csvLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.CSVLabelGenerator"/>
-	
+    <bean id="csvSeedPreparationLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.CSVSeedPreparationLabelGenerator"/>
+
 	<bean id="workbenchHibernateSessionProvider"
 		class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider"
 		scope="request" destroy-method="close">

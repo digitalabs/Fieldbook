@@ -45,6 +45,25 @@ public class UserLabelPrinting implements Serializable {
 	/** The name. */
 	private String name;
 
+	private String owner;
+
+	private String description;
+
+	private String type;
+
+	private String date;
+
+	private String numberOfEntries;
+
+	private String numberOfLotsWithReservations;
+
+	private String numberOfCopies;
+
+	/**
+	 * Possible values for inventory lists: Entry, Designation, GID, StockId
+	 */
+	private String sorting;
+
 	/** The title. */
 	private String title;
 
@@ -90,7 +109,7 @@ public class UserLabelPrinting implements Serializable {
 	private String filename;
 
 	/** The generate type. */
-	// 1 - pdf, 2 - xls
+	// 1 - pdf, 2 - xls, 3- csv
 	private String generateType;
 
 	/** The order. */
@@ -142,7 +161,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param filenameWithExtension the new filename with extension
 	 */
-	public void setFilenameWithExtension(String filenameWithExtension) {
+	public void setFilenameWithExtension(final String filenameWithExtension) {
 		this.filenameWithExtension = filenameWithExtension;
 	}
 
@@ -160,7 +179,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param filenameDLLocation the new filename dl location
 	 */
-	public void setFilenameDLLocation(String filenameDLLocation) {
+	public void setFilenameDLLocation(final String filenameDLLocation) {
 		this.filenameDLLocation = filenameDLLocation;
 	}
 
@@ -169,12 +188,12 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param fieldMapInfo the new field map info
 	 */
-	public void setFieldMapInfo(FieldMapInfo fieldMapInfo) {
+	public void setFieldMapInfo(final FieldMapInfo fieldMapInfo) {
 		this.fieldMapInfo = fieldMapInfo;
 		int totalLabels = 0;
 		if (fieldMapInfo != null) {
 			if (fieldMapInfo.getDatasets() != null && !fieldMapInfo.getDatasets().isEmpty()) {
-				FieldMapDatasetInfo info = fieldMapInfo.getDatasets().get(0);
+				final FieldMapDatasetInfo info = fieldMapInfo.getDatasets().get(0);
 				if (info.getTrialInstances() != null) {
 					this.numberOfInstances = Integer.toString(info.getTrialInstances().size());
 					for (int i = 0; i < info.getTrialInstances().size(); i++) {
@@ -197,7 +216,7 @@ public class UserLabelPrinting implements Serializable {
 	 * @param inventoryDetails the inventory details for study stock.
 	 *
 	 */
-	public void setFieldMapInfo(FieldMapInfo fieldMapInfo,List<InventoryDetails> inventoryDetails) {
+	public void setFieldMapInfo(final FieldMapInfo fieldMapInfo, final List<InventoryDetails> inventoryDetails) {
 		this.fieldMapInfo = fieldMapInfo;
 
 		//Override FieldMapInfo for Trial Stock to populate data based in Inventories instead of Measurements
@@ -251,11 +270,11 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param fieldMapInfoList the new field map info list
 	 */
-	public void setFieldMapInfoList(List<FieldMapInfo> fieldMapInfoList) {
+	public void setFieldMapInfoList(final List<FieldMapInfo> fieldMapInfoList) {
 		this.fieldMapInfoList = fieldMapInfoList;
 		int totalLabels = 0;
 		if (fieldMapInfoList != null) {
-			for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 				for (FieldMapDatasetInfo dataset : fieldMapInfo.getDatasets()) {
 					for (FieldMapTrialInstanceInfo trialInstance : dataset.getTrialInstances()) {
 						totalLabels += trialInstance.getFieldMapLabels().size();
@@ -280,7 +299,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param generateType the new generate type
 	 */
-	public void setGenerateType(String generateType) {
+	public void setGenerateType(final String generateType) {
 		this.generateType = generateType;
 	}
 
@@ -298,7 +317,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param filename the new filename
 	 */
-	public void setFilename(String filename) {
+	public void setFilename(final String filename) {
 		this.filename = filename;
 	}
 
@@ -316,7 +335,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param study the new study
 	 */
-	public void setStudy(Study study) {
+	public void setStudy(final Study study) {
 		this.study = study;
 		this.name = study.getName();
 		this.title = study.getTitle();
@@ -337,7 +356,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param firstBarcodeField the new first barcode field
 	 */
-	public void setFirstBarcodeField(String firstBarcodeField) {
+	public void setFirstBarcodeField(final String firstBarcodeField) {
 		this.firstBarcodeField = firstBarcodeField;
 	}
 
@@ -355,7 +374,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param secondBarcodeField the new second barcode field
 	 */
-	public void setSecondBarcodeField(String secondBarcodeField) {
+	public void setSecondBarcodeField(final String secondBarcodeField) {
 		this.secondBarcodeField = secondBarcodeField;
 	}
 
@@ -373,7 +392,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param thirdBarcodeField the new third barcode field
 	 */
-	public void setThirdBarcodeField(String thirdBarcodeField) {
+	public void setThirdBarcodeField(final String thirdBarcodeField) {
 		this.thirdBarcodeField = thirdBarcodeField;
 	}
 
@@ -391,7 +410,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param leftSelectedLabelFields the new left selected label fields
 	 */
-	public void setLeftSelectedLabelFields(String leftSelectedLabelFields) {
+	public void setLeftSelectedLabelFields(final String leftSelectedLabelFields) {
 		this.leftSelectedLabelFields = leftSelectedLabelFields;
 	}
 
@@ -409,7 +428,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param rightSelectedLabelFields the new right selected label fields
 	 */
-	public void setRightSelectedLabelFields(String rightSelectedLabelFields) {
+	public void setRightSelectedLabelFields(final String rightSelectedLabelFields) {
 		this.rightSelectedLabelFields = rightSelectedLabelFields;
 	}
 
@@ -427,7 +446,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param barcodeNeeded the new barcode needed
 	 */
-	public void setBarcodeNeeded(String barcodeNeeded) {
+	public void setBarcodeNeeded(final String barcodeNeeded) {
 		this.barcodeNeeded = barcodeNeeded;
 	}
 
@@ -445,7 +464,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param name the new name
 	 */
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -463,7 +482,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param title the new title
 	 */
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 
@@ -481,7 +500,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param objective the new objective
 	 */
-	public void setObjective(String objective) {
+	public void setObjective(final String objective) {
 		this.objective = objective;
 	}
 
@@ -499,7 +518,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param numberOfInstances the new number of instances
 	 */
-	public void setNumberOfInstances(String numberOfInstances) {
+	public void setNumberOfInstances(final String numberOfInstances) {
 		this.numberOfInstances = numberOfInstances;
 	}
 
@@ -517,7 +536,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param totalNumberOfLabelToPrint the new total number of label to print
 	 */
-	public void setTotalNumberOfLabelToPrint(String totalNumberOfLabelToPrint) {
+	public void setTotalNumberOfLabelToPrint(final String totalNumberOfLabelToPrint) {
 		this.totalNumberOfLabelToPrint = totalNumberOfLabelToPrint;
 	}
 
@@ -535,7 +554,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param sizeOfLabelSheet the new size of label sheet
 	 */
-	public void setSizeOfLabelSheet(String sizeOfLabelSheet) {
+	public void setSizeOfLabelSheet(final String sizeOfLabelSheet) {
 		this.sizeOfLabelSheet = sizeOfLabelSheet;
 	}
 
@@ -571,7 +590,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param numberOfRowsPerPageOfLabel the new number of rows per page of label
 	 */
-	public void setNumberOfRowsPerPageOfLabel(String numberOfRowsPerPageOfLabel) {
+	public void setNumberOfRowsPerPageOfLabel(final String numberOfRowsPerPageOfLabel) {
 		this.numberOfRowsPerPageOfLabel = numberOfRowsPerPageOfLabel;
 	}
 
@@ -589,7 +608,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param order the new order
 	 */
-	public void setOrder(String order) {
+	public void setOrder(final String order) {
 		this.order = order;
 	}
 
@@ -607,7 +626,7 @@ public class UserLabelPrinting implements Serializable {
 	 *
 	 * @param isFieldMapsExisting the new field maps existing
 	 */
-	public void setFieldMapsExisting(boolean isFieldMapsExisting) {
+	public void setFieldMapsExisting(final boolean isFieldMapsExisting) {
 		this.isFieldMapsExisting = isFieldMapsExisting;
 	}
 
@@ -615,7 +634,7 @@ public class UserLabelPrinting implements Serializable {
 		return this.settingsName;
 	}
 
-	public void setSettingsName(String settingsName) {
+	public void setSettingsName(final String settingsName) {
 		this.settingsName = settingsName;
 	}
 
@@ -623,7 +642,7 @@ public class UserLabelPrinting implements Serializable {
 		return this.mainSelectedLabelFields;
 	}
 
-	public void setMainSelectedLabelFields(String mainSelectedLabelFields) {
+	public void setMainSelectedLabelFields(final String mainSelectedLabelFields) {
 		this.mainSelectedLabelFields = mainSelectedLabelFields;
 	}
 
@@ -631,7 +650,7 @@ public class UserLabelPrinting implements Serializable {
 		return this.includeColumnHeadinginNonPdf;
 	}
 
-	public void setIncludeColumnHeadinginNonPdf(String includeColumnHeadinginNonPdf) {
+	public void setIncludeColumnHeadinginNonPdf(final String includeColumnHeadinginNonPdf) {
 		this.includeColumnHeadinginNonPdf = includeColumnHeadinginNonPdf;
 	}
 
@@ -639,47 +658,111 @@ public class UserLabelPrinting implements Serializable {
 		return this.isStockList;
 	}
 
-	public void setIsStockList(boolean isStockList) {
+	public void setIsStockList(final boolean isStockList) {
 		this.isStockList = isStockList;
 	}
 
 	public boolean isTrial() {
-		return isTrial;
+		return this.isTrial;
 	}
 
-	public void setIsTrial(boolean trial) {
-		isTrial = trial;
+	public void setIsTrial(final boolean trial) {
+		this.isTrial = trial;
 	}
 
 	public Integer getStudyId() {
 		return this.studyId;
 	}
 
-	public void setStudyId(Integer studyId) {
+	public void setStudyId(final Integer studyId) {
 		this.studyId = studyId;
 	}
 
     public Integer getStockListId() {
-        return stockListId;
+        return this.stockListId;
     }
 
-    public void setStockListId(Integer stockListId) {
+    public void setStockListId(final Integer stockListId) {
         this.stockListId = stockListId;
     }
 
     public String getStockListTypeName() {
-        return stockListTypeName;
+        return this.stockListTypeName;
     }
 
-    public void setStockListTypeName(String stockListTypeName) {
+    public void setStockListTypeName(final String stockListTypeName) {
         this.stockListTypeName = stockListTypeName;
     }
 
     public List<InventoryDetails> getInventoryDetailsList() {
-        return inventoryDetailsList;
+        return this.inventoryDetailsList;
     }
 
-    public void setInventoryDetailsList(List<InventoryDetails> inventoryDetailsList) {
+    public void setInventoryDetailsList(final List<InventoryDetails> inventoryDetailsList) {
         this.inventoryDetailsList = inventoryDetailsList;
     }
+
+	public String getOwner() {
+		return this.owner;
+	}
+
+	public void setOwner(final String owner) {
+		this.owner = owner;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setDescription(final String description) {
+		this.description = description;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public void setType(final String type) {
+		this.type = type;
+	}
+
+	public String getDate() {
+		return this.date;
+	}
+
+	public void setDate(final String date) {
+		this.date = date;
+	}
+
+	public String getNumberOfEntries() {
+		return this.numberOfEntries;
+	}
+
+	public void setNumberOfEntries(final String numberOfEntries) {
+		this.numberOfEntries = numberOfEntries;
+	}
+
+	public String getNumberOfLotsWithReservations() {
+		return this.numberOfLotsWithReservations;
+	}
+
+	public void setNumberOfLotsWithReservations(final String numberOfLotsWithReservations) {
+		this.numberOfLotsWithReservations = numberOfLotsWithReservations;
+	}
+
+	public String getNumberOfCopies() {
+		return this.numberOfCopies;
+	}
+
+	public void setNumberOfCopies(final String numberOfCopies) {
+		this.numberOfCopies = numberOfCopies;
+	}
+
+	public String getSorting() {
+		return this.sorting;
+	}
+
+	public void setSorting(final String sorting) {
+		this.sorting = sorting;
+	}
 }

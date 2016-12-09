@@ -28,6 +28,8 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
@@ -78,6 +80,35 @@ public class ValidationServiceImpl implements ValidationService {
 		} else if (StringUtils.isNotBlank(var.getDataType()) && var.getDataType().equalsIgnoreCase(ValidationServiceImpl.DATA_TYPE_NUMERIC)) {
 			return this.validateIfValueIsMissingOrNumber(value.trim());
 		}
+		return true;
+	}
+
+	public boolean isValidValue(final Variable var, final String value) {
+		if (StringUtils.isBlank(value)) {
+			return true;
+		}
+
+		if (var.getScale().getDataType() == DataType.NUMERIC_VARIABLE) {
+			boolean isNumber = NumberUtils.isNumber(value);
+
+			if (!isNumber) {
+				return false;
+			}
+
+			boolean withinValidRange = true;
+
+			if (var.getScale().getMinValue() != null && var.getScale().getMaxValue() != null) {
+				final Double minValue = Double.valueOf(var.getScale().getMinValue());
+				final Double maxValue = Double.valueOf(var.getScale().getMaxValue());
+
+				final Double currentValue = Double.valueOf(value);
+				if (!(currentValue >= minValue && currentValue <= maxValue)) {
+					withinValidRange = false;
+				}
+			}
+			return withinValidRange;
+		}
+		// TODO other validation cases.
 		return true;
 	}
 
@@ -204,6 +235,11 @@ public class ValidationServiceImpl implements ValidationService {
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean validateObservationValue(final Variable variable, String value) {
+		return this.isValidValue(variable, value);
 	}
 
 	private String setWarningMessage(final String value) {

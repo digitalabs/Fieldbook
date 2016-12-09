@@ -12,7 +12,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.CategoricalDisplayValue;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -197,10 +196,6 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		}
 		int termId = Integer.valueOf(data.get(ObservationMatrixController.TERM_ID));
 		String value = data.get("value");
-		// for categorical
-		int isNew = Integer.valueOf(data.get("isNew"));
-		boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard")) ? true : false;
-
 		map.put("experimentId", experimentId);
 		map.put("phenotypeId", phenotypeId != null ? phenotypeId : "");
 
@@ -208,83 +203,21 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		if (phenotypeId != null) {
 			existingPhenotype = this.studyDataManager.getPhenotypeById(phenotypeId);
 		}
-		this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, termId, value, existingPhenotype, TermId.NUMERIC_VARIABLE.getId());
 
-		// TODO Here on is work in progress..... RESTFul save of rows and their cell data required for the page in view.
-		UserSelection userSelection = this.getUserSelection();
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
-		tempList.addAll(userSelection.getMeasurementRowList());
+		Variable trait = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
 
-		MeasurementRow originalRow = null;
-		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
-			if (experimentId == row.getExperimentId()) {
-				originalRow = row;
-				break;
-			}
-		}
-
-		try {
-			// if (!isDiscard) {
-			// MeasurementRow copyRow = originalRow.copy();
-			// this.copyMeasurementValue(copyRow, originalRow, isNew == 1 ? true : false);
-			// // we set the data to the copy row
-			// if (copyRow != null && copyRow.getMeasurementVariables() != null) {
-			// this.updatePhenotypeValues(copyRow.getDataList(), value, termId, isNew);
-			// }
-			// this.validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
-			// // if there are no error, meaning everything is good, thats the time we copy it to the original
-			// this.copyMeasurementValue(originalRow, copyRow, isNew == 1 ? true : false);
-			// this.updateDates(originalRow);
-			// }
-			map.put(ObservationMatrixController.SUCCESS, "1");
-			Map<String, Object> dataMap = new HashMap<String, Object>();
-			// this.generateDatatableDataMap(originalRow, "");
-			map.put(ObservationMatrixController.DATA, dataMap);
-		} catch (MiddlewareQueryException e) {
-			ObservationMatrixController.LOG.error(e.getMessage(), e);
+		if (!this.validationService.validateObservationValue(trait, value)) {
 			map.put(ObservationMatrixController.SUCCESS, "0");
-			map.put(ObservationMatrixController.ERROR_MESSAGE, e.getMessage());
+			map.put(ObservationMatrixController.ERROR_MESSAGE, "Invalid value.");
+			return map;
 		}
 
+		this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
+				trait.getScale().getDataType().getId());
+		map.put(ObservationMatrixController.SUCCESS, "1");
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		map.put(ObservationMatrixController.DATA, dataMap);
 		return map;
-	}
-
-	private void updateDates(MeasurementRow originalRow) {
-		if (originalRow != null && originalRow.getMeasurementVariables() != null) {
-			for (MeasurementData var : originalRow.getDataList()) {
-				this.convertToDBDateIfDate(var);
-			}
-		}
-	}
-
-	private void convertToDBDateIfDate(MeasurementData var) {
-		if (var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null
-				&& var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
-			var.setValue(DateUtil.convertToDBDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
-		}
-	}
-
-	private void updatePhenotypeValues(List<MeasurementData> measurementDataList, String value, int termId, int isNew) {
-		for (MeasurementData var : measurementDataList) {
-			if (var != null && var.getMeasurementVariable().getTermId() == termId) {
-				if (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
-						|| !var.getMeasurementVariable().getPossibleValues().isEmpty()) {
-					if (isNew == 1) {
-						var.setcValueId(null);
-						var.setCustomCategoricalValue(true);
-					} else {
-						var.setcValueId(value);
-						var.setCustomCategoricalValue(false);
-					}
-					var.setValue(value);
-					var.setAccepted(true);
-				} else {
-					var.setAccepted(true);
-					var.setValue(value);
-				}
-				break;
-			}
-		}
 	}
 
 	@ResponseBody

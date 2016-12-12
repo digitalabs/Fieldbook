@@ -14,7 +14,7 @@ th:if="${variable.scale.dataType.id == numericVarId}"
 th:value="${phenotypeValue}"/>
 
 <input th:if="${#lists.isEmpty(possibleValues) and variable.scale.dataType.id == dateVarId}"
-	type="text" placeholder="yyyy-mm-dd" th:field="*{phenotypeValue}" class="form-control date-input data-value" />
+	type="text" placeholder="yyyy-mm-dd" th:value="${phenotypeValue}" class="form-control date-input data-value"/>
 <label  th:if="${#lists.isEmpty(possibleValues) and variable.scale.dataType.id  == dateVarId}"  class="btn datepicker">
 	<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 </label>

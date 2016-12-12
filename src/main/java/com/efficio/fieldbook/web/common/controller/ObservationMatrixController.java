@@ -215,7 +215,13 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
 				trait.getScale().getDataType().getId());
 		map.put(ObservationMatrixController.SUCCESS, "1");
+
 		Map<String, Object> dataMap = new HashMap<String, Object>();
+		List<ObservationDto> singleObservation =
+				this.studyService.getSingleObservation(this.userSelection.getWorkbook().getStudyDetails().getId(), experimentId);
+		if (!singleObservation.isEmpty()) {
+			dataMap = generateDatatableDataMap(singleObservation.get(0), "");
+		}
 		map.put(ObservationMatrixController.DATA, dataMap);
 		return map;
 	}
@@ -588,18 +594,29 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 					data.getTrait().getTraitId(), true, false);
 
 			if (measurementVariable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
-				for (TermSummary category : measurementVariable.getScale().getCategories()) {
-					if (category.getName().equals(data.getTriatValue())) {
-						dataMap.put(data.getTrait().getTraitName(),
-								new Object[] {category.getName() + suffix, category.getDefinition() + suffix, true});
-						break;
+
+				if (StringUtils.isBlank(data.getTriatValue())) {
+					dataMap.put(data.getTrait().getTraitName(),
+							new Object[] {"", "", false, data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
+				} else {
+					String catName = "";
+					String catDisplayValue = "";
+					for (TermSummary category : measurementVariable.getScale().getCategories()) {
+						if (category.getName().equals(data.getTriatValue())) {
+							catName = category.getName();
+							catDisplayValue = category.getDefinition();
+							break;
+						}
 					}
+					dataMap.put(data.getTrait().getTraitName(), new Object[] {catName + suffix, catDisplayValue + suffix, true,
+							data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 				}
 			} else if (measurementVariable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
 				dataMap.put(data.getTrait().getTraitName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "", true,
 						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 			} else {
-				dataMap.put(data.getTrait().getTraitName(), data.getTriatValue() != null ? data.getTriatValue() : "");
+				dataMap.put(data.getTrait().getTraitName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "",
+						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 			}
 		}
 

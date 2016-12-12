@@ -79,14 +79,19 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            						}
            					}
            				});
-           			} else if ($(this).data('term-data-type-id') === 1120) {
-           				// Column definition for Character data type
-
+           			} else if ($(this).data('term-data-type-id') === 1120 || $(this).data('term-data-type-id') === 1117) {
+           				// Column definition for Character and date data type
+           				var termId = $(this).data('term-id');
            				columnsDef.push({
            					defaultContent: '',
            					targets: columns.length - 1,
+           					
+           					createdCell: function(td, cellData, rowData, row, col) {
+           						$(td).data('term-id', termId);
+           						$(td).data('phenotype-id', cellData[1]);
+           					},
            					render: function(data, type, full, meta) {
-           						return EscapeHTML.escape(data);
+           						return EscapeHTML.escape(data[0]);
            					}
            				});
            			} else if ($(this).data('term-data-type-id') === 1130) {
@@ -145,6 +150,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            							}
            						}
            						$(td).data('term-id', termId);
+           						$(td).data('phenotype-id', cellData[3]);
            					},
            					render: function(data, type, full, meta) {
            						if (data !== undefined) {
@@ -313,7 +319,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            					$(tableIdentifier).data('show-inline-edit', '1');
            					
            					var experimentId = $(this).parent('tr').attr('id');
-           					var phenotypeId = $(this).data('phenotype-id');
+           					var phenotypeId = $(this).data('phenotype-id') !== undefined ? $(this).data('phenotype-id') : "";
         					
            					if ($colHeader.hasClass('variates')) {
            						$('body').data('last-td-time-clicked', new Date().getTime());

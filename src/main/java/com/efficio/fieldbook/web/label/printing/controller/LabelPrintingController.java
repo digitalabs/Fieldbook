@@ -490,8 +490,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@RequestMapping(method = RequestMethod.POST)
 	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
 
+		final String generateAutomatically =
+				form.getUserLabelPrinting().getBarcodeGeneratedAutomatically() == null || form.getUserLabelPrinting()
+						.getBarcodeGeneratedAutomatically().equals("0") ? "0" : "1";
 		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
-		this.userLabelPrinting.setBarcodeGeneratedAutomatically(form.getUserLabelPrinting().getBarcodeGeneratedAutomatically());
+		this.userLabelPrinting
+				.setBarcodeGeneratedAutomatically(generateAutomatically);
 		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
 		this.userLabelPrinting.setNumberOfLabelPerRow(form.getUserLabelPrinting().getNumberOfLabelPerRow());
 		this.userLabelPrinting.setNumberOfRowsPerPageOfLabel(form.getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
@@ -510,7 +514,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
 			String cropPrefix = null;
 			try {
-				cropPrefix = this.fieldbookMiddlewareService.getCropId(cropName);
+				cropPrefix = this.fieldbookMiddlewareService.getPlotCodePrefix(cropName);
 			} catch (final MiddlewareException e) {
 				LabelPrintingController.LOG.error(e.getMessage(), e);
 			}

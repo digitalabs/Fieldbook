@@ -272,8 +272,6 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            										$(this).addClass('invalid-value');
            									}
            									$(this).data('term-id', $(this).data('term-id'));
-           								} else {
-           									$(this).addClass('accepted-value');
            								}
            							}
            						}

@@ -604,12 +604,21 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
 		final List<GermplasmListData> germplasmListDataListWithExistingReservations =
 				this.getGermplasmListDataListWithExistingReservations(germplasmListDataList);
-		final int numberOfCopies = Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
+		
+		String copies = this.userLabelPrinting.getNumberOfCopies();
+		int numberOfCopies = 1;
+		if (copies != null && !copies.isEmpty()) {
+			numberOfCopies = Integer.parseInt(copies);	
+		}
+		
 
 		// GermplasmListData list sorting before printing
 		// Sort first and duplicate entries after that for performance
 		try {
-			this.labelPrintingUtil.sortGermplasmListDataList(germplasmListDataListWithExistingReservations, this.userLabelPrinting.getSorting());
+			String sorting = this.userLabelPrinting.getSorting();
+			if (sorting != null && !sorting.isEmpty()) {
+				this.labelPrintingUtil.sortGermplasmListDataList(germplasmListDataListWithExistingReservations, sorting);
+			}			
 		} catch (final LabelPrintingException ex) {
 			final Map<String, Object> results = new HashMap<>();
 			LabelPrintingController.LOG.error(ex.getMessage(), ex);

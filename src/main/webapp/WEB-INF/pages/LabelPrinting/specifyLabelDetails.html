@@ -669,7 +669,7 @@
                                 </div>
                                 <div th:if="*{isStockList == false}" class="col-xs-6 col-md-6"><label>&nbsp;</label></div>
                                 
-                                <div th:if="*{isStockList == false}" class="col-xs-6 col-md-6 automatically-barcode-fields">
+                                <div th:if="${isStockList == false and germplasmListId == null}" class="col-xs-6 col-md-6 automatically-barcode-fields">
                                     <label class="control-label label-bold" th:text="#{label.printing.do.you.want.automatically.unique.bar.codes}">Do you want 
                                     	to use automatically generated unique barcodes?</label>
                                     &nbsp;

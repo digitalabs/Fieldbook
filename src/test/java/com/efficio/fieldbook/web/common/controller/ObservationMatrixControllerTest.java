@@ -651,14 +651,16 @@ public class ObservationMatrixControllerTest {
 
 
 		// Character Trait
-		Assert.assertEquals(measurementText.getTriatValue(), onePlotMeasurementData.get(measurementText.getTrait().getTraitName()));
+		Assert.assertTrue(Arrays.equals(new Object[] {measurementText.getTriatValue(), measurementText.getPhenotypeId()},
+				(Object[]) onePlotMeasurementData.get(measurementText.getTrait().getTraitName())));
 
 		// Numeric Trait
-		Assert.assertTrue(Arrays.equals(new Object[] {measurementNumeric.getTriatValue(), true},
+		Assert.assertTrue(Arrays.equals(new Object[] {measurementNumeric.getTriatValue(), true, measurementNumeric.getPhenotypeId()},
 				(Object[]) onePlotMeasurementData.get(measurementNumeric.getTrait().getTraitName())));
 
 		// Categorical Trait
-		Assert.assertTrue(Arrays.equals(new Object[] {category1.getName(), category1.getDefinition(), true},
+		Assert.assertTrue(
+				Arrays.equals(new Object[] {category1.getName(), category1.getDefinition(), true, mesaurementCategorical.getPhenotypeId()},
 				(Object[]) onePlotMeasurementData.get(mesaurementCategorical.getTrait().getTraitName())));
 
 	}

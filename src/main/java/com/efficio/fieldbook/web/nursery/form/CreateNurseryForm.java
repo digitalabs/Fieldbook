@@ -11,6 +11,7 @@
 
 package com.efficio.fieldbook.web.nursery.form;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -1042,7 +1043,7 @@ public class CreateNurseryForm {
 	 * @return the arrange measurement variables
 	 */
 	public List<MeasurementVariable> getArrangeMeasurementVariables() {
-		return this.getMeasurementVariables();
+		return this.getMeasurementVariables() != null ? this.getMeasurementVariables() : new ArrayList<MeasurementVariable>();
 	}
 
 	/**

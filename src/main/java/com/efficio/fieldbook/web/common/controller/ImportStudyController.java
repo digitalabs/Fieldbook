@@ -442,8 +442,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		}
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/import/save", method = RequestMethod.POST)
-	public String saveImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model)
+	public Map<String, Object> saveImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model)
 			throws MiddlewareException {
 		final UserSelection userSelection = this.getUserSelection(false);
 		final List<MeasurementVariable> traits =
@@ -490,11 +491,14 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(), userSelection.getWorkbook()
 				.getStudyDetails().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
 
-		return super.showAjaxPage(model, ImportStudyController.ADD_OR_REMOVE_TRAITS_HTML);
+		final Map<String, Object> result = new HashMap<>();
+		result.put("success", "1");
+		return result;
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/import/preview", method = RequestMethod.POST)
-	public String previewImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
+	public Map<String, Object> previewImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
 		final UserSelection userSelection = this.getUserSelection(false);
 		final List<MeasurementVariable> traits =
 				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
@@ -508,7 +512,11 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		newVariableList.addAll(userSelection.getWorkbook().isNursery() ? userSelection.getWorkbook().getMeasurementDatasetVariables()
 				: userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 		newVariableList.addAll(traits);
-		return super.showAjaxPage(model, ImportStudyController.ADD_OR_REMOVE_TRAITS_HTML);
+
+		model.addAttribute("arrangeMeasurementVariables", newVariableList);
+		final Map<String, Object> result = new HashMap<>();
+		result.put("success", "1");
+		return result;
 	}
 
 	@ResponseBody

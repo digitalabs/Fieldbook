@@ -4075,7 +4075,8 @@ function reloadMeasurementTable() {
 			url: '/Fieldbook/ImportManager/import/preview',
 			type: 'POST',
 			success: function(html) {
-				$('#measurementsDiv').html(html);
+				debounce(reloadMeasurementPage, DELAY, false)();
+				//$('#measurementsDiv').html(html);
 				$('.import-study-data').data('data-import', '1');
 			}
 		});

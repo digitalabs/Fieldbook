@@ -33,6 +33,7 @@
     <input type="hidden" th:field="*{customReport}"/>
     <input type="hidden" th:field="*{germplasmListId}"/>
 
+
     <div class="row">
         <div class="panel panel-default">
             <div class="panel-body">
@@ -667,9 +668,9 @@
                                         <span th:text="#{label.printing.do.you.need.bar.codes.no}">No</span>
                                     </label>
                                 </div>
-                                <div th:if="${isStockList == false and germplasmListId == null}" class="col-xs-6 col-md-6"><label>&nbsp;</label></div>
+                                <div th:if="!*{isStockList} and (*{germplasmListId} == null or *{germplasmListId} == '')" class="col-xs-6 col-md-6"><label>&nbsp;</label></div>
                                 
-                                <div th:if="${isStockList == false and germplasmListId == null}" class="col-xs-6 col-md-6 automatically-barcode-fields">
+                                <div th:if="!*{isStockList} and (*{germplasmListId} == null or *{germplasmListId} == '')" class="col-xs-6 col-md-6 automatically-barcode-fields">
                                     <label class="control-label label-bold" th:text="#{label.printing.do.you.want.automatically.unique.bar.codes}">Do you want 
                                     	to use automatically generated unique barcodes?</label>
                                     &nbsp;

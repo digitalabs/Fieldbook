@@ -37,6 +37,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
+import com.google.common.base.Strings;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -600,24 +601,21 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		}
 
 		final Integer germplasmListId = form.getGermplasmListId();
-		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(germplasmListId, 0, Integer
-				.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
+		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(germplasmListId, 0,
+				Integer.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
 		final List<GermplasmListData> germplasmListDataListWithExistingReservations =
 				this.getGermplasmListDataListWithExistingReservations(germplasmListDataList);
-		
-		String copies = this.userLabelPrinting.getNumberOfCopies();
-		int numberOfCopies = 1;
-		if (copies != null && !copies.isEmpty()) {
-			numberOfCopies = Integer.parseInt(copies);	
-		}
+
+		int numberOfCopies = Strings.isNullOrEmpty(this.userLabelPrinting.getNumberOfCopies()) ?
+				1 :
+				Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
 		
 
 		// GermplasmListData list sorting before printing
 		// Sort first and duplicate entries after that for performance
 		try {
-			String sorting = this.userLabelPrinting.getSorting();
-			if (sorting != null && !sorting.isEmpty()) {
-				this.labelPrintingUtil.sortGermplasmListDataList(germplasmListDataListWithExistingReservations, sorting);
+			if (!Strings.isNullOrEmpty(this.userLabelPrinting.getSorting())) {
+				this.labelPrintingUtil.sortGermplasmListDataList(germplasmListDataListWithExistingReservations, this.userLabelPrinting.getSorting());
 			}			
 		} catch (final LabelPrintingException ex) {
 			final Map<String, Object> results = new HashMap<>();

@@ -412,7 +412,7 @@ LabelPrinting = {
 
 		// isPlotCodePrefix
 		if (barcodeNeeded === '1') {
-			if (isStockList === 'false' && inventory === null) {
+			if (isStockList === 'false' && (inventory === null || inventory === '')) {
 				$('.automatically-barcode-fields').show();
 				LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
 			}else{

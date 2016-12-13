@@ -240,20 +240,18 @@ public class WorkbookUtil {
 	}
 
 	public static void resetWorkbookObservations(final Workbook workbook) {
-		if (workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
-			if (workbook.getOriginalObservations() == null || workbook.getOriginalObservations().isEmpty()) {
-				final List<MeasurementRow> origObservations = new ArrayList<>();
-				for (final MeasurementRow row : workbook.getObservations()) {
-					origObservations.add(row.copy());
-				}
-				workbook.setOriginalObservations(origObservations);
-			} else {
-				final List<MeasurementRow> observations = new ArrayList<>();
-				for (final MeasurementRow row : workbook.getOriginalObservations()) {
-					observations.add(row.copy());
-				}
-				workbook.setObservations(observations);
+		if (workbook.getOriginalObservations() == null || workbook.getOriginalObservations().isEmpty()) {
+			final List<MeasurementRow> origObservations = new ArrayList<>();
+			for (final MeasurementRow row : workbook.getObservations()) {
+				origObservations.add(row.copy());
 			}
+			workbook.setOriginalObservations(origObservations);
+		} else {
+			final List<MeasurementRow> observations = new ArrayList<>();
+			for (final MeasurementRow row : workbook.getOriginalObservations()) {
+				observations.add(row.copy());
+			}
+			workbook.setObservations(observations);
 		}
 	}
 

@@ -203,6 +203,13 @@ public class OpenTrialController extends BaseTrialController {
 		return this.showAjaxPage(model, BaseTrialController.URL_MEASUREMENT);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/columns", method = RequestMethod.POST)
+	public List<MeasurementVariable> getColumns (@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
+			final HttpServletRequest request) {
+		return this.getLatestMeasurements(form, request);
+	}
+
 	@RequestMapping(value = "/{trialId}", method = RequestMethod.GET)
 	public String openTrial(@ModelAttribute("createTrialForm") final CreateTrialForm form, @PathVariable final Integer trialId,
 			final Model model, final HttpSession session, final RedirectAttributes redirectAttributes) {
@@ -572,6 +579,13 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(value = "/load/dynamic/change/measurement", method = RequestMethod.POST)
 	public Map<String, Object> loadDynamicChangeMeasurement(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
 			final HttpServletRequest request) {
+		getLatestMeasurements(form, request);
+		final Map<String, Object> result = new HashMap<>();
+		result.put("success", "1");
+		return result;
+	}
+
+	private List<MeasurementVariable> getLatestMeasurements(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final HttpServletRequest request) {
 		Workbook workbook = this.userSelection.getWorkbook();
 		if (this.userSelection.getTemporaryWorkbook() != null) {
 			workbook = this.userSelection.getTemporaryWorkbook();
@@ -616,10 +630,7 @@ public class OpenTrialController extends BaseTrialController {
 		}
 
 		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
-		measurementDatasetVariables = workbook.arrangeMeasurementVariables(measurementDatasetVariables);
-		final Map<String, Object> result = new HashMap<>();
-		result.put("success", "1");
-		return result;
+		return measurementDatasetVariables = workbook.arrangeMeasurementVariables(measurementDatasetVariables);
 	}
 
 	private String loadMeasurementDataPage(final boolean isTemporary, final CreateNurseryForm form, final Workbook workbook,

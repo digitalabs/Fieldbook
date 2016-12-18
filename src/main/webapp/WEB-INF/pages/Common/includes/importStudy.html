@@ -486,7 +486,7 @@ function doMeasurementsReload(hasDataOverwrite) {
 		url: '/Fieldbook/ImportManager/import/preview',
 		type: 'POST',
 		success: function(html) {
-			$('#measurementsDiv').html(html);
+			// $('#measurementsDiv').html(html);
 			$('.fbk-discard-imported-data').removeClass('fbk-hide');
 			if (hasDataOverwrite === '1') {
 				showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
@@ -747,7 +747,7 @@ function revertData(showMessage) {
 		cache: false,
 		async: false,
 		success: function(html) {
-			$('#measurementsDiv').html(html);
+			// $('#measurementsDiv').html(html);
 			if (showMessage === true) {
 				showSuccessfulMessage('', 'Discarded imported data successfully');
 			}

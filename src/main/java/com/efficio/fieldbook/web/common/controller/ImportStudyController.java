@@ -513,7 +513,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				: userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 		newVariableList.addAll(traits);
 
-		model.addAttribute("arrangeMeasurementVariables", newVariableList);
 		final Map<String, Object> result = new HashMap<>();
 		result.put("success", "1");
 		return result;

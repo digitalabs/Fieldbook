@@ -18,184 +18,194 @@ var getCurrentEnvironmentNumber = function() {
 
 BMS.Fieldbook.MeasurementsDataTable = (function($) {
 
-           	/**
-           	 * Creates a new MeasurementsDataTable.
-           	 *
-           	 * @constructor
-           	 * @alias module:fieldbook-datatable
-           	 * @param {string} tableIdentifier the id of the table container
-           	 * @param {string} ajaxUrl the URL from which to retrieve table data
-           	 */
-           	var dataTableConstructor = function MeasurementsDataTable(tableIdentifier) {
-           		'use strict';
+	/**
+ 	* Creates a new MeasurementsDataTable.
+ 	*
+ 	* @constructor
+ 	* @alias module:fieldbook-datatable
+ 	* @param {string} tableIdentifier the id of the table container
+ 	* @param {string} ajaxUrl the URL from which to retrieve table data
+ 	*/
+	var dataTableConstructor = function MeasurementsDataTable(tableIdentifier) {
+		'use strict';
 
-           		var columns = [],
-           			columnsDef = [],
-           			table;
+		var columns = [],
+		columnsDef = [],
+		table;
 
-           		var studyId = $('#studyId').val(),
-           			environmentId = getCurrentEnvironmentNumber();
+		var studyId = $('#studyId').val(),
+		environmentId = getCurrentEnvironmentNumber();
 
-           		$(tableIdentifier + ' thead tr th').each(function() {
-           			columns.push({
-           				data: $(this).html(),
-           				defaultContent: ''
-           			});
-           			if ($(this).data('term-data-type-id') === 1110) {
-           				// Column definition for Numeric data type
+		// recreate a table if exists
+		if (!!$(tableIdentifier).html().trim()) {
+			$(tableIdentifier).dataTable().fnDestroy();
+			$(tableIdentifier).empty();
+		}
 
-           				var minVal = ($(this).data('min-range'));
-           				var maxVal = ($(this).data('max-range'));
-           				var termId = $(this).data('term-id');
-           				var isVariates = $(this).hasClass('variates');
-           				columnsDef.push({
-           					defaultContent: '',
-           					targets: columns.length - 1,
-           					visible: termId === 8170 ? false : true, // do not display TRIAL_INSTANCE column, [0] column
-           					createdCell: function(td, cellData, rowData, row, col) {
-           						if (isVariates) {
-           							$(td).addClass('numeric-variable');
-           							var cellText = $(td).text();
-           							if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellText) || parseFloat(cellText) > parseFloat(maxVal))) {
-           								$(td).removeClass('accepted-value');
-           								$(td).removeClass('invalid-value');
-           								if ($(td).text() !== 'missing') {
-           									if ($(td).find("input[type='hidden']").val() === 'true') {
-           										$(td).addClass('accepted-value');
-           									} else {
-           										$(td).addClass('invalid-value');
-           									}
-           								}
-           							}
-           						}
-           						$(td).data('term-id', termId);
-           						$(td).data('phenotype-id', cellData[2]);
-           					},
-           					render: function(data, type, full, meta) {
-           						if (data !== undefined) {
-           							var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '');
-           							var hiddenData = EscapeHTML.escape(data[1]);
-           							return displayData + '<input type="hidden" value="' + hiddenData + '" />';
-           						}
-           					}
-           				});
-           			} else if ($(this).data('term-data-type-id') === 1120 || $(this).data('term-data-type-id') === 1117) {
-           				// Column definition for Character and date data type
-           				var termId = $(this).data('term-id');
-           				columnsDef.push({
-           					defaultContent: '',
-           					targets: columns.length - 1,
-           					
-           					createdCell: function(td, cellData, rowData, row, col) {
-           						$(td).data('term-id', termId);
-           						$(td).data('phenotype-id', cellData[1]);
-           					},
-           					render: function(data, type, full, meta) {
-           						return EscapeHTML.escape(data[0]);
-           					}
-           				});
-           			} else if ($(this).data('term-data-type-id') === 1130) {
-           				// Column definition for Categorical data type
+		var trialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
 
-           				if ($(this).data('term-valid-values') == null) {
-           					$(this).data('term-valid-values', '');
-           				}
-           				var possibleValues = $(this).data('term-valid-values').split('|');
-           				var termId = $(this).data('term-id');
-           				var isVariates = $(this).hasClass('variates');
-           				columnsDef.push({
-           					defaultContent: '',
-           					targets: columns.length - 1,
-           					createdCell: function(td, cellData, rowData, row, col) {
-           						if (isVariates) {
-           							// cellData[0] : categorical name
-           							// cellData[1] : categorical display description
+		$.ajax({
+			url: '/Fieldbook/TrialManager/openTrial/columns',
+			type: 'POST',
+			data: 'traitsList=' + trialManagerDataService.settings.measurements.m_keys
+		}).done(function(displayColumns) {
 
-           							// current measurementData has no value thus no need to check if out-of-bounds
-           							if (cellData[1] === '') {
-           								return;
-           							}
+			jQuery.each(displayColumns, function(i, displayColumn) {
+				columns.push({
+					title: displayColumn.name,
+					data: displayColumn.name,
+					termId: displayColumn.termId,
+					defaultContent: ''
+				});
 
-           							// look for that description in the list of possible values
-           							var found = $.grep(possibleValues, function(value, i) {
-           								if (value === cellData[1]) {
-           									// this is the case where a=x format is retrieved directly from ontology DB
+				var termId = displayColumn.termId;
+				var isVariates = displayColumn.factor === true;
 
-           									return true;
-           								} else if (value !== '' && value.indexOf('=') === -1 && cellData[1]) {
-           									// this is the case where categorical ref values (possibleValues) retrieved is not in a=x format
+				if (displayColumn.dataTypeId === 1110) {
+					// Column definition for Numeric data type
+					var minVal = displayColumn.minRange;
+					var maxVal = displayColumn.maxRange;
 
-           									// since currentValue contains both name and description, we need to retrieve
-           									// only the description by splitting from the first occurrence of the separator
-           									var currentValue = cellData[1].substring(cellData[1].indexOf('=') + 1).trim();
+					columnsDef.push({
+						defaultContent: '',
+						targets: columns.length - 1,
+						visible: termId === 8170 ? false : true, // do not display TRIAL_INSTANCE column, [0] column
+						createdCell: function(td, cellData, rowData, row, col) {
+							if (isVariates) {
+								$(td).addClass('numeric-variable');
+								var cellText = $(td).text();
+								if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellText) || parseFloat(cellText) > parseFloat(maxVal))) {
+									$(td).removeClass('accepted-value');
+									$(td).removeClass('invalid-value');
+									if ($(td).text() !== 'missing') {
+										if ($(td).find("input[type='hidden']").val() === 'true') {
+											$(td).addClass('accepted-value');
+										} else {
+											$(td).addClass('invalid-value');
+										}
+									}
+								}
+							}
+							$(td).data('term-id', termId);
+							$(td).data('phenotype-id', cellData[2]);
+						},
+						render: function(data, type, full, meta) {
+							if (data !== undefined) {
+								var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '');
+								var hiddenData = EscapeHTML.escape(data[1]);
+								return displayData + '<input type="hidden" value="' + hiddenData + '" />';
+							}
+						}
+					});
+				} else if (displayColumn.dataTypeId === 1120 || displayColumn.dataTypeId === 1117) {
+					// Column definition for Character and date data type
+					columnsDef.push({
+						defaultContent: '',
+						targets: columns.length - 1,
 
-           									return value === currentValue;
-           								}
+						createdCell: function(td, cellData, rowData, row, col) {
+							$(td).data('term-id', termId);
+							$(td).data('phenotype-id', cellData[1]);
+						},
+						render: function(data, type, full, meta) {
+							return EscapeHTML.escape(data[0]);
+						}
+					});
+				} else if (displayColumn.dataTypeId === 1130) {
+					// Column definition for Categorical data type
 
-           								return false;
-           							}).length;
+					if ($(this).data('term-valid-values') == null) {
+						$(this).data('term-valid-values', '');
+					}
 
-           							// if not found we may change its class as accepted (blue) or invalid (red)
-           							// depending on the data
-           							if (found <= 0) {
-           								$(td).removeClass('accepted-value');
-           								$(td).removeClass('invalid-value');
-           								if ($(td).text() !== 'missing') {
-           									if ($(td).find("input[type='hidden']").val() === 'true') {
-           										$(td).addClass('accepted-value');
-           									} else {
-           										$(td).addClass('invalid-value');
-           									}
-           								}
-           							}
-           						}
-           						$(td).data('term-id', termId);
-           						$(td).data('phenotype-id', cellData[3]);
-           					},
-           					render: function(data, type, full, meta) {
-           						if (data !== undefined) {
-           							// Use knowledge from session.isCategoricalDisplayView to render correct data
-           							// data[0] = name, data[1] = description, data[2] = accepted value
-           							var showDescription = window.isCategoricalDescriptionView ? 'style="display:none"' : '';
-           							var showName = !window.isCategoricalDescriptionView ? 'style="display:none"' : '';
+					var possibleValues = displayColumn.possibleValuesString.split('|');
+					columnsDef.push({
+						defaultContent: '',
+						targets: columns.length - 1,
+						createdCell: function(td, cellData, rowData, row, col) {
+							if (isVariates) {
+								// cellData[0] : categorical name
+								// cellData[1] : categorical display description
 
-           							var categoricalNameDom = '<span class="fbk-measurement-categorical-name" ' + showName  + '>' + EscapeHTML.escape(data[1]) + '</span>';
-           							var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" ' + showDescription  + '>' + EscapeHTML.escape(data[0]) + '</span>';
+								// current measurementData has no value thus no need to check if out-of-bounds
+								if (cellData[1] === '') {
+									return;
+								}
 
-           							return (isVariates ? categoricalNameDom + categoricalDescDom : EscapeHTML.escape(data[1])) +
-           								'<input type="hidden" value="' + EscapeHTML.escape(data[2]) + '" />';
-           						}
-           					}
-           				});
-           			}
+								// look for that description in the list of possible values
+								var found = $.grep(possibleValues, function(value, i) {
+									if (value === cellData[1]) {
+										// this is the case where a=x format is retrieved directly from ontology DB
+										return true;
+									} else if (value !== '' && value.indexOf('=') === -1 && cellData[1]) {
+										// this is the case where categorical ref values (possibleValues) retrieved is not in a=x format
+										// since currentValue contains both name and description, we need to retrieve
+										// only the description by splitting from the first occurrence of the separator
+										var currentValue = cellData[1].substring(cellData[1].indexOf('=') + 1).trim()
+										return value === currentValue;
+									}
+									return false;
+								}).length;
+								// if not found we may change its class as accepted (blue) or invalid (red)
+								// depending on the data
+								if (found <= 0) {
+									$(td).removeClass('accepted-value');
+									$(td).removeClass('invalid-value');
+									if ($(td).text() !== 'missing') {
+										if ($(td).find("input[type='hidden']").val() === 'true') {
+											$(td).addClass('accepted-value');
+										} else {
+											$(td).addClass('invalid-value');
+										}
+									}
+								}
+							}
+							$(td).data('term-id', termId);
+							$(td).data('phenotype-id', cellData[3]);
+						},
+						render: function(data, type, full, meta) {
+							if (data !== undefined) {
+								// Use knowledge from session.isCategoricalDisplayView to render correct data
+								// data[0] = name, data[1] = description, data[2] = accepted value
+								var showDescription = window.isCategoricalDescriptionView ? 'style="display:none"' : '';
+								var showName = !window.isCategoricalDescriptionView ? 'style="display:none"' : '';
+								var categoricalNameDom = '<span class="fbk-measurement-categorical-name" ' + showName  + '>' + EscapeHTML.escape(data[1]) + '</span>';
+								var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" ' + showDescription  + '>' + EscapeHTML.escape(data[0]) + '</span>';
 
-           			if ($(this).data('term-id') == '8240') {
-           				// For GID
-           				columnsDef.push({
-           					defaultContent: '',
-           					targets: columns.length - 1,
-           					data: $(this).html(),
-           					width: '100px',
-           					render: function(data, type, full, meta) {
-           						return '<a class="gid-link" href="javascript: void(0)" ' +
-           							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-           							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
-           					}
-           				});
-           			} else if ($(this).data('term-id') == '8250') {
-           				// For designation
-           				columnsDef.push({
-           					defaultContent: '',
-           					targets: columns.length - 1,
-           					data: $(this).html(),
-           					render: function(data, type, full, meta) {
-           						return '<a class="desig-link" href="javascript: void(0)" ' +
-           							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-           							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
-           					}
-           				});
-           			}
-           		});
+								return (isVariates ? categoricalNameDom + categoricalDescDom : EscapeHTML.escape(data[1])) +
+									'<input type="hidden" value="' + EscapeHTML.escape(data[2]) + '" />';
+							}
+						}
+					});
+				}
+
+				if (displayColumn.termId === 8240) {
+					// For GID
+					columnsDef.push({
+						defaultContent: '',
+						targets: columns.length - 1,
+						data: displayColumn.name,
+						width: '100px',
+						render: function(data, type, full, meta) {
+							return '<a class="gid-link" href="javascript: void(0)" ' +
+								'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+								full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
+						}
+					});
+				} else if (displayColumn.termId === 8250) {
+					// For designation
+					columnsDef.push({
+						defaultContent: '',
+						targets: columns.length - 1,
+						data: displayColumn.name,
+						render: function(data, type, full, meta) {
+							return '<a class="desig-link" href="javascript: void(0)" ' +
+								'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+								full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
+						}
+					});
+				}
+			});
 
            		table = $(tableIdentifier).DataTable({
            			destroy: true,
@@ -221,6 +231,13 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            						pageNumber: d.length === 0 ? 1 : d.start / d.length + 1
            					};
            				}
+           			},
+           			headerCallback: function(thead, data, start, end, display) {
+           				table.columns().iterator('column', function(settings, column) {
+           					if (settings.aoColumns[ column ].termId !== undefined) {
+           						$(table.column(column).header()).attr('data-term-id', settings.aoColumns[ column ].termId);
+           					}
+           				});
            			},
            			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
@@ -306,6 +323,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            			]
            		});
 
+		});
+
+
            		if (studyId !== '') {
            			// Activate an inline edit on click of a table cell
            			$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
@@ -315,10 +335,10 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            					var rowIndex = $(this).parent('tr').data('row-index');
            					var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq(' + cellTdIndex + ')');
            					$(tableIdentifier).data('show-inline-edit', '1');
-           					
+
            					var experimentId = $(this).parent('tr').attr('id');
            					var phenotypeId = $(this).data('phenotype-id') !== undefined ? $(this).data('phenotype-id') : "";
-        					
+
            					if ($colHeader.hasClass('variates')) {
            						$('body').data('last-td-time-clicked', new Date().getTime());
            					}
@@ -345,9 +365,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            				}
            			});
            		}
-           		$(tableIdentifier).dataTable().bind('sort', function() {
+           		/*$(tableIdentifier).dataTable().bind('sort', function() {
            			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
-           		});
+           		});*/
            		$('#measurementsDiv .mdt-columns').detach().insertAfter('.mdt-filtering');
            		$('.mdt-header').prepend($('#mdt-environment-list-panel').detach());
            		$('[name="measurement-table_length"]').addClass('inline-select mdt-table-length-selector');

@@ -170,7 +170,7 @@
 					cache: false,
 					success: function(html) {
 						$('body').data('columnReordered', '0');
-						$('#measurementsDiv').html(html);
+						//$('#measurementsDiv').html(html);
 						showSuccessfulMessage('', saveSuccessMessage);
 					}
 				});
@@ -413,8 +413,6 @@
 					//After Save Measurements table is available in edit mode
 					$('body').removeClass('preview-measurements-only');
 					//TODO Remove other classes as well
-					// GLOBAL
-					initializeTraitsPagination(false);
 
 					if (!processInlineEditInput()) {
 						return false;
@@ -532,6 +530,9 @@
                         };
                         setSelectedLocation();
                     }
+
+                    // GLOBAL
+                    onMeasurementsObservationLoad(false);
 				},
 				onUpdateData: function(dataKey, updateFunction) {
 					if (!dataRegistry[dataKey]) {

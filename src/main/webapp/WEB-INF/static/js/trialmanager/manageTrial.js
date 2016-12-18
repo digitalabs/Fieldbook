@@ -208,7 +208,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 				var measurementDiv = $('#measurementsDiv');
 				if (measurementDiv.length !== 0) {
-					measurementDiv.html('');
+					//measurementDiv.html('');
 				}
 
 				if (typeof resetGermplasmList !== 'undefined') {

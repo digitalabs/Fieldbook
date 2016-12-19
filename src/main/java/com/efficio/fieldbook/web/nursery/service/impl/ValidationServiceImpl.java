@@ -96,13 +96,18 @@ public class ValidationServiceImpl implements ValidationService {
 			}
 
 			boolean withinValidRange = true;
+			Double currentValue = Double.valueOf(value);
 
-			if (var.getScale().getMinValue() != null && var.getScale().getMaxValue() != null) {
-				final Double minValue = Double.valueOf(var.getScale().getMinValue());
-				final Double maxValue = Double.valueOf(var.getScale().getMaxValue());
+			if (var.getScale().getMinValue() != null) {
+				Double minValue = Double.valueOf(var.getScale().getMinValue());
+				if (currentValue < minValue) {
+					withinValidRange = false;
+				}
+			}
 
-				final Double currentValue = Double.valueOf(value);
-				if (!(currentValue >= minValue && currentValue <= maxValue)) {
+			if (var.getScale().getMaxValue() != null) {
+				Double maxValue = Double.valueOf(var.getScale().getMaxValue());
+				if (currentValue > maxValue) {
 					withinValidRange = false;
 				}
 			}

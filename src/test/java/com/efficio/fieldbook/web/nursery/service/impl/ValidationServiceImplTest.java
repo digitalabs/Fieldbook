@@ -8,8 +8,10 @@ import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Scale;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
-import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
@@ -190,5 +192,44 @@ public class ValidationServiceImplTest {
 		final String warningMessage = this.validationService.validateBreedingMethodCode(
 				this.measurementVarTestDataInitializer.createMeasurementVariable(TermId.BREEDING_METHOD_CODE.getId(), "PXP"));
 		Assert.assertTrue("There should be a warning message", ValidationServiceImplTest.WARNING_MESSAGE.equals(warningMessage));
+	}
+
+	@Test
+	public void testValidateObservationValueNumeric() {
+		Variable variable = new Variable();
+		Scale scale = new Scale();
+		scale.setDataType(DataType.NUMERIC_VARIABLE);
+		variable.setScale(scale);
+
+		// Edge cases, independent of variable.
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "abc"));
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, ""));
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, null));
+
+		// When both min and max are set.
+		scale.setMinValue("10");
+		scale.setMaxValue("20");
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "9"));
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "21"));
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, "10"));
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, "11"));
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, "20"));
+
+		// Only min is set. No max.
+		scale.setMinValue("10");
+		scale.setMaxValue(null);
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "9"));
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, "100"));
+
+		// Only max is set. No min.
+		scale.setMinValue(null);
+		scale.setMaxValue("20");
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, "5"));
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "21"));
+
+		// Any number is valid when there is no min/max set on scale.
+		scale.setMinValue(null);
+		scale.setMaxValue(null);
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, "999"));
 	}
 }

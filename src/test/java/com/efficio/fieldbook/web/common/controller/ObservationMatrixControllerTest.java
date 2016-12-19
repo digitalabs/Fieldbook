@@ -18,13 +18,17 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.service.api.study.MeasurementDto;
 import org.generationcp.middleware.service.api.study.ObservationDto;
 import org.generationcp.middleware.service.api.study.StudyService;
@@ -37,6 +41,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
@@ -48,11 +53,26 @@ public class ObservationMatrixControllerTest {
 
 	private ObservationMatrixController observationMatrixController;
 	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
+	private OntologyVariableDataManager ontologyVariableDataManager;
+	private StudyDataManager studyDataManager;
+	private ContextUtil contextUtil;
+	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+	private StudyService studyService;
 
 	@Before
 	public void setUp() {
 		this.observationMatrixController = new ObservationMatrixController();
 		this.measurementDataTestDataInitializer = new MeasurementDataTestDataInitializer();
+		this.ontologyVariableDataManager = Mockito.mock(OntologyVariableDataManager.class);
+		this.observationMatrixController.setOntologyVariableDataManager(this.ontologyVariableDataManager);
+		this.studyDataManager = Mockito.mock(StudyDataManager.class);
+		this.observationMatrixController.setStudyDataManager(this.studyDataManager);
+		this.contextUtil = Mockito.mock(ContextUtil.class);
+		this.observationMatrixController.setContextUtil(this.contextUtil);
+		this.fieldbookService = Mockito.mock(FieldbookService.class);
+		this.observationMatrixController.setFieldbookService(this.fieldbookService);
+		this.studyService = Mockito.mock(StudyService.class);
+		this.observationMatrixController.setStudyService(this.studyService);
 	}
 
 	@Test
@@ -220,29 +240,29 @@ public class ObservationMatrixControllerTest {
 	@Test
 	public void testEditExperimentCells() throws MiddlewareQueryException {
 		int termId = 2000;
+		int experimentId = 1;
 		ExtendedModelMap model = new ExtendedModelMap();
 		UserSelection userSelection = new UserSelection();
-		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
-		MeasurementRow row = new MeasurementRow();
-		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName1", "1st", TermId.CHARACTER_VARIABLE));
-		row.setDataList(dataList);
-		measurementRowList.add(row);
-		row = new MeasurementRow();
-		dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer
-				.createMeasurementData(termId, "TestVarName2", "2nd", TermId.CHARACTER_VARIABLE));
-		row.setDataList(dataList);
-		measurementRowList.add(row);
-		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+
+		Variable variableText = new Variable();
+		Scale scaleText = new Scale();
+		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
+		variableText.setScale(scaleText);
+		Mockito.when(this.ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(termId), Matchers.eq(true),
+				Matchers.eq(false))).thenReturn(variableText);
+
 		this.observationMatrixController.setUserSelection(userSelection);
-		this.observationMatrixController.editExperimentCells(1, 1, termId, model);
-		MeasurementData data = (MeasurementData) model.get("measurementData");
-		Assert.assertEquals("Should be able to return a copy of the measurement data, so the value should be the same", "2nd",
-				data.getValue());
-		Assert.assertEquals("Should be able to return a copy of the measurement data, so the id should be the same", termId, data
-				.getMeasurementVariable().getTermId());
+		this.observationMatrixController.editExperimentCells(experimentId, termId, null, model);
+		Assert.assertEquals(TermId.CATEGORICAL_VARIABLE.getId(), model.get("categoricalVarId"));
+		Assert.assertEquals(TermId.DATE_VARIABLE.getId(), model.get("dateVarId"));
+		Assert.assertEquals(TermId.NUMERIC_VARIABLE.getId(), model.get("numericVarId"));
+		Assert.assertEquals(false, model.get("isNursery"));
+		Assert.assertEquals(variableText, model.get("variable"));
+		Assert.assertEquals(experimentId, model.get("experimentId"));
+		Assert.assertTrue(((List<?>) model.get("possibleValues")).isEmpty());
+		Assert.assertEquals("", model.get("phenotypeId"));
+		Assert.assertEquals("", model.get("phenotypeValue"));
 	}
 
 	@Test
@@ -250,36 +270,41 @@ public class ObservationMatrixControllerTest {
 		int termId = 2000;
 		String newValue = "new value";
 		UserSelection userSelection = new UserSelection();
-		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
-		MeasurementRow row = new MeasurementRow();
-		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName1", "1st", TermId.CHARACTER_VARIABLE));
-		row.setDataList(dataList);
-		row.setDataList(dataList);
-		measurementRowList.add(row);
-		row = new MeasurementRow();
-		dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer
-				.createMeasurementData(termId, "TestVarName2", "2nd", TermId.CHARACTER_VARIABLE));
-		row.setDataList(dataList);
-		measurementRowList.add(row);
-		userSelection.setMeasurementRowList(measurementRowList);
-		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+		Workbook workbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setId(1234);
+		workbook.setStudyDetails(studyDetails);
+		userSelection.setWorkbook(workbook);
 		this.observationMatrixController.setUserSelection(userSelection);
-		this.observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
+
+		ValidationService mockValidationService = Mockito.mock(ValidationService.class);
+		Mockito.when(mockValidationService.validateObservationValue(Mockito.any(Variable.class), Mockito.anyString())).thenReturn(true);
+		this.observationMatrixController.setValidationService(mockValidationService);
+		
+		Variable variableText = new Variable();
+		Scale scaleText = new Scale();
+		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
+		variableText.setScale(scaleText);
+		Mockito.when(this.ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(termId), Matchers.eq(true),
+				Matchers.eq(false))).thenReturn(variableText);
+
 		Map<String, String> data = new HashMap<String, String>();
-		data.put("index", "1");
+		data.put("experimentId", "1");
 		data.put("termId", Integer.toString(termId));
 		data.put("value", newValue);
-		data.put("isNew", "1");
+
 		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 		Mockito.when(req.getParameter("isDiscard")).thenReturn("0");
 
 		Map<String, Object> results = this.observationMatrixController.updateExperimentCellData(data, req);
 
-		@SuppressWarnings("unchecked")
-		Map<String, Object> dataMap = (Map<String, Object>) results.get("data");
-		Assert.assertEquals("Should have the new value already", newValue, dataMap.get("TestVarName2"));
+		Assert.assertEquals("1", results.get(ObservationMatrixController.SUCCESS));
+		Assert.assertTrue(results.containsKey(ObservationMatrixController.DATA));
+
+		// Validation and saving of phenotype must occur when isDiscard flag is not on.
+		Mockito.verify(mockValidationService).validateObservationValue(variableText, newValue);
+		Mockito.verify(this.studyDataManager).saveOrUpdatePhenotypeValue(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString(),
+				Mockito.any(Phenotype.class), Mockito.anyInt());
 	}
 
 	@Test
@@ -287,36 +312,43 @@ public class ObservationMatrixControllerTest {
 		int termId = 2000;
 		String newValue = "new value";
 		UserSelection userSelection = new UserSelection();
-		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
-		MeasurementRow row = new MeasurementRow();
-		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName2", "1st", TermId.CHARACTER_VARIABLE));
 
-		row.setDataList(dataList);
-		measurementRowList.add(row);
-		row = new MeasurementRow();
-		dataList = new ArrayList<MeasurementData>();
-		dataList.add(this.measurementDataTestDataInitializer
-				.createMeasurementData(termId, "TestVarName2", "2nd", TermId.CHARACTER_VARIABLE));
-		row.setDataList(dataList);
-		measurementRowList.add(row);
-		userSelection.setMeasurementRowList(measurementRowList);
-		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+		Workbook workbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setId(1234);
+		workbook.setStudyDetails(studyDetails);
+		userSelection.setWorkbook(workbook);
 		this.observationMatrixController.setUserSelection(userSelection);
-		this.observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
+
+		ValidationService mockValidationService = Mockito.mock(ValidationService.class);
+		Mockito.when(mockValidationService.validateObservationValue(Mockito.any(Variable.class), Mockito.anyString())).thenReturn(true);
+
+		this.observationMatrixController.setValidationService(mockValidationService);
+
+		Variable variableText = new Variable();
+		Scale scaleText = new Scale();
+		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
+		variableText.setScale(scaleText);
+		Mockito.when(this.ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(termId), Matchers.eq(true),
+				Matchers.eq(false))).thenReturn(variableText);
+
 		Map<String, String> data = new HashMap<String, String>();
-		data.put("index", "1");
+		data.put("experimentId", "1");
 		data.put("termId", Integer.toString(termId));
 		data.put("value", newValue);
-		data.put("isNew", "1");
+
 		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 		Mockito.when(req.getParameter("isDiscard")).thenReturn("1");
 
 		Map<String, Object> results = this.observationMatrixController.updateExperimentCellData(data, req);
 
-		@SuppressWarnings("unchecked")
-		Map<String, Object> dataMap = (Map<String, Object>) results.get("data");
-		Assert.assertEquals("Should have the old value since we discard the saving", "2nd", dataMap.get("TestVarName2"));
+		Assert.assertEquals("1", results.get(ObservationMatrixController.SUCCESS));
+		Assert.assertTrue(results.containsKey(ObservationMatrixController.DATA));
+
+		// Validation and saving of phenotype must NOT occur when isDiscard flag is not off.
+		Mockito.verify(mockValidationService, Mockito.never()).validateObservationValue(variableText, newValue);
+		Mockito.verify(this.studyDataManager, Mockito.never()).saveOrUpdatePhenotypeValue(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString(),
+				Mockito.any(Phenotype.class), Mockito.anyInt());
 	}
 
 	@Test
@@ -583,20 +615,19 @@ public class ObservationMatrixControllerTest {
 		Mockito.when(studyService.countTotalObservationUnits(Mockito.anyInt(), Mockito.anyInt())).thenReturn(recordsCount);
 		this.observationMatrixController.setStudyService(studyService);
 
-		OntologyVariableDataManager ontologyVariableDataManager = Mockito.mock(OntologyVariableDataManager.class);
-
 		Variable variableText = new Variable();
 		Scale scaleText = new Scale();
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
-		Mockito.when(ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(measurementText.getTrait().getTraitId()),
+		Mockito.when(this.ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(measurementText.getTrait().getTraitId()),
 				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableText);
 
 		Variable variableNumeric = new Variable();
 		Scale scaleNumeric = new Scale();
 		scaleNumeric.setDataType(DataType.NUMERIC_VARIABLE);
 		variableNumeric.setScale(scaleNumeric);
-		Mockito.when(ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(measurementNumeric.getTrait().getTraitId()),
+		Mockito.when(
+				this.ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(measurementNumeric.getTrait().getTraitId()),
 				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableNumeric);
 
 		Variable variableCategorical = new Variable();
@@ -605,11 +636,11 @@ public class ObservationMatrixControllerTest {
 		TermSummary category1 = new TermSummary(111, "CategoryValue1", "CategoryValue1Definition");
 		scaleCategorical.addCategory(category1);
 		variableCategorical.setScale(scaleCategorical);
-		Mockito.when(ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(mesaurementCategorical.getTrait().getTraitId()),
+		Mockito.when(this.ontologyVariableDataManager.getVariable(Mockito.anyString(),
+				Mockito.eq(mesaurementCategorical.getTrait().getTraitId()),
 				Matchers.eq(true), Matchers.eq(false)))
 				.thenReturn(variableCategorical);
 
-		this.observationMatrixController.setOntologyVariableDataManager(ontologyVariableDataManager);
 		this.observationMatrixController.setContextUtil(Mockito.mock(ContextUtil.class));
 
 		final Map<String, Object> plotMeasurementsPaginated = this.observationMatrixController.getPlotMeasurementsPaginated(1, 1,

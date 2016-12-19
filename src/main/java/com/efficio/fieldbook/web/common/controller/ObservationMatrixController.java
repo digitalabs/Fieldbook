@@ -65,9 +65,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	private static final String STATUS = "status";
 	private static final String ERROR_MESSAGE = "errorMessage";
 	private static final String INDEX = "index";
-	private static final String SUCCESS = "success";
+	static final String SUCCESS = "success";
 	private static final String TERM_ID = "termId";
-	private static final String DATA = "data";
+	static final String DATA = "data";
 
 	@Resource
 	private UserSelection userSelection;
@@ -656,5 +656,13 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 	void setOntologyVariableDataManager(OntologyVariableDataManager ontologyVariableDataManager) {
 		this.ontologyVariableDataManager = ontologyVariableDataManager;
+	}
+
+	void setStudyDataManager(StudyDataManager studyDataManager) {
+		this.studyDataManager = studyDataManager;
+	}
+
+	void setFieldbookService(com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
+		this.fieldbookService = fieldbookService;
 	}
 }

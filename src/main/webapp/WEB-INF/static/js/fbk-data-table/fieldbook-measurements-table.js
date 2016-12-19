@@ -59,7 +59,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				});
 
 				var termId = displayColumn.termId;
-				var isVariates = displayColumn.factor === true;
+				var isVariates = displayColumn.factor !== true;
 
 				if (displayColumn.dataTypeId === 1110) {
 					// Column definition for Numeric data type

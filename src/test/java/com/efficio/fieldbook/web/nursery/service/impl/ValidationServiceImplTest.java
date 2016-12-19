@@ -232,4 +232,21 @@ public class ValidationServiceImplTest {
 		scale.setMaxValue(null);
 		Assert.assertTrue(this.validationService.validateObservationValue(variable, "999"));
 	}
+
+	@Test
+	public void testValidateObservationValueDate() {
+		Variable variable = new Variable();
+		Scale scale = new Scale();
+		scale.setDataType(DataType.DATE_TIME_VARIABLE);
+		variable.setScale(scale);
+
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "abc"));
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, ""));
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, null));
+
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, "2016-12-25"));
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "2016-13-25"));
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "2016-12-32"));
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "2015-02-29"));
+	}
 }

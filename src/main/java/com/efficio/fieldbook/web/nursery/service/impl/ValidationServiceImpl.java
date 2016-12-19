@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.validator.routines.DateValidator;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -113,7 +114,12 @@ public class ValidationServiceImpl implements ValidationService {
 			}
 			return withinValidRange;
 		}
-		// TODO other validation cases.
+		
+		else if (var.getScale().getDataType() == DataType.DATE_TIME_VARIABLE) {
+			return new DateValidator().isValid(value, "yyyy-MM-dd");
+		}
+
+		// TODO Are there other validation cases?
 		return true;
 	}
 

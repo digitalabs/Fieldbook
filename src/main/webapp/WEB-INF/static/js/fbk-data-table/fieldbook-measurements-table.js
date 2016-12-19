@@ -207,202 +207,197 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				}
 			});
 
-           		table = $(tableIdentifier).DataTable({
-           			destroy: true,
-           			columns: columns,
-           			scrollY: '500px',
-           			scrollX: '100%',
-           			scrollCollapse: true,
-           			columnDefs: columnsDef,
-           			lengthMenu: [[50, 75, 100], [50, 75, 100]],
-           			bAutoWidth: true,
-           			iDisplayLength: 100,
-           			serverSide: true,
-           			processing: true,
-           			deferRender: true,
-           			ajax: {
-           				url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
-           				type: 'GET',
-           				cache: false,
-           				data: function(d) {
-           					return {
-           						draw: d.draw,
-           						pageSize: d.length,
-           						pageNumber: d.length === 0 ? 1 : d.start / d.length + 1
-           					};
-           				}
-           			},
-           			headerCallback: function(thead, data, start, end, display) {
-           				table.columns().iterator('column', function(settings, column) {
-           					if (settings.aoColumns[ column ].termId !== undefined) {
-           						$(table.column(column).header()).attr('data-term-id', settings.aoColumns[ column ].termId);
-           					}
-           					$(table.column(column).header()).addClass(settings.aoColumns[ column ].factor === true ? 'factors' : 'variates');
-           				});
-           			},
-           			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+			table = $(tableIdentifier).DataTable({
+				destroy: true,
+				columns: columns,
+				scrollY: '500px',
+				scrollX: '100%',
+				scrollCollapse: true,
+				columnDefs: columnsDef,
+				lengthMenu: [[50, 75, 100], [50, 75, 100]],
+				bAutoWidth: true,
+				iDisplayLength: 100,
+				serverSide: true,
+				processing: true,
+				deferRender: true,
+				ajax: {
+					url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
+					type: 'GET',
+					cache: false,
+					data: function(d) {
+						return {
+							draw: d.draw,
+							pageSize: d.length,
+							pageNumber: d.length === 0 ? 1 : d.start / d.length + 1
+						};
+					}
+				},
+				headerCallback: function(thead, data, start, end, display) {
+					table.columns().iterator('column', function(settings, column) {
+						if (settings.aoColumns[ column ].termId !== undefined) {
+							$(table.column(column).header()).attr('data-term-id', settings.aoColumns[ column ].termId);
+						}
+						$(table.column(column).header()).addClass(settings.aoColumns[ column ].factor === true ? 'factors' : 'variates');
+					});
+				},
+				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+					var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
+					// Assuming ID is in last column
+					$(nRow).attr('id', aData.experimentId);
+					$(nRow).data('row-index', this.fnGetPosition(nRow));
+					$(nRow).attr('title', toolTip);
+					$('td', nRow).attr('nowrap', 'nowrap');
 
-           				var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
-           				// Assuming ID is in last column
-           				$(nRow).attr('id', aData.experimentId);
-           				$(nRow).data('row-index', this.fnGetPosition(nRow));
-           				$(nRow).attr('title', toolTip);
-           				$('td', nRow).attr('nowrap', 'nowrap');
+					$(nRow).find('.accepted-value, .invalid-value, .numeric-variable').each(function() {
+						var termId = $(this).data('term-id');
+						var cellData = $(this).text();
+						if (termId !== undefined) {
+							var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
+							var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
 
-           				$(nRow).find('.accepted-value, .invalid-value, .numeric-variable').each(function() {
+							if (dataTypeId == '1110') {
+								var minVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('min-range'));
+								var maxVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));
+								var isVariates =  $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").hasClass('variates');
+								if (isVariates) {
+									$(this).removeClass('accepted-value');
+									$(this).removeClass('invalid-value');
+									if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellData) || parseFloat(cellData) > parseFloat(maxVal))) {
+										if (cellData !== 'missing') {
+											if ($(this).find("input[type='hidden']").val() === 'true') {
+												$(this).addClass('accepted-value');
+											} else {
+												$(this).addClass('invalid-value');
+											}
+										}
+									}
+								}
+							} else if (possibleValues !== undefined) {
+								var values = possibleValues.split('|');
 
-           					var termId = $(this).data('term-id');
-           					var cellData = $(this).text();
-           					if (termId !== undefined) {
-           						var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
-           						var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
-           						if (dataTypeId == '1110') {
-           							var minVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('min-range'));
-           							var maxVal = ($(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));
-           							var isVariates =  $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").hasClass('variates');
-           							if (isVariates) {
-           								$(this).removeClass('accepted-value');
-           								$(this).removeClass('invalid-value');
-           								if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellData) || parseFloat(cellData) > parseFloat(maxVal))) {
-           									if (cellData !== 'missing') {
+								$(this).removeClass('accepted-value');
+								$(this).removeClass('invalid-value');
 
-           										if ($(this).find("input[type='hidden']").val() === 'true') {
-           											$(this).addClass('accepted-value');
-           										} else {
-           											$(this).addClass('invalid-value');
-           										}
-           									}
-           								}
-           							}
-           						} else if (possibleValues !== undefined) {
-           							var values = possibleValues.split('|');
+								if (cellData !== '' && cellData !== 'missing') {
+									if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
+										if ($(this).data('is-accepted') === '1') {
+											$(this).addClass('accepted-value');
+										} else if ($(this).data('is-accepted') === '0') {
+											$(this).removeClass('invalid-value').removeClass('accepted-value');
+										} else {
+											$(this).addClass('invalid-value');
+										}
+										$(this).data('term-id', $(this).data('term-id'));
+									}
+								}
+							}
+						}
+					});
+					return nRow;
+				},
+				fnInitComplete: function(oSettings, json) {
+					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
+					oSettings.oInstance.fnAdjustColumnSizing();
+					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+					if (this.$('.invalid-value').length !== 0) {
+						$('#review-out-of-bounds-data-list').show();
+					} else {
+						$('#review-out-of-bounds-data-list').hide();
+					}
+				},
+				dom: '<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp',
+				//TODO localise messages
+				language: {
+					processing: '<span class="throbber throbber-2x"></span>',
+					lengthMenu: 'Records per page: _MENU_'
+				},
+				// For column visibility
+				buttons: [
+				{
+					extend: 'colvis',
+					columns: ':not(:first-child)',
+					className: 'fbk-buttons-no-border fbk-colvis-button',
+					text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>'
+				}
+				]
+			});
 
-           							$(this).removeClass('accepted-value');
-           							$(this).removeClass('invalid-value');
+			if (studyId !== '') {
+				// Activate an inline edit on click of a table cell
+				$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
+					if (isAllowedEditMeasurementDataCell()) {
+						var $tdCell = $(this);
+						var cellTdIndex =  $(this).index();
+						var rowIndex = $(this).parent('tr').data('row-index');
+						var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq(' + cellTdIndex + ')');
 
-           							if (cellData !== '' && cellData !== 'missing') {
-           								if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
-           									if ($(this).data('is-accepted') === '1') {
-           										$(this).addClass('accepted-value');
-           									}else if ($(this).data('is-accepted') === '0') {
-           										$(this).removeClass('invalid-value').removeClass('accepted-value');
-           									} else {
-           										$(this).addClass('invalid-value');
-           									}
-           									$(this).data('term-id', $(this).data('term-id'));
-           								}
-           							}
-           						}
-           					}
-           				});
-           				return nRow;
-           			},
-           			fnInitComplete: function(oSettings, json) {
-           				$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
-           				oSettings.oInstance.fnAdjustColumnSizing();
-           				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-           				if (this.$('.invalid-value').length !== 0) {
-           					$('#review-out-of-bounds-data-list').show();
-           				} else {
-           					$('#review-out-of-bounds-data-list').hide();
-           				}
-           			},
-           			dom: '<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp',
-           			//TODO localise messages
-           			language: {
-           				processing: '<span class="throbber throbber-2x"></span>',
-           				lengthMenu: 'Records per page: _MENU_'
-           			},
-           			// For column visibility
-           			buttons: [
-           				{
-           					extend: 'colvis',
-           					columns: ':not(:first-child)',
-           					className: 'fbk-buttons-no-border fbk-colvis-button',
-           					text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>'
-           				}
-           			]
-           		});
+						$(tableIdentifier).data('show-inline-edit', '1');
 
-           		if (studyId !== '') {
-                           			// Activate an inline edit on click of a table cell
-                           			$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
-                           				if (isAllowedEditMeasurementDataCell()) {
-                           					var $tdCell = $(this);
-                           					var cellTdIndex =  $(this).index();
-                           					var rowIndex = $(this).parent('tr').data('row-index');
-                           					var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq(' + cellTdIndex + ')');
-                           					$(tableIdentifier).data('show-inline-edit', '1');
+						var experimentId = $(this).parent('tr').attr('id');
+						var phenotypeId = $(this).data('phenotype-id') !== undefined ? $(this).data('phenotype-id') : "";
 
-                           					var experimentId = $(this).parent('tr').attr('id');
-                           					var phenotypeId = $(this).data('phenotype-id') !== undefined ? $(this).data('phenotype-id') : "";
+						if ($colHeader.hasClass('variates')) {
+							$('body').data('last-td-time-clicked', new Date().getTime());
+						}
+						if ($colHeader.hasClass('factors')) {
+							//we should now submit it
+							processInlineEditInput();
+						} else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
+							processInlineEditInput();
+							if ($('#measurement-table').data('show-inline-edit') === '1') {
+								$.ajax({
+									url: '/Fieldbook/Common/addOrRemoveTraits/edit/experiment/cell/' + experimentId + '/' + $colHeader.data('term-id') + '?phenotypeId=' + phenotypeId,
+									type: 'GET',
+									success: function(data) {
+										$tdCell.html(data);
+										$tdCell.data('is-inline-edit', '1');
+									},
+									error: function() {
+										//TODO localise the message
+										showErrorMessage('Server Error', 'Could not update the measurement');
+									}
+								});
+							}
+						}
+					}
+				});
+			}
 
-                           					if ($colHeader.hasClass('variates')) {
-                           						$('body').data('last-td-time-clicked', new Date().getTime());
-                           					}
-                           					if ($colHeader.hasClass('factors')) {
-                           						//we should now submit it
-                           						processInlineEditInput();
-                           					} else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
-                           						processInlineEditInput();
-                           						if ($('#measurement-table').data('show-inline-edit') === '1') {
-                           							$.ajax({
-                           								url: '/Fieldbook/Common/addOrRemoveTraits/edit/experiment/cell/' + experimentId + '/' + $colHeader.data('term-id') + '?phenotypeId=' + phenotypeId,
-                           								type: 'GET',
-                           								success: function(data) {
-                           									$tdCell.html(data);
-                           									$tdCell.data('is-inline-edit', '1');
-                           								},
-                           								error: function() {
-                           									//TODO localise the message
-                           									showErrorMessage('Server Error', 'Could not update the measurement');
-                           								}
-                           							});
-                           						}
-                           					}
-                           				}
-                           			});
-                           		}
+			$('#measurementsDiv .mdt-columns').detach().insertAfter('.mdt-filtering');
+			$('.mdt-header').prepend($('#mdt-environment-list-panel').detach());
+			$('[name="measurement-table_length"]').addClass('inline-select mdt-table-length-selector');
+			$('.measurement-dropdown-menu a').click(function(e) {
+				var column;
 
+				e.stopPropagation();
+				if ($(this).parent().hasClass('fbk-dropdown-select-fade')) {
+					$(this).parent().removeClass('fbk-dropdown-select-fade');
+					$(this).parent().addClass('fbk-dropdown-select-highlight');
+				} else {
+					$(this).parent().addClass('fbk-dropdown-select-fade');
+					$(this).parent().removeClass('fbk-dropdown-select-highlight');
+				}
+				// Get the column API object
+
+				var colIndex = $(this).attr('data-index');
+				var cols = $(tableIdentifier).dataTable().fnSettings().aoColumns;
+				$(cols).each(function(index) {
+					var prevIndex = $(tableIdentifier).dataTable().fnSettings().aoColumns[index]._ColReorder_iOrigCol;
+					if (colIndex == prevIndex) {
+						column = table.column(index);
+						// Toggle the visibility
+						column.visible(!column.visible());
+					}
+				});
+			});
 		});
 
-
-
-           		/*$(tableIdentifier).dataTable().bind('sort', function() {
-           			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
-           		});*/
-           		$('#measurementsDiv .mdt-columns').detach().insertAfter('.mdt-filtering');
-           		$('.mdt-header').prepend($('#mdt-environment-list-panel').detach());
-           		$('[name="measurement-table_length"]').addClass('inline-select mdt-table-length-selector');
-           		$('.measurement-dropdown-menu a').click(function(e) {
-           			var column;
-
-           			e.stopPropagation();
-           			if ($(this).parent().hasClass('fbk-dropdown-select-fade')) {
-           				$(this).parent().removeClass('fbk-dropdown-select-fade');
-           				$(this).parent().addClass('fbk-dropdown-select-highlight');
-
-           			} else {
-           				$(this).parent().addClass('fbk-dropdown-select-fade');
-           				$(this).parent().removeClass('fbk-dropdown-select-highlight');
-           			}
-           			// Get the column API object
-           			var colIndex = $(this).attr('data-index');
-
-           			var cols = $(tableIdentifier).dataTable().fnSettings().aoColumns;
-           			$(cols).each(function(index) {
-           				var prevIndex = $(tableIdentifier).dataTable().fnSettings().aoColumns[index]._ColReorder_iOrigCol;
-           				if (colIndex == prevIndex) {
-           					column = table.column(index);
-           					// Toggle the visibility
-           					column.visible(!column.visible());
-           				}
-           			});
-           		});
-           	};
-           	return dataTableConstructor;
-
-           })(jQuery);
+		/*$(tableIdentifier).dataTable().bind('sort', function() {
+		$(tableIdentifier).dataTable().fnAdjustColumnSizing();
+		});*/
+	};
+	return dataTableConstructor;
+})(jQuery);
 
 			/**
 			 *   A copy of Measurement table for now with necessary changes for now. Modifications in progress

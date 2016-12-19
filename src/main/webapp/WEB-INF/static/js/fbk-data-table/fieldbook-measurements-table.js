@@ -114,8 +114,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				} else if (displayColumn.dataTypeId === 1130) {
 					// Column definition for Categorical data type
 
-					if ($(this).data('term-valid-values') == null) {
-						$(this).data('term-valid-values', '');
+					if (displayColumn.possibleValuesString == null) {
+						displayColumn.possibleValuesString =  '';
 					}
 
 					var possibleValues = displayColumn.possibleValuesString.split('|');
@@ -237,6 +237,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            					if (settings.aoColumns[ column ].termId !== undefined) {
            						$(table.column(column).header()).attr('data-term-id', settings.aoColumns[ column ].termId);
            					}
+           					$(table.column(column).header()).addClass(settings.aoColumns[ column ].factor === true ? 'factors' : 'variates');
            				});
            			},
            			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -323,48 +324,50 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
            			]
            		});
 
+           		if (studyId !== '') {
+                           			// Activate an inline edit on click of a table cell
+                           			$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
+                           				if (isAllowedEditMeasurementDataCell()) {
+                           					var $tdCell = $(this);
+                           					var cellTdIndex =  $(this).index();
+                           					var rowIndex = $(this).parent('tr').data('row-index');
+                           					var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq(' + cellTdIndex + ')');
+                           					$(tableIdentifier).data('show-inline-edit', '1');
+
+                           					var experimentId = $(this).parent('tr').attr('id');
+                           					var phenotypeId = $(this).data('phenotype-id') !== undefined ? $(this).data('phenotype-id') : "";
+
+                           					if ($colHeader.hasClass('variates')) {
+                           						$('body').data('last-td-time-clicked', new Date().getTime());
+                           					}
+                           					if ($colHeader.hasClass('factors')) {
+                           						//we should now submit it
+                           						processInlineEditInput();
+                           					} else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
+                           						processInlineEditInput();
+                           						if ($('#measurement-table').data('show-inline-edit') === '1') {
+                           							$.ajax({
+                           								url: '/Fieldbook/Common/addOrRemoveTraits/edit/experiment/cell/' + experimentId + '/' + $colHeader.data('term-id') + '?phenotypeId=' + phenotypeId,
+                           								type: 'GET',
+                           								success: function(data) {
+                           									$tdCell.html(data);
+                           									$tdCell.data('is-inline-edit', '1');
+                           								},
+                           								error: function() {
+                           									//TODO localise the message
+                           									showErrorMessage('Server Error', 'Could not update the measurement');
+                           								}
+                           							});
+                           						}
+                           					}
+                           				}
+                           			});
+                           		}
+
 		});
 
 
-           		if (studyId !== '') {
-           			// Activate an inline edit on click of a table cell
-           			$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
-           				if (isAllowedEditMeasurementDataCell()) {
-           					var $tdCell = $(this);
-           					var cellTdIndex =  $(this).index();
-           					var rowIndex = $(this).parent('tr').data('row-index');
-           					var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq(' + cellTdIndex + ')');
-           					$(tableIdentifier).data('show-inline-edit', '1');
 
-           					var experimentId = $(this).parent('tr').attr('id');
-           					var phenotypeId = $(this).data('phenotype-id') !== undefined ? $(this).data('phenotype-id') : "";
-
-           					if ($colHeader.hasClass('variates')) {
-           						$('body').data('last-td-time-clicked', new Date().getTime());
-           					}
-           					if ($colHeader.hasClass('factors')) {
-           						//we should now submit it
-           						processInlineEditInput();
-           					} else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
-           						processInlineEditInput();
-           						if ($('#measurement-table').data('show-inline-edit') === '1') {
-           							$.ajax({
-           								url: '/Fieldbook/Common/addOrRemoveTraits/edit/experiment/cell/' + experimentId + '/' + $colHeader.data('term-id') + '?phenotypeId=' + phenotypeId,
-           								type: 'GET',
-           								success: function(data) {
-           									$tdCell.html(data);
-           									$tdCell.data('is-inline-edit', '1');
-           								},
-           								error: function() {
-           									//TODO localise the message
-           									showErrorMessage('Server Error', 'Could not update the measurement');
-           								}
-           							});
-           						}
-           					}
-           				}
-           			});
-           		}
            		/*$(tableIdentifier).dataTable().bind('sort', function() {
            			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
            		});*/

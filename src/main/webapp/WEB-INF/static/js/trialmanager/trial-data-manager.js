@@ -532,7 +532,9 @@
                     }
 
                     // GLOBAL
-                    onMeasurementsObservationLoad(false);
+                    if ($('#measurement-table') && $('#measurement-table').length !== 0) {
+                    	onMeasurementsObservationLoad(false);
+                    }
 				},
 				onUpdateData: function(dataKey, updateFunction) {
 					if (!dataRegistry[dataKey]) {

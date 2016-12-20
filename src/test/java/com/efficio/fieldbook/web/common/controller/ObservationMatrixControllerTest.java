@@ -301,8 +301,53 @@ public class ObservationMatrixControllerTest {
 		Assert.assertEquals("1", results.get(ObservationMatrixController.SUCCESS));
 		Assert.assertTrue(results.containsKey(ObservationMatrixController.DATA));
 
-		// Validation and saving of phenotype must occur when isDiscard flag is not on.
+		// Validation and saving of phenotype must occur when isDiscard flag is off.
 		Mockito.verify(mockValidationService).validateObservationValue(variableText, newValue);
+		Mockito.verify(this.studyDataManager).saveOrUpdatePhenotypeValue(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString(),
+				Mockito.any(Phenotype.class), Mockito.anyInt());
+
+	}
+
+	@Test
+	public void testUpdateExperimentCellDataIfNotDiscardInvalidButKeep() {
+		int termId = 2000;
+		String newValue = "new value";
+		UserSelection userSelection = new UserSelection();
+		Workbook workbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setId(1234);
+		workbook.setStudyDetails(studyDetails);
+		userSelection.setWorkbook(workbook);
+		this.observationMatrixController.setUserSelection(userSelection);
+
+		ValidationService mockValidationService = Mockito.mock(ValidationService.class);
+		Mockito.when(mockValidationService.validateObservationValue(Mockito.any(Variable.class), Mockito.anyString())).thenReturn(true);
+		this.observationMatrixController.setValidationService(mockValidationService);
+
+		Variable variableText = new Variable();
+		Scale scaleText = new Scale();
+		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
+		variableText.setScale(scaleText);
+		Mockito.when(this.ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(termId), Matchers.eq(true),
+				Matchers.eq(false))).thenReturn(variableText);
+
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("experimentId", "1");
+		data.put("termId", Integer.toString(termId));
+		data.put("value", newValue);
+
+		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+		Mockito.when(req.getParameter("isDiscard")).thenReturn("0");
+		Mockito.when(req.getParameter("invalidButKeep")).thenReturn("1");
+
+		Map<String, Object> results = this.observationMatrixController.updateExperimentCellData(data, req);
+
+		Assert.assertEquals("1", results.get(ObservationMatrixController.SUCCESS));
+		Assert.assertTrue(results.containsKey(ObservationMatrixController.DATA));
+
+		// Validation step should not be invoked when there is a signal to keep the value even if it is invalid.
+		Mockito.verify(mockValidationService, Mockito.never()).validateObservationValue(variableText, newValue);
+		// But save step must be invoked.
 		Mockito.verify(this.studyDataManager).saveOrUpdatePhenotypeValue(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString(),
 				Mockito.any(Phenotype.class), Mockito.anyInt());
 	}
@@ -345,7 +390,7 @@ public class ObservationMatrixControllerTest {
 		Assert.assertEquals("1", results.get(ObservationMatrixController.SUCCESS));
 		Assert.assertTrue(results.containsKey(ObservationMatrixController.DATA));
 
-		// Validation and saving of phenotype must NOT occur when isDiscard flag is not off.
+		// Validation and saving of phenotype must NOT occur when isDiscard flag is on.
 		Mockito.verify(mockValidationService, Mockito.never()).validateObservationValue(variableText, newValue);
 		Mockito.verify(this.studyDataManager, Mockito.never()).saveOrUpdatePhenotypeValue(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString(),
 				Mockito.any(Phenotype.class), Mockito.anyInt());

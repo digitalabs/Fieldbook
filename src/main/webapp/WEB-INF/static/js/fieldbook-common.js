@@ -3926,16 +3926,16 @@ function processInlineEditInput() {
 			$('#measurement-table').data('show-inline-edit', '0');
 			return false;
 		} else {
-			saveInlineEdit(0);
+			saveInlineEdit(0, 0);
 		}
 	}
 	return true;
 }
-function saveInlineEdit(isDiscard) {
+function saveInlineEdit(isDiscard, invalidButKeep) {
 	'use strict';
 
 	$.ajax({
-		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/data?isDiscard=' + isDiscard,
+		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/data?isDiscard=' + isDiscard + '&invalidButKeep=' + invalidButKeep,
 		type: 'POST',
 		async: false,
 		data:   $('#measurement-table').data('json-inline-edit-val'),
@@ -4200,10 +4200,10 @@ function onMeasurementsInlineEditConfirmationEvent() {
 	return function(e) {
 		if (parseInt($(this).data('inline-edit'), 10) === 1) {
 			//keep the changes
-			saveInlineEdit(0);
+			saveInlineEdit(0, 1);
 		} else if (parseInt($(this).data('inline-edit'), 10) === 0) {
 			//discard the changes
-			saveInlineEdit(1);
+			saveInlineEdit(1, 0);
 		}
 		$('#inlineEditConfirmationModal').modal('hide');
 	};

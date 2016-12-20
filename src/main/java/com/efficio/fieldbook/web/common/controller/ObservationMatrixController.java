@@ -197,6 +197,8 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		int termId = Integer.valueOf(data.get(ObservationMatrixController.TERM_ID));
 		String value = data.get("value");
 		boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard")) ? true : false;
+		boolean invalidButKeep = "1".equalsIgnoreCase(req.getParameter("invalidButKeep")) ? true : false;
+
 		map.put("experimentId", experimentId);
 		map.put("phenotypeId", phenotypeId != null ? phenotypeId : "");
 
@@ -208,10 +210,12 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 			Variable trait = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
 
-			if (!this.validationService.validateObservationValue(trait, value)) {
-				map.put(ObservationMatrixController.SUCCESS, "0");
-				map.put(ObservationMatrixController.ERROR_MESSAGE, "Invalid value.");
-				return map;
+			if (!invalidButKeep) {
+				if (!this.validationService.validateObservationValue(trait, value)) {
+					map.put(ObservationMatrixController.SUCCESS, "0");
+					map.put(ObservationMatrixController.ERROR_MESSAGE, "Invalid value.");
+					return map;
+				}
 			}
 
 			this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,

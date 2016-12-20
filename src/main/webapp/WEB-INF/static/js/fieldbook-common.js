@@ -4084,7 +4084,7 @@ function reloadMeasurementTable() {
 }
 function hasMeasurementsInvalidValue() {
 	'use strict';
-	if ($('#measurement-table').dataTable().$('.invalid-value').length === 0) {
+	if ($('#measurement-table').find('.invalid-value').length === 0) {
 		return false;
 	}
 	return true;

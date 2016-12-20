@@ -147,7 +147,8 @@
 				$('#startIndex').val($('#startIndex2').val());
 				$('#interval').val($('#interval2').val());
 				$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
-				var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+				var columnsOrder = ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) ?
+					BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];
 
 				var serializedData = $form.serializeArray();
 				serializedData[serializedData.length] = {name: 'columnOrders', value: (JSON.stringify(columnsOrder))};
@@ -410,10 +411,6 @@
 				extractTreatmentFactorSettings: extractTreatmentFactorSettings,
 				saveCurrentData: function() {
 
-					//After Save Measurements table is available in edit mode
-					$('body').removeClass('preview-measurements-only');
-					//TODO Remove other classes as well
-
 					if (!processInlineEditInput()) {
 						return false;
 					}
@@ -432,7 +429,8 @@
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
                         stockListImportNotSaved = false;
 						performDataCleanup();
-						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+						var columnsOrder =  ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) ?
+							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];
 						var serializedData = (JSON.stringify(columnsOrder));
 						if (!service.isOpenTrial()) {
 							service.currentData.columnOrders = serializedData;
@@ -531,8 +529,12 @@
                         setSelectedLocation();
                     }
 
+                    //After Save Measurements table is available in edit mode
+                    $('body').removeClass('preview-measurements-only');
+                    //TODO Remove other classes as well
+
                     // GLOBAL
-                    if ($('#measurement-table') && $('#measurement-table').length !== 0) {
+                    if ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) {
                     	onMeasurementsObservationLoad(false);
                     }
 				},

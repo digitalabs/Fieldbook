@@ -116,7 +116,7 @@ public class ValidationServiceImpl implements ValidationService {
 		}
 		
 		else if (var.getScale().getDataType() == DataType.DATE_TIME_VARIABLE) {
-			return new DateValidator().isValid(value, "yyyy-MM-dd");
+			return new DateValidator().isValid(value, "yyyyMMdd");
 		}
 
 		// TODO Are there other validation cases?

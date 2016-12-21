@@ -88,18 +88,10 @@ function initializeInlineMeasurementInput(possibleValuesSuggestions) {
 	if ($('.inline-input .date-input').length > 0) {
 		$('.inline-input .date-input').each(function() {
 			$(this).datepicker({
-				'format' : 'yyyy-mm-dd'
+				'format' : 'yyyymmdd'
 			}).on('changeDate', function() {
 				$(this).datepicker('hide');
 				$('body').data('last-td-time-clicked', new Date().getTime());
-			}).on('change', function() {
-				var curDate = $(this).val();
-				try {
-					var r = $.datepicker.parseDate('yy-mm-dd', curDate);
-					$(this).datepicker('setDate', r);
-				} catch (e) {
-					$(this).datepicker('setDate', new Date());
-				}
 			});
 		});
 	}

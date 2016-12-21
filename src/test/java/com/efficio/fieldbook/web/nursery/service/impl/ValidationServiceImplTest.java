@@ -244,9 +244,9 @@ public class ValidationServiceImplTest {
 		Assert.assertTrue(this.validationService.validateObservationValue(variable, ""));
 		Assert.assertTrue(this.validationService.validateObservationValue(variable, null));
 
-		Assert.assertTrue(this.validationService.validateObservationValue(variable, "2016-12-25"));
-		Assert.assertFalse(this.validationService.validateObservationValue(variable, "2016-13-25"));
-		Assert.assertFalse(this.validationService.validateObservationValue(variable, "2016-12-32"));
-		Assert.assertFalse(this.validationService.validateObservationValue(variable, "2015-02-29"));
+		Assert.assertTrue(this.validationService.validateObservationValue(variable, "20161225"));
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "20161325"));
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "20161232"));
+		Assert.assertFalse(this.validationService.validateObservationValue(variable, "20150229"));
 	}
 }

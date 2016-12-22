@@ -655,7 +655,7 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
-		return measurementDatasetVariables = workbook.arrangeMeasurementVariables(measurementDatasetVariables);
+		return workbook.arrangeMeasurementVariables(measurementDatasetVariables);
 	}
 
 	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final List<MeasurementVariable> studyConditions,

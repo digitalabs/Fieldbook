@@ -415,7 +415,7 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 
 	//FIXME use variables insted of iterating through $(tableIdentifier + ' thead tr th')
 	//FIXME this would allow to remove timeouts/rebounce function etc.
-	var dataTableConstructor = function PreviewMeasurementsDataTable(tableIdentifier) {
+	var dataTableConstructor = function PreviewMeasurementsDataTable(tableIdentifier, columnsOrder) {
 		'use strict';
 
 		var columns = [],
@@ -436,7 +436,7 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 		$.ajax({
 			url: '/Fieldbook/TrialManager/createTrial/columns',
 			type: 'POST',
-			data: 'traitsList=' + trialManagerDataService.settings.measurements.m_keys
+			data: 'traitsList=' + trialManagerDataService.settings.measurements.m_keys + '&columnOrders=' + columnsOrder
 		}).done(function(displayColumns) {
 
 			jQuery.each(displayColumns, function(i, displayColumn) {

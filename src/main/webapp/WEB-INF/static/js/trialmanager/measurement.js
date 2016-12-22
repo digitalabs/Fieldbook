@@ -57,9 +57,8 @@
                     var dataParam = 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys +
                     	'&deletedEnvironment=' + 0 + addedData;
 					$http.post('/Fieldbook/TrialManager/createTrial/measurements/variables', dataParam).success(function(data) {
-						debounce(function() {
-							new BMS.Fieldbook.PreviewMeasurementsDataTable('#preview-measurement-table', data);
-						}, DELAY, false)();
+						new BMS.Fieldbook.PreviewMeasurementsDataTable('#preview-measurement-table',
+						encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
 					});
 
 				};

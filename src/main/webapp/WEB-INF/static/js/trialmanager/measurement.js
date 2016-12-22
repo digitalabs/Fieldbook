@@ -4,8 +4,9 @@
 
 	angular.module('manageTrialApp').controller('MeasurementsCtrl',
 		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http', 'DTOptionsBuilder', 'DTColumnBuilder',
-		'DTColumnDefBuilder',
-			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder, DTColumnBuilder, DTColumnDefBuilder) {
+		'DTColumnDefBuilder', '$filter',
+			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder, DTColumnBuilder,
+				DTColumnDefBuilder, $filter) {
 				var DELAY = 1500; // 1.5 secs
 				var studyId = $('#studyId').val();
 
@@ -37,6 +38,13 @@
 						$item.instanceDbId).load();
 				};
 
+				$scope.getListOfAdditionalColumns = function() {
+					if (!$scope.settings.keys()) {
+						return [];
+					}
+					return $filter('removeHiddenVariableFilter')($scope.settings.keys(), $scope.settings.vals());
+				};
+
 				$scope.previewMeasurements = function() {
 					$scope.isDisplayPreview = true;
 					// The jquery is out of sync with angular changes, set this hack timeout, it will be removed once the table is in
@@ -45,7 +53,10 @@
 					// the preview datatable could not start its construction until all variables in 'thead tr th' are loaded with
 					// arrangeMeasurementVariables() function
 					// FIXME this should be reimplemented properly
-					$http.get('/Fieldbook/TrialManager/createTrial/measurements/variables').success(function(data) {
+					var addedData = '&columnOrders=' + encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns()));
+                    var dataParam = 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys +
+                    	'&deletedEnvironment=' + 0 + addedData;
+					$http.post('/Fieldbook/TrialManager/createTrial/measurements/variables', dataParam).success(function(data) {
 						debounce(function() {
 							new BMS.Fieldbook.PreviewMeasurementsDataTable('#preview-measurement-table', data);
 						}, DELAY, false)();
@@ -71,7 +82,7 @@
 						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 						TrialManagerDataService.applicationData.isGeneratedOwnDesign = false;
 
-						debounce(reloadMeasurementPage, DELAY, false)();
+						reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
 
 					}
 
@@ -117,7 +128,7 @@
 					$scope.updateOccurred = true;
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
 
-					debounce(reloadMeasurementPage, DELAY, false)();
+					reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
 
 					$scope.isDisplayPreview = false;
 					$('body').addClass('preview-measurements-only');
@@ -130,18 +141,14 @@
 					TrialManagerDataService.clearUnappliedChangesFlag();
 					TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 
-					debounce(function() {
-						reloadMeasurementPage(result.deletedEnvironmentIndex).then(function() {
-							result.deferred.resolve();
-						});
-					}, DELAY, false)();
+					reloadMeasurementPage(result.deletedEnvironmentIndex, $scope.getListOfAdditionalColumns());
 				});
 
 				$scope.$on('variableAdded', function() {
 					$scope.updateOccurred = true;
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
 
-					debounce(reloadMeasurementPage, DELAY, false)();
+					reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
 
 					$scope.isDisplayPreview = false;
                     $('body').addClass('preview-measurements-only');
@@ -149,7 +156,7 @@
 				});
 
 				/* Controller Utility functions */
-				function reloadMeasurementPage(deletedEnvironmentIndex) {
+				function reloadMeasurementPage(deletedEnvironmentIndex, columnsOrder) {
 					deletedEnvironmentIndex = typeof deletedEnvironmentIndex === 'undefined' ? 0 : deletedEnvironmentIndex;
 
 					var $body = $('body');
@@ -157,7 +164,8 @@
 					var $measurementContainer = $('#measurementsDiv');
 
 					if ($measurementTable.length !== 0) {
-						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
+						/*var columnsOrder = $('#measurement-table') && $('#measurement-table').length !== 0 ?
+							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true) : [];*/
 						var addedData = '&columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
 						var dataParam = 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys +
 							'&deletedEnvironment=' + deletedEnvironmentIndex + addedData;

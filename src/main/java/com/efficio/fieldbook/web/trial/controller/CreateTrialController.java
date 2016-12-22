@@ -15,11 +15,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -27,6 +31,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +46,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
 import com.efficio.fieldbook.web.trial.bean.Environment;
@@ -51,6 +58,7 @@ import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -237,13 +245,50 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/measurements/variables", method = RequestMethod.GET, produces = "application/json")
-	public List<MeasurementVariable> showMeasurementsVariables() {
+	@RequestMapping(value = "/measurements/variables", method = RequestMethod.POST, produces = "application/json")
+	public List<MeasurementVariable> showMeasurementsVariables(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final HttpServletRequest request) {
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
-		if (workbook != null) {
-			return workbook.getMeasurementDatasetVariablesView();
+
+		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
+		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
+		// we show only traits that are being passed by the frontend
+		final String traitsListCsv = request.getParameter("traitsList");
+
+		final List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
+
+		final List<SettingDetail> traitList = this.userSelection.getBaselineTraitsList();
+
+		if (!measurementDatasetVariables.isEmpty()) {
+			for (final MeasurementVariable var : measurementDatasetVariables) {
+				if (var.isFactor()) {
+					newMeasurementDatasetVariables.add(var);
+				}
+			}
+			if (traitsListCsv != null && !"".equalsIgnoreCase(traitsListCsv)) {
+				final StringTokenizer token = new StringTokenizer(traitsListCsv, ",");
+				while (token.hasMoreTokens()) {
+					final int id = Integer.valueOf(token.nextToken());
+					final MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
+					if (currentVar == null) {
+						final StandardVariable var =
+								this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
+						var.setPhenotypicType(PhenotypicType.VARIATE);
+						final MeasurementVariable newVar =
+								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
+						newVar.setFactor(false);
+						newMeasurementDatasetVariables.add(newVar);
+						SettingsUtil.findAndUpdateVariableName(traitList, newVar);
+					} else {
+						newMeasurementDatasetVariables.add(currentVar);
+						SettingsUtil.findAndUpdateVariableName(traitList, currentVar);
+					}
+				}
+			}
+			measurementDatasetVariables = newMeasurementDatasetVariables;
 		}
-		return new ArrayList<>();
+
+		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
+		return workbook.arrangeMeasurementVariables(measurementDatasetVariables);
 	}
 
 	@Override

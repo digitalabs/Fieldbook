@@ -265,12 +265,15 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		return isTrial ? "TrialManager/openTrial" : "NurseryManager/addOrRemoveTraits";
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/revert/data", method = RequestMethod.GET)
-	public String revertData(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
+	public Map<String, Object> revertData(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
 
 		this.doRevertData(form);
 
-		return super.showAjaxPage(model, ImportStudyController.ADD_OR_REMOVE_TRAITS_HTML);
+		final Map<String, Object> result = new HashMap<>();
+		result.put("success", "1");
+		return result;
 	}
 
 	private void doRevertData(final CreateNurseryForm form) {

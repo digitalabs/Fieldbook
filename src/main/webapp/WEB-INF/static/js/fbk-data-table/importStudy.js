@@ -121,6 +121,7 @@ function doMeasurementsReload(hasDataOverwrite) {
 		url: '/Fieldbook/ImportManager/import/preview',
 		type: 'POST',
 		success: function(html) {
+			onMeasurementsObservationLoad(false);
 			// $('#measurementsDiv').html(html);
 			$('.fbk-discard-imported-data').removeClass('fbk-hide');
 			if (hasDataOverwrite === '1') {

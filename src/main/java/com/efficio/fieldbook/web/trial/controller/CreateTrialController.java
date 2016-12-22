@@ -135,6 +135,13 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/columns", method = RequestMethod.POST)
+	public List<MeasurementVariable> getColumns (@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
+			final HttpServletRequest request) {
+		return this.getLatestMeasurements(form, request);
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/useExistingTrial", method = RequestMethod.GET)
 	public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "trialID") final Integer trialID) {
 		final Map<String, Object> tabDetails = new HashMap<String, Object>();
@@ -247,48 +254,7 @@ public class CreateTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/measurements/variables", method = RequestMethod.POST, produces = "application/json")
 	public List<MeasurementVariable> showMeasurementsVariables(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final HttpServletRequest request) {
-		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
-
-		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
-		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
-		// we show only traits that are being passed by the frontend
-		final String traitsListCsv = request.getParameter("traitsList");
-
-		final List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
-
-		final List<SettingDetail> traitList = this.userSelection.getBaselineTraitsList();
-
-		if (!measurementDatasetVariables.isEmpty()) {
-			for (final MeasurementVariable var : measurementDatasetVariables) {
-				if (var.isFactor()) {
-					newMeasurementDatasetVariables.add(var);
-				}
-			}
-			if (traitsListCsv != null && !"".equalsIgnoreCase(traitsListCsv)) {
-				final StringTokenizer token = new StringTokenizer(traitsListCsv, ",");
-				while (token.hasMoreTokens()) {
-					final int id = Integer.valueOf(token.nextToken());
-					final MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
-					if (currentVar == null) {
-						final StandardVariable var =
-								this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
-						var.setPhenotypicType(PhenotypicType.VARIATE);
-						final MeasurementVariable newVar =
-								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
-						newVar.setFactor(false);
-						newMeasurementDatasetVariables.add(newVar);
-						SettingsUtil.findAndUpdateVariableName(traitList, newVar);
-					} else {
-						newMeasurementDatasetVariables.add(currentVar);
-						SettingsUtil.findAndUpdateVariableName(traitList, currentVar);
-					}
-				}
-			}
-			measurementDatasetVariables = newMeasurementDatasetVariables;
-		}
-
-		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
-		return workbook.arrangeMeasurementVariables(measurementDatasetVariables);
+		return this.getLatestMeasurements(form, request);
 	}
 
 	@Override

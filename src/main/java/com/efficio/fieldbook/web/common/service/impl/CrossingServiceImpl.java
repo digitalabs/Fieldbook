@@ -140,7 +140,7 @@ public class CrossingServiceImpl implements CrossingService {
 	public boolean applyCrossSettingWithNamingRules(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final Integer userId, final Workbook workbook) {
 
-		int entryIdCounter = 1;
+		int entryIdCounter = 0;
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
 			populateSeedSource(importedCross, workbook);
 			importedCross.setEntryCode(String.valueOf(entryIdCounter++));

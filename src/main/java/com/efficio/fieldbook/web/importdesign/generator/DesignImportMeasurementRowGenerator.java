@@ -27,6 +27,7 @@ import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.google.common.collect.ImmutableMap;
 
 public class DesignImportMeasurementRowGenerator {
 
@@ -35,7 +36,7 @@ public class DesignImportMeasurementRowGenerator {
 	private Workbook workbook;
 	private Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeaders;
 	private List<String> rowValues;
-	private List<ImportedGermplasm> importedGermplasm;
+	private ImmutableMap<Integer, ImportedGermplasm> importedGermplasm;
 	private Map<Integer, StandardVariable> germplasmStandardVariables;
 	private Set<String> trialInstancesFromUI;
 	private boolean isPreview;
@@ -49,7 +50,7 @@ public class DesignImportMeasurementRowGenerator {
 
 	public DesignImportMeasurementRowGenerator(final FieldbookService fieldbookService, final Workbook workbook,
 			final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId,
-			final List<ImportedGermplasm> importedGermplasm, final Map<Integer, StandardVariable> germplasmStandardVariables,
+			final ImmutableMap<Integer, ImportedGermplasm> importedGermplasm, final Map<Integer, StandardVariable> germplasmStandardVariables,
 			final Set<String> trialInstancesFromUI, final boolean isPreview, final Map<String, Integer> availableCheckTypes) {
 		super();
 		this.fieldbookService = fieldbookService;
@@ -173,11 +174,11 @@ public class DesignImportMeasurementRowGenerator {
 
 	}
 
-	protected void addGermplasmDetailsToDataList(final List<ImportedGermplasm> importedGermplasm,
+	protected void addGermplasmDetailsToDataList(final ImmutableMap<Integer, ImportedGermplasm> importedGermplasm,
 			final Map<Integer, StandardVariable> germplasmStandardVariables, final List<MeasurementData> dataList, final Integer entryNo,
 			final boolean hasEntryTypeColumnFromTheImport) {
 
-		final ImportedGermplasm germplasmEntry = importedGermplasm.get(entryNo - 1);
+		final ImportedGermplasm germplasmEntry = importedGermplasm.get(entryNo);
 
 		if (germplasmStandardVariables.get(TermId.ENTRY_NO.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_NO.getId()), germplasmEntry.getEntryId()
@@ -291,11 +292,11 @@ public class DesignImportMeasurementRowGenerator {
 		this.rowValues = rowValues;
 	}
 
-	public List<ImportedGermplasm> getImportedGermplasm() {
+	public ImmutableMap<Integer, ImportedGermplasm> getImportedGermplasm() {
 		return this.importedGermplasm;
 	}
 
-	public void setImportedGermplasm(final List<ImportedGermplasm> importedGermplasm) {
+	public void setImportedGermplasm(final ImmutableMap<Integer, ImportedGermplasm> importedGermplasm) {
 		this.importedGermplasm = importedGermplasm;
 	}
 

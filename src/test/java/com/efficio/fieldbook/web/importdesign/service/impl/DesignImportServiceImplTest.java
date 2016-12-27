@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -53,6 +51,11 @@ import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoIniti
 import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
+import junit.framework.Assert;
 
 @SuppressWarnings("deprecation")
 @RunWith(MockitoJUnitRunner.class)
@@ -474,65 +477,20 @@ public class DesignImportServiceImplTest {
 				expectedStartingPlotNo, startingPlotNo.intValue());
 	}
 
-	@Test
-	public void testRetrieveImportedGermplasmForNewTrial() {
-		final int startingEntryNo = 4;
-		final ImportedGermplasmMainInfo importedGermplasmInfo = ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo();
-
-		final Integer entryNoDelta =
-				startingEntryNo - importedGermplasmInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId();
-
-		final List<Integer> previousImportedGermplasmListEntryNos = new ArrayList<Integer>();
-		for (final ImportedGermplasm entry : importedGermplasmInfo.getImportedGermplasmList().getImportedGermplasms()) {
-			previousImportedGermplasmListEntryNos.add(entry.getEntryId());
-		}
-
-		Mockito.doReturn(importedGermplasmInfo).when(this.userSelection).getImportedGermplasmMainInfo();
-
-		this.service.retrieveImportedGermplasm(null, startingEntryNo);
-
-		final List<ImportedGermplasm> currentImportedGermplasmList = new ArrayList<ImportedGermplasm>();
-		currentImportedGermplasmList.addAll(importedGermplasmInfo.getImportedGermplasmList().getImportedGermplasms());
-
-		int currentIndx = 0;
-		while (currentIndx < currentImportedGermplasmList.size()) {
-			Assert.assertEquals("Expecting that the new entry no is incremented based on the stated starting no.",
-					Integer.valueOf(previousImportedGermplasmListEntryNos.get(currentIndx)).intValue() + entryNoDelta,
-					Integer.valueOf(currentImportedGermplasmList.get(currentIndx).getEntryId()).intValue());
-			currentIndx++;
-		}
-	}
-
-	@Test
-	public void testRetrieveImportedGermplasmForExistingTrial() {
-		final int startingEntryNo = 4;
-		final ImportedGermplasmMainInfo importedGermplasmInfo = ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo();
-
-		final List<Integer> previousImportedGermplasmListEntryNos = new ArrayList<Integer>();
-		for (final ImportedGermplasm entry : importedGermplasmInfo.getImportedGermplasmList().getImportedGermplasms()) {
-			previousImportedGermplasmListEntryNos.add(entry.getEntryId());
-		}
-
-		Mockito.doReturn(importedGermplasmInfo).when(this.userSelection).getImportedGermplasmMainInfo();
-		this.service.retrieveImportedGermplasm(1, startingEntryNo);
-
-		final List<ImportedGermplasm> currentImportedGermplasmList = new ArrayList<ImportedGermplasm>();
-		currentImportedGermplasmList.addAll(importedGermplasmInfo.getImportedGermplasmList().getImportedGermplasms());
-
-		int currentIndx = 0;
-		while (currentIndx < currentImportedGermplasmList.size()) {
-			Assert.assertEquals("Expecting that no changes made on starting no for existing trial..",
-					Integer.valueOf(previousImportedGermplasmListEntryNos.get(currentIndx)).intValue(),
-					Integer.valueOf(currentImportedGermplasmList.get(currentIndx).getEntryId()).intValue());
-			currentIndx++;
-		}
-	}
-
 	private DesignImportMeasurementRowGenerator generateMeasurementRowGenerator() {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(6, 3);
 		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId =
 				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
-		final List<ImportedGermplasm> importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
+
+		final ImmutableMap<Integer, ImportedGermplasm> importedGermplasm = Maps.uniqueIndex(
+				ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(), new Function<ImportedGermplasm, Integer>() {
+
+					@Override
+					public Integer apply(ImportedGermplasm input) {
+						return input.getEntryId();
+					}
+				});
+
 		final Map<Integer, StandardVariable> germplasmStandardVariables = new HashMap<Integer, StandardVariable>();
 		germplasmStandardVariables.put(TermId.ENTRY_NO.getId(),
 				StandardVariableInitializer.createStdVariable(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name()));

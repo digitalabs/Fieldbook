@@ -15,6 +15,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -31,7 +32,7 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.context.MessageSource;
-import org.apache.commons.lang3.StringUtils;
+
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
@@ -42,6 +43,9 @@ import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 public class DesignImportServiceImpl implements DesignImportService {
 
@@ -86,8 +90,16 @@ public class DesignImportServiceImpl implements DesignImportService {
 			this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, workbook, designImportData);
 		}
 
-		final List<ImportedGermplasm> importedGermplasm =
-				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+		final ImmutableMap<Integer, ImportedGermplasm> importedGermplasm =
+				Maps.uniqueIndex(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
+						new Function<ImportedGermplasm, Integer>() {
+
+							@Override
+							public Integer apply(ImportedGermplasm input) {
+								return input.getEntryId();
+							}
+
+						});
 
 		final Map<Integer, List<String>> csvData = designImportData.getRowDataMap();
 		final Map<Integer, StandardVariable> germplasmStandardVariables =

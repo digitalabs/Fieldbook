@@ -2,10 +2,10 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.easymock.internal.matchers.Matches;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -34,6 +35,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -57,6 +59,11 @@ public class CrossingServiceImplTest {
 	public static final String TEST_PROCESS_CODE_WITH_PREFIX = "B[RCRPRNT]";
 	public static final String TEST_SOURCE_1 = "MALE:1:FEMALE:1";
 	public static final String TEST_SOURCE_2 = "MALE:2:FEMALE:2";
+	public static final int PLOT_NUMBER_FLD_NO = 2003;
+	private static final int PLOT_CODE_FLD_NO = 1552;
+	private static final int CURRENT_USER_ID = 1;
+	private static final String TEST_FEMALE_PLOT_NO_1 = "1";
+	private static final String TEST_FEMALE_PLOT_NO_2 = "2";
 
     private ImportedCrossesList importedCrossesList;
 
@@ -192,6 +199,8 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testApplyCrossSetting() throws MiddlewareQueryException {
 
+		mockGetPassportAttributeForCode();
+		
 		final CrossNameSetting crossNameSetting = this.crossSetting.getCrossNameSetting();
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, null);
@@ -216,6 +225,20 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals((Integer) 0, cross2.getNames().get(0).getLocationId());
 		Assert.assertEquals(CrossingServiceImplTest.USER_ID, cross2.getNames().get(0).getUserId());
 
+	}
+
+	private void mockGetPassportAttributeForCode() {
+		Mockito.doReturn(this.createUserDefinedFieldWithFldNo(PLOT_NUMBER_FLD_NO)).when(this.germplasmDataManager).
+			getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "PLOT_NUMBER");
+		
+		Mockito.doReturn(this.createUserDefinedFieldWithFldNo(PLOT_CODE_FLD_NO)).when(this.germplasmDataManager).
+			getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "PLOTCODE");
+	}
+
+	private UserDefinedField createUserDefinedFieldWithFldNo(int fldNo) {
+		final UserDefinedField userDefinedField = new UserDefinedField();
+		userDefinedField.setFldno(fldNo);
+		return userDefinedField;
 	}
 
 	@Test
@@ -244,6 +267,8 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToTrue() {
+		mockGetPassportAttributeForCode();
+		
 		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
 
 		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
@@ -263,9 +288,197 @@ public class CrossingServiceImplTest {
 		Mockito.verify(this.germplasmDataManager, Mockito.atLeastOnce()).addGermplasmName(Mockito.any(List.class));
 
 	}
+	
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	@Test
+	public void testSaveAttributesWithSourceAndFemalePlotNo() {
+		///prepare saveAttributes parameters and mock middleware methods
+		
+		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
+		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
+		savedGermplasmIds.add(1);
+		savedGermplasmIds.add(2);
+		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
+		
+		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
+		crossNameSetting.setSaveParentageDesignationAsAString(false);
+		this.crossSetting.setCrossNameSetting(crossNameSetting);
+		
+		mockGetPassportAttributeForCode();
+		mockCurrentUserId();
+	
+		//call the method to test
+		this.crossingService.saveAttributes(this.crossSetting, this.importedCrossesList, savedGermplasmIds);
+		
+		Mockito.verify(this.germplasmDataManager, Mockito.times(0)).addGermplasmName(Mockito.any(List.class));
+		
+		final ArgumentCaptor<List> attributesArgumentCaptor = ArgumentCaptor.forClass(List.class);
+
+		Mockito.verify(this.germplasmDataManager, Mockito.atLeastOnce()).addAttributes(attributesArgumentCaptor.capture());
+		
+		final List<Attribute> attributes = (List<Attribute>) attributesArgumentCaptor.getValue();
+		
+		//Since both the female plot no and source are set in the crosses test data, 
+		//we're expecting the plot code and plot number to be added
+		final Integer today = Integer.valueOf(DateUtil.getCurrentDateAsStringValue());
+		final List<Integer> expectedTypeIds = Arrays.asList(new Integer[]{ PLOT_CODE_FLD_NO, PLOT_NUMBER_FLD_NO });
+		final List<String> expectedValues = Arrays.asList(new String[]{ TEST_SOURCE_1, TEST_SOURCE_2, TEST_FEMALE_PLOT_NO_1, TEST_FEMALE_PLOT_NO_2 });
+		for (final Attribute attribute : attributes) {
+			Assert.assertEquals("The attribute date should be " + today, today, attribute.getAdate());
+			Assert.assertEquals("The attribute user id should be " + CURRENT_USER_ID, CURRENT_USER_ID, attribute.getUserId().intValue());
+			Assert.assertTrue("The attribute type id should be in " + expectedTypeIds, expectedTypeIds.contains(attribute.getTypeId()));
+			Assert.assertTrue("The attribute value should be in " + expectedValues, expectedValues.contains(attribute.getAval()));
+			Assert.assertTrue("The attribute germplasm id should either be in " + savedGermplasmIds, savedGermplasmIds.contains(attribute.getGermplasmId()));
+		}
+	}
+	
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	@Test
+	public void testSaveAttributesWithSourceButWithoutFemalePlotNo() {
+		//prepare saveAttributes parameters and mock middleware methods
+		
+		setFemalePlotNoOfCrossesToNull();
+		
+		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
+		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
+		savedGermplasmIds.add(1);
+		savedGermplasmIds.add(2);
+		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
+		
+		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
+		crossNameSetting.setSaveParentageDesignationAsAString(false);
+		this.crossSetting.setCrossNameSetting(crossNameSetting);
+		
+		mockGetPassportAttributeForCode();
+		mockCurrentUserId();
+	
+		//call the method to test
+		this.crossingService.saveAttributes(this.crossSetting, this.importedCrossesList, savedGermplasmIds);
+		
+		Mockito.verify(this.germplasmDataManager, Mockito.times(0)).addGermplasmName(Mockito.any(List.class));
+		
+		final ArgumentCaptor<List> attributesArgumentCaptor = ArgumentCaptor.forClass(List.class);
+
+		Mockito.verify(this.germplasmDataManager, Mockito.atLeastOnce()).addAttributes(attributesArgumentCaptor.capture());
+		
+		final List<Attribute> attributes = (List<Attribute>) attributesArgumentCaptor.getValue();
+		
+		//Since we didn't set the female plot no in the crosses test data, 
+		//we're only expecting the plot code to be added (plot number should not be present)
+		final Integer today = Integer.valueOf(DateUtil.getCurrentDateAsStringValue());
+		final List<Integer> expectedTypeIds = Arrays.asList(new Integer[]{ PLOT_CODE_FLD_NO });
+		final List<String> expectedValues = Arrays.asList(new String[]{ TEST_SOURCE_1, TEST_SOURCE_2 });
+		for (final Attribute attribute : attributes) {
+			Assert.assertEquals("The attribute date should be " + today, today, attribute.getAdate());
+			Assert.assertEquals("The attribute user id should be " + CURRENT_USER_ID, CURRENT_USER_ID, attribute.getUserId().intValue());
+			Assert.assertTrue("The attribute type id should be in " + expectedTypeIds, expectedTypeIds.contains(attribute.getTypeId()));
+			Assert.assertTrue("The attribute value should be in " + expectedValues, expectedValues.contains(attribute.getAval()));
+			Assert.assertTrue("The attribute germplasm id should either be in " + savedGermplasmIds, savedGermplasmIds.contains(attribute.getGermplasmId()));
+		}
+	}
+	
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	@Test
+	public void testSaveAttributesWithFemalePlotNoButWithoutSource() {
+		//prepare saveAttributes parameters and mock middleware methods
+		
+		setSourceOfCrossesToNull();
+		setFemalePlotNoOfCrossesToNull();
+		
+		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
+		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
+		savedGermplasmIds.add(1);
+		savedGermplasmIds.add(2);
+		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
+		
+		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
+		crossNameSetting.setSaveParentageDesignationAsAString(false);
+		this.crossSetting.setCrossNameSetting(crossNameSetting);
+		
+		mockGetPassportAttributeForCode();
+		mockCurrentUserId();
+	
+		//call the method to test
+		this.crossingService.saveAttributes(this.crossSetting, this.importedCrossesList, savedGermplasmIds);
+		
+		Mockito.verify(this.germplasmDataManager, Mockito.times(0)).addGermplasmName(Mockito.any(List.class));
+		
+		final ArgumentCaptor<List> attributesArgumentCaptor = ArgumentCaptor.forClass(List.class);
+
+		Mockito.verify(this.germplasmDataManager, Mockito.atLeastOnce()).addAttributes(attributesArgumentCaptor.capture());
+		
+		final List<Attribute> attributes = (List<Attribute>) attributesArgumentCaptor.getValue();
+		
+		//Since we didn't set the source and female plot no in the crosses test data, 
+		//the list should be empty
+		Assert.assertTrue("The attribute list should be empty", attributes.isEmpty());
+	}
+	
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	@Test
+	public void testSaveAttributesWithoutSourceAndFemalePlotNo() {
+		//prepare saveAttributes parameters and mock middleware methods
+		
+		setSourceOfCrossesToNull();
+		
+		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
+		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
+		savedGermplasmIds.add(1);
+		savedGermplasmIds.add(2);
+		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
+		
+		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
+		crossNameSetting.setSaveParentageDesignationAsAString(false);
+		this.crossSetting.setCrossNameSetting(crossNameSetting);
+		
+		mockGetPassportAttributeForCode();
+		mockCurrentUserId();
+	
+		//call the method to test
+		this.crossingService.saveAttributes(this.crossSetting, this.importedCrossesList, savedGermplasmIds);
+		
+		Mockito.verify(this.germplasmDataManager, Mockito.times(0)).addGermplasmName(Mockito.any(List.class));
+		
+		final ArgumentCaptor<List> attributesArgumentCaptor = ArgumentCaptor.forClass(List.class);
+
+		Mockito.verify(this.germplasmDataManager, Mockito.atLeastOnce()).addAttributes(attributesArgumentCaptor.capture());
+		
+		final List<Attribute> attributes = (List<Attribute>) attributesArgumentCaptor.getValue();
+		
+		//Since we didn't set the source in the crosses test data, 
+		//we're only expecting the plot number to be added (plot code should not be present)
+		final Integer today = Integer.valueOf(DateUtil.getCurrentDateAsStringValue());
+		final List<Integer> expectedTypeIds = Arrays.asList(new Integer[]{ PLOT_NUMBER_FLD_NO });
+		final List<String> expectedValues = Arrays.asList(new String[]{ TEST_FEMALE_PLOT_NO_1, TEST_FEMALE_PLOT_NO_2 });
+		for (final Attribute attribute : attributes) {
+			Assert.assertEquals("The attribute date should be " + today, today, attribute.getAdate());
+			Assert.assertEquals("The attribute user id should be " + CURRENT_USER_ID, CURRENT_USER_ID, attribute.getUserId().intValue());
+			Assert.assertTrue("The attribute type id should be in " + expectedTypeIds, expectedTypeIds.contains(attribute.getTypeId()));
+			Assert.assertTrue("The attribute value should be in " + expectedValues, expectedValues.contains(attribute.getAval()));
+			Assert.assertTrue("The attribute germplasm id should either be in " + savedGermplasmIds, savedGermplasmIds.contains(attribute.getGermplasmId()));
+		}
+	}
+
+	private void setFemalePlotNoOfCrossesToNull() {
+		for (final ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
+			importedCrosses.setFemalePlotNo(null);
+		}
+	}
+	
+	private void setSourceOfCrossesToNull() {
+		for (final ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
+			importedCrosses.setSource(null);
+		}
+	}
+
+	private void mockCurrentUserId() {
+		Mockito.doReturn(CURRENT_USER_ID).when(this.contextUtil).getCurrentWorkbenchUserId();
+	}
 
 	@Test
 	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToFalse() {
+		mockGetPassportAttributeForCode();
+		
 		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
 
 		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
@@ -635,6 +848,7 @@ public class CrossingServiceImplTest {
 		cross.setSource(TEST_SOURCE_1);
 		cross.setDesig(
 				"G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML1612345");
+		cross.setFemalePlotNo(TEST_FEMALE_PLOT_NO_1);
 		importedCrosses.add(cross);
 		final ImportedCrosses cross2 = new ImportedCrosses();
 		cross2.setFemaleDesig("FEMALE-9999");
@@ -645,6 +859,7 @@ public class CrossingServiceImplTest {
 		cross2.setSource(TEST_SOURCE_2);
 		cross2.setDesig(
 				"((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML161");
+		cross.setFemalePlotNo(TEST_FEMALE_PLOT_NO_2);
 		importedCrosses.add(cross2);
 
 		return importedCrosses;

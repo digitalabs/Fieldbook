@@ -55,6 +55,8 @@ public class CrossingServiceImplTest {
     public static final String TEST_MALE_GID_2 = "8888";
 	public static final String TEST_PROCESS_CODE = "[BC]";
 	public static final String TEST_PROCESS_CODE_WITH_PREFIX = "B[RCRPRNT]";
+	public static final String TEST_SOURCE_1 = "MALE:1:FEMALE:1";
+	public static final String TEST_SOURCE_2 = "MALE:2:FEMALE:2";
 
     private ImportedCrossesList importedCrossesList;
 
@@ -630,7 +632,7 @@ public class CrossingServiceImplTest {
 		cross.setMaleDesig("MALE-54321");
 		cross.setMaleGid(TEST_MALE_GID_1);
 		cross.setCross("CROSS");
-		cross.setSource("MALE:1:FEMALE:1");
+		cross.setSource(TEST_SOURCE_1);
 		cross.setDesig(
 				"G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML1612345");
 		importedCrosses.add(cross);
@@ -640,7 +642,7 @@ public class CrossingServiceImplTest {
 		cross2.setMaleDesig("MALE-8888");
 		cross2.setMaleGid(TEST_MALE_GID_2);
 		cross2.setCross("CROSS");
-		cross2.setSource("MALE:2:FEMALE:2");
+		cross2.setSource(TEST_SOURCE_2);
 		cross2.setDesig(
 				"((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML161");
 		importedCrosses.add(cross2);
@@ -709,6 +711,32 @@ public class CrossingServiceImplTest {
 		ids.add(Integer.valueOf(CrossingServiceImplTest.SAVED_CROSSES_GID1));
 		ids.add(Integer.valueOf(CrossingServiceImplTest.SAVED_CROSSES_GID2));
 		return ids;
+	}
+	
+	@Test
+	public void testPopulateEntryCodeEntryIdAndSeedSource() {
+		final List<ImportedCrosses> importedCrosses = importedCrossesList.getImportedCrosses();
+		this.crossingService.populateEntryCodeEntryIdAndSeedSource(importedCrosses, new Workbook());
+		
+		int rowCounter = 0;
+		for (final ImportedCrosses importedCross : importedCrosses) {
+			rowCounter++;
+			switch(rowCounter) {
+				case 1: 
+					Assert.assertEquals(TEST_SOURCE_1, importedCross.getSource());
+					Assert.assertEquals(String.valueOf(rowCounter), importedCross.getEntryCode());
+					Assert.assertEquals(new Integer(rowCounter), importedCross.getEntryId());
+					break;
+				case 2: 
+					Assert.assertEquals(TEST_SOURCE_2, importedCross.getSource());
+					Assert.assertEquals(String.valueOf(rowCounter), importedCross.getEntryCode());
+					Assert.assertEquals(new Integer(rowCounter), importedCross.getEntryId());
+					break;
+				default: 
+					Assert.fail("There should only be two items in the list");
+					break;
+			}
+		}
 	}
 
 }

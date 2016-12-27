@@ -140,14 +140,8 @@ public class CrossingServiceImpl implements CrossingService {
 	public boolean applyCrossSettingWithNamingRules(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final Integer userId, final Workbook workbook) {
 
-		int entryIdCounter = 0;
-		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-			entryIdCounter++;
-			populateSeedSource(importedCross, workbook);
-			importedCross.setEntryCode(String.valueOf(entryIdCounter));
-			importedCross.setEntryId(entryIdCounter);
-		}
-
+		populateEntryCodeEntryIdAndSeedSource(importedCrossesList.getImportedCrosses(), workbook);
+		
 		final GermplasmListResult pairsResult = this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(),
 				userId, importedCrossesList.hasPlotDuplicate());
 
@@ -159,6 +153,16 @@ public class CrossingServiceImpl implements CrossingService {
 		this.verifyGermplasmMethodPresent(germplasmList);
 		this.save(crossSetting, importedCrossesList, pairsResult.germplasmPairs);
 		return pairsResult.isTrimed;
+	}
+
+	void populateEntryCodeEntryIdAndSeedSource(final List<ImportedCrosses> importedCrosses, final Workbook workbook) {
+		int entryIdCounter = 0;
+		for (final ImportedCrosses importedCross : importedCrosses) {
+			entryIdCounter++;
+			populateSeedSource(importedCross, workbook);
+			importedCross.setEntryCode(String.valueOf(entryIdCounter));
+			importedCross.setEntryId(entryIdCounter);
+		}
 	}
 
 	void populateSeedSource(ImportedCrosses importedCross, Workbook workbook) {

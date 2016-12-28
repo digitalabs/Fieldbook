@@ -162,21 +162,18 @@ public class DesignImportServiceImpl implements DesignImportService {
 			final List<MeasurementRow> measurements, final DesignImportMeasurementRowGenerator measurementRowGenerator,
 			final Map<String, Integer> additionalParams) {
 
-		final Integer startingPlotNo = additionalParams.get("startingPlotNo");
 		final Integer noOfAddedEnvironment =
 				additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) != null ? additionalParams
 						.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) : 0;
 
-		final Integer startingPlotNoFromCSV = this.getStartingPlotNoFromCSV(csvData, measurementRowGenerator.getMappedHeaders());
-		final int plotNoDelta = (startingPlotNo != null) ? startingPlotNo - startingPlotNoFromCSV : 0;
 
 		if (isPreset) {
 			final int startingTrialInstanceNo = noOfAddedEnvironment > 0 ? noOfEnvironments - noOfAddedEnvironment + 1 : 1;
 			for (int trialInstanceNo = startingTrialInstanceNo; trialInstanceNo <= noOfEnvironments; trialInstanceNo++) {
-				this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, plotNoDelta);
+				this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo);
 			}
 		} else {
-			this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, null, plotNoDelta);
+			this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, null);
 		}
 	}
 
@@ -191,7 +188,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	 * @param plotNoDelta
 	 */
 	void createMeasurementRowsPerInstance(final Map<Integer, List<String>> csvData, final List<MeasurementRow> measurements,
-			final DesignImportMeasurementRowGenerator measurementRowGenerator, final Integer trialInstanceNo, final Integer plotNoDelta) {
+			final DesignImportMeasurementRowGenerator measurementRowGenerator, final Integer trialInstanceNo) {
 
 		// row counter starts at index = 1 because zero index is the header
 		int rowCounter = 1;
@@ -212,44 +209,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 				measurementDataMap.get(TermId.TRIAL_INSTANCE_FACTOR.getId()).setValue(String.valueOf(trialInstanceNo));
 			}
 
-			if (plotNoDelta != 0) {
-				final Integer prevPlotNo = Integer.valueOf(measurementDataMap.get(TermId.PLOT_NO.getId()).getValue().toString());
-				measurementDataMap.get(TermId.PLOT_NO.getId()).setValue(String.valueOf(prevPlotNo + plotNoDelta));
-			}
-
 			measurements.add(measurementRow);
 
 		}
-	}
-
-	/**
-	 * Returns the value of the starting plot no from CSV rows
-	 * 
-	 * @param csvData
-	 * @param map
-	 * @return
-	 */
-	Integer getStartingPlotNoFromCSV(final Map<Integer, List<String>> csvData, final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map) {
-
-		final Integer plotNoIndx = map.get(PhenotypicType.TRIAL_DESIGN).get(TermId.PLOT_NO.getId()).getColumnIndex();
-
-		Integer startingPlotNoCSV = 0;
-
-		// row counter starts at index = 1 because zero index is the header
-		int rowCounter = 1;
-		while (rowCounter <= csvData.size() - 1) {
-
-			final List<String> rowEntries = csvData.get(rowCounter);
-
-			final Integer currentPlotNo = Integer.valueOf(rowEntries.get(plotNoIndx).toString());
-			if (startingPlotNoCSV == 0 || startingPlotNoCSV > currentPlotNo) {
-				startingPlotNoCSV = currentPlotNo;
-			}
-
-			rowCounter++;
-		}
-
-		return startingPlotNoCSV;
 	}
 
 	Map<Integer, MeasurementData> getMeasurementDataMap(final List<MeasurementData> dataList) {

@@ -61,8 +61,6 @@ import junit.framework.Assert;
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportServiceImplTest {
 
-	private static final int STARTING_PLOT_NO_FROM_CSV = 1;
-
 	private static final int CHALK_PCT_TERMID = 22768;
 
 	private static final int GYLD_TERMID = 18000;
@@ -429,11 +427,8 @@ public class DesignImportServiceImplTest {
 		final List<MeasurementRow> measurements = new ArrayList<MeasurementRow>();
 		final DesignImportMeasurementRowGenerator measurementRowGenerator = this.generateMeasurementRowGenerator();
 		final int trialInstanceNo = 1;
-		final Integer startingPlotNo = 3;
-		// The delta that will be used to adjust the value of each plot no from the measurement rows
-		final int plotNoDelta = startingPlotNo - STARTING_PLOT_NO_FROM_CSV;
 
-		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, plotNoDelta);
+		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo);
 
 		Assert.assertEquals("The number of measurement rows from the csv file must be equal to the number of measurements row generated.",
 				csvData.size() - 1, measurements.size());
@@ -458,23 +453,8 @@ public class DesignImportServiceImplTest {
 			final int plotNoActual = Integer.valueOf(dataListMap.get(TermId.PLOT_NO.getId()).getValue());
 
 			Assert.assertEquals("Expecting that the generated value for plot no is increased based on the stated starting plot no.",
-					plotNoCsv + plotNoDelta, plotNoActual);
+					plotNoCsv, plotNoActual);
 		}
-	}
-
-	@Test
-	public void testGetStartingPlotNoFromCSV() {
-
-		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
-		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map =
-				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
-
-		final int expectedStartingPlotNo = 1;
-
-		final Integer startingPlotNo = this.service.getStartingPlotNoFromCSV(csvData, map);
-		Assert.assertEquals(
-				"Expecting that the starting plot no is equal to " + expectedStartingPlotNo + " but returned " + startingPlotNo.intValue(),
-				expectedStartingPlotNo, startingPlotNo.intValue());
 	}
 
 	private DesignImportMeasurementRowGenerator generateMeasurementRowGenerator() {

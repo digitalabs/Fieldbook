@@ -18,6 +18,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
@@ -671,7 +672,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected String convertDateStringForUI(final String value) {
-		if (!value.contains("-")) {
+		if (!StringUtils.isBlank(value) && !value.contains("-")) {
 			return DateUtil.convertToUIDateFormat(TermId.DATE_VARIABLE.getId(), value);
 		} else {
 			return value;

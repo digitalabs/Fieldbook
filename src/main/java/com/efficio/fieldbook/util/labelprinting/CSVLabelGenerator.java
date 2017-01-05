@@ -80,7 +80,7 @@ public class CSVLabelGenerator implements LabelGenerator {
                             .generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField,
                                     fieldMapTrialInstanceInfo.getLabelHeaders(), false);
                 } else {
-                    barcodeLabelForCode = StringUtils.join(userLabelPrinting.getCropCodePrefix(), fieldMapLabel.getExperimentId());
+                    barcodeLabelForCode = StringUtils.join(userLabelPrinting.getPlotCodePrefix(), fieldMapLabel.getExperimentId());
                 }
                 moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
 

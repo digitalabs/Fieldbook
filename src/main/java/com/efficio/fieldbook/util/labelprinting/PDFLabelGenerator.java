@@ -84,7 +84,7 @@ public class PDFLabelGenerator implements LabelGenerator {
 		final String barcodeNeeded = userLabelPrinting.getBarcodeNeeded();
 		final String barcodeGeneratedAutomatically = userLabelPrinting.getBarcodeGeneratedAutomatically();
 
-		final String cropCodePrefix = userLabelPrinting.getCropCodePrefix();
+		final String cropCodePrefix = userLabelPrinting.getPlotCodePrefix();
 
 		final String fileName = userLabelPrinting.getFilenameDLLocation();
 

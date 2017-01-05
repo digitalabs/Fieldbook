@@ -518,8 +518,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				cropPrefix = this.fieldbookMiddlewareService.getPlotCodePrefix(cropName);
 			} catch (final MiddlewareException e) {
 				LabelPrintingController.LOG.error(e.getMessage(), e);
+				throw new MiddlewareException(e.getMessage(), e);
 			}
-			this.userLabelPrinting.setCropCodePrefix(cropPrefix);
+			this.userLabelPrinting.setPlotCodePrefix(cropPrefix);
 		}
 
 		// add validation for the file name

@@ -13,6 +13,8 @@
 			$scope.settings.managementDetails = [];
 			$scope.settings.trialConditionDetails = [];
 		}
+		$scope.userInput = TrialManagerDataService.currentData.trialSettings.userInput;
+		$scope.trialSettings = TrialManagerDataService.settings.trialSettings;
 
 		$scope.TRIAL_LOCATION_NAME_INDEX = 8180;
 		$scope.TRIAL_LOCATION_ABBR_INDEX = 8189;
@@ -38,12 +40,6 @@
 
 		$scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.replicationsCount;
 
-		if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
-			$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
-		} else if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
-			$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
-		}
-
 		//NOTE: Continue action for navigate from Locations to Advance Study Modal
 		$scope.trialSelectEnvironmentContinue = function() {
 
@@ -65,17 +61,27 @@
 			if (!isTrialInstanceSelected) {
 				showErrorMessage('', selectOneLocationErrorMessage);
 			} else {
-				selectedLocationDetails.push($scope.settings.managementDetails.val($scope.PREFERRED_LOCATION_VARIABLE).variable.name);
+				if ($scope.locationFromTrialSettings) {
+					selectedLocationDetails
+						.push($scope.trialSettings.val($scope.PREFERRED_LOCATION_VARIABLE).variable.name);
+				} else {
+					selectedLocationDetails
+						.push($scope.settings.managementDetails.val($scope.PREFERRED_LOCATION_VARIABLE).variable.name);
+				}
 
 				angular.forEach($scope.trialInstances, function(trialInstanceNumber, idx) {
 					if (trialInstanceNumber) {
 						selectedTrialInstances.push(trialInstanceNumber);
 
-						angular.forEach($scope.data.environments, function(env, position) {
-							if (position === idx) {
-								selectedLocationDetails.push(env.managementDetailValues[$scope.PREFERRED_LOCATION_VARIABLE]);
-							}
-						});
+						if ($scope.locationFromTrialSettings) {
+							selectedLocationDetails.push($scope.userInput[$scope.PREFERRED_LOCATION_VARIABLE]);
+						} else {
+							angular.forEach($scope.data.environments, function(env, position) {
+								if (position === idx) {
+									selectedLocationDetails.push(env.managementDetailValues[$scope.PREFERRED_LOCATION_VARIABLE]);
+								}
+							});
+						}
 
 					}
 				});
@@ -107,6 +113,29 @@
 			});
 
 		};
+
+		$scope.init = function() {
+			$scope.locationFromTrialSettings = false;
+
+			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
+				// LOCATION_ABBR from environments
+				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
+			} else if ($scope.trialSettings.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
+				// LOCATION_ABBR from trial settings
+				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
+				$scope.locationFromTrialSettings = true;
+			} else if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
+				// LOCATION_NAME from environments
+				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
+			} else if ($scope.trialSettings.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
+				// LOCATION_NAME from trial settings
+				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
+				$scope.locationFromTrialSettings = true;
+			} else {
+				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_INDEX;
+			}
+		};
+		$scope.init();
 
 	}]);
 

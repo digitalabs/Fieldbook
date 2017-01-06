@@ -658,8 +658,7 @@
                                 <div class="col-xs-6 col-md-6">
                                     <label class="control-label label-bold" th:text="#{label.printing.do.you.need.bar.codes}">Do you need
                                         barcodes on your labels?</label>
-                                    &nbsp;
-                                    <label class="radio-inline">
+                                    <label class="radio-inline" style="padding-left: 30px">
                                         <input type="radio" value="1" th:field="*{userLabelPrinting.barcodeNeeded}"/>
                                         <span th:text="#{label.printing.do.you.need.bar.codes.yes}">Yes</span>
                                     </label>
@@ -673,14 +672,13 @@
                                 <div th:if="!*{isStockList} and (*{germplasmListId} == null or *{germplasmListId} == '')" class="col-xs-6 col-md-6 automatically-barcode-fields">
                                     <label class="control-label label-bold" th:text="#{label.printing.do.you.want.automatically.unique.bar.codes}">Do you want 
                                     	to use automatically generated unique barcodes?</label>
-                                    &nbsp;
-                                    <label class="radio-inline">
+                                    <label class="radio-inline" style="padding-left: 30px">
                                         <input checked="checked" type="radio" value="1" th:field="*{userLabelPrinting.barcodeGeneratedAutomatically}"/>
-                                        <span th:text="#{label.printing.do.you.want.automatic.unique.bar.codes.yes}">Yes</span>
+                                        <span th:text="#{common.form.yes.text}">Yes</span>
                                     </label>
                                     <label class="radio-inline">
                                         <input type="radio" value="0" th:field="*{userLabelPrinting.barcodeGeneratedAutomatically}"/>
-                                        <span th:text="#{label.printing.do.you.want.automatic.unique.bar.codes.no}">No</span>
+                                        <span th:text="#{common.form.no.text}">No</span>
                                     </label>
                                 </div>
                                 

@@ -32,13 +32,15 @@
                                     <thead>
                                     <tr>
                                         <th></th>
-                                        <th>{{settings.managementDetails.val(PREFERRED_LOCATION_VARIABLE).variable.name}}</th>
+                                        <th ng-if="!locationFromTrialSettings">{{settings.managementDetails.val(PREFERRED_LOCATION_VARIABLE).variable.name}}</th>
+                                        <th ng-if="locationFromTrialSettings">{{trialSettings.val(PREFERRED_LOCATION_VARIABLE).variable.name}}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="environment in data.environments" ng-class="{even : $even, odd : $odd}">
                                         <td><input type="checkbox" name="location" ng-model="trialInstances[$index]"  ng-checked="environment.Selected" ng-true-value="{{environment.managementDetailValues[TRIAL_INSTANCE_INDEX]}}" ng-false-value="{{undefined}}"/></td>
-                                        <td>{{ environment.managementDetailValues[PREFERRED_LOCATION_VARIABLE] }}</td>
+                                        <td ng-if="!locationFromTrialSettings">{{ environment.managementDetailValues[PREFERRED_LOCATION_VARIABLE] }}</td>
+                                        <td ng-if="locationFromTrialSettings">{{ userInput[PREFERRED_LOCATION_VARIABLE] }}</td>
                                     </tr>
                                     </tbody>
                                 </table>

@@ -1017,6 +1017,10 @@ function advanceTrial() {
 	var idVal = $('#studyId').val();
 	$('#advanceNurseryModal').modal('hide');
 	$('#selectEnvironmentModal').modal({ backdrop: 'static', keyboard: true });
+
+	var scope = angular.element('#selectEnvironmentModal').scope();
+	scope.init();
+	scope.$apply();
 }
 
 function trialSelectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed) {

@@ -5,6 +5,7 @@ import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -42,6 +43,8 @@ public class ExcelLabelGenerator implements LabelGenerator {
         final boolean includeHeader =
                 LabelPrintingServiceImpl.INCLUDE_NON_PDF_HEADERS.equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf());
         final boolean isBarcodeNeeded = LabelPrintingServiceImpl.BARCODE_NEEDED.equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded());
+        final boolean generateAutomatically = LabelPrintingServiceImpl.BARCODE_GENERATED_AUTOMATICALLY
+                .equalsIgnoreCase(userLabelPrinting.getBarcodeGeneratedAutomatically()) ? true : false;
         final String fileName = userLabelPrinting.getFilenameDLLocation();
         final String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
         final String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
@@ -116,8 +119,15 @@ public class ExcelLabelGenerator implements LabelGenerator {
                     row = labelPrintingSheet.createRow(rowIndex++);
                     columnIndex = 0;
 
-                    final String barcodeLabelForCode = this.labelPrintingUtil.generateBarcodeField(moreFieldInfo, fieldMapLabel,
-                            firstBarcodeField, secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
+                    String barcodeLabelForCode;
+
+                    if (!generateAutomatically) {
+                        barcodeLabelForCode = this.labelPrintingUtil
+                                .generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField,
+                                        thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
+                    } else {
+                        barcodeLabelForCode = StringUtils.join(userLabelPrinting.getPlotCodePrefix(), fieldMapLabel.getExperimentId());
+                    }
                     moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
 
                     for (final Integer selectedFieldID : selectedFieldIDs) {

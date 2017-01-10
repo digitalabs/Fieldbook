@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.easymock.internal.matchers.Matches;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
@@ -611,7 +610,26 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(newSeedSource, importedCross4.getSource());
 
 	}
+	
+	@Test
+	public void testApplyCrossSettingWithNamingRules() {
 
+		final CrossSetting crossSetting = this.createCrossSetting();
+		final ImportedCrossesList importedCrossesList = this.createImportedCrossesList();
+		final Integer userId = 123456;
+		final Workbook workbook = new Workbook();
+
+		this.importedCrossesList.addImportedCrosses(this.createCross());
+
+		this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesList, userId, workbook);
+		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
+			Assert.assertEquals(importedCross.getEntryCode(), importedCross.getEntryId());
+			Assert.assertTrue(importedCross.getEntryCode().equals(1));
+			Assert.assertTrue(importedCross.getEntryId().equals(1));
+		}
+	}
+	
+	
 	private ImportedCrossesList createImportedCrossesList() {
 
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
@@ -660,7 +678,7 @@ public class CrossingServiceImplTest {
 	}
 
 	private CrossSetting createCrossSetting() {
-		return new CrossSetting(null, null, this.createCrossNameSetting(), null);
+		return new CrossSetting(null, null, this.createCrossNameSetting(), this.createAdditionalDetailsSetting());
 	}
 
 	private CrossNameSetting createCrossNameSetting() {

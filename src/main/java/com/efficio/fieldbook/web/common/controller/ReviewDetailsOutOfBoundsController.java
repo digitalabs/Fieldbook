@@ -158,14 +158,37 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 	protected Map<String, String> getTrialInstanceLocationMap() {
 		Map<String, String> map = new HashMap<>();
 		UserSelection userSelection = this.getUserSelection();
+
 		for (MeasurementRow row : userSelection.getWorkbook().getTrialObservations()) {
 			String trialInstanceValue = row.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
 			String locationValue = "";
 			if (row.getMeasurementData(TermId.TRIAL_LOCATION.getId()) != null) {
 				locationValue = row.getMeasurementData(TermId.TRIAL_LOCATION.getId()).getValue();
+			} else if (row.getMeasurementData(TermId.LOCATION_ABBR.getId()) != null) {
+				locationValue = row.getMeasurementData(TermId.LOCATION_ABBR.getId()).getValue();
 			}
+
+			if (locationValue.isEmpty()) {
+				String locationName = "";
+				String locationAbbreviation = "";
+				for (MeasurementVariable condition : userSelection.getWorkbook().getConditions()) {
+					if (condition.getTermId() == (TermId.TRIAL_LOCATION.getId())) {
+						locationName = condition.getValue();
+					} else if (condition.getTermId() == (TermId.LOCATION_ABBR.getId())) {
+						locationAbbreviation = condition.getValue();
+					}
+				}
+
+				if (!locationName.isEmpty()) {
+					locationValue = locationName;
+				} else {
+					locationValue = locationAbbreviation;
+				}
+			}
+
 			map.put(trialInstanceValue, locationValue);
 		}
+
 		return map;
 	}
 
@@ -254,32 +277,36 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		return false;
 	}
 
-	protected List<MeasurementVariable> filterColumnsForReviewDetailsTable(List<MeasurementVariable> measurementVariables, int traitTermId) {
+	protected List<MeasurementVariable> filterColumnsForReviewDetailsTable(List<MeasurementVariable> measurementVariables,
+			int traitTermId) {
 		List<MeasurementVariable> variables = new ArrayList<>();
-		Boolean locationExists = false;
+		Boolean locationNameExists = false;
+		Boolean locationAbbrExists = false;
 		for (MeasurementVariable var : measurementVariables) {
 			if (var.getTermId() == TermId.ENTRY_NO.getId()) {
 				variables.add(var);
-			}
-			if (var.getTermId() == TermId.PLOT_NO.getId()) {
+			} else if (var.getTermId() == TermId.PLOT_NO.getId()) {
 				variables.add(var);
-			}
-			if (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+			} else if (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				variables.add(var);
-			}
-			if (var.getTermId() == TermId.TRIAL_LOCATION.getId()) {
-				locationExists = true;
+			} else if (var.getTermId() == TermId.TRIAL_LOCATION.getId()) {
+				locationNameExists = true;
 				variables.add(var);
-			}
-			if (var.getTermId() == traitTermId) {
+			} else if (var.getTermId() == TermId.LOCATION_ABBR.getId()) {
+				locationAbbrExists = true;
+				variables.add(var);
+			} else if (var.getTermId() == traitTermId) {
 				variables.add(var);
 			}
 		}
 
-		if (locationExists) {
+		if (locationNameExists || locationAbbrExists) {
 			Iterator<MeasurementVariable> iterator = variables.iterator();
 			while (iterator.hasNext()) {
-				if (iterator.next().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				int termId = iterator.next().getTermId();
+				if (termId == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+					iterator.remove();
+				} else if (locationNameExists && locationAbbrExists && termId == TermId.LOCATION_ABBR.getId()) {
 					iterator.remove();
 				}
 			}

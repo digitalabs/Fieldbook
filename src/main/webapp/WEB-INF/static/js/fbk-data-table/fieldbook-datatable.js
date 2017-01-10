@@ -368,7 +368,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		$(tableIdentifier).dataTable().bind('sort', function() {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 		});
-		$('#measurementsDiv .mdt-columns').detach().insertBefore('.mdt-filtering');
+		$('#measurementsDiv .mdt-columns').detach().insertBefore('#measurementsDiv .mdt-filtering');
 		$('.measurement-dropdown-menu a').click(function(e) {
 			var column;
 

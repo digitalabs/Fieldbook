@@ -87,7 +87,7 @@ public class UserLabelPrinting implements Serializable {
 
 	/** The barcode needed. */
 	private String barcodeNeeded;
-
+	
 	/** The left selected label fields. */
 	private String leftSelectedLabelFields;
 
@@ -104,6 +104,9 @@ public class UserLabelPrinting implements Serializable {
 
 	/** The third barcode field. */
 	private String thirdBarcodeField;
+
+	/** The crop code prefix. */
+	private String plotCodePrefix;
 
 	/** The filename. */
 	private String filename;
@@ -137,6 +140,9 @@ public class UserLabelPrinting implements Serializable {
     private String stockListTypeName;
 
 	private List<InventoryDetails> inventoryDetailsList;
+
+	/** The automatically barcode. */
+	private String barcodeGeneratedAutomatically;
 
 	/**
 	 * Gets the field map info.
@@ -765,4 +771,22 @@ public class UserLabelPrinting implements Serializable {
 	public void setSorting(final String sorting) {
 		this.sorting = sorting;
 	}
+
+
+	public String getPlotCodePrefix() {
+		return plotCodePrefix;
+	}
+
+	public void setPlotCodePrefix(final String plotCodePrefix) {
+		this.plotCodePrefix = plotCodePrefix;
+	}
+
+	public String getBarcodeGeneratedAutomatically() {
+		return barcodeGeneratedAutomatically;
+	}
+
+	public void setBarcodeGeneratedAutomatically(final String barcodeGeneratedAutomatically) {
+		this.barcodeGeneratedAutomatically = barcodeGeneratedAutomatically;
+	}
+
 }

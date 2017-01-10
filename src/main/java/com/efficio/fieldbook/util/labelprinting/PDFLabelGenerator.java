@@ -18,6 +18,7 @@ import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.slf4j.Logger;
@@ -81,6 +82,9 @@ public class PDFLabelGenerator implements LabelGenerator {
 		final String leftSelectedFields = userLabelPrinting.getLeftSelectedLabelFields();
 		final String rightSelectedFields = userLabelPrinting.getRightSelectedLabelFields();
 		final String barcodeNeeded = userLabelPrinting.getBarcodeNeeded();
+		final String barcodeGeneratedAutomatically = userLabelPrinting.getBarcodeGeneratedAutomatically();
+
+		final String plotCodePrefix = userLabelPrinting.getPlotCodePrefix();
 
 		final String fileName = userLabelPrinting.getFilenameDLLocation();
 
@@ -116,10 +120,17 @@ public class PDFLabelGenerator implements LabelGenerator {
 						barcodeLabel = " ";
 						barcodeLabelForCode = " ";
 					} else {
-						barcodeLabel = this.labelPrintingUtil.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField,
-								secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
-						barcodeLabelForCode = this.labelPrintingUtil.generateBarcodeField(moreFieldInfo, fieldMapLabel,
-								firstBarcodeField, secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), true);
+						if (!LabelPrintingServiceImpl.BARCODE_GENERATED_AUTOMATICALLY.equalsIgnoreCase(barcodeGeneratedAutomatically)) {
+							barcodeLabel = this.labelPrintingUtil
+									.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField,
+											thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
+							barcodeLabelForCode = this.labelPrintingUtil
+									.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField,
+											thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), true);
+						} else {
+							barcodeLabel = StringUtils.join(plotCodePrefix, fieldMapLabel.getExperimentId());
+							barcodeLabelForCode = barcodeLabel;
+						}
 					}
 
 					barcodeLabelForCode = this.labelPrintingPDFUtil.truncateBarcodeLabelForCode(barcodeLabelForCode);

@@ -134,10 +134,10 @@
                 $scope.userAttemptedSubmission = false;
                 $scope.currentErrorField = null;
                 $scope.isReady = false;
-                
-                $timeout(function(){
-                	$scope.isReady = true;
-                },50);
+
+                angular.element(document).ready(function () {
+                    $scope.isReady = true;
+                });
 
                 var promise = null;
 

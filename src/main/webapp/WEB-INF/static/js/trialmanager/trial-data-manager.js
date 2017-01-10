@@ -75,6 +75,8 @@
 							service.trialMeasurement.count);
 					}
 
+				}).error(function() {
+					showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
 				});
 			};
 
@@ -459,6 +461,8 @@
 								} else {
 									showErrorMessage('', 'Trial could not be saved at the moment. Please try again later.');
 								}
+							}, function() {
+								showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
 							});
 						} else {
 
@@ -501,6 +505,8 @@
 										$('body').data('needToSave', '0');
 									});
 
+								}).error(function() {
+									showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
 								});
 							} else {
 								service.currentData.columnOrders = serializedData;
@@ -516,7 +522,11 @@
 											service.applicationData.unsavedGeneratedDesign = false;
 											service.applicationData.unsavedTraitsAvailable = false;
 											$('body').data('needToSave', '0');
+										}, function() {
+											showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
 										});
+									}).error(function() {
+										showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
 									});
 							}
 

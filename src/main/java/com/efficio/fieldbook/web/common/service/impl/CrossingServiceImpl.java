@@ -143,8 +143,9 @@ public class CrossingServiceImpl implements CrossingService {
 		int entryIdCounter = 1;
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
 			populateSeedSource(importedCross, workbook);
-			importedCross.setEntryCode(String.valueOf(entryIdCounter++));
+			importedCross.setEntryCode(String.valueOf(entryIdCounter));
 			importedCross.setEntryId(entryIdCounter);
+			entryIdCounter++;
 		}
 
 		final GermplasmListResult pairsResult = this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(),

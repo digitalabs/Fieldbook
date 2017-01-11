@@ -90,6 +90,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
 	public static final String INCLUDE_NON_PDF_HEADERS = "1";
 	public static final String BARCODE_NEEDED = "1";
+	public static final String BARCODE_GENERATED_AUTOMATICALLY = "1";
 
 	/** The message source. */
 	@Resource

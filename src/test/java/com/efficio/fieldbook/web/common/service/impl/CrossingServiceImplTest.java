@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.easymock.internal.matchers.Matches;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
@@ -611,7 +610,30 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(newSeedSource, importedCross4.getSource());
 
 	}
+	
+	@Test
+	public void testApplyCrossSettingWithNamingRules() {
 
+		final CrossSetting crossSetting = this.createCrossSetting();
+		final ImportedCrossesList importedCrossesList = this.createImportedCrossesList();
+		final Integer userId = 123456;
+		final Workbook workbook = new Workbook();
+
+		this.importedCrossesList.addImportedCrosses(this.createCross());
+		this.importedCrossesList.addImportedCrosses(this.createSecondCross());
+
+		this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesList, userId, workbook);
+		
+		int counter = 1;
+		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
+			Assert.assertEquals(importedCross.getEntryCode(), importedCross.getEntryId());
+			Assert.assertTrue(importedCross.getEntryCode().equals(counter));
+			Assert.assertTrue(importedCross.getEntryId().equals(counter));
+			counter ++;
+		}
+	}
+	
+	
 	private ImportedCrossesList createImportedCrossesList() {
 
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
@@ -634,6 +656,14 @@ public class CrossingServiceImplTest {
 		cross.setDesig(
 				"G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML1612345");
 		importedCrosses.add(cross);
+		final ImportedCrosses cross2 = createSecondCross();
+		importedCrosses.add(cross2);
+
+		return importedCrosses;
+
+	}
+
+	private ImportedCrosses createSecondCross() {
 		final ImportedCrosses cross2 = new ImportedCrosses();
 		cross2.setFemaleDesig("FEMALE-9999");
 		cross2.setFemaleGid(TEST_FEMALE_GID_2);
@@ -643,10 +673,7 @@ public class CrossingServiceImplTest {
 		cross2.setSource("MALE:2:FEMALE:2");
 		cross2.setDesig(
 				"((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML161");
-		importedCrosses.add(cross2);
-
-		return importedCrosses;
-
+		return cross2;
 	}
 
 	private ImportedCrosses createCross() {
@@ -660,7 +687,7 @@ public class CrossingServiceImplTest {
 	}
 
 	private CrossSetting createCrossSetting() {
-		return new CrossSetting(null, null, this.createCrossNameSetting(), null);
+		return new CrossSetting(null, null, this.createCrossNameSetting(), this.createAdditionalDetailsSetting());
 	}
 
 	private CrossNameSetting createCrossNameSetting() {

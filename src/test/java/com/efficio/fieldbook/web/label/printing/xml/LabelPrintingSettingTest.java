@@ -27,7 +27,7 @@ public class LabelPrintingSettingTest {
 		final String barcodeFieldsString = this.stringify(LabelPrintingSettingTest.BARCODE_FIELDS, BarcodeLabelPrintingSetting.DELIMITER);
 
 		final PDFLabelPrintingSetting pdfSetting = new PDFLabelPrintingSetting("A4", 7, leftFieldsString, rightFieldsString);
-		final BarcodeLabelPrintingSetting barcodeSetting = new BarcodeLabelPrintingSetting(true, "Barcode", barcodeFieldsString);
+		final BarcodeLabelPrintingSetting barcodeSetting = new BarcodeLabelPrintingSetting(true, "Barcode", barcodeFieldsString, false);
 		final LabelPrintingSetting labelPrintingSetting = new LabelPrintingSetting("PDF setting", "PDF", null, pdfSetting, barcodeSetting,
 				"stockId", "3");
 
@@ -63,7 +63,7 @@ public class LabelPrintingSettingTest {
 		final String barcodeFieldsString = this.stringify(LabelPrintingSettingTest.BARCODE_FIELDS, BarcodeLabelPrintingSetting.DELIMITER);
 
 		final CSVExcelLabelPrintingSetting csvExcelSetting = new CSVExcelLabelPrintingSetting(false, selectedFieldsString);
-		final BarcodeLabelPrintingSetting barcodeSetting = new BarcodeLabelPrintingSetting(true, "Barcode", barcodeFieldsString);
+		final BarcodeLabelPrintingSetting barcodeSetting = new BarcodeLabelPrintingSetting(true, "Barcode", barcodeFieldsString, false);
 		final LabelPrintingSetting labelPrintingSetting = new LabelPrintingSetting("PDF setting", "PDF", csvExcelSetting, null, barcodeSetting, "stockId", "3");
 
 		final JAXBContext context = JAXBContext.newInstance(LabelPrintingSetting.class);

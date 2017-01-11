@@ -59,6 +59,7 @@ public class LabelPrintingDataUtil {
 
 	// data for UserLabelPrinting
 	private static final String BARCODE_NEEDED = "1";
+	private static final String AUTOMATIC_BARCODE = "1";
 	private static final String LABEL_SHEET_SIZE = "1";
 	private static final String LABEL_PER_ROW = "3";
 	private static final String ROWS_PER_PAGE = "7";
@@ -107,6 +108,7 @@ public class LabelPrintingDataUtil {
 		fieldMapInfo.setDatasets(datasets);
 
 		userLabelPrinting.setBarcodeNeeded(LabelPrintingDataUtil.BARCODE_NEEDED);
+		userLabelPrinting.setBarcodeGeneratedAutomatically(LabelPrintingDataUtil.AUTOMATIC_BARCODE);
 		userLabelPrinting.setFilename(LabelPrintingDataUtil.FILE_NAME);
 		userLabelPrinting.setFirstBarcodeField(LabelPrintingDataUtil.FIRST_BARCODE_FIELD);
 		userLabelPrinting.setSecondBarcodeField(LabelPrintingDataUtil.SECOND_BARCODE_FIELD);

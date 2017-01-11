@@ -36,6 +36,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
+import com.google.common.base.Strings;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -207,6 +209,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setStudy(study);
 		this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
 		this.userLabelPrinting.setBarcodeNeeded("0");
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsTrial(true);
@@ -256,6 +259,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setStudy(study);
 		this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
 		this.userLabelPrinting.setBarcodeNeeded("0");
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsTrial(false);
@@ -290,6 +294,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
 		this.userLabelPrinting.setFieldMapInfoList(fieldMapInfoList);
 		this.userLabelPrinting.setBarcodeNeeded("0");
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 
@@ -347,6 +352,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		this.userLabelPrinting.setStudy(study);
 		this.userLabelPrinting.setBarcodeNeeded("0");
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsStockList(true);
@@ -404,6 +410,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setFieldMapInfo(null);
 		this.userLabelPrinting.setFieldMapInfoList(null);
 		this.userLabelPrinting.setBarcodeNeeded("0");
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsStockList(true);
@@ -484,7 +491,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@RequestMapping(method = RequestMethod.POST)
 	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
 
+		final String generateAutomatically =
+				form.getUserLabelPrinting().getBarcodeGeneratedAutomatically() == null || form.getUserLabelPrinting()
+						.getBarcodeGeneratedAutomatically().equals("0") ? "0" : "1";
 		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
+		this.userLabelPrinting
+				.setBarcodeGeneratedAutomatically(generateAutomatically);
 		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
 		this.userLabelPrinting.setNumberOfLabelPerRow(form.getUserLabelPrinting().getNumberOfLabelPerRow());
 		this.userLabelPrinting.setNumberOfRowsPerPageOfLabel(form.getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
@@ -498,6 +510,18 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
+
+		if (this.userLabelPrinting.getBarcodeGeneratedAutomatically().equalsIgnoreCase(LabelPrintingServiceImpl.BARCODE_GENERATED_AUTOMATICALLY)) {
+			String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
+			String cropPrefix = null;
+			try {
+				cropPrefix = this.fieldbookMiddlewareService.getPlotCodePrefix(cropName);
+			} catch (final MiddlewareException e) {
+				LabelPrintingController.LOG.error(e.getMessage(), e);
+				throw new MiddlewareException(e.getMessage(), e);
+			}
+			this.userLabelPrinting.setPlotCodePrefix(cropPrefix);
+		}
 
 		// add validation for the file name
 		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
@@ -550,6 +574,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	public Map<String, Object> submitDetailsOfInventory(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
 
 		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
+		this.userLabelPrinting.setBarcodeGeneratedAutomatically(form.getUserLabelPrinting().getBarcodeGeneratedAutomatically());
 		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
 		this.userLabelPrinting.setNumberOfLabelPerRow(form.getUserLabelPrinting().getNumberOfLabelPerRow());
 		this.userLabelPrinting.setNumberOfRowsPerPageOfLabel(form.getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
@@ -577,16 +602,22 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		}
 
 		final Integer germplasmListId = form.getGermplasmListId();
-		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(germplasmListId, 0, Integer
-				.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
+		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(germplasmListId, 0,
+				Integer.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
 		final List<GermplasmListData> germplasmListDataListWithExistingReservations =
 				this.getGermplasmListDataListWithExistingReservations(germplasmListDataList);
-		final int numberOfCopies = Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
+
+		int numberOfCopies = Strings.isNullOrEmpty(this.userLabelPrinting.getNumberOfCopies()) ?
+				1 :
+				Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
+		
 
 		// GermplasmListData list sorting before printing
 		// Sort first and duplicate entries after that for performance
 		try {
-			this.labelPrintingUtil.sortGermplasmListDataList(germplasmListDataListWithExistingReservations, this.userLabelPrinting.getSorting());
+			if (!Strings.isNullOrEmpty(this.userLabelPrinting.getSorting())) {
+				this.labelPrintingUtil.sortGermplasmListDataList(germplasmListDataListWithExistingReservations, this.userLabelPrinting.getSorting());
+			}			
 		} catch (final LabelPrintingException ex) {
 			final Map<String, Object> results = new HashMap<>();
 			LabelPrintingController.LOG.error(ex.getMessage(), ex);
@@ -718,7 +749,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final String fileName;
 		final LabelPrintingFileTypes selectedLabelPrintingType =
 				LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
-		final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
 		if (selectedLabelPrintingType.isValid()) {
 			this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
@@ -948,9 +978,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		// Preparation, convert the form into appropriate pojos for easy access
 		CSVExcelLabelPrintingSetting nonPDFSettings = null;
 		PDFLabelPrintingSetting pdfSettings = null;
-		final BarcodeLabelPrintingSetting barcodeSettings =
-				new BarcodeLabelPrintingSetting("1".equals(rawSettings.getBarcodeNeeded()), "Barcode", StringUtil.stringify(new String[] {
-						rawSettings.getFirstBarcodeField(), rawSettings.getSecondBarcodeField(), rawSettings.getThirdBarcodeField()}, ","));
+		String barcodeGeneratedAutomatically = rawSettings.getBarcodeGeneratedAutomatically();
+		boolean isPlotCodePrefix = barcodeGeneratedAutomatically == null || barcodeGeneratedAutomatically.equals("0") ? false : true;
+		final BarcodeLabelPrintingSetting barcodeSettings = new BarcodeLabelPrintingSetting(
+				"1".equals(rawSettings.getBarcodeNeeded()), "Barcode", StringUtil.stringify(new String[] {
+						rawSettings.getFirstBarcodeField(), rawSettings.getSecondBarcodeField(), rawSettings.getThirdBarcodeField()}, ","),
+				isPlotCodePrefix);
 
 		if (AppConstants.LABEL_PRINTING_PDF.getString().equals(rawSettings.getGenerateType())) {
 			pdfSettings = new PDFLabelPrintingSetting(rawSettings.getSizeOfLabelSheet(),

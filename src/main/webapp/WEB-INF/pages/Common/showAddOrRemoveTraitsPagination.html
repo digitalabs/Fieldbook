@@ -11,11 +11,10 @@
 	</div>
 
 	<div class="preview-measurements-panel">
-		<div class="preview-measurements-message" ng-if="!isDisplayPreview">
+		<div class="preview-measurements-message">
 			<span th:text="#{nursery.edit.nursery.preview.save.message}">Please save the study to be able to edit measurements</span>
-			<a class="btn btn-primary fbk-inline" ng-click="previewMeasurements()" th:text="#{nursery.edit.nursery.preview.measurement.button}">Preview Measurements</a>
 		</div>
-		<div class="preview-measurements-table" ng-if="isDisplayPreview">
+		<div class="preview-measurements-table">
 			<table id="preview-measurement-table"
 				   width="100%" th:object="${createTrialForm}"
 				   class="table-curved table-condensed">

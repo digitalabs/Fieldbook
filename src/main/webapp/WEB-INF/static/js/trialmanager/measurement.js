@@ -15,8 +15,6 @@
 				$scope.isHideDelete = false;
 				$scope.updateOccurred = false;
 				$scope.addVariable = true;
-				// controls if the user have chosen to display preview
-				$scope.isDisplayPreview = false;
 				$scope.isNewStudy = function() {
 					return ($('#studyId').val() === '');
 				};
@@ -46,7 +44,6 @@
 				};
 
 				$scope.previewMeasurements = function() {
-					$scope.isDisplayPreview = true;
 					// The jquery is out of sync with angular changes, set this hack timeout, it will be removed once the table is in
 					// angular
 					// the jQuery datatable for preview needs a list of measurement variables used as columns, it gets them from the DOM
@@ -62,6 +59,10 @@
 					});
 
 				};
+
+				if ($('body').hasClass('preview-measurements-only')) {
+					$scope.previewMeasurements();
+				}
 
 				/* Watchers */
 				$scope.$watch(function() {
@@ -129,9 +130,14 @@
 
 					reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
 
-					$scope.isDisplayPreview = false;
 					$('body').addClass('preview-measurements-only');
 					$('body').addClass('measurements-traits-changed');
+					$scope.previewMeasurements();
+				});
+
+				$scope.$on('previewMeasurements', function() {
+					$('body').addClass('preview-measurements-only');
+					$scope.previewMeasurements();
 				});
 
 				$scope.$on('onDeleteEnvironment', function(event, result) {
@@ -149,9 +155,9 @@
 
 					reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
 
-					$scope.isDisplayPreview = false;
                     $('body').addClass('preview-measurements-only');
                     $('body').addClass('measurements-traits-changed');
+                    $scope.previewMeasurements();
 				});
 
 				/* Controller Utility functions */

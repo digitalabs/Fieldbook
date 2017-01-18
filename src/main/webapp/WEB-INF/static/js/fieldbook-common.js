@@ -871,6 +871,11 @@ function setSelectTrialOrderValues() {
 	styleDynamicTree('selectedTrials');
 }
 
+function onCloseVariableSelection() {
+	// After closing the variable selection modal, make sure that the table header is properly adjusted.
+	setTimeout(function() {$("#environments-table").resize();}, 500);
+}
+
 function styleDynamicTree(treeName) {
 	var count = 0;
 

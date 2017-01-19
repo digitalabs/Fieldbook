@@ -426,10 +426,10 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		final UserSelection userSelection = this.getUserSelection();
 		final List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 
-		if (userSelection.getTemporaryWorkbook() != null && userSelection.getMeasurementRowList() == null) {
+		if (userSelection.getTemporaryWorkbook() != null) {
 			tempList.addAll(userSelection.getTemporaryWorkbook().getObservations());
 		} else {
-			tempList.addAll(userSelection.getMeasurementRowList());
+			tempList.addAll(userSelection.getWorkbook().getObservations());
 		}
 
 		final List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();

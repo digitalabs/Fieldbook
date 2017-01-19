@@ -2079,3 +2079,14 @@ input.select-all-margin{
 .remove-excess-padding[style] {
     padding-left:0 !important;
 }
+
+.separator {
+    border-top: 1px solid #e5e5e5;
+}
+
+.help-tooltip-crosses-flow {
+    color: #7D7D7D;
+    font-size: 18pt;
+    vertical-align: bottom;
+    cursor: pointer;
+}

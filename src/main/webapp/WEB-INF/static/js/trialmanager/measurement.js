@@ -43,21 +43,9 @@
 					return $filter('removeHiddenVariableFilter')($scope.settings.keys(), $scope.settings.vals());
 				};
 
-				$scope.previewMeasurements = function() {
-					// The jquery is out of sync with angular changes, set this hack timeout, it will be removed once the table is in
-					// angular
-					// the jQuery datatable for preview needs a list of measurement variables used as columns, it gets them from the DOM
-					// the preview datatable could not start its construction until all variables in 'thead tr th' are loaded with
-					// arrangeMeasurementVariables() function
-					// FIXME this should be reimplemented properly
-					var addedData = '&columnOrders=' + encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns()));
-                    var dataParam = 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys +
-                    	'&deletedEnvironment=' + 0 + addedData;
-					$http.post('/Fieldbook/TrialManager/createTrial/measurements/variables', dataParam).success(function(data) {
-						new BMS.Fieldbook.PreviewMeasurementsDataTable('#preview-measurement-table',
-						encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
-					});
-
+				$scope.previewMeasurements = function() {			
+					new BMS.Fieldbook.PreviewMeasurementsDataTable('#preview-measurement-table', 
+							encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
 				};
 
 				if ($('body').hasClass('preview-measurements-only')) {

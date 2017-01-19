@@ -239,8 +239,12 @@ public class EditNurseryController extends SettingsController {
 				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.ADVANCED);
 		final List<GermplasmList> germplasmCrossesList =
 				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.CROSSES);
+
+		germplasmCrossesList
+				.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.PLCRT));
+
 		model.addAttribute("advancedList", germplasmList);
-		model.addAttribute("crossesList", germplasmCrossesList);
+		model.addAttribute("crossesList", this.fieldbookMiddlewareService.appendTabLabelToList(germplasmCrossesList));
 	}
 
 	private void setUpNurserylevelConditions(final Workbook workbook, final CreateNurseryForm form, final ImportGermplasmListForm form2,

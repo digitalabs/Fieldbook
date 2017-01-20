@@ -424,9 +424,6 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 		columnsDef = [],
 		table;
 
-		var studyId = $('#studyId').val(),
-		environmentId = getCurrentEnvironmentNumber();
-
 		// recreate a table if exists
 		if (!!$(tableIdentifier).html().trim()) {
 			$(tableIdentifier).dataTable().fnDestroy();

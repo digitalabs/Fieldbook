@@ -2090,3 +2090,14 @@ input.select-all-margin{
     vertical-align: bottom;
     cursor: pointer;
 }
+
+.trash-crosses-flow {
+    color: #7D7D7D;
+    font-size: 18pt;
+    vertical-align: bottom;
+    cursor: pointer;
+}
+
+.label-italic{
+    font-style: italic;
+}

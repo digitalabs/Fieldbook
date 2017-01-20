@@ -414,8 +414,6 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 	 * @param {string} tableIdentifier the id of the table container
 	 * @param {string} ajaxUrl the URL from which to retrieve table data
 	 */
-
-	//FIXME use variables insted of iterating through $(tableIdentifier + ' thead tr th')
 	//FIXME this would allow to remove timeouts/rebounce function etc.
 	var dataTableConstructor = function PreviewMeasurementsDataTable(tableIdentifier, columnsOrder) {
 		'use strict';

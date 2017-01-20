@@ -321,6 +321,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				}
 				]
 			});
+			
+			new $.fn.dataTable.ColReorder(table);
 
 			if (studyId !== '') {
 				// Activate an inline edit on click of a table cell

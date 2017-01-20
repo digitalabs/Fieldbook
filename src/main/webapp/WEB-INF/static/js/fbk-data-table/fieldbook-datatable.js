@@ -29,12 +29,13 @@ BMS.Fieldbook.MeasurementsTable = {
 		if ($('#' + tableName).dataTable() !== null &&  $('#' + tableName).dataTable().fnSettings() !== null) {
 			var cols = $('#' + tableName).dataTable().fnSettings().aoColumns;
 			$(cols).each(function(index) {
-				var termId = $($(cols[index].nTh)[0]).attr('data-term-id');
 				var prevIndex = $('#' + tableName).dataTable().fnSettings().aoColumns[index]._ColReorder_iOrigCol;
-				if (termId != 'Action') {
-					if (index != prevIndex) {
-						hasOrderingChange = true;
-					}
+				if (index != prevIndex) {
+					hasOrderingChange = true;
+				}
+				
+				var termId = $($(cols[index].nTh)[0]).attr('data-term-id');
+				if (termId !== undefined) {
 					orderedColumns[orderedColumns.length] = termId;
 				}
 			});

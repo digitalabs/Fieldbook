@@ -245,10 +245,10 @@ var ImportCrosses = {
 		ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
 		
 		$('#settingsNextButton').off('click');
-		$('#settingsNextButton').click(false, ImportCrosses.submitCrossImportSettings);
+		$('#settingsNextButton').click(function () { ImportCrosses.submitCrossImportSettings(false); });
 		
 		$('#settingsNextButtonUpdateList').off('click');
-		$('#settingsNextButtonUpdateList').click(true, ImportCrosses.submitCrossImportSettings);
+		$('#settingsNextButtonUpdateList').click(function () { ImportCrosses.submitCrossImportSettings(true); });
 
 		$('#goBackToOpenCrossesButton').off('click');
 		$('#goBackToOpenCrossesButton').on('click', function() {
@@ -418,17 +418,17 @@ var ImportCrosses = {
 			}
 		} else if (!settingData.breedingMethodSetting.basedOnStatusOfParentalLines && !settingData.breedingMethodSetting.methodId) {
 			showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
-				return;
-			}
+			return;
+		}
 
 		var targetURL;
 		var settingsForSaving;
 		if ($('#presetName').val().trim() !== '') {
 			targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
-					settingsForSaving = true;
+			settingsForSaving = true;
 		} else {
 			targetURL = ImportCrosses.CROSSES_URL + '/submit';
-					settingsForSaving = false;
+			settingsForSaving = false;
 		}
 
 		$.ajax({
@@ -446,17 +446,17 @@ var ImportCrosses = {
 				} else {
 					$('#crossSettingsModal').modal('hide');
 					selectedBreedingMethodId = 0;
-					if (isUpdateCrossesList.data) {
+					if (isUpdateCrossesList) {
 						SaveAdvanceList.updateGermplasmList();
 					} else {
 						ImportCrosses.openSaveListModal();
 
-							if (settingsForSaving) {
-								// as per UI requirements, we also display a success message regarding the saving of the settings
-								// if an error in the settings saving has occurred, program flow would have continued in the data.success === '0' branch
-								// hence, we can safely assume that settings have been properly saved at this point
-								showSuccessfulMessage('', crossingSettingsSaved);
-							}
+						if (settingsForSaving) {
+							// as per UI requirements, we also display a success message regarding the saving of the settings
+							// if an error in the settings saving has occurred, program flow would have continued in the data.success === '0' branch
+							// hence, we can safely assume that settings have been properly saved at this point
+							showSuccessfulMessage('', crossingSettingsSaved);
+						}
 					}
 				}
 			},

@@ -534,21 +534,17 @@ public class ImportGermplasmListController extends SettingsController {
 			for (final ImportedGermplasm germplasm : list) {
 				final Map<String, Object> dataMap = new HashMap<>();
 
-				dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
 				dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
-				dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
-				dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
-				dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
-				dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid() == 0 ? "-" : germplasm.getMgid());
 
 				if (!isNursery) {
 					germplasm.setEntryTypeValue(defaultTestCheckId);
 					germplasm.setEntryTypeCategoricalID(Integer.valueOf(defaultTestCheckId));
 					dataMap.put(ImportGermplasmListController.CHECK, defaultTestCheckId);
+				}
 
 					final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 					if (factorsList != null) {
-						// we iterate the map for dynamic header of trial
+						// we iterate the map for dynamic header for both nursery and trail
 						for (final SettingDetail factorDetail : factorsList) {
 							if (factorDetail != null && factorDetail.getVariable() != null) {
 								dataMap.put(factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString(),
@@ -556,12 +552,6 @@ public class ImportGermplasmListController extends SettingsController {
 							}
 						}
 					}
-				} else {
-					dataMap.put(ImportGermplasmListController.CROSS, germplasm.getCross());
-					dataMap.put(ImportGermplasmListController.SOURCE, germplasm.getSource());
-					dataMap.put(ImportGermplasmListController.ENTRY_CODE, germplasm.getEntryCode());
-					dataMap.put(ImportGermplasmListController.CHECK, "");
-				}
 
 				dataTableDataList.add(dataMap);
 			}
@@ -641,12 +631,7 @@ public class ImportGermplasmListController extends SettingsController {
 			for (final ImportedGermplasm germplasm : list) {
 				final Map<String, Object> dataMap = new HashMap<>();
 
-				dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
 				dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
-				dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
-				dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
-				dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
-				dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid() == 0 ? "-" : germplasm.getMgid()); // Map Group_Id
 
 				if (!isNursery) {
 					if (germplasm.getEntryTypeValue() == null || "0".equals(germplasm.getEntryTypeValue())) {
@@ -656,10 +641,10 @@ public class ImportGermplasmListController extends SettingsController {
 					} else {
 						dataMap.put(ImportGermplasmListController.CHECK, germplasm.getEntryTypeCategoricalID());
 					}
-
+				}
 					final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 					if (factorsList != null) {
-						// we iterate the map for dynamic header of trial
+						// we iterate the map for dynamic header for both nursery and trail
 						for (final SettingDetail factorDetail : factorsList) {
 							if (factorDetail != null && factorDetail.getVariable() != null) {
 								dataMap.put(factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString(),
@@ -667,13 +652,6 @@ public class ImportGermplasmListController extends SettingsController {
 							}
 						}
 					}
-				} else {
-					dataMap.put(ImportGermplasmListController.CROSS, germplasm.getCross());
-					dataMap.put(ImportGermplasmListController.SOURCE, germplasm.getSource());
-					dataMap.put(ImportGermplasmListController.ENTRY_CODE, germplasm.getEntryCode());
-					dataMap.put(ImportGermplasmListController.CHECK, "");
-				}
-
 				dataTableDataList.add(dataMap);
 			}
 			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
@@ -758,30 +736,10 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	private List<TableHeader> getGermplasmTableHeader(final String type, final List<SettingDetail> factorsList) {
-		final Locale locale = LocaleContextHolder.getLocale();
-		final List<TableHeader> tableHeaderList = new ArrayList<>();
-		if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
 
-			tableHeaderList.add(new TableHeader(this.messageSource.getMessage("nursery.import.header.position", null, locale),
-					ImportGermplasmListController.POSITION));
-			tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_ID.getTermNameFromOntology(this.ontologyDataManager),
-					ImportGermplasmListController.ENTRY));
-			tableHeaderList.add(new TableHeader(ColumnLabels.DESIGNATION.getTermNameFromOntology(this.ontologyDataManager),
-					ImportGermplasmListController.DESIG));
-			tableHeaderList.add(
-					new TableHeader(ColumnLabels.GID.getTermNameFromOntology(this.ontologyDataManager), ImportGermplasmListController.GID));
-			tableHeaderList.add(new TableHeader(ColumnLabels.PARENTAGE.getTermNameFromOntology(this.ontologyDataManager),
-					ImportGermplasmListController.CROSS));
-			tableHeaderList.add(new TableHeader(ColumnLabels.SEED_SOURCE.getTermNameFromOntology(this.ontologyDataManager),
-					ImportGermplasmListController.SOURCE));
-			tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_CODE.getTermNameFromOntology(this.ontologyDataManager),
-					ImportGermplasmListController.ENTRY_CODE));
-			// Add table header named Group_Id to germplasm list
-			tableHeaderList.add(new TableHeader(ColumnLabels.GROUP_ID.getTermNameFromOntology(this.ontologyDataManager),
-					ImportGermplasmListController.GROUP_ID));
-
-		} else if (type != null && type.equalsIgnoreCase(StudyType.T.getName()) && factorsList != null) {
-			// we iterate the map for dynamic header of trial
+		 final List<TableHeader> tableHeaderList = new ArrayList<>();
+		 if (type != null  && factorsList != null) {
+			// we iterate the map for dynamic header for both nursery and trail
 			for (final SettingDetail factorDetail : factorsList) {
 				if (factorDetail != null && factorDetail.getVariable() != null
 						&& !SettingsUtil.inHideVariableFields(factorDetail.getVariable().getCvTermId(),
@@ -791,8 +749,6 @@ public class ImportGermplasmListController extends SettingsController {
 				}
 
 			}
-			tableHeaderList.add(new TableHeader(ColumnLabels.GROUP_ID.getTermNameFromOntology(this.ontologyDataManager),
-					ImportGermplasmListController.GROUP_ID));
 		}
 		return tableHeaderList;
 	}

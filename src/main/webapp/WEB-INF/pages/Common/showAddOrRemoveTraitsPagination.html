@@ -15,11 +15,8 @@
 			<span th:text="#{nursery.edit.nursery.preview.save.message}">Please save the study to be able to edit measurements</span>
 		</div>
 		<div class="preview-measurements-table">
-			<table id="preview-measurement-table"
-				   width="100%" th:object="${createTrialForm}"
-				   class="table-curved table-condensed">
+			<table id="preview-measurement-table" width="100%" th:object="${createTrialForm}" class="table-curved table-condensed">
 			</table>
-
 		</div>
 	</div>
 
@@ -89,6 +86,13 @@
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+
+	<div class="import-preview-measurements-panel">
+		<div class="import-preview-measurements-table">
+			<table id="import-preview-measurement-table" width="100%" th:object="${createTrialForm}" class="table-curved table-condensed">
+			</table>
 		</div>
 	</div>
 

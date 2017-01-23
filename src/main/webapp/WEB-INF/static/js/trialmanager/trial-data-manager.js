@@ -541,6 +541,7 @@
 
                     //After Save Measurements table is available in edit mode
                     $('body').removeClass('preview-measurements-only');
+                    $('body').removeClass('import-preview-measurements');
                     //TODO Remove other classes as well
 
                     // GLOBAL

@@ -2129,8 +2129,9 @@ input.select-all-margin{
 
 .preview-measurements-only .no-measurements-table,
 .preview-measurements-panel,
-.edit-measurements-panel {
-	display:none;
+.edit-measurements-panel,
+.import-preview-measurements-panel {
+	display: none;
 }
 
 /* Editing measurements is not allowed for a new not saved trial */
@@ -2150,6 +2151,14 @@ input.select-all-margin{
 
 .preview-measurements-only .preview-measurements-panel {
 	display: block;
+}
+
+.import-preview-measurements .import-preview-measurements-panel {
+	display: block;
+}
+
+.import-preview-measurements .edit-measurements-panel {
+	display: none;
 }
 
 /* FIXME for the existing study we need a proper check if the design was generated for that study or not previously before saving */

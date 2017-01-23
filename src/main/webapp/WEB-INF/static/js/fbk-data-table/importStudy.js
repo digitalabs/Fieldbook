@@ -117,20 +117,16 @@ function doSaveImportedData() {
 function doMeasurementsReload(hasDataOverwrite) {
 	'use strict';
 	$('.import-study-data').data('data-import', '1');
-	$.ajax({
-		url: '/Fieldbook/ImportManager/import/preview',
-		type: 'POST',
-		success: function(html) {
-			onMeasurementsObservationLoad(false);
-			// $('#measurementsDiv').html(html);
-			$('.fbk-discard-imported-data').removeClass('fbk-hide');
-			if (hasDataOverwrite === '1') {
-				showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
-			} else {
-				showSuccessfulMessage('', importSuccessReminderToSaveMessage);
-			}
-		}
-	});
+	$('body').addClass('import-preview-measurements');
+	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+	new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
+
+	$('.fbk-discard-imported-data').removeClass('fbk-hide');
+	if (hasDataOverwrite === '1') {
+		showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
+	} else {
+		showSuccessfulMessage('', importSuccessReminderToSaveMessage);
+	}
 
 	$('#importStudyModal').modal('hide');
 	$('#importStudyConfirmationModal').modal('hide');
@@ -361,6 +357,7 @@ function revertStockListData(){
 		data: '',
 		cache: false,
 		success: function(resp) {
+			//TODO Localise message
 			showSuccessfulMessage('', 'Imported data successfully discarded.');
 			$('.fbk-save-nursery').removeClass('fbk-hide');
 			$('.fbk-save-stocklist').addClass('fbk-hide');
@@ -383,7 +380,7 @@ function revertData(showMessage) {
 		cache: false,
 		async: false,
 		success: function(html) {
-			// $('#measurementsDiv').html(html);
+			$('body').removeClass('import-preview-measurements');
 			if (showMessage === true) {
 				showSuccessfulMessage('', 'Discarded imported data successfully');
 			}

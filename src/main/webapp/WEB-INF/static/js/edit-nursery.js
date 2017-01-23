@@ -102,7 +102,7 @@ $(document).ready(function() {
 
 	if (createdCrossesListId !== null && createdCrossesListId.length > 0) {
 		ImportCrosses.isFileCrossesImport = false;
-		ImportCrosses.openCrossesList(createdCrossesListId);
+		ImportCrosses.openBreedingModal();
 	}
 
 	$('#basicDetails.toggle-icon').click(function() {

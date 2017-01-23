@@ -72,18 +72,14 @@ var ImportCrosses = {
 
 		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
 			'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
-		//LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
-		//	'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio');
-		//ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
-		ImportCrosses.updateSampleParentageDesignation();
-
-		// this indicates that the user went through the crossing manager, and should have the breeding method setting fields disabled
-		if (selectedBreedingMethodId) {
-			ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
-		}
 
 		$('#useSelectedMethodCheckbox').off('change');
 		$('#useSelectedMethodCheckbox').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
+
+		// this indicates that the user went through the crossing manager, and should have the breeding method setting fields disabled
+		//if (selectedBreedingMethodId) {
+		//	ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
+		//}
 
 		//$('.cross-import-name-setting').off('change');
 		//$('.cross-import-name-setting').on('change', ImportCrosses.updateDisplayedSequenceNameValue);
@@ -311,15 +307,19 @@ var ImportCrosses = {
 		$('#settingsNextButton').off('click');
 		$('#settingsNextButton').click(function() {
 			$(crossSettingsPopupModal).modal('hide');
-			setTimeout(ImportCrosses.openCrossesList, 500);
+			setTimeout(function() {
+				ImportCrosses.openCrossesList(createdCrossesListId);
+			}, 500);
 		})
 		
 		$('#settingsNextButtonUpdateList').off('click');
 		$('#settingsNextButtonUpdateList').click(function() {
 			$(crossSettingsPopupModal).modal('hide');
-			setTimeout(ImportCrosses.openCrossesList, 500);
+			setTimeout(function() {
+				ImportCrosses.openCrossesList(createdCrossesListId);
+			}, 500);
 		});
-		
+
 		$('#goBackToSelectBreedingMethodModal').off('click');
 		$('#goBackToSelectBreedingMethodModal').on('click', function() {
 				ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(':checked');

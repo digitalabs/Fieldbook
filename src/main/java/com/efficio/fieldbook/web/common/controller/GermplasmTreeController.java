@@ -233,10 +233,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 				final List<GermplasmListData> data = new ArrayList<>();
 				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
-				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
-
-				final Integer listDataProjectListId =
-						this.saveListDataProjectList(form.getGermplasmListType(), germplasmListId, listDataProject);
+				final Integer listDataProjectListId = createAndSaveListDataProject(form, germplasmListId, data);
 				results.put(GermplasmTreeController.IS_SUCCESS, 1);
 				results.put("germplasmListId", germplasmListId);
 				results.put("uniqueId", form.getListIdentifier().isEmpty() ? "0" : form.getListIdentifier());
@@ -247,7 +244,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					results.put("advancedGermplasmListId", listDataProjectListId);
 				} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
 					results.put("crossesListId", listDataProjectListId);
-				} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
+				} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(form.getGermplasmListType())) {
 					results.put("parentListId", listDataProjectListId);
 				}
 			} else {
@@ -271,6 +268,20 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		}
 
 		return results;
+	}
+
+	private Integer createAndSaveListDataProject(final SaveListForm form, final Integer germplasmListId,
+			final List<GermplasmListData> data) {
+		
+		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(form.getGermplasmListType())){
+			return 0;
+		}
+		
+		final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
+
+		final Integer listDataProjectListId =
+				this.saveListDataProjectList(form.getGermplasmListType(), germplasmListId, listDataProject);
+		return listDataProjectListId;
 	}
 
 	@ResponseBody

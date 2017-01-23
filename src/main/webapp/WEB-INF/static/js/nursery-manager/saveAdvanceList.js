@@ -148,7 +148,6 @@ var SaveAdvanceList = {};
 				if (data.isSuccess === 1) {
 					$('#saveListTreeModal').modal('hide');
 					if(isParent) {
-						ImportCrosses.displayTabCrossesList(data.germplasmListId, data.parentListId,  data.listName);
 						$('#saveListTreeModal').data('is-save-parent', '0');
 					}
 					else if (isCrosses) {

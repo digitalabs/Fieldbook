@@ -2016,7 +2016,8 @@ input.select-all-margin{
     opacity: 1 !important;
 }
 
-.import-crosses-from-file #goBackToImportCrossesButton,
+.import-crosses-from-file .goBackToImport,
+/*.import-crosses-from-file #goBackToImportCrossesButton,*/
 .import-crosses-from-file #settingsNextButton,
 #settingsNextButtonUpdateList {
     display: inline-block;
@@ -2028,7 +2029,8 @@ input.select-all-margin{
     display: block;
 }
 
-#goBackToImportCrossesButton,
+.goBackToImport,
+/*#goBackToImportCrossesButton,*/
 #settingsNextButton,
 .import-crosses-from-file #settingsNextButtonUpdateList,
 #crossingBreedingMethodText,

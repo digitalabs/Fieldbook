@@ -1,5 +1,7 @@
 package com.efficio.fieldbook.web.trial.controller;
 
+import com.efficio.fieldbook.service.internal.DesignLicenseUtil;
+import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
@@ -16,7 +18,6 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.spring.util.ToolLicenseUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -25,7 +26,6 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
@@ -71,7 +71,7 @@ public class ExpDesignController extends BaseTrialController {
 	private DesignImportService designImportService;
 
 	@Resource
-	private ToolLicenseUtil toolLicenseUtil;
+	private DesignLicenseUtil designLicenseUtil;
 
 	@Override
 	public String getContentName() {
@@ -257,8 +257,9 @@ public class ExpDesignController extends BaseTrialController {
 							}
 						}
 
+						BVDesignLicenseInfo BVDesignLicenseInfo = designLicenseUtil.retrieveLicenseInfo();
 
-						if (this.toolLicenseUtil.isToolExpired(ToolName.breeding_view.toString())) {
+						if (this.designLicenseUtil.isExpired(BVDesignLicenseInfo)) {
 							expParameterOutput =
 									new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.license.expired",
 											null, locale));
@@ -305,9 +306,8 @@ public class ExpDesignController extends BaseTrialController {
 
 						workbook.setExpDesignVariables(designService.getRequiredDesignVariables());
 
-						if (this.toolLicenseUtil.isToolExpiringWithinThirtyDays(ToolName.breeding_view.toString())) {
-							final int daysBeforeExpiration =
-									this.toolLicenseUtil.daysBeforeToolExpiration(ToolName.breeding_view.toString());
+						if (this.designLicenseUtil.isExpiringWithinThirtyDays(BVDesignLicenseInfo)) {
+							final int daysBeforeExpiration = Integer.valueOf(BVDesignLicenseInfo.getStatus().getLicense().getExpiryDays());
 							expParameterOutput =
 									new ExpDesignValidationOutput(true, this.messageSource.getMessage("experiment.design.license.expiring",
 											new Integer[] {daysBeforeExpiration}, locale));

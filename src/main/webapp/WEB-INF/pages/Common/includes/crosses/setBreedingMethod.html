@@ -123,17 +123,11 @@
 
 
                 <div class="modal-footer add-top-bottom-padding">
-                    <button type="button" class="btn btn-default" id="crossSetBreedingMethodModal"
+                    <button type="button" class="btn btn-default" id="goBackToImportCrossesButton"
                             aria-hidden="true" th:text="#{common.form.back.text}">Back
                     </button>
-                    <!-- We need different flows if we came from Breeding Manager (update the crosses list)
-                    and if it is an XML file import (create new crosses list),
-                    we set ImportCrosses.isFileCrossesImport parameter to false to identify that we came from Breeding Manager -->
                     <button type="button" class="btn btn-primary"
-                            aria-hidden="true" th:text="#{common.form.continue.text}" id="settingsNextButton">Continue
-                    </button>
-                    <button type="button" class="btn btn-primary"
-                            aria-hidden="true" th:text="#{common.form.continue.text}" id="settingsNextButtonUpdateList">Continue
+                            aria-hidden="true" th:text="#{common.form.continue.text}" id="setNamingNextButton">Continue
                     </button>
                 </div>
             </div>

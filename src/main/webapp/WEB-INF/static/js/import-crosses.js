@@ -49,12 +49,18 @@ var ImportCrosses = {
                 }).modal({ backdrop: 'static', keyboard: true });
                 $('#chooseListOwner').addClass('import-crosses-from-file');
 
+				$('#goBackToImportFileCrossesButton').off('click');
+				$('#goBackToImportFileCrossesButton').on('click', function() {
+					ImportCrosses.goBackToPage('#chooseListOwner', '.import-crosses-section .modal');
+				});
+
                 $('#chooseListOwnerNextButton').on('click', function() {
                     if (ImportCrosses.isFileCrossesImport) {
                         $('#crossSetBreedingMethodModal').addClass('import-crosses-from-file');
                     }
                     $('#chooseListOwner').modal('hide');
 					setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
+
                 });
 
 			} else {

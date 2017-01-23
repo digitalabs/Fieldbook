@@ -110,17 +110,25 @@ var SaveAdvanceList = {};
 		var saveList  = '/Fieldbook/ListTreeManager/saveList/';
 		var isCrosses = false;
 		var isStock = false;
+		var isParent = false;
 
 		if ($('#saveListTreeModal').data('is-save-crosses') === '1') {
 			isCrosses = true;
 		}
-
+		
+		if ($('#saveListTreeModal').data('is-save-parent') === '1') {
+			isParent = true;
+			$('#sourceListId').val($('#saveListTreeModal').data('sourceListId'));
+		}
+		
 		if ($('#saveListTreeModal').data('is-save-stock') === '1') {
 			isStock = true;
 			$('#sourceListId').val($('#saveListTreeModal').data('sourceListId'));
 		}
 
-		if (isCrosses) {
+		if(isParent) {
+			$('#germplasmListType').val('parent');
+		} else if (isCrosses) {
 			$('#germplasmListType').val('cross');
 		} else if (isStock) {
 			$('#germplasmListType').val('stock');
@@ -139,7 +147,11 @@ var SaveAdvanceList = {};
 			success: function(data) {
 				if (data.isSuccess === 1) {
 					$('#saveListTreeModal').modal('hide');
-					if (isCrosses) {
+					if(isParent) {
+						ImportCrosses.displayTabCrossesList(data.germplasmListId, data.parentListId,  data.listName);
+						$('#saveListTreeModal').data('is-save-parent', '0');
+					}
+					else if (isCrosses) {
 						ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  data.listName);
 						$('#saveListTreeModal').data('is-save-crosses', '0');
 						if (data.isTrimed === 1) {

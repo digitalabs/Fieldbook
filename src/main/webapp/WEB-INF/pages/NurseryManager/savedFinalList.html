@@ -65,6 +65,12 @@
 								th:text="#{common.stock.list.generate}">
 									Generate Stock List
 							</a>
+							
+							<a  th:if="*{listType == 'CROSSES'}" href="javascript: void(0)"
+								th:onclick="'javascript: ImportCrosses.saveParentList(\'' + ${listId} + '\');'"
+								th:text="#{nursery.save.crosses.parent.list}">
+									Save Parent List
+							</a>
 
 							<a th:if="*{listType == 'ADVANCED'}" href="javascript: void(0)"
 							   onclick="javascript: StockIDFunctions.openGenerateStockIDModal(getCurrentAdvanceTabListIdentifier());"

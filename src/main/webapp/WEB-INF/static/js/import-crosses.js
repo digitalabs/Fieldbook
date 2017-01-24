@@ -79,22 +79,17 @@ var ImportCrosses = {
 		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
 			'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
 
-		$('#useSelectedMethodCheckbox').off('change');
-		$('#useSelectedMethodCheckbox').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
+		$("#breedingMethodSelectionDiv :input").attr("disabled", true);
+		$('#breedingMethodDropdown').select2('val', null);
 
-		// this indicates that the user went through the crossing manager, and should have the breeding method setting fields disabled
-		//if (selectedBreedingMethodId) {
-		//	ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
-		//}
+		$('#selectMethodForAllCrosses').off('change');
+		$('#selectMethodForAllCrosses').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
 
-		//$('.cross-import-name-setting').off('change');
-		//$('.cross-import-name-setting').on('change', ImportCrosses.updateDisplayedSequenceNameValue);
-        //
-		//$('#parentageDesignationSeparator').off('change');
-		//$('#parentageDesignationSeparator').on('change', ImportCrosses.updateSampleParentageDesignation);
+		$('#selectMethodInImportFile').off('change');
+		$('#selectMethodInImportFile').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
 
-		//ImportCrosses.populateHarvestMonthDropdown('harvestMonthDropdown');
-		//ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
+		$('#selectUseParentalStatus').off('change');
+		$('#selectUseParentalStatus').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
 
 		//$('#settingsNextButton').off('click');
 		//$('#settingsNextButton').click(function () {
@@ -337,12 +332,11 @@ var ImportCrosses = {
 	},
 
 	enableDisableBreedingMethodDropdown : function() {
-		var checkboxValue = $('#useSelectedMethodCheckbox').prop('checked');
-		if (checkboxValue) {
-			$('#breedingMethodSelectionDiv').show();
+		var radioValue = $('#selectMethodForAllCrosses').prop('checked');
+		if (radioValue) {
+			$("#breedingMethodSelectionDiv :input").attr("disabled", false);
 		} else {
-			$('#breedingMethodSelectionDiv').hide();
-
+			$("#breedingMethodSelectionDiv :input").attr("disabled", true);
 			$('#breedingMethodDropdown').select2('val', null);
 		}
 	},

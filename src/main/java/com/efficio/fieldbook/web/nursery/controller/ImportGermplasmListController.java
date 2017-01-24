@@ -780,8 +780,10 @@ public class ImportGermplasmListController extends SettingsController {
 				val = germplasm.getDesig();
 			} else if (term == TermId.CHECK.getId()) {
 				val = germplasm.getEntryTypeValue();
-			} else if (term == TermId.GROUP_ID.getId()) {
+			} else if (term == TermId.GROUPGID.getId()) {
 				val = germplasm.getMgid().toString();
+			} else if (term == TermId.STOCKID.getId()) {
+				val = germplasm.getStockIDs().toString();
 			}
 		}
 		return val;
@@ -1259,6 +1261,9 @@ public class ImportGermplasmListController extends SettingsController {
 				germplasm.setMgid(aData.getGroupId()); // set Group_Id from germplasm
 				germplasm.setSource(aData.getSeedSource());
 				germplasm.setGroupName(aData.getGroupName());
+				germplasm.setGroupId(aData.getGroupId());
+				//TODO : BMS-3374 need to set stockIDs in ListDataProject
+				germplasm.setStockIDs(aData.getStockIDs());
 				germplasm.setIndex(index++);
 
 				list.add(germplasm);

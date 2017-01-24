@@ -82,6 +82,9 @@ public class ListDataProjectUtil {
 				germplasm.setMgid(aData.getGroupId());
 				germplasm.setSource(aData.getSeedSource());
 				germplasm.setGroupName(aData.getGroupName());
+				germplasm.setGroupId(aData.getGroupId());
+				//TODO : BMS-3374 need to set stockIDs in ListDataProject
+				germplasm.setStockIDs(aData.getStockIDs());
 				germplasm.setIndex(index++);
 
 				list.add(germplasm);

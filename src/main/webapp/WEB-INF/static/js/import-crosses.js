@@ -161,7 +161,7 @@ var ImportCrosses = {
 			}
 			$('#openCrossesListModal').modal('hide');
 			$('#settingsNextButton').off('click');
-			$('#settingsNextButton').click(function () { ImportCrosses.submitCrossImportSettings(false); });
+			ImportCrosses.submitCrossImportSettings(false);
 		});
 
 		$('#openCrossListUpdateNextButton').off('click');
@@ -171,7 +171,7 @@ var ImportCrosses = {
 			}
 			$('#openCrossesListModal').modal('hide');
 			$('#openCrossListUpdateNextButton').off('click');
-			$('#openCrossListUpdateNextButton').click(function () { ImportCrosses.submitCrossImportSettings(true); });
+			ImportCrosses.submitCrossImportSettings(true);
 		});
 
 		$('#goBackToNamingModal').off('click');
@@ -516,18 +516,23 @@ var ImportCrosses = {
 				} else {
 					$('#crossSettingsModal').modal('hide');
 					selectedBreedingMethodId = 0;
-					if (isUpdateCrossesList) {
-						SaveAdvanceList.updateGermplasmList();
-					} else {
-						ImportCrosses.openSaveListModal();
 
-						if (settingsForSaving) {
-							// as per UI requirements, we also display a success message regarding the saving of the settings
-							// if an error in the settings saving has occurred, program flow would have continued in the data.success === '0' branch
-							// hence, we can safely assume that settings have been properly saved at this point
-							showSuccessfulMessage('', crossingSettingsSaved);
-						}
+					// TODO Remove
+					// if (isUpdateCrossesList) {
+					// 	ImportCrosses.updateGermplasmList();
+					// } else {
+
+					// TODO move after show crosses preview
+					ImportCrosses.openSaveListModal();
+
+					if (settingsForSaving) {
+						// as per UI requirements, we also display a success message regarding the saving of the settings
+						// if an error in the settings saving has occurred, program flow would have continued in the data.success === '0' branch
+						// hence, we can safely assume that settings have been properly saved at this point
+						showSuccessfulMessage('', crossingSettingsSaved);
 					}
+
+					// }
 				}
 			},
 			error: function() {
@@ -765,6 +770,32 @@ var ImportCrosses = {
 			},
 			error: function() {
 				//TODO Process errors
+			}
+		});
+	},
+
+	// TODO Remove
+	updateGermplasmList: function() {
+		$.ajax({
+			url: '/Fieldbook/ListTreeManager/updateCrossesList/',
+			type: 'POST',
+			data: null,
+			cache: false,
+			success: function(data) {
+				if (data.isSuccess === 1) {
+					$('#saveListTreeModal').modal('hide');
+					ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  data.listName);
+					$('#saveListTreeModal').data('is-save-crosses', '0');
+					showSuccessfulMessage('', saveListSuccessfullyMessage);
+				} else {
+					showErrorMessage('page-save-list-message-modal', data.message);
+				}
+				if (data.isTrimed === 1) {
+					showAlertMessage('page-save-list-message-modal', crossesWarningMessage, 10000);
+				}
+			},
+			error: function() {
+				showErrorMessage('page-save-list-message-modal', $.fieldbookMessages.errorImportFailed);
 			}
 		});
 	},

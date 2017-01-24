@@ -91,17 +91,14 @@ var ImportCrosses = {
 		$('#selectUseParentalStatus').off('change');
 		$('#selectUseParentalStatus').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
 
-		//$('#settingsNextButton').off('click');
-		//$('#settingsNextButton').click(function () {
-		//	$('#crossSetBreedingMethodModal').modal('hide');
-		//	setTimeout(ImportCrosses.showImportSettingsPopup, 500);
-		//});
-
-
 		$('#setNamingNextButton').off('click');
 		$('#setNamingNextButton').click(function () {
-			$('#crossSetBreedingMethodModal').modal('hide');
-			setTimeout(ImportCrosses.showImportSettingsPopup, 500);
+			if (ImportCrosses.isBreedingMethodSelectedValid()) {
+				$('#crossSetBreedingMethodModal').modal('hide');
+				setTimeout(ImportCrosses.showImportSettingsPopup, 500);
+			} else {
+				showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
+			}
 		});
 
 		$('#goBackToImportCrossesButton').off('click');
@@ -539,6 +536,17 @@ var ImportCrosses = {
 				showErrorMessage('', $.fieldbookMessages.errorImportCrossesSettingsFailed);
 			}
 		});
+	},
+
+	isBreedingMethodSelectedValid: function() {
+		'use strict';
+		var radioValue = $('#selectMethodForAllCrosses').prop('checked');
+		var breedingMethodId = $('#breedingMethodDropdown').select2('val');
+		if (radioValue && (!breedingMethodId || breedingMethodId === '')) {
+			return false;
+		} else {
+			return true;
+		}
 	},
 
 	isCrossImportSettingsValid: function(importSettings) {

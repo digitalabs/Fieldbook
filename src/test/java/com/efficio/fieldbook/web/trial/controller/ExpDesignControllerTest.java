@@ -2,6 +2,9 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.service.internal.DesignLicenseUtil;
 import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
+import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseException;
+import com.efficio.fieldbook.service.internal.breedingview.License;
+import com.efficio.fieldbook.service.internal.breedingview.Status;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
@@ -198,15 +201,21 @@ public class ExpDesignControllerTest {
 	}
 
 	@Test
-	public void testShowMeasurementsisExpiringWithinThirtyDaysHasWarning() {
+	public void testShowMeasurementsisExpiringWithinThirtyDaysHasWarning() throws BVLicenseParseException {
 		final Model model = Mockito.mock(Model.class);
 		final ExpDesignParameterUi expDesignParameterUi = this.createExpDesignParameterUiTestData();
 		final List<ImportedGermplasm> germplasmList = this.mockGermplasmList();
 		this.mockDesignValidation(expDesignParameterUi, germplasmList);
 
 		// mock license has not yet expired but expiring in thirty days
-		Mockito.doReturn(false).when(this.designLicenseUtil).isExpired(Mockito.any(BVDesignLicenseInfo.class));
-		Mockito.doReturn(true).when(this.designLicenseUtil).isExpiringWithinThirtyDays(Mockito.any(BVDesignLicenseInfo.class));
+		BVDesignLicenseInfo bvDesignLicenseInfo = new BVDesignLicenseInfo();
+		bvDesignLicenseInfo.setStatus(new Status());
+		bvDesignLicenseInfo.getStatus().setLicense(new License());
+		bvDesignLicenseInfo.getStatus().getLicense().setExpiryDays("29");
+
+		Mockito.doReturn(bvDesignLicenseInfo).when(this.designLicenseUtil).retrieveLicenseInfo();
+		Mockito.doReturn(false).when(this.designLicenseUtil).isExpired(bvDesignLicenseInfo);
+		Mockito.doReturn(true).when(this.designLicenseUtil).isExpiringWithinThirtyDays(bvDesignLicenseInfo);
 
 		final ExpDesignValidationOutput output = this.expDesignController.showMeasurements(model, expDesignParameterUi);
 

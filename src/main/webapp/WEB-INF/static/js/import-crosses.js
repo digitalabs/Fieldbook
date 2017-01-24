@@ -312,10 +312,19 @@ var ImportCrosses = {
 		
 		$('#settingsNextButtonUpdateList').off('click');
 		$('#settingsNextButtonUpdateList').click(function() {
-			$(crossSettingsPopupModal).modal('hide');
-			setTimeout(function() {
-				ImportCrosses.openCrossesList(createdCrossesListId);
-			}, 500);
+			var valid = true;
+			var settingData = ImportCrosses.constructSettingsObjectFromForm();
+			if (settingData.isUseManualSettingsForNaming) {
+				if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
+					valid = false;
+				}
+			}
+			if (valid) {
+				$(crossSettingsPopupModal).modal('hide');
+				setTimeout(function () {
+					ImportCrosses.openCrossesList(createdCrossesListId);
+				}, 500);
+			}
 		});
 
 		$('#goBackToSelectBreedingMethodModal').off('click');

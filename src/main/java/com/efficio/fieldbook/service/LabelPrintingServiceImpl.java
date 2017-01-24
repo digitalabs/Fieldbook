@@ -128,6 +128,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	@Resource
 	private OntologyDataManager ontologyDataManager;
+	
+	@Resource
+	private UserLabelPrinting userLabelPrinting;
 
 	private LabelGenerator labelGenerator;
 
@@ -1035,11 +1038,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		final List<LabelPrintingPresets> out = new ArrayList<>();
 
 		final Project project = this.workbenchService.getProjectById(programId.longValue());
-
+		
+		final String toolSectionName = this.userLabelPrinting.isStockList() ? ToolSection.INVENTORY_LABEL_PRINTING_PRESET.name() : ToolSection.PLANTING_LABEL_PRINTING_PRESET.name();
+		
 		if (LabelPrintingPresets.PROGRAM_PRESET == presetType) {
 			final List<ProgramPreset> presets =
 					this.presetDataManager.getProgramPresetFromProgramAndToolByName(presetName, this.contextUtil.getCurrentProgramUUID(),
-							this.workbenchService.getFieldbookWebTool().getToolId().intValue(), ToolSection.FBK_LABEL_PRINTING.name());
+							this.workbenchService.getFieldbookWebTool().getToolId().intValue(), toolSectionName);
 
 			for (final ProgramPreset preset : presets) {
 				out.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(), LabelPrintingPresets.PROGRAM_PRESET));
@@ -1049,7 +1054,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 			final List<StandardPreset> standardPresets =
 					this.workbenchService.getStandardPresetByCropAndPresetName(presetName, this.workbenchService.getFieldbookWebTool()
-							.getToolId().intValue(), cropName, ToolSection.FBK_LABEL_PRINTING.name());
+							.getToolId().intValue(), cropName, toolSectionName);
 
 			for (final StandardPreset preset : standardPresets) {
 				out.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(), LabelPrintingPresets.STANDARD_PRESET));
@@ -1068,17 +1073,18 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			final Project project = this.workbenchService.getProjectById(programId.longValue());
 			final String cropName = project.getCropType().getCropName();
 			final Integer fieldbookToolId = this.workbenchService.getFieldbookWebTool().getToolId().intValue();
-
+			
+			final String toolSectionName = this.userLabelPrinting.isStockList() ? ToolSection.INVENTORY_LABEL_PRINTING_PRESET.name() : ToolSection.PLANTING_LABEL_PRINTING_PRESET.name();
 			// 2. retrieve the standard presets
 			for (final StandardPreset preset : this.workbenchService.getStandardPresetByCrop(fieldbookToolId, cropName,
-					ToolSection.FBK_LABEL_PRINTING.name())) {
+					toolSectionName)) {
 				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(),
 						LabelPrintingPresets.STANDARD_PRESET));
 			}
 
 			// 3. add all program presets for fieldbook
 			for (final ProgramPreset preset : this.presetDataManager.getProgramPresetFromProgramAndTool(
-					this.contextUtil.getCurrentProgramUUID(), fieldbookToolId, ToolSection.FBK_LABEL_PRINTING.name())) {
+					this.contextUtil.getCurrentProgramUUID(), fieldbookToolId, toolSectionName)) {
 				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
 						LabelPrintingPresets.PROGRAM_PRESET));
 			}
@@ -1117,7 +1123,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		// check if exists, override if true else add new
 		final List<LabelPrintingPresets> searchPresetList =
 				this.getAllLabelPrintingPresetsByName(settingsName, programId, LabelPrintingPresets.PROGRAM_PRESET);
-
+		final String toolSectionName = this.userLabelPrinting.isStockList() ? ToolSection.INVENTORY_LABEL_PRINTING_PRESET.name() : ToolSection.PLANTING_LABEL_PRINTING_PRESET.name();
+		
 		if (!searchPresetList.isEmpty()) {
 			// update
 			final ProgramPreset currentLabelPrintingPreset = this.getLabelPrintingProgramPreset(searchPresetList.get(0).getId());
@@ -1130,7 +1137,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			preset.setName(settingsName);
 			preset.setProgramUuid(this.contextUtil.getCurrentProgramUUID());
 			preset.setToolId(this.workbenchService.getFieldbookWebTool().getToolId().intValue());
-			preset.setToolSection(ToolSection.FBK_LABEL_PRINTING.name());
+			preset.setToolSection(toolSectionName);
 			preset.setConfiguration(xmlConfig);
 
 			this.presetDataManager.saveOrUpdateProgramPreset(preset);

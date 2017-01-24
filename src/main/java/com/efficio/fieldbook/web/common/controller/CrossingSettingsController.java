@@ -416,6 +416,7 @@ public class CrossingSettingsController extends SettingsController {
 		}
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 		importedCrossesList.setType(germplasmList.getType());
+		importedCrossesList.setUserId(germplasmList.getUserId());
 		this.userSelection.setImportedCrossesList(importedCrossesList);
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);

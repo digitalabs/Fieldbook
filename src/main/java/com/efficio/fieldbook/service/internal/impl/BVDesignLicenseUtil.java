@@ -38,13 +38,13 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		try {
 
-			Format formatter = new SimpleDateFormat(LICENSE_DATE_FORMAT);
-			Date expiryDate = (Date) formatter.parseObject(bvDesignLicenseInfo.getStatus().getLicense().getExpiry());
+			final Format formatter = new SimpleDateFormat(LICENSE_DATE_FORMAT);
+			final Date expiryDate = (Date) formatter.parseObject(bvDesignLicenseInfo.getStatus().getLicense().getExpiry());
 			final Date currentDate = DateUtil.getCurrentDateWithZeroTime();
 			if (currentDate.compareTo(expiryDate) > 0) {
 				return true;
 			}
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			BVDesignLicenseUtil.LOG.error(e.getMessage(), e);
 		}
 		return false;
@@ -57,7 +57,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		try {
 			expiryDays = Integer.parseInt(bvDesignLicenseInfo.getStatus().getLicense().getExpiryDays());
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			BVDesignLicenseUtil.LOG.error("Expiration days from BVDesign's license file is not a number", e);
 			return true;
 		}
@@ -76,7 +76,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 		return this.readLicenseInfoFromJsonFile(bvDesignLocation);
 	}
 
-	protected BVDesignLicenseInfo readLicenseInfoFromJsonFile(String bvDesignLocation) throws BVLicenseParseException {
+	protected BVDesignLicenseInfo readLicenseInfoFromJsonFile(final String bvDesignLocation) throws BVLicenseParseException {
 
 		final ObjectMapper mapper = new ObjectMapper();
 		BVDesignLicenseInfo bvDesignLicenseInfo = new BVDesignLicenseInfo();
@@ -84,10 +84,10 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 		try {
 			bvDesignLicenseInfo = mapper.readValue(new File(bvDesignLocation + BVDESIGN_STATUS_OUTPUT_FILENAME), BVDesignLicenseInfo.class);
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 
-			String errorMessage = "The system cannot read the BVDesign license file because the format is invalid.";
-			BVDesignLicenseUtil.LOG.error(errorMessage + ":" +  e.getMessage(), e);
+			final String errorMessage = "The system cannot read the BVDesign license file because the format is invalid.";
+			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
 			throw new BVLicenseParseException(errorMessage);
 		}
 
@@ -95,7 +95,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 	}
 
-	protected void generateBVDesignLicenseJsonFile(String bvDesignLocation) throws BVLicenseParseException {
+	protected void generateBVDesignLicenseJsonFile(final String bvDesignLocation) throws BVLicenseParseException {
 
 		Process p = null;
 
@@ -106,11 +106,11 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		} catch (final IOException e) {
 
-			String errorMessage = "The system failed to generete license file from BVDesign.";
-			BVDesignLicenseUtil.LOG.error(errorMessage + ":" +  e.getMessage(), e);
+			final String errorMessage = "The system failed to generete license file from BVDesign.";
+			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
 			throw new BVLicenseParseException(errorMessage);
 
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			BVDesignLicenseUtil.LOG.error(e.getMessage(), e);
 		}
 

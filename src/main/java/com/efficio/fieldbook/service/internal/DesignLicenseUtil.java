@@ -1,8 +1,7 @@
 package com.efficio.fieldbook.service.internal;
 
 import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
-
-import java.io.IOException;
+import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseException;
 
 public interface DesignLicenseUtil {
 
@@ -10,6 +9,6 @@ public interface DesignLicenseUtil {
 
 	public boolean isExpiringWithinThirtyDays(BVDesignLicenseInfo bvDesignLicenseInfo);
 
-	public BVDesignLicenseInfo retrieveLicenseInfo() throws IOException;
+	public BVDesignLicenseInfo retrieveLicenseInfo() throws BVLicenseParseException;
 
 }

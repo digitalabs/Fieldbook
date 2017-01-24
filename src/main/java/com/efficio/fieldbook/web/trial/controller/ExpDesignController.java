@@ -2,6 +2,7 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.service.internal.DesignLicenseUtil;
 import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
+import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseException;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
@@ -321,6 +322,8 @@ public class ExpDesignController extends BaseTrialController {
 		} catch (final BVDesignException e) {
 			// this should catch when the BV design is not successful
 			expParameterOutput = new ExpDesignValidationOutput(false, this.messageSource.getMessage(e.getBvErrorCode(), null, locale));
+		} catch (final BVLicenseParseException e) {
+			expParameterOutput = new ExpDesignValidationOutput(false, e.getMessage());
 		} catch (final Exception e) {
 			ExpDesignController.LOG.error(e.getMessage(), e);
 			expParameterOutput = new ExpDesignValidationOutput(false,

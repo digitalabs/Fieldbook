@@ -3,6 +3,7 @@ package com.efficio.fieldbook.service.internal.impl;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
 import com.efficio.fieldbook.service.internal.DesignLicenseUtil;
+import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseException;
 import com.efficio.fieldbook.web.util.AppConstants;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.util.DateUtil;
@@ -66,7 +67,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 	}
 
 	@Override
-	public BVDesignLicenseInfo retrieveLicenseInfo() throws IOException {
+	public BVDesignLicenseInfo retrieveLicenseInfo() throws BVLicenseParseException {
 
 		final String bvDesignLocation = this.getBreedingViewExeLocation();
 
@@ -75,17 +76,26 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 		return this.readLicenseInfoFromJsonFile(bvDesignLocation);
 	}
 
-	protected BVDesignLicenseInfo readLicenseInfoFromJsonFile(String bvDesignLocation) throws IOException {
+	protected BVDesignLicenseInfo readLicenseInfoFromJsonFile(String bvDesignLocation) throws BVLicenseParseException {
 
 		final ObjectMapper mapper = new ObjectMapper();
 		BVDesignLicenseInfo bvDesignLicenseInfo = new BVDesignLicenseInfo();
-		bvDesignLicenseInfo = mapper.readValue(new File(bvDesignLocation + BVDESIGN_STATUS_OUTPUT_FILENAME), BVDesignLicenseInfo.class);
+
+		try {
+			bvDesignLicenseInfo = mapper.readValue(new File(bvDesignLocation + BVDESIGN_STATUS_OUTPUT_FILENAME), BVDesignLicenseInfo.class);
+
+		} catch (IOException e) {
+
+			String errorMessage = "The system cannot read the BVDesign license file because the format is invalid.";
+			BVDesignLicenseUtil.LOG.error(errorMessage + ":" +  e.getMessage(), e);
+			throw new BVLicenseParseException(errorMessage);
+		}
 
 		return bvDesignLicenseInfo;
 
 	}
 
-	protected void generateBVDesignLicenseJsonFile(String bvDesignLocation) throws IOException {
+	protected void generateBVDesignLicenseJsonFile(String bvDesignLocation) throws BVLicenseParseException {
 
 		Process p = null;
 
@@ -96,12 +106,9 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		} catch (final IOException e) {
 
-			if (p != null) {
-				// missing these was causing the mass amounts of open 'files'
-				p.getInputStream().close();
-				p.getOutputStream().close();
-				p.getErrorStream().close();
-			}
+			String errorMessage = "The system failed to generete license file from BVDesign.";
+			BVDesignLicenseUtil.LOG.error(errorMessage + ":" +  e.getMessage(), e);
+			throw new BVLicenseParseException(errorMessage);
 
 		} catch (InterruptedException e) {
 			BVDesignLicenseUtil.LOG.error(e.getMessage(), e);
@@ -122,4 +129,5 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 		}
 		return bvDesignLocation;
 	}
+
 }

@@ -50,7 +50,7 @@ public class BVDesignLicenseUtilTest {
 
 		final Calendar calendar = DateUtil.getCalendarInstance();
 		calendar.setTime(DateUtil.getCurrentDateWithZeroTime());
-		calendar.add(Calendar.DAY_OF_WEEK, 1);
+		calendar.add(Calendar.DAY_OF_WEEK, -1);
 
 		SimpleDateFormat df = new SimpleDateFormat(BVDesignLicenseUtil.LICENSE_DATE_FORMAT);
 		BVDesignLicenseInfo bvDesignLicenseInfo = this.createBVDesignLicenseInfo();

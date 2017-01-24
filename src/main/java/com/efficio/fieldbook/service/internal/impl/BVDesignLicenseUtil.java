@@ -40,7 +40,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 			Format formatter = new SimpleDateFormat(LICENSE_DATE_FORMAT);
 			Date expiryDate = (Date) formatter.parseObject(bvDesignLicenseInfo.getStatus().getLicense().getExpiry());
 			final Date currentDate = DateUtil.getCurrentDateWithZeroTime();
-			if (expiryDate.compareTo(currentDate) > 0) {
+			if (currentDate.compareTo(expiryDate) > 0) {
 				return true;
 			}
 		} catch (ParseException e) {

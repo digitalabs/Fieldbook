@@ -149,6 +149,8 @@ var ImportCrosses = {
             	return;
             }
 			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
+		}).fail(function (jqXHR, textStatus) {
+			showErrorMessage('', textStatus);
 		});
 
 		$('#openCrossListNextButton').off('click');
@@ -211,7 +213,7 @@ var ImportCrosses = {
 				url: crossesURL,
 				type: 'GET',
 				cache: false,
-				timeout: 3000
+				global: false
 			});
 		},
 

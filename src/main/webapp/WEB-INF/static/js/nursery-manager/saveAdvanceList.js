@@ -54,31 +54,6 @@ var SaveAdvanceList = {};
 		);
 	};
 
-	SaveAdvanceList.updateGermplasmList = function() {
-		$.ajax({
-			url: '/Fieldbook/ListTreeManager/updateCrossesList/',
-			type: 'POST',
-			data: null,
-			cache: false,
-			success: function(data) {
-				if (data.isSuccess === 1) {
-					$('#saveListTreeModal').modal('hide');
-					ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  data.listName);
-					$('#saveListTreeModal').data('is-save-crosses', '0');
-					showSuccessfulMessage('', saveListSuccessfullyMessage);
-				} else {
-					showErrorMessage('page-save-list-message-modal', data.message);
-				}
-				if (data.isTrimed === 1) {
-					showAlertMessage('page-save-list-message-modal', crossesWarningMessage, 10000);
-				}
-			},
-			error: function() {
-				showErrorMessage('page-save-list-message-modal', $.fieldbookMessages.errorImportFailed);
-			}
-		});
-	};
-
 	SaveAdvanceList.saveGermplasmList = function() {
 		var chosenNodeFolder = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 		var errorMessageDiv = 'page-save-list-message-modal';

@@ -105,6 +105,9 @@ public class LabelPrintingServiceImplTest {
 
 	@Mock
 	private OntologyDataManager ontologyDataManager;
+	
+	@Mock
+	private UserLabelPrinting userLabelPrinting;
 
 	@InjectMocks
 	private LabelPrintingServiceImpl labelPrintingServiceImpl;
@@ -132,30 +135,30 @@ public class LabelPrintingServiceImplTest {
 		final ArrayList<ProgramPreset> notEmptySearchResult = new ArrayList<>();
 		final ProgramPreset searchResultPreset = new ProgramPreset();
 		searchResultPreset.setProgramUuid(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID);
-		searchResultPreset.setToolSection(ToolSection.FBK_LABEL_PRINTING.name());
+		searchResultPreset.setToolSection(ToolSection.PLANTING_LABEL_PRINTING_PRESET.name());
 		searchResultPreset.setToolId(23);
 		searchResultPreset.setName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME);
 		searchResultPreset.setConfiguration(LabelPrintingServiceImplTest.PROGRAM_PRESET_CONFIG);
 		notEmptySearchResult.add(searchResultPreset);
 
 		Mockito.when(this.presetDataManager.getProgramPresetFromProgramAndToolByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
-				LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23, ToolSection.FBK_LABEL_PRINTING.name()))
+				LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23, ToolSection.PLANTING_LABEL_PRINTING_PRESET.name()))
 				.thenReturn(notEmptySearchResult);
 
 		Mockito.when(
 				this.presetDataManager.getProgramPresetFromProgramAndToolByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
-						LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23, ToolSection.FBK_LABEL_PRINTING.name()))
+						LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23, ToolSection.PLANTING_LABEL_PRINTING_PRESET.name()))
 				.thenReturn(new ArrayList<ProgramPreset>());
 
 		Mockito.when(this.presetDataManager.getProgramPresetFromProgramAndTool(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23,
-				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(notEmptySearchResult);
+				ToolSection.PLANTING_LABEL_PRINTING_PRESET.name())).thenReturn(notEmptySearchResult);
 
 		final ArrayList<StandardPreset> standardPresetSearchResults = new ArrayList<>();
 		final StandardPreset sp = new StandardPreset();
 		sp.setName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME);
 		sp.setCropName(LabelPrintingServiceImplTest.MAIZE_CROP_STR);
 		sp.setToolId(23);
-		sp.setToolSection(ToolSection.FBK_LABEL_PRINTING.name());
+		sp.setToolSection(ToolSection.PLANTING_LABEL_PRINTING_PRESET.name());
 		sp.setConfiguration(LabelPrintingServiceImplTest.STANDARD_PRESET_CONFIG);
 		standardPresetSearchResults.add(sp);
 
@@ -163,20 +166,22 @@ public class LabelPrintingServiceImplTest {
 		this.environmentData = MeasurementRowTestDataInitializer.createEnvironmentDataMap();
 
 		Mockito.when(this.workbenchService.getStandardPresetByCropAndPresetName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME, 23,
-				LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.FBK_LABEL_PRINTING.name()))
+				LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.PLANTING_LABEL_PRINTING_PRESET.name()))
 				.thenReturn(standardPresetSearchResults);
 		Mockito.when(this.workbenchService.getStandardPresetByCropAndPresetName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
-				23, LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.FBK_LABEL_PRINTING.name()))
+				23, LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.PLANTING_LABEL_PRINTING_PRESET.name()))
 				.thenReturn(new ArrayList<StandardPreset>());
 
 		Mockito.when(this.workbenchService.getStandardPresetByCrop(23, LabelPrintingServiceImplTest.MAIZE_CROP_STR,
-				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(standardPresetSearchResults);
+				ToolSection.PLANTING_LABEL_PRINTING_PRESET.name())).thenReturn(standardPresetSearchResults);
 
 		Mockito.when(this.workbenchService.getStandardPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID)).thenReturn(sp);
 		Mockito.when(this.presetDataManager.getProgramPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID))
 				.thenReturn(searchResultPreset);
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID);
+		
+		Mockito.when(this.userLabelPrinting.isStockList()).thenReturn(false);
 	}
 
 	@Test

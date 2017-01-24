@@ -267,11 +267,11 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 			} else if (term.intValue() == TermId.CHECK.getId()) {
 				// get the code of ENTRY_TYPE - CATEGORICAL FACTOR
 				val = this.getCategoricalCodeValue(germplasm, settingDetail);
-			} else if (term == TermId.GROUP_ID.getId()) {
+			} else if (term == TermId.GROUPGID.getId()) {
 				val = germplasm.getMgid().toString();
 			} else if (term == TermId.STOCKID.getId()) {
-				//TODO : BMS-3374 retrieven StockIDs
-				//val =
+				//TODO : BMS-3374 retrieve StockIDs
+				val = germplasm.getStockIDs().toString();
 			}
 		}
 		return val;

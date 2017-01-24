@@ -2037,6 +2037,14 @@ input.select-all-margin{
     display: none;
 }
 
+.import-crosses-from-file #useBreedingInTheImportFile {
+    display: inline-block;
+}
+
+#useBreedingInTheImportFile {
+    display: none;
+}
+
 #preSelectedBreedingMethodDropdown {
     width: 420px;
 }

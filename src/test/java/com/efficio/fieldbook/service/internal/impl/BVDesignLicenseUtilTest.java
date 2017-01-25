@@ -1,7 +1,8 @@
-package com.efficio.fieldbook.service.internal;
+package com.efficio.fieldbook.service.internal.impl;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
+import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseException;
 import com.efficio.fieldbook.service.internal.breedingview.License;
 import com.efficio.fieldbook.service.internal.breedingview.Status;
 import com.efficio.fieldbook.service.internal.impl.BVDesignLicenseUtil;
@@ -31,6 +32,9 @@ public class BVDesignLicenseUtilTest {
 
 	@Mock
 	private WorkbenchService workbenchService;
+
+	@Mock
+	private ObjectMapper objectMapper;
 
 	@InjectMocks
 	private BVDesignLicenseUtil bvDesignLicenseUtil;
@@ -105,6 +109,53 @@ public class BVDesignLicenseUtilTest {
 
 		bvDesignLicenseInfo.getStatus().getLicense().setExpiryDays("31");
 		Assert.assertFalse(bvDesignLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo));
+
+	}
+
+	@Test
+	public void testReadLicenseInfoFromJsonFileSuccess() throws IOException {
+
+
+		File file = Mockito.mock(File.class);
+		BVDesignLicenseInfo bvDesignLicenseInfo = this.createBVDesignLicenseInfo();
+		bvDesignLicenseInfo.getStatus().setReturnCode(BVDesignLicenseUtil.LICENSE_SUCCESS_CODE);
+		Mockito.when(objectMapper.readValue(file, BVDesignLicenseInfo.class)).thenReturn(bvDesignLicenseInfo);
+
+		try {
+
+			bvDesignLicenseUtil.readLicenseInfoFromJsonFile(file);
+
+		} catch (BVLicenseParseException e) {
+
+			Assert.fail("The method should not throw an exception");
+
+		}
+
+	}
+
+	@Test
+	public void testReadLicenseInfoFromJsonFileException() throws IOException {
+
+
+		File file = Mockito.mock(File.class);
+		BVDesignLicenseInfo bvDesignLicenseInfo = this.createBVDesignLicenseInfo();
+
+		String errorStatusCode = "-1";
+		String errorMessage = "There is an error.";
+		bvDesignLicenseInfo.getStatus().setReturnCode(errorStatusCode);
+		bvDesignLicenseInfo.getStatus().setAppStatus(errorMessage);
+		Mockito.when(objectMapper.readValue(file, BVDesignLicenseInfo.class)).thenReturn(bvDesignLicenseInfo);
+
+		try {
+
+			bvDesignLicenseUtil.readLicenseInfoFromJsonFile(file);
+			Assert.fail("The method should throw an exception");
+
+		} catch (BVLicenseParseException e) {
+
+			Assert.assertEquals("BVDesign returned an error: " + errorMessage, e.getMessage());
+
+		}
 
 	}
 

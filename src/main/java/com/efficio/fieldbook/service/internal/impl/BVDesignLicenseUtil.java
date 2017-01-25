@@ -34,6 +34,8 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 	@Resource
 	private WorkbenchService workbenchService;
 
+	private ObjectMapper objectMapper = new ObjectMapper();
+
 	@Override
 	public boolean isExpired(final BVDesignLicenseInfo bvDesignLicenseInfo) {
 
@@ -74,16 +76,16 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		this.generateBVDesignLicenseJsonFile(bvDesignLocation);
 
-		return this.readLicenseInfoFromJsonFile(bvDesignLocation);
+		return this.readLicenseInfoFromJsonFile(new File(bvDesignLocation + BVDESIGN_STATUS_OUTPUT_FILENAME));
 	}
 
-	protected BVDesignLicenseInfo readLicenseInfoFromJsonFile(final String bvDesignLocation) throws BVLicenseParseException {
+	protected BVDesignLicenseInfo readLicenseInfoFromJsonFile(final File file) throws BVLicenseParseException {
 
-		final ObjectMapper mapper = new ObjectMapper();
 		BVDesignLicenseInfo bvDesignLicenseInfo = new BVDesignLicenseInfo();
 
 		try {
-			bvDesignLicenseInfo = mapper.readValue(new File(bvDesignLocation + BVDESIGN_STATUS_OUTPUT_FILENAME), BVDesignLicenseInfo.class);
+
+			bvDesignLicenseInfo = objectMapper.readValue(file, BVDesignLicenseInfo.class);
 
 		} catch (final IOException e) {
 

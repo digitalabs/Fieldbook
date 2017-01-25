@@ -284,6 +284,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return listDataProjectListId;
 	}
 
+	// TODO Remove
 	@ResponseBody
 	@RequestMapping(value = "/updateCrossesList", method = RequestMethod.POST)
 	public Map<String, Object> updateCrossesList(final Model model, final HttpSession session) {

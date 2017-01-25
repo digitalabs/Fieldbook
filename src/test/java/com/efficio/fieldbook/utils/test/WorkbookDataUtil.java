@@ -703,9 +703,12 @@ public class WorkbookDataUtil {
 		final Map<TermId, Boolean> visibleColumnMap = new LinkedHashMap<>();
 
 		visibleColumnMap.put(TermId.GID, true);
+		visibleColumnMap.put(TermId.DESIG, true);
 		visibleColumnMap.put(TermId.CROSS, true);
 		visibleColumnMap.put(TermId.ENTRY_NO, true);
 		visibleColumnMap.put(TermId.DESIG, true);
+		visibleColumnMap.put(TermId.ENTRY_CODE, true);
+		visibleColumnMap.put(TermId.SEED_SOURCE, true);
 
 		return visibleColumnMap;
 

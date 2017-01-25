@@ -32,6 +32,7 @@ import org.mockito.MockitoAnnotations;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -252,6 +253,8 @@ public class ExportGermplasmListControllerTest {
 	public void test_getVisibleColumnsMapNursery() {
 
 		final String[] termIds = new String[] {"0"};
+		Mockito.when(this.userSelection.getPlotsLevelList()).thenReturn(WorkbookDataUtil.getPlotLevelList());
+
 		final Map<String, Boolean> result = this.exportGermplasmListController.getVisibleColumnsMap(termIds, true);
 
 		Assert.assertTrue(result.get(String.valueOf(TermId.GID.getId())));

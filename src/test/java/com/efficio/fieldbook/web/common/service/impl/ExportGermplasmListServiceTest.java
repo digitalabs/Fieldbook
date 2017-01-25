@@ -28,6 +28,7 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
@@ -46,6 +47,7 @@ import org.mockito.MockitoAnnotations;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.google.common.collect.Maps;
 
 public class ExportGermplasmListServiceTest {
 
@@ -121,6 +123,9 @@ public class ExportGermplasmListServiceTest {
 
 	@Mock
 	GermplasmList germplasmList;
+
+	@Mock
+	InventoryDataManager inventoryDataManager;
 
 	@InjectMocks
 	private ExportGermplasmListServiceImpl exportGermplasmListServiceImpl;
@@ -358,6 +363,10 @@ public class ExportGermplasmListServiceTest {
 				.thenReturn(germplasmLists);
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt())).thenReturn(this.germplasmList);
 
+		Map<Integer, String> mockData = Maps.newHashMap();
+		mockData.put(0, "StockID101, StockID102");
+		Mockito.when(this.inventoryDataManager.retrieveStockIds(Mockito.anyList())).thenReturn(mockData);
+
 		// Assert
 		final GermplasmListExportInputValues input =
 				this.exportGermplasmListServiceImpl.setUpInput(this.testFileName, 80, this.getVisibleColumnMap(), true);
@@ -376,6 +385,10 @@ public class ExportGermplasmListServiceTest {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Matchers.anyInt(), Matchers.eq(GermplasmListType.TRIAL)))
 				.thenReturn(germplasmLists);
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt())).thenReturn(this.germplasmList);
+
+		Map<Integer, String> mockData = Maps.newHashMap();
+		mockData.put(0, "StockID101, StockID102");
+		Mockito.when(this.inventoryDataManager.retrieveStockIds(Mockito.anyList())).thenReturn(mockData);
 
 		// Assert
 		final GermplasmListExportInputValues input =

@@ -262,7 +262,7 @@ public class WorkbookUtil {
 	public static void addFactorsToMeasurementRowDataList(final MeasurementRow row, StandardVariable stdVariable, final boolean isVariate,
 			final MeasurementVariable variable, final UserSelection userSelection ) {
 
-		MeasurementData measurementData;
+		MeasurementData measurementData = null;
 		String value = "";
 		ImportedGermplasm importedGermplasm = null;
 		String gid = null;
@@ -291,20 +291,27 @@ public class WorkbookUtil {
 		if(importedGermplasm != null) {
 			if(stdVariable.getId() == TermId.GROUPGID.getId()) {
 				value = importedGermplasm.getGroupId() != null ? importedGermplasm.getGroupId().toString() : "";
+				measurementData =
+						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 			}
 
 			if(stdVariable.getId() == TermId.SEED_SOURCE.getId()) {
 				value = importedGermplasm.getSource() != null ? importedGermplasm.getSource().toString() : "";
+				measurementData =
+						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 			}
 
 			if(stdVariable.getId() == TermId.STOCKID.getId()) {
 				value = importedGermplasm.getStockIDs() != null ? importedGermplasm.getStockIDs().toString() : "";
+				measurementData =
+						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 			}
 		}
 
-
-		measurementData =
-				new MeasurementData(variable.getName(), value, true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
+		if(measurementData != null) {
+			measurementData =
+					new MeasurementData(variable.getName(), value, true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
+		}
 
 		measurementData.setPhenotypeId(null);
 		final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);

@@ -30,12 +30,14 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.interfaces.GermplasmExportSource;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.manager.ontology.daoElements.VariableFilter;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -74,6 +76,9 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 	@Resource
 	private GermplasmExportService germplasmExportService;
+
+	@Resource
+	private InventoryDataManager inventoryDataManager;
 
 	public ExportGermplasmListServiceImpl() {
 
@@ -116,7 +121,9 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 				// set the ImportedGermplasmListMainInfo to the List reference of the list, so that it still points to the original list
 				this.userSelection.getImportedGermplasmMainInfo().setListId(germplasmList.getListRef());
 			}
-			germplasmlistData = this.germplasmListManager.retrieveSnapshotListData(germplasmList.getId());
+			List<ListDataProject> listDataProjects = this.germplasmListManager.retrieveSnapshotListData(germplasmList.getId());
+			FieldbookListUtil.populateStockIdInListDataProject(listDataProjects, inventoryDataManager);
+			germplasmlistData = listDataProjects;
 		}
 
 		this.setExportListTypeFromOriginalGermplasm(germplasmList);
@@ -270,7 +277,6 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 			} else if (term == TermId.GROUPGID.getId()) {
 				val = germplasm.getMgid().toString();
 			} else if (term == TermId.STOCKID.getId()) {
-				//TODO : BMS-3374 retrieve StockIDs
 				val = germplasm.getStockIDs().toString();
 			}
 		}

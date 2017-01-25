@@ -600,7 +600,7 @@ tr.trialInstance {
 }
 .variates{
 }
-.factors{
+.table-curved > thead > tr > th.factors{
     background-color: #a4a4a4
 }
 .lead {

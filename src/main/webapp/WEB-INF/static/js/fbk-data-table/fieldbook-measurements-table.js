@@ -55,7 +55,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					title: displayColumn.name,
 					data: displayColumn.name,
 					termId: displayColumn.termId,
-					defaultContent: ''
+					defaultContent: '',
+					className: displayColumn.factor == true ? 'factors' : 'variates'
 				});
 
 				var termId = displayColumn.termId;
@@ -440,7 +441,8 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 					title: displayColumn.name,
 					data: displayColumn.name,
 					termId: displayColumn.termId,
-					defaultContent: ''
+					defaultContent: '',
+					className: displayColumn.factor == true ? 'factors' : 'variates'
 				});
 
 				var termId = displayColumn.termId;
@@ -710,7 +712,8 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 					title: displayColumn.name,
 					data: displayColumn.name,
 					termId: displayColumn.termId,
-					defaultContent: ''
+					defaultContent: '',
+					className: displayColumn.factor == true ? 'factors' : 'variates'
 				});
 
 				var termId = displayColumn.termId;

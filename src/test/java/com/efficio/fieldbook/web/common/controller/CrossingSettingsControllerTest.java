@@ -366,7 +366,7 @@ public class CrossingSettingsControllerTest {
 		setting.setName(CrossingSettingsControllerTest.TEST_SETTING_NAME);
 
 		final BreedingMethodSetting methodSetting =
-				new BreedingMethodSetting(CrossingSettingsControllerTest.TEST_BREEDING_METHOD_ID, false);
+				new BreedingMethodSetting(CrossingSettingsControllerTest.TEST_BREEDING_METHOD_ID, false, false);
 		setting.setBreedingMethodSetting(methodSetting);
 
 		final CrossNameSetting nameSetting = new CrossNameSetting();

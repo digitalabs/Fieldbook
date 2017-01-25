@@ -49,7 +49,6 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.labelprinting.LabelGenerator;
 import com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory;
 import com.efficio.fieldbook.util.labelprinting.SeedPreparationLabelGenerator;
 import com.efficio.fieldbook.util.labelprinting.comparators.FieldMapLabelComparator;
@@ -131,8 +130,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	
 	@Resource
 	private UserLabelPrinting userLabelPrinting;
-
-	private LabelGenerator labelGenerator;
 
 	public LabelPrintingServiceImpl() {
 		super();
@@ -1033,34 +1030,20 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(final String presetName, final Integer programId,
-			final Integer presetType) throws MiddlewareQueryException {
+	public List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(final String presetName, final Integer programId) throws MiddlewareQueryException {
 		final List<LabelPrintingPresets> out = new ArrayList<>();
 
 		final Project project = this.workbenchService.getProjectById(programId.longValue());
 		
 		final String toolSectionName = this.userLabelPrinting.isStockList() ? ToolSection.INVENTORY_LABEL_PRINTING_PRESET.name() : ToolSection.PLANTING_LABEL_PRINTING_PRESET.name();
 		
-		if (LabelPrintingPresets.PROGRAM_PRESET == presetType) {
-			final List<ProgramPreset> presets =
+		final List<ProgramPreset> presets =
 					this.presetDataManager.getProgramPresetFromProgramAndToolByName(presetName, this.contextUtil.getCurrentProgramUUID(),
 							this.workbenchService.getFieldbookWebTool().getToolId().intValue(), toolSectionName);
 
-			for (final ProgramPreset preset : presets) {
-				out.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(), LabelPrintingPresets.PROGRAM_PRESET));
-			}
-		} else {
-			final String cropName = project.getCropType().getCropName();
-
-			final List<StandardPreset> standardPresets =
-					this.workbenchService.getStandardPresetByCropAndPresetName(presetName, this.workbenchService.getFieldbookWebTool()
-							.getToolId().intValue(), cropName, toolSectionName);
-
-			for (final StandardPreset preset : standardPresets) {
-				out.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(), LabelPrintingPresets.STANDARD_PRESET));
-			}
+		for (final ProgramPreset preset : presets) {
+			out.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(), LabelPrintingPresets.PROGRAM_PRESET));
 		}
-
 		return out;
 	}
 
@@ -1073,16 +1056,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			final Project project = this.workbenchService.getProjectById(programId.longValue());
 			final String cropName = project.getCropType().getCropName();
 			final Integer fieldbookToolId = this.workbenchService.getFieldbookWebTool().getToolId().intValue();
-			
 			final String toolSectionName = this.userLabelPrinting.isStockList() ? ToolSection.INVENTORY_LABEL_PRINTING_PRESET.name() : ToolSection.PLANTING_LABEL_PRINTING_PRESET.name();
-			// 2. retrieve the standard presets
-			for (final StandardPreset preset : this.workbenchService.getStandardPresetByCrop(fieldbookToolId, cropName,
-					toolSectionName)) {
-				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(),
-						LabelPrintingPresets.STANDARD_PRESET));
-			}
 
-			// 3. add all program presets for fieldbook
+			// 2. add all program presets for fieldbook
 			for (final ProgramPreset preset : this.presetDataManager.getProgramPresetFromProgramAndTool(
 					this.contextUtil.getCurrentProgramUUID(), fieldbookToolId, toolSectionName)) {
 				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
@@ -1122,7 +1098,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			throws MiddlewareQueryException {
 		// check if exists, override if true else add new
 		final List<LabelPrintingPresets> searchPresetList =
-				this.getAllLabelPrintingPresetsByName(settingsName, programId, LabelPrintingPresets.PROGRAM_PRESET);
+				this.getAllLabelPrintingPresetsByName(settingsName, programId);
 		final String toolSectionName = this.userLabelPrinting.isStockList() ? ToolSection.INVENTORY_LABEL_PRINTING_PRESET.name() : ToolSection.PLANTING_LABEL_PRINTING_PRESET.name();
 		
 		if (!searchPresetList.isEmpty()) {

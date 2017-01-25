@@ -872,16 +872,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
 
 		try {
-
-			final List<LabelPrintingPresets> standardPresets = this.labelPrintingService.getAllLabelPrintingPresetsByName(presetName,
-					contextInfo.getSelectedProjectId().intValue(), LabelPrintingPresets.STANDARD_PRESET);
-
-			if (!standardPresets.isEmpty()) {
-				return standardPresets;
-			} else {
-				return this.labelPrintingService.getAllLabelPrintingPresetsByName(presetName, contextInfo.getSelectedProjectId().intValue(),
-						LabelPrintingPresets.PROGRAM_PRESET);
-			}
+			return this.labelPrintingService.getAllLabelPrintingPresetsByName(presetName, contextInfo.getSelectedProjectId().intValue());
 		} catch (final MiddlewareQueryException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
 			return new ArrayList<>();

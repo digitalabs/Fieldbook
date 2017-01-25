@@ -189,7 +189,7 @@ public class LabelPrintingServiceImplTest {
 		final List<LabelPrintingPresets> presetList =
 				this.labelPrintingServiceImpl.getAllLabelPrintingPresets(LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue());
 
-		Assert.assertTrue("should have more than 1 item", presetList.size() > 1);
+		Assert.assertTrue("should have at least 1 item", presetList.size() > 0);
 	}
 
 	@Test
@@ -223,30 +223,18 @@ public class LabelPrintingServiceImplTest {
 	public void testGetAllLabelPrintingPresetsByName() throws Exception {
 		final List<LabelPrintingPresets> programPresetList =
 				this.labelPrintingServiceImpl.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
-						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.PROGRAM_PRESET);
+						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue());
 
 		final List<LabelPrintingPresets> emptyProgramPresetList =
 				this.labelPrintingServiceImpl.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
-						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.PROGRAM_PRESET);
+						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue());
 
-		final List<LabelPrintingPresets> standardPresetList =
-				this.labelPrintingServiceImpl.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
-						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.STANDARD_PRESET);
-
-		final List<LabelPrintingPresets> emptyStandardPresetList =
-				this.labelPrintingServiceImpl.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
-						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.STANDARD_PRESET);
-
-		Assert.assertTrue("should have an item", standardPresetList.size() > 0);
 		Assert.assertTrue("should have an item", programPresetList.size() > 0);
 
 		Assert.assertTrue("should be empty", emptyProgramPresetList.isEmpty());
-		Assert.assertTrue("should be empty", emptyStandardPresetList.isEmpty());
-
+		
 		Assert.assertEquals("should be the same item as we searched on", LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
 				programPresetList.get(0).getName());
-		Assert.assertEquals("should be the same item as we searched on", LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
-				standardPresetList.get(0).getName());
 	}
 
 	@Test

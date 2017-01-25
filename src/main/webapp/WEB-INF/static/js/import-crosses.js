@@ -624,7 +624,8 @@ var ImportCrosses = {
 			settingObject.breedingMethodSetting.methodId = null;
 		}
 
-		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').prop('checked');
+		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#selectUseParentalStatus').prop('checked');
+		settingObject.breedingMethodSetting.basedOnImportFile = ! $('#selectMethodInImportFile').prop('checked');
 
 		settingObject.crossNameSetting = {};
 		settingObject.crossNameSetting.prefix = $('#crossPrefix').val();

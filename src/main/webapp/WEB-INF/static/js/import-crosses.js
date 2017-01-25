@@ -509,6 +509,7 @@ var ImportCrosses = {
 			settingsForSaving = false;
 		}
 
+		// TODO submit settings earlier
 		$.ajax({
 			headers: {
 				Accept: 'application/json',
@@ -525,12 +526,6 @@ var ImportCrosses = {
 					$('#crossSettingsModal').modal('hide');
 					selectedBreedingMethodId = 0;
 
-					// TODO Remove
-					// if (isUpdateCrossesList) {
-					// 	ImportCrosses.updateGermplasmList();
-					// } else {
-
-					// TODO move after show crosses preview
 					ImportCrosses.openSaveListModal();
 
 					if (settingsForSaving) {
@@ -539,8 +534,6 @@ var ImportCrosses = {
 						// hence, we can safely assume that settings have been properly saved at this point
 						showSuccessfulMessage('', crossingSettingsSaved);
 					}
-
-					// }
 				}
 			},
 			error: function() {

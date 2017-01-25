@@ -24,6 +24,7 @@ import java.util.Date;
 public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 	public static final String LICENSE_DATE_FORMAT = "dd-MMM-yyyy";
+	public static final String LICENSE_SUCCESS_CODE = "0";
 	private static final Logger LOG = LoggerFactory.getLogger(BVDesignLicenseUtil.class);
 
 	private static final String BREEDING_VIEW_EXE = "BreedingView.exe";
@@ -86,9 +87,13 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		} catch (final IOException e) {
 
-			final String errorMessage = "The system cannot read the BVDesign license file because the format is invalid.";
+			final String errorMessage = "The system cannot read the BVDesign license file because format is invalid or it does not exist.";
 			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
 			throw new BVLicenseParseException(errorMessage);
+		}
+
+		if (!LICENSE_SUCCESS_CODE.equals(bvDesignLicenseInfo.getStatus().getReturnCode())) {
+			throw new BVLicenseParseException("BVDesign returned an error: " + bvDesignLicenseInfo.getStatus().getAppStatus());
 		}
 
 		return bvDesignLicenseInfo;

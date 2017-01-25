@@ -44,12 +44,14 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,6 +181,10 @@ public class ImportGermplasmListController extends SettingsController {
 	/** The message source. */
 	@Autowired
 	public MessageSource messageSource;
+
+	/** The Inventory list manager. */
+	@Resource
+	private InventoryDataManager inventoryDataManager;
 
 	private static String DEFAULT_CHECK_VALUE = "C";
 	private static String DEFAULT_TEST_VALUE = "T";
@@ -507,6 +513,7 @@ public class ImportGermplasmListController extends SettingsController {
 			mainInfo.setListId(listId);
 			final List<GermplasmListData> data = new ArrayList<>();
 			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId));
+			FieldbookListUtil.populateStockIdInGermplasmListData(data, inventoryDataManager);
 			final List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, null);
 			final String defaultTestCheckId =
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
@@ -610,6 +617,7 @@ public class ImportGermplasmListController extends SettingsController {
 					mainInfo.setListId(germplasmList.getListRef());
 				}
 				final List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
+				FieldbookListUtil.populateStockIdInListDataProject(data, inventoryDataManager);
 				list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
 			}
 
@@ -708,6 +716,7 @@ public class ImportGermplasmListController extends SettingsController {
 				}
 
 				final List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(checkList.getId());
+				FieldbookListUtil.populateStockIdInListDataProject(data, inventoryDataManager);
 				list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
 			}
 
@@ -886,6 +895,7 @@ public class ImportGermplasmListController extends SettingsController {
 			final String checkId = this.getCheckId(ImportGermplasmListController.DEFAULT_CHECK_VALUE, checksList);
 			final List<GermplasmListData> data = new ArrayList<>();
 			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId));
+			FieldbookListUtil.populateStockIdInGermplasmListData(data, inventoryDataManager);
 			final List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, checkId);
 			this.generateCheckListModel(model, list, checksList);
 
@@ -1262,7 +1272,6 @@ public class ImportGermplasmListController extends SettingsController {
 				germplasm.setSource(aData.getSeedSource());
 				germplasm.setGroupName(aData.getGroupName());
 				germplasm.setGroupId(aData.getGroupId());
-				//TODO : BMS-3374 need to set stockIDs in ListDataProject
 				germplasm.setStockIDs(aData.getStockIDs());
 				germplasm.setIndex(index++);
 

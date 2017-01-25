@@ -1696,4 +1696,8 @@ public class ImportGermplasmListController extends SettingsController {
 		}
 		return lowestEntryNo;
 	}
+
+	public void setInventoryDataManager(InventoryDataManager inventoryDataManager) {
+		this.inventoryDataManager = inventoryDataManager;
+	}
 }

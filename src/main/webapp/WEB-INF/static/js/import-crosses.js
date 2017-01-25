@@ -149,6 +149,8 @@ var ImportCrosses = {
             	return;
             }
 			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
+		}).fail(function (jqXHR, textStatus) {
+			showErrorMessage('', textStatus);
 		});
 
 		$('#openCrossListNextButton').off('click');
@@ -211,7 +213,7 @@ var ImportCrosses = {
 				url: crossesURL,
 				type: 'GET',
 				cache: false,
-				timeout: 3000
+				global: false
 			});
 		},
 
@@ -507,6 +509,7 @@ var ImportCrosses = {
 			settingsForSaving = false;
 		}
 
+		// TODO submit settings earlier
 		$.ajax({
 			headers: {
 				Accept: 'application/json',
@@ -523,12 +526,6 @@ var ImportCrosses = {
 					$('#crossSettingsModal').modal('hide');
 					selectedBreedingMethodId = 0;
 
-					// TODO Remove
-					// if (isUpdateCrossesList) {
-					// 	ImportCrosses.updateGermplasmList();
-					// } else {
-
-					// TODO move after show crosses preview
 					ImportCrosses.openSaveListModal();
 
 					if (settingsForSaving) {
@@ -537,8 +534,6 @@ var ImportCrosses = {
 						// hence, we can safely assume that settings have been properly saved at this point
 						showSuccessfulMessage('', crossingSettingsSaved);
 					}
-
-					// }
 				}
 			},
 			error: function() {

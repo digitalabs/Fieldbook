@@ -419,6 +419,9 @@ public class CrossingSettingsController extends SettingsController {
 		importedCrossesList.setUserId(germplasmList.getUserId());
 		this.userSelection.setImportedCrossesList(importedCrossesList);
 
+		// Delete temporary list created on BreedingManager
+		this.germplasmListManager.deleteGermplasmListByListIdPhysically(crossesListId);
+
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
 		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);

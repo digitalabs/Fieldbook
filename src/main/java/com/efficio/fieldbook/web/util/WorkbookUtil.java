@@ -308,7 +308,7 @@ public class WorkbookUtil {
 			}
 		}
 
-		if(measurementData != null) {
+		if(measurementData == null) {
 			measurementData =
 					new MeasurementData(variable.getName(), value, true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 		}

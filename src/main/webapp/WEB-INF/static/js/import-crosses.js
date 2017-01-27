@@ -45,23 +45,23 @@ var ImportCrosses = {
 
 			if (resp.isChoosingListOwnerNeeded) {
 				$('#chooseListOwner').one('shown.bs.modal', function() {
-                	$('body').addClass('modal-open');
-                }).modal({ backdrop: 'static', keyboard: true });
-                $('#chooseListOwner').addClass('import-crosses-from-file');
+					$('body').addClass('modal-open');
+				}).modal({ backdrop: 'static', keyboard: true });
+				$('#chooseListOwner').addClass('import-crosses-from-file');
 
 				$('#goBackToImportFileCrossesButton').off('click');
 				$('#goBackToImportFileCrossesButton').on('click', function() {
 					ImportCrosses.goBackToPage('#chooseListOwner', '.import-crosses-section .modal');
 				});
 
-                $('#chooseListOwnerNextButton').on('click', function() {
-                    if (ImportCrosses.isFileCrossesImport) {
-                        $('#crossSetBreedingMethodModal').addClass('import-crosses-from-file');
-                    }
-                    $('#chooseListOwner').modal('hide');
+				$('#chooseListOwnerNextButton').on('click', function() {
+					if (ImportCrosses.isFileCrossesImport) {
+						$('#crossSetBreedingMethodModal').addClass('import-crosses-from-file');
+					}
+					$('#chooseListOwner').modal('hide');
 					setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
 
-                });
+				});
 
 			} else {
 				setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
@@ -127,6 +127,7 @@ var ImportCrosses = {
 			$('#preview-crosses-table').resize();
 
 		}).modal({ backdrop: 'static', keyboard: true });
+
 		if (ImportCrosses.isFileCrossesImport) {
 			$('#openCrossesListModal').addClass('import-crosses-from-file');
 		}
@@ -138,44 +139,29 @@ var ImportCrosses = {
 		$('#crossSettingsModal').on('hidden.bs.modal', function() {
 				//we should clear the form and form fields on closing as we are going to reuse it later
 				//TODO clear other fields as well, some of them need to set the default value back
-				$('#breedingMethodId').val('');
-				$('#breedingMethodDropdown').select2('val', '');
 				$('#crossSettingsModal').removeClass('import-crosses-from-file');
 			});
 
-		ImportCrosses.getImportedCrossesTable(createdCrossesListId).done(function(response) {
-			if (response.isSuccess === 0) {
-            	showErrorMessage('', response.error);
-            	return;
-            }
-			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
-		}).fail(function (jqXHR, textStatus) {
-			showErrorMessage('', textStatus);
-		});
-
 		$('#openCrossListNextButton').off('click');
 		$('#openCrossListNextButton').on('click', function() {
-			if (ImportCrosses.isFileCrossesImport) {
-				$('#crossSettingsModal').addClass('import-crosses-from-file');
-			}
 			$('#openCrossesListModal').modal('hide');
 			$('#settingsNextButton').off('click');
-			ImportCrosses.submitCrossImportSettings(false);
-		});
-
-		$('#openCrossListUpdateNextButton').off('click');
-		$('#openCrossListUpdateNextButton').on('click', function() {
-			if (ImportCrosses.isFileCrossesImport) {
-				$('#crossSettingsModal').addClass('import-crosses-from-file');
-			}
-			$('#openCrossesListModal').modal('hide');
-			$('#openCrossListUpdateNextButton').off('click');
-			ImportCrosses.submitCrossImportSettings(true);
+			ImportCrosses.openSaveListModal();
 		});
 
 		$('#goBackToNamingModal').off('click');
 		$('#goBackToNamingModal').on('click', function() {
 			ImportCrosses.goBackToPage('#openCrossesListModal', '#crossSettingsModal');
+		});
+
+		return ImportCrosses.getImportedCrossesTable(createdCrossesListId).done(function(response) {
+			if (response.isSuccess === 0) {
+				showErrorMessage('', response.error);
+				return;
+			}
+			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
+		}).fail(function (jqXHR, textStatus) {
+			showErrorMessage('', textStatus);
 		});
 	},
 
@@ -285,7 +271,6 @@ var ImportCrosses = {
 		ImportCrosses.populateHarvestMonthDropdown('harvestMonthDropdown');
 		ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
 
-		// TODO unify Next and NextUpdate
 		$('#settingsNextButton').off('click');
 		$('#settingsNextButton').click(function() {
 			var valid = true;
@@ -298,27 +283,13 @@ var ImportCrosses = {
 			if (valid) {
 				$(crossSettingsPopupModal).modal('hide');
 				setTimeout(function () {
-					ImportCrosses.openCrossesList(createdCrossesListId);
+					ImportCrosses.submitCrossImportSettings().then(function () {
+						// createdCrossesListId (global) will be null for import
+						return ImportCrosses.openCrossesList(createdCrossesListId);
+					});
 				}, 500);
 			}
 
-		})
-
-		$('#settingsNextButtonUpdateList').off('click');
-		$('#settingsNextButtonUpdateList').click(function() {
-			var valid = true;
-			var settingData = ImportCrosses.constructSettingsObjectFromForm();
-			if (settingData.isUseManualSettingsForNaming) {
-				if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
-					valid = false;
-				}
-			}
-			if (valid) {
-				$(crossSettingsPopupModal).modal('hide');
-				setTimeout(function () {
-					ImportCrosses.openCrossesList(createdCrossesListId);
-				}, 500);
-			}
 		});
 
 		$('#goBackToSelectBreedingMethodModal').off('click');
@@ -477,7 +448,7 @@ var ImportCrosses = {
 		});
 	},
 
-	submitCrossImportSettings: function(isUpdateCrossesList) {
+	submitCrossImportSettings: function() {
 		'use strict';
 		var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
@@ -496,8 +467,7 @@ var ImportCrosses = {
 			settingsForSaving = true;
 		}
 
-		// TODO submit settings earlier
-		$.ajax({
+		return $.ajax({
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json'
@@ -511,8 +481,6 @@ var ImportCrosses = {
 					showErrorMessage('', $.fieldbookMessages.errorImportFailed);
 				} else {
 					$('#crossSettingsModal').modal('hide');
-
-					ImportCrosses.openSaveListModal();
 
 					if (settingsForSaving) {
 						// as per UI requirements, we also display a success message regarding the saving of the settings

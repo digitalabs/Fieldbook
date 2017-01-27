@@ -289,7 +289,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/updateCrossesList", method = RequestMethod.POST)
 	public Map<String, Object> updateCrossesList(final Model model, final HttpSession session) {
 		final Map<String, Object> results = new HashMap<>();
-		
+
 		try {
 			final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 			final String crossesListId = (String) session.getAttribute("createdCrossesListId");
@@ -344,7 +344,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		isTrimed = this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
 		this.fieldbookMiddlewareService.updateGermplasmList(listDataItems, germplasmList);
-		
+
 		return isTrimed;
 	}
 
@@ -590,6 +590,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
+			throw e;
 		}
 
 		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);

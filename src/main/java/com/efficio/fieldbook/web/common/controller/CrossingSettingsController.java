@@ -319,14 +319,18 @@ public class CrossingSettingsController extends SettingsController {
 	public Map<String, Object> getImportedCrossesList() {
 
 		final Map<String, Object> responseMap = new HashMap<>();
-		if (null == this.studySelection.getImportedCrossesList()) {
+		ImportedCrossesList importedCrossesList = this.studySelection.getImportedCrossesList();
+
+		if (null == importedCrossesList) {
 			return responseMap;
 		}
+
+		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
 
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 
-		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
+		for (final ImportedCrosses cross : importedCrossesList.getImportedCrosses()) {
 			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, cross));
 		}
 
@@ -418,6 +422,10 @@ public class CrossingSettingsController extends SettingsController {
 		importedCrossesList.setType(germplasmList.getType());
 		importedCrossesList.setUserId(germplasmList.getUserId());
 		this.userSelection.setImportedCrossesList(importedCrossesList);
+
+		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
+
+		// TODO add processed breeding method to masterList
 
 		// Delete temporary list created on BreedingManager
 		this.germplasmListManager.deleteGermplasmListByListIdPhysically(crossesListId);

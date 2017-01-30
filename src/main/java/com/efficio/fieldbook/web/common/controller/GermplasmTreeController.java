@@ -405,18 +405,22 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			Set<Integer> parentGids = new HashSet<>();
 			parentGids.addAll(femaleGids);
 			parentGids.addAll(maleGids);
+
+			ArrayList<Integer> gids = new ArrayList<>();
+			gids.addAll(parentGids);
+			List<Germplasm> parentList = this.germplasmDataManager.getSortedGermplasmWithPrefName(gids);
 			
 			int entryCode = 1;
-			for (Iterator<Integer> iterator = parentGids.iterator(); iterator.hasNext();) {
-				
-				Integer parentGid = (Integer) iterator.next();
-				Germplasm germplasm = this.fieldbookMiddlewareService.getGermplasmByGID(parentGid);
-				germplasms.add(germplasm);
+			for (Iterator<Germplasm> iterator = parentList.iterator(); iterator.hasNext();) {
+
+				Germplasm parent = (Germplasm) iterator.next();
+
+				germplasms.add(parent);
 
 				GermplasmListData germplasmListData = new GermplasmListData();
 				
-				germplasmListData.setGid(germplasm.getGid());
-				germplasmListData.setDesignation(germplasm.getNames().get(0).getNval());
+				germplasmListData.setGid(parent.getGid());
+				germplasmListData.setDesignation(parent.getPreferredName().getNval());
 				germplasmListData.setStatus(LIST_DATA_STATUS);
 				germplasmListData.setEntryCode(String.valueOf(entryCode));
 				germplasmListData.setLocalRecordId(LIST_DATA_LRECID);
@@ -425,7 +429,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				germplasmListData.setGroupName("");
 				germplasmListData.setLocalRecordId(entryCode);
 
-				listDataItems.add(new ImmutablePair<>(germplasm, germplasmListData));
+				listDataItems.add(new ImmutablePair<>(parent, germplasmListData));
 				entryCode ++;
 			}
 

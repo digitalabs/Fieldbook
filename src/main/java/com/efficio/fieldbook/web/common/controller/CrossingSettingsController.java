@@ -397,6 +397,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
+		final Map<Integer, ImportedCrosses> importedCrossesMap = new HashMap<>();
 
 		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
@@ -417,6 +418,7 @@ public class CrossingSettingsController extends SettingsController {
 			importedCross.setMaleStudyName(studyName);
 			importedCross.setFemaleStudyName(studyName);
 			importedCrosses.add(importedCross);
+			importedCrossesMap.put(importedCross.getEntryId(), importedCross);
 		}
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 		importedCrossesList.setType(germplasmList.getType());
@@ -425,7 +427,11 @@ public class CrossingSettingsController extends SettingsController {
 
 		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
 
-		// TODO add processed breeding method to masterList
+		for (Map<String, Object> map : masterList){
+			Integer entryId = (Integer) map.get(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX));
+			String breedingMethodIndex = tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX);
+			map.put(breedingMethodIndex, importedCrossesMap.get(entryId).getBreedingMethodName());
+		}
 
 		// Delete temporary list created on BreedingManager
 		this.germplasmListManager.deleteGermplasmListByListIdPhysically(crossesListId);

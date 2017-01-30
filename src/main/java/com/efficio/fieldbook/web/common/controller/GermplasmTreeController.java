@@ -266,7 +266,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/updateCrossesList", method = RequestMethod.POST)
 	public Map<String, Object> updateCrossesList(final Model model, final HttpSession session) {
 		final Map<String, Object> results = new HashMap<>();
-		
+
 		try {
 			final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 			final String crossesListId = (String) session.getAttribute("createdCrossesListId");
@@ -321,7 +321,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		isTrimed = this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
 		this.fieldbookMiddlewareService.updateGermplasmList(listDataItems, germplasmList);
-		
+
 		return isTrimed;
 	}
 
@@ -385,12 +385,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final GermplasmList germplasmList, final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList)
 			throws RuleException {
 
-		// before continuing processing of the crosses, we process the breeding
-		// method to be used for each imported cross
-		// so that the correct information is available for further operations
-		this.crossingService.processCrossBreedingMethod(crossSetting, importedCrossesList);
-		
-		
 		Boolean isTrimed;
 		if (crossSetting.isUseManualSettingsForNaming()) {
 			// this line of code is where the creation of new germplasm takes
@@ -508,6 +502,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
+			throw e;
 		}
 
 		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);

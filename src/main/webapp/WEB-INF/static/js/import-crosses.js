@@ -1,5 +1,5 @@
 /*global showErrorMessage, createErrorNotification, crossingImportErrorHeader, isInt, crossingExportErrorHeader, invalidImportedFile,
-getJquerySafeId, SaveAdvanceList, BreedingMethodsFunctions, selectedBreedingMethodId */
+getJquerySafeId, SaveAdvanceList, BreedingMethodsFunctions */
 var ImportCrosses = {
 	CROSSES_URL: '/Fieldbook/crosses',
 	showFavoriteMethodsOnly: true,
@@ -45,23 +45,23 @@ var ImportCrosses = {
 
 			if (resp.isChoosingListOwnerNeeded) {
 				$('#chooseListOwner').one('shown.bs.modal', function() {
-                	$('body').addClass('modal-open');
-                }).modal({ backdrop: 'static', keyboard: true });
-                $('#chooseListOwner').addClass('import-crosses-from-file');
+					$('body').addClass('modal-open');
+				}).modal({ backdrop: 'static', keyboard: true });
+				$('#chooseListOwner').addClass('import-crosses-from-file');
 
 				$('#goBackToImportFileCrossesButton').off('click');
 				$('#goBackToImportFileCrossesButton').on('click', function() {
 					ImportCrosses.goBackToPage('#chooseListOwner', '.import-crosses-section .modal');
 				});
 
-                $('#chooseListOwnerNextButton').on('click', function() {
-                    if (ImportCrosses.isFileCrossesImport) {
-                        $('#crossSetBreedingMethodModal').addClass('import-crosses-from-file');
-                    }
-                    $('#chooseListOwner').modal('hide');
+				$('#chooseListOwnerNextButton').on('click', function() {
+					if (ImportCrosses.isFileCrossesImport) {
+						$('#crossSetBreedingMethodModal').addClass('import-crosses-from-file');
+					}
+					$('#chooseListOwner').modal('hide');
 					setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
 
-                });
+				});
 
 			} else {
 				setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
@@ -127,6 +127,7 @@ var ImportCrosses = {
 			$('#preview-crosses-table').resize();
 
 		}).modal({ backdrop: 'static', keyboard: true });
+
 		if (ImportCrosses.isFileCrossesImport) {
 			$('#openCrossesListModal').addClass('import-crosses-from-file');
 		}
@@ -138,59 +139,47 @@ var ImportCrosses = {
 		$('#crossSettingsModal').on('hidden.bs.modal', function() {
 				//we should clear the form and form fields on closing as we are going to reuse it later
 				//TODO clear other fields as well, some of them need to set the default value back
-				$('#breedingMethodId').val('');
-				$('#breedingMethodDropdown').select2('val', '');
 				$('#crossSettingsModal').removeClass('import-crosses-from-file');
 			});
 
-		ImportCrosses.getImportedCrossesTable(createdCrossesListId).done(function(response) {
-			if (response.isSuccess === 0) {
-            	showErrorMessage('', response.error);
-            	return;
-            }
-			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
-		}).fail(function (jqXHR, textStatus) {
-			showErrorMessage('', textStatus);
-		});
-
 		$('#openCrossListNextButton').off('click');
 		$('#openCrossListNextButton').on('click', function() {
-			if (ImportCrosses.isFileCrossesImport) {
-				$('#crossSettingsModal').addClass('import-crosses-from-file');
-			}
 			$('#openCrossesListModal').modal('hide');
 			$('#settingsNextButton').off('click');
-			ImportCrosses.submitCrossImportSettings(false);
-		});
-
-		$('#openCrossListUpdateNextButton').off('click');
-		$('#openCrossListUpdateNextButton').on('click', function() {
-			if (ImportCrosses.isFileCrossesImport) {
-				$('#crossSettingsModal').addClass('import-crosses-from-file');
-			}
-			$('#openCrossesListModal').modal('hide');
-			$('#openCrossListUpdateNextButton').off('click');
-			ImportCrosses.submitCrossImportSettings(true);
+			// delete temporary list created on BreedingManager
+			ImportCrosses.deleteCrossList(createdCrossesListId)
+				.done(ImportCrosses.openSaveListModal)
+				.fail(function () {
+					showErrorMessage('', 'Could not delete cross list');
+				});
 		});
 
 		$('#goBackToNamingModal').off('click');
 		$('#goBackToNamingModal').on('click', function() {
 			ImportCrosses.goBackToPage('#openCrossesListModal', '#crossSettingsModal');
 		});
+
+		return ImportCrosses.getImportedCrossesTable(createdCrossesListId).done(function(response) {
+			if (response.isSuccess === 0) {
+				showErrorMessage('', response.error);
+				return;
+			}
+			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
+		}).fail(function (jqXHR, textStatus) {
+			showErrorMessage('', textStatus);
+		});
 	},
 
-	preselectCrossBreedingMethod: function(breedingMethodId) {
-		'use strict';
-		if (breedingMethodId !== '0') {
-			// in addition, if the user has already selected a breeding method, we should pre select that
-			var breedingMethodText = '';
-			breedingMethodText = BreedingMethodsFunctions.getBreedingMethodById(breedingMethodId).done(function(response) {
-				$('#preSelectedBreedingMethodDropdown').val(response);
-			});
-
-		} else {
-			$('#preSelectedBreedingMethodDropdown').val($.fieldbookMessages.determinedFromParentalLines);
+	deleteCrossList: function (createdCrossesListId) {
+		if (!createdCrossesListId) {
+			return $.Deferred().resolve();
 		}
+		return $.ajax({
+			url: ImportCrosses.CROSSES_URL + '/deleteCrossList/' + createdCrossesListId,
+			type: 'DELETE',
+			cache: false,
+			global: false
+		});
 	},
 
 	goBackToPage: function(hiddenModalSelector, shownModalSelector) {
@@ -287,11 +276,6 @@ var ImportCrosses = {
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 		ImportCrosses.updateSampleParentageDesignation();
 
-		// this indicates that the user went through the crossing manager, and should have the breeding method setting fields disabled
-		if (selectedBreedingMethodId) {
-			ImportCrosses.preselectCrossBreedingMethod(selectedBreedingMethodId);
-		}
-
 		$('#useSelectedMethodCheckbox').off('change');
 		$('#useSelectedMethodCheckbox').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
 
@@ -303,17 +287,9 @@ var ImportCrosses = {
 
 		ImportCrosses.populateHarvestMonthDropdown('harvestMonthDropdown');
 		ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
-		
+
 		$('#settingsNextButton').off('click');
 		$('#settingsNextButton').click(function() {
-			$(crossSettingsPopupModal).modal('hide');
-			setTimeout(function() {
-				ImportCrosses.openCrossesList(createdCrossesListId);
-			}, 500);
-		})
-		
-		$('#settingsNextButtonUpdateList').off('click');
-		$('#settingsNextButtonUpdateList').click(function() {
 			var valid = true;
 			var settingData = ImportCrosses.constructSettingsObjectFromForm();
 			if (settingData.isUseManualSettingsForNaming) {
@@ -324,9 +300,13 @@ var ImportCrosses = {
 			if (valid) {
 				$(crossSettingsPopupModal).modal('hide');
 				setTimeout(function () {
-					ImportCrosses.openCrossesList(createdCrossesListId);
+					ImportCrosses.submitCrossImportSettings().then(function () {
+						// createdCrossesListId (global) will be null for import
+						return ImportCrosses.openCrossesList(createdCrossesListId);
+					});
 				}, 500);
 			}
+
 		});
 
 		$('#goBackToSelectBreedingMethodModal').off('click');
@@ -485,7 +465,7 @@ var ImportCrosses = {
 		});
 	},
 
-	submitCrossImportSettings: function(isUpdateCrossesList) {
+	submitCrossImportSettings: function() {
 		'use strict';
 		var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
@@ -494,23 +474,17 @@ var ImportCrosses = {
 			if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
 				return;
 			}
-		} else if (!settingData.breedingMethodSetting.basedOnStatusOfParentalLines && !settingData.breedingMethodSetting.methodId) {
-			showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
-			return;
 		}
 
-		var targetURL;
-		var settingsForSaving;
+		var targetURL = ImportCrosses.CROSSES_URL + '/submit';
+		var settingsForSaving = false;
+
 		if ($('#presetName').val().trim() !== '') {
 			targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
 			settingsForSaving = true;
-		} else {
-			targetURL = ImportCrosses.CROSSES_URL + '/submit';
-			settingsForSaving = false;
 		}
 
-		// TODO submit settings earlier
-		$.ajax({
+		return $.ajax({
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json'
@@ -524,9 +498,6 @@ var ImportCrosses = {
 					showErrorMessage('', $.fieldbookMessages.errorImportFailed);
 				} else {
 					$('#crossSettingsModal').modal('hide');
-					selectedBreedingMethodId = 0;
-
-					ImportCrosses.openSaveListModal();
 
 					if (settingsForSaving) {
 						// as per UI requirements, we also display a success message regarding the saving of the settings
@@ -612,15 +583,8 @@ var ImportCrosses = {
 		settingObject.breedingMethodSetting = {};
 		settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
 
-		if(selectedBreedingMethodId !== null && selectedBreedingMethodId !== 0){
-			settingObject.breedingMethodSetting.methodId = selectedBreedingMethodId;
-		}
-		else if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
-			settingObject.breedingMethodSetting.methodId = null;
-		}
-
-		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#selectUseParentalStatus').prop('checked');
-		settingObject.breedingMethodSetting.basedOnImportFile = ! $('#selectMethodInImportFile').prop('checked');
+		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = $('#selectUseParentalStatus').prop('checked');
+		settingObject.breedingMethodSetting.basedOnImportFile = $('#selectMethodInImportFile').prop('checked');
 
 		settingObject.crossNameSetting = {};
 		settingObject.crossNameSetting.prefix = $('#crossPrefix').val();

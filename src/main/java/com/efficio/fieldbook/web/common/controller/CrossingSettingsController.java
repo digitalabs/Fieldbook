@@ -331,14 +331,18 @@ public class CrossingSettingsController extends SettingsController {
 	public Map<String, Object> getImportedCrossesList() {
 
 		final Map<String, Object> responseMap = new HashMap<>();
-		if (null == this.studySelection.getImportedCrossesList()) {
+		ImportedCrossesList importedCrossesList = this.studySelection.getImportedCrossesList();
+
+		if (null == importedCrossesList) {
 			return responseMap;
 		}
+
+		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
 
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 
-		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
+		for (final ImportedCrosses cross : importedCrossesList.getImportedCrosses()) {
 			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, cross));
 		}
 
@@ -393,6 +397,17 @@ public class CrossingSettingsController extends SettingsController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/deleteCrossList/{createdCrossesListId}", method = RequestMethod.DELETE)
+	public Map<String, Object> deleteCrossList(@PathVariable final Integer createdCrossesListId) {
+		Map<String, Object> responseMap = new HashMap<>();
+
+		this.germplasmListManager.deleteGermplasmListByListIdPhysically(createdCrossesListId);
+
+		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);
+		return responseMap;
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList/{createdCrossesListId}", method = RequestMethod.GET)
 	public Map<String, Object> getImportedCrossesList(@PathVariable final String createdCrossesListId) {
 
@@ -405,6 +420,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
+		final Map<Integer, ImportedCrosses> importedCrossesMap = new HashMap<>();
 
 		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
@@ -425,14 +441,20 @@ public class CrossingSettingsController extends SettingsController {
 			importedCross.setMaleStudyName(studyName);
 			importedCross.setFemaleStudyName(studyName);
 			importedCrosses.add(importedCross);
+			importedCrossesMap.put(importedCross.getEntryId(), importedCross);
 		}
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 		importedCrossesList.setType(germplasmList.getType());
 		importedCrossesList.setUserId(germplasmList.getUserId());
 		this.userSelection.setImportedCrossesList(importedCrossesList);
 
-		// Delete temporary list created on BreedingManager
-		this.germplasmListManager.deleteGermplasmListByListIdPhysically(crossesListId);
+		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
+
+		for (Map<String, Object> map : masterList){
+			Integer entryId = (Integer) map.get(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX));
+			String breedingMethodIndex = tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX);
+			map.put(breedingMethodIndex, importedCrossesMap.get(entryId).getBreedingMethodName());
+		}
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);

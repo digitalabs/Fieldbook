@@ -105,26 +105,26 @@ public class CrossesListUtilTest {
 				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".",
 				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FGID_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MGID_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+//		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FGID_INDEX) + ".",
+//				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+//		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MGID_INDEX) + ".",
+//				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.SOURCE_INDEX) + ".",
 				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_PLOT_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FEMALE_PLOT_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_PLOT_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_PLOT_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_NURSERY_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_NURSERY_INDEX)));
+//		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".",
+//				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_CROSS) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FEMALE_CROSS)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_CROSS) + ".",
+				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_CROSS)));
+//		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_NURSERY_INDEX) + ".",
+//				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_NURSERY_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX) + ".",
 				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.CROSSING_DATE_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.CROSSING_DATE_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.NOTES_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.NOTES_INDEX)));
+//		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.CROSSING_DATE_INDEX) + ".",
+//				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.CROSSING_DATE_INDEX)));
+//		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.NOTES_INDEX) + ".",
+//				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.NOTES_INDEX)));
 	}
 
 	@Test
@@ -137,14 +137,14 @@ public class CrossesListUtilTest {
 				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".",
 				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FGID_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MGID_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+//		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FGID_INDEX) + ".",
+//				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+//		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MGID_INDEX) + ".",
+//				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.SOURCE_INDEX) + ".",
 				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
+//		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".",
+//				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 	}
 
 	@Test

@@ -669,9 +669,7 @@ public class CrossingServiceImpl implements CrossingService {
 		importedCrosses.setBreedingMethodId(CrossingUtil.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(),
 				maleLine.getLeft(), femaleLine.getMiddle(), femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));
 
-		if (StringUtils.isBlank(importedCrosses.getBreedingMethodName())) {
-			setBreedingMethodNameByMethodId(importedCrosses);
-		}
+		setBreedingMethodNameByMethodId(importedCrosses);
 	}
 
 	private boolean processBreedingMethodImport(ImportedCrosses importedCrosses, String rawBreedingMethod) {

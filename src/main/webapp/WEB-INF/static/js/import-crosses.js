@@ -172,7 +172,7 @@ var ImportCrosses = {
 
 	deleteCrossList: function (createdCrossesListId) {
 		if (!createdCrossesListId) {
-			return;
+			return $.Deferred().resolve();
 		}
 		return $.ajax({
 			url: ImportCrosses.CROSSES_URL + '/deleteCrossList/' + createdCrossesListId,

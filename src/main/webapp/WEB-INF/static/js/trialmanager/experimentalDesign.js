@@ -169,7 +169,9 @@
 						3: 'In adjacent columns'
 					};
 					
-					$scope.disableDesignTypeSelect = TrialManagerDataService.trialMeasurement.count !== 0 && TrialManagerDataService.applicationData.hasNewEnvironmentAdded;
+					$scope.disableDesignTypeSelect = function() {
+						return (TrialManagerDataService.trialMeasurement.hasMeasurement || (TrialManagerDataService.trialMeasurement.count !== 0 && TrialManagerDataService.applicationData.hasNewEnvironmentAdded));	
+					}
 					
 					$scope.onSwitchDesignTypes = function(newId) {
 						if (newId !== '') {

@@ -385,6 +385,17 @@ public class CrossingSettingsController extends SettingsController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/deleteCrossList/{createdCrossesListId}", method = RequestMethod.DELETE)
+	public Map<String, Object> deleteCrossList(@PathVariable final Integer createdCrossesListId) {
+		Map<String, Object> responseMap = new HashMap<>();
+
+		this.germplasmListManager.deleteGermplasmListByListIdPhysically(createdCrossesListId);
+
+		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);
+		return responseMap;
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList/{createdCrossesListId}", method = RequestMethod.GET)
 	public Map<String, Object> getImportedCrossesList(@PathVariable final String createdCrossesListId) {
 
@@ -432,9 +443,6 @@ public class CrossingSettingsController extends SettingsController {
 			String breedingMethodIndex = tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX);
 			map.put(breedingMethodIndex, importedCrossesMap.get(entryId).getBreedingMethodName());
 		}
-
-		// Delete temporary list created on BreedingManager
-		this.germplasmListManager.deleteGermplasmListByListIdPhysically(crossesListId);
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
 		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);

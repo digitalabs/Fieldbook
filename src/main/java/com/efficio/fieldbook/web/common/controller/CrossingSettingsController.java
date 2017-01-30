@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -23,6 +28,7 @@ import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -108,7 +114,10 @@ public class CrossingSettingsController extends SettingsController {
 	@Resource
 	private UserDataManager userDataManager;
 
-	/**
+	@Resource
+	private GermplasmDataManager germplasmDataManager;
+
+  /**
 	 * The germplasm list manager.
 	 */
 	@Resource
@@ -290,6 +299,9 @@ public class CrossingSettingsController extends SettingsController {
 			DuplicatesUtil.processDuplicatesAndReciprocals(parseResults);
 			// 3. Store the crosses to study selection if all validated
 
+		    this.setParentsInformation(parseResults.getImportedCrosses());
+
+
 			this.studySelection.setImportedCrossesList(parseResults);
 
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 1);
@@ -469,4 +481,38 @@ public class CrossingSettingsController extends SettingsController {
 	public void setCrossesListUtil(final CrossesListUtil crossesListUtil) {
 		this.crossesListUtil = crossesListUtil;
 	}
+
+  	protected void setParentsInformation(List<ImportedCrosses> importedCrossesList) {
+
+	  Collection<Integer> maleGidList = Collections2.transform(importedCrossesList, new Function<ImportedCrosses, Integer>() {
+
+		@Override public Integer apply(ImportedCrosses input) {
+		  return Integer.parseInt(input.getMaleGid());
+		}
+	  });
+	  Collection<Integer> femaleGidList = Collections2.transform(importedCrossesList, new Function<ImportedCrosses, Integer>() {
+
+		@Override public Integer apply(ImportedCrosses input) {
+		  return Integer.parseInt(input.getFemaleGid());
+		}
+	  });
+
+	  List<Integer> gidList = new ArrayList<>();
+	  gidList.addAll(maleGidList);
+	  gidList.addAll(femaleGidList);
+
+	  ImmutableList<Integer> listWithNoDuplicates = ImmutableSet.copyOf(gidList).asList();
+
+	  Map<Integer, String[]> pedigreeMap = germplasmDataManager.getParentsInfoByGIDList(listWithNoDuplicates);
+
+	  for (ImportedCrosses importedCrosses : importedCrossesList) {
+		importedCrosses.setFemalePedigree(pedigreeMap.get(Integer.parseInt(importedCrosses.getFemaleGid()))[0]);
+		importedCrosses.setMalePedigree(pedigreeMap.get(Integer.parseInt(importedCrosses.getMaleGid()))[0]);
+		importedCrosses.setFemaleCross(pedigreeMap.get(Integer.parseInt(importedCrosses.getFemaleGid()))[1]);
+		importedCrosses.setMaleCross(pedigreeMap.get(Integer.parseInt(importedCrosses.getMaleGid()))[1]);
+	  }
+
+	}
+
+
 }

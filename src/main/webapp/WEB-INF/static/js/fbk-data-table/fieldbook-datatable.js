@@ -523,7 +523,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 	 * @param {string} tableIdentifier the id of the table container
 	 * @param {string} ajaxUrl the URL from which to retrieve table data
 	 */
-	var dataTableConstructor = function PreviewCrossesDataTable(tableIdentifier, dataList, tableHeaderList, isImport) {
+	var dataTableConstructor = function PreviewCrossesDataTable(tableIdentifier, dataList, tableHeaderList, isImport, render) {
 		'use strict';
 
 		var columns = [],
@@ -533,9 +533,13 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 		https://datatables.net/reference/option/columnDefs*/
 		columnsDef = [
 				{
-					targets: [-2,-3,-4,-5,-7],
+					targets: [2],
 					visible: isImport
 				},
+				{
+					targets: [9,10],
+					visible: false
+				}
 			],
 			table;
 		
@@ -553,6 +557,29 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					targets: index,
 					createdCell: function(td, cellData, rowData, row, col) {
 						transformDuplicateStringToColorCodedSpans(td);
+					}
+				});
+			} else if ($(this).html() === 'FEMALE PARENT') {
+				columnsDef.push({
+					targets: index,
+					data: $(this).html(),
+					width: '100px',
+					render: function(data, type, full, meta) {
+						return '<a class="gid-link" href="javascript: void(0)" ' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							full.fgid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
+					}
+				});
+
+			} else if ($(this).html() === 'MALE PARENT') {
+				columnsDef.push({
+					targets: index,
+					data: $(this).html(),
+					width: '100px',
+					render: function (data, type, full, meta) {
+						return '<a class="gid-link" href="javascript: void(0)" ' +
+							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							full.fgid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
 			}

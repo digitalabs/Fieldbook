@@ -146,7 +146,12 @@ var ImportCrosses = {
 		$('#openCrossListNextButton').on('click', function() {
 			$('#openCrossesListModal').modal('hide');
 			$('#settingsNextButton').off('click');
-			ImportCrosses.openSaveListModal();
+			// delete temporary list created on BreedingManager
+			ImportCrosses.deleteCrossList(createdCrossesListId)
+				.done(ImportCrosses.openSaveListModal)
+				.fail(function () {
+					showErrorMessage('', 'Could not delete cross list');
+				});
 		});
 
 		$('#goBackToNamingModal').off('click');
@@ -162,6 +167,18 @@ var ImportCrosses = {
 			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
 		}).fail(function (jqXHR, textStatus) {
 			showErrorMessage('', textStatus);
+		});
+	},
+
+	deleteCrossList: function (createdCrossesListId) {
+		if (!createdCrossesListId) {
+			return;
+		}
+		return $.ajax({
+			url: ImportCrosses.CROSSES_URL + '/deleteCrossList/' + createdCrossesListId,
+			type: 'DELETE',
+			cache: false,
+			global: false
 		});
 	},
 

@@ -385,12 +385,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final GermplasmList germplasmList, final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList)
 			throws RuleException {
 
-		// before continuing processing of the crosses, we process the breeding
-		// method to be used for each imported cross
-		// so that the correct information is available for further operations
-		this.crossingService.processCrossBreedingMethod(crossSetting, importedCrossesList);
-		
-		
 		Boolean isTrimed;
 		if (crossSetting.isUseManualSettingsForNaming()) {
 			// this line of code is where the creation of new germplasm takes

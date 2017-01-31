@@ -400,11 +400,16 @@ var ImportCrosses = {
 
 	openBreedingMethodsModal: function() {
 		'use strict';
-		var crossSettingsPopupModal = $('#crossSettingsModal');
+		var crossSettingsPopupModal = $('#crossSetBreedingMethodModal');
 		crossSettingsPopupModal.modal('hide');
 		crossSettingsPopupModal.data('open', '1');
 
 		BreedingMethodsFunctions.openMethodsModal();
+
+		$('#manageMethodModal').one('hidden.bs.modal', function () {
+			$('#manageMethodModal').modal ('hide');
+			$('#crossSetBreedingMethodModal').modal({ backdrop: 'static', keyboard: true });
+		});
 	},
 
 	openLocationsModal: function() {
@@ -804,6 +809,15 @@ var ImportCrosses = {
 			error: function() {
 				//TODO process errors
 			}
+		});
+	},
+	openGermplasmModal : function (gid) {
+		'use strict';
+		$('#openCrossesListModal').modal('hide');
+		openGermplasmDetailsPopopWithGidAndDesig(gid);
+		$('#openGermplasmModal').one('hidden.bs.modal', function () {
+			$('#openGermplasmModal').modal ('hide');
+			$('#openCrossesListModal').modal({ backdrop: 'static', keyboard: true });
 		});
 	}
 };

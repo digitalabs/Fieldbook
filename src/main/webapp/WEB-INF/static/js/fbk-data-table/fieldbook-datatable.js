@@ -564,10 +564,13 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					targets: index,
 					data: $(this).html(),
 					width: '100px',
-					render: function(data, type, full, meta) {
+					render: function(data, type, row) {
+						//return '<a class="gid-link" href="javascript: void(0)" ' +
+						//	'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+						//	row.FGID + '&quot;)">' + data + '</a>';
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.fgid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
+							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
+							row.FGID + '&quot;)">' + data + '</a>';
 					}
 				});
 
@@ -576,10 +579,10 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					targets: index,
 					data: $(this).html(),
 					width: '100px',
-					render: function (data, type, full, meta) {
+					render: function(data, type, row) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.fgid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
+							row.MGID + '&quot;)">' + data + '</a>';
 					}
 				});
 			}

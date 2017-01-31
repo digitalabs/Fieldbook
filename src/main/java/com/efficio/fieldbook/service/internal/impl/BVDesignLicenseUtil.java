@@ -11,6 +11,9 @@ import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -33,6 +36,9 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 	@Resource
 	private WorkbenchService workbenchService;
+
+	@Resource
+	private MessageSource messageSource;
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -61,7 +67,9 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 		try {
 			expiryDays = Integer.parseInt(bvDesignLicenseInfo.getStatus().getLicense().getExpiryDays());
 		} catch (final NumberFormatException e) {
-			BVDesignLicenseUtil.LOG.error("Expiration days from BVDesign's license file is not a number", e);
+
+			final String errorMessage = this.messageSource.getMessage("bv.design.error.expiry.days.not.numeric", null, LocaleContextHolder.getLocale());
+			BVDesignLicenseUtil.LOG.error(errorMessage, e);
 			return true;
 		}
 
@@ -89,13 +97,14 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		} catch (final IOException e) {
 
-			final String errorMessage = "The system cannot read the BVDesign license file because format is invalid or it does not exist. Please make sure that you have the latest version of BVDesign.";
+			final String errorMessage = this.messageSource.getMessage("bv.design.error.cannot.read.license.file", null, LocaleContextHolder.getLocale());
 			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
 			throw new BVLicenseParseException(errorMessage);
 		}
 
 		if (!LICENSE_SUCCESS_CODE.equals(bvDesignLicenseInfo.getStatus().getReturnCode())) {
-			throw new BVLicenseParseException("BVDesign returned an error: " + bvDesignLicenseInfo.getStatus().getAppStatus());
+			final String errorMessage = this.messageSource.getMessage("bv.design.error.generic", null, LocaleContextHolder.getLocale());
+			throw new BVLicenseParseException(errorMessage + bvDesignLicenseInfo.getStatus().getAppStatus());
 		}
 
 		return bvDesignLicenseInfo;
@@ -105,7 +114,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 	protected void generateBVDesignLicenseJsonFile(final String bvDesignLocation) throws BVLicenseParseException {
 
 		Process p = null;
-		final String errorMessage = "The system failed to generate license file from BVDesign.";
+		final String errorMessage = this.messageSource.getMessage("bv.design.error.failed.license.generation", null, LocaleContextHolder.getLocale());
 
 		try {
 

@@ -18,6 +18,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,15 +28,20 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BVDesignLicenseUtilTest {
 
+	public static final String GENERIC_ERROR = "BVDesign returned an error: ";
 	@Mock
 	private WorkbenchService workbenchService;
 
 	@Mock
 	private ObjectMapper objectMapper;
+
+	@Mock
+	private MessageSource messageSource;
 
 	@InjectMocks
 	private BVDesignLicenseUtil bvDesignLicenseUtil;
@@ -104,11 +111,20 @@ public class BVDesignLicenseUtilTest {
 		bvDesignLicenseInfo.getStatus().getLicense().setExpiryDays("-1");
 		Assert.assertTrue(bvDesignLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo));
 
-		bvDesignLicenseInfo.getStatus().getLicense().setExpiryDays("AAA");
-		Assert.assertTrue(bvDesignLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo));
-
 		bvDesignLicenseInfo.getStatus().getLicense().setExpiryDays("31");
 		Assert.assertFalse(bvDesignLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo));
+
+	}
+
+	@Test
+	public void testIsExpiringWithinThirtyDaysExpirayDaysNotNumeric() {
+
+		BVDesignLicenseInfo bvDesignLicenseInfo = this.createBVDesignLicenseInfo();
+		Mockito.when(this.messageSource.getMessage(Mockito.anyString(), Mockito.any(Object[].class), Mockito.any(Locale.class))).thenReturn("");
+		bvDesignLicenseInfo.getStatus().getLicense().setExpiryDays("AAA");
+
+		Assert.assertTrue(bvDesignLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo));
+		Mockito.verify(this.messageSource).getMessage("bv.design.error.expiry.days.not.numeric", null, LocaleContextHolder.getLocale());
 
 	}
 
@@ -140,6 +156,11 @@ public class BVDesignLicenseUtilTest {
 		File file = Mockito.mock(File.class);
 		BVDesignLicenseInfo bvDesignLicenseInfo = this.createBVDesignLicenseInfo();
 
+		Mockito.when(this.messageSource.getMessage(Mockito.anyString(), Mockito.any(Object[].class), Mockito.any(Locale.class))).thenReturn(
+				GENERIC_ERROR);
+
+
+		// If BVDesign failed in generating the license file the return code value will be a non-zero (-1).
 		String errorStatusCode = "-1";
 		String errorMessage = "There is an error.";
 		bvDesignLicenseInfo.getStatus().setReturnCode(errorStatusCode);
@@ -153,7 +174,7 @@ public class BVDesignLicenseUtilTest {
 
 		} catch (BVLicenseParseException e) {
 
-			Assert.assertEquals("BVDesign returned an error: " + errorMessage, e.getMessage());
+			Assert.assertEquals(GENERIC_ERROR + errorMessage, e.getMessage());
 
 		}
 

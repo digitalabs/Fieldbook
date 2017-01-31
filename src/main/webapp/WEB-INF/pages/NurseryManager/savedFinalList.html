@@ -52,21 +52,21 @@
 						class="btn btn-info dropdown-toggle fbk-action-btn"
 						data-toggle="dropdown">
 						<span th:text="#{advance.list.actions}" th:if="*{listType == 'ADVANCED'}">Advance List Actions</span>
-						<span th:text="#{crosses.nursery.list.actions}" th:if="*{listType == 'CROSSES'}">Cross List Actions</span>
+						<span th:text="#{crosses.nursery.list.actions}" th:if="*{(listType == 'CROSSES' || listType == 'F1CRT' || listType == 'F1IMP')}">Cross List Actions</span>
 						<span th:text="#{stock.list.actions}" th:if="*{listType == 'STOCK'}">Stock List Actions</span>
 					</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-						<li class="withMeasurementsOnly" th:id="*{'generateStockListMenuItem' + listId}" th:if="*{listType == 'CROSSES' || listType == 'ADVANCED'}">
+						<li class="withMeasurementsOnly" th:id="*{'generateStockListMenuItem' + listId}" th:if="*{(listType == 'CROSSES' || listType == 'F1CRT' || listType == 'F1IMP') || listType == 'ADVANCED'}">
 							<a href=""
 								style="display: none" id="open-study-url"></a>
-							<a  th:if="*{listType == 'CROSSES'}" href="javascript: void(0)"
+							<a  th:if="*{(listType == 'CROSSES' || listType == 'F1CRT' || listType == 'F1IMP')}" href="javascript: void(0)"
 								th:onclick="'javascript: StockIDFunctions.openGenerateStockIDModal(getCurrentAdvanceTabListIdentifier(), ' +
 									*{hasPedigreeDupe} + ',' + *{hasPlotRecip} + ',' + *{hasPedigreeRecip} + ',' + *{hasPlotDupe} + ');'"
 								th:text="#{common.stock.list.generate}">
 									Generate Stock List
 							</a>
 							
-							<a  th:if="*{listType == 'CROSSES'}" href="javascript: void(0)"
+							<a  th:if="*{(listType == 'CROSSES' || listType == 'F1CRT' || listType == 'F1IMP')}" href="javascript: void(0)"
 								th:onclick="'javascript: ImportCrosses.saveParentList(\'' + ${listId} + '\');'"
 								th:text="#{nursery.save.crosses.parent.list}">
 									Save Parent List
@@ -148,6 +148,6 @@
 
 <div class="row">&nbsp;</div>
 <div class="row col-xs-12 col-md-12" id="inventory-germplasm-list">
-	<div th:if="*{listType == 'CROSSES' || listType == 'ADVANCED'}" th:include="/Common/includes/listPagination"></div>
+	<div th:if="*{(listType == 'CROSSES' || listType == 'F1CRT' || listType == 'F1IMP') || listType == 'ADVANCED'}" th:include="/Common/includes/listPagination"></div>
 	<div th:if="*{listType == 'STOCK'}" th:include="/Inventory/seedInventoryPagination"></div>
 </div>

@@ -238,11 +238,6 @@ public class EditNurseryController extends SettingsController {
 		final List<GermplasmList> germplasmCrossesList =
 				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.CROSSES);
 		
-		germplasmCrossesList
-				.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.F1CRT));
-		germplasmCrossesList
-				.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.F1IMP));
-		
 		model.addAttribute("advancedList", germplasmList);
 		model.addAttribute("crossesList", this.fieldbookMiddlewareService.appendTabLabelToList(germplasmCrossesList));
 	}

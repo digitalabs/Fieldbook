@@ -600,6 +600,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);
 	}
 
+	// TODO only used in Test?
 	protected int saveCrossesList(final Integer germplasmListId, final List<ListDataProject> listDataProject, final Integer userId) {
 		int studyId = 0;
 
@@ -996,7 +997,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					&& (germplasmList.getType().equalsIgnoreCase(GermplasmListType.NURSERY.toString())
 							|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.TRIAL.toString()))
 					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.CHECK.toString())
-					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.CROSSES.toString())
+					|| GermplasmListType.isCrosses(germplasmList.getType())
 					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.ADVANCED.toString())) {
 				dataResults.put("totalEntries", this.fieldbookMiddlewareService.countListDataProjectGermplasmListDataByListId(listId));
 			} else {

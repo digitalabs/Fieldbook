@@ -109,7 +109,9 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		try {
 
-			p = new ProcessBuilder(bvDesignLocation + BVDesignLicenseUtil.BVDESIGN_EXE, "-status -json").start();
+			final ProcessBuilder processBuilder = new ProcessBuilder(bvDesignLocation + BVDesignLicenseUtil.BVDESIGN_EXE, "-status", "-json");
+			processBuilder.directory(new File(bvDesignLocation));
+			p = processBuilder.start();
 			p.waitFor();
 
 		} catch (final IOException | InterruptedException e) {

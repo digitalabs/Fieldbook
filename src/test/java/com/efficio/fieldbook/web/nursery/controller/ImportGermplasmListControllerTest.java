@@ -223,6 +223,10 @@ public class ImportGermplasmListControllerTest {
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListControllerTest.GID_FACTOR));
 			Assert.assertEquals("GROUPNAME" + x, map.get(ImportGermplasmListControllerTest.CROSS_FACTOR));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListControllerTest.ENTRY_NO_FACTOR));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_CODE));
+			Assert.assertEquals("", map.get(ImportGermplasmListController.CHECK));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
 			x++;
 		}
 
@@ -270,6 +274,9 @@ public class ImportGermplasmListControllerTest {
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListControllerTest.GID_FACTOR));
 			Assert.assertEquals("GROUPNAME"+x, map.get(ImportGermplasmListControllerTest.CROSS_FACTOR));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListControllerTest.ENTRY_NO_FACTOR));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+			Assert.assertEquals("1", map.get(ImportGermplasmListController.CHECK));
 			x++;
 		}
 
@@ -318,6 +325,10 @@ public class ImportGermplasmListControllerTest {
 
 		int x = 1;
 		for (final Map<String, Object> map : listDataTable) {
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_CODE));
+			Assert.assertEquals("", map.get(ImportGermplasmListController.CHECK));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
 			Assert.assertEquals(checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
 			Assert.assertEquals("DESIGNATION" + x, map.get(ImportGermplasmListControllerTest.DESIGNATION_FACTOR));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListControllerTest.GID_FACTOR));
@@ -365,6 +376,9 @@ public class ImportGermplasmListControllerTest {
 
 		int x = 1;
 		for (final Map<String, Object> map : listDataTable) {
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+			Assert.assertEquals(1, map.get(ImportGermplasmListController.CHECK));
 			Assert.assertEquals(checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
 			Assert.assertEquals("DESIGNATION" + x, map.get(ImportGermplasmListControllerTest.DESIGNATION_FACTOR));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListControllerTest.GID_FACTOR));

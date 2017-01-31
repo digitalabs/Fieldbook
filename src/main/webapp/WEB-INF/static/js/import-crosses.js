@@ -320,10 +320,12 @@ var ImportCrosses = {
 	},
 
 	showCrossListPopup : function(crossSettingsPopupModal) {
-        // createdCrossesListId (global) will be null for import
 		$(crossSettingsPopupModal).modal('hide');
 		setTimeout(function () {
-			ImportCrosses.openCrossesList(createdCrossesListId);
+			ImportCrosses.submitCrossImportSettings().then(function () {
+				// createdCrossesListId (global) will be null for import
+				return ImportCrosses.openCrossesList(createdCrossesListId);
+			});
 		}, 500);
 	},
 

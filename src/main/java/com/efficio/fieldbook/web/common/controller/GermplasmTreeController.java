@@ -166,6 +166,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private UserSelection userSelection;
 
 	@Resource
+	private UserSelection studySelection;
+
+	@Resource
 	private UserTreeStateService userTreeStateService;
 
 	@Resource
@@ -197,7 +200,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private class GermplasmListResult {
 		private Integer germplasmListId;
 		private Boolean isTrimed;
-		
+
 		public GermplasmListResult(Integer germplasmListId, Boolean isTrimed) {
 			super();
 			this.germplasmListId = germplasmListId;
@@ -539,7 +542,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			type = GermplasmListType.ADVANCED;
 
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equalsIgnoreCase(germplasmListType)) {
-			BreedingMethodSetting breedingMethodSetting = this.userSelection.getCrossSettings().getBreedingMethodSetting();
+			BreedingMethodSetting breedingMethodSetting = this.studySelection.getCrossSettings().getBreedingMethodSetting();
 			if (breedingMethodSetting.isBasedOnImportFile()) {
 				type = GermplasmListType.F1IMP;
 			} else {

@@ -298,13 +298,13 @@ var ImportCrosses = {
 				}
 			}
 			if (valid) {
-				$(crossSettingsPopupModal).modal('hide');
-				setTimeout(function () {
-					ImportCrosses.submitCrossImportSettings().then(function () {
-						// createdCrossesListId (global) will be null for import
-						return ImportCrosses.openCrossesList(createdCrossesListId);
-					});
-				}, 500);
+				ImportCrosses.retrieveNextNameInSequence(function(data){
+					if (data.success === '1') {
+						ImportCrosses.showCrossListPopup(crossSettingsPopupModal);
+					} else {
+						showErrorMessage('', data.error);
+					}
+				}, function(){ showErrorMessage('', $.fieldbookMessages.errorNoNextNameInSequence)} );
 			}
 
 		});
@@ -317,6 +317,14 @@ var ImportCrosses = {
 				ImportCrosses.showBreedingLocationOnly = $('#showBreedingLocationOnlyRadio').is(':checked');
 				ImportCrosses.goBackToPage('#crossSettingsModal', '#crossSetBreedingMethodModal');
 			});
+	},
+
+	showCrossListPopup : function(crossSettingsPopupModal) {
+        // createdCrossesListId (global) will be null for import
+		$(crossSettingsPopupModal).modal('hide');
+		setTimeout(function () {
+			ImportCrosses.openCrossesList(createdCrossesListId);
+		}, 500);
 	},
 
 	enableDisableBreedingMethodDropdown : function() {
@@ -545,25 +553,25 @@ var ImportCrosses = {
 	updateDisplayedSequenceNameValue: function() {
 		'use strict';
 		var value = $('#startingSequenceNumber').val();
-		if (ImportCrosses.validateStartingSequenceNumber(value)) {
-			ImportCrosses.retrieveNextNameInSequence().done(function(data) {
-				if (data.success === '1') {
-					$('#importNextSequenceName').text(data.sequenceValue);
-				} else {
-					showErrorMessage('', $.fieldbookMessages.errorNoNextNameInSequence);
-				}
-			}).fail(function() {
-				showErrorMessage('', $.fieldbookMessages.errorNoNextNameInSequence);
-			});
+		if(ImportCrosses.validateStartingSequenceNumber(value)) {
+			ImportCrosses.retrieveNextNameInSequence(ImportCrosses.updateNextSequenceName
+			, function() { showErrorMessage('', $.fieldbookMessages.errorNoNextNameInSequence); });
 		}
 	},
 
-	retrieveNextNameInSequence: function() {
+    updateNextSequenceName : function(data) {
+        if (data.success === '1') {
+            $('#importNextSequenceName').text(data.sequenceValue);
+        } else {
+            showErrorMessage('', data.error);
+        }
+    },
+
+	retrieveNextNameInSequence: function(success, fail) {
 		'use strict';
 		var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
-		//TODO Handle errors for ajax request
-		return $.ajax({
+		$.ajax({
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json'
@@ -572,6 +580,10 @@ var ImportCrosses = {
 			type: 'POST',
 			data: JSON.stringify(settingData),
 			cache: false
+		}).done(function(data) {
+			success(data);
+		}).fail(function() {
+			fail();
 		});
 	},
 

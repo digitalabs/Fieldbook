@@ -39,6 +39,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RulesNotConfiguredException;
 import org.generationcp.commons.service.UserTreeStateService;
+import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -538,7 +539,12 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			type = GermplasmListType.ADVANCED;
 
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equalsIgnoreCase(germplasmListType)) {
-			type = GermplasmListType.CROSSES;
+			BreedingMethodSetting breedingMethodSetting = this.userSelection.getCrossSettings().getBreedingMethodSetting();
+			if (breedingMethodSetting.isBasedOnImportFile()) {
+				type = GermplasmListType.F1IMP;
+			} else {
+				type = GermplasmListType.F1CRT;
+			}
 			// need to add the copying of the duplicate entry here
 			FieldbookUtil.copyDupeNotesToListDataProject(dataProjectList, this.userSelection.getImportedCrossesList().getImportedCrosses());
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(germplasmListType)) {

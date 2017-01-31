@@ -89,7 +89,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		} catch (final IOException e) {
 
-			final String errorMessage = "The system cannot read the BVDesign license file because format is invalid or it does not exist.";
+			final String errorMessage = "The system cannot read the BVDesign license file because format is invalid or it does not exist. Please make sure that you have the latest version of BVDesign.";
 			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
 			throw new BVLicenseParseException(errorMessage);
 		}
@@ -105,20 +105,22 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 	protected void generateBVDesignLicenseJsonFile(final String bvDesignLocation) throws BVLicenseParseException {
 
 		Process p = null;
+		final String errorMessage = "The system failed to generate license file from BVDesign.";
 
 		try {
 
 			p = new ProcessBuilder(bvDesignLocation + BVDesignLicenseUtil.BVDESIGN_EXE, "-status -json").start();
 			p.waitFor();
 
-		} catch (final IOException e) {
+		} catch (final IOException | InterruptedException e) {
 
-			final String errorMessage = "The system failed to generete license file from BVDesign.";
 			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
 			throw new BVLicenseParseException(errorMessage);
 
-		} catch (final InterruptedException e) {
-			BVDesignLicenseUtil.LOG.error(e.getMessage(), e);
+		} catch (final Exception e) {
+
+			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
+			throw new BVLicenseParseException(errorMessage);
 		}
 
 	}

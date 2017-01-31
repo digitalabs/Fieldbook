@@ -27,6 +27,7 @@ import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -179,9 +180,13 @@ public class CrossingSettingsController extends SettingsController {
 			final String sequenceValue = this.crossNameService.getNextNameInSequence(setting.getCrossNameSetting());
 			returnVal.put(CrossingSettingsController.SUCCESS_KEY, "1");
 			returnVal.put("sequenceValue", sequenceValue);
-		} catch (final MiddlewareQueryException e) {
+		} catch (final MiddlewareException e) {
 			CrossingSettingsController.LOG.error(e.getMessage(), e);
 			returnVal.put(CrossingSettingsController.SUCCESS_KEY, "0");
+			String errorMessage = (e instanceof MiddlewareQueryException)
+					? this.messageSource.getMessage("error.no.next.name.in.sequence", new Object[] {}, LocaleContextHolder.getLocale())
+					: e.getMessage();
+			returnVal.put(ERROR, errorMessage);
 		}
 
 		return returnVal;

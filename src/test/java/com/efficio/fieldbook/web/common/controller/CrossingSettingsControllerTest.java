@@ -26,6 +26,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -59,6 +60,7 @@ public class CrossingSettingsControllerTest {
 
 	public static final String TEST_SEQUENCE_NAME_VALUE = "PRE1";
 	public static final String SUCCESS_VALUE = "1";
+	public static final String SEQUENCE_VALUE = "sequenceValue";
 	public static final String FAILURE_VALUE = "0";
 	public static final String TEST_SETTING_NAME = "mySettingName";
 	public static final Integer TEST_BREEDING_METHOD_ID = 1;
@@ -162,7 +164,7 @@ public class CrossingSettingsControllerTest {
 			Assert.assertNotNull(output);
 			Assert.assertEquals(CrossingSettingsControllerTest.SUCCESS_VALUE, output.get("success"));
 			Assert.assertEquals(CrossingSettingsControllerTest.TEST_SEQUENCE_NAME_VALUE, output.get("sequenceValue"));
-		} catch (final MiddlewareQueryException e) {
+		} catch (final MiddlewareException e) {
 			Assert.fail(e.getMessage());
 		}
 	}
@@ -172,14 +174,16 @@ public class CrossingSettingsControllerTest {
 		final CrossSetting settingObject = Mockito.mock(CrossSetting.class);
 		final CrossNameSetting nameSetting = Mockito.mock(CrossNameSetting.class);
 
+		Mockito.doReturn(nameSetting).when(settingObject).getCrossNameSetting();
+		Mockito.doThrow(new MiddlewareException("Please select a starting sequence number larger than 10")).when(this.crossNameService)
+				.getNextNameInSequence(Matchers.any(CrossNameSetting.class));
+
 		try {
-			Mockito.doReturn(nameSetting).when(settingObject).getCrossNameSetting();
-
-			Mockito.doThrow(MiddlewareQueryException.class).when(this.crossNameService)
-					.getNextNameInSequence(Matchers.any(CrossNameSetting.class));
-
-		} catch (final MiddlewareQueryException e) {
-			e.printStackTrace();
+			this.crossingSettingsController.generateSequenceValue(Mockito.mock(CrossSetting.class), this.request);
+		} catch (MiddlewareException e) {
+			Assert.assertNull(CrossingSettingsControllerTest.SUCCESS_VALUE);
+			Assert.assertNull(CrossingSettingsControllerTest.SEQUENCE_VALUE);
+			Assert.assertEquals("Please select a starting sequence number larger than 10", e.getMessage());
 		}
 
 	}

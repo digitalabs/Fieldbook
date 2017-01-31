@@ -3881,8 +3881,13 @@ function showExportAdvanceResponse(responseText, statusText, xhr, $form) {
 }
 function processInlineEditInput() {
 	'use strict';
+
+	var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' :
+        			'#measurement-table';
+
 	if ($('.inline-input').length !== 0) {
 		var experimentId = $('.data-hidden-value-experimentId').val();
+		var indexElem = $('.data-hidden-value-index').val();
 		var phenotypeId = $('.data-hidden-value-phenotypeId').val();
 		var termId = $('.data-hidden-value-term-id').val();
 		var indexDataVal = '';
@@ -3916,18 +3921,19 @@ function processInlineEditInput() {
 
 		var currentInlineEdit = {
 			experimentId: experimentId,
+			index: indexElem,
 			phenotypeId: phenotypeId,
 			termId: termId,
 			value: indexDataVal,
 			isNew: isNew
 		};
-		$('#measurement-table').data('json-inline-edit-val', JSON.stringify(currentInlineEdit));
+		$(tableIdentifier).data('json-inline-edit-val', JSON.stringify(currentInlineEdit));
 		if (isNew === '1') {
 			$('#inlineEditConfirmationModal').modal({
 				backdrop: 'static',
 				keyboard: true
 			});
-			$('#measurement-table').data('show-inline-edit', '0');
+			$(tableIdentifier).data('show-inline-edit', '0');
 			return false;
 		} else {
 			saveInlineEdit(0, 0);
@@ -3938,14 +3944,16 @@ function processInlineEditInput() {
 function saveInlineEdit(isDiscard, invalidButKeep) {
 	'use strict';
 
+	var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' :
+    			'#measurement-table';
 	$.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/data?isDiscard=' + isDiscard + '&invalidButKeep=' + invalidButKeep,
 		type: 'POST',
 		async: false,
-		data:   $('#measurement-table').data('json-inline-edit-val'),
+		data:   $(tableIdentifier).data('json-inline-edit-val'),
 		contentType: 'application/json',
 		success: function(data) {
-			var jsonData = $.parseJSON($('#measurement-table').data('json-inline-edit-val'));
+			var jsonData = $.parseJSON($(tableIdentifier).data('json-inline-edit-val'));
 			if (isDiscard === 0 && jsonData.isNew === '1' && jsonData.value !== 'missing') {
 				$('.inline-input').parent('td').addClass('accepted-value').removeClass('invalid-value');
 				$('.inline-input').parent('td').data('is-accepted', '1');
@@ -3956,12 +3964,12 @@ function saveInlineEdit(isDiscard, invalidButKeep) {
 			if (data.success === '1') {
 				$('.inline-input').parent('td').data('is-inline-edit', '0');
 
-				var oTable = $('#measurement-table').dataTable();
+				var oTable = $(tableIdentifier).dataTable();
 				oTable.fnUpdate(data.data, data.index, null, false); // Row
 				oTable.fnAdjustColumnSizing();
 				$('body').off('click');
 			} else {
-				$('#measurement-table').data('show-inline-edit', '0');
+				$(tableIdentifier).data('show-inline-edit', '0');
 				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
 			}
 		},
@@ -4013,6 +4021,9 @@ function markCellAsAccepted(indexElem, indexTermId, elem) {
 		termId: indexTermId
 	};
 
+	var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' :
+            			'#measurement-table';
+
 	$.ajax({
 		headers: {
 			Accept: 'application/json',
@@ -4025,13 +4036,13 @@ function markCellAsAccepted(indexElem, indexTermId, elem) {
 		contentType: 'application/json',
 		success: function(data) {
 			if (data.success === '1') {
-				var oTable = $('#measurement-table').dataTable();
+				var oTable = $(tableIdentifier).dataTable();
 				oTable.fnUpdate(data.data, data.index, null, false); // Row
 				$(elem).removeClass('invalid-value');
 				$(elem).addClass('accepted-value');
 			} else {
 				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
-				$('#measurement-table').data('show-inline-edit', '0');
+				$(tableIdentifier).data('show-inline-edit', '0');
 			}
 		}
 	});

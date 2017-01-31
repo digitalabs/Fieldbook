@@ -2,6 +2,7 @@
 <input type="hidden" class="data-hidden-value-experimentId" name="experimentId" th:value="${experimentId}"/>
 <input type="hidden" class="data-hidden-value-phenotypeId" name="phenotypeId" th:value="${phenotypeId}"/>
 <input type="hidden" class="data-hidden-value-term-id" name="termId" th:value="*{variable.id}"/>
+<input type="hidden" class="data-hidden-value-index" name="index" th:value="*{index}"/>
 
 <input  class="data-value" maxlength="250"  th:attr="data-type=${variable.scale.dataType}"
 style="width: 100%" size="1" type="text"

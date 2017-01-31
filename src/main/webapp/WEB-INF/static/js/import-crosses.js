@@ -40,6 +40,7 @@ var ImportCrosses = {
 			// show review crosses page
 
 			ImportCrosses.isFileCrossesImport = true;
+			createdCrossesListId = null;
 
 			$('#crossSetBreedingMethodModal').addClass('import-crosses-from-file');
 

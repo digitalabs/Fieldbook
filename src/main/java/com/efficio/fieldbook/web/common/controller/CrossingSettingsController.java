@@ -28,7 +28,6 @@ import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -306,7 +305,6 @@ public class CrossingSettingsController extends SettingsController {
 
 		    this.setParentsInformation(parseResults.getImportedCrosses());
 
-		    parseResults.setType(GermplasmListType.F1IMP.toString());
 
 			this.studySelection.setImportedCrossesList(parseResults);
 

@@ -200,7 +200,12 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			int index = Integer.valueOf(data.get(ObservationMatrixController.INDEX));
 			String value = data.get("value");
 			// for categorical
-			int isNew = Integer.valueOf(data.get("isNew"));
+			int isNew;
+			if (data.get("isNew") != null) {
+				isNew = Integer.valueOf(data.get("isNew"));
+			} else {
+				isNew = 1;
+			}
 			boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard")) ? true : false;
 
 			map.put(ObservationMatrixController.INDEX, index);

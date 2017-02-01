@@ -438,7 +438,6 @@ public class CrossingSettingsController extends SettingsController {
 		for (final GermplasmListData listData : germplasmListDataList) {
 			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, listData));
 			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData);
-
 			if (importedCross.getGid() == null) {
 				responseMap.put(CrossingSettingsController.IS_SUCCESS, 0);
 				final String localisedErrorMessage = this.messageSource.getMessage("error.germplasm.record.already.exists", new String[] {},
@@ -451,6 +450,11 @@ public class CrossingSettingsController extends SettingsController {
 			// both female and male nursery is the current nursery.
 			importedCross.setMaleStudyName(studyName);
 			importedCross.setFemaleStudyName(studyName);
+			//TODO remove when apply name settings and save are splitted
+			if (importedCross.getSource() == null || importedCross.getSource().equals("null")) {
+				importedCross.setSource(null);
+				this.crossingService.populateSeedSource(importedCross, this.studySelection.getWorkbook());
+			}
 			importedCrosses.add(importedCross);
 			importedCrossesMap.put(importedCross.getEntryId(), importedCross);
 		}
@@ -464,7 +468,11 @@ public class CrossingSettingsController extends SettingsController {
 		for (Map<String, Object> map : masterList){
 			Integer entryId = (Integer) map.get(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX));
 			String breedingMethodIndex = tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX);
+			String seedSourceIndex = tableHeaderList.get(CrossesListUtil.SOURCE_INDEX);
+
 			map.put(breedingMethodIndex, importedCrossesMap.get(entryId).getBreedingMethodName());
+			map.put(seedSourceIndex, importedCrossesMap.get(entryId).getSource());
+
 		}
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);

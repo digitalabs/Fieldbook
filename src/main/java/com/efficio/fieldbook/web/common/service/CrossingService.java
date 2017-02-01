@@ -23,4 +23,6 @@ public interface CrossingService {
 			workbook);
 
 	void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList);
+
+	void populateSeedSource(ImportedCrosses importedCross, Workbook workbook);
 }

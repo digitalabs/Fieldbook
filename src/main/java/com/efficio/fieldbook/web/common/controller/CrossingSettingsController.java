@@ -136,7 +136,7 @@ public class CrossingSettingsController extends SettingsController {
 		try {
 			final List<ProgramPreset> presets =
 					this.presetDataManager.getProgramPresetFromProgramAndTool(this.getCurrentProgramID(), this.getFieldbookToolID(),
-							ToolSection.FBK_CROSS_IMPORT.name());
+						ToolSection.FBK_CROSS_IMPORT.name());
 
 			for (final ProgramPreset preset : presets) {
 				final CrossSetting crossSetting =
@@ -269,9 +269,8 @@ public class CrossingSettingsController extends SettingsController {
 			CrossingSettingsController.LOG.debug(e.getMessage(), e);
 
 			out.put(CrossingSettingsController.IS_SUCCESS, Boolean.FALSE);
-			out.put("errorMessage",
-					this.messageSource.getMessage(e.getMessage(), new String[] {}, "cannot export a crossing template",
-							LocaleContextHolder.getLocale()));
+			out.put("errorMessage", this.messageSource
+					.getMessage(e.getMessage(), new String[] {}, "cannot export a crossing template", LocaleContextHolder.getLocale()));
 		}
 
 		return out;
@@ -300,7 +299,6 @@ public class CrossingSettingsController extends SettingsController {
 			// 3. Store the crosses to study selection if all validated
 
 		    this.setParentsInformation(parseResults.getImportedCrosses());
-
 
 			this.studySelection.setImportedCrossesList(parseResults);
 
@@ -338,6 +336,11 @@ public class CrossingSettingsController extends SettingsController {
 		}
 
 		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
+
+		//TODO decouple save and aply settings and then replace this for for the apply settings method
+		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
+			this.crossingService.populateSeedSource(importedCross, this.userSelection.getWorkbook());
+		}
 
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();

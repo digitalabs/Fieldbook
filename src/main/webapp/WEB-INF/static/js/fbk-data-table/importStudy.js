@@ -93,8 +93,6 @@ function doSaveImportedData() {
 		data: serializedData,
 		async: true,
 		success: function(html) {
-			//$('#measurementsDiv').html(html);
-
 			$('.import-study-data').data('data-import', '0');
 			$('.import-study-data').data('measurement-show-already', '0');
 			$('.fbk-discard-imported-data').addClass('fbk-hide');
@@ -140,6 +138,7 @@ function confirmStudyImport(hasDataOverwrite) {
 	} else {
 		doMeasurementsReload(hasDataOverwrite);
 	}
+	$('.import-study-data').data('data-import', '1');
 }
 
 function showImportResponse(responseText) {
@@ -232,7 +231,7 @@ function showWarningImport(resp) {
 		$('#studyConfirmationButton').on('click', function() {
 		    confirmStudyImport('0');
 		})
-	}else{
+	} else {
 		confirmStudyImport('0');
 	}
 }

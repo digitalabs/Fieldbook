@@ -4091,8 +4091,6 @@ function reloadMeasurementTable() {
 			type: 'POST',
 			success: function(html) {
 				 onMeasurementsObservationLoad(false);
-				//$('#measurementsDiv').html(html);
-				$('.import-study-data').data('data-import', '1');
 			}
 		});
 	}

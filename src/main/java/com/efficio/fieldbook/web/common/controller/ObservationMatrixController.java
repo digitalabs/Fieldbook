@@ -50,6 +50,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 
@@ -224,7 +225,8 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 					this.updateDates(originalRow);
 				}
 				map.put(ObservationMatrixController.SUCCESS, "1");
-				Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
+				final DataMapUtil dataMapUtil = new DataMapUtil();
+				final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(originalRow, "", this.userSelection);
 				map.put(ObservationMatrixController.DATA, dataMap);
 			} catch (MiddlewareQueryException e) {
 				ObservationMatrixController.LOG.error(e.getMessage(), e);
@@ -352,7 +354,8 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		}
 
 		map.put(ObservationMatrixController.SUCCESS, "1");
-		Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
+		final DataMapUtil dataMapUtil = new DataMapUtil();
+		final Map<String, Object> dataMap =   dataMapUtil.generateDatatableDataMap(originalRow, "", this.userSelection);
 		map.put(ObservationMatrixController.DATA, dataMap);
 
 		return map;
@@ -574,8 +577,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		final List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
 
+		final DataMapUtil dataMapUtil = new DataMapUtil();
 		for (final MeasurementRow row : tempList) {
-			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
+			final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(row, "", this.userSelection);
 			masterList.add(dataMap);
 		}
 
@@ -680,48 +684,6 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			oldData.setValue(newData.getValue());
 			oldData.setAccepted(newData.isAccepted());
 		}
-	}
-
-	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {
-		Map<String, Object> dataMap = new HashMap<String, Object>();
-		// the 3 attributes are needed always
-		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
-		dataMap.put("GID", row.getMeasurementDataValue(TermId.GID.getId()));
-		dataMap.put("DESIGNATION", row.getMeasurementDataValue(TermId.DESIG.getId()));
-
-		// initialize suffix as empty string if its null
-		suffix = null == suffix ? "" : suffix;
-
-		// generate measurement row data from dataList (existing / generated data)
-		for (MeasurementData data : row.getDataList()) {
-			if (data.isCategorical()) {
-				CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
-
-				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {categoricalDisplayValue.getName() + suffix,
-						categoricalDisplayValue.getDescription() + suffix, data.isAccepted()});
-
-			} else if (data.isNumeric()) {
-				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() + suffix, data.isAccepted()});
-			} else {
-				dataMap.put(data.getMeasurementVariable().getName(), data.getDisplayValue());
-			}
-		}
-
-		// generate measurement row data from newly added traits (no data yet)
-		UserSelection userSelection = this.getUserSelection();
-		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
-				&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {
-			for (MeasurementVariable var : userSelection.getMeasurementDatasetVariable()) {
-				if (!dataMap.containsKey(var.getName())) {
-					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
-						dataMap.put(var.getName(), new Object[] {"", "", true});
-					} else {
-						dataMap.put(var.getName(), "");
-					}
-				}
-			}
-		}
-		return dataMap;
 	}
 
 	private Map<String, Object> generateDatatableDataMap(final ObservationDto row, String suffix) {

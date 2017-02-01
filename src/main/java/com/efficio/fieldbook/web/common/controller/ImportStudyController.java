@@ -55,6 +55,7 @@ import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
 import com.efficio.fieldbook.web.study.ImportStudyType;
@@ -527,60 +528,16 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 		form.setMeasurementRowList(tempList);
 
-		List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
+		final List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
 
-		for (MeasurementRow row : tempList) {
-
-			Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
-
+		final DataMapUtil dataMapUtil = new DataMapUtil();
+		for (final MeasurementRow row : tempList) {
+			final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(row, "", this.getUserSelection(false));
 			masterList.add(dataMap);
 		}
 
 		return masterList;
 	}
-
-	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {
-		Map<String, Object> dataMap = new HashMap<String, Object>();
-		// the 3 attributes are needed always
-		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
-		dataMap.put("GID", row.getMeasurementDataValue(TermId.GID.getId()));
-		dataMap.put("DESIGNATION", row.getMeasurementDataValue(TermId.DESIG.getId()));
-
-		// initialize suffix as empty string if its null
-		suffix = null == suffix ? "" : suffix;
-
-		// generate measurement row data from dataList (existing / generated data)
-		for (MeasurementData data : row.getDataList()) {
-			if (data.isCategorical()) {
-				CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
-
-				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {categoricalDisplayValue.getName() + suffix,
-						categoricalDisplayValue.getDescription() + suffix, data.isAccepted()});
-
-			} else if (data.isNumeric()) {
-				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() + suffix, data.isAccepted()});
-			} else {
-				dataMap.put(data.getMeasurementVariable().getName(), data.getDisplayValue());
-			}
-		}
-
-		// generate measurement row data from newly added traits (no data yet)
-		UserSelection userSelection = this.getUserSelection(false);
-		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
-				&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {
-			for (MeasurementVariable var : userSelection.getMeasurementDatasetVariable()) {
-				if (!dataMap.containsKey(var.getName())) {
-					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
-						dataMap.put(var.getName(), new Object[] {"", "", true});
-					} else {
-						dataMap.put(var.getName(), "");
-					}
-				}
-			}
-		}
-		return dataMap;
-	}
-	//**
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieve/new/import/variables", method = RequestMethod.GET)

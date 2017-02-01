@@ -136,7 +136,9 @@ var getColumns = function(displayColumns) {
 					$(td).data('phenotype-id', cellData[1]);
 				},
 				render: function(data, type, full, meta) {
-					return EscapeHTML.escape(data[0]);
+					if (data) {
+						return EscapeHTML.escape(data[0]);
+					}
 				}
 			});
 		} else if (displayColumn.dataTypeId === 1130) {

@@ -270,15 +270,27 @@ var ImportCrosses = {
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
 
-		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
-			'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
 		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
 			'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio');
-		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
-		ImportCrosses.updateSampleParentageDesignation();
 
-		$('#useSelectedMethodCheckbox').off('change');
-		$('#useSelectedMethodCheckbox').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
+		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
+
+		$('#presetSettingsDelete').off('click');
+		$('#presetSettingsDelete').on('click', function () {
+			var data = $('#presetSettingsDropdown').select2('data');
+			if (!(data && data.programPresetId)) {
+				return;
+			}
+			ImportCrosses.deleteImportSettings(data.programPresetId)
+				.done(function () {
+					ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
+				})
+				.fail(function () {
+					showErrorMessage('', 'Could not delete setting');
+				});
+		});
+
+		ImportCrosses.updateSampleParentageDesignation();
 
 		$('.cross-import-name-setting').off('change');
 		$('.cross-import-name-setting').on('change', ImportCrosses.updateDisplayedSequenceNameValue);
@@ -467,7 +479,8 @@ var ImportCrosses = {
 		return {
 			id: setting.name,
 			text: setting.name,
-			description: setting.name
+			description: setting.name,
+			programPresetId: setting.programPresetId
 		};
 	},
 
@@ -478,6 +491,16 @@ var ImportCrosses = {
 			url: ImportCrosses.CROSSES_URL + '/retrieveSettings',
 			type: 'GET',
 			cache: false
+		});
+	},
+
+	deleteImportSettings: function(programPresetId) {
+		'use strict';
+		return $.ajax({
+			url: ImportCrosses.CROSSES_URL + '/deleteSetting/' + programPresetId,
+			type: 'DELETE',
+			cache: false,
+			global: false
 		});
 	},
 

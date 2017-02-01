@@ -144,6 +144,7 @@ public class CrossingSettingsController extends SettingsController {
 						(CrossSetting) this.settingsPresetService.convertPresetFromXmlString(preset.getConfiguration(), CrossSetting.class);
 				final CrossImportSettings importSettings = new CrossImportSettings();
 				importSettings.populate(crossSetting);
+				importSettings.setProgramPresetId(preset.getProgramPresetId());
 				settings.add(importSettings);
 			}
 
@@ -167,6 +168,17 @@ public class CrossingSettingsController extends SettingsController {
 		}
 
 		returnVal.put(CrossingSettingsController.SUCCESS_KEY, "0");
+		return returnVal;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/deleteSetting/{programPresetId}", method = RequestMethod.DELETE)
+	public Map<String, Object> deleteSetting(@PathVariable final Integer programPresetId) {
+		final Map<String, Object> returnVal = new HashMap<>();
+
+		this.deleteCrossSetting(programPresetId);
+
+		returnVal.put(CrossingSettingsController.SUCCESS_KEY, "1");
 		return returnVal;
 	}
 
@@ -478,6 +490,10 @@ public class CrossingSettingsController extends SettingsController {
 		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);
 		responseMap.put(CrossesListUtil.IS_IMPORT, false);
 		return responseMap;
+	}
+
+	protected void deleteCrossSetting(int programPresetId)  {
+		this.presetDataManager.deleteProgramPreset(programPresetId);
 	}
 
 	protected void saveCrossSetting(final CrossSetting setting, final String programUUID) throws MiddlewareQueryException, JAXBException {

@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.generationcp.commons.constant.ColumnLabels;
+import org.generationcp.middleware.dao.GermplasmListDAO;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -176,6 +177,12 @@ public class GermplasmListController {
 				model.addAttribute("hasPedigreeRecip", pedigreeRecipFound);
 				model.addAttribute("hasPlotDupe", plotDupeFound);
 				model.addAttribute("hasPlotRecip", plotRecipFound);
+
+				if (GermplasmListType.F1IMP.name().equals(germplasmList.getType())) {
+					model.addAttribute("listTypeLabel", GermplasmListDAO.IMPORTED_CROSSES);
+				} else if (GermplasmListType.F1CRT.name().equals(germplasmList.getType())) {
+					model.addAttribute("listTypeLabel", GermplasmListDAO.DESIGNED_CROSSES);
+				}
 			}
 		} catch (MiddlewareQueryException e) {
 			GermplasmListController.LOG.error(e.getMessage(), e);

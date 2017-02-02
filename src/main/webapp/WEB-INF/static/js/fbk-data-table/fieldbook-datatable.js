@@ -523,7 +523,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 	 * @param {string} tableIdentifier the id of the table container
 	 * @param {string} ajaxUrl the URL from which to retrieve table data
 	 */
-	var dataTableConstructor = function PreviewCrossesDataTable(tableIdentifier, dataList, tableHeaderList, isImport, render) {
+	var dataTableConstructor = function PreviewCrossesDataTable(tableIdentifier, dataList, tableHeaderList, isImport) {
 		'use strict';
 
 		var columns = [],
@@ -630,6 +630,8 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				}
 			});
 		}
+
+		$(tableIdentifier).DataTable().column( 2 ).visible( isImport );
 
 		$(tableIdentifier).dataTable().bind('sort', function() {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();

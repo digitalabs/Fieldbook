@@ -179,9 +179,9 @@ public class GermplasmListController {
 				model.addAttribute("hasPlotRecip", plotRecipFound);
 
 				if (GermplasmListType.F1IMP.name().equals(germplasmList.getType())) {
-					model.addAttribute("listTypeLabel", GermplasmListDAO.IMPORTED_CROSSES);
+					model.addAttribute("listTypeLabel", GermplasmList.IMPORTED_CROSSES);
 				} else if (GermplasmListType.F1CRT.name().equals(germplasmList.getType())) {
-					model.addAttribute("listTypeLabel", GermplasmListDAO.DESIGNED_CROSSES);
+					model.addAttribute("listTypeLabel", GermplasmList.DESIGNED_CROSSES);
 				}
 			}
 		} catch (MiddlewareQueryException e) {

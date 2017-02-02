@@ -104,7 +104,11 @@ var SaveAdvanceList = {};
 		if(isParent) {
 			$('#germplasmListType').val('parent');
 		} else if (isCrosses) {
-			$('#germplasmListType').val('cross');
+			if (ImportCrosses.isFileCrossesImport) {
+				$('#germplasmListType').val('F1IMP');
+			} else {
+				$('#germplasmListType').val('F1CRT');
+			}
 		} else if (isStock) {
 			$('#germplasmListType').val('stock');
 		} else {

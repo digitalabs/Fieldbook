@@ -246,7 +246,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 				if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
 					results.put("advancedGermplasmListId", listDataProjectListId);
-				} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
+				} else if (GermplasmListType.isCrosses(form.getGermplasmListType())) {
 					results.put("crossesListId", listDataProjectListId);
 				} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(form.getGermplasmListType())) {
 					results.put("parentListId", listDataProjectListId);
@@ -370,7 +370,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					germplasmList, germplasmAttributes);
 			return new GermplasmListResult(germplasmListId, false);
 
-		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
+		} else if (GermplasmListType.isCrosses(form.getGermplasmListType())) {
 			final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 			final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
 
@@ -541,13 +541,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(germplasmListType)) {
 			type = GermplasmListType.ADVANCED;
 
-		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equalsIgnoreCase(germplasmListType)) {
-			BreedingMethodSetting breedingMethodSetting = this.studySelection.getCrossSettings().getBreedingMethodSetting();
-			if (breedingMethodSetting.isBasedOnImportFile()) {
-				type = GermplasmListType.F1IMP;
-			} else {
-				type = GermplasmListType.F1CRT;
-			}
+		} else if (GermplasmListType.isCrosses(germplasmListType)) {
+			type = GermplasmListType.valueOf(germplasmListType);
 			// need to add the copying of the duplicate entry here
 			FieldbookUtil.copyDupeNotesToListDataProject(dataProjectList, this.userSelection.getImportedCrossesList().getImportedCrosses());
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(germplasmListType)) {

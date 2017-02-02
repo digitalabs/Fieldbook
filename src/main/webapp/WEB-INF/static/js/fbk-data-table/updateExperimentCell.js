@@ -25,7 +25,7 @@ function initializeInlineMeasurementInput(possibleValuesSuggestions) {
 		var possibleValues_obj = [];
 		var defaultJsonVal = null;
 		var defaultCValue = $(this).data('cvalueid') == null ? '' :  $(this).data('cvalueid');
-		var defaultValue = $(this).data('value');
+		var defaultValue = $(this).data('value') == null ? '' :  $(this).data('value');
 		defaultValue = defaultCValue !== '' ? defaultCValue : defaultValue;
 		possibleValues_obj.push({'id': '', 'text': 'Please Choose', 'status': '0'});
 		if ($('.inline-input').parent('td').hasClass('accepted-value') || $('.inline-input').parent('td').hasClass('invalid-value') || defaultValue === 'missing') {

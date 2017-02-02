@@ -3944,10 +3944,13 @@ function processInlineEditInput() {
 function saveInlineEdit(isDiscard, invalidButKeep) {
 	'use strict';
 
-	var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' :
-    			'#measurement-table';
+	var isImportPreviewMeasurementsView = $('body').hasClass('import-preview-measurements');
+	var tableIdentifier = isImportPreviewMeasurementsView ? '#import-preview-measurement-table' : '#measurement-table';
+
 	$.ajax({
-		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/data?isDiscard=' + isDiscard + '&invalidButKeep=' + invalidButKeep,
+		url: '/Fieldbook/Common/addOrRemoveTraits/' +
+			(isImportPreviewMeasurementsView ? 'updateByIndex' : 'update') +
+			'/experiment/cell/data?isDiscard=' + isDiscard + '&invalidButKeep=' + invalidButKeep,
 		type: 'POST',
 		async: false,
 		data:   $(tableIdentifier).data('json-inline-edit-val'),

@@ -186,19 +186,73 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	@ResponseBody
 	@RequestMapping(value = "/update/experiment/cell/data", method = RequestMethod.POST)
 	@Transactional
-	public Map<String, Object> updateExperimentCellData(@RequestBody Map<String, String> data, HttpServletRequest req) {
+	public Map<String, Object> updateExperimentCellData(@RequestBody final Map<String, String> data, final HttpServletRequest req) {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
+		Integer phenotypeId = null;
+		if (StringUtils.isNotBlank(data.get("phenotypeId"))) {
+			phenotypeId = Integer.valueOf(data.get("phenotypeId"));
+		}
+		final int termId = Integer.valueOf(data.get(ObservationMatrixController.TERM_ID));
+
+		final String value = data.get("value");
+		final boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard"));
+		final boolean invalidButKeep = "1".equalsIgnoreCase(req.getParameter("invalidButKeep"));
+
+		final int experimentId = Integer.valueOf(data.get("experimentId"));
+		map.put("experimentId", experimentId);
+		map.put("phenotypeId", phenotypeId != null ? phenotypeId : "");
+
+		if (!isDiscard) {
+			Phenotype existingPhenotype = null;
+			if (phenotypeId != null) {
+				existingPhenotype = this.studyDataManager.getPhenotypeById(phenotypeId);
+			}
+
+			final Variable trait = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
+
+			if (!invalidButKeep) {
+				if (!this.validationService.validateObservationValue(trait, value)) {
+					map.put(ObservationMatrixController.SUCCESS, "0");
+					map.put(ObservationMatrixController.ERROR_MESSAGE, "Invalid value.");
+					return map;
+				}
+			}
+			this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
+					trait.getScale().getDataType().getId());
+		}
+		map.put(ObservationMatrixController.SUCCESS, "1");
+
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		List<ObservationDto> singleObservation =
+				this.studyService.getSingleObservation(this.userSelection.getWorkbook().getStudyDetails().getId(), experimentId);
+		if (!singleObservation.isEmpty()) {
+			dataMap = generateDatatableDataMap(singleObservation.get(0), "");
+		}
+		map.put(ObservationMatrixController.DATA, dataMap);
+		return map;
+	}
+
+	/**
+	 * POST call once value has been entered in the table cell and user has blurred out or hit enter.
+	 * The Update is made by Index of the record as stored temprorary in memory without persisting to the DB until User hits Save.
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/updateByIndex/experiment/cell/data", method = RequestMethod.POST)
+	@Transactional
+	public Map<String, Object> updateExperimentCellDataByIndex(@RequestBody final Map<String, String> data, final HttpServletRequest req) {
+
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		Integer phenotypeId = null;
 		if (StringUtils.isNotBlank(data.get("phenotypeId"))) {
 			phenotypeId = Integer.valueOf(data.get("phenotypeId"));
 		}
-		int termId = Integer.valueOf(data.get(ObservationMatrixController.TERM_ID));
+		final int termId = Integer.valueOf(data.get(ObservationMatrixController.TERM_ID));
 
 		if (StringUtils.isNotBlank(data.get(ObservationMatrixController.INDEX))) {
-			int index = Integer.valueOf(data.get(ObservationMatrixController.INDEX));
-			String value = data.get("value");
+			final int index = Integer.valueOf(data.get(ObservationMatrixController.INDEX));
+			final String value = data.get("value");
 			// for categorical
 			int isNew;
 			if (data.get("isNew") != null) {
@@ -206,101 +260,56 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			} else {
 				isNew = 1;
 			}
-			boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard")) ? true : false;
+			final boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard"));
 
 			map.put(ObservationMatrixController.INDEX, index);
 
-			UserSelection userSelection = this.getUserSelection();
-			List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
-			tempList.addAll(userSelection.getMeasurementRowList());
-
-			MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+			final UserSelection userSelection = this.getUserSelection();
+			final MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
 
 			try {
 				if (!isDiscard) {
-					MeasurementRow copyRow = originalRow.copy();
-					this.copyMeasurementValue(copyRow, originalRow, isNew == 1 ? true : false);
+					final MeasurementRow copyRow = originalRow.copy();
+					this.copyMeasurementValue(copyRow, originalRow, isNew == 1);
 					// we set the data to the copy row
 					if (copyRow != null && copyRow.getMeasurementVariables() != null) {
 						this.updatePhenotypeValues(copyRow.getDataList(), value, termId, isNew);
 					}
 					this.validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
 					// if there are no error, meaning everything is good, thats the time we copy it to the original
-					this.copyMeasurementValue(originalRow, copyRow, isNew == 1 ? true : false);
+					this.copyMeasurementValue(originalRow, copyRow, isNew == 1);
 					this.updateDates(originalRow);
 				}
 				map.put(ObservationMatrixController.SUCCESS, "1");
 				final DataMapUtil dataMapUtil = new DataMapUtil();
 				final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(originalRow, "", this.userSelection);
 				map.put(ObservationMatrixController.DATA, dataMap);
-			} catch (MiddlewareQueryException e) {
+			} catch (final MiddlewareQueryException e) {
 				ObservationMatrixController.LOG.error(e.getMessage(), e);
 				map.put(ObservationMatrixController.SUCCESS, "0");
 				map.put(ObservationMatrixController.ERROR_MESSAGE, e.getMessage());
 			}
-
-			return map;
-
-		} else {
-
-			String value = data.get("value");
-			boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard")) ? true : false;
-			boolean invalidButKeep = "1".equalsIgnoreCase(req.getParameter("invalidButKeep")) ? true : false;
-
-			int experimentId = Integer.valueOf(data.get("experimentId"));
-			map.put("experimentId", experimentId);
-			map.put("phenotypeId", phenotypeId != null ? phenotypeId : "");
-
-			if (!isDiscard) {
-				Phenotype existingPhenotype = null;
-				if (phenotypeId != null) {
-					existingPhenotype = this.studyDataManager.getPhenotypeById(phenotypeId);
-				}
-
-				Variable trait =
-						this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
-
-				if (!invalidButKeep) {
-					if (!this.validationService.validateObservationValue(trait, value)) {
-						map.put(ObservationMatrixController.SUCCESS, "0");
-						map.put(ObservationMatrixController.ERROR_MESSAGE, "Invalid value.");
-						return map;
-					}
-				}
-
-				this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
-						trait.getScale().getDataType().getId());
-			}
-			map.put(ObservationMatrixController.SUCCESS, "1");
-
-			Map<String, Object> dataMap = new HashMap<String, Object>();
-			List<ObservationDto> singleObservation =
-					this.studyService.getSingleObservation(this.userSelection.getWorkbook().getStudyDetails().getId(), experimentId);
-			if (!singleObservation.isEmpty()) {
-				dataMap = generateDatatableDataMap(singleObservation.get(0), "");
-			}
-			map.put(ObservationMatrixController.DATA, dataMap);
-			return map;
 		}
+		return map;
 	}
 
-	private void updateDates(MeasurementRow originalRow) {
+	private void updateDates(final MeasurementRow originalRow) {
 		if (originalRow != null && originalRow.getMeasurementVariables() != null) {
-			for (MeasurementData var : originalRow.getDataList()) {
+			for (final MeasurementData var : originalRow.getDataList()) {
 				this.convertToDBDateIfDate(var);
 			}
 		}
 	}
 
-	private void convertToDBDateIfDate(MeasurementData var) {
+	private void convertToDBDateIfDate(final MeasurementData var) {
 		if (var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null
 				&& var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
 			var.setValue(DateUtil.convertToDBDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
 		}
 	}
 
-	private void updatePhenotypeValues(List<MeasurementData> measurementDataList, String value, int termId, int isNew) {
-		for (MeasurementData var : measurementDataList) {
+	private void updatePhenotypeValues(final List<MeasurementData> measurementDataList, final String value, final int termId, final int isNew) {
+		for (final MeasurementData var : measurementDataList) {
 			if (var != null && var.getMeasurementVariable().getTermId() == termId) {
 				if (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
 						|| !var.getMeasurementVariable().getPossibleValues().isEmpty()) {

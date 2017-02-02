@@ -112,9 +112,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	public String importFile(@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form,
 			@PathVariable final String studyType, @PathVariable final int importType, final BindingResult result, final Model model) {
 
-		final boolean isTrial = "TRIAL".equalsIgnoreCase(studyType);
 		ImportResult importResult = null;
-		final UserSelection userSelection = this.getUserSelection(isTrial);
+		final UserSelection userSelection = this.getUserSelection();
 		final ImportStudyType importStudyType = ImportStudyType.getImportType(importType);
 
 		assert importStudyType != null;
@@ -253,7 +252,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		return list;
 	}
 
-	private UserSelection getUserSelection(final boolean isTrial) {
+	private UserSelection getUserSelection() {
 		return this.studySelection;
 	}
 
@@ -279,7 +278,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	private void doRevertData(final CreateNurseryForm form) {
-		final UserSelection userSelection = this.getUserSelection(false);
+		final UserSelection userSelection = this.getUserSelection();
 		// we should remove here the newly added traits
 		final List<MeasurementVariable> newVariableList = new ArrayList<>();
 
@@ -301,7 +300,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/apply/change/details", method = RequestMethod.POST)
 	public String applyChangeDetails(@RequestParam(value = "data") final String userResponses) throws FieldbookException {
-		final UserSelection userSelection = this.getUserSelection(false);
+		final UserSelection userSelection = this.getUserSelection();
 		final GermplasmChangeDetail[] responseDetails = this.getResponseDetails(userResponses);
 		final List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
 		final Map<String, Map<String, String>> changeMap = new HashMap<>();
@@ -451,7 +450,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/import/save", method = RequestMethod.POST)
 	public Map<String, Object> saveImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model)
 			throws MiddlewareException {
-		final UserSelection userSelection = this.getUserSelection(false);
+		final UserSelection userSelection = this.getUserSelection();
 		final List<MeasurementVariable> traits =
 				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
 						.getObservations());
@@ -504,7 +503,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/import/preview", method = RequestMethod.POST)
 	public List<Map<String, Object>> previewImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
-		final UserSelection userSelection = this.getUserSelection(false);
+		final UserSelection userSelection = this.getUserSelection();
 		final List<MeasurementVariable> traits =
 				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
 						.getObservations());
@@ -532,7 +531,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 		final DataMapUtil dataMapUtil = new DataMapUtil();
 		for (final MeasurementRow row : tempList) {
-			final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(row, "", this.getUserSelection(false));
+			final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(row, "", this.getUserSelection());
 			masterList.add(dataMap);
 		}
 
@@ -542,7 +541,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/retrieve/new/import/variables", method = RequestMethod.GET)
 	public Map<String, String> getNewlyImportedTraits() throws IOException {
-		final UserSelection userSelection = this.getUserSelection(false);
+		final UserSelection userSelection = this.getUserSelection();
 		final Map<String, String> map = new HashMap<>();
 		final List<SettingDetail> newTraits = userSelection.getNewTraits();
 		final List<SettingDetail> selectedVariates = userSelection.getNewSelectionVariates();

@@ -224,7 +224,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		map.put(ObservationMatrixController.SUCCESS, "1");
 
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		List<ObservationDto> singleObservation =
+		final List<ObservationDto> singleObservation =
 				this.studyService.getSingleObservation(this.userSelection.getWorkbook().getStudyDetails().getId(), experimentId);
 		if (!singleObservation.isEmpty()) {
 			dataMap = generateDatatableDataMap(singleObservation.get(0), "");

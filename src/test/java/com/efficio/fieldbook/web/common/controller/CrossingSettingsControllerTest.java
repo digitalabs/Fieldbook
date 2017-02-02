@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import com.efficio.fieldbook.web.common.service.CrossingService;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
@@ -86,6 +87,9 @@ public class CrossingSettingsControllerTest {
 	public static final String MALE_NURSERY_NAME = "maleNursery";
 	public static final Integer CROSSING_DATE = 20161212;
 	public static final String NOTES = "Test notes";
+	public static final String FEMALE_PEDIGREE = "-";
+	public static final String MALE_PEDIGREE = "-";
+
 
 	@Mock
 	private WorkbenchService workbenchService;
@@ -107,6 +111,8 @@ public class CrossingSettingsControllerTest {
 	private OntologyDataManager ontologyDataManager;
 	@Mock
 	private ContextUtil contextUtil;
+	@Mock
+	private CrossingService crossingService;
 
 	private CrossesListUtil crossesListUtil;
 
@@ -140,6 +146,8 @@ public class CrossingSettingsControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.MALE_PARENT.getId())).thenReturn(this.getTerm(ColumnLabels.MALE_PARENT));
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.MGID.getId())).thenReturn(this.getTerm(ColumnLabels.MGID));
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(this.getTerm(ColumnLabels.SEED_SOURCE));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS_FEMALE_GID.getId())).thenReturn(this.getTerm(ColumnLabels.CROSS_FEMALE_GID));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS_MALE_GID.getId())).thenReturn(this.getTerm(ColumnLabels.CROSS_MALE_GID));
 	}
 
 	private Term getTerm(final ColumnLabels columnLabel) {
@@ -397,6 +405,9 @@ public class CrossingSettingsControllerTest {
 		germplasmListData.setFgid(CrossingSettingsControllerTest.FGID);
 		germplasmListData.setMgid(CrossingSettingsControllerTest.MGID);
 		germplasmListData.setFemaleParent(CrossingSettingsControllerTest.TEST_FEMALE_PARENT);
+		germplasmListData.setFemalePedigree(CrossingSettingsControllerTest.FEMALE_PEDIGREE);
+		germplasmListData.setMalePedigree(CrossingSettingsControllerTest.MALE_PEDIGREE);
+
 		germplasmListDatas.add(germplasmListData);
 		Mockito.when(this.germplasmListManager.retrieveListDataWithParents(80)).thenReturn(germplasmListDatas);
 		Mockito.when(this.germplasmListManager.getGermplasmListById(80)).thenReturn(germplasmList);
@@ -411,15 +422,18 @@ public class CrossingSettingsControllerTest {
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_SEED_SOURCE));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.ENTRY_ID));
-//		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.FGID));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertTrue(data.containsValue(
-				CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT));
+			CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
 		Assert.assertTrue(data.containsValue(""));
-//		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.MGID));
+		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.FEMALE_PEDIGREE));
+		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.MALE_PEDIGREE));
+
 	}
 
 	@Test
@@ -444,14 +458,14 @@ public class CrossingSettingsControllerTest {
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_SEED_SOURCE));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.ENTRY_ID));
-//		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
 		Assert.assertTrue(data.containsValue(Integer.toString(CrossingSettingsControllerTest.FGID)));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertTrue(data.containsValue(
-				CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT));
+			CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.TEST_SEED_SOURCE));
-//		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
 		Assert.assertTrue(data.containsValue(Integer.toString(CrossingSettingsControllerTest.MGID)));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FEMALE_CROSS)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.FEMALE_PLOT));
@@ -460,9 +474,7 @@ public class CrossingSettingsControllerTest {
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.BREEDING_METHOD));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.CROSSING_DATE));
-//		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MALE_NURSERY_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.MALE_NURSERY_NAME));
-//		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.NOTES_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.NOTES));
 
 	}

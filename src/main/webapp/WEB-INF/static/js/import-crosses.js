@@ -83,6 +83,15 @@ var ImportCrosses = {
 		$("#breedingMethodSelectionDiv :input").attr("disabled", true);
 		$('#breedingMethodDropdown').select2('val', null);
 
+		if (createdCrossesListId == null) {
+			$('#selectMethodInImportFile').prop('checked',true);
+			$('#selectUseParentalStatus').prop('checked',false);
+
+		} else {
+			$('#selectMethodInImportFile').prop('checked',false);
+			$('#selectUseParentalStatus').prop('checked',true);
+		}
+
 		$('#selectMethodForAllCrosses').off('change');
 		$('#selectMethodForAllCrosses').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
 

@@ -43,16 +43,14 @@
                         <!--First option will be displayed only when it comes from Importing a file -->
                         <div class="col-xs-12 col-md-12 add-top-bottom-padding" id="useBreedingInTheImportFile">
                             <label class="radio-inline">
-                                <input type="radio" class="crossingBreedingMethodInput" id="selectMethodInImportFile" name="breeding-method-radio" value="1"
-                                       th:checked="*{#strings.isEmpty(createdCrossesListId)}"/>
+                                <input type="radio" class="crossingBreedingMethodInput" id="selectMethodInImportFile" name="breeding-method-radio" value="1"/>
                                 <span th:text="#{study.import.crosses.settings.breeding.method.import.file.label}">Use the breeding methods specified in the import file</span>
                             </label>
                         </div>
 
                         <div class="col-xs-12 col-md-12">
                             <label class="radio-inline">
-                                <input type="radio" class="crossingBreedingMethodInput" id="selectUseParentalStatus" name="breeding-method-radio" value="2"
-                                       th:checked="*{!#strings.isEmpty(createdCrossesListId)}"/>
+                                <input type="radio" class="crossingBreedingMethodInput" id="selectUseParentalStatus" name="breeding-method-radio" value="2"/>
                                 <span th:text="#{study.import.crosses.settings.parental.status.label}">Use parental status</span>
                             </label>
                         </div>

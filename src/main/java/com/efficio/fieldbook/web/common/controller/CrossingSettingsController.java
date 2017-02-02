@@ -537,35 +537,35 @@ public class CrossingSettingsController extends SettingsController {
 		this.crossesListUtil = crossesListUtil;
 	}
 
-  	protected void setParentsInformation(List<ImportedCrosses> importedCrossesList) {
+	protected void setParentsInformation(List<ImportedCrosses> importedCrossesList) {
 
-	  Collection<Integer> maleGidList = Collections2.transform(importedCrossesList, new Function<ImportedCrosses, Integer>() {
+		Collection<Integer> maleGidList = Collections2.transform(importedCrossesList, new Function<ImportedCrosses, Integer>() {
 
-		@Override public Integer apply(ImportedCrosses input) {
-		  return Integer.parseInt(input.getMaleGid());
+			@Override public Integer apply(ImportedCrosses input) {
+				return Integer.parseInt(input.getMaleGid());
+			}
+		});
+		Collection<Integer> femaleGidList = Collections2.transform(importedCrossesList, new Function<ImportedCrosses, Integer>() {
+
+			@Override public Integer apply(ImportedCrosses input) {
+				return Integer.parseInt(input.getFemaleGid());
+			}
+		});
+
+		List<Integer> gidList = new ArrayList<>();
+		gidList.addAll(maleGidList);
+		gidList.addAll(femaleGidList);
+
+		ImmutableList<Integer> listWithNoDuplicates = ImmutableSet.copyOf(gidList).asList();
+
+		Map<Integer, String[]> pedigreeMap = germplasmDataManager.getParentsInfoByGIDList(listWithNoDuplicates);
+
+		for (ImportedCrosses importedCrosses : importedCrossesList) {
+			importedCrosses.setFemalePedigree(pedigreeMap.get(Integer.parseInt(importedCrosses.getFemaleGid()))[0]);
+			importedCrosses.setMalePedigree(pedigreeMap.get(Integer.parseInt(importedCrosses.getMaleGid()))[0]);
+			importedCrosses.setFemaleCross(pedigreeMap.get(Integer.parseInt(importedCrosses.getFemaleGid()))[1]);
+			importedCrosses.setMaleCross(pedigreeMap.get(Integer.parseInt(importedCrosses.getMaleGid()))[1]);
 		}
-	  });
-	  Collection<Integer> femaleGidList = Collections2.transform(importedCrossesList, new Function<ImportedCrosses, Integer>() {
-
-		@Override public Integer apply(ImportedCrosses input) {
-		  return Integer.parseInt(input.getFemaleGid());
-		}
-	  });
-
-	  List<Integer> gidList = new ArrayList<>();
-	  gidList.addAll(maleGidList);
-	  gidList.addAll(femaleGidList);
-
-	  ImmutableList<Integer> listWithNoDuplicates = ImmutableSet.copyOf(gidList).asList();
-
-	  Map<Integer, String[]> pedigreeMap = germplasmDataManager.getParentsInfoByGIDList(listWithNoDuplicates);
-
-	  for (ImportedCrosses importedCrosses : importedCrossesList) {
-		importedCrosses.setFemalePedigree(pedigreeMap.get(Integer.parseInt(importedCrosses.getFemaleGid()))[0]);
-		importedCrosses.setMalePedigree(pedigreeMap.get(Integer.parseInt(importedCrosses.getMaleGid()))[0]);
-		importedCrosses.setFemaleCross(pedigreeMap.get(Integer.parseInt(importedCrosses.getFemaleGid()))[1]);
-		importedCrosses.setMaleCross(pedigreeMap.get(Integer.parseInt(importedCrosses.getMaleGid()))[1]);
-	  }
 
 	}
 

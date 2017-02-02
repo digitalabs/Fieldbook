@@ -4100,7 +4100,11 @@ function reloadMeasurementTable() {
 }
 function hasMeasurementsInvalidValue() {
 	'use strict';
-	if ($('#measurement-table').find('.invalid-value').length === 0) {
+
+	var isImportPreviewMeasurementsView = $('body').hasClass('import-preview-measurements');
+    var tableIdentifier = isImportPreviewMeasurementsView ? '#import-preview-measurement-table' : '#measurement-table';
+
+	if ($(tableIdentifier).find('.invalid-value').length === 0) {
 		return false;
 	}
 	return true;

@@ -471,6 +471,8 @@ public class CrossingSettingsControllerTest {
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MALE_CROSS)));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.BREEDING_METHOD));
+		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.FEMALE_PEDIGREE));
+		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.MALE_PEDIGREE));
 	}
 
 	private void fillUpUserSelectionWithImportedCrossTestData() {

@@ -283,10 +283,11 @@ var ImportCrosses = {
 			}
 			ImportCrosses.deleteImportSettings(data.programPresetId)
 				.done(function () {
+					showSuccessfulMessage('', crossingSettingsDeleted);
 					ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 				})
 				.fail(function () {
-					showErrorMessage('', 'Could not delete setting');
+					showErrorMessage('', crossingSettingsDeleteFailed);
 				});
 		});
 

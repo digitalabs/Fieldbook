@@ -28,7 +28,6 @@ import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -145,6 +144,7 @@ public class CrossingSettingsController extends SettingsController {
 						(CrossSetting) this.settingsPresetService.convertPresetFromXmlString(preset.getConfiguration(), CrossSetting.class);
 				final CrossImportSettings importSettings = new CrossImportSettings();
 				importSettings.populate(crossSetting);
+				importSettings.setProgramPresetId(preset.getProgramPresetId());
 				settings.add(importSettings);
 			}
 
@@ -168,6 +168,17 @@ public class CrossingSettingsController extends SettingsController {
 		}
 
 		returnVal.put(CrossingSettingsController.SUCCESS_KEY, "0");
+		return returnVal;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/deleteSetting/{programPresetId}", method = RequestMethod.DELETE)
+	public Map<String, Object> deleteSetting(@PathVariable final Integer programPresetId) {
+		final Map<String, Object> returnVal = new HashMap<>();
+
+		this.deleteCrossSetting(programPresetId);
+
+		returnVal.put(CrossingSettingsController.SUCCESS_KEY, "1");
 		return returnVal;
 	}
 
@@ -306,7 +317,6 @@ public class CrossingSettingsController extends SettingsController {
 
 		    this.setParentsInformation(parseResults.getImportedCrosses());
 
-		    parseResults.setType(GermplasmListType.F1IMP.toString());
 
 			this.studySelection.setImportedCrossesList(parseResults);
 
@@ -480,6 +490,10 @@ public class CrossingSettingsController extends SettingsController {
 		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);
 		responseMap.put(CrossesListUtil.IS_IMPORT, false);
 		return responseMap;
+	}
+
+	protected void deleteCrossSetting(int programPresetId)  {
+		this.presetDataManager.deleteProgramPreset(programPresetId);
 	}
 
 	protected void saveCrossSetting(final CrossSetting setting, final String programUUID) throws MiddlewareQueryException, JAXBException {

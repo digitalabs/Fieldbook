@@ -166,9 +166,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private UserSelection userSelection;
 
 	@Resource
-	private UserSelection studySelection;
-
-	@Resource
 	private UserTreeStateService userTreeStateService;
 
 	@Resource

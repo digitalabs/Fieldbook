@@ -692,7 +692,11 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	private void setBreedingMethodNameByMethodId(ImportedCrosses importedCrosses) {
-		final String breedingMethodName = this.germplasmDataManager.getMethodByID(importedCrosses.getBreedingMethodId()).getMname();
+		Method method = this.germplasmDataManager.getMethodByID(importedCrosses.getBreedingMethodId());
+		if (method == null) {
+			return;
+		}
+		final String breedingMethodName = method.getMname();
 		importedCrosses.setBreedingMethodName(breedingMethodName);
 	}
 

@@ -117,6 +117,8 @@ public class CrossingServiceImplTest {
 	public void testProcessCrossBreedingMethodCodeAlreadyAvailable() {
 		final List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
 
+		this.crossSetting.getBreedingMethodSetting().setBasedOnImportFile(true);
+
 		// we modify the data such that one of the entries already have a raw breeding method code (i.e., from import file)
 		crosses.get(0).setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
 		final Method method = new Method(TEST_BREEDING_METHOD_ID);
@@ -711,6 +713,8 @@ public class CrossingServiceImplTest {
 	private BreedingMethodSetting createBreedingMethodSetting() {
 		final BreedingMethodSetting breedingMethodSetting = new BreedingMethodSetting();
 		breedingMethodSetting.setMethodId(BREEDING_METHOD_ID);
+		breedingMethodSetting.setBasedOnImportFile(false);
+		breedingMethodSetting.setBasedOnStatusOfParentalLines(false);
 		return breedingMethodSetting;
 	}
 

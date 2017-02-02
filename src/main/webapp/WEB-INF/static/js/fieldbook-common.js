@@ -3991,12 +3991,15 @@ function markCellAsMissing(indexElem, indexTermId, indexDataVal, isNew, elem) {
 		isNew: isNew
 	};
 
+	var isImportPreviewMeasurementsView = $('body').hasClass('import-preview-measurements');
+
 	$.ajax({
 		headers: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json'
 		},
-		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/data?isDiscard=0',
+		url: '/Fieldbook/Common/addOrRemoveTraits/' +
+			(isImportPreviewMeasurementsView ? 'updateByIndex' : 'update') + '/experiment/cell/data?isDiscard=0',
 		type: 'POST',
 		async: false,
 		data:   JSON.stringify(data),

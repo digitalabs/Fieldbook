@@ -245,11 +245,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
 				} else if (Number(newVal) > Number(oldVal)) {
 					addNewEnvironments(newVal - oldVal);
-
-					// should not be equal to 1 since the default number of environment for a trial is 1
-					if(newVal !== 1){
-						TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
-					}
+					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 				}
 			});
 

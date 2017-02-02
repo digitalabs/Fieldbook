@@ -144,7 +144,7 @@ var getColumns = function(displayColumns) {
 		} else if (displayColumn.dataTypeId === 1130) {
 			// Column definition for Categorical data type
 
-			if (displayColumn.possibleValuesString) {
+			if (!displayColumn.possibleValuesString) {
 				displayColumn.possibleValuesString =  '';
 			}
 
@@ -192,6 +192,7 @@ var getColumns = function(displayColumns) {
 					}
 					$(td).data('term-id', termId);
 					$(td).data('phenotype-id', cellData[3]);
+					$(td).data('term-valid-values', displayColumn.possibleValuesString);
 				},
 				render: function(data, type, full, meta) {
 					if (data !== undefined) {

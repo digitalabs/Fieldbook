@@ -468,15 +468,9 @@ public class CrossingSettingsControllerTest {
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
 		Assert.assertTrue(data.containsValue(Integer.toString(CrossingSettingsControllerTest.MGID)));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.FEMALE_CROSS)));
-		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.FEMALE_PLOT));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.MALE_CROSS)));
-		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.MALE_PLOT));
 		Assert.assertTrue(data.containsKey(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX)));
 		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.BREEDING_METHOD));
-		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.CROSSING_DATE));
-		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.MALE_NURSERY_NAME));
-		Assert.assertTrue(data.containsValue(CrossingSettingsControllerTest.NOTES));
-
 	}
 
 	private void fillUpUserSelectionWithImportedCrossTestData() {
@@ -498,6 +492,8 @@ public class CrossingSettingsControllerTest {
 		importedCrosses.setRawBreedingMethod(CrossingSettingsControllerTest.BREEDING_METHOD);
 		importedCrosses.setCrossingDate(CrossingSettingsControllerTest.CROSSING_DATE);
 		importedCrosses.setNotes(CrossingSettingsControllerTest.NOTES);
+		importedCrosses.setFemalePedigree(CrossingSettingsControllerTest.FEMALE_PEDIGREE);
+		importedCrosses.setMalePedigree(CrossingSettingsControllerTest.MALE_PEDIGREE);
 		importedCrossesList.add(importedCrosses);
 	}
 

@@ -2157,6 +2157,15 @@ input.select-all-margin{
 	display: block;
 }
 
+/* Do not display Add Trait button in import preview measurements mode */
+.import-preview-measurements .nrm-md-variable-select {
+	display: none;
+}
+/* Do not display Remove Trait link in import preview measurements mode */
+.import-preview-measurements .fbk-remove-traits-link {
+	display: none;
+}
+
 .import-preview-measurements .edit-measurements-panel {
 	display: none;
 }

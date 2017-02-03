@@ -41,7 +41,6 @@ import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class FieldbookServiceTest {
 
 	private static final String DUMMY_PROGRAM_UUID = "1234567890";
@@ -155,6 +154,7 @@ public class FieldbookServiceTest {
 		return person;
 	}
 
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testGetVariablePossibleValuesWhenVariableIsLocation() throws Exception {
 		List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getVariablePossibleValues(this.locationVariable);
@@ -169,6 +169,7 @@ public class FieldbookServiceTest {
 				resultPossibleValues.size());
 	}
 
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testGetAllLocations() throws Exception {
 		List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getAllLocations(false);
@@ -179,6 +180,7 @@ public class FieldbookServiceTest {
 		Assert.assertEquals("There should only be 2 records as per our test data", 2, resultPossibleValues.size());
 	}
 
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsTrue() throws Exception {
 		List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getAllPossibleValues(this.locationVariable.getTermId(), true);
@@ -189,6 +191,7 @@ public class FieldbookServiceTest {
 		Assert.assertEquals("There should only be 2 records as per our test data", 2, resultPossibleValues.size());
 	}
 
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsFalse() throws Exception {
 		List<ValueReference> resultPossibleValues =
@@ -196,6 +199,7 @@ public class FieldbookServiceTest {
 		Assert.assertEquals("There should be no records as per our test data", 0, resultPossibleValues.size());
 	}
 
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testGetAllPossibleValuesWhenIdIsNonLocation() throws Exception {
 		List<ValueReference> resultPossibleValues =
@@ -247,6 +251,7 @@ public class FieldbookServiceTest {
 				this.fieldbookServiceImpl.hasCheckVariables(userSelection.getWorkbook().getConditions()));
 	}
 
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testManageCheckVariablesForAdd() {
 		// prepare test data
@@ -275,6 +280,7 @@ public class FieldbookServiceTest {
 		return importedGermplasms;
 	}
 
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testManageCheckVariablesForUpdate() {
 		// prepare test data
@@ -303,6 +309,7 @@ public class FieldbookServiceTest {
 				this.areCheckVariableValuesUpdated(userSelection.getWorkbook().getConditions()));
 	}
 
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testManageCheckVariablesForUpdateWithNoTrialObservations() {
 		// prepare test data
@@ -350,6 +357,7 @@ public class FieldbookServiceTest {
 				Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole()));
 	}
 
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testManageCheckVariablesForDelete() {
 		// prepare test data

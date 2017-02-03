@@ -29,6 +29,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
@@ -36,6 +37,7 @@ import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -87,6 +89,10 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
+
+	/** The Inventory list manager. */
+	@Resource
+	private InventoryDataManager inventoryDataManager;
 
 	@Override
 	public String getContentName() {
@@ -260,7 +266,7 @@ public class OpenTrialController extends BaseTrialController {
 
 				model.addAttribute("germplasmListSize", listDataProjects.size());
 				model.addAttribute("germplasmChecksSize", germplasmListChecksSize);
-
+				FieldbookListUtil.populateStockIdInListDataProject(listDataProjects, inventoryDataManager);
 				final List<ImportedGermplasm> list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(listDataProjects);
 				final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 				importedGermplasmList.setImportedGermplasms(list);

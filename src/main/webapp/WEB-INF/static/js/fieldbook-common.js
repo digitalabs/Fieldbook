@@ -4,20 +4,21 @@ $(function() {
 	'use strict';
 
 	// attach spinner operations to ajax events
-	// TODO Review the usage of that Spinner, there should not be global spinners in the ajax apps
-	$(document).ajaxStart(function() {
-		SpinnerManager.addActive();
-	}).ajaxStop(function() {
-		SpinnerManager.resolveActive();
-	}).ajaxError(function(xhr, error) {
-		// TODO find out why do we do that here and ==
-		if (error.status == 500) {
-			showErrorMessage('', ajaxGenericErrorMsg);
-		} else {
-			showErrorMessage('INVALID INPUT', error.responseText);
+	jQuery.ajaxSetup({
+		beforeSend: function() {
+			SpinnerManager.addActive();
+		},
+		complete: function() {
+			SpinnerManager.resolveActive();
+		},
+		success: function() {},
+		error: function(jqXHR, textStatus, errorThrown) {
+			if (jqXHR.status === 500) {
+				showErrorMessage('', ajaxGenericErrorMsg);
+			} else {
+				showErrorMessage('INVALID INPUT', error.responseText);
+			}
 		}
-
-		SpinnerManager.resolveActive();
 	});
 
 	if (typeof convertToSelect2 === 'undefined' || convertToSelect2) {
@@ -1381,7 +1382,7 @@ function exportStudy() {
 		showMessage('Please choose export type');
 		return false;
 	}
-	
+
 	doExportContinue(type, isNursery());
 }
 
@@ -4233,19 +4234,19 @@ function onMeasurementsInlineEditConfirmationEvent() {
 }
 
 function ValidateValueCheckBoxFavorite(checkFavorite,data){
-	
+
 	if(checkFavorite === 'showFavoriteLocationInventory'){
 		if(data.allSeedStorageFavoritesLocations.length !== 0){
 			$('#' + checkFavorite).prop('checked', true);
 		}
 	}
-	
+
 	if(checkFavorite === 'importFavoriteMethod'){
 		if(data.favoriteNonGenerativeMethods.length !== 0){
 			$('#' + checkFavorite).prop('checked', true);
 		}
 	}
-	
+
 	if(checkFavorite === 'importFavoriteLocation'){
 		if(data.allBreedingFavoritesLocations.length !== 0){
 			$('#' + checkFavorite).prop('checked', true);

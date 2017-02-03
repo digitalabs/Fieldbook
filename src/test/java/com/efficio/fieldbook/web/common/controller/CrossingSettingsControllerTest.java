@@ -56,6 +56,8 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
 import com.efficio.fieldbook.web.util.CrossesListUtil;
 
+import static org.mockito.Mockito.times;
+
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingSettingsControllerTest {
 
@@ -359,6 +361,22 @@ public class CrossingSettingsControllerTest {
 
 		Assert.assertEquals("should return success", Boolean.FALSE, jsonResult.get("isSuccess"));
 		Assert.assertEquals("should return the correct error message", "export.error", jsonResult.get("errorMessage"));
+	}
+
+	@Test
+	public void testDeleteCrossList() {
+		Integer crossListId = 1;
+		this.crossingSettingsController.deleteCrossList(crossListId);
+
+		Mockito.verify(this.germplasmListManager, times(1)).deleteGermplasmListByListIdPhysically(crossListId);
+	}
+
+	@Test
+	public void testDeleteSetting() {
+		Integer programPresetId = 1;
+		this.crossingSettingsController.deleteCrossSetting(programPresetId);
+
+		Mockito.verify(this.presetDataManager, times(1)).deleteProgramPreset(programPresetId);
 	}
 
 	public List<ProgramPreset> constructDummyPresetList() throws JAXBException {

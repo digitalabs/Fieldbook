@@ -76,37 +76,24 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 
 		List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 
-		if (isNursery) {
+		for (SettingDetail factor : factorsList) {
 
-			map.put(String.valueOf(TermId.GID.getId()), true);
-			map.put(String.valueOf(TermId.CROSS.getId()), true);
-			map.put(String.valueOf(TermId.ENTRY_NO.getId()), true);
-			map.put(String.valueOf(TermId.DESIG.getId()), true);
-			map.put(String.valueOf(TermId.ENTRY_CODE.getId()), true);
-			map.put(String.valueOf(TermId.SEED_SOURCE.getId()), true);
+			if (!factor.isHidden()
+					&& !"0".equals(visibleColumnsInClient.get(0))
+					&& (factor.getVariable().getCvTermId().equals(TermId.GID.getId())
+					|| factor.getVariable().getCvTermId().equals(TermId.ENTRY_NO.getId()) || factor.getVariable().getCvTermId()
+					.equals(TermId.DESIG.getId()))) {
 
-		} else {
-			for (SettingDetail factor : factorsList) {
+				map.put(factor.getVariable().getCvTermId().toString(), true);
 
-				if (!factor.isHidden()
-						&& !"0".equals(visibleColumnsInClient.get(0))
-						&& (factor.getVariable().getCvTermId().equals(TermId.GID.getId())
-								|| factor.getVariable().getCvTermId().equals(TermId.ENTRY_NO.getId()) || factor.getVariable().getCvTermId()
-								.equals(TermId.DESIG.getId()))) {
+			} else if (!factor.isHidden() && !"0".equals(visibleColumnsInClient.get(0))
+					&& !visibleColumnsInClient.contains(factor.getVariable().getCvTermId().toString())) {
+				map.put(factor.getVariable().getCvTermId().toString(), false);
 
-					map.put(factor.getVariable().getCvTermId().toString(), true);
-
-				} else if (!factor.isHidden() && !"0".equals(visibleColumnsInClient.get(0))
-						&& !visibleColumnsInClient.contains(factor.getVariable().getCvTermId().toString())) {
-
-					map.put(factor.getVariable().getCvTermId().toString(), false);
-
-				} else if (!factor.isHidden()) {
-
-					map.put(factor.getVariable().getCvTermId().toString(), true);
-				}
-
+			} else if (!factor.isHidden()) {
+				map.put(factor.getVariable().getCvTermId().toString(), true);
 			}
+
 		}
 
 		return map;

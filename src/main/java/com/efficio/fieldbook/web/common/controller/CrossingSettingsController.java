@@ -537,7 +537,7 @@ public class CrossingSettingsController extends SettingsController {
 		this.crossesListUtil = crossesListUtil;
 	}
 
-	protected void setParentsInformation(List<ImportedCrosses> importedCrossesList) {
+	private void setParentsInformation(List<ImportedCrosses> importedCrossesList) {
 
 		Collection<Integer> maleGidList = Collections2.transform(importedCrossesList, new Function<ImportedCrosses, Integer>() {
 

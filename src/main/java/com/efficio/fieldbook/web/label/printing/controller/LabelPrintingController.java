@@ -213,6 +213,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsTrial(true);
+		this.userLabelPrinting.setIsStockList(false);
 
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, true));
 		form.setUserLabelPrinting(this.userLabelPrinting);
@@ -263,6 +264,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsTrial(false);
+		this.userLabelPrinting.setIsStockList(false);
 
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
 		form.setUserLabelPrinting(this.userLabelPrinting);
@@ -297,6 +299,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
 		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
+		this.userLabelPrinting.setIsStockList(false);
 
 		this.userLabelPrinting.setFirstBarcodeField("");
 		this.userLabelPrinting.setSecondBarcodeField("");
@@ -431,7 +434,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		form.setIsTrial(false);
 		this.userLabelPrinting.setIsTrial(false);
 		form.setIsStockList(false);
-
+		
 		return super.show(model);
 	}
 
@@ -881,16 +884,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
 
 		try {
-
-			final List<LabelPrintingPresets> standardPresets = this.labelPrintingService.getAllLabelPrintingPresetsByName(presetName,
-					contextInfo.getSelectedProjectId().intValue(), LabelPrintingPresets.STANDARD_PRESET);
-
-			if (!standardPresets.isEmpty()) {
-				return standardPresets;
-			} else {
-				return this.labelPrintingService.getAllLabelPrintingPresetsByName(presetName, contextInfo.getSelectedProjectId().intValue(),
-						LabelPrintingPresets.PROGRAM_PRESET);
-			}
+			return this.labelPrintingService.getAllLabelPrintingPresetsByName(presetName, contextInfo.getSelectedProjectId().intValue());
 		} catch (final MiddlewareQueryException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
 			return new ArrayList<>();

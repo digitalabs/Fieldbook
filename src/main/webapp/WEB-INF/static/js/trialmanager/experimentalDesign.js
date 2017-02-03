@@ -170,6 +170,9 @@
 						2: 'In a single row',
 						3: 'In adjacent columns'
 					};
+					
+					$scope.disableDesignTypeSelect = ((TrialManagerDataService.trialMeasurement.hasMeasurement) || (TrialManagerDataService.trialMeasurement.count > 0 && TrialManagerDataService.applicationData.hasNewEnvironmentAdded));
+					
 					$scope.onSwitchDesignTypes = function(newId) {
 						if (newId !== '') {
 

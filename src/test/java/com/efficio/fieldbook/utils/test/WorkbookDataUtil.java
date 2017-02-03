@@ -13,19 +13,26 @@ package com.efficio.fieldbook.utils.test;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.operation.builder.WorkbookBuilder;
 import org.generationcp.middleware.pojos.Location;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
@@ -134,6 +141,12 @@ public class WorkbookDataUtil {
 	private static final Integer SNL1ID = 1;
 	private static final Integer CNTRYID = 1;
 	private static final Integer LRPLCE = 1;
+
+	private static final String NUMERIC_VARIABLE = "NUMERIC VARIABLE";
+	private static final String TEST_METHOD = "TEST METHOD";
+	private static final String TEST_SCALE = "TEST SCALE";
+	private static final String TEST_PROPERTY = "TEST PROPERTY";
+	private static final String TEST_DESCRIPTION = "TEST DESCRIPTION";
 
 	public static Workbook getTestWorkbook(final int noOfObservations, final StudyType studyType) {
 		return WorkbookDataUtil.createTestWorkbook(noOfObservations, studyType);
@@ -674,5 +687,72 @@ public class WorkbookDataUtil {
 		measurementVariable.setValue(value);
 		return measurementVariable;
 	}
+
+	public static List<SettingDetail> getPlotLevelList() {
+		final List<SettingDetail> plotLevelList = new ArrayList<>();
+
+		for (final Map.Entry<TermId, Boolean> entry : WorkbookDataUtil.getVisibleColumnMap().entrySet()) {
+			plotLevelList.add(WorkbookDataUtil.generateSettingDetail(entry.getKey()));
+		}
+
+		return plotLevelList;
+
+	}
+
+	public static Map<TermId, Boolean> getVisibleColumnMap() {
+		final Map<TermId, Boolean> visibleColumnMap = new LinkedHashMap<>();
+
+		visibleColumnMap.put(TermId.GID, true);
+		visibleColumnMap.put(TermId.DESIG, true);
+		visibleColumnMap.put(TermId.CROSS, true);
+		visibleColumnMap.put(TermId.ENTRY_NO, true);
+		visibleColumnMap.put(TermId.DESIG, true);
+		visibleColumnMap.put(TermId.ENTRY_CODE, true);
+		visibleColumnMap.put(TermId.SEED_SOURCE, true);
+
+		return visibleColumnMap;
+
+	}
+
+	public static SettingDetail generateSettingDetail(final TermId termId) {
+		final SettingDetail settingDetail = new SettingDetail();
+		settingDetail.setHidden(false);
+		final SettingVariable var = new SettingVariable();
+		var.setCvTermId(termId.getId());
+		settingDetail.setVariable(var);
+
+		StandardVariable stdVar = WorkbookDataUtil.createStandardVariable(termId.getId(), termId.name());
+		settingDetail.getVariable().setName(stdVar.getName());
+		settingDetail.getVariable().setDescription(stdVar.getDescription());
+		settingDetail.setPossibleValues(new ArrayList<ValueReference>());
+
+		return settingDetail;
+	}
+
+	public static StandardVariable createStandardVariable(final int id, final String name) {
+		final StandardVariable stdVar = new StandardVariable();
+		stdVar.setId(id);
+		stdVar.setName(name);
+		stdVar.setDescription(WorkbookDataUtil.TEST_DESCRIPTION);
+
+		final Term prop = new Term();
+		prop.setName(WorkbookDataUtil.TEST_PROPERTY);
+		stdVar.setProperty(prop);
+
+		final Term scale = new Term();
+		scale.setName(WorkbookDataUtil.TEST_SCALE);
+		stdVar.setScale(scale);
+
+		final Term method = new Term();
+		method.setName(WorkbookDataUtil.TEST_METHOD);
+		stdVar.setMethod(method);
+
+		final Term dataType = new Term();
+		dataType.setName(WorkbookDataUtil.NUMERIC_VARIABLE);
+		stdVar.setDataType(dataType);
+
+		return stdVar;
+	}
+
 
 }

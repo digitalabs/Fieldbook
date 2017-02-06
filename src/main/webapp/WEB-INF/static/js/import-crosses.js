@@ -310,6 +310,9 @@ var ImportCrosses = {
 			if (!(data && data.programPresetId)) {
 				return;
 			}
+			if (!confirm(crossingSettingsDeleteConfirm)) {
+				return;
+			}
 			ImportCrosses.deleteImportSettings(data.programPresetId)
 				.done(function () {
 					showSuccessfulMessage('', crossingSettingsDeleted);

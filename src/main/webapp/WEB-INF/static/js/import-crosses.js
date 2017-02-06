@@ -111,12 +111,32 @@ var ImportCrosses = {
 			}
 		});
 
+        $('#crossSettingsModal').one('show.bs.modal', function() {
+            ImportCrosses.resetCrossSettingsModal();
+        });
+
 		$('#goBackToImportCrossesButton').off('click');
 		$('#goBackToImportCrossesButton').on('click', function() {
 			ImportCrosses.goBackToPage('#crossSetBreedingMethodModal', '.import-crosses-section .modal');
 		});
 
 	},
+
+	resetCrossSettingsModal: function () {
+        $('#crossPrefix').val('');
+        $('#sequenceNumberDigits').select2('val', '');
+        $('#crossSuffix').val('');
+        $('input:radio[name=hasPrefixSpace][value=' + false + ']').prop('checked', true);
+        $('input:radio[name=hasSuffixSpace][value=' +false + ']').prop('checked', true);
+        $('input:radio[name=manualNamingSettings][value=' +false + ']').prop('checked', true);
+        $('#manualNamingSettingsPanel').addClass('fbk-hide');
+        $('input:radio[name=hasParentageDesignationName][value=' +false + ']').prop('checked', true);
+        $('#parentageDesignationSeparator').val('/');
+        $('#startingSequenceNumber').val('');
+        $('#locationDropdown').select2('val', '');
+        $('#importNextSequenceName').text('');
+        $('#presetName').val('');
+    },
 
 	hasPlotDuplicate: function() {
 		'use strict';

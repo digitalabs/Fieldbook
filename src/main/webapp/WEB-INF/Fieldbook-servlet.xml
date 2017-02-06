@@ -121,6 +121,8 @@
 
 	<bean id="designRunner" class="${design.runner}" />
 
+	<bean id="designRunnerLicenseUtil" class="${design.runner.license.util}" />
+
 	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
 	
 	<bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"
@@ -519,9 +521,6 @@
 	<bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
 		scope="request">
 		<aop:scoped-proxy />
-	</bean>
-	
-	<bean id="toolLicenseUtil" class="org.generationcp.commons.spring.util.ToolLicenseUtil" factory-method="getInstance">
 	</bean>
 	
 	<bean id="seedSourceGenerator" class="org.generationcp.commons.service.impl.SeedSourceGenerator">

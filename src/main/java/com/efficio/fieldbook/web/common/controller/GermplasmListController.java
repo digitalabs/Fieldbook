@@ -178,10 +178,10 @@ public class GermplasmListController {
 				model.addAttribute("hasPlotDupe", plotDupeFound);
 				model.addAttribute("hasPlotRecip", plotRecipFound);
 
-				if (GermplasmListType.F1IMP.name().equals(germplasmList.getType())) {
-					model.addAttribute("listTypeLabel", GermplasmList.IMPORTED_CROSSES);
-				} else if (GermplasmListType.F1CRT.name().equals(germplasmList.getType())) {
-					model.addAttribute("listTypeLabel", GermplasmList.DESIGNED_CROSSES);
+				if (GermplasmListType.IMP_CROSS.name().equals(germplasmList.getType())) {
+					model.addAttribute("listTypeLabel", GermplasmList.IMP_CROSS);
+				} else if (GermplasmListType.CRT_CROSS.name().equals(germplasmList.getType())) {
+					model.addAttribute("listTypeLabel", GermplasmList.CRT_CROSS);
 				}
 			}
 		} catch (MiddlewareQueryException e) {

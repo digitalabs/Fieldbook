@@ -213,7 +213,7 @@ public class GermplasmTreeControllerTest {
 		this.form.setListNotes(GermplasmTreeControllerTest.LIST_NOTES);
 		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
 		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
-		this.form.setGermplasmListType(GermplasmListType.F1CRT.name());
+		this.form.setGermplasmListType(GermplasmListType.IMP_CROSS.name());
 
 		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 

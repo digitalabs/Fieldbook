@@ -355,7 +355,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
 
-		//TODO decouple save and aply settings and then replace this for for the apply settings method
+		// TODO decouple save and apply settings and then replace this for for the apply settings method
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
 			this.crossingService.populateSeedSource(importedCross, this.userSelection.getWorkbook());
 		}
@@ -460,11 +460,6 @@ public class CrossingSettingsController extends SettingsController {
 			// both female and male nursery is the current nursery.
 			importedCross.setMaleStudyName(studyName);
 			importedCross.setFemaleStudyName(studyName);
-			//TODO remove when apply name settings and save are splitted
-			if (importedCross.getSource() == null || importedCross.getSource().equals("null")) {
-				importedCross.setSource(null);
-				this.crossingService.populateSeedSource(importedCross, this.studySelection.getWorkbook());
-			}
 			importedCrosses.add(importedCross);
 			importedCrossesMap.put(importedCross.getEntryId(), importedCross);
 		}
@@ -537,7 +532,7 @@ public class CrossingSettingsController extends SettingsController {
 		this.crossesListUtil = crossesListUtil;
 	}
 
-	protected void setParentsInformation(List<ImportedCrosses> importedCrossesList) {
+	private void setParentsInformation(List<ImportedCrosses> importedCrossesList) {
 
 		Collection<Integer> maleGidList = Collections2.transform(importedCrossesList, new Function<ImportedCrosses, Integer>() {
 

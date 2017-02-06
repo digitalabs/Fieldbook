@@ -128,7 +128,7 @@ public interface LabelPrintingService {
 	 * @return
 	 * @throws MiddlewareQueryException
 	 */
-	List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName, Integer programId, Integer presetType)
+	List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName, Integer programId)
 					throws MiddlewareQueryException;
 
 	/**

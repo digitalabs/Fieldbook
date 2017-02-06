@@ -183,6 +183,14 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 						measurementData =
 								new MeasurementData(var.getName(), germplasm.getSource() != null ? germplasm.getSource() : "", false,
 										var.getDataType(), var);
+					} else if (termId == TermId.GROUPGID.getId()) {
+						measurementData =
+								new MeasurementData(var.getName(), germplasm.getGroupId() != null ? germplasm.getGroupId().toString() : "", false,
+										var.getDataType(), var);
+					} else if (termId == TermId.STOCKID.getId()) {
+						measurementData =
+								new MeasurementData(var.getName(), germplasm.getStockIDs() != null ? germplasm.getStockIDs() : "", false,
+										var.getDataType(), var);
 					} else if (termId == TermId.CROSS.getId()) {
 						measurementData = new MeasurementData(var.getName(), germplasm.getCross(), false, var.getDataType(), var);
 					} else if (termId == TermId.DESIG.getId()) {

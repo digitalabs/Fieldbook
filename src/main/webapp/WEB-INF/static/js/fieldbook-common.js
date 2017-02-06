@@ -69,8 +69,8 @@ $(function() {
 			$(document.body).css('padding-right', 0);
 		});
 
-	$('.page-header')
-		.on('click','.fbk-help',function() {
+	$('.fbk-help')
+		.click(function() {
 		   var helpModule = $(this).data().helpLink;
 			$.get('/ibpworkbench/controller/help/getUrl/' + helpModule).success(function(helpUrl) {
 				if (!helpUrl || !helpUrl.length) {

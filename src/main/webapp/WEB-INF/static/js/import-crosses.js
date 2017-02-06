@@ -82,6 +82,7 @@ var ImportCrosses = {
 
 		$("#breedingMethodSelectionDiv :input").attr("disabled", true);
 		$('#breedingMethodDropdown').select2('val', null);
+		$("#showFavoritesOnlyCheckbox").prop('checked', false);
 
 		if (createdCrossesListId == null) {
 			$('#selectMethodInImportFile').prop('checked',true);
@@ -465,6 +466,9 @@ var ImportCrosses = {
 		$('#manageMethodModal').one('hidden.bs.modal', function () {
 			$('#manageMethodModal').modal ('hide');
 			$('#crossSetBreedingMethodModal').modal({ backdrop: 'static', keyboard: true });
+
+			BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
+				'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
 		});
 	},
 

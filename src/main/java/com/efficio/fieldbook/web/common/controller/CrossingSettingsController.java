@@ -38,6 +38,8 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.UDTableType;
+import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -354,6 +356,11 @@ public class CrossingSettingsController extends SettingsController {
 		if (null == importedCrossesList) {
 			return responseMap;
 		}
+		UserDefinedField importedCrossUserDefinedField =
+			this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode(UDTableType.LISTNMS_LISTTYPE.getTable(), UDTableType
+				.LISTNMS_LISTTYPE.getType(), GermplasmListType.F1IMP.name());
+
+		importedCrossesList.setTitle(importedCrossUserDefinedField.getFdesc());
 
 		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
 
@@ -471,6 +478,13 @@ public class CrossingSettingsController extends SettingsController {
 		this.userSelection.setImportedCrossesList(importedCrossesList);
 
 		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
+
+		UserDefinedField createdCrossUserDefinedField =
+			this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode(UDTableType.LISTNMS_LISTTYPE.getTable(), UDTableType
+				.LISTNMS_LISTTYPE.getType(), GermplasmListType.F1CRT.name());
+		importedCrossesList.setTitle(createdCrossUserDefinedField.getFdesc());
+
+		importedCrossesList.setDate(DateUtil.getCurrentDate());
 
 		for (Map<String, Object> map : masterList){
 			Integer entryId = (Integer) map.get(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX));

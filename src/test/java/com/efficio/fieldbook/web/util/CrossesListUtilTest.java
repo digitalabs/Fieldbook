@@ -1,11 +1,8 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.List;
-import java.util.Map;
-
 import junit.framework.Assert;
-
+import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -18,6 +15,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.List;
+import java.util.Map;
+
 public class CrossesListUtilTest {
 
 	public static final int TEST_ENTRY_ID_VALUE = 123;
@@ -27,6 +27,7 @@ public class CrossesListUtilTest {
 	public static final String TEST_MALE_PARENT_VALUE = "Test male parent";
 	public static final int TEST_MGID_VALUE = 493;
 	public static final String TEST_SEED_SOURCE_VALUE = "Test seed source";
+	public static final String UNKNOWN_PEDIGREE = "-";
 	final String dummyString = "DUMMY STRING";
 
 	@Mock
@@ -65,6 +66,7 @@ public class CrossesListUtilTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.MALE_PARENT.getId())).thenReturn(this.fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.MGID.getId())).thenReturn(this.fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(this.fromOntology);
+
 	}
 
 	@Test
@@ -99,32 +101,32 @@ public class CrossesListUtilTest {
 	public void testGenerateDatatableDataMapWithDups_importedCrosses() {
 
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
-		final Map<String, Object> dataMap = this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCrosses);
+		final Map<String, Object> dataMap =
+			this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCrosses);
 
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FGID_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MGID_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.SOURCE_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_PLOT_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FEMALE_PLOT_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_PLOT_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_PLOT_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_NURSERY_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_NURSERY_INDEX)));
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_CROSS) + ".",
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FEMALE_CROSS)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_CROSS) + ".",
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_CROSS)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.CROSSING_DATE_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.CROSSING_DATE_INDEX)));
-		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.NOTES_INDEX) + ".",
-				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.NOTES_INDEX)));
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE) + ".",
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE) + ".",
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE)));
+
 	}
 
 	@Test
@@ -145,6 +147,14 @@ public class CrossesListUtilTest {
 				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".",
 				this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE) + ".",
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE) + ".",
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_CROSS) + ".",
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.FEMALE_CROSS)));
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_CROSS) + ".",
+			this.hasColumnHeader(dataMap, tableHeaderList.get(CrossesListUtil.MALE_CROSS)));
 	}
 
 	@Test
@@ -157,6 +167,8 @@ public class CrossesListUtilTest {
 		germplasmListData.setMaleParent(CrossesListUtilTest.TEST_MALE_PARENT_VALUE);
 		germplasmListData.setMgid(CrossesListUtilTest.TEST_MGID_VALUE);
 		germplasmListData.setSeedSource(CrossesListUtilTest.TEST_SEED_SOURCE_VALUE);
+		germplasmListData.setFemalePedigree(CrossesListUtilTest.UNKNOWN_PEDIGREE);
+		germplasmListData.setMalePedigree(CrossesListUtilTest.UNKNOWN_PEDIGREE);
 
 		final ImportedCrosses testImportedCrosses = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(germplasmListData);
 
@@ -169,6 +181,9 @@ public class CrossesListUtilTest {
 		Assert.assertEquals(CrossesListUtilTest.TEST_SEED_SOURCE_VALUE, testImportedCrosses.getSource());
 		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE + "/" + CrossesListUtilTest.TEST_MALE_PARENT_VALUE,
 				testImportedCrosses.getCross());
+		Assert.assertEquals(CrossesListUtilTest.UNKNOWN_PEDIGREE, testImportedCrosses.getFemalePedigree());
+		Assert.assertEquals(CrossesListUtilTest.UNKNOWN_PEDIGREE, testImportedCrosses.getMalePedigree());
+
 	}
 
 	private boolean hasColumnHeader(final Map<String, Object> tableHeaderList, final String columnName) {

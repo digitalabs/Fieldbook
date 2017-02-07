@@ -94,7 +94,7 @@ public class InventoryImportParserTest {
 
 	private Workbook createWorkbook(final GermplasmListType germplasmListType) throws Exception {
 		String filename = InventoryImportParserTest.TEST_FILE_NAME;
-		if (germplasmListType == GermplasmListType.CROSSES) {
+		if (GermplasmListType.isCrosses(germplasmListType)) {
 			filename = InventoryImportParserTest.TEST_FILE_NAME_WITH_BULKING;
 		}
 		final File workbookFile = new File(ClassLoader.getSystemClassLoader().getResource(filename).toURI());

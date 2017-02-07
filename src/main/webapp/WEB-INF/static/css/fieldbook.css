@@ -2016,9 +2016,7 @@ input.select-all-margin{
     opacity: 1 !important;
 }
 
-.import-crosses-from-file #goBackToImportCrossesButton,
-.import-crosses-from-file #settingsNextButton,
-#settingsNextButtonUpdateList {
+.import-crosses-from-file .go-back-to-import {
     display: inline-block;
 }
 
@@ -2028,12 +2026,18 @@ input.select-all-margin{
     display: block;
 }
 
-#goBackToImportCrossesButton,
-#settingsNextButton,
-.import-crosses-from-file #settingsNextButtonUpdateList,
+.go-back-to-import,
 #crossingBreedingMethodText,
 #crossesSelectBreedingMethod,
 .import-crosses-from-file #crossesPreSelectedBreedingMethod{
+    display: none;
+}
+
+.import-crosses-from-file #useBreedingInTheImportFile {
+    display: inline-block;
+}
+
+#useBreedingInTheImportFile {
     display: none;
 }
 
@@ -2078,4 +2082,26 @@ input.select-all-margin{
 
 .remove-excess-padding[style] {
     padding-left:0 !important;
+}
+
+.separator {
+    border-top: 1px solid #e5e5e5;
+}
+
+.help-tooltip-crosses-flow {
+    color: #7D7D7D;
+    font-size: 18pt;
+    vertical-align: bottom;
+    cursor: pointer;
+}
+
+.trash-crosses-flow {
+    color: #7D7D7D;
+    font-size: 18pt;
+    vertical-align: bottom;
+    cursor: pointer;
+}
+
+.label-italic{
+    font-style: italic;
 }

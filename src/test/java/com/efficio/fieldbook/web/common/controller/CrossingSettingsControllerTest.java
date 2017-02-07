@@ -29,11 +29,13 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.junit.Assert;
 import org.junit.Before;
@@ -109,6 +111,8 @@ public class CrossingSettingsControllerTest {
 	private MessageSource messageSource;
 	@Mock
 	private GermplasmListManager germplasmListManager;
+	@Mock
+	private GermplasmDataManager germplasmDataManager;
 	@Mock
 	private OntologyDataManager ontologyDataManager;
 	@Mock
@@ -429,6 +433,12 @@ public class CrossingSettingsControllerTest {
 		germplasmListDatas.add(germplasmListData);
 		Mockito.when(this.germplasmListManager.retrieveListDataWithParents(80)).thenReturn(germplasmListDatas);
 		Mockito.when(this.germplasmListManager.getGermplasmListById(80)).thenReturn(germplasmList);
+		UserDefinedField userDefinedField = new UserDefinedField();
+		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode(
+			Matchers.anyString(),
+			Matchers.anyString(),
+			Matchers.anyString()))
+			.thenReturn(userDefinedField);
 
 		final Map<String, Object> testResponseMap = this.crossingSettingsController.getImportedCrossesList("80");
 		final List<String> tableHeaderList = (List<String>) testResponseMap.get(CrossesListUtil.TABLE_HEADER_LIST);
@@ -464,6 +474,13 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testGetImportedCrossesListWithSessionData() throws Exception {
 		this.fillUpUserSelectionWithImportedCrossTestData();
+
+		UserDefinedField userDefinedField = new UserDefinedField();
+		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode(
+			Matchers.anyString(),
+			Matchers.anyString(),
+			Matchers.anyString()))
+			.thenReturn(userDefinedField);
 
 		final Map<String, Object> testResponseMap = this.crossingSettingsController.getImportedCrossesList();
 		Assert.assertFalse("The response map should not be empty", testResponseMap.isEmpty());

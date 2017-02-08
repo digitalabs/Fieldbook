@@ -161,7 +161,7 @@ public class CrossingServiceImpl implements CrossingService {
 		return pairsResult.isTrimed;
 	}
 
-	void populateSeedSource(ImportedCrosses importedCross, Workbook workbook) {
+	public void populateSeedSource(ImportedCrosses importedCross, Workbook workbook) {
 		if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource())
 				|| importedCross.getSource().equalsIgnoreCase(ImportedCrosses.SEED_SOURCE_PENDING)) {
 
@@ -436,6 +436,8 @@ public class CrossingServiceImpl implements CrossingService {
 
 				// Find the existing name that was created in crossing manager. There should only be one and must be preferred.
 				name = germplasm.findPreferredName();
+
+				germplasm.setMethodId(cross.getBreedingMethodId());
 			} else {
 				germplasm = new Germplasm();
 				// In case of importing crosses, the crosses are not yet persisted, GID will be null. We populate data from spreadsheet,
@@ -622,42 +624,80 @@ public class CrossingServiceImpl implements CrossingService {
 	@Override
 	public void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList) {
 		final BreedingMethodSetting methodSetting = crossSetting.getBreedingMethodSetting();
+		final boolean basedOnImportFile = methodSetting.isBasedOnImportFile();
+		final boolean basedOnStatusOfParentalLines = methodSetting.isBasedOnStatusOfParentalLines();
 
 		for (ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
-			// if imported cross contains raw breeding method code we use that to populate the breeding method
-			if (!StringUtils.isEmpty(importedCrosses.getRawBreedingMethod())) {
-				final Method breedingMethod = this.germplasmDataManager.getMethodByCode(importedCrosses.getRawBreedingMethod());
-
-				if (breedingMethod != null && breedingMethod.getMid() != null && breedingMethod.getMid() != 0) {
-					importedCrosses.setBreedingMethodId(breedingMethod.getMid());
-				} else {
-                    // TODO address case where breeding method does not exist in the parser level to avoid having this case during the saving flow
-                    importedCrosses.setBreedingMethodId(0);
-                }
-			}
-
-			// if at this point, there is already breeding method info available on the imported cross (from import file, etc, we proceed to next)
-			if (importedCrosses.isBreedingMethodInformationAvailable()) {
-				continue;
-			}
-
-			// if breeding method is based on status of parental lines, we calculate the resulting breeding method per germplasm
-            // currently, the convention is that parental lines will be used as basis if user does not select any method
-			if (methodSetting.getMethodId() == null || methodSetting.getMethodId() == 0) {
-				final Integer femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
-				final Integer maleGid = Integer.parseInt(importedCrosses.getMaleGid());
-
-				Triple<Germplasm, Germplasm, Germplasm> femaleLine = retrieveParentGermplasmObjects(femaleGid);
-				Triple<Germplasm, Germplasm, Germplasm> maleLine = retrieveParentGermplasmObjects(maleGid);
-
-				importedCrosses.setBreedingMethodId(CrossingUtil.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(),
-						maleLine.getLeft(), femaleLine.getMiddle(), femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));
-			} else {
-				// otherwise, we use the breeding method selected
-				importedCrosses.setBreedingMethodId(methodSetting.getMethodId());
-
-			}
+			processCrossBreedingMethod(methodSetting, basedOnImportFile, basedOnStatusOfParentalLines, importedCrosses);
 		}
+	}
+
+	private void processCrossBreedingMethod(
+		final BreedingMethodSetting methodSetting,
+		final boolean basedOnImportFile,
+		final boolean basedOnStatusOfParentalLines, ImportedCrosses importedCrosses) {
+
+		final String rawBreedingMethod = importedCrosses.getRawBreedingMethod();
+
+		// if imported cross contains raw breeding method code we use that to populate the breeding method
+		if (!StringUtils.isEmpty(rawBreedingMethod) && basedOnImportFile) {
+			if (processBreedingMethodImport(importedCrosses, rawBreedingMethod))
+				return;
+		}
+
+		if (!basedOnStatusOfParentalLines
+			&& !basedOnImportFile
+			&& methodSetting.getMethodId() != null
+			&& methodSetting.getMethodId() != 0) {
+			importedCrosses.setBreedingMethodId(methodSetting.getMethodId());
+			setBreedingMethodNameByMethodId(importedCrosses);
+			return;
+		}
+
+		// if breeding method is based on status of parental lines, we calculate the resulting breeding method per germplasm
+		// currently, the convention is that parental lines will be used as basis if user does not select any method
+		processBreedingMethodParental(importedCrosses);
+	}
+
+	private void processBreedingMethodParental(ImportedCrosses importedCrosses) {
+		final Integer femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
+		final Integer maleGid = Integer.parseInt(importedCrosses.getMaleGid());
+
+		Triple<Germplasm, Germplasm, Germplasm> femaleLine = retrieveParentGermplasmObjects(femaleGid);
+		Triple<Germplasm, Germplasm, Germplasm> maleLine = retrieveParentGermplasmObjects(maleGid);
+
+		importedCrosses.setBreedingMethodId(CrossingUtil.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(),
+				maleLine.getLeft(), femaleLine.getMiddle(), femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));
+
+		setBreedingMethodNameByMethodId(importedCrosses);
+	}
+
+	private boolean processBreedingMethodImport(ImportedCrosses importedCrosses, String rawBreedingMethod) {
+		final Method breedingMethod = this.germplasmDataManager.getMethodByCode(rawBreedingMethod);
+
+		if (breedingMethod != null && breedingMethod.getMid() != null && breedingMethod.getMid() != 0) {
+			importedCrosses.setBreedingMethodId(breedingMethod.getMid());
+			importedCrosses.setBreedingMethodName(breedingMethod.getMname());
+		} else {
+			// TODO address case where breeding method does not exist in the parser level to avoid having this case during the saving flow
+			importedCrosses.setBreedingMethodId(0);
+		}
+
+		// if at this point, if there is already breeding method info available on the imported cross
+		// (from import file, etc, we proceed to next cross)
+		if (importedCrosses.isBreedingMethodInformationAvailable()) {
+			return true;
+		}
+		return false;
+	}
+
+	private void setBreedingMethodNameByMethodId(ImportedCrosses importedCrosses) {
+		Method method = this.germplasmDataManager.getMethodByID(importedCrosses.getBreedingMethodId());
+		if (method == null) {
+			return;
+		}
+		final String breedingMethodName = method.getMname();
+		importedCrosses.setBreedingMethodName(breedingMethodName);
 	}
 
 	protected Triple<Germplasm, Germplasm, Germplasm> retrieveParentGermplasmObjects(final Integer germplasmID) {

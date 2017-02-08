@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -140,8 +141,76 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		input.setExporterName(this.fieldbookMiddlewareService.getOwnerListName(currentLocalIbdbUserId));
 		input.setVisibleColumnMap(visibleColumns);
 
+		input.setInventoryVariableMap(this.extractInventoryVariableMapFromVisibleColumns(visibleColumns));
+
+		this.removeInventoryVariableMapFromVisibleColumns(visibleColumns);
+
 		input.setColumnTermMap(this.generateColumnStandardVariableMap(visibleColumns, isNursery));
 		return input;
+	}
+
+	/**
+	 * Extracts the inventory variables from the visibleColumns map.
+	 *
+	 * @param visibleColumns
+	 * @return
+	 */
+	Map<Integer,Variable> extractInventoryVariableMapFromVisibleColumns(final Map<String, Boolean> visibleColumns) {
+
+		Map<Integer, Variable> inventontoryVariableMap = new HashMap<>();
+
+		Iterator<Map.Entry<String, Boolean>> iterator = visibleColumns.entrySet().iterator();
+
+		while (iterator.hasNext()) {
+
+			Map.Entry<String, Boolean> entry = iterator.next();
+			String termId = entry.getKey();
+			Boolean isVisible = entry.getValue();
+			if (isVisible && isInventoryVariable(termId)) {
+				addVariableToMap(inventontoryVariableMap, Integer.valueOf(termId));
+			}
+		}
+		return inventontoryVariableMap;
+
+	}
+
+	/**
+	 * Removes inventory variables from the visibleColumns map.
+	 *
+	 * @param visibleColumns
+	 * @return
+	 */
+	void removeInventoryVariableMapFromVisibleColumns(final Map<String, Boolean> visibleColumns) {
+
+		Iterator<Map.Entry<String, Boolean>> iterator = visibleColumns.entrySet().iterator();
+
+		while (iterator.hasNext()) {
+
+			Map.Entry<String, Boolean> entry = iterator.next();
+			String termId = entry.getKey();
+			if (isInventoryVariable(termId)) {
+				iterator.remove();
+			}
+		}
+
+	}
+
+	boolean isInventoryVariable(final String termId) {
+		return termId.equals(String.valueOf(TermId.STOCKID.getId())) || termId.equals(String.valueOf(TermId.SEED_AMOUNT_G.getId()));
+	}
+
+	void addVariableToMap(final Map<Integer, Variable> variableMap, final int termId) {
+
+		try {
+			final Variable variable =
+					this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, false, false);
+			if (variable != null) {
+				variableMap.put(variable.getId(), variable);
+			}
+
+		} catch (final MiddlewareQueryException e) {
+			ExportGermplasmListServiceImpl.LOG.error(e.getMessage(), e);
+		}
 	}
 
 	private Map<Integer, Term> generateColumnStandardVariableMap(final Map<String, Boolean> visibleColumnMap, final Boolean isNursery) {

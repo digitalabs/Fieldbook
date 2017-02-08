@@ -286,7 +286,11 @@ public class CrossingServiceImpl implements CrossingService {
 			final Integer gid = germplasmIdIterator.next();
 			final String parentageDesignation = entry.getFemaleDesig() + "/" + entry.getMaleDesig();
 
-			final Integer locationId = crossSetting.getAdditionalDetailsSetting().getHarvestLocationId();
+			Integer locationId = 0;
+
+			if(crossSetting.getAdditionalDetailsSetting().getHarvestLocationId() != null) {
+				locationId = crossSetting.getAdditionalDetailsSetting().getHarvestLocationId();;
+			}
 
 			final Name parentageDesignationName = new Name();
 			parentageDesignationName.setGermplasmId(gid);

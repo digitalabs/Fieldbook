@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -887,6 +889,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		// Stock List Specific Fields
 		labelFieldsList.addAll(this.addStockListDetailsFields(locale, listType));
+
+		Set<LabelFields> uniqueLabelFields = new HashSet<>(labelFieldsList);
+
+		labelFieldsList.clear();
+		labelFieldsList.addAll(uniqueLabelFields);
 
 		return labelFieldsList;
 	}

@@ -438,12 +438,18 @@ public class ExportGermplasmListServiceTest {
 	public void testRemoveInventoryVariableMapFromVisibleColumns() {
 
 		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
+
+		// Get the size of visibleColumnsMap before adding the inventory variables so that
+		// we can compare the size of visibleColumnsMap after removing the inventory variables.
+		int visibleColumnsMapVariableCount = visibleColumnsMap.size();
+
+		// Add inventory variables in visibleColumnsmap
 		visibleColumnsMap.put(String.valueOf(TermId.STOCKID.getId()), true);
 		visibleColumnsMap.put(String.valueOf(TermId.SEED_AMOUNT_G.getId()), true);
 
 		exportGermplasmListServiceImpl.removeInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
 
-		Assert.assertEquals("Expecting 8 variables in visibleColumnsMap", 8, visibleColumnsMap.size());
+		Assert.assertEquals("Expecting " + visibleColumnsMapVariableCount + " variables in visibleColumnsMap", visibleColumnsMapVariableCount, visibleColumnsMap.size());
 		Assert.assertFalse(visibleColumnsMap.containsKey(TermId.STOCKID.getId()));
 		Assert.assertFalse(visibleColumnsMap.containsKey(TermId.SEED_AMOUNT_G.getId()));
 

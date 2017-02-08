@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
@@ -171,6 +173,9 @@ public class ExportGermplasmListServiceTest {
 		Mockito.doReturn(ExportGermplasmListServiceTest.CURRENT_USER_NAME).when(this.fieldbookMiddlewareService)
 				.getOwnerListName(ExportGermplasmListServiceTest.CURRENT_USER_ID);
 		Mockito.doReturn("1010").when(this.fieldbookMiddlewareService).getOwnerListName(Matchers.anyInt());
+
+		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.STOCKID.getId(), false, false)).thenReturn(this.createVariable(TermId.STOCKID.getId()));
+		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.SEED_AMOUNT_G.getId(), false, false)).thenReturn(this.createVariable(TermId.SEED_AMOUNT_G.getId()));
 
 	}
 
@@ -397,6 +402,60 @@ public class ExportGermplasmListServiceTest {
 				input.getVisibleColumnMap());
 		Assert.assertEquals("The germplasm list should be " + this.germplasmList, this.germplasmList, input.getGermplasmList());
 		Assert.assertEquals("The germplasm list data should be " + listData, listData, input.getListData());
+	}
+
+	@Test
+	public void testExtractInventoryVariableMapFromVisibleColumnsInventoryVariablesAreVisible() {
+
+		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
+		visibleColumnsMap.put(String.valueOf(TermId.STOCKID.getId()), true);
+		visibleColumnsMap.put(String.valueOf(TermId.SEED_AMOUNT_G.getId()), true);
+
+		Map<Integer,Variable> result = exportGermplasmListServiceImpl.extractInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
+
+		Assert.assertEquals("There are 2 inventory variables in visibleColumnsMap so the size of InventoryVariableMap should be 2.", 2, result.size());
+		Assert.assertTrue(result.containsKey(TermId.STOCKID.getId()));
+		Assert.assertTrue(result.containsKey(TermId.SEED_AMOUNT_G.getId()));
+
+	}
+
+	@Test
+	public void testExtractInventoryVariableMapFromVisibleColumnsInventoryVariablesAreNotVisible() {
+
+		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
+		visibleColumnsMap.put(String.valueOf(TermId.STOCKID.getId()), false);
+		visibleColumnsMap.put(String.valueOf(TermId.SEED_AMOUNT_G.getId()), false);
+
+		Map<Integer,Variable> result = exportGermplasmListServiceImpl.extractInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
+
+		Assert.assertTrue("There are 2 inventory variables in visibleColumnsMap but they are not visible so the size of InventoryVariableMap should be empty", result.isEmpty());
+		Assert.assertFalse(result.containsKey(TermId.STOCKID.getId()));
+		Assert.assertFalse(result.containsKey(TermId.SEED_AMOUNT_G.getId()));
+
+	}
+
+	@Test
+	public void testRemoveInventoryVariableMapFromVisibleColumns() {
+
+		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
+		visibleColumnsMap.put(String.valueOf(TermId.STOCKID.getId()), true);
+		visibleColumnsMap.put(String.valueOf(TermId.SEED_AMOUNT_G.getId()), true);
+
+		exportGermplasmListServiceImpl.removeInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
+
+		Assert.assertEquals("Expecting 8 variables in visibleColumnsMap", 8, visibleColumnsMap.size());
+		Assert.assertFalse(visibleColumnsMap.containsKey(TermId.STOCKID.getId()));
+		Assert.assertFalse(visibleColumnsMap.containsKey(TermId.SEED_AMOUNT_G.getId()));
+
+	}
+
+
+	private Variable createVariable(final int termid) {
+
+		Variable variable = new Variable();
+		variable.setId(termid);
+		return variable;
+
 	}
 
 	private ImportedGermplasm generateImportedGermplasm() {

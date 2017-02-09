@@ -4,9 +4,12 @@ package com.efficio.fieldbook.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -47,7 +50,9 @@ import org.mockito.Mockito;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 import org.mockito.exceptions.verification.TooLittleActualInvocations;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
 
+import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.initializer.LabelPrintingServiceDataInitializer;
 import com.efficio.fieldbook.util.labelprinting.CSVLabelGenerator;
@@ -56,6 +61,7 @@ import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.data.initializer.FieldMapTrialInstanceInfoTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.LabelPrintingProcessingParamsTestDataInitializer;
+import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
@@ -108,6 +114,12 @@ public class LabelPrintingServiceImplTest {
 	
 	@Mock
 	private UserLabelPrinting userLabelPrinting;
+
+	@Mock
+	private MessageSource messageSource;
+
+	@Mock
+	private SettingsService settingsService;
 
 	@InjectMocks
 	private LabelPrintingServiceImpl labelPrintingServiceImpl;
@@ -598,6 +610,147 @@ public class LabelPrintingServiceImplTest {
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is invoked.");
 		}
 	}
+
+	@Test
+	public void testGetAvailableLabelFieldsForStockListForNursery() throws Exception {
+
+		Mockito.when(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY,
+				null, Locale.getDefault())).thenReturn("Nursery Name");
+
+		Workbook workbook = Mockito.mock(Workbook.class);
+		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(101)).thenReturn(workbook);
+
+		List<LabelFields> nurseryManagementLabelFields = LabelPrintingServiceDataInitializer.createNurseryManagementLabelFields();
+		Mockito.when(this.settingsService.retrieveNurseryManagementDetailsAsLabels(Mockito.isA(Workbook.class))).
+				thenReturn(nurseryManagementLabelFields);
+
+		List<LabelFields> germplsmDescriptorsLabelFields = LabelPrintingServiceDataInitializer.createGermplsmDescriptorsLabelFields();
+		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(Mockito.isA(Workbook.class))).
+				thenReturn(germplsmDescriptorsLabelFields);
+
+		final Term plotNoTerm = new Term();
+		plotNoTerm.setName("plotNoTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.PLOT_NO.getId())).thenReturn(plotNoTerm);
+
+		final Term stockIDTerm = new Term();
+		stockIDTerm.setName("stockIDTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.STOCKID.getId())).thenReturn(stockIDTerm);
+
+		final Term lotLocationTerm = new Term();
+		lotLocationTerm.setName("lotLocationTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.LOT_LOCATION_INVENTORY.getId())).thenReturn(lotLocationTerm);
+
+		final Term amountTerm = new Term();
+		amountTerm.setName("amountTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.AMOUNT_INVENTORY.getId())).thenReturn(amountTerm);
+
+		final Term unitsTerm = new Term();
+		unitsTerm.setName("unitsTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.UNITS_INVENTORY.getId())).thenReturn(unitsTerm);
+
+		final Term commentTerm = new Term();
+		commentTerm.setName("commentTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.COMMENT_INVENTORY.getId())).thenReturn(commentTerm);
+
+
+		final List<LabelFields> labelFieldForNurseryStock =
+				this.labelPrintingServiceImpl.getAvailableLabelFieldsForStockList(GermplasmListType.LST, Locale.getDefault(), StudyType.N,
+						101);
+
+		Assert.assertEquals(9, labelFieldForNurseryStock.size());
+
+		Set<String> labelFieldsNames = new HashSet<>();
+		for(LabelFields labelFields : labelFieldForNurseryStock) {
+			labelFieldsNames.add(labelFields.getName());
+		}
+
+		Assert.assertTrue(labelFieldsNames.contains("Nursery Name"));
+		Assert.assertTrue(labelFieldsNames.contains(nurseryManagementLabelFields.get(0).getName()));
+		Assert.assertTrue(labelFieldsNames.contains(germplsmDescriptorsLabelFields.get(0).getName()));
+		Assert.assertTrue(labelFieldsNames.contains(plotNoTerm.getName()));
+		Assert.assertTrue(labelFieldsNames.contains(stockIDTerm.getName()));
+		Assert.assertTrue(labelFieldsNames.contains(lotLocationTerm.getName()));
+		Assert.assertTrue(labelFieldsNames.contains(amountTerm.getName()));
+		Assert.assertTrue(labelFieldsNames.contains(unitsTerm.getName()));
+		Assert.assertTrue(labelFieldsNames.contains(commentTerm.getName()));
+	}
+
+	@Test
+	public void testGetAvailableLabelFieldsForStockListForTrial() throws Exception {
+
+		Mockito.when(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null,
+				Locale.getDefault())).thenReturn("Trial Name");
+
+		Workbook workbook = Mockito.mock(Workbook.class);
+		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(101)).thenReturn(workbook);
+
+		List<LabelFields> trialSettingLabelFields = LabelPrintingServiceDataInitializer.createTrialSettingLabelFields();
+		Mockito.when(this.settingsService.retrieveTrialSettingsAsLabels(Mockito.isA(Workbook.class))).
+				thenReturn(trialSettingLabelFields);
+
+		List<LabelFields> environmentAndExperimentalDesignSettingsLabelFields =
+				LabelPrintingServiceDataInitializer.createEnvironmentAndExperimentalDesignSettingsLabelFields();
+		Mockito.when(this.settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(Mockito.isA(Workbook.class))).
+				thenReturn(environmentAndExperimentalDesignSettingsLabelFields);
+
+		List<LabelFields> germplsmDescriptorsLabelFields = LabelPrintingServiceDataInitializer.createGermplsmDescriptorsLabelFields();
+		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(Mockito.isA(Workbook.class))).
+				thenReturn(germplsmDescriptorsLabelFields);
+
+		final Term repNoTerm = new Term();
+		repNoTerm.setName("repNoTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.REP_NO.getId())).thenReturn(repNoTerm);
+
+
+		final Term plotNoTerm = new Term();
+		plotNoTerm.setName("plotNoTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.PLOT_NO.getId())).thenReturn(plotNoTerm);
+
+		final Term stockIDTerm = new Term();
+		stockIDTerm.setName("stockIDTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.STOCKID.getId())).thenReturn(stockIDTerm);
+
+		final Term lotLocationTerm = new Term();
+		lotLocationTerm.setName("lotLocationTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.LOT_LOCATION_INVENTORY.getId())).thenReturn(lotLocationTerm);
+
+		final Term amountTerm = new Term();
+		amountTerm.setName("amountTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.AMOUNT_INVENTORY.getId())).thenReturn(amountTerm);
+
+		final Term unitsTerm = new Term();
+		unitsTerm.setName("unitsTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.UNITS_INVENTORY.getId())).thenReturn(unitsTerm);
+
+		final Term commentTerm = new Term();
+		commentTerm.setName("commentTerm");
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.COMMENT_INVENTORY.getId())).thenReturn(commentTerm);
+
+
+		final List<LabelFields> labelFieldForNurseryStock =
+				this.labelPrintingServiceImpl.getAvailableLabelFieldsForStockList(GermplasmListType.LST, Locale.getDefault(), StudyType.T,
+						101);
+
+		Assert.assertEquals(11, labelFieldForNurseryStock.size());
+
+		Set<String> labelFieldsNames = new HashSet<>();
+		for(LabelFields labelFields : labelFieldForNurseryStock) {
+			labelFieldsNames.add(labelFields.getName());
+		}
+
+		Assert.assertTrue(labelFieldsNames.contains("Trial Name"));
+		Assert.assertTrue(labelFieldsNames.contains(trialSettingLabelFields.get(0).getName()));
+		Assert.assertTrue(labelFieldsNames.contains(environmentAndExperimentalDesignSettingsLabelFields.get(0).getName()));
+		Assert.assertTrue(labelFieldsNames.contains(germplsmDescriptorsLabelFields.get(0).getName()));
+		Assert.assertTrue(labelFieldsNames.contains(repNoTerm.getName()));
+		Assert.assertTrue(labelFieldsNames.contains(plotNoTerm.getName()));
+		Assert.assertTrue(labelFieldsNames.contains(stockIDTerm.getName()));
+		Assert.assertTrue(labelFieldsNames.contains(lotLocationTerm.getName()));
+		Assert.assertTrue(labelFieldsNames.contains(amountTerm.getName()));
+		Assert.assertTrue(labelFieldsNames.contains(unitsTerm.getName()));
+		Assert.assertTrue(labelFieldsNames.contains(commentTerm.getName()));
+	}
+
 
 	private void setExperimentId(final Workbook workbook) {
 		int i = 1;

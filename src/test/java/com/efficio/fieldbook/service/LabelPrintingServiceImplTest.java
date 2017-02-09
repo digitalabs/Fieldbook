@@ -494,6 +494,51 @@ public class LabelPrintingServiceImplTest {
 
 	}
 
+	@Test
+	public void testCheckAndSetFieldMapInstanceInfoForGermplsmDescriptorsData() throws Exception {
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(2, 2);
+
+		final boolean isTrial = true;
+		final boolean isStockList = true;
+
+		final List<FieldMapTrialInstanceInfo> trialFieldMap = FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList();
+		trialFieldMap.get(0).setTrialInstanceNo("1");
+
+		final LabelPrintingProcessingParams params =
+				LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParamsWithGermplsmDescriptorsFields();
+		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		userLabelPrinting.setStockListId(2);
+
+		final List<InventoryDetails> inventoryDetailList = this.inventoryDetailsInitializer.createInventoryDetailList(1);
+		Mockito.when(this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(Matchers.isA(Integer.class))).thenReturn(
+				inventoryDetailList);
+
+		Mockito.when(this.pedigreeService.getCrossExpansion(Matchers.isA(Integer.class), Matchers.isA(CrossExpansionProperties.class)))
+				.thenReturn("cross");
+
+
+		final Term groupGid = new Term();
+		groupGid.setName(TermId.GROUPGID.name());
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.GROUPGID.getId())).thenReturn(groupGid);
+
+		final Term seedSource = new Term();
+		seedSource.setName(TermId.SEED_SOURCE.name());
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(seedSource);
+
+
+		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isTrial, isStockList, params,
+				this.measurementData, this.environmentData, userLabelPrinting);
+
+		Assert.assertEquals(2, params.getLabelHeaders().size());
+		Assert.assertEquals(TermId.GROUPGID.name(), params.getLabelHeaders().get(TermId.GROUPGID.getId()));
+		Assert.assertEquals(TermId.SEED_SOURCE.name(), params.getLabelHeaders().get(TermId.SEED_SOURCE.getId()));
+
+		Assert.assertEquals(2, params.getUserSpecifiedLabels().size());
+		Assert.assertEquals(inventoryDetailList.get(0).getSource(), params.getUserSpecifiedLabels().get(TermId.SEED_SOURCE.getId()));
+		Assert.assertEquals(inventoryDetailList.get(0).getGroupId().toString(), params.getUserSpecifiedLabels().get(TermId.GROUPGID.getId()));
+
+	}
+
 	/**
 	 * Bulk the first two entries to the 3rd entry (for testing purposes)
 	 * 

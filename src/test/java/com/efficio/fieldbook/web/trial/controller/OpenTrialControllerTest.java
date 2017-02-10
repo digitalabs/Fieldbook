@@ -947,7 +947,7 @@ public class OpenTrialControllerTest {
 		Assert.assertEquals("0", importedGermplasm.getGid());
 		Assert.assertEquals(12, importedGermplasm.getMgid().intValue());
 		Assert.assertEquals("seedSource", importedGermplasm.getSource());
-		Assert.assertEquals(12, importedGermplasm.getGroupId().intValue());
+		Assert.assertEquals("12", importedGermplasm.getGroupId());
 		Assert.assertEquals("StockID101, StockID102", importedGermplasm.getStockIDs());
 
 	}

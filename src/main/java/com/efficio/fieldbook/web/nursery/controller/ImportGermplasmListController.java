@@ -812,7 +812,7 @@ public class ImportGermplasmListController extends SettingsController {
 			} else if (term == TermId.CHECK.getId()) {
 				val = germplasm.getEntryTypeValue();
 			} else if (term == TermId.GROUPGID.getId()) {
-				val = germplasm.getMgid().toString();
+				val = germplasm.getGroupId();
 			} else if (term == TermId.STOCKID.getId()) {
 				val = germplasm.getStockIDs().toString();
 			}
@@ -1293,7 +1293,8 @@ public class ImportGermplasmListController extends SettingsController {
 				germplasm.setMgid(aData.getGroupId()); // set Group_Id from germplasm
 				germplasm.setSource(aData.getSeedSource());
 				germplasm.setGroupName(aData.getGroupName());
-				germplasm.setGroupId(aData.getGroupId());
+				String groupId = aData.getGroupId() == 0 ?  "-" : aData.getGroupId().toString();
+				germplasm.setGroupId(groupId);
 				germplasm.setStockIDs(aData.getStockIDs());
 				germplasm.setIndex(index++);
 

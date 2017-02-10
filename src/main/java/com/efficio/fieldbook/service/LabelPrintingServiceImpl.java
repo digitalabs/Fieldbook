@@ -526,6 +526,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			value = this.getValueForStockList(row.getSource());
 		} else if (termID.equals(TermId.REP_NO.getId())) {
 			value = this.getValueForStockList(row.getReplicationNumber());
+		}else if (termID.equals(TermId.GROUPGID.getId())) {
+			String groupId = row.getGroupId() == 0 ?  "-" : row.getGroupId().toString();
+			value = this.getValueForStockList(groupId);
 		} else if (termID.equals(TermId.PLOT_NO.getId())) {
 			value = this.getValueForStockList(row.getPlotNumber());
 		} else if (termID.equals(TermId.TRIAL_INSTANCE_FACTOR.getId())) {

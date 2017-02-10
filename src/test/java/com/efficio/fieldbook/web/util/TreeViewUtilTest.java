@@ -60,7 +60,8 @@ public class TreeViewUtilTest {
 		TreeViewUtilTest.germplasmListManager = Mockito.mock(GermplasmListManager.class);
 		TreeViewUtilTest.germplasmDataManager = Mockito.mock(GermplasmDataManager.class);
 		TreeViewUtilTest.userDefinedFields = TreeViewUtilTest.createGermplasmListUserDefinedFields();
-		Mockito.when(TreeViewUtilTest.germplasmListManager.getGermplasmListTypes()).thenReturn(TreeViewUtilTest.userDefinedFields);
+		Mockito.when(TreeViewUtilTest.germplasmDataManager.getUserDefinedFieldByFieldTableNameAndType(Mockito.isA(String.class),
+				Mockito.isA(String.class))).thenReturn(TreeViewUtilTest.userDefinedFields);
 	}
 
 	@Test

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.workbook.generator.RowColumnType;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
@@ -24,6 +25,7 @@ import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmFolderMetadata;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -209,11 +211,13 @@ public class TreeViewUtil {
 	 * @return the list
 	 */
 	public static List<TreeTableNode> convertGermplasmListToTreeTableNodes(List<GermplasmList> germplasmLists,
-			GermplasmListManager germplasmListManager) {
+			GermplasmListManager germplasmListManager, GermplasmDataManager germplasmDataManager) {
 		List<TreeTableNode> treeTableNodes = new ArrayList<TreeTableNode>();
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
 			
-			final List<UserDefinedField> listTypes = germplasmListManager.getGermplasmListTypes();
+			final List<UserDefinedField> listTypes =
+					germplasmDataManager.getUserDefinedFieldByFieldTableNameAndType(RowColumnType.LIST_TYPE.getFtable(),
+							RowColumnType.LIST_TYPE.getFtype());
 			final Map<Integer, GermplasmListMetadata> allListMetaData = germplasmListManager.getGermplasmListMetadata(germplasmLists);
 			final Map<Integer, GermplasmFolderMetadata> allFolderMetaData 
 					= germplasmListManager.getGermplasmFolderMetadata(germplasmLists);

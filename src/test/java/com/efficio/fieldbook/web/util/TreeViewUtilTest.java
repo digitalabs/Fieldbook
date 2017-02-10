@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -40,6 +41,7 @@ public class TreeViewUtilTest {
 
 	private static final List<GermplasmList> NULL_GERMPLASM_LIST_TEST_DATA = null;
 	private static GermplasmListManager germplasmListManager;
+	private static GermplasmDataManager germplasmDataManager;
 	private static UserDataManager userDataManager;
 	private static List<UserDefinedField> userDefinedFields;
 
@@ -56,6 +58,7 @@ public class TreeViewUtilTest {
 
 	private static void mockGermplasmListManagerAndSomeOfItsMethods() throws MiddlewareQueryException {
 		TreeViewUtilTest.germplasmListManager = Mockito.mock(GermplasmListManager.class);
+		TreeViewUtilTest.germplasmDataManager = Mockito.mock(GermplasmDataManager.class);
 		TreeViewUtilTest.userDefinedFields = TreeViewUtilTest.createGermplasmListUserDefinedFields();
 		Mockito.when(TreeViewUtilTest.germplasmListManager.getGermplasmListTypes()).thenReturn(TreeViewUtilTest.userDefinedFields);
 	}
@@ -64,7 +67,8 @@ public class TreeViewUtilTest {
 	public void testConvertGermplasmListToTreeTableNodes() {
 		List<GermplasmList> germplasmLists = new ArrayList<GermplasmList>(TreeViewUtilTest.GERMPLASM_LIST_TEST_DATA);
 		List<TreeTableNode> treeTableNodes =
-				TreeViewUtil.convertGermplasmListToTreeTableNodes(germplasmLists, TreeViewUtilTest.germplasmListManager);
+				TreeViewUtil.convertGermplasmListToTreeTableNodes(germplasmLists, TreeViewUtilTest.germplasmListManager,
+						TreeViewUtilTest.germplasmDataManager);
 
 		Assert.assertTrue("The list should not be null", treeTableNodes != null);
 		Assert.assertTrue("The list should not be empty", !treeTableNodes.isEmpty());
@@ -155,7 +159,7 @@ public class TreeViewUtilTest {
 	public void testConvertGermplasmListToTreeTableNodes_NullList() {
 		List<TreeTableNode> treeTableNodes =
 				TreeViewUtil.convertGermplasmListToTreeTableNodes(TreeViewUtilTest.NULL_GERMPLASM_LIST_TEST_DATA,
-						TreeViewUtilTest.germplasmListManager);
+						TreeViewUtilTest.germplasmListManager, TreeViewUtilTest.germplasmDataManager);
 		Assert.assertTrue("The list should be empty", treeTableNodes.isEmpty());
 	}
 
@@ -163,7 +167,7 @@ public class TreeViewUtilTest {
 	public void testConvertGermplasmListToTreeTableNodes_EmptyList() {
 		List<TreeTableNode> treeTableNodes =
 				TreeViewUtil.convertGermplasmListToTreeTableNodes(TreeViewUtilTest.EMPTY_GERMPLASM_LIST_TEST_DATA,
-						TreeViewUtilTest.germplasmListManager);
+						TreeViewUtilTest.germplasmListManager, TreeViewUtilTest.germplasmDataManager);
 		Assert.assertTrue("The list should be empty", treeTableNodes.isEmpty());
 	}
 }

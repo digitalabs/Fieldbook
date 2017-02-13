@@ -148,7 +148,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@Resource
 	private NamingConventionService namingConventionService;
 
-	private static final String NAME_NOT_UNIQUE = "Name not unique";
+	static final String NAME_NOT_UNIQUE = "Name not unique";
 	private static final String HAS_CHILDREN = "Folder has children";
 	private static final String FOLDER = "FOLDER";
 
@@ -223,9 +223,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final Map<String, Object> results = new HashMap<>();
 
 		try {
+			final String trimmedListName = form.getListName().trim();
 			final GermplasmList germplasmListIsNew =
-					this.fieldbookMiddlewareService.getGermplasmListByName(form.getListName().trim(), this.getCurrentProgramUUID());
-			if (germplasmListIsNew == null && !this.isSimilarToRootFolderName(form.getListName())) {
+					this.fieldbookMiddlewareService.getGermplasmListByName(trimmedListName, this.getCurrentProgramUUID());
+			if (germplasmListIsNew == null && !this.isSimilarToRootFolderName(trimmedListName)) {
 				final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 				
 				GermplasmListResult result = this.saveGermplasmList(form, listDataItems);
@@ -609,7 +610,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return crossesId;
 	}
 
-	private GermplasmList createGermplasmList(final SaveListForm saveListForm, final Integer currentUserId) {
+	GermplasmList createGermplasmList(final SaveListForm saveListForm, final Integer currentUserId) {
 
 		// Create germplasm list
 		final String listName = saveListForm.getListName().trim();
@@ -1066,7 +1067,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return this.expandGermplasmTree(parentKey, "0");
 	}
 
-	protected void checkIfUnique(final String folderName, final String programUUID) throws MiddlewareException {
+	void checkIfUnique(final String folderName, final String programUUID) throws MiddlewareException {
 		final String trimmedName = folderName.trim();
 		final List<GermplasmList> duplicate = this.germplasmListManager.getGermplasmListByName(trimmedName, programUUID, 0, 1, null);
 		if (duplicate != null && !duplicate.isEmpty()) {

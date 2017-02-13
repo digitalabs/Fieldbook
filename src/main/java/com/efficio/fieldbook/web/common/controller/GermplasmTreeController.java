@@ -39,7 +39,6 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RulesNotConfiguredException;
 import org.generationcp.commons.service.UserTreeStateService;
-import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -225,7 +224,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		try {
 			final GermplasmList germplasmListIsNew =
-					this.fieldbookMiddlewareService.getGermplasmListByName(form.getListName(), this.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getGermplasmListByName(form.getListName().trim(), this.getCurrentProgramUUID());
 			if (germplasmListIsNew == null && !this.isSimilarToRootFolderName(form.getListName())) {
 				final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 				
@@ -613,7 +612,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private GermplasmList createGermplasmList(final SaveListForm saveListForm, final Integer currentUserId) {
 
 		// Create germplasm list
-		final String listName = saveListForm.getListName();
+		final String listName = saveListForm.getListName().trim();
 		final String listType = saveListForm.getListType();
 
 		final String description = saveListForm.getListDescription();
@@ -1068,11 +1067,12 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	protected void checkIfUnique(final String folderName, final String programUUID) throws MiddlewareException {
-		final List<GermplasmList> duplicate = this.germplasmListManager.getGermplasmListByName(folderName, programUUID, 0, 1, null);
+		final String trimmedName = folderName.trim();
+		final List<GermplasmList> duplicate = this.germplasmListManager.getGermplasmListByName(trimmedName, programUUID, 0, 1, null);
 		if (duplicate != null && !duplicate.isEmpty()) {
 			throw new MiddlewareException(GermplasmTreeController.NAME_NOT_UNIQUE);
 		}
-		if (this.isSimilarToRootFolderName(folderName)) {
+		if (this.isSimilarToRootFolderName(trimmedName)) {
 			throw new MiddlewareException(GermplasmTreeController.NAME_NOT_UNIQUE);
 		}
 	}

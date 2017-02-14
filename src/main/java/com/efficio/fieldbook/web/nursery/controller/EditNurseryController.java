@@ -148,11 +148,9 @@ public class EditNurseryController extends SettingsController {
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form2, @PathVariable final int nurseryId,
 			@RequestParam(required = false) final String isAjax, final Model model, final HttpServletRequest request,
 			final RedirectAttributes redirectAttributes,
-			@RequestParam(value = "crosseslistid", required = false) final String crossesListId,
-			@RequestParam(value = "breedingmethodid", required = false) final String breedingMethodID) throws MiddlewareQueryException {
+			@RequestParam(value = "crosseslistid", required = false) final String crossesListId) throws MiddlewareQueryException {
 
 		model.addAttribute("createdCrossesListId", crossesListId);
-		model.addAttribute("selectedBreedingMethodId", breedingMethodID);
 
 		final String contextParams = this.retrieveContextInfo(request);
 
@@ -161,7 +159,7 @@ public class EditNurseryController extends SettingsController {
 		//store the id of the created germplasm list with crosses to update it later in the flow when all data is updated applying naming
 		// rules
 		request.getSession().setAttribute("createdCrossesListId", crossesListId);
-		request.getSession().setAttribute("selectedBreedingMethodId", breedingMethodID);
+
 		try {
 			Workbook workbook = null;
 			if (nurseryId != 0) {
@@ -239,8 +237,18 @@ public class EditNurseryController extends SettingsController {
 				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.ADVANCED);
 		final List<GermplasmList> germplasmCrossesList =
 				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.CROSSES);
+
+		germplasmCrossesList
+			.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(
+				Integer.valueOf(nurseryId),
+				GermplasmListType.CRT_CROSS));
+		germplasmCrossesList
+			.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(
+				Integer.valueOf(nurseryId),
+				GermplasmListType.IMP_CROSS));
+
 		model.addAttribute("advancedList", germplasmList);
-		model.addAttribute("crossesList", germplasmCrossesList);
+		model.addAttribute("crossesList", this.fieldbookMiddlewareService.appendTabLabelToList(germplasmCrossesList));
 	}
 
 	private void setUpNurserylevelConditions(final Workbook workbook, final CreateNurseryForm form, final ImportGermplasmListForm form2,

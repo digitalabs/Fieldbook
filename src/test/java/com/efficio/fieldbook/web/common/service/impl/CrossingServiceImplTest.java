@@ -117,6 +117,8 @@ public class CrossingServiceImplTest {
 	public void testProcessCrossBreedingMethodCodeAlreadyAvailable() {
 		final List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
 
+		this.crossSetting.getBreedingMethodSetting().setBasedOnImportFile(true);
+
 		// we modify the data such that one of the entries already have a raw breeding method code (i.e., from import file)
 		crosses.get(0).setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
 		final Method method = new Method(TEST_BREEDING_METHOD_ID);
@@ -133,20 +135,20 @@ public class CrossingServiceImplTest {
 
 		final List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
 
-		// we provide breeding method ID values to the objects to simulate input
-        // we start from 1, because a breeding method ID of 0 is not considered a proper value
-		int i = 1;
+		this.crossSetting.getBreedingMethodSetting().setBasedOnImportFile(true);
+		Method breedingMethod = new Method();
+		breedingMethod.setMid(TEST_BREEDING_METHOD_ID);
+		Mockito.when(this.germplasmDataManager.getMethodByCode(Matchers.anyString())).thenReturn(breedingMethod);
+
 		for (final ImportedCrosses cross : crosses) {
-			cross.setBreedingMethodId(i++);
+			cross.setRawBreedingMethod(String.valueOf(TEST_BREEDING_METHOD_CODE));
 		}
 
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 
-		// we verify that the breeding method IDs have not changed from the original processing
-		i = 1;
 		for (final ImportedCrosses cross : crosses) {
-			Assert.assertEquals("Breeding method ID should not be overridden if it is already present in the imported cross info", i, cross.getBreedingMethodId().intValue());
-            i++;
+			Assert.assertEquals("Breeding method ID should not be overridden if it is already present in the imported cross info",
+				TEST_BREEDING_METHOD_ID.intValue(), cross.getBreedingMethodId().intValue());
 		}
 	}
 
@@ -711,6 +713,8 @@ public class CrossingServiceImplTest {
 	private BreedingMethodSetting createBreedingMethodSetting() {
 		final BreedingMethodSetting breedingMethodSetting = new BreedingMethodSetting();
 		breedingMethodSetting.setMethodId(BREEDING_METHOD_ID);
+		breedingMethodSetting.setBasedOnImportFile(false);
+		breedingMethodSetting.setBasedOnStatusOfParentalLines(false);
 		return breedingMethodSetting;
 	}
 

@@ -25,6 +25,7 @@ public class CrossImportSettings {
 	private String parentageDesignationSeparator;
 	private Integer locationID;
 	private Boolean hasParentageDesignationName;
+	private Integer programPresetId;
 
 	public CrossImportSettings() {
 	}
@@ -156,5 +157,13 @@ public class CrossImportSettings {
 
 	public void setHasParentageDesignationName(Boolean hasParentageDesignationName) {
 		this.hasParentageDesignationName = hasParentageDesignationName;
+	}
+
+	public Integer getProgramPresetId() {
+		return programPresetId;
+	}
+
+	public void setProgramPresetId(Integer programPresetId) {
+		this.programPresetId = programPresetId;
 	}
 }

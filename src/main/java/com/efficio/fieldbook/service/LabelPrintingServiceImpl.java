@@ -915,7 +915,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		labelFieldList.add(new LabelFields(ColumnLabels.COMMENT.getTermNameFromOntology(this.ontologyDataManager), TermId.COMMENT_INVENTORY
 				.getId(), true));
 
-		if (listType.equals(GermplasmListType.CROSSES)) {
+		if (GermplasmListType.isCrosses(listType)) {
 
 			labelFieldList.add(new LabelFields(ColumnLabels.DUPLICATE.getTermNameFromOntology(this.ontologyDataManager), TermId.DUPLICATE
 					.getId(), true));

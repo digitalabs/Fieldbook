@@ -169,7 +169,7 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 
 	protected void updateInventoryDetailsFromImport(InventoryDetails inventoryDetailsFromDB, InventoryDetails inventoryDetailsFromImport,
 			GermplasmListType germplasmListType) {
-		if (germplasmListType == GermplasmListType.CROSSES) {
+		if (GermplasmListType.isCrosses(germplasmListType)) {
 			if (inventoryDetailsFromImport.getDuplicate() != null) {
 				inventoryDetailsFromDB.setDuplicate(inventoryDetailsFromImport.getDuplicate());
 			}

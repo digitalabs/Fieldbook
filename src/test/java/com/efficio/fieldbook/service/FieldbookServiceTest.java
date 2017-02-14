@@ -172,7 +172,7 @@ public class FieldbookServiceTest {
 	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testGetAllLocations() throws Exception {
-		List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getAllLocations(false);
+		List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getLocations(false);
 		Assert.assertEquals("First possible value should have an id of 1 as per our test data", Integer.valueOf(1), resultPossibleValues
 				.get(0).getId());
 		Assert.assertEquals("Second possible value should have an id of 2 as per our test data", Integer.valueOf(2), resultPossibleValues

@@ -285,7 +285,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		if (possibleValues.isEmpty()) {
 			if (DataType.LOCATION.equals(variable.getScale().getDataType())) {
 				// for location, we get all since it is for saving, so we would be able to set the name properly
-				possibleValues = this.getAllLocations(isGetAllRecords);
+				possibleValues = this.getLocations(isGetAllRecords);
 			} else {
 				possibleValues = this.getAllPossibleValues(variable);
 			}
@@ -326,7 +326,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 					break;
 				case LOCATION:
 					if (excludesProgramValues) {
-						possibleValues = this.getAllLocations(filtered);
+						possibleValues = this.getLocations(filtered);
 					} else {
 						possibleValues = this.getAllLocationsByProgram(filtered);
 					}
@@ -456,7 +456,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return list;
 	}
 
-	public List<ValueReference> getAllLocations(final boolean isBreedingMethodOnly) {
+	public List<ValueReference> getLocations(final boolean isBreedingMethodOnly) {
 		final String currentProgramUUID = this.contextUtil.getCurrentProgramUUID();
 		if (isBreedingMethodOnly) {
 			return this.convertLocationsToValueReferences(this.getAllBreedingLocationsByUniqueID(currentProgramUUID));
@@ -1065,7 +1065,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		// we need to get all possible values so we can check the favorites as well, since if we depend on the variable possible values, its
 		// already filtered, so it can be wrong
 		if (DataType.LOCATION.getId().equals(var.getDataTypeId())) {
-			possibleValues = this.getAllLocations(true);
+			possibleValues = this.getLocations(false);
 		} else {
 			possibleValues = var.getPossibleValues();
 		}

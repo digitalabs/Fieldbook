@@ -10,6 +10,8 @@ import junit.framework.Assert;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.PersonTestDataInitializer;
+import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -72,9 +74,14 @@ public class FieldbookServiceTest {
 	private FieldbookServiceImpl fieldbookServiceImpl;
 	private MeasurementVariable locationVariable;
 	private MeasurementVariable nonLocationVariable;
+	
+	private StandardVariableTestDataInitializer standardVariableTestDataInitializer;
+	private PersonTestDataInitializer personTestDataInitializer;
 
 	@Before
 	public void setUp() throws MiddlewareException {
+		this.standardVariableTestDataInitializer = new StandardVariableTestDataInitializer();
+		this.personTestDataInitializer = new PersonTestDataInitializer();
 		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService =
 				Mockito.mock(org.generationcp.middleware.service.api.FieldbookService.class);
 		List<Location> allLocation = new ArrayList<Location>();
@@ -86,7 +93,7 @@ public class FieldbookServiceTest {
 		this.setUpStandardVariablesForChecks(fieldbookMiddlewareService);
 
 		List<Person> personsList = new ArrayList<Person>();
-		personsList.add(this.createPerson(200));
+		personsList.add(this.personTestDataInitializer.createPerson(200));
 
 		Mockito.when(fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral()).thenReturn(personsList);
 
@@ -109,7 +116,7 @@ public class FieldbookServiceTest {
 
 	private void setUpStandardVariablesForChecks(FieldbookService fieldbookMiddlewareService) throws MiddlewareException {
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId(), DUMMY_PROGRAM_UUID)).thenReturn(
-				this.createStandardVariable(new Term(FieldbookServiceTest.CHECK_START_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_START,
+				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_START_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_START,
 						FieldbookServiceTest.ED_CHECK_START), new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
 								FieldbookServiceTest.NUMBER), new Term(FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL,
 										FieldbookServiceTest.FIELD_TRIAL), new Term(TermId.NUMERIC_VARIABLE.getId(), FieldbookServiceTest.NUMERIC_VARIABLE,
@@ -118,7 +125,7 @@ public class FieldbookServiceTest {
 																FieldbookServiceTest.TRIAL_DESIGN_ID, FieldbookServiceTest.TRIAL_DESIGN, FieldbookServiceTest.TRIAL_DESIGN),
 																PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_START.getId(), FieldbookServiceTest.CHECK_START));
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId(), DUMMY_PROGRAM_UUID)).thenReturn(
-				this.createStandardVariable(new Term(FieldbookServiceTest.CHECK_INTERVAL_PROPERTY_ID,
+				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_INTERVAL_PROPERTY_ID,
 						FieldbookServiceTest.ED_CHECK_INTERVAL, FieldbookServiceTest.ED_CHECK_INTERVAL), new Term(
 								FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER, FieldbookServiceTest.NUMBER), new Term(
 										FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL, FieldbookServiceTest.FIELD_TRIAL), new Term(
@@ -128,7 +135,7 @@ public class FieldbookServiceTest {
 																FieldbookServiceTest.TRIAL_DESIGN), PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_INTERVAL.getId(),
 																FieldbookServiceTest.CHECK_INTERVAL));
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId(), DUMMY_PROGRAM_UUID)).thenReturn(
-				this.createStandardVariable(new Term(FieldbookServiceTest.CHECK_PLAN_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_PLAN,
+				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_PLAN_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_PLAN,
 						FieldbookServiceTest.ED_CHECK_PLAN), new Term(FieldbookServiceTest.CODE_ID, FieldbookServiceTest.CODE,
 								FieldbookServiceTest.CODE), new Term(FieldbookServiceTest.ASSIGNED_ID, FieldbookServiceTest.ASSIGNED,
 										FieldbookServiceTest.ASSIGNED), new Term(TermId.CATEGORICAL_VARIABLE.getId(),
@@ -137,21 +144,6 @@ public class FieldbookServiceTest {
 														FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION), new Term(FieldbookServiceTest.TRIAL_DESIGN_ID,
 																FieldbookServiceTest.TRIAL_DESIGN, FieldbookServiceTest.TRIAL_DESIGN), PhenotypicType.TRIAL_ENVIRONMENT,
 																TermId.CHECK_PLAN.getId(), "CHECK_PLAN"));
-	}
-
-	private StandardVariable createStandardVariable(Term property, Term scale, Term method, Term dataType, Term storedIn, Term isA,
-			PhenotypicType phenotypicType, int termId, String name) {
-		StandardVariable stdVar = new StandardVariable(property, scale, method, dataType, isA, phenotypicType);
-		stdVar.setId(termId);
-		stdVar.setName(name);
-
-		return stdVar;
-	}
-
-	private Person createPerson(int id) {
-		Person person = new Person("First Name", "Middle Name", "Last Name");
-		person.setId(id);
-		return person;
 	}
 
 	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")

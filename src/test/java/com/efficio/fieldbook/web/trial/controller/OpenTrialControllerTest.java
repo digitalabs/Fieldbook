@@ -20,7 +20,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.ListDataProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
-import org.generationcp.middleware.data.initializer.StandardVariableInitializer;
+import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -135,10 +135,12 @@ public class OpenTrialControllerTest {
 
 	@InjectMocks
 	private OpenTrialController openTrialController;
+	
+	private StandardVariableTestDataInitializer standardVariableTestDataInitializer;
 
 	@Before
 	public void setUp() {
-
+		this.standardVariableTestDataInitializer = new StandardVariableTestDataInitializer();
 		final Project project = this.createProject();
 		final DmsProject dmsProject = this.createDmsProject();
 		final WorkbenchRuntimeData workbenchRuntimeData = new WorkbenchRuntimeData();
@@ -1029,10 +1031,10 @@ public class OpenTrialControllerTest {
 	private List<StandardVariable> initExpDesignVariables() {
 		final List<StandardVariable> existingExpDesignVariables = new ArrayList<StandardVariable>();
 		existingExpDesignVariables
-				.add(StandardVariableInitializer.createStdVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXP_DESIGN"));
-		existingExpDesignVariables.add(StandardVariableInitializer.createStdVariable(TermId.NUMBER_OF_REPLICATES.getId(), "NREP"));
+				.add(this.standardVariableTestDataInitializer.createStandardVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXP_DESIGN"));
+		existingExpDesignVariables.add(this.standardVariableTestDataInitializer.createStandardVariable(TermId.NUMBER_OF_REPLICATES.getId(), "NREP"));
 		existingExpDesignVariables
-				.add(StandardVariableInitializer.createStdVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "EXP_DESIGN_SOURCE"));
+				.add(this.standardVariableTestDataInitializer.createStandardVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "EXP_DESIGN_SOURCE"));
 		return existingExpDesignVariables;
 	}
 

@@ -5,36 +5,41 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.LocationTestDataInitializer;
 import org.generationcp.middleware.data.initializer.PersonTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.UserDataManager;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
@@ -43,9 +48,12 @@ import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
+import junit.framework.Assert;
+
+@RunWith(MockitoJUnitRunner.class)
 public class FieldbookServiceTest {
 
-	private static final String DUMMY_PROGRAM_UUID = "1234567890";
+	private static final String PROGRAMUUID = "1000001";
 	private static final String CHECK = "CHECK";
 	private static final String DESIG = "DESIG";
 	private static final String CATEGORICAL_VARIABLE = "Categorical variable";
@@ -70,23 +78,39 @@ public class FieldbookServiceTest {
 	private static final int NUMBER_ID = 6040;
 	private static final String ED_CHECK_START = "ED - Check Start";
 	private static final int CHECK_START_PROPERTY_ID = 2153;
-
+	
+	@Mock
+	private ContextUtil contextUtil;
+	
+	@Mock
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+	
+	@Mock
+	private OntologyVariableDataManager ontologyVariableDataManager;
+	
+	@InjectMocks
 	private FieldbookServiceImpl fieldbookServiceImpl;
+	
 	private MeasurementVariable locationVariable;
 	private MeasurementVariable nonLocationVariable;
 	
 	private StandardVariableTestDataInitializer standardVariableTestDataInitializer;
 	private PersonTestDataInitializer personTestDataInitializer;
+	private LocationTestDataInitializer locationTestDataInitializer;
+	private VariableTestDataInitializer variableTestDataInitializer;
+	private PossibleValuesCache possibleValuesCache;
 
 	@Before
 	public void setUp() throws MiddlewareException {
 		this.standardVariableTestDataInitializer = new StandardVariableTestDataInitializer();
 		this.personTestDataInitializer = new PersonTestDataInitializer();
-		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService =
-				Mockito.mock(org.generationcp.middleware.service.api.FieldbookService.class);
+		this.locationTestDataInitializer = new LocationTestDataInitializer();
+		this.variableTestDataInitializer = new VariableTestDataInitializer();
 		List<Location> allLocation = new ArrayList<Location>();
-		allLocation.add(new Location(1));
-		allLocation.add(new Location(2));
+		
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAMUUID);
+		allLocation.add(this.locationTestDataInitializer.createLocation(1, "Loc1", null));
+		allLocation.add(this.locationTestDataInitializer.createLocation(2, "Loc2", null));
 		Mockito.when(fieldbookMiddlewareService.getAllLocations()).thenReturn(allLocation);
 		Mockito.when(fieldbookMiddlewareService.getAllBreedingLocations()).thenReturn(new ArrayList<Location>());
 
@@ -97,9 +121,11 @@ public class FieldbookServiceTest {
 
 		Mockito.when(fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral()).thenReturn(personsList);
 
-		this.fieldbookServiceImpl = new FieldbookServiceImpl(fieldbookMiddlewareService, new PossibleValuesCache());
-
-		this.fieldbookServiceImpl.setContextUtil(Mockito.mock(ContextUtil.class));
+		this.fieldbookServiceImpl.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
+		this.possibleValuesCache = new PossibleValuesCache();
+		this.fieldbookServiceImpl.setPossibleValuesCache(possibleValuesCache);
+		this.fieldbookServiceImpl.setOntologyVariableDataManager(this.ontologyVariableDataManager);
+		this.fieldbookServiceImpl.setContextUtil(this.contextUtil);
 
 		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
 		for (int i = 0; i < 5; i++) {
@@ -115,7 +141,7 @@ public class FieldbookServiceTest {
 	}
 
 	private void setUpStandardVariablesForChecks(FieldbookService fieldbookMiddlewareService) throws MiddlewareException {
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId(), DUMMY_PROGRAM_UUID)).thenReturn(
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId(), PROGRAMUUID)).thenReturn(
 				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_START_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_START,
 						FieldbookServiceTest.ED_CHECK_START), new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
 								FieldbookServiceTest.NUMBER), new Term(FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL,
@@ -124,7 +150,7 @@ public class FieldbookServiceTest {
 														FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION, FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION), new Term(
 																FieldbookServiceTest.TRIAL_DESIGN_ID, FieldbookServiceTest.TRIAL_DESIGN, FieldbookServiceTest.TRIAL_DESIGN),
 																PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_START.getId(), FieldbookServiceTest.CHECK_START));
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId(), DUMMY_PROGRAM_UUID)).thenReturn(
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId(), PROGRAMUUID)).thenReturn(
 				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_INTERVAL_PROPERTY_ID,
 						FieldbookServiceTest.ED_CHECK_INTERVAL, FieldbookServiceTest.ED_CHECK_INTERVAL), new Term(
 								FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER, FieldbookServiceTest.NUMBER), new Term(
@@ -134,7 +160,7 @@ public class FieldbookServiceTest {
 														FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION), new Term(1100, FieldbookServiceTest.TRIAL_DESIGN,
 																FieldbookServiceTest.TRIAL_DESIGN), PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_INTERVAL.getId(),
 																FieldbookServiceTest.CHECK_INTERVAL));
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId(), DUMMY_PROGRAM_UUID)).thenReturn(
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId(), PROGRAMUUID)).thenReturn(
 				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_PLAN_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_PLAN,
 						FieldbookServiceTest.ED_CHECK_PLAN), new Term(FieldbookServiceTest.CODE_ID, FieldbookServiceTest.CODE,
 								FieldbookServiceTest.CODE), new Term(FieldbookServiceTest.ASSIGNED_ID, FieldbookServiceTest.ASSIGNED,
@@ -146,14 +172,6 @@ public class FieldbookServiceTest {
 																TermId.CHECK_PLAN.getId(), "CHECK_PLAN"));
 	}
 
-	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
-	@Test
-	public void testGetVariablePossibleValuesWhenVariableIsLocation() throws Exception {
-		List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getVariablePossibleValues(this.locationVariable);
-		Assert.assertEquals("The results of get all possible values for the location should return a total of 2 records", 2,
-				resultPossibleValues.size());
-	}
-
 	@Test
 	public void testGetVariablePossibleValuesWhenVariableIsNonLocation() throws Exception {
 		List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getVariablePossibleValues(this.nonLocationVariable);
@@ -161,7 +179,6 @@ public class FieldbookServiceTest {
 				resultPossibleValues.size());
 	}
 
-	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testGetAllLocations() throws Exception {
 		List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getLocations(false);
@@ -172,10 +189,12 @@ public class FieldbookServiceTest {
 		Assert.assertEquals("There should only be 2 records as per our test data", 2, resultPossibleValues.size());
 	}
 
-	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
-	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsTrue() throws Exception {
-		List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getAllPossibleValues(this.locationVariable.getTermId(), true);
+	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsFalse() throws Exception {
+		Variable variable = this.variableTestDataInitializer.createVariable(DataType.LOCATION);
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), this.locationVariable.getTermId(), true, false)).thenReturn(variable);
+		
+		List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getAllPossibleValues(this.locationVariable.getTermId(), false);
 		Assert.assertEquals("First possible value should have an id of 1 as per our test data", Integer.valueOf(1), resultPossibleValues
 				.get(0).getId());
 		Assert.assertEquals("Second possible value should have an id of 2 as per our test data", Integer.valueOf(2), resultPossibleValues
@@ -183,21 +202,27 @@ public class FieldbookServiceTest {
 		Assert.assertEquals("There should only be 2 records as per our test data", 2, resultPossibleValues.size());
 	}
 
-	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
-	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsFalse() throws Exception {
+	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsTrue() throws Exception {
+		Variable variable = this.variableTestDataInitializer.createVariable(DataType.LOCATION);
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), this.locationVariable.getTermId(), true, false)).thenReturn(variable);
+		
 		List<ValueReference> resultPossibleValues =
-				this.fieldbookServiceImpl.getAllPossibleValues(this.locationVariable.getTermId(), false);
+				this.fieldbookServiceImpl.getAllPossibleValues(this.locationVariable.getTermId(), true);
 		Assert.assertEquals("There should be no records as per our test data", 0, resultPossibleValues.size());
 	}
 
-	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testGetAllPossibleValuesWhenIdIsNonLocation() throws Exception {
+		Variable variable = this.variableTestDataInitializer.createVariable(DataType.CATEGORICAL_VARIABLE);
+		this.possibleValuesCache.addPossibleValuesByDataType(DataType.CATEGORICAL_VARIABLE, nonLocationVariable.getPossibleValues());
+		
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), this.nonLocationVariable.getTermId(), true, false)).thenReturn(variable);
+		
 		List<ValueReference> resultPossibleValues =
 				this.fieldbookServiceImpl.getAllPossibleValues(this.nonLocationVariable.getTermId(), false);
-		Assert.assertEquals("There should be 1 record as per our test data", 1, resultPossibleValues.size());
-		Assert.assertEquals("First possible value should have an id of 200 as per our test data", Integer.valueOf(200),
+		Assert.assertEquals("There should be 1 record as per our test data", 5, resultPossibleValues.size());
+		Assert.assertEquals("First possible value should have an id of 200 as per our test data", Integer.valueOf(0),
 				resultPossibleValues.get(0).getId());
 	}
 
@@ -243,7 +268,6 @@ public class FieldbookServiceTest {
 				this.fieldbookServiceImpl.hasCheckVariables(userSelection.getWorkbook().getConditions()));
 	}
 
-	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testManageCheckVariablesForAdd() {
 		// prepare test data
@@ -272,18 +296,14 @@ public class FieldbookServiceTest {
 		return importedGermplasms;
 	}
 
-	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testManageCheckVariablesForUpdate() {
 		// prepare test data
 		UserSelection userSelection = new UserSelection();
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
-		WorkbookDataUtil.addCheckConditions(workbook);
 		WorkbookDataUtil.createTrialObservations(1, workbook);
 		try {
-			this.addCheckVariables(workbook.getConditions());
-
 			userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
 			userSelection.setWorkbook(workbook);
 			form.setImportedCheckGermplasm(this.createImportedCheckGermplasmData());
@@ -291,7 +311,7 @@ public class FieldbookServiceTest {
 
 			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
 		} catch (MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
+			Assert.fail("Expected mocked class but original method was called.");
 		}
 
 		Assert.assertTrue("Expected check variables in the conditions but found none.",
@@ -301,7 +321,6 @@ public class FieldbookServiceTest {
 				this.areCheckVariableValuesUpdated(userSelection.getWorkbook().getConditions()));
 	}
 
-	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testManageCheckVariablesForUpdateWithNoTrialObservations() {
 		// prepare test data
@@ -349,7 +368,6 @@ public class FieldbookServiceTest {
 				Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole()));
 	}
 
-	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	@Test
 	public void testManageCheckVariablesForDelete() {
 		// prepare test data

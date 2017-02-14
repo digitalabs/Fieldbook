@@ -26,13 +26,19 @@
 
 		$scope.$on('changeEnvironments', function() {
 			$scope.data = environmentService.environments;
+			
+			//create a map for location dropdown values
+			var locationMap = {};
+			console.log($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues.length);
+			console.log($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].possibleValues.length);
+			angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues, function(locationVariable) {
+            	locationMap[locationVariable.id] = locationVariable.name;
+            });
+			
 			angular.forEach($scope.data.environments, function(environment) {
-                angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].possibleValues, function(possibleValue) {
-                    if (possibleValue.id === environment.managementDetailValues[$scope.LOCATION_NAME_ID]) {
-                        environment.managementDetailValues[$scope.LOCATION_NAME_ID] = possibleValue.id;
-                        selectedLocationForTrail = {id: possibleValue.id, name: possibleValue.name};
-					}
-				});
+                //Set the value of the location name per environment
+				environment.managementDetailValues[$scope.TRIAL_LOCATION_NAME_INDEX] = locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]];
+				selectedLocationForTrail = {id: environment.managementDetailValues[$scope.LOCATION_NAME_ID], name: environment.managementDetailValues[$scope.TRIAL_LOCATION_NAME_INDEX]};
 			});
 		});
 

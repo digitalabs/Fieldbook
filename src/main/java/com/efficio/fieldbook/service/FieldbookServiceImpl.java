@@ -1228,15 +1228,23 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	
-	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+	void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
-	public void setContextUtil(final ContextUtil contextUtil) {
+	void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}
 
-	public void setUserDataManager(final UserDataManager userDataManager) {
+	void setUserDataManager(final UserDataManager userDataManager) {
 		this.userDataManager = userDataManager;
+	}
+	
+	void setPossibleValuesCache(final PossibleValuesCache possibleValuesCache) {
+		this.possibleValuesCache = possibleValuesCache;
+	}
+	
+	void setOntologyVariableDataManager(final OntologyVariableDataManager ontologyVariableDataManager){
+		this.ontologyVariableDataManager= ontologyVariableDataManager;
 	}
 }

@@ -1,15 +1,10 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
+import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -18,7 +13,6 @@ import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.pojo.GermplasmListExportInputValues;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.commons.vaadin.spring.SimpleResourceBundleMessageSource;
 import org.generationcp.middleware.dao.GermplasmListDAO;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -38,12 +32,15 @@ import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
-import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Configurable
 public class ExportGermplasmListServiceImpl implements ExportGermplasmListService {
@@ -67,9 +64,6 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 	@Resource
 	private GermplasmListManager germplasmListManager;
-
-	@Resource
-	private ResourceBundleMessageSource messageSource;
 
 	@Resource
 	private GermplasmExportService germplasmExportService;
@@ -140,8 +134,75 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		input.setExporterName(this.fieldbookMiddlewareService.getOwnerListName(currentLocalIbdbUserId));
 		input.setVisibleColumnMap(visibleColumns);
 
+		// Get the variables that will be put into the Inventory Section
+		input.setInventoryVariableMap(this.extractInventoryVariableMapFromVisibleColumns(visibleColumns));
+
+		// We do not need the inventory variables in visibleColumns anymore so we have to remove them, since variables in Inventory Section will come from
+		// GermplasmListExportInputValues.InventoryVariableMap.
+		this.removeInventoryVariableMapFromVisibleColumns(visibleColumns);
+
 		input.setColumnTermMap(this.generateColumnStandardVariableMap(visibleColumns, isNursery));
 		return input;
+	}
+
+	/**
+	 * Extracts the inventory variables from the visibleColumns map.
+	 *
+	 * @param visibleColumns
+	 * @return
+	 */
+	Map<Integer,Variable> extractInventoryVariableMapFromVisibleColumns(final Map<String, Boolean> visibleColumns) {
+
+		Map<Integer, Variable> inventontoryVariableMap = new HashMap<>();
+
+		Iterator<Map.Entry<String, Boolean>> iterator = visibleColumns.entrySet().iterator();
+
+		while (iterator.hasNext()) {
+
+			Map.Entry<String, Boolean> entry = iterator.next();
+			String termId = entry.getKey();
+			Boolean isVisible = entry.getValue();
+			if (isVisible && isInventoryVariable(termId)) {
+				addVariableToMap(inventontoryVariableMap, Integer.valueOf(termId));
+			}
+		}
+		return inventontoryVariableMap;
+
+	}
+
+	/**
+	 * Removes inventory variables from the visibleColumns map.
+	 *
+	 * @param visibleColumns
+	 * @return
+	 */
+	void removeInventoryVariableMapFromVisibleColumns(final Map<String, Boolean> visibleColumns) {
+
+		Iterator<Map.Entry<String, Boolean>> iterator = visibleColumns.entrySet().iterator();
+
+		while (iterator.hasNext()) {
+
+			Map.Entry<String, Boolean> entry = iterator.next();
+			String termId = entry.getKey();
+			if (isInventoryVariable(termId)) {
+				iterator.remove();
+			}
+		}
+
+	}
+
+	boolean isInventoryVariable(final String termId) {
+		return termId.equals(String.valueOf(TermId.STOCKID.getId())) || termId.equals(String.valueOf(TermId.SEED_AMOUNT_G.getId()));
+	}
+
+	void addVariableToMap(final Map<Integer, Variable> variableMap, final int termId) {
+
+		final Variable variable =
+				this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, false, false);
+		if (variable != null) {
+			variableMap.put(variable.getId(), variable);
+		}
+
 	}
 
 	private Map<Integer, Term> generateColumnStandardVariableMap(final Map<String, Boolean> visibleColumnMap, final Boolean isNursery) {
@@ -293,10 +354,6 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		}
 
 		return val;
-	}
-
-	protected void setMessageSource(final SimpleResourceBundleMessageSource messageSource) {
-		this.messageSource = messageSource;
 	}
 
 	protected void setGermplasmListManager(final GermplasmListManager germplasmListManager) {

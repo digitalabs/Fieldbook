@@ -333,7 +333,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 				// get the code of ENTRY_TYPE - CATEGORICAL FACTOR
 				val = this.getCategoricalCodeValue(germplasm, settingDetail);
 			} else if (term == TermId.GROUPGID.getId()) {
-				val = germplasm.getMgid().toString();
+				val = germplasm.getGroupId();
 			} else if (term == TermId.STOCKID.getId()) {
 				val = germplasm.getStockIDs().toString();
 			}

@@ -173,12 +173,12 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 		retrieveCurrentProjectID: function() {
 			return $.get('/Fieldbook/breedingMethod/programID');
 		},
-		
-		getBreedingMethodById: function() {
+
+		getBreedingMethodById: function(breedingMethodId) {
 			return $.ajax({
 				url: '/Fieldbook/breedingMethod/getBreedingMethodById',
 				type: 'GET',
-				data: 'data=' + selectedBreedingMethodId,
+				data: 'data=' + breedingMethodId,
 				success: function(data) {
 					console.log("success");
 				},

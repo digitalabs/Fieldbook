@@ -213,7 +213,7 @@ public class GermplasmTreeControllerTest {
 		this.form.setListNotes(GermplasmTreeControllerTest.LIST_NOTES);
 		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
 		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
-		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
+		this.form.setGermplasmListType(GermplasmListType.IMP_CROSS.name());
 
 		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
@@ -566,6 +566,26 @@ public class GermplasmTreeControllerTest {
 					instanceAttribute.getAval());
 		}
 
+	}
+	
+	@Test
+	public void testSaveParentListPostSuccessful() {
+		this.form = new SaveListForm();
+		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME);
+		this.form.setListDate(GermplasmTreeControllerTest.LIST_DATE);
+		this.form.setListDescription(GermplasmTreeControllerTest.LIST_DESCRIPTION);
+		this.form.setListIdentifier(GermplasmTreeControllerTest.LIST_IDENTIFIER);
+		this.form.setListNotes(GermplasmTreeControllerTest.LIST_NOTES);
+		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
+		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
+		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT);
+
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
+
+		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
+		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
+		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", this.form.getListIdentifier(), result.get("uniqueId"));
+		Assert.assertEquals("List Name should be LIST 1", this.form.getListName(), result.get("listName"));
 	}
 
 	private CrossSetting createCrossSetting() {

@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.generationcp.commons.constant.ColumnLabels;
+import org.generationcp.middleware.dao.GermplasmListDAO;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -134,7 +135,7 @@ public class GermplasmListController {
 		boolean hasCompletedBulking = false;
 		if (germplasmList.getType().equals(GermplasmListType.ADVANCED.name())) {
 			tableHeaderList = this.getAdvancedStockListTableHeaders(GermplasmListType.STOCK.name());
-		} else if (germplasmList.getType().equals(GermplasmListType.CROSSES.name())) {
+		} else if (GermplasmListType.isCrosses(germplasmList.getType())) {
 			tableHeaderList = this.getCrossStockListTableHeaders();
 			hasCompletedBulking = this.stockHasCompletedBulking(listId);
 		}
@@ -159,7 +160,7 @@ public class GermplasmListController {
 			model.addAttribute("listNotes", germplasmList.getNotes());
 			model.addAttribute("listType", germplasmList.getType());
 
-			if (germplasmListType.equals(GermplasmListType.CROSSES.name())) {
+			if (GermplasmListType.isCrosses(germplasmListType)) {
 				boolean pedigreeDupeFound = false;
 				boolean pedigreeRecipFound = false;
 				boolean plotDupeFound = false;
@@ -176,6 +177,12 @@ public class GermplasmListController {
 				model.addAttribute("hasPedigreeRecip", pedigreeRecipFound);
 				model.addAttribute("hasPlotDupe", plotDupeFound);
 				model.addAttribute("hasPlotRecip", plotRecipFound);
+
+				if (GermplasmListType.IMP_CROSS.name().equals(germplasmList.getType())) {
+					model.addAttribute("listTypeLabel", GermplasmList.IMP_CROSS);
+				} else if (GermplasmListType.CRT_CROSS.name().equals(germplasmList.getType())) {
+					model.addAttribute("listTypeLabel", GermplasmList.CRT_CROSS);
+				}
 			}
 		} catch (MiddlewareQueryException e) {
 			GermplasmListController.LOG.error(e.getMessage(), e);
@@ -188,7 +195,7 @@ public class GermplasmListController {
 		try {
 			if (germplasmListType.equals(GermplasmListType.ADVANCED.name())) {
 				listData = this.germplasmListManager.retrieveSnapshotListData(listId);
-			} else if (germplasmListType.equals(GermplasmListType.CROSSES.name())) {
+			} else if (GermplasmListType.isCrosses(germplasmListType)) {
 				listData = this.germplasmListManager.retrieveSnapshotListDataWithParents(listId);
 			}
 
@@ -275,7 +282,7 @@ public class GermplasmListController {
 		tableHeaderList.add(new TableHeader(ColumnLabels.PARENTAGE.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
 				.getMessage("seed.entry.parentage", null, locale)));
 
-		if (germplasmListType.equals(GermplasmListType.CROSSES.name())) {
+		if (GermplasmListType.isCrosses(germplasmListType)) {
 			tableHeaderList.add(new TableHeader(ColumnLabels.FEMALE_PARENT.getTermNameFromOntology(this.ontologyDataManager),
 					this.messageSource.getMessage("germplasm.list.female.parent", null, locale)));
 
@@ -297,7 +304,7 @@ public class GermplasmListController {
 		tableHeaderList.add(new TableHeader(ColumnLabels.GROUP_ID.getTermNameFromOntology(this.ontologyDataManager),
 				this.messageSource.getMessage("germplasm.list.group.id", null, locale)));
 
-		if (germplasmListType.equals(GermplasmListType.CROSSES.name())) {
+		if (GermplasmListType.isCrosses(germplasmListType)) {
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.GERMPLASM_LIST_DUPLICATE, null,
 					locale), this.messageSource.getMessage(GermplasmListController.GERMPLASM_LIST_DUPLICATE, null, locale)));
 		}

@@ -182,9 +182,13 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 		https://datatables.net/reference/option/columnDefs*/
 		columnsDef = [
 				{
-					targets: [-2,-3,-4,-5,-7],
+					targets: [2],
 					visible: isImport
 				},
+				{
+					targets: [9,10],
+					visible: false
+				}
 			],
 			table;
 		
@@ -202,6 +206,29 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					targets: index,
 					createdCell: function(td, cellData, rowData, row, col) {
 						transformDuplicateStringToColorCodedSpans(td);
+					}
+				});
+			} else if ($(this).html() === 'FEMALE PARENT') {
+				columnsDef.push({
+					targets: index,
+					data: $(this).html(),
+					width: '100px',
+					render: function(data, type, row) {
+						return '<a class="gid-link" href="javascript: void(0)" ' +
+							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
+							row.FGID + '&quot;)">' + data + '</a>';
+					}
+				});
+
+			} else if ($(this).html() === 'MALE PARENT') {
+				columnsDef.push({
+					targets: index,
+					data: $(this).html(),
+					width: '100px',
+					render: function(data, type, row) {
+						return '<a class="gid-link" href="javascript: void(0)" ' +
+							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
+							row.MGID + '&quot;)">' + data + '</a>';
 					}
 				});
 			}
@@ -252,6 +279,8 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				}
 			});
 		}
+
+		$(tableIdentifier).DataTable().column( 2 ).visible( isImport );
 
 		$(tableIdentifier).dataTable().bind('sort', function() {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();

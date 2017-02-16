@@ -14,7 +14,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.CategoricalDisplayValue;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -747,6 +746,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		dataMap.put(TermId.ENTRY_TYPE.name(), new Object[] {row.getEntryType(), row.getEntryType(), false});
 		dataMap.put(TermId.PLOT_NO.name(), new Object[] {row.getPlotNumber(), false});
 		dataMap.put(TermId.REP_NO.name(), new Object[] {row.getRepitionNumber(), false});
+		dataMap.put(TermId.BLOCK_NO.name(), new Object[] {row.getBlockNumber(), false});
 		dataMap.put("TRIAL_INSTANCE", new Object[] {row.getTrialInstance(), false});
 
 		// generate measurement row data from newly added traits (no data yet)

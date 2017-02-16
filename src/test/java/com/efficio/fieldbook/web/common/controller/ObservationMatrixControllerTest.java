@@ -650,7 +650,7 @@ public class ObservationMatrixControllerTest {
 
 		List<MeasurementDto> measurements = Lists.newArrayList(measurementText, measurementNumeric, mesaurementCategorical);
 		ObservationDto observationDto =
-				new ObservationDto(123, "1", "Test Entry", 300, "CML123", "5", "CIMMYT Seed Bank", "2", "10", measurements);
+				new ObservationDto(123, "1", "Test Entry", 300, "CML123", "5", "CIMMYT Seed Bank", "2", "10", "3", measurements);
 
 		List<ObservationDto> observations = Lists.newArrayList(observationDto);
 		Mockito.when(studyService.getObservations(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
@@ -718,6 +718,9 @@ public class ObservationMatrixControllerTest {
 
 		Assert.assertTrue(
 				Arrays.equals(new Object[] {observationDto.getPlotNumber(), false}, (Object[]) onePlotMeasurementData.get("PLOT_NO")));
+
+		Assert.assertTrue(
+				Arrays.equals(new Object[] {observationDto.getBlockNumber(), false}, (Object[]) onePlotMeasurementData.get("BLOCK_NO")));
 
 		Assert.assertTrue(
 				Arrays.equals(new Object[] {observationDto.getRepitionNumber(), false}, (Object[]) onePlotMeasurementData.get("REP_NO")));

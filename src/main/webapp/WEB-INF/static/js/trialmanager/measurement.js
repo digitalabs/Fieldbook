@@ -170,6 +170,9 @@
 							$body.data('needToSave', '1');
 							//TODO Remove that global
 							$body.data('columnReordered', columnsOrder.length !== 0 ? '1' : '0');
+							if ($('body').hasClass('preview-measurements-only')) {
+								$scope.previewMeasurements();
+							}
 						});
 					}
 				}

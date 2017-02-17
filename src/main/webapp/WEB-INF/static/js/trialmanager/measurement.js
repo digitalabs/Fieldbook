@@ -48,6 +48,11 @@
 							encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
 				};
 
+				$scope.reloadMeasurements = function() {
+					new BMS.Fieldbook.MeasurementsDataTable('#measurement-table',
+							encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
+				};
+
 				if ($('body').hasClass('preview-measurements-only')) {
 					$scope.previewMeasurements();
 				}
@@ -118,9 +123,7 @@
 
 					reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
 
-					$('body').addClass('preview-measurements-only');
 					$('body').addClass('measurements-traits-changed');
-					$scope.previewMeasurements();
 				});
 
 				$scope.$on('previewMeasurements', function() {
@@ -143,9 +146,7 @@
 
 					reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
 
-                    $('body').addClass('preview-measurements-only');
                     $('body').addClass('measurements-traits-changed');
-                    $scope.previewMeasurements();
 				});
 
 				/* Controller Utility functions */
@@ -172,6 +173,8 @@
 							$body.data('columnReordered', columnsOrder.length !== 0 ? '1' : '0');
 							if ($('body').hasClass('preview-measurements-only')) {
 								$scope.previewMeasurements();
+							} else {
+								$scope.reloadMeasurements();
 							}
 						});
 					}

@@ -747,6 +747,8 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		dataMap.put(TermId.PLOT_NO.name(), new Object[] {row.getPlotNumber(), false});
 		dataMap.put(TermId.REP_NO.name(), new Object[] {row.getRepitionNumber(), false});
 		dataMap.put(TermId.BLOCK_NO.name(), new Object[] {row.getBlockNumber(), false});
+		dataMap.put(TermId.ROW.name(), new Object[] {row.getRowNumber(), false});
+		dataMap.put(TermId.COL.name(), new Object[] {row.getColumnNumber(), false});
 		dataMap.put("TRIAL_INSTANCE", new Object[] {row.getTrialInstance(), false});
 
 		// generate measurement row data from newly added traits (no data yet)

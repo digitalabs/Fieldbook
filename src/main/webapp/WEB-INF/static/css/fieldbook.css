@@ -1206,6 +1206,8 @@ a.fbk-edit-experiment{
 .dataTables_wrapper .dataTables_paginate, .fbk-page-div .dataTables_paginate {
     margin-top: 16px;
     margin-bottom: 10px;
+    float: left;
+    width: 100%;
 }
 .fbk-right-button-drop-down{
     right: 0;

@@ -298,11 +298,17 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
 					type: 'GET',
 					cache: false,
-					data: function(d) {
+					data: function(d) {						
+						var sortedColIndex = $(tableIdentifier).dataTable().fnSettings().aaSorting[0][0];
+						var sortDirection = $(tableIdentifier).dataTable().fnSettings().aaSorting[0][1];
+						var sortedColName = d.columns[sortedColIndex].data;
+						
 						return {
 							draw: d.draw,
 							pageSize: d.length,
-							pageNumber: d.length === 0 ? 1 : d.start / d.length + 1
+							pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
+							sortBy : sortedColName,
+							sortOrder : sortDirection
 						};
 					}
 				},

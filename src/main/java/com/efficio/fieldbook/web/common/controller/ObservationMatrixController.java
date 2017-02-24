@@ -557,7 +557,11 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		// number of records per page
 		final Integer pageSize = Integer.parseInt(req.getParameter("pageSize"));
 		final Integer pageNumber = Integer.parseInt(req.getParameter("pageNumber"));
-		final List<ObservationDto> pageResults = this.studyService.getObservations(studyId, instanceId, pageNumber, pageSize);
+		final String sortBy = req.getParameter("sortBy");
+		final String sortOrder = req.getParameter("sortOrder");
+
+		final List<ObservationDto> pageResults =
+				this.studyService.getObservations(studyId, instanceId, pageNumber, pageSize, sortBy, sortOrder);
 
 		for (final ObservationDto row : pageResults) {
 			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");

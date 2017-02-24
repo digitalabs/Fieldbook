@@ -653,8 +653,8 @@ public class ObservationMatrixControllerTest {
 				new ObservationDto(123, "1", "Test Entry", 300, "CML123", "5", "CIMMYT Seed Bank", "2", "10", "3", measurements);
 
 		List<ObservationDto> observations = Lists.newArrayList(observationDto);
-		Mockito.when(studyService.getObservations(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
-				.thenReturn(observations);
+		Mockito.when(studyService.getObservations(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(),
+				Mockito.anyString(), Mockito.anyString())).thenReturn(observations);
 
 		int recordsCount = 1;
 		Mockito.when(studyService.countTotalObservationUnits(Mockito.anyInt(), Mockito.anyInt())).thenReturn(recordsCount);

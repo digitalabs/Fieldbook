@@ -292,6 +292,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				bAutoWidth: true,
 				iDisplayLength: 100,
 				serverSide: true,
+				aaSorting: [[6, 'asc']], // column index 6 = PLOT_NO which is what we want to sort by, by default.
 				processing: true,
 				deferRender: true,
 				ajax: {

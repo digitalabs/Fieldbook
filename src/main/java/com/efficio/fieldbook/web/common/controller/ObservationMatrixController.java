@@ -374,46 +374,6 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		return map;
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/update/experiment/cell/accepted/all", method = RequestMethod.GET)
-	public Map<String, Object> markAllExperimentDataAsAccepted() {
-
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		UserSelection userSelection = this.getUserSelection();
-		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
-			if (row != null && row.getMeasurementVariables() != null) {
-				this.markNonEmptyVariateValuesAsAccepted(row.getDataList());
-			}
-		}
-
-		map.put(ObservationMatrixController.SUCCESS, "1");
-
-		return map;
-	}
-
-	private void markNonEmptyVariateValuesAsAccepted(List<MeasurementData> measurementDataList) {
-		for (MeasurementData var : measurementDataList) {
-			if (var != null && !StringUtils.isEmpty(var.getValue())
-					&& var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
-				if (this.isNumericalValueOutOfBounds(var.getValue(), var.getMeasurementVariable())) {
-					var.setAccepted(true);
-				}
-			} else if (var != null
-					&& !StringUtils.isEmpty(var.getValue())
-					&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var
-							.getMeasurementVariable().getPossibleValues().isEmpty())) {
-				var.setAccepted(true);
-				if (this.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())) {
-					var.setCustomCategoricalValue(true);
-				} else {
-					var.setCustomCategoricalValue(false);
-				}
-
-			}
-		}
-	}
-
 	private void markNonEmptyVariateValuesAsMissing(List<MeasurementData> measurementDataList) {
 		for (MeasurementData var : measurementDataList) {
 			if (var != null && !StringUtils.isEmpty(var.getValue())

@@ -1062,6 +1062,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 
 })(jQuery);
 
+// hook the context menu to the datatable cells with invalid values
 $(function() {
 	$(document).contextmenu({
 		delegate: ".dataTable td[class*='invalid-value']",

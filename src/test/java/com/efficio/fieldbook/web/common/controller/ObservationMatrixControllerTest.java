@@ -469,53 +469,6 @@ public class ObservationMatrixControllerTest {
 	}
 
 	@Test
-	public void testMarkAllExperimentDataAsAccepted() {
-		int termId = 2000;
-		UserSelection userSelection = new UserSelection();
-		List<MeasurementRow> measurementRowList = new ArrayList<>();
-		MeasurementRow row = new MeasurementRow();
-		List<MeasurementData> dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName1", "1st", TermId.CHARACTER_VARIABLE));
-		row.setDataList(dataList);
-		measurementRowList.add(row);
-		row = new MeasurementRow();
-		dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createCategoricalMeasurementData(termId, "TestVarName2", "2nd",
-				new ArrayList<ValueReference>()));
-		row.setDataList(dataList);
-		measurementRowList.add(row);
-		dataList = new ArrayList<>();
-		dataList.add(this.measurementDataTestDataInitializer.createCategoricalMeasurementData(termId, "TestVarName3", "3rd",
-				new ArrayList<ValueReference>()));
-		row.setDataList(dataList);
-		measurementRowList.add(row);
-
-		userSelection.setMeasurementRowList(measurementRowList);
-		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
-
-		this.observationMatrixController.setUserSelection(userSelection);
-		this.observationMatrixController.markAllExperimentDataAsAccepted();
-
-		for (MeasurementRow measurementRow : userSelection.getMeasurementRowList()) {
-			if (measurementRow != null && measurementRow.getMeasurementVariables() != null) {
-				for (MeasurementData var : measurementRow.getDataList()) {
-					if (var != null
-							&& !StringUtils.isEmpty(var.getValue())
-							&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var
-									.getMeasurementVariable().getPossibleValues().isEmpty())) {
-						Assert.assertTrue(var.isAccepted());
-						Assert.assertTrue(var.isCustomCategoricalValue());
-					} else {
-						Assert.assertFalse(var.isAccepted());
-						Assert.assertFalse(var.isCustomCategoricalValue());
-					}
-				}
-			}
-		}
-
-	}
-
-	@Test
 	public void testMarkAllExperimentDataAsMissing() {
 		int termId = 2000;
 		UserSelection userSelection = new UserSelection();

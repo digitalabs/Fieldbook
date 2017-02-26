@@ -4057,21 +4057,13 @@ function markCellAsAccepted(indexElem, indexTermId, elem) {
 function markAllCellAsAccepted() {
 	'use strict';
 
-	$.ajax({
-		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/accepted/all',
-		type: 'GET',
-		async: false,
-		contentType: 'application/json',
-		success: function(data) {
-			if (data.success === '1') {
-				reloadMeasurementTable();
-				$('#reviewOutOfBoundsDataModal').modal('hide');
-			} else {
-				showErrorMessage('page-review-out-of-bounds-data-message-modal', data.errorMessage);
-			}
-		}
+	$(".dataTable td[class*='invalid-value']").each(function() {
+		$(this).removeClass('invalid-value');
+		$(this).addClass('accepted-value');
 	});
+	$('#reviewOutOfBoundsDataModal').modal('hide');
 }
+
 function markAllCellAsMissing() {
 	'use strict';
 

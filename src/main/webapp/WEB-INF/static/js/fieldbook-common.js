@@ -3791,6 +3791,7 @@ function displaySelectedGermplasmDetails() {
 		success: function(html) {
 			$('#imported-germplasm-list').css('display', 'block');
 			$('#imported-germplasm-list').html(html);
+			window.ImportGermplasm.initialize(dataGermplasmList);
 			if (parseInt($('#totalGermplasms').val()) !== 0) {
 				$('#entries-details').css('display', 'block');
 			}

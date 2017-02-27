@@ -158,7 +158,7 @@ var getColumns = function(displayColumns) {
 						// cellData[1] : categorical display description
 
 						// current measurementData has no value thus no need to check if out-of-bounds
-						if (cellData[1] === '') {
+						if (cellData === "" || cellData[1] === "") {
 							return;
 						}
 

@@ -386,6 +386,7 @@ function revertData(showMessage) {
 			if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable()) {
             	$('#measurement-table').dataTable().fnAdjustColumnSizing();
             }
+            $('#review-out-of-bounds-data-list').hide();
 			$('.fbk-discard-imported-data').addClass('fbk-hide');
 			$('#discardImportDataConfirmation').modal('hide');
 			$('.import-study-data').data('data-import', '0');

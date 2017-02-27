@@ -3993,6 +3993,7 @@ function markCellAsMissing(indexElem, indexTermId, indexDataVal, isNew, elem) {
 	};
 
 	var isImportPreviewMeasurementsView = $('body').hasClass('import-preview-measurements');
+	var tableIdentifier = isImportPreviewMeasurementsView ? '#import-preview-measurement-table' : '#measurement-table';
 
 	$.ajax({
 		headers: {
@@ -4007,7 +4008,7 @@ function markCellAsMissing(indexElem, indexTermId, indexDataVal, isNew, elem) {
 		contentType: 'application/json',
 		success: function(data) {
 			if (data.success === '1') {
-				var oTable = $('#measurement-table').dataTable();
+				var oTable = $(tableIdentifier).dataTable();
 				oTable.fnUpdate(data.data, data.index, null, false); // Row
 				$(elem).removeClass('invalid-value');
 			} else {
@@ -4028,8 +4029,7 @@ function markCellAsAccepted(indexElem, indexTermId, elem) {
 		termId: indexTermId
 	};
 
-	var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' :
-            			'#measurement-table';
+	var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' : '#measurement-table';
 
 	$.ajax({
 		headers: {

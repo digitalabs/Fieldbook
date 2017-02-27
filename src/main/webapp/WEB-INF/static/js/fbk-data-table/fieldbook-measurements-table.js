@@ -73,7 +73,7 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 	return nRow;
 };
 
-var getColumns = function(displayColumns) {
+var getColumns = function(displayColumns, displayTrialInstance) {
 	var columns = [],
 		columnsDef = [];
 
@@ -97,7 +97,7 @@ var getColumns = function(displayColumns) {
 			columnsDef.push({
 				defaultContent: '',
 				targets: columns.length - 1,
-				visible: termId === 8170 ? false : true, // do not display TRIAL_INSTANCE column, [0] column
+				visible: termId === 8170 && !displayTrialInstance ? false : true, // do not display TRIAL_INSTANCE column, [0] column
 				createdCell: function(td, cellData, rowData, row, col) {
 					if (isVariates) {
 						$(td).addClass('numeric-variable');
@@ -277,7 +277,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			data: 'traitsList=' + trialManagerDataService.settings.measurements.m_keys
 		}).done(function(displayColumns) {
 
-			var columnsObj = getColumns(displayColumns);
+			var columnsObj = getColumns(displayColumns, false);
 			columns = columnsObj.columns;
 			columnsDef = columnsObj.columnsDef;
 
@@ -464,7 +464,7 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 			data: 'traitsList=' + trialManagerDataService.settings.measurements.m_keys + '&columnOrders=' + columnsOrder
 		}).done(function(displayColumns) {
 
-			var columnsObj = getColumns(displayColumns);
+			var columnsObj = getColumns(displayColumns, true);
 			columns = columnsObj.columns;
 			columnsDef = columnsObj.columnsDef;
 
@@ -581,7 +581,7 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 			data: 'traitsList=' + trialManagerDataService.settings.measurements.m_keys + '&columnOrders=' + columnsOrder
 		}).done(function(displayColumns) {
 
-			var columnsObj = getColumns(displayColumns);
+			var columnsObj = getColumns(displayColumns, true);
 			columns = columnsObj.columns;
 			columnsDef = columnsObj.columnsDef;
 

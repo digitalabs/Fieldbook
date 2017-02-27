@@ -4067,6 +4067,10 @@ function markAllCellAsAccepted() {
 function markAllCellAsMissing() {
 	'use strict';
 
+	var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' :
+    		'#measurement-table';
+    var oTable = $(tableIdentifier).dataTable();
+
 	$.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/missing/all',
 		type: 'GET',
@@ -4074,7 +4078,10 @@ function markAllCellAsMissing() {
 		contentType: 'application/json',
 		success: function(data) {
 			if (data.success === '1') {
-				reloadMeasurementTable();
+				$(".dataTable td[class*='invalid-value']").each(function() {
+					$(this).removeClass('invalid-value');
+                    oTable.fnUpdate(['missing',''], $(this).parents('tr').data('row-index'), this.cellIndex, false); // Cell
+                 });
 				$('#reviewOutOfBoundsDataModal').modal('hide');
 			} else {
 				showErrorMessage('page-review-out-of-bounds-data-message-modal', data.errorMessage);

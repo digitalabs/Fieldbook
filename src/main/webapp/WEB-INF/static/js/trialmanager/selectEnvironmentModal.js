@@ -29,8 +29,6 @@
 			
 			//create a map for location dropdown values
 			var locationMap = {};
-			console.log($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues.length);
-			console.log($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].possibleValues.length);
 			angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues, function(locationVariable) {
             	locationMap[locationVariable.id] = locationVariable.name;
             });

@@ -2767,6 +2767,35 @@ function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
 	});
 }
 
+function editExperiment(tableIdentifier, expId, rowIndex) {
+	'use strict';
+	var needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
+
+	if (!isNursery() && angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.unappliedChangesAvailable) {
+		angular.element('#mainApp').injector().get('TrialManagerDataService').warnAboutUnappliedChanges();
+		return;
+	}
+	// We show the ajax page here
+	if (needToSaveFirst) {
+		showAlertMessage('', $.fieldbookMessages.measurementsTraitsChangeWarning);
+	} else {
+		$.ajax({
+			url: '/Fieldbook/Common/addOrRemoveTraits/nursery/inlineinput/multiple/' + rowIndex,
+			type: 'GET',
+			cache: false,
+			success: function(dataResp) {
+				$('.edit-experiment-section').html(dataResp);
+				$('.updateExperimentModal').modal({ backdrop: 'static', keyboard: true });
+			},
+			error: function() {
+				//TODO Localise the message
+				showErrorMessage('Update experiment error', 'Could not update the experiment.');
+			}
+		});
+	}
+
+}
+
 function isAllowedEditMeasurementDataCellForTrials(needToSaveFirst) {
 	'use strict';
 	var trialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');

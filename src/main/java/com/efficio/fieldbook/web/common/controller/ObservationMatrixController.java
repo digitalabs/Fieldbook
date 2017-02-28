@@ -50,6 +50,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
@@ -178,6 +179,79 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 	protected void setUserSelection(UserSelection userSelection) {
 		this.userSelection = userSelection;
+	}
+
+	/**
+	 * This is the GET call to open the action dialog to edit one row.
+	 */
+	@RequestMapping(value = "/nursery/inlineinput/multiple/{index}", method = RequestMethod.GET)
+	public String inlineInputNurseryMultipleGet(@PathVariable int index, @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,
+			Model model) throws MiddlewareQueryException {
+
+		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		tempList.addAll(userSelection.getMeasurementRowList());
+
+		MeasurementRow row = tempList.get(index);
+		MeasurementRow copyRow = row.copy();
+		this.copyMeasurementValue(copyRow, row);
+		if (copyRow != null && copyRow.getMeasurementVariables() != null) {
+			for (MeasurementData var : copyRow.getDataList()) {
+				if (var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null
+						&& var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
+					// we change the date to the UI format
+					var.setValue(DateUtil.convertToUIDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
+				}
+			}
+		}
+		form.setUpdateObservation(copyRow);
+		form.setExperimentIndex(index);
+		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
+		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
+		model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());
+		model.addAttribute("isNursery", userSelection.getWorkbook().isNursery());
+		return super.showAjaxPage(model, ObservationMatrixController.EDIT_EXPERIMENT_TEMPLATE);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/nursery/inlineinput/multiple/{index}", method = RequestMethod.POST)
+	public Map<String, Object> inlineInputNurseryMultiplePost(@PathVariable int index,
+			@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		tempList.addAll(userSelection.getMeasurementRowList());
+
+		MeasurementRow row = form.getUpdateObservation();
+		MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+		MeasurementRow copyRow = originalRow.copy();
+		this.copyMeasurementValue(copyRow, row);
+
+		try {
+			this.validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
+			// if there are no error, meaning everything is good, thats the time we copy it to the original
+			this.copyMeasurementValue(originalRow, row);
+			this.updateDates(originalRow);
+			map.put(ObservationMatrixController.SUCCESS, "1");
+			for (MeasurementData data : originalRow.getDataList()) {
+				// we set the data accepted automatically to true, if value is out out limit
+				if (data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())) {
+					Double minRange = data.getMeasurementVariable().getMinRange();
+					Double maxRange = data.getMeasurementVariable().getMaxRange();
+					if (minRange != null && maxRange != null && NumberUtils.isNumber(data.getValue())
+							&& (Double.parseDouble(data.getValue()) < minRange || Double.parseDouble(data.getValue()) > maxRange)) {
+						data.setAccepted(true);
+					}
+				}
+			}
+
+			Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
+			map.put(ObservationMatrixController.DATA, dataMap);
+		} catch (MiddlewareQueryException e) {
+			ObservationMatrixController.LOG.error(e.getMessage(), e);
+			map.put(ObservationMatrixController.SUCCESS, "0");
+			map.put(ObservationMatrixController.ERROR_MESSAGE, e.getMessage());
+		}
+
+		return map;
 	}
 
 	/**
@@ -818,7 +892,8 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 	private Map<String, Object> generateDatatableDataMap(final ObservationDto row, String suffix) {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		// the 3 attributes are needed always
+		// the 4 attributes are needed always
+		dataMap.put("Action", Integer.toString(row.getMeasurementId()));
 		dataMap.put("experimentId", Integer.toString(row.getMeasurementId()));
 		dataMap.put("GID", row.getGid());
 		dataMap.put("DESIGNATION", row.getDesignation());

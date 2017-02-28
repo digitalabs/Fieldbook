@@ -14,6 +14,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.CategoricalDisplayValue;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -500,6 +501,31 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		model.addAttribute(ObservationMatrixController.TERM_ID, termId);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/data/table/ajax", method = RequestMethod.GET)
+	public List<Map<String, Object>> getPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+
+		if (this.userSelection.getTemporaryWorkbook() != null && this.userSelection.getMeasurementRowList() == null) {
+			tempList.addAll(this.userSelection.getTemporaryWorkbook().getObservations());
+		} else {
+			tempList.addAll(this.userSelection.getMeasurementRowList());
+		}
+
+		form.setMeasurementRowList(tempList);
+
+		List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
+
+		for (MeasurementRow row : tempList) {
+
+			Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
+
+			masterList.add(dataMap);
+		}
+
+		return masterList;
+	}
+
 	/**
 	 * This the call to get data required for measurement table in JSON format.
 	 * The url is /plotMeasurements/{studyid}/{instanceid}?pagenumber=1&pagesize=100
@@ -661,6 +687,48 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			oldData.setValue(newData.getValue());
 			oldData.setAccepted(newData.isAccepted());
 		}
+	}
+
+	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		// the 4 attributes are needed always
+		dataMap.put("Action", Integer.toString(row.getExperimentId()));
+		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
+		dataMap.put("GID", row.getMeasurementDataValue(TermId.GID.getId()));
+		dataMap.put("DESIGNATION", row.getMeasurementDataValue(TermId.DESIG.getId()));
+
+		// initialize suffix as empty string if its null
+		suffix = null == suffix ? "" : suffix;
+
+		// generate measurement row data from dataList (existing / generated data)
+		for (MeasurementData data : row.getDataList()) {
+			if (data.isCategorical()) {
+				CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
+
+				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {categoricalDisplayValue.getName() + suffix,
+						categoricalDisplayValue.getDescription() + suffix, data.isAccepted()});
+
+			} else if (data.isNumeric()) {
+				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() + suffix, data.isAccepted()});
+			} else {
+				dataMap.put(data.getMeasurementVariable().getName(), data.getDisplayValue());
+			}
+		}
+
+		// generate measurement row data from newly added traits (no data yet)
+		if (this.userSelection != null && this.userSelection.getMeasurementDatasetVariable() != null
+				&& !this.userSelection.getMeasurementDatasetVariable().isEmpty()) {
+			for (MeasurementVariable var : this.userSelection.getMeasurementDatasetVariable()) {
+				if (!dataMap.containsKey(var.getName())) {
+					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
+						dataMap.put(var.getName(), new Object[] {"", "", true});
+					} else {
+						dataMap.put(var.getName(), "");
+					}
+				}
+			}
+		}
+		return dataMap;
 	}
 
 	private Map<String, Object> generateDatatableDataMap(final ObservationDto row, String suffix) {

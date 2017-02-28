@@ -3984,6 +3984,101 @@ function saveInlineEdit(isDiscard, invalidButKeep) {
 		}
 	});
 }
+
+
+function processInlineEditInputNursery() {
+	'use strict';
+	if ($('.inline-input').length !== 0) {
+		var indexElem = $('.data-hidden-value-index').val();
+		var indexTermId = $('.data-hidden-value-term-id').val();
+		var indexDataVal = '';
+		var isNew = '0';
+		if ($('.data-value').hasClass('variates-select')) {
+			if ($('.data-value').select2('data')) {
+				indexDataVal = $('.data-value').select2('data').id;
+				isNew  = $('.data-value').select2('data').status;
+			} else {
+				indexDataVal = '';
+			}
+		} else if ($('.data-value').hasClass('numeric-value')) {
+			var minVal = ($('.data-value').data('min-range'));
+			var maxVal = ($('.data-value').data('max-range'));
+			var cellText = $('.data-value').val();
+			if ($.trim(cellText.toLowerCase()) == 'missing') {
+				if (minVal && maxVal) {
+					isNew = '1';
+				} else {
+					isNew = '0';
+				}
+				$('.data-value').val('missing');
+			} else if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellText) ||
+				parseFloat(cellText) > parseFloat(maxVal))) {
+				isNew = '1';
+			}
+			indexDataVal =  $('.data-value').val();
+		} else {
+			indexDataVal =  $('.data-value').val();
+		}
+
+		var currentInlineEdit = {
+			index: indexElem,
+			termId: indexTermId,
+			value: indexDataVal,
+			isNew: isNew
+		};
+		$('#measurement-table').data('json-inline-edit-val', JSON.stringify(currentInlineEdit));
+		if (isNew === '1') {
+			$('#inlineEditConfirmationModal').modal({
+				backdrop: 'static',
+				keyboard: true
+			});
+			$('#measurement-table').data('show-inline-edit', '0');
+			return false;
+		} else {
+			saveInlineEditNursery(0);
+		}
+	}
+	return true;
+}
+
+
+function saveInlineEditNursery(isDiscard) {
+	'use strict';
+
+	$.ajax({
+		url: '/Fieldbook/Common/addOrRemoveTraits/nursery/inlineinput?isDiscard=' + isDiscard,
+		type: 'POST',
+		async: false,
+		data:   $('#measurement-table').data('json-inline-edit-val'),
+		contentType: 'application/json',
+		success: function(data) {
+			var jsonData = $.parseJSON($('#measurement-table').data('json-inline-edit-val'));
+			if (isDiscard === 0 && jsonData.isNew === '1' && jsonData.value !== 'missing') {
+				$('.inline-input').parent('td').addClass('accepted-value').removeClass('invalid-value');
+				$('.inline-input').parent('td').data('is-accepted', '1');
+			} else if (jsonData.isNew === '0') {
+				$('.inline-input').parent('td').removeClass('accepted-value').removeClass('invalid-value');
+				$('.inline-input').parent('td').data('is-accepted', '0');
+			}
+			if (data.success === '1') {
+				$('.inline-input').parent('td').data('is-inline-edit', '0');
+
+				var oTable = $('#measurement-table').dataTable();
+				oTable.fnUpdate(data.data, data.index, null, false); // Row
+				oTable.fnAdjustColumnSizing();
+				$('body').off('click');
+			} else {
+				$('#measurement-table').data('show-inline-edit', '0');
+				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+			}
+		},
+		error: function() {
+			//TODO Localise the message
+			showErrorMessage('', 'Could not update the measurement');
+		}
+	});
+}
+
 function markCellAsMissing(indexElem, indexTermId, indexDataVal, isNew, elem) {
 	'use strict';
 	var data = {

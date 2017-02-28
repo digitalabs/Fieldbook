@@ -1460,7 +1460,7 @@ BMS.Fieldbook.MeasurementsDataTableNursery = (function($) {
 						processInlineEditInput();
 						if ($('#measurement-table').data('show-inline-edit') === '1') {
 							$.ajax({
-								url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/' + rowIndex + '/' + $colHeader.data('term-id'),
+								url: '/Fieldbook/Common/addOrRemoveTraits/nursery/inlineinput/' + rowIndex + '/' + $colHeader.data('term-id'),
 								type: 'GET',
 								success: function(data) {
 									$tdCell.html(data);

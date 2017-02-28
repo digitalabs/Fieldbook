@@ -501,6 +501,91 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		model.addAttribute(ObservationMatrixController.TERM_ID, termId);
 	}
 
+	@RequestMapping(value = "/nursery/inlineinput/{index}/{termId}", method = RequestMethod.GET)
+	public String inlineInputNurseryGet(@PathVariable int index, @PathVariable int termId, Model model) throws MiddlewareQueryException {
+
+		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		tempList.addAll(this.userSelection.getMeasurementRowList());
+
+		MeasurementRow row = tempList.get(index);
+		MeasurementRow copyRow = row.copy();
+		this.copyMeasurementValue(copyRow, row);
+		MeasurementData editData = null;
+		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+		if (copyRow != null && copyRow.getMeasurementVariables() != null) {
+			for (MeasurementData var : copyRow.getDataList()) {
+				this.convertToUIDateIfDate(var);
+				if (var != null && (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
+						|| !var.getMeasurementVariable().getPossibleValues().isEmpty())) {
+					possibleValues = var.getMeasurementVariable().getPossibleValues();
+				}
+				if (var != null && var.getMeasurementVariable().getTermId() == termId) {
+					editData = var;
+					break;
+				}
+			}
+		}
+		this.updateModel(model, userSelection.getWorkbook().isNursery(), editData, index, termId, possibleValues);
+		return super.showAjaxPage(model, "/NurseryManager/inlineInputMeasurement");
+	}
+
+	private void updateModel(Model model, boolean isNursery, MeasurementData measurementData, int index, int termId,
+			List<ValueReference> possibleValues) {
+		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
+		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
+		model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());
+		model.addAttribute("isNursery", isNursery);
+		model.addAttribute("measurementData", measurementData);
+		model.addAttribute(ObservationMatrixController.INDEX, index);
+		model.addAttribute(ObservationMatrixController.TERM_ID, termId);
+		model.addAttribute("possibleValues", possibleValues);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/nursery/inlineinput", method = RequestMethod.POST)
+	public Map<String, Object> inlineInputNurseryPost(@RequestBody Map<String, String> data, HttpServletRequest req) {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		int index = Integer.valueOf(data.get(ObservationMatrixController.INDEX));
+		int termId = Integer.valueOf(data.get(ObservationMatrixController.TERM_ID));
+		String value = data.get("value");
+		// for categorical
+		int isNew = Integer.valueOf(data.get("isNew"));
+		boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard")) ? true : false;
+
+		map.put(ObservationMatrixController.INDEX, index);
+
+		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		tempList.addAll(userSelection.getMeasurementRowList());
+
+		MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+
+		try {
+			if (!isDiscard) {
+				MeasurementRow copyRow = originalRow.copy();
+				this.copyMeasurementValue(copyRow, originalRow, isNew == 1 ? true : false);
+				// we set the data to the copy row
+				if (copyRow != null && copyRow.getMeasurementVariables() != null) {
+					this.updatePhenotypeValues(copyRow.getDataList(), value, termId, isNew);
+				}
+				this.validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
+				// if there are no error, meaning everything is good, thats the time we copy it to the original
+				this.copyMeasurementValue(originalRow, copyRow, isNew == 1 ? true : false);
+				this.updateDates(originalRow);
+			}
+			map.put(ObservationMatrixController.SUCCESS, "1");
+			Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
+			map.put(ObservationMatrixController.DATA, dataMap);
+		} catch (MiddlewareQueryException e) {
+			ObservationMatrixController.LOG.error(e.getMessage(), e);
+			map.put(ObservationMatrixController.SUCCESS, "0");
+			map.put(ObservationMatrixController.ERROR_MESSAGE, e.getMessage());
+		}
+
+		return map;
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "/data/table/ajax", method = RequestMethod.GET)
 	public List<Map<String, Object>> getPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {

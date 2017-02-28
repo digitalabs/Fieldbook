@@ -102,7 +102,7 @@ function saveExperimentMeasurements() {
 	'use strict';
 	var rowIndex = $('.updateExperimentForm #experimentIndex').val();
 	$.ajax({
-		url: '/Fieldbook/Common/addOrRemoveTraits/nursery/inlineinput/multiple/' + rowIndex,
+		url: '/Fieldbook/nursery/measurements/inlineinput/multiple/' + rowIndex,
 		type: 'POST',
 		data: $('.updateExperimentForm').serialize(),
 		success: function(data) {

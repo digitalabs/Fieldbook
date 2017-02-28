@@ -2780,7 +2780,7 @@ function editExperiment(tableIdentifier, expId, rowIndex) {
 		showAlertMessage('', $.fieldbookMessages.measurementsTraitsChangeWarning);
 	} else {
 		$.ajax({
-			url: '/Fieldbook/Common/addOrRemoveTraits/nursery/inlineinput/multiple/' + rowIndex,
+			url: '/Fieldbook/nursery/measurements/inlineinput/multiple/' + rowIndex,
 			type: 'GET',
 			cache: false,
 			success: function(dataResp) {
@@ -4075,7 +4075,7 @@ function saveInlineEditNursery(isDiscard) {
 	'use strict';
 
 	$.ajax({
-		url: '/Fieldbook/Common/addOrRemoveTraits/nursery/inlineinput?isDiscard=' + isDiscard,
+		url: '/Fieldbook/nursery/measurements/inlineinput/single?isDiscard=' + isDiscard,
 		type: 'POST',
 		async: false,
 		data:   $('#measurement-table').data('json-inline-edit-val'),

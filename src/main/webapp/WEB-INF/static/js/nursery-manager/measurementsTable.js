@@ -19,7 +19,7 @@ function onMeasurementsObservationLoadNursery(isCategoricalDisplay) {
 
 	// display the measurements table
 	return $.ajax({
-		url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax',
+		url: '/Fieldbook/nursery/measurements',
 		type: 'GET',
 		data: '',
 		cache: false

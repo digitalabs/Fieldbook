@@ -62,7 +62,7 @@ function generateDataForProcessing() {
 
 					$.each(dataChanges.data, function(index, value) {
 						for (i = 0; i < value.values.length; i++) {
-							if (value.values[i].action === '2') {
+							if (value.values[i].action === '2' || value.values[i].action === '') {
 								oTable.fnUpdate([value.values[i].newValue,''], value.values[i].rowIndex,
 									$("#import-preview-measurement-table thead tr th:contains(' " + traitTermName +" ')").index(), false); // Cell
                     		} else if (value.values[i].action === '3') {

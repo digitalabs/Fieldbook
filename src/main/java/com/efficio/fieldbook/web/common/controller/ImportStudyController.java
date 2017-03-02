@@ -163,10 +163,16 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 						}
 					}
 				}
-				
+				String plotsNotFoundMessage = " ";
+				final Integer plotsNotFound = userSelection.getWorkbook().getPlotsIdNotfound();
+				if(plotsNotFound != null){
+					plotsNotFoundMessage =
+						plotsNotFound + " "+ this.messageSource.getMessage("study.import.warning.plot.id.not.found", null, locale);
+				}
 				resultsMap.put("addedTraits", addedTraits);
 				resultsMap.put("deletedTraits", deletedTraits);
 				resultsMap.put("message", reminderConfirmation);
+				resultsMap.put("plotsNotFound", plotsNotFoundMessage);
 				resultsMap.put("confirmMessage", this.messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));
 				resultsMap.put("conditionConstantsImportErrorMessage", importResult.getConditionsAndConstantsErrorMessage());
 			}

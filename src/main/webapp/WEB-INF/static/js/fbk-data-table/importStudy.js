@@ -88,11 +88,14 @@ function doSaveImportedData() {
 	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 	var serializedData = 'columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
 	return $.ajax({
-		url: '/Fieldbook/ImportManager/import/save',
+		url: isNursery() ? '/Fieldbook/ImportManager/import/save/nursery' : '/Fieldbook/ImportManager/import/save',
 		type: 'POST',
 		data: serializedData,
 		async: true,
 		success: function(html) {
+			if(isNursery()) {
+				$('#measurementsDiv').html(html);
+			}
 			$('.import-study-data').data('data-import', '0');
 			$('.import-study-data').data('measurement-show-already', '0');
 			$('.fbk-discard-imported-data').addClass('fbk-hide');
@@ -107,23 +110,40 @@ function doSaveImportedData() {
 				displayEditFactorsAndGermplasmSection();
 			} else {
 				displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
-			}
-			reloadMeasurementTable();
+				reloadMeasurementTable();
+			}			
 		}
 	});
 }
 function doMeasurementsReload(hasDataOverwrite) {
 	'use strict';
 	$('.import-study-data').data('data-import', '1');
-	$('body').addClass('import-preview-measurements');
-	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
-	new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
-
-	$('.fbk-discard-imported-data').removeClass('fbk-hide');
-	if (hasDataOverwrite === '1') {
-		showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
+	
+	if (isNursery()) {
+		$.ajax({
+			url: '/Fieldbook/ImportManager/import/preview/nursery',
+			type: 'POST',
+			success: function(html) {
+				$('#measurementsDiv').html(html);
+				$('.fbk-discard-imported-data').removeClass('fbk-hide');
+				if (hasDataOverwrite === '1') {
+					showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
+				} else {
+					showSuccessfulMessage('', importSuccessReminderToSaveMessage);
+				}
+			}
+		});
 	} else {
-		showSuccessfulMessage('', importSuccessReminderToSaveMessage);
+		$('body').addClass('import-preview-measurements');
+		var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+		new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
+	
+		$('.fbk-discard-imported-data').removeClass('fbk-hide');
+		if (hasDataOverwrite === '1') {
+			showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
+		} else {
+			showSuccessfulMessage('', importSuccessReminderToSaveMessage);
+		}
 	}
 
 	$('#importStudyModal').modal('hide');

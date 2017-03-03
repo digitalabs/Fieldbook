@@ -26,6 +26,7 @@ import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -388,8 +389,11 @@ public class CrossingSettingsController extends SettingsController {
 	@RequestMapping(value = "/getCurrentProgramMembers", method = RequestMethod.GET, produces = "application/json")
 	public Map<String, Person> getCurrentProgramMembers() {
 		// we need to convert Integer to String because angular doest work with numbers as options for select
+
+		String cropname = this.contextUtil.getProjectInContext().getCropType().getCropName();
+
 		final Map<String, Person> currentProgramMembers = new HashMap<>();
-		final Long projectId = this.workbenchDataManager.getProjectByUuid(this.getCurrentProgramID()).getProjectId();
+		final Long projectId = this.workbenchDataManager.getProjectByUuid(this.getCurrentProgramID(), cropname).getProjectId();
 		final Map<Integer, Person> programMembers = this.workbenchDataManager.getPersonsByProjectId(projectId);
 		for (final Map.Entry<Integer, Person> member : programMembers.entrySet()) {
 			currentProgramMembers.put(String.valueOf(member.getKey()), member.getValue());

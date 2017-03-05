@@ -703,3 +703,73 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 	};
 	return dataTableConstructor;
 })(jQuery);
+
+
+function markCellAsAccepted(indexElem, indexTermId, elem) {
+	'use strict';
+
+	var data = {
+		index: indexElem,
+		termId: indexTermId
+	};
+
+	var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' : '#measurement-table';
+
+	$.ajax({
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/accepted',
+		type: 'POST',
+		async: false,
+		data:   JSON.stringify(data),
+		contentType: 'application/json',
+		success: function(data) {
+			if (data.success === '1') {
+				var oTable = $(tableIdentifier).dataTable();
+				oTable.fnUpdate(data.data, data.index, null, false); // Row
+				$(elem).removeClass('invalid-value');
+				$(elem).addClass('accepted-value');
+			} else {
+				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+				$(tableIdentifier).data('show-inline-edit', '0');
+			}
+		}
+	});
+}
+function markAllCellAsAccepted() {
+	'use strict';
+
+	$(".dataTable td[class*='invalid-value']").each(function() {
+		$(this).removeClass('invalid-value');
+		$(this).addClass('accepted-value');
+	});
+	$('#reviewOutOfBoundsDataModal').modal('hide');
+}
+
+function markAllCellAsMissing() {
+	'use strict';
+
+	var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' :
+    		'#measurement-table';
+    var oTable = $(tableIdentifier).dataTable();
+
+	$.ajax({
+		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/missing/all',
+		type: 'GET',
+		async: false,
+		contentType: 'application/json',
+		success: function(data) {
+			if (data.success === '1') {
+				$(".dataTable td[class*='invalid-value']").each(function() {
+					$(this).removeClass('invalid-value');
+                    oTable.fnUpdate(['missing',''], $(this).parents('tr').data('row-index'), this.cellIndex, false); // Cell
+                 });
+				$('#reviewOutOfBoundsDataModal').modal('hide');
+			} else {
+				showErrorMessage('page-review-out-of-bounds-data-message-modal', data.errorMessage);
+			}
+		}
+	});
+}

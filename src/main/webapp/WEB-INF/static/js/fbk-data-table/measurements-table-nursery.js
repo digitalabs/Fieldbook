@@ -297,9 +297,9 @@ BMS.Fieldbook.MeasurementsDataTableNursery = (function($) {
 					}
 					if ($colHeader.hasClass('factors')) {
 						//we should now submit it
-						processInlineEditInput();
+						processInlineEditInputNursery();
 					} else if ($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1') {
-						processInlineEditInput();
+						processInlineEditInputNursery();
 						if ($('#measurement-table').data('show-inline-edit') === '1') {
 							$.ajax({
 								url: '/Fieldbook/nursery/measurements/inlineinput/single/' + rowIndex + '/' + $colHeader.data('term-id'),
@@ -352,6 +352,19 @@ BMS.Fieldbook.MeasurementsDataTableNursery = (function($) {
 
 })(jQuery);
 
+function onMeasurementsInlineEditConfirmationEventNursery() {
+	'use strict';
+	return function(e) {
+		if (parseInt($(this).data('inline-edit'), 10) === 1) {
+			//keep the changes
+			saveInlineEditNursery(0);
+		} else if (parseInt($(this).data('inline-edit'), 10) === 0) {
+			//discard the changes
+			saveInlineEditNursery(1);
+		}
+		$('#inlineEditConfirmationModal').modal('hide');
+	};
+}
 
 function onMeasurementsObservationLoadNursery(isCategoricalDisplay) {
 	'use strict';
@@ -364,10 +377,10 @@ function onMeasurementsObservationLoadNursery(isCategoricalDisplay) {
 		window.measurementObservationMessages.showCategoricalDescription);
 
 	// add event handlers
-	$('.inline-edit-confirmation').off('click').on('click', onMeasurementsInlineEditConfirmationEvent());
+	$('.inline-edit-confirmation').off('click').on('click', onMeasurementsInlineEditConfirmationEventNursery());
 	$categoricalDisplayToggleBtn.off('click').on('click', function() {
 		// process any unedited saves before updating measurement table's categorical view
-		processInlineEditInput();
+		processInlineEditInputNursery();
 
 		switchCategoricalView();
 	});

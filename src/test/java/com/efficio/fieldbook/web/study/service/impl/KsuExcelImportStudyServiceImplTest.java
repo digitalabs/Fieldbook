@@ -173,10 +173,11 @@ public class KsuExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testValidate_ReturnsNoExceptionForValidHeaderNames() {
-		final String[] headerNames = {"plot", "ENTRY_NO", "GID", "DESIGNATION"};
+		final String[] headerNames = {"plot", "ENTRY_NO", "GID", "DESIGNATION", "PLOT_ID"};
 
 		final boolean result = this.ksuExcelImportStudy.isValidHeaderNames(headerNames);
 		Assert.assertTrue("Expecting to a positive result for valid header names", result);
 
 	}
+
 }

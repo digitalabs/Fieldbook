@@ -252,6 +252,127 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		return map;
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/inlineinput/accepted", method = RequestMethod.POST)
+	public Map<String, Object> markExperimentCellDataAsAccepted(@RequestBody Map<String, String> data, HttpServletRequest req) {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		int index = Integer.valueOf(data.get(NurseryMeasurementsController.INDEX));
+		int termId = Integer.valueOf(data.get(NurseryMeasurementsController.TERM_ID));
+
+		map.put(NurseryMeasurementsController.INDEX, index);
+
+		MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+
+		if (originalRow != null && originalRow.getMeasurementVariables() != null) {
+			for (MeasurementData var : originalRow.getDataList()) {
+				if (var != null && var.getMeasurementVariable().getTermId() == termId
+						&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
+								|| !var.getMeasurementVariable().getPossibleValues().isEmpty())) {
+					var.setAccepted(true);
+					if (this.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(),
+							var.getMeasurementVariable().getPossibleValues())) {
+						var.setCustomCategoricalValue(true);
+					} else {
+						var.setCustomCategoricalValue(false);
+					}
+					break;
+				} else if (var != null && var.getMeasurementVariable().getTermId() == termId
+						&& var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
+					var.setAccepted(true);
+					break;
+				}
+			}
+		}
+
+		map.put(NurseryMeasurementsController.SUCCESS, "1");
+		Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
+		map.put(NurseryMeasurementsController.DATA, dataMap);
+
+		return map;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/inlineinput/accepted/all", method = RequestMethod.GET)
+	public Map<String, Object> markAllExperimentDataAsAccepted() {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+			if (row != null && row.getMeasurementVariables() != null) {
+				this.markNonEmptyVariateValuesAsAccepted(row.getDataList());
+			}
+		}
+
+		map.put(ObservationMatrixController.SUCCESS, "1");
+
+		return map;
+	}
+
+	private void markNonEmptyVariateValuesAsAccepted(List<MeasurementData> measurementDataList) {
+		for (MeasurementData var : measurementDataList) {
+			if (var != null && !StringUtils.isEmpty(var.getValue())
+					&& var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
+				if (this.isNumericalValueOutOfBounds(var.getValue(), var.getMeasurementVariable())) {
+					var.setAccepted(true);
+				}
+			} else if (var != null && !StringUtils.isEmpty(var.getValue())
+					&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
+							|| !var.getMeasurementVariable().getPossibleValues().isEmpty())) {
+				var.setAccepted(true);
+				if (this.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(),
+						var.getMeasurementVariable().getPossibleValues())) {
+					var.setCustomCategoricalValue(true);
+				} else {
+					var.setCustomCategoricalValue(false);
+				}
+
+			}
+		}
+	}
+
+	private void markNonEmptyVariateValuesAsMissing(List<MeasurementData> measurementDataList) {
+		for (MeasurementData var : measurementDataList) {
+			if (var != null && !StringUtils.isEmpty(var.getValue())
+					&& var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
+				if (this.isNumericalValueOutOfBounds(var.getValue(), var.getMeasurementVariable())) {
+					var.setAccepted(true);
+					var.setValue(MeasurementData.MISSING_VALUE);
+				}
+			} else if (var != null && !StringUtils.isEmpty(var.getValue())
+					&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
+							|| !var.getMeasurementVariable().getPossibleValues().isEmpty())) {
+				var.setAccepted(true);
+				if (this.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(),
+						var.getMeasurementVariable().getPossibleValues())) {
+					var.setValue(MeasurementData.MISSING_VALUE);
+					var.setCustomCategoricalValue(true);
+				} else {
+					var.setCustomCategoricalValue(false);
+				}
+			}
+		}
+	}
+
+	protected boolean isNumericalValueOutOfBounds(String value, MeasurementVariable var) {
+		return var.getMinRange() != null && var.getMaxRange() != null && NumberUtils.isNumber(value)
+				&& (Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange());
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/inlineinput/missing/all", method = RequestMethod.GET)
+	public Map<String, Object> markAllExperimentDataAsMissing() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+			if (row != null && row.getMeasurementVariables() != null) {
+				this.markNonEmptyVariateValuesAsMissing(row.getDataList());
+			}
+		}
+		map.put(ObservationMatrixController.SUCCESS, "1");
+		return map;
+	}
+
 	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		// the 4 attributes are needed always

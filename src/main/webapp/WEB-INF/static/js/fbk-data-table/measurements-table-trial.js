@@ -773,3 +773,16 @@ function markAllCellAsMissing() {
 		}
 	});
 }
+
+function reloadMeasurementTable() {
+	'use strict';
+	if ($('#measurement-table').length !== 0) {
+		$.ajax({
+			url: '/Fieldbook/ImportManager/import/preview',
+			type: 'POST',
+			success: function(html) {
+				 onMeasurementsObservationLoad(false);
+			}
+		});
+	}
+}

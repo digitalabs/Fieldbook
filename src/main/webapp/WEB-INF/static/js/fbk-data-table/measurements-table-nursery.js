@@ -528,3 +528,119 @@ function processInlineEditInputNursery() {
 	}
 	return true;
 }
+
+function markCellAsMissing(indexElem, indexTermId, indexDataVal, isNew, elem) {
+	'use strict';
+	var data = {
+		index:indexElem,
+		termId:indexTermId,
+		value:indexDataVal,
+		isNew: isNew
+	};
+
+	$.ajax({
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		url: '/Fieldbook/nursery/measurements/inlineinput/single?isDiscard=0',
+		type: 'POST',
+		async: false,
+		data:   JSON.stringify(data),
+		contentType: 'application/json',
+		success: function(data) {
+			if (data.success === '1') {
+				var oTable = $('#measurement-table').dataTable();
+				oTable.fnUpdate(data.data, data.index, null, false); // Row
+				$(elem).removeClass('invalid-value');
+			} else {
+				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+			}
+		},
+		error: function() {
+			//TODO Localise the message
+			showErrorMessage('Server error', 'Could not update the measurement');
+		}
+	});
+}
+function markCellAsAccepted(indexElem, indexTermId, elem) {
+	'use strict';
+
+	var data = {
+		index: indexElem,
+		termId: indexTermId
+	};
+
+	$.ajax({
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		url: '/Fieldbook/nursery/measurements/inlineinput/accepted',
+		type: 'POST',
+		async: false,
+		data:   JSON.stringify(data),
+		contentType: 'application/json',
+		success: function(data) {
+			if (data.success === '1') {
+				var oTable = $('#measurement-table').dataTable();
+				oTable.fnUpdate(data.data, data.index, null, false); // Row
+				$(elem).removeClass('invalid-value');
+				$(elem).addClass('accepted-value');
+			} else {
+				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+				$('#measurement-table').data('show-inline-edit', '0');
+			}
+		}
+	});
+}
+function markAllCellAsAccepted() {
+	'use strict';
+
+	$.ajax({
+		url: '/Fieldbook/nursery/measurements/inlineinput/accepted/all',
+		type: 'GET',
+		async: false,
+		contentType: 'application/json',
+		success: function(data) {
+			if (data.success === '1') {
+				reloadMeasurementTable();
+				$('#reviewOutOfBoundsDataModal').modal('hide');
+			} else {
+				showErrorMessage('page-review-out-of-bounds-data-message-modal', data.errorMessage);
+			}
+		}
+	});
+}
+function markAllCellAsMissing() {
+	'use strict';
+
+	$.ajax({
+		url: '/Fieldbook/nursery/measurements/inlineinput/missing/all',
+		type: 'GET',
+		async: false,
+		contentType: 'application/json',
+		success: function(data) {
+			if (data.success === '1') {
+				reloadMeasurementTable();
+				$('#reviewOutOfBoundsDataModal').modal('hide');
+			} else {
+				showErrorMessage('page-review-out-of-bounds-data-message-modal', data.errorMessage);
+			}
+		}
+	});
+}
+
+function reloadMeasurementTable() {
+	'use strict';
+	if ($('#measurement-table').length !== 0) {
+		$.ajax({
+			url: '/Fieldbook/ImportManager/import/preview/nursery',
+			type: 'POST',
+			success: function(html) {
+				$('#measurementsDiv').html(html);
+				$('.import-study-data').data('data-import', '1');
+			}
+		});
+	}
+}

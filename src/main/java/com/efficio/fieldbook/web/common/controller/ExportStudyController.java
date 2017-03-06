@@ -292,12 +292,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(Integer.valueOf(studyId));
 			}
 			userSelection.setWorkbook(workbook);
-		} else {
-			// Otherwise we are exporting from the main "Open Trial" page. Use the one in user session.
-			// workbook.observations() collection is no longer pre-loaded into user session when trial is opened. Load now as we need it to
-			// keep export functionality working.
-			this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());
 		}
+		// workbook.observations() collection is no longer pre-loaded into user session when trial is opened. Load now as we need it to
+		// keep export functionality working.
+		this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());
 
 		LOG.info("Export Nursery/Trial : doExport : getWorbook : end");
 		LOG.info("Export Nursery/Trial : doExport : processWorbook : start");

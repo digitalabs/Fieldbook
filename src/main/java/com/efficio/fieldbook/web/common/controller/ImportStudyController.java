@@ -165,7 +165,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				}
 				String plotsNotFoundMessage = " ";
 				final Integer plotsNotFound = userSelection.getWorkbook().getPlotsIdNotfound();
-				if(plotsNotFound != null){
+				if (plotsNotFound != null && plotsNotFound != 0) {
 					plotsNotFoundMessage =
 						plotsNotFound + " "+ this.messageSource.getMessage("study.import.warning.plot.id.not.found", null, locale);
 				}

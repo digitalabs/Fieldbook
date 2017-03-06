@@ -395,7 +395,6 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			}
 
 			$('#measurementsDiv .mdt-columns').detach().insertAfter('.mdt-filtering');
-			$('.mdt-header').prepend($('#mdt-environment-list-panel').detach());
 			$('[name="measurement-table_length"]').addClass('inline-select mdt-table-length-selector');
 			$('.measurement-dropdown-menu a').click(function(e) {
 				var column;

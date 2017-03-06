@@ -34,6 +34,7 @@
 				$scope.changeEnvironmentForMeasurementDataTable = function($item, $model) {
 					$('#measurement-table').DataTable().ajax.url('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' +
 						$item.instanceDbId).load();
+					$scope.selectedEnvironment = $item;
 				};
 
 				$scope.getListOfAdditionalColumns = function() {

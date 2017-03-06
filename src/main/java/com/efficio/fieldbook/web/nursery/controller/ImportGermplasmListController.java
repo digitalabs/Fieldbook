@@ -544,7 +544,9 @@ public class ImportGermplasmListController extends SettingsController {
 				dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
 				dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
 				dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
-
+				dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
+				dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
+				 
 				if (!isNursery) {
 					germplasm.setEntryTypeValue(defaultTestCheckId);
 					germplasm.setEntryTypeCategoricalID(Integer.valueOf(defaultTestCheckId));
@@ -648,7 +650,9 @@ public class ImportGermplasmListController extends SettingsController {
 				dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
 				dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
 				dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
-
+				dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
+				dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
+				
 				if (!isNursery) {
 					if (germplasm.getEntryTypeValue() == null || "0".equals(germplasm.getEntryTypeValue())) {
 						germplasm.setEntryTypeValue(defaultTestCheckId);

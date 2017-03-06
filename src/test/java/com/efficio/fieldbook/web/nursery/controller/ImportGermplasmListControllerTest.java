@@ -38,6 +38,7 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.junit.Assert;
@@ -131,9 +132,11 @@ public class ImportGermplasmListControllerTest {
 
 	@InjectMocks
 	private ImportGermplasmListController importGermplasmListController;
+	private final String cropPrefix = "ABCD";
 
 	@Before
 	public void setUp() {
+		
 		this.settingDetailTestDataInitializer = new SettingDetailTestDataInitializer();
 		
 		final StandardVariable experimentalDesign =
@@ -628,12 +631,15 @@ public class ImportGermplasmListControllerTest {
 		project.setUniqueID("123");
 		project.setUserId(1);
 		project.setProjectId(Long.parseLong("123"));
+		final CropType cropType = new CropType();
+		cropType.setPlotCodePrefix(cropPrefix);
+		project.setCropType(cropType);
 		Mockito.when(this.importGermplasmListController.getCurrentProject()).thenReturn(project);
 
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.isA(Long.class), Matchers.isA(Integer.class))).thenReturn(1);
 		final Integer studyIdInSaveDataset = 3;
 
-		Mockito.when(this.dataImportService.saveDataset(workbook, true, true, project.getUniqueID())).thenReturn(studyIdInSaveDataset);
+		Mockito.when(this.dataImportService.saveDataset(workbook, true, true, project.getUniqueID(), cropPrefix)).thenReturn(studyIdInSaveDataset);
 		Mockito.doNothing().when(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyList(), Matchers.isA(Integer.class));
 
 		final List<ListDataProject> listDataProjects = new ArrayList<>();
@@ -651,7 +657,7 @@ public class ImportGermplasmListControllerTest {
 		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.isA(Workbook.class), Matchers.anyList(),
 				Matchers.isA(String.class), Matchers.anyBoolean());
 		Mockito.verify(this.workbenchService).getCurrentIbdbUserId(Matchers.isA(Long.class), Matchers.isA(Integer.class));
-		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID());
+		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID(), cropPrefix);
 		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyList(), Matchers.isA(Integer.class));
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
 

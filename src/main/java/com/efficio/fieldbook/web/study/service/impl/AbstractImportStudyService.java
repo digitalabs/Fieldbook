@@ -87,9 +87,9 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			final List<GermplasmChangeDetail> changeDetailsList = new ArrayList<>();
 
 			this.performWorkbookMetadataUpdate();
-			final Map<String, MeasurementRow> workBookMeasurementRowsMap =
+			final Map<String, MeasurementRow> measurementRowsMap =
 					this.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNo, workbook.isNursery());
-			this.performStudyDataImport(modes, parsedData, workBookMeasurementRowsMap, trialInstanceNo, changeDetailsList, workbook);
+			this.performStudyDataImport(modes, parsedData, measurementRowsMap, trialInstanceNo, changeDetailsList, workbook);
 
 			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService, 
 					workbook.getStudyDetails().getProgramUUID());

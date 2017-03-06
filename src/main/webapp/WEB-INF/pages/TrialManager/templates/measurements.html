@@ -14,6 +14,6 @@
 
 <br />
 <div id="measurementsDiv" ng-cloak="">	
-	<div th:include="/Common/showAddOrRemoveTraitsPagination"></div>
+	<div th:if="${createTrialForm != null and measurementRowCount != 0}" th:include="/Common/showAddOrRemoveTraitsPagination"></div>
 </div>
 </div>

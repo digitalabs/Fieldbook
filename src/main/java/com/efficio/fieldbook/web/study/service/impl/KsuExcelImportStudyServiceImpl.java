@@ -114,29 +114,6 @@ public class KsuExcelImportStudyServiceImpl extends AbstractExcelImportStudyServ
 		return headerNames;
 	}
 
-	@Override
-	protected String getColumnIndexesFromXlsSheet(final Sheet observationSheet, final List<MeasurementVariable> variables,
-			final String trialInstanceNumber) throws WorkbookParserException {
-		String plotLabel = null, entryLabel = null;
-		for (final MeasurementVariable variable : variables) {
-			if (variable.getTermId() == TermId.PLOT_NO.getId() || variable.getTermId() == TermId.PLOT_NNO.getId()) {
-				plotLabel = KsuFieldbookUtil.getLabelFromKsuRequiredColumn(variable);
-			} else if (variable.getTermId() == TermId.ENTRY_NO.getId()) {
-				entryLabel = KsuFieldbookUtil.getLabelFromKsuRequiredColumn(variable);
-			}
-		}
-		if (plotLabel != null && entryLabel != null) {
-			final String indexes = this.findColumns(observationSheet, trialInstanceNumber, plotLabel, entryLabel);
-			for (final String index : indexes.split(",")) {
-				if (!NumberUtils.isNumber(index) || "-1".equalsIgnoreCase(index)) {
-					return null;
-				}
-			}
-			return indexes;
-		}
-		return null;
-	}
-
     void setOntologyDataManager(OntologyDataManager ontologyDataManager) {
         this.ontologyDataManager = ontologyDataManager;
     }

@@ -740,8 +740,6 @@ function showFieldMapPopUpCreate(ids) {
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus, errorThrown);
-		},
-		complete: function() {
 		}
 	});
 }
@@ -1800,8 +1798,6 @@ function validatePlantsSelected() {
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log('The following error occured: ' + textStatus, errorThrown);
-			},
-			complete: function() {
 			}
 		});
 	}
@@ -1919,8 +1915,6 @@ function validateBreedingMethod() {
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log('The following error occured: ' + textStatus, errorThrown);
-			},
-			complete: function() {
 			}
 		});
 	}
@@ -2067,8 +2061,6 @@ function recreateMethodCombo(possibleFavorite) {
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus, errorThrown);
-		},
-		complete: function() {
 		}
 	});
 }
@@ -3472,8 +3464,6 @@ function loadDatasetDropdown(optionTag) {
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus,
 					errorThrown);
-		},
-		complete: function() {
 		}
 	});
 }

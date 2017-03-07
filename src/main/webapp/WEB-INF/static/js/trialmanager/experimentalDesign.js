@@ -209,14 +209,13 @@
 						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 						$('#chooseGermplasmAndChecks').data('replace', '1');
 						$scope.toggleIsPresetWithGeneratedDesign();
+						//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
+						$rootScope.$broadcast('previewMeasurements');
+						$('body').addClass('preview-measurements-only');
 					};
 
 					// on click generate design button
 					$scope.generateDesign = function() {
-
-                        //if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
-                        $rootScope.$broadcast('previewMeasurements');
-                        $('body').addClass('preview-measurements-only');
 
 						if (!$scope.doValidate()) {
 							return;

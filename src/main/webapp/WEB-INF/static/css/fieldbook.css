@@ -319,12 +319,6 @@ div.DTFC_RightWrapper table.table-curved {
     table-layout: fixed;
 }
 
-#measurement-table_wrapper > div > div:nth-child(2) {
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-
 .form-group {
     margin-bottom: 6px;
 }

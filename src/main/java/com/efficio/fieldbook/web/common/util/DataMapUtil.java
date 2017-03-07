@@ -17,7 +17,6 @@ public class DataMapUtil {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		// the 3 attributes are needed always
 		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
-		dataMap.put("DESIGNATION", row.getMeasurementDataValue(TermId.DESIG.getId()));
 
 		// initialize suffix as empty string if its null
 		suffix = null == suffix ? "" : suffix;
@@ -38,6 +37,7 @@ public class DataMapUtil {
 			}
 		}
 
+		dataMap.put("DESIGNATION", row.getMeasurementDataValue(TermId.DESIG.getId()));
 		dataMap.put("GID", row.getMeasurementDataValue(TermId.GID.getId()));
 
 		// generate measurement row data from newly added traits (no data yet)

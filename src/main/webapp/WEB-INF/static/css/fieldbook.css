@@ -1160,8 +1160,12 @@ a.fbk-edit-experiment{
 
 /* Measurements Tab */
 
-.mdt-header {
+.edit-measurements-panel .mdt-header {
     height: 75px;
+}
+
+.preview-measurements-panel .mdt-header {
+    height: 45px;
 }
 
 .mdt-header .dataTables_length,

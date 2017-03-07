@@ -73,6 +73,8 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 	return nRow;
 };
 
+var sortableColumns = ["GID", "DESIGNATION", "ENTRY_NO", "ENTRY_TYPE", "SEED_SOURCE", "REP_NO", "PLOT_NO", "BLOCK_NO", "ROW_NO", "COL_NO"];
+
 var getColumns = function(displayColumns, displayTrialInstance) {
 	var columns = [],
 		columnsDef = [];
@@ -83,6 +85,7 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 			data: displayColumn.name,
 			termId: displayColumn.termId,
 			defaultContent: '',
+			orderable: displayColumn.variableType === "TRAIT" ? true : $.inArray(displayColumn.name, sortableColumns) > -1,
 			className: displayColumn.factor === true ? 'factors' : 'variates'
 		});
 
@@ -130,7 +133,6 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 			columnsDef.push({
 				defaultContent: '',
 				targets: columns.length - 1,
-
 				createdCell: function(td, cellData, rowData, row, col) {
 					$(td).data('term-id', termId);
 					$(td).data('phenotype-id', cellData[1]);
@@ -280,6 +282,15 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			var columnsObj = getColumns(displayColumns, false);
 			columns = columnsObj.columns;
 			columnsDef = columnsObj.columnsDef;
+			// column index is usually 6 but not always. 
+			// Depends on how many germplasm factors are there. So we determine actual one from the column list.
+			var plotNoIndex = 6; 
+			for (var i = 0; i < displayColumns.length; i++) {
+				if (displayColumns[i].name === "PLOT_NO") {
+					plotNoIndex = i;
+					break;
+				}
+			}
 
 			table = $(tableIdentifier).DataTable({
 				destroy: true,
@@ -292,7 +303,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				bAutoWidth: true,
 				iDisplayLength: 100,
 				serverSide: true,
-				aaSorting: [[6, 'asc']], // column index 6 = PLOT_NO which is what we want to sort by, by default.
+				aaSorting: [[plotNoIndex, 'asc']], 
 				processing: true,
 				deferRender: true,
 				ajax: {

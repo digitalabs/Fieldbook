@@ -45,8 +45,14 @@
 				};
 
 				$scope.previewMeasurements = function() {			
-					new BMS.Fieldbook.PreviewMeasurementsDataTable('#preview-measurement-table', 
-							encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
+					 $.when(new BMS.Fieldbook.PreviewMeasurementsDataTable('#preview-measurement-table',
+					 	encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())))
+					 ).then(function () {
+					 		if ($('preview-measurement-table').length !== 0 && $('preview-measurement-table').dataTable()) {
+					 			$('preview-measurement-table').dataTable().fnAdjustColumnSizing();
+					 		}
+					 	}
+					 );
 				};
 
 				$scope.reloadMeasurements = function() {

@@ -358,10 +358,18 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				if (targetState === 'editMeasurements') {
 					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
 					// of the table if we do not do that
-					if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
-						$timeout(function() {
-							$('#measurement-table').dataTable().fnAdjustColumnSizing();
-						}, 1);
+					if ($('body').hasClass('preview-measurements-only')) {
+						if ($('#preview-measurement-table').length !== 0 && $('#preview-measurement-table').dataTable()) {
+							$timeout(function() {
+								$('#preview-measurement-table').dataTable().fnAdjustColumnSizing();
+							}, 1);
+                        }
+					} else {
+						if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
+							$timeout(function() {
+								$('#measurement-table').dataTable().fnAdjustColumnSizing();
+							}, 1);
+						}
 					}
 
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {

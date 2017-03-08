@@ -390,6 +390,22 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 							$('#preview-measurement-table').dataTable().fnAdjustColumnSizing();
 						}, 1);
 					}
+				} else if (targetState === 'germplasm') {
+					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
+					// of the table if we do not do that
+                    if ($('#tableForGermplasm').length !== 0 && $('#tableForGermplasm').dataTable() !== null) {
+                    	$timeout(function() {
+                    		$('#tableForGermplasm').dataTable().fnAdjustColumnSizing();
+                    	}, 1);
+                    }
+				} else if (targetState === 'environment') {
+					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
+                	// of the table if we do not do that
+					if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
+					 	$timeout(function() {
+					 		$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
+					 	}, 1);
+					}
 				}
 			};
 

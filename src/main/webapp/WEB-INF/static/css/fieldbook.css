@@ -1154,7 +1154,8 @@ a.fbk-edit-experiment{
 
 /* Measurements Tab */
 
-.edit-measurements-panel .mdt-header {
+.edit-measurements-panel .mdt-header,
+.import-preview-measurements-panel .mdt-header {
     height: 75px;
 }
 
@@ -2083,7 +2084,6 @@ input.select-all-margin{
     padding-left:0 !important;
 }
 
-<<<<<<< HEAD
 /* Styles for Measurements data table */
 
 #mdt-environment-list-label.dataTables_info.fbk-std-padding-right {

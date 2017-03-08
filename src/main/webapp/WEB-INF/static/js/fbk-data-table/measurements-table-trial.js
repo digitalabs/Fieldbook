@@ -687,6 +687,8 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 				$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 			});
 
+			$('[name="import-preview-measurement-table_length"]').addClass('inline-select mdt-table-length-selector');
+
 			$('.measurement-dropdown-menu a').click(function(e) {
 				var column;
 

@@ -356,11 +356,14 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				$scope.isSettingsTab = true;
 				$scope.tabSelected = targetState;
 				if (targetState === 'editMeasurements') {
+					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
+					// of the table if we do not do that
 					if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
 						$timeout(function() {
 							$('#measurement-table').dataTable().fnAdjustColumnSizing();
 						}, 1);
 					}
+
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
@@ -374,6 +377,14 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
+					}
+
+					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
+                    // of the table if we do not do that
+					if ($('#preview-measurement-table').length !== 0 && $('#preview-measurement-table').dataTable()) {
+						$timeout(function() {
+							$('#preview-measurement-table').dataTable().fnAdjustColumnSizing();
+						}, 1);
 					}
 				}
 			};

@@ -14,6 +14,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -689,14 +690,26 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 					dataMap.put(data.getTrait().getTraitName(),
 							new Object[] {"", "", false, data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 				} else {
+
+					boolean isCategoricalValueFound = false;
 					String catName = "";
 					String catDisplayValue = "";
+
+					// Find the categorical value (possible value) of the measurement data, so we can get its name and definition.
 					for (TermSummary category : measurementVariable.getScale().getCategories()) {
 						if (category.getName().equals(data.getTriatValue())) {
 							catName = category.getName();
 							catDisplayValue = category.getDefinition();
+							isCategoricalValueFound = true;
 							break;
 						}
+					}
+
+					// If the measurement value is out of range from categorical values, then the assumption is, it is custom value.
+					// For this case, just display the measaurement data as is.
+					if (isCategoricalValueFound) {
+						catName = data.getTriatValue();
+						catDisplayValue = data.getTriatValue();
 					}
 					dataMap.put(data.getTrait().getTraitName(), new Object[] {catName + suffix, catDisplayValue + suffix, true,
 							data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});

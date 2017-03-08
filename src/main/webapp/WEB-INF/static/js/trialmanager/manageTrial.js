@@ -374,6 +374,9 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 							'Please select a design type and specify the parameters for your trial again', 10000);
 					}
 				} else if (targetState === 'createMeasurements') {
+					if (TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
+						$rootScope.$broadcast('previewMeasurements');
+                    }
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
@@ -381,7 +384,8 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
                     // of the table if we do not do that
-					if ($('#preview-measurement-table').length !== 0 && $('#preview-measurement-table').dataTable()) {
+					if (!TrialManagerDataService.applicationData.unsavedGeneratedDesign && $('#preview-measurement-table').length !== 0 &&
+						$('#preview-measurement-table').dataTable()) {
 						$timeout(function() {
 							$('#preview-measurement-table').dataTable().fnAdjustColumnSizing();
 						}, 1);

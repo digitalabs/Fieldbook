@@ -244,9 +244,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					}
 
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
+					// design should be regenerated
+					TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
 				} else if (Number(newVal) > Number(oldVal)) {
 					addNewEnvironments(newVal - oldVal);
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
+					// design should be regenerated
+					TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
 				}
 			});
 
@@ -362,6 +366,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			}
 
 			function updateDeletedEnvironment(index) {
+
+				// design should be regenerated
+                TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
+
 				// remove 1 environment
 				$scope.temp.noOfEnvironments -= 1;
 				$scope.data.environments.splice(index, 1);
@@ -381,7 +389,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments, 10);
 				$scope.temp.noOfEnvironments = parseInt($scope.temp.noOfEnvironments, 10) + addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
-				addNewEnvironments(addtlNumOfEnvironments,$stateParams.displayWarningMessage);
+				addNewEnvironments(addtlNumOfEnvironments, $stateParams.displayWarningMessage);
 			}
 		}]).factory('DTLoadingTemplate', function() {
 			return {

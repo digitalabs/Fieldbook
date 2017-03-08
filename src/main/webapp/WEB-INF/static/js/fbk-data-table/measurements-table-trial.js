@@ -73,7 +73,7 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 	return nRow;
 };
 
-var sortableColumns = ["GID", "DESIGNATION", "ENTRY_NO", "ENTRY_TYPE", "SEED_SOURCE", "REP_NO", "PLOT_NO", "BLOCK_NO", "ROW_NO", "COL_NO"];
+var sortableColumns = ["GID", "DESIGNATION", "ENTRY_NO", "ENTRY_TYPE", "ENTRY_CODE", "REP_NO", "PLOT_NO", "BLOCK_NO", "ROW_NO", "COL_NO"];
 
 var getColumns = function(displayColumns, displayTrialInstance) {
 	var columns = [],

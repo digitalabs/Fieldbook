@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -710,6 +711,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		}
 
 		dataMap.put(TermId.ENTRY_NO.name(), new Object[] {row.getEntryNo(), false});
+		dataMap.put(TermId.ENTRY_CODE.name(), new Object[] {row.getEntryCode(), false});
 		dataMap.put(TermId.ENTRY_TYPE.name(), new Object[] {row.getEntryType(), row.getEntryType(), false});
 		dataMap.put(TermId.PLOT_NO.name(), new Object[] {row.getPlotNumber(), false});
 		dataMap.put(TermId.REP_NO.name(), new Object[] {row.getRepitionNumber(), false});
@@ -717,6 +719,10 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		dataMap.put(TermId.ROW.name(), new Object[] {row.getRowNumber(), false});
 		dataMap.put(TermId.COL.name(), new Object[] {row.getColumnNumber(), false});
 		dataMap.put("TRIAL_INSTANCE", new Object[] {row.getTrialInstance(), false});
+
+		for (Pair<String, String> additionalGermplasmAttrCols : row.getAdditionalGermplasmDescriptors()) {
+			dataMap.put(additionalGermplasmAttrCols.getLeft(), new Object[] {additionalGermplasmAttrCols.getRight()});
+		}
 
 		// generate measurement row data from newly added traits (no data yet)
 		final UserSelection userSelection = this.getUserSelection();

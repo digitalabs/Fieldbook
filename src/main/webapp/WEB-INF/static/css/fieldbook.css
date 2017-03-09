@@ -1422,6 +1422,10 @@ input.inputForNumberingAndChecks {
     background: white;
 }
 
+.select2-highlighted.ui-select-choices-row:hover {
+    background-color:  #428bca !important;
+}
+
 .s2-nosearch-icon .select2-input {
     background: no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee))
 }

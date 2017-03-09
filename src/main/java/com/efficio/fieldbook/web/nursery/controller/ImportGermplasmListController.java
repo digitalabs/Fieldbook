@@ -522,7 +522,7 @@ public class ImportGermplasmListController extends SettingsController {
 			form.setStartingEntryNo(list.get(0).getEntryId().toString());
 
 			if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
-				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getDataList().get(3).getValue());
+				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getMeasurementDataValue(TermId.PLOT_NO.getId()));
 			}
 
 			// Set the default value of starting plot number to 1
@@ -636,7 +636,7 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 
 			if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
-				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getDataList().get(3).getValue());
+				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getMeasurementDataValue(TermId.PLOT_NO.getId()));
 			}
 
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();

@@ -641,22 +641,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 			if (measurementVariable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
 
-				if (StringUtils.isBlank(data.getTriatValue())) {
-					dataMap.put(data.getTrait().getTraitName(),
-							new Object[] {"", "", false, data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
-				} else {
-					String catName = "";
-					String catDisplayValue = "";
-					for (TermSummary category : measurementVariable.getScale().getCategories()) {
-						if (category.getName().equals(data.getTriatValue())) {
-							catName = category.getName();
-							catDisplayValue = category.getDefinition();
-							break;
-						}
-					}
-					dataMap.put(data.getTrait().getTraitName(), new Object[] {catName + suffix, catDisplayValue + suffix, true,
-							data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
-				}
+				this.addDataTableDataMapForCategoricalVariable(measurementVariable, data, dataMap, suffix);
+
 			} else if (measurementVariable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
 				dataMap.put(data.getTrait().getTraitName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "", true,
 						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
@@ -696,6 +682,40 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 		return dataMap;
 	}
+
+	void addDataTableDataMapForCategoricalVariable(final Variable measurementVariable, final MeasurementDto data, final Map<String, Object> dataMap, final String suffix) {
+
+		if (StringUtils.isBlank(data.getTriatValue())) {
+			dataMap.put(data.getTrait().getTraitName(),
+					new Object[] {"", "", false, data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
+		} else {
+			boolean isCategoricalValueFound = false;
+			String catName = "";
+			String catDisplayValue = "";
+
+			// Find the categorical value (possible value) of the measurement data, so we can get its name and definition.
+			for (TermSummary category : measurementVariable.getScale().getCategories()) {
+				if (category.getName().equals(data.getTriatValue())) {
+					catName = category.getName();
+					catDisplayValue = category.getDefinition();
+					isCategoricalValueFound = true;
+					break;
+				}
+			}
+
+			// If the measurement value is out of range from categorical values, then the assumption is, it is custom value.
+			// For this case, just display the measaurement data as is.
+			if (!isCategoricalValueFound) {
+				catName = data.getTriatValue();
+				catDisplayValue = data.getTriatValue();
+			}
+			dataMap.put(data.getTrait().getTraitName(), new Object[] {catName + suffix, catDisplayValue + suffix, true,
+					data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
+		}
+
+
+	}
+
 
 	void setValidationService(ValidationService validationService) {
 		this.validationService = validationService;

@@ -52,6 +52,9 @@ import junit.framework.Assert;
 
 public class TrialMeasurementsControllerTest {
 
+	public static final String ALEUCOL_1_5_TRAIT_NAME = "ALEUCOL_1_5";
+	public static final int ALEUCOL_1_5_TERM_ID = 123;
+
 	private TrialMeasurementsController trialMeasurementsController;
 	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
 	private OntologyVariableDataManager ontologyVariableDataManager;
@@ -719,4 +722,99 @@ public class TrialMeasurementsControllerTest {
 		Assert.assertEquals("ENTRY_NO", sortByArg.getValue());
 		Assert.assertEquals("desc", sortOrderArg.getValue());
 	}
+
+	@Test
+	public void testAddDataTableDataMapForCategoricalVariableBlankMeasurementDto() {
+
+		Map<String, Object> dataMap = new HashMap<>();
+
+		final Variable measurementVariable = new Variable();
+		final int aleucolPhenotypeId = 456;
+		final String aleucolPhenotypeTraitValue = "";
+
+		final MeasurementDto measurementDto = new MeasurementDto(new TraitDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
+
+		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap ,"");
+
+		Assert.assertEquals(1, dataMap.size());
+		Assert.assertTrue(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME));
+
+		Object[] values = (Object[]) dataMap.get(ALEUCOL_1_5_TRAIT_NAME);
+
+		Assert.assertEquals("", values[0]);
+		Assert.assertEquals("", values[1]);
+		Assert.assertEquals(false, values[2]);
+		Assert.assertEquals(aleucolPhenotypeId, values[3]);
+
+	}
+
+
+	@Test
+	public void testAddDataTableDataMapForCategoricalVariableTraitValueIsOutOfRangeFromCategoricalValues() {
+
+		Map<String, Object> dataMap = new HashMap<>();
+
+		final Variable measurementVariable = createTestVariable();
+
+
+		final int aleucolPhenotypeId = 456;
+		final String aleucolPhenotypeTraitValue = "DDD";
+
+		final MeasurementDto measurementDto = new MeasurementDto(new TraitDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
+
+		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap ,"");
+
+		Assert.assertEquals(1, dataMap.size());
+		Assert.assertTrue(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME));
+
+		Object[] values = (Object[]) dataMap.get(ALEUCOL_1_5_TRAIT_NAME);
+
+		Assert.assertEquals(aleucolPhenotypeTraitValue, values[0]);
+		Assert.assertEquals(aleucolPhenotypeTraitValue, values[1]);
+		Assert.assertEquals(true, values[2]);
+		Assert.assertEquals(aleucolPhenotypeId, values[3]);
+
+	}
+
+
+	@Test
+	public void testAddDataTableDataMapForCategoricalVariableTraitValueIsWithinCategoricalValues() {
+
+		Map<String, Object> dataMap = new HashMap<>();
+
+		final Variable measurementVariable = createTestVariable();
+
+
+		final int aleucolPhenotypeId = 456;
+		final String aleucolPhenotypeTraitValue = "AAA";
+
+		final MeasurementDto measurementDto = new MeasurementDto(new TraitDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
+
+		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap ,"");
+
+		Assert.assertEquals(1, dataMap.size());
+		Assert.assertTrue(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME));
+
+		Object[] values = (Object[]) dataMap.get(ALEUCOL_1_5_TRAIT_NAME);
+
+		Assert.assertEquals(aleucolPhenotypeTraitValue, values[0]);
+		Assert.assertEquals("AAA Definition 1", values[1]);
+		Assert.assertEquals(true, values[2]);
+		Assert.assertEquals(aleucolPhenotypeId, values[3]);
+
+	}
+
+	private Variable createTestVariable() {
+
+		final Variable measurementVariable = new Variable();
+		final Scale scale = new Scale();
+		scale.addCategory(new TermSummary(1, "AAA", "AAA Definition 1"));
+		scale.addCategory(new TermSummary(2, "BBB", "AAA Definition 2"));
+		scale.addCategory(new TermSummary(3, "CCC", "AAA Definition 3"));
+		measurementVariable.setScale(scale);
+
+		return measurementVariable;
+
+	}
+
 }

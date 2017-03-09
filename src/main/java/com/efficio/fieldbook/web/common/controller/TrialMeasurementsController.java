@@ -59,7 +59,6 @@ import com.efficio.fieldbook.web.nursery.service.ValidationService;
 public class TrialMeasurementsController extends AbstractBaseFieldbookController {
 
 	private static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
-	private static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
 	private static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrialMeasurementsController.class);
@@ -118,26 +117,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		form.changePage(pageNum);
 		userSelection.setCurrentPage(form.getCurrentPage());
 		return super.showAjaxPage(model, TrialMeasurementsController.PAGINATION_TEMPLATE);
-	}
-
-	@RequestMapping(value = "/pageView/{studyType}/{pageNum}", method = RequestMethod.GET)
-	public String getPaginatedListViewOnly(@PathVariable String studyType, @PathVariable int pageNum,
-			@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, @RequestParam("listIdentifier") String datasetId) {
-
-		UserSelection userSelection = this.getUserSelection();
-
-		List<MeasurementRow> rows = this.paginationListSelection.getReviewDetailsList(datasetId);
-		if (rows != null) {
-			form.setMeasurementRowList(rows);
-			form.changePage(pageNum);
-		}
-		List<MeasurementVariable> variables = this.paginationListSelection.getReviewVariableList(datasetId);
-		if (variables != null) {
-			form.setMeasurementVariables(variables);
-		}
-		form.changePage(pageNum);
-		userSelection.setCurrentPage(form.getCurrentPage());
-		return super.showAjaxPage(model, TrialMeasurementsController.PAGINATION_TEMPLATE_VIEW_ONLY);
 	}
 
 	@ResponseBody

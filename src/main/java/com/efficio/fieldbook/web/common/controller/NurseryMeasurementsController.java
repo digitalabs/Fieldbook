@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -308,6 +309,24 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		map.put(NurseryMeasurementsController.SUCCESS, "1");
 
 		return map;
+	}
+
+	@RequestMapping(value = "/pageView/{studyType}/{pageNum}", method = RequestMethod.GET)
+	public String getPaginatedListViewOnly(@PathVariable String studyType, @PathVariable int pageNum,
+			@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, @RequestParam("listIdentifier") String datasetId) {
+
+		List<MeasurementRow> rows = this.paginationListSelection.getReviewDetailsList(datasetId);
+		if (rows != null) {
+			form.setMeasurementRowList(rows);
+			form.changePage(pageNum);
+		}
+		List<MeasurementVariable> variables = this.paginationListSelection.getReviewVariableList(datasetId);
+		if (variables != null) {
+			form.setMeasurementVariables(variables);
+		}
+		form.changePage(pageNum);
+		userSelection.setCurrentPage(form.getCurrentPage());
+		return super.showAjaxPage(model, "/NurseryManager/datasetSummaryView");
 	}
 
 	private void markNonEmptyVariateValuesAsAccepted(List<MeasurementData> measurementDataList) {

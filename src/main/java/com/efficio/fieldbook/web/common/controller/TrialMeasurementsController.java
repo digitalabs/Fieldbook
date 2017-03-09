@@ -58,7 +58,6 @@ import com.efficio.fieldbook.web.nursery.service.ValidationService;
 @RequestMapping("/trial/measurements")
 public class TrialMeasurementsController extends AbstractBaseFieldbookController {
 
-	private static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
 	private static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrialMeasurementsController.class);
@@ -96,27 +95,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@Override
 	public String getContentName() {
 		return null;
-	}
-
-	/**
-	 * Get for the pagination of the list
-	 * 
-	 * @param form the form
-	 * @param model the model
-	 * @return the string
-	 */
-	@RequestMapping(value = "/reload/{studyType}/{pageNum}/{previewPageNum}", method = RequestMethod.GET)
-	public String getPaginatedListAfterImport(@PathVariable String studyType, @PathVariable int pageNum, @PathVariable int previewPageNum,
-			@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
-
-		UserSelection userSelection = this.getUserSelection();
-		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
-		form.setMeasurementRowList(userSelection.getWorkbook().getObservations());
-		form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
-		form.setStudyName(userSelection.getWorkbook().getStudyDetails().getStudyName());
-		form.changePage(pageNum);
-		userSelection.setCurrentPage(form.getCurrentPage());
-		return super.showAjaxPage(model, TrialMeasurementsController.PAGINATION_TEMPLATE);
 	}
 
 	@ResponseBody

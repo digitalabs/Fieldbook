@@ -305,7 +305,7 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 			}
 		}
 
-		map.put(ObservationMatrixController.SUCCESS, "1");
+		map.put(NurseryMeasurementsController.SUCCESS, "1");
 
 		return map;
 	}
@@ -369,7 +369,7 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 				this.markNonEmptyVariateValuesAsMissing(row.getDataList());
 			}
 		}
-		map.put(ObservationMatrixController.SUCCESS, "1");
+		map.put(TrialMeasurementsController.SUCCESS, "1");
 		return map;
 	}
 

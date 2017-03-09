@@ -35,6 +35,7 @@ import org.generationcp.middleware.service.api.study.StudyService;
 import org.generationcp.middleware.service.api.study.TraitDto;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -592,6 +593,8 @@ public class ObservationMatrixControllerTest {
 		final MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addParameter("pageNumber", "1");
 		request.addParameter("pageSize", "10");
+		request.addParameter("sortBy", "ENTRY_NO");
+		request.addParameter("sortOrder", "desc");
 
 		String drawParam = "drawParamValue";
 		request.addParameter("draw", drawParam);
@@ -704,5 +707,16 @@ public class ObservationMatrixControllerTest {
 				Arrays.equals(new Object[] {category1.getName(), category1.getDefinition(), true, mesaurementCategorical.getPhenotypeId()},
 				(Object[]) onePlotMeasurementData.get(mesaurementCategorical.getTrait().getTraitName())));
 
+		ArgumentCaptor<Integer> pageNumberArg = ArgumentCaptor.forClass(Integer.class);
+		ArgumentCaptor<Integer> pageSizeArg = ArgumentCaptor.forClass(Integer.class);
+		ArgumentCaptor<String> sortByArg = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<String> sortOrderArg = ArgumentCaptor.forClass(String.class);
+
+		Mockito.verify(studyService).getObservations(Mockito.anyInt(), Mockito.anyInt(), pageNumberArg.capture(),
+				pageSizeArg.capture(), sortByArg.capture(), sortOrderArg.capture());
+		Assert.assertEquals(new Integer(1), pageNumberArg.getValue());
+		Assert.assertEquals(new Integer(10), pageSizeArg.getValue());
+		Assert.assertEquals("ENTRY_NO", sortByArg.getValue());
+		Assert.assertEquals("desc", sortOrderArg.getValue());
 	}
 }

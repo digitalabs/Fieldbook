@@ -603,7 +603,10 @@ public class ObservationMatrixControllerTest {
 
 		List<MeasurementDto> measurements = Lists.newArrayList(measurementText, measurementNumeric, mesaurementCategorical);
 		ObservationDto observationDto =
-				new ObservationDto(123, "1", "Test Entry", 300, "CML123", "5", "CIMMYT Seed Bank", "2", "10", "3", measurements);
+				new ObservationDto(123, "1", "Test Entry", 300, "CML123", "5", "Entry Code", "2", "10", "3", measurements);
+
+		observationDto.additionalGermplasmDescriptor("StockID", "STCK-123");
+		observationDto.additionalGermplasmDescriptor("CROSS", "ABC12/XYZ34");
 
 		List<ObservationDto> observations = Lists.newArrayList(observationDto);
 		Mockito.when(studyService.getObservations(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(),
@@ -664,6 +667,12 @@ public class ObservationMatrixControllerTest {
 
 		Assert.assertTrue(
 				Arrays.equals(new Object[] {observationDto.getEntryNo(), false}, (Object[]) onePlotMeasurementData.get("ENTRY_NO")));
+
+		Assert.assertTrue(
+				Arrays.equals(new Object[] {observationDto.getEntryCode(), false}, (Object[]) onePlotMeasurementData.get("ENTRY_CODE")));
+
+		Assert.assertTrue(Arrays.equals(new Object[] {"STCK-123"}, (Object[]) onePlotMeasurementData.get("StockID")));
+		Assert.assertTrue(Arrays.equals(new Object[] {"ABC12/XYZ34"}, (Object[]) onePlotMeasurementData.get("CROSS")));
 
 		Assert.assertTrue(
 				Arrays.equals(new Object[] {observationDto.getEntryType(), observationDto.getEntryType(), false},

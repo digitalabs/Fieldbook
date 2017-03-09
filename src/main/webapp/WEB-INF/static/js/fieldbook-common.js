@@ -2503,12 +2503,13 @@ function recreateMethodComboAfterClose(comboName, data) {
 function changeBuildOption() {
 	'use strict';
 	if ($('#studyBuildOption').is(':checked')) {
-		$('#choosePreviousStudy').removeClass('fbk-hide');
-		$('#choosePreviousStudy').addClass('fbk-show-inline');
+		$('#choosePreviousStudy, #resetTabsData')
+			.removeClass('fbk-hide')
+			.addClass('fbk-show-inline');
 	} else {
-		$('#choosePreviousStudy').addClass('fbk-hide');
-		$('#choosePreviousStudy').removeClass('fbk-show-inline');
-		clearSettings();
+		$('#choosePreviousStudy, #resetTabsData')
+			.addClass('fbk-hide')
+			.removeClass('fbk-show-inline');
 	}
 }
 

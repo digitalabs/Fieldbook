@@ -58,10 +58,10 @@ import com.efficio.fieldbook.web.nursery.service.ValidationService;
 @RequestMapping("/trial/measurements")
 public class TrialMeasurementsController extends AbstractBaseFieldbookController {
 
-	public static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
-	public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
-	public static final String EDIT_EXPERIMENT_TEMPLATE = "/Common/updateExperimentModal";
-	public static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
+	private static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
+	private static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
+	private static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
+
 	private static final Logger LOG = LoggerFactory.getLogger(TrialMeasurementsController.class);
 	private static final String STATUS = "status";
 	private static final String ERROR_MESSAGE = "errorMessage";

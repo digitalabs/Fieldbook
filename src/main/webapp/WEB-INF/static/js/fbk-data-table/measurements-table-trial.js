@@ -1,3 +1,4 @@
+/*globals isCategoricalDisplay */
 var getCurrentEnvironmentNumber = function() {
 	var selEnv = $('#fbk-measurements-controller-div').scope().selectedEnvironment;
 
@@ -795,7 +796,7 @@ function reloadMeasurementTable() {
 			url: '/Fieldbook/ImportManager/import/preview',
 			type: 'POST',
 			success: function(html) {
-				 onMeasurementsObservationLoad(false);
+				 onMeasurementsObservationLoad(isCategoricalDisplay);
 			}
 		});
 	}

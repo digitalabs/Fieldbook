@@ -1,4 +1,4 @@
-/*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
+/*globals angular, displayStudyGermplasmSection, isStudyNameUnique, showSuccessfulMessage, isCategoricalDisplay,
  showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
  invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates, showErrorMessage*/
 (function() {
@@ -546,7 +546,7 @@
 
                     // GLOBAL
                     if ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) {
-                    	onMeasurementsObservationLoad(false);
+                    	onMeasurementsObservationLoad(isCategoricalDisplay);
                     }
 				},
 				onUpdateData: function(dataKey, updateFunction) {

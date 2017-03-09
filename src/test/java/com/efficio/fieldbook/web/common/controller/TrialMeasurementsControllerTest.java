@@ -50,9 +50,9 @@ import com.google.common.collect.Lists;
 
 import junit.framework.Assert;
 
-public class ObservationMatrixControllerTest {
+public class TrialMeasurementsControllerTest {
 
-	private ObservationMatrixController observationMatrixController;
+	private TrialMeasurementsController trialMeasurementsController;
 	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
 	private OntologyVariableDataManager ontologyVariableDataManager;
 	private StudyDataManager studyDataManager;
@@ -62,18 +62,18 @@ public class ObservationMatrixControllerTest {
 
 	@Before
 	public void setUp() {
-		this.observationMatrixController = new ObservationMatrixController();
+		this.trialMeasurementsController = new TrialMeasurementsController();
 		this.measurementDataTestDataInitializer = new MeasurementDataTestDataInitializer();
 		this.ontologyVariableDataManager = Mockito.mock(OntologyVariableDataManager.class);
-		this.observationMatrixController.setOntologyVariableDataManager(this.ontologyVariableDataManager);
+		this.trialMeasurementsController.setOntologyVariableDataManager(this.ontologyVariableDataManager);
 		this.studyDataManager = Mockito.mock(StudyDataManager.class);
-		this.observationMatrixController.setStudyDataManager(this.studyDataManager);
+		this.trialMeasurementsController.setStudyDataManager(this.studyDataManager);
 		this.contextUtil = Mockito.mock(ContextUtil.class);
-		this.observationMatrixController.setContextUtil(this.contextUtil);
+		this.trialMeasurementsController.setContextUtil(this.contextUtil);
 		this.fieldbookService = Mockito.mock(FieldbookService.class);
-		this.observationMatrixController.setFieldbookService(this.fieldbookService);
+		this.trialMeasurementsController.setFieldbookService(this.fieldbookService);
 		this.studyService = Mockito.mock(StudyService.class);
-		this.observationMatrixController.setStudyService(this.studyService);
+		this.trialMeasurementsController.setStudyService(this.studyService);
 	}
 
 	@Test
@@ -84,7 +84,7 @@ public class ObservationMatrixControllerTest {
 		MeasurementRow valueRow = new MeasurementRow();
 		valueRow.setDataList(this.generateTestDataList());
 
-		this.observationMatrixController.copyMeasurementValue(origRow, valueRow);
+		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
 			Assert.assertEquals("The origRow's measurement value must be equal to the valueRow's measurement value", origRow.getDataList()
@@ -117,7 +117,7 @@ public class ObservationMatrixControllerTest {
 		origRow.getDataList().add(nullData);
 		valueRow.getDataList().add(nullData);
 
-		this.observationMatrixController.copyMeasurementValue(origRow, valueRow);
+		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
 			Assert.assertEquals("The origRow's measurement value must be equal to the valueRow's measurement value", origRow.getDataList()
@@ -159,7 +159,7 @@ public class ObservationMatrixControllerTest {
 		origRow.getDataList().add(data);
 		valueRow.getDataList().add(data2);
 
-		this.observationMatrixController.copyMeasurementValue(origRow, valueRow);
+		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
 			Assert.assertEquals("The origRow's measurement value must be equal to the valueRow's measurement value", origRow.getDataList()
@@ -188,7 +188,7 @@ public class ObservationMatrixControllerTest {
 		valueRow.setDataList(this.generateTestDataList());
 		valueRow.getDataList().get(0).setAccepted(true);
 
-		this.observationMatrixController.copyMeasurementValue(origRow, valueRow, true);
+		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow, true);
 
 		Assert.assertTrue(origRow.getDataList().get(0).isCustomCategoricalValue());
 
@@ -253,8 +253,8 @@ public class ObservationMatrixControllerTest {
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(termId), Matchers.eq(true),
 				Matchers.eq(false))).thenReturn(variableText);
 
-		this.observationMatrixController.setUserSelection(userSelection);
-		this.observationMatrixController.editExperimentCells(experimentId, termId, null, model);
+		this.trialMeasurementsController.setUserSelection(userSelection);
+		this.trialMeasurementsController.editExperimentCells(experimentId, termId, null, model);
 		Assert.assertEquals(TermId.CATEGORICAL_VARIABLE.getId(), model.get("categoricalVarId"));
 		Assert.assertEquals(TermId.DATE_VARIABLE.getId(), model.get("dateVarId"));
 		Assert.assertEquals(TermId.NUMERIC_VARIABLE.getId(), model.get("numericVarId"));
@@ -276,11 +276,11 @@ public class ObservationMatrixControllerTest {
 		studyDetails.setId(1234);
 		workbook.setStudyDetails(studyDetails);
 		userSelection.setWorkbook(workbook);
-		this.observationMatrixController.setUserSelection(userSelection);
+		this.trialMeasurementsController.setUserSelection(userSelection);
 
 		ValidationService mockValidationService = Mockito.mock(ValidationService.class);
 		Mockito.when(mockValidationService.validateObservationValue(Mockito.any(Variable.class), Mockito.anyString())).thenReturn(true);
-		this.observationMatrixController.setValidationService(mockValidationService);
+		this.trialMeasurementsController.setValidationService(mockValidationService);
 		
 		Variable variableText = new Variable();
 		Scale scaleText = new Scale();
@@ -297,10 +297,10 @@ public class ObservationMatrixControllerTest {
 		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 		Mockito.when(req.getParameter("isDiscard")).thenReturn("0");
 
-		Map<String, Object> results = this.observationMatrixController.updateExperimentCellData(data, req);
+		Map<String, Object> results = this.trialMeasurementsController.updateExperimentCellData(data, req);
 
-		Assert.assertEquals("1", results.get(ObservationMatrixController.SUCCESS));
-		Assert.assertTrue(results.containsKey(ObservationMatrixController.DATA));
+		Assert.assertEquals("1", results.get(TrialMeasurementsController.SUCCESS));
+		Assert.assertTrue(results.containsKey(TrialMeasurementsController.DATA));
 
 		// Validation and saving of phenotype must occur when isDiscard flag is off.
 		Mockito.verify(mockValidationService).validateObservationValue(variableText, newValue);
@@ -319,11 +319,11 @@ public class ObservationMatrixControllerTest {
 		studyDetails.setId(1234);
 		workbook.setStudyDetails(studyDetails);
 		userSelection.setWorkbook(workbook);
-		this.observationMatrixController.setUserSelection(userSelection);
+		this.trialMeasurementsController.setUserSelection(userSelection);
 
 		ValidationService mockValidationService = Mockito.mock(ValidationService.class);
 		Mockito.when(mockValidationService.validateObservationValue(Mockito.any(Variable.class), Mockito.anyString())).thenReturn(true);
-		this.observationMatrixController.setValidationService(mockValidationService);
+		this.trialMeasurementsController.setValidationService(mockValidationService);
 
 		Variable variableText = new Variable();
 		Scale scaleText = new Scale();
@@ -341,10 +341,10 @@ public class ObservationMatrixControllerTest {
 		Mockito.when(req.getParameter("isDiscard")).thenReturn("0");
 		Mockito.when(req.getParameter("invalidButKeep")).thenReturn("1");
 
-		Map<String, Object> results = this.observationMatrixController.updateExperimentCellData(data, req);
+		Map<String, Object> results = this.trialMeasurementsController.updateExperimentCellData(data, req);
 
-		Assert.assertEquals("1", results.get(ObservationMatrixController.SUCCESS));
-		Assert.assertTrue(results.containsKey(ObservationMatrixController.DATA));
+		Assert.assertEquals("1", results.get(TrialMeasurementsController.SUCCESS));
+		Assert.assertTrue(results.containsKey(TrialMeasurementsController.DATA));
 
 		// Validation step should not be invoked when there is a signal to keep the value even if it is invalid.
 		Mockito.verify(mockValidationService, Mockito.never()).validateObservationValue(variableText, newValue);
@@ -364,12 +364,12 @@ public class ObservationMatrixControllerTest {
 		studyDetails.setId(1234);
 		workbook.setStudyDetails(studyDetails);
 		userSelection.setWorkbook(workbook);
-		this.observationMatrixController.setUserSelection(userSelection);
+		this.trialMeasurementsController.setUserSelection(userSelection);
 
 		ValidationService mockValidationService = Mockito.mock(ValidationService.class);
 		Mockito.when(mockValidationService.validateObservationValue(Mockito.any(Variable.class), Mockito.anyString())).thenReturn(true);
 
-		this.observationMatrixController.setValidationService(mockValidationService);
+		this.trialMeasurementsController.setValidationService(mockValidationService);
 
 		Variable variableText = new Variable();
 		Scale scaleText = new Scale();
@@ -386,10 +386,10 @@ public class ObservationMatrixControllerTest {
 		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 		Mockito.when(req.getParameter("isDiscard")).thenReturn("1");
 
-		Map<String, Object> results = this.observationMatrixController.updateExperimentCellData(data, req);
+		Map<String, Object> results = this.trialMeasurementsController.updateExperimentCellData(data, req);
 
-		Assert.assertEquals("1", results.get(ObservationMatrixController.SUCCESS));
-		Assert.assertTrue(results.containsKey(ObservationMatrixController.DATA));
+		Assert.assertEquals("1", results.get(TrialMeasurementsController.SUCCESS));
+		Assert.assertTrue(results.containsKey(TrialMeasurementsController.DATA));
 
 		// Validation and saving of phenotype must NOT occur when isDiscard flag is on.
 		Mockito.verify(mockValidationService, Mockito.never()).validateObservationValue(variableText, newValue);
@@ -416,8 +416,8 @@ public class ObservationMatrixControllerTest {
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
-		this.observationMatrixController.setUserSelection(userSelection);
-		this.observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
+		this.trialMeasurementsController.setUserSelection(userSelection);
+		this.trialMeasurementsController.setValidationService(Mockito.mock(ValidationService.class));
 		Map<String, String> data = new HashMap<>();
 
 		data.put("index", "1");
@@ -425,7 +425,7 @@ public class ObservationMatrixControllerTest {
 
 		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 
-		Map<String, Object> results = this.observationMatrixController.markExperimentCellDataAsAccepted(data, req);
+		Map<String, Object> results = this.trialMeasurementsController.markExperimentCellDataAsAccepted(data, req);
 
 		@SuppressWarnings("unchecked")
 		Map<String, Object> dataMap = (Map<String, Object>) results.get("data");
@@ -451,8 +451,8 @@ public class ObservationMatrixControllerTest {
 		measurementRowList.add(row);
 		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
-		this.observationMatrixController.setUserSelection(userSelection);
-		this.observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
+		this.trialMeasurementsController.setUserSelection(userSelection);
+		this.trialMeasurementsController.setValidationService(Mockito.mock(ValidationService.class));
 		Map<String, String> data = new HashMap<>();
 
 		data.put("index", "1");
@@ -460,7 +460,7 @@ public class ObservationMatrixControllerTest {
 
 		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 
-		Map<String, Object> results = this.observationMatrixController.markExperimentCellDataAsAccepted(data, req);
+		Map<String, Object> results = this.trialMeasurementsController.markExperimentCellDataAsAccepted(data, req);
 
 		@SuppressWarnings("unchecked")
 		Map<String, Object> dataMap = (Map<String, Object>) results.get("data");
@@ -495,8 +495,8 @@ public class ObservationMatrixControllerTest {
 		userSelection.setMeasurementRowList(measurementRowList);
 		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
 
-		this.observationMatrixController.setUserSelection(userSelection);
-		this.observationMatrixController.markAllExperimentDataAsMissing();
+		this.trialMeasurementsController.setUserSelection(userSelection);
+		this.trialMeasurementsController.markAllExperimentDataAsMissing();
 
 		for (MeasurementRow measurementRow : userSelection.getMeasurementRowList()) {
 			if (measurementRow != null && measurementRow.getMeasurementVariables() != null) {
@@ -507,7 +507,7 @@ public class ObservationMatrixControllerTest {
 								&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var
 										.getMeasurementVariable().getPossibleValues().isEmpty())) {
 							Assert.assertTrue(var.isAccepted());
-							if (this.observationMatrixController.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var
+							if (this.trialMeasurementsController.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var
 									.getMeasurementVariable().getPossibleValues())) {
 								Assert.assertEquals(MeasurementData.MISSING_VALUE, var.getValue());
 							} else {
@@ -534,13 +534,13 @@ public class ObservationMatrixControllerTest {
 		possibleValues.get(1).setKey("2");
 
 		Assert.assertFalse("2 is in possible values so the return value should be false",
-				this.observationMatrixController.isCategoricalValueOutOfBounds("2", "", possibleValues));
+				this.trialMeasurementsController.isCategoricalValueOutOfBounds("2", "", possibleValues));
 		Assert.assertTrue("3 is NOT in possible values so the return value should be true",
-				this.observationMatrixController.isCategoricalValueOutOfBounds("3", "", possibleValues));
+				this.trialMeasurementsController.isCategoricalValueOutOfBounds("3", "", possibleValues));
 		Assert.assertFalse("2 is in possible values so the return value should be false",
-				this.observationMatrixController.isCategoricalValueOutOfBounds(null, "2", possibleValues));
+				this.trialMeasurementsController.isCategoricalValueOutOfBounds(null, "2", possibleValues));
 		Assert.assertTrue("3 is NOT in possible values so the return value should be true",
-				this.observationMatrixController.isCategoricalValueOutOfBounds(null, "3", possibleValues));
+				this.trialMeasurementsController.isCategoricalValueOutOfBounds(null, "3", possibleValues));
 	}
 
 	@Test
@@ -549,9 +549,9 @@ public class ObservationMatrixControllerTest {
 		var.setMinRange(Double.valueOf("1"));
 		var.setMaxRange(Double.valueOf("10"));
 		Assert.assertFalse("Should return false since 2 is not out of range",
-				this.observationMatrixController.isNumericalValueOutOfBounds("2", var));
+				this.trialMeasurementsController.isNumericalValueOutOfBounds("2", var));
 		Assert.assertTrue("Should return true since 21 is out of range",
-				this.observationMatrixController.isNumericalValueOutOfBounds("21", var));
+				this.trialMeasurementsController.isNumericalValueOutOfBounds("21", var));
 	}
 
 	@Test
@@ -559,9 +559,9 @@ public class ObservationMatrixControllerTest {
 		MeasurementVariable var = new MeasurementVariable();
 
 		Assert.assertFalse("Should return false since 2 is not out of range",
-				this.observationMatrixController.isNumericalValueOutOfBounds("2", var));
+				this.trialMeasurementsController.isNumericalValueOutOfBounds("2", var));
 		Assert.assertFalse("Should return false since 21 is not out of range",
-				this.observationMatrixController.isNumericalValueOutOfBounds("21", var));
+				this.trialMeasurementsController.isNumericalValueOutOfBounds("21", var));
 	}
 
 	@Test
@@ -571,7 +571,7 @@ public class ObservationMatrixControllerTest {
 		HttpSession session = Mockito.mock(HttpSession.class);
 		Mockito.when(session.getAttribute("isCategoricalDescriptionView")).thenReturn(Boolean.FALSE);
 
-		Boolean result = this.observationMatrixController.setCategoricalDisplayType(null, session);
+		Boolean result = this.trialMeasurementsController.setCategoricalDisplayType(null, session);
 		Mockito.verify(session, Mockito.times(1)).setAttribute("isCategoricalDescriptionView", Boolean.TRUE);
 		Assert.assertTrue("should be true", result);
 	}
@@ -583,7 +583,7 @@ public class ObservationMatrixControllerTest {
 		HttpSession session = Mockito.mock(HttpSession.class);
 		Mockito.when(session.getAttribute("isCategoricalDescriptionView")).thenReturn(Boolean.FALSE);
 
-		Boolean result = this.observationMatrixController.setCategoricalDisplayType(Boolean.FALSE, session);
+		Boolean result = this.trialMeasurementsController.setCategoricalDisplayType(Boolean.FALSE, session);
 		Mockito.verify(session, Mockito.times(1)).setAttribute("isCategoricalDescriptionView", Boolean.FALSE);
 		Assert.assertFalse("should be false", result);
 	}
@@ -617,7 +617,7 @@ public class ObservationMatrixControllerTest {
 
 		int recordsCount = 1;
 		Mockito.when(studyService.countTotalObservationUnits(Mockito.anyInt(), Mockito.anyInt())).thenReturn(recordsCount);
-		this.observationMatrixController.setStudyService(studyService);
+		this.trialMeasurementsController.setStudyService(studyService);
 
 		Variable variableText = new Variable();
 		Scale scaleText = new Scale();
@@ -645,9 +645,9 @@ public class ObservationMatrixControllerTest {
 				Matchers.eq(true), Matchers.eq(false)))
 				.thenReturn(variableCategorical);
 
-		this.observationMatrixController.setContextUtil(Mockito.mock(ContextUtil.class));
+		this.trialMeasurementsController.setContextUtil(Mockito.mock(ContextUtil.class));
 
-		final Map<String, Object> plotMeasurementsPaginated = this.observationMatrixController.getPlotMeasurementsPaginated(1, 1,
+		final Map<String, Object> plotMeasurementsPaginated = this.trialMeasurementsController.getPlotMeasurementsPaginated(1, 1,
 				new CreateNurseryForm(), Mockito.mock(Model.class), request);
 
 		Assert.assertNotNull("Expected a non-null map as return value.", plotMeasurementsPaginated);

@@ -55,15 +55,15 @@ import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 
 @Controller
-@RequestMapping(ObservationMatrixController.URL)
-public class ObservationMatrixController extends AbstractBaseFieldbookController {
+@RequestMapping(TrialMeasurementsController.URL)
+public class TrialMeasurementsController extends AbstractBaseFieldbookController {
 
 	public static final String URL = "/Common/addOrRemoveTraits";
 	public static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
 	public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
 	public static final String EDIT_EXPERIMENT_TEMPLATE = "/Common/updateExperimentModal";
 	public static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
-	private static final Logger LOG = LoggerFactory.getLogger(ObservationMatrixController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TrialMeasurementsController.class);
 	private static final String STATUS = "status";
 	private static final String ERROR_MESSAGE = "errorMessage";
 	private static final String INDEX = "index";
@@ -118,7 +118,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		form.setStudyName(userSelection.getWorkbook().getStudyDetails().getStudyName());
 		form.changePage(pageNum);
 		userSelection.setCurrentPage(form.getCurrentPage());
-		return super.showAjaxPage(model, ObservationMatrixController.PAGINATION_TEMPLATE);
+		return super.showAjaxPage(model, TrialMeasurementsController.PAGINATION_TEMPLATE);
 	}
 
 	@RequestMapping(value = "/pageView/{studyType}/{pageNum}", method = RequestMethod.GET)
@@ -138,7 +138,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		}
 		form.changePage(pageNum);
 		userSelection.setCurrentPage(form.getCurrentPage());
-		return super.showAjaxPage(model, ObservationMatrixController.PAGINATION_TEMPLATE_VIEW_ONLY);
+		return super.showAjaxPage(model, TrialMeasurementsController.PAGINATION_TEMPLATE_VIEW_ONLY);
 	}
 
 	@ResponseBody
@@ -162,11 +162,11 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		try {
 			this.validationService.validateObservationValues(workbook, "");
 			this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID());
-			resultMap.put(ObservationMatrixController.STATUS, "1");
+			resultMap.put(TrialMeasurementsController.STATUS, "1");
 		} catch (WorkbookParserException e) {
-			ObservationMatrixController.LOG.error(e.getMessage(), e);
-			resultMap.put(ObservationMatrixController.STATUS, "-1");
-			resultMap.put(ObservationMatrixController.ERROR_MESSAGE, e.getMessage());
+			TrialMeasurementsController.LOG.error(e.getMessage(), e);
+			resultMap.put(TrialMeasurementsController.STATUS, "-1");
+			resultMap.put(TrialMeasurementsController.ERROR_MESSAGE, e.getMessage());
 		}
 
 		return resultMap;
@@ -193,7 +193,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		if (StringUtils.isNotBlank(data.get("phenotypeId"))) {
 			phenotypeId = Integer.valueOf(data.get("phenotypeId"));
 		}
-		final int termId = Integer.valueOf(data.get(ObservationMatrixController.TERM_ID));
+		final int termId = Integer.valueOf(data.get(TrialMeasurementsController.TERM_ID));
 
 		final String value = data.get("value");
 		final boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard"));
@@ -213,15 +213,15 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 			if (!invalidButKeep) {
 				if (!this.validationService.validateObservationValue(trait, value)) {
-					map.put(ObservationMatrixController.SUCCESS, "0");
-					map.put(ObservationMatrixController.ERROR_MESSAGE, "Invalid value.");
+					map.put(TrialMeasurementsController.SUCCESS, "0");
+					map.put(TrialMeasurementsController.ERROR_MESSAGE, "Invalid value.");
 					return map;
 				}
 			}
 			this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
 					trait.getScale().getDataType().getId());
 		}
-		map.put(ObservationMatrixController.SUCCESS, "1");
+		map.put(TrialMeasurementsController.SUCCESS, "1");
 
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		final List<ObservationDto> singleObservation =
@@ -229,7 +229,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		if (!singleObservation.isEmpty()) {
 			dataMap = generateDatatableDataMap(singleObservation.get(0), "");
 		}
-		map.put(ObservationMatrixController.DATA, dataMap);
+		map.put(TrialMeasurementsController.DATA, dataMap);
 		return map;
 	}
 
@@ -248,10 +248,10 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		if (StringUtils.isNotBlank(data.get("phenotypeId"))) {
 			phenotypeId = Integer.valueOf(data.get("phenotypeId"));
 		}
-		final int termId = Integer.valueOf(data.get(ObservationMatrixController.TERM_ID));
+		final int termId = Integer.valueOf(data.get(TrialMeasurementsController.TERM_ID));
 
-		if (StringUtils.isNotBlank(data.get(ObservationMatrixController.INDEX))) {
-			final int index = Integer.valueOf(data.get(ObservationMatrixController.INDEX));
+		if (StringUtils.isNotBlank(data.get(TrialMeasurementsController.INDEX))) {
+			final int index = Integer.valueOf(data.get(TrialMeasurementsController.INDEX));
 			final String value = data.get("value");
 			// for categorical
 			int isNew;
@@ -262,7 +262,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			}
 			final boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard"));
 
-			map.put(ObservationMatrixController.INDEX, index);
+			map.put(TrialMeasurementsController.INDEX, index);
 
 			final UserSelection userSelection = this.getUserSelection();
 			final MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
@@ -280,14 +280,14 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 					this.copyMeasurementValue(originalRow, copyRow, isNew == 1);
 					this.updateDates(originalRow);
 				}
-				map.put(ObservationMatrixController.SUCCESS, "1");
+				map.put(TrialMeasurementsController.SUCCESS, "1");
 				final DataMapUtil dataMapUtil = new DataMapUtil();
 				final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(originalRow, "", this.userSelection);
-				map.put(ObservationMatrixController.DATA, dataMap);
+				map.put(TrialMeasurementsController.DATA, dataMap);
 			} catch (final MiddlewareQueryException e) {
-				ObservationMatrixController.LOG.error(e.getMessage(), e);
-				map.put(ObservationMatrixController.SUCCESS, "0");
-				map.put(ObservationMatrixController.ERROR_MESSAGE, e.getMessage());
+				TrialMeasurementsController.LOG.error(e.getMessage(), e);
+				map.put(TrialMeasurementsController.SUCCESS, "0");
+				map.put(TrialMeasurementsController.ERROR_MESSAGE, e.getMessage());
 			}
 		}
 		return map;
@@ -337,10 +337,10 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		int index = Integer.valueOf(data.get(ObservationMatrixController.INDEX));
-		int termId = Integer.valueOf(data.get(ObservationMatrixController.TERM_ID));
+		int index = Integer.valueOf(data.get(TrialMeasurementsController.INDEX));
+		int termId = Integer.valueOf(data.get(TrialMeasurementsController.TERM_ID));
 
-		map.put(ObservationMatrixController.INDEX, index);
+		map.put(TrialMeasurementsController.INDEX, index);
 
 		UserSelection userSelection = this.getUserSelection();
 		MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
@@ -367,10 +367,10 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 			}
 		}
 
-		map.put(ObservationMatrixController.SUCCESS, "1");
+		map.put(TrialMeasurementsController.SUCCESS, "1");
 		final DataMapUtil dataMapUtil = new DataMapUtil();
 		final Map<String, Object> dataMap =   dataMapUtil.generateDatatableDataMap(originalRow, "", this.userSelection);
-		map.put(ObservationMatrixController.DATA, dataMap);
+		map.put(TrialMeasurementsController.DATA, dataMap);
 
 		return map;
 	}
@@ -408,7 +408,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 				this.markNonEmptyVariateValuesAsMissing(row.getDataList());
 			}
 		}
-		map.put(ObservationMatrixController.SUCCESS, "1");
+		map.put(TrialMeasurementsController.SUCCESS, "1");
 		return map;
 	}
 
@@ -437,10 +437,10 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		model.addAttribute("variable", variable);
 		model.addAttribute("experimentId", experimentId);
 
-		model.addAttribute(ObservationMatrixController.TERM_ID, termId);
+		model.addAttribute(TrialMeasurementsController.TERM_ID, termId);
 		model.addAttribute("possibleValues", this.fieldbookService.getAllPossibleValues(variable));
 
-		return super.showAjaxPage(model, ObservationMatrixController.EDIT_EXPERIMENT_CELL_TEMPLATE);
+		return super.showAjaxPage(model, TrialMeasurementsController.EDIT_EXPERIMENT_CELL_TEMPLATE);
 	}
 
 	/**
@@ -484,7 +484,7 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 		model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());
 
 		this.updateModel(model, userSelection.getWorkbook().isNursery(), editData, index, termId);
-		return super.showAjaxPage(model, ObservationMatrixController.EDIT_EXPERIMENT_CELL_TEMPLATE);
+		return super.showAjaxPage(model, TrialMeasurementsController.EDIT_EXPERIMENT_CELL_TEMPLATE);
 	}
 
 	private void convertToUIDateIfDate(MeasurementData var) {
@@ -497,8 +497,8 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 	private void updateModel(Model model, boolean isNursery, MeasurementData measurementData, int index, int termId) {
 		model.addAttribute("isNursery", isNursery);
 		model.addAttribute("measurementData", measurementData);
-		model.addAttribute(ObservationMatrixController.INDEX, index);
-		model.addAttribute(ObservationMatrixController.TERM_ID, termId);
+		model.addAttribute(TrialMeasurementsController.INDEX, index);
+		model.addAttribute(TrialMeasurementsController.TERM_ID, termId);
 	}
 
 	/**

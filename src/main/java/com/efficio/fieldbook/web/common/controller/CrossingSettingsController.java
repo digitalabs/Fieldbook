@@ -388,8 +388,11 @@ public class CrossingSettingsController extends SettingsController {
 	@RequestMapping(value = "/getCurrentProgramMembers", method = RequestMethod.GET, produces = "application/json")
 	public Map<String, Person> getCurrentProgramMembers() {
 		// we need to convert Integer to String because angular doest work with numbers as options for select
+
+		String cropname = this.contextUtil.getProjectInContext().getCropType().getCropName();
+
 		final Map<String, Person> currentProgramMembers = new HashMap<>();
-		final Long projectId = this.workbenchDataManager.getProjectByUuid(this.getCurrentProgramID()).getProjectId();
+		final Long projectId = this.workbenchDataManager.getProjectByUuidAndCrop(this.getCurrentProgramID(), cropname).getProjectId();
 		final Map<Integer, Person> programMembers = this.workbenchDataManager.getPersonsByProjectId(projectId);
 		for (final Map.Entry<Integer, Person> member : programMembers.entrySet()) {
 			currentProgramMembers.put(String.valueOf(member.getKey()), member.getValue());

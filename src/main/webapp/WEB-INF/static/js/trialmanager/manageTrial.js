@@ -172,10 +172,6 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 			$scope.toggleChoosePreviousTrial = function() {
 				$scope.isChoosePreviousTrial = !$scope.isChoosePreviousTrial;
-
-				if (!$scope.isChoosePreviousTrial) {
-					$scope.resetTabsData();
-				}
 			};
 
 			$scope.resetTabsData = function() {

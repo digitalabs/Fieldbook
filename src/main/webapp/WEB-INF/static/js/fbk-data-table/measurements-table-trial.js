@@ -5,7 +5,7 @@ var getCurrentEnvironmentNumber = function() {
 	if (!selEnv) {
 		var envList;
 		$.ajax({
-			url: '/Fieldbook/Common/addOrRemoveTraits/instanceMetadata/' + $('#studyId').val(),
+			url: '/Fieldbook/trial/measurements/instanceMetadata/' + $('#studyId').val(),
 			async: false,
 			success: function(data) {
 				envList = data;
@@ -308,7 +308,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				processing: true,
 				deferRender: true,
 				ajax: {
-					url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' + environmentId,
+					url: '/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' + environmentId,
 					type: 'GET',
 					cache: false,
 					data: function(d) {						
@@ -389,7 +389,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							processInlineEditInput();
 							if ($('#measurement-table').data('show-inline-edit') === '1') {
 								$.ajax({
-									url: '/Fieldbook/Common/addOrRemoveTraits/edit/experiment/cell/' + experimentId + '/' + $colHeader.data('term-id') + '?phenotypeId=' + phenotypeId,
+									url: '/Fieldbook/trial/measurements/edit/experiment/cell/' + experimentId + '/' + $colHeader.data('term-id') + '?phenotypeId=' + phenotypeId,
 									type: 'GET',
 									success: function(data) {
 										$tdCell.html(data);
@@ -494,7 +494,7 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 				deferRender: true,
 				sAjaxDataProp: '',
 				ajax: {
-					url: '/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/preview',
+					url: '/Fieldbook/trial/measurements/plotMeasurements/preview',
 					type: 'GET',
 					cache: false
 				},
@@ -667,7 +667,7 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 							processInlineEditInput();
 							if ($(tableIdentifier).data('show-inline-edit') === '1') {
 								$.ajax({
-									url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/' + rowIndex + '/' + $tdCell.data('term-id'),
+									url: '/Fieldbook/trial/measurements/update/experiment/cell/' + rowIndex + '/' + $tdCell.data('term-id'),
 									type: 'GET',
 									success: function(data) {
 										$tdCell.html(data);
@@ -735,7 +735,7 @@ function markCellAsAccepted(indexElem, indexTermId, elem) {
 			Accept: 'application/json',
 			'Content-Type': 'application/json'
 		},
-		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/accepted',
+		url: '/Fieldbook/trial/measurements/update/experiment/cell/accepted',
 		type: 'POST',
 		async: false,
 		data:   JSON.stringify(data),
@@ -771,7 +771,7 @@ function markAllCellAsMissing() {
     var oTable = $(tableIdentifier).dataTable();
 
 	$.ajax({
-		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/missing/all',
+		url: '/Fieldbook/trial/measurements/update/experiment/cell/missing/all',
 		type: 'GET',
 		async: false,
 		contentType: 'application/json',

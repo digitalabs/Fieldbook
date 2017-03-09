@@ -55,10 +55,9 @@ import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 
 @Controller
-@RequestMapping(TrialMeasurementsController.URL)
+@RequestMapping("/trial/measurements")
 public class TrialMeasurementsController extends AbstractBaseFieldbookController {
 
-	public static final String URL = "/Common/addOrRemoveTraits";
 	public static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
 	public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
 	public static final String EDIT_EXPERIMENT_TEMPLATE = "/Common/updateExperimentModal";

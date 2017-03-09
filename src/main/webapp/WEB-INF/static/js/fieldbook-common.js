@@ -3941,7 +3941,7 @@ function saveInlineEdit(isDiscard, invalidButKeep) {
 	var tableIdentifier = isImportPreviewMeasurementsView ? '#import-preview-measurement-table' : '#measurement-table';
 
 	$.ajax({
-		url: '/Fieldbook/Common/addOrRemoveTraits/' +
+		url: '/Fieldbook/trial/measurements/' +
 			(isImportPreviewMeasurementsView ? 'updateByIndex' : 'update') +
 			'/experiment/cell/data?isDiscard=' + isDiscard + '&invalidButKeep=' + invalidButKeep,
 		type: 'POST',
@@ -3993,7 +3993,7 @@ function markCellAsMissing(indexElem, indexTermId, indexDataVal, isNew, elem) {
 			Accept: 'application/json',
 			'Content-Type': 'application/json'
 		},
-		url: '/Fieldbook/Common/addOrRemoveTraits/' +
+		url: '/Fieldbook/trial/measurements/' +
 			(isImportPreviewMeasurementsView ? 'updateByIndex' : 'update') + '/experiment/cell/data?isDiscard=0',
 		type: 'POST',
 		async: false,
@@ -4122,7 +4122,7 @@ function switchCategoricalView(showCategoricalDescriptionView) {
 	$('.fbk-measurement-categorical-name').toggle();
 	$('.fbk-measurement-categorical-desc').toggle();
 
-	return $.get('/Fieldbook/Common/addOrRemoveTraits/setCategoricalDisplayType', {showCategoricalDescriptionView: showCategoricalDescriptionView})
+	return $.get('/Fieldbook/trial/measurements/setCategoricalDisplayType', {showCategoricalDescriptionView: showCategoricalDescriptionView})
 		.done(function(result) {
 			window.isCategoricalDescriptionView = result;
 

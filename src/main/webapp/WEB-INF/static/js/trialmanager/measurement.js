@@ -21,7 +21,7 @@
 
 				$scope.initEnvironmentList = function() {
 					if (!$scope.isNewStudy()) {
-						$http.get('/Fieldbook/Common/addOrRemoveTraits/instanceMetadata/' + studyId).success(function(data) {
+						$http.get('/Fieldbook/trial/measurements/instanceMetadata/' + studyId).success(function(data) {
 							$scope.environmentsList = data;
 							$scope.selectedEnvironment = data[0];
 						});
@@ -32,7 +32,7 @@
 				};
 
 				$scope.changeEnvironmentForMeasurementDataTable = function($item, $model) {
-					$('#measurement-table').DataTable().ajax.url('/Fieldbook/Common/addOrRemoveTraits/plotMeasurements/' + studyId + '/' +
+					$('#measurement-table').DataTable().ajax.url('/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' +
 						$item.instanceDbId).load();
 					$scope.selectedEnvironment = $item;
 				};

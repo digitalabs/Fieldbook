@@ -11,7 +11,7 @@ public class KsuFieldbookUtilTest {
 
 	@Test
 	public void testIsValidHeaderNames_ReturnsTrueIfAllRequiredColumnsArePresent() {
-		String[] headerNames = {"plot", "ENTRY_NO", "DESIGNATION", "GID"};
+		String[] headerNames = {"plot", "ENTRY_NO", "DESIGNATION", "GID", "PLOT_ID"};
 		Assert.assertTrue("Expecting that the headers are valid when all of the required column are present but didn't.",
 				KsuFieldbookUtil.isValidHeaderNames(headerNames));
 	}

@@ -84,7 +84,6 @@ public class PDFLabelGenerator implements LabelGenerator {
 		final String barcodeNeeded = userLabelPrinting.getBarcodeNeeded();
 		final String barcodeGeneratedAutomatically = userLabelPrinting.getBarcodeGeneratedAutomatically();
 
-		final String plotCodePrefix = userLabelPrinting.getPlotCodePrefix();
 
 		final String fileName = userLabelPrinting.getFilenameDLLocation();
 
@@ -128,7 +127,7 @@ public class PDFLabelGenerator implements LabelGenerator {
 									.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField,
 											thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), true);
 						} else {
-							barcodeLabel = StringUtils.join(plotCodePrefix, fieldMapLabel.getExperimentId());
+							barcodeLabel = fieldMapLabel.getPlotId();
 							barcodeLabelForCode = barcodeLabel;
 						}
 					}

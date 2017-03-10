@@ -45,7 +45,6 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
-import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
@@ -644,7 +643,7 @@ public class ETLServiceImpl implements ETLService {
 
 	@Override
 	public int saveProjectOntology(final org.generationcp.middleware.domain.etl.Workbook importData, final String programUUID) {
-		return this.dataImportService.saveProjectOntology(importData, programUUID);
+		return this.dataImportService.saveProjectOntology(importData, programUUID, this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
 	}
 
 	@Override
@@ -665,7 +664,7 @@ public class ETLServiceImpl implements ETLService {
 
 	@Override
 	public int saveProjectData(final org.generationcp.middleware.domain.etl.Workbook importData, final String programUUID) {
-		return this.dataImportService.saveProjectData(importData, programUUID);
+		return this.dataImportService.saveProjectData(importData, programUUID, this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
 	}
 
 	@Override

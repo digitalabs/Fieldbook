@@ -9,6 +9,14 @@ if (typeof (BMS.Fieldbook) === 'undefined') {
 	BMS.Fieldbook = {};
 }
 
+/**
+* Creates a new MeasurementsDataTable.
+*
+* @constructor
+* @alias module:fieldbook-datatable
+* @param {string} tableIdentifier the id of the table container
+* @param {string} ajaxUrl the URL from which to retrieve table data
+*/
 BMS.Fieldbook.MeasurementsDataTableNursery = (function($) {
 	
 	var dataTableConstructor = function MeasurementsDataTableNursery(tableIdentifier, dataList) {
@@ -195,6 +203,7 @@ BMS.Fieldbook.MeasurementsDataTableNursery = (function($) {
 			columnDefs: columnsDef,
 			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 			bAutoWidth: true,
+			deferRender: true,
 			iDisplayLength: 100,
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
@@ -321,7 +330,7 @@ BMS.Fieldbook.MeasurementsDataTableNursery = (function($) {
 		$(tableIdentifier).dataTable().bind('sort', function() {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 		});
-		$('#measurementsDiv .mdt-columns').detach().insertBefore('.mdt-filtering');
+		$('#measurementsDiv .mdt-columns').detach().insertBefore('#measurementsDiv .mdt-filtering');
 		$('.measurement-dropdown-menu a').click(function(e) {
 			var column;
 
@@ -347,6 +356,17 @@ BMS.Fieldbook.MeasurementsDataTableNursery = (function($) {
 				}
 			});
 		});
+		var cols = $(tableIdentifier).dataTable().fnSettings().aoColumns;
+		var plotIndex;
+		for (var i = 0; i<cols.length; i++) {
+			if (cols[i].termId == '8201') {
+				plotIndex = i;
+				break;
+			}
+		};
+		if (plotIndex) {
+			$(tableIdentifier).DataTable().column(plotIndex).visible(false);
+        }
 	};
 	return dataTableConstructor;
 

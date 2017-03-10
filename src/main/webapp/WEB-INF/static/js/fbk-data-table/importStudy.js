@@ -187,7 +187,9 @@ function showImportResponse(responseText) {
     	$('#importStudyModal').modal('hide');
     	if (resp.deletedTraits !== ' ' || resp.addedTraits !== ' ') {
 			showWarningTraitsImport(resp);
-    	} else {
+    	} else if (resp.plotsNotFound !== ' ') {
+    		ShowWarningPlotIdNotFound(resp);
+        } else {
 			showWarningImport(resp);
     	}
 	} else {
@@ -195,6 +197,30 @@ function showImportResponse(responseText) {
 		$('#importStudyModal').modal('hide');
 	}
 }
+
+ function ShowWarningPlotIdNotFound(resp) {
+ 	'use strict';
+ 	setTimeout(function () {
+ 		$('#importStudyConfirmationModal').modal({
+ 			backdrop: 'static',
+ 			keyboard: true
+ 		});
+ 	}, 300);
+
+ 	var warningMessage = '', errorIndex = 0;
+ 	//warningMessage = resp.confirmMessageTrais;
+ 	//warningMessage += '<p> </p>';
+ 	warningMessage += '<ul>';
+ 	warningMessage += '<p>' + resp.plotsNotFound + '</p>';
+ 	warningMessage += '</ul>';
+ 	//warningMessage += '<br />';
+
+	$('#importStudyConfirmationModal .import-confirmation').html(warningMessage);
+	$('#studyConfirmationButton').off('click');
+	$('#studyConfirmationButton').on('click', function () {
+		showWarningImport(resp);
+	})
+ }
 
 function showWarningTraitsImport(resp) {
 	'use strict';

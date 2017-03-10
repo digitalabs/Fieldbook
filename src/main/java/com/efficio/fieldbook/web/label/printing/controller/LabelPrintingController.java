@@ -36,6 +36,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
+import com.google.common.base.Strings;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -81,7 +83,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
-import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
@@ -102,7 +103,6 @@ import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.google.common.base.Strings;
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -493,10 +493,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
-
 		try {
-			final String generateAutomatically = form.getUserLabelPrinting().getBarcodeGeneratedAutomatically() == null
-					|| form.getUserLabelPrinting().getBarcodeGeneratedAutomatically().equals("0") ? "0" : "1";
+			final String generateAutomatically =
+					form.getUserLabelPrinting().getBarcodeGeneratedAutomatically() == null || form.getUserLabelPrinting()
+							.getBarcodeGeneratedAutomatically().equals("0") ? "0" : "1";
 			this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
 			this.userLabelPrinting.setBarcodeGeneratedAutomatically(generateAutomatically);
 			this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
@@ -512,19 +512,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
 			this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 			this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
-
-			if (this.userLabelPrinting.getBarcodeGeneratedAutomatically()
-					.equalsIgnoreCase(LabelPrintingServiceImpl.BARCODE_GENERATED_AUTOMATICALLY)) {
-				String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
-				String cropPrefix = null;
-				try {
-					cropPrefix = this.fieldbookMiddlewareService.getPlotCodePrefix(cropName);
-				} catch (final MiddlewareException e) {
-					LabelPrintingController.LOG.error(e.getMessage(), e);
-					throw new MiddlewareException(e.getMessage(), e);
-				}
-				this.userLabelPrinting.setPlotCodePrefix(cropPrefix);
-			}
 
 			// add validation for the file name
 			if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
@@ -543,9 +530,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 			if (workbook != null) {
 				final String selectedLabelFields = this.getSelectedLabelFields(this.userLabelPrinting);
-				this.labelPrintingService.populateUserSpecifiedLabelFields(
-						this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances(), workbook, selectedLabelFields,
-						form.getIsTrial(), form.getIsStockList(), this.userLabelPrinting);
+				this.labelPrintingService
+						.populateUserSpecifiedLabelFields(this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances(),
+								workbook, selectedLabelFields, form.getIsTrial(), form.getIsStockList(), this.userLabelPrinting);
 			}
 
 			final List<FieldMapInfo> fieldMapInfoList = this.userLabelPrinting.getFieldMapInfoList();

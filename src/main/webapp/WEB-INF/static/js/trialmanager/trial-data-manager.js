@@ -160,7 +160,9 @@
 				$http.post('/Fieldbook/TrialManager/GermplasmList/next', $.param(serializedData),
 					{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).success(function(data) {
 					d.resolve(data);
-				});
+				}).error(function(data, status, header, config) {
+                      showErrorMessage('', 'Could not persist the germplasm list.');
+                });
 
 				return d.promise;
 			};

@@ -195,11 +195,11 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 			final String entry = this.getCellValue(xlsRow.getCell(Integer.valueOf(indexArray[2])));
 			final String plotId = this.getCellValue(xlsRow.getCell(Integer.valueOf(indexArray[3])));
 
-			if (StringUtils.isBlank(plot)) {
+			if (null == plot) {
 				throw new WorkbookParserException("error.workbook.import.plot.no.empty.cell");
-			} else if (StringUtils.isBlank(entry)) {
+			} else if (null == entry) {
 				throw new WorkbookParserException("error.workbook.import.entry.no.empty.cell");
-			} else if (StringUtils.isBlank(plotId)) {
+			} else if (null == plotId) {
 				throw new WorkbookParserException("error.workbook.import.plot.id.empty.cell");
 			}
 

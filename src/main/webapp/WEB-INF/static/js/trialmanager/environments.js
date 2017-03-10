@@ -244,13 +244,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					}
 
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
-					// design should be regenerated
-					TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
 				} else if (Number(newVal) > Number(oldVal)) {
 					addNewEnvironments(newVal - oldVal);
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
-					// design should be regenerated
-					TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
 				}
 			});
 
@@ -366,10 +362,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			}
 
 			function updateDeletedEnvironment(index) {
-
-				// design should be regenerated
-                TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
-
 				// remove 1 environment
 				$scope.temp.noOfEnvironments -= 1;
 				$scope.data.environments.splice(index, 1);

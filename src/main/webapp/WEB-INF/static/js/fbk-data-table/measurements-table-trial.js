@@ -406,7 +406,10 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				});
 			}
 
-			$('#measurementsDiv .mdt-columns').detach().insertAfter('.mdt-filtering');
+			if ($('.mdt-measurements-table-panel .fbk-toggle-categorical-display').length < 1) {
+				$('#mdt-toggle-categorical-display-hidden-original').clone(true, true).removeClass('fbk-hide')
+					.insertAfter('.mdt-measurements-table-panel .mdt-filtering');
+			}
 			$('[name="measurement-table_length"]').addClass('inline-select mdt-table-length-selector');
 			$('.measurement-dropdown-menu a').click(function(e) {
 				var column;
@@ -689,6 +692,10 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 			});
 
 			$('[name="import-preview-measurement-table_length"]').addClass('inline-select mdt-table-length-selector');
+			if ($('.import-preview-measurements-table .fbk-toggle-categorical-display').length < 1) {
+				$('#mdt-toggle-categorical-display-hidden-original').clone(true, true).removeClass('fbk-hide')
+						.insertAfter('.import-preview-measurements-table .mdt-filtering');
+			}
 
 			$('.measurement-dropdown-menu a').click(function(e) {
 				var column;
@@ -787,17 +794,4 @@ function markAllCellAsMissing() {
 			}
 		}
 	});
-}
-
-function reloadMeasurementTable() {
-	'use strict';
-	if ($('#measurement-table').length !== 0) {
-		$.ajax({
-			url: '/Fieldbook/ImportManager/import/preview',
-			type: 'POST',
-			success: function(html) {
-				 onMeasurementsObservationLoad(isCategoricalDisplay);
-			}
-		});
-	}
 }

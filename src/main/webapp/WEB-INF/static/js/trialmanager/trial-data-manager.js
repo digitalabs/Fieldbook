@@ -546,7 +546,7 @@
 
                     // GLOBAL
                     if ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) {
-                    	onMeasurementsObservationLoad(isCategoricalDisplay);
+                    	onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
                     }
 				},
 				onUpdateData: function(dataKey, updateFunction) {

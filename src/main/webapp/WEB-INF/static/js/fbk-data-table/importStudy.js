@@ -1,5 +1,5 @@
 /*globals displaySaveSuccessMessage, createTableSettingVariables, importNursery, Spinner, showErrorMessage*/
-/*globals recreateMethodCombo,showErrorMessage,showImportResponse,recreateLocationCombo*/
+/*globals recreateMethodCombo,showErrorMessage,showImportResponse,recreateLocationCombo, isCategoricalDisplay*/
 /*exported showImportResponse, importOptions, confirmDesignation, goBackToImport, doImportActionChange*/
 /*exported importStudyBookHeader, importStudyHeader*/
 
@@ -110,7 +110,13 @@ function doSaveImportedData() {
 				displayEditFactorsAndGermplasmSection();
 			} else {
 				displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
-				reloadMeasurementTable();
+				$.ajax({
+					url: '/Fieldbook/ImportManager/import/preview',
+					type: 'POST',
+					success: function(html) {
+						onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
+                	}
+                });
 			}			
 		}
 	});

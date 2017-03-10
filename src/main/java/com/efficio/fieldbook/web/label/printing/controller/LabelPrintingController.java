@@ -514,18 +514,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
 		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
 
-		if (this.userLabelPrinting.getBarcodeGeneratedAutomatically().equalsIgnoreCase(LabelPrintingServiceImpl.BARCODE_GENERATED_AUTOMATICALLY)) {
-			String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
-			String cropPrefix = null;
-			try {
-				cropPrefix = this.fieldbookMiddlewareService.getPlotCodePrefix(cropName);
-			} catch (final MiddlewareException e) {
-				LabelPrintingController.LOG.error(e.getMessage(), e);
-				throw new MiddlewareException(e.getMessage(), e);
-			}
-			this.userLabelPrinting.setPlotCodePrefix(cropPrefix);
-		}
-
 		// add validation for the file name
 		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
 			final Map<String, Object> results = new HashMap<>();

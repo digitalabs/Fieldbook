@@ -105,9 +105,6 @@ public class UserLabelPrinting implements Serializable {
 	/** The third barcode field. */
 	private String thirdBarcodeField;
 
-	/** The crop code prefix. */
-	private String plotCodePrefix;
-
 	/** The filename. */
 	private String filename;
 
@@ -770,15 +767,6 @@ public class UserLabelPrinting implements Serializable {
 
 	public void setSorting(final String sorting) {
 		this.sorting = sorting;
-	}
-
-
-	public String getPlotCodePrefix() {
-		return plotCodePrefix;
-	}
-
-	public void setPlotCodePrefix(final String plotCodePrefix) {
-		this.plotCodePrefix = plotCodePrefix;
 	}
 
 	public String getBarcodeGeneratedAutomatically() {

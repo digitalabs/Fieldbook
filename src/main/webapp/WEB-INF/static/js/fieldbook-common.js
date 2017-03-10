@@ -1470,7 +1470,8 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 		studyId = getCurrentStudyIdInTab();
 	} else {
 		// the nursery/trial is opened
-		visibleColumns = getMeasurementTableVisibleColumns(isNursery);
+		var tableContainsPlotId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');
+		visibleColumns = getMeasurementTableVisibleColumns(isNursery, tableContainsPlotId);
 		var exportType = $('#exportType').val();
 		// excel or csv
 		if ((exportType == 6 || exportType == 2) && visibleColumns.length !== 0) {
@@ -1523,7 +1524,7 @@ function showWarningMessageForRequiredColumns(visibleColumns) {
 	}
 }
 
-function getMeasurementTableVisibleColumns(isNursery) {
+function getMeasurementTableVisibleColumns(isNursery, addPlotId) {
 	'use strict';
 	var visibleColumns = '';
 	if (!isNursery && $('[ui-view="editMeasurements"]').text().length === 0) {
@@ -1532,15 +1533,22 @@ function getMeasurementTableVisibleColumns(isNursery) {
 	var headers = $('#measurement-table_wrapper .dataTables_scrollHead [data-term-id]');
 	var headerCount = headers.size();
 	var i = 0;
+	var plotIdFound = false;
 	for (i = 0; i < headerCount; i++) {
 		var headerId = $('#measurement-table_wrapper .dataTables_scrollHead [data-term-id]:eq(' + i + ')').attr('data-term-id');
 		if ($.isNumeric(headerId)) {
+			if (headerId == '8201'){
+				plotIdFound = true;
+			}
 			if (visibleColumns.length == 0) {
 				visibleColumns = headerId;
 			} else {
 				visibleColumns = visibleColumns + ',' + headerId;
 			}
 		}
+	}
+	if (addPlotId && !plotIdFound) {
+		visibleColumns = visibleColumns + ',' + '8201';
 	}
 	return visibleColumns;
 }

@@ -217,11 +217,11 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 		final String entry = row.get(indexes.get(2));
 		final String plotId = row.get(indexes.get(3));
 
-		if (null == plot) {
+		if (StringUtils.isBlank(plot)) {
 			throw new WorkbookParserException("error.workbook.import.plot.no.empty.cell");
-		} else if (null == entry) {
+		} else if (StringUtils.isBlank(entry)) {
 			throw new WorkbookParserException("error.workbook.import.entry.no.empty.cell");
-		} else if (null == plotId) {
+		} else if (StringUtils.isBlank(plotId)) {
 			throw new WorkbookParserException("error.workbook.import.plot.id.empty.cell");
 		}
 

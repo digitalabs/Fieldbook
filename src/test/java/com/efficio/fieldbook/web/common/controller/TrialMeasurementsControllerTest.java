@@ -614,6 +614,10 @@ public class TrialMeasurementsControllerTest {
 		observationDto.additionalGermplasmDescriptor("StockID", "STCK-123");
 		observationDto.additionalGermplasmDescriptor("CROSS", "ABC12/XYZ34");
 
+		observationDto.setRowNumber("11");
+		observationDto.setColumnNumber("22");
+		observationDto.setPlotId("9CVRPNHaSlCE1");
+
 		List<ObservationDto> observations = Lists.newArrayList(observationDto);
 		Mockito.when(studyService.getObservations(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(),
 				Mockito.anyString(), Mockito.anyString())).thenReturn(observations);
@@ -696,6 +700,13 @@ public class TrialMeasurementsControllerTest {
 		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getTrialInstance(), false},
 				(Object[]) onePlotMeasurementData.get("TRIAL_INSTANCE")));
 
+		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getRowNumber(), false}, (Object[]) onePlotMeasurementData.get("ROW")));
+
+		Assert.assertTrue(
+				Arrays.equals(new Object[] {observationDto.getColumnNumber(), false}, (Object[]) onePlotMeasurementData.get("COL")));
+
+		Assert.assertTrue(
+				Arrays.equals(new Object[] {observationDto.getPlotId(), false}, (Object[]) onePlotMeasurementData.get("PLOT_ID")));
 
 		// Character Trait
 		Assert.assertTrue(Arrays.equals(new Object[] {measurementText.getTriatValue(), measurementText.getPhenotypeId()},

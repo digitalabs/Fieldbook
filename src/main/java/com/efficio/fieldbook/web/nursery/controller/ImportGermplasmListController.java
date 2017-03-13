@@ -607,7 +607,7 @@ public class ImportGermplasmListController extends SettingsController {
 		return super.showAjaxPage(model, ImportGermplasmListController.PAGINATION_TEMPLATE);
 	}
 
-	private List<Map<String, Object>> populateDataTableDataList(final List<ImportedGermplasm> list, final String defaultTestCheckId, boolean isNursery, boolean isDefaultTestCheck) {
+	List<Map<String, Object>> populateDataTableDataList(final List<ImportedGermplasm> list, final String defaultTestCheckId, boolean isNursery, boolean isDefaultTestCheck) {
 		final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 		final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 		
@@ -650,7 +650,7 @@ public class ImportGermplasmListController extends SettingsController {
 		return dataTableDataList;
 	}
 	
-	private void initializeObjectsForGermplasmDetailsView(final String type, final ImportGermplasmListForm form, final Model model,
+	void initializeObjectsForGermplasmDetailsView(final String type, final ImportGermplasmListForm form, final Model model,
 			final ImportedGermplasmMainInfo mainInfo, List<ImportedGermplasm> list,
 			final List<Map<String, Object>> dataTableDataList) {
 		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();

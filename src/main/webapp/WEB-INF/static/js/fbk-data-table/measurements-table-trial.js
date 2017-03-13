@@ -267,7 +267,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		environmentId = getCurrentEnvironmentNumber();
 
 		// recreate a table if exists
-		if (!!$(tableIdentifier).html().trim()) {
+		if ($(tableIdentifier).html() && !!$(tableIdentifier).html().trim()) {
 			$(tableIdentifier).dataTable().fnDestroy();
 			$(tableIdentifier).empty();
 		}
@@ -465,7 +465,7 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 		table;
 
 		// recreate a table if exists
-		if (!!$(tableIdentifier).html().trim()) {
+		if ($(tableIdentifier).html() && !!$(tableIdentifier).html().trim()) {
 			$(tableIdentifier).dataTable().fnDestroy();
 			$(tableIdentifier).empty();
 		}
@@ -584,7 +584,7 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 		environmentId = getCurrentEnvironmentNumber();
 
 		// recreate a table if exists
-		if (!!$(tableIdentifier).html().trim()) {
+		if ($(tableIdentifier).html() && !!$(tableIdentifier).html().trim()) {
 			$(tableIdentifier).dataTable().fnDestroy();
 			$(tableIdentifier).empty();
 		}

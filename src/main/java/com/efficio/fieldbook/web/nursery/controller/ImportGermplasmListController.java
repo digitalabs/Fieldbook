@@ -494,16 +494,15 @@ public class ImportGermplasmListController extends SettingsController {
 		}
 	}
 
-	/**
-	 * Display germplasm details of the list selected from the Browse List pop up in Germplasm and Checks tab
-	 *
-	 * @param listId the list id
-	 * @param form the form
-	 * @param model the model
-	 * @return the string
-	 */
+	/** Displays the germplasm details of the list selected from the Browse List pop up in Germplasm and Checks tab.
+    *
+    * @param listId the id of the germplasm list to be displayed
+    * @param form - the form
+    * @param model - the model
+    * @return the string
+    */
 	@RequestMapping(value = "/displayGermplasmDetails/{listId}/{type}", method = RequestMethod.GET)
-	public String displayGermplasmDetails(@PathVariable final Integer listId, @PathVariable final String type,
+	public String displayGermplasmDetailsOfSelectedList(@PathVariable final Integer listId, @PathVariable final String type,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
 		try {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
@@ -528,13 +527,10 @@ public class ImportGermplasmListController extends SettingsController {
 			if (StringUtils.isEmpty(form.getStartingPlotNo())) {
 				form.setStartingPlotNo(ImportGermplasmListController.STARTING_PLOT_NO);
 			}
-
-			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
-			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
-			boolean isNursery = type != null && type.equalsIgnoreCase(StudyType.N.getName()) ? true : false;
 			
-			this.populateDataMap(list, defaultTestCheckId, dataTableDataList, checkList, isNursery, true);
-			this.setModelAttributesValues(type, form, model, mainInfo, list, dataTableDataList);
+			boolean isNursery = type != null && type.equalsIgnoreCase(StudyType.N.getName()) ? true : false;
+			final List<Map<String, Object>> dataTableDataList = this.populateDataTableDataList(list, defaultTestCheckId, isNursery, true);
+			this.initializeObjectsForGermplasmDetailsView(type, form, model, mainInfo, list, dataTableDataList);
 		} catch (final Exception e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
@@ -542,15 +538,15 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 	
 	/**
-	 * Display the assigned Germplasm List of the study
+	 * Displays the assigned Germplasm List of the study
 	 * 
-	 * @param type
-	 * @param form
-	 * @param model
-	 * @return
+	 * @param type - Study type (N/T)
+	 * @param form - the form
+	 * @param model - the model
+	 * @return the string
 	 */
 	@RequestMapping(value = "/displaySelectedGermplasmDetails/{type}", method = RequestMethod.GET)
-	public String displaySelectedGermplasmDetails(@PathVariable final String type,
+	public String displayGermplasmDetailsOfCurrentStudy(@PathVariable final String type,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
 		try {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
@@ -598,11 +594,8 @@ public class ImportGermplasmListController extends SettingsController {
 				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getMeasurementDataValue(TermId.PLOT_NO.getId()));
 			}
 
-			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
-			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
-
-			this.populateDataMap(list, defaultTestCheckId, dataTableDataList, checkList, isNursery, false);
-			this.setModelAttributesValues(type, form, model, mainInfo, list, dataTableDataList);
+			final List<Map<String, Object>> dataTableDataList = this.populateDataTableDataList(list, defaultTestCheckId, isNursery, false);
+			this.initializeObjectsForGermplasmDetailsView(type, form, model, mainInfo, list, dataTableDataList);
 
 			// setting the form
 			form.setImportedGermplasmMainInfo(mainInfo);
@@ -614,8 +607,10 @@ public class ImportGermplasmListController extends SettingsController {
 		return super.showAjaxPage(model, ImportGermplasmListController.PAGINATION_TEMPLATE);
 	}
 
-	private void populateDataMap(final List<ImportedGermplasm> list, final String defaultTestCheckId,
-			final List<Map<String, Object>> dataTableDataList, final List<Enumeration> checkList, boolean isNursery, boolean isDefaultTestCheck) {
+	private List<Map<String, Object>> populateDataTableDataList(final List<ImportedGermplasm> list, final String defaultTestCheckId, boolean isNursery, boolean isDefaultTestCheck) {
+		final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
+		final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
+		
 		for (final ImportedGermplasm germplasm : list) {
 			final Map<String, Object> dataMap = new HashMap<>();
 
@@ -651,9 +646,11 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 			dataTableDataList.add(dataMap);
 		}
+		
+		return dataTableDataList;
 	}
 	
-	private void setModelAttributesValues(final String type, final ImportGermplasmListForm form, final Model model,
+	private void initializeObjectsForGermplasmDetailsView(final String type, final ImportGermplasmListForm form, final Model model,
 			final ImportedGermplasmMainInfo mainInfo, List<ImportedGermplasm> list,
 			final List<Map<String, Object>> dataTableDataList) {
 		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
@@ -663,8 +660,8 @@ public class ImportGermplasmListController extends SettingsController {
 		form.changePage(1);
 		this.userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
 
-		this.getUserSelection().setImportedGermplasmMainInfo(mainInfo);
-		this.getUserSelection().setImportValid(true);
+		this.userSelection.setImportedGermplasmMainInfo(mainInfo);
+		this.userSelection.setImportValid(true);
 
 		model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckTypeList());
 		model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);

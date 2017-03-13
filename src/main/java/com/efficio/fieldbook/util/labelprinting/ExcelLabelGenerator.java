@@ -126,7 +126,7 @@ public class ExcelLabelGenerator implements LabelGenerator {
                                 .generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField,
                                         thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
                     } else {
-                        barcodeLabelForCode = StringUtils.join(userLabelPrinting.getPlotCodePrefix(), fieldMapLabel.getExperimentId());
+                        barcodeLabelForCode = fieldMapLabel.getPlotId();
                     }
                     moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
 

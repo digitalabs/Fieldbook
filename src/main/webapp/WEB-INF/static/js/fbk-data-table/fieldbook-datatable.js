@@ -44,6 +44,18 @@ BMS.Fieldbook.MeasurementsTable = {
 		}
 		//we return blank if there is no ordering change
 		return [];
+	},
+
+	containsHeader: function (tableName, header) {
+		if ($('#' + tableName).dataTable() !== null && $('#' + tableName).dataTable().fnSettings() !== null) {
+			var cols = $('#' + tableName).dataTable().fnSettings().aoColumns;
+			for (var i = 0; i<cols.length; i++) {
+				if (cols[i].termId == header) {
+					return true;
+				}
+			};
+		}
+		return false;
 	}
 };
 
@@ -394,7 +406,19 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				}
 			});
 		});
+		var cols = $(tableIdentifier).dataTable().fnSettings().aoColumns;
+		var plotIndex;
+		for (var i = 0; i<cols.length; i++) {
+			if (cols[i].termId == '8201') {
+				plotIndex = i;
+				break;
+			}
+		};
+		if (plotIndex) {
+			$(tableIdentifier).DataTable().column(plotIndex).visible(false);
+		}
 	};
+
 	return dataTableConstructor;
 
 })(jQuery);
@@ -420,18 +444,18 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 
 			if (($(this).data('term-id') === 'Check')) {
 				columns.push({
-					data:   'active',
+					data: 'active',
 					defaultContent: '',
-					render: function(data, type, row) {
+					render: function (data, type, row) {
 						return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="checkbox" class="editor-active" data-binding>';
 					},
-					className:'fbk-center'
+					className: 'fbk-center'
 				});
 			} else if (($(this).data('term-id') === 'NewValue')) {
 				columns.push({
-					data:   'newValue',
+					data: 'newValue',
 					defaultContent: '',
-					render: function(data, type, row) {
+					render: function (data, type, row) {
 						return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="text" class="form-control" data-binding />';
 					}
 				});

@@ -166,8 +166,10 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
         }
         final int gidCol = this.findColumn(obsSheet, this.getColumnLabel(workbook, TermId.GID.getId()));
         final int desigCol = this.findColumn(obsSheet, this.getColumnLabel(workbook, TermId.DESIG.getId()));
-        if (entryCol <= -1 || plotCol <= -1 || gidCol <= -1 || desigCol <= -1) {
-            throw new WorkbookParserException("error.workbook.import.requiredColumnsMissing");
+		final int plot_id = this.findColumn(obsSheet, this.getColumnLabel(workbook, TermId.PLOT_ID.getId()));
+
+		if (entryCol <= -1 || plotCol <= -1 || gidCol <= -1 || desigCol <= -1 || plot_id <= -1) {
+			throw new WorkbookParserException("error.workbook.import.requiredColumnsMissing");
         }
     }
 

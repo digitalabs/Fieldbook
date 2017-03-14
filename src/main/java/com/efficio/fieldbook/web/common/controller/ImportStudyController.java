@@ -54,6 +54,7 @@ import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
 import com.efficio.fieldbook.web.study.ImportStudyType;
@@ -110,9 +111,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	public String importFile(@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form,
 			@PathVariable final String studyType, @PathVariable final int importType, final BindingResult result, final Model model) {
 
-		final boolean isTrial = "TRIAL".equalsIgnoreCase(studyType);
 		ImportResult importResult = null;
-		final UserSelection userSelection = this.getUserSelection(isTrial);
+		final UserSelection userSelection = this.getUserSelection();
 		final ImportStudyType importStudyType = ImportStudyType.getImportType(importType);
 
 		assert importStudyType != null;
@@ -121,6 +121,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		 * Should always revert the data first to the original data here we should move here that part the copies it to the original
 		 * observation
 		 */
+		this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());
 		WorkbookUtil.resetWorkbookObservations(userSelection.getWorkbook());
 
 		importResult = this.importWorkbookByType(form.getFile(), result, userSelection.getWorkbook(), importStudyType);
@@ -256,7 +257,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		return list;
 	}
 
-	private UserSelection getUserSelection(final boolean isTrial) {
+	private UserSelection getUserSelection() {
 		return this.studySelection;
 	}
 
@@ -270,16 +271,25 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		return isTrial ? "TrialManager/openTrial" : "NurseryManager/addOrRemoveTraits";
 	}
 
-	@RequestMapping(value = "/revert/data", method = RequestMethod.GET)
-	public String revertData(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
-
+	@RequestMapping(value = "/revert/data/nursery", method = RequestMethod.GET)
+	public String revertDataNursery(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
 		this.doRevertData(form);
-
 		return super.showAjaxPage(model, ImportStudyController.ADD_OR_REMOVE_TRAITS_HTML);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/revert/data", method = RequestMethod.GET)
+	public Map<String, Object> revertData(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
+
+		this.doRevertData(form);
+
+		final Map<String, Object> result = new HashMap<>();
+		result.put("success", "1");
+		return result;
+	}
+
 	private void doRevertData(final CreateNurseryForm form) {
-		final UserSelection userSelection = this.getUserSelection(false);
+		final UserSelection userSelection = this.getUserSelection();
 		// we should remove here the newly added traits
 		final List<MeasurementVariable> newVariableList = new ArrayList<>();
 
@@ -301,7 +311,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/apply/change/details", method = RequestMethod.POST)
 	public String applyChangeDetails(@RequestParam(value = "data") final String userResponses) throws FieldbookException {
-		final UserSelection userSelection = this.getUserSelection(false);
+		final UserSelection userSelection = this.getUserSelection();
 		final GermplasmChangeDetail[] responseDetails = this.getResponseDetails(userResponses);
 		final List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
 		final Map<String, Map<String, String>> changeMap = new HashMap<>();
@@ -447,10 +457,63 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		}
 	}
 
-	@RequestMapping(value = "/import/save", method = RequestMethod.POST)
-	public String saveImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model)
+	@RequestMapping(value = "/import/save/nursery", method = RequestMethod.POST)
+	public String saveImportedFilesNursery(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model)
 			throws MiddlewareException {
-		final UserSelection userSelection = this.getUserSelection(false);
+		final UserSelection userSelection = this.getUserSelection();
+		final List<MeasurementVariable> traits = WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(),
+				userSelection.getWorkbook().getObservations());
+		final Workbook workbook = userSelection.getWorkbook();
+		userSelection.getWorkbook().getVariates().addAll(traits);
+
+		this.fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+				AppConstants.ID_NAME_COMBINATION.getString(), true);
+
+		// will do the cleanup for BM_CODE_VTE here
+		SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
+				this.ontologyService, contextUtil.getCurrentProgramUUID());
+		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService,
+				contextUtil.getCurrentProgramUUID());
+		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
+
+		userSelection.getWorkbook().setOriginalObservations(userSelection.getWorkbook().getObservations());
+		final List<SettingDetail> newTraits = new ArrayList<>();
+		final List<SettingDetail> selectedVariates = new ArrayList<>();
+		SettingsUtil.convertWorkbookVariatesToSettingDetails(traits, this.fieldbookMiddlewareService, this.fieldbookService, newTraits,
+				selectedVariates);
+
+		if (workbook.isNursery()) {
+			userSelection.getSelectionVariates().addAll(selectedVariates);
+			userSelection.setNewSelectionVariates(selectedVariates);
+			form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+		} else {
+			form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+		}
+		userSelection.getBaselineTraitsList().addAll(newTraits);
+		userSelection.setNewTraits(newTraits);
+
+		for (final SettingDetail detail : newTraits) {
+			detail.getVariable().setOperation(Operation.UPDATE);
+		}
+		for (final SettingDetail detail : selectedVariates) {
+			detail.getVariable().setOperation(Operation.UPDATE);
+		}
+		form.setMeasurementDataExisting(
+				this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(userSelection.getWorkbook().getMeasurementDatesetId(),
+						SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));
+
+		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(),
+				userSelection.getWorkbook().getStudyDetails().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
+
+		return super.showAjaxPage(model, ImportStudyController.ADD_OR_REMOVE_TRAITS_HTML);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/import/save", method = RequestMethod.POST)
+	public Map<String, Object> saveImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model)
+			throws MiddlewareException {
+		final UserSelection userSelection = this.getUserSelection();
 		final List<MeasurementVariable> traits =
 				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
 						.getObservations());
@@ -495,15 +558,16 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(), userSelection.getWorkbook()
 				.getStudyDetails().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
 
-		return super.showAjaxPage(model, ImportStudyController.ADD_OR_REMOVE_TRAITS_HTML);
+		final Map<String, Object> result = new HashMap<>();
+		result.put("success", "1");
+		return result;
 	}
 
-	@RequestMapping(value = "/import/preview", method = RequestMethod.POST)
-	public String previewImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
-		final UserSelection userSelection = this.getUserSelection(false);
-		final List<MeasurementVariable> traits =
-				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
-						.getObservations());
+	@RequestMapping(value = "/import/preview/nursery", method = RequestMethod.POST)
+	public String previewImportedFilesNursery(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
+		final UserSelection userSelection = this.getUserSelection();
+		final List<MeasurementVariable> traits = WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(),
+				userSelection.getWorkbook().getObservations());
 
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
 		final List<MeasurementVariable> newVariableList = new ArrayList<>();
@@ -517,9 +581,47 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/import/preview", method = RequestMethod.POST)
+	public List<Map<String, Object>> previewImportedFiles(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
+		final UserSelection userSelection = this.getUserSelection();
+		final List<MeasurementVariable> traits =
+				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
+						.getObservations());
+
+		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
+		final List<MeasurementVariable> newVariableList = new ArrayList<>();
+
+		form.setMeasurementVariables(newVariableList);
+
+		newVariableList.addAll(userSelection.getWorkbook().isNursery() ? userSelection.getWorkbook().getMeasurementDatasetVariables()
+				: userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+		newVariableList.addAll(traits);
+
+		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+
+		if (userSelection.getTemporaryWorkbook() != null && userSelection.getMeasurementRowList() == null) {
+			tempList.addAll(userSelection.getTemporaryWorkbook().getObservations());
+		} else {
+			tempList.addAll(userSelection.getMeasurementRowList());
+		}
+
+		form.setMeasurementRowList(tempList);
+
+		final List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
+
+		final DataMapUtil dataMapUtil = new DataMapUtil();
+		for (final MeasurementRow row : tempList) {
+			final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(row, "", this.getUserSelection());
+			masterList.add(dataMap);
+		}
+
+		return masterList;
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/retrieve/new/import/variables", method = RequestMethod.GET)
 	public Map<String, String> getNewlyImportedTraits() throws IOException {
-		final UserSelection userSelection = this.getUserSelection(false);
+		final UserSelection userSelection = this.getUserSelection();
 		final Map<String, String> map = new HashMap<>();
 		final List<SettingDetail> newTraits = userSelection.getNewTraits();
 		final List<SettingDetail> selectedVariates = userSelection.getNewSelectionVariates();

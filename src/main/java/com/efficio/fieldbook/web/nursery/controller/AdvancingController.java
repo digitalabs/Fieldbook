@@ -289,6 +289,12 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			results.put(AdvancingController.IS_SUCCESS, "0");
 			results.put(AdvancingController.LIST_SIZE, 0);
 			results.put(AdvancingController.MESSAGE, form.getErrorInAdvance());
+		} finally {
+			// Important to clear out the observations collection from user session, once we are done with it to keep heap memory under
+			// control. For large trials/nurseries the observations collection can be huge.
+			if (this.userSelection.getWorkbook() != null) {
+				this.userSelection.getWorkbook().getObservations().clear();
+			}
 		}
 
 		return results;

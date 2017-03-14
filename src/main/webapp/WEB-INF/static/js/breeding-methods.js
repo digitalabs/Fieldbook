@@ -160,8 +160,6 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log('The following error occurred: ' + textStatus, errorThrown);
-				},
-				complete: function() {
 				}
 			});
 		},
@@ -184,8 +182,6 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log('The following error occurred: ' + textStatus, errorThrown);
-				},
-				complete: function() {
 				}
 			});
 		}

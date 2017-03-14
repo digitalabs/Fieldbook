@@ -191,7 +191,7 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testDisplayGermplasmDetailsForNursery() throws MiddlewareException {
+	public void testDisplayGermplasmDetailsOfSelectedListForNursery() throws MiddlewareException {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
@@ -243,7 +243,7 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testDisplayGermplasmDetailsForTrial() throws MiddlewareException {
+	public void testDisplayGermplasmDetailsOfSelectedListForTrial() throws MiddlewareException {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
@@ -293,12 +293,12 @@ public class ImportGermplasmListControllerTest {
 	}
 	
 	@Test
-	public void testPopulateDataTableDataListForTrial() {
+	public void testGenerateGermplasmListDataTableForTrial() {
 		final List<Enumeration> checkList = this.createCheckList();
 		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckTypeList();
 		
 		final List<ImportedGermplasm> list = ImportedGermplasmTestDataInitializer.createImportedGermplasmList();
-		final List<Map<String, Object>> dataTableDataList = this.importGermplasmListController.populateDataTableDataList(list, "1", false, false);
+		final List<Map<String, Object>> dataTableDataList = this.importGermplasmListController.generateGermplasmListDataTable(list, "1", false, false);
 		
 		int x = 1;
 		for (final Map<String, Object> map : dataTableDataList) {
@@ -314,12 +314,12 @@ public class ImportGermplasmListControllerTest {
 	}
 	
 	@Test
-	public void testPopulateDataTableDataListForNursery() {
+	public void testGenerateGermplasmListDataTableForNursery() {
 		final List<Enumeration> checkList = this.createCheckList();
 		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckTypeList();
 		
 		final List<ImportedGermplasm> list = ImportedGermplasmTestDataInitializer.createImportedGermplasmList();
-		final List<Map<String, Object>> dataTableDataList = this.importGermplasmListController.populateDataTableDataList(list, "1", true, false);
+		final List<Map<String, Object>> dataTableDataList = this.importGermplasmListController.generateGermplasmListDataTable(list, "1", true, false);
 		
 		int x = 1;
 		for (final Map<String, Object> map : dataTableDataList) {
@@ -336,7 +336,7 @@ public class ImportGermplasmListControllerTest {
 
 	
 	@Test
-	public void testDisplaySelectedGermplasmDetailsForNursery() throws MiddlewareException {
+	public void testDisplayGermplasmDetailsOfCurrentStudyForNursery() throws MiddlewareException {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
@@ -409,10 +409,11 @@ public class ImportGermplasmListControllerTest {
 		Assert.assertEquals("The data table list should be " + dataTableDataList, dataTableDataList, model.get(ImportGermplasmListController.LIST_DATA_TABLE));
 		Assert.assertEquals("The type should be " + type, type, model.get(ImportGermplasmListController.TYPE2));
 		Assert.assertNotNull("The table header list should not be null", ImportGermplasmListController.TABLE_HEADER_LIST);
+		Assert.assertEquals("The starting plot no should be " + ImportGermplasmListController.STARTING_PLOT_NO, ImportGermplasmListController.STARTING_PLOT_NO, form.getStartingPlotNo());
 	}
 
 	@Test
-	public void testDisplaySelectedGermplasmDetailsForTrial() throws MiddlewareException {
+	public void testDisplayGermplasmDetailsOfCurrentStudyForTrial() throws MiddlewareException {
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
 

@@ -516,20 +516,9 @@ public class ImportGermplasmListController extends SettingsController {
 			final String defaultTestCheckId =
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
-			// Set first entry number from the list
-			form.setStartingEntryNo(list.get(0).getEntryId().toString());
-
-			if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
-				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getMeasurementDataValue(TermId.PLOT_NO.getId()));
-			}
-
-			// Set the default value of starting plot number to 1
-			if (StringUtils.isEmpty(form.getStartingPlotNo())) {
-				form.setStartingPlotNo(ImportGermplasmListController.STARTING_PLOT_NO);
-			}
 			
 			boolean isNursery = type != null && type.equalsIgnoreCase(StudyType.N.getName()) ? true : false;
-			final List<Map<String, Object>> dataTableDataList = this.populateDataTableDataList(list, defaultTestCheckId, isNursery, true);
+			final List<Map<String, Object>> dataTableDataList = this.generateGermplasmListDataTable(list, defaultTestCheckId, isNursery, true);
 			this.initializeObjectsForGermplasmDetailsView(type, form, model, mainInfo, list, dataTableDataList);
 		} catch (final Exception e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
@@ -585,16 +574,8 @@ public class ImportGermplasmListController extends SettingsController {
 			final String defaultTestCheckId =
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
-			// Set first entry number from the list
-			if (list.size() != 0) {
-				form.setStartingEntryNo(list.get(0).getEntryId().toString());
-			}
-
-			if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
-				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getMeasurementDataValue(TermId.PLOT_NO.getId()));
-			}
-
-			final List<Map<String, Object>> dataTableDataList = this.populateDataTableDataList(list, defaultTestCheckId, isNursery, false);
+			
+			final List<Map<String, Object>> dataTableDataList = this.generateGermplasmListDataTable(list, defaultTestCheckId, isNursery, false);
 			this.initializeObjectsForGermplasmDetailsView(type, form, model, mainInfo, list, dataTableDataList);
 
 			// setting the form
@@ -607,7 +588,7 @@ public class ImportGermplasmListController extends SettingsController {
 		return super.showAjaxPage(model, ImportGermplasmListController.PAGINATION_TEMPLATE);
 	}
 
-	List<Map<String, Object>> populateDataTableDataList(final List<ImportedGermplasm> list, final String defaultTestCheckId, boolean isNursery, boolean isDefaultTestCheck) {
+	List<Map<String, Object>> generateGermplasmListDataTable(final List<ImportedGermplasm> list, final String defaultTestCheckId, boolean isNursery, boolean isDefaultTestCheck) {
 		final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 		final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 		
@@ -653,6 +634,20 @@ public class ImportGermplasmListController extends SettingsController {
 	void initializeObjectsForGermplasmDetailsView(final String type, final ImportGermplasmListForm form, final Model model,
 			final ImportedGermplasmMainInfo mainInfo, List<ImportedGermplasm> list,
 			final List<Map<String, Object>> dataTableDataList) {
+		// Set first entry number from the list
+		if (list.size() != 0) {
+			form.setStartingEntryNo(list.get(0).getEntryId().toString());
+		}
+
+		if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
+			form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getMeasurementDataValue(TermId.PLOT_NO.getId()));
+		}
+
+		// Set the default value of starting plot number to 1
+		if (StringUtils.isEmpty(form.getStartingPlotNo())) {
+			form.setStartingPlotNo(ImportGermplasmListController.STARTING_PLOT_NO);
+		}
+		
 		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 		importedGermplasmList.setImportedGermplasms(list);
 		mainInfo.setImportedGermplasmList(importedGermplasmList);

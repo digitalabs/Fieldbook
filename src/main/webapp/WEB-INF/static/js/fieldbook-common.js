@@ -3973,6 +3973,12 @@ function saveInlineEdit(isDiscard, invalidButKeep) {
 				oTable.fnUpdate(data.data, data.index, null, false); // Row
 				oTable.fnAdjustColumnSizing();
 				$('body').off('click');
+				
+				if (!isImportPreviewMeasurementsView) {
+					var trialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');				
+					trialManagerDataService.trialMeasurement.hasMeasurement = true;
+					// .. so that generate design is disabled because input is instantly saved.
+				}				
 			} else {
 				$(tableIdentifier).data('show-inline-edit', '0');
 				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);

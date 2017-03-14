@@ -438,6 +438,7 @@ public class ImportGermplasmListControllerTest {
 				ImportGermplasmListController.TABLE_HEADER_LIST);
 		Assert.assertEquals("The starting plot no should be " + ImportGermplasmListController.STARTING_PLOT_NO,
 				ImportGermplasmListController.STARTING_PLOT_NO, form.getStartingPlotNo());
+		Assert.assertEquals("The starting plot no should be 1", "1", form.getStartingEntryNo());
 	}
 
 	@Test

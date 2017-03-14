@@ -1,5 +1,5 @@
 <div ng-class="isNewStudy() ? 'msrmnt-study-not-saved' : 'msrmnt-existing-study'">
-	<div class="row form-group col-xs-12 col-md-12">
+	<div class="row form-group col-xs-12 col-md-12" th:if="${createTrialForm != null and measurementRowCount != 0}">
 		<!-- TODO Remove inlined styles-->
 		<img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px;" width="22" height="22"/>
 		<strong class="sub-content-heading measurements-header" th:text="#{nursery.edit.nursery.measurements}"></strong>
@@ -20,7 +20,7 @@
 		</div>
 	</div>
 
-	<div class="edit-measurements-panel">
+	<div class="edit-measurements-panel" th:if="${createTrialForm != null and measurementRowCount != 0}">
 
 		<div id="mdt-toggle-categorical-display-hidden-original" class="mdt-columns dataTables_info fbk-hide">
 			<span class="btn btn-link fbk-toggle-categorical-display" th:text="#{measurements.show.categorical.description}">Show Categorical Description</span>
@@ -107,7 +107,9 @@
 jQuery(function() {
 	'use strict';
 	var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
-	if ($('#studyId').val() !== '') {
+	var hasSavedPlots = /*[[${measurementRowCount != null && measurementRowCount != 0}]]*/ false;
+	
+	if ($('#studyId').val() !== '' && hasSavedPlots) {
 		initializeTraitsPagination(isCategoricalDisplay);
 	}
 });

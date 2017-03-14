@@ -302,14 +302,13 @@ public class ImportGermplasmListControllerTest {
 		
 		int x = 1;
 		for (final Map<String, Object> map : dataTableDataList) {
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
-			Assert.assertNull(map.get(ImportGermplasmListController.ENTRY_CODE));
-			Assert.assertEquals("1", map.get(ImportGermplasmListController.CHECK));
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
-			Assert.assertEquals(checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
-			Assert.assertEquals("Desig", map.get(ImportGermplasmListController.DESIG));
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.GID));
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+			Assert.assertEquals("The position's value should be " + x, String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
+			Assert.assertNull("The entry code's value should be null", map.get(ImportGermplasmListController.ENTRY_CODE));
+			Assert.assertEquals("The check's value should be 1", "1", map.get(ImportGermplasmListController.CHECK));
+			Assert.assertEquals("The entry's value should be " + x,  String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+			Assert.assertEquals("The check option's value should be " + checkList, checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
+			Assert.assertEquals("The desig's value should be Desig", "Desig", map.get(ImportGermplasmListController.DESIG));
+			Assert.assertEquals("The GID's value should be " + x, String.valueOf(x), map.get(ImportGermplasmListController.GID));
 			x++;
 		}
 	}
@@ -324,14 +323,13 @@ public class ImportGermplasmListControllerTest {
 		
 		int x = 1;
 		for (final Map<String, Object> map : dataTableDataList) {
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_CODE));
-			Assert.assertEquals("", map.get(ImportGermplasmListController.CHECK));
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
-			Assert.assertEquals(checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
-			Assert.assertEquals("Desig", map.get(ImportGermplasmListController.DESIG));
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.GID));
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+			Assert.assertEquals("The position's value should be " + x, String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
+			Assert.assertEquals("The entry code's value should be " + x, String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_CODE));
+			Assert.assertEquals("The check's value should be empty string", "", map.get(ImportGermplasmListController.CHECK));
+			Assert.assertEquals("The entry's value should be " + x,  String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+			Assert.assertEquals("The check option's value should be " + checkList, checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
+			Assert.assertEquals("The desig's value should be Desig", "Desig", map.get(ImportGermplasmListController.DESIG));
+			Assert.assertEquals("The GID's value should be " + x, String.valueOf(x), map.get(ImportGermplasmListController.GID));
 			x++;
 		}
 	}
@@ -402,15 +400,15 @@ public class ImportGermplasmListControllerTest {
 		final String type = "T";
 		this.importGermplasmListController.initializeObjectsForGermplasmDetailsView(type, form, model, mainInfo, list, dataTableDataList);
 		
-		Assert.assertEquals(list, mainInfo.getImportedGermplasmList().getImportedGermplasms());
-		Assert.assertEquals(CURRENT_PAGE, form.getCurrentPage());
-		Assert.assertEquals(CURRENT_PAGE, this.userSelection.getCurrentPageGermplasmList());
-		Assert.assertEquals(mainInfo, this.userSelection.getImportedGermplasmMainInfo());
-		Assert.assertTrue(this.userSelection.isImportValid());
-		Assert.assertEquals(checkList, model.get(ImportGermplasmListController.CHECK_LISTS));
-		Assert.assertEquals(dataTableDataList, model.get(ImportGermplasmListController.LIST_DATA_TABLE));
-		Assert.assertEquals(type, model.get(ImportGermplasmListController.TYPE2));
-		Assert.assertNotNull(ImportGermplasmListController.TABLE_HEADER_LIST);
+		Assert.assertEquals("The imported germplasms should be " + list, list, mainInfo.getImportedGermplasmList().getImportedGermplasms());
+		Assert.assertEquals("The current page should be " + CURRENT_PAGE, CURRENT_PAGE, form.getCurrentPage());
+		Assert.assertEquals("The current page should be " + CURRENT_PAGE, CURRENT_PAGE, this.userSelection.getCurrentPageGermplasmList());
+		Assert.assertEquals("The main info should be " + mainInfo, mainInfo, this.userSelection.getImportedGermplasmMainInfo());
+		Assert.assertTrue("The isImportValid's value should be true", this.userSelection.isImportValid());
+		Assert.assertEquals("The checklist should be " + checkList, checkList, model.get(ImportGermplasmListController.CHECK_LISTS));
+		Assert.assertEquals("The data table list should be " + dataTableDataList, dataTableDataList, model.get(ImportGermplasmListController.LIST_DATA_TABLE));
+		Assert.assertEquals("The type should be " + type, type, model.get(ImportGermplasmListController.TYPE2));
+		Assert.assertNotNull("The table header list should not be null", ImportGermplasmListController.TABLE_HEADER_LIST);
 	}
 
 	@Test

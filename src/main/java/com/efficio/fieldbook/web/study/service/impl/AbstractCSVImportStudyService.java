@@ -134,10 +134,15 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 					final MeasurementData wData = measurementRow.getMeasurementData(header);
 					this.importDataCellValues(wData, rowData, j, workbook, factorVariableMap);
 				}
+			}
 
-				if (countPlotIdNotFound != 0) {
-					workbook.setPlotsIdNotfound(countPlotIdNotFound);
-				}
+			if (!measurementRowsMap.isEmpty()) {
+				// meaning there are items in the original list, so there are items deleted
+				throw new WorkbookParserException("confirmation.import.add.or.delete.rows");
+			}
+
+			if (countPlotIdNotFound != 0) {
+				workbook.setPlotsIdNotfound(countPlotIdNotFound);
 			}
 		}
 	}
@@ -210,17 +215,17 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 	String getKeyIdentifierFromRow(final List<String> row, final List<Integer> indexes) throws WorkbookParserException{
 		final String plot = row.get(indexes.get(1));
 		final String entry = row.get(indexes.get(2));
-		final String plot_id = row.get(indexes.get(3));
+		final String plotId = row.get(indexes.get(3));
 
 		if (StringUtils.isBlank(plot)) {
 			throw new WorkbookParserException("error.workbook.import.plot.no.empty.cell");
 		} else if (StringUtils.isBlank(entry)) {
 			throw new WorkbookParserException("error.workbook.import.entry.no.empty.cell");
-		} else if (StringUtils.isBlank(plot_id)) {
+		} else if (StringUtils.isBlank(plotId)) {
 			throw new WorkbookParserException("error.workbook.import.plot.id.empty.cell");
 		}
 
-		return plot_id;
+		return plotId;
 	}
 
 	protected void importDataCellValues(final MeasurementData wData, final List<String> row, final int columnIndex,

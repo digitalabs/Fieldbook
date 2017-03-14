@@ -100,7 +100,7 @@ public class CsvImportStudyServiceImplTest {
 
 	@Test(expected = WorkbookParserException.class)
 	public void testGetKeyIdentifierFromRowWithFileParsingException() throws WorkbookParserException {
-		final List<String> row = Arrays.asList("1", "", "1", "PLOT123P123456");
+		final List<String> row = Arrays.asList("1", null, "1", "PLOT123P123456");
 		final List<Integer> indexes = Arrays.asList(1, 1, 2, 3);
 		this.csvImport.getKeyIdentifierFromRow(row, indexes);
 	}

@@ -176,23 +176,14 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			$scope.deleteEnvironment = function(index) {
-				if (!TrialManagerDataService.isOpenTrial() ||
-						(TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement)) {
-					// For New Trial and Existing Trial w/o measurement data
+				if (!TrialManagerDataService.isOpenTrial()) {
+					// For New Trial
 					confirmDeleteEnvironment(index);
 
-				} else if (TrialManagerDataService.trialMeasurement.hasMeasurement) {
-					// For Existing Trial with measurement data
+				} else {
+					// For Existing Trial
 					var environmentNo = index + 1;
-
-					hasMeasurementDataOnEnvironment(environmentNo).success(function(data) {
-						if (true === data) {
-							var warningMessage = 'This environment cannot be removed because it contains measurement data.';
-							showAlertMessage('', warningMessage);
-						} else {
-							confirmDeleteEnvironment(index);
-						}
-					});
+					hasMeasurementDataOnEnvironment(environmentNo);
 				}
 			};
 
@@ -271,8 +262,25 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			function hasMeasurementDataOnEnvironment(environmentNo) {
 				var variableIds = TrialManagerDataService.settings.measurements.keys();
-				return $http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' + environmentNo,
-					variableIds, {cache: false});
+				var dfd = $.Deferred();
+				$.ajax({
+					url: '/Fieldbook/trial/measurements/instanceMetadata/' + $('#studyId').val(),
+						success: function(data) {
+							var envList;
+                			envList = data;
+                			$http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' +
+                				envList[environmentNo].instanceDbId, variableIds, {cache: false}).success(function(data) {
+                					if (true === data) {
+                						var warningMessage = 'This environment cannot be removed because it contains measurement data.';
+                						showAlertMessage('', warningMessage);
+                					} else {
+                						confirmDeleteEnvironment(index);
+                					}
+                					dfd.resolve();
+                				});
+                			}
+                });
+                return dfd.promise();
 			}
 
 			// on click generate design button

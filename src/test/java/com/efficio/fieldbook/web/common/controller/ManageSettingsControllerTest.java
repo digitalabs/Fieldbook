@@ -113,17 +113,6 @@ public class ManageSettingsControllerTest {
 	}
 
 	@Test
-	public void testGetObservationsOnEnvironment() {
-		Workbook workbook =
-				WorkbookDataUtil.getTestWorkbookForTrial(ManageSettingsControllerTest.NO_OF_OBSERVATIONS,
-						ManageSettingsControllerTest.NO_OF_TRIAL_INSTANCES);
-
-		Assert.assertEquals("Expecting that the return size of observation is " + ManageSettingsControllerTest.NO_OF_OBSERVATIONS
-				+ " but returned " + this.controller.getObservationsOnEnvironment(workbook, 1).size(), this.controller
-				.getObservationsOnEnvironment(workbook, 1).size(), ManageSettingsControllerTest.NO_OF_OBSERVATIONS);
-	}
-
-	@Test
 	public void testHasMeasurementDataOnEnvronmentReturnsTrueForExistingTraits() {
 		Workbook workbook =
 				WorkbookDataUtil.getTestWorkbookForTrial(ManageSettingsControllerTest.NO_OF_OBSERVATIONS,

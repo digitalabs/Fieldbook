@@ -310,7 +310,7 @@ public class ImportGermplasmListController extends SettingsController {
 		this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
 				AppConstants.ID_NAME_COMBINATION.getString(), true);
 		final int studyId = this.dataImportService.saveDataset(this.userSelection.getWorkbook(), true, isDeleteObservations,
-				this.getCurrentProject().getUniqueID());
+				this.getCurrentProject().getUniqueID(), this.getCurrentProject().getCropType().getPlotCodePrefix());
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 
 		// for saving the list data project
@@ -522,7 +522,7 @@ public class ImportGermplasmListController extends SettingsController {
 			form.setStartingEntryNo(list.get(0).getEntryId().toString());
 
 			if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
-				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getDataList().get(3).getValue());
+				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getMeasurementDataValue(TermId.PLOT_NO.getId()));
 			}
 
 			// Set the default value of starting plot number to 1
@@ -559,15 +559,15 @@ public class ImportGermplasmListController extends SettingsController {
 				if (factorsList != null) {
 					// we iterate the map for dynamic header of nursery and trial
 					for (final SettingDetail factorDetail : factorsList) {
-						if (factorDetail != null && factorDetail.getVariable() != null) {
+						if (factorDetail != null && factorDetail.getVariable() != null ){
 							dataMap.put(factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString(),
-									this.getGermplasmData(factorDetail.getVariable().getCvTermId().toString(), germplasm));
+								this.getGermplasmData(factorDetail.getVariable().getCvTermId().toString(), germplasm));
 						}
 					}
 				}
-
 				dataTableDataList.add(dataMap);
 			}
+
 			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 			importedGermplasmList.setImportedGermplasms(list);
 			mainInfo.setImportedGermplasmList(importedGermplasmList);
@@ -636,7 +636,7 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 
 			if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
-				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getDataList().get(3).getValue());
+				form.setStartingPlotNo(this.userSelection.getMeasurementRowList().get(0).getMeasurementDataValue(TermId.PLOT_NO.getId()));
 			}
 
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
@@ -764,21 +764,20 @@ public class ImportGermplasmListController extends SettingsController {
 		if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
 
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage("nursery.import.header.position", null, locale),
-					ImportGermplasmListController.POSITION));
+				ImportGermplasmListController.POSITION));
 			tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_CODE.getTermNameFromOntology(this.ontologyDataManager),
-					ImportGermplasmListController.ENTRY_CODE));
+				ImportGermplasmListController.ENTRY_CODE));
 		}
 
-		if(factorsList != null) {
+		if (factorsList != null) {
 			// we iterate the map for dynamic header of nursery and trial
 			for (final SettingDetail factorDetail : factorsList) {
-				if (factorDetail != null && factorDetail.getVariable() != null
-						&& !SettingsUtil.inHideVariableFields(factorDetail.getVariable().getCvTermId(),
+				if (factorDetail != null && factorDetail.getVariable() != null && !SettingsUtil
+					.inHideVariableFields(factorDetail.getVariable().getCvTermId(),
 						AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString())) {
 					tableHeaderList.add(new TableHeader(factorDetail.getVariable().getName(),
-							factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString()));
+						factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString()));
 				}
-
 			}
 		}
 		return tableHeaderList;

@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.validator.routines.DateValidator;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -28,6 +29,8 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
@@ -78,6 +81,45 @@ public class ValidationServiceImpl implements ValidationService {
 		} else if (StringUtils.isNotBlank(var.getDataType()) && var.getDataType().equalsIgnoreCase(ValidationServiceImpl.DATA_TYPE_NUMERIC)) {
 			return this.validateIfValueIsMissingOrNumber(value.trim());
 		}
+		return true;
+	}
+
+	public boolean isValidValue(final Variable var, final String value) {
+		if (StringUtils.isBlank(value)) {
+			return true;
+		}
+
+		if (var.getScale().getDataType() == DataType.NUMERIC_VARIABLE) {
+			boolean isNumber = NumberUtils.isNumber(value);
+
+			if (!isNumber) {
+				return false;
+			}
+
+			boolean withinValidRange = true;
+			Double currentValue = Double.valueOf(value);
+
+			if (var.getScale().getMinValue() != null) {
+				Double minValue = Double.valueOf(var.getScale().getMinValue());
+				if (currentValue < minValue) {
+					withinValidRange = false;
+				}
+			}
+
+			if (var.getScale().getMaxValue() != null) {
+				Double maxValue = Double.valueOf(var.getScale().getMaxValue());
+				if (currentValue > maxValue) {
+					withinValidRange = false;
+				}
+			}
+			return withinValidRange;
+		}
+		
+		else if (var.getScale().getDataType() == DataType.DATE_TIME_VARIABLE) {
+			return new DateValidator().isValid(value, "yyyyMMdd");
+		}
+
+		// TODO Are there other validation cases?
 		return true;
 	}
 
@@ -204,6 +246,11 @@ public class ValidationServiceImpl implements ValidationService {
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean validateObservationValue(final Variable variable, String value) {
+		return this.isValidValue(variable, value);
 	}
 
 	private String setWarningMessage(final String value) {

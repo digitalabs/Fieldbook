@@ -493,77 +493,72 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public Map<String, Object> submitDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
+		try {
+			final String generateAutomatically =
+					form.getUserLabelPrinting().getBarcodeGeneratedAutomatically() == null || form.getUserLabelPrinting()
+							.getBarcodeGeneratedAutomatically().equals("0") ? "0" : "1";
+			this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
+			this.userLabelPrinting.setBarcodeGeneratedAutomatically(generateAutomatically);
+			this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
+			this.userLabelPrinting.setNumberOfLabelPerRow(form.getUserLabelPrinting().getNumberOfLabelPerRow());
+			this.userLabelPrinting.setNumberOfRowsPerPageOfLabel(form.getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
+			this.userLabelPrinting.setLeftSelectedLabelFields(form.getUserLabelPrinting().getLeftSelectedLabelFields());
+			this.userLabelPrinting.setRightSelectedLabelFields(form.getUserLabelPrinting().getRightSelectedLabelFields());
+			this.userLabelPrinting.setMainSelectedLabelFields(form.getUserLabelPrinting().getMainSelectedLabelFields());
+			this.userLabelPrinting.setIncludeColumnHeadinginNonPdf(form.getUserLabelPrinting().getIncludeColumnHeadinginNonPdf());
+			this.userLabelPrinting.setSettingsName(form.getUserLabelPrinting().getSettingsName());
+			this.userLabelPrinting.setFirstBarcodeField(form.getUserLabelPrinting().getFirstBarcodeField());
+			this.userLabelPrinting.setSecondBarcodeField(form.getUserLabelPrinting().getSecondBarcodeField());
+			this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
+			this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
+			this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
 
-		final String generateAutomatically =
-				form.getUserLabelPrinting().getBarcodeGeneratedAutomatically() == null || form.getUserLabelPrinting()
-						.getBarcodeGeneratedAutomatically().equals("0") ? "0" : "1";
-		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
-		this.userLabelPrinting
-				.setBarcodeGeneratedAutomatically(generateAutomatically);
-		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
-		this.userLabelPrinting.setNumberOfLabelPerRow(form.getUserLabelPrinting().getNumberOfLabelPerRow());
-		this.userLabelPrinting.setNumberOfRowsPerPageOfLabel(form.getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
-		this.userLabelPrinting.setLeftSelectedLabelFields(form.getUserLabelPrinting().getLeftSelectedLabelFields());
-		this.userLabelPrinting.setRightSelectedLabelFields(form.getUserLabelPrinting().getRightSelectedLabelFields());
-		this.userLabelPrinting.setMainSelectedLabelFields(form.getUserLabelPrinting().getMainSelectedLabelFields());
-		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf(form.getUserLabelPrinting().getIncludeColumnHeadinginNonPdf());
-		this.userLabelPrinting.setSettingsName(form.getUserLabelPrinting().getSettingsName());
-		this.userLabelPrinting.setFirstBarcodeField(form.getUserLabelPrinting().getFirstBarcodeField());
-		this.userLabelPrinting.setSecondBarcodeField(form.getUserLabelPrinting().getSecondBarcodeField());
-		this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
-		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
-		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
+			// add validation for the file name
+			if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
+				final Map<String, Object> results = new HashMap<>();
+				results.put(LabelPrintingController.IS_SUCCESS, 0);
+				results.put(AppConstants.MESSAGE.getString(),
+						this.messageSource.getMessage("common.error.invalid.filename.windows", new Object[] {}, Locale.getDefault()));
 
-		if (this.userLabelPrinting.getBarcodeGeneratedAutomatically().equalsIgnoreCase(LabelPrintingServiceImpl.BARCODE_GENERATED_AUTOMATICALLY)) {
-			String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
-			String cropPrefix = null;
-			try {
-				cropPrefix = this.fieldbookMiddlewareService.getPlotCodePrefix(cropName);
-			} catch (final MiddlewareException e) {
-				LabelPrintingController.LOG.error(e.getMessage(), e);
-				throw new MiddlewareException(e.getMessage(), e);
+				return results;
 			}
-			this.userLabelPrinting.setPlotCodePrefix(cropPrefix);
-		}
 
-		// add validation for the file name
-		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
-			final Map<String, Object> results = new HashMap<>();
-			results.put(LabelPrintingController.IS_SUCCESS, 0);
-			results.put(AppConstants.MESSAGE.getString(),
-					this.messageSource.getMessage("common.error.invalid.filename.windows", new Object[] {}, Locale.getDefault()));
+			final Workbook workbook = this.userSelection.getWorkbook();
+			// workbook.observations() collection is no longer pre-loaded into user session when trial is opened. Load now as we need it to
+			// keep label printing functionality working as before (all plots assumed loaded).
+			this.fieldbookMiddlewareService.loadAllObservations(workbook);
 
-			return results;
-		}
-
-		final Workbook workbook = this.userSelection.getWorkbook();
-
-		if (workbook != null) {
-			final String selectedLabelFields = this.getSelectedLabelFields(this.userLabelPrinting);
-			this.labelPrintingService.populateUserSpecifiedLabelFields(
-					this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances(), workbook, selectedLabelFields,
-					form.getIsTrial(), form.getIsStockList(), this.userLabelPrinting);
-		}
-
-		final List<FieldMapInfo> fieldMapInfoList = this.userLabelPrinting.getFieldMapInfoList();
-
-		final List<StudyTrialInstanceInfo> trialInstances;
-
-		if (fieldMapInfoList != null) {
-			trialInstances = this.generateTrialInstancesFromSelectedFieldMaps(fieldMapInfoList, form);
-		} else {
-			// initial implementation of BMS-186 will be for single studies
-			// only, not for cases where multiple studies participating in a
-			// single fieldmap
-			trialInstances = this.generateTrialInstancesFromFieldMap();
-
-			for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
-				final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
-				fieldMapTrialInstanceInfo.setLocationName(fieldMapTrialInstanceInfo.getSiteName());
+			if (workbook != null) {
+				final String selectedLabelFields = this.getSelectedLabelFields(this.userLabelPrinting);
+				this.labelPrintingService
+						.populateUserSpecifiedLabelFields(this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances(),
+								workbook, selectedLabelFields, form.getIsTrial(), form.getIsStockList(), this.userLabelPrinting);
 			}
-		}
 
-		return this.generateLabels(trialInstances, form.isCustomReport());
+			final List<FieldMapInfo> fieldMapInfoList = this.userLabelPrinting.getFieldMapInfoList();
+
+			final List<StudyTrialInstanceInfo> trialInstances;
+
+			if (fieldMapInfoList != null) {
+				trialInstances = this.generateTrialInstancesFromSelectedFieldMaps(fieldMapInfoList, form);
+			} else {
+				// initial implementation of BMS-186 will be for single studies
+				// only, not for cases where multiple studies participating in a
+				// single fieldmap
+				trialInstances = this.generateTrialInstancesFromFieldMap();
+
+				for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
+					final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
+					fieldMapTrialInstanceInfo.setLocationName(fieldMapTrialInstanceInfo.getSiteName());
+				}
+			}
+
+			return this.generateLabels(trialInstances, form.isCustomReport());
+		} finally {
+			// Important to clear out the observations collection from user session, once we are done with it to keep heap memory under
+			// control. For large trials/nurseries the observations collection can be huge.
+			this.userSelection.getWorkbook().getObservations().clear();
+		}
 	}
 
 	/**

@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.nursery.service;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 
@@ -26,4 +27,6 @@ public interface ValidationService {
 	String validateConditionAndConstantValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException;
 
 	void validateObservationValues(Workbook workbook, MeasurementRow row) throws MiddlewareQueryException;
+
+	boolean validateObservationValue(final Variable variable, String value);
 }

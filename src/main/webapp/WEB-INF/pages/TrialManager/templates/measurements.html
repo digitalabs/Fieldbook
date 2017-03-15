@@ -1,3 +1,4 @@
+<div id="fbk-measurements-controller-div">
 <div class="row" ng-cloak="">
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
         <section-container th:attr="heading=#{trial.managesettings.measurement.title}"
@@ -13,5 +14,6 @@
 
 <br />
 <div id="measurementsDiv" ng-cloak="">	
-	<div th:if="${createTrialForm != null and measurementRowCount != 0}" th:include="/Common/showAddOrRemoveTraitsPagination"></div>
+	<div th:include="/TrialManager/templates/measurementsTab"></div>
+</div>
 </div>

@@ -25,7 +25,6 @@ import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class ManageSettingsControllerTest {
 
 	private static final int NO_OF_TRIAL_INSTANCES = 2;
@@ -43,6 +42,7 @@ public class ManageSettingsControllerTest {
 	private ManageSettingsController controller;
 
 	@Test
+	@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 	public void testDeleteVariableMultiple() throws Exception {
 		// we just have to make sure that the original deleteVariable(@PathVariable int mode, @PathVariable int variableId) is called
 		// unit test for that method should be done separately
@@ -111,46 +111,4 @@ public class ManageSettingsControllerTest {
 
 		Mockito.verify(spyController).hasMeasurementDataEntered(ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
 	}
-
-	@Test
-	public void testGetObservationsOnEnvironment() {
-		Workbook workbook =
-				WorkbookDataUtil.getTestWorkbookForTrial(ManageSettingsControllerTest.NO_OF_OBSERVATIONS,
-						ManageSettingsControllerTest.NO_OF_TRIAL_INSTANCES);
-
-		Assert.assertEquals("Expecting that the return size of observation is " + ManageSettingsControllerTest.NO_OF_OBSERVATIONS
-				+ " but returned " + this.controller.getObservationsOnEnvironment(workbook, 1).size(), this.controller
-				.getObservationsOnEnvironment(workbook, 1).size(), ManageSettingsControllerTest.NO_OF_OBSERVATIONS);
-	}
-
-	@Test
-	public void testHasMeasurementDataOnEnvronmentReturnsTrueForExistingTraits() {
-		Workbook workbook =
-				WorkbookDataUtil.getTestWorkbookForTrial(ManageSettingsControllerTest.NO_OF_OBSERVATIONS,
-						ManageSettingsControllerTest.NO_OF_TRIAL_INSTANCES);
-
-		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
-
-		List<Integer> ids = new ArrayList<Integer>();
-		ids.add(TermId.PLOT_NO.getId());
-
-		Assert.assertTrue("Expected that the set of observations on the given environment has measurement data.",
-				this.controller.hasMeasurementDataOnEnvironment(ids, 1));
-	}
-
-	@Test
-	public void testHasMeasurementDataOnEnvronmentReturnsFalseForNonExistingTraits() {
-		Workbook workbook =
-				WorkbookDataUtil.getTestWorkbookForTrial(ManageSettingsControllerTest.NO_OF_OBSERVATIONS,
-						ManageSettingsControllerTest.NO_OF_TRIAL_INSTANCES);
-
-		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
-
-		List<Integer> ids = new ArrayList<Integer>();
-		ids.add(TermId.ENTRY_CODE.getId());
-
-		Assert.assertFalse("Expected that the set of observations on the given environment has no measurement data.",
-				this.controller.hasMeasurementDataOnEnvironment(ids, 1));
-	}
-
 }

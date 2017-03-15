@@ -62,7 +62,7 @@ public class KsuFieldbookUtil {
 
 	public enum KsuRequiredColumnEnum {
 		ENTRY_NO(TermId.ENTRY_NO.getId(), "ENTRY_NO"), PLOT_NO(TermId.PLOT_NO.getId(), KsuFieldbookUtil.PLOT), GID(TermId.GID.getId(),
-				"GID"), DESIGNATION(TermId.DESIG.getId(), "DESIGNATION");
+				"GID"), DESIGNATION(TermId.DESIG.getId(), "DESIGNATION"),PLOT_ID(TermId.PLOT_ID.getId(), "PLOT_ID");
 
 		private final Integer id;
 		private final String label;

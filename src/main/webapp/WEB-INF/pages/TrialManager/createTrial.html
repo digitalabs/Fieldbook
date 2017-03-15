@@ -228,6 +228,9 @@
 								<input type="button" ng-click="selectPreviousTrial()" ng-show="isChoosePreviousTrial"
 									   th:value="#{common.form.choose.text}"
 									   class="btn btn-info" id="choosePreviousStudy"/>
+								<input type="button" ng-click="resetTabsData()" ng-show="isChoosePreviousTrial"
+									   th:value="#{trial.managesettings.create.trial.reset}"
+									   class="btn btn-info" id="resetTabsData"/>
 							</div>
 						</div>
 
@@ -547,7 +550,7 @@ var translations = {
 	).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
 	).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
 	).constant('EXPERIMENTAL_DESIGN_SPECIAL_DATA', /*[[${experimentalDesignSpecialData}]]*/ ''
-	).constant('DESIGN_TYPE' ,
+	).constant('DESIGN_TYPE',
 			{ RANDOMIZED_COMPLETE_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).RANDOMIZED_COMPLETE_BLOCK.getId()}]]*/ 0
 				, RESOLVABLE_INCOMPLETE_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).RESOLVABLE_INCOMPLETE_BLOCK.getId()}]]*/ 1
 				, ROW_COL: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).ROW_COL.getId()}]]*/ 2
@@ -571,6 +574,11 @@ var translations = {
 	});
 
 })();
+
+jQuery(function() {
+	'use strict';
+	var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
+});
 
 //]]>
 </script>

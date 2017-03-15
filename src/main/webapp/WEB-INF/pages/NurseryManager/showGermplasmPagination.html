@@ -68,27 +68,12 @@
             </div>
         </div>
     </div>
-
-	<div id="cpecify-crosses-section" class="row col-xs-12 col-md-12" th:if="${type == 'N'}">
-		<img th:src="@{/static/img/review-crosses.png}" />
-        <label class="control-label"><strong id="cpefifyCrossesLabel" class="sub-content-heading"
-												 th:text="#{germplasm.list.specify.crosses}">Specify Crosses</strong></label>
-        <div th:if="*{germplasmListId > -1}">
-            <a th:href="@{~/BreedingManager/main/createcrosses(nurseryid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${contextInfo.loggedInUserId},selectedProjectId=${contextInfo.selectedProjectId})}"
-               th:text="#{nursery.managesettings.create.nursery.createcrosses.label} + ' ' ">.Create</a>
-            <label class="control-label" th:text="#{germplasm.list.create.new.crosses}">. new crosses</label>
-        </div>
-	</div>
 </form>
 
 </div>
 
 <script type="text/javascript" th:inline="javascript">
 //<![CDATA[
-var dataGermplasmList = /*[[${listDataTable}]]*/ [];
-$(document).ready(function() {
-	'use strict';
-	window.ImportGermplasm.initialize(dataGermplasmList);
-});
+	var dataGermplasmList = /*[[${listDataTable}]]*/ [];
 //]]>
 </script>

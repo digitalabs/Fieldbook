@@ -773,7 +773,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param temporaryWorkbook the new temporary workbook
 	 */
-	public void setTemporaryWorkbook(Workbook temporaryWorkbook) {
+	public void setTemporaryWorkbook(final Workbook temporaryWorkbook) {
 		this.temporaryWorkbook = temporaryWorkbook;
 	}
 
@@ -791,7 +791,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param deletedTrialLevelVariables the new deleted trial level variables
 	 */
-	public void setDeletedTrialLevelVariables(List<SettingDetail> deletedTrialLevelVariables) {
+	public void setDeletedTrialLevelVariables(final List<SettingDetail> deletedTrialLevelVariables) {
 		this.deletedTrialLevelVariables = deletedTrialLevelVariables;
 	}
 
@@ -799,7 +799,7 @@ public class UserSelection implements Serializable {
 		return this.measurementDatasetVariable;
 	}
 
-	public void setMeasurementDatasetVariable(List<MeasurementVariable> measurementDatasetVariable) {
+	public void setMeasurementDatasetVariable(final List<MeasurementVariable> measurementDatasetVariable) {
 		this.measurementDatasetVariable = measurementDatasetVariable;
 	}
 

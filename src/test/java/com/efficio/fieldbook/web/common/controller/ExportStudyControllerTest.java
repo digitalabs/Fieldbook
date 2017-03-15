@@ -123,7 +123,6 @@ public class ExportStudyControllerTest {
 		this.exportStudyController.setUserSelection(this.userSelection);
 		final PaginationListSelection paginationListSelection = Mockito.mock(PaginationListSelection.class);
 		this.exportStudyController.setPaginationListSelection(paginationListSelection);
-		Mockito.doReturn(null).when(paginationListSelection).getReviewFullWorkbook("0");
 	}
 
 	@Test
@@ -295,6 +294,7 @@ public class ExportStudyControllerTest {
 				ExportStudyControllerTest.CSV_CONTENT_TYPE, result.get("contentType"));
 		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + ".csv",
 				generatedFilename + ExportStudyControllerTest.CSV_EXT, result.get("filename"));
+
 		Assert.assertEquals("Expected that the returned output filename is " + outputFilename, outputFilename,
 				result.get("outputFilename"));
 	}

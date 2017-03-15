@@ -12,8 +12,13 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.SessionUtility;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.ListDataProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
@@ -35,6 +40,7 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
@@ -123,6 +129,9 @@ public class OpenTrialControllerTest {
 
 	@Mock
 	private OntologyVariableDataManager variableDataManager;
+
+	@Mock
+	private InventoryDataManager inventoryDataManager;
 
 	@InjectMocks
 	private OpenTrialController openTrialController;
@@ -896,10 +905,21 @@ public class OpenTrialControllerTest {
 
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.TRIAL))
 				.thenReturn(listOfGermplasmList);
+		ListDataProject listDataProject = ListDataProjectTestDataInitializer
+				.createListDataProject(germplasmList, 0, 0, 1, "entryCode", "seedSource", "designation", "groupName",
+						"duplicate", "notes", 20170125);
+		listDataProject.setMgid(12);
+		listDataProject.setGroupId(12);
+
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId))
-				.thenReturn(this.createListDataProject(germplasmCount));
+				.thenReturn(Lists.newArrayList(listDataProject));
+
 		Mockito.when(this.fieldbookMiddlewareService
 				.countListDataProjectByListIdAndEntryType(germplasmListId, SystemDefinedEntryType.CHECK_ENTRY)).thenReturn(checkCount);
+
+		Map<Integer, String> mockData = Maps.newHashMap();
+		mockData.put(0, "StockID101, StockID102");
+		Mockito.when(this.inventoryDataManager.retrieveStockIds(Mockito.anyList())).thenReturn(mockData);
 
 		final Model model = new ExtendedModelMap();
 
@@ -916,6 +936,19 @@ public class OpenTrialControllerTest {
 
 		Assert.assertEquals(Integer.valueOf(germplasmCount), model.asMap().get(GERMPLASM_LIST_SIZE));
 		Assert.assertEquals(checkCount, model.asMap().get(GERMPLASM_CHECKS_SIZE));
+
+		ImportedGermplasm importedGermplasm = importedGermplasmMainInfo.getImportedGermplasmList().getImportedGermplasms().get(0);
+		Assert.assertEquals("0", importedGermplasm.getEntryTypeValue());
+		Assert.assertEquals(0, importedGermplasm.getEntryTypeCategoricalID().intValue());
+		Assert.assertEquals("groupName", importedGermplasm.getCross());
+		Assert.assertEquals("groupName", importedGermplasm.getCross());
+		Assert.assertEquals("entryCode", importedGermplasm.getEntryCode());
+		Assert.assertEquals(1, importedGermplasm.getEntryId().intValue());
+		Assert.assertEquals("0", importedGermplasm.getGid());
+		Assert.assertEquals(12, importedGermplasm.getMgid().intValue());
+		Assert.assertEquals("seedSource", importedGermplasm.getSource());
+		Assert.assertEquals(12, importedGermplasm.getGroupId().intValue());
+		Assert.assertEquals("StockID101, StockID102", importedGermplasm.getStockIDs());
 
 	}
 

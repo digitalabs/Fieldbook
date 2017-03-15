@@ -152,7 +152,7 @@ public class FileUploadController extends AbstractBaseETLController {
 					this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
 							confirmDiscard == 1 ? true : false, new WorkbookParser());
 
-			this.dataImportService.saveDataset(wb, programUUID);
+			this.dataImportService.saveDataset(wb, programUUID, this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
 
 			this.httpSessionUtil.clearSessionData(session, new String[] {HTTPSessionUtil.USER_SELECTION_SESSION_NAME});
 

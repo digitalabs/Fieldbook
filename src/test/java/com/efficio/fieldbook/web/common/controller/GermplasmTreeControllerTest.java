@@ -24,6 +24,7 @@ import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -213,7 +214,7 @@ public class GermplasmTreeControllerTest {
 		this.form.setListNotes(GermplasmTreeControllerTest.LIST_NOTES);
 		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
 		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
-		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
+		this.form.setGermplasmListType(GermplasmListType.IMP_CROSS.name());
 
 		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
 
@@ -244,6 +245,68 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals(0, result.get("isSuccess"));
 		Assert.assertEquals(GermplasmTreeControllerTest.LIST_NAME_SHOULD_BE_UNIQUE, result.get("message"));
 	}
+	
+	@Test
+	public void testSaveListPostExistingListNameWithTrailingSpaces() throws MiddlewareQueryException {
+		this.form = new SaveListForm();
+		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME + "   ");
+		this.form.setListDate(GermplasmTreeControllerTest.LIST_DATE);
+		this.form.setListDescription(GermplasmTreeControllerTest.LIST_DESCRIPTION);
+		this.form.setListIdentifier(GermplasmTreeControllerTest.LIST_IDENTIFIER);
+		this.form.setListNotes(GermplasmTreeControllerTest.LIST_NOTES);
+		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
+		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
+		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
+		
+		// Setup mocks
+		Mockito.doReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService).getGermplasmListByName(GermplasmTreeControllerTest.LIST_NAME, GermplasmTreeControllerTest.TEST_PROGRAM_UUID);
+
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
+
+		// Verify that list name was trimmed before being as Middleware parameter
+		Mockito.verify(this.fieldbookMiddlewareService).getGermplasmListByName(GermplasmTreeControllerTest.LIST_NAME, GermplasmTreeControllerTest.TEST_PROGRAM_UUID);
+		Assert.assertEquals(0, result.get("isSuccess"));
+		Assert.assertEquals(GermplasmTreeControllerTest.LIST_NAME_SHOULD_BE_UNIQUE, result.get("message"));
+	}
+	
+	@Test
+	public void testCreateGermplasmListUsingNameWithTrailingSpaces() throws MiddlewareQueryException {
+		this.form = new SaveListForm();
+		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME + "   ");
+		this.form.setListDate(GermplasmTreeControllerTest.LIST_DATE);
+		this.form.setListDescription(GermplasmTreeControllerTest.LIST_DESCRIPTION);
+		this.form.setListIdentifier(GermplasmTreeControllerTest.LIST_IDENTIFIER);
+		this.form.setListNotes(GermplasmTreeControllerTest.LIST_NOTES);
+		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
+		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
+		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
+		Mockito.doReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+		
+		final GermplasmList germplasmList = this.controller.createGermplasmList(this.form, GermplasmTreeControllerTest.TEST_USER_ID);
+
+		// Verify that list name was trimmed plus that other list fields were populated properly
+		Assert.assertEquals(GermplasmTreeControllerTest.LIST_NAME, germplasmList.getName());
+		Assert.assertEquals(GermplasmTreeControllerTest.LIST_DATE.toString().replace("-", ""), germplasmList.getDate().toString());
+		Assert.assertEquals(GermplasmTreeControllerTest.LIST_DESCRIPTION, germplasmList.getDescription());
+		Assert.assertEquals(GermplasmTreeControllerTest.LIST_TYPE, germplasmList.getType());
+		Assert.assertEquals(GermplasmTreeControllerTest.LIST_NOTES, germplasmList.getNotes());
+		Assert.assertEquals(new Integer(1), germplasmList.getStatus());
+		Assert.assertEquals(GermplasmTreeControllerTest.TEST_PROGRAM_UUID, germplasmList.getProgramUUID());
+	}
+	
+	@Test
+	public void testCheckIfUniqueUsingExistingListNameWithTrailingSpaces() {
+		Mockito.doReturn(Collections.singletonList(this.createGermplasmList())).when(this.germplasmListManager).getGermplasmListByName(
+				GermplasmTreeControllerTest.LIST_NAME, GermplasmTreeControllerTest.TEST_PROGRAM_UUID , 0, 1, null);
+		try {
+			this.controller.checkIfUnique(GermplasmTreeControllerTest.LIST_NAME + "  ", GermplasmTreeControllerTest.TEST_PROGRAM_UUID);
+			Assert.fail("Should have thrown Middleware Exception but didn't.");
+		} catch (MiddlewareException e) {
+			Assert.assertEquals(GermplasmTreeController.NAME_NOT_UNIQUE, e.getMessage());
+		}
+	}
+
 
 	@Test
 	public void testSaveListPostWithError() throws MiddlewareQueryException {
@@ -566,6 +629,26 @@ public class GermplasmTreeControllerTest {
 					instanceAttribute.getAval());
 		}
 
+	}
+	
+	@Test
+	public void testSaveParentListPostSuccessful() {
+		this.form = new SaveListForm();
+		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME);
+		this.form.setListDate(GermplasmTreeControllerTest.LIST_DATE);
+		this.form.setListDescription(GermplasmTreeControllerTest.LIST_DESCRIPTION);
+		this.form.setListIdentifier(GermplasmTreeControllerTest.LIST_IDENTIFIER);
+		this.form.setListNotes(GermplasmTreeControllerTest.LIST_NOTES);
+		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
+		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
+		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT);
+
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class));
+
+		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
+		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
+		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", this.form.getListIdentifier(), result.get("uniqueId"));
+		Assert.assertEquals("List Name should be LIST 1", this.form.getListName(), result.get("listName"));
 	}
 
 	private CrossSetting createCrossSetting() {

@@ -52,6 +52,7 @@ public class LabelPrintingDataUtil {
 	private static final int RANGE = 1;
 	private static final String STUDY_NAME = "labelPrintingTest";
 	public static final int SAMPLE_EXPERIMENT_NO = -2;
+	public static final String SAMPLE_PLOT_ID = "CROPPRANDOM";
 	public static final int SAMPLE_EXPERIMENT_NO_2 = 0;
 
 	// data for FieldMapDatasetInfo
@@ -59,6 +60,7 @@ public class LabelPrintingDataUtil {
 
 	// data for UserLabelPrinting
 	private static final String BARCODE_NEEDED = "1";
+	private static final String AUTOMATIC_BARCODE = "1";
 	private static final String LABEL_SHEET_SIZE = "1";
 	private static final String LABEL_PER_ROW = "3";
 	private static final String ROWS_PER_PAGE = "7";
@@ -107,6 +109,7 @@ public class LabelPrintingDataUtil {
 		fieldMapInfo.setDatasets(datasets);
 
 		userLabelPrinting.setBarcodeNeeded(LabelPrintingDataUtil.BARCODE_NEEDED);
+		userLabelPrinting.setBarcodeGeneratedAutomatically(LabelPrintingDataUtil.AUTOMATIC_BARCODE);
 		userLabelPrinting.setFilename(LabelPrintingDataUtil.FILE_NAME);
 		userLabelPrinting.setFirstBarcodeField(LabelPrintingDataUtil.FIRST_BARCODE_FIELD);
 		userLabelPrinting.setSecondBarcodeField(LabelPrintingDataUtil.SECOND_BARCODE_FIELD);
@@ -219,6 +222,7 @@ public class LabelPrintingDataUtil {
 		label.setRange(LabelPrintingDataUtil.RANGE);
 		label.setStudyName(LabelPrintingDataUtil.STUDY_NAME);
 		label.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO);
+		label.setPlotId(LabelPrintingDataUtil.SAMPLE_PLOT_ID);
 		labels.add(label);
 
 		return labels;
@@ -237,6 +241,7 @@ public class LabelPrintingDataUtil {
 		label.setRange(LabelPrintingDataUtil.RANGE);
 		label.setStudyName(LabelPrintingDataUtil.STUDY_NAME);
 		label.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO_2);
+		label.setPlotId(LabelPrintingDataUtil.SAMPLE_PLOT_ID);
 		labels.add(label);
 
 		return labels;

@@ -160,8 +160,6 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log('The following error occurred: ' + textStatus, errorThrown);
-				},
-				complete: function() {
 				}
 			});
 		},
@@ -173,19 +171,17 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 		retrieveCurrentProjectID: function() {
 			return $.get('/Fieldbook/breedingMethod/programID');
 		},
-		
-		getBreedingMethodById: function() {
+
+		getBreedingMethodById: function(breedingMethodId) {
 			return $.ajax({
 				url: '/Fieldbook/breedingMethod/getBreedingMethodById',
 				type: 'GET',
-				data: 'data=' + selectedBreedingMethodId,
+				data: 'data=' + breedingMethodId,
 				success: function(data) {
 					console.log("success");
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log('The following error occurred: ' + textStatus, errorThrown);
-				},
-				complete: function() {
 				}
 			});
 		}

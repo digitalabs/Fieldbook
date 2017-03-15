@@ -121,8 +121,10 @@
 
 	<bean id="designRunner" class="${design.runner}" />
 
-	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
+	<bean id="designRunnerLicenseUtil" class="${design.runner.license.util}" />
 
+	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
+	
 	<bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"
 		init-method="init">
 		<constructor-arg value="${upload.directory}" />
@@ -521,9 +523,6 @@
 		<aop:scoped-proxy />
 	</bean>
 	
-	<bean id="toolLicenseUtil" class="org.generationcp.commons.spring.util.ToolLicenseUtil" factory-method="getInstance">
-	</bean>
-	
 	<bean id="seedSourceGenerator" class="org.generationcp.commons.service.impl.SeedSourceGenerator">
 		<constructor-arg name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
 		<constructor-arg name="contextUtil" ref="contextUtil"/>
@@ -618,6 +617,11 @@
 
     <bean id="keySequenceRegisterService" factory-bean="managerFactory"
           factory-method="getKeySequenceRegisterService" scope="request">
+        <aop:scoped-proxy />
+    </bean>
+    
+    <bean id="studyService" factory-bean="managerFactory"
+    	factory-method="getStudyService" scope="request">
         <aop:scoped-proxy />
     </bean>
 

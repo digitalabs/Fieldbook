@@ -115,7 +115,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 					org.apache.poi.ss.util.WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.STOCK_LIST_EXPORT_SHEET_NAME);
 
 			this.exportList(inventoryDetailList, filenamePath, sheetName, germplasmExportServiceImpl,
-					AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString(), germplasmListType == GermplasmListType.CROSSES);
+					AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString(), GermplasmListType.isCrosses(germplasmListType));
 
 			outputFilename = filenamePath;
 			filenameList.add(filenamePath);

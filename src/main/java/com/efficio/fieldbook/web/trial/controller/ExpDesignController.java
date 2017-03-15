@@ -1,5 +1,39 @@
 package com.efficio.fieldbook.web.trial.controller;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+import javax.annotation.Resource;
+
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.util.ResourceFinder;
+import org.generationcp.middleware.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.efficio.fieldbook.service.internal.DesignLicenseUtil;
+import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
+import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseException;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
@@ -15,37 +49,6 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.spring.util.ToolLicenseUtil;
-import org.generationcp.middleware.domain.dms.DesignTypeItem;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.pojos.workbench.ToolName;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.util.ResourceFinder;
-import org.generationcp.middleware.util.StringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.annotation.Resource;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
 
 @Controller
 @RequestMapping(ExpDesignController.URL)
@@ -71,7 +74,7 @@ public class ExpDesignController extends BaseTrialController {
 	private DesignImportService designImportService;
 
 	@Resource
-	private ToolLicenseUtil toolLicenseUtil;
+	private DesignLicenseUtil designLicenseUtil;
 
 	@Override
 	public String getContentName() {
@@ -217,6 +220,18 @@ public class ExpDesignController extends BaseTrialController {
 		workbook.setStudyDetails(details);
 		this.userSelection.setTemporaryWorkbook(workbook);
 
+		if (this.userSelection.getWorkbook() != null) {
+			int persistedNumberOfEnvironments = this.userSelection.getWorkbook().getTotalNumberOfInstances();
+			if (persistedNumberOfEnvironments < Integer.parseInt(expDesign.getNoOfEnvironments())) {
+				// This means we are adding new environments.
+				// workbook.observations() collection is no longer pre-loaded into user session when trial is opened.
+				// Load now as we need it to keep existing environments/observations data intact in workbook.
+				// this is a compromise solution for now as saving trials still works through the workbook loaded in session.
+				// If we dont load all observations at this stage, existing phenotypes will be wiped out on save.
+				this.fieldbookMiddlewareService.loadAllObservations(this.userSelection.getWorkbook());
+			}
+		}
+
 		final int designType = expDesign.getDesignType();
 		final List<ImportedGermplasm> germplasmList =
 				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
@@ -257,8 +272,9 @@ public class ExpDesignController extends BaseTrialController {
 							}
 						}
 
+						BVDesignLicenseInfo BVDesignLicenseInfo = designLicenseUtil.retrieveLicenseInfo();
 
-						if (this.toolLicenseUtil.isToolExpired(ToolName.breeding_view.toString())) {
+						if (this.designLicenseUtil.isExpired(BVDesignLicenseInfo)) {
 							expParameterOutput =
 									new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.license.expired",
 											null, locale));
@@ -305,9 +321,8 @@ public class ExpDesignController extends BaseTrialController {
 
 						workbook.setExpDesignVariables(designService.getRequiredDesignVariables());
 
-						if (this.toolLicenseUtil.isToolExpiringWithinThirtyDays(ToolName.breeding_view.toString())) {
-							final int daysBeforeExpiration =
-									this.toolLicenseUtil.daysBeforeToolExpiration(ToolName.breeding_view.toString());
+						if (this.designLicenseUtil.isExpiringWithinThirtyDays(BVDesignLicenseInfo)) {
+							final int daysBeforeExpiration = Integer.valueOf(BVDesignLicenseInfo.getStatus().getLicense().getExpiryDays());
 							expParameterOutput =
 									new ExpDesignValidationOutput(true, this.messageSource.getMessage("experiment.design.license.expiring",
 											new Integer[] {daysBeforeExpiration}, locale));
@@ -321,6 +336,8 @@ public class ExpDesignController extends BaseTrialController {
 		} catch (final BVDesignException e) {
 			// this should catch when the BV design is not successful
 			expParameterOutput = new ExpDesignValidationOutput(false, this.messageSource.getMessage(e.getBvErrorCode(), null, locale));
+		} catch (final BVLicenseParseException e) {
+			expParameterOutput = new ExpDesignValidationOutput(false, e.getMessage());
 		} catch (final Exception e) {
 			ExpDesignController.LOG.error(e.getMessage(), e);
 			expParameterOutput = new ExpDesignValidationOutput(false,
@@ -333,7 +350,8 @@ public class ExpDesignController extends BaseTrialController {
 	protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(final List<MeasurementRow> measurementRows,
 			final UserSelection userSelection, final boolean hasMeasurementData) {
 		Workbook workbook = null;
-		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null) {
+		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null
+				&& !userSelection.getTemporaryWorkbook().getObservations().isEmpty()) {
 			workbook = userSelection.getTemporaryWorkbook();
 		} else {
 			workbook = userSelection.getWorkbook();
@@ -350,7 +368,8 @@ public class ExpDesignController extends BaseTrialController {
 	protected String countNewEnvironments(final String noOfEnvironments, final UserSelection userSelection,
 			final boolean hasMeasurementData) {
 		Workbook workbook = null;
-		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null) {
+		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null
+				&& !userSelection.getTemporaryWorkbook().getObservations().isEmpty()) {
 			workbook = userSelection.getTemporaryWorkbook();
 		} else {
 			workbook = userSelection.getWorkbook();

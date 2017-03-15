@@ -319,12 +319,6 @@ div.DTFC_RightWrapper table.table-curved {
     table-layout: fixed;
 }
 
-#measurement-table_wrapper > div > div:nth-child(2) {
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-
 .form-group {
     margin-bottom: 6px;
 }
@@ -600,7 +594,7 @@ tr.trialInstance {
 }
 .variates{
 }
-.factors{
+.table-curved > thead > tr > th.factors{
     background-color: #a4a4a4
 }
 .lead {
@@ -1146,6 +1140,9 @@ a.fbk-edit-experiment{
 .fbk-float-right{
     float: right;
 }
+.fbk-float-left{
+    float: left;
+}
 .fbk-float-right-with-top-pos{
     float: right;
     position:relative;
@@ -1157,8 +1154,13 @@ a.fbk-edit-experiment{
 
 /* Measurements Tab */
 
-.mdt-header {
-    height: 46px;
+.edit-measurements-panel .mdt-header,
+.import-preview-measurements-panel .mdt-header {
+    height: 75px;
+}
+
+.preview-measurements-panel .mdt-header {
+    height: 45px;
 }
 
 .mdt-header .dataTables_length,
@@ -1182,11 +1184,6 @@ a.fbk-edit-experiment{
 .mdt-filtering input.form-control{
 	float: right;
 }
-.mdt-header .dataTables_info {
-    padding: 0;
-    position: relative;
-	top: 5px;
-}
 
 .mdt-header .mdt-filtering-label,
 .mdt-header .dataTables_info {
@@ -1201,12 +1198,6 @@ a.fbk-edit-experiment{
     margin-right: 15px;
 }
 
-.mdt-header .dataTables_length,
-.dataTables_wrapper .dataTables_length {
-	position: relative;
-	top: 5px;
-}
-
 .mdt-header .dataTables_filter {
     margin-right: 20px;
 }
@@ -1214,6 +1205,8 @@ a.fbk-edit-experiment{
 .dataTables_wrapper .dataTables_paginate, .fbk-page-div .dataTables_paginate {
     margin-top: 16px;
     margin-bottom: 10px;
+    float: left;
+    width: 100%;
 }
 .fbk-right-button-drop-down{
     right: 0;
@@ -1321,6 +1314,10 @@ input::-ms-clear {
     display: none;
 }
 
+.fbk-inline {
+	display: inline;
+}
+
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
     display: none !important;
@@ -1423,6 +1420,10 @@ input.inputForNumberingAndChecks {
     border-bottom-right-radius: 4px !important;
     border-bottom-left-radius: 4px !important;
     background: white;
+}
+
+.select2-highlighted.ui-select-choices-row:hover {
+    background-color:  #428bca !important;
 }
 
 .s2-nosearch-icon .select2-input {
@@ -2049,6 +2050,9 @@ input.select-all-margin{
     color:red;
     font-weight:bold
 }
+.fbk-std-padding-right {
+	padding-right: 10px;
+}
 
 /* Label Printing */
 .lblprnt-germplasm-list-details,
@@ -2082,6 +2086,106 @@ input.select-all-margin{
 
 .remove-excess-padding[style] {
     padding-left:0 !important;
+}
+
+/* Styles for Measurements data table */
+
+#mdt-environment-list-label.dataTables_info.fbk-std-padding-right {
+	padding-right: 10px;
+}
+
+.inline-select {
+	width: auto !important;
+}
+.inline-select.select2-container.form-control {
+	display: inline-block;
+	width: auto !important;
+}
+
+.mdt-table-length-selector.inline-select.select2-container.form-control {
+	margin-left: 10px;
+    top: -9px;
+}
+
+.mdt-length {
+	padding-left: 10px;
+}
+
+#measurement-table_wrapper > div.mdt-header > div.mdt-length {
+	padding-top: 7px;
+}
+
+/* Preview Measurements view */
+.preview-measurements-only .preview-measurements-header {
+	display: inline-block;
+}
+
+.preview-measurements-only .measurements-header {
+	display: none;
+}
+
+.preview-measurements-header {
+	display: none;
+}
+
+.measurements-header {
+	display: inline-block;
+}
+
+.no-measurements-table {
+	display:block;
+}
+
+.preview-measurements-only .no-measurements-table,
+.preview-measurements-panel,
+.edit-measurements-panel,
+.import-preview-measurements-panel {
+	display: none;
+}
+
+/* Editing measurements is not allowed for a new not saved trial */
+.msrmnt-study-not-saved .edit-measurements-panel {
+	display: none;
+}
+
+/* Editing measurements allowed for the saved trial */
+.msrmnt-existing-study .edit-measurements-panel {
+	display: block;
+}
+
+/* Editing measurements is not allowed for existing trial in preview mode */
+.preview-measurements-only .msrmnt-existing-study .edit-measurements-panel {
+	display: none;
+}
+
+.preview-measurements-only .preview-measurements-panel {
+	display: block;
+}
+
+.import-preview-measurements .import-preview-measurements-panel {
+	display: block;
+}
+
+/* Do not display Add Trait button in import preview measurements mode */
+.import-preview-measurements .nrm-md-variable-select {
+	display: none;
+}
+/* Do not display Remove Trait link in import preview measurements mode */
+.import-preview-measurements .fbk-remove-traits-link {
+	display: none;
+}
+
+.import-preview-measurements .edit-measurements-panel {
+	display: none;
+}
+
+/* FIXME for the existing study we need a proper check if the design was generated for that study or not previously before saving */
+.msrmnt-existing-study .no-measurements-table {
+	display: none;
+}
+
+.select2-result-label {
+    white-space: nowrap;
 }
 
 .separator {

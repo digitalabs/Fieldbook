@@ -92,6 +92,7 @@
         }).success(function(html) {
             $('#liExportList').removeClass('fbk-dropdown-select-fade');
             $('#imported-germplasm-list').html(html);
+			window.ImportGermplasm.initialize(dataGermplasmList);
             $('#entries-details').css('display', 'block');
             $('#numberOfEntries').html($('#totalGermplasms').val());
             $('#imported-germplasm-list-reset-button').css('opacity', '1');

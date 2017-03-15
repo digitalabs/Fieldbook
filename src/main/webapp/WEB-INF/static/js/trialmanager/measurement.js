@@ -3,15 +3,60 @@
 	'use strict';
 
 	angular.module('manageTrialApp').controller('MeasurementsCtrl',
-		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http',
-			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http) {
+		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http', 'DTOptionsBuilder', 'DTColumnBuilder',
+		'DTColumnDefBuilder', '$filter',
+			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder, DTColumnBuilder,
+				DTColumnDefBuilder, $filter) {
 				var DELAY = 1500; // 1.5 secs
+				var studyId = $('#studyId').val();
 
 				$scope.settings = TrialManagerDataService.settings.measurements;
 
 				$scope.isHideDelete = false;
 				$scope.updateOccurred = false;
 				$scope.addVariable = true;
+				$scope.isNewStudy = function() {
+					return ($('#studyId').val() === '');
+				};
+
+				$scope.initEnvironmentList = function() {
+					if (!$scope.isNewStudy()) {
+						$http.get('/Fieldbook/trial/measurements/instanceMetadata/' + studyId).success(function(data) {
+							$scope.environmentsList = data;
+							$scope.selectedEnvironment = data[0];
+						});
+					} else {
+						$scope.environmentsList = [{}];
+						$scope.selectedEnvironment = $scope.environmentsList[0];
+					}
+				};
+
+				$scope.changeEnvironmentForMeasurementDataTable = function($item, $model) {
+					$('#measurement-table').DataTable().ajax.url('/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' +
+						$item.instanceDbId).load();
+					$scope.selectedEnvironment = $item;
+				};
+
+				$scope.getListOfAdditionalColumns = function() {
+					if (!$scope.settings.keys()) {
+						return [];
+					}
+					return $filter('removeHiddenVariableFilter')($scope.settings.keys(), $scope.settings.vals());
+				};
+
+				$scope.previewMeasurements = function() {			
+					 new BMS.Fieldbook.PreviewMeasurementsDataTable('#preview-measurement-table',
+					 	encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
+				};
+
+				$scope.reloadMeasurements = function() {
+					new BMS.Fieldbook.MeasurementsDataTable('#measurement-table',
+							encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
+				};
+
+				if ($('body').hasClass('preview-measurements-only')) {
+					$scope.previewMeasurements();
+				}
 
 				/* Watchers */
 				$scope.$watch(function() {
@@ -31,7 +76,7 @@
 						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 						TrialManagerDataService.applicationData.isGeneratedOwnDesign = false;
 
-						debounce(reloadMeasurementPage, DELAY, false)();
+						reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
 
 					}
 
@@ -77,7 +122,14 @@
 					$scope.updateOccurred = true;
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
 
-					debounce(reloadMeasurementPage, DELAY, false)();
+					reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
+
+					$('body').addClass('measurements-traits-changed');
+				});
+
+				$scope.$on('previewMeasurements', function() {
+					$('body').addClass('preview-measurements-only');
+					$scope.previewMeasurements();
 				});
 
 				$scope.$on('onDeleteEnvironment', function(event, result) {
@@ -86,22 +138,20 @@
 					TrialManagerDataService.clearUnappliedChangesFlag();
 					TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 
-					debounce(function() {
-						reloadMeasurementPage(result.deletedEnvironmentIndex).then(function() {
-							result.deferred.resolve();
-						});
-					}, DELAY, false)();
+					reloadMeasurementPage(result.deletedEnvironmentIndex, $scope.getListOfAdditionalColumns());
 				});
 
 				$scope.$on('variableAdded', function() {
 					$scope.updateOccurred = true;
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
 
-					debounce(reloadMeasurementPage, DELAY, false)();
+					reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
+
+                    $('body').addClass('measurements-traits-changed');
 				});
 
 				/* Controller Utility functions */
-				function reloadMeasurementPage(deletedEnvironmentIndex) {
+				function reloadMeasurementPage(deletedEnvironmentIndex, columnsOrder) {
 					deletedEnvironmentIndex = typeof deletedEnvironmentIndex === 'undefined' ? 0 : deletedEnvironmentIndex;
 
 					var $body = $('body');
@@ -109,18 +159,28 @@
 					var $measurementContainer = $('#measurementsDiv');
 
 					if ($measurementTable.length !== 0) {
-						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
+						/*var columnsOrder = $('#measurement-table') && $('#measurement-table').length !== 0 ?
+							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true) : [];*/
 						var addedData = '&columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
 						var dataParam = 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys +
 							'&deletedEnvironment=' + deletedEnvironmentIndex + addedData;
 
-						//we reload
-						return TrialManagerDataService.reloadMeasurementAjax(dataParam).success(function(data) {
-							$measurementContainer.html(data);
+						return $http.post('/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement', dataParam,
+                            {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).success(function(data) {
+							//$measurementContainer.html(data);
+							// TODO Change that global to the dirty study flag
 							$body.data('needToSave', '1');
+							//TODO Remove that global
 							$body.data('columnReordered', columnsOrder.length !== 0 ? '1' : '0');
+							if ($('body').hasClass('preview-measurements-only')) {
+								$scope.previewMeasurements();
+							} else {
+								$scope.reloadMeasurements();
+							}
 						});
 					}
 				}
+
+				$scope.initEnvironmentList();
 			}]);
 })();

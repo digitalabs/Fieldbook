@@ -311,18 +311,17 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public List<ValueReference> getAllPossibleValues(final Variable variable) {
-		return this.getAllPosibleValues(variable, true, true);
+		return this.getAllPosibleValues(variable, true);
 	}
 
 	@Override
 	public List<ValueReference> getAllPossibleValuesWithFilter(final int id, final boolean filtered) {
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
 				id, true, false);
-		return this.getAllPosibleValues(variable, filtered, false);
+		return this.getAllPosibleValues(variable, filtered);
 	}
 
-	private List<ValueReference> getAllPosibleValues(final Variable variable, final boolean filtered,
-			final boolean excludesProgramValues) {
+	private List<ValueReference> getAllPosibleValues(final Variable variable, final boolean filtered) {
 		List<ValueReference> possibleValues = this.getCachedValues(!filtered, variable);
 
 		if (possibleValues.isEmpty()) {
@@ -344,12 +343,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 				this.possibleValuesCache.addPossibleValuesByDataType(DataType.BREEDING_METHOD, allBreedingMethods);
 				break;
 			case LOCATION:
-				if (excludesProgramValues) {
-					possibleValues = this.getLocations(filtered);
-				} else {
-					possibleValues = this.getAllLocationsByProgram(filtered);
-				}
-
+				possibleValues = this.getLocations(filtered);
 				this.possibleValuesCache.addLocations(filtered, possibleValues);
 				break;
 			case PERSON:
@@ -490,32 +484,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 		// added filtering of location based on programUUID
 		final List<Location> locations = this.fieldbookMiddlewareService.getAllLocations();
-
-		for (final Iterator<Location> it = locations.iterator(); it.hasNext();) {
-			if (currentProgramUUID.equals(it.next().getUniqueID())) {
-				it.remove();
-			}
-
-		}
 		return this.convertLocationsToValueReferences(locations);
-	}
-
-	private List<ValueReference> getAllLocationsByProgram(final boolean isBreedingMethodOnly) {
-		final List<Location> locations = this.getLocationsByProgram(isBreedingMethodOnly);
-
-		return this.convertLocationsToValueReferences(locations);
-	}
-
-	public List<Location> getLocationsByProgram(final boolean isBreedingMethodOnly) {
-		final String currentProgramUUID = this.contextUtil.getCurrentProgramUUID();
-		if (isBreedingMethodOnly) {
-			return this.getAllBreedingLocationsByUniqueID(currentProgramUUID);
-		}
-
-		// added filtering of location based on programUUID
-		final List<Location> locations = this.fieldbookMiddlewareService.getAllLocations();
-
-		return locations;
 	}
 
 	private List<ValueReference> convertLocationsToValueReferences(final List<Location> locations) {

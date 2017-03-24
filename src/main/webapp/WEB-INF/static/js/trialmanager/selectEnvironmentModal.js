@@ -30,13 +30,12 @@
 			//create a map for location dropdown values
 			var locationMap = {};
 			angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues, function(locationVariable) {
-            	locationMap[locationVariable.id] = locationVariable.name;
+            	locationMap[locationVariable.id] = locationVariable;
             });
 			
 			angular.forEach($scope.data.environments, function(environment) {
 				//Set the value of the location name per environment
-				var locationName = ((environment.managementDetailValues[$scope.LOCATION_NAME_ID]  && isNaN(environment.managementDetailValues[$scope.LOCATION_NAME_ID])) ? locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID].id] : locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]]);
-				environment.managementDetailValues[$scope.TRIAL_LOCATION_NAME_INDEX] = locationName;
+				environment.managementDetailValues[$scope.TRIAL_LOCATION_NAME_INDEX] = environment.managementDetailValues[$scope.LOCATION_NAME_ID] != null ? locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID].id] : null;
 				selectedLocationForTrail = {id: environment.managementDetailValues[$scope.LOCATION_NAME_ID], name: environment.managementDetailValues[$scope.TRIAL_LOCATION_NAME_INDEX]};
 			});
 		});

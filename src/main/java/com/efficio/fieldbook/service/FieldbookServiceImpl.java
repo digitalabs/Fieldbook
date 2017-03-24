@@ -482,8 +482,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			return this.convertLocationsToValueReferences(this.getAllBreedingLocationsByUniqueID(currentProgramUUID));
 		}
 
-		// added filtering of location based on programUUID
-		final List<Location> locations = this.fieldbookMiddlewareService.getAllLocations();
+		final List<Location> locations = this.fieldbookMiddlewareService.getLocationsByProgramUUID(currentProgramUUID);
 		return this.convertLocationsToValueReferences(locations);
 	}
 

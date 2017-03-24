@@ -112,6 +112,7 @@ public class FieldbookServiceTest {
 		allLocation.add(this.locationTestDataInitializer.createLocation(1, "Loc1", null));
 		allLocation.add(this.locationTestDataInitializer.createLocation(2, "Loc2", null));
 		Mockito.when(this.fieldbookMiddlewareService.getAllLocations()).thenReturn(allLocation);
+		Mockito.when(this.fieldbookMiddlewareService.getLocationsByProgramUUID(FieldbookServiceTest.PROGRAMUUID)).thenReturn(allLocation);
 		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingLocations()).thenReturn(new ArrayList<Location>());
 
 		this.setUpStandardVariablesForChecks(this.fieldbookMiddlewareService);

@@ -21,6 +21,7 @@ import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
@@ -212,4 +213,21 @@ public interface FieldbookService {
 
 	public List<ValueReference> getAllPossibleValuesWithFilter(final int id, boolean filtered);
 
+	/**
+	 * Adds the specified variable to the measurementVariable list if it does not yet exist in the list.
+	 *
+	 * @param variableIdToAdd - The variable id
+	 * @param phenotypicType
+	 * @param measurementVariables
+	 */
+	void addMeasurementVariableToList(int variableIdToAdd, PhenotypicType phenotypicType, List<MeasurementVariable> measurementVariables);
+
+	/**
+	 * Adds the specified variable to the measurementRows. This will add a blank measurementData on each measurement row for the specified variable.
+	 *
+	 * @param variableIdToAdd
+	 * @param phenotypicType
+	 * @param observations
+	 */
+	void addMeasurementVariableToMeasurementRows(int variableIdToAdd, PhenotypicType phenotypicType, List<MeasurementRow> observations);
 }

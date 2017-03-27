@@ -1,18 +1,16 @@
 
 package com.efficio.etl.web;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.bean.FileUploadForm;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.validators.FileUploadFormValidator;
+import com.efficio.fieldbook.service.api.FieldbookService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
@@ -30,10 +28,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.bean.FileUploadForm;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.validators.FileUploadFormValidator;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -54,6 +55,9 @@ public class FileUploadController extends AbstractBaseETLController {
 	private static final String STATUS_MESSAGE = "statusMessage";
 
 	private static final String UPLOAD_FORM_FILE = "uploadForm.file";
+
+	@Resource
+	private FieldbookService fieldbookService;
 
 	@Resource
 	private ETLService etlService;
@@ -151,6 +155,14 @@ public class FileUploadController extends AbstractBaseETLController {
 			wb =
 					this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
 							confirmDiscard == 1 ? true : false, new WorkbookParser());
+
+			// PLOT_ID is not required in processing the fieldbook data file, but we need to add it in the background
+			// if it is not available as it is necessary in displaying the plot_id in measurements
+			this.fieldbookService.addMeasurementVariableToList(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM, wb.getFactors());
+
+			// It is important to add the PLOT_ID measurement data in measurement rows to make sure that variables
+			// in Workbook match the variables in measurement rows.
+			this.fieldbookService.addMeasurementVariableToMeasurementRows(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM, wb.getObservations());
 
 			this.dataImportService.saveDataset(wb, programUUID, this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
 

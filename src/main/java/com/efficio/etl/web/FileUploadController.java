@@ -48,13 +48,16 @@ public class FileUploadController extends AbstractBaseETLController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileUploadController.class);
 
-	private static final String STATUS_CODE = "statusCode";
+	protected static final String STATUS_CODE = "statusCode";
 
-	private static final String ERROR_TYPE = "errorType";
+	protected static final String ERROR_TYPE = "errorType";
 
-	private static final String STATUS_MESSAGE = "statusMessage";
+	protected static final String STATUS_MESSAGE = "statusMessage";
 
 	private static final String UPLOAD_FORM_FILE = "uploadForm.file";
+	public static final String STATUS_CODE_HAS_OUT_OF_BOUNDS = "2";
+	public static final String STATUS_CODE_SUCCESSFUL = "1";
+	public static final String STATUS_CODE_HAS_ERROR = "-1";
 
 	@Resource
 	private FieldbookService fieldbookService;
@@ -161,7 +164,8 @@ public class FileUploadController extends AbstractBaseETLController {
 			this.fieldbookService.addMeasurementVariableToList(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM, wb.getFactors());
 
 			// It is important to add the PLOT_ID measurement data in measurement rows to make sure that variables
-			// in Workbook match the variables in measurement rows.
+			// in Workbook match the variables in measurement rows. This will initially creates blank values for PLOT_ID
+			// but the generation of plot IDs will be handled during the saving of Workbook.
 			this.fieldbookService.addMeasurementVariableToMeasurementRows(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM, wb.getObservations());
 
 			this.dataImportService.saveDataset(wb, programUUID, this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
@@ -169,21 +173,21 @@ public class FileUploadController extends AbstractBaseETLController {
 			this.httpSessionUtil.clearSessionData(session, new String[] {HTTPSessionUtil.USER_SELECTION_SESSION_NAME});
 
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_SUCCESSFUL);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "Import is done.");
 
 		} catch (WorkbookParserException e) {
 
 			FileUploadController.LOG.error(e.getMessage(), e);
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_ERROR);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, e.getMessage());
 			this.returnMessage.put(FileUploadController.ERROR_TYPE, e.getClass().getSimpleName());
 
 		} catch (IOException e) {
 			FileUploadController.LOG.error(e.getMessage(), e);
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_ERROR);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "An error occurred while reading the file.");
 			this.returnMessage.put(FileUploadController.ERROR_TYPE, e.getClass().getSimpleName());
 		}
@@ -212,10 +216,10 @@ public class FileUploadController extends AbstractBaseETLController {
 							programUUID);
 
 			if (workbook.hasOutOfBoundsData()) {
-				this.returnMessage.put(FileUploadController.STATUS_CODE, "2");
+				this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_OUT_OF_BOUNDS);
 				this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "");
 			} else {
-				this.returnMessage.put(FileUploadController.STATUS_CODE, "1");
+				this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_SUCCESSFUL);
 				this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "");
 			}
 
@@ -224,7 +228,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			FileUploadController.LOG.error(e.getMessage(), e);
 
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_ERROR);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, e.getMessage());
 			this.returnMessage.put(FileUploadController.ERROR_TYPE, "IOException");
 
@@ -253,7 +257,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			}
 
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_ERROR);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, builder.toString());
 			if (isMaxLimitException) {
 				this.returnMessage.put(FileUploadController.ERROR_TYPE, "WorkbookParserException-OverMaxLimit");
@@ -265,7 +269,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			FileUploadController.LOG.error(e.getMessage(), e);
 
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_ERROR);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, e.getMessage());
 			this.returnMessage.put(FileUploadController.ERROR_TYPE, "Exception");
 

@@ -9,9 +9,11 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -159,14 +161,18 @@ public class FileUploadController extends AbstractBaseETLController {
 					this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
 							confirmDiscard == 1 ? true : false, new WorkbookParser());
 
+
+			final MeasurementVariable plotIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "",
+					Operation.ADD, PhenotypicType.GERMPLASM);
+			plotIdMeasurementVariable.setFactor(true);
 			// PLOT_ID is not required in processing the fieldbook data file, but we need to add it in the background
 			// if it is not available as it is necessary in displaying the plot_id in measurements
-			this.fieldbookService.addMeasurementVariableToList(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM, wb.getFactors());
+			this.fieldbookService.addMeasurementVariableToList(plotIdMeasurementVariable, wb.getFactors());
 
 			// It is important to add the PLOT_ID measurement data in measurement rows to make sure that variables
 			// in Workbook match the variables in measurement rows. This will initially creates blank values for PLOT_ID
 			// but the generation of plot IDs will be handled during the saving of Workbook.
-			this.fieldbookService.addMeasurementVariableToMeasurementRows(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM, wb.getObservations());
+			this.fieldbookService.addMeasurementVariableToMeasurementRows(plotIdMeasurementVariable, wb.getObservations());
 
 			this.dataImportService.saveDataset(wb, programUUID, this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
 

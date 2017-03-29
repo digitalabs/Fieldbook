@@ -675,28 +675,27 @@ public class FieldbookServiceTest {
 	@Test
 	public void testAddMeasurementVariableToList() {
 
-		final StandardVariable standardVariable = StandardVariableInitializer.createStdVariable(TermId.PLOT_ID.getId(), TermId.PLOT_ID.name());
-
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_ID.getId(), null)).thenReturn(standardVariable);
+		final MeasurementVariable measurementVariableToAdd = new MeasurementVariable();
+		measurementVariableToAdd.setTermId(TermId.PLOT_ID.getId());
+		measurementVariableToAdd.setName(TermId.PLOT_ID.name());
 
 		List<MeasurementVariable> measurementVariables = new ArrayList<>();
-		this.fieldbookServiceImpl.addMeasurementVariableToList(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM, measurementVariables);
+		this.fieldbookServiceImpl.addMeasurementVariableToList(measurementVariableToAdd, measurementVariables);
 
 		final MeasurementVariable plotIdMeasurementVariabe = measurementVariables.get(0);
 
 		Assert.assertNotNull(plotIdMeasurementVariabe);
 		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdMeasurementVariabe.getTermId());
 		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdMeasurementVariabe.getName());
-		Assert.assertEquals(true, plotIdMeasurementVariabe.isFactor());
 
 	}
 
 	@Test
 	public void testAddMeasurementVariableToMeasurementRows() {
 
-		final StandardVariable standardVariable = StandardVariableInitializer.createStdVariable(TermId.PLOT_ID.getId(), TermId.PLOT_ID.name());
-
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_ID.getId(), null)).thenReturn(standardVariable);
+		final MeasurementVariable measurementVariableToAdd = new MeasurementVariable();
+		measurementVariableToAdd.setTermId(TermId.PLOT_ID.getId());
+		measurementVariableToAdd.setName(TermId.PLOT_ID.name());
 
 		List<MeasurementRow> measurementRows = new ArrayList<>();
 		final MeasurementRow measurementRow = new MeasurementRow();
@@ -704,7 +703,7 @@ public class FieldbookServiceTest {
 		measurementRows.add(measurementRow);
 
 		List<MeasurementVariable> measurementVariables = new ArrayList<>();
-		this.fieldbookServiceImpl.addMeasurementVariableToMeasurementRows(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM, measurementRows);
+		this.fieldbookServiceImpl.addMeasurementVariableToMeasurementRows(measurementVariableToAdd, measurementRows);
 
 		final List<MeasurementData> measurementDataList = measurementRows.get(0).getDataList();
 		final MeasurementData plotIdMeasurementData = measurementDataList.get(0);

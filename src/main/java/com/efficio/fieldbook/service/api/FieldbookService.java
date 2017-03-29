@@ -38,6 +38,7 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+import org.generationcp.middleware.manager.Operation;
 
 /**
  * This is used by the trial manager and nursery manager in communicating to the data access layer, manipulating workbook files and
@@ -163,6 +164,16 @@ public interface FieldbookService {
 	void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs, boolean deleteIdWhenNameExists);
 
 	/**
+	 * Creates a MeasurementVariable from StandardVariable
+	 * @param idToCreate
+	 * @param value
+	 * @param operation
+	 * @param role
+	 * @return
+	 */
+	MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation, PhenotypicType role);
+
+	/**
 	 * Creates the id code name variable pairs.
 	 *
 	 * @param workbook the workbook
@@ -220,7 +231,7 @@ public interface FieldbookService {
 	 * @param phenotypicType
 	 * @param measurementVariables
 	 */
-	void addMeasurementVariableToList(int variableIdToAdd, PhenotypicType phenotypicType, List<MeasurementVariable> measurementVariables);
+	void addMeasurementVariableToList(MeasurementVariable measurementVariable, List<MeasurementVariable> measurementVariables);
 
 	/**
 	 * Adds the specified variable to the measurementRows. This will add a blank measurementData on each measurement row for the specified variable.
@@ -229,5 +240,5 @@ public interface FieldbookService {
 	 * @param phenotypicType
 	 * @param observations
 	 */
-	void addMeasurementVariableToMeasurementRows(int variableIdToAdd, PhenotypicType phenotypicType, List<MeasurementRow> observations);
+	void addMeasurementVariableToMeasurementRows(MeasurementVariable measurementVariable, List<MeasurementRow> observations);
 }

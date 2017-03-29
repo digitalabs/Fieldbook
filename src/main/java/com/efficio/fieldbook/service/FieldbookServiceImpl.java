@@ -683,6 +683,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return idNameMap;
 	}
 
+	@Override
 	public MeasurementVariable createMeasurementVariable(final String idToCreate, final String value, final Operation operation,
 			final PhenotypicType role) {
 		final StandardVariable stdvar =
@@ -1227,25 +1228,19 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public void addMeasurementVariableToList(final int variableIdToAdd, final PhenotypicType phenotypicType,
+	public void addMeasurementVariableToList(final MeasurementVariable measurementVariable,
 			final List<MeasurementVariable> measurementVariables) {
 
-		if (!isVariableExistsInList(variableIdToAdd, measurementVariables)) {
-
-			final MeasurementVariable plotIDVariable = createMeasurementVariable(String.valueOf(variableIdToAdd), null, Operation.ADD, phenotypicType);
-			plotIDVariable.setFactor(true);
-			measurementVariables.add(plotIDVariable);
+		if (!isVariableExistsInList(measurementVariable.getTermId(), measurementVariables)) {
+			measurementVariables.add(measurementVariable);
 
 		}
 
 	}
 
 	@Override
-	public void addMeasurementVariableToMeasurementRows(final int variableIdToAdd, final PhenotypicType phenotypicType,
+	public void addMeasurementVariableToMeasurementRows(final MeasurementVariable measurementVariable,
 			final List<MeasurementRow> observations) {
-
-		final MeasurementVariable measurementVariable = createMeasurementVariable(String.valueOf(variableIdToAdd), null, Operation.ADD, phenotypicType);
-		measurementVariable.setFactor(true);
 
 		for (MeasurementRow measurementRow : observations) {
 			final MeasurementData measurementData = new MeasurementData();

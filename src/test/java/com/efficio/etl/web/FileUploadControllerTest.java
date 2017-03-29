@@ -13,10 +13,12 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -85,6 +87,7 @@ public class FileUploadControllerTest {
 	private HttpSession session;
 	private HttpServletRequest request;
 	private HttpServletResponse response;
+	private MeasurementVariable plotIdMeasurementVariable;
 
 	@InjectMocks
 	private FileUploadController fileUploadController;
@@ -110,6 +113,12 @@ public class FileUploadControllerTest {
 		project.getCropType().setPlotCodePrefix(PROJECT_CODE_PREFIX);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+
+		this.plotIdMeasurementVariable = new MeasurementVariable();
+		plotIdMeasurementVariable.setTermId(TermId.PLOT_ID.getId());
+		plotIdMeasurementVariable.setName(TermId.PLOT_ID.name());
+		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM))
+				.thenReturn(this.plotIdMeasurementVariable);
 	}
 
 	@Test
@@ -154,11 +163,12 @@ public class FileUploadControllerTest {
 
 		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request, this.response, this.model);
 
-		Mockito.verify(this.fieldbookService).addMeasurementVariableToList(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM , workbook.getFactors());
-		Mockito.verify(this.fieldbookService).addMeasurementVariableToMeasurementRows(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM , workbook.getObservations());
+		Mockito.verify(this.fieldbookService).addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
+		Mockito.verify(this.fieldbookService).addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService).saveDataset(workbook, PROGRAM_UUID, PROJECT_CODE_PREFIX);
 		Mockito.verify(this.httpSessionUtil).clearSessionData(this.session, new String[] {HTTPSessionUtil.USER_SELECTION_SESSION_NAME});
 
+		Assert.assertTrue(this.plotIdMeasurementVariable.isFactor());
 		Assert.assertEquals(FileUploadController.STATUS_CODE_SUCCESSFUL, returnMessage.get(FileUploadController.STATUS_CODE));
 		Assert.assertEquals("Import is done.", returnMessage.get(FileUploadController.STATUS_MESSAGE));
 
@@ -174,8 +184,8 @@ public class FileUploadControllerTest {
 
 		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request, this.response, this.model);
 
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToList(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM , workbook.getFactors());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToMeasurementRows(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM , workbook.getObservations());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToList(this.plotIdMeasurementVariable , workbook.getFactors());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable , workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook, PROGRAM_UUID, PROJECT_CODE_PREFIX);
 		Mockito.verify(this.httpSessionUtil, Mockito.times(0)).clearSessionData(this.session, new String[] {HTTPSessionUtil.USER_SELECTION_SESSION_NAME});
 
@@ -194,8 +204,8 @@ public class FileUploadControllerTest {
 
 		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request, this.response, this.model);
 
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToList(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM , workbook.getFactors());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToMeasurementRows(TermId.PLOT_ID.getId(), PhenotypicType.GERMPLASM , workbook.getObservations());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToList(this.plotIdMeasurementVariable , workbook.getFactors());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable , workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook, PROGRAM_UUID, PROJECT_CODE_PREFIX);
 		Mockito.verify(this.httpSessionUtil, Mockito.times(0)).clearSessionData(this.session, new String[] {HTTPSessionUtil.USER_SELECTION_SESSION_NAME});
 

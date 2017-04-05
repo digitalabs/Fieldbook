@@ -1,18 +1,22 @@
 
 package com.efficio.fieldbook.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.MeasurementTestDataInitializer;
+import org.generationcp.middleware.data.initializer.StandardVariableInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -31,16 +35,18 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
+@RunWith(MockitoJUnitRunner.class)
 public class FieldbookServiceTest {
 
 	private static final String DUMMY_PROGRAM_UUID = "1234567890";
@@ -69,30 +75,35 @@ public class FieldbookServiceTest {
 	private static final String ED_CHECK_START = "ED - Check Start";
 	private static final int CHECK_START_PROPERTY_ID = 2153;
 
+
+	@Mock
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+
+	@Mock
+	private ContextUtil contextUtil;
+
+	@InjectMocks
 	private FieldbookServiceImpl fieldbookServiceImpl;
+
 	private MeasurementVariable locationVariable;
 	private MeasurementVariable nonLocationVariable;
 
+
 	@Before
 	public void setUp() throws MiddlewareException {
-		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService =
-				Mockito.mock(org.generationcp.middleware.service.api.FieldbookService.class);
+
 		List<Location> allLocation = new ArrayList<Location>();
 		allLocation.add(new Location(1));
 		allLocation.add(new Location(2));
-		Mockito.when(fieldbookMiddlewareService.getAllLocations()).thenReturn(allLocation);
-		Mockito.when(fieldbookMiddlewareService.getAllBreedingLocations()).thenReturn(new ArrayList<Location>());
-
-		this.setUpStandardVariablesForChecks(fieldbookMiddlewareService);
 
 		List<Person> personsList = new ArrayList<Person>();
 		personsList.add(this.createPerson(200));
 
+		Mockito.when(fieldbookMiddlewareService.getAllLocations()).thenReturn(allLocation);
+		Mockito.when(fieldbookMiddlewareService.getAllBreedingLocations()).thenReturn(new ArrayList<Location>());
 		Mockito.when(fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral()).thenReturn(personsList);
 
-		this.fieldbookServiceImpl = new FieldbookServiceImpl(fieldbookMiddlewareService, new PossibleValuesCache());
-
-		this.fieldbookServiceImpl.setContextUtil(Mockito.mock(ContextUtil.class));
+		this.setUpStandardVariablesForChecks();
 
 		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
 		for (int i = 0; i < 5; i++) {
@@ -105,9 +116,11 @@ public class FieldbookServiceTest {
 		this.locationVariable.setTermId(TermId.LOCATION_ID.getId());
 		this.nonLocationVariable.setTermId(TermId.PI_ID.getId());
 		this.nonLocationVariable.setPossibleValues(possibleValues);
+
+		this.fieldbookServiceImpl.setContextUtil(this.contextUtil);
 	}
 
-	private void setUpStandardVariablesForChecks(FieldbookService fieldbookMiddlewareService) throws MiddlewareException {
+	private void setUpStandardVariablesForChecks() throws MiddlewareException {
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId(), DUMMY_PROGRAM_UUID)).thenReturn(
 				this.createStandardVariable(new Term(FieldbookServiceTest.CHECK_START_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_START,
 						FieldbookServiceTest.ED_CHECK_START), new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
@@ -658,4 +671,62 @@ public class FieldbookServiceTest {
 		String personName = fieldbookService.getPersonNameByPersonId(personId);
 		Assert.assertEquals(expectedName, personName);
 	}
+
+	@Test
+	public void testAddMeasurementVariableToList() {
+
+		final MeasurementVariable measurementVariableToAdd = new MeasurementVariable();
+		measurementVariableToAdd.setTermId(TermId.PLOT_ID.getId());
+		measurementVariableToAdd.setName(TermId.PLOT_ID.name());
+
+		List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		this.fieldbookServiceImpl.addMeasurementVariableToList(measurementVariableToAdd, measurementVariables);
+
+		final MeasurementVariable plotIdMeasurementVariabe = measurementVariables.get(0);
+
+		Assert.assertNotNull(plotIdMeasurementVariabe);
+		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdMeasurementVariabe.getTermId());
+		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdMeasurementVariabe.getName());
+
+	}
+
+	@Test
+	public void testAddMeasurementVariableToMeasurementRows() {
+
+		final MeasurementVariable measurementVariableToAdd = new MeasurementVariable();
+		measurementVariableToAdd.setTermId(TermId.PLOT_ID.getId());
+		measurementVariableToAdd.setName(TermId.PLOT_ID.name());
+
+		List<MeasurementRow> measurementRows = new ArrayList<>();
+		final MeasurementRow measurementRow = new MeasurementRow();
+		measurementRow.setDataList(new ArrayList<MeasurementData>());
+		measurementRows.add(measurementRow);
+
+		List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		this.fieldbookServiceImpl.addMeasurementVariableToMeasurementRows(measurementVariableToAdd, measurementRows);
+
+		final List<MeasurementData> measurementDataList = measurementRows.get(0).getDataList();
+		final MeasurementData plotIdMeasurementData = measurementDataList.get(0);
+
+		Assert.assertNotNull("Expecting that PLOT_ID measurementData is added in the measurementData list of the measurement", plotIdMeasurementData);
+		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdMeasurementData.getMeasurementVariable().getTermId());
+		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdMeasurementData.getLabel());
+
+	}
+
+	@Test
+	public void testIsVariableExistsInList() {
+
+		List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		MeasurementVariable plotIdMeasurementVariable = new MeasurementVariable();
+
+		plotIdMeasurementVariable.setName(TermId.PLOT_ID.name());
+		plotIdMeasurementVariable.setTermId(TermId.PLOT_ID.getId());
+
+		measurementVariables.add(plotIdMeasurementVariable);
+
+		Assert.assertTrue("Expecting that PLOT_ID variable exists in the list", this.fieldbookServiceImpl.isVariableExistsInList(TermId.PLOT_ID.getId(), measurementVariables));
+		Assert.assertFalse("Expecting that ENTRY_NO variable does not exist in the list", this.fieldbookServiceImpl.isVariableExistsInList(TermId.ENTRY_NO.getId(), measurementVariables));
+	}
+
 }

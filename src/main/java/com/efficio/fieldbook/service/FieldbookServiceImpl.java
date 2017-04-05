@@ -11,22 +11,25 @@
 
 package com.efficio.fieldbook.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.service.internal.DesignRunner;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.service.FileService;
@@ -59,25 +62,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.service.internal.DesignRunner;
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
-import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -685,7 +683,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return idNameMap;
 	}
 
-	protected MeasurementVariable createMeasurementVariable(final String idToCreate, final String value, final Operation operation,
+	@Override
+	public MeasurementVariable createMeasurementVariable(final String idToCreate, final String value, final Operation operation,
 			final PhenotypicType role) {
 		final StandardVariable stdvar =
 				this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate), this.contextUtil.getCurrentProgramUUID());
@@ -1226,6 +1225,43 @@ public class FieldbookServiceImpl implements FieldbookService {
 			this.fieldbookMiddlewareService.setOrderVariableByRank(workbook);
 		}
 
+	}
+
+	@Override
+	public void addMeasurementVariableToList(final MeasurementVariable measurementVariable,
+			final List<MeasurementVariable> measurementVariables) {
+
+		if (!isVariableExistsInList(measurementVariable.getTermId(), measurementVariables)) {
+			measurementVariables.add(measurementVariable);
+
+		}
+
+	}
+
+	@Override
+	public void addMeasurementVariableToMeasurementRows(final MeasurementVariable measurementVariable,
+			final List<MeasurementRow> observations) {
+
+		for (MeasurementRow measurementRow : observations) {
+			final MeasurementData measurementData = new MeasurementData();
+			measurementData.setLabel(measurementVariable.getName());
+			measurementData.setValue("");
+			measurementData.setMeasurementVariable(measurementVariable);
+			measurementRow.getDataList().add(measurementData);
+		}
+
+	}
+
+	boolean isVariableExistsInList(final int termId, final List<MeasurementVariable> measurementVariables) {
+
+		for (MeasurementVariable measurementVariable : measurementVariables) {
+
+			if (measurementVariable.getTermId() == termId) {
+				return true;
+			}
+
+		}
+		return false;
 	}
 
 	

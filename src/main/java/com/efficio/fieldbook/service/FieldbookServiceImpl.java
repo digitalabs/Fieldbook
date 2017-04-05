@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -683,10 +682,11 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return idNameMap;
 	}
 
-	protected MeasurementVariable createMeasurementVariable(final String idToCreate, final String value,
-			final Operation operation, final PhenotypicType role) {
-		final StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate),
-				this.contextUtil.getCurrentProgramUUID());
+	@Override
+	public MeasurementVariable createMeasurementVariable(final String idToCreate, final String value, final Operation operation,
+			final PhenotypicType role) {
+		final StandardVariable stdvar =
+				this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate), this.contextUtil.getCurrentProgramUUID());
 		stdvar.setPhenotypicType(role);
 		final MeasurementVariable var = new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(),
 				stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
@@ -1252,8 +1252,45 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	}
 
-	void setFieldbookMiddlewareService(
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+	@Override
+	public void addMeasurementVariableToList(final MeasurementVariable measurementVariable,
+			final List<MeasurementVariable> measurementVariables) {
+
+		if (!isVariableExistsInList(measurementVariable.getTermId(), measurementVariables)) {
+			measurementVariables.add(measurementVariable);
+
+		}
+
+	}
+
+	@Override
+	public void addMeasurementVariableToMeasurementRows(final MeasurementVariable measurementVariable,
+			final List<MeasurementRow> observations) {
+
+		for (MeasurementRow measurementRow : observations) {
+			final MeasurementData measurementData = new MeasurementData();
+			measurementData.setLabel(measurementVariable.getName());
+			measurementData.setValue("");
+			measurementData.setMeasurementVariable(measurementVariable);
+			measurementRow.getDataList().add(measurementData);
+		}
+
+	}
+
+	boolean isVariableExistsInList(final int termId, final List<MeasurementVariable> measurementVariables) {
+
+		for (MeasurementVariable measurementVariable : measurementVariables) {
+
+			if (measurementVariable.getTermId() == termId) {
+				return true;
+			}
+
+		}
+		return false;
+	}
+
+	
+	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 

@@ -228,7 +228,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					render: function(data, type, row) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-							row.FGID + '&quot;)">' + data + '</a>';
+							row.FGID + '&quot;,&quot;' + row['FEMALE PARENT'] + '&quot;)">' + data + '</a>';
 					}
 				});
 
@@ -240,7 +240,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					render: function(data, type, row) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-							row.MGID + '&quot;)">' + data + '</a>';
+							row.MGID + '&quot;,&quot;' + row['MALE PARENT'] + '&quot;)">' + data + '</a>';
 					}
 				});
 			}

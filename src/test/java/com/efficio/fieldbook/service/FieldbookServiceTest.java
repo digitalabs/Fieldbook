@@ -13,7 +13,10 @@ import org.generationcp.middleware.data.initializer.PersonTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -33,6 +36,7 @@ import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -82,6 +86,7 @@ public class FieldbookServiceTest {
 	@Mock
 	private ContextUtil contextUtil;
 
+
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
@@ -93,6 +98,7 @@ public class FieldbookServiceTest {
 
 	private MeasurementVariable locationVariable;
 	private MeasurementVariable nonLocationVariable;
+
 
 	private StandardVariableTestDataInitializer standardVariableTestDataInitializer;
 	private PersonTestDataInitializer personTestDataInitializer;
@@ -115,8 +121,7 @@ public class FieldbookServiceTest {
 		Mockito.when(this.fieldbookMiddlewareService.getLocationsByProgramUUID(FieldbookServiceTest.PROGRAMUUID)).thenReturn(allLocation);
 		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingLocations()).thenReturn(new ArrayList<Location>());
 
-		this.setUpStandardVariablesForChecks(this.fieldbookMiddlewareService);
-
+		
 		final List<Person> personsList = new ArrayList<Person>();
 		personsList.add(this.personTestDataInitializer.createPerson(200));
 
@@ -139,59 +144,43 @@ public class FieldbookServiceTest {
 		this.locationVariable.setTermId(TermId.LOCATION_ID.getId());
 		this.nonLocationVariable.setTermId(TermId.PI_ID.getId());
 		this.nonLocationVariable.setPossibleValues(possibleValues);
+
+		this.fieldbookServiceImpl.setContextUtil(this.contextUtil);
+		this.setUpStandardVariablesForChecks();
 	}
 
-	private void setUpStandardVariablesForChecks(final FieldbookService fieldbookMiddlewareService)
-			throws MiddlewareException {
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId(),
-				FieldbookServiceTest.PROGRAMUUID))
-				.thenReturn(this.standardVariableTestDataInitializer.createStandardVariable(
-						new Term(FieldbookServiceTest.CHECK_START_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_START,
-								FieldbookServiceTest.ED_CHECK_START),
-						new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
-								FieldbookServiceTest.NUMBER),
-						new Term(FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL,
-								FieldbookServiceTest.FIELD_TRIAL),
-						new Term(TermId.NUMERIC_VARIABLE.getId(), FieldbookServiceTest.NUMERIC_VARIABLE,
-								FieldbookServiceTest.NUMERIC_VARIABLE),
-						new Term(FieldbookServiceTest.TRIAL_ENV_ID, FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION,
-								FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION),
-						new Term(FieldbookServiceTest.TRIAL_DESIGN_ID, FieldbookServiceTest.TRIAL_DESIGN,
-								FieldbookServiceTest.TRIAL_DESIGN),
-						PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_START.getId(),
-						FieldbookServiceTest.CHECK_START));
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId(),
-				FieldbookServiceTest.PROGRAMUUID))
-				.thenReturn(this.standardVariableTestDataInitializer.createStandardVariable(
-						new Term(FieldbookServiceTest.CHECK_INTERVAL_PROPERTY_ID,
-								FieldbookServiceTest.ED_CHECK_INTERVAL, FieldbookServiceTest.ED_CHECK_INTERVAL),
-						new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
-								FieldbookServiceTest.NUMBER),
-						new Term(FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL,
-								FieldbookServiceTest.FIELD_TRIAL),
-						new Term(TermId.NUMERIC_VARIABLE.getId(), FieldbookServiceTest.NUMERIC_VARIABLE,
-								FieldbookServiceTest.NUMERIC_VARIABLE),
-						new Term(FieldbookServiceTest.TRIAL_ENV_ID, FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION,
-								FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION),
-						new Term(1100, FieldbookServiceTest.TRIAL_DESIGN, FieldbookServiceTest.TRIAL_DESIGN),
-						PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_INTERVAL.getId(),
-						FieldbookServiceTest.CHECK_INTERVAL));
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId(),
-				FieldbookServiceTest.PROGRAMUUID))
-				.thenReturn(this.standardVariableTestDataInitializer.createStandardVariable(
-						new Term(FieldbookServiceTest.CHECK_PLAN_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_PLAN,
-								FieldbookServiceTest.ED_CHECK_PLAN),
-						new Term(FieldbookServiceTest.CODE_ID, FieldbookServiceTest.CODE, FieldbookServiceTest.CODE),
-						new Term(FieldbookServiceTest.ASSIGNED_ID, FieldbookServiceTest.ASSIGNED,
-								FieldbookServiceTest.ASSIGNED),
-						new Term(TermId.CATEGORICAL_VARIABLE.getId(), FieldbookServiceTest.CATEGORICAL_VARIABLE,
-								FieldbookServiceTest.CATEGORICAL_VARIABLE),
-						new Term(FieldbookServiceTest.TRIAL_ENV_ID, FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION,
-								FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION),
-						new Term(FieldbookServiceTest.TRIAL_DESIGN_ID, FieldbookServiceTest.TRIAL_DESIGN,
-								FieldbookServiceTest.TRIAL_DESIGN),
-						PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_PLAN.getId(), "CHECK_PLAN"));
+	private void setUpStandardVariablesForChecks() throws MiddlewareException {
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId(), PROGRAMUUID)).thenReturn(
+				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_START_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_START,
+						FieldbookServiceTest.ED_CHECK_START), new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
+								FieldbookServiceTest.NUMBER), new Term(FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL,
+										FieldbookServiceTest.FIELD_TRIAL), new Term(TermId.NUMERIC_VARIABLE.getId(), FieldbookServiceTest.NUMERIC_VARIABLE,
+												FieldbookServiceTest.NUMERIC_VARIABLE), new Term(FieldbookServiceTest.TRIAL_ENV_ID,
+														FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION, FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION), new Term(
+																FieldbookServiceTest.TRIAL_DESIGN_ID, FieldbookServiceTest.TRIAL_DESIGN, FieldbookServiceTest.TRIAL_DESIGN),
+																PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_START.getId(), FieldbookServiceTest.CHECK_START));
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId(), PROGRAMUUID)).thenReturn(
+				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_INTERVAL_PROPERTY_ID,
+						FieldbookServiceTest.ED_CHECK_INTERVAL, FieldbookServiceTest.ED_CHECK_INTERVAL), new Term(
+								FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER, FieldbookServiceTest.NUMBER), new Term(
+										FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL, FieldbookServiceTest.FIELD_TRIAL), new Term(
+												TermId.NUMERIC_VARIABLE.getId(), FieldbookServiceTest.NUMERIC_VARIABLE, FieldbookServiceTest.NUMERIC_VARIABLE),
+												new Term(FieldbookServiceTest.TRIAL_ENV_ID, FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION,
+														FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION), new Term(1100, FieldbookServiceTest.TRIAL_DESIGN,
+																FieldbookServiceTest.TRIAL_DESIGN), PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_INTERVAL.getId(),
+																FieldbookServiceTest.CHECK_INTERVAL));
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId(), PROGRAMUUID)).thenReturn(
+				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_PLAN_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_PLAN,
+						FieldbookServiceTest.ED_CHECK_PLAN), new Term(FieldbookServiceTest.CODE_ID, FieldbookServiceTest.CODE,
+								FieldbookServiceTest.CODE), new Term(FieldbookServiceTest.ASSIGNED_ID, FieldbookServiceTest.ASSIGNED,
+										FieldbookServiceTest.ASSIGNED), new Term(TermId.CATEGORICAL_VARIABLE.getId(),
+												FieldbookServiceTest.CATEGORICAL_VARIABLE, FieldbookServiceTest.CATEGORICAL_VARIABLE), new Term(
+														FieldbookServiceTest.TRIAL_ENV_ID, FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION,
+														FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION), new Term(FieldbookServiceTest.TRIAL_DESIGN_ID,
+																FieldbookServiceTest.TRIAL_DESIGN, FieldbookServiceTest.TRIAL_DESIGN), PhenotypicType.TRIAL_ENVIRONMENT,
+																TermId.CHECK_PLAN.getId(), "CHECK_PLAN"));
 	}
+
 
 	@Test
 	public void testGetVariablePossibleValuesWhenVariableIsNonLocation() throws Exception {
@@ -700,4 +689,62 @@ public class FieldbookServiceTest {
 		final String personName = fieldbookService.getPersonNameByPersonId(personId);
 		Assert.assertEquals(expectedName, personName);
 	}
+
+	@Test
+	public void testAddMeasurementVariableToList() {
+
+		final MeasurementVariable measurementVariableToAdd = new MeasurementVariable();
+		measurementVariableToAdd.setTermId(TermId.PLOT_ID.getId());
+		measurementVariableToAdd.setName(TermId.PLOT_ID.name());
+
+		List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		this.fieldbookServiceImpl.addMeasurementVariableToList(measurementVariableToAdd, measurementVariables);
+
+		final MeasurementVariable plotIdMeasurementVariabe = measurementVariables.get(0);
+
+		Assert.assertNotNull(plotIdMeasurementVariabe);
+		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdMeasurementVariabe.getTermId());
+		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdMeasurementVariabe.getName());
+
+	}
+
+	@Test
+	public void testAddMeasurementVariableToMeasurementRows() {
+
+		final MeasurementVariable measurementVariableToAdd = new MeasurementVariable();
+		measurementVariableToAdd.setTermId(TermId.PLOT_ID.getId());
+		measurementVariableToAdd.setName(TermId.PLOT_ID.name());
+
+		List<MeasurementRow> measurementRows = new ArrayList<>();
+		final MeasurementRow measurementRow = new MeasurementRow();
+		measurementRow.setDataList(new ArrayList<MeasurementData>());
+		measurementRows.add(measurementRow);
+
+		List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		this.fieldbookServiceImpl.addMeasurementVariableToMeasurementRows(measurementVariableToAdd, measurementRows);
+
+		final List<MeasurementData> measurementDataList = measurementRows.get(0).getDataList();
+		final MeasurementData plotIdMeasurementData = measurementDataList.get(0);
+
+		Assert.assertNotNull("Expecting that PLOT_ID measurementData is added in the measurementData list of the measurement", plotIdMeasurementData);
+		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdMeasurementData.getMeasurementVariable().getTermId());
+		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdMeasurementData.getLabel());
+
+	}
+
+	@Test
+	public void testIsVariableExistsInList() {
+
+		List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		MeasurementVariable plotIdMeasurementVariable = new MeasurementVariable();
+
+		plotIdMeasurementVariable.setName(TermId.PLOT_ID.name());
+		plotIdMeasurementVariable.setTermId(TermId.PLOT_ID.getId());
+
+		measurementVariables.add(plotIdMeasurementVariable);
+
+		Assert.assertTrue("Expecting that PLOT_ID variable exists in the list", this.fieldbookServiceImpl.isVariableExistsInList(TermId.PLOT_ID.getId(), measurementVariables));
+		Assert.assertFalse("Expecting that ENTRY_NO variable does not exist in the list", this.fieldbookServiceImpl.isVariableExistsInList(TermId.ENTRY_NO.getId(), measurementVariables));
+	}
+
 }

@@ -101,7 +101,7 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 			columnsDef.push({
 				defaultContent: '',
 				targets: columns.length - 1,
-				visible: termId === 8170 && !displayTrialInstance ? false : true, // do not display TRIAL_INSTANCE column, [0] column
+				visible: termId === 8170  && !displayTrialInstance ? false : true , // do not display TRIAL_INSTANCE column, [0] column
 				createdCell: function(td, cellData, rowData, row, col) {
 					if (isVariates) {
 						$(td).addClass('numeric-variable');
@@ -130,11 +130,13 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 				}
 			});
 		} else if (displayColumn.dataTypeId === 1120 || displayColumn.dataTypeId === 1117) {
+			var isPlotId = displayColumn.termId === 8201;
 			// Column definition for Character and date data type
 			columnsDef.push({
 				defaultContent: '',
 				targets: columns.length - 1,
-				createdCell: function(td, cellData, rowData, row, col) {
+                visible: !isPlotId,
+                createdCell: function(td, cellData, rowData, row, col) {
 					$(td).data('term-id', termId);
 					$(td).data('phenotype-id', cellData[1]);
 				},

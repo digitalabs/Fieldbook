@@ -727,7 +727,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected String convertDateStringForUI(final String value) {
-		if (!value.contains("-")) {
+		if (value != null && !value.contains("-")) {
 			return DateUtil.convertToUIDateFormat(TermId.DATE_VARIABLE.getId(), value);
 		} else {
 			return value;

@@ -82,7 +82,7 @@ var ImportCrosses = {
 
 		$("#breedingMethodSelectionDiv :input").attr("disabled", true);
 		$('#breedingMethodDropdown').select2('val', null);
-		$("#showFavoritesOnlyCheckbox").prop('checked', false);
+		$("#showFavoritesOnlyCheckbox").prop('checked', true);
 
 		if (createdCrossesListId == null) {
 			$('#selectMethodInImportFile').prop('checked',true);

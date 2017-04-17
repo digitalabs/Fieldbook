@@ -843,7 +843,7 @@ var ImportCrosses = {
 			success: function(data) {
 				if (data.isSuccess === 1) {
 					$('#saveListTreeModal').modal('hide');
-					ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  data.listName);
+					ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  $.trim(data.listName));
 					$('#saveListTreeModal').data('is-save-crosses', '0');
 					showSuccessfulMessage('', saveListSuccessfullyMessage);
 				} else {
@@ -919,10 +919,10 @@ var ImportCrosses = {
 			}
 		});
 	},
-	openGermplasmModal : function (gid) {
+	openGermplasmModal : function (gid, desig) {
 		'use strict';
 		$('#openCrossesListModal').modal('hide');
-		openGermplasmDetailsPopopWithGidAndDesig(gid);
+		openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
 		$('#openGermplasmModal').one('hidden.bs.modal', function () {
 			$('#openGermplasmModal').modal ('hide');
 			$('#openCrossesListModal').modal({ backdrop: 'static', keyboard: true });

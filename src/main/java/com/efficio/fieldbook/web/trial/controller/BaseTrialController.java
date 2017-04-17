@@ -1,8 +1,10 @@
 package com.efficio.fieldbook.web.trial.controller;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
 import com.efficio.fieldbook.web.trial.bean.Environment;
@@ -15,7 +17,9 @@ import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -42,8 +46,11 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -602,6 +609,55 @@ public abstract class BaseTrialController extends SettingsController {
 		return output;
 	}
 
+	protected List<MeasurementVariable> getLatestMeasurements(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+			final HttpServletRequest request) {
+		Workbook workbook = this.userSelection.getWorkbook();
+		if (this.userSelection.getTemporaryWorkbook() != null) {
+			workbook = this.userSelection.getTemporaryWorkbook();
+		}
+
+		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
+		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
+		// we show only traits that are being passed by the frontend
+		final String traitsListCsv = request.getParameter("traitsList");
+
+		final List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
+
+		final List<SettingDetail> traitList = this.userSelection.getBaselineTraitsList();
+
+		if (!measurementDatasetVariables.isEmpty()) {
+			for (final MeasurementVariable var : measurementDatasetVariables) {
+				if (var.isFactor()) {
+					newMeasurementDatasetVariables.add(var);
+				}
+			}
+			if (traitsListCsv != null && !"".equalsIgnoreCase(traitsListCsv)) {
+				final StringTokenizer token = new StringTokenizer(traitsListCsv, ",");
+				while (token.hasMoreTokens()) {
+					final int id = Integer.valueOf(token.nextToken());
+					final MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
+					if (currentVar == null) {
+						final StandardVariable var =
+								this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
+						var.setPhenotypicType(PhenotypicType.VARIATE);
+						final MeasurementVariable newVar =
+								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
+						newVar.setFactor(false);
+						newMeasurementDatasetVariables.add(newVar);
+						SettingsUtil.findAndUpdateVariableName(traitList, newVar);
+					} else {
+						newMeasurementDatasetVariables.add(currentVar);
+						SettingsUtil.findAndUpdateVariableName(traitList, currentVar);
+					}
+				}
+			}
+			measurementDatasetVariables = newMeasurementDatasetVariables;
+		}
+
+		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
+		return workbook.arrangeMeasurementVariables(measurementDatasetVariables);
+	}
+
 	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final List<MeasurementVariable> studyConditions,
 			final boolean isUsePrevious, final int trialID) {
 		final Map<String, String> basicDetails = new HashMap<String, String>();
@@ -671,7 +727,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected String convertDateStringForUI(final String value) {
-		if (!value.contains("-")) {
+		if (value != null && !value.contains("-")) {
 			return DateUtil.convertToUIDateFormat(TermId.DATE_VARIABLE.getId(), value);
 		} else {
 			return value;

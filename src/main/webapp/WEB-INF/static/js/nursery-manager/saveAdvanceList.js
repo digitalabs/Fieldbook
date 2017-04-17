@@ -130,7 +130,7 @@ var SaveAdvanceList = {};
 						$('#saveListTreeModal').data('is-save-parent', '0');
 					}
 					else if (isCrosses) {
-						ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  data.listName);
+						ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  $.trim(data.listName));
 						$('#saveListTreeModal').data('is-save-crosses', '0');
 						if (data.isTrimed === 1) {
 							showAlertMessage('page-save-list-message-modal', crossesWarningMessage, 10000);
@@ -159,7 +159,7 @@ var SaveAdvanceList = {};
 							}, 100);
 						}
 						$('a#advanceHref' + id).tab('show');
-						displayAdvanceList(data.uniqueId, data.germplasmListId, data.listName, false, data.advancedGermplasmListId);
+						displayAdvanceList(data.uniqueId, data.germplasmListId, $.trim(data.listName), false, data.advancedGermplasmListId);
 					}
 					showSuccessfulMessage('', saveListSuccessfullyMessage);
 				} else {

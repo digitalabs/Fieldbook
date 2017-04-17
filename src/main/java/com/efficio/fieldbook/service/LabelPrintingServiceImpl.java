@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -524,6 +526,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			value = this.getValueForStockList(row.getCross());
 		} else if (termID.equals(TermId.SEED_SOURCE.getId())) {
 			value = this.getValueForStockList(row.getSource());
+		} else if (termID.equals(TermId.GROUPGID.getId())) {
+			value = this.getValueForStockList(row.getGroupId());
 		} else if (termID.equals(TermId.REP_NO.getId())) {
 			value = this.getValueForStockList(row.getReplicationNumber());
 		}else if (termID.equals(TermId.GROUPGID.getId())) {
@@ -890,6 +894,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		// Stock List Specific Fields
 		labelFieldsList.addAll(this.addStockListDetailsFields(locale, listType));
+
+		Set<LabelFields> uniqueLabelFields = new HashSet<>(labelFieldsList);
+
+		labelFieldsList.clear();
+		labelFieldsList.addAll(uniqueLabelFields);
 
 		return labelFieldsList;
 	}

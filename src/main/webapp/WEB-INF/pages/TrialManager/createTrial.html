@@ -228,6 +228,9 @@
 								<input type="button" ng-click="selectPreviousTrial()" ng-show="isChoosePreviousTrial"
 									   th:value="#{common.form.choose.text}"
 									   class="btn btn-info" id="choosePreviousStudy"/>
+								<input type="button" ng-click="resetTabsData()" ng-show="isChoosePreviousTrial"
+									   th:value="#{trial.managesettings.create.trial.reset}"
+									   class="btn btn-info" id="resetTabsData"/>
 							</div>
 						</div>
 
@@ -571,6 +574,11 @@ var translations = {
 	});
 
 })();
+
+jQuery(function() {
+	'use strict';
+	var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
+});
 
 //]]>
 </script>

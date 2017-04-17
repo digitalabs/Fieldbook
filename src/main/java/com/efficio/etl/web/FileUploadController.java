@@ -1,19 +1,19 @@
 
 package com.efficio.etl.web;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.bean.FileUploadForm;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.validators.FileUploadFormValidator;
+import com.efficio.fieldbook.service.api.FieldbookService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -30,10 +30,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.bean.FileUploadForm;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.validators.FileUploadFormValidator;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -47,13 +50,19 @@ public class FileUploadController extends AbstractBaseETLController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileUploadController.class);
 
-	private static final String STATUS_CODE = "statusCode";
+	protected static final String STATUS_CODE = "statusCode";
 
-	private static final String ERROR_TYPE = "errorType";
+	protected static final String ERROR_TYPE = "errorType";
 
-	private static final String STATUS_MESSAGE = "statusMessage";
+	protected static final String STATUS_MESSAGE = "statusMessage";
 
 	private static final String UPLOAD_FORM_FILE = "uploadForm.file";
+	public static final String STATUS_CODE_HAS_OUT_OF_BOUNDS = "2";
+	public static final String STATUS_CODE_SUCCESSFUL = "1";
+	public static final String STATUS_CODE_HAS_ERROR = "-1";
+
+	@Resource
+	private FieldbookService fieldbookService;
 
 	@Resource
 	private ETLService etlService;
@@ -152,26 +161,39 @@ public class FileUploadController extends AbstractBaseETLController {
 					this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
 							confirmDiscard == 1 ? true : false, new WorkbookParser());
 
-			this.dataImportService.saveDataset(wb, programUUID);
+
+			final MeasurementVariable plotIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "",
+					Operation.ADD, PhenotypicType.GERMPLASM);
+			plotIdMeasurementVariable.setFactor(true);
+			// PLOT_ID is not required in processing the fieldbook data file, but we need to add it in the background
+			// if it is not available as it is necessary in displaying the plot_id in measurements
+			this.fieldbookService.addMeasurementVariableToList(plotIdMeasurementVariable, wb.getFactors());
+
+			// It is important to add the PLOT_ID measurement data in measurement rows to make sure that variables
+			// in Workbook match the variables in measurement rows. This will initially creates blank values for PLOT_ID
+			// but the generation of plot IDs will be handled during the saving of Workbook.
+			this.fieldbookService.addMeasurementVariableToMeasurementRows(plotIdMeasurementVariable, wb.getObservations());
+
+			this.dataImportService.saveDataset(wb, programUUID, this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
 
 			this.httpSessionUtil.clearSessionData(session, new String[] {HTTPSessionUtil.USER_SELECTION_SESSION_NAME});
 
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_SUCCESSFUL);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "Import is done.");
 
 		} catch (WorkbookParserException e) {
 
 			FileUploadController.LOG.error(e.getMessage(), e);
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_ERROR);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, e.getMessage());
 			this.returnMessage.put(FileUploadController.ERROR_TYPE, e.getClass().getSimpleName());
 
 		} catch (IOException e) {
 			FileUploadController.LOG.error(e.getMessage(), e);
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_ERROR);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "An error occurred while reading the file.");
 			this.returnMessage.put(FileUploadController.ERROR_TYPE, e.getClass().getSimpleName());
 		}
@@ -200,10 +222,10 @@ public class FileUploadController extends AbstractBaseETLController {
 							programUUID);
 
 			if (workbook.hasOutOfBoundsData()) {
-				this.returnMessage.put(FileUploadController.STATUS_CODE, "2");
+				this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_OUT_OF_BOUNDS);
 				this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "");
 			} else {
-				this.returnMessage.put(FileUploadController.STATUS_CODE, "1");
+				this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_SUCCESSFUL);
 				this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "");
 			}
 
@@ -212,7 +234,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			FileUploadController.LOG.error(e.getMessage(), e);
 
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_ERROR);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, e.getMessage());
 			this.returnMessage.put(FileUploadController.ERROR_TYPE, "IOException");
 
@@ -241,7 +263,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			}
 
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_ERROR);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, builder.toString());
 			if (isMaxLimitException) {
 				this.returnMessage.put(FileUploadController.ERROR_TYPE, "WorkbookParserException-OverMaxLimit");
@@ -253,7 +275,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			FileUploadController.LOG.error(e.getMessage(), e);
 
 			this.returnMessage.clear();
-			this.returnMessage.put(FileUploadController.STATUS_CODE, "-1");
+			this.returnMessage.put(FileUploadController.STATUS_CODE, STATUS_CODE_HAS_ERROR);
 			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, e.getMessage());
 			this.returnMessage.put(FileUploadController.ERROR_TYPE, "Exception");
 

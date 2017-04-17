@@ -15,7 +15,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.data.initializer.StandardVariableInitializer;
+import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -97,13 +97,15 @@ public class DesignImportServiceImplTest {
 	private DesignImportMeasurementRowGenerator measurementRowGenerator;
 
 	private DesignImportData designImportData;
+	
+	private StandardVariableTestDataInitializer standardVariableTestDataInitializer;
 
 	@InjectMocks
 	private DesignImportServiceImpl service;
 
 	@Before
 	public void setUp() {
-
+		this.standardVariableTestDataInitializer = new StandardVariableTestDataInitializer();
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(DesignImportServiceImplTest.PROGRAM_UUID);
 
 		this.initializeOntologyScaleDataManager();
@@ -535,7 +537,7 @@ public class DesignImportServiceImplTest {
 		final List<ImportedGermplasm> importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
 		final Map<Integer, StandardVariable> germplasmStandardVariables = new HashMap<Integer, StandardVariable>();
 		germplasmStandardVariables.put(TermId.ENTRY_NO.getId(),
-				StandardVariableInitializer.createStdVariable(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name()));
+				this.standardVariableTestDataInitializer.createStandardVariable(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name()));
 		final Set<String> trialInstancesFromUI = new HashSet<String>();
 		trialInstancesFromUI.add("1");
 		trialInstancesFromUI.add("2");

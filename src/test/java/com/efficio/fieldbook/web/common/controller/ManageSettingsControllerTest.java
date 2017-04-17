@@ -111,46 +111,4 @@ public class ManageSettingsControllerTest {
 
 		Mockito.verify(spyController).hasMeasurementDataEntered(ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
 	}
-
-	@Test
-	public void testGetObservationsOnEnvironment() {
-		Workbook workbook =
-				WorkbookDataUtil.getTestWorkbookForTrial(ManageSettingsControllerTest.NO_OF_OBSERVATIONS,
-						ManageSettingsControllerTest.NO_OF_TRIAL_INSTANCES);
-
-		Assert.assertEquals("Expecting that the return size of observation is " + ManageSettingsControllerTest.NO_OF_OBSERVATIONS
-				+ " but returned " + this.controller.getObservationsOnEnvironment(workbook, 1).size(), this.controller
-				.getObservationsOnEnvironment(workbook, 1).size(), ManageSettingsControllerTest.NO_OF_OBSERVATIONS);
-	}
-
-	@Test
-	public void testHasMeasurementDataOnEnvronmentReturnsTrueForExistingTraits() {
-		Workbook workbook =
-				WorkbookDataUtil.getTestWorkbookForTrial(ManageSettingsControllerTest.NO_OF_OBSERVATIONS,
-						ManageSettingsControllerTest.NO_OF_TRIAL_INSTANCES);
-
-		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
-
-		List<Integer> ids = new ArrayList<Integer>();
-		ids.add(TermId.PLOT_NO.getId());
-
-		Assert.assertTrue("Expected that the set of observations on the given environment has measurement data.",
-				this.controller.hasMeasurementDataOnEnvironment(ids, 1));
-	}
-
-	@Test
-	public void testHasMeasurementDataOnEnvronmentReturnsFalseForNonExistingTraits() {
-		Workbook workbook =
-				WorkbookDataUtil.getTestWorkbookForTrial(ManageSettingsControllerTest.NO_OF_OBSERVATIONS,
-						ManageSettingsControllerTest.NO_OF_TRIAL_INSTANCES);
-
-		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
-
-		List<Integer> ids = new ArrayList<Integer>();
-		ids.add(TermId.ENTRY_CODE.getId());
-
-		Assert.assertFalse("Expected that the set of observations on the given environment has no measurement data.",
-				this.controller.hasMeasurementDataOnEnvironment(ids, 1));
-	}
-
 }

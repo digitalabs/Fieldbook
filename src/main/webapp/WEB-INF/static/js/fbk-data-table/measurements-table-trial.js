@@ -130,10 +130,12 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 				}
 			});
 		} else if (displayColumn.dataTypeId === 1120 || displayColumn.dataTypeId === 1117) {
+			var isPlotId = displayColumn.termId === 8201;
 			// Column definition for Character and date data type
 			columnsDef.push({
 				defaultContent: '',
 				targets: columns.length - 1,
+				visible: !isPlotId,
 				createdCell: function(td, cellData, rowData, row, col) {
 					$(td).data('term-id', termId);
 					$(td).data('phenotype-id', cellData[1]);

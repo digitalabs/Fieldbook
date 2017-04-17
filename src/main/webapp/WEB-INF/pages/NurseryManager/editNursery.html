@@ -92,7 +92,7 @@
 										<a tabindex="-1" href="#">Design and planning options</a>
 										<ul class="dropdown-menu" style="margin-left: 28px;">
 											<!--Export germplasm list-->
-											<li th:if="${createNurseryForm.measurementRowList.size() != 0}">
+											<li th:if="${createNurseryForm.measurementRowList.size() != 0} and ${createNurseryForm.germplasmListId > -1}">
 												<a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link" th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export germplasm list</a>
 											</li>
 											<!--Export design template-->
@@ -470,7 +470,7 @@
 
 	<!-- Modal Dialog for Import Design option -->
 	<div th:include="/DesignImport/importFile"></div>
-	
+
 	<div th:include="/DesignImport/changeDesign"></div>
 
 	<div th:include="/DesignImport/reviewDetails"></div>

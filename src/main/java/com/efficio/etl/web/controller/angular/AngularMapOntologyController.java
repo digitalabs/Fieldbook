@@ -1,23 +1,21 @@
 
 package com.efficio.etl.web.controller.angular;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.AbstractBaseETLController;
+import com.efficio.etl.web.bean.FileUploadForm;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.bean.VariableDTO;
+import com.efficio.etl.web.validators.FileUploadFormValidator;
+import com.efficio.fieldbook.service.api.FieldbookService;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.Constants;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +28,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.AbstractBaseETLController;
-import com.efficio.etl.web.bean.FileUploadForm;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.bean.VariableDTO;
-import com.efficio.etl.web.validators.FileUploadFormValidator;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -47,6 +49,9 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 	public static final String URL = "/etl/workbook/mapOntology";
 	private static final Logger LOG = LoggerFactory.getLogger(AngularMapOntologyController.class);
+
+	@Resource
+	private FieldbookService fieldbookService;
 
 	@Resource(name = "etlUserSelection")
 	private UserSelection userSelection;
@@ -210,10 +215,19 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			this.userSelection.clearMeasurementVariables();
 
+
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			this.etlService.mergeVariableData(variables, workbook, this.userSelection);
 
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
+
+			final MeasurementVariable plotIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "",
+					Operation.ADD, PhenotypicType.GERMPLASM);
+			plotIdMeasurementVariable.setFactor(true);
+
+			// PLOT_ID is not required in processing the Fieldbook data file, but we need to add it in the background
+			// if it is not available as it is necessary in displaying the PLOT_ID column in measurements table.
+			this.fieldbookService.addMeasurementVariableToList(plotIdMeasurementVariable, importData.getFactors());
 
 			this.etlService.saveProjectOntology(importData, this.contextUtil.getCurrentProgramUUID());
 

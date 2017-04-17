@@ -919,10 +919,10 @@ var ImportCrosses = {
 			}
 		});
 	},
-	openGermplasmModal : function (gid) {
+	openGermplasmModal : function (gid, desig) {
 		'use strict';
 		$('#openCrossesListModal').modal('hide');
-		openGermplasmDetailsPopopWithGidAndDesig(gid);
+		openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
 		$('#openGermplasmModal').one('hidden.bs.modal', function () {
 			$('#openGermplasmModal').modal ('hide');
 			$('#openCrossesListModal').modal({ backdrop: 'static', keyboard: true });

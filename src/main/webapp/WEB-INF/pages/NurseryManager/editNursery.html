@@ -21,19 +21,19 @@
 					<div class="pull-left">
 						<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="" />
 
-						<span class="fbk-nursery-heading nursery-name-display">
+			            <span class="fbk-nursery-heading nursery-name-display">
 			            	<span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
 			            	<span class="heading nursery-name-display" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
 			            	<span class="heading fieldmap-study-name fbk-hide" th:text="*{basicDetails[0].value}"></span>
 			            	<span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
 			            </span>
 
-						<div class="fbk-nursery-heading-btns">
-							<input type="button" onclick="submitEditForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-nursery" />
-							<input type="button" value="Save" class="btn btn-info fbk-save-stocklist fbk-hide" onclick="saveStockListImport();" th:value="#{common.form.save.text}"/>
-							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>
-							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-stocklist-data fbk-hide" onclick="discardImportedStockList();" th:value="#{import.discard.data}"/>
-						</div>
+                        <div class="fbk-nursery-heading-btns">
+			            	<input type="button" onclick="submitEditForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-nursery" />
+			            	<input type="button" value="Save" class="btn btn-info fbk-save-stocklist fbk-hide" onclick="saveStockListImport();" th:value="#{common.form.save.text}"/>
+			            	<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>
+			            	<input type="button" value="Save" class="btn btn-info fbk-discard-imported-stocklist-data fbk-hide" onclick="discardImportedStockList();" th:value="#{import.discard.data}"/>
+			            </div>
 					</div>
 					<div class="pull-right fbk-nursery-heading-right">
 						<div class="col-md-12">
@@ -488,45 +488,45 @@
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 
-	<script type="text/javascript" th:inline="javascript">
-        //<![CDATA[
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
 
-        // FIXME Should not be using global variables or functions
-		/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery*/
-		/*globals validateStartEndDate, moveToTopScreen, programNurseriesText, measurementRowCount*/
-		/*globals submitGermplasmAndCheck, truncateStudyVariableNames, displayCorrespondingGermplasmSections*/
-		/*exported lastDraggedChecksList, locationSuggestions, scaleSuggestions,saveSuccessMessage, submitEditForm*/
+// FIXME Should not be using global variables or functions
+/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery*/
+/*globals validateStartEndDate, moveToTopScreen, programNurseriesText, measurementRowCount*/
+/*globals submitGermplasmAndCheck, truncateStudyVariableNames, displayCorrespondingGermplasmSections*/
+/*exported lastDraggedChecksList, locationSuggestions, scaleSuggestions,saveSuccessMessage, submitEditForm*/
 
-        var locationSuggestions = /*[[${locationList}]]*/ '',
-            scaleSuggestions = /*[[${scaleList}]]*/  '',
-            createdCrossesListId = /*[[${createdCrossesListId}]]*/ '';
+var locationSuggestions = /*[[${locationList}]]*/ '',
+		scaleSuggestions = /*[[${scaleList}]]*/  '',
+		createdCrossesListId = /*[[${createdCrossesListId}]]*/ '';
 
-        // defining "constant" variables that will be used later on with values retrieved from back end
+// defining "constant" variables that will be used later on with values retrieved from back end
 
-        // the following segment defines variables that represent different variable types, used to define segments within the Nursery
-        // the constant value provided after the Thymeleaf expression serves as a default value in the case that the attribute is not provided from the back end
-        var studyLevelDetailsType = /*[[${studyLevelDetailType}]]*/ 1805;
-        var baselineTraitsSegment = /*[[${baselineTraitsSegment}]]*/ 1808;
-        var plotLevelDetailsType = /*[[${plotLevelDetailType}]]*/ 1804;
-        var selectionDetailsType = /*[[${selectionVariatesSegment}]]*/ 1807;
-        var nurseryConditionsType = /*[[${nurseryConditionsType}]]*/ 1803;
+// the following segment defines variables that represent different variable types, used to define segments within the Nursery
+// the constant value provided after the Thymeleaf expression serves as a default value in the case that the attribute is not provided from the back end
+var studyLevelDetailsType = /*[[${studyLevelDetailType}]]*/ 1805;
+var baselineTraitsSegment = /*[[${baselineTraitsSegment}]]*/ 1808;
+var plotLevelDetailsType = /*[[${plotLevelDetailType}]]*/ 1804;
+var selectionDetailsType = /*[[${selectionVariatesSegment}]]*/ 1807;
+var nurseryConditionsType = /*[[${nurseryConditionsType}]]*/ 1803;
 
-		/* jshint ignore:start */
-        var measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0,
-            buttonToDelete = null;
-		/* jshint ignore:end */
+/* jshint ignore:start */
+var measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0,
+		buttonToDelete = null;
+/* jshint ignore:end */
 
-        var selectedTableIds = new Array();
+var selectedTableIds = new Array();
 
 
-        var loggedInUserId = /*[[${contextInfo.loggedInUserId}]]*/ '',
-            authToken = /*[[${contextInfo.authToken}]]*/ '',
-            selectedProjectId = /*[[${contextInfo.selectedProjectId}]]*/ '',
-            currentProgramId = /*[[${currentProgramId}]]*/ '',
-            cropName = /*[[${cropName}]]*/ '';
+var loggedInUserId = /*[[${contextInfo.loggedInUserId}]]*/ '',
+    authToken = /*[[${contextInfo.authToken}]]*/ '',
+    selectedProjectId = /*[[${contextInfo.selectedProjectId}]]*/ '',
+    currentProgramId = /*[[${currentProgramId}]]*/ '',
+    cropName = /*[[${cropName}]]*/ '';
 
-        //]]>
-	</script>
+//]]>
+</script>
 	<script type="text/javascript" th:src="@{/static/js/edit-nursery.js}"></script>
 
 

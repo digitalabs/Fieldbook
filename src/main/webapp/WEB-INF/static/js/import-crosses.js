@@ -83,6 +83,7 @@ var ImportCrosses = {
 		$("#breedingMethodSelectionDiv :input").attr("disabled", true);
 		$('#breedingMethodDropdown').select2('val', null);
 		$("#showFavoritesOnlyCheckbox").prop('checked', true);
+        $("#showBreedingMethodOnlyRadio").prop('checked', true);
 
 		if (createdCrossesListId == null) {
 			$('#selectMethodInImportFile').prop('checked',true);
@@ -196,6 +197,7 @@ var ImportCrosses = {
 				return;
 			}
 			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
+            $('#preview-crosses-table').resize();
 		}).fail(function (jqXHR, textStatus) {
 			showErrorMessage('', textStatus);
 		});

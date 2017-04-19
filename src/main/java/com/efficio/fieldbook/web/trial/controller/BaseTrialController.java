@@ -620,39 +620,14 @@ public abstract class BaseTrialController extends SettingsController {
 		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
 		// we show only traits that are being passed by the frontend
 		final String traitsListCsv = request.getParameter("traitsList");
-
-		final List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
-
 		final List<SettingDetail> traitList = this.userSelection.getBaselineTraitsList();
 
-		if (!measurementDatasetVariables.isEmpty()) {
-			for (final MeasurementVariable var : measurementDatasetVariables) {
-				if (var.isFactor()) {
-					newMeasurementDatasetVariables.add(var);
-				}
-			}
-			if (traitsListCsv != null && !"".equalsIgnoreCase(traitsListCsv)) {
-				final StringTokenizer token = new StringTokenizer(traitsListCsv, ",");
-				while (token.hasMoreTokens()) {
-					final int id = Integer.valueOf(token.nextToken());
-					final MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
-					if (currentVar == null) {
-						final StandardVariable var =
-								this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
-						var.setPhenotypicType(PhenotypicType.VARIATE);
-						final MeasurementVariable newVar =
-								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
-						newVar.setFactor(false);
-						newMeasurementDatasetVariables.add(newVar);
-						SettingsUtil.findAndUpdateVariableName(traitList, newVar);
-					} else {
-						newMeasurementDatasetVariables.add(currentVar);
-						SettingsUtil.findAndUpdateVariableName(traitList, currentVar);
-					}
-				}
-			}
+		/*if (!measurementDatasetVariables.isEmpty()) {
+
+			final List<MeasurementVariable> newMeasurementDatasetVariables = getMeasurementVariableFactor(measurementDatasetVariables);
+			obtainTratisVariates(measurementDatasetVariables,newMeasurementDatasetVariables,traitsListCsv,traitList);
 			measurementDatasetVariables = newMeasurementDatasetVariables;
-		}
+		}*/
 
 		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
 		return workbook.arrangeMeasurementVariables(measurementDatasetVariables);
@@ -849,5 +824,41 @@ public abstract class BaseTrialController extends SettingsController {
 			x++;
 		}
 
+	}
+
+
+	protected List<MeasurementVariable> getMeasurementVariableFactor(List<MeasurementVariable> measurementDatasetVariables) {
+		List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
+		for (final MeasurementVariable var : measurementDatasetVariables) {
+			if (var.isFactor()) {
+				newMeasurementDatasetVariables.add(var);
+			}
+		}
+		return newMeasurementDatasetVariables;
+	}
+
+	protected void obtainTratisVariates(List<MeasurementVariable> measurementDatasetVariables,List<MeasurementVariable> newMeasurementDatasetVariables, String traitsListCsv,
+		List<SettingDetail> traitList) {
+
+		if (traitsListCsv != null && !"".equalsIgnoreCase(traitsListCsv)) {
+			final StringTokenizer token = new StringTokenizer(traitsListCsv, ",");
+			while (token.hasMoreTokens()) {
+				final int id = Integer.valueOf(token.nextToken());
+				final MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
+				if (currentVar == null) {
+					final StandardVariable var =
+						this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
+					var.setPhenotypicType(PhenotypicType.VARIATE);
+					final MeasurementVariable newVar =
+						ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
+					newVar.setFactor(false);
+					newMeasurementDatasetVariables.add(newVar);
+					SettingsUtil.findAndUpdateVariableName(traitList, newVar);
+				} else {
+					newMeasurementDatasetVariables.add(currentVar);
+					SettingsUtil.findAndUpdateVariableName(traitList, currentVar);
+				}
+			}
+		}
 	}
 }

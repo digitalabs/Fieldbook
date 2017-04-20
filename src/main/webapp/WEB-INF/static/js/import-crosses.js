@@ -196,7 +196,7 @@ var ImportCrosses = {
 				showErrorMessage('', response.error);
 				return;
 			}
-			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
+		new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
 		}).fail(function (jqXHR, textStatus) {
 			showErrorMessage('', textStatus);
 		});

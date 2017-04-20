@@ -182,7 +182,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				} else {
 					// For Existing Trial
-					var environmentNo = index + 1;
+					var environmentNo = index;
 					hasMeasurementDataOnEnvironment(environmentNo);
 				}
 			};
@@ -274,7 +274,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
                 						var warningMessage = 'This environment cannot be removed because it contains measurement data.';
                 						showAlertMessage('', warningMessage);
                 					} else {
-                						confirmDeleteEnvironment(index);
+                						confirmDeleteEnvironment(environmentNo);
                 					}
                 					dfd.resolve();
                 				});

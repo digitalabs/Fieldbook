@@ -159,10 +159,9 @@
 					var $measurementContainer = $('#measurementsDiv');
 
 					if ($measurementTable.length !== 0) {
-						/*var columnsOrder = $('#measurement-table') && $('#measurement-table').length !== 0 ?
-							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true) : [];*/
 						var addedData = '&columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
 						var dataParam = 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys +
+                            '&selectionVariablesList=' + TrialManagerDataService.settings.selectionVariables.m_keys +
 							'&deletedEnvironment=' + deletedEnvironmentIndex + addedData;
 
 						return $http.post('/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement', dataParam,

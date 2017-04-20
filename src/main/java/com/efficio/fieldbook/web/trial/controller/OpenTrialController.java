@@ -38,6 +38,7 @@ import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.util.FieldbookListUtil;
+import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -589,16 +590,28 @@ public class OpenTrialController extends BaseTrialController {
 
 		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
 		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
-		// we show only traits that are being passed by the frontend
+
 		final String traitsListCsv = request.getParameter("traitsList");
+		final String selectionVariablesListCsv = request.getParameter("selectionVariablesList");
+		final String listCsv;
+		if (!StringUtil.isEmpty(traitsListCsv) && !StringUtil.isEmpty(selectionVariablesListCsv)) {
+			listCsv = traitsListCsv + "," + selectionVariablesListCsv;
+
+		} else {
+			listCsv = !StringUtil.isEmpty(traitsListCsv) ? traitsListCsv : selectionVariablesListCsv;
+		}
+
 		final List<SettingDetail> traitList = this.userSelection.getBaselineTraitsList();
+		final List<SettingDetail> selectionVariatesList = this.userSelection.getSelectionVariates();
+		final List<SettingDetail> variableList = new ArrayList<>();
+		variableList.addAll(traitList);
+		variableList.addAll(selectionVariatesList);
 
-		/*if (!measurementDatasetVariables.isEmpty()) {
-
+		if (!measurementDatasetVariables.isEmpty()) {
 			final List<MeasurementVariable> newMeasurementDatasetVariables = getMeasurementVariableFactor(measurementDatasetVariables);
-			obtainTratisVariates(measurementDatasetVariables,newMeasurementDatasetVariables,traitsListCsv,traitList);
+			obtainTratisVariates(measurementDatasetVariables,newMeasurementDatasetVariables,listCsv,variableList);
 			measurementDatasetVariables = newMeasurementDatasetVariables;
-		}*/
+		}
 
 		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
 		measurementDatasetVariables = workbook.arrangeMeasurementVariables(measurementDatasetVariables);

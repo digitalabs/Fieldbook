@@ -280,6 +280,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			url: '/Fieldbook/TrialManager/openTrial/columns',
 			type: 'POST',
 			data: 'traitsList=' + trialManagerDataService.settings.measurements.m_keys
+			+'&selectionVariablesList=' + trialManagerDataService.settings.selectionVariables.m_keys
 		}).done(function(displayColumns) {
 
 			var columnsObj = getColumns(displayColumns, false);

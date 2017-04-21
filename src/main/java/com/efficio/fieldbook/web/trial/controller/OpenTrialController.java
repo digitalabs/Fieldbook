@@ -604,8 +604,15 @@ public class OpenTrialController extends BaseTrialController {
 		final List<SettingDetail> traitList = this.userSelection.getBaselineTraitsList();
 		final List<SettingDetail> selectionVariatesList = this.userSelection.getSelectionVariates();
 		final List<SettingDetail> variableList = new ArrayList<>();
-		variableList.addAll(traitList);
-		variableList.addAll(selectionVariatesList);
+
+		if(traitList != null){
+			variableList.addAll(traitList);
+
+		}
+		if(selectionVariatesList != null){
+			variableList.addAll(selectionVariatesList);
+
+		}
 
 		if (!measurementDatasetVariables.isEmpty()) {
 			final List<MeasurementVariable> newMeasurementDatasetVariables = getMeasurementVariableFactor(measurementDatasetVariables);

@@ -139,6 +139,8 @@
 					TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 
 					reloadMeasurementPage(result.deletedEnvironmentIndex, $scope.getListOfAdditionalColumns());
+					$scope.environmentsList.pop($scope.environmentsList[result.deletedEnvironmentIndex]);
+					$scope.selectedEnvironment = $scope.environmentsList[0];
 				});
 
 				$scope.$on('variableAdded', function() {
@@ -177,8 +179,6 @@
 							} else {
 								$scope.reloadMeasurements();
 							}
-							$scope.environmentsList.pop($scope.environmentsList[deletedEnvironmentIndex]);
-							$scope.selectedEnvironment = $scope.environmentsList[0];
 						});
 					}
 				}

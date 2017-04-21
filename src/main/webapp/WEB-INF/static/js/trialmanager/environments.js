@@ -268,17 +268,23 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						success: function(data) {
 							var envList;
                 			envList = data;
-                			$http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' +
-                				envList[environmentNo].instanceDbId, variableIds, {cache: false}).success(function(data) {
-                					if (true === data) {
-                						var warningMessage = 'This environment cannot be removed because it contains measurement data.';
-                						showAlertMessage('', warningMessage);
-                					} else {
-                						confirmDeleteEnvironment(environmentNo);
-                					}
-                					dfd.resolve();
-                				});
-                			}
+                			if(envList[environmentNo] == undefined) {
+                                confirmDeleteEnvironment(environmentNo);
+							}
+							else {
+                                $http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' +
+                                    envList[environmentNo].instanceDbId, variableIds, {cache: false}).success(function(data) {
+                                    if (true === data) {
+                                        var warningMessage = 'This environment cannot be removed because it contains measurement data.';
+                                        showAlertMessage('', warningMessage);
+                                    } else {
+                                        confirmDeleteEnvironment(environmentNo);
+                                    }
+                                    dfd.resolve();
+                                });
+							}
+
+						}
                 });
                 return dfd.promise();
 			}
@@ -389,7 +395,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments, 10);
 				$scope.temp.noOfEnvironments = parseInt($scope.temp.noOfEnvironments, 10) + addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
-				addNewEnvironments(addtlNumOfEnvironments, $stateParams.displayWarningMessage);
+				addNewEnvironments(addtlNumOfEnvironments, 'true');
 			}
 		}]).factory('DTLoadingTemplate', function() {
 			return {

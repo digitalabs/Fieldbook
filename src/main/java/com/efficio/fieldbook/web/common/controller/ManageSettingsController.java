@@ -412,8 +412,8 @@ public class ManageSettingsController extends SettingsController {
 	@Transactional
 	public boolean hasMeasurementDataOnEnvironment(@RequestBody List<Integer> ids, @PathVariable int environmentNo) {
 
-		final int numberOfObservations = this.studyService.countTotalObservationUnits(
-				this.userSelection.getWorkbook().getStudyDetails().getId(), environmentNo);
+		final int numberOfObservations = this.studyService
+				.countTotalObservationUnits(this.userSelection.getWorkbook().getStudyDetails().getId(), environmentNo, Boolean.FALSE);
 
 		return numberOfObservations > 0;
 	}

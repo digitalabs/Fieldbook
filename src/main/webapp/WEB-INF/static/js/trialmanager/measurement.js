@@ -177,6 +177,8 @@
 							} else {
 								$scope.reloadMeasurements();
 							}
+                            $scope.environmentsList.pop($scope.environmentsList[deletedEnvironmentIndex]);
+                            $scope.selectedEnvironment = $scope.environmentsList[0];
 						});
 					}
 				}

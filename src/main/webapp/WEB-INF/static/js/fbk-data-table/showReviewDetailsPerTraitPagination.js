@@ -29,6 +29,9 @@ function generateDataForProcessing() {
 	var oTable = $('#import-preview-measurement-table').dataTable();
 	var traitTermName = $("#traitTermName").val();
 
+	// Get the column index of the trait based on the number of all columns (visible or invisible).
+	var traitColumnIndex = $('#import-preview-measurement-table').DataTable().column(':contains(' + traitTermName + ')').index();
+
 	if (sessionStorage) {
 		for (var i in sessionStorage) {
 			if (i.indexOf('reviewDetailsFormDataAction') === 0) {
@@ -64,10 +67,10 @@ function generateDataForProcessing() {
 						for (i = 0; i < value.values.length; i++) {
 							if (value.values[i].action === '2' || value.values[i].action === '') {
 								oTable.fnUpdate([value.values[i].newValue,''], value.values[i].rowIndex,
-									$("#import-preview-measurement-table thead tr th:contains(' " + traitTermName +" ')").index(), false); // Cell
+									traitColumnIndex, false); // Cell
                     		} else if (value.values[i].action === '3') {
                     			oTable.fnUpdate(['missing',''], value.values[i].rowIndex,
-                    				$("#import-preview-measurement-table thead tr th:contains(' " + traitTermName +" ')").index(), false); // Cell
+									traitColumnIndex, false); // Cell
                             }
                     	}
                     });

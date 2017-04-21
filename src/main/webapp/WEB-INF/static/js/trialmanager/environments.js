@@ -265,28 +265,28 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				var dfd = $.Deferred();
 				$.ajax({
 					url: '/Fieldbook/trial/measurements/instanceMetadata/' + $('#studyId').val(),
-						success: function(data) {
-							var envList;
-                			envList = data;
-                			if(envList[environmentNo] == undefined) {
-                                confirmDeleteEnvironment(environmentNo);
-							}
-							else {
-                                $http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' +
-                                    envList[environmentNo].instanceDbId, variableIds, {cache: false}).success(function(data) {
-                                    if (true === data) {
-                                        var warningMessage = 'This environment cannot be removed because it contains measurement data.';
-                                        showAlertMessage('', warningMessage);
-                                    } else {
-                                        confirmDeleteEnvironment(environmentNo);
-                                    }
-                                    dfd.resolve();
-                                });
-							}
-
+					success: function (data) {
+						var envList;
+						envList = data;
+						if (envList[environmentNo] == undefined) {
+							confirmDeleteEnvironment(environmentNo);
 						}
-                });
-                return dfd.promise();
+						else {
+							$http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' +
+								envList[environmentNo].instanceDbId, variableIds, {cache: false}).success(function (data) {
+								if (true === data) {
+									var warningMessage = 'This environment cannot be removed because it contains measurement data.';
+									showAlertMessage('', warningMessage);
+								} else {
+									confirmDeleteEnvironment(environmentNo);
+								}
+								dfd.resolve();
+							});
+						}
+
+					}
+				});
+				return dfd.promise();
 			}
 
 			// on click generate design button

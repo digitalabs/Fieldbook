@@ -375,7 +375,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			// Set imported user as owner of the list
 			germplasmList.setUserId(importedCrossesList.getUserId());
 
-			Integer germplasmListId = this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList);
+			Integer germplasmListId = this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList, crossSetting.isApplyNewGroupToPreviousCrosses());
 
 			return new GermplasmListResult(germplasmListId, isTrimed);
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(form.getGermplasmListType())) {
@@ -434,7 +434,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				entryCode ++;
 			}
 
-			Integer germplasmListId = this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList);
+			Integer germplasmListId = this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList, false);
 			return new GermplasmListResult(germplasmListId, isTrimed);
 
 		} else {

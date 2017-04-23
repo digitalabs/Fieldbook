@@ -143,7 +143,7 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(this.createWorkBook()).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getGermplasmIdByName(Matchers.anyString());
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_GERMPLASM_ID).when(this.fieldbookMiddlewareService)
-				.saveGermplasmList(Matchers.anyList(), Matchers.any(GermplasmList.class));
+				.saveGermplasmList(Matchers.anyList(), Matchers.any(GermplasmList.class), Matchers.eq(false));
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_LISTPROJECT_ID).when(this.fieldbookMiddlewareService)
 				.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class), Matchers.anyInt(),
 						Matchers.anyList(), Matchers.anyInt());

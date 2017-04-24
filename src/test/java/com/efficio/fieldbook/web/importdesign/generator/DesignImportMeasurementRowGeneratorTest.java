@@ -166,6 +166,10 @@ public class DesignImportMeasurementRowGeneratorTest {
 				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.SEED_SOURCE.toString(),
 						measurementData.getValue().toString(), germplasmEntry.getSource().toString());
 			}
+			if (TermId.PLOT_ID.getId() == measurementData.getMeasurementVariable().getTermId()) {
+				Assert.assertEquals("The value of MeasurementData should be empty : " + TermId.PLOT_ID.toString(),
+						measurementData.getValue().toString(), "");
+			}
 
 		}
 	}

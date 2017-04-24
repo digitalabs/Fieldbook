@@ -468,7 +468,7 @@ public class DesignImportControllerTest {
 
 		this.designImportController.addFactorsIfNecessary(workbook, data);
 
-		Assert.assertEquals(10, workbook.getFactors().size());
+		Assert.assertEquals(11, workbook.getFactors().size());
 		Assert.assertEquals("ROW should be added to the Factors since it isn't in the list", "ROW",
 				this.getMeasurementVariable(TermId.ROW.getId(), new HashSet<MeasurementVariable>(workbook.getFactors())).getName());
 		Assert.assertEquals("COL should be added to the Factors since it isn't in the list", "COL",
@@ -492,7 +492,7 @@ public class DesignImportControllerTest {
 
 		this.designImportController.addFactorsIfNecessary(workbook, data);
 
-		Assert.assertEquals("ENTRY_NO and GID should not added to the Factors, so the size of Factor must remain 8", 8,
+		Assert.assertEquals("ENTRY_NO and GID should not added to the Factors, so the size of Factor must remain 9", 9,
 				workbook.getFactors().size());
 
 	}

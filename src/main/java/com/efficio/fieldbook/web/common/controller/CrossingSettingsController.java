@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -344,7 +345,6 @@ public class CrossingSettingsController extends SettingsController {
 			}
 			
 			resultsMap.put("hasHybridMethod", this.checkForHybridMethods(parseResults.getImportedCrosses()));
-			resultsMap.put("hybridMethods", this.crossExpansionProperties.getHybridBreedingMethods());
 		} catch (final FileParsingException e) {
 			CrossingSettingsController.LOG.error(e.getMessage(), e);
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 0);
@@ -363,6 +363,12 @@ public class CrossingSettingsController extends SettingsController {
 			}
 		}
 		return 0;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getHybridMethods", method = RequestMethod.GET)
+	public Set<Integer> getHybridMethods() {
+		return this.crossExpansionProperties.getHybridBreedingMethods();
 	}
 
 	@ResponseBody

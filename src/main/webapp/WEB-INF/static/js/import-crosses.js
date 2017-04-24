@@ -45,7 +45,6 @@ var ImportCrosses = {
 			createdCrossesListId = null;
 			
 			ImportCrosses.hasHybridMethod = resp.hasHybridMethod;
-			ImportCrosses.hybridMethods = resp.hybridMethods;
 			
 			$('#crossSetBreedingMethodModal').addClass('import-crosses-from-file');
 
@@ -86,7 +85,7 @@ var ImportCrosses = {
 
 		$("#breedingMethodSelectionDiv :input").attr("disabled", true);
 		$('#breedingMethodDropdown').select2('val', null);
-		$('#breedingMethodDropdown').on('change', ImportCrosses.showOrHideApplyGroupingOptionDiv);
+		$('#breedingMethodDropdown').on('change', ImportCrosses.retrieveHybridMethods);
 		$("#showFavoritesOnlyCheckbox").prop('checked', true);
 		$("#showBreedingMethodOnlyRadio").prop('checked', true);
 
@@ -130,6 +129,21 @@ var ImportCrosses = {
         BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
             'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
 
+	},
+	
+	retrieveHybridMethods : function () {
+		if(ImportCrosses.hybridMethods === null){
+			$.ajax({
+				url: ImportCrosses.CROSSES_URL + '/getHybridMethods',
+				type: 'GET',
+				cache: false,
+				success: function(data) {
+					ImportCrosses.hybridMethods = data;
+				}
+			}).done(ImportCrosses.showOrHideApplyGroupingOptionDiv);
+		} else {
+			ImportCrosses.showOrHideApplyGroupingOptionDiv();
+		}
 	},
 	
 	showOrHideApplyGroupingOptionDiv : function () {

@@ -182,8 +182,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				} else {
 					// For Existing Trial
-					var environmentNo = index;
-					hasMeasurementDataOnEnvironment(environmentNo);
+					hasMeasurementDataOnEnvironment(index);
 				}
 			};
 

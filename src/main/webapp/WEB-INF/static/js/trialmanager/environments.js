@@ -182,8 +182,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				} else {
 					// For Existing Trial
-					var environmentNo = index + 1;
-					hasMeasurementDataOnEnvironment(environmentNo);
+					hasMeasurementDataOnEnvironment(index);
 				}
 			};
 
@@ -265,22 +264,28 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				var dfd = $.Deferred();
 				$.ajax({
 					url: '/Fieldbook/trial/measurements/instanceMetadata/' + $('#studyId').val(),
-						success: function(data) {
-							var envList;
-                			envList = data;
-                			$http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' +
-                				envList[environmentNo].instanceDbId, variableIds, {cache: false}).success(function(data) {
-                					if (true === data) {
-                						var warningMessage = 'This environment cannot be removed because it contains measurement data.';
-                						showAlertMessage('', warningMessage);
-                					} else {
-                						confirmDeleteEnvironment(index);
-                					}
-                					dfd.resolve();
-                				});
-                			}
-                });
-                return dfd.promise();
+					success: function (data) {
+						var envList;
+						envList = data;
+						if (envList[environmentNo] == undefined) {
+							confirmDeleteEnvironment(environmentNo);
+						}
+						else {
+							$http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' +
+								envList[environmentNo].instanceDbId, variableIds, {cache: false}).success(function (data) {
+								if (true === data) {
+									var warningMessage = 'This environment cannot be removed because it contains measurement data.';
+									showAlertMessage('', warningMessage);
+								} else {
+									confirmDeleteEnvironment(environmentNo);
+								}
+								dfd.resolve();
+							});
+						}
+
+					}
+				});
+				return dfd.promise();
 			}
 
 			// on click generate design button
@@ -389,7 +394,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments, 10);
 				$scope.temp.noOfEnvironments = parseInt($scope.temp.noOfEnvironments, 10) + addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
-				addNewEnvironments(addtlNumOfEnvironments, $stateParams.displayWarningMessage);
+				addNewEnvironments(addtlNumOfEnvironments, 'true');
 			}
 		}]).factory('DTLoadingTemplate', function() {
 			return {

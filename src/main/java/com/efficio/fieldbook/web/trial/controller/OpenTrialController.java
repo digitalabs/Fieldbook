@@ -636,7 +636,7 @@ public class OpenTrialController extends BaseTrialController {
 	private void processPreLoadingMeasurementDataPage(final boolean isTemporary, final CreateNurseryForm form, final Workbook workbook,
 			final List<MeasurementVariable> measurementDatasetVariables, final Model model, final String deletedEnvironments) {
 
-		final Integer measurementDatasetId = workbook.getMeasurementDatesetId();
+		final Integer measurementDatasetId = this.userSelection.getWorkbook().getMeasurementDatesetId();
 		final List<MeasurementVariable> variates = workbook.getVariates();
 
 		if (!isTemporary) {

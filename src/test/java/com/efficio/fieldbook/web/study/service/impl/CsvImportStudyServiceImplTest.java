@@ -91,7 +91,7 @@ public class CsvImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetKeyIdentifierFromRow() throws WorkbookParserException {
+	public void testGetPlotIdFromRow() throws WorkbookParserException {
 		final List<String> row = Arrays.asList("1", "1", "1","PLOT123P123456");
 		final String keyIdentifier = this.csvImport.getPlotIdFromRow(row, 3);
 		Assert.assertEquals("KeyIdendtifier should be PLOT123P123456", "PLOT123P123456", keyIdentifier);

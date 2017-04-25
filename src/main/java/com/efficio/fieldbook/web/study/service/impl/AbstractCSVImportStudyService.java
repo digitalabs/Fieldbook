@@ -107,21 +107,21 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 			workbook.setPlotsIdNotfound(0);
 			int countPlotIdNotFound = 0;
 			final List<String> headerRowData = parsedData.get(0);
-			final List<Integer> indexes = this.getColumnIndexesFromObservation(parsedData, variablesFactors, trialInstanceNumber);
+			final Integer plotIdIndex = this.getIndexOfPlotIdFromObservation(parsedData, variablesFactors);
 			final Integer desigIndex =
 				this.findIndexOfColumn(headerRowData, this.getColumnLabel(variablesFactors, TermId.DESIG.getId())).get(0);
 
 			for (int i = 1; i < parsedData.size(); i++) {
 				final List<String> rowData = parsedData.get(i);
-				final String key = this.getKeyIdentifierFromRow(rowData, indexes);
-				final MeasurementRow measurementRow = measurementRowsMap.get(key);
+				final String plotId = this.getPlotIdFromRow(rowData, plotIdIndex);
+				final MeasurementRow measurementRow = measurementRowsMap.get(plotId);
 
 				if (measurementRow == null) {
 					countPlotIdNotFound++;
 					continue;
 				}
 
-				measurementRowsMap.remove(key);
+				measurementRowsMap.remove(plotId);
 
 				if (desigIndex == null) {
 					throw new WorkbookParserException("error.workbook.import.designation.empty.cell");
@@ -136,11 +136,6 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 				}
 			}
 
-			if (!measurementRowsMap.isEmpty()) {
-				// meaning there are items in the original list, so there are items deleted
-				throw new WorkbookParserException("confirmation.import.add.or.delete.rows");
-			}
-
 			if (countPlotIdNotFound != 0) {
 				workbook.setPlotsIdNotfound(countPlotIdNotFound);
 			}
@@ -148,49 +143,28 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 	}
 
 	private void validateAndSetNewDesignation(final Integer desigIndex, final List<String> rowData, final MeasurementRow measurementRow) {
-		final String originalDesig = measurementRow.getMeasurementDataValue(TermId.DESIG.getId());
 		final String newDesig = rowData.get(desigIndex);
-		final String originalGid = measurementRow.getMeasurementDataValue(TermId.GID.getId());
 
-		if (originalDesig != null && !originalDesig.equalsIgnoreCase(newDesig)) {
-			final List<Integer> newGids = this.getGermplasmIdsByName(newDesig);
-			if (originalGid != null && newGids.contains(Integer.valueOf(originalGid))) {
-				final MeasurementData wData = measurementRow.getMeasurementData(TermId.DESIG.getId());
-				wData.setValue(newDesig);
-			}
-		}
+		setNewDesignation(measurementRow, newDesig);
 	}
 
-	protected List<Integer> getColumnIndexesFromObservation(final Map<Integer, List<String>> csvMap,
-			final List<MeasurementVariable> variables, final String trialInstanceNumber) throws WorkbookParserException {
-		String plotLabel = null, entryLabel = null, plot_label = null;
+	protected Integer getIndexOfPlotIdFromObservation(final Map<Integer, List<String>> csvMap,
+			final List<MeasurementVariable> variables) throws WorkbookParserException {
+
+		String plotIdLabel = null;
 
 		for (final MeasurementVariable variable : variables) {
-			if (variable.getTermId() == TermId.PLOT_NO.getId() || variable.getTermId() == TermId.PLOT_NNO.getId()) {
-				plotLabel = this.getLabelFromRequiredColumn(variable);
-				continue;
-			} else if (variable.getTermId() == TermId.ENTRY_NO.getId()) {
-				entryLabel = this.getLabelFromRequiredColumn(variable);
-				continue;
-			} else if (variable.getTermId() == TermId.PLOT_ID.getId()) {
-				plot_label = this.getLabelFromRequiredColumn(variable);
-				continue;
+			if (variable.getTermId() == TermId.PLOT_ID.getId()) {
+				plotIdLabel = this.getLabelFromRequiredColumn(variable);
+				break;
 			}
 		}
 
-		if (plotLabel != null && entryLabel != null && plot_label != null) {
-			final List<Integer> indexes = this.findIndexOfColumn(csvMap.get(0), plotLabel, entryLabel,plot_label);
-			indexes.add(0, NumberUtils.createInteger(trialInstanceNumber));
-
-			for (final int index : indexes) {
-				if (index == -1) {
-					return new ArrayList<>();
-				}
-			}
-
-			return indexes;
+		final List<Integer> indexes = this.findIndexOfColumn(csvMap.get(0), plotIdLabel);
+		if (indexes.size() == 0 || indexes.get(0) == -1) {
+			throw new WorkbookParserException("error.workbook.import.plot.id.empty.cell");
 		}
-		return new ArrayList<>();
+		return indexes.get(0);
 	}
 
 	protected List<Integer> findIndexOfColumn(final List<String> headers, final String... cellValue) {
@@ -212,16 +186,10 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 		return "";
 	}
 
-	String getKeyIdentifierFromRow(final List<String> row, final List<Integer> indexes) throws WorkbookParserException{
-		final String plot = row.get(indexes.get(1));
-		final String entry = row.get(indexes.get(2));
-		final String plotId = row.get(indexes.get(3));
+	String getPlotIdFromRow(final List<String> row, final Integer index) throws WorkbookParserException{
+		final String plotId = row.get(index);
 
-		if (StringUtils.isBlank(plot)) {
-			throw new WorkbookParserException("error.workbook.import.plot.no.empty.cell");
-		} else if (StringUtils.isBlank(entry)) {
-			throw new WorkbookParserException("error.workbook.import.entry.no.empty.cell");
-		} else if (StringUtils.isBlank(plotId)) {
+		if (StringUtils.isBlank(plotId)) {
 			throw new WorkbookParserException("error.workbook.import.plot.id.empty.cell");
 		}
 
@@ -310,10 +278,6 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 
 		return realValue;
 	}
-
-    private List<Integer> getGermplasmIdsByName(final String newDesig) {
-        return this.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
-    }
 
 	@Override
 	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,

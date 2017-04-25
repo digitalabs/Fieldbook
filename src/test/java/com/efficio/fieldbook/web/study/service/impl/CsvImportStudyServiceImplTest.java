@@ -49,7 +49,7 @@ public class CsvImportStudyServiceImplTest {
 	public void setUp() {
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(1, StudyType.N);
         this.csvImport = new CsvImportStudyServiceImpl(workbook, "", "");
-		this.rowsMap = csvImport.createMeasurementRowsMap(this.workbook.getObservations(), "1", this.workbook.isNursery());
+		this.rowsMap = csvImport.createMeasurementRowsMap(this.workbook.getObservations(), "");
 
 	}
 
@@ -93,16 +93,8 @@ public class CsvImportStudyServiceImplTest {
 	@Test
 	public void testGetKeyIdentifierFromRow() throws WorkbookParserException {
 		final List<String> row = Arrays.asList("1", "1", "1","PLOT123P123456");
-		final List<Integer> indexes = Arrays.asList(1, 1, 2, 3);
-		final String keyIdentifier = this.csvImport.getKeyIdentifierFromRow(row, indexes);
+		final String keyIdentifier = this.csvImport.getPlotIdFromRow(row, 3);
 		Assert.assertEquals("KeyIdendtifier should be PLOT123P123456", "PLOT123P123456", keyIdentifier);
-	}
-
-	@Test(expected = WorkbookParserException.class)
-	public void testGetKeyIdentifierFromRowWithFileParsingException() throws WorkbookParserException {
-		final List<String> row = Arrays.asList("1", null, "1", "PLOT123P123456");
-		final List<Integer> indexes = Arrays.asList(1, 1, 2, 3);
-		this.csvImport.getKeyIdentifierFromRow(row, indexes);
 	}
 
 	@Test

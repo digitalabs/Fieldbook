@@ -65,7 +65,7 @@ public class DataKaptureImportStudyServiceImpl extends AbstractImportStudyServic
 	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
 			List<String> removedVariates) {
 		// NO-OP
-		
+
 	}
 
 }

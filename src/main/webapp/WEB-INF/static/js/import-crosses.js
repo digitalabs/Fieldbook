@@ -77,12 +77,10 @@ var ImportCrosses = {
 		var crossSettingsPopupModal = $('#crossSetBreedingMethodModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
 
-		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
-			'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
-
 		$("#breedingMethodSelectionDiv :input").attr("disabled", true);
 		$('#breedingMethodDropdown').select2('val', null);
-		$("#showFavoritesOnlyCheckbox").prop('checked', false);
+		$("#showFavoritesOnlyCheckbox").prop('checked', true);
+		$("#showBreedingMethodOnlyRadio").prop('checked', true);
 
 		if (createdCrossesListId == null) {
 			$('#selectMethodInImportFile').prop('checked',true);
@@ -120,6 +118,9 @@ var ImportCrosses = {
 		$('#goBackToImportCrossesButton').on('click', function() {
 			ImportCrosses.goBackToPage('#crossSetBreedingMethodModal', '.import-crosses-section .modal');
 		});
+
+        BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
+            'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
 
 	},
 
@@ -195,7 +196,7 @@ var ImportCrosses = {
 				showErrorMessage('', response.error);
 				return;
 			}
-			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
+		new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
 		}).fail(function (jqXHR, textStatus) {
 			showErrorMessage('', textStatus);
 		});

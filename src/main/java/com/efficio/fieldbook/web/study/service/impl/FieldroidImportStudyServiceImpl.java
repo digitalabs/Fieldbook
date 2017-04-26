@@ -60,7 +60,7 @@ public class FieldroidImportStudyServiceImpl extends AbstractImportStudyService<
 
 	@Override
 	protected void performStudyDataImport(Set<ChangeType> modes, CSVOziel parsedData, Map<String, MeasurementRow> rowsMap,
-			String trialInstanceNumber, List<GermplasmChangeDetail> changeDetailsList, Workbook workbook) throws WorkbookParserException {
+			List<GermplasmChangeDetail> changeDetailsList, Workbook workbook) throws WorkbookParserException {
 		final File file = new File(currentFile);
 		parsedData.readDATAnew(file, ontologyService, fieldbookMiddlewareService);
 	}

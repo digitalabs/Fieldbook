@@ -56,7 +56,12 @@ public class DataKaptureImportStudyServiceImpl extends AbstractImportStudyServic
     }
 
     @Override
-    protected void performStudyDataImport(final Set modes, final CSVOziel parsedData, final Map rowsMap, final String trialInstanceNumber, final List changeDetailsList, final Workbook workbook) throws WorkbookParserException {
+    protected void performStudyDataImport(
+        final Set modes,
+        final CSVOziel parsedData,
+        final Map rowsMap,
+        final List changeDetailsList,
+        final Workbook workbook) throws WorkbookParserException {
         final File file = new File(currentFile);
         parsedData.readDATACapture(file, ontologyService, fieldbookMiddlewareService);
     }

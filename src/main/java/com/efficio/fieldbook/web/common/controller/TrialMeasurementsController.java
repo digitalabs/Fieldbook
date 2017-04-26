@@ -116,7 +116,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		workbook.updateTrialObservationsWithReferenceList(form.getTrialEnvironmentValues());
 
 		try {
-			this.validationService.validateObservationValues(workbook, "");
+			this.validationService.validateObservationValues(workbook);
 			this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID());
 			resultMap.put(TrialMeasurementsController.STATUS, "1");
 		} catch (WorkbookParserException e) {

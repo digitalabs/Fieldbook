@@ -49,7 +49,7 @@ public class CsvImportStudyServiceImplTest {
 	public void setUp() {
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(1, StudyType.N);
         this.csvImport = new CsvImportStudyServiceImpl(workbook, "", "");
-		this.rowsMap = csvImport.createMeasurementRowsMap(this.workbook.getObservations(), "");
+		this.rowsMap = csvImport.createMeasurementRowsMap(this.workbook.getObservations());
 
 	}
 

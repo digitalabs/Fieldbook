@@ -92,7 +92,7 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 
     @Override
 	protected void performStudyDataImport(final Set<ChangeType> modes, final Map<Integer, List<String>> parsedData,
-		final Map<String, MeasurementRow> measurementRowsMap, final String trialInstanceNumber,
+		final Map<String, MeasurementRow> measurementRowsMap,
 		final List<GermplasmChangeDetail> changeDetailsList, final Workbook workbook) throws WorkbookParserException {
 
 		final List<MeasurementVariable> variablesFactors = workbook.getFactors();
@@ -145,7 +145,7 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 	private void validateAndSetNewDesignation(final Integer desigIndex, final List<String> rowData, final MeasurementRow measurementRow) {
 		final String newDesig = rowData.get(desigIndex);
 
-		setNewDesignation(measurementRow, newDesig);
+		this.setNewDesignation(measurementRow, newDesig);
 	}
 
 	protected Integer getIndexOfPlotIdFromObservation(final Map<Integer, List<String>> csvMap,

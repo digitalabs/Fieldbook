@@ -81,19 +81,18 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			
 			this.detectAddedTraitsAndPerformRename(modes,addedTraits,removedTraits);
 
-			final String trialInstanceNo = this.retrieveTrialInstanceNumber();
 			final List<GermplasmChangeDetail> changeDetailsList = new ArrayList<>();
 
 			this.performWorkbookMetadataUpdate();
 			final Map<String, MeasurementRow> measurementRowsMap =
-				this.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNo);
-			this.performStudyDataImport(modes, parsedData, measurementRowsMap, trialInstanceNo, changeDetailsList, workbook);
+				this.createMeasurementRowsMap(workbook.getObservations());
+			this.performStudyDataImport(modes, parsedData, measurementRowsMap, changeDetailsList, workbook);
 
 			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService, 
 					workbook.getStudyDetails().getProgramUUID());
 
 			try {
-				this.validationService.validateObservationValues(workbook, trialInstanceNo);
+				this.validationService.validateObservationValues(workbook);
 			} catch (final MiddlewareQueryException e) {
 				AbstractImportStudyService.LOG.error(e.getMessage(), e);
 				WorkbookUtil.resetWorkbookObservations(workbook);
@@ -103,7 +102,7 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			String conditionsAndConstantsErrorMessage = "";
 
 			try {
-				this.validationService.validateConditionAndConstantValues(workbook, trialInstanceNo);
+				this.validationService.validateConditionAndConstantValues(workbook);
 			} catch (final MiddlewareQueryException e) {
 				conditionsAndConstantsErrorMessage = e.getMessage();
 				WorkbookUtil.revertImportedConditionAndConstantsData(workbook);
@@ -152,18 +151,6 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
     */
 	protected abstract void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes, final List<String> addedVariates, final List<String> removedVariates) throws IOException, WorkbookParserException;
 
-
-	/**
-	 * Provides an implementation of retrieving the trial instance number. Can be overridden in cases where study
-	 * import service needs a different logic with a different set of working parameters for calculating the trial instance number
-	 *
-	 * @return
-	 * @throws WorkbookParserException
-	 */
-	protected String retrieveTrialInstanceNumber() throws WorkbookParserException {
-		return "";
-	}
-
 	/**
 	 * The following method abstracts the implementation and even the return type of the result of parsing the observation data contained
 	 * within the target file This is to accommodate differences in parsing output regarding CSV based and Excel based file formats
@@ -178,12 +165,11 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 	 * @param modes
 	 * @param parsedData
 	 * @param rowsMap
-	 * @param trialInstanceNumber
 	 * @param changeDetailsList
 	 * @param workbook
 	 */
 	protected abstract void performStudyDataImport(final Set<ChangeType> modes, final T parsedData,
-			final Map<String, MeasurementRow> rowsMap, final String trialInstanceNumber,
+			final Map<String, MeasurementRow> rowsMap,
 			final List<GermplasmChangeDetail> changeDetailsList, final Workbook workbook) throws WorkbookParserException;
 
 	protected void setNewDesignation(MeasurementRow measurementRow, String newDesig) {
@@ -203,11 +189,8 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 		return this.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
 	}
 
-	public Map<String, MeasurementRow> createMeasurementRowsMap(List<MeasurementRow> observations, final String instanceNumber) {
+	public Map<String, MeasurementRow> createMeasurementRowsMap(List<MeasurementRow> observations) {
 		final Map<String, MeasurementRow> map = new HashMap<>();
-
-		observations = WorkbookUtil.filterObservationsByTrialInstance(observations, instanceNumber);
-
 		if (observations != null && !observations.isEmpty()) {
 			for (final MeasurementRow row : observations) {
 				map.put(row.getKeyIdentifier(), row);

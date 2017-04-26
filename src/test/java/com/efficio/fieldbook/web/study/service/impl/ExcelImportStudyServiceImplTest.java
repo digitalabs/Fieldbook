@@ -449,7 +449,7 @@ public class ExcelImportStudyServiceImplTest {
     public void testCreateMeasurementRowsMap() {
         final List<MeasurementRow> observations = this.workbook.getObservations();
 
-        final Map<String, MeasurementRow> measurementRowsMap = this.importStudy.createMeasurementRowsMap(observations, "");
+        final Map<String, MeasurementRow> measurementRowsMap = this.importStudy.createMeasurementRowsMap(observations);
         Assert.assertEquals("The number of measurements in the measurementRowsMap should be equal to the number of the observationss",
                 observations.size(), measurementRowsMap.size());
     }

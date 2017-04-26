@@ -67,7 +67,7 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 
 	@Override
 	protected void performStudyDataImport(final Set<ChangeType> modes, final Workbook parsedData, final Map<String, MeasurementRow> measurementRowsMap,
-		final String trialInstanceNumber, final List<GermplasmChangeDetail> changeDetailsList,
+		final List<GermplasmChangeDetail> changeDetailsList,
 		final org.generationcp.middleware.domain.etl.Workbook workbook) throws WorkbookParserException {
 
 		final List<MeasurementVariable> variablesFactors = workbook.getFactors();

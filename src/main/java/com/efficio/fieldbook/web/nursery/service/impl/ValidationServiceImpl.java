@@ -131,20 +131,10 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	@Override
-	public void validateObservationValues(final Workbook workbook, final String instanceNumber) throws WorkbookParserException {
+	public void validateObservationValues(final Workbook workbook) throws WorkbookParserException {
 		final Locale locale = LocaleContextHolder.getLocale();
 		if (workbook.getObservations() != null) {
-			final List<MeasurementRow> observations;
-			if (instanceNumber != null && "".equalsIgnoreCase(instanceNumber)) {
-				// meaning we want to validate all
-				observations = workbook.getObservations();
-			} else {
-				observations =
-						workbook.isNursery() ? workbook.getObservations() : WorkbookUtil.filterObservationsByTrialInstance(
-								workbook.getObservations(), instanceNumber);
-			}
-
-			for (final MeasurementRow row : observations) {
+			for (final MeasurementRow row : workbook.getObservations()) {
 				for (final MeasurementData data : row.getDataList()) {
 					final MeasurementVariable variate = data.getMeasurementVariable();
 					if (!this.isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
@@ -158,8 +148,9 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	@Override
-	public String validateConditionAndConstantValues(final Workbook workbook, final String instanceNumber) {
+	public String validateConditionAndConstantValues(final Workbook workbook) {
 		String warningMessage = "";
+
 		if (workbook.getConditions() != null) {
 			for (final MeasurementVariable var : workbook.getConditions()) {
 				if (WorkbookUtil.isConditionValidate(var.getTermId())) {
@@ -178,10 +169,7 @@ public class ValidationServiceImpl implements ValidationService {
 			}
 		}
 		if (!workbook.getTrialObservations().isEmpty()) {
-			List<MeasurementRow> observations = WorkbookUtil.filterObservationsByTrialInstance(workbook.getTrialObservations(),
-				instanceNumber);
-
-			for (final MeasurementRow row : observations) {
+			for (final MeasurementRow row : workbook.getTrialObservations()) {
 				for (final MeasurementData data : row.getDataList()) {
 					final MeasurementVariable variate = data.getMeasurementVariable();
 					if (!this.isValidValue(variate, data.getValue(), data.getcValueId(), true)) {

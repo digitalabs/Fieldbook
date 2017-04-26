@@ -1101,6 +1101,12 @@ public class DesignImportController extends SettingsController {
 				if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()
 						|| Integer.valueOf(managementDetail.getKey()) == TermId.LOCATION_ID.getId()) {
 
+					// If there's no standard variable name resolved for TRIAL_LOCATION, we should try to get it from LOCATION_ID since LOCATION_ID is 
+					// always added to the trial level factors in memory after the user added location variable in Environments tab.
+					if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId() && StringUtils.isEmpty(standardVariableName)) {
+						variableLocalName = resolveLocalNameOfTheTrialEnvironmentVariable(TermId.LOCATION_ID.getId(), this.userSelection.getTrialLevelVariableList(), designImportData);
+					}
+
 					// The termId of the pair ID variable
 					final String termId = nameIdMap.get(managementDetail.getKey().toUpperCase());
 					if (termId != null) {

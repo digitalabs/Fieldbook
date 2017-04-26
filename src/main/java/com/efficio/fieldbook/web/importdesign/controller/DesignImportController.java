@@ -1092,25 +1092,10 @@ public class DesignImportController extends SettingsController {
 
 			for (final Entry<String, String> managementDetail : environment.getManagementDetailValues().entrySet()) {
 
-				String variableLocalName =
-						this.getLocalNameFromSettingDetails(Integer.valueOf(managementDetail.getKey()),
-								this.userSelection.getTrialLevelVariableList());
-				String standardVariableName =
-						this.getVariableNameFromSettingDetails(Integer.valueOf(managementDetail.getKey()),
-								this.userSelection.getTrialLevelVariableList());
 
-				if ("".equals(variableLocalName)) {
+				String variableLocalName = resolveLocalNameOfTheTrialEnvironmentVariable(Integer.parseInt(managementDetail.getKey()), this.userSelection.getTrialLevelVariableList(), designImportData);
+				String standardVariableName = resolveStandardVariableNameOfTheTrialEnvironmentVariable(Integer.parseInt(managementDetail.getKey()), this.userSelection, designImportData);
 
-					variableLocalName =
-							this.getHeaderName(Integer.valueOf(managementDetail.getKey()),
-									designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-				}
-
-				if ("".equals(standardVariableName)) {
-					standardVariableName =
-							this.getStandardVariableName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders()
-									.get(PhenotypicType.TRIAL_ENVIRONMENT));
-				}
 
 				// For LOCATION_NAME and LOCATION_NAME_ID
 				if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()
@@ -1193,6 +1178,53 @@ public class DesignImportController extends SettingsController {
 			environment.getManagementDetailValues().putAll(copyOfManagementDetailValues);
 
 		}
+
+	}
+
+	/**
+	 * Gets the local name of the variable in trial variable list if available. If not the system will search for the local name from the Design Import Data.
+	 * @param termId
+	 * @param userSelection
+	 * @param designImportData
+	 * @return
+	 */
+	String resolveLocalNameOfTheTrialEnvironmentVariable(final int termId, final List<SettingDetail> trialLevelVariableList, final DesignImportData designImportData) {
+
+		String variableLocalName =
+				this.getLocalNameFromSettingDetails(termId,
+						trialLevelVariableList);
+
+		if ("".equals(variableLocalName)) {
+
+			variableLocalName =
+					this.getHeaderName(termId,
+							designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+		}
+
+		return variableLocalName;
+	}
+
+	/**
+	 * Gets the standard name of the variable in trial variable list if available. If not the system will search for the standard name from the Design Import Data.
+	 * @param termId
+	 * @param userSelection
+	 * @param designImportData
+	 * @return
+	 */
+	String resolveStandardVariableNameOfTheTrialEnvironmentVariable(final int termId, final UserSelection userSelection, final DesignImportData designImportData) {
+
+		String standardVariableName =
+				this.getVariableNameFromSettingDetails(termId,
+						userSelection.getTrialLevelVariableList());
+
+
+		if ("".equals(standardVariableName)) {
+			standardVariableName =
+					this.getStandardVariableName(termId, designImportData.getMappedHeaders()
+							.get(PhenotypicType.TRIAL_ENVIRONMENT));
+		}
+
+		return standardVariableName;
 
 	}
 

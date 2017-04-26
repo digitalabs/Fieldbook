@@ -124,7 +124,7 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 
 		final String newDesig = this.getDesignation(xlsRow, desigColumn);
 
-		setNewDesignation(measurementRow, newDesig);
+		this.setNewDesignation(measurementRow, newDesig);
 	}
 
 	protected String getIndexOfPlotIdFromXlsSheet(final Sheet observationSheet, final List<MeasurementVariable> variables)

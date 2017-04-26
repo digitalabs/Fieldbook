@@ -280,6 +280,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			url: '/Fieldbook/TrialManager/openTrial/columns',
 			type: 'POST',
 			data: 'traitsList=' + trialManagerDataService.settings.measurements.m_keys
+			+'&selectionVariablesList=' + trialManagerDataService.settings.selectionVariables.m_keys
 		}).done(function(displayColumns) {
 
 			var columnsObj = getColumns(displayColumns, false);
@@ -596,7 +597,9 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 		$.ajax({
 			url: '/Fieldbook/TrialManager/createTrial/columns',
 			type: 'POST',
-			data: 'traitsList=' + trialManagerDataService.settings.measurements.m_keys + '&columnOrders=' + columnsOrder
+			data: 'traitsList=' + trialManagerDataService.settings.measurements.m_keys +
+            '&selectionVariablesList=' + trialManagerDataService.settings.selectionVariables.m_keys +
+            '&columnOrders=' + columnsOrder
 		}).done(function(displayColumns) {
 
 			var columnsObj = getColumns(displayColumns, true);

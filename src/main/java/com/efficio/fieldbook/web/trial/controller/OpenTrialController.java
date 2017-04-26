@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +14,6 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -38,6 +36,7 @@ import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.util.FieldbookListUtil;
+import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -62,7 +61,6 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -589,39 +587,33 @@ public class OpenTrialController extends BaseTrialController {
 
 		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
 		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
-		// we show only traits that are being passed by the frontend
-		final String traitsListCsv = request.getParameter("traitsList");
 
-		final List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
+		final String traitsListCsv = request.getParameter("traitsList");
+		final String selectionVariablesListCsv = request.getParameter("selectionVariablesList");
+		final String listCsv;
+		if (!StringUtil.isEmpty(traitsListCsv) && !StringUtil.isEmpty(selectionVariablesListCsv)) {
+			listCsv = traitsListCsv + "," + selectionVariablesListCsv;
+
+		} else {
+			listCsv = !StringUtil.isEmpty(traitsListCsv) ? traitsListCsv : selectionVariablesListCsv;
+		}
 
 		final List<SettingDetail> traitList = this.userSelection.getBaselineTraitsList();
+		final List<SettingDetail> selectionVariatesList = this.userSelection.getSelectionVariates();
+		final List<SettingDetail> variableList = new ArrayList<>();
+
+		if(traitList != null){
+			variableList.addAll(traitList);
+
+		}
+		if(selectionVariatesList != null){
+			variableList.addAll(selectionVariatesList);
+
+		}
 
 		if (!measurementDatasetVariables.isEmpty()) {
-			for (final MeasurementVariable var : measurementDatasetVariables) {
-				if (var.isFactor()) {
-					newMeasurementDatasetVariables.add(var);
-				}
-			}
-			if (traitsListCsv != null && !"".equalsIgnoreCase(traitsListCsv)) {
-				final StringTokenizer token = new StringTokenizer(traitsListCsv, ",");
-				while (token.hasMoreTokens()) {
-					final int id = Integer.valueOf(token.nextToken());
-					final MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
-					if (currentVar == null) {
-						final StandardVariable var =
-								this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
-						var.setPhenotypicType(PhenotypicType.VARIATE);
-						final MeasurementVariable newVar =
-								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
-						newVar.setFactor(false);
-						newMeasurementDatasetVariables.add(newVar);
-						SettingsUtil.findAndUpdateVariableName(traitList, newVar);
-					} else {
-						newMeasurementDatasetVariables.add(currentVar);
-						SettingsUtil.findAndUpdateVariableName(traitList, currentVar);
-					}
-				}
-			}
+			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);
+			this.getTratisAndSelectionVariates(measurementDatasetVariables,newMeasurementDatasetVariables,listCsv,variableList);
 			measurementDatasetVariables = newMeasurementDatasetVariables;
 		}
 

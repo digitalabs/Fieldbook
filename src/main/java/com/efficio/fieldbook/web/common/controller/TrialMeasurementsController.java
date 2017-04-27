@@ -53,6 +53,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
 @RequestMapping("/trial/measurements")
@@ -633,24 +634,30 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		// initialize suffix as empty string if its null
 		suffix = null == suffix ? "" : suffix;
 
+		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
+		measurementDatasetVariables.addAll(this.userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+
 		// generate measurement row data from dataList (existing / generated data)
 		for (MeasurementDto data : row.getTraitMeasurements()) {
 
-			Variable measurementVariable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-					data.getTrait().getTraitId(), true, false);
+			final Integer traitId = data.getTrait().getTraitId();
+			Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+					traitId, true, false);
+			final MeasurementVariable measurementVariable = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, traitId);
+			
+			if (variable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
 
-			if (measurementVariable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
+				this.addDataTableDataMapForCategoricalVariable(variable, data, dataMap, measurementVariable.getName(), suffix);
 
-				this.addDataTableDataMapForCategoricalVariable(measurementVariable, data, dataMap, suffix);
-
-			} else if (measurementVariable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
-				dataMap.put(data.getTrait().getTraitName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "", true,
+			} else if (variable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
+				dataMap.put(measurementVariable.getName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "", true,
 						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 			} else {
-				dataMap.put(data.getTrait().getTraitName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "",
+				dataMap.put(measurementVariable.getName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "",
 						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 			}
 		}
+
 
 		dataMap.put(TermId.ENTRY_NO.name(), new Object[] {row.getEntryNo(), false});
 		dataMap.put(TermId.ENTRY_CODE.name(), new Object[] {row.getEntryCode(), false});
@@ -684,10 +691,10 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return dataMap;
 	}
 
-	void addDataTableDataMapForCategoricalVariable(final Variable measurementVariable, final MeasurementDto data, final Map<String, Object> dataMap, final String suffix) {
+	void addDataTableDataMapForCategoricalVariable(final Variable measurementVariable, final MeasurementDto data, final Map<String, Object> dataMap, final String localVariableName, final String suffix) {
 
 		if (StringUtils.isBlank(data.getTriatValue())) {
-			dataMap.put(data.getTrait().getTraitName(),
+			dataMap.put(localVariableName,
 					new Object[] {"", "", false, data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 		} else {
 			boolean isCategoricalValueFound = false;
@@ -705,12 +712,12 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			}
 
 			// If the measurement value is out of range from categorical values, then the assumption is, it is custom value.
-			// For this case, just display the measaurement data as is.
+			// For this case, just display the measurement data as is.
 			if (!isCategoricalValueFound) {
 				catName = data.getTriatValue();
 				catDisplayValue = data.getTriatValue();
 			}
-			dataMap.put(data.getTrait().getTraitName(), new Object[] {catName + suffix, catDisplayValue + suffix, true,
+			dataMap.put(localVariableName, new Object[] {catName + suffix, catDisplayValue + suffix, true,
 					data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 		}
 

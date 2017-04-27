@@ -873,10 +873,8 @@ public abstract class BaseTrialController extends SettingsController {
 						ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
 					newVar.setFactor(false);
 					newMeasurementDatasetVariables.add(newVar);
-					SettingsUtil.findAndUpdateVariableName(variableList, newVar);
 				} else {
 					newMeasurementDatasetVariables.add(currentVar);
-					SettingsUtil.findAndUpdateVariableName(variableList, currentVar);
 				}
 			}
 		}

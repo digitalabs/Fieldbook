@@ -745,7 +745,7 @@ public class TrialMeasurementsControllerTest {
 
 		final MeasurementDto measurementDto = new MeasurementDto(new TraitDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
-		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap ,"");
+		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap , ALEUCOL_1_5_TRAIT_NAME, "");
 
 		Assert.assertEquals(1, dataMap.size());
 		Assert.assertTrue(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME));
@@ -773,7 +773,7 @@ public class TrialMeasurementsControllerTest {
 
 		final MeasurementDto measurementDto = new MeasurementDto(new TraitDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
-		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap ,"");
+		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap , ALEUCOL_1_5_TRAIT_NAME, "");
 
 		Assert.assertEquals(1, dataMap.size());
 		Assert.assertTrue(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME));
@@ -801,7 +801,7 @@ public class TrialMeasurementsControllerTest {
 
 		final MeasurementDto measurementDto = new MeasurementDto(new TraitDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
-		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap ,"");
+		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap , ALEUCOL_1_5_TRAIT_NAME, "");
 
 		Assert.assertEquals(1, dataMap.size());
 		Assert.assertTrue(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME));

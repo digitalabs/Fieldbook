@@ -78,6 +78,8 @@ public class DesignImportControllerTest {
 
 	private static final int COOPERATOR_TERMID = 8373;
 	public static final String TEST_IMPORT_FILE_NAME_CSV = "Test_import_file_name.csv";
+	public static final String LOCATION_NAME = "LOCATION_NAME";
+	public static final String SITE_NAME = "SITE_NAME";
 
 	@Mock
 	private HttpServletRequest httpRequest;
@@ -184,11 +186,11 @@ public class DesignImportControllerTest {
 		final Set<MeasurementVariable> designFileMeasurementVariables = new HashSet<>();
 
 		workbookMeasurementVariables
-				.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITE_NAME", "Location", "Text", "Assigned", "TRIAL"));
+				.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), SITE_NAME, "Location", "Text", "Assigned", "TRIAL"));
 		workbookMeasurementVariables.add(
-				this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "Location", "DBCV", "Assigned", "TRIAL"));
+				this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), LOCATION_NAME, "Location", "DBCV", "Assigned", "TRIAL"));
 		designFileMeasurementVariables
-				.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITE_NAME", "Location", "Text", "Assigned", "TRIAL"));
+				.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), SITE_NAME, "Location", "Text", "Assigned", "TRIAL"));
 		designFileMeasurementVariables
 				.add(this.createMeasurementVariable(TermId.PI_NAME.getId(), "PI_NAME", "Person", "DBCV", "Assigned", "TRIAL"));
 
@@ -396,7 +398,7 @@ public class DesignImportControllerTest {
 				this.getMeasurementVariable(TermId.COOPERATOOR_ID.getId(), trialVariables).getName());
 		Assert.assertEquals("PI_NAME should be added to the Trial Variables", "PI_NAME",
 				this.getMeasurementVariable(TermId.PI_NAME.getId(), trialVariables).getName());
-		Assert.assertEquals("SITE_NAME should be added to the Trial Variables", "SITE_NAME",
+		Assert.assertEquals("SITE_NAME should be added to the Trial Variables", SITE_NAME,
 				this.getMeasurementVariable(TermId.SITE_NAME.getId(), trialVariables).getName());
 		Assert.assertEquals("TRIAL_INSTANCE should be added to the Trial Variables", "TRIAL_INSTANCE",
 				this.getMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), trialVariables).getName());
@@ -416,6 +418,36 @@ public class DesignImportControllerTest {
 				managementDetailValuesMap.containsKey(String.valueOf(TermId.TRIAL_INSTANCE_FACTOR.getId())));
 
 	}
+
+	@Test
+	public void testResolveIDNamePairingAndValuesForTrialLocationVariableDoesNotExistInTrialLevelVariables() {
+
+		final Set<MeasurementVariable> trialVariables = new HashSet<>();
+
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final EnvironmentData environmentData = this.createEnvironmentData(1);
+
+		final List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
+
+		settingDetails
+				.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(), LOCATION_NAME, "", "TRIAL"));
+
+		Mockito.doReturn(settingDetails).when(this.userSelection).getTrialLevelVariableList();
+		this.designImportController.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData, trialVariables);
+
+		Assert.assertEquals(5, trialVariables.size());
+		Assert.assertEquals("LOCATION_NAME_ID should be added to the Trial Variables", "LOCATION_NAME_ID",
+				this.getMeasurementVariable(TermId.LOCATION_ID.getId(), trialVariables).getName());
+
+		Assert.assertEquals(1, environmentData.getNoOfEnvironments());
+		final Map<String, String> managementDetailValuesMap = environmentData.getEnvironments().get(0).getManagementDetailValues();
+
+		Assert.assertTrue("LOCATION_NAME_ID should be in Management Details",
+				managementDetailValuesMap.containsKey(String.valueOf(TermId.LOCATION_ID.getId())));
+
+
+	}
+
 
 	@Test
 	public void testResolveIDNamePairingAndValuesForNursery() {
@@ -468,7 +500,7 @@ public class DesignImportControllerTest {
 
 		this.designImportController.addFactorsIfNecessary(workbook, data);
 
-		Assert.assertEquals(10, workbook.getFactors().size());
+		Assert.assertEquals(11, workbook.getFactors().size());
 		Assert.assertEquals("ROW should be added to the Factors since it isn't in the list", "ROW",
 				this.getMeasurementVariable(TermId.ROW.getId(), new HashSet<MeasurementVariable>(workbook.getFactors())).getName());
 		Assert.assertEquals("COL should be added to the Factors since it isn't in the list", "COL",
@@ -492,7 +524,7 @@ public class DesignImportControllerTest {
 
 		this.designImportController.addFactorsIfNecessary(workbook, data);
 
-		Assert.assertEquals("ENTRY_NO and GID should not added to the Factors, so the size of Factor must remain 8", 8,
+		Assert.assertEquals("ENTRY_NO and GID should not added to the Factors, so the size of Factor must remain 9", 9,
 				workbook.getFactors().size());
 
 	}
@@ -544,9 +576,9 @@ public class DesignImportControllerTest {
 	public void testPopulateTrialLevelVariableListIfNecessary() {
 
 		final Project project = this.createProject();
-		final MeasurementVariable siteName = this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITE_NAME", "TRIAL");
+		final MeasurementVariable siteName = this.createMeasurementVariable(TermId.SITE_NAME.getId(), SITE_NAME, "TRIAL");
 		final SettingDetail siteNameSettingDetail =
-				this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), "SITE_NAME", "", "TRIAL");
+				this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), SITE_NAME, "", "TRIAL");
 
 		final List<SettingDetail> settingDetails = new ArrayList<>();
 		Mockito.doReturn(settingDetails).when(this.userSelection).getTrialLevelVariableList();
@@ -566,7 +598,7 @@ public class DesignImportControllerTest {
 		// SITE_NAME should be added to setting details passed to addNewSettingDetailsIfNecessary()
 		Assert.assertEquals(1, settingDetails.size());
 		Assert.assertEquals(TermId.SITE_NAME.getId(), settingDetail.getVariable().getCvTermId().intValue());
-		Assert.assertEquals("SITE_NAME", settingDetail.getVariable().getName());
+		Assert.assertEquals(SITE_NAME, settingDetail.getVariable().getName());
 		Assert.assertEquals("Newly added setting detail must always be deletable", true, settingDetail.isDeletable());
 
 	}
@@ -579,9 +611,9 @@ public class DesignImportControllerTest {
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
 
-		final MeasurementVariable siteName = this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITE_NAME", "TRIAL");
+		final MeasurementVariable siteName = this.createMeasurementVariable(TermId.SITE_NAME.getId(), SITE_NAME, "TRIAL");
 		final SettingDetail siteNameSettingDetail =
-				this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), "SITE_NAME", "", "TRIAL");
+				this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), SITE_NAME, "", "TRIAL");
 		final MeasurementVariable piName = this.createMeasurementVariable(TermId.PI_NAME.getId(), "PI_NAME", "TRIAL");
 		final SettingDetail piNameSettingDetail =
 				this.settingDetailTestDataInitializer.createSettingDetail(TermId.PI_NAME.getId(), "PI_NAME", "", "TRIAL");
@@ -746,7 +778,7 @@ public class DesignImportControllerTest {
 
 		final List<SettingDetail> settingDetails = new ArrayList<>();
 		final SettingDetail settingDetail =
-				this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), "SITE_NAME", "", "TRIAL");
+				this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), SITE_NAME, "", "TRIAL");
 		settingDetails.add(settingDetail);
 
 		this.designImportController.updateOperation(TermId.SITE_NAME.getId(), settingDetails, Operation.ADD);
@@ -760,7 +792,7 @@ public class DesignImportControllerTest {
 
 		final List<SettingDetail> settingDetails = new ArrayList<>();
 		final SettingDetail settingDetail =
-				this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), "SITE_NAME", "", "TRIAL");
+				this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), SITE_NAME, "", "TRIAL");
 		settingDetails.add(settingDetail);
 
 		this.designImportController.updateOperation(TermId.BLOCK_ID.getId(), settingDetails, Operation.ADD);
@@ -775,10 +807,10 @@ public class DesignImportControllerTest {
 		final Set<MeasurementVariable> setA = new HashSet<>();
 		final Set<MeasurementVariable> setB = new HashSet<>();
 
-		setA.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITE_NAME", "Location", "Text", "Assigned", "TRIAL"));
-		setA.add(this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "Location", "DBCV", "Assigned", "TRIAL"));
+		setA.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), SITE_NAME, "Location", "Text", "Assigned", "TRIAL"));
+		setA.add(this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), LOCATION_NAME, "Location", "DBCV", "Assigned", "TRIAL"));
 
-		setB.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITE_NAME", "Location", "Text", "Assigned", "TRIAL"));
+		setB.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), SITE_NAME, "Location", "Text", "Assigned", "TRIAL"));
 		setB.add(this.createMeasurementVariable(TermId.PI_NAME.getId(), "PI_NAME", "Person", "DBCV", "Assigned", "TRIAL"));
 
 		Assert.assertTrue(this.designImportController.hasConflict(setA, setB));
@@ -791,8 +823,8 @@ public class DesignImportControllerTest {
 		final Set<MeasurementVariable> setA = new HashSet<>();
 		final Set<MeasurementVariable> setB = new HashSet<>();
 
-		setA.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITE_NAME", "Location", "Text", "Assigned", "TRIAL"));
-		setA.add(this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "Location", "DBCV", "Assigned", "TRIAL"));
+		setA.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), SITE_NAME, "Location", "Text", "Assigned", "TRIAL"));
+		setA.add(this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), LOCATION_NAME, "Location", "DBCV", "Assigned", "TRIAL"));
 
 		setB.add(this.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "Trial instance", "Number",
 				"Enumerated", "TRIAL"));
@@ -1054,7 +1086,7 @@ public class DesignImportControllerTest {
 
 		final List<MeasurementVariable> conditions = new ArrayList<>();
 
-		conditions.add(this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "Location", "Location name",
+		conditions.add(this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), LOCATION_NAME, "Location", "Location name",
 				"Assigned", "TRIAL"));
 
 		Assert.assertFalse(this.designImportController.hasCheckVariables(conditions));
@@ -1211,6 +1243,52 @@ public class DesignImportControllerTest {
 		return results;
 	}
 
+	@Test
+	public void testResolveLocalNameOfTheTrialEnvironmentVariable() {
+
+		final List<SettingDetail> trialLevelVariableList = new ArrayList<SettingDetail>();
+
+		trialLevelVariableList.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE",
+				"", "TRIAL"));
+		trialLevelVariableList.add(
+				this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(), LOCATION_NAME, "", "TRIAL"));
+
+		DesignImportData designImportData = this.userSelection.getDesignImportData();
+
+		Assert.assertEquals("Expecting a local name value 'LOCATION_NAME' because the variable exists in trial variable list",
+				LOCATION_NAME,
+				this.designImportController.resolveLocalNameOfTheTrialEnvironmentVariable(TermId.TRIAL_LOCATION.getId(), trialLevelVariableList, designImportData));
+		Assert.assertEquals("Expecting a local name value 'SITE_NAME' because the variable exists in the headers of design import data", "SITE_NAME_LOCAL_NAME" ,
+				this.designImportController.resolveLocalNameOfTheTrialEnvironmentVariable(TermId.SITE_NAME.getId(), trialLevelVariableList, designImportData));
+		Assert.assertEquals("Expecting an empty value because COOPERATOR_ID does not exist in both trial variables and headers of design import data", "" ,
+				this.designImportController.resolveLocalNameOfTheTrialEnvironmentVariable(TermId.COOPERATOOR_ID.getId(), trialLevelVariableList, designImportData));
+
+	}
+
+	@Test
+	public void testResolveStandardVariableNameOfTheTrialEnvironmentVariable() {
+
+		final List<SettingDetail> trialLevelVariableList = new ArrayList<SettingDetail>();
+
+		trialLevelVariableList.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE",
+				"", "TRIAL"));
+		trialLevelVariableList.add(
+				this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(), LOCATION_NAME, "", "TRIAL"));
+
+		DesignImportData designImportData = this.userSelection.getDesignImportData();
+
+		Assert.assertEquals("Expecting standard variable name 'LOCATION_NAME' because the variable exists in trial variable list",
+				LOCATION_NAME,
+				this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(TermId.TRIAL_LOCATION.getId(), trialLevelVariableList, designImportData));
+		Assert.assertEquals("Expecting standard variable name 'SITE_NAME' because the variable exists in the headers of design import data",
+				SITE_NAME,
+				this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(TermId.SITE_NAME.getId(), trialLevelVariableList, designImportData));
+		Assert.assertEquals("Expecting an empty standard variable name because COOPERATOR_ID does not exist in both trial variables and headers of design import data", "" ,
+				this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(TermId.COOPERATOOR_ID.getId(), trialLevelVariableList, designImportData));
+
+
+	}
+
 	private MeasurementVariable getMeasurementVariable(final int termId, final Set<MeasurementVariable> trialVariables) {
 		for (final MeasurementVariable mvar : trialVariables) {
 			if (termId == mvar.getTermId()) {
@@ -1250,8 +1328,8 @@ public class DesignImportControllerTest {
 	private Map<String, String> createManagementDetailValues(final int instanceNo) {
 		final Map<String, String> map = new HashMap<>();
 		map.put(String.valueOf(TermId.TRIAL_INSTANCE_FACTOR.getId()), String.valueOf(instanceNo));
-		map.put(String.valueOf(TermId.TRIAL_LOCATION.getId()), "Test Location");
 		map.put(String.valueOf(TermId.LOCATION_ID.getId()), "1234");
+		map.put(String.valueOf(TermId.TRIAL_LOCATION.getId()), "Test Location");
 		map.put(String.valueOf(TermId.SITE_NAME.getId()), "Test Site");
 		map.put(String.valueOf(TermId.PI_NAME.getId()), null);
 		map.put(String.valueOf(TermId.COOPERATOR.getId()), "4321");
@@ -1264,10 +1342,10 @@ public class DesignImportControllerTest {
 		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE",
 				"", "TRIAL"));
 		settingDetails.add(
-				this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "", "TRIAL"));
+				this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(), LOCATION_NAME, "", "TRIAL"));
 		settingDetails
 				.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(), "LOCATION_ID", "", "TRIAL"));
-		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), "SITE_NAME", "", "TRIAL"));
+		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), SITE_NAME, "", "TRIAL"));
 		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.PI_NAME.getId(), "PI_NAME", "", "TRIAL"));
 		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.COOPERATOR.getId(), "COOPERATOR", "", "TRIAL"));
 
@@ -1304,10 +1382,9 @@ public class DesignImportControllerTest {
 
 		final StandardVariable trialInstance = this.createStandardVariable(PhenotypicType.TRIAL_ENVIRONMENT,
 				TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "", "", "", "", "");
-		final StandardVariable siteName = this.createStandardVariable(PhenotypicType.TRIAL_ENVIRONMENT, TermId.SITE_NAME.getId(),
-				"SITE_NAME", "", "", "", "", "", "");
+		final StandardVariable siteName = this.createStandardVariable(PhenotypicType.TRIAL_ENVIRONMENT, TermId.SITE_NAME.getId(), SITE_NAME, "", "", "", "", "", "");
 		final StandardVariable locationName = this.createStandardVariable(PhenotypicType.TRIAL_ENVIRONMENT, TermId.TRIAL_LOCATION.getId(),
-				"LOCATION_NAME", "", "", "", "", "", "");
+				LOCATION_NAME, "", "", "", "", "", "");
 		final StandardVariable locationID = this.createStandardVariable(PhenotypicType.TRIAL_ENVIRONMENT, TermId.LOCATION_ID.getId(),
 				"LOCATION_NAME_ID", "", "", "", "", "", "");
 		final StandardVariable cooperator = this.createStandardVariable(PhenotypicType.TRIAL_ENVIRONMENT, TermId.COOPERATOR.getId(),
@@ -1332,8 +1409,8 @@ public class DesignImportControllerTest {
 				"GW_100G", "", "", "", "", "", "");
 
 		map.put("TRIAL_INSTANCE", this.createList(trialInstance));
-		map.put("SITE_NAME", this.createList(siteName));
-		map.put("LOCATION_NAME", this.createList(locationName));
+		map.put(SITE_NAME, this.createList(siteName));
+		map.put(LOCATION_NAME, this.createList(locationName));
 		map.put("LOCATION_NAME_ID", this.createList(locationID));
 		map.put("ENTRY_NO", this.createList(entryNo));
 		map.put("PLOT_NO", this.createList(plotNo));
@@ -1469,9 +1546,9 @@ public class DesignImportControllerTest {
 
 		final Set<MeasurementVariable> measurementVariables = new HashSet<>();
 		measurementVariables.add(this.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "TRIAL"));
-		measurementVariables.add(this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "TRIAL"));
+		measurementVariables.add(this.createMeasurementVariable(TermId.TRIAL_LOCATION.getId(), LOCATION_NAME, "TRIAL"));
 		measurementVariables.add(this.createMeasurementVariable(TermId.LOCATION_ID.getId(), "LOCATION_NAME_ID", "TRIAL"));
-		measurementVariables.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITE_NAME", "TRIAL"));
+		measurementVariables.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), SITE_NAME, "TRIAL"));
 		measurementVariables.add(this.createMeasurementVariable(TermId.COOPERATOR.getId(), "COOPERATOR", "TRIAL"));
 		measurementVariables.add(this.createMeasurementVariable(TermId.ENTRY_NO.getId(), "ENTRY_NO", "GERMPLASM ENTRY"));
 		measurementVariables.add(this.createMeasurementVariable(TermId.PLOT_NO.getId(), "PLOT_NO", "PLOT"));
@@ -1485,9 +1562,9 @@ public class DesignImportControllerTest {
 		final List<SettingDetail> deletedTrialLevelVariables = new ArrayList<>();
 
 		deletedTrialLevelVariables
-				.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), "SITE_NAME", "", "TRIAL"));
+				.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(), SITE_NAME, "", "TRIAL"));
 		deletedTrialLevelVariables.add(
-				this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "", "TRIAL"));
+				this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(), LOCATION_NAME, "", "TRIAL"));
 		deletedTrialLevelVariables.add(
 				this.settingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(), "LOCATION_NAME_ID", "", "TRIAL"));
 
@@ -1498,7 +1575,7 @@ public class DesignImportControllerTest {
 		final Map<String, List<DesignHeaderItem>> testNewMap = new HashMap<>();
 		final DesignHeaderItem designHeaderItem = new DesignHeaderItem();
 		designHeaderItem.setId(TermId.SITE_NAME.getId());
-		designHeaderItem.setName("SITE_NAME");
+		designHeaderItem.setName(SITE_NAME);
 		final List<DesignHeaderItem> designHeaderItems = new ArrayList<>();
 		designHeaderItems.add(designHeaderItem);
 		testNewMap.put("mappedEnvironmentalFactors", designHeaderItems);

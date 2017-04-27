@@ -58,8 +58,11 @@ public class DesignImportTestDataInitializer {
 		final List<DesignHeaderItem> trialEvironmentItems = new ArrayList<>();
 		trialEvironmentItems.add(createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.TRIAL_INSTANCE_FACTOR.getId(),
 				"TRIAL_INSTANCE", 0, NUMERIC_VARIABLE));
-		trialEvironmentItems.add(createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.SITE_NAME.getId(), "SITE_NAME", 1,
-				CHARACTER_VARIABLE));
+
+		DesignHeaderItem siteNameDesignHeaderItem = createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.SITE_NAME.getId(), "SITE_NAME", 1,
+				CHARACTER_VARIABLE);
+		siteNameDesignHeaderItem.setName("SITE_NAME_LOCAL_NAME");
+		trialEvironmentItems.add(siteNameDesignHeaderItem);
 
 		final List<DesignHeaderItem> germplasmItems = new ArrayList<>();
 		germplasmItems.add(createDesignHeaderItem(PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", 2, NUMERIC_VARIABLE));

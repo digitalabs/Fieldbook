@@ -1416,6 +1416,7 @@ public class DesignImportController extends SettingsController {
 		}
 	}
 
+	// FIXME: getLocalNameFromSettingDetails and getVariableNameFromSettingDetails have same code. Review and modify appropriately.
 	protected String getLocalNameFromSettingDetails(final int termId, final List<SettingDetail> settingDetails) {
 		for (final SettingDetail detail : settingDetails) {
 			if (detail.getVariable().getCvTermId().intValue() == termId) {
@@ -1425,6 +1426,7 @@ public class DesignImportController extends SettingsController {
 		return "";
 	}
 
+	// FIXME: getLocalNameFromSettingDetails and getVariableNameFromSettingDetails have same code. Review and modify appropriately.
 	protected String getVariableNameFromSettingDetails(final int termId, final List<SettingDetail> settingDetails) {
 		for (final SettingDetail detail : settingDetails) {
 			if (detail.getVariable().getCvTermId().intValue() == termId) {

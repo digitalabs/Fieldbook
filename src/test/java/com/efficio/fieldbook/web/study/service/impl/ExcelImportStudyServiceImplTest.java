@@ -449,22 +449,9 @@ public class ExcelImportStudyServiceImplTest {
     public void testCreateMeasurementRowsMap() {
         final List<MeasurementRow> observations = this.workbook.getObservations();
 
-        final Map<String, MeasurementRow> measurementRowsMap = this.importStudy.createMeasurementRowsMap(observations, "1", true);
+        final Map<String, MeasurementRow> measurementRowsMap = this.importStudy.createMeasurementRowsMap(observations);
         Assert.assertEquals("The number of measurements in the measurementRowsMap should be equal to the number of the observationss",
                 observations.size(), measurementRowsMap.size());
-    }
-
-    @Test(expected = WorkbookParserException.class)
-    public void testGetTrialInstanceNumberOfNurseryWithError() throws WorkbookParserException {
-        this.workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyType.T);
-        this.importStudy.getTrialInstanceNo(this.workbook, "filename");
-    }
-
-    @Test
-    public void testGetTrialInstanceNumberOfNurseryOfTrial() throws WorkbookParserException {
-        this.workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyType.T);
-        final String trialInstanceNumber = importStudy.getTrialInstanceNo(this.workbook, "filename-11");
-        Assert.assertEquals("The trial instance number should be 11", "11", trialInstanceNumber);
     }
 
     @Test
@@ -475,8 +462,6 @@ public class ExcelImportStudyServiceImplTest {
         Assert.assertNotNull("Conditions copy should not be emprt after copy operation", workbook.getImportConditionsCopy());
         Assert.assertTrue("Unable to properly copy conditions portion of workbook", workbook.getImportConditionsCopy().size() == workbook.getConditions().size());
     }
-
-
 
     @Test
     public void testDetectAddedTraitsNoTraitsAdded() throws WorkbookParserException{

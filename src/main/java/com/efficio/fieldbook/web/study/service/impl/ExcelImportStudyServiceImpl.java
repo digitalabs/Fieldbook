@@ -185,11 +185,6 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
     }
 
     @Override
-    protected String retrieveTrialInstanceNumber() throws WorkbookParserException {
-        return getTrialInstanceNumber(workbook, parsedData);
-    }
-
-    @Override
     protected void performWorkbookMetadataUpdate() throws WorkbookParserException{
         final Map<String, Object> variableMap = new HashMap<>();
         final WorkbookParser parser = new WorkbookParser();

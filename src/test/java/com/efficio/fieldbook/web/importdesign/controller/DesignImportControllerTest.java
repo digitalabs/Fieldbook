@@ -418,6 +418,36 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
+	public void testResolveIDNamePairingAndValuesForTrialLocationVariableDoesNotExistInTrialLevelVariables() {
+
+		final Set<MeasurementVariable> trialVariables = new HashSet<>();
+
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final EnvironmentData environmentData = this.createEnvironmentData(1);
+
+		final List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
+
+		settingDetails
+				.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(), "LOCATION_NAME", "", "TRIAL"));
+
+		Mockito.doReturn(settingDetails).when(this.userSelection).getTrialLevelVariableList();
+		this.designImportController.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData, trialVariables);
+
+		Assert.assertEquals(5, trialVariables.size());
+		Assert.assertEquals("LOCATION_NAME_ID should be added to the Trial Variables", "LOCATION_NAME_ID",
+				this.getMeasurementVariable(TermId.LOCATION_ID.getId(), trialVariables).getName());
+
+		Assert.assertEquals(1, environmentData.getNoOfEnvironments());
+		final Map<String, String> managementDetailValuesMap = environmentData.getEnvironments().get(0).getManagementDetailValues();
+
+		Assert.assertTrue("LOCATION_NAME_ID should be in Management Details",
+				managementDetailValuesMap.containsKey(String.valueOf(TermId.LOCATION_ID.getId())));
+
+
+	}
+
+
+	@Test
 	public void testResolveIDNamePairingAndValuesForNursery() {
 
 		Mockito.mock(Workbook.class);
@@ -1293,8 +1323,8 @@ public class DesignImportControllerTest {
 	private Map<String, String> createManagementDetailValues(final int instanceNo) {
 		final Map<String, String> map = new HashMap<>();
 		map.put(String.valueOf(TermId.TRIAL_INSTANCE_FACTOR.getId()), String.valueOf(instanceNo));
-		map.put(String.valueOf(TermId.TRIAL_LOCATION.getId()), "Test Location");
 		map.put(String.valueOf(TermId.LOCATION_ID.getId()), "1234");
+		map.put(String.valueOf(TermId.TRIAL_LOCATION.getId()), "Test Location");
 		map.put(String.valueOf(TermId.SITE_NAME.getId()), "Test Site");
 		map.put(String.valueOf(TermId.PI_NAME.getId()), null);
 		map.put(String.valueOf(TermId.COOPERATOR.getId()), "4321");

@@ -1211,6 +1211,49 @@ public class DesignImportControllerTest {
 		return results;
 	}
 
+	@Test
+	public void testResolveLocalNameOfTheTrialEnvironmentVariable() {
+
+		final List<SettingDetail> trialLevelVariableList = new ArrayList<SettingDetail>();
+
+		trialLevelVariableList.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE",
+				"", "TRIAL"));
+		trialLevelVariableList.add(
+				this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "", "TRIAL"));
+
+		DesignImportData designImportData = this.userSelection.getDesignImportData();
+
+		Assert.assertEquals("Expecting a local name value 'LOCATION_NAME' because the variable exists in trial variable list", "LOCATION_NAME" ,
+				this.designImportController.resolveLocalNameOfTheTrialEnvironmentVariable(TermId.TRIAL_LOCATION.getId(), trialLevelVariableList, designImportData));
+		Assert.assertEquals("Expecting a local name value 'SITE_NAME' because the variable exists in the headers of design import data", "SITE_NAME" ,
+				this.designImportController.resolveLocalNameOfTheTrialEnvironmentVariable(TermId.SITE_NAME.getId(), trialLevelVariableList, designImportData));
+		Assert.assertEquals("Expecting an empty value because COOPERATOR_ID does not exist in both trial variables and headers of design import data", "" ,
+				this.designImportController.resolveLocalNameOfTheTrialEnvironmentVariable(TermId.COOPERATOOR_ID.getId(), trialLevelVariableList, designImportData));
+
+	}
+
+	@Test
+	public void testResolveStandardVariableNameOfTheTrialEnvironmentVariable() {
+
+		final List<SettingDetail> trialLevelVariableList = new ArrayList<SettingDetail>();
+
+		trialLevelVariableList.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE",
+				"", "TRIAL"));
+		trialLevelVariableList.add(
+				this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "", "TRIAL"));
+
+		DesignImportData designImportData = this.userSelection.getDesignImportData();
+
+		Assert.assertEquals("Expecting standard variable name 'LOCATION_NAME' because the variable exists in trial variable list", "LOCATION_NAME" ,
+				this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(TermId.TRIAL_LOCATION.getId(), trialLevelVariableList, designImportData));
+		Assert.assertEquals("Expecting standard variable name 'SITE_NAME' because the variable exists in the headers of design import data", "SITE_NAME" ,
+				this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(TermId.SITE_NAME.getId(), trialLevelVariableList, designImportData));
+		Assert.assertEquals("Expecting an empty standard variable name because COOPERATOR_ID does not exist in both trial variables and headers of design import data", "" ,
+				this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(TermId.COOPERATOOR_ID.getId(), trialLevelVariableList, designImportData));
+
+
+	}
+
 	private MeasurementVariable getMeasurementVariable(final int termId, final Set<MeasurementVariable> trialVariables) {
 		for (final MeasurementVariable mvar : trialVariables) {
 			if (termId == mvar.getTermId()) {

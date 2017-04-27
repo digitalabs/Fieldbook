@@ -432,8 +432,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true,
 				false);
 		model.addAttribute("variable", variable);
-		model.addAttribute("phenotypeId", "");
-		model.addAttribute("phenotypeValue", "");
+		model.addAttribute("phenotypeId", editData.getPhenotypeId());
+		model.addAttribute("phenotypeValue", editData.getValue());
 		model.addAttribute("possibleValues", this.fieldbookService.getAllPossibleValues(variable));
 		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
 		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());

@@ -404,13 +404,13 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testCheckForHybridMethodsTrue() {
 		List<ImportedCrosses> importedCrosses = this.importedCrossesTestDataInitializer.createImportedCrossesList(1, true);
-		Assert.assertTrue("The imported crosses should have hybrid methods", this.crossingSettingsController.checkForHybridMethods(importedCrosses ) == 1);
+		Assert.assertTrue("The imported crosses should have hybrid methods", this.crossingSettingsController.checkForHybridMethods(importedCrosses ));
 	}
 	
 	@Test
 	public void testCheckForHybridMethodsFalse() {
 		List<ImportedCrosses> importedCrosses = this.importedCrossesTestDataInitializer.createImportedCrossesList(1, false);
-		Assert.assertFalse("The imported crosses should not have hybrid methods", this.crossingSettingsController.checkForHybridMethods(importedCrosses ) == 1);
+		Assert.assertFalse("The imported crosses should not have hybrid methods", this.crossingSettingsController.checkForHybridMethods(importedCrosses));
 	}
 	
 

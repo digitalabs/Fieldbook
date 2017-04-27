@@ -355,14 +355,14 @@ public class CrossingSettingsController extends SettingsController {
 		return super.convertObjectToJson(resultsMap);
 	}
 
-	Integer checkForHybridMethods(List<ImportedCrosses> importedCrosses) {
+	boolean checkForHybridMethods(List<ImportedCrosses> importedCrosses) {
 		List<String> hybridMethods = this.germplasmDataManager.getMethodCodeByMethodIds(this.crossExpansionProperties.getHybridBreedingMethods());
 		for(ImportedCrosses importedCross: importedCrosses){
 			if(hybridMethods.contains(importedCross.getRawBreedingMethod().toUpperCase())){
-				return 1;
+				return true;
 			}
 		}
-		return 0;
+		return false;
 	}
 	
 	@ResponseBody

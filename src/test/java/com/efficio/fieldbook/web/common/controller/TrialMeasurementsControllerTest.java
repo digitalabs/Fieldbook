@@ -270,6 +270,46 @@ public class TrialMeasurementsControllerTest {
 	}
 
 	@Test
+	public void testEditExperimentCellsImportPreview() throws MiddlewareQueryException {
+		int termId = 2000;
+		int experimentId = 1;
+		ExtendedModelMap model = new ExtendedModelMap();
+		UserSelection userSelection = new UserSelection();
+		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+
+		Variable variableText = new Variable();
+		Scale scaleText = new Scale();
+		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
+		variableText.setScale(scaleText);
+
+		List<MeasurementRow> measurementRowList = new ArrayList<>();
+		MeasurementRow row = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList<>();
+		dataList.add(this.measurementDataTestDataInitializer.createMeasurementData(1000, "TestVarName1", "1st", TermId.CHARACTER_VARIABLE));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		row = new MeasurementRow();
+		dataList = new ArrayList<>();
+		String phenotpevalue = "2nd";
+		dataList.add(this.measurementDataTestDataInitializer.createCategoricalMeasurementData(termId, "TestVarName2", phenotpevalue,
+			new ArrayList<ValueReference>()));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+
+		userSelection.setMeasurementRowList(measurementRowList);
+
+		this.trialMeasurementsController.setUserSelection(userSelection);
+		this.trialMeasurementsController.editExperimentCells(experimentId, termId, model);
+		Assert.assertEquals(TermId.CATEGORICAL_VARIABLE.getId(), model.get("categoricalVarId"));
+		Assert.assertEquals(TermId.DATE_VARIABLE.getId(), model.get("dateVarId"));
+		Assert.assertEquals(TermId.NUMERIC_VARIABLE.getId(), model.get("numericVarId"));
+		Assert.assertEquals(false, model.get("isNursery"));
+		Assert.assertTrue(((List<?>) model.get("possibleValues")).isEmpty());
+		Assert.assertEquals(0, model.get("phenotypeId"));
+		Assert.assertEquals(phenotpevalue, model.get("phenotypeValue"));
+	}
+
+	@Test
 	public void testUpdateExperimentCellDataIfNotDiscard() {
 		int termId = 2000;
 		String newValue = "new value";

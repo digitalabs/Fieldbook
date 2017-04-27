@@ -658,21 +658,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			}
 		}
 
-
-		dataMap.put(TermId.ENTRY_NO.name(), new Object[] {row.getEntryNo(), false});
-		dataMap.put(TermId.ENTRY_CODE.name(), new Object[] {row.getEntryCode(), false});
-		dataMap.put(TermId.ENTRY_TYPE.name(), new Object[] {row.getEntryType(), row.getEntryType(), false});
-		dataMap.put(TermId.PLOT_NO.name(), new Object[] {row.getPlotNumber(), false});
-		dataMap.put(TermId.REP_NO.name(), new Object[] {row.getRepitionNumber(), false});
-		dataMap.put(TermId.BLOCK_NO.name(), new Object[] {row.getBlockNumber(), false});
-		dataMap.put(TermId.ROW.name(), new Object[] {row.getRowNumber(), false});
-		dataMap.put(TermId.COL.name(), new Object[] {row.getColumnNumber(), false});
-		dataMap.put("TRIAL_INSTANCE", new Object[] {row.getTrialInstance(), false});
-		dataMap.put(TermId.PLOT_ID.name(), new Object[] {row.getPlotId(), false});
-
-		for (Pair<String, String> additionalGermplasmAttrCols : row.getAdditionalGermplasmDescriptors()) {
-			dataMap.put(additionalGermplasmAttrCols.getLeft(), new Object[] {additionalGermplasmAttrCols.getRight()});
-		}
+		// generate measurement row data for standard factors like TRIAL_INSTANCE, ENTRY_NO, ENTRY_TYPE, PLOT_NO, PLOT_ID, etc
+		this.addGermplasmAndPlotFactorsDataToDataMap(row, dataMap, measurementDatasetVariables);
 
 		// generate measurement row data from newly added traits (no data yet)
 		final UserSelection userSelection = this.getUserSelection();
@@ -689,6 +676,68 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			}
 		}
 		return dataMap;
+	}
+
+	/*
+	 * Generate measurement row data for standard factors like TRIAL_INSTANCE, ENTRY_NO, ENTRY_TYPE, PLOT_NO, REP_NO,
+	 * BLOCK_NO, ROW, COL, PLOT_ID and add to dataMap. Use the local name of the variable as key and the 
+	 * value of the variable as value in dataMap.
+	 */
+	private void addGermplasmAndPlotFactorsDataToDataMap(final ObservationDto row, Map<String, Object> dataMap,
+			List<MeasurementVariable> measurementDatasetVariables) {
+		final MeasurementVariable entryNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.ENTRY_NO.getId());
+		if (entryNoVar != null){
+			dataMap.put(entryNoVar.getName(), new Object[] {row.getEntryNo(), false});
+		}
+		
+		final MeasurementVariable entryCodeVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.ENTRY_CODE.getId());
+		if (entryCodeVar != null) {
+			dataMap.put(entryCodeVar.getName(), new Object[] {row.getEntryCode(), false});
+		}
+		
+		final MeasurementVariable entryTypeVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.ENTRY_TYPE.getId());
+		if (entryTypeVar != null) { 
+			dataMap.put(entryTypeVar.getName(), new Object[] {row.getEntryType(), row.getEntryType(), false});
+		}
+		
+		final MeasurementVariable plotNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.PLOT_NO.getId());
+		if (plotNoVar != null) { 
+			dataMap.put(plotNoVar.getName(), new Object[] {row.getPlotNumber(), false});
+		}
+
+		final MeasurementVariable repNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.REP_NO.getId());
+		if (repNoVar != null) { 
+			dataMap.put(repNoVar.getName(), new Object[] {row.getRepitionNumber(), false});
+		}
+		
+		final MeasurementVariable blockNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.BLOCK_NO.getId());
+		if (blockNoVar != null) { 
+			dataMap.put(blockNoVar.getName(), new Object[] {row.getBlockNumber(), false});
+		}
+
+		final MeasurementVariable rowVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.ROW.getId());
+		if (rowVar != null) { 
+			dataMap.put(rowVar.getName(), new Object[] {row.getRowNumber(), false});
+		}
+		
+		final MeasurementVariable colVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.COL.getId());
+		if (colVar != null) { 
+			dataMap.put(colVar.getName(), new Object[] {row.getColumnNumber(), false});
+		}
+		
+		final MeasurementVariable trialInstanceVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.TRIAL_INSTANCE_FACTOR.getId());
+		if (trialInstanceVar != null) { 
+			dataMap.put(trialInstanceVar.getName(), new Object[] {row.getTrialInstance(), false});
+		}
+		
+		final MeasurementVariable plotIdVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.PLOT_ID.getId());
+		if (plotIdVar != null) { 
+			dataMap.put(plotIdVar.getName(), new Object[] {row.getPlotId(), false});
+		}
+
+		for (Pair<String, String> additionalGermplasmAttrCols : row.getAdditionalGermplasmDescriptors()) {
+			dataMap.put(additionalGermplasmAttrCols.getLeft(), new Object[] {additionalGermplasmAttrCols.getRight()});
+		}
 	}
 
 	void addDataTableDataMapForCategoricalVariable(final Variable measurementVariable, final MeasurementDto data, final Map<String, Object> dataMap, final String localVariableName, final String suffix) {

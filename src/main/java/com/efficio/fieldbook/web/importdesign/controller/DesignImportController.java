@@ -1092,91 +1092,95 @@ public class DesignImportController extends SettingsController {
 
 			for (final Entry<String, String> managementDetail : environment.getManagementDetailValues().entrySet()) {
 
+				Integer resolvingTermIdKey = Integer.valueOf(managementDetail.getKey());
+				String resolvingTermIdValue = managementDetail.getValue();
 
-				String variableLocalName = resolveLocalNameOfTheTrialEnvironmentVariable(Integer.parseInt(managementDetail.getKey()), this.userSelection.getTrialLevelVariableList(), designImportData);
-				String standardVariableName = resolveStandardVariableNameOfTheTrialEnvironmentVariable(Integer.parseInt(managementDetail.getKey()), this.userSelection.getTrialLevelVariableList(), designImportData);
-
+				String variableLocalName = resolveLocalNameOfTheTrialEnvironmentVariable(resolvingTermIdKey, this.userSelection.getTrialLevelVariableList(), designImportData);
+				String standardVariableName = resolveStandardVariableNameOfTheTrialEnvironmentVariable(resolvingTermIdKey, this.userSelection.getTrialLevelVariableList(), designImportData);
 
 				// For LOCATION_NAME and LOCATION_NAME_ID
-				if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()
-						|| Integer.valueOf(managementDetail.getKey()) == TermId.LOCATION_ID.getId()) {
+				if (resolvingTermIdKey == TermId.TRIAL_LOCATION.getId()
+						|| resolvingTermIdKey == TermId.LOCATION_ID.getId()) {
 
 					// If there's no standard variable name resolved for TRIAL_LOCATION, we should try to get it from LOCATION_ID since LOCATION_ID is 
 					// always added to the trial level factors in memory after the user added location variable in Environments tab.
-					if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId() && StringUtils.isEmpty(standardVariableName)) {
+					if (resolvingTermIdKey == TermId.TRIAL_LOCATION.getId() && StringUtils.isEmpty(standardVariableName)) {
+						/** FIXME: this is the low-risk hack solution for BMS-4082. Ideally, the TRIAL_LOCATION variable should exist in userSelection.getTrialLevelVariableList() when
+						 * the user adds it in the Environment tab. We should also look how Generate Design resolves the name-id pair variables and use that as a pattern in Design Import if possible.
+						**/
 						variableLocalName = resolveLocalNameOfTheTrialEnvironmentVariable(TermId.LOCATION_ID.getId(), this.userSelection.getTrialLevelVariableList(), designImportData);
 						standardVariableName = resolveStandardVariableNameOfTheTrialEnvironmentVariable(TermId.LOCATION_ID.getId(), this.userSelection.getTrialLevelVariableList(), designImportData);
 					}
 
 					// The termId of the pair ID variable
-					final String termId = nameIdMap.get(managementDetail.getKey().toUpperCase());
-					if (termId != null) {
+					final String termIdOfPairIdVariable = nameIdMap.get(resolvingTermIdKey.toString().toUpperCase());
+					if (termIdOfPairIdVariable != null) {
 
-						if (this.isTermIdExisting(Integer.valueOf(managementDetail.getKey()),
+						if (this.isTermIdExisting(resolvingTermIdKey,
 								designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT))) {
-							this.populateTheValueOfLocationIDBasedOnLocationName(copyOfManagementDetailValues, Integer.valueOf(termId),
-									managementDetail.getValue());
+							this.populateTheValueOfLocationIDBasedOnLocationName(copyOfManagementDetailValues, Integer.valueOf(termIdOfPairIdVariable),
+									resolvingTermIdValue);
 						}
 
 						final SettingDetail settingDetail =
-								this.createSettingDetail(Integer.valueOf(termId), variableLocalName, VariableType.ENVIRONMENT_DETAIL.name());
+								this.createSettingDetail(Integer.valueOf(termIdOfPairIdVariable), variableLocalName, VariableType.ENVIRONMENT_DETAIL.name());
 						settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 
 						this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 
 						final MeasurementVariable measurementVariable =
 								this.createMeasurementVariableFromStandardVariable(
-										standardVariableName + AppConstants.ID_SUFFIX.getString(), Integer.valueOf(termId),
+										standardVariableName + AppConstants.ID_SUFFIX.getString(), Integer.valueOf(termIdOfPairIdVariable),
 										PhenotypicType.TRIAL_ENVIRONMENT);
 
 						trialVariables.add(measurementVariable);
 
-						copyOfManagementDetailValues.remove(managementDetail.getKey());
+						copyOfManagementDetailValues.remove(resolvingTermIdKey);
 
 						SettingsUtil.hideVariableInSession(this.userSelection.getTrialLevelVariableList(),
-								Integer.valueOf(managementDetail.getKey()));
+								resolvingTermIdKey);
 					}
 
 					// For COOPERATOR and COOPERATOR_ID
-				} else if (Integer.valueOf(managementDetail.getKey()) == TermId.COOPERATOR.getId()
-						|| Integer.valueOf(managementDetail.getKey()) == TermId.COOPERATOOR_ID.getId()) {
+				} else if (resolvingTermIdKey == TermId.COOPERATOR.getId()
+						|| resolvingTermIdKey == TermId.COOPERATOOR_ID.getId()) {
 
 					// The termId of the pair ID variable
-					final String termId = nameIdMap.get(managementDetail.getKey());
+					final String termIdOfPairIdVariable = nameIdMap.get(resolvingTermIdKey.toString());
 
-					if (termId != null) {
+					if (termIdOfPairIdVariable != null) {
 
-						copyOfManagementDetailValues.put(termId, String.valueOf(super.getCurrentIbdbUserId()));
+						copyOfManagementDetailValues.put(termIdOfPairIdVariable, String.valueOf(super.getCurrentIbdbUserId()));
 
 						final SettingDetail settingDetail =
-								this.createSettingDetail(Integer.valueOf(termId), variableLocalName, VariableType.ENVIRONMENT_DETAIL.name());
+								this.createSettingDetail(Integer.valueOf(termIdOfPairIdVariable), variableLocalName, VariableType.ENVIRONMENT_DETAIL.name());
 						settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 						this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 
 						final MeasurementVariable measurementVariable =
 								this.createMeasurementVariableFromStandardVariable(
-										standardVariableName + AppConstants.ID_SUFFIX.getString(), Integer.valueOf(termId),
+										standardVariableName + AppConstants.ID_SUFFIX.getString(), Integer.valueOf(termIdOfPairIdVariable),
 										PhenotypicType.TRIAL_ENVIRONMENT);
 
 						trialVariables.add(measurementVariable);
 
-						copyOfManagementDetailValues.remove(managementDetail.getKey());
+						copyOfManagementDetailValues.remove(resolvingTermIdKey);
 
 						SettingsUtil.hideVariableInSession(this.userSelection.getTrialLevelVariableList(),
-								Integer.valueOf(managementDetail.getKey()));
+								resolvingTermIdKey);
 					}
 
 				} else {
 
 					final MeasurementVariable measurementVariable =
 							this.createMeasurementVariableFromStandardVariable(standardVariableName,
-									Integer.valueOf(managementDetail.getKey()), PhenotypicType.TRIAL_ENVIRONMENT);
+									resolvingTermIdKey, PhenotypicType.TRIAL_ENVIRONMENT);
 
 					trialVariables.add(measurementVariable);
 
 				}
 
-				this.populateTheValueOfCategoricalVariable(Integer.valueOf(managementDetail.getKey()), managementDetail.getValue(),
+				this.populateTheValueOfCategoricalVariable(resolvingTermIdKey, resolvingTermIdValue,
 						copyOfManagementDetailValues);
 
 			}
@@ -1260,13 +1264,16 @@ public class DesignImportController extends SettingsController {
 
 		for (final Entry<String, String> managementDetail : environment.getManagementDetailValues().entrySet()) {
 
+			Integer resolvingTermIdKey = Integer.valueOf(managementDetail.getKey());
+			String resolvingTermIdValue = managementDetail.getValue();
+
 			// For TRIAL_LOCATION (Location Name)
-			if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()) {
-				final String termId = nameIdMap.get(managementDetail.getKey());
+			if (resolvingTermIdKey == TermId.TRIAL_LOCATION.getId()) {
+				final String termId = nameIdMap.get(resolvingTermIdKey.toString());
 				if (termId != null) {
 
 					final Location location =
-							this.fieldbookMiddlewareService.getLocationByName(managementDetail.getValue(), Operation.EQUAL);
+							this.fieldbookMiddlewareService.getLocationByName(resolvingTermIdValue, Operation.EQUAL);
 					if (location != null) {
 						copyOfManagementDetailValues.put(termId, String.valueOf(location.getLocid()));
 					} else {
@@ -1274,7 +1281,7 @@ public class DesignImportController extends SettingsController {
 					}
 
 					final String headerName =
-							this.getHeaderName(Integer.valueOf(managementDetail.getKey()),
+							this.getHeaderName(resolvingTermIdKey,
 									designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 
 					final SettingDetail settingDetail =
@@ -1288,21 +1295,21 @@ public class DesignImportController extends SettingsController {
 
 					this.addSettingOrUpdateDetailToTargetListIfNecessary(settingDetail, newDetails);
 
-					copyOfManagementDetailValues.remove(managementDetail.getKey());
+					copyOfManagementDetailValues.remove(resolvingTermIdKey);
 
 				}
 			}
 
 			// For COOPERATOR and PI_NAME
-			if (Integer.valueOf(managementDetail.getKey()) == TermId.COOPERATOR.getId()
-					|| Integer.valueOf(managementDetail.getKey()) == TermId.PI_NAME.getId()) {
-				final String termId = nameIdMap.get(managementDetail.getKey());
+			if (resolvingTermIdKey == TermId.COOPERATOR.getId()
+					|| resolvingTermIdKey == TermId.PI_NAME.getId()) {
+				final String termId = nameIdMap.get(resolvingTermIdKey.toString());
 				if (termId != null) {
 
 					copyOfManagementDetailValues.put(termId, String.valueOf(super.getCurrentIbdbUserId()));
 
 					final String headerName =
-							this.getHeaderName(Integer.valueOf(managementDetail.getKey()),
+							this.getHeaderName(resolvingTermIdKey,
 									designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 
 					final SettingDetail settingDetail =
@@ -1313,13 +1320,13 @@ public class DesignImportController extends SettingsController {
 
 					this.addSettingOrUpdateDetailToTargetListIfNecessary(settingDetail, newDetails);
 
-					copyOfManagementDetailValues.remove(managementDetail.getKey());
+					copyOfManagementDetailValues.remove(resolvingTermIdKey);
 
 				}
 
 			}
 
-			this.populateTheValueOfCategoricalVariable(Integer.valueOf(managementDetail.getKey()), managementDetail.getValue(),
+			this.populateTheValueOfCategoricalVariable(resolvingTermIdKey, resolvingTermIdValue,
 					copyOfManagementDetailValues);
 
 		}

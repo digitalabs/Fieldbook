@@ -692,7 +692,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	 * 
 	 * Use the local name of the variable as key and the value of the variable as value in dataMap.
 	 */
-	private void addGermplasmAndPlotFactorsDataToDataMap(final ObservationDto row, Map<String, Object> dataMap,
+	void addGermplasmAndPlotFactorsDataToDataMap(final ObservationDto row, Map<String, Object> dataMap,
 			List<MeasurementVariable> measurementDatasetVariables) {
 		final MeasurementVariable gidVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.GID.getId());
 		

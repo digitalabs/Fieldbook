@@ -53,6 +53,8 @@ import junit.framework.Assert;
 
 public class TrialMeasurementsControllerTest {
 
+	private static final String CROSS_VALUE = "ABC12/XYZ34";
+	private static final String STOCK_ID_VALUE = "STCK-123";
 	private static final String DATA = "data";
 	private static final String RECORDS_FILTERED = "recordsFiltered";
 	private static final String RECORDS_TOTAL = "recordsTotal";
@@ -73,6 +75,7 @@ public class TrialMeasurementsControllerTest {
 	private static final String STOCK_ID = "StockID";
 	private static final String ALEUCOL_1_5_TRAIT_NAME = "ALEUCOL_1_5";
 	private static final int ALEUCOL_1_5_TERM_ID = 123;
+	private static final String LOCAL = "-Local";
 
 	private TrialMeasurementsController trialMeasurementsController;
 	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
@@ -81,10 +84,14 @@ public class TrialMeasurementsControllerTest {
 	private ContextUtil contextUtil;
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 	private StudyService studyService;
+	private List<MeasurementVariable> measurementVariables;
 	
 	private MeasurementDto measurementText = new MeasurementDto(new TraitDto(1, "NOTES"), 1, "Text Notes");
 	private MeasurementDto measurementNumeric = new MeasurementDto(new TraitDto(2, "Grain Yield"), 2, "500");
 	private MeasurementDto measurementCategorical = new MeasurementDto(new TraitDto(3, "CategoricalTrait"), 3, "CategoryValue1");
+	
+	private final TermId[] standardFactors = {TermId.GID, TermId.ENTRY_NO, TermId.ENTRY_TYPE, TermId.ENTRY_CODE, TermId.PLOT_NO, TermId.PLOT_ID,
+			TermId.BLOCK_NO, TermId.REP_NO, TermId.ROW, TermId.COL};
 
 	@Before
 	public void setUp() {
@@ -626,11 +633,14 @@ public class TrialMeasurementsControllerTest {
 		String drawParamValue = "drawParamValue";
 		request.addParameter(DRAW, drawParamValue);
 		
-		this.setupMeasurementVariablesInMockWorkbook();
+		final boolean useDifferentLocalNames = false;
+		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
 
 		final int recordsCount = 1;
 		final TermSummary category1 = new TermSummary(111, this.measurementCategorical.getTriatValue(), "CategoryValue1Definition");
-		List<ObservationDto> observations = this.setupTestObservations(recordsCount, category1);
+		// Add CROSS and STOCK measurements
+		final boolean doAddNewGermplasmDescriptors = true;
+		List<ObservationDto> observations = this.setupTestObservations(recordsCount, category1, doAddNewGermplasmDescriptors);
 
 		this.trialMeasurementsController.setContextUtil(Mockito.mock(ContextUtil.class));
 
@@ -658,42 +668,8 @@ public class TrialMeasurementsControllerTest {
 		
 		// Verify the factor names and values were included properly in data map
 		Assert.assertEquals(String.valueOf(observationDto.getMeasurementId()), onePlotMeasurementData.get(EXPERIMENT_ID));
-		Assert.assertEquals(observationDto.getDesignation(), onePlotMeasurementData.get(DESIGNATION));
-		Assert.assertEquals(observationDto.getGid(), onePlotMeasurementData.get(TermId.GID.name()));
-
-		Assert.assertTrue(
-				Arrays.equals(new Object[] {observationDto.getEntryNo(), false}, (Object[]) onePlotMeasurementData.get(TermId.ENTRY_NO.name())));
-
-		Assert.assertTrue(
-				Arrays.equals(new Object[] {observationDto.getEntryCode(), false}, (Object[]) onePlotMeasurementData.get(TermId.ENTRY_CODE.name())));
-
-		Assert.assertTrue(Arrays.equals(new Object[] {"STCK-123"}, (Object[]) onePlotMeasurementData.get(STOCK_ID)));
-		Assert.assertTrue(Arrays.equals(new Object[] {"ABC12/XYZ34"}, (Object[]) onePlotMeasurementData.get(CROSS)));
-
-		Assert.assertTrue(
-				Arrays.equals(new Object[] {observationDto.getEntryType(), observationDto.getEntryType(), false},
-						(Object[]) onePlotMeasurementData.get(TermId.ENTRY_TYPE.name())));
-
-		Assert.assertTrue(
-				Arrays.equals(new Object[] {observationDto.getPlotNumber(), false}, (Object[]) onePlotMeasurementData.get(TermId.PLOT_NO.name())));
-
-		Assert.assertTrue(
-				Arrays.equals(new Object[] {observationDto.getBlockNumber(), false}, (Object[]) onePlotMeasurementData.get(TermId.BLOCK_NO.name())));
-
-		Assert.assertTrue(
-				Arrays.equals(new Object[] {observationDto.getRepitionNumber(), false}, (Object[]) onePlotMeasurementData.get(TermId.REP_NO.name())));
-
-		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getTrialInstance(), false},
-				(Object[]) onePlotMeasurementData.get(TRIAL_INSTANCE)));
-
-		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getRowNumber(), false}, (Object[]) onePlotMeasurementData.get(TermId.ROW.name())));
-
-		Assert.assertTrue(
-				Arrays.equals(new Object[] {observationDto.getColumnNumber(), false}, (Object[]) onePlotMeasurementData.get(TermId.COL.name())));
-
-		Assert.assertTrue(
-				Arrays.equals(new Object[] {observationDto.getPlotId(), false}, (Object[]) onePlotMeasurementData.get(TermId.PLOT_ID.name())));
-
+		final boolean isGidDesigFactorsIncluded = true;
+		this.verifyCorrectValuesForFactors(onePlotMeasurementData, observationDto, isGidDesigFactorsIncluded, doAddNewGermplasmDescriptors, useDifferentLocalNames);
 		
 		// Character Trait
 		Assert.assertTrue(Arrays.equals(new Object[] {this.measurementText.getTriatValue(), this.measurementText.getPhenotypeId()},
@@ -722,13 +698,63 @@ public class TrialMeasurementsControllerTest {
 		Assert.assertEquals("desc", sortOrderArg.getValue());
 	}
 
-	private List<ObservationDto> setupTestObservations(final int recordsCount, final TermSummary category1) {
+	private void verifyCorrectValuesForFactors(final Map<String, Object> onePlotMeasurementData, final ObservationDto observationDto, final boolean isGidDesigFactorsIncluded, final boolean isNewGermplasmDescriptorsAdded, final boolean useDifferentLocalNames) {
+		// there are tests where GID and DESIGNATION variable headers are not expected to be present
+		if (isGidDesigFactorsIncluded) {
+			final String designationMapKey = useDifferentLocalNames? DESIGNATION + LOCAL : DESIGNATION;
+			Assert.assertEquals(observationDto.getDesignation(), onePlotMeasurementData.get(designationMapKey));
+			final String gidMapKey = useDifferentLocalNames? TermId.GID.name() + LOCAL : TermId.GID.name();
+			Assert.assertEquals(observationDto.getGid(), onePlotMeasurementData.get(gidMapKey));
+		} 
+		
+		final String entryNoMapKey = useDifferentLocalNames? TermId.ENTRY_NO.name() + LOCAL : TermId.ENTRY_NO.name();
+		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getEntryNo(), false}, (Object[]) onePlotMeasurementData.get(entryNoMapKey)));
+
+		final String entryCodeMapKey = useDifferentLocalNames? TermId.ENTRY_CODE.name() + LOCAL : TermId.ENTRY_CODE.name();
+		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getEntryCode(), false}, (Object[]) onePlotMeasurementData.get(entryCodeMapKey)));
+
+		if (isNewGermplasmDescriptorsAdded) {
+			Assert.assertTrue(Arrays.equals(new Object[] {STOCK_ID_VALUE}, (Object[]) onePlotMeasurementData.get(STOCK_ID)));
+			Assert.assertTrue(Arrays.equals(new Object[] {CROSS_VALUE}, (Object[]) onePlotMeasurementData.get(CROSS)));
+		}
+
+		final String entryTypeMapKey = useDifferentLocalNames? TermId.ENTRY_TYPE.name() + LOCAL : TermId.ENTRY_TYPE.name();
+		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getEntryType(), observationDto.getEntryType(), false},
+						(Object[]) onePlotMeasurementData.get(entryTypeMapKey)));
+
+		final String plotNoMapKey = useDifferentLocalNames? TermId.PLOT_NO.name() + LOCAL : TermId.PLOT_NO.name();
+		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getPlotNumber(), false}, (Object[]) onePlotMeasurementData.get(plotNoMapKey)));
+
+		final String blockNoMapKey = useDifferentLocalNames? TermId.BLOCK_NO.name() + LOCAL : TermId.BLOCK_NO.name();
+		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getBlockNumber(), false}, (Object[]) onePlotMeasurementData.get(blockNoMapKey)));
+
+		final String repNoMapKey = useDifferentLocalNames? TermId.REP_NO.name() + LOCAL : TermId.REP_NO.name();
+		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getRepitionNumber(), false}, (Object[]) onePlotMeasurementData.get(repNoMapKey)));
+
+		final String trialInstanceMapKey = useDifferentLocalNames? TRIAL_INSTANCE + LOCAL : TRIAL_INSTANCE;
+		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getTrialInstance(), false},
+				(Object[]) onePlotMeasurementData.get(trialInstanceMapKey)));
+
+		final String rowMapKey = useDifferentLocalNames? TermId.ROW.name() + LOCAL : TermId.ROW.name();
+		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getRowNumber(), false}, (Object[]) onePlotMeasurementData.get(rowMapKey)));
+
+		final String colMapKey = useDifferentLocalNames? TermId.COL.name() + LOCAL : TermId.COL.name();
+		Assert.assertTrue(Arrays.equals(new Object[] {observationDto.getColumnNumber(), false}, (Object[]) onePlotMeasurementData.get(colMapKey)));
+
+		final String plotIdMapKey = useDifferentLocalNames? TermId.PLOT_ID.name() + LOCAL : TermId.PLOT_ID.name();
+		Assert.assertTrue(
+				Arrays.equals(new Object[] {observationDto.getPlotId(), false}, (Object[]) onePlotMeasurementData.get(plotIdMapKey)));
+	}
+
+	private List<ObservationDto> setupTestObservations(final int recordsCount, final TermSummary category1, final boolean doAddNewGermplasmDescriptors) {
 		List<MeasurementDto> measurements = Lists.newArrayList(this.measurementText, this.measurementNumeric, this.measurementCategorical);
 		ObservationDto testObservationDto =
 				new ObservationDto(123, "1", "Test Entry", 300, "CML123", "5", "Entry Code", "2", "10", "3", measurements);
 
-		testObservationDto.additionalGermplasmDescriptor(STOCK_ID, "STCK-123");
-		testObservationDto.additionalGermplasmDescriptor(CROSS, "ABC12/XYZ34");
+		if (doAddNewGermplasmDescriptors) {
+			testObservationDto.additionalGermplasmDescriptor(STOCK_ID, STOCK_ID_VALUE);
+			testObservationDto.additionalGermplasmDescriptor(CROSS, CROSS_VALUE);
+		}
 
 		testObservationDto.setRowNumber("11");
 		testObservationDto.setColumnNumber("22");
@@ -768,29 +794,30 @@ public class TrialMeasurementsControllerTest {
 		return observations;
 	}
 
-	private void setupMeasurementVariablesInMockWorkbook() {
+	private void setupMeasurementVariablesInMockWorkbook(final boolean useDifferentLocalName) {
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class);
 		userSelection.setWorkbook(workbook);
 		
 		MeasurementVariableTestDataInitializer measurementVarDataInitializer = new MeasurementVariableTestDataInitializer();
-		List<MeasurementVariable> measurementVariables = new ArrayList<>();
-		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
-				this.measurementText.getTrait().getTraitId(), this.measurementText.getTrait().getTraitName()));
-		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
-				this.measurementNumeric.getTrait().getTraitId(), this.measurementNumeric.getTrait().getTraitName()));
-		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
-				this.measurementCategorical.getTrait().getTraitId(), this.measurementCategorical.getTrait().getTraitName()));
+		this.measurementVariables = new ArrayList<>();
+		final String trait1Name = this.measurementText.getTrait().getTraitName();
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
+				this.measurementText.getTrait().getTraitId(), useDifferentLocalName? trait1Name + LOCAL : trait1Name));
+		final String trait2Name = this.measurementNumeric.getTrait().getTraitName();
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
+				this.measurementNumeric.getTrait().getTraitId(), useDifferentLocalName? trait2Name + LOCAL : trait2Name));
+		final String trait3Name = this.measurementCategorical.getTrait().getTraitName();
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
+				this.measurementCategorical.getTrait().getTraitId(), useDifferentLocalName? trait3Name + LOCAL : trait3Name));
 		
-		final TermId[] factors = {TermId.GID, TermId.ENTRY_NO, TermId.ENTRY_TYPE, TermId.ENTRY_CODE, TermId.PLOT_NO, TermId.PLOT_ID,
-				TermId.BLOCK_NO, TermId.REP_NO, TermId.ROW, TermId.COL};
-		for (final TermId term : factors) {
-			measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(term.getId(), term.name()));
+		for (final TermId term : this.standardFactors) {
+			measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(term.getId(), useDifferentLocalName? term.name() + LOCAL : term.name()));
 		}
-		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.DESIG.getId(), DESIGNATION));
-		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.TRIAL_INSTANCE_FACTOR.getId(), TRIAL_INSTANCE));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.DESIG.getId(), useDifferentLocalName? DESIGNATION + LOCAL : DESIGNATION));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.TRIAL_INSTANCE_FACTOR.getId(), useDifferentLocalName? TRIAL_INSTANCE + LOCAL : TRIAL_INSTANCE));
 		
-		Mockito.when(workbook.getMeasurementDatasetVariablesView()).thenReturn(measurementVariables);
+		Mockito.when(workbook.getMeasurementDatasetVariablesView()).thenReturn(this.measurementVariables);
 		this.trialMeasurementsController.setUserSelection(userSelection);
 	}
 
@@ -873,6 +900,74 @@ public class TrialMeasurementsControllerTest {
 		Assert.assertEquals(true, values[2]);
 		Assert.assertEquals(aleucolPhenotypeId, values[3]);
 
+	}
+	
+	@Test
+	public void testAddGermplasmAndPlotFactorsDataToDataMap() {
+		Map<String, Object> dataMap = new HashMap<>();
+		final boolean useDifferentLocalNames = false;
+		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
+		
+		final boolean doAddNewGermplasmDescriptors = false;
+		// null because we are not interested in categorical traits for this test method
+		List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
+		
+		// Method to test
+		final ObservationDto observationDto = observations.get(0);
+		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables);
+		
+		Assert.assertEquals(this.standardFactors.length, dataMap.size());
+		// set to false because GID and DESIGNATION are not expected to be in map
+		final boolean isGidDesigFactorsIncluded = false;
+		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded, doAddNewGermplasmDescriptors, useDifferentLocalNames);
+		Assert.assertNull("GID should not be a key in data map.", dataMap.get(TermId.GID.name()));
+		Assert.assertNull("DESIGNATION should not be a key in data map.", dataMap.get(DESIGNATION));
+	}
+	
+	@Test
+	public void testAddGermplasmAndPlotFactorsDataToDataMapWithDifferentLocalNames() {
+		Map<String, Object> dataMap = new HashMap<>();
+		final boolean useDifferentLocalNames = true;
+		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
+		
+		final boolean doAddNewGermplasmDescriptors = false;
+		// null because we are not interested in categorical traits for this test method
+		List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
+		
+		// Method to test
+		final ObservationDto observationDto = observations.get(0);
+		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables);
+		
+		// Expecting that GID-local and DESIGNATION-local were added
+		Assert.assertEquals(this.standardFactors.length + 2, dataMap.size());
+		Assert.assertNotNull(TermId.GID.name() + LOCAL + " was expected as key in data map but wasn't.", dataMap.get(TermId.GID.name() + LOCAL));
+		Assert.assertNotNull(DESIGNATION + LOCAL + " was expected as key in data map but wasn't.", dataMap.get(DESIGNATION) + LOCAL);
+		
+		final boolean isGidDesigFactorsIncluded = true;
+		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded, doAddNewGermplasmDescriptors, useDifferentLocalNames);
+	}
+	
+	@Test
+	public void testAddGermplasmAndPlotFactorsDataToDataMapWithAdditionalGermplasmDescriptors() {
+		Map<String, Object> dataMap = new HashMap<>();
+		final boolean useDifferentLocalNames = false;
+		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
+		
+		final boolean doAddNewGermplasmDescriptors = true;
+		// null because we are not interested in categorical traits for this test method
+		List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
+		
+		// Method to test
+		final ObservationDto observationDto = observations.get(0);
+		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables);
+		
+		// expecting CROSS and STOCK_ID to have been added
+		Assert.assertEquals(this.standardFactors.length + 2, dataMap.size());
+		Assert.assertNotNull(CROSS + " was expected as key in data map but wasn't.", dataMap.get(CROSS));
+		Assert.assertNotNull(STOCK_ID + " was expected as key in data map but wasn't.", dataMap.get(STOCK_ID));
+		
+		final boolean isGidDesigFactorsIncluded = false;
+		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded, doAddNewGermplasmDescriptors, useDifferentLocalNames);
 	}
 
 	private Variable createTestVariable() {

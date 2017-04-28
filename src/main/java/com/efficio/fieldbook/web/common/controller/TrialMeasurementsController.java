@@ -662,6 +662,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		dataMap.put(TermId.COL.name(), new Object[] {row.getColumnNumber(), false});
 		dataMap.put("TRIAL_INSTANCE", new Object[] {row.getTrialInstance(), false});
 		dataMap.put(TermId.PLOT_ID.name(), new Object[] {row.getPlotId(), false});
+		dataMap.put("FIELDMAP COLUMN", new Object[] {row.getFieldMapColumn(), false});
+		dataMap.put("FIELDMAP RANGE", new Object[] {row.getFieldMapRange(), false});
 
 		for (Pair<String, String> additionalGermplasmAttrCols : row.getAdditionalGermplasmDescriptors()) {
 			dataMap.put(additionalGermplasmAttrCols.getLeft(), new Object[] {additionalGermplasmAttrCols.getRight()});

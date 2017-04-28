@@ -756,6 +756,16 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			dataMap.put(plotIdVar.getName(), new Object[] {row.getPlotId(), false});
 		}
 
+		final MeasurementVariable fieldMapcolumVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.FIELDMAP_COLUMN.getId());
+		if (plotIdVar != null) {
+			dataMap.put(fieldMapcolumVar.getName(), new Object[] {row.getFieldMapColumn(), false});
+		}
+
+		final MeasurementVariable fieldMapRangevar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.FIELDMAP_RANGE.getId());
+		if (plotIdVar != null) {
+			dataMap.put(fieldMapRangevar.getName(), new Object[] {row.getFieldMapRange(), false});
+		}
+
 		for (Pair<String, String> additionalGermplasmAttrCols : row.getAdditionalGermplasmDescriptors()) {
 			dataMap.put(additionalGermplasmAttrCols.getLeft(), new Object[] {additionalGermplasmAttrCols.getRight()});
 		}

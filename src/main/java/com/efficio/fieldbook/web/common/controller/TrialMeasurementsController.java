@@ -699,11 +699,11 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		// Add local variable names of GID and DESIGNATiON variables if they are not equal to "GID" and "DESIGNATION"
 		// "GID" and "DESIGNATION" are assumed to be added beforehand to dataMap
 		if (gidVar != null && !GID.equals(gidVar.getName())){
-			dataMap.put(gidVar.getName(), new Object[] {row.getGid(), false});
+			dataMap.put(gidVar.getName(), row.getGid());
 		}
 		final MeasurementVariable desigVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.DESIG.getId());
 		if (desigVar != null && !DESIGNATION.equals(desigVar.getName())){
-			dataMap.put(desigVar.getName(), new Object[] {row.getDesignation(), false});
+			dataMap.put(desigVar.getName(), row.getDesignation());
 		}
 		
 		final MeasurementVariable entryNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.ENTRY_NO.getId());

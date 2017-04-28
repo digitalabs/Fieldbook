@@ -162,8 +162,7 @@
 
 					if ($measurementTable.length !== 0) {
 						var addedData = '&columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
-						var dataParam = 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys +
-                            '&selectionVariablesList=' + TrialManagerDataService.settings.selectionVariables.m_keys +
+						var dataParam = 'variableList=' + TrialManagerDataService.settings.measurements.m_keys.concat(TrialManagerDataService.settings.selectionVariables.m_keys).join() +
 							'&deletedEnvironment=' + deletedEnvironmentIndex + addedData;
 
 						return $http.post('/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement', dataParam,

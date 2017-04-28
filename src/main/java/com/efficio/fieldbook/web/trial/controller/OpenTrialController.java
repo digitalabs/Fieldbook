@@ -34,9 +34,7 @@ import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.util.FieldbookListUtil;
-import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -82,13 +80,7 @@ public class OpenTrialController extends BaseTrialController {
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
 
 	@Resource
-	private StudyDataManager studyDataManagerImpl;
-
-	@Resource
 	private StudyDataManager studyDataManager;
-
-	@Resource
-	private OntologyService ontologyService;
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
@@ -588,28 +580,8 @@ public class OpenTrialController extends BaseTrialController {
 		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
 		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
 
-		final String traitsListCsv = request.getParameter("traitsList");
-		final String selectionVariablesListCsv = request.getParameter("selectionVariablesList");
-		final String listCsv;
-		if (!StringUtil.isEmpty(traitsListCsv) && !StringUtil.isEmpty(selectionVariablesListCsv)) {
-			listCsv = traitsListCsv + "," + selectionVariablesListCsv;
-
-		} else {
-			listCsv = !StringUtil.isEmpty(traitsListCsv) ? traitsListCsv : selectionVariablesListCsv;
-		}
-
-		final List<SettingDetail> traitList = this.userSelection.getBaselineTraitsList();
-		final List<SettingDetail> selectionVariatesList = this.userSelection.getSelectionVariates();
+		final String listCsv = request.getParameter("variableList");
 		final List<SettingDetail> variableList = new ArrayList<>();
-
-		if(traitList != null){
-			variableList.addAll(traitList);
-
-		}
-		if(selectionVariatesList != null){
-			variableList.addAll(selectionVariatesList);
-
-		}
 
 		if (!measurementDatasetVariables.isEmpty()) {
 			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);

@@ -757,12 +757,12 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 
 		final MeasurementVariable fieldMapcolumVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.FIELDMAP_COLUMN.getId());
-		if (plotIdVar != null) {
+		if (fieldMapcolumVar != null) {
 			dataMap.put(fieldMapcolumVar.getName(), new Object[] {row.getFieldMapColumn(), false});
 		}
 
 		final MeasurementVariable fieldMapRangevar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.FIELDMAP_RANGE.getId());
-		if (plotIdVar != null) {
+		if (fieldMapRangevar != null) {
 			dataMap.put(fieldMapRangevar.getName(), new Object[] {row.getFieldMapRange(), false});
 		}
 

@@ -80,7 +80,13 @@ public class OpenTrialController extends BaseTrialController {
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
 
 	@Resource
+	private StudyDataManager studyDataManagerImpl;
+
+	@Resource
 	private StudyDataManager studyDataManager;
+
+	@Resource
+	private OntologyService ontologyService;
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
@@ -581,11 +587,10 @@ public class OpenTrialController extends BaseTrialController {
 		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
 
 		final String listCsv = request.getParameter("variableList");
-		final List<SettingDetail> variableList = new ArrayList<>();
 
 		if (!measurementDatasetVariables.isEmpty()) {
 			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);
-			this.getTratisAndSelectionVariates(measurementDatasetVariables,newMeasurementDatasetVariables,listCsv,variableList);
+			this.getTraitsAndSelectionVariates(measurementDatasetVariables, newMeasurementDatasetVariables, listCsv);
 			measurementDatasetVariables = newMeasurementDatasetVariables;
 		}
 

@@ -612,11 +612,10 @@ public abstract class BaseTrialController extends SettingsController {
 		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
 
 		final String listCsv = request.getParameter("variableList");
-		final List<SettingDetail> variableList = new ArrayList<>();
 
 		if (!measurementDatasetVariables.isEmpty()) {
 			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);
-			this.getTratisAndSelectionVariates(measurementDatasetVariables,newMeasurementDatasetVariables,listCsv,variableList);
+			this.getTraitsAndSelectionVariates(measurementDatasetVariables, newMeasurementDatasetVariables, listCsv);
 			measurementDatasetVariables = newMeasurementDatasetVariables;
 		}
 
@@ -828,8 +827,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return newMeasurementDatasetVariables;
 	}
 
-	protected void getTratisAndSelectionVariates(List<MeasurementVariable> measurementDatasetVariables,List<MeasurementVariable> newMeasurementDatasetVariables, String listCsv,
-		List<SettingDetail> variableList) {
+	protected void getTraitsAndSelectionVariates(List<MeasurementVariable> measurementDatasetVariables,List<MeasurementVariable> newMeasurementDatasetVariables, String listCsv) {
 
 		if (listCsv != null && !"".equalsIgnoreCase(listCsv)) {
 			final StringTokenizer token = new StringTokenizer(listCsv, ",");
@@ -844,10 +842,8 @@ public abstract class BaseTrialController extends SettingsController {
 						ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
 					newVar.setFactor(false);
 					newMeasurementDatasetVariables.add(newVar);
-					SettingsUtil.findAndUpdateVariableName(variableList, newVar);
 				} else {
 					newMeasurementDatasetVariables.add(currentVar);
-					SettingsUtil.findAndUpdateVariableName(variableList, currentVar);
 				}
 			}
 		}

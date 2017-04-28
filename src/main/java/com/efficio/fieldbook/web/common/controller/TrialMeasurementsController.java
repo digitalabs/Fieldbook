@@ -634,20 +634,20 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		suffix = null == suffix ? "" : suffix;
 
 		// generate measurement row data from dataList (existing / generated data)
-		for (MeasurementDto data : row.getTraitMeasurements()) {
+		for (MeasurementDto data : row.getVariableMeasurements()) {
 
 			Variable measurementVariable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-					data.getTrait().getTraitId(), true, false);
+					data.getMeasurementVariable().getId(), true, false);
 
 			if (measurementVariable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
 
 				this.addDataTableDataMapForCategoricalVariable(measurementVariable, data, dataMap, suffix);
 
 			} else if (measurementVariable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
-				dataMap.put(data.getTrait().getTraitName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "", true,
+				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getVariableValue() != null ? data.getVariableValue() : "", true,
 						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 			} else {
-				dataMap.put(data.getTrait().getTraitName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "",
+				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getVariableValue() != null ? data.getVariableValue() : "",
 						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 			}
 		}
@@ -688,8 +688,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	void addDataTableDataMapForCategoricalVariable(final Variable measurementVariable, final MeasurementDto data, final Map<String, Object> dataMap, final String suffix) {
 
-		if (StringUtils.isBlank(data.getTriatValue())) {
-			dataMap.put(data.getTrait().getTraitName(),
+		if (StringUtils.isBlank(data.getVariableValue())) {
+			dataMap.put(data.getMeasurementVariable().getName(),
 					new Object[] {"", "", false, data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 		} else {
 			boolean isCategoricalValueFound = false;
@@ -698,7 +698,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 			// Find the categorical value (possible value) of the measurement data, so we can get its name and definition.
 			for (TermSummary category : measurementVariable.getScale().getCategories()) {
-				if (category.getName().equals(data.getTriatValue())) {
+				if (category.getName().equals(data.getVariableValue())) {
 					catName = category.getName();
 					catDisplayValue = category.getDefinition();
 					isCategoricalValueFound = true;
@@ -709,10 +709,10 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			// If the measurement value is out of range from categorical values, then the assumption is, it is custom value.
 			// For this case, just display the measaurement data as is.
 			if (!isCategoricalValueFound) {
-				catName = data.getTriatValue();
-				catDisplayValue = data.getTriatValue();
+				catName = data.getVariableValue();
+				catDisplayValue = data.getVariableValue();
 			}
-			dataMap.put(data.getTrait().getTraitName(), new Object[] {catName + suffix, catDisplayValue + suffix, true,
+			dataMap.put(data.getMeasurementVariable().getName(), new Object[] {catName + suffix, catDisplayValue + suffix, true,
 					data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 		}
 

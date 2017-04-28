@@ -30,9 +30,9 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.service.api.study.MeasurementDto;
+import org.generationcp.middleware.service.api.study.MeasurementVariableDto;
 import org.generationcp.middleware.service.api.study.ObservationDto;
 import org.generationcp.middleware.service.api.study.StudyService;
-import org.generationcp.middleware.service.api.study.TraitDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -603,9 +603,9 @@ public class TrialMeasurementsControllerTest {
 		request.addParameter("draw", drawParam);
 
 		StudyService studyService = Mockito.mock(StudyService.class);
-		MeasurementDto measurementText = new MeasurementDto(new TraitDto(1, "Notes"), 1, "Text Notes");
-		MeasurementDto measurementNumeric = new MeasurementDto(new TraitDto(2, "Grain Yield"), 2, "500");
-		MeasurementDto mesaurementCategorical = new MeasurementDto(new TraitDto(3, "CategoricalTrait"), 3, "CategoryValue1");
+		MeasurementDto measurementText = new MeasurementDto(new MeasurementVariableDto(1, "Notes"), 1, "Text Notes");
+		MeasurementDto measurementNumeric = new MeasurementDto(new MeasurementVariableDto(2, "Grain Yield"), 2, "500");
+		MeasurementDto mesaurementCategorical = new MeasurementDto(new MeasurementVariableDto(3, "CategoricalTrait"), 3, "CategoryValue1");
 
 		List<MeasurementDto> measurements = Lists.newArrayList(measurementText, measurementNumeric, mesaurementCategorical);
 		ObservationDto observationDto =
@@ -630,7 +630,7 @@ public class TrialMeasurementsControllerTest {
 		Scale scaleText = new Scale();
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(measurementText.getTrait().getTraitId()),
+		Mockito.when(this.ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(measurementText.getMeasurementVariable().getId()),
 				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableText);
 
 		Variable variableNumeric = new Variable();
@@ -638,7 +638,7 @@ public class TrialMeasurementsControllerTest {
 		scaleNumeric.setDataType(DataType.NUMERIC_VARIABLE);
 		variableNumeric.setScale(scaleNumeric);
 		Mockito.when(
-				this.ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(measurementNumeric.getTrait().getTraitId()),
+				this.ontologyVariableDataManager.getVariable(Mockito.anyString(), Mockito.eq(measurementNumeric.getMeasurementVariable().getId()),
 				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableNumeric);
 
 		Variable variableCategorical = new Variable();
@@ -648,7 +648,7 @@ public class TrialMeasurementsControllerTest {
 		scaleCategorical.addCategory(category1);
 		variableCategorical.setScale(scaleCategorical);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Mockito.anyString(),
-				Mockito.eq(mesaurementCategorical.getTrait().getTraitId()),
+				Mockito.eq(mesaurementCategorical.getMeasurementVariable().getId()),
 				Matchers.eq(true), Matchers.eq(false)))
 				.thenReturn(variableCategorical);
 
@@ -709,17 +709,17 @@ public class TrialMeasurementsControllerTest {
 				Arrays.equals(new Object[] {observationDto.getPlotId(), false}, (Object[]) onePlotMeasurementData.get("PLOT_ID")));
 
 		// Character Trait
-		Assert.assertTrue(Arrays.equals(new Object[] {measurementText.getTriatValue(), measurementText.getPhenotypeId()},
-				(Object[]) onePlotMeasurementData.get(measurementText.getTrait().getTraitName())));
+		Assert.assertTrue(Arrays.equals(new Object[] {measurementText.getVariableValue(), measurementText.getPhenotypeId()},
+				(Object[]) onePlotMeasurementData.get(measurementText.getMeasurementVariable().getName())));
 
 		// Numeric Trait
-		Assert.assertTrue(Arrays.equals(new Object[] {measurementNumeric.getTriatValue(), true, measurementNumeric.getPhenotypeId()},
-				(Object[]) onePlotMeasurementData.get(measurementNumeric.getTrait().getTraitName())));
+		Assert.assertTrue(Arrays.equals(new Object[] {measurementNumeric.getMeasurementVariable(), true, measurementNumeric.getPhenotypeId()},
+				(Object[]) onePlotMeasurementData.get(measurementNumeric.getMeasurementVariable().getName())));
 
 		// Categorical Trait
 		Assert.assertTrue(
 				Arrays.equals(new Object[] {category1.getName(), category1.getDefinition(), true, mesaurementCategorical.getPhenotypeId()},
-				(Object[]) onePlotMeasurementData.get(mesaurementCategorical.getTrait().getTraitName())));
+				(Object[]) onePlotMeasurementData.get(mesaurementCategorical.getMeasurementVariable().getName())));
 
 		ArgumentCaptor<Integer> pageNumberArg = ArgumentCaptor.forClass(Integer.class);
 		ArgumentCaptor<Integer> pageSizeArg = ArgumentCaptor.forClass(Integer.class);
@@ -743,7 +743,7 @@ public class TrialMeasurementsControllerTest {
 		final int aleucolPhenotypeId = 456;
 		final String aleucolPhenotypeTraitValue = "";
 
-		final MeasurementDto measurementDto = new MeasurementDto(new TraitDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
+		final MeasurementDto measurementDto = new MeasurementDto(new MeasurementVariableDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
 		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap ,"");
 
@@ -771,7 +771,7 @@ public class TrialMeasurementsControllerTest {
 		final int aleucolPhenotypeId = 456;
 		final String aleucolPhenotypeTraitValue = "DDD";
 
-		final MeasurementDto measurementDto = new MeasurementDto(new TraitDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
+		final MeasurementDto measurementDto = new MeasurementDto(new MeasurementVariableDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
 		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap ,"");
 
@@ -799,7 +799,7 @@ public class TrialMeasurementsControllerTest {
 		final int aleucolPhenotypeId = 456;
 		final String aleucolPhenotypeTraitValue = "AAA";
 
-		final MeasurementDto measurementDto = new MeasurementDto(new TraitDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
+		final MeasurementDto measurementDto = new MeasurementDto(new MeasurementVariableDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
 		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap ,"");
 

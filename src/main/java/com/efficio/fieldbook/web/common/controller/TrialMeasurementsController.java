@@ -59,6 +59,10 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @RequestMapping("/trial/measurements")
 public class TrialMeasurementsController extends AbstractBaseFieldbookController {
 
+	public static final String DESIGNATION = "DESIGNATION";
+
+	public static final String GID = "GID";
+
 	private static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrialMeasurementsController.class);
@@ -628,8 +632,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		// the 4 attributes are needed always
 		dataMap.put("Action", Integer.toString(row.getMeasurementId()));
 		dataMap.put("experimentId", Integer.toString(row.getMeasurementId()));
-		dataMap.put("GID", row.getGid());
-		dataMap.put("DESIGNATION", row.getDesignation());
+		// We always need to return GID and DESIGNATION as keys as they are expected for tooltip in table
+		dataMap.put(GID, row.getGid());
+		dataMap.put(DESIGNATION, row.getDesignation());
 
 		// initialize suffix as empty string if its null
 		suffix = null == suffix ? "" : suffix;
@@ -679,12 +684,28 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	}
 
 	/*
-	 * Generate measurement row data for standard factors like TRIAL_INSTANCE, ENTRY_NO, ENTRY_TYPE, PLOT_NO, REP_NO,
-	 * BLOCK_NO, ROW, COL, PLOT_ID and add to dataMap. Use the local name of the variable as key and the 
-	 * value of the variable as value in dataMap.
+	 * 1. Generate measurement row data for standard factors like TRIAL_INSTANCE, ENTRY_NO, ENTRY_TYPE, PLOT_NO, REP_NO,
+	 * BLOCK_NO, ROW, COL, PLOT_ID and add to dataMap. 
+	 * 2. Also adds additonal germplasm descriptors (eg. StockID) to dataMap
+	 * 3. If local variable name for GID and DESIGNATION are not equal to "GID" and "DESIGNATION" respectively, 
+	 * add them to map as well
+	 * 
+	 * Use the local name of the variable as key and the value of the variable as value in dataMap.
 	 */
 	private void addGermplasmAndPlotFactorsDataToDataMap(final ObservationDto row, Map<String, Object> dataMap,
 			List<MeasurementVariable> measurementDatasetVariables) {
+		final MeasurementVariable gidVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.GID.getId());
+		
+		// Add local variable names of GID and DESIGNATiON variables if they are not equal to "GID" and "DESIGNATION"
+		// "GID" and "DESIGNATION" are assumed to be added beforehand to dataMap
+		if (gidVar != null && !GID.equals(gidVar.getName())){
+			dataMap.put(gidVar.getName(), new Object[] {row.getGid(), false});
+		}
+		final MeasurementVariable desigVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.DESIG.getId());
+		if (desigVar != null && !DESIGNATION.equals(desigVar.getName())){
+			dataMap.put(desigVar.getName(), new Object[] {row.getDesignation(), false});
+		}
+		
 		final MeasurementVariable entryNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.ENTRY_NO.getId());
 		if (entryNoVar != null){
 			dataMap.put(entryNoVar.getName(), new Object[] {row.getEntryNo(), false});

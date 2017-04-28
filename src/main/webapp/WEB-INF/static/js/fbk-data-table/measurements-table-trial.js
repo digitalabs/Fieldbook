@@ -279,7 +279,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		$.ajax({
 			url: '/Fieldbook/TrialManager/openTrial/columns',
 			type: 'POST',
-            data: 'variableList=' + trialManagerDataService.settings.measurements.m_keys.concat(trialManagerDataService.settings.selectionVariables.m_keys).join()
+			data: 'variableList=' + trialManagerDataService.settings.measurements.m_keys.concat(trialManagerDataService.settings.selectionVariables.m_keys).join()
 		}).done(function(displayColumns) {
 
 			var columnsObj = getColumns(displayColumns, false);
@@ -477,7 +477,7 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 		$.ajax({
 			url: '/Fieldbook/TrialManager/createTrial/columns',
 			type: 'POST',
-            data: 'variableList=' + trialManagerDataService.settings.measurements.m_keys.concat(trialManagerDataService.settings.selectionVariables.m_keys).join() +
+			data: 'variableList=' + trialManagerDataService.settings.measurements.m_keys.concat(trialManagerDataService.settings.selectionVariables.m_keys).join() +
                 '&columnOrders=' + columnsOrder
 		}).done(function(displayColumns) {
 
@@ -597,8 +597,8 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 		$.ajax({
 			url: '/Fieldbook/TrialManager/createTrial/columns',
 			type: 'POST',
-            data: 'variableList=' + trialManagerDataService.settings.measurements.m_keys.concat(trialManagerDataService.settings.selectionVariables.m_keys).join() +
-            '&columnOrders=' + columnsOrder
+			data: 'variableList=' + trialManagerDataService.settings.measurements.m_keys.concat(trialManagerDataService.settings.selectionVariables.m_keys).join() +
+			'&columnOrders=' + columnsOrder
 		}).done(function(displayColumns) {
 
 			var columnsObj = getColumns(displayColumns, true);

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
+import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -601,6 +602,8 @@ public class TrialMeasurementsControllerTest {
 
 		String drawParam = "drawParamValue";
 		request.addParameter("draw", drawParam);
+		
+		this.setupMeasurementVariablesInMockWorkbook();
 
 		StudyService studyService = Mockito.mock(StudyService.class);
 		MeasurementDto measurementText = new MeasurementDto(new TraitDto(1, "Notes"), 1, "Text Notes");
@@ -732,6 +735,32 @@ public class TrialMeasurementsControllerTest {
 		Assert.assertEquals(new Integer(10), pageSizeArg.getValue());
 		Assert.assertEquals("ENTRY_NO", sortByArg.getValue());
 		Assert.assertEquals("desc", sortOrderArg.getValue());
+	}
+
+	private void setupMeasurementVariablesInMockWorkbook() {
+		final UserSelection userSelection = new UserSelection();
+		final Workbook workbook = Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class);
+		userSelection.setWorkbook(workbook);
+		
+		MeasurementVariableTestDataInitializer measurementVarDataInitializer = new MeasurementVariableTestDataInitializer();
+		List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(1, "Notes"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(2, "Grain Yield"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(3, "CategoricalTrait"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.GID.getId(), "GID"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.DESIG.getId(), "DESIGNATION"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.ENTRY_NO.getId(), "ENTRY_NO"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.ENTRY_TYPE.getId(), "ENTRY_TYPE"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.ENTRY_CODE.getId(), "ENTRY_CODE"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.PLOT_NO.getId(), "PLOT_NO"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.PLOT_ID.getId(), "PLOT_ID"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.BLOCK_NO.getId(), "BLOCK_NO"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.REP_NO.getId(), "REP_NO"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.ROW.getId(), "ROW"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.COL.getId(), "COL"));
+		measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE"));
+		Mockito.when(workbook.getMeasurementDatasetVariablesView()).thenReturn(measurementVariables);
+		this.trialMeasurementsController.setUserSelection(userSelection);
 	}
 
 	@Test

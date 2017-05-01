@@ -643,22 +643,22 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		measurementDatasetVariables.addAll(this.userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 
 		// generate measurement row data from dataList (existing / generated data)
-		for (MeasurementDto data : row.getTraitMeasurements()) {
+		for (MeasurementDto data : row.getVariableMeasurements()) {
 
-			final Integer traitId = data.getTrait().getTraitId();
+			final Integer variableId = data.getMeasurementVariable().getId();
 			Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-					traitId, true, false);
-			final MeasurementVariable measurementVariable = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, traitId);
-			
+					variableId, true, false);
+			final MeasurementVariable measurementVariable = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, variableId);
+
 			if (variable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
 
 				this.addDataTableDataMapForCategoricalVariable(variable, data, dataMap, measurementVariable.getName(), suffix);
 
 			} else if (variable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
-				dataMap.put(measurementVariable.getName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "", true,
+				dataMap.put(measurementVariable.getName(), new Object[] {data.getVariableValue() != null ? data.getVariableValue() : "", true,
 						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 			} else {
-				dataMap.put(measurementVariable.getName(), new Object[] {data.getTriatValue() != null ? data.getTriatValue() : "",
+				dataMap.put(measurementVariable.getName(), new Object[] {data.getVariableValue() != null ? data.getVariableValue() : "",
 						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 			}
 		}
@@ -685,17 +685,17 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	/*
 	 * 1. Generate measurement row data for standard factors like TRIAL_INSTANCE, ENTRY_NO, ENTRY_TYPE, PLOT_NO, REP_NO,
-	 * BLOCK_NO, ROW, COL, PLOT_ID and add to dataMap. 
+	 * BLOCK_NO, ROW, COL, PLOT_ID and add to dataMap.
 	 * 2. Also adds additonal germplasm descriptors (eg. StockID) to dataMap
-	 * 3. If local variable name for GID and DESIGNATION are not equal to "GID" and "DESIGNATION" respectively, 
+	 * 3. If local variable name for GID and DESIGNATION are not equal to "GID" and "DESIGNATION" respectively,
 	 * add them to map as well
-	 * 
+	 *
 	 * Use the local name of the variable as key and the value of the variable as value in dataMap.
 	 */
 	void addGermplasmAndPlotFactorsDataToDataMap(final ObservationDto row, Map<String, Object> dataMap,
 			List<MeasurementVariable> measurementDatasetVariables) {
 		final MeasurementVariable gidVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.GID.getId());
-		
+
 		// Add local variable names of GID and DESIGNATiON variables if they are not equal to "GID" and "DESIGNATION"
 		// "GID" and "DESIGNATION" are assumed to be added beforehand to dataMap
 		if (gidVar != null && !GID.equals(gidVar.getName())){
@@ -705,55 +705,65 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		if (desigVar != null && !DESIGNATION.equals(desigVar.getName())){
 			dataMap.put(desigVar.getName(), row.getDesignation());
 		}
-		
+
 		final MeasurementVariable entryNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.ENTRY_NO.getId());
 		if (entryNoVar != null){
 			dataMap.put(entryNoVar.getName(), new Object[] {row.getEntryNo(), false});
 		}
-		
+
 		final MeasurementVariable entryCodeVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.ENTRY_CODE.getId());
 		if (entryCodeVar != null) {
 			dataMap.put(entryCodeVar.getName(), new Object[] {row.getEntryCode(), false});
 		}
-		
+
 		final MeasurementVariable entryTypeVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.ENTRY_TYPE.getId());
-		if (entryTypeVar != null) { 
+		if (entryTypeVar != null) {
 			dataMap.put(entryTypeVar.getName(), new Object[] {row.getEntryType(), row.getEntryType(), false});
 		}
-		
+
 		final MeasurementVariable plotNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.PLOT_NO.getId());
-		if (plotNoVar != null) { 
+		if (plotNoVar != null) {
 			dataMap.put(plotNoVar.getName(), new Object[] {row.getPlotNumber(), false});
 		}
 
 		final MeasurementVariable repNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.REP_NO.getId());
-		if (repNoVar != null) { 
+		if (repNoVar != null) {
 			dataMap.put(repNoVar.getName(), new Object[] {row.getRepitionNumber(), false});
 		}
-		
+
 		final MeasurementVariable blockNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.BLOCK_NO.getId());
-		if (blockNoVar != null) { 
+		if (blockNoVar != null) {
 			dataMap.put(blockNoVar.getName(), new Object[] {row.getBlockNumber(), false});
 		}
 
 		final MeasurementVariable rowVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.ROW.getId());
-		if (rowVar != null) { 
+		if (rowVar != null) {
 			dataMap.put(rowVar.getName(), new Object[] {row.getRowNumber(), false});
 		}
-		
+
 		final MeasurementVariable colVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.COL.getId());
-		if (colVar != null) { 
+		if (colVar != null) {
 			dataMap.put(colVar.getName(), new Object[] {row.getColumnNumber(), false});
 		}
-		
+
 		final MeasurementVariable trialInstanceVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.TRIAL_INSTANCE_FACTOR.getId());
-		if (trialInstanceVar != null) { 
+		if (trialInstanceVar != null) {
 			dataMap.put(trialInstanceVar.getName(), new Object[] {row.getTrialInstance(), false});
 		}
-		
+
 		final MeasurementVariable plotIdVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.PLOT_ID.getId());
-		if (plotIdVar != null) { 
+		if (plotIdVar != null) {
 			dataMap.put(plotIdVar.getName(), new Object[] {row.getPlotId(), false});
+		}
+
+		final MeasurementVariable fieldMapcolumVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.FIELDMAP_COLUMN.getId());
+		if (fieldMapcolumVar != null) {
+			dataMap.put(fieldMapcolumVar.getName(), new Object[] {row.getFieldMapColumn(), false});
+		}
+
+		final MeasurementVariable fieldMapRangevar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.FIELDMAP_RANGE.getId());
+		if (fieldMapRangevar != null) {
+			dataMap.put(fieldMapRangevar.getName(), new Object[] {row.getFieldMapRange(), false});
 		}
 
 		for (Pair<String, String> additionalGermplasmAttrCols : row.getAdditionalGermplasmDescriptors()) {
@@ -763,7 +773,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	void addDataTableDataMapForCategoricalVariable(final Variable measurementVariable, final MeasurementDto data, final Map<String, Object> dataMap, final String localVariableName, final String suffix) {
 
-		if (StringUtils.isBlank(data.getTriatValue())) {
+		if (StringUtils.isBlank(data.getVariableValue())) {
 			dataMap.put(localVariableName,
 					new Object[] {"", "", false, data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
 		} else {
@@ -773,7 +783,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 			// Find the categorical value (possible value) of the measurement data, so we can get its name and definition.
 			for (TermSummary category : measurementVariable.getScale().getCategories()) {
-				if (category.getName().equals(data.getTriatValue())) {
+				if (category.getName().equals(data.getVariableValue())) {
 					catName = category.getName();
 					catDisplayValue = category.getDefinition();
 					isCategoricalValueFound = true;
@@ -784,8 +794,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			// If the measurement value is out of range from categorical values, then the assumption is, it is custom value.
 			// For this case, just display the measurement data as is.
 			if (!isCategoricalValueFound) {
-				catName = data.getTriatValue();
-				catDisplayValue = data.getTriatValue();
+				catName = data.getVariableValue();
+				catDisplayValue = data.getVariableValue();
 			}
 			dataMap.put(localVariableName, new Object[] {catName + suffix, catDisplayValue + suffix, true,
 					data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});

@@ -43,13 +43,10 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
@@ -74,12 +71,6 @@ public abstract class BaseTrialController extends SettingsController {
 	public static final String URL_EXPERIMENTAL_DESIGN = "TrialManager/templates/experimentalDesign";
 	public static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
 	public static final String URL_DATATABLE = "Common/showAddOrRemoveTraitsPagination";
-
-	/**
-	 * The ontology service.
-	 */
-	@Resource
-	protected OntologyService ontologyService;
 
 	protected void createStudyDetails(final Workbook workbook, final BasicDetails detailBean) {
 		if (workbook.getStudyDetails() == null) {
@@ -620,15 +611,7 @@ public abstract class BaseTrialController extends SettingsController {
 		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
 		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
 
-		final String traitsListCsv = request.getParameter("traitsList");
-		final String selectionVariablesListCsv = request.getParameter("selectionVariablesList");
-		final String listCsv;
-		if (!StringUtil.isEmpty(traitsListCsv) && !StringUtil.isEmpty(selectionVariablesListCsv)) {
-			listCsv = traitsListCsv + "," + selectionVariablesListCsv;
-
-		} else {
-			listCsv = !StringUtil.isEmpty(traitsListCsv) ? traitsListCsv : selectionVariablesListCsv;
-		}
+		final String listCsv = request.getParameter("variableList");
 
 		if (!measurementDatasetVariables.isEmpty()) {
 			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);

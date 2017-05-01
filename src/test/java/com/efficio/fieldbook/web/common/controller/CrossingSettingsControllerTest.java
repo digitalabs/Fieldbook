@@ -3,15 +3,19 @@ package com.efficio.fieldbook.web.common.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import org.generationcp.commons.constant.ColumnLabels;
+import org.generationcp.commons.data.initializer.ImportedCrossesTestDataInitializer;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.service.CrossNameService;
@@ -37,6 +41,7 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,8 +98,10 @@ public class CrossingSettingsControllerTest {
 	public static final String NOTES = "Test notes";
 	public static final String FEMALE_PEDIGREE = "-";
 	public static final String MALE_PEDIGREE = "-";
-
-
+	
+	private ImportedCrossesTestDataInitializer importedCrossesTestDataInitializer;
+	@Mock
+	private CrossExpansionProperties crossExpansionProperties;
 	@Mock
 	private WorkbenchService workbenchService;
 	@Mock
@@ -140,6 +147,9 @@ public class CrossingSettingsControllerTest {
 		studyDetails.setId(CrossingSettingsControllerTest.DUMMY_STUDY_ID);
 		workbook.setStudyDetails(studyDetails);
 		Mockito.when(this.studySelection.getWorkbook()).thenReturn(workbook);
+		Mockito.when(this.crossExpansionProperties.getHybridBreedingMethods()).thenReturn(new HashSet<Integer>(Arrays.asList(1)));
+		Mockito.when(this.germplasmDataManager.getMethodCodeByMethodIds(this.crossExpansionProperties.getHybridBreedingMethods())).thenReturn(new ArrayList<String>(Arrays.asList("TCR")));
+		this.importedCrossesTestDataInitializer = new ImportedCrossesTestDataInitializer();
 	}
 
 	private void mockMappingOfHeadersToOntology() {
@@ -382,6 +392,27 @@ public class CrossingSettingsControllerTest {
 
 		Mockito.verify(this.presetDataManager, times(1)).deleteProgramPreset(programPresetId);
 	}
+	
+	@Test
+	public void testGetHybridMethods() {
+		Set<Integer> hybridMethods = this.crossingSettingsController.getHybridMethods();
+		Assert.assertNotNull("The hybrid methods should not be null", hybridMethods);
+		Assert.assertFalse("The Hybrid methods should not be empty", hybridMethods.isEmpty());
+		
+	}
+	
+	@Test
+	public void testCheckForHybridMethodsTrue() {
+		List<ImportedCrosses> importedCrosses = this.importedCrossesTestDataInitializer.createImportedCrossesList(1, true);
+		Assert.assertTrue("The imported crosses should have hybrid methods", this.crossingSettingsController.checkForHybridMethods(importedCrosses ));
+	}
+	
+	@Test
+	public void testCheckForHybridMethodsFalse() {
+		List<ImportedCrosses> importedCrosses = this.importedCrossesTestDataInitializer.createImportedCrossesList(1, false);
+		Assert.assertFalse("The imported crosses should not have hybrid methods", this.crossingSettingsController.checkForHybridMethods(importedCrosses));
+	}
+	
 
 	public List<ProgramPreset> constructDummyPresetList() throws JAXBException {
 		final ProgramPreset existing = new ProgramPreset();

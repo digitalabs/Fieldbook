@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -41,8 +42,10 @@ import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.UDTableType;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.FileSystemResource;
@@ -84,7 +87,10 @@ public class CrossingSettingsController extends SettingsController {
 	private static final String HAS_PLOT_DUPLICATE = "hasPlotDuplicate";
 	public static final String CHOOSING_LIST_OWNER_NEEDED = "isChoosingListOwnerNeeded";
 	public static final String ERROR = "error";
-
+	
+	@Autowired
+	private CrossExpansionProperties crossExpansionProperties;
+	
 	@Resource
 	private WorkbenchService workbenchService;
 
@@ -337,13 +343,32 @@ public class CrossingSettingsController extends SettingsController {
 			} else {
 				resultsMap.put(CrossingSettingsController.CHOOSING_LIST_OWNER_NEEDED, 0);
 			}
-
+			
+			resultsMap.put("hasHybridMethod", this.checkForHybridMethods(parseResults.getImportedCrosses()));
 		} catch (final FileParsingException e) {
 			CrossingSettingsController.LOG.error(e.getMessage(), e);
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 0);
 			resultsMap.put(ERROR, new String[] {e.getMessage()});
 		}
+		
+		
 		return super.convertObjectToJson(resultsMap);
+	}
+
+	boolean checkForHybridMethods(List<ImportedCrosses> importedCrosses) {
+		List<String> hybridMethods = this.germplasmDataManager.getMethodCodeByMethodIds(this.crossExpansionProperties.getHybridBreedingMethods());
+		for(ImportedCrosses importedCross: importedCrosses){
+			if(hybridMethods.contains(importedCross.getRawBreedingMethod().toUpperCase())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getHybridMethods", method = RequestMethod.GET)
+	public Set<Integer> getHybridMethods() {
+		return this.crossExpansionProperties.getHybridBreedingMethods();
 	}
 
 	@ResponseBody

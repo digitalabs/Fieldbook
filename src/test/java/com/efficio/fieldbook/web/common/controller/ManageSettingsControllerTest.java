@@ -71,6 +71,21 @@ public class ManageSettingsControllerTest {
 			.asList(ManageSettingsControllerTest.TEST_VARIABLE_ID_0, ManageSettingsControllerTest.TEST_VARIABLE_ID_1,
 				ManageSettingsControllerTest.TEST_VARIABLE_ID_2), VariableType.TRAIT.getId()))));
 	}
+	
+	@Test
+	public void testHasMeasurementDataWithNullWorkbook() throws Exception {
+		ManageSettingsController spyController = this.initializeMockMeasurementRows();
+		// Returning null workbook mean trial is unsaved yet
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
+		
+		final boolean hasMeasurementData = spyController.hasMeasurementData(Arrays
+			.asList(ManageSettingsControllerTest.TEST_VARIABLE_ID_0, ManageSettingsControllerTest.TEST_VARIABLE_ID_1,
+				ManageSettingsControllerTest.TEST_VARIABLE_ID_2), VariableType.TRAIT.getId());
+		
+		// Unsaved trial will have no measurement data
+		assertThat(false, is(equalTo(hasMeasurementData)));
+		Mockito.verify(this.studyService, Mockito.never()).hasMeasurementDataEntered(Matchers.anyListOf(Integer.class), Matchers.anyInt());
+	}
 
 	@Test
 	public void testHasMeasurementFailScenario() throws Exception {

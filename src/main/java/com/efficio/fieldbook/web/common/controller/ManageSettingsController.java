@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -400,6 +401,11 @@ public class ManageSettingsController extends SettingsController {
 	@RequestMapping(value = "/hasMeasurementData/{mode}", method = RequestMethod.POST)
 	@Transactional
 	public boolean hasMeasurementData(@RequestBody List<Integer> ids, @PathVariable int mode) {
+		// if study is not yet saved, no measurement data yet
+		final Workbook savedWorkbook = this.userSelection.getWorkbook();
+		if (savedWorkbook == null) {
+			return false;
+		}
 		return this.checkModeAndHasMeasurementDataEntered(mode, ids, this.userSelection.getWorkbook().getStudyDetails().getId());
 	}
 

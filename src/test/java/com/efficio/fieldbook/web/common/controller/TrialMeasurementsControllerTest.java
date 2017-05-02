@@ -71,6 +71,7 @@ public class TrialMeasurementsControllerTest {
 	private static final String TERM_ID = "termId";
 	private static final String IS_DISCARD = "isDiscard";
 	private static final String EXPERIMENT_ID = "experimentId";
+	private static final String ACTION = "Action";
 	private static final String CROSS = "CROSS";
 	private static final String STOCK_ID = "StockID";
 	private static final String ALEUCOL_1_5_TRAIT_NAME = "ALEUCOL_1_5";
@@ -711,18 +712,7 @@ public class TrialMeasurementsControllerTest {
 		final boolean isGidDesigFactorsIncluded = true;
 		this.verifyCorrectValuesForFactors(onePlotMeasurementData, observationDto, isGidDesigFactorsIncluded, doAddNewGermplasmDescriptors, useDifferentLocalNames);
 
-		// Character Trait
-		Assert.assertTrue(Arrays.equals(new Object[] {this.measurementText.getVariableValue(), this.measurementText.getPhenotypeId()},
-				(Object[]) onePlotMeasurementData.get(measurementText.getMeasurementVariable().getName())));
-
-		// Numeric Trait
-		Assert.assertTrue(Arrays.equals(new Object[] {this.measurementNumeric.getVariableValue(), true, this.measurementNumeric.getPhenotypeId()},
-				(Object[]) onePlotMeasurementData.get(measurementNumeric.getMeasurementVariable().getName())));
-
-		// Categorical Trait
-		Assert.assertTrue(
-				Arrays.equals(new Object[] {category1.getName(), category1.getDefinition(), true, this.measurementCategorical.getPhenotypeId()},
-				(Object[]) onePlotMeasurementData.get(this.measurementCategorical.getMeasurementVariable().getName())));
+		this.verifyCorrectValuesForTraits(category1, onePlotMeasurementData);
 
 		ArgumentCaptor<Integer> pageNumberArg = ArgumentCaptor.forClass(Integer.class);
 		ArgumentCaptor<Integer> pageSizeArg = ArgumentCaptor.forClass(Integer.class);
@@ -736,6 +726,67 @@ public class TrialMeasurementsControllerTest {
 		Assert.assertEquals(new Integer(10), pageSizeArg.getValue());
 		Assert.assertEquals(TermId.ENTRY_NO.name(), sortByArg.getValue());
 		Assert.assertEquals("desc", sortOrderArg.getValue());
+	}
+	
+	@Test
+	public void testGenerateDatatableDataMap() {
+		final boolean useDifferentLocalNames = false;
+		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
+
+		final int recordsCount = 1;
+		final TermSummary category1 = new TermSummary(111, this.measurementCategorical.getVariableValue(), "CategoryValue1Definition");
+		final boolean doAddNewGermplasmDescriptors = false;
+		List<ObservationDto> observations = this.setupTestObservations(recordsCount, category1, doAddNewGermplasmDescriptors);
+		final ObservationDto observationDto = observations.get(0);
+		
+		// Method to test
+		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto, "");
+
+		Assert.assertNotNull("Expected a non-null data map.", dataMap);
+		Assert.assertEquals(String.valueOf(observationDto.getMeasurementId()), dataMap.get(EXPERIMENT_ID));
+		Assert.assertEquals(String.valueOf(observationDto.getMeasurementId()), dataMap.get(ACTION));
+
+		// Verify the factor and trait names and values were included properly in data map
+		final boolean isGidDesigFactorsIncluded = true;
+		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded, doAddNewGermplasmDescriptors, useDifferentLocalNames);
+		this.verifyCorrectValuesForTraits(category1, dataMap);
+	}
+	
+	@Test
+	public void testGenerateDatatableDataMapWithDeletedTrait() {
+		final boolean useDifferentLocalNames = false;
+		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
+		// Remove from measurement variables the character trait, but it is still in test observations
+		this.measurementVariables.remove(0);
+
+		final int recordsCount = 1;
+		final TermSummary category1 = new TermSummary(111, this.measurementCategorical.getVariableValue(), "CategoryValue1Definition");
+		final boolean doAddNewGermplasmDescriptors = false;
+		List<ObservationDto> observations = this.setupTestObservations(recordsCount, category1, doAddNewGermplasmDescriptors);
+		final ObservationDto observationDto = observations.get(0);
+		
+		// Method to test
+		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto, "");
+
+		// Verify that values exist for retained traits but deleted trait is not included in data map
+		Assert.assertNotNull(dataMap.get(this.measurementNumeric.getMeasurementVariable().getName()));
+		Assert.assertNotNull(dataMap.get(this.measurementCategorical.getMeasurementVariable().getName()));
+		Assert.assertNull(dataMap.get(this.measurementText.getMeasurementVariable().getName()));
+	}
+
+	private void verifyCorrectValuesForTraits(final TermSummary category1, final Map<String, Object> dataMap) {
+		// Character Trait
+		Assert.assertTrue(Arrays.equals(new Object[] {this.measurementText.getVariableValue(), this.measurementText.getPhenotypeId()},
+				(Object[]) dataMap.get(measurementText.getMeasurementVariable().getName())));
+
+		// Numeric Trait
+		Assert.assertTrue(Arrays.equals(new Object[] {this.measurementNumeric.getVariableValue(), true, this.measurementNumeric.getPhenotypeId()},
+				(Object[]) dataMap.get(measurementNumeric.getMeasurementVariable().getName())));
+
+		// Categorical Trait
+		Assert.assertTrue(
+				Arrays.equals(new Object[] {category1.getName(), category1.getDefinition(), true, this.measurementCategorical.getPhenotypeId()},
+				(Object[]) dataMap.get(this.measurementCategorical.getMeasurementVariable().getName())));
 	}
 
 	private void verifyCorrectValuesForFactors(final Map<String, Object> onePlotMeasurementData, final ObservationDto observationDto, final boolean isGidDesigFactorsIncluded, final boolean isNewGermplasmDescriptorsAdded, final boolean useDifferentLocalNames) {

@@ -62,20 +62,31 @@ function generateDataForProcessing() {
 
 					$.each(dataChanges.data, function(index, value) {
 						for (i = 0; i < value.values.length; i++) {
-							var traitColumnIndex = value.values[i].colIndex;
-							if ((value.values[i].action === '2' || value.values[i].action === '') && value.values[i].newValue != '') {
-								oTable.fnUpdate([value.values[i].newValue,''], value.values[i].rowIndex,
-									traitColumnIndex, false); // Cell
+							var columnIndex = value.values[i].colIndex;
+							var rowIndex = value.values[i].rowIndex;
+							var cell = $(oTable).find('tr').eq(rowIndex+1).find('td').eq(columnIndex-1);
+
+							//if Action is Accept as is, do not update value. Just highlight as accepted
+							if  (value.values[i].action === '1'){
+								$(cell).removeClass('invalid-value');
+								$(cell).addClass('accepted-value');
+							
+							// if action is Assign new value for all entries or new value was set individually. Highlight as accepted
+							} else if ((value.values[i].action === '2' || value.values[i].action === '') && value.values[i].newValue != '') {
+								oTable.fnUpdate([value.values[i].newValue,''], rowIndex,
+									columnIndex, false); // Cell
+                    			$(cell).removeClass('invalid-value');
+                    			$(cell).addClass('accepted-value');
+
+                    		// if action is set cell value to Missing. No highlighting for missing values
                     		} else if (value.values[i].action === '3') {
-                    			oTable.fnUpdate(['missing',''], value.values[i].rowIndex,
-									traitColumnIndex, false); // Cell
-                            }
+                    			oTable.fnUpdate(['missing',''], rowIndex,
+									columnIndex, false); // Cell	
+                    			$(cell).removeClass('invalid-value');
+                            } 
                     	}
                     });
 
-                    $(".dataTable td[class*='invalid-value']").each(function() {
-                    	$(this).removeClass('invalid-value');
-                    });
 				} else {
 					showErrorMessage('', data.errorMessage);
 				}

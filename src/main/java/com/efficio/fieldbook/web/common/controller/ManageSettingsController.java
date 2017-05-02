@@ -413,7 +413,11 @@ public class ManageSettingsController extends SettingsController {
 	@RequestMapping(value = "/hasMeasurementData/environmentNo/{environmentNo}", method = RequestMethod.POST)
 	@Transactional
 	public boolean hasMeasurementDataOnEnvironment(@RequestBody List<Integer> ids, @PathVariable int environmentNo) {
-
+		// if study is not yet saved, no measurement data yet
+		final Workbook savedWorkbook = this.userSelection.getWorkbook();
+		if (savedWorkbook == null) {
+			return false;
+		}
 		return this.studyService
 			.hasMeasurementDataOnEnvironment(this.userSelection.getWorkbook().getStudyDetails().getId(), environmentNo);
 	}

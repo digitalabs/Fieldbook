@@ -398,13 +398,9 @@ public class ManageSettingsController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/hasMeasurementData/{mode}", method = RequestMethod.POST)
+	@Transactional
 	public boolean hasMeasurementData(@RequestBody List<Integer> ids, @PathVariable int mode) {
-		for (Integer id : ids) {
-			if (this.checkModeAndHasMeasurementData(mode, id)) {
-				return true;
-			}
-		}
-		return false;
+		return this.checkModeAndHasMeasurementDataEntered(mode, ids, this.userSelection.getWorkbook().getStudyDetails().getId());
 	}
 
 	@ResponseBody
@@ -412,15 +408,17 @@ public class ManageSettingsController extends SettingsController {
 	@Transactional
 	public boolean hasMeasurementDataOnEnvironment(@RequestBody List<Integer> ids, @PathVariable int environmentNo) {
 
-		final int numberOfObservations = this.studyService.countTotalObservationUnits(
-				this.userSelection.getWorkbook().getStudyDetails().getId(), environmentNo);
-
-		return numberOfObservations > 0;
+		return this.studyService
+			.hasMeasurementDataOnEnvironment(this.userSelection.getWorkbook().getStudyDetails().getId(), environmentNo);
 	}
 
 	protected boolean checkModeAndHasMeasurementData(int mode, int variableId) {
 		return mode == VariableType.TRAIT.getId() && this.userSelection.getMeasurementRowList() != null && !this.userSelection
 				.getMeasurementRowList().isEmpty() && this.hasMeasurementDataEntered(variableId);
+	}
+
+	protected boolean checkModeAndHasMeasurementDataEntered(final int mode, final List<Integer> ids, final Integer studyId) {
+		return mode == VariableType.TRAIT.getId() && this.studyService.hasMeasurementDataEntered(ids, studyId);
 	}
 
 	@Override

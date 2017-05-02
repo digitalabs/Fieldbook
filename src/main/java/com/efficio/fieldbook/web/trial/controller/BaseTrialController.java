@@ -43,12 +43,10 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
@@ -73,12 +71,6 @@ public abstract class BaseTrialController extends SettingsController {
 	public static final String URL_EXPERIMENTAL_DESIGN = "TrialManager/templates/experimentalDesign";
 	public static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
 	public static final String URL_DATATABLE = "Common/showAddOrRemoveTraitsPagination";
-
-	/**
-	 * The ontology service.
-	 */
-	@Resource
-	protected OntologyService ontologyService;
 
 	protected void createStudyDetails(final Workbook workbook, final BasicDetails detailBean) {
 		if (workbook.getStudyDetails() == null) {
@@ -618,39 +610,12 @@ public abstract class BaseTrialController extends SettingsController {
 
 		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
 		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
-		// we show only traits that are being passed by the frontend
-		final String traitsListCsv = request.getParameter("traitsList");
 
-		final List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
-
-		final List<SettingDetail> traitList = this.userSelection.getBaselineTraitsList();
+		final String listCsv = request.getParameter("variableList");
 
 		if (!measurementDatasetVariables.isEmpty()) {
-			for (final MeasurementVariable var : measurementDatasetVariables) {
-				if (var.isFactor()) {
-					newMeasurementDatasetVariables.add(var);
-				}
-			}
-			if (traitsListCsv != null && !"".equalsIgnoreCase(traitsListCsv)) {
-				final StringTokenizer token = new StringTokenizer(traitsListCsv, ",");
-				while (token.hasMoreTokens()) {
-					final int id = Integer.valueOf(token.nextToken());
-					final MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
-					if (currentVar == null) {
-						final StandardVariable var =
-								this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
-						var.setPhenotypicType(PhenotypicType.VARIATE);
-						final MeasurementVariable newVar =
-								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
-						newVar.setFactor(false);
-						newMeasurementDatasetVariables.add(newVar);
-						SettingsUtil.findAndUpdateVariableName(traitList, newVar);
-					} else {
-						newMeasurementDatasetVariables.add(currentVar);
-						SettingsUtil.findAndUpdateVariableName(traitList, currentVar);
-					}
-				}
-			}
+			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);
+			this.getTraitsAndSelectionVariates(measurementDatasetVariables, newMeasurementDatasetVariables, listCsv);
 			measurementDatasetVariables = newMeasurementDatasetVariables;
 		}
 
@@ -849,5 +814,38 @@ public abstract class BaseTrialController extends SettingsController {
 			x++;
 		}
 
+	}
+
+
+	protected List<MeasurementVariable> getMeasurementVariableFactor(List<MeasurementVariable> measurementDatasetVariables) {
+		List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
+		for (final MeasurementVariable var : measurementDatasetVariables) {
+			if (var.isFactor()) {
+				newMeasurementDatasetVariables.add(var);
+			}
+		}
+		return newMeasurementDatasetVariables;
+	}
+
+	protected void getTraitsAndSelectionVariates(List<MeasurementVariable> measurementDatasetVariables,List<MeasurementVariable> newMeasurementDatasetVariables, String listCsv) {
+
+		if (listCsv != null && !"".equalsIgnoreCase(listCsv)) {
+			final StringTokenizer token = new StringTokenizer(listCsv, ",");
+			while (token.hasMoreTokens()) {
+				final int id = Integer.valueOf(token.nextToken());
+				final MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
+				if (currentVar == null) {
+					final StandardVariable var =
+						this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
+					var.setPhenotypicType(PhenotypicType.VARIATE);
+					final MeasurementVariable newVar =
+						ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
+					newVar.setFactor(false);
+					newMeasurementDatasetVariables.add(newVar);
+				} else {
+					newMeasurementDatasetVariables.add(currentVar);
+				}
+			}
+		}
 	}
 }

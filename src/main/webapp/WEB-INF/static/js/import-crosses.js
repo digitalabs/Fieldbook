@@ -6,6 +6,8 @@ var ImportCrosses = {
 	showFavoriteLocationsOnly: true,
 	preservePlotDuplicates: false,
 	isFileCrossesImport: true,
+	hasHybridMethod: false,
+	hybridMethods: null,
 	showPopup: function() {
 		'use strict';
 		$('#fileupload-import-crosses').val('');
@@ -41,7 +43,9 @@ var ImportCrosses = {
 
 			ImportCrosses.isFileCrossesImport = true;
 			createdCrossesListId = null;
-
+			
+			ImportCrosses.hasHybridMethod = resp.hasHybridMethod;
+			
 			$('#crossSetBreedingMethodModal').addClass('import-crosses-from-file');
 
 			if (resp.isChoosingListOwnerNeeded) {
@@ -76,12 +80,12 @@ var ImportCrosses = {
 		'use strict';
 		var crossSettingsPopupModal = $('#crossSetBreedingMethodModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
-
-		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
-			'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
+		
+		if(!ImportCrosses.hasHybridMethod) $("#applyGroupingOptionDiv").hide();
 
 		$("#breedingMethodSelectionDiv :input").attr("disabled", true);
 		$('#breedingMethodDropdown').select2('val', null);
+		$('#breedingMethodDropdown').on('change', ImportCrosses.retrieveHybridMethods);
 		$("#showFavoritesOnlyCheckbox").prop('checked', true);
 		$("#showBreedingMethodOnlyRadio").prop('checked', true);
 
@@ -122,8 +126,34 @@ var ImportCrosses = {
 			ImportCrosses.goBackToPage('#crossSetBreedingMethodModal', '.import-crosses-section .modal');
 		});
 
-	},
+        BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
+            'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
 
+	},
+	
+	retrieveHybridMethods : function () {
+		if(ImportCrosses.hybridMethods === null){
+			$.ajax({
+				url: ImportCrosses.CROSSES_URL + '/getHybridMethods',
+				type: 'GET',
+				cache: false,
+				success: function(data) {
+					ImportCrosses.hybridMethods = data;
+				}
+			}).done(ImportCrosses.showOrHideApplyGroupingOptionDiv);
+		} else {
+			ImportCrosses.showOrHideApplyGroupingOptionDiv();
+		}
+	},
+	
+	showOrHideApplyGroupingOptionDiv : function () {
+		if(!ImportCrosses.hybridMethods.includes(parseInt($('#breedingMethodDropdown').select2('val')))) {
+			$("#applyGroupingOptionDiv").hide();
+		} else {
+			$("#applyGroupingOptionDiv").show();
+		}
+	},
+	
 	resetCrossSettingsModal: function () {
         $('#crossPrefix').val('');
         $('#sequenceNumberDigits').select2('val', '');
@@ -196,8 +226,7 @@ var ImportCrosses = {
 				showErrorMessage('', response.error);
 				return;
 			}
-			new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
-			$('#preview-crosses-table').resize();
+		new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response.listDataTable, response.tableHeaderList,response.isImport);
 		}).fail(function (jqXHR, textStatus) {
 			showErrorMessage('', textStatus);
 		});
@@ -386,6 +415,13 @@ var ImportCrosses = {
 			$("#breedingMethodSelectionDiv :input").attr("disabled", true);
 			$('#breedingMethodDropdown').select2('val', null);
 		}
+		
+		if ($('#selectMethodInImportFile').prop('checked') && ImportCrosses.hasHybridMethod) {
+			$("#applyGroupingOptionDiv").show();
+		} else {
+			$("#applyGroupingOptionDiv").hide();
+		}
+		
 	},
 
 	validateStartingSequenceNumber: function(value) {
@@ -464,7 +500,7 @@ var ImportCrosses = {
 		crossSettingsPopupModal.data('open', '1');
 
 		BreedingMethodsFunctions.openMethodsModal();
-
+		
 		$('#manageMethodModal').one('hidden.bs.modal', function () {
 			$('#manageMethodModal').modal ('hide');
 			$('#crossSetBreedingMethodModal').modal({ backdrop: 'static', keyboard: true });
@@ -679,6 +715,7 @@ var ImportCrosses = {
 		settingObject.crossNameSetting.saveParentageDesignationAsAString =
 			$('input:radio[name=hasParentageDesignationName]:checked').val() === 'true';
 		settingObject.preservePlotDuplicates =  ImportCrosses.preservePlotDuplicates;
+		settingObject.applyNewGroupToPreviousCrosses = !$('#applyGroupingCheckBox').prop('checked');
 		settingObject.isUseManualSettingsForNaming = $('input:radio[name=manualNamingSettings]:checked').val() === 'true';
 		settingObject.additionalDetailsSetting = {};
 		settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');

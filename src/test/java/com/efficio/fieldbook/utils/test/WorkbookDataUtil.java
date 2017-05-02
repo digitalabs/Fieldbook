@@ -80,6 +80,7 @@ public class WorkbookDataUtil {
 	private static final String DATE = "Date (yyyymmdd)";
 	private static final String KG_HA = "kg/ha";
 	private static final String PH = "ph";
+	private static final String TEXT = "TEXT";
 
 	// METHODS
 	private static final String ASSIGNED = "ASSIGNED";
@@ -330,6 +331,13 @@ public class WorkbookDataUtil {
 						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.FIELD_PLOT, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
 						WorkbookDataUtil.PLOT);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
+		factors.add(variable);
+
+		variable =
+				new MeasurementVariable(TermId.PLOT_ID.getId(), WorkbookDataUtil.PLOT, "Field plot id - assigned (text)", WorkbookDataUtil.TEXT,
+						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.FIELD_PLOT, WorkbookDataUtil.CHAR, "",
+						WorkbookDataUtil.ENTRY);
+		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		factors.add(variable);
 
 		// Plot Factors

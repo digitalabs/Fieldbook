@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -68,6 +69,11 @@ public class WorkbookUtil {
 
 	public static List<MeasurementRow> filterObservationsByTrialInstance(final List<MeasurementRow> observations, final String trialInstance) {
 		final List<MeasurementRow> list = new ArrayList<>();
+
+		if (StringUtils.isBlank(trialInstance)) {
+			return observations;
+		}
+
 		if (observations != null && !observations.isEmpty()) {
 			final List<MeasurementVariable> variables = observations.get(0).getMeasurementVariables();
 			for (final MeasurementRow row : observations) {

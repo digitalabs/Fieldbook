@@ -139,6 +139,8 @@
 					TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 
 					reloadMeasurementPage(result.deletedEnvironmentIndex, $scope.getListOfAdditionalColumns());
+					$scope.environmentsList.pop($scope.environmentsList[result.deletedEnvironmentIndex]);
+					$scope.selectedEnvironment = $scope.environmentsList[0];
 				});
 
 				$scope.$on('variableAdded', function() {
@@ -159,10 +161,8 @@
 					var $measurementContainer = $('#measurementsDiv');
 
 					if ($measurementTable.length !== 0) {
-						/*var columnsOrder = $('#measurement-table') && $('#measurement-table').length !== 0 ?
-							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true) : [];*/
 						var addedData = '&columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
-						var dataParam = 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys +
+						var dataParam = 'variableList=' + TrialManagerDataService.settings.measurements.m_keys.concat(TrialManagerDataService.settings.selectionVariables.m_keys).join() +
 							'&deletedEnvironment=' + deletedEnvironmentIndex + addedData;
 
 						return $http.post('/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement', dataParam,

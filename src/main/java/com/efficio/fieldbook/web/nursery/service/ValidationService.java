@@ -22,9 +22,9 @@ public interface ValidationService {
 
 	boolean isValidValue(MeasurementVariable var, String value, boolean validateDateForDB);
 
-	void validateObservationValues(Workbook workbook, String instanceNumber) throws WorkbookParserException;
+	void validateObservationValues(Workbook workbook) throws WorkbookParserException;
 
-	String validateConditionAndConstantValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException;
+	String validateConditionAndConstantValues(Workbook workbook) throws MiddlewareQueryException;
 
 	void validateObservationValues(Workbook workbook, MeasurementRow row) throws MiddlewareQueryException;
 

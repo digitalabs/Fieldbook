@@ -1,11 +1,13 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -24,15 +26,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ManageSettingsControllerTest {
 
-	private static final int NO_OF_TRIAL_INSTANCES = 2;
-	private static final int NO_OF_OBSERVATIONS = 10;
+	private static final int STUDY_ID = 2020;
 	public static final int TEST_VARIABLE_ID_0 = 1234;
 	public static final int TEST_VARIABLE_ID_1 = 3456;
 	public static final int TEST_VARIABLE_ID_2 = 4567;
@@ -71,6 +70,43 @@ public class ManageSettingsControllerTest {
 			.asList(ManageSettingsControllerTest.TEST_VARIABLE_ID_0, ManageSettingsControllerTest.TEST_VARIABLE_ID_1,
 				ManageSettingsControllerTest.TEST_VARIABLE_ID_2), VariableType.TRAIT.getId()))));
 	}
+	
+	@Test
+	public void testHasMeasurementDataWithNullWorkbook() throws Exception {
+		ManageSettingsController spyController = this.initializeMockMeasurementRows();
+		// Returning null workbook means trial is unsaved yet
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
+		
+		final boolean hasMeasurementData = spyController.hasMeasurementData(Arrays
+			.asList(ManageSettingsControllerTest.TEST_VARIABLE_ID_0, ManageSettingsControllerTest.TEST_VARIABLE_ID_1,
+				ManageSettingsControllerTest.TEST_VARIABLE_ID_2), VariableType.TRAIT.getId());
+		
+		// Unsaved trial will have no measurement data
+		assertThat(false, is(equalTo(hasMeasurementData)));
+		Mockito.verify(this.studyService, Mockito.never()).hasMeasurementDataEntered(Matchers.anyListOf(Integer.class), Matchers.anyInt());
+	}
+	
+	@Test
+	public void testHasMeasurementDataOnEnvironment() throws Exception {
+		final int environmentNo = 1;
+		ManageSettingsController spyController = this.initializeMockMeasurementRows();
+		Mockito.doReturn(true).when(this.studyService).hasMeasurementDataOnEnvironment(STUDY_ID, environmentNo);
+		
+		assertThat(true, is(equalTo(spyController.hasMeasurementDataOnEnvironment(new ArrayList<Integer>(), environmentNo))));
+	}
+	
+	@Test
+	public void testHasMeasurementDataOnEnvironmentWithNullWorkbook() throws Exception {
+		ManageSettingsController spyController = this.initializeMockMeasurementRows();
+		// Returning null workbook means trial is unsaved yet
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
+		
+		final boolean hasMeasurementData = spyController.hasMeasurementDataOnEnvironment(new ArrayList<Integer>(), 1);
+		
+		// Unsaved trial will have no measurement data
+		assertThat(false, is(equalTo(hasMeasurementData)));
+		Mockito.verify(this.studyService, Mockito.never()).hasMeasurementDataOnEnvironment(Matchers.anyInt(), Matchers.anyInt());
+	}
 
 	@Test
 	public void testHasMeasurementFailScenario() throws Exception {
@@ -99,7 +135,7 @@ public class ManageSettingsControllerTest {
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 		StudyDetails st = new StudyDetails();
-		st.setId(2020);
+		st.setId(STUDY_ID);
 		Mockito.when(this.userSelection.getWorkbook().getStudyDetails()).thenReturn(st);
 		return spyController;
 	}

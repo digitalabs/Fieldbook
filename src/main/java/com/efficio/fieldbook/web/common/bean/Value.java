@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class Value {
 
 	private int rowIndex;
+	private int colIndex;
 	private boolean isSelected;
 	private String newValue;
 	private String action;
@@ -84,6 +85,16 @@ public class Value {
 
 	public void setAdditionalProperty(String name, Object value) {
 		this.additionalProperties.put(name, value);
+	}
+
+	
+	public int getColIndex() {
+		return colIndex;
+	}
+
+	
+	public void setColIndex(int colIndex) {
+		this.colIndex = colIndex;
 	}
 
 	@Override

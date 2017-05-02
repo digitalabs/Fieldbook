@@ -63,7 +63,7 @@ function generateDataForProcessing() {
 					$.each(dataChanges.data, function(index, value) {
 						for (i = 0; i < value.values.length; i++) {
 							var traitColumnIndex = value.values[i].colIndex;
-							if (value.values[i].action === '2' || (value.values[i].action === '' && value.values[i].newValue != '')) {
+							if ((value.values[i].action === '2' || value.values[i].action === '') && value.values[i].newValue != '') {
 								oTable.fnUpdate([value.values[i].newValue,''], value.values[i].rowIndex,
 									traitColumnIndex, false); // Cell
                     		} else if (value.values[i].action === '3') {

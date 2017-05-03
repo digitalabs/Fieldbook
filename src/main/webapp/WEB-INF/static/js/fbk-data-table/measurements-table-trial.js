@@ -186,7 +186,10 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 						if (found <= 0) {
 							$(td).removeClass('accepted-value');
 							$(td).removeClass('invalid-value');
-							if ($(td).text() !== 'missing') {
+
+							var categoricalNameText = $(td).find('.fbk-measurement-categorical-name').text();
+
+							if (categoricalNameText !== 'missing') {
 								if ($(td).find("input[type='hidden']").val() === 'true') {
 									$(td).addClass('accepted-value');
 								} else {
@@ -790,7 +793,7 @@ function markAllCellAsMissing() {
 			if (data.success === '1') {
 				$(".dataTable td[class*='invalid-value']").each(function() {
 					$(this).removeClass('invalid-value');
-                    oTable.fnUpdate(['missing',''], $(this).parents('tr').data('row-index'), this.cellIndex, false); // Cell
+					$(this).html("missing");
                  });
 				$('#reviewOutOfBoundsDataModal').modal('hide');
 			} else {

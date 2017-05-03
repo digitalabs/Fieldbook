@@ -27,8 +27,8 @@ function generateDataForProcessing() {
 	var dataChanges = { data: [] };
 
 	var oTable = $('#import-preview-measurement-table').dataTable();
-	var traitTermName = $("#traitTermName").val();
-
+	
+							
 	if (sessionStorage) {
 		for (var i in sessionStorage) {
 			if (i.indexOf('reviewDetailsFormDataAction') === 0) {
@@ -62,19 +62,31 @@ function generateDataForProcessing() {
 
 					$.each(dataChanges.data, function(index, value) {
 						for (i = 0; i < value.values.length; i++) {
-							if (value.values[i].action === '2' || value.values[i].action === '') {
-								oTable.fnUpdate([value.values[i].newValue,''], value.values[i].rowIndex,
-									$("#import-preview-measurement-table thead tr th:contains(' " + traitTermName +" ')").index(), false); // Cell
+							var columnIndex = value.values[i].colIndex;
+							var rowIndex = value.values[i].rowIndex;
+							var cell = $(oTable).find('tr').eq(rowIndex+1).find('td').eq(columnIndex-1);
+
+							//if Action is Accept as is, do not update value. Just highlight as accepted
+							if  (value.values[i].action === '1'){
+								$(cell).removeClass('invalid-value');
+								$(cell).addClass('accepted-value');
+							
+							// if action is Assign new value for all entries or new value was set individually. Highlight as accepted
+							} else if ((value.values[i].action === '2' || value.values[i].action === '') && value.values[i].newValue != '') {
+								oTable.fnUpdate([value.values[i].newValue,''], rowIndex,
+									columnIndex, false); // Cell
+                    			$(cell).removeClass('invalid-value');
+                    			$(cell).addClass('accepted-value');
+
+                    		// if action is set cell value to Missing. No highlighting for missing values
                     		} else if (value.values[i].action === '3') {
-                    			oTable.fnUpdate(['missing',''], value.values[i].rowIndex,
-                    				$("#import-preview-measurement-table thead tr th:contains(' " + traitTermName +" ')").index(), false); // Cell
-                            }
+                    			oTable.fnUpdate(['missing',''], rowIndex,
+									columnIndex, false); // Cell	
+                    			$(cell).removeClass('invalid-value');
+                            } 
                     	}
                     });
 
-                    $(".dataTable td[class*='invalid-value']").each(function() {
-                    	$(this).removeClass('invalid-value');
-                    });
 				} else {
 					showErrorMessage('', data.errorMessage);
 				}
@@ -128,11 +140,17 @@ function saveFormDataToSessionStorage(dataKey) {
 	var selectedActionType = $('#selectAction').val();
 	var selectedActionValue = $('#selectActionValue').val().trim();
 
+	// get the column index of trait from Measurements data table
+	var oTable = $('#import-preview-measurement-table').dataTable();
+    var traitTermName = $("#traitTermName").val();
+	var traitColumnIndex = $('#import-preview-measurement-table').DataTable().column(':contains(' + traitTermName + ')').index();
+	
 	$(cells).find('[data-binding]').each(function() {
 
-		data[$(this).data('row-index')] = data[$(this).data('row-index')] || { rowIndex: null, isSelected: false, newValue: '', action: '' };
+		data[$(this).data('row-index')] = data[$(this).data('row-index')] || { rowIndex: null, colIndex: null, isSelected: false, newValue: '', action: ''};
 
 		data[$(this).data('row-index')].rowIndex = $(this).data('row-index');
+		data[$(this).data('row-index')].colIndex = traitColumnIndex;
 
 		if ($(this).is(':checkbox')) {
 			data[$(this).data('row-index')].isSelected = $(this).prop('checked');

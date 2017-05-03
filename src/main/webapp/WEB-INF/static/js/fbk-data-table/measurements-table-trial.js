@@ -793,7 +793,7 @@ function markAllCellAsMissing() {
 			if (data.success === '1') {
 				$(".dataTable td[class*='invalid-value']").each(function() {
 					$(this).removeClass('invalid-value');
-                    oTable.fnUpdate(['missing',''], $(this).parents('tr').data('row-index'), this.cellIndex, false); // Cell
+					$(this).html("missing");
                  });
 				$('#reviewOutOfBoundsDataModal').modal('hide');
 			} else {

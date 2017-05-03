@@ -88,6 +88,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 						+ " wish to see the details of this trial.", details.getErrorMessage());
 	}
 
+	@Ignore("See BMS-3721")
 	@Test
 	public void testShowTrialSummaryEnvironmentsWithoutAnalysisVariables() {
 		final int id = 1;

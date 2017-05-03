@@ -627,7 +627,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 
 
-	private Map<String, Object> generateDatatableDataMap(final ObservationDto row, String suffix) {
+	Map<String, Object> generateDatatableDataMap(final ObservationDto row, String suffix) {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		// the 4 attributes are needed always
 		dataMap.put("Action", Integer.toString(row.getMeasurementId()));
@@ -650,16 +650,19 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 					variableId, true, false);
 			final MeasurementVariable measurementVariable = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, variableId);
 
-			if (variable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
-
-				this.addDataTableDataMapForCategoricalVariable(variable, data, dataMap, measurementVariable.getName(), suffix);
-
-			} else if (variable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
-				dataMap.put(measurementVariable.getName(), new Object[] {data.getVariableValue() != null ? data.getVariableValue() : "", true,
-						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
-			} else {
-				dataMap.put(measurementVariable.getName(), new Object[] {data.getVariableValue() != null ? data.getVariableValue() : "",
-						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
+			// measurementVariable could be null if the trait was deleted
+			if (measurementVariable != null) {
+				if (variable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
+					
+					this.addDataTableDataMapForCategoricalVariable(variable, data, dataMap, measurementVariable.getName(), suffix);
+					
+				} else if (variable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
+					dataMap.put(measurementVariable.getName(), new Object[] {data.getVariableValue() != null ? data.getVariableValue() : "", true,
+							data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
+				} else {
+					dataMap.put(measurementVariable.getName(), new Object[] {data.getVariableValue() != null ? data.getVariableValue() : "",
+							data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
+				}
 			}
 		}
 

@@ -172,4 +172,8 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
+	protected void setFieldbookService(com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
+		this.fieldbookService = fieldbookService;
+	}
+
 }

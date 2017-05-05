@@ -29,8 +29,8 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
  */
 public interface ExperimentDesignService {
 	
-	static final Integer MAX_STARTING_ENTRY_PLOT_NO = 99999;
-
+	Integer MAX_STARTING_ENTRY_NO = 99999;
+	Integer MAX_STARTING_PLOT_NO = 99999999;
 	/**
 	 * Generate design.
 	 *

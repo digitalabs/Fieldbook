@@ -7,7 +7,8 @@
 		window.ImportGermplasm = {
 			initialize: function(dataGermplasmList) {
 				var $noGermplasmListIndicator = $('.noGermplasmListIndicator'),
-					$txtStartingEntryNo = $('#txtStartingEntryNo');
+					$txtStartingEntryNo = $('#txtStartingEntryNo'),
+					$txtStartingPlotNo = $('#txtStartingPlotNo');
 
 				var gpListItemsClass = '.germplasm-list-items',
 					gpListDataTblClass = '.germplasm-list-data-table';
@@ -41,7 +42,21 @@
 
 				if (!isNursery()) {
 					window.ImportGermplasm.setStartingEntryNumberFirstTime();
+				}else{
+
+					$txtStartingPlotNo.keypress(function(event) {
+						if (event.keyCode === 13) {
+							$txtStartingEntryNo.change();
+
+							event.preventDefault();
+						}
+					});
+
+					$txtStartingPlotNo.change(function() {
+						window.ImportGermplasm.validateAndSetPlotNo();
+					});
 				}
+
 			},
 			validateAndSetEntryNo: function() {
 				var $txtStartingEntryNo = $('#txtStartingEntryNo');
@@ -50,7 +65,7 @@
 				var entryNo = $.trim($txtStartingEntryNo.val());
 
 				if (entryNo !== '') {
-					if (!window.ImportGermplasm.validateEntryAndPlotNo(entryNo)) {
+					if (!window.ImportGermplasm.validateEntryNo(entryNo)) {
 						customMessage = entryNoShouldBeInRange;
 					}
 
@@ -120,7 +135,12 @@
 					trialManager.updateStartingEntryNoCount($.trim($('#txtStartingEntryNo').val()));
 				}
 			},
-			validateEntryAndPlotNo: function(inputNo) {
+			validatePlotNo: function(inputNo) {
+				var validNo = '^(?=.*[1-9].*)[0-9]{1,8}$';
+
+				return !!inputNo.match(validNo);
+			},
+			validateEntryNo: function(inputNo) {
 				var validNo = '^(?=.*[1-9].*)[0-9]{1,5}$';
 
 				return !!inputNo.match(validNo);
@@ -129,7 +149,7 @@
 				var customMessage = '';
 				var plotNo = $.trim($('#txtStartingPlotNo').val());
 				if (plotNo !== '') {
-					if (!window.ImportGermplasm.validateEntryAndPlotNo(plotNo)) {
+					if (!window.ImportGermplasm.validatePlotNo(plotNo)) {
 						customMessage = plotNoShouldBeInRange;
 					}
 

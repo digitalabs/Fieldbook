@@ -526,13 +526,6 @@ public class CrossingServiceImpl implements CrossingService {
 		sb.append(this.buildPrefixString(nameSetting));
 		sb.append(this.getNumberWithLeadingZeroesAsString(number, nameSetting));
 
-		if (importedCrosses != null && !StringUtils.isEmpty(importedCrosses.getRawBreedingMethod())) {
-			final Method method = this.germplasmDataManager.getMethodByCode(importedCrosses.getRawBreedingMethod());
-			if (StringUtils.isEmpty(nameSetting.getSuffix()) && !StringUtils.isEmpty(method.getSuffix())) {
-				nameSetting.setSuffix(method.getSuffix());
-			}
-		}
-
 		if (!StringUtils.isEmpty(nameSetting.getSuffix())) {
 			String suffix = nameSetting.getSuffix().trim();
 			String processCodeValue = "";

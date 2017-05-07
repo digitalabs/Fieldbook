@@ -363,46 +363,40 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testBuildDesignationNameInSequenceMethodSuffixProcessCodeIsAvailable() throws RuleException {
-
 		final String resolvedSuffixString = "AAA";
-		final int sequenceNumber = 1;
-
-		final Method breedingMethod = new Method(TEST_BREEDING_METHOD_ID);
-		breedingMethod.setSuffix(TEST_PROCESS_CODE);
-
-		Mockito.when(this.germplasmDataManager.getMethodByCode(TEST_BREEDING_METHOD_CODE)).thenReturn(breedingMethod);
 		Mockito.when(this.processCodeOrderedRule.runRule(Mockito.any(RuleExecutionContext.class))).thenReturn(resolvedSuffixString);
 
 		final CrossSetting crossSetting = new CrossSetting();
-		crossSetting.setCrossNameSetting(new CrossNameSetting());
+		final CrossNameSetting crossNameSetting = new CrossNameSetting();
+		crossNameSetting.setSuffix(resolvedSuffixString);
+		crossSetting.setCrossNameSetting(crossNameSetting);
+		
 		final ImportedCrosses importedCrosses = new ImportedCrosses();
-		importedCrosses.setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
-
+		final int sequenceNumber = 1;
 		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses, sequenceNumber, crossSetting);
-
-		Assert.assertEquals(sequenceNumber + resolvedSuffixString, designationName);
+		
+		final String expectedResult = sequenceNumber + resolvedSuffixString;
+		Assert.assertEquals("The designation name should be " + expectedResult, expectedResult, designationName);
 	}
 
 	@Test
 	public void testBuildDesignationNameInSequenceMethodSuffixProcessCodeWithPrefix() throws RuleException {
-
 		final String resolvedSuffixString = "AAA";
-		final int sequenceNumber = 1;
-
-		final Method breedingMethod = new Method(TEST_BREEDING_METHOD_ID);
-		breedingMethod.setSuffix(TEST_PROCESS_CODE_WITH_PREFIX);
-
-		Mockito.when(this.germplasmDataManager.getMethodByCode(TEST_BREEDING_METHOD_CODE)).thenReturn(breedingMethod);
 		Mockito.when(this.processCodeOrderedRule.runRule(Mockito.any(RuleExecutionContext.class))).thenReturn(resolvedSuffixString);
 
 		final CrossSetting crossSetting = new CrossSetting();
-		crossSetting.setCrossNameSetting(new CrossNameSetting());
+		final CrossNameSetting crossNameSetting = new CrossNameSetting();
+		crossNameSetting.setSuffix(resolvedSuffixString);
+		final String prefix = "B";
+		crossNameSetting.setPrefix(prefix);
+		crossSetting.setCrossNameSetting(crossNameSetting);
+		
 		final ImportedCrosses importedCrosses = new ImportedCrosses();
-		importedCrosses.setRawBreedingMethod(TEST_BREEDING_METHOD_CODE);
-
+		final int sequenceNumber = 1;
 		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses, sequenceNumber, crossSetting);
-
-		Assert.assertEquals(sequenceNumber + "B" +resolvedSuffixString, designationName);
+		
+		final String expectedResult = prefix + sequenceNumber + resolvedSuffixString;
+		Assert.assertEquals("The designation name should be " + expectedResult, expectedResult, designationName);
 	}
 
 	@Test

@@ -129,7 +129,10 @@ public class ImportGermplasmListController extends SettingsController {
 
 	protected static final String GROUP_ID = "groupId";
 
-	protected static final Integer MAX_ENTRY_PLOT_NUMBER_LIMIT = 99999;
+	protected static final Integer MAX_ENTRY_NUMBER_LIMIT = 99999;
+
+	protected static final Integer MAX_PLOT_NUMBER_LIMIT = 99999999;
+
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListController.class);
@@ -356,7 +359,7 @@ public class ImportGermplasmListController extends SettingsController {
 			final Integer totalExpectedEntryNumber = startingEntryNumber + this.userSelection
 					.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().size();
 
-			if (totalExpectedEntryNumber > ImportGermplasmListController.MAX_ENTRY_PLOT_NUMBER_LIMIT) {
+			if (totalExpectedEntryNumber > ImportGermplasmListController.MAX_ENTRY_NUMBER_LIMIT) {
 				throw new FieldbookRequestValidationException("entry.number.should.be.in.range");
 			}
 		}
@@ -367,7 +370,7 @@ public class ImportGermplasmListController extends SettingsController {
 		if (plotNo != null) {
 			final Integer totalMeasurement = totalExpectedNumber + plotNo;
 
-			if (totalMeasurement > ImportGermplasmListController.MAX_ENTRY_PLOT_NUMBER_LIMIT) {
+			if (totalMeasurement > ImportGermplasmListController.MAX_PLOT_NUMBER_LIMIT) {
 				throw new FieldbookRequestValidationException("plot.number.should.be.in.range");
 			}
 		}

@@ -46,7 +46,7 @@
 
 					$txtStartingPlotNo.keypress(function(event) {
 						if (event.keyCode === 13) {
-							$txtStartingEntryNo.change();
+							$txtStartingPlotNo.change();
 
 							event.preventDefault();
 						}

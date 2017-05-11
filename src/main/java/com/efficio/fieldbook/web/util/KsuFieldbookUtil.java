@@ -50,6 +50,7 @@ public class KsuFieldbookUtil {
 	private static final String NUMERIC_FORMAT = "Numeric";
 	private static final String DATE_FORMAT = "Date";
 	private static final String CHARACTER_FORMAT = "Text";
+	private static final String UNRECOGNIZED_FORMAT ="Unrecognized";
 
 
 	private static final Map<Integer, String> ID_NAME_MAP;
@@ -286,10 +287,9 @@ public class KsuFieldbookUtil {
 
 	private static String getDataTypeDescription(MeasurementVariable trait) {
 		if (trait.getDataTypeId() == null || !dataTypeList.contains(trait.getDataTypeId()) || StringUtils.isBlank(trait.getDataType())) {
-			return "unrecognized";
+			return KsuFieldbookUtil.UNRECOGNIZED_FORMAT;
 		} else if (trait.getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
 			return KsuFieldbookUtil.NUMERIC_FORMAT;
-
 		} else if (trait.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
 			return KsuFieldbookUtil.CATEGORICAL_FORMAT;
 		} else if (trait.getDataTypeId() == TermId.DATE_VARIABLE.getId()) {

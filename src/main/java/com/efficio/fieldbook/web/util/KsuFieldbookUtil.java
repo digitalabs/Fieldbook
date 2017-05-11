@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.csvreader.CsvWriter;
+import org.apache.commons.lang3.StringUtils;
+
 
 public class KsuFieldbookUtil {
 
@@ -40,8 +42,15 @@ public class KsuFieldbookUtil {
 	private static final List<String> TRAIT_FILE_HEADERS =
 			Arrays.asList("trait", "format", "defaultValue", "minimum", "maximum", "details", "categories", "isVisible", "realPosition");
 
-	private static final String NUMERIC_FORMAT = "numeric";
-	private static final String TEXT_FORMAT = "text";
+	private static final List<Integer> dataTypeList = Arrays
+		.asList(TermId.NUMERIC_VARIABLE.getId(), TermId.CATEGORICAL_VARIABLE.getId(), TermId.DATE_VARIABLE.getId(),
+			TermId.CHARACTER_VARIABLE.getId());
+
+	private static final String CATEGORICAL_FORMAT = "Categorical";
+	private static final String NUMERIC_FORMAT = "Numeric";
+	private static final String DATE_FORMAT = "Date";
+	private static final String CHARACTER_FORMAT = "Text";
+
 
 	private static final Map<Integer, String> ID_NAME_MAP;
 
@@ -229,11 +238,7 @@ public class KsuFieldbookUtil {
 		for (final MeasurementVariable trait : traits) {
 			final List<String> traitData = new ArrayList<String>();
 			traitData.add(trait.getName());
-			if ("C".equalsIgnoreCase(trait.getDataTypeDisplay())) {
-				traitData.add(KsuFieldbookUtil.TEXT_FORMAT);
-			} else {
-				traitData.add(KsuFieldbookUtil.NUMERIC_FORMAT);
-			}
+			traitData.add(getDataTypeDescription(trait));
 			// default value
 			traitData.add("");
 			if (trait.getMinRange() != null) {
@@ -277,6 +282,20 @@ public class KsuFieldbookUtil {
 		}
 
 		return data;
+	}
+
+	private static String getDataTypeDescription(MeasurementVariable trait) {
+		if (trait.getDataTypeId() == null || !dataTypeList.contains(trait.getDataTypeId()) || StringUtils.isBlank(trait.getDataType())) {
+			return "unrecognized";
+		} else if (trait.getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
+			return KsuFieldbookUtil.NUMERIC_FORMAT;
+
+		} else if (trait.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+			return KsuFieldbookUtil.CATEGORICAL_FORMAT;
+		} else if (trait.getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
+			return KsuFieldbookUtil.DATE_FORMAT;
+		}
+		return KsuFieldbookUtil.CHARACTER_FORMAT;
 	}
 
 	public static String getLabelFromKsuRequiredColumn(final MeasurementVariable variable) {

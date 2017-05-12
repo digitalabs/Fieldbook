@@ -219,7 +219,7 @@ public class KsuFieldbookUtil {
 		}
 	}
 
-	private static List<List<String>> convertTraitsData(final List<MeasurementVariable> traits,
+	protected static List<List<String>> convertTraitsData(final List<MeasurementVariable> traits,
 			final FieldbookService fieldbookMiddlewareService, final OntologyService ontologyService) {
 		final List<List<String>> data = new ArrayList<List<String>>();
 

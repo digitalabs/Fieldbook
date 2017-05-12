@@ -46,11 +46,11 @@ public class KsuFieldbookUtil {
 		.asList(TermId.NUMERIC_VARIABLE.getId(), TermId.CATEGORICAL_VARIABLE.getId(), TermId.DATE_VARIABLE.getId(),
 			TermId.CHARACTER_VARIABLE.getId());
 
-	private static final String CATEGORICAL_FORMAT = "Categorical";
-	private static final String NUMERIC_FORMAT = "Numeric";
-	private static final String DATE_FORMAT = "Date";
-	private static final String CHARACTER_FORMAT = "Text";
-	private static final String UNRECOGNIZED_FORMAT ="Unrecognized";
+	private static final String CATEGORICAL_FORMAT = "categorical";
+	private static final String NUMERIC_FORMAT = "numeric";
+	private static final String DATE_FORMAT = "date";
+	private static final String CHARACTER_FORMAT = "text";
+	private static final String UNRECOGNIZED_FORMAT ="unrecognized";
 
 
 	private static final Map<Integer, String> ID_NAME_MAP;
@@ -139,7 +139,6 @@ public class KsuFieldbookUtil {
 	 * Writes the Header Row to the CSV or Excel file. Omits designated columns.
 	 * 
 	 * @param headers : List of MeasurementVariables to filter, processing the name of the Variable
-	 * @param isFactor
 	 * @return a list of Strings to print in appropriate format
 	 * 
 	 */
@@ -177,7 +176,6 @@ public class KsuFieldbookUtil {
 	/**
 	 * Collects the measurement data required to export. Processes omissions as required in {@link KsuFieldbookUtil}
 	 * 
-	 * @param factorIds : IDs corresponding to variables to export
 	 * @param variables : The variables to export
 	 * @return
 	 */

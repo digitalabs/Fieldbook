@@ -73,11 +73,11 @@ public class KsuFieldbookUtilTest {
 	private static final String R_SECA_SEV_E_00_TO_99_TEXT_PROPERTY = "Barley scald severity";
 
 	// DATA TYPES
-	private static final String NUMBER = "Numeric";
-	private static final String CATEGORICAL = "Categorical";
-	private static final String DATE = "Date";
+	private static final String NUMBER = "numeric";
+	private static final String CATEGORICAL = "categorical";
+	private static final String DATE = "date";
 	private static final String CHARACTER = "Character";
-	private static final String TEXT = "Text";
+	private static final String TEXT = "text";
 
 	// LABELS
 	private static final String STUDY = "STUDY";

@@ -286,7 +286,7 @@ public class KsuFieldbookUtil {
 	}
 
 	private static String getDataTypeDescription(MeasurementVariable trait) {
-		if (trait.getDataTypeId() == null || !dataTypeList.contains(trait.getDataTypeId()) || StringUtils.isBlank(trait.getDataType())) {
+		if (trait.getDataTypeId() == null || !dataTypeList.contains(trait.getDataTypeId())) {
 			return KsuFieldbookUtil.UNRECOGNIZED_FORMAT;
 		} else if (trait.getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
 			return KsuFieldbookUtil.NUMERIC_FORMAT;

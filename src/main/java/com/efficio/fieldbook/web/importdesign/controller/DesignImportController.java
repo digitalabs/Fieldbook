@@ -1101,17 +1101,6 @@ public class DesignImportController extends SettingsController {
 				// For LOCATION_NAME and LOCATION_NAME_ID
 				if (resolvingTermIdKey == TermId.TRIAL_LOCATION.getId()
 						|| resolvingTermIdKey == TermId.LOCATION_ID.getId()) {
-
-					// If there's no standard variable name resolved for TRIAL_LOCATION, we should try to get it from LOCATION_ID since LOCATION_ID is 
-					// always added to the trial level factors in memory after the user added location variable in Environments tab.
-					if (resolvingTermIdKey == TermId.TRIAL_LOCATION.getId() && StringUtils.isEmpty(standardVariableName)) {
-						/** FIXME: this is the low-risk hack solution for BMS-4082. Ideally, the TRIAL_LOCATION variable should exist in userSelection.getTrialLevelVariableList() when
-						 * the user adds it in the Environment tab. We should also look how Generate Design resolves the name-id pair variables and use that as a pattern in Design Import if possible.
-						**/
-						variableLocalName = resolveLocalNameOfTheTrialEnvironmentVariable(TermId.LOCATION_ID.getId(), this.userSelection.getTrialLevelVariableList(), designImportData);
-						standardVariableName = resolveStandardVariableNameOfTheTrialEnvironmentVariable(TermId.LOCATION_ID.getId(), this.userSelection.getTrialLevelVariableList(), designImportData);
-					}
-
 					// The termId of the pair ID variable
 					final String termIdOfPairIdVariable = nameIdMap.get(resolvingTermIdKey.toString().toUpperCase());
 					if (termIdOfPairIdVariable != null) {

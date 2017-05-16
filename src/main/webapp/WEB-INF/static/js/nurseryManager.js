@@ -2,8 +2,8 @@
 /*global isStudyNameUnique, validateStartDateEndDateBasic*/
 
 //Used globle variable to selected location for trial
-var selectedLocationForTrail;
-var possibleLocationsForTrail;
+var selectedLocationForTrial;
+var possibleLocationsForTrial;
 
 function checkMethod() {
 	'use strict';
@@ -2013,19 +2013,19 @@ function checkNurseryIfShowRemoveVariableLinks() {
 }
 
 function selectedLocation(location, possibleValues) {
-    selectedLocationForTrail = location;
-    possibleLocationsForTrail = possibleValues;
+	selectedLocationForTrial = location;
+	possibleLocationsForTrial = possibleValues;
 }
 
 
 function setSelectedLocation() {
     //Trial passes preferred values in which location abbreviation available in bracket.
     //We need to split value to get actual abbreviation for selected location
-	if (possibleLocationsForTrail != null && selectedLocationForTrail != null && selectedLocationForTrail != '' &&
-		selectedLocationForTrail.id != undefined) {
-		$('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
-		var locationName = $.grep(possibleLocationsForTrail, function(e) {
-			return e.key == selectedLocationForTrail.id;
+	if (possibleLocationsForTrial != null && selectedLocationForTrial != null && selectedLocationForTrial != '' &&
+			selectedLocationForTrial.id != undefined) {
+		$('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrial.id);
+		var locationName = $.grep(possibleLocationsForTrial, function(e) {
+			return e.key == selectedLocationForTrial.id;
 		});
 		$('#' + getJquerySafeId('harvestLocationName')).val(locationName[0].name);
 		var locAbbreviation = locationName[0].name.split("(");

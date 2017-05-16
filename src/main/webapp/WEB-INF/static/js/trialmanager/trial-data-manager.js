@@ -534,7 +534,7 @@
 					}
                     // set selected location on save
                     if (service.currentData.trialSettings.userInput[LOCATION_NAME_ID] != '') {
-                        selectedLocationForTrail = {
+                    	selectedLocationForTrial = {
                             name: service.currentData.trialSettings.userInput[TRIAL_LOCATION_NAME_INDEX],
                             id: service.currentData.trialSettings.userInput[LOCATION_NAME_ID]
                         };

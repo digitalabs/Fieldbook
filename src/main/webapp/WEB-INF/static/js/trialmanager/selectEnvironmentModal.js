@@ -36,7 +36,7 @@
 			angular.forEach($scope.data.environments, function(environment) {
 				//Set the value of the location id per environment
 				environment.managementDetailValues[$scope.LOCATION_NAME_ID] = locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].id;
-				selectedLocationForTrail = {id: environment.managementDetailValues[$scope.LOCATION_NAME_ID], name: environment.managementDetailValues[$scope.LOCATION_NAME_ID].name};
+				selectedLocationForTrial = {id: environment.managementDetailValues[$scope.LOCATION_NAME_ID], name: environment.managementDetailValues[$scope.LOCATION_NAME_ID].name};
 			});
 		});
 

@@ -215,7 +215,11 @@ public class OpenTrialController extends BaseTrialController {
 					return "redirect:" + ManageTrialController.URL + "?summaryId=" + trialId + "&summaryName=" + dmsProject.getName();
 				}
 				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(trialId);
+
+				// FIXME
+				// See setStartingEntryNoAndPlotNoFromObservations() in prepareExperimentalDesignTabInfo
 				this.fieldbookMiddlewareService.loadAllObservations(trialWorkbook);
+
 				this.filterAnalysisVariable(trialWorkbook);
 
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());

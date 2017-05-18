@@ -29,6 +29,7 @@ import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -88,19 +89,24 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 						+ " wish to see the details of this trial.", details.getErrorMessage());
 	}
 
-	@Ignore("See BMS-3721")
 	@Test
 	public void testShowTrialSummaryEnvironmentsWithoutAnalysisVariables() {
 		final int id = 1;
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
-		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		this.reviewStudyDetailsController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		Mockito.doReturn(workbook).when(fieldbookMiddlewareService).getStudyVariableSettings(id, false);
-		this.mockStandardVariables(workbook.getAllVariables(), fieldbookMiddlewareService);
-		this.mockContextUtil();
 		final AddOrRemoveTraitsForm form = new AddOrRemoveTraitsForm();
 		final Model model = new ExtendedModelMap();
+
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
+		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		final com.efficio.fieldbook.service.api.FieldbookService fieldbookService =
+			Mockito.mock(com.efficio.fieldbook.service.api.FieldbookService.class);
+		this.reviewStudyDetailsController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		this.reviewStudyDetailsController.setFieldbookService(fieldbookService);
+		Mockito.doReturn(workbook).when(fieldbookMiddlewareService).getStudyVariableSettings(id, false);
+		this.mockStandardVariables(workbook.getAllVariables(), fieldbookMiddlewareService, fieldbookService);
+		this.mockContextUtil();
+
 		this.reviewStudyDetailsController.show(StudyType.T.toString(), id, form, model);
+
 		final StudyDetails details = (StudyDetails) model.asMap().get("trialDetails");
 		Assert.assertNotNull(details);
 		final List<SettingDetail> conditionSettingDetails = details.getNurseryConditionDetails();
@@ -120,7 +126,8 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		Mockito.doReturn(this.PROGRAM_UUID).when(contextUtil).getCurrentProgramUUID();
 	}
 
-	private void mockStandardVariables(final List<MeasurementVariable> allVariables, final FieldbookService fieldbookMiddlewareService) {
+	private void mockStandardVariables(final List<MeasurementVariable> allVariables, final FieldbookService fieldbookMiddlewareService,
+		com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
 		for (final MeasurementVariable measurementVariable : allVariables) {
 			final StandardVariable stdVar =
 					this.createStandardVariable(measurementVariable.getTermId(), measurementVariable.getProperty(),
@@ -131,6 +138,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 					.when(fieldbookMiddlewareService)
 					.getStandardVariableIdByPropertyScaleMethodRole(measurementVariable.getProperty(), measurementVariable.getScale(),
 							measurementVariable.getMethod(), measurementVariable.getRole());
+			Mockito.when(fieldbookService.getValue(Matchers.anyInt(), Matchers.anyString(), Matchers.anyBoolean())).thenReturn("");
 		}
 	}
 

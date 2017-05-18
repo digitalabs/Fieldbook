@@ -246,13 +246,15 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
 		} else if (Objects.equals(plotNumber, 0)) {
 			output = new ExpDesignValidationOutput(false, this.messageSource.getMessage("plot.number.should.be.in.range", null, locale));
-		} else if (entryNumber != null && (germplasmCount + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO) {
+		} else if (entryNumber != null && (germplasmCount + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_NO) {
+			final Integer total = germplasmCount + entryNumber;
 			output = new ExpDesignValidationOutput(false,
-					this.messageSource.getMessage("experiment.design.entry.number.should.not.exceed", null, locale));
+				this.messageSource.getMessage("experiment.design.entry.number.should.not.exceed", new Object[] {total}, locale));
 		} else if (entryNumber != null && plotNumber != null && (((germplasmCount * replicationCount) + plotNumber)
-				> ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
+			> ExperimentDesignService.MAX_STARTING_PLOT_NO)) {
+			final Integer total = (germplasmCount * replicationCount) + plotNumber;
 			output = new ExpDesignValidationOutput(false,
-					this.messageSource.getMessage("experiment.design.plot.number.should.not.exceed", null, locale));
+				this.messageSource.getMessage("experiment.design.plot.number.should.not.exceed", new Object[] {total}, locale));
 		}
 
 		return output;

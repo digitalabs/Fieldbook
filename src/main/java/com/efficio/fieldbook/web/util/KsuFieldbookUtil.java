@@ -46,18 +46,16 @@ public class KsuFieldbookUtil {
 		.asList(TermId.NUMERIC_VARIABLE.getId(), TermId.CATEGORICAL_VARIABLE.getId(), TermId.DATE_VARIABLE.getId(),
 			TermId.CHARACTER_VARIABLE.getId());
 
-	private static final String CATEGORICAL_FORMAT = "categorical";
-	private static final String NUMERIC_FORMAT = "numeric";
-	private static final String DATE_FORMAT = "date";
-	private static final String CHARACTER_FORMAT = "text";
-	private static final String UNRECOGNIZED_FORMAT ="unrecognized";
-
-
 	private static final Map<Integer, String> ID_NAME_MAP;
 
 	// August 2015 : KSU handheld does not process CROSS information, so using
 	// this list to handle omissions of standard Germplasm variables from the export
 	private static final List<Integer> fieldsToOmit = new ArrayList<Integer>();
+
+	private static final int NUMERIC_VARIABLE = 1110;
+	private static final int CATEGORICAL_VARIABLE = 1130;
+	private static final int DATE_VARIABLE = 1117;
+
 
 	static {
 		ID_NAME_MAP = new HashMap<Integer, String>();
@@ -86,6 +84,43 @@ public class KsuFieldbookUtil {
 		}
 
 		KsuRequiredColumnEnum(final Integer id, final String label) {
+			this.id = id;
+			this.label = label;
+		}
+
+		public Integer getId() {
+			return this.id;
+		}
+
+		public String getLabel() {
+			return this.label;
+		}
+
+		public static KsuRequiredColumnEnum get(final Integer id) {
+			return KsuRequiredColumnEnum.LOOK_UP.get(id);
+		}
+	}
+
+
+	public enum KsuDataTypeFormatEnum {
+		CATEGORICAL_FORMAT(TermId.CATEGORICAL_VARIABLE.getId(), "categorical"),
+		NUMERIC_FORMAT(TermId.NUMERIC_VARIABLE.getId(), "numeric"),
+		DATE_FORMAT(TermId.DATE_VARIABLE.getId(), "date"),
+		CHARACTER_FORMAT(TermId.CHARACTER_VARIABLE.getId(), "text"),
+		UNRECOGNIZED_FORMAT(0, "unrecognized");
+
+		private final Integer id;
+		private final String label;
+
+		private static final Map<Integer, KsuDataTypeFormatEnum> LOOK_UP = new HashMap<>();
+
+		static {
+			for (final KsuDataTypeFormatEnum cl : EnumSet.allOf(KsuDataTypeFormatEnum.class)) {
+				KsuDataTypeFormatEnum.LOOK_UP.put(cl.getId(), cl);
+			}
+		}
+
+		KsuDataTypeFormatEnum(final Integer id, final String label) {
 			this.id = id;
 			this.label = label;
 		}
@@ -285,15 +320,18 @@ public class KsuFieldbookUtil {
 
 	private static String getDataTypeDescription(MeasurementVariable trait) {
 		if (trait.getDataTypeId() == null || !dataTypeList.contains(trait.getDataTypeId())) {
-			return KsuFieldbookUtil.UNRECOGNIZED_FORMAT;
-		} else if (trait.getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
-			return KsuFieldbookUtil.NUMERIC_FORMAT;
-		} else if (trait.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
-			return KsuFieldbookUtil.CATEGORICAL_FORMAT;
-		} else if (trait.getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
-			return KsuFieldbookUtil.DATE_FORMAT;
+			return KsuDataTypeFormatEnum.UNRECOGNIZED_FORMAT.getLabel();
 		}
-		return KsuFieldbookUtil.CHARACTER_FORMAT;
+		switch (trait.getDataTypeId()) {
+			case NUMERIC_VARIABLE:
+				return KsuDataTypeFormatEnum.NUMERIC_FORMAT.getLabel();
+			case CATEGORICAL_VARIABLE:
+				return KsuDataTypeFormatEnum.CATEGORICAL_FORMAT.getLabel();
+			case DATE_VARIABLE:
+				return KsuDataTypeFormatEnum.DATE_FORMAT.getLabel();
+			default:
+				return KsuDataTypeFormatEnum.CHARACTER_FORMAT.getLabel();
+		}
 	}
 
 	public static String getLabelFromKsuRequiredColumn(final MeasurementVariable variable) {

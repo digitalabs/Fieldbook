@@ -200,13 +200,15 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 					} else if (replicationCount <= 1 || replicationCount >= 13) {
 						output = new ExpDesignValidationOutput(false,
 								this.messageSource.getMessage("experiment.design.replication.count.resolvable.error", null, locale));
-					} else if (entryNumber != null && (treatmentSize + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_NO) {
+					} else if (entryNumber != null && (treatmentSize + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_NO + 1) {
 						output = new ExpDesignValidationOutput(false,
 								this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
 					} else if (entryNumber != null && plotNumber != null && (((treatmentSize * replicationCount) + plotNumber)
-							> ExperimentDesignService.MAX_STARTING_PLOT_NO)) {
-						output = new ExpDesignValidationOutput(false,
-								this.messageSource.getMessage("plot.number.should.be.in.range", null, locale));
+							> ExperimentDesignService.MAX_STARTING_PLOT_NO + 1)) {
+						final Integer total = (treatmentSize * replicationCount) + plotNumber;
+						output = new ExpDesignValidationOutput(
+							false,
+							this.messageSource.getMessage("experiment.design.plot.number.should.not.exceed", new Object[] {total}, locale));
 					} else if (blockSize <= 1) {
 						output = new ExpDesignValidationOutput(false,
 								this.messageSource.getMessage("experiment.design.block.size.should.be.a.greater.than.1", null, locale));

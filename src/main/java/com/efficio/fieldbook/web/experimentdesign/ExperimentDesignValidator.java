@@ -61,7 +61,7 @@ public class ExperimentDesignValidator {
 
 		if (startingPlotNo != null && NumberUtils.isNumber(startingPlotNo)) {
 			final Integer plotNumber = Integer.valueOf(startingPlotNo);
-			if (plotNumber != 0 && ((treatmentSize + plotNumber) <= ExperimentDesignService.MAX_STARTING_PLOT_NO)) {
+			if (plotNumber != 0 && ((treatmentSize + plotNumber) <= ExperimentDesignService.MAX_STARTING_PLOT_NO + 1)) {
 				return;
 			}
 		}
@@ -77,7 +77,7 @@ public class ExperimentDesignValidator {
 
 		if (startingEntryNo != null && NumberUtils.isNumber(startingEntryNo)) {
 			final Integer entryNumber = Integer.valueOf(startingEntryNo);
-			if (entryNumber != 0 && ((treatmentSize + entryNumber) <= ExperimentDesignService.MAX_STARTING_ENTRY_NO)) {
+			if (entryNumber != 0 && ((treatmentSize + entryNumber) <= ExperimentDesignService.MAX_STARTING_ENTRY_NO + 1)) {
 				return;
 			}
 		}

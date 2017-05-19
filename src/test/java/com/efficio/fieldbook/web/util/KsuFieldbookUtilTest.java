@@ -90,14 +90,14 @@ public class KsuFieldbookUtilTest {
 	private static final String DATE_VALUE = "20171010";
 
 	@Test
-	public void testIsValidHeaderNames_ReturnsTrueIfAllRequiredColumnsArePresent() {
+	public void testIsValidHeaderNamesReturnsTrueIfAllRequiredColumnsArePresent() {
 		String[] headerNames = {"plot", "ENTRY_NO", "DESIGNATION", "GID", "PLOT_ID"};
 		Assert.assertTrue("Expecting that the headers are valid when all of the required column are present but didn't.",
 			KsuFieldbookUtil.isValidHeaderNames(headerNames));
 	}
 
 	@Test
-	public void testIsValidHeaderNames_ReturnsFalseIfAtLeastOneOfTheRequiredColumnsIsNotPresent() {
+	public void testIsValidHeaderNamesReturnsFalseIfAtLeastOneOfTheRequiredColumnsIsNotPresent() {
 		String[] headerNames = {"plot", "ENTRY_NO", "DESIGNATION"};
 		Assert.assertFalse("Expecting that the headers are not valid if at least one of the required column is not present but didn't.",
 			KsuFieldbookUtil.isValidHeaderNames(headerNames));

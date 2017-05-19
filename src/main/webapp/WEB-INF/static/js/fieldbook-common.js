@@ -16,7 +16,7 @@ $(function() {
 			if (jqXHR.status === 500) {
 				showErrorMessage('', ajaxGenericErrorMsg);
 			} else {
-				showErrorMessage('INVALID INPUT', error.responseText);
+				showErrorMessage('INVALID INPUT', jqXHR.responseText);
 			}
 		}
 	});

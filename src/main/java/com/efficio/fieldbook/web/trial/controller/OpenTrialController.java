@@ -34,7 +34,6 @@ import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,13 +80,7 @@ public class OpenTrialController extends BaseTrialController {
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
 
 	@Resource
-	private StudyDataManager studyDataManagerImpl;
-
-	@Resource
 	private StudyDataManager studyDataManager;
-
-	@Resource
-	private OntologyService ontologyService;
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
@@ -222,6 +215,11 @@ public class OpenTrialController extends BaseTrialController {
 					return "redirect:" + ManageTrialController.URL + "?summaryId=" + trialId + "&summaryName=" + dmsProject.getName();
 				}
 				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(trialId);
+
+				// FIXME
+				// See setStartingEntryNoAndPlotNoFromObservations() in prepareExperimentalDesignTabInfo
+				this.fieldbookMiddlewareService.loadAllObservations(trialWorkbook);
+
 				this.filterAnalysisVariable(trialWorkbook);
 
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());

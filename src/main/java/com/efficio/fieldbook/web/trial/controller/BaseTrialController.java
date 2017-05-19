@@ -175,6 +175,8 @@ public abstract class BaseTrialController extends SettingsController {
 
 			data.setFileName(this.getExperimentalDesignData(xpDesignVariable.getExperimentalDesignSource()));
 
+			// FIXME
+			// Get starting entry and plot without loading all observations in OpenTrialController.openTrial()
 			this.setStartingEntryNoAndPlotNoFromObservations(trialWorkbook, data);
 
 			// Get all entry numbers from workbook, sort it and get first element from entry numbers list

@@ -66,7 +66,7 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 	private static final String PROGRAM_UUID = "2191a54c-7d98-40d0-ae6f-6a400e4546ce";
 
 	private static final String ENTRY_NUMBER_SHOULD_HAVE_VALID_RANGE = "Entry Number should accept only numbers in range 1 to 99999.";
-	private static final String PLOT_NUMBER_SHOULD_HAVE_VALID_RANGE = "Plot Number should accept only numbers in range 1 to 99999.";
+	private static final String PLOT_NUMBER_SHOULD_HAVE_VALID_RANGE = "Plot Number should accept only numbers in range 1 to 99999999.";
 
 	Locale locale = LocaleContextHolder.getLocale();
 
@@ -239,7 +239,7 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 		param.setNoOfEnvironments("2");
 		param.setBlockSize("25");
 		param.setStartingEntryNo("200");
-		param.setStartingPlotNo("99970");
+		param.setStartingPlotNo("99999970");
 
 		Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); // Key - CVTerm
 		// ID , List

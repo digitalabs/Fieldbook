@@ -215,14 +215,15 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 					} else if (replicationCount <= 1 || replicationCount >= 13) {
 						output = new ExpDesignValidationOutput(false,
 								this.messageSource.getMessage("experiment.design.replication.count.resolvable.error", null, locale));
-					} else if (entryNumber != null && (germplasmCount + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO) {
-
+					} else if (entryNumber != null && (germplasmCount + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_NO) {
+						final Integer total = germplasmCount + entryNumber;
 						output = new ExpDesignValidationOutput(false,
-								this.messageSource.getMessage("experiment.design.entry.number.should.not.exceed", null, locale));
+								this.messageSource.getMessage("experiment.design.entry.number.should.not.exceed", new Object[] {total}, locale));
 					} else if (entryNumber != null && plotNumber != null && (((germplasmCount * replicationCount) + plotNumber)
-							> ExperimentDesignService.MAX_STARTING_ENTRY_PLOT_NO)) {
+							> ExperimentDesignService.MAX_STARTING_PLOT_NO)) {
+						final Integer total = (germplasmCount * replicationCount) + plotNumber;
 						output = new ExpDesignValidationOutput(false,
-								this.messageSource.getMessage("experiment.design.plot.number.should.not.exceed", null, locale));
+								this.messageSource.getMessage("experiment.design.plot.number.should.not.exceed", new Object[] {total}, locale));
 					} else if (size != rowsPerReplication * colsPerReplication) {
 						output = new ExpDesignValidationOutput(false, this.messageSource
 								.getMessage("experiment.design.resolvable.incorrect.row.and.col.product.to.germplasm.size", null, locale));

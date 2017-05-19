@@ -34,9 +34,11 @@
             });
 			
 			angular.forEach($scope.data.environments, function(environment) {
-				//Set the value of the location id per environment
-				environment.managementDetailValues[$scope.LOCATION_NAME_ID] = locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].id;
-				selectedLocationForTrial = {id: environment.managementDetailValues[$scope.LOCATION_NAME_ID], name: environment.managementDetailValues[$scope.LOCATION_NAME_ID].name};
+				if(locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]]) {
+					//Set the value of the location id per environment
+					environment.managementDetailValues[$scope.LOCATION_NAME_ID] = locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].id;
+					selectedLocationForTrial = {id: environment.managementDetailValues[$scope.LOCATION_NAME_ID], name: locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].name};
+				}
 			});
 		});
 

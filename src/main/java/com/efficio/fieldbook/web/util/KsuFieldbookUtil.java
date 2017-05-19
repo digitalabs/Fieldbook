@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -96,42 +97,13 @@ public class KsuFieldbookUtil {
 		}
 	}
 
-
-	public enum KsuDataTypeFormatEnum {
-		CATEGORICAL_FORMAT(TermId.CATEGORICAL_VARIABLE.getId(), "categorical"),
-		NUMERIC_FORMAT(TermId.NUMERIC_VARIABLE.getId(), "numeric"),
-		DATE_FORMAT(TermId.DATE_VARIABLE.getId(), "date"),
-		CHARACTER_FORMAT(TermId.CHARACTER_VARIABLE.getId(), "text"),
-		UNRECOGNIZED_FORMAT(0, "unrecognized");
-
-		private final Integer id;
-		private final String label;
-
-		private static final Map<Integer, KsuDataTypeFormatEnum> LOOK_UP = new HashMap<>();
-
-		static {
-			for (final KsuDataTypeFormatEnum cl : EnumSet.allOf(KsuDataTypeFormatEnum.class)) {
-				KsuDataTypeFormatEnum.LOOK_UP.put(cl.getId(), cl);
-			}
-		}
-
-		KsuDataTypeFormatEnum(final Integer id, final String label) {
-			this.id = id;
-			this.label = label;
-		}
-
-		public Integer getId() {
-			return this.id;
-		}
-
-		public String getLabel() {
-			return this.label;
-		}
-
-		public static KsuDataTypeFormatEnum get(final Integer id) {
-			return KsuDataTypeFormatEnum.LOOK_UP.get(id);
-		}
-	}
+	private static ImmutableMap<Integer,String> dataTypeFormats = ImmutableMap.<Integer, String>builder()
+			.put(TermId.CATEGORICAL_VARIABLE.getId(), "categorical")
+			.put(TermId.NUMERIC_VARIABLE.getId(), "numeric")
+			.put(TermId.DATE_VARIABLE.getId(), "date")
+			.put(TermId.CHARACTER_VARIABLE.getId(), "text")
+			.put(0, "unrecognized")
+			.build();
 
 	public static List<List<String>> convertWorkbookData(final List<MeasurementRow> observations,
 			final List<MeasurementVariable> variables) {
@@ -320,7 +292,7 @@ public class KsuFieldbookUtil {
 		} else {
 			dataType = trait.getDataTypeId();
 		}
-		return KsuDataTypeFormatEnum.get(dataType).getLabel();
+		return dataTypeFormats.get(dataType);
 	}
 
 	public static String getLabelFromKsuRequiredColumn(final MeasurementVariable variable) {

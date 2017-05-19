@@ -52,11 +52,6 @@ public class KsuFieldbookUtil {
 	// this list to handle omissions of standard Germplasm variables from the export
 	private static final List<Integer> fieldsToOmit = new ArrayList<Integer>();
 
-	private static final int NUMERIC_VARIABLE = 1110;
-	private static final int CATEGORICAL_VARIABLE = 1130;
-	private static final int DATE_VARIABLE = 1117;
-
-
 	static {
 		ID_NAME_MAP = new HashMap<Integer, String>();
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT_ID, KsuFieldbookUtil.PLOT_ID);
@@ -133,8 +128,8 @@ public class KsuFieldbookUtil {
 			return this.label;
 		}
 
-		public static KsuRequiredColumnEnum get(final Integer id) {
-			return KsuRequiredColumnEnum.LOOK_UP.get(id);
+		public static KsuDataTypeFormatEnum get(final Integer id) {
+			return KsuDataTypeFormatEnum.LOOK_UP.get(id);
 		}
 	}
 
@@ -319,19 +314,13 @@ public class KsuFieldbookUtil {
 	}
 
 	private static String getDataTypeDescription(MeasurementVariable trait) {
+		Integer dataType;
 		if (trait.getDataTypeId() == null || !dataTypeList.contains(trait.getDataTypeId())) {
-			return KsuDataTypeFormatEnum.UNRECOGNIZED_FORMAT.getLabel();
+			dataType = 0;
+		} else {
+			dataType = trait.getDataTypeId();
 		}
-		switch (trait.getDataTypeId()) {
-			case NUMERIC_VARIABLE:
-				return KsuDataTypeFormatEnum.NUMERIC_FORMAT.getLabel();
-			case CATEGORICAL_VARIABLE:
-				return KsuDataTypeFormatEnum.CATEGORICAL_FORMAT.getLabel();
-			case DATE_VARIABLE:
-				return KsuDataTypeFormatEnum.DATE_FORMAT.getLabel();
-			default:
-				return KsuDataTypeFormatEnum.CHARACTER_FORMAT.getLabel();
-		}
+		return KsuDataTypeFormatEnum.get(dataType).getLabel();
 	}
 
 	public static String getLabelFromKsuRequiredColumn(final MeasurementVariable variable) {

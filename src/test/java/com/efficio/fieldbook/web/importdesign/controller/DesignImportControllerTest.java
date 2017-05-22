@@ -79,6 +79,7 @@ public class DesignImportControllerTest {
 	private static final int COOPERATOR_TERMID = 8373;
 	public static final String TEST_IMPORT_FILE_NAME_CSV = "Test_import_file_name.csv";
 	public static final String LOCATION_NAME = "LOCATION_NAME";
+	public static final String LOCATION_ID = "LOCATION_ID";
 	public static final String SITE_NAME = "SITE_NAME";
 
 	@Mock
@@ -392,7 +393,7 @@ public class DesignImportControllerTest {
 		this.designImportController.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData, trialVariables);
 
 		Assert.assertEquals(5, trialVariables.size());
-		Assert.assertEquals("LOCATION_NAME_ID should be added to the Trial Variables", "LOCATION_NAME_ID",
+		Assert.assertEquals("LOCATION_ID should be added to the Trial Variables", "LOCATION_ID",
 				this.getMeasurementVariable(TermId.LOCATION_ID.getId(), trialVariables).getName());
 		Assert.assertEquals("COOPERATOR_ID should be added to the Trial Variables", "COOPERATOR_ID",
 				this.getMeasurementVariable(TermId.COOPERATOOR_ID.getId(), trialVariables).getName());
@@ -406,7 +407,7 @@ public class DesignImportControllerTest {
 		Assert.assertEquals(1, environmentData.getNoOfEnvironments());
 		final Map<String, String> managementDetailValuesMap = environmentData.getEnvironments().get(0).getManagementDetailValues();
 
-		Assert.assertTrue("LOCATION_NAME_ID should be in Management Details",
+		Assert.assertTrue("LOCATION_ID should be in Management Details",
 				managementDetailValuesMap.containsKey(String.valueOf(TermId.LOCATION_ID.getId())));
 		Assert.assertTrue("COOPERATOOR_ID should be in Management Details",
 				managementDetailValuesMap.containsKey(String.valueOf(TermId.COOPERATOOR_ID.getId())));
@@ -430,13 +431,13 @@ public class DesignImportControllerTest {
 		final List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
 
 		settingDetails
-				.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(), LOCATION_NAME, "", "TRIAL"));
+				.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(), LOCATION_ID, "", "TRIAL"));
 
 		Mockito.doReturn(settingDetails).when(this.userSelection).getTrialLevelVariableList();
 		this.designImportController.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData, trialVariables);
 
 		Assert.assertEquals(5, trialVariables.size());
-		Assert.assertEquals("LOCATION_NAME_ID should be added to the Trial Variables", "LOCATION_NAME_ID",
+		Assert.assertEquals("LOCATION_ID should be added to the Trial Variables", "LOCATION_ID",
 				this.getMeasurementVariable(TermId.LOCATION_ID.getId(), trialVariables).getName());
 
 		Assert.assertEquals(1, environmentData.getNoOfEnvironments());

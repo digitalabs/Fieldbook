@@ -1071,16 +1071,25 @@ public class DesignImportController extends SettingsController {
 	}
 
 	/**
-	 * 
+	 *
 	 * If a variable(s) is expected to have a pair ID variable (e.g. LOCATION_NAME has LOCATION_NAME_ID pair), the pair ID should be created
 	 * and added to the trial variables in order for the system to properly save the Trial.
-	 * 
+	 *
 	 * @param environmentData
 	 * @param designImportData
 	 * @param trialVariables
 	 */
 	protected void resolveIDNamePairingAndValuesForTrial(final EnvironmentData environmentData, final DesignImportData designImportData,
 			final Set<MeasurementVariable> trialVariables) {
+
+		/**
+		 * Name variables (e.g. LOCATION_NAME and COOPERATOR) are added in environment details if they
+		 * are available in Design Import File. During design import, we should convert them to their
+		 * corresponding ID variables so they can be processed and saved correctly by the system.
+		 * If LOCATION_NAME and COOPERATOR are added by the user in Environment Tabs, these are automatically
+		 * resolved in the system as their ID counterpart.
+		 *
+		 */
 
 		final Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		final Map<String, String> nameIdMap = this.switchKey(idNameMap);
@@ -1098,52 +1107,42 @@ public class DesignImportController extends SettingsController {
 				String variableLocalName = resolveLocalNameOfTheTrialEnvironmentVariable(resolvingTermIdKey, this.userSelection.getTrialLevelVariableList(), designImportData);
 				String standardVariableName = resolveStandardVariableNameOfTheTrialEnvironmentVariable(resolvingTermIdKey, this.userSelection.getTrialLevelVariableList(), designImportData);
 
-				// For LOCATION_NAME and LOCATION_NAME_ID
-				if (resolvingTermIdKey == TermId.TRIAL_LOCATION.getId()
-						|| resolvingTermIdKey == TermId.LOCATION_ID.getId()) {
-
-					// If there's no standard variable name resolved for TRIAL_LOCATION, we should try to get it from LOCATION_ID since LOCATION_ID is 
-					// always added to the trial level factors in memory after the user added location variable in Environments tab.
-					if (resolvingTermIdKey == TermId.TRIAL_LOCATION.getId() && StringUtils.isEmpty(standardVariableName)) {
-						/** FIXME: this is the low-risk hack solution for BMS-4082. Ideally, the TRIAL_LOCATION variable should exist in userSelection.getTrialLevelVariableList() when
-						 * the user adds it in the Environment tab. We should also look how Generate Design resolves the name-id pair variables and use that as a pattern in Design Import if possible.
-						**/
-						variableLocalName = resolveLocalNameOfTheTrialEnvironmentVariable(TermId.LOCATION_ID.getId(), this.userSelection.getTrialLevelVariableList(), designImportData);
-						standardVariableName = resolveStandardVariableNameOfTheTrialEnvironmentVariable(TermId.LOCATION_ID.getId(), this.userSelection.getTrialLevelVariableList(), designImportData);
-					}
-
+				// CASE: If the Import Design File has LOCATION_NAME column, TermID 8180 is added in managementDetailValues
+				// so we need to convert it to LOCATION_NAME_ID (8190) and create and update the trial variables
+				if (resolvingTermIdKey.intValue() == TermId.TRIAL_LOCATION.getId()) {
 					// The termId of the pair ID variable
 					final String termIdOfPairIdVariable = nameIdMap.get(resolvingTermIdKey.toString().toUpperCase());
-					if (termIdOfPairIdVariable != null) {
 
-						if (this.isTermIdExisting(resolvingTermIdKey,
-								designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT))) {
-							this.populateTheValueOfLocationIDBasedOnLocationName(copyOfManagementDetailValues, Integer.valueOf(termIdOfPairIdVariable),
-									resolvingTermIdValue);
-						}
+					if (this.isTermIdExisting(resolvingTermIdKey,
+							designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT))) {
 
-						final SettingDetail settingDetail =
-								this.createSettingDetail(Integer.valueOf(termIdOfPairIdVariable), variableLocalName, VariableType.ENVIRONMENT_DETAIL.name());
-						settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
-
-						this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
-
-						final MeasurementVariable measurementVariable =
-								this.createMeasurementVariableFromStandardVariable(
-										standardVariableName + AppConstants.ID_SUFFIX.getString(), Integer.valueOf(termIdOfPairIdVariable),
-										PhenotypicType.TRIAL_ENVIRONMENT);
-
-						trialVariables.add(measurementVariable);
-
-						copyOfManagementDetailValues.remove(resolvingTermIdKey);
-
-						SettingsUtil.hideVariableInSession(this.userSelection.getTrialLevelVariableList(),
-								resolvingTermIdKey);
+						// It is expected that the LOCATION_NAME column in design file has the name values of the location.
+						// This will convert the location name value to its corresponding locationid in the database.
+						this.populateTheValueOfLocationIDBasedOnLocationName(copyOfManagementDetailValues, Integer.valueOf(termIdOfPairIdVariable),
+								resolvingTermIdValue);
 					}
 
-					// For COOPERATOR and COOPERATOR_ID
-				} else if (resolvingTermIdKey == TermId.COOPERATOR.getId()
-						|| resolvingTermIdKey == TermId.COOPERATOOR_ID.getId()) {
+					final SettingDetail settingDetail =
+							this.createSettingDetail(Integer.valueOf(termIdOfPairIdVariable), variableLocalName, VariableType.ENVIRONMENT_DETAIL.name());
+					settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+
+					this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
+
+					final MeasurementVariable measurementVariable =
+							this.createMeasurementVariableFromStandardVariable(standardVariableName + AppConstants.ID_SUFFIX.getString(),
+									Integer.valueOf(termIdOfPairIdVariable), PhenotypicType.TRIAL_ENVIRONMENT);
+
+					trialVariables.add(measurementVariable);
+
+					copyOfManagementDetailValues.remove(resolvingTermIdKey);
+
+					SettingsUtil.hideVariableInSession(this.userSelection.getTrialLevelVariableList(), resolvingTermIdKey);
+
+
+					// CASE: If the Import Design File has COOPERATOR column, TermID 8373 is added in managementDetailValues
+					// so we need to convert it to COOPERATOR_ID (8372) and create and update the trial variables
+				} else if (resolvingTermIdKey.intValue() == TermId.COOPERATOR.getId()
+						) {
 
 					// The termId of the pair ID variable
 					final String termIdOfPairIdVariable = nameIdMap.get(resolvingTermIdKey.toString());
@@ -1172,6 +1171,7 @@ public class DesignImportController extends SettingsController {
 
 				} else {
 
+					// Every variable added in Environment tab should be added to the trial variables.
 					final MeasurementVariable measurementVariable =
 							this.createMeasurementVariableFromStandardVariable(standardVariableName,
 									resolvingTermIdKey, PhenotypicType.TRIAL_ENVIRONMENT);

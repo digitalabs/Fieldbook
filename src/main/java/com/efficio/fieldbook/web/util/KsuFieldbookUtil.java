@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -23,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.csvreader.CsvWriter;
+import org.apache.commons.lang3.StringUtils;
+
 
 public class KsuFieldbookUtil {
 
@@ -40,8 +43,9 @@ public class KsuFieldbookUtil {
 	private static final List<String> TRAIT_FILE_HEADERS =
 			Arrays.asList("trait", "format", "defaultValue", "minimum", "maximum", "details", "categories", "isVisible", "realPosition");
 
-	private static final String NUMERIC_FORMAT = "numeric";
-	private static final String TEXT_FORMAT = "text";
+	private static final List<Integer> dataTypeList = Arrays
+		.asList(TermId.NUMERIC_VARIABLE.getId(), TermId.CATEGORICAL_VARIABLE.getId(), TermId.DATE_VARIABLE.getId(),
+			TermId.CHARACTER_VARIABLE.getId());
 
 	private static final Map<Integer, String> ID_NAME_MAP;
 
@@ -93,6 +97,14 @@ public class KsuFieldbookUtil {
 		}
 	}
 
+	private static ImmutableMap<Integer,String> dataTypeFormats = ImmutableMap.<Integer, String>builder()
+			.put(TermId.CATEGORICAL_VARIABLE.getId(), "categorical")
+			.put(TermId.NUMERIC_VARIABLE.getId(), "numeric")
+			.put(TermId.DATE_VARIABLE.getId(), "date")
+			.put(TermId.CHARACTER_VARIABLE.getId(), "text")
+			.put(0, "unrecognized")
+			.build();
+
 	public static List<List<String>> convertWorkbookData(final List<MeasurementRow> observations,
 			final List<MeasurementVariable> variables) {
 
@@ -129,7 +141,6 @@ public class KsuFieldbookUtil {
 	 * Writes the Header Row to the CSV or Excel file. Omits designated columns.
 	 * 
 	 * @param headers : List of MeasurementVariables to filter, processing the name of the Variable
-	 * @param isFactor
 	 * @return a list of Strings to print in appropriate format
 	 * 
 	 */
@@ -167,7 +178,6 @@ public class KsuFieldbookUtil {
 	/**
 	 * Collects the measurement data required to export. Processes omissions as required in {@link KsuFieldbookUtil}
 	 * 
-	 * @param factorIds : IDs corresponding to variables to export
 	 * @param variables : The variables to export
 	 * @return
 	 */
@@ -209,7 +219,7 @@ public class KsuFieldbookUtil {
 		}
 	}
 
-	private static List<List<String>> convertTraitsData(final List<MeasurementVariable> traits,
+	protected static List<List<String>> convertTraitsData(final List<MeasurementVariable> traits,
 			final FieldbookService fieldbookMiddlewareService, final OntologyService ontologyService) {
 		final List<List<String>> data = new ArrayList<List<String>>();
 
@@ -229,11 +239,7 @@ public class KsuFieldbookUtil {
 		for (final MeasurementVariable trait : traits) {
 			final List<String> traitData = new ArrayList<String>();
 			traitData.add(trait.getName());
-			if ("C".equalsIgnoreCase(trait.getDataTypeDisplay())) {
-				traitData.add(KsuFieldbookUtil.TEXT_FORMAT);
-			} else {
-				traitData.add(KsuFieldbookUtil.NUMERIC_FORMAT);
-			}
+			traitData.add(getDataTypeDescription(trait));
 			// default value
 			traitData.add("");
 			if (trait.getMinRange() != null) {
@@ -277,6 +283,16 @@ public class KsuFieldbookUtil {
 		}
 
 		return data;
+	}
+
+	private static String getDataTypeDescription(MeasurementVariable trait) {
+		Integer dataType;
+		if (trait.getDataTypeId() == null || !dataTypeList.contains(trait.getDataTypeId())) {
+			dataType = 0;
+		} else {
+			dataType = trait.getDataTypeId();
+		}
+		return dataTypeFormats.get(dataType);
 	}
 
 	public static String getLabelFromKsuRequiredColumn(final MeasurementVariable variable) {

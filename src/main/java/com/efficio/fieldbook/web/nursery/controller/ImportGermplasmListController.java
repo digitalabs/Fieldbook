@@ -349,30 +349,33 @@ public class ImportGermplasmListController extends SettingsController {
 	 *
 	 * @param form
 	 */
-	protected void validateEntryAndPlotNo(
-			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form) {
+	protected void validateEntryAndPlotNo(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form) {
 
-		final Integer startingEntryNumber = org.generationcp.middleware.util.StringUtil
-				.parseInt(form.getStartingEntryNo(), null);
+		final Integer startingEntryNumber = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
 
-		if (startingEntryNumber != null) {
-			final Integer totalExpectedEntryNumber = startingEntryNumber + this.userSelection
-					.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().size();
+		if (startingEntryNumber != null && startingEntryNumber > 1) {
+			final Integer totalExpectedEntryNumber =
+				startingEntryNumber + this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
+					.size();
 
 			if (totalExpectedEntryNumber > ImportGermplasmListController.MAX_ENTRY_NUMBER_LIMIT + 1) {
 				throw new FieldbookRequestValidationException("entry.number.should.not.exceed");
 			}
+		} else {
+			throw new FieldbookRequestValidationException("entry.number.should.be.in.range");
 		}
 
 		final Integer totalExpectedNumber = this.computeTotalExpectedWithChecks(form);
 		final Integer plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), null);
 
-		if (plotNo != null) {
+		if (plotNo != null && plotNo > 1) {
 			final Integer totalMeasurement = totalExpectedNumber + plotNo;
 
 			if (totalMeasurement > ImportGermplasmListController.MAX_PLOT_NUMBER_LIMIT + 1) {
 				throw new FieldbookRequestValidationException("plot.number.should.not.exceed");
 			}
+		} else {
+			throw new FieldbookRequestValidationException("plot.number.should.be.in.range");
 		}
 	}
 

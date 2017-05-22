@@ -385,11 +385,19 @@ public class ImportGermplasmListController extends SettingsController {
 			Integer entryNo = null;
 			if (form.getStartingEntryNo() != null) {
 				entryNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
+				if (entryNo == null) {
+					throw new FieldbookRequestValidationException("entry.number.should.be.in.range");
+
+				}
 			}
 
-			Integer plotNo = 1;
+			Integer plotNo = null;
 			if (form.getStartingPlotNo() != null) {
-				plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), 1);
+				plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), null);
+				if (plotNo == null) {
+					throw new FieldbookRequestValidationException("plot.number.should.be.in.range");
+
+				}
 			}
 
 			this.userSelection.setStartingEntryNo(entryNo);

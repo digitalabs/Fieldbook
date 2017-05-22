@@ -537,29 +537,20 @@ public class CrossingServiceImpl implements CrossingService {
 		return nextNumberInSequence;
 
 	}
-
+	
+	/*
+	 * This method is only used for Specify Name Scenario in import crosses and design crosses
+	 */
 	protected String buildDesignationNameInSequence(final ImportedCrosses importedCrosses, final Integer number,
 			final CrossSetting setting) {
 		final CrossNameSetting nameSetting = setting.getCrossNameSetting();
-		final Pattern pattern = Pattern.compile(ExpressionHelper.PROCESS_CODE_PATTERN);
 		final StringBuilder sb = new StringBuilder();
-		final String uDSuffix = nameSetting.getSuffix();
 		sb.append(this.buildPrefixString(nameSetting));
 		sb.append(this.getNumberWithLeadingZeroesAsString(number, nameSetting));
 
 		if (!StringUtils.isEmpty(nameSetting.getSuffix())) {
-			String suffix = nameSetting.getSuffix().trim();
-			String processCodeValue = "";
-			final Matcher matcher = pattern.matcher(suffix);
-
-			if (matcher.find()) {
-				processCodeValue = this.evaluateSuffixProcessCode(importedCrosses, setting, matcher.group());
-				suffix = this.replaceExpressionWithValue(new StringBuilder(suffix), matcher.group(), processCodeValue);
-			}
-
-			sb.append(this.buildSuffixString(nameSetting, suffix));
+			sb.append(this.buildSuffixString(nameSetting, nameSetting.getSuffix()));
 		}
-		nameSetting.setSuffix(uDSuffix);
 		return sb.toString();
 	}
 

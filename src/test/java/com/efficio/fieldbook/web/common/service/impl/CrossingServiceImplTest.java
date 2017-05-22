@@ -376,14 +376,12 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
-	public void testBuildDesignationNameInSequenceMethodSuffixProcessCodeIsAvailable() throws RuleException {
-		final String resolvedSuffixString = "AAA";
-		Mockito.when(this.processCodeOrderedRule.runRule(Matchers.any(RuleExecutionContext.class)))
-				.thenReturn(resolvedSuffixString);
-
+	public void testBuildDesignationNameInSequenceSuffixIsAvailable() throws RuleException {
+		final String specifiedSuffix = "AAA";
+		
 		final CrossSetting crossSetting = new CrossSetting();
 		final CrossNameSetting crossNameSetting = new CrossNameSetting();
-		crossNameSetting.setSuffix(resolvedSuffixString);
+		crossNameSetting.setSuffix(specifiedSuffix);
 		crossSetting.setCrossNameSetting(crossNameSetting);
 
 		final ImportedCrosses importedCrosses = new ImportedCrosses();
@@ -391,19 +389,16 @@ public class CrossingServiceImplTest {
 		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses,
 				sequenceNumber, crossSetting);
 
-		final String expectedResult = sequenceNumber + resolvedSuffixString;
+		final String expectedResult = sequenceNumber + specifiedSuffix;
 		Assert.assertEquals("The designation name should be " + expectedResult, expectedResult, designationName);
 	}
 
 	@Test
-	public void testBuildDesignationNameInSequenceMethodSuffixProcessCodeWithPrefix() throws RuleException {
-		final String resolvedSuffixString = "AAA";
-		Mockito.when(this.processCodeOrderedRule.runRule(Matchers.any(RuleExecutionContext.class)))
-				.thenReturn(resolvedSuffixString);
-
+	public void testBuildDesignationNameInSequenceSuffixAndPrefixAreAvailable() throws RuleException {
+		final String specifiedSuffix = "AAA";
 		final CrossSetting crossSetting = new CrossSetting();
 		final CrossNameSetting crossNameSetting = new CrossNameSetting();
-		crossNameSetting.setSuffix(resolvedSuffixString);
+		crossNameSetting.setSuffix(specifiedSuffix);
 		final String prefix = "B";
 		crossNameSetting.setPrefix(prefix);
 		crossSetting.setCrossNameSetting(crossNameSetting);
@@ -413,7 +408,7 @@ public class CrossingServiceImplTest {
 		final String designationName = this.crossingService.buildDesignationNameInSequence(importedCrosses,
 				sequenceNumber, crossSetting);
 
-		final String expectedResult = prefix + sequenceNumber + resolvedSuffixString;
+		final String expectedResult = prefix + sequenceNumber + specifiedSuffix;
 		Assert.assertEquals("The designation name should be " + expectedResult, expectedResult, designationName);
 	}
 

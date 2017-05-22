@@ -52,20 +52,20 @@
             <label class="control-label"><strong id="specifynumbering" class="sub-content-heading" th:text="#{germplasm.list.specify.numbering}">Specify Numbering</strong></label>
 
             <div class="form-group">
-                <div class="col-xs-5">
+                <div class="col-xs-6">
                     <!-- The following label and input box will be displayed for both Nursery & Trial -->
-                    <label class="control-label-bold labelForNumberingAndChecks" id="startingEntryNumber" th:text="#{germplasm.list.specify.starting.entry.number}">Specify Starting Entry Number</label>
+                    <label class="control-label-bold" id="startingEntryNumber" th:text="#{germplasm.list.specify.starting.entry.number}" style="margin-left: 5px;">Specify Starting Entry Number</label>
                     <input class="inputForNumberingAndChecks" id="txtStartingEntryNo" rows="1" th:field="*{startingEntryNo}" disabled="disabled"
                            title="Click Replace button to edit entry number" />
                 </div>
 
-                <div class="col-xs-6" th:if="${type == 'N'}">
-                    <!-- Display this section for Nursery only -->
-                    <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}" style="margin-right: 36px;">Specify Starting Plot Number</label>
-                    <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" rows="1" th:field="*{startingPlotNo}" disabled="disabled"
-                           title="Click Replace button to edit plot number" />
-                </div>
-            </div>
+				<div class="col-xs-6" th:if="${type == 'N'}">
+				<!-- Display this section for Nursery only -->
+					<label class="control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}" style="margin-left: 5px;">Specify Starting Plot Number</label>
+					<input class="inputForNumberingAndChecks" id="txtStartingPlotNo" rows="1" th:field="*{startingPlotNo}" disabled="disabled"
+						   title="Click Replace button to edit plot number"/>
+				</div>
+			</div>
         </div>
     </div>
 </form>

@@ -58,40 +58,35 @@
 				}
 
 			},
-			validateAndSetEntryNo: function() {
+			validateAndSetEntryNo: function () {
 				var $txtStartingEntryNo = $('#txtStartingEntryNo');
 
 				var customMessage = '';
 				var entryNo = $.trim($txtStartingEntryNo.val());
 
-				if (entryNo !== '') {
-					if (!window.ImportGermplasm.validateEntryNo(entryNo)) {
-						customMessage = entryNoShouldBeInRange;
-					}
-
-					if (customMessage !== '') {
-						showInvalidInputMessage(customMessage);
-						$txtStartingEntryNo.val('');
-					} else {
-						var dataTableIdentifier = '.germplasm-list-items';
-						var entryNoColIndex = window.ImportGermplasm.findEntryColIndex(dataTableIdentifier);
-						var lowestEntryNo = window.ImportGermplasm.findLowestEntryNo(dataTableIdentifier, entryNoColIndex);
-						var diff = entryNo - lowestEntryNo;
-						window.ImportGermplasm.updateEntryNo(dataTableIdentifier, entryNoColIndex, diff);
-						if (isNursery()) {
-							showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-								'To update the Measurements table, please save the Nursery', 10000);
-						} else {
-							window.ImportGermplasm.setUnappliedChangesAvailable();
-							showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-								'To update the Measurements table, please review your settings and regenerate ' +
-								'the Experimental Design', 10000);
-						}
-					}
-				} else {
-					// Set starting entry number back to blank if starting entry number is only white spaces
-					$txtStartingEntryNo.val('');
+				if (!window.ImportGermplasm.validateEntryNo(entryNo)) {
+					customMessage = entryNoShouldBeInRange;
 				}
+
+				if (customMessage !== '') {
+					showInvalidInputMessage(customMessage);
+				} else {
+					var dataTableIdentifier = '.germplasm-list-items';
+					var entryNoColIndex = window.ImportGermplasm.findEntryColIndex(dataTableIdentifier);
+					var lowestEntryNo = window.ImportGermplasm.findLowestEntryNo(dataTableIdentifier, entryNoColIndex);
+					var diff = entryNo - lowestEntryNo;
+					window.ImportGermplasm.updateEntryNo(dataTableIdentifier, entryNoColIndex, diff);
+					if (isNursery()) {
+						showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+							'To update the Measurements table, please save the Nursery', 10000);
+					} else {
+						window.ImportGermplasm.setUnappliedChangesAvailable();
+						showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+							'To update the Measurements table, please review your settings and regenerate ' +
+							'the Experimental Design', 10000);
+					}
+				}
+
 			},
 			findEntryColIndex: function(dataTableId) {
 				var entryNoColNum = 0;
@@ -145,30 +140,26 @@
 
 				return !!inputNo.match(validNo);
 			},
-			validateAndSetPlotNo: function() {
+			validateAndSetPlotNo: function () {
 				var customMessage = '';
 				var plotNo = $.trim($('#txtStartingPlotNo').val());
-				if (plotNo !== '') {
-					if (!window.ImportGermplasm.validatePlotNo(plotNo)) {
-						customMessage = plotNoShouldBeInRange;
-					}
 
-					if (customMessage !== '') {
-						showInvalidInputMessage(customMessage);
-						$('#txtStartingPlotNo').val('');
-					} else {
-						if (isNursery()) {
-							showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-								'To update the Measurements table, please save the Nursery', 10000);
-						} else {
-							showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-								'To update the Measurements table, please save the Trial', 10000);
-						}
-					}
-				} else {
-					// Set starting plot number back to blank if starting plot number is only white spaces
-					$('#txtStartingPlotNo').val('');
+				if (!window.ImportGermplasm.validatePlotNo(plotNo)) {
+					customMessage = plotNoShouldBeInRange;
 				}
+
+				if (customMessage !== '') {
+					showInvalidInputMessage(customMessage);
+				} else {
+					if (isNursery()) {
+						showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+							'To update the Measurements table, please save the Nursery', 10000);
+					} else {
+						showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+							'To update the Measurements table, please save the Trial', 10000);
+					}
+				}
+
 			},
 			setUnappliedChangesAvailable: function() {
 				var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');

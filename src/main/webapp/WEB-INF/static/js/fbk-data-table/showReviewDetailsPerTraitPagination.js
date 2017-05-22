@@ -27,8 +27,7 @@ function generateDataForProcessing() {
 	var dataChanges = { data: [] };
 
 	var oTable = $('#import-preview-measurement-table').dataTable();
-	
-							
+								
 	if (sessionStorage) {
 		for (var i in sessionStorage) {
 			if (i.indexOf('reviewDetailsFormDataAction') === 0) {
@@ -141,8 +140,7 @@ function saveFormDataToSessionStorage(dataKey) {
 	var selectedActionValue = $('#selectActionValue').val().trim();
 
 	// get the column index of trait from Measurements data table
-	var oTable = $('#import-preview-measurement-table').dataTable();
-    var traitTermName = $("#traitTermName").val();
+	var traitTermName = $("#traitTermName").val();
 	var traitColumnIndex = $('#import-preview-measurement-table').DataTable().column(':contains(' + traitTermName + ')').index();
 	
 	$(cells).find('[data-binding]').each(function() {

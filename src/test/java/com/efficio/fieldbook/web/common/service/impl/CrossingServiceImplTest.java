@@ -10,7 +10,6 @@ import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
 import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
 import org.generationcp.commons.ruleengine.RuleException;
-import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
@@ -378,7 +377,7 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testBuildDesignationNameInSequenceSuffixIsAvailable() throws RuleException {
 		final String specifiedSuffix = "AAA";
-		
+
 		final CrossSetting crossSetting = new CrossSetting();
 		final CrossNameSetting crossNameSetting = new CrossNameSetting();
 		crossNameSetting.setSuffix(specifiedSuffix);

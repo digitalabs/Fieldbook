@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -30,7 +28,6 @@ import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.commons.util.ExpressionHelper;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -537,9 +534,10 @@ public class CrossingServiceImpl implements CrossingService {
 		return nextNumberInSequence;
 
 	}
-	
+
 	/*
-	 * This method is only used for Specify Name Scenario in import crosses and design crosses
+	 * This method is only used for Specify Name Scenario in import crosses and
+	 * design crosses
 	 */
 	protected String buildDesignationNameInSequence(final ImportedCrosses importedCrosses, final Integer number,
 			final CrossSetting setting) {

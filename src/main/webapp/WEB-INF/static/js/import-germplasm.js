@@ -70,6 +70,7 @@
 
 				if (customMessage !== '') {
 					showInvalidInputMessage(customMessage);
+					$('#txtStartingEntryNo').val('1');
 				} else {
 					var dataTableIdentifier = '.germplasm-list-items';
 					var entryNoColIndex = window.ImportGermplasm.findEntryColIndex(dataTableIdentifier);
@@ -150,6 +151,7 @@
 
 				if (customMessage !== '') {
 					showInvalidInputMessage(customMessage);
+					$('#txtStartingPlotNo').val('1');
 				} else {
 					if (isNursery()) {
 						showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +

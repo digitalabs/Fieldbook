@@ -190,6 +190,8 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 					final int blockLevel = treatmentSize / blockSize;
 					final Integer entryNumber = StringUtil.parseInt(expDesignParameter.getStartingEntryNo(), null);
 					final Integer plotNumber = StringUtil.parseInt(expDesignParameter.getStartingPlotNo(), null);
+					final Integer maxEntry = treatmentSize + entryNumber - 1;
+					final Integer maxPlot = (treatmentSize * replicationCount) + plotNumber - 1;
 
 					if (Objects.equals(entryNumber, 0)) {
 						output = new ExpDesignValidationOutput(false,
@@ -200,13 +202,12 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 					} else if (replicationCount <= 1 || replicationCount >= 13) {
 						output = new ExpDesignValidationOutput(false,
 								this.messageSource.getMessage("experiment.design.replication.count.resolvable.error", null, locale));
-					} else if (entryNumber != null && (treatmentSize + entryNumber) > ExperimentDesignService.MAX_STARTING_ENTRY_NO) {
-						output = new ExpDesignValidationOutput(false,
-								this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
-					} else if (entryNumber != null && plotNumber != null && (((treatmentSize * replicationCount) + plotNumber)
-							> ExperimentDesignService.MAX_STARTING_PLOT_NO)) {
-						output = new ExpDesignValidationOutput(false,
-								this.messageSource.getMessage("plot.number.should.be.in.range", null, locale));
+					} else if (entryNumber != null && maxEntry > ExperimentDesignService.MAX_ENTRY_NO) {
+						output = new ExpDesignValidationOutput(false, this.messageSource
+							.getMessage("experiment.design.entry.number.should.not.exceed", new Object[] {maxEntry}, locale));
+					} else if (entryNumber != null && plotNumber != null && maxPlot > ExperimentDesignService.MAX_PLOT_NO) {
+						output = new ExpDesignValidationOutput(false, this.messageSource
+							.getMessage("experiment.design.plot.number.should.not.exceed", new Object[] {maxPlot}, locale));
 					} else if (blockSize <= 1) {
 						output = new ExpDesignValidationOutput(false,
 								this.messageSource.getMessage("experiment.design.block.size.should.be.a.greater.than.1", null, locale));

@@ -93,27 +93,23 @@
 	function validateAndSetPlotNo() {
 		var customMessage = '';
 		var plotNo = $.trim($("#txtStartingPlotNo").val());
-		if(plotNo != '') {
-			if (!validatePlotNo(plotNo)) {
-				customMessage = plotNoShouldBeInRange;
-			}
-
-			if (customMessage != '') {
-				showInvalidInputMessage(customMessage);
-				$("#txtStartingPlotNo").val('');
-			} else {
-				if (isNursery()) {
-					showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-						'To update the Measurements table, please save the Nursery', 10000);
-				} else {
-					showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-						'To update the Measurements table, please save the Trial', 10000);
-				}
-			}
-		} else {
-			// Set starting plot number back to blank if starting plot number is only white spaces
-			$("#txtStartingPlotNo").val('');
+		if (!validatePlotNo(plotNo)) {
+			customMessage = plotNoShouldBeInRange;
 		}
+
+		if (customMessage != '') {
+			showInvalidInputMessage(customMessage);
+			$("#txtStartingPlotNo").val('1');
+		} else {
+			if (isNursery()) {
+				showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+					'To update the Measurements table, please save the Nursery', 10000);
+			} else {
+				showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+					'To update the Measurements table, please save the Trial', 10000);
+			}
+		}
+
 	}
 
 	function validatePlotNo(inputNo) {

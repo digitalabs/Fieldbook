@@ -129,9 +129,9 @@ public class ImportGermplasmListController extends SettingsController {
 
 	protected static final String GROUP_ID = "groupId";
 
-	protected static final Integer MAX_ENTRY_NUMBER_LIMIT = 99999;
+	protected static final Integer MAX_ENTRY_NO = 99999;
 
-	protected static final Integer MAX_PLOT_NUMBER_LIMIT = 99999999;
+	protected static final Integer MAX_PLOT_NO = 99999999;
 
 
 	/** The Constant LOG. */
@@ -357,10 +357,10 @@ public class ImportGermplasmListController extends SettingsController {
 
 		if (startingEntryNumber != null) {
 			final Integer totalExpectedEntryNumber = startingEntryNumber + this.userSelection
-					.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().size();
+					.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().size() - 1;
 
-			if (totalExpectedEntryNumber > ImportGermplasmListController.MAX_ENTRY_NUMBER_LIMIT) {
-				throw new FieldbookRequestValidationException("entry.number.should.be.in.range");
+			if (totalExpectedEntryNumber > ImportGermplasmListController.MAX_ENTRY_NO) {
+				throw new FieldbookRequestValidationException("entry.number.should.not.exceed");
 			}
 		}
 
@@ -368,10 +368,10 @@ public class ImportGermplasmListController extends SettingsController {
 		final Integer plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), null);
 
 		if (plotNo != null) {
-			final Integer totalMeasurement = totalExpectedNumber + plotNo;
+			final Integer totalMeasurement = totalExpectedNumber + plotNo - 1;
 
-			if (totalMeasurement > ImportGermplasmListController.MAX_PLOT_NUMBER_LIMIT) {
-				throw new FieldbookRequestValidationException("plot.number.should.be.in.range");
+			if (totalMeasurement > ImportGermplasmListController.MAX_PLOT_NO) {
+				throw new FieldbookRequestValidationException("plot.number.should.not.exceed");
 			}
 		}
 	}
@@ -385,11 +385,19 @@ public class ImportGermplasmListController extends SettingsController {
 			Integer entryNo = null;
 			if (form.getStartingEntryNo() != null) {
 				entryNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
+				if (entryNo == null) {
+					throw new FieldbookRequestValidationException("entry.number.should.be.in.range");
+
+				}
 			}
 
-			Integer plotNo = 1;
+			Integer plotNo = null;
 			if (form.getStartingPlotNo() != null) {
-				plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), 1);
+				plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), null);
+				if (plotNo == null) {
+					throw new FieldbookRequestValidationException("plot.number.should.be.in.range");
+
+				}
 			}
 
 			this.userSelection.setStartingEntryNo(entryNo);

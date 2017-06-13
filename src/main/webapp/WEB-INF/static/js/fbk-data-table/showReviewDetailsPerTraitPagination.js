@@ -75,7 +75,6 @@ function generateDataForProcessing() {
 								oTable.fnUpdate([value.values[i].newValue,''], rowIndex,
 									columnIndex, false); // Cell
                     			$(cell).removeClass('invalid-value');
-                    			$(cell).addClass('accepted-value');
 
                     		// if action is set cell value to Missing. No highlighting for missing values
                     		} else if (value.values[i].action === '3') {

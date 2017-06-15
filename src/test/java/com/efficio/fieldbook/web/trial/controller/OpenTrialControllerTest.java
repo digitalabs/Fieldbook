@@ -1,19 +1,11 @@
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.TestDataHelper;
-import com.efficio.fieldbook.web.trial.bean.AdvanceList;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -66,11 +58,20 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpenTrialControllerTest {
@@ -229,6 +230,10 @@ public class OpenTrialControllerTest {
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
+		
+		// Verify that workbook has Analysis and/or Analysis Summary variables beforehand to check that they were later removed
+		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConditions()));
+		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConstants()));
 
 		try {
 
@@ -265,21 +270,31 @@ public class OpenTrialControllerTest {
 			Assert.assertTrue("Controller does not properly set into the model the data for measurement row count",
 					model.containsAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT));
 
-			Assert.assertFalse("Analysis variables should not be displayed.", this.hasAnalysisVariables(model));
+			Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be displayed.", this.hasAnalysisVariables(model));
 
 		} catch (final MiddlewareException e) {
 			this.handleUnexpectedException(e);
 		}
 	}
 
+	private boolean hasAnalysisVariables(final List<MeasurementVariable> variables) {
+		boolean analysisVariableFound = false;
+		for (final MeasurementVariable variable : variables) {
+			if (VariableType.getReservedVariableTypes().contains(variable.getVariableType())) {
+				analysisVariableFound = true;
+				break;
+			}
+		}
+		return analysisVariableFound;
+	}
+	
 	private boolean hasAnalysisVariables(final Model model) {
 		final List<SettingDetail> settingDetails = this.getSettingDetailsPossiblyWithAnalysisVariables(model);
 		boolean analysisVariableFound = false;
 		for (final SettingDetail settingDetail : settingDetails) {
-			final Integer termId = settingDetail.getVariable().getCvTermId();
-			if (WorkbookTestDataInitializer.PLANT_HEIGHT_MEAN_ID == termId
-					|| WorkbookTestDataInitializer.PLANT_HEIGHT_UNIT_ERRORS_ID == termId) {
+			if (VariableType.getReservedVariableTypes().contains(settingDetail.getVariableType())) {
 				analysisVariableFound = true;
+				break;
 			}
 		}
 		return analysisVariableFound;

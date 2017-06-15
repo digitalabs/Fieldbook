@@ -104,6 +104,10 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		Mockito.doReturn(workbook).when(fieldbookMiddlewareService).getStudyVariableSettings(id, false);
 		this.mockStandardVariables(workbook.getAllVariables(), fieldbookMiddlewareService, fieldbookService);
 		this.mockContextUtil();
+		
+		// Verify that workbook has Analysis and/or Analysis Summary variables beforehand to check that they were later removed
+		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConditions()));
+		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConstants()));
 
 		this.reviewStudyDetailsController.show(StudyType.T.toString(), id, form, model);
 
@@ -112,12 +116,24 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final List<SettingDetail> conditionSettingDetails = details.getNurseryConditionDetails();
 		boolean hasAnalysisVariable = false;
 		for (final SettingDetail settingDetail : conditionSettingDetails) {
-			if (settingDetail.getVariableType() == VariableType.ANALYSIS) {
+			if (VariableType.getReservedVariableTypes().contains(settingDetail.getVariableType())) {
 				hasAnalysisVariable = true;
+				break;
 			}
 		}
-		Assert.assertFalse("Analysis variables should not be found under Trial Conditions of the Summary page.", hasAnalysisVariable);
+		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Trial Conditions of the Summary page.", hasAnalysisVariable);
 
+	}
+	
+	private boolean hasAnalysisVariables(final List<MeasurementVariable> variables) {
+		boolean analysisVariableFound = false;
+		for (final MeasurementVariable variable : variables) {
+			if (VariableType.getReservedVariableTypes().contains(variable.getVariableType())) {
+				analysisVariableFound = true;
+				break;
+			}
+		}
+		return analysisVariableFound;
 	}
 
 	private void mockContextUtil() {

@@ -13,6 +13,7 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -61,6 +62,10 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 		Mockito.doReturn(workbook).when(this.fieldbookMiddlewareService).getTrialDataSet(1);
 		this.mockStandardVariables(workbook.getAllVariables());
+		
+		// Verify that workbook has Analysis and/or Analysis Summary variables beforehand to check that they were later removed
+		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConditions()));
+		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConstants()));
 
 		Map<String, Object> tabDetails = this.controller.getExistingTrialDetails(1);
 		boolean analysisVariableFound = false;
@@ -73,15 +78,25 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 					continue;
 				}
 				for (SettingDetail settingDetail : detailList) {
-					Integer termId = settingDetail.getVariable().getCvTermId();
-					if (WorkbookTestDataInitializer.PLANT_HEIGHT_MEAN_ID == termId
-							|| WorkbookTestDataInitializer.PLANT_HEIGHT_UNIT_ERRORS_ID == termId) {
+					if (VariableType.getReservedVariableTypes().contains(settingDetail.getVariableType())) {
 						analysisVariableFound = true;
+						break;
 					}
 				}
 			}
 		}
-		Assert.assertFalse("Analysis variables should not be found", analysisVariableFound);
+		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be included.", analysisVariableFound);
+	}
+	
+	private boolean hasAnalysisVariables(final List<MeasurementVariable> variables) {
+		boolean analysisVariableFound = false;
+		for (final MeasurementVariable variable : variables) {
+			if (VariableType.getReservedVariableTypes().contains(variable.getVariableType())) {
+				analysisVariableFound = true;
+				break;
+			}
+		}
+		return analysisVariableFound;
 	}
 
 	private void mockContextUtil() {

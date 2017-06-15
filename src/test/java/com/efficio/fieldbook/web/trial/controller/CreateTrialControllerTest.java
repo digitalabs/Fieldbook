@@ -36,6 +36,7 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
+	@Override
 	@Before
 	public void setUp() {
 		this.fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
@@ -45,39 +46,39 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testUseExistingTrialWithError() throws Exception {
-		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(1)).thenThrow(
-				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
+		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(1))
+				.thenThrow(new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
 
-		Map<String, Object> tabDetails = this.controller.getExistingTrialDetails(1);
+		final Map<String, Object> tabDetails = this.controller.getExistingTrialDetails(1);
 
 		Assert.assertNotNull("Expecting error but did not get one", tabDetails.get("createTrialForm"));
 
-		CreateTrialForm form = (CreateTrialForm) tabDetails.get("createTrialForm");
+		final CreateTrialForm form = (CreateTrialForm) tabDetails.get("createTrialForm");
 		Assert.assertTrue("Expecting error but did not get one", form.isHasError());
 	}
-	
+
 	@Test
 	public void testUseExistingTrial() throws Exception {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 		Mockito.doReturn(workbook).when(this.fieldbookMiddlewareService).getTrialDataSet(1);
 		this.mockStandardVariables(workbook.getAllVariables());
-		
+
 		// Verify that workbook has Analysis and/or Analysis Summary variables beforehand to check that they were later removed
 		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConditions()));
 		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConstants()));
 
-		Map<String, Object> tabDetails = this.controller.getExistingTrialDetails(1);
+		final Map<String, Object> tabDetails = this.controller.getExistingTrialDetails(1);
 		boolean analysisVariableFound = false;
 		for (final String tab : tabDetails.keySet()) {
-			Object tabDetail = tabDetails.get(tab);
+			final Object tabDetail = tabDetails.get(tab);
 			if (tabDetail instanceof TabInfo) {
 				final TabInfo tabInfo = (TabInfo) tabDetail;
-				final List<SettingDetail> detailList = getSettingDetails(tabInfo);
-				if(detailList == null) {
+				final List<SettingDetail> detailList = this.getSettingDetails(tabInfo);
+				if (detailList == null) {
 					continue;
 				}
-				for (SettingDetail settingDetail : detailList) {
+				for (final SettingDetail settingDetail : detailList) {
 					if (VariableType.getReservedVariableTypes().contains(settingDetail.getVariableType())) {
 						analysisVariableFound = true;
 						break;
@@ -87,7 +88,7 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 		}
 		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be included.", analysisVariableFound);
 	}
-	
+
 	private boolean hasAnalysisVariables(final List<MeasurementVariable> variables) {
 		boolean analysisVariableFound = false;
 		for (final MeasurementVariable variable : variables) {
@@ -102,25 +103,25 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 	private void mockContextUtil() {
 		final ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
 		this.controller.setContextUtil(contextUtil);
-		Mockito.doReturn(PROGRAM_UUID).when(contextUtil).getCurrentProgramUUID();
+		Mockito.doReturn(this.PROGRAM_UUID).when(contextUtil).getCurrentProgramUUID();
 	}
 
-	private void mockStandardVariables(List<MeasurementVariable> allVariables) {
-		for (MeasurementVariable measurementVariable : allVariables) {
+	private void mockStandardVariables(final List<MeasurementVariable> allVariables) {
+		for (final MeasurementVariable measurementVariable : allVariables) {
 			Mockito.doReturn(this.createStandardVariable(measurementVariable.getTermId())).when(this.fieldbookMiddlewareService)
 					.getStandardVariable(measurementVariable.getTermId(), this.PROGRAM_UUID);
 		}
 	}
 
-	private StandardVariable createStandardVariable(Integer id) {
-		StandardVariable standardVariable = new StandardVariable();
+	private StandardVariable createStandardVariable(final Integer id) {
+		final StandardVariable standardVariable = new StandardVariable();
 		standardVariable.setId(id);
 		return standardVariable;
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<SettingDetail> getSettingDetails(TabInfo tabInfo) {
-		List<SettingDetail> detailList = new ArrayList<>();
+	private List<SettingDetail> getSettingDetails(final TabInfo tabInfo) {
+		final List<SettingDetail> detailList = new ArrayList<>();
 		if (tabInfo.getSettings() != null && !tabInfo.getSettings().isEmpty()) {
 			return tabInfo.getSettings();
 		}
@@ -133,14 +134,14 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 			} else if (tabInfo.getSettingMap().containsKey("details")) {
 				detailList.addAll((List<SettingDetail>) tabInfo.getSettingMap().get("details"));
 			} else if (tabInfo.getSettingMap().containsKey("treatmentLevelPairs")) {
-				Map<String, List<SettingDetail>> treatmentFactorPairs =
+				final Map<String, List<SettingDetail>> treatmentFactorPairs =
 						(Map<String, List<SettingDetail>>) tabInfo.getSettingMap().get("details");
-				for (List<SettingDetail> settingDetails : treatmentFactorPairs.values()) {
+				for (final List<SettingDetail> settingDetails : treatmentFactorPairs.values()) {
 					detailList.addAll(settingDetails);
 				}
 			}
 		}
-			
+
 		return detailList;
 	}
 

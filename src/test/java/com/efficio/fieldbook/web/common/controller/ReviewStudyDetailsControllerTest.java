@@ -56,9 +56,9 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.model().attributeExists("nurseryDetails"));
 	}
-	
+
 	// FIXME BMS-2360
-	//@Test
+	// @Test
 	public void testShowReviewTrialSummaryWithError() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get(ReviewStudyDetailsController.URL + "/show/T/1"))
 				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
@@ -74,7 +74,8 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 		Assert.assertEquals("Expecting error message for nursery but got " + details.getErrorMessage() + " instead.",
 				"This nursery is in a format that cannot be opened in the Nursery Manager. Please use the Study Browser if you"
-						+ " wish to see the details of this nursery.", details.getErrorMessage());
+						+ " wish to see the details of this nursery.",
+				details.getErrorMessage());
 	}
 
 	@Test
@@ -86,7 +87,8 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 		Assert.assertEquals("Expecting error message for nursery but got " + details.getErrorMessage() + " instead.",
 				"This trial is in a format that cannot be opened in the Trial Manager. Please use the Study Browser if you"
-						+ " wish to see the details of this trial.", details.getErrorMessage());
+						+ " wish to see the details of this trial.",
+				details.getErrorMessage());
 	}
 
 	@Test
@@ -98,13 +100,13 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
 		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
 		final com.efficio.fieldbook.service.api.FieldbookService fieldbookService =
-			Mockito.mock(com.efficio.fieldbook.service.api.FieldbookService.class);
+				Mockito.mock(com.efficio.fieldbook.service.api.FieldbookService.class);
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
 		this.reviewStudyDetailsController.setFieldbookService(fieldbookService);
 		Mockito.doReturn(workbook).when(fieldbookMiddlewareService).getStudyVariableSettings(id, false);
 		this.mockStandardVariables(workbook.getAllVariables(), fieldbookMiddlewareService, fieldbookService);
 		this.mockContextUtil();
-		
+
 		// Verify that workbook has Analysis and/or Analysis Summary variables beforehand to check that they were later removed
 		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConditions()));
 		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConstants()));
@@ -121,10 +123,11 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 				break;
 			}
 		}
-		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Trial Conditions of the Summary page.", hasAnalysisVariable);
+		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Trial Conditions of the Summary page.",
+				hasAnalysisVariable);
 
 	}
-	
+
 	private boolean hasAnalysisVariables(final List<MeasurementVariable> variables) {
 		boolean analysisVariableFound = false;
 		for (final MeasurementVariable variable : variables) {
@@ -143,17 +146,15 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	}
 
 	private void mockStandardVariables(final List<MeasurementVariable> allVariables, final FieldbookService fieldbookMiddlewareService,
-		com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
+			final com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
 		for (final MeasurementVariable measurementVariable : allVariables) {
-			final StandardVariable stdVar =
-					this.createStandardVariable(measurementVariable.getTermId(), measurementVariable.getProperty(),
-							measurementVariable.getScale(), measurementVariable.getMethod(), measurementVariable.getRole());
-			Mockito.doReturn(stdVar).when(fieldbookMiddlewareService)
-					.getStandardVariable(measurementVariable.getTermId(), this.PROGRAM_UUID);
-			Mockito.doReturn(stdVar.getId())
-					.when(fieldbookMiddlewareService)
-					.getStandardVariableIdByPropertyScaleMethodRole(measurementVariable.getProperty(), measurementVariable.getScale(),
-							measurementVariable.getMethod(), measurementVariable.getRole());
+			final StandardVariable stdVar = this.createStandardVariable(measurementVariable.getTermId(), measurementVariable.getProperty(),
+					measurementVariable.getScale(), measurementVariable.getMethod(), measurementVariable.getRole());
+			Mockito.doReturn(stdVar).when(fieldbookMiddlewareService).getStandardVariable(measurementVariable.getTermId(),
+					this.PROGRAM_UUID);
+			Mockito.doReturn(stdVar.getId()).when(fieldbookMiddlewareService).getStandardVariableIdByPropertyScaleMethodRole(
+					measurementVariable.getProperty(), measurementVariable.getScale(), measurementVariable.getMethod(),
+					measurementVariable.getRole());
 			Mockito.when(fieldbookService.getValue(Matchers.anyInt(), Matchers.anyString(), Matchers.anyBoolean())).thenReturn("");
 		}
 	}

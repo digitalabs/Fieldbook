@@ -182,6 +182,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Convert favorite location to json.
+	 * 
 	 * @param objectList list of objects
 	 * @return the string
 	 */

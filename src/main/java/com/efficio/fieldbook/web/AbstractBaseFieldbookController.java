@@ -212,7 +212,7 @@ public abstract class AbstractBaseFieldbookController {
 	/**
 	 * Remove variables with variable types 'Analysis' and 'Analysis Summary' in the workbook's conditions, constants, factors and variates
 	 */
-	protected void filterAnalysisVariable(final Workbook workbook) {
+	protected void removeAnalysisAndAnalysisSummaryVariables(final Workbook workbook) {
 		this.removeAnalysisVariables(workbook.getConditions());
 		this.removeAnalysisVariables(workbook.getConstants());
 		this.removeAnalysisVariables(workbook.getFactors());

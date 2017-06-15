@@ -220,7 +220,7 @@ public class OpenTrialController extends BaseTrialController {
 				// See setStartingEntryNoAndPlotNoFromObservations() in prepareExperimentalDesignTabInfo
 				this.fieldbookMiddlewareService.loadAllObservations(trialWorkbook);
 
-				this.filterAnalysisVariable(trialWorkbook);
+				this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
 				this.userSelection.setWorkbook(trialWorkbook);

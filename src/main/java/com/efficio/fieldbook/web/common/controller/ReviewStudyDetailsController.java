@@ -144,7 +144,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	}
 
 	private List<SettingDetail> rearrangeSettingDetails(final List<SettingDetail> list) {
-		final List<SettingDetail> newList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> newList = new ArrayList<>();
 
 		if (list != null && !list.isEmpty()) {
 			final int rows = Double.valueOf(Math.ceil(list.size() / (double) ReviewStudyDetailsController.COLS)).intValue();

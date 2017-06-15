@@ -260,7 +260,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	protected void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer trialId, final Model model) {
 		final List<GermplasmList> germplasmLists =
-				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(trialId), GermplasmListType.TRIAL);
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.TRIAL);
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
 			final GermplasmList germplasmList = germplasmLists.get(0);
 
@@ -412,7 +412,7 @@ public class OpenTrialController extends BaseTrialController {
 		workbook.setTrialDatasetId(trialDatasetId);
 		workbook.setMeasurementDatesetId(measurementDatasetId);
 
-		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>();
 		variablesForEnvironment.addAll(workbook.getTrialVariables());
 
 		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(
@@ -458,7 +458,7 @@ public class OpenTrialController extends BaseTrialController {
 				return returnVal;
 			} catch (final MiddlewareQueryException e) {
 				OpenTrialController.LOG.error(e.getMessage(), e);
-				return new HashMap<String, Object>();
+				return new HashMap<>();
 			}
 		} else {
 			return returnVal;
@@ -479,7 +479,7 @@ public class OpenTrialController extends BaseTrialController {
 			return;
 		}
 
-		final List<Integer> existingExpDesignVariableIds = new ArrayList<Integer>();
+		final List<Integer> existingExpDesignVariableIds = new ArrayList<>();
 		for (final StandardVariable expVar : existingExpDesignVariables) {
 			existingExpDesignVariableIds.add(expVar.getId());
 		}
@@ -497,7 +497,7 @@ public class OpenTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/updateSavedTrial", method = RequestMethod.GET)
 	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") final int id) {
-		final Map<String, Object> returnVal = new HashMap<String, Object>();
+		final Map<String, Object> returnVal = new HashMap<>();
 		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(id);
 		this.userSelection.setWorkbook(trialWorkbook);
 		this.userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
@@ -533,7 +533,7 @@ public class OpenTrialController extends BaseTrialController {
 			OpenTrialController.LOG.error(e.getMessage(), e);
 		}
 
-		return new ArrayList<UserDefinedField>();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -581,7 +581,7 @@ public class OpenTrialController extends BaseTrialController {
 			workbook = this.userSelection.getTemporaryWorkbook();
 		}
 
-		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
+		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
 		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
 
 		final String listCsv = request.getParameter("variableList");
@@ -663,7 +663,7 @@ public class OpenTrialController extends BaseTrialController {
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		// transfer over data from user input into the list of setting details stored in the session
-		final List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> combinedList = new ArrayList<>();
 		combinedList.addAll(basicDetails);
 
 		if (studyLevelConditions != null) {
@@ -692,7 +692,7 @@ public class OpenTrialController extends BaseTrialController {
 			return trialObservations;
 		}
 
-		List<MeasurementRow> filteredTrialObservations = new ArrayList<MeasurementRow>();
+		List<MeasurementRow> filteredTrialObservations = new ArrayList<>();
 		filteredTrialObservations.addAll(trialObservations);
 
 		// remove the deleted trial instance
@@ -726,7 +726,7 @@ public class OpenTrialController extends BaseTrialController {
 	protected List<MeasurementRow> updateTrialInstanceNoAfterDelete(final String deletedEnvironment,
 			final List<MeasurementRow> filteredMeasurementRowList) {
 
-		final List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
+		final List<MeasurementRow> measurementRowList = new ArrayList<>();
 		measurementRowList.addAll(filteredMeasurementRowList);
 
 		for (final MeasurementRow row : measurementRowList) {
@@ -757,7 +757,7 @@ public class OpenTrialController extends BaseTrialController {
 			return observations;
 		}
 
-		List<MeasurementRow> filteredObservations = new ArrayList<MeasurementRow>();
+		List<MeasurementRow> filteredObservations = new ArrayList<>();
 		for (final MeasurementRow row : observations) {
 			final List<MeasurementData> dataList = row.getDataList();
 			for (final MeasurementData data : dataList) {

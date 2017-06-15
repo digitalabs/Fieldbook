@@ -138,7 +138,7 @@ public class CreateTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/useExistingTrial", method = RequestMethod.GET)
 	public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "trialID") final Integer trialID) {
-		final Map<String, Object> tabDetails = new HashMap<String, Object>();
+		final Map<String, Object> tabDetails = new HashMap<>();
 		CreateTrialForm form = new CreateTrialForm();
 		try {
 			if (trialID != null && trialID != 0) {
@@ -309,7 +309,7 @@ public class CreateTrialController extends BaseTrialController {
 					this.userSelection.getTemporaryWorkbook().getTrialObservations());
 		}
 
-		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>();
 		variablesForEnvironment.addAll(workbook.getTrialVariables());
 
 		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(
@@ -328,7 +328,7 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	protected TabInfo prepareGermplasmTabInfo(final boolean isClearSettings) {
-		final List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> initialDetailList = new ArrayList<>();
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
@@ -363,8 +363,8 @@ public class CreateTrialController extends BaseTrialController {
 			data.getEnvironments().add(new Environment());
 		}
 
-		final Map<String, Object> settingMap = new HashMap<String, Object>();
-		final List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
+		final Map<String, Object> settingMap = new HashMap<>();
+		final List<SettingDetail> managementDetailList = new ArrayList<>();
 		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
 
 		for (final Integer id : this.buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
@@ -390,8 +390,8 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	protected TabInfo prepareBasicDetailsTabInfo() {
-		final Map<String, String> basicDetails = new HashMap<String, String>();
-		final List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
+		final Map<String, String> basicDetails = new HashMap<>();
+		final List<SettingDetail> initialDetailList = new ArrayList<>();
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
@@ -431,7 +431,7 @@ public class CreateTrialController extends BaseTrialController {
 		boolean found = false;
 		List<SettingDetail> detailList = basicDetails;
 		if (basicDetails == null) {
-			detailList = new ArrayList<SettingDetail>();
+			detailList = new ArrayList<>();
 		}
 		for (final SettingDetail detail : detailList) {
 			if (detail.getVariable().getCvTermId() == TermId.STUDY_UID.getId()) {
@@ -454,11 +454,11 @@ public class CreateTrialController extends BaseTrialController {
 
 			this.prepareTrialSettingsTabInfo();
 			this.prepareExperimentalDesignSpecialData();
-			List<SettingDetail> detailList = new ArrayList<SettingDetail>();
+			List<SettingDetail> detailList = new ArrayList<>();
 			this.userSelection.setBaselineTraitsList(detailList);
 			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
 			this.userSelection.setNurseryConditions(new ArrayList<SettingDetail>());
-			detailList = new ArrayList<SettingDetail>();
+			detailList = new ArrayList<>();
 			this.userSelection.setTreatmentFactors(detailList);
 			if (this.userSelection.getTemporaryWorkbook() != null) {
 				this.userSelection.setTemporaryWorkbook(null);
@@ -475,7 +475,7 @@ public class CreateTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/refresh/settings/tab", method = RequestMethod.GET)
 	public Map<String, TabInfo> refreshSettingsTab() {
-		final Map<String, TabInfo> tabDetails = new HashMap<String, TabInfo>();
+		final Map<String, TabInfo> tabDetails = new HashMap<>();
 
 		final Workbook trialWorkbook = this.userSelection.getWorkbook();
 		this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());

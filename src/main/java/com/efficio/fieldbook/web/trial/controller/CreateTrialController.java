@@ -15,15 +15,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.context.ContextInfo;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -31,7 +28,6 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +42,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
@@ -58,7 +53,6 @@ import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -91,7 +85,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
 	 */
 	@Override
@@ -136,7 +130,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/columns", method = RequestMethod.POST)
-	public List<MeasurementVariable> getColumns (@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
+	public List<MeasurementVariable> getColumns(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
 			final HttpServletRequest request) {
 		return this.getLatestMeasurements(form, request);
 	}
@@ -144,12 +138,12 @@ public class CreateTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/useExistingTrial", method = RequestMethod.GET)
 	public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "trialID") final Integer trialID) {
-		final Map<String, Object> tabDetails = new HashMap<String, Object>();
+		final Map<String, Object> tabDetails = new HashMap<>();
 		CreateTrialForm form = new CreateTrialForm();
 		try {
 			if (trialID != null && trialID != 0) {
 				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(trialID);
-				this.filterAnalysisVariable(trialWorkbook);
+				this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
 
@@ -157,8 +151,10 @@ public class CreateTrialController extends BaseTrialController {
 				tabDetails.put(CreateTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, true));
 				tabDetails.put(CreateTrialController.TRIAL_SETTINGS_DATA_TAB,
 						this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
-				tabDetails.put("measurementsData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, true));
-				tabDetails.put("selectionVariableData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
+				tabDetails.put("measurementsData",
+						this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, true));
+				tabDetails.put("selectionVariableData",
+						this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
 
 				this.fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(),
 						trialWorkbook.getMeasurementDatesetId());
@@ -178,8 +174,8 @@ public class CreateTrialController extends BaseTrialController {
 		final CreateTrialForm form = new CreateTrialForm();
 		form.setHasError(true);
 		if (e instanceof MiddlewareQueryException) {
-			form.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(((MiddlewareQueryException) e).getCode(), new Object[] {
-					param, param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n"));
+			form.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(((MiddlewareQueryException) e).getCode(),
+					new Object[] {param, param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n"));
 		} else {
 			form.setErrorMessage(e.getMessage());
 		}
@@ -241,7 +237,7 @@ public class CreateTrialController extends BaseTrialController {
 		return this.showAjaxPage(model, BaseTrialController.URL_EXPERIMENTAL_DESIGN);
 	}
 
-	//TODO Merge this method with the OpenTrialController.showMeasurements()
+	// TODO Merge this method with the OpenTrialController.showMeasurements()
 	@RequestMapping(value = "/measurements", method = RequestMethod.GET)
 	public String showMeasurements(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model) {
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
@@ -253,7 +249,8 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/measurements/variables", method = RequestMethod.POST, produces = "application/json")
-	public List<MeasurementVariable> showMeasurementsVariables(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final HttpServletRequest request) {
+	public List<MeasurementVariable> showMeasurementsVariables(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+			final HttpServletRequest request) {
 		return this.getLatestMeasurements(form, request);
 	}
 
@@ -284,7 +281,7 @@ public class CreateTrialController extends BaseTrialController {
 
 		final String name = data.getBasicDetails().getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId()));
 
-		if(this.userSelection.getStudyLevelConditions() == null) {
+		if (this.userSelection.getStudyLevelConditions() == null) {
 			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
 		}
 
@@ -296,32 +293,27 @@ public class CreateTrialController extends BaseTrialController {
 			this.userSelection.setSelectionVariates(new ArrayList<SettingDetail>());
 		}
 
-		//Combining variates to baseline traits
+		// Combining variates to baseline traits
 		this.userSelection.getBaselineTraitsList().addAll(this.userSelection.getSelectionVariates());
 
-		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService,
-				name,
-				this.userSelection,
-				data.getTreatmentFactors().getCurrentData(),
-				this.contextUtil.getCurrentProgramUUID());
+		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, name, this.userSelection,
+				data.getTreatmentFactors().getCurrentData(), this.contextUtil.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
-		final Workbook workbook =
-				SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
-						this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
-						this.userSelection.getExperimentalDesignVariables(), this.contextUtil.getCurrentProgramUUID());
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
+				this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
+				this.userSelection.getExperimentalDesignVariables(), this.contextUtil.getCurrentProgramUUID());
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
-			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook, this.userSelection
-					.getTemporaryWorkbook().getTrialObservations());
+			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook,
+					this.userSelection.getTemporaryWorkbook().getTrialObservations());
 		}
 
-		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>();
 		variablesForEnvironment.addAll(workbook.getTrialVariables());
 
-		final List<MeasurementRow> trialEnvironmentValues =
-				WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment,
-						this.userSelection.getExpDesignParams());
+		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(
+				data.getEnvironments().getEnvironments(), variablesForEnvironment, this.userSelection.getExpDesignParams());
 		workbook.setTrialObservations(trialEnvironmentValues);
 
 		this.createStudyDetails(workbook, data.getBasicDetails());
@@ -336,7 +328,7 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	protected TabInfo prepareGermplasmTabInfo(final boolean isClearSettings) {
-		final List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> initialDetailList = new ArrayList<>();
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
@@ -371,8 +363,8 @@ public class CreateTrialController extends BaseTrialController {
 			data.getEnvironments().add(new Environment());
 		}
 
-		final Map<String, Object> settingMap = new HashMap<String, Object>();
-		final List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
+		final Map<String, Object> settingMap = new HashMap<>();
+		final List<SettingDetail> managementDetailList = new ArrayList<>();
 		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
 
 		for (final Integer id : this.buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
@@ -398,8 +390,8 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	protected TabInfo prepareBasicDetailsTabInfo() {
-		final Map<String, String> basicDetails = new HashMap<String, String>();
-		final List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
+		final Map<String, String> basicDetails = new HashMap<>();
+		final List<SettingDetail> initialDetailList = new ArrayList<>();
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
@@ -439,7 +431,7 @@ public class CreateTrialController extends BaseTrialController {
 		boolean found = false;
 		List<SettingDetail> detailList = basicDetails;
 		if (basicDetails == null) {
-			detailList = new ArrayList<SettingDetail>();
+			detailList = new ArrayList<>();
 		}
 		for (final SettingDetail detail : detailList) {
 			if (detail.getVariable().getCvTermId() == TermId.STUDY_UID.getId()) {
@@ -462,11 +454,11 @@ public class CreateTrialController extends BaseTrialController {
 
 			this.prepareTrialSettingsTabInfo();
 			this.prepareExperimentalDesignSpecialData();
-			List<SettingDetail> detailList = new ArrayList<SettingDetail>();
+			List<SettingDetail> detailList = new ArrayList<>();
 			this.userSelection.setBaselineTraitsList(detailList);
 			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
 			this.userSelection.setNurseryConditions(new ArrayList<SettingDetail>());
-			detailList = new ArrayList<SettingDetail>();
+			detailList = new ArrayList<>();
 			this.userSelection.setTreatmentFactors(detailList);
 			if (this.userSelection.getTemporaryWorkbook() != null) {
 				this.userSelection.setTemporaryWorkbook(null);
@@ -483,7 +475,7 @@ public class CreateTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/refresh/settings/tab", method = RequestMethod.GET)
 	public Map<String, TabInfo> refreshSettingsTab() {
-		final Map<String, TabInfo> tabDetails = new HashMap<String, TabInfo>();
+		final Map<String, TabInfo> tabDetails = new HashMap<>();
 
 		final Workbook trialWorkbook = this.userSelection.getWorkbook();
 		this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
@@ -495,7 +487,8 @@ public class CreateTrialController extends BaseTrialController {
 		return tabDetails;
 	}
 
-	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+	protected void setFieldbookMiddlewareService(
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 }

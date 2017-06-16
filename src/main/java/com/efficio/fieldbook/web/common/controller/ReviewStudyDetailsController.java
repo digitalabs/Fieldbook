@@ -90,10 +90,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		try {
 			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
 			workbook.getStudyDetails().setId(id);
-			this.filterAnalysisVariable(workbook);
-			details =
-					SettingsUtil.convertWorkbookToStudyDetails(workbook, this.fieldbookMiddlewareService, this.fieldbookService,
-							this.userSelection, this.contextUtil.getCurrentProgramUUID(), this.appConstantsProperties);
+			this.removeAnalysisAndAnalysisSummaryVariables(workbook);
+			details = SettingsUtil.convertWorkbookToStudyDetails(workbook, this.fieldbookMiddlewareService, this.fieldbookService,
+					this.userSelection, this.contextUtil.getCurrentProgramUUID(), this.appConstantsProperties);
 			this.rearrangeDetails(details);
 			this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
 			if (workbook.getMeasurementDatesetId() != null) {
@@ -127,9 +126,8 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		details.setId(id);
 		String errorMessage = e.getMessage();
 		if (e instanceof MiddlewareQueryException) {
-			errorMessage =
-					this.errorHandlerService.getErrorMessagesAsString(((MiddlewareQueryException) e).getCode(), new Object[] {param,
-							param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n");
+			errorMessage = this.errorHandlerService.getErrorMessagesAsString(((MiddlewareQueryException) e).getCode(),
+					new Object[] {param, param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n");
 		}
 		details.setErrorMessage(errorMessage);
 	}
@@ -146,7 +144,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	}
 
 	private List<SettingDetail> rearrangeSettingDetails(final List<SettingDetail> list) {
-		final List<SettingDetail> newList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> newList = new ArrayList<>();
 
 		if (list != null && !list.isEmpty()) {
 			final int rows = Double.valueOf(Math.ceil(list.size() / (double) ReviewStudyDetailsController.COLS)).intValue();
@@ -172,7 +170,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
-	protected void setFieldbookService(com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
+	protected void setFieldbookService(final com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
 	}
 

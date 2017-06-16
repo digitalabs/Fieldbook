@@ -14,10 +14,8 @@ package com.efficio.fieldbook.web;
 import java.util.Iterator;
 import java.util.List;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import javax.annotation.Resource;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -31,7 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 
-import javax.annotation.Resource;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 /**
  * Base controller encapsulaitng common functionality between all the Fieldbook controllers.
@@ -181,6 +182,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Convert favorite location to json.
+	 * 
 	 * @param objectList list of objects
 	 * @return the string
 	 */
@@ -209,23 +211,23 @@ public abstract class AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Filter variables with variable type 'Analysis' in the workbook
+	 * Remove variables with variable types 'Analysis' and 'Analysis Summary' in the workbook's conditions, constants, factors and variates
 	 */
-	protected void filterAnalysisVariable(final Workbook workbook) {
-		this.filterAnalysisVariable(workbook.getConditions());
-		this.filterAnalysisVariable(workbook.getConstants());
-		this.filterAnalysisVariable(workbook.getFactors());
-		this.filterAnalysisVariable(workbook.getVariates());
+	protected void removeAnalysisAndAnalysisSummaryVariables(final Workbook workbook) {
+		this.removeAnalysisVariables(workbook.getConditions());
+		this.removeAnalysisVariables(workbook.getConstants());
+		this.removeAnalysisVariables(workbook.getFactors());
+		this.removeAnalysisVariables(workbook.getVariates());
 	}
 
 	/**
-	 * Filter variables with variable type 'Analysis' in the list of measurement variables
+	 * Remove variables with variable types 'Analysis' and 'Analysis Summary' in the list of measurement variables
 	 */
-	private void filterAnalysisVariable(final List<MeasurementVariable> measurementVariables) {
+	private void removeAnalysisVariables(final List<MeasurementVariable> measurementVariables) {
 		final Iterator<MeasurementVariable> measurementVariablesIterator = measurementVariables.iterator();
 		while (measurementVariablesIterator.hasNext()) {
 			final MeasurementVariable measurementVariable = measurementVariablesIterator.next();
-			if (measurementVariable != null && VariableType.ANALYSIS == measurementVariable.getVariableType()) {
+			if (measurementVariable != null && VariableType.getReservedVariableTypes().contains(measurementVariable.getVariableType())) {
 				measurementVariablesIterator.remove();
 			}
 		}

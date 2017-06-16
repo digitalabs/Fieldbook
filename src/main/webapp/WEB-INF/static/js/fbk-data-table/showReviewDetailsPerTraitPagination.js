@@ -64,27 +64,29 @@ function generateDataForProcessing() {
 							var columnIndex = value.values[i].colIndex;
 							var rowIndex = value.values[i].rowIndex;
 							var isSelected = value.values[i].isSelected;
-							if (isSelected){								
-								var cell = $(oTable).find('tr').eq(rowIndex+1).find('td').eq(columnIndex-1);
+							var action = value.values[i].action;
+							
+														
+							var cell = $(oTable).find('tr').eq(rowIndex+1).find('td').eq(columnIndex-1);
+							
+							// if Action is Accept as is, do not update value. Just highlight as accepted
+							if  (action === '1' && isSelected){
+								$(cell).removeClass('invalid-value');
+								$(cell).addClass('accepted-value');
 								
-								//if Action is Accept as is, do not update value. Just highlight as accepted
-								if  (value.values[i].action === '1'){
-									$(cell).removeClass('invalid-value');
-									$(cell).addClass('accepted-value');
-									
-									// if action is Assign new value for all entries or new value was set individually. Highlight as accepted
-								} else if ((value.values[i].action === '2' || value.values[i].action === '') && value.values[i].newValue !== '') {
-									oTable.fnUpdate([value.values[i].newValue,''], rowIndex,
-											columnIndex, false); // Cell
-									$(cell).removeClass('invalid-value');
-									
-									// if action is set cell value to Missing. No highlighting for missing values
-								} else if (value.values[i].action === '3') {
-									oTable.fnUpdate(['missing',''], rowIndex,
-											columnIndex, false); // Cell	
-									$(cell).removeClass('invalid-value');
-								} 
-							}
+							// if action is Assign new value for all entries selected or new value was set individually
+							} else if (((action === '2' && isSelected) || action === '') && value.values[i].newValue !== '') {
+								oTable.fnUpdate([value.values[i].newValue,''], rowIndex,
+										columnIndex, false);
+								$(cell).removeClass('invalid-value');
+								
+							// if action is set cell value to Missing. No highlighting for missing values
+							} else if (value.values[i].action === '3' && isSelected) {
+								oTable.fnUpdate(['missing',''], rowIndex,
+										columnIndex, false);	
+								$(cell).removeClass('invalid-value');
+							} 
+							
                     	}
                     });
 

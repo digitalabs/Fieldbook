@@ -372,7 +372,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 
 			if (studyId !== '') {
 				// Activate an inline edit on click of a table cell
-				$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
+
+				$(tableIdentifier).off().on('click', 'tbody td:not(:first-child)', function(e) {
 					if (isAllowedEditMeasurementDataCell()) {
 						var $tdCell = $(this);
 						var cellTdIndex =  $(this).index();

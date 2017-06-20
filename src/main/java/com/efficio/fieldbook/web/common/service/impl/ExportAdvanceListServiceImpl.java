@@ -130,7 +130,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 	protected void exportList(final List<InventoryDetails> inventoryDetailList, final String filenamePath, final String sheetName,
 			final GermplasmExportService germplasmExportServiceImpl, final String type, final boolean displayCrossRelatedColumns)
-					throws IOException {
+			throws IOException {
 		final List<ExportColumnHeader> exportColumnHeaders =
 				this.generateAdvanceListColumnHeaders(displayCrossRelatedColumns, this.getAmountsHeader(inventoryDetailList));
 		if (AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)) {
@@ -194,8 +194,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(),
 				this.messageSource.getMessage("seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
 		// Always use TermId.SEED_AMOUNT_G for inventory amount id to align with expected id in GermplasmExportService in Commons
-		exportColumnHeaders
-				.add(new ExportColumnHeader(TermId.SEED_AMOUNT_G.getId(), amountHeader, true, ExportColumnHeader.BLUE));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.SEED_AMOUNT_G.getId(), amountHeader, true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.STOCKID.getId(),
 				this.messageSource.getMessage("seed.inventory.stockid", null, locale), true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(),

@@ -111,7 +111,7 @@ public class ExportAdvanceListServiceImplTest {
 		inventoryDetails.setAmount(2.22);
 
 		Assert.assertEquals("The Amount should be 2.22", "2.22", this.exportAdvanceListServiceImpl.getInventoryAmount(inventoryDetails));
-		
+
 		// Setting a whole number as inventory amount
 		inventoryDetails.setAmount(2D);
 		Assert.assertEquals("The Amount should be 2.0", "2.0", this.exportAdvanceListServiceImpl.getInventoryAmount(inventoryDetails));
@@ -298,8 +298,7 @@ public class ExportAdvanceListServiceImplTest {
 	public void testGetInventoryDetailValueInfo() {
 		final Integer[] columnHeaderIds = new Integer[] {TermId.ENTRY_NO.getId(), TermId.DESIG.getId(), TermId.CROSS.getId(),
 				TermId.GID.getId(), TermId.SOURCE.getId(), TermId.DUPLICATE.getId(), TermId.BULK_WITH.getId(), TermId.BULK_COMPL.getId(),
-				TermId.LOCATION_ID.getId(), TermId.SEED_AMOUNT_G.getId(),
-				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()};
+				TermId.LOCATION_ID.getId(), TermId.SEED_AMOUNT_G.getId(), AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()};
 		final InventoryDetails inventoryDetails = this.getSampleInventoryDetails(1, 1);
 		for (int i = 0; i < columnHeaderIds.length; i++) {
 			final String result = this.exportAdvanceListServiceImpl.getInventoryDetailValueInfo(inventoryDetails, columnHeaderIds[i]);

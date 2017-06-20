@@ -54,7 +54,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 	private static final String NO_FILE = "noFile";
 
-	private static String ADVANCE_LIST_SHEET_NAME = "Advance List";
+	private static final String ADVANCE_LIST_SHEET_NAME = "Advance List";
 
 	private static final String STOCK_LIST_EXPORT_SHEET_NAME = "Inventory List";
 
@@ -62,7 +62,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	public File exportAdvanceGermplasmList(final String delimitedAdvanceGermplasmListIds, final String studyName,
 			final GermplasmExportService germplasmExportServiceImpl, final String type) {
 		final List<Integer> advanceGermplasmListIds = this.parseDelimitedAdvanceGermplasmListIds(delimitedAdvanceGermplasmListIds);
-		final List<String> filenameList = new ArrayList<String>();
+		final List<String> filenameList = new ArrayList<>();
 		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
 		final String suffix = AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)
 				? AppConstants.EXPORT_XLS_SUFFIX.getString() : AppConstants.EXPORT_CSV_SUFFIX.getString();
@@ -80,9 +80,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
-			} catch (final IOException e) {
-				ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
-			} catch (final MiddlewareQueryException e) {
+			} catch (final IOException | MiddlewareQueryException e) {
 				ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 			}
 		}
@@ -99,7 +97,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	@Override
 	public File exportStockList(final Integer stockListId, final GermplasmExportService germplasmExportServiceImpl) {
 
-		final List<String> filenameList = new ArrayList<String>();
+		final List<String> filenameList = new ArrayList<>();
 		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
 		final String suffix = AppConstants.EXPORT_XLS_SUFFIX.getString();
 
@@ -127,9 +125,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	}
 
 	protected String getFileNamePath(final String name) {
-		final String filenamePath =
-				this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(name);
-		return filenamePath;
+		return this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(name);
 	}
 
 	protected void exportList(final List<InventoryDetails> inventoryDetailList, final String filenamePath, final String sheetName,
@@ -162,7 +158,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	}
 
 	protected List<Integer> parseDelimitedAdvanceGermplasmListIds(final String advancedListIds) {
-		final List<Integer> advancedGermplasmListIds = new ArrayList<Integer>();
+		final List<Integer> advancedGermplasmListIds = new ArrayList<>();
 		final StringTokenizer tokenizer = new StringTokenizer(advancedListIds, "|");
 		while (tokenizer.hasMoreTokens()) {
 			advancedGermplasmListIds.add(Integer.valueOf(tokenizer.nextToken()));
@@ -172,7 +168,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 	protected List<ExportColumnHeader> generateAdvanceListColumnHeaders(final boolean displayCrossRelatedColumns,
 			final String amountHeader) {
-		final List<ExportColumnHeader> exportColumnHeaders = new ArrayList<ExportColumnHeader>();
+		final List<ExportColumnHeader> exportColumnHeaders = new ArrayList<>();
 		final Locale locale = LocaleContextHolder.getLocale();
 
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_NO.getId(),
@@ -209,9 +205,9 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 	protected List<Map<Integer, ExportColumnValue>> generateAdvanceListColumnValues(final List<InventoryDetails> inventoryDetailList,
 			final List<ExportColumnHeader> exportColumnHeaders) {
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<Map<Integer, ExportColumnValue>>();
+		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
 		for (final InventoryDetails inventoryDetails : inventoryDetailList) {
-			final Map<Integer, ExportColumnValue> dataMap = new HashMap<Integer, ExportColumnValue>();
+			final Map<Integer, ExportColumnValue> dataMap = new HashMap<>();
 			for (final ExportColumnHeader columnHeader : exportColumnHeaders) {
 				dataMap.put(columnHeader.getId(), new ExportColumnValue(columnHeader.getId(),
 						this.getInventoryDetailValueInfo(inventoryDetails, columnHeader.getId())));

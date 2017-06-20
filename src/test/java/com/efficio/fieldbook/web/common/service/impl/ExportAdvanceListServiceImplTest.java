@@ -111,6 +111,10 @@ public class ExportAdvanceListServiceImplTest {
 		inventoryDetails.setAmount(2.22);
 
 		Assert.assertEquals("The Amount should be 2.22", "2.22", this.exportAdvanceListServiceImpl.getInventoryAmount(inventoryDetails));
+		
+		// Setting a whole number as inventory amount
+		inventoryDetails.setAmount(2D);
+		Assert.assertEquals("The Amount should be 2.0", "2.0", this.exportAdvanceListServiceImpl.getInventoryAmount(inventoryDetails));
 	}
 
 	@Test
@@ -162,7 +166,7 @@ public class ExportAdvanceListServiceImplTest {
 		Assert.assertEquals("5th column should be SOURCE", exportColumnHeaders.get(4).getId().intValue(), TermId.SOURCE.getId());
 		Assert.assertEquals("6th column should be LOCATION_ID", exportColumnHeaders.get(5).getId().intValue(), TermId.LOCATION_ID.getId());
 		Assert.assertEquals("7th column should be INVENTORY_AMOUNT", exportColumnHeaders.get(6).getId().intValue(),
-				AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt());
+				TermId.SEED_AMOUNT_G.getId());
 		Assert.assertEquals("8th column should be STOCKID", exportColumnHeaders.get(7).getId().intValue(), TermId.STOCKID.getId());
 		Assert.assertEquals("9th column should be INVENTORY_COMMENT", exportColumnHeaders.get(8).getId().intValue(),
 				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt());
@@ -182,7 +186,7 @@ public class ExportAdvanceListServiceImplTest {
 		Assert.assertEquals("8th column should be BULK COMPL", exportColumnHeaders.get(7).getId().intValue(), TermId.BULK_COMPL.getId());
 		Assert.assertEquals("9th column should be LOCATION_ID", exportColumnHeaders.get(8).getId().intValue(), TermId.LOCATION_ID.getId());
 		Assert.assertEquals("10th column should be INVENTORY_AMOUNT", exportColumnHeaders.get(9).getId().intValue(),
-				AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt());
+				TermId.SEED_AMOUNT_G.getId());
 		Assert.assertEquals("11th column should be STOCKID", exportColumnHeaders.get(10).getId().intValue(), TermId.STOCKID.getId());
 		Assert.assertEquals("12th column should be INVENTORY_COMMENT", exportColumnHeaders.get(11).getId().intValue(),
 				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt());
@@ -294,7 +298,7 @@ public class ExportAdvanceListServiceImplTest {
 	public void testGetInventoryDetailValueInfo() {
 		final Integer[] columnHeaderIds = new Integer[] {TermId.ENTRY_NO.getId(), TermId.DESIG.getId(), TermId.CROSS.getId(),
 				TermId.GID.getId(), TermId.SOURCE.getId(), TermId.DUPLICATE.getId(), TermId.BULK_WITH.getId(), TermId.BULK_COMPL.getId(),
-				TermId.LOCATION_ID.getId(), AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(),
+				TermId.LOCATION_ID.getId(), TermId.SEED_AMOUNT_G.getId(),
 				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()};
 		final InventoryDetails inventoryDetails = this.getSampleInventoryDetails(1, 1);
 		for (int i = 0; i < columnHeaderIds.length; i++) {

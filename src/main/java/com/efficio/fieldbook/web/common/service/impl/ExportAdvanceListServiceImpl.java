@@ -197,8 +197,9 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(),
 				this.messageSource.getMessage("seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
+		// Always use TermId.SEED_AMOUNT_G for inventory amount id to align with expected id in GermplasmExportService in Commons
 		exportColumnHeaders
-				.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(), amountHeader, true, ExportColumnHeader.BLUE));
+				.add(new ExportColumnHeader(TermId.SEED_AMOUNT_G.getId(), amountHeader, true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.STOCKID.getId(),
 				this.messageSource.getMessage("seed.inventory.stockid", null, locale), true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(),
@@ -241,7 +242,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		} else if (columnHeaderId == TermId.LOCATION_ID.getId()) {
 			// in preparation for BMS-143. Export the abbreviation instead of the whole name
 			val = inventoryDetails.getLocationAbbr();
-		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt()) {
+		} else if (columnHeaderId == TermId.SEED_AMOUNT_G.getId()) {
 			val = this.getInventoryAmount(inventoryDetails);
 		} else if (columnHeaderId == TermId.STOCKID.getId()) {
 			val = this.getInventoryValue(inventoryDetails.getInventoryID());

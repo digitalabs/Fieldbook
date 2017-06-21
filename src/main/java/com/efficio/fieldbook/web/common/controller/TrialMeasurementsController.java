@@ -25,6 +25,7 @@ import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.dms.Phenotype;
@@ -96,6 +97,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	@Resource
 	private OntologyVariableDataManager ontologyVariableDataManager;
+	
+	@Resource
+	private OntologyDataManager ontologyDataManager;
 
 	@Override
 	public String getContentName() {
@@ -479,7 +483,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		// number of records per page
 		final Integer pageSize = Integer.parseInt(req.getParameter("pageSize"));
 		final Integer pageNumber = Integer.parseInt(req.getParameter("pageNumber"));
-		final String sortBy = req.getParameter("sortBy");
+		final String sortBy = this.ontologyDataManager.getTermById(Integer.parseInt(req.getParameter("sortBy"))).getName();
 		final String sortOrder = req.getParameter("sortOrder");
 
 		final List<ObservationDto> pageResults =

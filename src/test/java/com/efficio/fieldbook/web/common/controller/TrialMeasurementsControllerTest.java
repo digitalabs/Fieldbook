@@ -21,12 +21,14 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.dms.Phenotype;
@@ -36,9 +38,13 @@ import org.generationcp.middleware.service.api.study.ObservationDto;
 import org.generationcp.middleware.service.api.study.StudyService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
@@ -57,6 +63,7 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TrialMeasurementsControllerTest {
 
 	private static final String CROSS_VALUE = "ABC12/XYZ34";
@@ -85,14 +92,29 @@ public class TrialMeasurementsControllerTest {
 	private static final String LOCAL = "-Local";
 	private static final String FIELDMAP_COLUMN = "FIELDMAP_COLUMN";
 	private static final String FIELDMAP_RANGE = "FIELDMAP_RANGE";
-
+	
+	@InjectMocks
 	private TrialMeasurementsController trialMeasurementsController;
 	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
+	
+	@Mock
 	private OntologyVariableDataManager ontologyVariableDataManager;
+	
+	@Mock
 	private StudyDataManager studyDataManager;
+	
+	@Mock
 	private ContextUtil contextUtil;
+	
+	@Mock
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+	
+	@Mock
 	private StudyService studyService;
+	
+	@Mock
+	private OntologyDataManager ontologyDataManager;
+	
 	private List<MeasurementVariable> measurementVariables;
 
 	private MeasurementDto measurementText = new MeasurementDto(new MeasurementVariableDto(1, "NOTES"), 1, "Text Notes");
@@ -104,18 +126,8 @@ public class TrialMeasurementsControllerTest {
 
 	@Before
 	public void setUp() {
-		this.trialMeasurementsController = new TrialMeasurementsController();
 		this.measurementDataTestDataInitializer = new MeasurementDataTestDataInitializer();
-		this.ontologyVariableDataManager = Mockito.mock(OntologyVariableDataManager.class);
-		this.trialMeasurementsController.setOntologyVariableDataManager(this.ontologyVariableDataManager);
-		this.studyDataManager = Mockito.mock(StudyDataManager.class);
-		this.trialMeasurementsController.setStudyDataManager(this.studyDataManager);
-		this.contextUtil = Mockito.mock(ContextUtil.class);
-		this.trialMeasurementsController.setContextUtil(this.contextUtil);
-		this.fieldbookService = Mockito.mock(FieldbookService.class);
-		this.trialMeasurementsController.setFieldbookService(this.fieldbookService);
-		this.studyService = Mockito.mock(StudyService.class);
-		this.trialMeasurementsController.setStudyService(this.studyService);
+		Mockito.when(this.ontologyDataManager.getTermById(1001)).thenReturn(new Term(1001, "ENTRY_NO", "Definition"));
 	}
 
 	@Test
@@ -674,7 +686,7 @@ public class TrialMeasurementsControllerTest {
 		final MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addParameter(PAGE_NUMBER, "1");
 		request.addParameter(PAGE_SIZE, "10");
-		request.addParameter(SORT_BY, "ENTRY_NO");
+		request.addParameter(SORT_BY, "1001");
 		request.addParameter(SORT_ORDER, "desc");
 
 		String drawParamValue = "drawParamValue";

@@ -74,7 +74,8 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 	return nRow;
 };
 
-var sortableColumns = ["GID", "DESIGNATION", "ENTRY_NO", "ENTRY_TYPE", "ENTRY_CODE", "REP_NO", "PLOT_NO", "BLOCK_NO", "ROW", "COL"];
+//Sortable columns: GID(8240), DESIGNATION(8250), ENTRY_NO(8230), ENTRY_TYPE(8255), ENTRY_CODE(8300), REP_NO(8210), PLOT_NO(8200), BLOCK_NO(8220), ROW(8581), COL(8582) 
+var sortableColumnIDs = [8240, 8250, 8230, 8255, 8300, 8210, 8200, 8220, 8581, 8582];
 
 var getColumns = function(displayColumns, displayTrialInstance) {
 	var columns = [],
@@ -86,7 +87,7 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 			data: displayColumn.name,
 			termId: displayColumn.termId,
 			defaultContent: '',
-			orderable: displayColumn.variableType === "TRAIT" ? true : $.inArray(displayColumn.name, sortableColumns) > -1,
+			orderable: displayColumn.variableType === "TRAIT" ? true : $.inArray(displayColumn.termId, sortableColumnIDs) > -1,
 			className: displayColumn.factor === true ? 'factors' : 'variates'
 		});
 

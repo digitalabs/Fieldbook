@@ -87,12 +87,15 @@ if (typeof (LocationsFunctions) === 'undefined') {
 					}
 
 				});
-
+				
+				$(document).off('location-update');
 				$(document).on(
 					'location-update',
 					function() {
 						LocationsFunctions.processLocationDropdownAndFavoritesCheckbox(locationSelectID, favoritesCheckboxID,
 							allRadioButtonId, breedingLocationOnlyRadio, locationType, locationConversionFunction);
+					    //Recreate the location combo to make sure that the changes made are reflected in the UI
+						recreateLocationCombo();
 				});
 			});
 		},

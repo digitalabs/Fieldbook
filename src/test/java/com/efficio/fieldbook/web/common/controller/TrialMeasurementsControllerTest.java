@@ -1,6 +1,14 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,19 +57,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.google.common.collect.Lists;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.core.Is.is;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrialMeasurementsControllerTest {
@@ -127,7 +126,7 @@ public class TrialMeasurementsControllerTest {
 	@Before
 	public void setUp() {
 		this.measurementDataTestDataInitializer = new MeasurementDataTestDataInitializer();
-		Mockito.when(this.ontologyDataManager.getTermById(1001)).thenReturn(new Term(1001, "ENTRY_NO", "Definition"));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(new Term(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name(), "Definition"));
 	}
 
 	@Test
@@ -686,7 +685,7 @@ public class TrialMeasurementsControllerTest {
 		final MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addParameter(PAGE_NUMBER, "1");
 		request.addParameter(PAGE_SIZE, "10");
-		request.addParameter(SORT_BY, "1001");
+		request.addParameter(SORT_BY, String.valueOf(TermId.ENTRY_NO.getId()));
 		request.addParameter(SORT_ORDER, "desc");
 
 		String drawParamValue = "drawParamValue";

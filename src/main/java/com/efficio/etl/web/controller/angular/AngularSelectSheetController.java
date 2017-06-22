@@ -154,7 +154,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			if (inFieldbookFormat) {
 				this.userSelection.setSelectedSheet(ETLServiceImpl.OBSERVATION_SHEET);
 				this.userSelection.setHeaderRowIndex(0);
-				List<String> fileHeaders = this.etlService.retrieveColumnHeaders(wb, this.userSelection);
+				List<String> fileHeaders = this.etlService.retrieveColumnHeaders(wb, this.userSelection, Boolean.FALSE);
 				if (fileHeaders != null) {
 					this.userSelection.setHeaderRowDisplayText(StringUtils.join(fileHeaders, ','));
 				}
@@ -339,8 +339,17 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 					org.generationcp.middleware.domain.etl.Workbook importData =
 							this.etlService.retrieveAndSetProjectOntology(this.userSelection, isMeansDataImport);
 
-					List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection);
 					List<MeasurementVariable> studyHeaders = importData.getAllVariables();
+					boolean hasPlotId = false;
+					for (MeasurementVariable mv: studyHeaders) {
+						if (mv.getTermId() == 8201){
+							hasPlotId = true;
+							break;
+						}
+					}
+
+					List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, hasPlotId);
+
 					mismatchErrors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
 				} catch (Exception e) {
 					AngularSelectSheetController.LOG.error(e.getMessage(), e);

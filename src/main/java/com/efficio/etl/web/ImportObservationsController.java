@@ -92,8 +92,17 @@ public class ImportObservationsController extends AbstractBaseETLController {
 
 			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getVariates(), programUUID);
 
-			List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection);
 			List<MeasurementVariable> studyHeaders = importData.getAllVariables();
+			boolean hasPlotId = false;
+			for (MeasurementVariable mv: studyHeaders) {
+				if (mv.getTermId() == 8201){
+					hasPlotId = true;
+					break;
+				}
+			}
+
+			List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, hasPlotId);
+
 			Map<String, List<Message>> mismatchErrors =
 					this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
 

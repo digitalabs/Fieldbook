@@ -282,12 +282,15 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	@Override
-	public List<String> retrieveColumnHeaders(final Workbook workbook, final UserSelection userSelection) {
+	public List<String> retrieveColumnHeaders(final Workbook workbook, final UserSelection userSelection, Boolean addPlotId) {
 		final Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
 		final String[] headerArray = PoiUtil.rowAsStringArray(sheet, userSelection.getHeaderRowIndex());
 
 		final List<String> returnValue = new ArrayList<String>();
 		returnValue.addAll(Arrays.asList(headerArray));
+		if (addPlotId && !returnValue.contains("PLOT_ID")){
+			returnValue.add("PLOT_ID");
+		}
 		return returnValue;
 	}
 
@@ -488,7 +491,16 @@ public class ETLServiceImpl implements ETLService {
 	public List<MeasurementRow> extractExcelFileData(final Workbook workbook, final UserSelection userSelection,
 			final org.generationcp.middleware.domain.etl.Workbook importData, final boolean discardInvalidValues) {
 		final List<MeasurementVariable> variableList = importData.getAllVariables();
-		final List<String> columnHeaders = this.retrieveColumnHeaders(workbook, userSelection);
+
+		boolean hasPlotId = false;
+		for (MeasurementVariable mv: importData.getAllVariables()) {
+			if (mv.getTermId() == 8201){
+				hasPlotId = true;
+				break;
+			}
+		}
+
+		final List<String> columnHeaders = this.retrieveColumnHeaders(workbook, userSelection, hasPlotId);
 		// DMV : a linkedhashmap is used to preserve insert order
 		final Map<Integer, MeasurementVariable> variableIndexMap = new LinkedHashMap<Integer, MeasurementVariable>();
 

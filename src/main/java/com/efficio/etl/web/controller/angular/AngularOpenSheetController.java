@@ -248,7 +248,15 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 						&& this.userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA.getId();
 		org.generationcp.middleware.domain.etl.Workbook importData =
 				this.etlService.retrieveAndSetProjectOntology(this.userSelection, isMeansDataImport);
-		List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection);
+		boolean hasPlotId = false;
+		for (MeasurementVariable mv: importData.getAllVariables()) {
+			if (mv.getTermId() == 8201){
+				hasPlotId = true;
+				break;
+			}
+		}
+
+		List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, hasPlotId);
 		List<MeasurementVariable> studyHeaders = importData.getAllVariables();
 		return this.etlService.getIndexColumnIndex(fileHeaders, studyHeaders);
 	}

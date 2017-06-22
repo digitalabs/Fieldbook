@@ -56,7 +56,7 @@ public interface ETLService {
 
   public int calculateObservationRows(Workbook workbook, int sheetIndex, int contentRowIndex, int indexColumnIndex);
 
-  public List<String> retrieveColumnHeaders(Workbook workbook, UserSelection userSelection);
+  public List<String> retrieveColumnHeaders(Workbook workbook, UserSelection userSelection, Boolean addPlotId);
 
   public int getAvailableRowsForDisplay(Workbook workbook, int selectedSheetIndex);
 

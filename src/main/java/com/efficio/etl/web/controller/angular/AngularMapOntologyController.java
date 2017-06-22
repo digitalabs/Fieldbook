@@ -77,7 +77,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 		try {
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
-			final List<String> headers = this.etlService.retrieveColumnHeaders(workbook, this.userSelection);
+			final List<String> headers = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, Boolean.FALSE);
 
 			final Map<PhenotypicType, List<VariableDTO>> headerMap =
 					this.etlService.prepareInitialCategorization(headers, this.userSelection);

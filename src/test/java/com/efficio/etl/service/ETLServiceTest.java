@@ -383,8 +383,7 @@ public class ETLServiceTest {
 	public void testCheckOutOfBoundsDataTrue() throws IOException {
 
 		// Accept any workbook when checkForOutOfBoundsData is called. It will be captured and verified later.
-		Mockito.when(
-				this.dataImportService.checkForOutOfBoundsData(Mockito.any(org.generationcp.middleware.domain.etl.Workbook.class),
+		Mockito.when(this.dataImportService.checkForOutOfBoundsData(Mockito.any(org.generationcp.middleware.domain.etl.Workbook.class),
 						Mockito.eq(PROGRAM_UUID))).thenReturn(true);
 
 		final int datasetType = DataSetType.PLOT_DATA.getId();

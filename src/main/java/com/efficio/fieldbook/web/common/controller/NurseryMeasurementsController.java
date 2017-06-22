@@ -97,11 +97,16 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		if (copyRow != null && copyRow.getMeasurementVariables() != null) {
 			for (MeasurementData var : copyRow.getDataList()) {
 				this.convertToUIDateIfDate(var);
-				if (var != null && (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
-						|| !var.getMeasurementVariable().getPossibleValues().isEmpty())) {
-					possibleValues = var.getMeasurementVariable().getPossibleValues();
+				MeasurementVariable variable = var.getMeasurementVariable();
+				if (var != null && (variable.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
+						|| (variable.getPossibleValues() != null && !variable.getPossibleValues().isEmpty()))) {
+					possibleValues = variable.getPossibleValues();
+					if (possibleValues.isEmpty()) {
+						variable.setPossibleValues(this.fieldbookService.getAllPossibleValues(variable.getTermId()));
+						possibleValues = variable.getPossibleValues();
+					}
 				}
-				if (var != null && var.getMeasurementVariable().getTermId() == termId) {
+				if (var != null && variable.getTermId() == termId) {
 					editData = var;
 					break;
 				}

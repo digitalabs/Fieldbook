@@ -340,15 +340,8 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 							this.etlService.retrieveAndSetProjectOntology(this.userSelection, isMeansDataImport);
 
 					List<MeasurementVariable> studyHeaders = importData.getAllVariables();
-					boolean hasPlotId = false;
-					for (MeasurementVariable mv: studyHeaders) {
-						if (mv.getTermId() == 8201){
-							hasPlotId = true;
-							break;
-						}
-					}
 
-					List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, hasPlotId);
+					List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, this.etlService.headersContainsPlotId(importData));
 
 					mismatchErrors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
 				} catch (Exception e) {

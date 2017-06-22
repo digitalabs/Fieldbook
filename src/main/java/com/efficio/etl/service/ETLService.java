@@ -151,4 +151,11 @@ public interface ETLService {
    */
   org.generationcp.middleware.domain.etl.Workbook createWorkbookFromUserSelection(UserSelection userSelection, boolean isMeansDataImport);
 
+  /**
+   * Verify if the file header contains PLOT_ID
+   * @param importData
+   * @return
+   */
+  boolean headersContainsPlotId(final org.generationcp.middleware.domain.etl.Workbook importData);
+
 }

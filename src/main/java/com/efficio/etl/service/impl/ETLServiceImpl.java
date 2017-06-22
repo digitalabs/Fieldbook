@@ -89,7 +89,7 @@ public class ETLServiceImpl implements ETLService {
 
 	private int maxRowLimit = WorkbookParser.DEFAULT_MAX_ROW_LIMIT;
 
-  	@Resource(name = "etlFileService")
+	@Resource(name = "etlFileService")
 	private FileService fileService;
 
 	@Resource
@@ -107,8 +107,8 @@ public class ETLServiceImpl implements ETLService {
 	@Resource
 	private GermplasmDataManager germplasmDataManager;
 
-  	@Resource
-  	private ResourceBundleMessageSource messageSource;
+	@Resource
+	private ResourceBundleMessageSource messageSource;
 
 	@Resource
 	private ContextUtil contextUtil;
@@ -288,7 +288,7 @@ public class ETLServiceImpl implements ETLService {
 
 		final List<String> returnValue = new ArrayList<String>();
 		returnValue.addAll(Arrays.asList(headerArray));
-		if (addPlotId && !returnValue.contains("PLOT_ID")){
+		if (addPlotId && !returnValue.contains("PLOT_ID")) {
 			returnValue.add("PLOT_ID");
 		}
 		return returnValue;
@@ -492,15 +492,7 @@ public class ETLServiceImpl implements ETLService {
 			final org.generationcp.middleware.domain.etl.Workbook importData, final boolean discardInvalidValues) {
 		final List<MeasurementVariable> variableList = importData.getAllVariables();
 
-		boolean hasPlotId = false;
-		for (MeasurementVariable mv: importData.getAllVariables()) {
-			if (mv.getTermId() == 8201){
-				hasPlotId = true;
-				break;
-			}
-		}
-
-		final List<String> columnHeaders = this.retrieveColumnHeaders(workbook, userSelection, hasPlotId);
+		final List<String> columnHeaders = this.retrieveColumnHeaders(workbook, userSelection, this.headersContainsPlotId(importData));
 		// DMV : a linkedhashmap is used to preserve insert order
 		final Map<Integer, MeasurementVariable> variableIndexMap = new LinkedHashMap<Integer, MeasurementVariable>();
 
@@ -655,7 +647,8 @@ public class ETLServiceImpl implements ETLService {
 
 	@Override
 	public int saveProjectOntology(final org.generationcp.middleware.domain.etl.Workbook importData, final String programUUID) {
-		return this.dataImportService.saveProjectOntology(importData, programUUID, this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
+		return this.dataImportService
+				.saveProjectOntology(importData, programUUID, this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
 	}
 
 	@Override
@@ -676,7 +669,8 @@ public class ETLServiceImpl implements ETLService {
 
 	@Override
 	public int saveProjectData(final org.generationcp.middleware.domain.etl.Workbook importData, final String programUUID) {
-		return this.dataImportService.saveProjectData(importData, programUUID, this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
+		return this.dataImportService
+				.saveProjectData(importData, programUUID, this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
 	}
 
 	@Override
@@ -696,8 +690,8 @@ public class ETLServiceImpl implements ETLService {
 	/***
 	 * This sets the study id, and id of datasets of the workbook. This also set the conditions, constants, factors and variates of the
 	 * workbook based on what is saved in the trial dataset and the dataset for import (plot data or means data)
-	 * 
-	 * @param wb as the Workbook
+	 *
+	 * @param wb      as the Workbook
 	 * @param studyId as the id of the study
 	 */
 	private void fillDetailsOfDatasetsInWorkbook(final org.generationcp.middleware.domain.etl.Workbook wb, final Integer studyId,
@@ -891,18 +885,10 @@ public class ETLServiceImpl implements ETLService {
 		if (pmKeyLabel != null && !pmKeyLabel.trim().equals(ETLServiceImpl.PMKEY_LABEL)) {
 			rowAdjustMent++;
 		}
-		final String objective =
-				this.getCellStringValue(sheet, ETLServiceImpl.OBJECTIVE_ROW_INDEX - rowAdjustMent,
-						ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		final String startDateStr =
-				this.getCellStringValue(sheet, ETLServiceImpl.START_DATE_ROW_INDEX - rowAdjustMent,
-						ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		final String endDateStr =
-				this.getCellStringValue(sheet, ETLServiceImpl.END_DATE_ROW_INDEX - rowAdjustMent,
-						ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		final String studyType =
-				this.getCellStringValue(sheet, ETLServiceImpl.STUDY_TYPE_ROW_INDEX - rowAdjustMent,
-						ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
+		final String objective = this.getCellStringValue(sheet, ETLServiceImpl.OBJECTIVE_ROW_INDEX - rowAdjustMent, ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
+		final String startDateStr = this.getCellStringValue(sheet, ETLServiceImpl.START_DATE_ROW_INDEX - rowAdjustMent, ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
+		final String endDateStr = this.getCellStringValue(sheet, ETLServiceImpl.END_DATE_ROW_INDEX - rowAdjustMent, ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
+		final String studyType = this.getCellStringValue(sheet, ETLServiceImpl.STUDY_TYPE_ROW_INDEX - rowAdjustMent, ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
 		StudyType studyTypeValue = StudyType.getStudyType(studyType);
 		if (studyTypeValue == null) {
 			studyTypeValue = StudyType.N;
@@ -1044,5 +1030,18 @@ public class ETLServiceImpl implements ETLService {
 			this.maxRowLimit = value;
 		}
 	}
+
+	public boolean headersContainsPlotId(final org.generationcp.middleware.domain.etl.Workbook importData) {
+		boolean hasPlotId = false;
+		for (final MeasurementVariable mv : importData.getAllVariables())
+		{
+			if (mv.getTermId() == TermId.PLOT_ID.getId()) {
+				hasPlotId = true;
+				break;
+			}
+		}
+		return hasPlotId;
+	}
+
 
 }

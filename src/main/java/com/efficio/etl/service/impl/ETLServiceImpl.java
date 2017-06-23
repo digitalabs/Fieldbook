@@ -105,9 +105,6 @@ public class ETLServiceImpl implements ETLService {
 	private WorkbenchDataManager workbenchDataManager;
 
 	@Resource
-	private GermplasmDataManager germplasmDataManager;
-
-	@Resource
 	private ResourceBundleMessageSource messageSource;
 
 	@Resource
@@ -282,14 +279,14 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	@Override
-	public List<String> retrieveColumnHeaders(final Workbook workbook, final UserSelection userSelection, Boolean addPlotId) {
+	public List<String> retrieveColumnHeaders(final Workbook workbook, final UserSelection userSelection, final Boolean addPlotId) {
 		final Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
 		final String[] headerArray = PoiUtil.rowAsStringArray(sheet, userSelection.getHeaderRowIndex());
 
-		final List<String> returnValue = new ArrayList<String>();
+		final List<String> returnValue = new ArrayList<>();
 		returnValue.addAll(Arrays.asList(headerArray));
-		if (addPlotId && !returnValue.contains("PLOT_ID")) {
-			returnValue.add("PLOT_ID");
+		if (addPlotId && !returnValue.contains(TermId.PLOT_ID.name())) {
+			returnValue.add(TermId.PLOT_ID.name());
 		}
 		return returnValue;
 	}

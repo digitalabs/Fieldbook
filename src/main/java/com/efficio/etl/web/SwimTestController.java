@@ -60,7 +60,7 @@ public class SwimTestController {
 		try {
 			this.provideTestUserSelection();
 			Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
-			List<String> headers = this.etlService.retrieveColumnHeaders(workbook, this.userSelection);
+			List<String> headers = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, Boolean.FALSE);
 
 			if (headers != null) {
 				return headers;

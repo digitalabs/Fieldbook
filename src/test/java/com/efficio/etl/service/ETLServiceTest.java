@@ -42,7 +42,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -187,8 +186,8 @@ public class ETLServiceTest {
 	@Test
 	public void testExtractColumnHeadersPositive() {
 
-		Assert.assertArrayEquals(ETLServiceTest.COLUMN_HEADERS, this.etlService.retrieveColumnHeaders(this.workbook, this.userSelection)
-				.toArray());
+		Assert.assertArrayEquals(ETLServiceTest.COLUMN_HEADERS,
+				this.etlService.retrieveColumnHeaders(this.workbook, this.userSelection, Boolean.FALSE).toArray());
 
 	}
 
@@ -383,8 +382,8 @@ public class ETLServiceTest {
 	public void testCheckOutOfBoundsDataTrue() throws IOException {
 
 		// Accept any workbook when checkForOutOfBoundsData is called. It will be captured and verified later.
-		Mockito.when(
-				this.dataImportService.checkForOutOfBoundsData(Mockito.any(org.generationcp.middleware.domain.etl.Workbook.class), Mockito.eq(PROGRAM_UUID))).thenReturn(true);
+		Mockito.when(this.dataImportService.checkForOutOfBoundsData(Mockito.any(org.generationcp.middleware.domain.etl.Workbook.class),
+						Mockito.eq(PROGRAM_UUID))).thenReturn(true);
 
 		final int datasetType = DataSetType.PLOT_DATA.getId();
 		this.fillStudyDetailsOfUserSelection(this.userSelection, STUDY_ID);
@@ -539,6 +538,24 @@ public class ETLServiceTest {
 		Assert.assertEquals("1", result.get(0).getMeasurementData(PLOT_NO).getValue());
 		Assert.assertEquals("The value should be 6", "6", result.get(0).getMeasurementData(ALEU_COL_1_5).getValue());
 
+	}
+
+	@Test
+	public void testHeadersContainsPlotIdFalse() {
+		this.userSelection.setObservationRows(1);
+		org.generationcp.middleware.domain.etl.Workbook testWorkbook = this.createTestWorkbook();
+
+		Assert.assertFalse(this.etlService.headersContainsPlotId(testWorkbook));
+	}
+
+	@Test
+	public void testHeadersContainsPlotIdTrue() {
+		this.userSelection.setObservationRows(1);
+		org.generationcp.middleware.domain.etl.Workbook testWorkbook = this.createTestWorkbook();
+		MeasurementVariable plotVariable = new MeasurementVariable();
+		plotVariable.setTermId(TermId.PLOT_ID.getId());
+		testWorkbook.getFactors().add(plotVariable);
+		Assert.assertTrue(this.etlService.headersContainsPlotId(testWorkbook));
 	}
 
 	protected Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {

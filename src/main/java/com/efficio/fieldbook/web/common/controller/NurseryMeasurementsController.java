@@ -81,12 +81,6 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 
 		List<MeasurementRow> measurementRowList = this.userSelection.getMeasurementRowList();
 
-		if(measurementRowList == null || measurementRowList.isEmpty()) {
-			this.fieldbookMiddlewareService.loadAllObservations(this.userSelection.getWorkbook());
-			this.userSelection.setMeasurementRowList(this.userSelection.getWorkbook().getObservations());
-			measurementRowList = this.userSelection.getMeasurementRowList();
-		}
-
 		tempList.addAll(measurementRowList);
 
 		MeasurementRow row = tempList.get(index);

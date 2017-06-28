@@ -90,7 +90,7 @@ public class FileUploadController extends AbstractBaseETLController {
 	@Resource
 	private ContextUtil contextUtil;
 
-	private final Map<String, String> returnMessage = new HashMap<String, String>();
+	private final Map<String, String> returnMessage = new HashMap<>();
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(@ModelAttribute("uploadForm") FileUploadForm uploadForm, Model model, HttpSession session) {

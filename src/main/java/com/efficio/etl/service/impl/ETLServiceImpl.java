@@ -126,7 +126,7 @@ public class ETLServiceImpl implements ETLService {
 		wb.setStudyDetails(this.convertToStudyDetails(userSelection));
 		wb.setImportType(userSelection.getDatasetType());
 
-		final Set<PhenotypicType> phenoTypicKey = new LinkedHashSet<PhenotypicType>();
+		final Set<PhenotypicType> phenoTypicKey = new LinkedHashSet<>();
 		// always follow the order: TE, G, TD, V
 		phenoTypicKey.add(PhenotypicType.TRIAL_ENVIRONMENT);
 		phenoTypicKey.add(PhenotypicType.GERMPLASM);
@@ -134,9 +134,9 @@ public class ETLServiceImpl implements ETLService {
 		phenoTypicKey.add(PhenotypicType.VARIATE);
 		final Iterator<PhenotypicType> iter = phenoTypicKey.iterator();
 
-		final List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
-		final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
-		final List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> conditions = new ArrayList<>();
+		final List<MeasurementVariable> factors = new ArrayList<>();
+		final List<MeasurementVariable> variates = new ArrayList<>();
 
 		// loop to all phenotypickeys in the giant Hashmap
 		while (iter.hasNext()) {
@@ -221,7 +221,7 @@ public class ETLServiceImpl implements ETLService {
 	public List<SheetDTO> retrieveSheetInformation(final Workbook workbook) {
 		final int sheetCount = workbook.getNumberOfSheets();
 
-		final List<SheetDTO> returnVal = new ArrayList<SheetDTO>();
+		final List<SheetDTO> returnVal = new ArrayList<>();
 
 		for (int i = 0; i < sheetCount; i++) {
 			final Sheet sheet = workbook.getSheetAt(i);
@@ -237,7 +237,7 @@ public class ETLServiceImpl implements ETLService {
 	public List<RowDTO> retrieveRowInformation(final Workbook workbook, final int sheetIndex, final int startRow, final int endRow,
 			final int maxRowContentLength) {
 		final Sheet sheet = workbook.getSheetAt(sheetIndex);
-		final List<RowDTO> displayRows = new ArrayList<RowDTO>(endRow);
+		final List<RowDTO> displayRows = new ArrayList<>(endRow);
 		for (int rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
 			final String row = PoiUtil.rowAsString(sheet, rowIndex, ",", maxRowContentLength);
 			final RowDTO dto = new RowDTO(rowIndex, row);
@@ -254,7 +254,7 @@ public class ETLServiceImpl implements ETLService {
 
 		final String[] columnValues = PoiUtil.rowAsStringArray(sheet, rowIndex);
 
-		final List<IndexValueDTO> dtoList = new ArrayList<IndexValueDTO>(columnValues.length);
+		final List<IndexValueDTO> dtoList = new ArrayList<>(columnValues.length);
 		for (int i = 0; i < columnValues.length; i++) {
 			final IndexValueDTO dto = new IndexValueDTO(i, columnValues[i]);
 			dtoList.add(dto);
@@ -349,9 +349,9 @@ public class ETLServiceImpl implements ETLService {
 	// optimize prep step for new implem
 	@Override
 	public Map<PhenotypicType, List<VariableDTO>> prepareInitialCategorization(final List<String> headers, final UserSelection selection) {
-		final List<String> headerList = new ArrayList<String>(headers);
+		final List<String> headerList = new ArrayList<>(headers);
 
-		final Map<PhenotypicType, List<VariableDTO>> returnVal = new HashMap<PhenotypicType, List<VariableDTO>>();
+		final Map<PhenotypicType, List<VariableDTO>> returnVal = new HashMap<>();
 		// initialize return variable to ensure non null lists
 		returnVal.put(null, new ArrayList<VariableDTO>());
 		returnVal.put(PhenotypicType.TRIAL_ENVIRONMENT, new ArrayList<VariableDTO>());
@@ -375,7 +375,7 @@ public class ETLServiceImpl implements ETLService {
 						final List<VariableDTO> variableDTOList = returnVal.get(type);
 
 						if (categoryHeaders == null) {
-							categoryHeaders = new LinkedList<String>();
+							categoryHeaders = new LinkedList<>();
 							selection.setHeadersForCategory(categoryHeaders, type);
 						}
 
@@ -386,7 +386,7 @@ public class ETLServiceImpl implements ETLService {
 					} else {
 						List<VariableDTO> unmatched = returnVal.get(null);
 						if (unmatched == null) {
-							unmatched = new ArrayList<VariableDTO>();
+							unmatched = new ArrayList<>();
 							returnVal.put(null, unmatched);
 						}
 
@@ -423,7 +423,7 @@ public class ETLServiceImpl implements ETLService {
 			ETLServiceImpl.LOG.error(e.getMessage(), e);
 			List<VariableDTO> unmatched = returnVal.get(null);
 			if (unmatched == null) {
-				unmatched = new ArrayList<VariableDTO>();
+				unmatched = new ArrayList<>();
 				returnVal.put(null, unmatched);
 			}
 
@@ -475,7 +475,7 @@ public class ETLServiceImpl implements ETLService {
 
 			if (measurementVariableMap == null) {
 				// order should be preserved
-				measurementVariableMap = new LinkedHashMap<String, MeasurementVariable>();
+				measurementVariableMap = new LinkedHashMap<>();
 				userSelection
 						.setMeasurementVariablesByPhenotypic(type, (LinkedHashMap<String, MeasurementVariable>) measurementVariableMap);
 			}
@@ -495,7 +495,7 @@ public class ETLServiceImpl implements ETLService {
 
 		final List<String> columnHeaders = this.retrieveColumnHeaders(workbook, userSelection, this.headersContainsPlotId(importData));
 		// DMV : a linkedhashmap is used to preserve insert order
-		final Map<Integer, MeasurementVariable> variableIndexMap = new LinkedHashMap<Integer, MeasurementVariable>();
+		final Map<Integer, MeasurementVariable> variableIndexMap = new LinkedHashMap<>();
 
 		for (final MeasurementVariable measurementVariable : variableList) {
 			final int columnIndex = columnHeaders.indexOf(measurementVariable.getName());
@@ -511,7 +511,7 @@ public class ETLServiceImpl implements ETLService {
 			final Map<Integer, MeasurementVariable> variableIndexMap, final boolean discardInvalidValues) {
 		final Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
 
-		final List<MeasurementRow> rows = new ArrayList<MeasurementRow>(userSelection.getObservationRows());
+		final List<MeasurementRow> rows = new ArrayList<>(userSelection.getObservationRows());
 
 		for (int i = userSelection.getContentRowIndex(); i <= userSelection.getContentRowIndex() + userSelection.getObservationRows() - 1; i++) {
 			final MeasurementRow row = new MeasurementRow();
@@ -584,7 +584,7 @@ public class ETLServiceImpl implements ETLService {
 
 	@Override
 	public List<String> convertMessageList(final List<Message> messages) {
-		final Set<String> stringMessages = new LinkedHashSet<String>(messages.size());
+		final Set<String> stringMessages = new LinkedHashSet<>(messages.size());
 		for (final Message message : messages) {
 			try {
 				stringMessages.add(this.convertMessage(message));
@@ -593,7 +593,7 @@ public class ETLServiceImpl implements ETLService {
 				stringMessages.add(message.getMessageKey());
 			}
 		}
-		return new ArrayList<String>(stringMessages);
+		return new ArrayList<>(stringMessages);
 	}
 
 	@Override
@@ -608,7 +608,7 @@ public class ETLServiceImpl implements ETLService {
 
 	@Override
 	public List<StudyDetails> retrieveExistingStudyDetails(final String programUUID) {
-		final List<StudyDetails> returnVal = new LinkedList<StudyDetails>();
+		final List<StudyDetails> returnVal = new LinkedList<>();
 		for (final StudyType studyType : StudyType.values()) {
 			try {
 				returnVal.addAll(this.studyDataManager.getAllStudyDetails(studyType, programUUID));
@@ -644,8 +644,8 @@ public class ETLServiceImpl implements ETLService {
 			return this.dataImportService.validateProjectOntology(importData, this.contextUtil.getCurrentProgramUUID());
 		} catch (final MiddlewareException e) {
 			ETLServiceImpl.LOG.error(e.getMessage(), e);
-			final Map<String, List<Message>> genericError = new HashMap<String, List<Message>>();
-			final List<Message> error = new ArrayList<Message>();
+			final Map<String, List<Message>> genericError = new HashMap<>();
+			final List<Message> error = new ArrayList<>();
 			error.add(new Message(Constants.MESSAGE_KEY_GENERIC_ERROR));
 			genericError.put(Constants.GLOBAL, error);
 			return genericError;
@@ -665,8 +665,8 @@ public class ETLServiceImpl implements ETLService {
 			return this.dataImportService.validateProjectData(importData, programUUID);
 		} catch (final MiddlewareException e) {
 			ETLServiceImpl.LOG.error(e.getMessage(), e);
-			final Map<String, List<Message>> genericError = new HashMap<String, List<Message>>();
-			final List<Message> error = new ArrayList<Message>();
+			final Map<String, List<Message>> genericError = new HashMap<>();
+			final List<Message> error = new ArrayList<>();
 			error.add(new Message(Constants.MESSAGE_KEY_GENERIC_ERROR));
 			genericError.put(Constants.GLOBAL, error);
 			return genericError;
@@ -800,9 +800,9 @@ public class ETLServiceImpl implements ETLService {
 	@Override
 	public Map<String, List<Message>> checkForMismatchedHeaders(final List<String> fileHeaders,
 			final List<MeasurementVariable> studyHeaders, final boolean isMeansDataImport) {
-		final Map<String, List<Message>> errors = new LinkedHashMap<String, List<Message>>();
+		final Map<String, List<Message>> errors = new LinkedHashMap<>();
 
-		final Map<String, String> fileHeaderMap = new HashMap<String, String>();
+		final Map<String, String> fileHeaderMap = new HashMap<>();
 		final String delimeter = ", ";
 
 		// construct map of file headers to simplify retrieval / checking of
@@ -827,7 +827,7 @@ public class ETLServiceImpl implements ETLService {
 		String missingHeaderString = missingHeaders.toString();
 		if (missingHeaderString.length() > 0) {
 			missingHeaderString = missingHeaderString.substring(0, missingHeaderString.lastIndexOf(delimeter));
-			final List<Message> errorMessages = new ArrayList<Message>();
+			final List<Message> errorMessages = new ArrayList<>();
 
 			errorMessages.add(new Message("error.missing.headers", missingHeaderString));
 			errors.put(Constants.GLOBAL, errorMessages);
@@ -860,7 +860,7 @@ public class ETLServiceImpl implements ETLService {
 
 	@Override
 	public int getIndexColumnIndex(final List<String> fileHeaders, final List<MeasurementVariable> studyHeaders) {
-		final Map<String, Integer> fileHeaderMap = new HashMap<String, Integer>();
+		final Map<String, Integer> fileHeaderMap = new HashMap<>();
 		for (int i = 0; i < fileHeaders.size(); i++) {
 			fileHeaderMap.put(fileHeaders.get(i).toUpperCase(), i);
 		}
@@ -909,11 +909,7 @@ public class ETLServiceImpl implements ETLService {
 			final Row row = sheet.getRow(rowNumber);
 			final Cell cell = row.getCell(columnNumber);
 			return PoiUtil.getCellStringValue(cell);
-		} catch (final IllegalStateException e) {
-			ETLServiceImpl.LOG.error(e.getMessage(), e);
-			return "";
-
-		} catch (final NullPointerException e) {
+		} catch (final IllegalStateException | NullPointerException e) {
 			ETLServiceImpl.LOG.error(e.getMessage(), e);
 			return "";
 		}
@@ -961,7 +957,7 @@ public class ETLServiceImpl implements ETLService {
 
 		importData = this.createWorkbookFromUserSelection(userSelection, isMeansDataImport);
 
-		List<String> errors = new ArrayList<String>();
+		List<String> errors = new ArrayList<>();
 		boolean isWorkbookHasObservationRecords = this.isWorkbookHasObservationRecords(userSelection, errors, workbook);
 		boolean isObservationOverMaxLimit = this.isObservationOverMaximumLimit(userSelection, errors, workbook);
 
@@ -981,7 +977,7 @@ public class ETLServiceImpl implements ETLService {
 		Integer lastRowNum = PoiUtil.getLastRowNum(sheet);
 
 		if (lastRowNum > this.maxRowLimit) {
-			List<Message> messages = new ArrayList<Message>();
+			List<Message> messages = new ArrayList<>();
 			Message message =
 					new Message("error.observation.over.maximum.limit", new DecimalFormat("###,###,###").format(this.maxRowLimit));
 			messages.add(message);
@@ -998,7 +994,7 @@ public class ETLServiceImpl implements ETLService {
 		Integer lastRowNum = PoiUtil.getLastRowNum(sheet);
 
 		if (lastRowNum == 0) {
-			List<Message> messages = new ArrayList<Message>();
+			List<Message> messages = new ArrayList<>();
 			Message message = new Message("error.observation.no.records");
 			messages.add(message);
 			errors.addAll(this.convertMessageList(messages));

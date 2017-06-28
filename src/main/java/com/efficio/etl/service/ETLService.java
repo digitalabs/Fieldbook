@@ -157,5 +157,13 @@ public interface ETLService {
    * @return
    */
   boolean headersContainsPlotId(final org.generationcp.middleware.domain.etl.Workbook importData);
+  
+  /**
+   * Returns all available entry types at the moment in the form of a map <Name, CVTermId> i.e <C,10170>
+   * @param programUUID 
+   * 
+   * @return map <Name, CVTermId>
+   **/
+  Map<String, Integer> retrieveAvailableEntryTypes(String programUUID);
 
 }

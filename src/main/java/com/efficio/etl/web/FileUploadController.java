@@ -9,6 +9,7 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -36,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,6 +65,9 @@ public class FileUploadController extends AbstractBaseETLController {
 
 	@Resource
 	private FieldbookService fieldbookService;
+	
+	@Resource
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
 	@Resource
 	private ETLService etlService;
@@ -160,7 +165,9 @@ public class FileUploadController extends AbstractBaseETLController {
 			wb =
 					this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
 							confirmDiscard == 1 ? true : false, new WorkbookParser());
-
+			
+			//Change the values of the Entry_Type from Entry_Type code to id
+			this.updateEntryTypeValues(programUUID, wb.getObservations(), this.etlService.retrieveAvailableEntryTypes(programUUID));
 
 			final MeasurementVariable plotIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "",
 					Operation.ADD, PhenotypicType.GERMPLASM);
@@ -200,6 +207,24 @@ public class FileUploadController extends AbstractBaseETLController {
 
 		return this.returnMessage;
 
+	}
+
+	public void updateEntryTypeValues(String programUUID, List<MeasurementRow> observations,
+			Map<String, Integer> availableEntryTypes) {
+		Map<String, MeasurementVariable> mVarMap = new HashMap<>();
+		for(MeasurementRow row: observations) {
+			for(MeasurementVariable mvar: row.getMeasurementVariables()){
+				if(!mVarMap.containsKey(mvar.getName())){
+					MeasurementVariable measurementVariable = this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(mvar.getProperty(), mvar.getScale(), mvar.getMethod(), mvar.getRole(), programUUID);
+					mVarMap.put(mvar.getName(), measurementVariable);
+				}
+				if(mVarMap.get(mvar.getName()) != null && mVarMap.get(mvar.getName()).getTermId() == TermId.ENTRY_TYPE.getId()){
+					String value = row.getMeasurementData(mvar.getName()).getValue();
+					
+					row.getMeasurementData(mvar.getName()).setValue(availableEntryTypes.get(value).toString());
+				}
+			}
+		}
 	}
 
 	@ResponseBody

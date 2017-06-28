@@ -865,20 +865,20 @@ public class TrialMeasurementsControllerTest {
 		MeasurementVariableTestDataInitializer measurementVarDataInitializer = new MeasurementVariableTestDataInitializer();
 		this.measurementVariables = new ArrayList<>();
 		final String trait1Name = this.measurementText.getMeasurementVariable().getName();
-		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
-				this.measurementText.getMeasurementVariable().getId(), useDifferentLocalName? trait1Name + LOCAL : trait1Name));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(
+				this.measurementText.getMeasurementVariable().getId(), useDifferentLocalName? trait1Name + LOCAL : trait1Name, null));
 		final String trait2Name = this.measurementNumeric.getMeasurementVariable().getName();
-		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
-				this.measurementNumeric.getMeasurementVariable().getId(), useDifferentLocalName? trait2Name + LOCAL : trait2Name));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(
+				this.measurementNumeric.getMeasurementVariable().getId(), useDifferentLocalName? trait2Name + LOCAL : trait2Name, null));
 		final String trait3Name = this.measurementCategorical.getMeasurementVariable().getName();
-		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
-				this.measurementCategorical.getMeasurementVariable().getId(), useDifferentLocalName? trait3Name + LOCAL : trait3Name));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(
+				this.measurementCategorical.getMeasurementVariable().getId(), useDifferentLocalName? trait3Name + LOCAL : trait3Name, null));
 
 		for (final TermId term : this.standardFactors) {
-			measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(term.getId(), useDifferentLocalName? term.name() + LOCAL : term.name()));
+			measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(term.getId(), useDifferentLocalName? term.name() + LOCAL : term.name(), null));
 		}
-		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.DESIG.getId(), useDifferentLocalName? DESIGNATION + LOCAL : DESIGNATION));
-		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.TRIAL_INSTANCE_FACTOR.getId(), useDifferentLocalName? TRIAL_INSTANCE + LOCAL : TRIAL_INSTANCE));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(TermId.DESIG.getId(), useDifferentLocalName? DESIGNATION + LOCAL : DESIGNATION, null));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), useDifferentLocalName? TRIAL_INSTANCE + LOCAL : TRIAL_INSTANCE, null));
 
 		Mockito.when(workbook.getMeasurementDatasetVariablesView()).thenReturn(this.measurementVariables);
 		this.trialMeasurementsController.setUserSelection(userSelection);

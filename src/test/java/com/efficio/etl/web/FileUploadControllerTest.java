@@ -1,18 +1,24 @@
 
 package com.efficio.etl.web;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
+import org.generationcp.middleware.data.initializer.MeasurementRowTestDataInitializer;
+import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -23,12 +29,12 @@ import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -43,10 +49,7 @@ import com.efficio.etl.service.ETLService;
 import com.efficio.etl.web.bean.FileUploadForm;
 import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.validators.FileUploadFormValidator;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
+import com.efficio.fieldbook.service.api.FieldbookService;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -82,7 +85,12 @@ public class FileUploadControllerTest {
 
 	@Mock
 	private BindingResult result;
-
+	
+	@Mock
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+	
+	private MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer;
+	private MeasurementRowTestDataInitializer measurementRowTestDataInitializer;
 	private Model model;
 	private HttpSession session;
 	private HttpServletRequest request;
@@ -119,6 +127,10 @@ public class FileUploadControllerTest {
 		plotIdMeasurementVariable.setName(TermId.PLOT_ID.name());
 		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM))
 				.thenReturn(this.plotIdMeasurementVariable);
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class), Matchers.anyString())).thenReturn(null);
+		
+		this.measurementVariableTestDataInitializer = new MeasurementVariableTestDataInitializer();
+		this.measurementRowTestDataInitializer = new MeasurementRowTestDataInitializer();
 	}
 
 	@Test
@@ -213,5 +225,19 @@ public class FileUploadControllerTest {
 		Assert.assertEquals("An error occurred while reading the file.", returnMessage.get(FileUploadController.STATUS_MESSAGE));
 		Assert.assertEquals(IOException.class.getSimpleName(), returnMessage.get(FileUploadController.ERROR_TYPE));
 
+	}
+	
+	@Test
+	public void testupdateEntryTypeValues(){
+		String value = "T";
+		MeasurementVariable measurementVariable = this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), value);
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class), Matchers.anyString())).thenReturn(measurementVariable);
+		List<MeasurementRow> observations = this.measurementRowTestDataInitializer.createMeasurementRowList(TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), value, measurementVariable);
+		Map<String, Integer> availableEntryTypes = new HashMap<>();
+		availableEntryTypes.put(value, TermId.ENTRY_TYPE.getId());
+		MeasurementData mdata = observations.get(0).getMeasurementData(TermId.ENTRY_TYPE.getId());
+		this.fileUploadController.updateEntryTypeValues(PROGRAM_UUID, observations, availableEntryTypes);
+		
+		Assert.assertEquals(String.valueOf(TermId.ENTRY_TYPE.getId()), mdata.getValue());
 	}
 }

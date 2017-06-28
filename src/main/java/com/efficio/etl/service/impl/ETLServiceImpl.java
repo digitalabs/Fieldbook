@@ -28,6 +28,7 @@ import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.DataSet;
 import org.generationcp.middleware.domain.dms.DataSetType;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.Constants;
@@ -41,7 +42,6 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
-import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
@@ -49,6 +49,7 @@ import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.util.DatasetUtil;
 import org.generationcp.middleware.util.Message;
 import org.generationcp.middleware.util.PoiUtil;
@@ -109,6 +110,9 @@ public class ETLServiceImpl implements ETLService {
 
 	@Resource
 	private ContextUtil contextUtil;
+	
+	@Resource
+	private OntologyService ontologyService;
 
 	@Override
 	public String storeUserWorkbook(final InputStream in) throws IOException {
@@ -511,7 +515,7 @@ public class ETLServiceImpl implements ETLService {
 
 		for (int i = userSelection.getContentRowIndex(); i <= userSelection.getContentRowIndex() + userSelection.getObservationRows() - 1; i++) {
 			final MeasurementRow row = new MeasurementRow();
-			row.setDataList(this.convertRow(sheet, i, variableIndexMap, discardInvalidValues));
+			row.setDataList(this.convertRow(sheet, i, variableIndexMap, discardInvalidValues, this.retrieveAvailableEntryTypes(this.contextUtil.getCurrentProgramUUID())));
 			rows.add(row);
 		}
 
@@ -519,9 +523,8 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	protected List<MeasurementData> convertRow(final Sheet sheet, final int dataRowIndex,
-			final Map<Integer, MeasurementVariable> variableIndexMap, boolean discardInvalidValues) {
-		final List<MeasurementData> dataList = new ArrayList<MeasurementData>(variableIndexMap.size());
-
+			final Map<Integer, MeasurementVariable> variableIndexMap, boolean discardInvalidValues, Map<String, Integer> availableEntryTypes) {
+		final List<MeasurementData> dataList = new ArrayList<>(variableIndexMap.size());
 		for (final Map.Entry<Integer, MeasurementVariable> entry : variableIndexMap.entrySet()) {
 			final Integer columnIndex = entry.getKey();
 			final MeasurementVariable variable = entry.getValue();
@@ -532,11 +535,18 @@ public class ETLServiceImpl implements ETLService {
 			if (discardInvalidValues && !measurementData.isCategoricalValueValid() && variable.getRole() == PhenotypicType.VARIATE) {
 				measurementData.setValue("");
 			}
-
+			this.updateEntryTypeValue(variable, measurementData, availableEntryTypes);
 			dataList.add(measurementData);
 		}
 
 		return dataList;
+	}
+	
+	public void updateEntryTypeValue(MeasurementVariable variable, MeasurementData measurementData, Map<String, Integer> availableEntryTypes){
+		if(TermId.ENTRY_TYPE.getId() == variable.getTermId() && measurementData.getValue() != null){
+			String value = measurementData.getValue();
+			measurementData.setValue(availableEntryTypes.get(value).toString());
+		}
 	}
 
 	public FileService getFileService() {
@@ -1040,5 +1050,22 @@ public class ETLServiceImpl implements ETLService {
 		return hasPlotId;
 	}
 
+	/**
+	 * Returns all available entry types at the moment in the form of a map <Name, CVTermId> i.e <C,10170>
+	 * @param programUUID 
+	 * 
+	 * @return map <Name, CVTermId>
+	 */
+	@Override
+	public Map<String, Integer> retrieveAvailableEntryTypes(String programUUID) {
+		final Map<String, Integer> entryTypeMap = new HashMap<>();
+		final List<Enumeration> entryTypes = this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), programUUID)
+				.getEnumerations();
 
+		for (final Enumeration entryType : entryTypes) {
+			entryTypeMap.put(entryType.getName(), entryType.getId());
+		}
+
+		return entryTypeMap;
+	}
 }

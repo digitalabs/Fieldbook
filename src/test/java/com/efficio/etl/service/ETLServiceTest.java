@@ -17,13 +17,17 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
+import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.DataSet;
 import org.generationcp.middleware.domain.dms.DataSetType;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -33,6 +37,7 @@ import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,11 +84,17 @@ public class ETLServiceTest {
 
 	@Mock
 	private ResourceBundleMessageSource messageSource;
-
+	
+	@Mock
+	private OntologyService ontologyService;
 	@InjectMocks
 	private ETLServiceImpl etlService = new ETLServiceImpl();
 
 	private UserSelection userSelection;
+	
+	private MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer;
+	
+	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
 
 	private final static String PROGRAM_UUID = "9f2102ee-ca88-43bc-900a-09dc49a29ddb";
 
@@ -143,6 +154,13 @@ public class ETLServiceTest {
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
 		Mockito.when(this.fileService.retrieveWorkbook(Mockito.anyString())).thenReturn(this.workbook);
+		
+		this.measurementVariableTestDataInitializer = new MeasurementVariableTestDataInitializer();
+		this.measurementDataTestDataInitializer = new MeasurementDataTestDataInitializer();
+		
+		StandardVariable standardVariable =  Mockito.mock(StandardVariable.class);
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), PROGRAM_UUID)).thenReturn(standardVariable);
+		Mockito.when(standardVariable.getEnumerations()).thenReturn(new ArrayList<Enumeration>());
 	}
 
 	@Test
@@ -377,7 +395,17 @@ public class ETLServiceTest {
 			Assert.assertTrue("A variate should have a variate role", measurementVariable.getRole() == PhenotypicType.VARIATE);
 		}
 	}
-
+	
+	@Test
+	public void testUpdateEntryTypeValue() {
+		final String value = "T";
+		MeasurementVariable variable = this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.ENTRY_TYPE.getId(), value);
+		MeasurementData measurementData = this.measurementDataTestDataInitializer.createMeasurementData(value, variable);
+		Map<String, Integer> availableEntryTypes = new HashMap<>();
+		availableEntryTypes.put(value, TermId.ENTRY_TYPE.getId());
+		this.etlService.updateEntryTypeValue(variable, measurementData, availableEntryTypes);
+		Assert.assertEquals("The measurement data's value should be " + TermId.ENTRY_TYPE.getId(), String.valueOf(TermId.ENTRY_TYPE.getId()), measurementData.getValue());
+	}
 	@Test
 	public void testCheckOutOfBoundsDataTrue() throws IOException {
 

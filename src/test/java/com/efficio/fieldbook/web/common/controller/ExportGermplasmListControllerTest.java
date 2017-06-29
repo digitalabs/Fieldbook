@@ -231,31 +231,12 @@ public class ExportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void test_getVisibleColumnsMapTrial() {
-
-		final String[] termIds = new String[] {String.valueOf(TermId.CHECK.getId())};
-		final Map<String, Boolean> result = this.exportGermplasmListController.getVisibleColumnsMap(termIds, false);
-
-		Assert.assertTrue(result.get(String.valueOf(TermId.GID.getId())));
-		Assert.assertTrue(result.get(String.valueOf(TermId.DESIG.getId())));
-		Assert.assertTrue(result.get(String.valueOf(TermId.ENTRY_NO.getId())));
-
-		Assert.assertTrue(result.get(String.valueOf(TermId.CHECK.getId())));
-
-		Assert.assertFalse(result.get(String.valueOf(TermId.ENTRY_CODE.getId())));
-		Assert.assertFalse(result.get(String.valueOf(TermId.CROSS.getId())));
-		Assert.assertFalse(result.get(String.valueOf(TermId.SEED_SOURCE.getId())));
-		Assert.assertFalse(result.get(String.valueOf(TermId.ENTRY_NUMBER_STORAGE.getId())));
-
-	}
-
-	@Test
 	public void test_getVisibleColumnsMapNursery() {
 
-		final String[] termIds = new String[] {"0"};
+		final String[] termIds = new String[] {String.valueOf(TermId.GID.getId()), String.valueOf(TermId.DESIG.getId()), String.valueOf(TermId.ENTRY_NO.getId()), String.valueOf(TermId.CROSS.getId()), String.valueOf(TermId.ENTRY_CODE.getId()), String.valueOf(TermId.SEED_SOURCE.getId())};
 		Mockito.when(this.userSelection.getPlotsLevelList()).thenReturn(WorkbookDataUtil.getPlotLevelList());
 
-		final Map<String, Boolean> result = this.exportGermplasmListController.getVisibleColumnsMap(termIds, true);
+		final Map<String, Boolean> result = this.exportGermplasmListController.getVisibleColumnsMap(termIds);
 
 		Assert.assertTrue(result.get(String.valueOf(TermId.GID.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.DESIG.getId())));
@@ -263,27 +244,6 @@ public class ExportGermplasmListControllerTest {
 		Assert.assertTrue(result.get(String.valueOf(TermId.CROSS.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.ENTRY_CODE.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.SEED_SOURCE.getId())));
-
-		Assert.assertNull(result.get(String.valueOf(TermId.ENTRY_NUMBER_STORAGE.getId())));
-		Assert.assertNull(result.get(String.valueOf(TermId.CHECK.getId())));
-	}
-
-	@Test
-	public void test_getVisibleColumnsMapWithNoVisibleColumns() {
-
-		final String[] termIds = new String[] {"0"};
-
-		final Map<String, Boolean> result = this.exportGermplasmListController.getVisibleColumnsMap(termIds, false);
-
-		Assert.assertTrue(result.get(String.valueOf(TermId.GID.getId())));
-		Assert.assertTrue(result.get(String.valueOf(TermId.DESIG.getId())));
-		Assert.assertTrue(result.get(String.valueOf(TermId.ENTRY_NO.getId())));
-
-		Assert.assertTrue(result.get(String.valueOf(TermId.ENTRY_CODE.getId())));
-		Assert.assertTrue(result.get(String.valueOf(TermId.CROSS.getId())));
-		Assert.assertTrue(result.get(String.valueOf(TermId.SEED_SOURCE.getId())));
-		Assert.assertTrue(result.get(String.valueOf(TermId.ENTRY_NUMBER_STORAGE.getId())));
-		Assert.assertTrue(result.get(String.valueOf(TermId.CHECK.getId())));
 	}
 
 	private List<SettingDetail> getPlotLevelList() {

@@ -64,12 +64,12 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		String[] clientVisibleColumnTermIds = exportGermplasmListForm.getGermplasmListVisibleColumns().split(",");
 
 		Boolean isNursery = "N".equals(studyType);
-		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnsMap(clientVisibleColumnTermIds, isNursery);
+		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnsMap(clientVisibleColumnTermIds);
 
 		return this.doExport(exportType, response, req, visibleColumnsMap, isNursery);
 	}
 
-	protected Map<String, Boolean> getVisibleColumnsMap(String[] termIds, Boolean isNursery) {
+	protected Map<String, Boolean> getVisibleColumnsMap(String[] termIds) {
 
 		List<String> visibleColumnsInClient = Arrays.asList(termIds);
 		Map<String, Boolean> map = new HashMap<>();

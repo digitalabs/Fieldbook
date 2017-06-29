@@ -126,41 +126,6 @@ var InventoryPage = {
     }
 };
 
-function selectAllEntries() {
-    // Select all entries of table based on the bottom select all checkbox
-    var listDivIdentifier = '';
-    if (isNursery()) {
-        if ($('#create-nursery-tab-headers .tabdrop').hasClass('active')) {
-            //means the active is in the tab drop
-            listDivIdentifier = $('#create-nursery-tab-headers .tabdrop li.active .fbk-close-tab').attr('id');
-        } else {
-            listDivIdentifier = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
-        }
-    } else {
-        listDivIdentifier = $('#manage-trial-tab-headers .active').children('a').attr('tab-data');
-    }
-
-    var sectionContainerDiv = 'stock-content-pane' + listDivIdentifier;
-    var inventoryTableId = 'inventory-table' + listDivIdentifier;
-
-    var isChecked = $('#' + getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked');
-
-    $('#' + getJquerySafeId(sectionContainerDiv) + ' input.stockListEntryId').prop('checked', isChecked);
-    $('#' + getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').prop('checked', isChecked);
-
-    if (isChecked) {
-        $('#' + getJquerySafeId(inventoryTableId) + ' tr').addClass('selected');
-        $('#' + getJquerySafeId(inventoryTableId) + ' tr').addClass('manual-selected');
-    } else {
-        $('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('selected');
-        $('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('manual-selected');
-    }
-
-    var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
-    // Display the total number of records selected
-    $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
-}
-
 $(document).ready(function() {
     'use strict';
     setTimeout(InventoryPage.setupPage, 3);

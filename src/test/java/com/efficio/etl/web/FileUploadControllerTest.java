@@ -228,7 +228,7 @@ public class FileUploadControllerTest {
 	}
 	
 	@Test
-	public void testupdateEntryTypeValues(){
+	public void testConvertEntryTypeNameToID(){
 		String value = "T";
 		MeasurementVariable measurementVariable = this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), value);
 		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class), Matchers.anyString())).thenReturn(measurementVariable);
@@ -236,7 +236,7 @@ public class FileUploadControllerTest {
 		Map<String, Integer> availableEntryTypes = new HashMap<>();
 		availableEntryTypes.put(value, TermId.ENTRY_TYPE.getId());
 		MeasurementData mdata = observations.get(0).getMeasurementData(TermId.ENTRY_TYPE.getId());
-		this.fileUploadController.updateEntryTypeValues(PROGRAM_UUID, observations, availableEntryTypes);
+		this.fileUploadController.convertEntryTypeNameToID(PROGRAM_UUID, observations, availableEntryTypes);
 		
 		Assert.assertEquals(String.valueOf(TermId.ENTRY_TYPE.getId()), mdata.getValue());
 	}

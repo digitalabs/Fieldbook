@@ -166,8 +166,8 @@ public class FileUploadController extends AbstractBaseETLController {
 					this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
 							confirmDiscard == 1 ? true : false, new WorkbookParser());
 			
-			//Change the values of the Entry_Type from Entry_Type code to id
-			this.updateEntryTypeValues(programUUID, wb.getObservations(), this.etlService.retrieveAvailableEntryTypes(programUUID));
+			//The entry type id should be saved in the db instead of the entry type name
+			this.convertEntryTypeNameToID(programUUID, wb.getObservations(), this.etlService.retrieveAvailableEntryTypes(programUUID));
 
 			final MeasurementVariable plotIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "",
 					Operation.ADD, PhenotypicType.GERMPLASM);
@@ -209,7 +209,7 @@ public class FileUploadController extends AbstractBaseETLController {
 
 	}
 
-	public void updateEntryTypeValues(String programUUID, List<MeasurementRow> observations,
+	public void convertEntryTypeNameToID(String programUUID, List<MeasurementRow> observations,
 			Map<String, Integer> availableEntryTypes) {
 		Map<String, MeasurementVariable> mVarMap = new HashMap<>();
 		for(MeasurementRow row: observations) {

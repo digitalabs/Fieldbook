@@ -535,14 +535,16 @@ public class ETLServiceImpl implements ETLService {
 			if (discardInvalidValues && !measurementData.isCategoricalValueValid() && variable.getRole() == PhenotypicType.VARIATE) {
 				measurementData.setValue("");
 			}
-			this.updateEntryTypeValue(variable, measurementData, availableEntryTypes);
+			
+			//The entry type id should be saved in the db instead of the entry type name
+			this.convertEntryTypeNameToID(variable, measurementData, availableEntryTypes);
 			dataList.add(measurementData);
 		}
 
 		return dataList;
 	}
 	
-	public void updateEntryTypeValue(MeasurementVariable variable, MeasurementData measurementData, Map<String, Integer> availableEntryTypes){
+	public void convertEntryTypeNameToID(MeasurementVariable variable, MeasurementData measurementData, Map<String, Integer> availableEntryTypes){
 		if(TermId.ENTRY_TYPE.getId() == variable.getTermId() && measurementData.getValue() != null){
 			String value = measurementData.getValue();
 			measurementData.setValue(availableEntryTypes.get(value).toString());

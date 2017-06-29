@@ -397,13 +397,13 @@ public class ETLServiceTest {
 	}
 	
 	@Test
-	public void testUpdateEntryTypeValue() {
+	public void testConvertEntryTypeNameToID() {
 		final String value = "T";
 		MeasurementVariable variable = this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.ENTRY_TYPE.getId(), value);
 		MeasurementData measurementData = this.measurementDataTestDataInitializer.createMeasurementData(value, variable);
 		Map<String, Integer> availableEntryTypes = new HashMap<>();
 		availableEntryTypes.put(value, TermId.ENTRY_TYPE.getId());
-		this.etlService.updateEntryTypeValue(variable, measurementData, availableEntryTypes);
+		this.etlService.convertEntryTypeNameToID(variable, measurementData, availableEntryTypes);
 		Assert.assertEquals("The measurement data's value should be " + TermId.ENTRY_TYPE.getId(), String.valueOf(TermId.ENTRY_TYPE.getId()), measurementData.getValue());
 	}
 	@Test

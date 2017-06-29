@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.util.FileUtils;
-import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -93,7 +91,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 
 		String outputFileNamePath = "";
 		String fileName = "";
-		String listName = "GermplasmList";
+		String listName;
 
 		GermplasmList list = null;
 		if (this.userSelection.getImportedGermplasmMainInfo() != null) {
@@ -122,7 +120,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 			}
 		}
 
-		Map<String, Object> results = new HashMap<String, Object>();
+		Map<String, Object> results = new HashMap<>();
 		results.put("outputFilename", outputFileNamePath);
 		results.put("filename", fileName);
 		results.put("contentType", response.getContentType());

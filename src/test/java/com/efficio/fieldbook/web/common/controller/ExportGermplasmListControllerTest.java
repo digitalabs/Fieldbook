@@ -73,7 +73,6 @@ public class ExportGermplasmListControllerTest {
 	private static final String TRIAL_TYPE = "T";
 	private static final String NURSERY_TYPE = "N";
 
-	private static final Integer STATUS_DELETED = 9;
 
 	@Mock
 	private HttpServletResponse response;

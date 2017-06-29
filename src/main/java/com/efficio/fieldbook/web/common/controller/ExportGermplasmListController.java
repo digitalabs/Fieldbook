@@ -77,19 +77,8 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 
 		for (SettingDetail factor : factorsList) {
-
-			if (!factor.isHidden()
-					&& !"0".equals(visibleColumnsInClient.get(0))
-					&& (factor.getVariable().getCvTermId().equals(TermId.GID.getId())
-					|| factor.getVariable().getCvTermId().equals(TermId.ENTRY_NO.getId()) || factor.getVariable().getCvTermId()
-					.equals(TermId.DESIG.getId()))) {
-
-				map.put(factor.getVariable().getCvTermId().toString(), true);
-
-			} else if (!factor.isHidden() && !"0".equals(visibleColumnsInClient.get(0))
-					&& !visibleColumnsInClient.contains(factor.getVariable().getCvTermId().toString())) {
+			if (!factor.isHidden() && !visibleColumnsInClient.contains(factor.getVariable().getCvTermId().toString())) {
 				map.put(factor.getVariable().getCvTermId().toString(), false);
-
 			} else if (!factor.isHidden()) {
 				map.put(factor.getVariable().getCvTermId().toString(), true);
 			}

@@ -512,10 +512,10 @@ public class ETLServiceImpl implements ETLService {
 		final Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
 
 		final List<MeasurementRow> rows = new ArrayList<>(userSelection.getObservationRows());
-
+		final Map<String, Integer> availableEntryTypes =  this.retrieveAvailableEntryTypes(this.contextUtil.getCurrentProgramUUID());
 		for (int i = userSelection.getContentRowIndex(); i <= userSelection.getContentRowIndex() + userSelection.getObservationRows() - 1; i++) {
 			final MeasurementRow row = new MeasurementRow();
-			row.setDataList(this.convertRow(sheet, i, variableIndexMap, discardInvalidValues, this.retrieveAvailableEntryTypes(this.contextUtil.getCurrentProgramUUID())));
+			row.setDataList(this.convertRow(sheet, i, variableIndexMap, discardInvalidValues, availableEntryTypes));
 			rows.add(row);
 		}
 

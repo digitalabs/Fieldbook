@@ -36,12 +36,14 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.service.api.study.StudyService;
 import org.generationcp.middleware.util.ResourceFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,6 +77,7 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
  */
 @Controller
 @RequestMapping(DesignImportController.URL)
+@Transactional
 public class DesignImportController extends SettingsController {
 
 	private static final int DEFAULT_STARTING_PLOT_NO = 1;
@@ -125,6 +128,9 @@ public class DesignImportController extends SettingsController {
 
 	@Resource
 	private SettingsService settingsService;
+
+	@Resource
+	private StudyService studyService;
 
 	/*
 	 * (non-Javadoc)
@@ -305,6 +311,9 @@ public class DesignImportController extends SettingsController {
 	public List<Map<String, Object>> showDetailsData(@RequestBody final EnvironmentData environmentData, final Model model,
 			@ModelAttribute("importDesignForm") final ImportDesignForm form) {
 
+		int startingEntryNumber = DEFAULT_STARTING_ENTRY_NO;
+		int startingPlotNumber = DEFAULT_STARTING_PLOT_NO;
+
 		this.processEnvironmentData(environmentData);
 
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
@@ -312,10 +321,16 @@ public class DesignImportController extends SettingsController {
 
 		List<MeasurementRow> measurementRows = new ArrayList<>();
 
+		if (this.userSelection.getWorkbook() != null && this.userSelection.getWorkbook().getStudyDetails() != null) {
+			Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
+			startingEntryNumber = this.studyService.getStartingEntryNumber(studyId);
+			startingPlotNumber = this.studyService.getStartingPlotNumber(studyId);
+		}
+
 		try {
 			measurementRows =
 					this.designImportService.generateDesign(workbook, designImportData, environmentData, false, false,
-							this.generateAdditionalParams(DEFAULT_STARTING_ENTRY_NO, DEFAULT_STARTING_PLOT_NO));
+							this.generateAdditionalParams(startingEntryNumber, startingPlotNumber));
 		} catch (final DesignValidationException e) {
 			DesignImportController.LOG.error(e.getMessage(), e);
 		}

@@ -85,10 +85,10 @@ public class FileUploadControllerTest {
 
 	@Mock
 	private BindingResult result;
-	
+
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	
+
 	private MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer;
 	private MeasurementRowTestDataInitializer measurementRowTestDataInitializer;
 	private Model model;
@@ -110,7 +110,6 @@ public class FileUploadControllerTest {
 		this.form = new FileUploadForm();
 		this.form.setFile(this.file);
 
-
 		this.fileUploadController.setEtlService(this.etlService);
 		this.fileUploadController.setUserSelection(this.userSelection);
 
@@ -118,17 +117,19 @@ public class FileUploadControllerTest {
 
 		final Project project = new Project();
 		project.setCropType(new CropType("Maize"));
-		project.getCropType().setPlotCodePrefix(PROJECT_CODE_PREFIX);
+		project.getCropType().setPlotCodePrefix(FileUploadControllerTest.PROJECT_CODE_PREFIX);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
-		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FileUploadControllerTest.PROGRAM_UUID);
 
 		this.plotIdMeasurementVariable = new MeasurementVariable();
-		plotIdMeasurementVariable.setTermId(TermId.PLOT_ID.getId());
-		plotIdMeasurementVariable.setName(TermId.PLOT_ID.name());
-		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM))
-				.thenReturn(this.plotIdMeasurementVariable);
-		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class), Matchers.anyString())).thenReturn(null);
-		
+		this.plotIdMeasurementVariable.setTermId(TermId.PLOT_ID.getId());
+		this.plotIdMeasurementVariable.setName(TermId.PLOT_ID.name());
+		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "",
+				Operation.ADD, PhenotypicType.GERMPLASM)).thenReturn(this.plotIdMeasurementVariable);
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
+				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class),
+				Matchers.anyString())).thenReturn(null);
+
 		this.measurementVariableTestDataInitializer = new MeasurementVariableTestDataInitializer();
 		this.measurementRowTestDataInitializer = new MeasurementRowTestDataInitializer();
 	}
@@ -141,7 +142,7 @@ public class FileUploadControllerTest {
 		// stub the hasErrors call to provide expected fileUploadController flow
 		Mockito.when(this.result.hasErrors()).thenReturn(true);
 
-		String navigationResult = this.fileUploadController.uploadFile(this.form, this.result, this.model);
+		final String navigationResult = this.fileUploadController.uploadFile(this.form, this.result, this.model);
 
 		// verify if the expected methods in the mock object were called
 		Mockito.verify(this.result).rejectValue("file", FileUploadFormValidator.FILE_NOT_FOUND_ERROR);
@@ -158,7 +159,7 @@ public class FileUploadControllerTest {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn("something.txt");
 		Mockito.when(this.result.hasErrors()).thenReturn(true);
 
-		String navigationResult = this.fileUploadController.uploadFile(this.form, this.result, this.model);
+		final String navigationResult = this.fileUploadController.uploadFile(this.form, this.result, this.model);
 
 		// verify if the expected methods in the mock object were called
 		Mockito.verify(this.result).rejectValue("file", FileUploadFormValidator.FILE_NOT_EXCEL_ERROR);
@@ -169,19 +170,27 @@ public class FileUploadControllerTest {
 	@Test
 	public void testStartProcessSuccessful() throws WorkbookParserException {
 
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1, false);
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+				false);
 
-		Mockito.when(this.dataImportService.parseWorkbook(Mockito.any(File.class), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(WorkbookParser.class))).thenReturn(workbook);
+		Mockito.when(this.dataImportService.parseWorkbook(Matchers.any(File.class), Matchers.anyString(),
+				Matchers.anyBoolean(), Matchers.any(WorkbookParser.class))).thenReturn(workbook);
 
-		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request, this.response, this.model);
+		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request,
+				this.response, this.model);
 
-		Mockito.verify(this.fieldbookService).addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
-		Mockito.verify(this.fieldbookService).addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
-		Mockito.verify(this.dataImportService).saveDataset(workbook, PROGRAM_UUID, PROJECT_CODE_PREFIX);
-		Mockito.verify(this.httpSessionUtil).clearSessionData(this.session, new String[] {HTTPSessionUtil.USER_SELECTION_SESSION_NAME});
+		Mockito.verify(this.fieldbookService).addMeasurementVariableToList(this.plotIdMeasurementVariable,
+				workbook.getFactors());
+		Mockito.verify(this.fieldbookService).addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable,
+				workbook.getObservations());
+		Mockito.verify(this.dataImportService).saveDataset(workbook, FileUploadControllerTest.PROGRAM_UUID,
+				FileUploadControllerTest.PROJECT_CODE_PREFIX);
+		Mockito.verify(this.httpSessionUtil).clearSessionData(this.session,
+				new String[] { HTTPSessionUtil.USER_SELECTION_SESSION_NAME });
 
 		Assert.assertTrue(this.plotIdMeasurementVariable.isFactor());
-		Assert.assertEquals(FileUploadController.STATUS_CODE_SUCCESSFUL, returnMessage.get(FileUploadController.STATUS_CODE));
+		Assert.assertEquals(FileUploadController.STATUS_CODE_SUCCESSFUL,
+				returnMessage.get(FileUploadController.STATUS_CODE));
 		Assert.assertEquals("Import is done.", returnMessage.get(FileUploadController.STATUS_MESSAGE));
 
 	}
@@ -190,54 +199,77 @@ public class FileUploadControllerTest {
 	public void testStartProcessParserException() throws WorkbookParserException {
 
 		final String errorMessage = "sample message";
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1, false);
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+				false);
 
-		Mockito.when(this.dataImportService.parseWorkbook(Mockito.any(File.class), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(WorkbookParser.class))).thenThrow(new WorkbookParserException(errorMessage));
+		Mockito.when(this.dataImportService.parseWorkbook(Matchers.any(File.class), Matchers.anyString(),
+				Matchers.anyBoolean(), Matchers.any(WorkbookParser.class)))
+				.thenThrow(new WorkbookParserException(errorMessage));
 
-		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request, this.response, this.model);
+		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request,
+				this.response, this.model);
 
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToList(this.plotIdMeasurementVariable , workbook.getFactors());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable , workbook.getObservations());
-		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook, PROGRAM_UUID, PROJECT_CODE_PREFIX);
-		Mockito.verify(this.httpSessionUtil, Mockito.times(0)).clearSessionData(this.session, new String[] {HTTPSessionUtil.USER_SELECTION_SESSION_NAME});
+		Mockito.verify(this.fieldbookService, Mockito.times(0))
+				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
+		Mockito.verify(this.fieldbookService, Mockito.times(0))
+				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
+		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,
+				FileUploadControllerTest.PROGRAM_UUID, FileUploadControllerTest.PROJECT_CODE_PREFIX);
+		Mockito.verify(this.httpSessionUtil, Mockito.times(0)).clearSessionData(this.session,
+				new String[] { HTTPSessionUtil.USER_SELECTION_SESSION_NAME });
 
-		Assert.assertEquals(FileUploadController.STATUS_CODE_HAS_ERROR, returnMessage.get(FileUploadController.STATUS_CODE));
+		Assert.assertEquals(FileUploadController.STATUS_CODE_HAS_ERROR,
+				returnMessage.get(FileUploadController.STATUS_CODE));
 		Assert.assertEquals(errorMessage, returnMessage.get(FileUploadController.STATUS_MESSAGE));
-		Assert.assertEquals(WorkbookParserException.class.getSimpleName(), returnMessage.get(FileUploadController.ERROR_TYPE));
+		Assert.assertEquals(WorkbookParserException.class.getSimpleName(),
+				returnMessage.get(FileUploadController.ERROR_TYPE));
 
 	}
 
 	@Test
 	public void testStartProcessParserIOException() throws WorkbookParserException, IOException {
 
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1, false);
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+				false);
 
 		Mockito.when(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection)).thenThrow(new IOException());
 
-		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request, this.response, this.model);
+		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request,
+				this.response, this.model);
 
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToList(this.plotIdMeasurementVariable , workbook.getFactors());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable , workbook.getObservations());
-		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook, PROGRAM_UUID, PROJECT_CODE_PREFIX);
-		Mockito.verify(this.httpSessionUtil, Mockito.times(0)).clearSessionData(this.session, new String[] {HTTPSessionUtil.USER_SELECTION_SESSION_NAME});
+		Mockito.verify(this.fieldbookService, Mockito.times(0))
+				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
+		Mockito.verify(this.fieldbookService, Mockito.times(0))
+				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
+		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,
+				FileUploadControllerTest.PROGRAM_UUID, FileUploadControllerTest.PROJECT_CODE_PREFIX);
+		Mockito.verify(this.httpSessionUtil, Mockito.times(0)).clearSessionData(this.session,
+				new String[] { HTTPSessionUtil.USER_SELECTION_SESSION_NAME });
 
-		Assert.assertEquals(FileUploadController.STATUS_CODE_HAS_ERROR, returnMessage.get(FileUploadController.STATUS_CODE));
-		Assert.assertEquals("An error occurred while reading the file.", returnMessage.get(FileUploadController.STATUS_MESSAGE));
+		Assert.assertEquals(FileUploadController.STATUS_CODE_HAS_ERROR,
+				returnMessage.get(FileUploadController.STATUS_CODE));
+		Assert.assertEquals("An error occurred while reading the file.",
+				returnMessage.get(FileUploadController.STATUS_MESSAGE));
 		Assert.assertEquals(IOException.class.getSimpleName(), returnMessage.get(FileUploadController.ERROR_TYPE));
 
 	}
-	
+
 	@Test
-	public void testConvertEntryTypeNameToID(){
-		String value = "T";
-		MeasurementVariable measurementVariable = this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), value);
-		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class), Matchers.anyString())).thenReturn(measurementVariable);
-		List<MeasurementRow> observations = this.measurementRowTestDataInitializer.createMeasurementRowList(TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), value, measurementVariable);
-		Map<String, Integer> availableEntryTypes = new HashMap<>();
+	public void testConvertEntryTypeNameToID() {
+		final String value = "T";
+		final MeasurementVariable measurementVariable = this.measurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), value);
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
+				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class),
+				Matchers.anyString())).thenReturn(measurementVariable);
+		final List<MeasurementRow> observations = this.measurementRowTestDataInitializer.createMeasurementRowList(
+				TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), value, measurementVariable);
+		final Map<String, Integer> availableEntryTypes = new HashMap<>();
 		availableEntryTypes.put(value, TermId.ENTRY_TYPE.getId());
-		MeasurementData mdata = observations.get(0).getMeasurementData(TermId.ENTRY_TYPE.getId());
-		this.fileUploadController.convertEntryTypeNameToID(PROGRAM_UUID, observations, availableEntryTypes);
-		
+		final MeasurementData mdata = observations.get(0).getMeasurementData(TermId.ENTRY_TYPE.getId());
+		this.fileUploadController.convertEntryTypeNameToID(FileUploadControllerTest.PROGRAM_UUID, observations,
+				availableEntryTypes);
+
 		Assert.assertEquals(String.valueOf(TermId.ENTRY_TYPE.getId()), mdata.getValue());
 	}
 }

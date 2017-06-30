@@ -3,6 +3,7 @@ package com.efficio.etl.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -87,6 +88,7 @@ public class ETLServiceTest {
 	
 	@Mock
 	private OntologyService ontologyService;
+	
 	@InjectMocks
 	private ETLServiceImpl etlService = new ETLServiceImpl();
 
@@ -160,7 +162,7 @@ public class ETLServiceTest {
 		
 		StandardVariable standardVariable =  Mockito.mock(StandardVariable.class);
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), PROGRAM_UUID)).thenReturn(standardVariable);
-		Mockito.when(standardVariable.getEnumerations()).thenReturn(new ArrayList<Enumeration>());
+		Mockito.when(standardVariable.getEnumerations()).thenReturn(Arrays.asList(new Enumeration(TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), "", 0)));
 	}
 
 	@Test
@@ -406,6 +408,13 @@ public class ETLServiceTest {
 		this.etlService.convertEntryTypeNameToID(variable, measurementData, availableEntryTypes);
 		Assert.assertEquals("The measurement data's value should be " + TermId.ENTRY_TYPE.getId(), String.valueOf(TermId.ENTRY_TYPE.getId()), measurementData.getValue());
 	}
+	
+	@Test
+	public void testRetrieveAvailableEntryTypes(){
+		Map<String, Integer> availableEntryTypes = this.etlService.retrieveAvailableEntryTypes(PROGRAM_UUID);
+		Assert.assertEquals("The map should contain the id  of " + TermId.ENTRY_TYPE.name(),String.valueOf(TermId.ENTRY_TYPE.getId()), availableEntryTypes.get(TermId.ENTRY_TYPE.name()).toString());
+	}
+	
 	@Test
 	public void testCheckOutOfBoundsDataTrue() throws IOException {
 

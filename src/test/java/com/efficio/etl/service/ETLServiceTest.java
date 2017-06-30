@@ -162,7 +162,7 @@ public class ETLServiceTest {
 		
 		StandardVariable standardVariable =  Mockito.mock(StandardVariable.class);
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), PROGRAM_UUID)).thenReturn(standardVariable);
-		Mockito.when(standardVariable.getEnumerations()).thenReturn(Arrays.asList(new Enumeration(TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), "", 0)));
+		Mockito.when(standardVariable.getEnumerations()).thenReturn(Arrays.asList(new Enumeration(TermId.CHECK.getId(), TermId.CHECK.name(), "", 0)));
 	}
 
 	@Test
@@ -412,7 +412,7 @@ public class ETLServiceTest {
 	@Test
 	public void testRetrieveAvailableEntryTypes(){
 		Map<String, Integer> availableEntryTypes = this.etlService.retrieveAvailableEntryTypes(PROGRAM_UUID);
-		Assert.assertEquals("The map should contain the id  of " + TermId.ENTRY_TYPE.name(),String.valueOf(TermId.ENTRY_TYPE.getId()), availableEntryTypes.get(TermId.ENTRY_TYPE.name()).toString());
+		Assert.assertEquals("The map should contain the id  of " + TermId.CHECK.name(),String.valueOf(TermId.CHECK.getId()), availableEntryTypes.get(TermId.CHECK.name()).toString());
 	}
 	
 	@Test

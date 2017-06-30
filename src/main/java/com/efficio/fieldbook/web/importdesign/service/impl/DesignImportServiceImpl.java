@@ -177,6 +177,11 @@ public class DesignImportServiceImpl implements DesignImportService {
 				additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) != null ? additionalParams
 						.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) : 0;
 
+		/**
+		 * FIXME This is not clear.
+		 * It seems that the goal is to adjust the plot numbers from the csv to the study plot numbers.
+		 * But if that's the case, why do we use the numbers from the csv in the first place?
+		 */
 		final Integer startingPlotNoFromCSV = this.getStartingPlotNoFromCSV(csvData, measurementRowGenerator.getMappedHeaders());
 		final int plotNoDelta = (startingPlotNo != null) ? startingPlotNo - startingPlotNoFromCSV : 0;
 

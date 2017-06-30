@@ -1,14 +1,12 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.util.DateUtil;
@@ -27,20 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/nursery/measurements")
@@ -86,7 +78,10 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 	public String inlineInputNurseryGet(@PathVariable int index, @PathVariable int termId, Model model) throws MiddlewareQueryException {
 
 		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
-		tempList.addAll(this.userSelection.getMeasurementRowList());
+
+		List<MeasurementRow> measurementRowList = this.userSelection.getMeasurementRowList();
+
+		tempList.addAll(measurementRowList);
 
 		MeasurementRow row = tempList.get(index);
 		MeasurementRow copyRow = row.copy();
@@ -96,11 +91,16 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		if (copyRow != null && copyRow.getMeasurementVariables() != null) {
 			for (MeasurementData var : copyRow.getDataList()) {
 				this.convertToUIDateIfDate(var);
-				if (var != null && (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
-						|| !var.getMeasurementVariable().getPossibleValues().isEmpty())) {
-					possibleValues = var.getMeasurementVariable().getPossibleValues();
+				MeasurementVariable variable = var.getMeasurementVariable();
+				if (var != null && (variable.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
+						|| (variable.getPossibleValues() != null && !variable.getPossibleValues().isEmpty()))) {
+					possibleValues = variable.getPossibleValues();
+					if (possibleValues.isEmpty()) {
+						variable.setPossibleValues(this.fieldbookService.getAllPossibleValues(variable.getTermId()));
+						possibleValues = variable.getPossibleValues();
+					}
 				}
-				if (var != null && var.getMeasurementVariable().getTermId() == termId) {
+				if (var != null && variable.getTermId() == termId) {
 					editData = var;
 					break;
 				}

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
+ *
+ *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.util;
@@ -28,9 +28,7 @@ public enum AppConstants {
 	// Label Printing
 	SIZE_OF_PAPER_A4, SIZE_OF_PAPER_LETTER
 
-	, AVAILABLE_LABEL_FIELDS_ENTRY_NUM, AVAILABLE_LABEL_FIELDS_GID, AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME, AVAILABLE_LABEL_FIELDS_YEAR, AVAILABLE_LABEL_FIELDS_SEASON, AVAILABLE_LABEL_FIELDS_TRIAL_NAME, AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM, AVAILABLE_LABEL_FIELDS_REP, AVAILABLE_LABEL_FIELDS_LOCATION, AVAILABLE_LABEL_FIELDS_BLOCK_NAME, AVAILABLE_LABEL_FIELDS_PLOT, AVAILABLE_LABEL_FIELDS_NURSERY_NAME, AVAILABLE_LABEL_FIELDS_PARENTAGE, AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES, AVAILABLE_LABEL_FIELDS_FIELD_NAME, AVAILABLE_LABEL_BARCODE, FIELDMAP_LABEL_FIELDS, AVAILABLE_LABEL_SEED_INVENTORY_AMOUNT,
-	AVAILABLE_LABEL_SEED_INVENTORY_SCALE, AVAILABLE_LABEL_SEED_LOT_ID, AVAILABLE_LABEL_SEED_SOURCE, AVAILABLE_LABEL_FIELDS_DESIGNATION,
-	AVAILABLE_LABEL_FIELDS_CROSS, AVAILABLE_LABEL_FIELDS_STOCK_ID, AVAILABLE_LABEL_FIELDS_LIST_NAME
+	, AVAILABLE_LABEL_FIELDS_ENTRY_NUM, AVAILABLE_LABEL_FIELDS_GID, AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME, AVAILABLE_LABEL_FIELDS_YEAR, AVAILABLE_LABEL_FIELDS_SEASON, AVAILABLE_LABEL_FIELDS_TRIAL_NAME, AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM, AVAILABLE_LABEL_FIELDS_REP, AVAILABLE_LABEL_FIELDS_LOCATION, AVAILABLE_LABEL_FIELDS_BLOCK_NAME, AVAILABLE_LABEL_FIELDS_PLOT, AVAILABLE_LABEL_FIELDS_NURSERY_NAME, AVAILABLE_LABEL_FIELDS_PARENTAGE, AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES, AVAILABLE_LABEL_FIELDS_FIELD_NAME, AVAILABLE_LABEL_BARCODE, FIELDMAP_LABEL_FIELDS, AVAILABLE_LABEL_SEED_INVENTORY_AMOUNT, AVAILABLE_LABEL_SEED_INVENTORY_SCALE, AVAILABLE_LABEL_SEED_LOT_ID, AVAILABLE_LABEL_SEED_SOURCE, AVAILABLE_LABEL_FIELDS_DESIGNATION, AVAILABLE_LABEL_FIELDS_CROSS, AVAILABLE_LABEL_FIELDS_STOCK_ID, AVAILABLE_LABEL_FIELDS_LIST_NAME
 
 	// Field Map
 	, ROW_COLUMN, SERPENTINE, PLANTING_ORDER_ROW_COLUMN, PLANTING_ORDER_SERPENTINE
@@ -116,7 +114,7 @@ public enum AppConstants {
 
 	, EXPORT_ADVANCE_NURSERY_EXCEL, EXPORT_ADVANCE_NURSERY_CSV
 
-	, TEMPORARY_INVENTORY_AMOUNT, TEMPORARY_INVENTORY_SCALE, TEMPORARY_INVENTORY_COMMENT
+	, TEMPORARY_INVENTORY_SCALE, TEMPORARY_INVENTORY_COMMENT
 
 	, ADVANCE_ZIP_DEFAULT_FILENAME
 
@@ -132,7 +130,7 @@ public enum AppConstants {
 
 	static {
 		try {
-			configFile.load(AppConstants.class.getClassLoader().getResourceAsStream(AppConstants.PROPERTY_FILE));
+			AppConstants.configFile.load(AppConstants.class.getClassLoader().getResourceAsStream(AppConstants.PROPERTY_FILE));
 		} catch (final IOException e) {
 			AppConstants.LOG.error("Error accessing property file: " + AppConstants.PROPERTY_FILE, e);
 		}
@@ -163,7 +161,7 @@ public enum AppConstants {
 	public String getString() {
 		String value = null;
 		try {
-			value = configFile.getProperty(this.toString());
+			value = AppConstants.configFile.getProperty(this.toString());
 		} catch (final NumberFormatException e) {
 			AppConstants.LOG.error("Value not numeric.", e);
 		}
@@ -173,7 +171,7 @@ public enum AppConstants {
 	public static String getString(final String labelKey) {
 		String value = null;
 		try {
-			value = configFile.getProperty(labelKey);
+			value = AppConstants.configFile.getProperty(labelKey);
 		} catch (final NumberFormatException e) {
 			AppConstants.LOG.error("Value not numeric.", e);
 		}

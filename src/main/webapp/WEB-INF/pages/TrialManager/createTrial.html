@@ -102,13 +102,6 @@
 								<a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
 							</li>
 
-							<li ng-show="hasMeasurementData()">
-
-								<a href="javascript: showAddEnvironmentsDialog();" id="add-environments-url-link"
-								   th:text="#{trial.add.environments}">Add Environments</a>
-
-							</li>
-
 							<li ng-show="displayGermplasmOnlyActions()">
 
 								<a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link" th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>

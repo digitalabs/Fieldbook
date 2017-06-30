@@ -295,7 +295,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		}
 		// workbook.observations() collection is no longer pre-loaded into user session when trial is opened. Load now as we need it to
 		// keep export functionality working.
-		this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());
+		boolean observationsLoaded = this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());
 
 		LOG.info("Export Nursery/Trial : doExport : getWorbook : end");
 		LOG.info("Export Nursery/Trial : doExport : processWorbook : start");
@@ -379,7 +379,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		} finally {
 			// Important to clear out the observations collection from user session, once we are done with it to keep heap memory under
 			// control. For large trials/nurseries the observations collection can be huge.
-			userSelection.getWorkbook().getObservations().clear();
+			if (observationsLoaded) {
+				userSelection.getWorkbook().getObservations().clear();
+			}
 		}
 		LOG.info("Exiting Export Nursery/Trial : doExport");
 		return super.convertObjectToJson(results);

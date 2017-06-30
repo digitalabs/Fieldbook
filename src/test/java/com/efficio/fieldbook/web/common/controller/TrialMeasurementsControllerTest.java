@@ -1,6 +1,14 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,12 +29,14 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.dms.Phenotype;
@@ -36,27 +46,23 @@ import org.generationcp.middleware.service.api.study.ObservationDto;
 import org.generationcp.middleware.service.api.study.StudyService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.google.common.collect.Lists;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.core.Is.is;
-
+@RunWith(MockitoJUnitRunner.class)
 public class TrialMeasurementsControllerTest {
 
 	private static final String CROSS_VALUE = "ABC12/XYZ34";
@@ -85,14 +91,29 @@ public class TrialMeasurementsControllerTest {
 	private static final String LOCAL = "-Local";
 	private static final String FIELDMAP_COLUMN = "FIELDMAP_COLUMN";
 	private static final String FIELDMAP_RANGE = "FIELDMAP_RANGE";
-
+	
+	@InjectMocks
 	private TrialMeasurementsController trialMeasurementsController;
 	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
+	
+	@Mock
 	private OntologyVariableDataManager ontologyVariableDataManager;
+	
+	@Mock
 	private StudyDataManager studyDataManager;
+	
+	@Mock
 	private ContextUtil contextUtil;
+	
+	@Mock
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+	
+	@Mock
 	private StudyService studyService;
+	
+	@Mock
+	private OntologyDataManager ontologyDataManager;
+	
 	private List<MeasurementVariable> measurementVariables;
 
 	private MeasurementDto measurementText = new MeasurementDto(new MeasurementVariableDto(1, "NOTES"), 1, "Text Notes");
@@ -104,18 +125,8 @@ public class TrialMeasurementsControllerTest {
 
 	@Before
 	public void setUp() {
-		this.trialMeasurementsController = new TrialMeasurementsController();
 		this.measurementDataTestDataInitializer = new MeasurementDataTestDataInitializer();
-		this.ontologyVariableDataManager = Mockito.mock(OntologyVariableDataManager.class);
-		this.trialMeasurementsController.setOntologyVariableDataManager(this.ontologyVariableDataManager);
-		this.studyDataManager = Mockito.mock(StudyDataManager.class);
-		this.trialMeasurementsController.setStudyDataManager(this.studyDataManager);
-		this.contextUtil = Mockito.mock(ContextUtil.class);
-		this.trialMeasurementsController.setContextUtil(this.contextUtil);
-		this.fieldbookService = Mockito.mock(FieldbookService.class);
-		this.trialMeasurementsController.setFieldbookService(this.fieldbookService);
-		this.studyService = Mockito.mock(StudyService.class);
-		this.trialMeasurementsController.setStudyService(this.studyService);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(new Term(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name(), "Definition"));
 	}
 
 	@Test
@@ -674,7 +685,7 @@ public class TrialMeasurementsControllerTest {
 		final MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addParameter(PAGE_NUMBER, "1");
 		request.addParameter(PAGE_SIZE, "10");
-		request.addParameter(SORT_BY, "ENTRY_NO");
+		request.addParameter(SORT_BY, String.valueOf(TermId.ENTRY_NO.getId()));
 		request.addParameter(SORT_ORDER, "desc");
 
 		String drawParamValue = "drawParamValue";
@@ -854,20 +865,20 @@ public class TrialMeasurementsControllerTest {
 		MeasurementVariableTestDataInitializer measurementVarDataInitializer = new MeasurementVariableTestDataInitializer();
 		this.measurementVariables = new ArrayList<>();
 		final String trait1Name = this.measurementText.getMeasurementVariable().getName();
-		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
-				this.measurementText.getMeasurementVariable().getId(), useDifferentLocalName? trait1Name + LOCAL : trait1Name));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(
+				this.measurementText.getMeasurementVariable().getId(), useDifferentLocalName? trait1Name + LOCAL : trait1Name, null));
 		final String trait2Name = this.measurementNumeric.getMeasurementVariable().getName();
-		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
-				this.measurementNumeric.getMeasurementVariable().getId(), useDifferentLocalName? trait2Name + LOCAL : trait2Name));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(
+				this.measurementNumeric.getMeasurementVariable().getId(), useDifferentLocalName? trait2Name + LOCAL : trait2Name, null));
 		final String trait3Name = this.measurementCategorical.getMeasurementVariable().getName();
-		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(
-				this.measurementCategorical.getMeasurementVariable().getId(), useDifferentLocalName? trait3Name + LOCAL : trait3Name));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(
+				this.measurementCategorical.getMeasurementVariable().getId(), useDifferentLocalName? trait3Name + LOCAL : trait3Name, null));
 
 		for (final TermId term : this.standardFactors) {
-			measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(term.getId(), useDifferentLocalName? term.name() + LOCAL : term.name()));
+			measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(term.getId(), useDifferentLocalName? term.name() + LOCAL : term.name(), null));
 		}
-		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.DESIG.getId(), useDifferentLocalName? DESIGNATION + LOCAL : DESIGNATION));
-		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariableWithName(TermId.TRIAL_INSTANCE_FACTOR.getId(), useDifferentLocalName? TRIAL_INSTANCE + LOCAL : TRIAL_INSTANCE));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(TermId.DESIG.getId(), useDifferentLocalName? DESIGNATION + LOCAL : DESIGNATION, null));
+		this.measurementVariables.add(measurementVarDataInitializer.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), useDifferentLocalName? TRIAL_INSTANCE + LOCAL : TRIAL_INSTANCE, null));
 
 		Mockito.when(workbook.getMeasurementDatasetVariablesView()).thenReturn(this.measurementVariables);
 		this.trialMeasurementsController.setUserSelection(userSelection);

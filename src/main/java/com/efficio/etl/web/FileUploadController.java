@@ -214,14 +214,14 @@ public class FileUploadController extends AbstractBaseETLController {
 		Map<String, MeasurementVariable> mVarMap = new HashMap<>();
 		for(MeasurementRow row: observations) {
 			for(MeasurementVariable mvar: row.getMeasurementVariables()){
-				if(!mVarMap.containsKey(mvar.getName())){
+				String variableName = mvar.getName();
+				if(!mVarMap.containsKey(variableName)){
 					MeasurementVariable measurementVariable = this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(mvar.getProperty(), mvar.getScale(), mvar.getMethod(), mvar.getRole(), programUUID);
-					mVarMap.put(mvar.getName(), measurementVariable);
+					mVarMap.put(variableName, measurementVariable);
 				}
-				if(mVarMap.get(mvar.getName()) != null && mVarMap.get(mvar.getName()).getTermId() == TermId.ENTRY_TYPE.getId()){
-					String value = row.getMeasurementData(mvar.getName()).getValue();
-					
-					row.getMeasurementData(mvar.getName()).setValue(availableEntryTypes.get(value).toString());
+				if(mVarMap.get(variableName) != null && mVarMap.get(variableName).getTermId() == TermId.ENTRY_TYPE.getId()){
+					String value = row.getMeasurementData(variableName).getValue();
+					row.getMeasurementData(variableName).setValue(availableEntryTypes.get(value).toString());
 				}
 			}
 		}

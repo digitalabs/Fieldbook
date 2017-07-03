@@ -338,22 +338,37 @@ var ImportCrosses = {
 
 		$('#presetSettingsDelete').off('click');
 		$('#presetSettingsDelete').on('click', function () {
+
 			var data = $('#presetSettingsDropdown').select2('data');
 			if (!(data && data.programPresetId)) {
 				return;
 			}
-			if (!confirm(crossingSettingsDeleteConfirm)) {
-				return;
-			}
-			ImportCrosses.deleteImportSettings(data.programPresetId)
-				.done(function () {
-					showSuccessfulMessage('', crossingSettingsDeleted);
-					ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
-				})
-				.fail(function () {
-					showErrorMessage('', crossingSettingsDeleteFailed);
-				});
+
+			crossSettingsPopupModal.modal('hide');
+			crossSettingsPopupModal.data('open', '1');
+
+			var deleteModalElm = $('#fbk-delete-import-settings-confirm');
+			$('#fbk-delete-import-settings-confirm .yes').on('click', function() {
+				deleteModalElm.modal('hide');
+				deleteModalElm.data('open', '1');
+				setTimeout(function () {
+					crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true })
+					ImportCrosses.onDeleteSettingOk(data);
+				}, 500)
+			});
+
+			$('#fbk-delete-import-settings-confirm .no').on('click', function() {
+				deleteModalElm.modal('hide');
+				deleteModalElm.data('open', '1');
+				setTimeout(function () {
+					crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true })
+				}, 500)
+			});
+			deleteModalElm.modal({ backdrop: 'static', keyboard: true });
 		});
+
+
+
 
 		ImportCrosses.updateSampleParentageDesignation();
 
@@ -394,6 +409,17 @@ var ImportCrosses = {
 				ImportCrosses.showAllLocationOnly = $('#showAllLocationOnlyRadio').is(':checked');
 				ImportCrosses.showBreedingLocationOnly = $('#showBreedingLocationOnlyRadio').is(':checked');
 				ImportCrosses.goBackToPage('#crossSettingsModal', '#crossSetBreedingMethodModal');
+			});
+	},
+
+	onDeleteSettingOk: function(data) {
+		ImportCrosses.deleteImportSettings(data.programPresetId)
+			.done(function () {
+				showSuccessfulMessage('', crossingSettingsDeleted);
+				ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
+			})
+			.fail(function () {
+				showErrorMessage('', crossingSettingsDeleteFailed);
 			});
 	},
 

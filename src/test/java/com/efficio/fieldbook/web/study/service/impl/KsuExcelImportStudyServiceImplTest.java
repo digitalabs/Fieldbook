@@ -164,7 +164,7 @@ public class KsuExcelImportStudyServiceImplTest {
 	@Test
 	public void testValidate_ReturnsAnExceptionForInvalidHeaderNames() {
 		// invalid header names, since it lacks Designation column
-		final String[] headerNames = {"Plot", "Entry_no", "GID"};
+		final String[] headerNames = {"PLOT_NO", "Entry_no", "GID"};
 
 		final boolean result = this.ksuExcelImportStudy.isValidHeaderNames(headerNames);
 		Assert.assertFalse("Expecting to a negative result for valid header names", result);
@@ -173,7 +173,7 @@ public class KsuExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testValidate_ReturnsNoExceptionForValidHeaderNames() {
-		final String[] headerNames = {"plot", "ENTRY_NO", "GID", "DESIGNATION", "PLOT_ID"};
+		final String[] headerNames = {"PLOT_NO", "ENTRY_NO", "GID", "DESIGNATION", "PLOT_ID"};
 
 		final boolean result = this.ksuExcelImportStudy.isValidHeaderNames(headerNames);
 		Assert.assertTrue("Expecting to a positive result for valid header names", result);

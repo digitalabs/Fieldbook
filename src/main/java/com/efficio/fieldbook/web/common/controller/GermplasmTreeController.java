@@ -182,6 +182,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		try {
 			form.setListDate(DateUtil.getCurrentDateInUIFormat());
 			form.setListIdentifier(listIdentifier);
+			String listOwner = this.fieldbookMiddlewareService.getOwnerListName(this.contextUtil.getCurrentUserLocalId());
+			form.setListOwner(listOwner);
 			final List<UserDefinedField> germplasmListTypes = this.germplasmListManager.getGermplasmListTypes();
 			form.setListType(AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString());
 			model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_TYPES, germplasmListTypes);
@@ -571,19 +573,21 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			String listDescription = "";
 			String listType = AppConstants.GERMPLASM_LIST_TYPE_GENERIC_LIST.getString();
 			String listDate = DateUtil.getCurrentDateInUIFormat();
-
+			String listOwner = this.fieldbookMiddlewareService.getOwnerListName(this.contextUtil.getCurrentUserLocalId());
 			if (this.userSelection.getImportedCrossesList() != null) {
 				listName = this.userSelection.getImportedCrossesList().getName();
 				listDescription = this.userSelection.getImportedCrossesList().getTitle();
 				listType = this.userSelection.getImportedCrossesList().getType();
 				listDate = DateUtil.getDateInUIFormat(this.userSelection.getImportedCrossesList().getDate());
+				listOwner = this.fieldbookMiddlewareService.getOwnerListName(this.userSelection.getImportedCrossesList().getUserId());
 			}
-
+			
 			form.setListName(listName);
 			form.setListDescription(listDescription);
 			form.setListType(listType);
 			form.setListDate(listDate);
-
+			form.setListOwner(listOwner);
+			
 			final List<UserDefinedField> germplasmListTypes = this.germplasmListManager.getGermplasmListTypes();
 			model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_TYPES, germplasmListTypes);
 
@@ -1272,8 +1276,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			String listDescription = AppConstants.PARENT_LIST_DESCRIPTION.getString();
 			String listType = AppConstants.PARENT_LIST_TYPE.getString();
 			String listDate = DateUtil.getCurrentDateInUIFormat();
-
+			String listOwner = this.fieldbookMiddlewareService.getOwnerListName(this.contextUtil.getCurrentUserLocalId());
+			
 			form.setListName(listName);
+			form.setListOwner(listOwner);
 			form.setListDescription(listDescription);
 			form.setListType(listType);
 			form.setListDate(listDate);

@@ -41,6 +41,8 @@ public class SaveListForm {
 
 	// to be used for saving of stock lists
 	private int sourceListId;
+	
+	private String listOwner;
 
 	public String getParentId() {
 		return this.parentId;
@@ -162,5 +164,13 @@ public class SaveListForm {
 
 	public void setSourceListId(int sourceListId) {
 		this.sourceListId = sourceListId;
+	}
+
+	public String getListOwner() {
+		return listOwner;
+	}
+
+	public void setListOwner(String listOwner) {
+		this.listOwner = listOwner;
 	}
 }

@@ -58,6 +58,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.google.common.collect.Lists;
 
 import junit.framework.Assert;
@@ -84,6 +85,7 @@ public class GermplasmTreeControllerTest {
 	private static final int SAVED_LISTPROJECT_ID = 2;
 	private static final String ERROR_MESSAGE = "middeware exception message";
 	private static final Integer TEST_USER_ID = 101;
+	private static final String TEST_USER_NAME ="Test User";
 	private static final String TEST_PROGRAM_UUID = "1234567890";
 	private static final int PLOT_CODE_FIELD_NO = 1152;
 	private static final int REP_FIELD_NO = 1153;
@@ -171,6 +173,9 @@ public class GermplasmTreeControllerTest {
 				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.REP_FIELD_NO));
 		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "INSTANCE_NUMBER"))
 				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.TRIAL_INSTANCE_FIELD_NO));
+		
+		Mockito.when(this.contextUtil.getCurrentUserLocalId()).thenReturn(GermplasmTreeControllerTest.TEST_USER_ID);
+		Mockito.when(this.fieldbookMiddlewareService.getOwnerListName(GermplasmTreeControllerTest.TEST_USER_ID)).thenReturn(GermplasmTreeControllerTest.TEST_USER_NAME);
 	}
 
 	private Project getProject() {
@@ -203,7 +208,44 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", this.form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", this.form.getListName(), result.get("listName"));
 	}
-
+	
+	@Test
+	public void testSaveList() {
+		this.form = new SaveListForm();
+		this.controller.saveList(this.form, GermplasmTreeControllerTest.LIST_IDENTIFIER, Mockito.mock(Model.class));
+		Assert.assertEquals(DateUtil.getCurrentDateInUIFormat(), form.getListDate());
+		Assert.assertEquals(GermplasmTreeControllerTest.LIST_IDENTIFIER, form.getListIdentifier());
+		Assert.assertEquals(GermplasmTreeControllerTest.TEST_USER_NAME, form.getListOwner());
+	}
+	
+	@Test
+	public void testSaveParentList() {
+		this.form = new SaveListForm();
+		this.controller.saveParentList(form, Mockito.mock(Model.class));
+		Assert.assertEquals("", form.getListName());
+		Assert.assertEquals(DateUtil.getCurrentDateInUIFormat(), form.getListDate());
+		Assert.assertEquals(AppConstants.PARENT_LIST_DESCRIPTION.getString(), form.getListDescription());
+		Assert.assertEquals(AppConstants.PARENT_LIST_TYPE.getString(), form.getListType());
+		Assert.assertEquals(GermplasmTreeControllerTest.TEST_USER_NAME, form.getListOwner());	
+	}
+	
+	@Test
+	public void saveCrossesList() {
+		this.userSelection.getImportedCrossesList().setDate(DateUtil.getCurrentDate());
+		this.userSelection.getImportedCrossesList().setTitle("");
+		this.userSelection.getImportedCrossesList().setType(AppConstants.GERMPLASM_LIST_TYPE_GENERIC_LIST.getString());
+		this.userSelection.getImportedCrossesList().setUserId(TEST_USER_ID);
+		
+		this.form = new SaveListForm();
+		this.controller.saveList(form, Mockito.mock(Model.class));
+		
+		Assert.assertNull(form.getListName());
+		Assert.assertEquals(DateUtil.getCurrentDateInUIFormat(), form.getListDate());
+		Assert.assertEquals("", form.getListDescription());
+		Assert.assertEquals(AppConstants.GERMPLASM_LIST_TYPE_GENERIC_LIST.getString(), form.getListType());
+		Assert.assertEquals(GermplasmTreeControllerTest.TEST_USER_NAME, form.getListOwner());	
+	}
+	
 	@Test
 	public void testSaveCrossesListPostSuccessful() {
 		this.form = new SaveListForm();

@@ -930,7 +930,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		if (GermplasmTreeController.LISTS.equals(id)) {
 			children = this.germplasmListManager.getAllTopLevelLists(programUUID);
 		} else if (NumberUtils.isNumber(id)) {
-			final int parentId = Integer.valueOf(id);
+			final int parentId = Integer.parseInt(id);
 			children = this.germplasmListManager.getGermplasmListByParentFolderIdBatched(parentId, programUUID,
 					GermplasmTreeController.BATCH_SIZE);
 		} else {
@@ -967,7 +967,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		if (GermplasmTreeController.LISTS.equals(parentKey)) {
 			rootLists = this.germplasmListManager.getAllTopLevelLists(programUUID);
 		} else if (NumberUtils.isNumber(parentKey)) {
-			rootLists = this.getGermplasmChildrenNode(parentKey, isFolderOnly, programUUID);
+			rootLists = this.getGermplasmChildrenNode(parentKey, programUUID);
 		} else {
 			throw new IllegalStateException("Add a message");
 		}
@@ -985,9 +985,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return childNodes;
 	}
 
-	private List<GermplasmList> getGermplasmChildrenNode(final String parentKey, final boolean isFolderOnly,
-			final String programUUID) {
-		final int parentId = Integer.valueOf(parentKey);
+	private List<GermplasmList> getGermplasmChildrenNode(final String parentKey, final String programUUID) {
+		final int parentId = Integer.parseInt(parentKey);
 		return this.germplasmListManager.getGermplasmListByParentFolderIdBatched(parentId, programUUID,
 				GermplasmTreeController.BATCH_SIZE);
 	}

@@ -932,4 +932,11 @@ public class EditNurseryController extends SettingsController {
 						SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));
 		return resultMap;
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "/columns", method = RequestMethod.GET)
+	public List<MeasurementVariable> getColumns() {
+		return this.userSelection.getWorkbook().getMeasurementDatasetVariables();
+	}
+
 }

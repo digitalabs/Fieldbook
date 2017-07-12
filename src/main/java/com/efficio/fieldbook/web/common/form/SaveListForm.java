@@ -41,14 +41,14 @@ public class SaveListForm {
 
 	// to be used for saving of stock lists
 	private int sourceListId;
-	
+
 	private String listOwner;
 
 	public String getParentId() {
 		return this.parentId;
 	}
 
-	public void setParentId(String parentId) {
+	public void setParentId(final String parentId) {
 		this.parentId = parentId;
 	}
 
@@ -56,7 +56,7 @@ public class SaveListForm {
 		return this.listIdentifier;
 	}
 
-	public void setListIdentifier(String listIdentifier) {
+	public void setListIdentifier(final String listIdentifier) {
 		this.listIdentifier = listIdentifier;
 	}
 
@@ -72,9 +72,10 @@ public class SaveListForm {
 	/**
 	 * Sets the list name.
 	 *
-	 * @param listName the new list name
+	 * @param listName
+	 *            the new list name
 	 */
-	public void setListName(String listName) {
+	public void setListName(final String listName) {
 		this.listName = listName;
 	}
 
@@ -90,9 +91,10 @@ public class SaveListForm {
 	/**
 	 * Sets the list description.
 	 *
-	 * @param listDescription the new list description
+	 * @param listDescription
+	 *            the new list description
 	 */
-	public void setListDescription(String listDescription) {
+	public void setListDescription(final String listDescription) {
 		this.listDescription = listDescription;
 	}
 
@@ -108,9 +110,10 @@ public class SaveListForm {
 	/**
 	 * Sets the list type.
 	 *
-	 * @param listType the new list type
+	 * @param listType
+	 *            the new list type
 	 */
-	public void setListType(String listType) {
+	public void setListType(final String listType) {
 		this.listType = listType;
 	}
 
@@ -126,9 +129,10 @@ public class SaveListForm {
 	/**
 	 * Sets the list date.
 	 *
-	 * @param listDate the new list date
+	 * @param listDate
+	 *            the new list date
 	 */
-	public void setListDate(String listDate) {
+	public void setListDate(final String listDate) {
 		this.listDate = listDate;
 	}
 
@@ -144,9 +148,10 @@ public class SaveListForm {
 	/**
 	 * Sets the list notes.
 	 *
-	 * @param listNotes the new list notes
+	 * @param listNotes
+	 *            the new list notes
 	 */
-	public void setListNotes(String listNotes) {
+	public void setListNotes(final String listNotes) {
 		this.listNotes = listNotes;
 	}
 
@@ -154,7 +159,7 @@ public class SaveListForm {
 		return this.germplasmListType;
 	}
 
-	public void setGermplasmListType(String germplasmListType) {
+	public void setGermplasmListType(final String germplasmListType) {
 		this.germplasmListType = germplasmListType;
 	}
 
@@ -162,15 +167,15 @@ public class SaveListForm {
 		return this.sourceListId;
 	}
 
-	public void setSourceListId(int sourceListId) {
+	public void setSourceListId(final int sourceListId) {
 		this.sourceListId = sourceListId;
 	}
 
 	public String getListOwner() {
-		return listOwner;
+		return this.listOwner;
 	}
 
-	public void setListOwner(String listOwner) {
+	public void setListOwner(final String listOwner) {
 		this.listOwner = listOwner;
 	}
 }

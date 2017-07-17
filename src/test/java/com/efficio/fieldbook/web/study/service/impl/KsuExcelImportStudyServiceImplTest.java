@@ -37,7 +37,7 @@ public class KsuExcelImportStudyServiceImplTest {
     @Before
 	public void setup() {
         fbWorkbook = Mockito.mock(Workbook.class);
-        ContextUtil util = Mockito.mock(ContextUtil.class);
+        final ContextUtil util = Mockito.mock(ContextUtil.class);
         Mockito.doReturn(TEST_PROGRAM_UUID).when(util).getCurrentProgramUUID();
         ontologyDataManager = Mockito.mock(OntologyDataManager.class);
 		this.ksuExcelImportStudy = new KsuExcelImportStudyServiceImpl(fbWorkbook, "", "");
@@ -113,7 +113,7 @@ public class KsuExcelImportStudyServiceImplTest {
             Mockito.doReturn(constructHeaderName(i)).when(cell).getStringCellValue();
         }
 
-        Cell cell = Mockito.mock(Cell.class);
+        final Cell cell = Mockito.mock(Cell.class);
         Mockito.doReturn(cell).when(row).getCell(TEST_COLUMN_HEADER_COUNT);
         Mockito.doReturn(KsuFieldbookUtil.PLOT).when(cell).getStringCellValue();
     }
@@ -136,7 +136,7 @@ public class KsuExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testValidateNumberOfSheets_ReturnsExceptionForInvalidNoOfSheet() {
+	public void testValidateNumberOfSheetsReturnsExceptionForInvalidNoOfSheet() {
 		final org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
 		Mockito.doReturn(2).when(xlsBook).getNumberOfSheets();
 
@@ -149,7 +149,7 @@ public class KsuExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testValidateNumberOfSheets_ReturnsNoExceptionForValidNoOfSheet() {
+	public void testValidateNumberOfSheetsReturnsNoExceptionForValidNoOfSheet() {
 		final org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
 		Mockito.doReturn(1).when(xlsBook).getNumberOfSheets();
 		this.ksuExcelImportStudy = new KsuExcelImportStudyServiceImpl(Mockito.mock(Workbook.class), "", "");
@@ -162,9 +162,9 @@ public class KsuExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testValidate_ReturnsAnExceptionForInvalidHeaderNames() {
+	public void testValidateReturnsAnExceptionForInvalidHeaderNames() {
 		// invalid header names, since it lacks Designation column
-		final String[] headerNames = {"Plot", "Entry_no", "GID"};
+		final String[] headerNames = {"PLOT_NO", "Entry_no", "GID"};
 
 		final boolean result = this.ksuExcelImportStudy.isValidHeaderNames(headerNames);
 		Assert.assertFalse("Expecting to a negative result for valid header names", result);
@@ -172,8 +172,8 @@ public class KsuExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testValidate_ReturnsNoExceptionForValidHeaderNames() {
-		final String[] headerNames = {"plot", "ENTRY_NO", "GID", "DESIGNATION", "PLOT_ID"};
+	public void testValidateReturnsNoExceptionForValidHeaderNames() {
+		final String[] headerNames = {"PLOT_NO", "ENTRY_NO", "GID", "DESIGNATION", "PLOT_ID"};
 
 		final boolean result = this.ksuExcelImportStudy.isValidHeaderNames(headerNames);
 		Assert.assertTrue("Expecting to a positive result for valid header names", result);

@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.csvreader.CsvWriter;
-import org.apache.commons.lang3.StringUtils;
 
 
 public class KsuFieldbookUtil {
@@ -33,7 +32,7 @@ public class KsuFieldbookUtil {
 
 	private static final String PLOT_ID = "plot_id";
 	private static final String RANGE = "range";
-	public static final String PLOT = "plot";
+	public static final String PLOT = "PLOT_NO";
 
 	private static final int TERM_PLOT_ID = TermId.PLOT_CODE.getId();
 	private static final int TERM_RANGE = TermId.RANGE_NO.getId();

@@ -80,7 +80,7 @@ function generateDataForProcessing() {
 							url: '/Fieldbook/ImportManager/import/preview',
 							type: 'POST',
 							success: function(html) {
-				 				onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
+									onMeasurementsObservationLoadNursery(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 							}
 						});
 					}

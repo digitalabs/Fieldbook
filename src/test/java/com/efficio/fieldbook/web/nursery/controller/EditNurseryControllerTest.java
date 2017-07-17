@@ -154,6 +154,7 @@ public class EditNurseryControllerTest {
 		this.editNurseryController.setFieldbookService(this.fieldbookService);
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		Mockito.when(workbook.getMeasurementDatesetId()).thenReturn(1);
+		Mockito.when(workbook.getMeasurementDatasetVariables()).thenReturn(measurementVariableTestDataInitializer.createMeasurementVariableList());
 		Mockito.when(workbook.getVariates()).thenReturn(new ArrayList<MeasurementVariable>());
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 	}
@@ -515,6 +516,17 @@ public class EditNurseryControllerTest {
 		Assert.assertEquals(seasonCodeValue, measurementRow.getMeasurementData(TermId.SEASON.getId()).getcValueId());
 		Assert.assertEquals(seasonTextValue, measurementRow.getMeasurementData(TermId.SEASON_VAR_TEXT.getId()).getValue());
 		Assert.assertEquals(null, measurementRow.getMeasurementData(TermId.SEASON_VAR_TEXT.getId()).getcValueId());
+
+	}
+
+
+	@Test
+	public void testGetColumns() {
+
+		final List<MeasurementVariable> columns = this.editNurseryController.getColumns();
+
+		Assert.assertEquals("Expecting only 1 column returned", 1, columns.size());
+		Assert.assertEquals("Expecting PI_ID measurement variable is returned",TermId.PI_ID.getId(), columns.get(0).getTermId());
 
 	}
 

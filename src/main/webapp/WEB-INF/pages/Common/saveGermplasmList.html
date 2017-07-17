@@ -18,6 +18,15 @@
 			<input type="text" class="form-control" th:field="*{listName}"/>
 		</div>
 	</div>
+	
+	<div class="row form-group">
+		<div class="col-xs-5 col-md-5">
+			<label class="control-label label-bold" th:text="#{germplasm.save.list.owner.label}">List Owner:</label>
+		</div>
+		<div class="col-xs-7 col-md-7">
+			<label class="control-label" th:text="*{listOwner}"></label>
+		</div>
+	</div>
 
 	<div class="row form-group">
 		<div class="col-xs-5 col-md-5">

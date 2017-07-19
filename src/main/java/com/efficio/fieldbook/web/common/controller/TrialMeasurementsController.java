@@ -132,7 +132,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		try {
 			this.validationService.validateObservationValues(workbook);
-			this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID());
+			this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), true);
 			resultMap.put(TrialMeasurementsController.STATUS, "1");
 		} catch (final WorkbookParserException e) {
 			TrialMeasurementsController.LOG.error(e.getMessage(), e);

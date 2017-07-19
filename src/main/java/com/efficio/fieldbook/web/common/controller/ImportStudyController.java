@@ -472,7 +472,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		// will do the cleanup for BM_CODE_VTE here
 		SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 				this.ontologyService, contextUtil.getCurrentProgramUUID());
-		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), this.contextUtil.getCurrentProgramUUID());
+		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), this.contextUtil.getCurrentProgramUUID(), true);
 		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService,
 				contextUtil.getCurrentProgramUUID());
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
@@ -526,7 +526,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		// will do the cleanup for BM_CODE_VTE here
 		SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 				this.ontologyService, contextUtil.getCurrentProgramUUID());
-		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), this.contextUtil.getCurrentProgramUUID());
+		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), this.contextUtil.getCurrentProgramUUID(), true);
 		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService, contextUtil.getCurrentProgramUUID());
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
 

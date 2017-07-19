@@ -483,7 +483,7 @@ public class EditNurseryController extends SettingsController {
 					AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 			this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(), this.userSelection.getRemovedConditions(),
 					AppConstants.ID_NAME_COMBINATION.getString(), true);
-			this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID());
+			this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), true);
 			workbook.setTrialObservations(this.fieldbookMiddlewareService
 					.buildTrialObservations(trialDatasetId, workbook.getTrialConditions(), workbook.getTrialConstants()));
 			workbook.setOriginalObservations(workbook.getObservations());

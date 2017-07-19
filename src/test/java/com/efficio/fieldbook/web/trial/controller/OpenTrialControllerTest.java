@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,10 +66,16 @@ import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.trial.TestDataHelper;
 import com.efficio.fieldbook.web.trial.bean.AdvanceList;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.google.common.collect.Lists;
@@ -157,7 +164,10 @@ public class OpenTrialControllerTest {
 		final Project testProject = new Project();
 		testProject.setProjectId(1L);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
-
+		Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		workbook.setTrialDatasetId(1);
+		workbook.setMeasurementDatesetId(1);
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 		this.initializeOntology();
 
 	}
@@ -953,6 +963,44 @@ public class OpenTrialControllerTest {
 		Assert.assertEquals("StockID101, StockID102", importedGermplasm.getStockIDs());
 
 	}
+	
+	@Test
+	public void testSubmitWhereReplaceIsNotZero() {
+		TrialData data = setUpTrialData();
+		final Map<String, Object> returnVal = this.openTrialController.submit(1, data);
+		
+		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
+		Assert.assertEquals("The measurement data flag should be false", false, returnVal.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
+		Assert.assertEquals("The measurement row count should be zero", 0, returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
+	}
+	
+	@Test
+	public void testSubmitWhereReplaceIsZero() {
+		TrialData data = setUpTrialData();
+		Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.eq(1), Matchers.anyList())).thenReturn(true);
+		final long experimentCount = 10;
+		Mockito.when(this.studyDataManager.countExperiments(Matchers.eq(1))).thenReturn(experimentCount);
+		final Map<String, Object> returnVal = this.openTrialController.submit(0, data);
+		
+		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
+		Assert.assertEquals("The measurement data flag should be true", true, returnVal.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
+		Assert.assertEquals("The measurement row count should be " + experimentCount, experimentCount, returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
+	}
+
+	private TrialData setUpTrialData() {
+		TrialData data = Mockito.mock(TrialData.class);
+		Mockito.when(data.getEnvironments()).thenReturn(DesignImportTestDataInitializer.createEnvironmentData(1));
+		BasicDetails basicDetails = Mockito.mock(BasicDetails.class);
+		Mockito.when(basicDetails.getBasicDetails()).thenReturn(new HashMap<String, String>());
+		Mockito.when(data.getBasicDetails()).thenReturn(basicDetails);
+		TrialSettingsBean trialSettings = Mockito.mock(TrialSettingsBean.class);
+		Mockito.when(trialSettings.getUserInput()).thenReturn(new HashMap<String, String>());
+		Mockito.when(data.getTrialSettings()).thenReturn(trialSettings);
+		TreatmentFactorTabBean treatmentFactor = Mockito.mock(TreatmentFactorTabBean.class);
+		Mockito.when(treatmentFactor.getCurrentData()).thenReturn(new HashMap<String, TreatmentFactorData>());		
+		Mockito.when(data.getTreatmentFactors()).thenReturn(treatmentFactor);
+		return data;
+	}
 
 	@Test
 	public void testSetUserSelectionImportedGermplasmMainInfoGermplasmListIsEmpty() {
@@ -1001,30 +1049,6 @@ public class OpenTrialControllerTest {
 		Assert.assertFalse(this.userSelection.isImportValid());
 		Assert.assertFalse(this.model.containsAttribute(OpenTrialControllerTest.GERMPLASM_LIST_SIZE));
 		Assert.assertFalse(this.model.containsAttribute(OpenTrialControllerTest.GERMPLASM_CHECKS_SIZE));
-
-	}
-
-	private List<ListDataProject> createListDataProject(final int germplasmCount) {
-
-		final List<ListDataProject> list = new ArrayList<ListDataProject>();
-
-		for (int i = 0; i < germplasmCount; i++) {
-
-			final ListDataProject listDataProject = new ListDataProject();
-
-			listDataProject.setCheckType(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
-			listDataProject.setGroupName("");
-			listDataProject.setDesignation("");
-			listDataProject.setEntryCode("");
-			listDataProject.setEntryId(i);
-			listDataProject.setGermplasmId(i);
-			listDataProject.setGroupId(i);
-			listDataProject.setSeedSource("");
-
-			list.add(listDataProject);
-		}
-
-		return list;
 
 	}
 

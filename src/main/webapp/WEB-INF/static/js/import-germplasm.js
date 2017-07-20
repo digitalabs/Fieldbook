@@ -151,7 +151,6 @@
 
 				if (customMessage !== '') {
 					showInvalidInputMessage(customMessage);
-					$('#txtStartingPlotNo').val('1');
 				} else {
 					if (isNursery()) {
 						showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +

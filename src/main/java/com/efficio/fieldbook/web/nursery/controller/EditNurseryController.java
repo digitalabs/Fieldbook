@@ -77,6 +77,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @SessionAttributes("isCategoricalDescriptionView")
 public class EditNurseryController extends SettingsController {
 
+	private static final String REDIRECT = "redirect:";
 	/**
 	 * The Constant URL.
 	 */
@@ -174,7 +175,7 @@ public class EditNurseryController extends SettingsController {
 			if (nurseryId != 0) {
 				final DmsProject dmsProject = this.studyDataManagerImpl.getProject(nurseryId);
 				if (dmsProject.getProgramUUID() == null) {
-					return "redirect:" + ManageNurseriesController.URL + "?summaryId=" + nurseryId + "&summaryName="
+					return REDIRECT + ManageNurseriesController.URL + "?summaryId=" + nurseryId + "&summaryName="
 							+ dmsProject.getName();
 				}
 
@@ -216,11 +217,11 @@ public class EditNurseryController extends SettingsController {
 									StringUtils.capitalize(AppConstants.NURSERY.getString()),
 									AppConstants.NURSERY.getString() },
 							"\n"));
-			return "redirect:" + ManageNurseriesController.URL;
+			return REDIRECT + ManageNurseriesController.URL;
 		} catch (final MiddlewareException e) {
 			EditNurseryController.LOG.debug(e.getMessage(), e);
 			redirectAttributes.addFlashAttribute("redirectErrorMessage", e.getMessage());
-			return "redirect:" + ManageNurseriesController.URL;
+			return REDIRECT + ManageNurseriesController.URL;
 		}
 
 	}

@@ -402,11 +402,11 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		// perform the database / transaction managed operations outside of the
 		// loop for better performance
 		try {
-			if (namesForAdding.size() > 0) {
+			if (!namesForAdding.isEmpty()) {
 				this.fieldbookMiddlewareService.addGermplasmNames(namesForAdding);
 			}
 
-			if (germplasmPairs.size() > 0) {
+			if (!germplasmPairs.isEmpty()) {
 				final List<Integer> newGids = this.fieldbookMiddlewareService.addGermplasm(germplasmPairs);
 
 				// update both the maintained change map as well as the GID
@@ -629,7 +629,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 						: userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 		newVariableList.addAll(traits);
 
-		final List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		final List<MeasurementRow> tempList = new ArrayList<>();
 
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getMeasurementRowList() == null) {
 			tempList.addAll(userSelection.getTemporaryWorkbook().getObservations());
@@ -639,7 +639,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 		form.setMeasurementRowList(tempList);
 
-		final List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
+		final List<Map<String, Object>> masterList = new ArrayList<>();
 
 		final DataMapUtil dataMapUtil = new DataMapUtil();
 		for (final MeasurementRow row : tempList) {

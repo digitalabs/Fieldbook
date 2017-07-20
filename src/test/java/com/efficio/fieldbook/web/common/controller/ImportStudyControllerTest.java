@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.common.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -29,6 +31,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +40,7 @@ import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.study.ImportStudyType;
 import com.efficio.fieldbook.web.study.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -68,7 +72,10 @@ public class ImportStudyControllerTest {
 	private OntologyService ontologyService;
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
-
+	
+	@Mock
+	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+	
 	@Mock
 	private UserSelection userSelection;
 
@@ -117,6 +124,31 @@ public class ImportStudyControllerTest {
 		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
+	}
+	
+	@Test
+	public void testSaveImportedFiles() {
+		CreateNurseryForm form = Mockito.mock(CreateNurseryForm.class);
+		Model model = Mockito.mock(Model.class);
+		Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		final Map<String, Object> result = this.unitUnderTest.saveImportedFiles(form, model);
+		Assert.assertEquals("1", result.get(ImportStudyController.SUCCESS));
+		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), true);
+		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(), userSelection.getWorkbook()
+				.getStudyDetails().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
+	}
+	
+	@Test
+	public void testSaveImportedFilesNursery() {
+		CreateNurseryForm form = Mockito.mock(CreateNurseryForm.class);
+		Model model = Mockito.mock(Model.class);
+		Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		this.unitUnderTest.saveImportedFilesNursery(form, model);
+		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), true);
+		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(), userSelection.getWorkbook()
+				.getStudyDetails().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
 	}
 
 	@Test

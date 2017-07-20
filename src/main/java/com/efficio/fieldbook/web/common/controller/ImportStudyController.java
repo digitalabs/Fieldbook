@@ -66,6 +66,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @RequestMapping(ImportStudyController.URL)
 public class ImportStudyController extends AbstractBaseFieldbookController {
 
+	public static final String SUCCESS = "success";
 	private static final String ERROR = "error";
 	private static final String IS_SUCCESS = "isSuccess";
 	private static final Logger LOG = LoggerFactory.getLogger(ImportStudyController.class);
@@ -284,7 +285,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		this.doRevertData(form);
 
 		final Map<String, Object> result = new HashMap<>();
-		result.put("success", "1");
+		result.put(SUCCESS, "1");
 		return result;
 	}
 
@@ -421,7 +422,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 			}
 		}
 
-		return "success";
+		return SUCCESS;
 	}
 
 	private int getUserId() throws FieldbookException {
@@ -559,7 +560,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				.getStudyDetails().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
 
 		final Map<String, Object> result = new HashMap<>();
-		result.put("success", "1");
+		result.put(SUCCESS, "1");
 		return result;
 	}
 

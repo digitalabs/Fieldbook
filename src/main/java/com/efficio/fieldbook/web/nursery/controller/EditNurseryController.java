@@ -462,7 +462,7 @@ public class EditNurseryController extends SettingsController {
 
 	}
 
-	private void saveMeasurementRows(final CreateNurseryForm form, final int trialDatasetId, final Workbook workbook,
+	public void saveMeasurementRows(final CreateNurseryForm form, final int trialDatasetId, final Workbook workbook,
 			final Map<String, String> resultMap) {
 		try {
 			WorkbookUtil
@@ -937,6 +937,11 @@ public class EditNurseryController extends SettingsController {
 	@RequestMapping(value = "/columns", method = RequestMethod.GET)
 	public List<MeasurementVariable> getColumns() {
 		return this.userSelection.getWorkbook().getMeasurementDatasetVariables();
+	}
+	
+	public void setFieldbookService(FieldbookService fieldbookService){
+		this.fieldbookService = fieldbookService;
+		super.setFieldbookService(fieldbookService);
 	}
 
 }

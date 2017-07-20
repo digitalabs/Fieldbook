@@ -58,6 +58,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -151,14 +152,26 @@ public class EditNurseryControllerTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
 		Mockito.when(this.request.getSession()).thenReturn(this.session);
-		this.editNurseryController.setFieldbookService(this.fieldbookService);
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		Mockito.when(workbook.getMeasurementDatesetId()).thenReturn(1);
 		Mockito.when(workbook.getMeasurementDatasetVariables()).thenReturn(measurementVariableTestDataInitializer.createMeasurementVariableList());
 		Mockito.when(workbook.getVariates()).thenReturn(new ArrayList<MeasurementVariable>());
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		this.editNurseryController.setFieldbookService(fieldbookService);
 	}
-
+	
+	@Test
+	public void testSaveMeasurementRows() {
+		CreateNurseryForm form = Mockito.mock(CreateNurseryForm.class);
+		Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		workbook.setFactors(new ArrayList<MeasurementVariable>());
+		workbook.setVariates(new ArrayList<MeasurementVariable>());
+		Map<String, String> resultMap = new HashMap<>();
+		this.editNurseryController.saveMeasurementRows(form, 1, workbook, resultMap);
+		Assert.assertEquals(EditNurseryController.SUCCESS, resultMap.get(EditNurseryController.STATUS));
+		Assert.assertFalse(Boolean.valueOf(resultMap.get(EditNurseryController.HAS_MEASUREMENT_DATA_STR)));
+		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), true);
+	}
 	@Test
 	public void testUseExistingNurseryNoRedirect() throws Exception {
 		final DmsProject dmsProject = Mockito.mock(DmsProject.class);

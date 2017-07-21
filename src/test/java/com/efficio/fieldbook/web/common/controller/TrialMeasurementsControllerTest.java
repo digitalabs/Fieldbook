@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -36,10 +37,12 @@ import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.dms.Phenotype;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.study.MeasurementDto;
 import org.generationcp.middleware.service.api.study.MeasurementVariableDto;
 import org.generationcp.middleware.service.api.study.ObservationDto;
@@ -56,11 +59,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.google.common.collect.Lists;
+
+import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrialMeasurementsControllerTest {
@@ -113,6 +119,12 @@ public class TrialMeasurementsControllerTest {
 	
 	@Mock
 	private OntologyDataManager ontologyDataManager;
+	
+	@Mock
+	private ValidationService validationService;
+	
+	@Mock
+	private FieldbookService fieldbookMiddlewareService;
 	
 	private List<MeasurementVariable> measurementVariables;
 
@@ -1057,6 +1069,21 @@ public class TrialMeasurementsControllerTest {
 
 		final boolean isGidDesigFactorsIncluded = false;
 		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded, doAddNewGermplasmDescriptors, useDifferentLocalNames);
+	}
+	
+	@Test
+	public void testUpdateTraits() throws WorkbookParserException {
+		UserSelection userSelection = new UserSelection();
+		Workbook workbook= WorkbookTestDataInitializer.getTestWorkbook();
+		userSelection.setWorkbook(workbook);
+		this.trialMeasurementsController.setUserSelection(userSelection );
+		CreateNurseryForm form = new CreateNurseryForm();
+		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		Model model = Mockito.mock(Model.class);
+		final Map<String, String> resultMap = this.trialMeasurementsController.updateTraits(form, "T", bindingResult, model);
+		Assert.assertEquals("1", resultMap.get(TrialMeasurementsController.STATUS));
+		Mockito.verify(this.validationService).validateObservationValues(workbook);
+		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), true);
 	}
 
 	private Variable createTestVariable() {

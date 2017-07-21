@@ -73,7 +73,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	private static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrialMeasurementsController.class);
-	private static final String STATUS = "status";
+	public static final String STATUS = "status";
 	private static final String ERROR_MESSAGE = "errorMessage";
 	private static final String INDEX = "index";
 	static final String SUCCESS = "success";
@@ -132,7 +132,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		try {
 			this.validationService.validateObservationValues(workbook);
-			this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID());
+			this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(),
+					true);
 			resultMap.put(TrialMeasurementsController.STATUS, "1");
 		} catch (final WorkbookParserException e) {
 			TrialMeasurementsController.LOG.error(e.getMessage(), e);

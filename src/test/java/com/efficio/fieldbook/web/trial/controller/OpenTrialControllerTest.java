@@ -972,6 +972,9 @@ public class OpenTrialControllerTest {
 		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
 		Assert.assertEquals("The measurement data flag should be false", false, returnVal.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
 		Assert.assertEquals("The measurement row count should be zero", 0, returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).saveMeasurementRows(Matchers.any(Workbook.class), Matchers.anyString(), Matchers.anyBoolean());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyList(), Matchers.anyString(), Matchers.anyBoolean());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).saveStudyColumnOrdering(Matchers.anyInt(), Matchers.anyString(), Matchers.anyString(), Matchers.any(Workbook.class));
 	}
 	
 	@Test
@@ -985,6 +988,10 @@ public class OpenTrialControllerTest {
 		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
 		Assert.assertEquals("The measurement data flag should be true", true, returnVal.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
 		Assert.assertEquals("The measurement row count should be " + experimentCount, experimentCount, returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
+
+		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(Matchers.any(Workbook.class), Matchers.anyString(), Matchers.anyBoolean());
+		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyList(), Matchers.anyString(), Matchers.anyBoolean());
+		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(Matchers.anyInt(), Matchers.anyString(), Matchers.anyString(), Matchers.any(Workbook.class));
 	}
 
 	private TrialData setUpTrialData() {

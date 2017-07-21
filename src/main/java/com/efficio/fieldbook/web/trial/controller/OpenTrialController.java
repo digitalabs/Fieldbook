@@ -465,7 +465,8 @@ public class OpenTrialController extends BaseTrialController {
 
 				this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(),
 						new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);
-
+				
+				//Set the flag that indicates whether the variates will be save or not to false since it's already save after inline edit
 				this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(),
 						false);
 				returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING,

@@ -286,7 +286,7 @@ public class WorkbookDataUtil {
 		workbook.getConditions().add(variable);
 	}
 
-	private static List<MeasurementVariable> createFactors() {
+	public static List<MeasurementVariable> createFactors() {
 		// Create measurement variables and set its dataTypeId
 		final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 
@@ -296,6 +296,7 @@ public class WorkbookDataUtil {
 						WorkbookDataUtil.NUMBER, WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.GERMPLASM_ENTRY, WorkbookDataUtil.NUMERIC,
 						WorkbookDataUtil.STUDY, WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		variable.setFactor(true);
 		factors.add(variable);
 
 		variable =
@@ -303,6 +304,7 @@ public class WorkbookDataUtil {
 						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.GERMPLASM_ID, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
 						WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
+		variable.setFactor(true);
 		factors.add(variable);
 
 		variable =
@@ -310,6 +312,7 @@ public class WorkbookDataUtil {
 						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.GERMPLASM_ID, WorkbookDataUtil.CHAR, WorkbookDataUtil.STUDY,
 						WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		variable.setFactor(true);
 		factors.add(variable);
 
 		variable =
@@ -317,6 +320,7 @@ public class WorkbookDataUtil {
 						WorkbookDataUtil.PEDIGREE_STRING, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.CROSS_HISTORY, WorkbookDataUtil.CHAR,
 						WorkbookDataUtil.STUDY, WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		variable.setFactor(true);
 		factors.add(variable);
 
 		variable =
@@ -330,6 +334,7 @@ public class WorkbookDataUtil {
 				new MeasurementVariable(TermId.PLOT_NO.getId(), WorkbookDataUtil.PLOT, "Plot number ", WorkbookDataUtil.NESTED_NUMBER,
 						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.FIELD_PLOT, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
 						WorkbookDataUtil.PLOT);
+		variable.setFactor(true);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		factors.add(variable);
 
@@ -337,6 +342,7 @@ public class WorkbookDataUtil {
 				new MeasurementVariable(TermId.PLOT_ID.getId(), WorkbookDataUtil.PLOT, "Field plot id - assigned (text)", WorkbookDataUtil.TEXT,
 						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.FIELD_PLOT, WorkbookDataUtil.CHAR, "",
 						WorkbookDataUtil.ENTRY);
+		variable.setFactor(true);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		factors.add(variable);
 

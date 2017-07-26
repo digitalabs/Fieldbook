@@ -1,30 +1,34 @@
 package com.efficio.fieldbook.web.util;
 
-import com.google.common.collect.Lists;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.Is.is;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.generationcp.middleware.data.initializer.MeasurementTestDataInitializer;
+import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.oms.Property;
-import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.Is.is;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KsuFieldbookUtilTest {
@@ -83,12 +87,17 @@ public class KsuFieldbookUtilTest {
 	private static final String STUDY = "STUDY";
 	private static final String PLOT = "PLOT";
 
-	private static final String CHAR = "C";
 	private static final String NUMERIC = "N";
 
 	private static final String NUMERIC_VALUE = "1";
 	private static final String DATE_VALUE = "20171010";
-
+	
+	private MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer;
+	
+	@Before
+	public void setUp(){
+		this.measurementVariableTestDataInitializer = new MeasurementVariableTestDataInitializer();
+	}
 	@Test
 	public void testIsValidHeaderNamesReturnsTrueIfAllRequiredColumnsArePresent() {
 		String[] headerNames = {"PLOT_NO", "ENTRY_NO", "DESIGNATION", "GID", "PLOT_ID"};
@@ -133,28 +142,70 @@ public class KsuFieldbookUtilTest {
 		assertThat(TEXT, is(equalTo(traitsList.get(4).get(1))));
 
 	}
+	
+	@Test
+	public void testConvertWorkbookData() {
+		List<MeasurementRow> observations = WorkbookDataUtil.createNewObservations(10);
+		List<MeasurementVariable> variables = WorkbookDataUtil.createFactors();
+		List<List<String>> table = KsuFieldbookUtil.convertWorkbookData(observations, variables );
+		Assert.assertNotNull("The table should not be null", table);
+		Assert.assertEquals("The table size should be 11, the header row + the number of observations", 11, table.size());
+	}
 
+	@Test
+	public void testGetHeaderNames() {
+		List<MeasurementVariable> variables = WorkbookDataUtil.createFactors();
+		List<String> headers = KsuFieldbookUtil.getHeaderNames(variables);
+		Assert.assertNotNull("The headers should not be null", headers);
+		Assert.assertEquals("The number of headers should be 6", 6, headers.size());
+	}
+	
+	@Test
+	public void testGetDataTypeDescription() {
+		MeasurementVariable mvar = this.measurementVariableTestDataInitializer.createMeasurementVariable(R_SECA_SEV_E_00_TO_99_TEXT_ID, R_SECA_SEV_E_00_TO_99_TEXT_NAME,
+				R_SECA_SEV_E_00_TO_99_TEXT_DESCRIPTION, R_SECA_SEV_E_00_TO_99_TEXT_SCALE, R_SECA_SEV_E_00_TO_99_TEXT_METHOD,
+				R_SECA_SEV_E_00_TO_99_TEXT_PROPERTY, TEXT, "", STUDY, TermId.CHARACTER_VARIABLE.getId(), PhenotypicType.VARIATE);
+		final String dataTypeDescription = KsuFieldbookUtil.getDataTypeDescription(mvar);
+		Assert.assertEquals("The data type description should be text", "text", dataTypeDescription);
+	}
+	
+	@Test
+	public void testGetLabelFromKsuRequiredColumnNotRequired() {
+		MeasurementVariable mvar = this.measurementVariableTestDataInitializer.createMeasurementVariable(R_SECA_SEV_E_00_TO_99_TEXT_ID, R_SECA_SEV_E_00_TO_99_TEXT_NAME,
+				R_SECA_SEV_E_00_TO_99_TEXT_DESCRIPTION, R_SECA_SEV_E_00_TO_99_TEXT_SCALE, R_SECA_SEV_E_00_TO_99_TEXT_METHOD,
+				R_SECA_SEV_E_00_TO_99_TEXT_PROPERTY, TEXT, "", STUDY, TermId.CHARACTER_VARIABLE.getId(), PhenotypicType.VARIATE);
+		final String label = KsuFieldbookUtil.getLabelFromKsuRequiredColumn(mvar);
+		Assert.assertEquals("The label should be " + mvar.getName(), mvar.getName(), label);
+	}
+	@Test
+	public void testGetLabelFromKsuRequiredColumnIsRequired() {
+		MeasurementVariable mvar = this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.GID.getId(), "1");
+		final String label = KsuFieldbookUtil.getLabelFromKsuRequiredColumn(mvar);
+		System.out.println(label);
+		Assert.assertEquals("The label should be GID", "GID", label);
+	}
+	
 	private List<MeasurementVariable> initializeListOfTraits() {
 		final List<MeasurementVariable> variates = new ArrayList<>();
 
 		MeasurementVariable measurementVariable =
-			this.createMeasurementVariable(HGRAMINC_E_PCT_ID, HGRAMINC_E_PCT_NAME, HGRAMINC_E_PCT_DESCRIPTION, PERCENTAGE_SCALE,
+			this.measurementVariableTestDataInitializer.createMeasurementVariable(HGRAMINC_E_PCT_ID, HGRAMINC_E_PCT_NAME, HGRAMINC_E_PCT_DESCRIPTION, PERCENTAGE_SCALE,
 				HGRAMINC_E_PCT_METHOD, HGRAMINC_E_PCT_PROPERTY, NUMERIC, NUMERIC_VALUE, PLOT, TermId.NUMERIC_VARIABLE.getId(),
 				PhenotypicType.VARIATE);
 
 		variates.add(measurementVariable);
 
-		measurementVariable = this.createMeasurementVariable(ACDTOL_E_1TO_5_ID, ACDTOL_E_1TO_5_NAME, ACDTOL_E_1TO_5_DESCRIPTION, SCALE_1_5,
+		measurementVariable = this.measurementVariableTestDataInitializer.createMeasurementVariable(ACDTOL_E_1TO_5_ID, ACDTOL_E_1TO_5_NAME, ACDTOL_E_1TO_5_DESCRIPTION, SCALE_1_5,
 			ACDTOL_E_1TO_5_METHOD, ACDTOL_E_1TO_5_PROPERTY, CHARACTER, NUMERIC_VALUE, PLOT, TermId.CATEGORICAL_VARIABLE.getId(),
 			PhenotypicType.VARIATE);
 
 		variates.add(measurementVariable);
 
-		measurementVariable = this.createMeasurementVariable(ANT_DATE_YMD_ID, ANT_DATE_YMD_NAME, ANT_DATE_YMD_DESCRIPTION, YYYYMMDD_SCALE,
+		measurementVariable = this.measurementVariableTestDataInitializer.createMeasurementVariable(ANT_DATE_YMD_ID, ANT_DATE_YMD_NAME, ANT_DATE_YMD_DESCRIPTION, YYYYMMDD_SCALE,
 			ANT_DATE_YMD_METHOD, ANT_DATE_YMD_PROPERTY, DATE, DATE_VALUE, STUDY, TermId.DATE_VARIABLE.getId(), PhenotypicType.VARIATE);
 		variates.add(measurementVariable);
 
-		measurementVariable = this.createMeasurementVariable(R_SECA_SEV_E_00_TO_99_TEXT_ID, R_SECA_SEV_E_00_TO_99_TEXT_NAME,
+		measurementVariable = this.measurementVariableTestDataInitializer.createMeasurementVariable(R_SECA_SEV_E_00_TO_99_TEXT_ID, R_SECA_SEV_E_00_TO_99_TEXT_NAME,
 			R_SECA_SEV_E_00_TO_99_TEXT_DESCRIPTION, R_SECA_SEV_E_00_TO_99_TEXT_SCALE, R_SECA_SEV_E_00_TO_99_TEXT_METHOD,
 			R_SECA_SEV_E_00_TO_99_TEXT_PROPERTY, TEXT, "", STUDY, TermId.CHARACTER_VARIABLE.getId(), PhenotypicType.VARIATE);
 		variates.add(measurementVariable);
@@ -162,16 +213,7 @@ public class KsuFieldbookUtilTest {
 		return variates;
 	}
 
-	private MeasurementVariable createMeasurementVariable(final int termId, final String name, final String description,
-		final String scale, final String method, final String property, final String dataType, final String value, final String label,
-		final int dataTypeId, final PhenotypicType role) {
-		final MeasurementVariable variable =
-			new MeasurementVariable(termId, name, description, scale, method, property, dataType, value, label);
-		variable.setRole(role);
-		variable.setDataTypeId(dataTypeId);
-		variable.setVariableType(VariableType.TRAIT);
-		return variable;
-	}
+	
 
 	private List<MeasurementVariable> initializeTraitTest(){
 		List<MeasurementVariable> traits = initializeListOfTraits();

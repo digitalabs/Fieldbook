@@ -621,7 +621,7 @@ public class CSVOziel {
 				String strTrailValRule = "";
 				final String strDataType;
 
-				strDataType = variate.getDataTypeDisplay();
+				strDataType = variate.getDataTypeCode();
 				strTraitName = variate.getName();
 
 				/**

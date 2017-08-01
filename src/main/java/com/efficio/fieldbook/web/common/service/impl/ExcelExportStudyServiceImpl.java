@@ -1,12 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2012, All Rights Reserved.
- * 
+ * <p/>
  * Generation Challenge Programme (GCP)
- * 
- * 
+ * <p/>
+ * <p/>
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.common.service.impl;
@@ -33,7 +32,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.format.CellFormatType;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -47,7 +45,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -95,12 +92,13 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
-	private String breedingMethodPropertyName = "";
+	private final String breedingMethodPropertyName = "";
 
-	protected static final List<Integer> STUDY_DETAILS_IDS = Arrays.asList(TermId.STUDY_NAME.getId(), TermId.STUDY_TITLE.getId(),
-			TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(), TermId.START_DATE.getId(), TermId.END_DATE.getId(),
-			TermId.STUDY_TYPE.getId(), TermId.STUDY_UID.getId(), TermId.STUDY_STATUS.getId());
-		
+	protected static final List<Integer> STUDY_DETAILS_IDS =
+			Arrays.asList(TermId.STUDY_NAME.getId(), TermId.STUDY_TITLE.getId(), TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(),
+					TermId.START_DATE.getId(), TermId.END_DATE.getId(), TermId.STUDY_TYPE.getId(), TermId.STUDY_UID.getId(),
+					TermId.STUDY_STATUS.getId());
+
 	@Override
 	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
 		return this.export(workbook, filename, instances, null);
@@ -127,9 +125,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				this.writeDescriptionSheet(xlsBook, workbook, instanceLevelObservation, visibleColumns);
 				this.writeObservationSheet(xlsBook, workbook, plotLevelObservations, visibleColumns, breedingMethodPropertyName);
 
-				final String filenamePath =
-						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename,
-								workbook.isNursery(), this.fieldbookProperties, this.fieldbookMiddlewareService);
+				final String filenamePath = ExportImportStudyUtil
+						.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename, workbook.isNursery(),
+								this.fieldbookProperties, this.fieldbookMiddlewareService);
 
 				fos = new FileOutputStream(new File(filenamePath));
 				xlsBook.write(fos);
@@ -146,10 +144,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 		// multiple instances
 		if (instances != null && instances.size() > 1) {
-			outputFilename =
-					this.fieldbookProperties.getUploadDirectory() + File.separator
-							+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "")
-							+ AppConstants.ZIP_FILE_SUFFIX.getString();
+			outputFilename = this.fieldbookProperties.getUploadDirectory() + File.separator + filename
+					.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") + AppConstants.ZIP_FILE_SUFFIX.getString();
 			ZipUtil.zipIt(outputFilename, filenameList);
 		}
 
@@ -183,7 +179,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	}
 
 	protected void writeObservationSheet(final HSSFWorkbook xlsBook, final Workbook workbook, final List<MeasurementRow> observations,
-			final List<Integer> visibleColumns, String breedingMethodPropertyName) {
+			final List<Integer> visibleColumns, final String breedingMethodPropertyName) {
 		LOG.info("Start Export Observation Sheet");
 		final Locale locale = LocaleContextHolder.getLocale();
 		final HSSFSheet xlsSheet = xlsBook.createSheet(this.messageSource.getMessage("export.study.sheet.observation", null, locale));
@@ -192,7 +188,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		this.writeObservationHeader(currentRowNum++, xlsBook, xlsSheet, workbook.getMeasurementDatasetVariables(), visibleColumns);
 
 		final CellStyle style = this.createCellStyle(xlsBook);
-		
+
 		for (final MeasurementRow dataRow : observations) {
 			this.writeObservationRow(currentRowNum++, xlsSheet, dataRow, workbook.getMeasurementDatasetVariables(), xlsBook, style,
 					visibleColumns, breedingMethodPropertyName);
@@ -232,8 +228,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.startdate", startDate);
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.enddate", endDate);
-		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.studytype", studyDetails
-				.getStudyType().name());
+		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.studytype",
+				studyDetails.getStudyType().name());
 
 		return rowNumIndex;
 	}
@@ -241,8 +237,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	private PhenotypicType getRoleOfVariableInTrialObservations(final MeasurementVariable variable, final MeasurementRow trialObservation) {
 		if (trialObservation != null && variable != null) {
 			for (final MeasurementData measurementData : trialObservation.getDataList()) {
-				if (measurementData.getMeasurementVariable() != null
-						&& measurementData.getMeasurementVariable().getTermId() == variable.getTermId()) {
+				if (measurementData.getMeasurementVariable() != null && measurementData.getMeasurementVariable().getTermId() == variable
+						.getTermId()) {
 					return measurementData.getMeasurementVariable().getRole();
 				}
 			}
@@ -253,7 +249,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	/**
 	 * This will write condition variables (i.e. trial instance, setting variables, and experimental design type) to the condition section
 	 * of a fieldbook excel description sheet
-	 * 
+	 *
 	 * @param currentRowNum
 	 * @param xlsBook
 	 * @param xlsSheet
@@ -289,14 +285,14 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			}
 		}
 		filteredConditions = workbook.arrangeMeasurementVariables(filteredConditions);
-		return this.writeSection(currentRowNum, xlsBook, xlsSheet, filteredConditions, "export.study.description.column.condition", 51,
-				153, 102);
+		return this.writeSection(currentRowNum, xlsBook, xlsSheet, filteredConditions, "export.study.description.column.condition", 51, 153,
+				102);
 	}
 
 	/**
 	 * This will write factor variables (i.e. germplasm descriptor variables and fieldmap) to the factor section of a fieldbook excel
 	 * description sheet
-	 * 
+	 *
 	 * @param currentRowNum
 	 * @param xlsBook
 	 * @param xlsSheet
@@ -309,8 +305,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			final List<MeasurementVariable> factors, final List<Integer> visibleColumns, final Workbook workbook) {
 		List<MeasurementVariable> filteredFactors = new ArrayList<MeasurementVariable>();
 		for (final MeasurementVariable factor : factors) {
-			if (factor.getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()
-					&& ExportImportStudyUtil.isColumnVisible(factor.getTermId(), visibleColumns)) {
+			if (factor.getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId() && ExportImportStudyUtil
+					.isColumnVisible(factor.getTermId(), visibleColumns)) {
 				filteredFactors.add(factor);
 			}
 		}
@@ -320,7 +316,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 	/**
 	 * This will write constant variables (i.e. trial condition) to the constant section of a fieldbook excel description sheet
-	 * 
+	 *
 	 * @param currentRowNum
 	 * @param xlsBook
 	 * @param xlsSheet
@@ -340,13 +336,13 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			}
 		}
 		filteredConstants = workbook.arrangeMeasurementVariables(filteredConstants);
-		return this.writeSection(currentRowNum, xlsBook, xlsSheet, filteredConstants, "export.study.description.column.constant", 51, 51,
-				153);
+		return this
+				.writeSection(currentRowNum, xlsBook, xlsSheet, filteredConstants, "export.study.description.column.constant", 51, 51, 153);
 	}
 
 	/**
 	 * This will write variates (i.e. trait variables) to the variates section of a fieldbook excel description sheet
-	 * 
+	 *
 	 * @param currentRowNum
 	 * @param xlsBook
 	 * @param xlsSheet
@@ -365,8 +361,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			}
 		}
 		filteredVariates = workbook.arrangeMeasurementVariables(filteredVariates);
-		return this.writeSection(currentRowNum, xlsBook, xlsSheet, filteredVariates, "export.study.description.column.variate", 51, 51,
-				153, true);
+		return this.writeSection(currentRowNum, xlsBook, xlsSheet, filteredVariates, "export.study.description.column.variate", 51, 51, 153,
+				true);
 	}
 
 	private CellStyle getHeaderStyle(final HSSFWorkbook xlsBook, final int c1, final int c2, final int c3) {
@@ -502,19 +498,18 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 		cell = row.createCell(LABEL_COLUMN_INDEX, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(this.getLabel(measurementVariable));
-		
+
 	}
-	
-	protected String getLabel(final MeasurementVariable  measurementVariable) {
+
+	protected String getLabel(final MeasurementVariable measurementVariable) {
 
 		if (measurementVariable.getTreatmentLabel() != null && !"".equals(measurementVariable.getTreatmentLabel())) {
 			return measurementVariable.getTreatmentLabel();
 		} else {
 			return measurementVariable.getLabel();
 		}
-		
-	}
 
+	}
 
 	protected void setContentOfVariableValueColumn(final HSSFCell cell, final MeasurementVariable measurementVariable) {
 
@@ -538,17 +533,18 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 	}
 
-
 	protected void setVariableValueBasedOnDataType(final HSSFCell cell, final MeasurementVariable measurementVariable) {
 
-		if (DataType.NUMERIC_VARIABLE.getId().equals(measurementVariable.getDataTypeId()) && StringUtils.isNotBlank(measurementVariable.getValue()) && NumberUtils.isNumber(measurementVariable.getValue())) {
+		if (DataType.NUMERIC_VARIABLE.getId().equals(measurementVariable.getDataTypeId()) && StringUtils
+				.isNotBlank(measurementVariable.getValue()) && NumberUtils.isNumber(measurementVariable.getValue())) {
 
 			cell.setCellValue(Double.valueOf(measurementVariable.getValue()));
 			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 
 		} else if (DataType.CATEGORICAL_VARIABLE.getId().equals(measurementVariable.getDataTypeId())) {
 
-			cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(measurementVariable.getValue(), measurementVariable.getPossibleValues()));
+			cell.setCellValue(
+					ExportImportStudyUtil.getCategoricalCellValue(measurementVariable.getValue(), measurementVariable.getPossibleValues()));
 
 		} else {
 
@@ -556,7 +552,6 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		}
 
 	}
-
 
 	protected String getPossibleValueDetailAsStringBasedOnDataType(final MeasurementVariable measurementVariable) {
 
@@ -579,7 +574,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 		final StringBuilder sb = new StringBuilder();
 
-		Iterator<ValueReference> iterator = possibleValues.iterator();
+		final Iterator<ValueReference> iterator = possibleValues.iterator();
 		while (iterator.hasNext()) {
 			sb.append(iterator.next().getName());
 			if (iterator.hasNext()) {
@@ -593,8 +588,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 	protected String concatenateMinMaxValueIfAvailable(final MeasurementVariable measurementVariable) {
 
-		if (measurementVariable.getMinRange() != null  &&  measurementVariable.getMaxRange() != null) {
-			return measurementVariable.getMinRange().toString() +  " - " + measurementVariable.getMaxRange().toString();
+		if (measurementVariable.getMinRange() != null && measurementVariable.getMaxRange() != null) {
+			return measurementVariable.getMinRange().toString() + " - " + measurementVariable.getMaxRange().toString();
 		}
 
 		return "";
@@ -618,7 +613,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	}
 
 	protected CellStyle getObservationHeaderStyle(final boolean isFactor, final HSSFWorkbook xlsBook) {
-		CellStyle style;
+		final CellStyle style;
 		if (isFactor) {
 			style = this.getHeaderStyle(xlsBook, 51, 153, 102);
 		} else {
@@ -628,37 +623,36 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	}
 
 	private void writeObservationRow(final int currentRowNum, final HSSFSheet xlsSheet, final MeasurementRow dataRow,
-			final List<MeasurementVariable> variables, final HSSFWorkbook xlsBook, final CellStyle style, final List<Integer> visibleColumns, 
-			String propertyName) {
+			final List<MeasurementVariable> variables, final HSSFWorkbook xlsBook, final CellStyle style,
+			final List<Integer> visibleColumns, final String propertyName) {
 
 		final HSSFRow row = xlsSheet.createRow(currentRowNum);
-		int currentColNum = 0;		
+		int currentColNum = 0;
 
 		for (final MeasurementVariable variable : variables) {
 
 			final MeasurementData dataCell = dataRow.getMeasurementData(variable.getTermId());
 			if (dataCell != null) {
 				if (dataCell.getMeasurementVariable() != null
-						&& dataCell.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-						|| !ExportImportStudyUtil.isColumnVisible(dataCell.getMeasurementVariable().getTermId(), visibleColumns)) {
+						&& dataCell.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId() || !ExportImportStudyUtil
+						.isColumnVisible(dataCell.getMeasurementVariable().getTermId(), visibleColumns)) {
 					continue;
 				}
 				final HSSFCell cell = row.createCell(currentColNum++);
-				
-				if (ExportImportStudyUtil.measurementVariableHasValue(dataCell)
-						&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty()
-						&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
-						&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
-						&& !dataCell.getMeasurementVariable().getProperty().equals(propertyName)) {
 
-					cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable()
-							.getPossibleValues()));
+				if (ExportImportStudyUtil.measurementVariableHasValue(dataCell) && !dataCell.getMeasurementVariable().getPossibleValues()
+						.isEmpty() && dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
+						&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId() && !dataCell
+						.getMeasurementVariable().getProperty().equals(propertyName)) {
+
+					cell.setCellValue(ExportImportStudyUtil
+							.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
 
 				} else {
 
 					if (AppConstants.NUMERIC_DATA_TYPE.getString().equalsIgnoreCase(dataCell.getDataType())) {
-						if (dataCell.getValue() != null && !"".equalsIgnoreCase(dataCell.getValue())
-								&& NumberUtils.isNumber(dataCell.getValue())) {
+						if (dataCell.getValue() != null && !"".equalsIgnoreCase(dataCell.getValue()) && NumberUtils
+								.isNumber(dataCell.getValue())) {
 							cell.setCellType(Cell.CELL_TYPE_BLANK);
 							cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 							cell.setCellValue(Double.valueOf(dataCell.getValue()));
@@ -678,7 +672,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		this.fieldbookService = fieldbookService;
 	}
 
-	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+	protected void setFieldbookMiddlewareService(
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 }

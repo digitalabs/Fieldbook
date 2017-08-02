@@ -1015,6 +1015,7 @@ function advanceTrial() {
 	'use strict';
 	var idVal = $('#studyId').val();
 	$('#advanceNurseryModal').modal('hide');
+	$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
 	$('#selectEnvironmentModal').modal({ backdrop: 'static', keyboard: true });
 
 	var scope = angular.element('#selectEnvironmentModal').scope();

@@ -94,6 +94,7 @@ public class ExcelExportStudyServiceImplTest {
 		Assert.assertEquals("TreatmentLabel", this.excelExportStudyService.getLabel(measurementVariable));
 
 		measurementVariable.setLabel("Label");
+		measurementVariable.setTreatmentLabel("");
 
 		// If Treatment Label has no value, return measurementVariable.getLabel()'s value
 		Assert.assertEquals("Label", this.excelExportStudyService.getLabel(measurementVariable));

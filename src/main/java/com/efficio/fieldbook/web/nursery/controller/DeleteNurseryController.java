@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.UnpermittedDeletionException;
@@ -58,7 +57,7 @@ public class DeleteNurseryController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/{studyId}/{studyType}", method = RequestMethod.POST)
 	public Map<String, Object> submitDelete(@PathVariable int studyId, @PathVariable String studyType, Model model, HttpSession session, Locale locale)
 			throws MiddlewareException {
-		Map<String, Object> results = new HashMap<String, Object>();
+		Map<String, Object> results = new HashMap<>();
 		try {
 			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentUserLocalId());
 			

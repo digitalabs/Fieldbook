@@ -2893,8 +2893,9 @@ function isValidInput(input) {
 
 function doDeleteNursery(id, callback) {
 	'use strict';
+	var studyType = isNursery() ? 'N' : 'T';
 	$.ajax({
-		url: '/Fieldbook/NurseryManager/deleteNursery/' + id,
+		url: '/Fieldbook/NurseryManager/deleteNursery/' + id + '/' + studyType,
 		type: 'POST',
 		cache: false,
 		success: function(data) {

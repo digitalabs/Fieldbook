@@ -62,7 +62,6 @@ public class DeleteNurseryController extends AbstractBaseFieldbookController {
 		try {
 			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentUserLocalId());
 			
-			//Set germplasm list status to deleted
 			List<GermplasmList> germplasmLists = null;
 			if("N".equals(studyType)){
 				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
@@ -74,6 +73,7 @@ public class DeleteNurseryController extends AbstractBaseFieldbookController {
 				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.TRIAL);
 			}
 			
+			//Set germplasm list status to deleted
 			this.deleteGermplasmList(germplasmLists);
 			
 			results.put(IS_SUCCESS, "1");

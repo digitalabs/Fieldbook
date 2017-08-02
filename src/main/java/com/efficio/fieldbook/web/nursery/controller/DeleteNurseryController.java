@@ -44,7 +44,7 @@ public class DeleteNurseryController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private MessageSource messageSource;
-	
+
 	@Resource
 	private GermplasmListManager germplasmListManager;
 
@@ -55,44 +55,47 @@ public class DeleteNurseryController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/{studyId}/{studyType}", method = RequestMethod.POST)
-	public Map<String, Object> submitDelete(@PathVariable int studyId, @PathVariable String studyType, Model model, HttpSession session, Locale locale)
-			throws MiddlewareException {
-		Map<String, Object> results = new HashMap<>();
+	public Map<String, Object> submitDelete(@PathVariable final int studyId, @PathVariable final String studyType,
+			final Model model, final HttpSession session, final Locale locale) throws MiddlewareException {
+		final Map<String, Object> results = new HashMap<>();
 		try {
 			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentUserLocalId());
-			
+
 			List<GermplasmList> germplasmLists = null;
-			if("N".equals(studyType)){
-				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
-				
-				//Also set the status of checklist to deleted
-				List<GermplasmList> checkGermplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
+			if ("N".equals(studyType)) {
+				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,
+						GermplasmListType.NURSERY);
+
+				// Also set the status of checklist to deleted
+				final List<GermplasmList> checkGermplasmLists = this.fieldbookMiddlewareService
+						.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
 				this.deleteGermplasmList(checkGermplasmLists);
 			} else {
-				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.TRIAL);
+				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,
+						GermplasmListType.TRIAL);
 			}
-			
-			//Set germplasm list status to deleted
-			this.deleteGermplasmList(germplasmLists);
-			
-			results.put(IS_SUCCESS, "1");
 
-		} catch (UnpermittedDeletionException ude) {
+			// Set germplasm list status to deleted
+			this.deleteGermplasmList(germplasmLists);
+
+			results.put(DeleteNurseryController.IS_SUCCESS, "1");
+
+		} catch (final UnpermittedDeletionException ude) {
 			DeleteNurseryController.LOG.error(ude.getMessage(), ude);
-			Integer studyUserId = this.fieldbookMiddlewareService.getStudy(studyId).getUser();
-			results.put(IS_SUCCESS, "0");
+			final Integer studyUserId = this.fieldbookMiddlewareService.getStudy(studyId).getUser();
+			results.put(DeleteNurseryController.IS_SUCCESS, "0");
 			results.put("message", this.messageSource.getMessage(DeleteNurseryController.STUDY_DELETE_NOT_PERMITTED,
-					new String[] {this.fieldbookMiddlewareService.getOwnerListName(studyUserId)}, locale));
-		} catch (Exception e) {
+					new String[] { this.fieldbookMiddlewareService.getOwnerListName(studyUserId) }, locale));
+		} catch (final Exception e) {
 			DeleteNurseryController.LOG.error(e.getMessage(), e);
-			results.put(IS_SUCCESS, "0");
+			results.put(DeleteNurseryController.IS_SUCCESS, "0");
 		}
 
 		return results;
 	}
 
-	private void deleteGermplasmList(List<GermplasmList> germplasmLists) {
-		if(germplasmLists != null && !germplasmLists.isEmpty()) {
+	private void deleteGermplasmList(final List<GermplasmList> germplasmLists) {
+		if (germplasmLists != null && !germplasmLists.isEmpty()) {
 			this.germplasmListManager.deleteGermplasmList(germplasmLists.get(0));
 		}
 	}

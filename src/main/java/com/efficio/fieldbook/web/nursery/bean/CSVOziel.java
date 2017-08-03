@@ -621,7 +621,7 @@ public class CSVOziel {
 				String strTrailValRule = "";
 				final String strDataType;
 
-				strDataType = variate.getDataTypeCode();
+				strDataType = this.getDataTypeDisplay(variate.getDataTypeId());
 				strTraitName = variate.getName();
 
 				/**
@@ -725,4 +725,17 @@ public class CSVOziel {
 		}
 	}
 	// end copied from CSVFileManager (old Fb)
+
+
+	protected String getDataTypeDisplay(final int dataTypeId) {
+		// datatype ids: 1120, 1125, 1128, 1130
+		if (dataTypeId == TermId.CHARACTER_VARIABLE.getId() || dataTypeId == TermId.TIMESTAMP_VARIABLE.getId()
+				|| dataTypeId == TermId.CHARACTER_DBID_VARIABLE.getId() || dataTypeId == TermId.CATEGORICAL_VARIABLE.getId()
+				|| dataTypeId == TermId.GERMPLASM_LIST_DATA_TYPE.getId() || dataTypeId == TermId.LOCATION_DATA_TYPE.getId()
+				|| dataTypeId == TermId.PERSON_DATA_TYPE.getId() || dataTypeId == TermId.BREEDING_METHOD_DATA_TYPE.getId()) {
+			return "C";
+		} else {
+			return "N";
+		}
+	}
 }

@@ -16,8 +16,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -54,6 +56,18 @@ public class CSVOziel {
 	private MeasurementVariable selectedTrait;
 	private final List<MeasurementRow> trialObservations;
 
+	private static final Set<Integer> CHARACTER_DATATYPES = new HashSet<Integer>();
+	static {
+		CHARACTER_DATATYPES.add(TermId.CHARACTER_VARIABLE.getId());
+		CHARACTER_DATATYPES.add(TermId.TIMESTAMP_VARIABLE.getId());
+		CHARACTER_DATATYPES.add(TermId.CHARACTER_DBID_VARIABLE.getId());
+		CHARACTER_DATATYPES.add(TermId.CATEGORICAL_VARIABLE.getId());
+		CHARACTER_DATATYPES.add(TermId.GERMPLASM_LIST_DATA_TYPE.getId());
+		CHARACTER_DATATYPES.add(TermId.LOCATION_DATA_TYPE.getId());
+		CHARACTER_DATATYPES.add(TermId.PERSON_DATA_TYPE.getId());
+		CHARACTER_DATATYPES.add(TermId.BREEDING_METHOD_DATA_TYPE.getId());
+	}
+
 	public CSVOziel(final Workbook workbook, final List<MeasurementRow> observations, final List<MeasurementRow> trialObservations) {
 		this(workbook, observations, trialObservations, false);
 	}
@@ -73,6 +87,7 @@ public class CSVOziel {
 			try {
 				csvOutput.write(cad);
 			} catch (final IOException ex) {
+				LOG.error(ex.getMessage(), ex);
 			}
 
 		}
@@ -85,6 +100,7 @@ public class CSVOziel {
 				csvOutput.endRecord();
 			}
 		} catch (final IOException ex) {
+			LOG.error(ex.getMessage(), ex);
 		}
 	}
 
@@ -103,6 +119,7 @@ public class CSVOziel {
 			}
 
 		} catch (final IOException ex) {
+			LOG.error(ex.getMessage(), ex);
 		}
 	}
 
@@ -120,6 +137,7 @@ public class CSVOziel {
 			}
 
 		} catch (final IOException ex) {
+			LOG.error(ex.getMessage(), ex);
 		}
 	}
 
@@ -179,6 +197,7 @@ public class CSVOziel {
 						} catch (final NullPointerException ex) {
 							final String cad = ".";
 							csvOutput.write(cad);
+							LOG.error(ex.getMessage(), ex);
 						}
 					}
 
@@ -189,6 +208,7 @@ public class CSVOziel {
 				csvOutput.endRecord();
 			}
 		} catch (final IOException ex) {
+			LOG.error(ex.getMessage(), ex);
 		}
 
 	}
@@ -240,6 +260,7 @@ public class CSVOziel {
 					final String cad = ".";
 
 					csvOutput.write(cad);
+					LOG.error(ex.getMessage(), ex);
 				}
 
 				for (final MeasurementVariable variate : this.variateHeaders) {
@@ -259,6 +280,7 @@ public class CSVOziel {
 						} catch (final NullPointerException ex) {
 							final String cad = ".";
 							csvOutput.write(cad);
+							LOG.error(ex.getMessage(), ex);
 						}
 					}
 
@@ -267,6 +289,7 @@ public class CSVOziel {
 				csvOutput.endRecord();
 			}
 		} catch (final IOException ex) {
+			LOG.error(ex.getMessage(), ex);
 		}
 
 	}
@@ -281,10 +304,10 @@ public class CSVOziel {
 		try {
 			final CsvReader csvReader = new CsvReader(file.toString());
 			csvReader.readHeaders();
-			final String[] headers = csvReader.getHeaders();
+			final String[] csvReaderHeaders = csvReader.getHeaders();
 
-			for (int i = 26; i < headers.length - 1; i++) {
-				final String titulo = headers[i];
+			for (int i = 26; i < csvReaderHeaders.length - 1; i++) {
+				final String titulo = csvReaderHeaders[i];
 				if (!titulo.equals("")) {
 					titulos.add(titulo);
 				}
@@ -358,8 +381,9 @@ public class CSVOziel {
 			}
 			csvReader.close();
 		} catch (final FileNotFoundException ex) {
-
+			LOG.error(ex.getMessage(), ex);
 		} catch (final IOException e) {
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
@@ -407,10 +431,11 @@ public class CSVOziel {
 		try {
 			final CsvReader csvReader = new CsvReader(file.toString());
 			csvReader.readHeaders();
-			final String[] headers = csvReader.getHeaders();
+			final String[] csvReaderHeaders = csvReader.getHeaders();
 
-            isvalid = headers[headers.length - 1].equals("IBFB");
+            isvalid = csvReaderHeaders[csvReaderHeaders.length - 1].equals("IBFB");
 		} catch (final IOException ex) {
+			LOG.error(ex.getMessage(), ex);
 		}
 		return isvalid;
 	}
@@ -728,14 +753,11 @@ public class CSVOziel {
 
 
 	protected String getDataTypeDisplay(final int dataTypeId) {
-		// datatype ids: 1120, 1125, 1128, 1130
-		if (dataTypeId == TermId.CHARACTER_VARIABLE.getId() || dataTypeId == TermId.TIMESTAMP_VARIABLE.getId()
-				|| dataTypeId == TermId.CHARACTER_DBID_VARIABLE.getId() || dataTypeId == TermId.CATEGORICAL_VARIABLE.getId()
-				|| dataTypeId == TermId.GERMPLASM_LIST_DATA_TYPE.getId() || dataTypeId == TermId.LOCATION_DATA_TYPE.getId()
-				|| dataTypeId == TermId.PERSON_DATA_TYPE.getId() || dataTypeId == TermId.BREEDING_METHOD_DATA_TYPE.getId()) {
+		if (CHARACTER_DATATYPES.contains(dataTypeId)) {
 			return "C";
 		} else {
 			return "N";
 		}
 	}
+
 }

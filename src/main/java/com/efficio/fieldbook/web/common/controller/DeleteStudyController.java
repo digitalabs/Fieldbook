@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.common.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,14 +28,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 @Controller
-@RequestMapping(DeleteNurseryController.URL)
-public class DeleteNurseryController extends AbstractBaseFieldbookController {
+@RequestMapping(DeleteStudyController.URL)
+public class DeleteStudyController extends AbstractBaseFieldbookController {
 
 	public static final String IS_SUCCESS = "isSuccess";
 
-	private static final Logger LOG = LoggerFactory.getLogger(DeleteNurseryController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DeleteStudyController.class);
 
-	public static final String URL = "/NurseryManager/deleteNursery";
+	public static final String URL = "/StudyManager/deleteStudy";
 
 	public static final String STUDY_DELETE_NOT_PERMITTED = "study.delete.not.permitted";
 
@@ -78,17 +78,17 @@ public class DeleteNurseryController extends AbstractBaseFieldbookController {
 			// Set germplasm list status to deleted
 			this.deleteGermplasmList(germplasmLists);
 
-			results.put(DeleteNurseryController.IS_SUCCESS, "1");
+			results.put(DeleteStudyController.IS_SUCCESS, "1");
 
 		} catch (final UnpermittedDeletionException ude) {
-			DeleteNurseryController.LOG.error(ude.getMessage(), ude);
+			DeleteStudyController.LOG.error(ude.getMessage(), ude);
 			final Integer studyUserId = this.fieldbookMiddlewareService.getStudy(studyId).getUser();
-			results.put(DeleteNurseryController.IS_SUCCESS, "0");
-			results.put("message", this.messageSource.getMessage(DeleteNurseryController.STUDY_DELETE_NOT_PERMITTED,
+			results.put(DeleteStudyController.IS_SUCCESS, "0");
+			results.put("message", this.messageSource.getMessage(DeleteStudyController.STUDY_DELETE_NOT_PERMITTED,
 					new String[] { this.fieldbookMiddlewareService.getOwnerListName(studyUserId) }, locale));
 		} catch (final Exception e) {
-			DeleteNurseryController.LOG.error(e.getMessage(), e);
-			results.put(DeleteNurseryController.IS_SUCCESS, "0");
+			DeleteStudyController.LOG.error(e.getMessage(), e);
+			results.put(DeleteStudyController.IS_SUCCESS, "0");
 		}
 
 		return results;

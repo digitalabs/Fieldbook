@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.common.controller;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -25,10 +25,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.Model;
 
+import com.efficio.fieldbook.web.common.controller.DeleteStudyController;
+
 import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DeleteNurseryControllerTest {
+public class DeleteStudyControllerTest {
 	private static final int PROJECT_ID = 1;
 
 	@Mock
@@ -50,7 +52,7 @@ public class DeleteNurseryControllerTest {
 	private HttpSession session;
 
 	@InjectMocks
-	private DeleteNurseryController deleteNurseryController;
+	private DeleteStudyController deleteStudyController;
 
 	private GermplasmListTestDataInitializer germplasmListTestDataInitializer;
 
@@ -67,37 +69,37 @@ public class DeleteNurseryControllerTest {
 				GermplasmListType.TRIAL.name());
 
 		Mockito.when(this.fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(DeleteNurseryControllerTest.PROJECT_ID, GermplasmListType.NURSERY))
+				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.NURSERY))
 				.thenReturn(Arrays.asList(nurseryList));
 		Mockito.when(this.fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(DeleteNurseryControllerTest.PROJECT_ID, GermplasmListType.TRIAL))
+				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.TRIAL))
 				.thenReturn(Arrays.asList(trialList));
 	}
 
 	@Test
 	public void testSubmitDeleteNursery() throws UnpermittedDeletionException {
-		final Map<String, Object> result = this.deleteNurseryController
-				.submitDelete(DeleteNurseryControllerTest.PROJECT_ID, "N", this.model, this.session, this.locale);
-		Assert.assertEquals("The value should be 1", "1", result.get(DeleteNurseryController.IS_SUCCESS));
+		final Map<String, Object> result = this.deleteStudyController
+				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "N", this.model, this.session, this.locale);
+		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.deleteStudy(DeleteNurseryControllerTest.PROJECT_ID, this.contextUtil.getCurrentUserLocalId());
+				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentUserLocalId());
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.getGermplasmListsByProjectId(DeleteNurseryControllerTest.PROJECT_ID, GermplasmListType.NURSERY);
+				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.NURSERY);
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.getGermplasmListsByProjectId(DeleteNurseryControllerTest.PROJECT_ID, GermplasmListType.CHECK);
+				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.CHECK);
 		Mockito.verify(this.germplasmListManager, Mockito.times(1))
 				.deleteGermplasmList(Matchers.any(GermplasmList.class));
 	}
 
 	@Test
 	public void testSubmitDeleteTrial() throws UnpermittedDeletionException {
-		final Map<String, Object> result = this.deleteNurseryController
-				.submitDelete(DeleteNurseryControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
-		Assert.assertEquals("The value should be 1", "1", result.get(DeleteNurseryController.IS_SUCCESS));
+		final Map<String, Object> result = this.deleteStudyController
+				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
+		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.deleteStudy(DeleteNurseryControllerTest.PROJECT_ID, this.contextUtil.getCurrentUserLocalId());
+				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentUserLocalId());
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.getGermplasmListsByProjectId(DeleteNurseryControllerTest.PROJECT_ID, GermplasmListType.TRIAL);
+				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.TRIAL);
 		Mockito.verify(this.germplasmListManager, Mockito.times(1))
 				.deleteGermplasmList(Matchers.any(GermplasmList.class));
 	}
@@ -106,7 +108,7 @@ public class DeleteNurseryControllerTest {
 	public void testSubmitDeleteWithUnpermittedDeletionException() throws UnpermittedDeletionException {
 		final Study study = Mockito.mock(Study.class);
 		Mockito.when(study.getUser()).thenReturn(1);
-		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteNurseryControllerTest.PROJECT_ID))
+		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
 				.thenReturn(study);
 		Mockito.when(this.fieldbookMiddlewareService.getOwnerListName(1)).thenReturn("User Name");
 
@@ -116,9 +118,9 @@ public class DeleteNurseryControllerTest {
 		Mockito.doThrow(UnpermittedDeletionException.class).when(this.fieldbookMiddlewareService)
 				.deleteStudy(Matchers.anyInt(), Matchers.anyInt());
 
-		final Map<String, Object> result = this.deleteNurseryController
-				.submitDelete(DeleteNurseryControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
-		Assert.assertEquals("The value should be 1", "0", result.get(DeleteNurseryController.IS_SUCCESS));
+		final Map<String, Object> result = this.deleteStudyController
+				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
+		Assert.assertEquals("The value should be 1", "0", result.get(DeleteStudyController.IS_SUCCESS));
 		Assert.assertEquals("The message should be " + message, message, result.get("message"));
 	}
 
@@ -127,8 +129,8 @@ public class DeleteNurseryControllerTest {
 		Mockito.doThrow(Exception.class).when(this.fieldbookMiddlewareService).deleteStudy(Matchers.anyInt(),
 				Matchers.anyInt());
 
-		final Map<String, Object> result = this.deleteNurseryController
-				.submitDelete(DeleteNurseryControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
-		Assert.assertEquals("The value should be 1", "0", result.get(DeleteNurseryController.IS_SUCCESS));
+		final Map<String, Object> result = this.deleteStudyController
+				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
+		Assert.assertEquals("The value should be 1", "0", result.get(DeleteStudyController.IS_SUCCESS));
 	}
 }

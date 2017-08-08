@@ -1,0 +1,73 @@
+<div class="col-xs-10 col-md-10" xmlns:th="http://www.thymeleaf.org" >
+		<div class="modal fade" id="selectEnvironmentToSampleListModal" role="dialog" aria-labelledby="selectEnvironmentToSampleListModal"
+			 ng-controller="SampleListController" aria-hidden="true">
+			<div class="modal-dialog modal-medium">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="row form-group">
+							<div class="col-xs-11 col-md-11">
+								<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{trial.trialdetails.action.create.sample}">Create sample list</label>
+							</div>
+							<div class="col-xs-1 col-md-1">
+								<button  id="closeAdvanceTrialModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+							</div>
+						</div>
+
+						<div class="row form-group">
+							<div id="page-advance-modal-message"></div>
+						</div>
+						<div class="separator"></div>
+						<p></p>
+						<div class="row form-group">
+							<div class="col-xs-12 col-md-12" >
+								<br></br>
+								<label class="" ng-show="locationFromTrial" th:utext="#{trial.select.locations.sample.list}"> Select the locations you would like to sample:</label>
+								<label class="" ng-hide="locationFromTrial" th:utext="#{trial.select.instances.sample.list}"> Select the instances you would like to sample:</label>
+							</div>
+						</div>
+						<br/>
+                        <div id="location-selection">
+
+                                <table class="table table-curved table-condensed fbk-table-with-check fbk-datatable-environments"
+										width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th ng-if="!locationFromTrialSettings">{{settings.managementDetails.val(PREFERRED_LOCATION_VARIABLE).variable.name}}</th>
+                                        <th ng-if="locationFromTrialSettings">{{trialSettings.val(PREFERRED_LOCATION_VARIABLE).variable.name}}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="environment in data.environments" ng-class="{even : $even, odd : $odd}">
+                                        <td><input type="checkbox" name="location" ng-model="trialInstances[$index]"  ng-checked="environment.Selected" ng-true-value="{{environment.managementDetailValues[TRIAL_INSTANCE_INDEX]}}" ng-false-value="{{undefined}}"/></td>
+                                        <td ng-if="!locationFromTrialSettings">{{ environment.managementDetailValues[PREFERRED_LOCATION_VARIABLE] }}</td>
+                                        <td ng-if="locationFromTrialSettings">{{ userInput[PREFERRED_LOCATION_VARIABLE] }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        <div class="col-md-12">
+                            <input type="checkbox" ng-model="selectAll" ng-change="doSelectAll()"/>&nbsp;&nbsp;<label class="fbk-selectall-chk" th:text="#{advancing.trial.select.all}"></label>
+                        </div>
+					</div> <!-- Modal Body -->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
+							Cancel
+						</button>
+						<button type="button" class="btn btn-primary" aria-hidden="true" ng-click="continueCreatingSample()" th:text="#{common.form.continue.text}">
+							Continue
+						</button>
+					</div>
+				</div> <!-- Modal Content -->
+			</div>
+		</div>
+</div>
+
+<div layout:fragment="page-script">
+
+<script type='text/javascript' th:inline="javascript">
+    var selectOneLocationErrorMessage = /*[[#{error.creating.sample.list.trial.instance.selected.atleast.one.location.selected}]]*/ '';
+</script>
+</div>

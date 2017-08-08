@@ -344,11 +344,7 @@
 						$scope.currentDesignType = null;
 						$scope.applicationData.importDesignMappedData = null;
 						$scope.data.designType = '';
-
-						// the following prevents the user from saving before re-generating the design, to avoid having invalid measurement data
-						if (TrialManagerDataService.trialMeasurement.count > 0) {
-							TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
-						}
+						$scope.applicationData.unsavedGeneratedDesign = true;
 					};
 					
 					$scope.$on('importedDesignReset', function() {

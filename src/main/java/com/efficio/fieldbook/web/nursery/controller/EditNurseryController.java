@@ -629,7 +629,7 @@ public class EditNurseryController extends SettingsController {
 
 		final List<SettingDetail> studyLevelVariablesSession = this.userSelection.getBasicDetails();
 		this.userSelection.getStudyLevelConditions().addAll(studyLevelVariablesSession);
-		if (this.userSelection.getRemovedConditions() != null && !this.userSelection.isDesignGenerated()) {
+		if (this.userSelection.getRemovedConditions() != null) {
 			studyLevelVariables.addAll(this.userSelection.getRemovedConditions());
 			this.userSelection.getStudyLevelConditions().addAll(this.userSelection.getRemovedConditions());
 		}

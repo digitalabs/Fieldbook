@@ -3,9 +3,11 @@ package com.efficio.fieldbook.web.nursery.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -291,7 +293,7 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testAddNurseryTypeFromDesignImportWhenNurseryTypeValueIsNull() {
-		final List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
 		Mockito.doReturn(null).when(this.userSelection).getNurseryTypeForDesign();
 		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
 
@@ -300,11 +302,11 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testAddNurseryTypeFromDesignImportWhenNurseryTypeValueHasValue() {
-		final List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
 		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
 
 		Assert.assertNotNull("studyLevelVariables should not be null", studyLevelVariables);
-		final SettingDetail settingDetail = studyLevelVariables.get(0);
+		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
 
 		Assert.assertEquals("Value should be zero but " + settingDetail.getValue(), "0", settingDetail.getValue());
 		Assert.assertNotNull("settingDetail Variable should not be null ", settingDetail.getVariable());
@@ -312,7 +314,7 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testAddNurseryFromDesignImportWhenDesignImportHasValue() {
-		final List<SettingDetail> studyLevelVariables = Arrays.asList(this.initializeSettingDetails(true));
+		final Set<SettingDetail> studyLevelVariables = new HashSet<>(Arrays.asList(this.initializeSettingDetails(true)));
 		final List<Integer> expDesignVariables = new ArrayList<Integer>();
 		expDesignVariables.add(1);
 
@@ -321,7 +323,7 @@ public class EditNurseryControllerTest {
 		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
 
 		Assert.assertEquals("studyLevelVariables' size should be 1", studyLevelVariables.size(), 1);
-		final SettingDetail settingDetail = studyLevelVariables.get(0);
+		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
 
 		Assert.assertNull("SettingDetail value should be null but " + settingDetail.getValue(),
 				settingDetail.getValue());
@@ -330,14 +332,14 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testAddExperimentalDesignTypeFromDesignImportTrue() {
-		final List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
 		final List<Integer> expDesignVariables = new ArrayList<Integer>();
 		expDesignVariables.add(1);
 		Mockito.doReturn(expDesignVariables).when(this.userSelection).getExpDesignVariables();
 		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
 
 		Assert.assertFalse("studyLevelVariables should not be empty", studyLevelVariables.isEmpty());
-		final SettingDetail settingDetail = studyLevelVariables.get(0);
+		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
 
 		Assert.assertEquals("Value should be " + TermId.OTHER_DESIGN.getId() + " but " + settingDetail.getValue(),
 				String.valueOf(TermId.OTHER_DESIGN.getId()), settingDetail.getValue());
@@ -346,7 +348,7 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testAddExperimentalDesignTypeFromDesignImportFalse() {
-		final List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
 		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
 
 		Assert.assertTrue("studyLevelVariables should be empty", studyLevelVariables.isEmpty());
@@ -354,7 +356,7 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testAddExperimentalDesignTypeFromDesignImportUpdate() {
-		final List<SettingDetail> studyLevelVariables = Arrays.asList(this.initializeSettingDetails(false));
+		final Set<SettingDetail> studyLevelVariables = new HashSet<>(Arrays.asList(this.initializeSettingDetails(false)));
 		final List<Integer> expDesignVariables = new ArrayList<Integer>();
 		expDesignVariables.add(1);
 
@@ -363,7 +365,7 @@ public class EditNurseryControllerTest {
 		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
 
 		Assert.assertEquals("studyLevelVariables' size should be 1", studyLevelVariables.size(), 1);
-		final SettingDetail settingDetail = studyLevelVariables.get(0);
+		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
 
 		Assert.assertNull("SettingDetail value should be null but " + settingDetail.getValue(),
 				settingDetail.getValue());

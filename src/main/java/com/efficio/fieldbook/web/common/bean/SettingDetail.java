@@ -307,4 +307,35 @@ public class SettingDetail implements Serializable {
 	public void setAllFavoriteValuesJson(final String allFavoriteValuesJson) {
 		this.allFavoriteValuesJson = allFavoriteValuesJson;
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (this.variable.getCvTermId() == null ? 0 : this.variable.getCvTermId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (this.getClass() != obj.getClass()) {
+			return false;
+		}
+		SettingDetail other = (SettingDetail) obj;
+		if (this.variable.getCvTermId() == null) {
+			if (other.variable.getCvTermId() != null) {
+				return false;
+			}
+		} else if (!this.variable.getCvTermId().equals(other.getVariable().getCvTermId())) {
+			return false;
+		}
+		return true;
+	}
 }

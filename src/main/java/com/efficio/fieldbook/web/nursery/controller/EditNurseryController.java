@@ -12,8 +12,10 @@ package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -620,23 +622,75 @@ public class EditNurseryController extends SettingsController {
 		}
 	}
 
-	private List<SettingDetail> combineStudyConditions(final CreateNurseryForm form) {
-		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
-		if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
-			studyLevelVariables.addAll(form.getStudyLevelVariables());
-		}
-		studyLevelVariables.addAll(form.getBasicDetails());
+	void copyTheRoleAndVariableType(final Set<SettingDetail> studyLevelVariables,
+			List<SettingDetail> studyLevelConditions) {
 
-		final List<SettingDetail> studyLevelVariablesSession = this.userSelection.getBasicDetails();
-		this.userSelection.getStudyLevelConditions().addAll(studyLevelVariablesSession);
+		for (final SettingDetail studyLevelConditionFromUserSelection : studyLevelConditions) {
+			for (final SettingDetail settingDetail : studyLevelVariables) {
+				if (settingDetail.getVariable().getCvTermId().intValue() == studyLevelConditionFromUserSelection.getVariable()
+						.getCvTermId().intValue()) {
+					settingDetail.setRole(studyLevelConditionFromUserSelection.getRole());
+					settingDetail.setVariableType(studyLevelConditionFromUserSelection.getVariableType());
+				}
+			}
+		}
+
+	}
+
+
+	List<SettingDetail> combineStudyLevelVariablesInNurseryForm(final CreateNurseryForm createNurseryForm) {
+
+		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
+
+		if (createNurseryForm.getStudyLevelVariables() != null && !createNurseryForm.getStudyLevelVariables().isEmpty()) {
+			studyLevelVariables.addAll(createNurseryForm.getStudyLevelVariables());
+		}
+
+		studyLevelVariables.addAll(createNurseryForm.getBasicDetails());
+
+		return studyLevelVariables;
+
+	}
+
+	List<SettingDetail> combineStudyLevelConditionsInUserSelection(final UserSelection userSelection) {
+
+		List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
+		studyLevelConditions.addAll(userSelection.getBasicDetails());
+
+		if (userSelection.getRemovedConditions() != null) {
+			studyLevelConditions.addAll(userSelection.getRemovedConditions());
+		}
+
+		return studyLevelConditions;
+
+	}
+
+	List<SettingDetail> combineStudyConditions(final CreateNurseryForm form) {
+
+		// Create a HashSet of SettingDetail to store all study condition variables.
+		// We use the Set class to enforce uniqueness of object when combining/merging variables from
+		// CreateNurseryForm and UserSelection.
+		final Set<SettingDetail> studyLevelVariables = new HashSet<>();
+
+		// Add the SettingDetails from Nursery Form
+		studyLevelVariables.addAll(this.combineStudyLevelVariablesInNurseryForm(form));
+
+		final List<SettingDetail> studyLevelConditions = this.combineStudyLevelConditionsInUserSelection(this.userSelection);
+
+		// Add the SettingDetails from UserSelection
+		studyLevelVariables.addAll(studyLevelConditions);
+
+		// Add the hidden variables (e.g. PI_NAME, LOCATION_NAME, COOPERATOR_NAME)
 		if (this.userSelection.getRemovedConditions() != null) {
 			studyLevelVariables.addAll(this.userSelection.getRemovedConditions());
-			this.userSelection.getStudyLevelConditions().addAll(this.userSelection.getRemovedConditions());
 		}
 
-		this.addStudyLevelVariablesFromUserSelectionIfNecessary(studyLevelVariables, this.userSelection);
+		// Ensure that SettingDetails in studyLevelVariables have Role and VariableType assigned
+		// by copying that information from SettingDetails in UserSelection.
+		this.copyTheRoleAndVariableType(studyLevelVariables, studyLevelConditions);
 
 		this.addNurseryTypeFromDesignImport(studyLevelVariables);
+
 		this.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
 
 		// add hidden variables like OCC in factors list
@@ -644,10 +698,12 @@ public class EditNurseryController extends SettingsController {
 			form.getPlotLevelVariables().addAll(this.userSelection.getRemovedFactors());
 			this.userSelection.getPlotsLevelList().addAll(this.userSelection.getRemovedFactors());
 		}
-		return studyLevelVariables;
+
+		// Return studyLevelVariables as an ArrayList.
+		return new ArrayList<>(studyLevelVariables);
 	}
 
-	void addNurseryTypeFromDesignImport(final List<SettingDetail> studyLevelVariables) {
+	void addNurseryTypeFromDesignImport(final Set<SettingDetail> studyLevelVariables) {
 
 		final SettingDetail nurseryTypeSettingDetail = new SettingDetail();
 		final SettingVariable nurseryTypeSettingVariable = new SettingVariable();
@@ -675,7 +731,7 @@ public class EditNurseryController extends SettingsController {
 
 	}
 
-	void addExperimentalDesignTypeFromDesignImport(final List<SettingDetail> studyLevelVariables) {
+	void addExperimentalDesignTypeFromDesignImport(final Set<SettingDetail> studyLevelVariables) {
 
 		final SettingDetail nurseryTypeSettingDetail = new SettingDetail();
 		final SettingVariable nurseryTypeSettingVariable = new SettingVariable();
@@ -934,31 +990,6 @@ public class EditNurseryController extends SettingsController {
 				&& this.userSelection.getImportedGermplasmMainInfo().getListId() != null
 						? this.userSelection.getImportedGermplasmMainInfo().getListId()
 						: EditNurseryController.NO_LIST_ID;
-	}
-
-	private void addStudyLevelVariablesFromUserSelectionIfNecessary(final List<SettingDetail> studyLevelVariables,
-			final UserSelection userSelection) {
-
-		for (final SettingDetail settingDetailFromUserSelection : userSelection.getStudyLevelConditions()) {
-
-			boolean settingDetailExists = false;
-
-			for (final SettingDetail settingDetail : studyLevelVariables) {
-				if (settingDetail.getVariable().getCvTermId().intValue() == settingDetailFromUserSelection.getVariable()
-						.getCvTermId().intValue()) {
-					settingDetail.setRole(settingDetailFromUserSelection.getRole());
-					settingDetail.setVariableType(settingDetailFromUserSelection.getVariableType());
-					settingDetailExists = true;
-					break;
-				}
-			}
-
-			if (!settingDetailExists) {
-				studyLevelVariables.add(settingDetailFromUserSelection);
-			}
-
-		}
-
 	}
 
 	private void setUpForDesignImport(final SettingDetail nurseryTypeSettingDetail,

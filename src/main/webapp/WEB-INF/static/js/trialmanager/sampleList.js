@@ -115,8 +115,9 @@
         $scope.init = function (idVal, trialInstances) {
             $scope.selectionVariables = TrialManagerDataService.settings.selectionVariables.m_keys;
             $scope.variableRequired = false;
+            $scope.saveSampleListButton = false;
             $scope.data = {
-                dateSampling: {},
+                dateSampling: '',
                 variables: {},
                 variableSelected: undefined
 
@@ -180,6 +181,7 @@
 
         
 		$scope.saveSample = function() {
+            $scope.saveSampleListButton = true;
             $scope.sampleList.studyId = $scope.DDidVal;
             $scope.sampleList.selectionVariableId = $scope.data.variableSelected.id;
             $scope.sampleList.instanceIds = $scope.DDtrialInstances;
@@ -194,6 +196,7 @@
                 });
             }
 
+
             $http.post('/bmsapi/sample/' + cropName + '/sampleList', JSON.stringify($scope.sampleList), config).success(function (data) {
                 $scope.selectedTrialInstancesBySampleList = data;
                 var message = 'Sample list created successfully!';
@@ -201,6 +204,7 @@
                 $('#managerSampleListModal').modal('hide');
             }).error(function () {
                 showErrorMessage('', $.fieldbookMessages.errorSaveSamplesList);
+                $scope.saveSampleListButton = false;
             });
 		};
 

@@ -3,7 +3,7 @@
 
 	<div id="experimental-design-choose-design">
 		<section-container icon="bms-exp-design" heading="Experimental Design">
-			<section-container name="content" heading="{{ toggleDesignView() ? 'DETAILS OF IMPORTED EXPERIMENTAL DESIGN' : 'CHOOSE A DESIGN TYPE'}}">
+			<section-container name="content" heading="{{ toggleDesignView() ? 'DETAILS OF EXPERIMENTAL DESIGN' : 'CHOOSE A DESIGN TYPE'}}">
 				<div class="row" name="content">
 					<div ng-hide="toggleDesignView()">
 						<div class="col-md-12">
@@ -44,21 +44,20 @@
 	            		<div class="col-md-8">
 	            			<div class="add-bottom-padding"
 								ng-show="data.noOfEnvironments &gt;= 0">
-									<b th:text="#{review.trial.design.source}"></b>
-									<span>{{currentDesignType.templateName}}</span>
-	                            <span class="pull-right">
-										<a ng-hide="!currentDesignType.isPreset || data.hasMeasurementData" href="" ng-click="resetExperimentalDesign()"
-	                                   class="btn btn-info chs-add-variable" >Change</a>
-										<a ng-hide="!isImportedDesign() || data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
-										   class="btn btn-info chs-add-variable" th:text="#{design.import.change}">Change</a>
-	                            </span>
-							</div>
-						</div>
-						<div class="col-md-8">
-	            			<div class="add-bottom-padding"
-								ng-show="data.noOfEnvironments &gt;= 0">
-								<b th:text="#{review.trial.design.type}"></b>
-									<span>{{currentDesignType.name}}</span>
+									<div ng-hide="currentDesignType.templateName =='Default Design'">
+										<b th:text="#{review.trial.design.source}"></b>
+										<span>{{currentDesignType.templateName}}</span>
+		                            </div>
+		                            <span class="pull-right">
+											<a ng-hide="!isImportedDesign() || data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
+											   class="btn btn-info chs-add-variable" th:text="#{design.import.change}">Change</a>
+		                            </span>
+		                            <div class="add-bottom-padding"
+										ng-show="data.noOfEnvironments &gt;= 0">
+										<b th:text="#{review.trial.design.type}"></b>
+										<span ng-hide="currentDesignType.templateName =='Default Design'">{{currentDesignType.name}}</span>
+										<span ng-show="currentDesignType.templateName =='Default Design'">Default Design</span>
+									</div>
 							</div>
 						</div>
 				    </div>

@@ -246,6 +246,8 @@ public class DesignImportController extends SettingsController {
 				WorkbookUtil.resetObservationToDefaultDesign(this.userSelection.getTemporaryWorkbook().getObservations());
 			}
 
+			this.userSelection.setDesignImportData(null);
+			this.userSelection.getExpDesignParams().setFileName("Default Design");
 			resultsMap.put(DesignImportController.SUCCESS,
 					this.messageSource.getMessage("design.import.change.design.success.message.trial", null, Locale.ENGLISH));
 		}
@@ -565,9 +567,11 @@ public class DesignImportController extends SettingsController {
 
 		// defaults
 		output.put("name", DesignTypeItem.CUSTOM_IMPORT.getName());
-		final String filename =
-				this.userSelection.getDesignImportData() != null ? this.userSelection.getDesignImportData().getImportFileName()
-						: DesignTypeItem.CUSTOM_IMPORT.getTemplateName();
+		if(!this.userSelection.getExpDesignParams().getFileName().isEmpty()){
+			output.put("templateName", this.userSelection.getExpDesignParams().getFileName());
+			return output;
+		}
+		
 
 		// unsaved but has import design
 		final Workbook workbook = this.userSelection.getWorkbook();
@@ -575,11 +579,11 @@ public class DesignImportController extends SettingsController {
 			// existing design (if saved)
 			final MeasurementVariable expDesignSource = workbook.getExperimentalDesignVariables().getExperimentalDesignSource();
 			output.put("templateName", expDesignSource != null && expDesignSource.getValue() != null
-					&& !expDesignSource.getValue().isEmpty() ? expDesignSource.getValue() : filename);
-		} else if (filename != null) {
-			output.put("templateName", filename);
+					&& !expDesignSource.getValue().isEmpty() ? expDesignSource.getValue() : "Default Design");
+		} else {
+			output.put("templateName", "Default Design");
 		}
-
+		
 		return output;
 	}
 

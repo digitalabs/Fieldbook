@@ -50,7 +50,6 @@
 						</div>
 						<br></br>
 					</div>
-					Selected ID:  {{selectedUser}}
 					<div class="row form-group">
 						<div class="col-xs-6 col-md-6">
 							<label class="control-label add_top_padding label-bold" th:text="#{trial.sampling.date.sample.list}">Sampling
@@ -58,10 +57,7 @@
 						</div>
 						<div class="col-xs-4 col-md-4">
 							<p class="input-group">
-							<input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px" type="text"
-								   ng-model="data.dateSampling" jq-datepicker=""
-								   set-current-date-as-default="true" data-date-format="yyyy-mm-dd" with-image="true"
-								   image-src="/Fieldbook/static/img/calendar.png"/>
+							<input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.dateSampling" jq-datepicker="" set-current-date-as-default="true" data-date-format="yyyy-mm-dd" with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
 							</p>
 						</div>
 					</div>
@@ -70,7 +66,7 @@
 					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="backToCreateSample()" th:text="#{common.form.back.text}">
 						Back
 					</button>
-					<button type="button" class="btn btn-primary"  ng-disabled="data.variableSelected === 'Please Choose'"  aria-hidden="true" ng-click="saveSample()" th:text="#{common.form.save.text}">
+					<button type="button" class="btn btn-primary"  ng-disabled="data.variableSelected === undefined" ng-click="saveSample()" th:text="#{common.form.save.text}">
 						Save
 					</button>
 				</div>
@@ -83,6 +79,6 @@
 <div layout:fragment="page-script">
 
 	<script type='text/javascript' th:inline="javascript">
-		var selectOneLocationErrorMessage = /*[[#{error.creating.sample.list.trial.instance.selected.atleast.one.location.selected}]]*/ '';
+		var selectOneLocationErrorMessage = /*[[#{error.creating.sample.list.trial.instance.selected.at.least.one.location.selected}]]*/ '';
 	</script>
 </div>

@@ -1025,7 +1025,6 @@ function advanceTrial() {
 
 function createSample() {
 	'use strict';
-
 	if ($('.import-study-data').data('data-import') === '1') {
 		showErrorMessage('', needSaveImportDataError);
 		return;
@@ -1049,16 +1048,14 @@ function trialSelectEnvironmentContinueAdvancing(trialInstances, noOfReplication
 }
 
 
-function trialSelectedEnvironmentContinueCreatingSample(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed) {
+function trialSelectedEnvironmentContinueCreatingSample(trialInstances) {
 	'use strict';
 	var idVal = $('#studyId').val();
 	$('#selectEnvironmentToSampleListModal').modal('hide');
-	var locationDetailHtml = generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed);
-	//advanceStudy(idVal, trialInstances, noOfReplications, locationDetailHtml);
-	var scope = angular.element('#managerSampleListModal').scope();
-    scope.init();
-	$('#managerSampleListModal').modal('show');
 
+	var scope = angular.element('#managerSampleListModal').scope();
+    scope.init(idVal, trialInstances);
+    $('#managerSampleListModal').modal('show');
 
 }
 

@@ -4,17 +4,18 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SampleListController', ['$scope', 'TrialManagerDataService', 'environmentService', function($scope,
-	TrialManagerDataService, environmentService) {
+    manageTrialApp.controller('SampleListController', ['$scope', 'TrialManagerDataService', function ($scope,
+                                                                                                      TrialManagerDataService) {
 
+        $scope.selectedTrialInstancesBySampleList = [];
 		$scope.settings = TrialManagerDataService.settings.environments;
+
 		if (Object.keys($scope.settings).length === 0) {
 			$scope.settings = {};
 			$scope.settings.managementDetails = [];
 			$scope.settings.trialConditionDetails = [];
 		}
 
-		$scope.userInput = TrialManagerDataService.currentData.trialSettings.userInput;
 		$scope.trialSettings = TrialManagerDataService.settings.trialSettings;
 
 		$scope.TRIAL_LOCATION_NAME_INDEX = 8180;
@@ -24,141 +25,147 @@
 
 		$scope.data = TrialManagerDataService.currentData.environments;
 
-		$scope.trialInstances = [];
-
-		$scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.replicationsCount;
-
 		//NOTE: Continue action for navigate from Locations to Sample List Modal
-		$scope.continueCreatingSample = function() {
+        $scope.continueCreatingSampleList = function () {
 
-			var isTrialInstanceSelected = false;
-			var selectedTrialInstances = [];
-			var selectedLocationDetails = [];
-			angular.forEach($scope.trialInstances, function(id) {
-				if (id && !isTrialInstanceSelected) {
-					isTrialInstanceSelected = true;
-				}
-			});
-
-			if (!isTrialInstanceSelected) {
-				showErrorMessage('', selectOneLocationErrorMessage);
-			} else {
-				if ($scope.locationFromTrialSettings) {
-					selectedLocationDetails
-						.push($scope.trialSettings.val($scope.PREFERRED_LOCATION_VARIABLE).variable.name);
-				} else {
-					selectedLocationDetails
-						.push($scope.settings.managementDetails.val($scope.PREFERRED_LOCATION_VARIABLE).variable.name);
-				}
-
-				angular.forEach($scope.trialInstances, function(trialInstanceNumber, idx) {
-					if (trialInstanceNumber) {
-						selectedTrialInstances.push(trialInstanceNumber);
-
-						if ($scope.locationFromTrialSettings) {
-							selectedLocationDetails.push($scope.userInput[$scope.PREFERRED_LOCATION_VARIABLE]);
-						} else {
-							angular.forEach($scope.data.environments, function(env, position) {
-								if (position === idx) {
-									selectedLocationDetails.push(env.managementDetailValues[$scope.PREFERRED_LOCATION_VARIABLE]);
-								}
-							});
-						}
-
-					}
-				});
-
-				var isTrialInstanceNumberUsed = false;
-				if ($scope.PREFERRED_LOCATION_VARIABLE === 8170) {
-					isTrialInstanceNumberUsed = true;
-				}
-				trialSelectedEnvironmentContinueCreatingSample(selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
-					isTrialInstanceNumberUsed);
-			}
-
-		};
+            if ($scope.selectedTrialInstancesBySampleList.length === 0) {
+                showErrorMessage('', selectOneLocationErrorMessage);
+            }
+            trialSelectedEnvironmentContinueCreatingSample($scope.selectedTrialInstancesBySampleList);
+        };
 
 		$scope.doSelectAll = function() {
-			$scope.trialInstances = [];
-			$scope.trialInstancesName = [];
 			if ($scope.selectAll) {
 				$scope.selectAll = true;
 			} else {
-				$scope.selectAll = false;
-				$scope.trialInstances = [];
+                $scope.selectAll = false;
 			}
 			angular.forEach($scope.data.environments, function(env) {
 				env.Selected = $scope.selectAll;
 				if ($scope.selectAll) {
-					$scope.trialInstances.push(env.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX]);
-				}
-			});
+				    if(!$scope.selectedTrialInstancesBySampleList.includes(String(env.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX]))){
+                        $scope.doSelectInstance(env.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX]);
+                    }
+				}else{
+                    $scope.doSelectInstance(env.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX]);
+                }
+            });
 
 		};
 
-		$scope.init = function() {
-			$scope.locationFromTrialSettings = false;
-			$scope.locationFromTrial = false;
-          //  $scope.changeEnvironments();
-			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
-				// LOCATION_NAME from environments
-				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
-				$scope.locationFromTrial = true;
-			} else if ($scope.trialSettings.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
-				// LOCATION_NAME from trial settings
-				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
-				$scope.locationFromTrialSettings = true;
-			} else {
-				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_INDEX;
-			}
-		};
-		$scope.init();
+        $scope.doSelectInstance = function (trialInstance) {
+            if ($scope.selectedTrialInstancesBySampleList.length != 0) {
+                if ($scope.selectedTrialInstancesBySampleList.includes(String(trialInstance))) {
+                    for (var i = $scope.selectedTrialInstancesBySampleList.length - 1; i >= 0; i--) {
+                        if ($scope.selectedTrialInstancesBySampleList[i].includes(String(trialInstance))) {
+                            $scope.selectedTrialInstancesBySampleList.splice(i, 1);
+                            $scope.selectAll = false;
+                        }
+                    }
+                } else {
+                    $scope.selectedTrialInstancesBySampleList.push(trialInstance);
+                }
+
+            } else {
+                $scope.selectedTrialInstancesBySampleList.push(trialInstance);
+            }
+        };
+
+        $scope.init = function () {
+            $scope.locationFromTrialSettings = false;
+            $scope.locationFromTrial = false;
+
+            if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
+                // LOCATION_NAME from environments
+                $scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
+                $scope.locationFromTrial = true;
+            } else if ($scope.trialSettings.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
+                // LOCATION_NAME from trial settings
+                $scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
+
+                $scope.locationFromTrialSettings = true;
+            } else {
+                $scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_INDEX;
+            }
+        };
+        $scope.init();
 	}]);
 
     manageTrialApp.controller('ManagerSampleListController', ['$scope', 'TrialManagerDataService', '$http', function ($scope,
                                                                                                                       TrialManagerDataService, $http) {
-        $scope.variableRequired = false;
-		$scope.data = {
-            dateSampling: {},
-			variables: {},
-            variableSelected: null
+        var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
+        var config = {
+            headers: {
+                'X-Auth-Token': xAuthToken
+            }
         };
 
 		$scope.backToCreateSample = function() {
-			$('#managerSampleModal').modal('hide');
+			$('#managerSampleListModal').modal('hide');
 			$('#selectEnvironmentToSampleListModal').modal('show');
         }
 
 		$scope.openToCalendar = function($event) {
 			$event.preventDefault();
 			$event.stopPropagation();
-
-			//$scope.data.toCalendarOpened = true;
 		};
 
 		// TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
-        $scope.init = function () {
-            var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+        $scope.init = function (idVal, trialInstances) {
+            $scope.selectionVariables = TrialManagerDataService.settings.selectionVariables.m_keys;
+            $scope.variableRequired = false;
+            $scope.data = {
+                dateSampling: {},
+                variables: {},
+                variableSelected: undefined
 
-            var config = {
-                headers: {
-                    'X-Auth-Token': xAuthToken
-                }
             };
-            $http.get('/bmsapi/ontology/' + cropName + '/filtervariables?programId=' + currentProgramId + '&dataTypeIds=1110&variableTypeIds=1801',config).success(function (data) {
-                $scope.data.variables = data;
-            }).error(function () {
+
+            $scope.selectedTrialInstancesBySampleList = {};
+            $scope.sampleList = {
+                "description": "",
+                "notes": "",
+                "createdBy": "",
+                "selectionVariableId": 0,
+                "instanceIds": [
+                    0
+                ],
+                "takenBy": "",
+                "samplingDate": "",
+                "studyId": 0,
+                "cropName": ""
+            };
+
+
+            $scope.DDidVal = idVal;
+            $scope.DDtrialInstances = trialInstances;
+
+            if ($scope.selectionVariables.length !== 0) {
+                $http.get('/bmsapi/ontology/' + cropName + '/filtervariables?programId=' + currentProgramId + '&dataTypeIds=1110&variableTypeIds=1807', config).success(function (data) {
+                    $scope.data.variables = data;
+
+                    for (var i = $scope.data.variables.length - 1; i >= 0; i--) {
+                        if (!$scope.selectionVariables.includes(parseInt($scope.data.variables[i].id))) {
+                            $scope.data.variables.splice(i, 1);
+                        }
+                    }
+
+                }).error(function () {
+                    showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
+                    $scope.data.variables = {};
+                    $scope.variableSelected = undefined;
+                    $scope.variableRequired = true;
+                });
+            }else{
                 showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
-                $scope.variableSelected = [];
                 $scope.variableRequired = true;
-            });
+            }
 
-
-            $http.get('/bmsapi/user/list?projectUUID=' + currentProgramId ,config).success(function (data) {
+            $http.get('/bmsapi/user/list?projectUUID=' + currentProgramId, config).success(function (data) {
                 $scope.users = data;
 
-                angular.forEach($scope.users, function(user) {
+                angular.forEach($scope.users, function (user) {
                     if (user.id === loggedInUserId) {
                         $scope.selectedUser = user.id;
                     }
@@ -173,9 +180,30 @@
 
         
 		$scope.saveSample = function() {
-            var message = 'Sample list created successfully!';
+            $scope.sampleList.studyId = $scope.DDidVal;
+            $scope.sampleList.selectionVariableId = $scope.data.variableSelected.id;
+            $scope.sampleList.instanceIds = $scope.DDtrialInstances;
+            $scope.sampleList.samplingDate = $scope.data.dateSampling;
+            $scope.sampleList.cropName = cropName;
+
+            if ($scope.selectedUser !== null) {
+                angular.forEach($scope.users, function (user) {
+                    if (user.id === $scope.selectedUser) {
+                        $scope.sampleList.takenBy = user.username;
+                    }
+                });
+            }
+
+            $http.post('/bmsapi/sample/' + cropName + '/sampleList', JSON.stringify($scope.sampleList), config).success(function (data) {
+                $scope.selectedTrialInstancesBySampleList = data;
+                var message = 'Sample list created successfully!';
                 showSuccessfulMessage('', message);
+                $('#managerSampleListModal').modal('hide');
+            }).error(function () {
+                showErrorMessage('', $.fieldbookMessages.errorSaveSamplesList);
+            });
 		};
 
 	}]);
+
 })();

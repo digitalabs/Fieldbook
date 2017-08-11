@@ -8,24 +8,23 @@
                                                                                                       TrialManagerDataService) {
 
         $scope.selectedTrialInstancesBySampleList = [];
-		$scope.settings = TrialManagerDataService.settings.environments;
+        $scope.settings = TrialManagerDataService.settings.environments;
 
-		if (Object.keys($scope.settings).length === 0) {
-			$scope.settings = {};
-			$scope.settings.managementDetails = [];
-			$scope.settings.trialConditionDetails = [];
-		}
+        if (Object.keys($scope.settings).length === 0) {
+            $scope.settings = {};
+            $scope.settings.managementDetails = [];
+            $scope.settings.trialConditionDetails = [];
+        }
 
-		$scope.trialSettings = TrialManagerDataService.settings.trialSettings;
+        $scope.trialSettings = TrialManagerDataService.settings.trialSettings;
 
-		$scope.TRIAL_LOCATION_NAME_INDEX = 8180;
-		$scope.TRIAL_INSTANCE_INDEX = 8170;
-		$scope.PREFERRED_LOCATION_VARIABLE = 8170;
-		$scope.LOCATION_NAME_ID = 8190;
+        $scope.TRIAL_LOCATION_NAME_ID = 8180;
+        $scope.TRIAL_INSTANCE_ID = 8170;
+        $scope.PREFERRED_LOCATION_VARIABLE = 8170;
+        $scope.LOCATION_NAME_ID = 8190;
 
-		$scope.data = TrialManagerDataService.currentData.environments;
+        $scope.data = TrialManagerDataService.currentData.environments;
 
-		//NOTE: Continue action for navigate from Locations to Sample List Modal
         $scope.continueCreatingSampleList = function () {
 
             if ($scope.selectedTrialInstancesBySampleList.length === 0) {
@@ -34,24 +33,24 @@
             trialSelectedEnvironmentContinueCreatingSample($scope.selectedTrialInstancesBySampleList);
         };
 
-		$scope.doSelectAll = function() {
-			if ($scope.selectAll) {
-				$scope.selectAll = true;
-			} else {
+        $scope.doSelectAll = function () {
+            if ($scope.selectAll) {
+                $scope.selectAll = true;
+            } else {
                 $scope.selectAll = false;
-			}
-			angular.forEach($scope.data.environments, function(env) {
-				env.Selected = $scope.selectAll;
-				if ($scope.selectAll) {
-				    if(!$scope.selectedTrialInstancesBySampleList.includes(String(env.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX]))){
-                        $scope.doSelectInstance(env.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX]);
+            }
+            angular.forEach($scope.data.environments, function (env) {
+                env.Selected = $scope.selectAll;
+                if ($scope.selectAll) {
+                    if (!$scope.selectedTrialInstancesBySampleList.includes(String(env.managementDetailValues[$scope.TRIAL_INSTANCE_ID]))) {
+                        $scope.doSelectInstance(env.managementDetailValues[$scope.TRIAL_INSTANCE_ID]);
                     }
-				}else{
-                    $scope.doSelectInstance(env.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX]);
+                } else {
+                    $scope.doSelectInstance(env.managementDetailValues[$scope.TRIAL_INSTANCE_ID]);
                 }
             });
 
-		};
+        };
 
         $scope.doSelectInstance = function (trialInstance) {
             if ($scope.selectedTrialInstancesBySampleList.length != 0) {
@@ -75,21 +74,21 @@
             $scope.locationFromTrialSettings = false;
             $scope.locationFromTrial = false;
 
-            if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
+            if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_ID) != null) {
                 // LOCATION_NAME from environments
-                $scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
+                $scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_ID;
                 $scope.locationFromTrial = true;
-            } else if ($scope.trialSettings.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
+            } else if ($scope.trialSettings.val($scope.TRIAL_LOCATION_NAME_ID) != null) {
                 // LOCATION_NAME from trial settings
-                $scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
+                $scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_ID;
 
                 $scope.locationFromTrialSettings = true;
             } else {
-                $scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_INDEX;
+                $scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_ID;
             }
         };
         $scope.init();
-	}]);
+    }]);
 
     manageTrialApp.controller('ManagerSampleListController', ['$scope', 'TrialManagerDataService', '$http', function ($scope,
                                                                                                                       TrialManagerDataService, $http) {
@@ -101,17 +100,17 @@
             }
         };
 
-		$scope.backToCreateSample = function() {
-			$('#managerSampleListModal').modal('hide');
-			$('#selectEnvironmentToSampleListModal').modal('show');
+        $scope.backToCreateSample = function () {
+            $('#managerSampleListModal').modal('hide');
+            $('#selectEnvironmentToSampleListModal').modal('show');
         }
 
-		$scope.openToCalendar = function($event) {
-			$event.preventDefault();
-			$event.stopPropagation();
-		};
+        $scope.openToCalendar = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+        };
 
-		// TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
+        // TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
         $scope.init = function (trialStudyId, trialInstances) {
             $scope.studyId = trialStudyId;
             $scope.instances = trialInstances;
@@ -122,9 +121,8 @@
 
             $scope.variables = [];
             $scope.variableSelected = undefined;
-
-
             $scope.sampleForm.$setPristine();
+
             if ($scope.selectionVariables.length !== 0) {
                 angular.forEach($scope.selectionVariables, function (variableId) {
                     if (TrialManagerDataService.settings.selectionVariables.m_vals[parseInt(variableId)].variable.dataType === "Numeric") {
@@ -132,6 +130,7 @@
                     }
                 });
             }
+
             if ($scope.variables.length === 0) {
                 showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
                 $scope.sampleForm.selectVariableManageSample.$setDirty();
@@ -151,7 +150,7 @@
             });
         };
 
-		$scope.saveSample = function() {
+        $scope.saveSample = function () {
             $scope.saveSampleListButton = true;
             $scope.sampleList = {
                 "description": "",
@@ -176,12 +175,11 @@
             $http.post('/bmsapi/sample/' + cropName + '/sampleList', JSON.stringify($scope.sampleList), config).success(function (data) {
                 var message = 'Sample list created successfully!';
                 showSuccessfulMessage('', message);
-            }).error(function () {
-                showErrorMessage('', $.fieldbookMessages.errorSaveSamplesList);
+            }).error(function (data) {
+                showErrorMessage('', data.errors[0].message);
                 $scope.saveSampleListButton = false;
             });
             $('#managerSampleListModal').modal('hide');
         };
-	}]);
-
+    }]);
 })();

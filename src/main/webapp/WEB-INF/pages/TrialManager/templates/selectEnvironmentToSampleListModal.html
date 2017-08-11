@@ -46,9 +46,9 @@
 							<tbody>
 							<tr ng-repeat="environment in data.environments" ng-class="{even : $even, odd : $odd}">
 								<td><input type="checkbox"
-										   ng-change="doSelectInstance(environment.managementDetailValues[TRIAL_INSTANCE_INDEX])"
+										   ng-change="doSelectInstance(environment.managementDetailValues[TRIAL_INSTANCE_ID])"
 										   name="location" ng-model="trialInstances[$index]" ng-checked="environment.Selected"
-										   ng-true-value="{{environment.managementDetailValues[TRIAL_INSTANCE_INDEX]}}"
+										   ng-true-value="{{environment.managementDetailValues[TRIAL_INSTANCE_ID]}}"
 										   ng-false-value="{{undefined}}"/></td>
 								<td ng-if="!locationFromTrialSettings">{{ environment.managementDetailValues[PREFERRED_LOCATION_VARIABLE]
 									}}

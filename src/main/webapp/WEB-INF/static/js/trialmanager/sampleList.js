@@ -92,6 +92,8 @@
 
 	manageTrialApp.controller('ManagerSampleListController', ['$scope', 'TrialManagerDataService', '$http', function ($scope,
 																													  TrialManagerDataService, $http) {
+
+		// TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 		var config = {

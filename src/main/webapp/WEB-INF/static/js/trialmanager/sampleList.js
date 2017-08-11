@@ -116,8 +116,9 @@
             $scope.selectionVariables = TrialManagerDataService.settings.selectionVariables.m_keys;
             $scope.variableRequired = false;
             $scope.saveSampleListButton = false;
+            $scope.dateSampling = '';
+
             $scope.data = {
-                dateSampling: '',
                 variables: {},
                 variableSelected: undefined
 
@@ -161,6 +162,7 @@
             }else{
                 showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
                 $scope.variableRequired = true;
+                $scope.sampleForm.selectVariableManageSample.$setDirty();
             }
 
             $http.get('/bmsapi/user/list?projectUUID=' + currentProgramId, config).success(function (data) {
@@ -185,7 +187,7 @@
             $scope.sampleList.studyId = $scope.DDidVal;
             $scope.sampleList.selectionVariableId = $scope.data.variableSelected.id;
             $scope.sampleList.instanceIds = $scope.DDtrialInstances;
-            $scope.sampleList.samplingDate = $scope.data.dateSampling;
+            $scope.sampleList.samplingDate = $scope.dateSampling;
             $scope.sampleList.cropName = cropName;
 
             if ($scope.selectedUser !== null) {

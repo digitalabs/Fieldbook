@@ -1067,9 +1067,8 @@ function trialSelectedEnvironmentContinueCreatingSample(trialInstances) {
     });
 
     $('#managerSampleListModal').on('shown.bs.modal', function () {
-        $('#sampleSelectSamplingDate').datepicker({ dateFormat: "yyyy-mm-dd"}).val('');
+        $('#sampleSelectSamplingDate').datepicker({dateFormat: "yyyy-mm-dd"}).val('');
     });
-
 }
 
 function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed) {

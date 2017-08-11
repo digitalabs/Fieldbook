@@ -112,19 +112,16 @@
 		};
 
 		// TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
-        $scope.init = function (idVal, trialInstances) {
+        $scope.init = function (trialStudyId, trialInstances) {
+            $scope.studyId = trialStudyId;
+            $scope.instances = trialInstances;
+
             $scope.selectionVariables = TrialManagerDataService.settings.selectionVariables.m_keys;
-            $scope.variableRequired = false;
             $scope.saveSampleListButton = false;
             $scope.dateSampling = '';
 
-            $scope.data = {
-                variables: {},
-                variableSelected: undefined
-
-            };
-
-            $scope.selectedTrialInstancesBySampleList = {};
+            $scope.variables = {};
+            $scope.variableSelected = undefined;
             $scope.sampleList = {
                 "description": "",
                 "notes": "",
@@ -139,29 +136,24 @@
                 "cropName": ""
             };
 
-
-            $scope.DDidVal = idVal;
-            $scope.DDtrialInstances = trialInstances;
-
+            $scope.sampleForm.$setPristine();
             if ($scope.selectionVariables.length !== 0) {
                 $http.get('/bmsapi/ontology/' + cropName + '/filtervariables?programId=' + currentProgramId + '&dataTypeIds=1110&variableTypeIds=1807', config).success(function (data) {
-                    $scope.data.variables = data;
+                    $scope.variables = data;
 
-                    for (var i = $scope.data.variables.length - 1; i >= 0; i--) {
-                        if (!$scope.selectionVariables.includes(parseInt($scope.data.variables[i].id))) {
-                            $scope.data.variables.splice(i, 1);
+                    for (var i = $scope.variables.length - 1; i >= 0; i--) {
+                        if (!$scope.selectionVariables.includes(parseInt($scope.variables[i].id))) {
+                            $scope.variables.splice(i, 1);
                         }
                     }
 
                 }).error(function () {
                     showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
-                    $scope.data.variables = {};
+                    $scope.variables = {};
                     $scope.variableSelected = undefined;
-                    $scope.variableRequired = true;
                 });
-            }else{
+            } else {
                 showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
-                $scope.variableRequired = true;
                 $scope.sampleForm.selectVariableManageSample.$setDirty();
             }
 
@@ -177,16 +169,13 @@
                 showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
                 $scope.selectedUser = [];
             });
-
-
         };
 
-        
 		$scope.saveSample = function() {
             $scope.saveSampleListButton = true;
-            $scope.sampleList.studyId = $scope.DDidVal;
-            $scope.sampleList.selectionVariableId = $scope.data.variableSelected.id;
-            $scope.sampleList.instanceIds = $scope.DDtrialInstances;
+            $scope.sampleList.studyId = $scope.studyId;
+            $scope.sampleList.selectionVariableId = $scope.variableSelected.id;
+            $scope.sampleList.instanceIds = $scope.instances;
             $scope.sampleList.samplingDate = $scope.dateSampling;
             $scope.sampleList.cropName = cropName;
 
@@ -198,18 +187,15 @@
                 });
             }
 
-
             $http.post('/bmsapi/sample/' + cropName + '/sampleList', JSON.stringify($scope.sampleList), config).success(function (data) {
-                $scope.selectedTrialInstancesBySampleList = data;
                 var message = 'Sample list created successfully!';
                 showSuccessfulMessage('', message);
-                $('#managerSampleListModal').modal('hide');
             }).error(function () {
                 showErrorMessage('', $.fieldbookMessages.errorSaveSamplesList);
                 $scope.saveSampleListButton = false;
             });
-		};
-
+            $('#managerSampleListModal').modal('hide');
+        };
 	}]);
 
 })();

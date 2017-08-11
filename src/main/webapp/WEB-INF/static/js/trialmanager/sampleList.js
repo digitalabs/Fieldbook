@@ -120,39 +120,19 @@
             $scope.saveSampleListButton = false;
             $scope.dateSampling = '';
 
-            $scope.variables = {};
+            $scope.variables = [];
             $scope.variableSelected = undefined;
-            $scope.sampleList = {
-                "description": "",
-                "notes": "",
-                "createdBy": "",
-                "selectionVariableId": 0,
-                "instanceIds": [
-                    0
-                ],
-                "takenBy": "",
-                "samplingDate": "",
-                "studyId": 0,
-                "cropName": ""
-            };
+
 
             $scope.sampleForm.$setPristine();
             if ($scope.selectionVariables.length !== 0) {
-                $http.get('/bmsapi/ontology/' + cropName + '/filtervariables?programId=' + currentProgramId + '&dataTypeIds=1110&variableTypeIds=1807', config).success(function (data) {
-                    $scope.variables = data;
-
-                    for (var i = $scope.variables.length - 1; i >= 0; i--) {
-                        if (!$scope.selectionVariables.includes(parseInt($scope.variables[i].id))) {
-                            $scope.variables.splice(i, 1);
-                        }
+                angular.forEach($scope.selectionVariables, function (variableId) {
+                    if (TrialManagerDataService.settings.selectionVariables.m_vals[parseInt(variableId)].variable.dataType === "Numeric") {
+                        $scope.variables.push(TrialManagerDataService.settings.selectionVariables.m_vals[parseInt(variableId)].variable);
                     }
-
-                }).error(function () {
-                    showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
-                    $scope.variables = {};
-                    $scope.variableSelected = undefined;
                 });
-            } else {
+            }
+            if ($scope.variables.length === 0) {
                 showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
                 $scope.sampleForm.selectVariableManageSample.$setDirty();
             }
@@ -173,11 +153,17 @@
 
 		$scope.saveSample = function() {
             $scope.saveSampleListButton = true;
-            $scope.sampleList.studyId = $scope.studyId;
-            $scope.sampleList.selectionVariableId = $scope.variableSelected.id;
-            $scope.sampleList.instanceIds = $scope.instances;
-            $scope.sampleList.samplingDate = $scope.dateSampling;
-            $scope.sampleList.cropName = cropName;
+            $scope.sampleList = {
+                "description": "",
+                "notes": "",
+                "createdBy": "",
+                "selectionVariableId": $scope.variableSelected.cvTermId,
+                "instanceIds": $scope.instances,
+                "takenBy": "",
+                "samplingDate": $scope.dateSampling,
+                "studyId": $scope.studyId,
+                "cropName": cropName
+            };
 
             if ($scope.selectedUser !== null) {
                 angular.forEach($scope.users, function (user) {

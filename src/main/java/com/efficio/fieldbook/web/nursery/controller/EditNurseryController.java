@@ -448,7 +448,7 @@ public class EditNurseryController extends SettingsController {
 		}
 		// combine all study conditions (basic details and management details
 		// and hidden variables)
-		final List<SettingDetail> studyLevelVariables = this.combineStudyConditions(form);
+		final List<SettingDetail> studyLevelVariables = this.combineStudyConditions(form, this.userSelection);
 
 		// combine all variates (traits and selection variates)
 		final List<SettingDetail> baselineTraits = this.combineVariates(form);
@@ -665,7 +665,7 @@ public class EditNurseryController extends SettingsController {
 
 	}
 
-	List<SettingDetail> combineStudyConditions(final CreateNurseryForm form) {
+	List<SettingDetail> combineStudyConditions(final CreateNurseryForm form, final UserSelection userSelection) {
 
 		// Create a HashSet of SettingDetail to store all study condition variables.
 		// We use the Set class to enforce uniqueness of object when combining/merging variables from
@@ -675,40 +675,36 @@ public class EditNurseryController extends SettingsController {
 		// Add the SettingDetails from Nursery Form
 		studyLevelVariables.addAll(this.combineStudyLevelVariablesInNurseryForm(form));
 
-		final List<SettingDetail> studyLevelConditions = this.combineStudyLevelConditionsInUserSelection(this.userSelection);
+		final List<SettingDetail> studyLevelConditions = this.combineStudyLevelConditionsInUserSelection(userSelection);
 
 		// Add the SettingDetails from UserSelection
 		studyLevelVariables.addAll(studyLevelConditions);
 
 		// Add the hidden variables (e.g. PI_NAME, LOCATION_NAME, COOPERATOR_NAME)
-		if (this.userSelection.getRemovedConditions() != null) {
-			studyLevelVariables.addAll(this.userSelection.getRemovedConditions());
+		if (userSelection.getRemovedConditions() != null) {
+			studyLevelVariables.addAll(userSelection.getRemovedConditions());
 		}
 
 		// Ensure that SettingDetails in studyLevelVariables have Role and VariableType assigned
 		// by copying that information from SettingDetails in UserSelection.
 		this.copyTheRoleAndVariableType(studyLevelVariables, studyLevelConditions);
 
-		this.addNurseryTypeFromDesignImport(studyLevelVariables);
+		this.addNurseryTypeFromDesignImport(studyLevelVariables, userSelection);
 
-		this.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
+		this.addExperimentalDesignTypeFromDesignImport(studyLevelVariables, userSelection);
 
-		// add hidden variables like OCC in factors list
-		if (this.userSelection.getRemovedFactors() != null) {
-			form.getPlotLevelVariables().addAll(this.userSelection.getRemovedFactors());
-			this.userSelection.getPlotsLevelList().addAll(this.userSelection.getRemovedFactors());
-		}
+		this.addHiddenVariablesToFactorsListInFormAndSession(form, userSelection);
 
 		// Return studyLevelVariables as an ArrayList.
 		return new ArrayList<>(studyLevelVariables);
 	}
 
-	void addNurseryTypeFromDesignImport(final Set<SettingDetail> studyLevelVariables) {
+	void addNurseryTypeFromDesignImport(final Set<SettingDetail> studyLevelVariables, final UserSelection userSelection) {
 
 		final SettingDetail nurseryTypeSettingDetail = new SettingDetail();
 		final SettingVariable nurseryTypeSettingVariable = new SettingVariable();
 
-		final Integer nurseryTypeValue = this.userSelection.getNurseryTypeForDesign();
+		final Integer nurseryTypeValue = userSelection.getNurseryTypeForDesign();
 
 		this.setUpForDesignImport(nurseryTypeSettingDetail, nurseryTypeSettingVariable,
 				String.valueOf(nurseryTypeValue), TermId.NURSERY_TYPE.getId(), "NURSERY_TYPE");
@@ -719,7 +715,7 @@ public class EditNurseryController extends SettingsController {
 				if (settingDetail.getVariable().getCvTermId() == TermId.NURSERY_TYPE.getId()) {
 					settingDetail.setValue(String.valueOf(nurseryTypeValue));
 					settingDetail.getVariable().setName("NURSERY_TYPE");
-					this.userSelection.setNurseryTypeForDesign(null);
+					userSelection.setNurseryTypeForDesign(null);
 					return;
 				}
 			}
@@ -727,11 +723,11 @@ public class EditNurseryController extends SettingsController {
 			studyLevelVariables.add(nurseryTypeSettingDetail);
 		}
 
-		this.userSelection.setNurseryTypeForDesign(null);
+		userSelection.setNurseryTypeForDesign(null);
 
 	}
 
-	void addExperimentalDesignTypeFromDesignImport(final Set<SettingDetail> studyLevelVariables) {
+	void addExperimentalDesignTypeFromDesignImport(final Set<SettingDetail> studyLevelVariables, final UserSelection userSelection) {
 
 		final SettingDetail nurseryTypeSettingDetail = new SettingDetail();
 		final SettingVariable nurseryTypeSettingVariable = new SettingVariable();
@@ -740,8 +736,8 @@ public class EditNurseryController extends SettingsController {
 				String.valueOf(TermId.OTHER_DESIGN.getId()), TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
 				"EXPERIMENT_DESIGN");
 
-		if (this.userSelection.getExpDesignVariables() != null
-				&& !this.userSelection.getExpDesignVariables().isEmpty()) {
+		if (userSelection.getExpDesignVariables() != null
+				&& !userSelection.getExpDesignVariables().isEmpty()) {
 
 			for (final SettingDetail settingDetail : studyLevelVariables) {
 				if (settingDetail.getVariable().getCvTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
@@ -752,6 +748,16 @@ public class EditNurseryController extends SettingsController {
 			}
 
 			studyLevelVariables.add(nurseryTypeSettingDetail);
+		}
+
+	}
+
+	void addHiddenVariablesToFactorsListInFormAndSession(final CreateNurseryForm form, final UserSelection userSelection) {
+
+		// Add hidden variables like OCC in factors list
+		if (userSelection.getRemovedFactors() != null) {
+			form.getPlotLevelVariables().addAll(userSelection.getRemovedFactors());
+			userSelection.getPlotsLevelList().addAll(userSelection.getRemovedFactors());
 		}
 
 	}

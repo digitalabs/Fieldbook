@@ -291,11 +291,104 @@ public class EditNurseryControllerTest {
 		Mockito.verify(this.fieldbookMiddlewareService).getFolderNameById(EditNurseryControllerTest.CHILD_FOLDER_ID);
 	}
 
+
+	@Test
+	public void testCombineStudyLevelVariablesInNurseryForm() {
+
+
+		final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
+		createNurseryForm.setStudyLevelVariables(Arrays.asList(this.createSettingDetail(TermId.COOPERATOOR_ID.getId())));
+		createNurseryForm.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
+
+		List<SettingDetail> result = this.editNurseryController.combineStudyLevelVariablesInNurseryForm(createNurseryForm);
+
+		// The combined size of SettingDetails from Study Level Variables and Basic Details and Hidden Variables
+		// must equal to 2
+		Assert.assertEquals(2, result.size());
+	}
+
+
+	@Test
+	public void testCombineStudyLevelConditionsInUserSelection() {
+
+		final UserSelection testUserSelection = new UserSelection();
+
+		List<SettingDetail> studyLevelConditions = new ArrayList<>();
+		studyLevelConditions.add(this.createSettingDetail(TermId.LOCATION_ID.getId()));
+
+		testUserSelection.setStudyLevelConditions(studyLevelConditions);
+		testUserSelection.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
+		testUserSelection.setRemovedConditions(Arrays.asList(this.createSettingDetail(TermId.TRIAL_LOCATION.getId())));
+
+		List<SettingDetail> result = this.editNurseryController.combineStudyLevelConditionsInUserSelection(testUserSelection);
+
+
+		Assert.assertSame(studyLevelConditions, result);
+
+		// The combined size of SettingDetails from Study Level Conditions, Basic Details and Hidden Variables
+		// must equal to 3
+		Assert.assertEquals(3, studyLevelConditions.size());
+
+	}
+
+	@Test
+	public void testCopyTheRoleAndVariableType() {
+
+		final SettingDetail locationNameVariableInStudyLevel = this.createSettingDetail(TermId.TRIAL_LOCATION.getId());
+		final SettingDetail cooperatorNameVariableInStudyLevel = this.createSettingDetail(TermId.COOPERATOR.getId());
+		final SettingDetail locationNameVariableInConditionList = this.createSettingDetail(TermId.TRIAL_LOCATION.getId());
+		locationNameVariableInConditionList.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+		locationNameVariableInConditionList.setVariableType(VariableType.ENVIRONMENT_DETAIL);
+
+		final Set<SettingDetail> studyLevelVariables = new HashSet<>();
+		studyLevelVariables.add(locationNameVariableInStudyLevel);
+		studyLevelVariables.add(cooperatorNameVariableInStudyLevel);
+
+		this.editNurseryController.copyTheRoleAndVariableType(studyLevelVariables, Arrays.asList(locationNameVariableInConditionList));
+
+		// The Role and Variable Type detail of the Location Name in Conditons list should be copied
+		// to the Location Name in Study Level Variables
+		Assert.assertEquals(locationNameVariableInStudyLevel.getRole(), locationNameVariableInConditionList.getRole());
+		Assert.assertEquals(locationNameVariableInStudyLevel.getVariableType(), locationNameVariableInConditionList.getVariableType());
+
+		// Cooperator Name doesn't exist in Conditions list so the Role and Variable Type should remain unchanged (null)
+		Assert.assertNull(cooperatorNameVariableInStudyLevel.getRole());
+		Assert.assertNull(cooperatorNameVariableInStudyLevel.getVariableType());
+
+	}
+
+	@Test
+	public void testCombineStudyConditions() {
+
+		final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
+		createNurseryForm.setStudyLevelVariables(Arrays.asList(this.createSettingDetail(TermId.COOPERATOOR_ID.getId())));
+		createNurseryForm.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
+
+		final UserSelection testUserSelection = new UserSelection();
+		List<SettingDetail> studyLevelConditions = new ArrayList<>();
+		studyLevelConditions.add(this.createSettingDetail(TermId.LOCATION_ID.getId()));
+		testUserSelection.setStudyLevelConditions(studyLevelConditions);
+		testUserSelection.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
+		testUserSelection.setRemovedConditions(Arrays.asList(this.createSettingDetail(TermId.TRIAL_LOCATION.getId())));
+		testUserSelection.setNurseryTypeForDesign(1);
+
+		List<SettingDetail> result = this.editNurseryController.combineStudyConditions(createNurseryForm, testUserSelection);
+
+		// Ensure that condition variables from Create Nursery Form, UserSelection and Hidden Variable are included
+		// in the list.
+		Assert.assertTrue(containsTermId(TermId.COOPERATOOR_ID.getId(), result));
+		Assert.assertTrue(containsTermId(TermId.STUDY_NAME.getId(), result));
+		Assert.assertTrue(containsTermId(TermId.LOCATION_ID.getId(), result));
+		Assert.assertTrue(containsTermId(TermId.TRIAL_LOCATION.getId(), result));
+		Assert.assertTrue(containsTermId(TermId.NURSERY_TYPE.getId(), result));
+
+	}
+
 	@Test
 	public void testAddNurseryTypeFromDesignImportWhenNurseryTypeValueIsNull() {
 		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
 		Mockito.doReturn(null).when(this.userSelection).getNurseryTypeForDesign();
-		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
+		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertTrue("studyLevelVariables should not be null", studyLevelVariables.isEmpty());
 	}
@@ -303,7 +396,7 @@ public class EditNurseryControllerTest {
 	@Test
 	public void testAddNurseryTypeFromDesignImportWhenNurseryTypeValueHasValue() {
 		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
-		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
+		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertNotNull("studyLevelVariables should not be null", studyLevelVariables);
 		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
@@ -320,7 +413,7 @@ public class EditNurseryControllerTest {
 
 		Mockito.when(this.userSelection.getExpDesignVariables()).thenReturn(expDesignVariables);
 
-		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
+		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertEquals("studyLevelVariables' size should be 1", studyLevelVariables.size(), 1);
 		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
@@ -336,7 +429,7 @@ public class EditNurseryControllerTest {
 		final List<Integer> expDesignVariables = new ArrayList<Integer>();
 		expDesignVariables.add(1);
 		Mockito.doReturn(expDesignVariables).when(this.userSelection).getExpDesignVariables();
-		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
+		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertFalse("studyLevelVariables should not be empty", studyLevelVariables.isEmpty());
 		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
@@ -349,7 +442,7 @@ public class EditNurseryControllerTest {
 	@Test
 	public void testAddExperimentalDesignTypeFromDesignImportFalse() {
 		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
-		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
+		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertTrue("studyLevelVariables should be empty", studyLevelVariables.isEmpty());
 	}
@@ -362,7 +455,7 @@ public class EditNurseryControllerTest {
 
 		Mockito.when(this.userSelection.getExpDesignVariables()).thenReturn(expDesignVariables);
 
-		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
+		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertEquals("studyLevelVariables' size should be 1", studyLevelVariables.size(), 1);
 		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
@@ -370,6 +463,49 @@ public class EditNurseryControllerTest {
 		Assert.assertNull("SettingDetail value should be null but " + settingDetail.getValue(),
 				settingDetail.getValue());
 		Assert.assertNotNull("settingDetail Variable should not be null ", settingDetail.getVariable());
+	}
+
+	@Test
+	public void testAddHiddenVariablesToFactorsListInFormAndSession() {
+
+
+		final int removedFactorTermId = 111;
+		final UserSelection testUserSelection = new UserSelection();
+		final CreateNurseryForm testCreateNurseryForm = new CreateNurseryForm();
+		testCreateNurseryForm.setPlotLevelVariables(new ArrayList<SettingDetail>());
+		testUserSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
+
+		// Create any removed factors
+		testUserSelection.setRemovedFactors(Arrays.asList(this.createSettingDetail(removedFactorTermId)));
+
+		this.editNurseryController.addHiddenVariablesToFactorsListInFormAndSession(testCreateNurseryForm, testUserSelection);
+
+		// Verify that removed factor is added to CreateNurseryForm's plotLevelVariables
+		Assert.assertEquals(removedFactorTermId, testCreateNurseryForm.getPlotLevelVariables().get(0).getVariable().getCvTermId().intValue());
+
+		// Verify that removed factor is added to UserSelection's plotLevelList
+		Assert.assertEquals(removedFactorTermId, testUserSelection.getPlotsLevelList().get(0).getVariable().getCvTermId().intValue());
+
+	}
+
+	@Test
+	public void testAddHiddenVariablesToFactorsListInFormAndSessionNoRemovedFactors() {
+
+		final UserSelection testUserSelection = new UserSelection();
+		final CreateNurseryForm testCreateNurseryForm = new CreateNurseryForm();
+		testCreateNurseryForm.setPlotLevelVariables(new ArrayList<SettingDetail>());
+		testUserSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
+
+		// Set the removed factors to null
+		testUserSelection.setRemovedFactors(null);
+
+		this.editNurseryController.addHiddenVariablesToFactorsListInFormAndSession(testCreateNurseryForm, testUserSelection);
+
+		// PlotLevelVariables and PlotLevelList should remain empty because
+		// there is  no removed factors.
+		Assert.assertTrue(testCreateNurseryForm.getPlotLevelVariables().isEmpty());
+		Assert.assertTrue(testUserSelection.getPlotsLevelList().isEmpty());
+
 	}
 
 	@Test
@@ -596,6 +732,17 @@ public class EditNurseryControllerTest {
 
 	}
 
+
+	private SettingDetail createSettingDetail(final Integer cvTermId) {
+
+		final SettingDetail settingDetail = new SettingDetail();
+		final SettingVariable settingVariable = new SettingVariable();
+		settingVariable.setCvTermId(cvTermId);
+		settingDetail.setVariable(settingVariable);
+
+		return settingDetail;
+	}
+
 	private SettingDetail initializeSettingDetails(final boolean isAddNursery) {
 		final SettingDetail settingDetail = Mockito.mock(SettingDetail.class);
 
@@ -638,5 +785,16 @@ public class EditNurseryControllerTest {
 		Mockito.when(measurementData.getValue()).thenReturn(value);
 
 		return measurementData;
+	}
+
+	private boolean containsTermId(final Integer termid, final List<SettingDetail> settingDetails) {
+
+		for (SettingDetail settingDetail : settingDetails) {
+			if (termid.equals(settingDetail.getVariable().getCvTermId())) {
+				return true;
+			}
+		}
+		return false;
+
 	}
 }

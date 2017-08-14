@@ -146,7 +146,6 @@ public class EditNurseryController extends SettingsController {
 	 * @param nurseryId the nursery id
 	 * @param model     the model
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(value = "/{nurseryId}", method = RequestMethod.GET)
 	public String useExistingNursery(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
@@ -354,7 +353,6 @@ public class EditNurseryController extends SettingsController {
 	 * @param model   the model
 	 * @param session the session
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
@@ -372,7 +370,6 @@ public class EditNurseryController extends SettingsController {
 	 * Assign default values.
 	 *
 	 * @param form the form
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	void assignDefaultValues(final CreateNurseryForm form) {
 		List<SettingDetail> basicDetails = new ArrayList<>();
@@ -405,7 +402,6 @@ public class EditNurseryController extends SettingsController {
 	 * @param form  the form
 	 * @param model the model
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
@@ -817,7 +813,6 @@ public class EditNurseryController extends SettingsController {
 	 * @param model   the model
 	 * @param session the session
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(value = "/recreate/session/variables", method = RequestMethod.GET)
 	public String resetSessionVariablesAfterSave(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,

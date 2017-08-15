@@ -4,10 +4,9 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SampleListController', ['$scope', 'TrialManagerDataService', function ($scope,
-																									  TrialManagerDataService) {
+	manageTrialApp.controller('SampleListController', ['$scope', 'TrialManagerDataService', 'environmentService', function ($scope,
+																															TrialManagerDataService, environmentService) {
 
-		$scope.selectedTrialInstancesBySampleList = [];
 		$scope.settings = TrialManagerDataService.settings.environments;
 
 		if (Object.keys($scope.settings).length === 0) {
@@ -16,6 +15,8 @@
 			$scope.settings.trialConditionDetails = [];
 		}
 
+		$scope.selectedTrialInstancesBySampleList = [];
+
 		$scope.trialSettings = TrialManagerDataService.settings.trialSettings;
 
 		$scope.TRIAL_LOCATION_NAME_ID = 8180;
@@ -23,70 +24,58 @@
 		$scope.PREFERRED_LOCATION_VARIABLE = 8170;
 		$scope.LOCATION_NAME_ID = 8190;
 
-		$scope.data = TrialManagerDataService.currentData.environments;
+		$scope.instances = angular.copy(environmentService.environments);
 
 		$scope.continueCreatingSampleList = function () {
-
 			if ($scope.selectedTrialInstancesBySampleList.length === 0) {
 				showErrorMessage('', selectOneLocationErrorMessage);
+			} else {
+				trialSelectedEnvironmentContinueCreatingSample($scope.selectedTrialInstancesBySampleList);
 			}
-			trialSelectedEnvironmentContinueCreatingSample($scope.selectedTrialInstancesBySampleList);
 		};
 
 		$scope.doSelectAll = function () {
-			if ($scope.selectAll) {
-				$scope.selectAll = true;
-			} else {
-				$scope.selectAll = false;
-			}
-			angular.forEach($scope.data.environments, function (env) {
-				env.Selected = $scope.selectAll;
+			$scope.selectedTrialInstancesBySampleList = [];
+			var i = 1;
+			angular.forEach($scope.instances.environments, function (environment) {
 				if ($scope.selectAll) {
-					if (!$scope.selectedTrialInstancesBySampleList.includes(String(env.managementDetailValues[$scope.TRIAL_INSTANCE_ID]))) {
-						$scope.doSelectInstance(env.managementDetailValues[$scope.TRIAL_INSTANCE_ID]);
-					}
+					environment.Selected = i;
+					i = i + 1;
+					$scope.selectedTrialInstancesBySampleList.push(environment.managementDetailValues[$scope.TRIAL_INSTANCE_ID]);
 				} else {
-					$scope.doSelectInstance(env.managementDetailValues[$scope.TRIAL_INSTANCE_ID]);
+					environment.Selected = undefined;
 				}
 			});
-
 		};
 
-		$scope.doSelectInstance = function (trialInstance) {
-			if ($scope.selectedTrialInstancesBySampleList.length != 0) {
-				if ($scope.selectedTrialInstancesBySampleList.includes(String(trialInstance))) {
-					for (var i = $scope.selectedTrialInstancesBySampleList.length - 1; i >= 0; i--) {
-						if ($scope.selectedTrialInstancesBySampleList[i].includes(String(trialInstance))) {
-							$scope.selectedTrialInstancesBySampleList.splice(i, 1);
-							$scope.selectAll = false;
-						}
-					}
-				} else {
-					$scope.selectedTrialInstancesBySampleList.push(trialInstance);
-				}
-
-			} else {
-				$scope.selectedTrialInstancesBySampleList.push(trialInstance);
+		$scope.doSelectInstance = function(index){
+			var environment = $scope.instances.environments[index];
+			if(environment.Selected != undefined){
+				$scope.selectedTrialInstancesBySampleList.push(environment.managementDetailValues[$scope.TRIAL_INSTANCE_ID]);
+			}else{
+				$scope.selectAll = false;
+				var idx = $scope.selectedTrialInstancesBySampleList.indexOf(String(index + 1));
+				$scope.selectedTrialInstancesBySampleList.splice(idx,1);
 			}
 		};
+
+
 
 		$scope.init = function () {
 			$scope.locationFromTrialSettings = false;
 			$scope.locationFromTrial = false;
+			$scope.selectAll = true;
 
 			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_ID) != null) {
 				// LOCATION_NAME from environments
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_ID;
 				$scope.locationFromTrial = true;
-			} else if ($scope.trialSettings.val($scope.TRIAL_LOCATION_NAME_ID) != null) {
-				// LOCATION_NAME from trial settings
-				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_ID;
-
-				$scope.locationFromTrialSettings = true;
 			} else {
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_ID;
 			}
+			$scope.doSelectAll();
 		};
+
 		$scope.init();
 	}]);
 

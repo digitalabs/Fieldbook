@@ -134,8 +134,11 @@
 						$scope.selectedUser = user.id;
 					}
 				});
-			}).error(function () {
-				showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
+			}).error(function (data) {
+				if (data.status == 401) {
+					bmsAuth.handleReAuthentication();
+				}
+				showErrorMessage('', data.errors[0].message);
 				$scope.selectedUser = [];
 			});
 		};
@@ -166,6 +169,9 @@
 				var message = 'Sample list created successfully!';
 				showSuccessfulMessage('', message);
 			}).error(function (data) {
+				if (data.status == 401) {
+					bmsAuth.handleReAuthentication();
+				}
 				showErrorMessage('', data.errors[0].message);
 				$scope.saveSampleListButton = false;
 			});

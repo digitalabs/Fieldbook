@@ -3267,7 +3267,7 @@ function reloadCheckListTable() {
 			window.ImportGermplasm.initialize(dataGermplasmList);
 			$('#entries-details').css('display', 'block');
 			$('#numberOfEntries').html($('#totalGermplasms').val());
-			$('#txtStartingEntryNo').prop('disabled', false);
+			$('#txtStartingEntryNo').prop('readOnly', false);
 		});
 	}
 }
@@ -3638,8 +3638,8 @@ function toggleControlsForGermplasmListManagement(value) {
 		}
 	}
 
-	$('#txtStartingEntryNo').prop('disabled', !value);
-	$('#txtStartingPlotNo').prop('disabled', !value);
+	$('#txtStartingEntryNo').prop('readOnly', !value);
+	$('#txtStartingPlotNo').prop('readOnly', !value);
 }
 
 function showGermplasmDetailsSection() {

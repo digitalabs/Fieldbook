@@ -101,7 +101,6 @@
 			$event.stopPropagation();
 		};
 
-		// TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
 		$scope.init = function (trialStudyId, trialInstances) {
 			$scope.studyId = trialStudyId;
 			$scope.instances = trialInstances;

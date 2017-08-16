@@ -1015,9 +1015,26 @@ function advanceTrial() {
 	'use strict';
 	var idVal = $('#studyId').val();
 	$('#advanceNurseryModal').modal('hide');
+	$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
 	$('#selectEnvironmentModal').modal({ backdrop: 'static', keyboard: true });
 
 	var scope = angular.element('#selectEnvironmentModal').scope();
+	scope.init();
+	scope.$apply();
+}
+
+function createSample() {
+	'use strict';
+	if ($('.import-study-data').data('data-import') === '1') {
+		showErrorMessage('', needSaveImportDataError);
+		return;
+	}
+
+	$('#managerSampleListModal').modal('hide');
+	$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
+	$('#selectEnvironmentToSampleListModal').modal({ backdrop: 'static', keyboard: true });
+
+	var scope = angular.element('#selectEnvironmentToSampleListModal').scope();
 	scope.init();
 	scope.$apply();
 }
@@ -1028,6 +1045,17 @@ function trialSelectEnvironmentContinueAdvancing(trialInstances, noOfReplication
 	$('#selectEnvironmentModal').modal('hide');
 	var locationDetailHtml = generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed);
 	advanceStudy(idVal, trialInstances, noOfReplications, locationDetailHtml);
+}
+
+
+function trialSelectedEnvironmentContinueCreatingSample(trialInstances) {
+	'use strict';
+	var idVal = $('#studyId').val();
+	$('#selectEnvironmentToSampleListModal').modal('hide');
+
+	var scope = angular.element('#managerSampleListModal').scope();
+    scope.init(idVal, trialInstances);
+    $('#managerSampleListModal').modal('show');
 }
 
 function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed) {

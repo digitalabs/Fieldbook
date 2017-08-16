@@ -1056,19 +1056,6 @@ function trialSelectedEnvironmentContinueCreatingSample(trialInstances) {
 	var scope = angular.element('#managerSampleListModal').scope();
     scope.init(idVal, trialInstances);
     $('#managerSampleListModal').modal('show');
-
-    $('#managerSampleListModal').on('shown.bs.modal', function () {
-        $('#sampleSelectUser').select2();
-    });
-
-    $('#managerSampleListModal').on('shown.bs.modal', function () {
-        $('#sampleSelectVariable').select2();
-        $('#sampleSelectVariable').focus();
-    });
-
-    $('#managerSampleListModal').on('shown.bs.modal', function () {
-        $('#sampleSelectSamplingDate').datepicker({dateFormat: "yyyy-mm-dd"}).val('');
-    });
 }
 
 function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed) {

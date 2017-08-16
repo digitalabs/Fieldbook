@@ -89,5 +89,15 @@
 
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
+		$(document).ready(function () {
+			$('#managerSampleListModal').on('shown.bs.modal', function () {
+				$('#sampleSelectUser').select2();
+
+				$('#sampleSelectVariable').focus();
+				$('#report-type-section').select2();
+
+				$('#sampleSelectSamplingDate').datepicker({dateFormat: "yyyy-mm-dd"}).val('');
+			});
+		});
 	</script>
 </div>

@@ -74,8 +74,8 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 	return nRow;
 };
 
-//Sortable columns: GID(8240), DESIGNATION(8250), ENTRY_NO(8230), ENTRY_TYPE(8255), ENTRY_CODE(8300), REP_NO(8210), PLOT_NO(8200), BLOCK_NO(8220), ROW(8581), COL(8582) 
-var sortableColumnIDs = [8240, 8250, 8230, 8255, 8300, 8210, 8200, 8220, 8581, 8582];
+//Sortable columns: GID(8240), DESIGNATION(8250), ENTRY_NO(8230), ENTRY_TYPE(8255), ENTRY_CODE(8300), REP_NO(8210), PLOT_NO(8200), BLOCK_NO(8220), ROW(8581), COL(8582), SAMPLES(10)
+var sortableColumnIDs = [8240, 8250, 8230, 8255, 8300, 8210, 8200, 8220, 8581, 8582, 10];
 
 var getColumns = function(displayColumns, displayTrialInstance) {
 	var columns = [],

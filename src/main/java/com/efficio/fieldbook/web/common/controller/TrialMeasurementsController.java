@@ -70,6 +70,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	public static final String GID = "GID";
 
+	public static final String SAMPLES = "SAMPLES";
+
 	private static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrialMeasurementsController.class);
@@ -498,9 +500,13 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final String sortBy = this.ontologyDataManager.getTermById(sortedColumnTermId).getName();
 		final String sortOrder = req.getParameter("sortOrder");
 
-		final List<ObservationDto> pageResults = this.studyService.getObservations(studyId, instanceId, pageNumber,
-				pageSize, sortBy, sortOrder);
-
+		boolean hasSamples = fieldbookMiddlewareService.hasSamples(this.userSelection.getWorkbook().getStudyDetails().getId());
+		final List<ObservationDto> pageResults;
+		if (hasSamples) {
+			pageResults = this.studyService.getObservationsWithSamples(studyId, instanceId, pageNumber, pageSize, sortBy, sortOrder);
+		} else {
+			pageResults = this.studyService.getObservations(studyId, instanceId, pageNumber, pageSize, sortBy, sortOrder);
+		}
 		for (final ObservationDto row : pageResults) {
 			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
 			masterDataList.add(dataMap);
@@ -658,6 +664,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		// expected for tooltip in table
 		dataMap.put(TrialMeasurementsController.GID, row.getGid());
 		dataMap.put(TrialMeasurementsController.DESIGNATION, row.getDesignation());
+
+		dataMap.put(TrialMeasurementsController.SAMPLES, new Object[] {row.getSamples(), false});
 
 		// initialize suffix as empty string if its null
 		final String suffixValue = suffix == null ? "" : suffix;

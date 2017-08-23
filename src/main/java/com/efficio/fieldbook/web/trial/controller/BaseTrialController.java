@@ -630,10 +630,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	private MeasurementVariable createSampleVariable() {
-		final StandardVariable var = this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
-		var.setPhenotypicType(PhenotypicType.VARIATE);
-		final MeasurementVariable sample = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, null, this.fieldbookService);
-
+		final MeasurementVariable sample = new MeasurementVariable();
 		sample.setName("SAMPLES");
 		sample.setTermId(10);
 		sample.setFactor(true);

@@ -74,10 +74,10 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 	return nRow;
 };
 
-//Sortable columns: GID(8240), DESIGNATION(8250), ENTRY_NO(8230), ENTRY_TYPE(8255), ENTRY_CODE(8300), REP_NO(8210), PLOT_NO(8200), BLOCK_NO(8220), ROW(8581), COL(8582), SAMPLES(10)
-var sortableColumnIDs = [8240, 8250, 8230, 8255, 8300, 8210, 8200, 8220, 8581, 8582, 10];
+//Sortable columns: GID(8240), DESIGNATION(8250), ENTRY_NO(8230), ENTRY_TYPE(8255), ENTRY_CODE(8300), REP_NO(8210), PLOT_NO(8200), BLOCK_NO(8220), ROW(8581), COL(8582)
+var sortableColumnIDs = [8240, 8250, 8230, 8255, 8300, 8210, 8200, 8220, 8581, 8582];
 
-var getColumns = function(displayColumns, displayTrialInstance) {
+var getColumns = function(displayColumns, tableIdentifier, displayTrialInstance) {
 	var columns = [],
 		columnsDef = [];
 
@@ -102,7 +102,7 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 			columnsDef.push({
 				defaultContent: '',
 				targets: columns.length - 1,
-				visible: termId === 8170 && !displayTrialInstance ? false : true, // do not display TRIAL_INSTANCE column, [0] column
+				visible: termId === 8170 && !displayTrialInstance || termId === 10 && '#import-preview-measurement-table' === tableIdentifier ? false : true, // do not display TRIAL_INSTANCE column, [0] column
 				createdCell: function(td, cellData, rowData, row, col) {
 					if (isVariates) {
 						$(td).addClass('numeric-variable');
@@ -244,6 +244,21 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 						full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 				}
 			});
+		} else if (displayColumn.termId === 10) {
+			// For samples
+			columnsDef.push({
+				defaultContent: '',
+				targets: columns.length - 1,
+				visible: '#import-preview-measurement-table' === tableIdentifier ? false : true,
+				data: displayColumn.name,
+				render: function(data, type, full, meta) {
+					if (data !== undefined) {
+						var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '');
+						var hiddenData = EscapeHTML.escape(data[1]);
+						return displayData + '<input type="hidden" value="' + hiddenData + '" />';
+					}
+				}
+			});
 		}
 	});
 	return {
@@ -286,7 +301,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			data: 'variableList=' + trialManagerDataService.settings.measurements.m_keys.concat(trialManagerDataService.settings.selectionVariables.m_keys).join()
 		}).done(function(displayColumns) {
 
-			var columnsObj = getColumns(displayColumns, false);
+			var columnsObj = getColumns(displayColumns, tableIdentifier, false);
 			columns = columnsObj.columns;
 			columnsDef = columnsObj.columnsDef;
 			// column index is usually 6 but not always. 
@@ -486,7 +501,7 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
                 '&columnOrders=' + columnsOrder
 		}).done(function(displayColumns) {
 
-			var columnsObj = getColumns(displayColumns, true);
+			var columnsObj = getColumns(displayColumns, tableIdentifier, true);
 			columns = columnsObj.columns;
 			columnsDef = columnsObj.columnsDef;
 
@@ -606,7 +621,7 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 			'&columnOrders=' + columnsOrder
 		}).done(function(displayColumns) {
 
-			var columnsObj = getColumns(displayColumns, true);
+			var columnsObj = getColumns(displayColumns, tableIdentifier, true);
 			columns = columnsObj.columns;
 			columnsDef = columnsObj.columnsDef;
 

@@ -102,7 +102,7 @@ var getColumns = function(displayColumns, tableIdentifier, displayTrialInstance)
 			columnsDef.push({
 				defaultContent: '',
 				targets: columns.length - 1,
-				visible: termId === 8170 && !displayTrialInstance || termId === 10 && '#import-preview-measurement-table' === tableIdentifier ? false : true, // do not display TRIAL_INSTANCE column, [0] column
+				visible: termId === 8170 && !displayTrialInstance ? false : true, // do not display TRIAL_INSTANCE column, [0] column
 				createdCell: function(td, cellData, rowData, row, col) {
 					if (isVariates) {
 						$(td).addClass('numeric-variable');
@@ -246,10 +246,11 @@ var getColumns = function(displayColumns, tableIdentifier, displayTrialInstance)
 			});
 		} else if (displayColumn.termId === 10) {
 			// For samples
+			var isVisible = '#import-preview-measurement-table' != tableIdentifier;
 			columnsDef.push({
 				defaultContent: '',
 				targets: columns.length - 1,
-				visible: '#import-preview-measurement-table' === tableIdentifier ? false : true,
+				visible: isVisible,
 				data: displayColumn.name,
 				render: function(data, type, full, meta) {
 					if (data !== undefined) {

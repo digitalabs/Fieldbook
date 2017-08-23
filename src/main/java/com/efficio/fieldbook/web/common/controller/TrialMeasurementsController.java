@@ -660,7 +660,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		dataMap.put(TrialMeasurementsController.GID, row.getGid());
 		dataMap.put(TrialMeasurementsController.DESIGNATION, row.getDesignation());
 
-		dataMap.put(TrialMeasurementsController.SAMPLES, new Object[] {row.getSamples(), false});
+		dataMap.put(TrialMeasurementsController.SAMPLES, new Object[] {row.getSamples(), row.getPlotId()});
 
 		// initialize suffix as empty string if its null
 		final String suffixValue = suffix == null ? "" : suffix;

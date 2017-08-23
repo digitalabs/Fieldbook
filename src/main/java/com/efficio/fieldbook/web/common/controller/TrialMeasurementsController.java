@@ -500,13 +500,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final String sortBy = this.ontologyDataManager.getTermById(sortedColumnTermId).getName();
 		final String sortOrder = req.getParameter("sortOrder");
 
-		boolean hasSamples = fieldbookMiddlewareService.hasSamples(this.userSelection.getWorkbook().getStudyDetails().getId());
-		final List<ObservationDto> pageResults;
-		if (hasSamples) {
-			pageResults = this.studyService.getObservationsWithSamples(studyId, instanceId, pageNumber, pageSize, sortBy, sortOrder);
-		} else {
-			pageResults = this.studyService.getObservations(studyId, instanceId, pageNumber, pageSize, sortBy, sortOrder);
-		}
+		final List<ObservationDto> pageResults = this.studyService.getObservations(studyId, instanceId, pageNumber, pageSize, sortBy, sortOrder);
+
 		for (final ObservationDto row : pageResults) {
 			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
 			masterDataList.add(dataMap);

@@ -1880,7 +1880,8 @@ public class SettingsUtil {
 		int index = 0;
 		// FIXME this is OTT logic
 		for (final MeasurementData data : mrow.getDataList()) {
-			if (!varCache.keySet().contains(data.getMeasurementVariable().getTermId())) {
+			if (!varCache.keySet().contains(data.getMeasurementVariable().getTermId()) && data.getMeasurementVariable().getTermId() != 10) {
+
 				// EHCached we hope
 				stdVar = ontologyService.getStandardVariable(data.getMeasurementVariable().getTermId(), programUUID);
 				varCache.put(data.getMeasurementVariable().getTermId(), stdVar);

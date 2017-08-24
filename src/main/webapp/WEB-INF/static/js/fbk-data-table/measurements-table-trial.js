@@ -77,7 +77,7 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 //Sortable columns: GID(8240), DESIGNATION(8250), ENTRY_NO(8230), ENTRY_TYPE(8255), ENTRY_CODE(8300), REP_NO(8210), PLOT_NO(8200), BLOCK_NO(8220), ROW(8581), COL(8582)
 var sortableColumnIDs = [8240, 8250, 8230, 8255, 8300, 8210, 8200, 8220, 8581, 8582];
 
-var getColumns = function(displayColumns, tableIdentifier, displayTrialInstance) {
+var getColumns = function(displayColumns, displayTrialInstance) {
 	var columns = [],
 		columnsDef = [];
 
@@ -246,11 +246,10 @@ var getColumns = function(displayColumns, tableIdentifier, displayTrialInstance)
 			});
 		} else if (displayColumn.termId === 10) {
 			// For samples
-			var isVisible = '#import-preview-measurement-table' != tableIdentifier;
 			columnsDef.push({
 				defaultContent: '',
 				targets: columns.length - 1,
-				visible: isVisible,
+				data: displayColumn.name,
 				render: function(data, type, full, meta) {
 					if (data && full) {
 						if (data[0] == "-") {
@@ -304,7 +303,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			data: 'variableList=' + trialManagerDataService.settings.measurements.m_keys.concat(trialManagerDataService.settings.selectionVariables.m_keys).join()
 		}).done(function(displayColumns) {
 
-			var columnsObj = getColumns(displayColumns, tableIdentifier, false);
+			var columnsObj = getColumns(displayColumns, false);
 			columns = columnsObj.columns;
 			columnsDef = columnsObj.columnsDef;
 			// column index is usually 6 but not always. 
@@ -504,7 +503,7 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
                 '&columnOrders=' + columnsOrder
 		}).done(function(displayColumns) {
 
-			var columnsObj = getColumns(displayColumns, tableIdentifier, true);
+			var columnsObj = getColumns(displayColumns, true);
 			columns = columnsObj.columns;
 			columnsDef = columnsObj.columnsDef;
 
@@ -624,7 +623,7 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 			'&columnOrders=' + columnsOrder
 		}).done(function(displayColumns) {
 
-			var columnsObj = getColumns(displayColumns, tableIdentifier, true);
+			var columnsObj = getColumns(displayColumns, true);
 			columns = columnsObj.columns;
 			columnsDef = columnsObj.columnsDef;
 

@@ -251,12 +251,14 @@ var getColumns = function(displayColumns, tableIdentifier, displayTrialInstance)
 				defaultContent: '',
 				targets: columns.length - 1,
 				visible: isVisible,
-				data: displayColumn.name,
 				render: function(data, type, full, meta) {
-					if (data !== undefined) {
-						var displayData = EscapeHTML.escape(data[0] != null ? data[0] : '');
-						var hiddenData = EscapeHTML.escape(data[1]);
-						return displayData + '<input type="hidden" value="' + hiddenData + '" />';
+					if (data && full) {
+						if (data[0] == "-") {
+							return data[0];
+						}
+						return '<a class="desig-link" href="javascript: void(0)" ' +
+							'onclick="openSampleSummary(\'' + full.PLOT_ID[0] + '\',\'' +  + full.PLOT_NO[0] + '\''
+							+ ')">' + data[0] + '</a>';
 					}
 				}
 			});

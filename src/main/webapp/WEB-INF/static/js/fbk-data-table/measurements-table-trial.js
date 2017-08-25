@@ -244,7 +244,7 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 						full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 				}
 			});
-		} else if (displayColumn.termId === 10) {
+		} else if (displayColumn.termId === -2) {
 			// For samples
 			columnsDef.push({
 				defaultContent: '',

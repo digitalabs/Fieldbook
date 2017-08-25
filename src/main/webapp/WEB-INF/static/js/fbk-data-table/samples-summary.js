@@ -16,7 +16,13 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 			columns: [
 				{data: 'sampleName'},
 				{data: 'sampleBusinessKey'},
-				{data: 'takenBy'},
+				{data: 'takenBy',
+					render: function (data) {
+						if (!data) {
+							return '-';
+						}
+						return data;
+					}},
 				{data: 'samplingDate',
 					render: function (data, type, row) {
 						if (!data) {

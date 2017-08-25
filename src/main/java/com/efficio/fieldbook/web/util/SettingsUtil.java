@@ -1876,11 +1876,12 @@ public class SettingsUtil {
 		final List<Integer> indices = new ArrayList<>();
 		final MeasurementRow mrow = observations.get(0);
 		final Map<Integer, StandardVariable> varCache = new HashMap<>();
-		StandardVariable stdVar = null;
+		StandardVariable stdVar;
 		int index = 0;
 		// FIXME this is OTT logic
 		for (final MeasurementData data : mrow.getDataList()) {
-			if (!varCache.keySet().contains(data.getMeasurementVariable().getTermId()) && data.getMeasurementVariable().getTermId() != 10) {
+			final boolean isVariableSample = data.getMeasurementVariable().getTermId() == TermId.SAMPLES.getId();
+			if (!varCache.keySet().contains(data.getMeasurementVariable().getTermId()) && !isVariableSample) {
 
 				// EHCached we hope
 				stdVar = ontologyService.getStandardVariable(data.getMeasurementVariable().getTermId(), programUUID);

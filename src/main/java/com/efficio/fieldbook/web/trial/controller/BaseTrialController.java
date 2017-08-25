@@ -632,7 +632,7 @@ public abstract class BaseTrialController extends SettingsController {
 	private MeasurementVariable createSampleVariable() {
 		final MeasurementVariable sample = new MeasurementVariable();
 		sample.setName("SAMPLES");
-		sample.setTermId(10);
+		sample.setTermId(TermId.SAMPLES.getId());
 		sample.setFactor(true);
 
 		return sample;

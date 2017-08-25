@@ -17,7 +17,16 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 				{data: 'sampleName'},
 				{data: 'sampleBusinessKey'},
 				{data: 'takenBy'},
-				{data: 'createdDate'},
+				{data: 'samplingDate',
+					render: function (data, type, row) {
+						if (type === 'display' || type === 'filter') {
+							var d = new Date(data);
+							return d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();
+						}
+
+						return data;
+					}
+				},
 				{data: 'sampleList'},
 				{data: 'plantNumber'},
 				{data: 'plantBusinessKey'}

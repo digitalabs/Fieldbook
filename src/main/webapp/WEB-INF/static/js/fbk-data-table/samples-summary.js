@@ -19,6 +19,9 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 				{data: 'takenBy'},
 				{data: 'samplingDate',
 					render: function (data, type, row) {
+						if (!data) {
+							return '-';
+						}
 						if (type === 'display' || type === 'filter') {
 							var d = new Date(data);
 							return d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();

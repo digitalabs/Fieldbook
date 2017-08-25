@@ -262,7 +262,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				scrollCollapse: true,
 				columnDefs: columnsDef,
 				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
-				bAutoWidth: true,
+				bAutoWidth: false,
 				iDisplayLength: 100,
 				retrieve: true,
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {

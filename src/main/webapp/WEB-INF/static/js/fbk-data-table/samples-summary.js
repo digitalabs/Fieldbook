@@ -6,7 +6,6 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 
 		$(tableIdentifier).DataTable({
 			destroy: true,
-			// scrollX: true, // TODO add scroll and auto adjust header
 			ajax: {
 				url: '/bmsapi/sample/' + cropName + '/samples?plotId=' + plotId,
 				dataSrc: '',

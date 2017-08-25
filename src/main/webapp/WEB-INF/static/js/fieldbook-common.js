@@ -1062,6 +1062,7 @@ function openSampleSummary(plotId, plotNumber) {
 	'use strict';
 	BMS.Fieldbook.SamplesSummaryDataTable('#samples-summary-table', plotId, plotNumber);
 	$('#samplesSummaryModal').modal({ backdrop: 'static', keyboard: true })
+	$('#samples-summary-table').wrap('<div style="overflow-x: auto" />');
 }
 
 function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed) {

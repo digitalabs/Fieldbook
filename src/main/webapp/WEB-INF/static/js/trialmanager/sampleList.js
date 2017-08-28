@@ -110,6 +110,9 @@
 			$scope.dateSampling = '';
 
 			$scope.variables = [];
+			$scope.users = [];
+
+			$scope.selectedUser = undefined;
 			$scope.variableSelected = undefined;
 			$scope.sampleForm.$setPristine();
 
@@ -127,7 +130,7 @@
 			}
 
 			$http.get('/bmsapi/user/list?projectUUID=' + currentProgramId, config).success(function (data) {
-				$scope.users = data;
+				$scope.users = data.USERS;
 
 				angular.forEach($scope.users, function (user) {
 					if (user.id === loggedInUserId) {
@@ -138,7 +141,7 @@
 				if (data.status == 401) {
 					bmsAuth.handleReAuthentication();
 				}
-				showErrorMessage('', data.errors[0].message);
+				showErrorMessage('', data.ERROR);
 				$scope.selectedUser = [];
 			});
 		};

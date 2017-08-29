@@ -609,7 +609,11 @@ public abstract class BaseTrialController extends SettingsController {
 			workbook = this.userSelection.getTemporaryWorkbook();
 		}
 
-		boolean haveSamples = fieldbookMiddlewareService.hasSamples(this.userSelection.getWorkbook().getStudyDetails().getId());
+		boolean haveSamples = false;
+		if (this.userSelection.getWorkbook() != null) {
+			haveSamples = fieldbookMiddlewareService.hasSamples(this.userSelection.getWorkbook().getStudyDetails().getId());
+		}
+
 		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
 		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
 

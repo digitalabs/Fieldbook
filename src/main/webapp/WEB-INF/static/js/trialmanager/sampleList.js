@@ -147,6 +147,7 @@
 		};
 
 		$scope.saveSample = function () {
+			Spinner.play();
 			$scope.saveSampleListButton = true;
 			$scope.sampleList = {
 				"description": "",
@@ -177,6 +178,7 @@
 					}
 					$('#managerSampleListModal').modal('hide');
 					$scope.saveSampleListButton = false;
+					Spinner.stop();
 				}
 
 			}).error(function (data) {
@@ -185,6 +187,7 @@
 				}
 				showErrorMessage('', data.errors[0].message);
 				$scope.saveSampleListButton = false;
+				Spinner.stop();
 			});
 		};
 	}]);

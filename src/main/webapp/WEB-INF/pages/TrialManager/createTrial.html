@@ -81,7 +81,7 @@
                             <li ng-show="hasMeasurementData()">
 
                                 <a href="javascript: advanceTrial();" id="advance-trial-link" th:text="#{trial.trialdetails.action.advance.trial}">Advance Trial</a>
-
+								<a href="javascript: createSample();" id="sample-trial-link"  th:text="#{trial.trialdetails.action.create.sample}">Create Sample</a>
                             </li>
 
 							<li id="review-out-of-bounds-data-list" style="display:none;">
@@ -360,10 +360,22 @@
 </div>
 
 <div class="row">
-      <div class="col-xs-12 col-md-12">
-            <div id="select-enviornments" th:include="/TrialManager/templates/selectEnvironmentModal"></div>
-        </div>
+	<div class="col-xs-12 col-md-12">
+    	<div id="select-enviornments" th:include="/TrialManager/templates/selectEnvironmentModal"></div>
     </div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div id="sample-list" th:include="/TrialManager/templates/selectEnvironmentToSampleListModal"></div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<div id="Managersample-list" th:include="/TrialManager/templates/managerSampleListModal"></div>
+	</div>
+</div>
 
 <div class="row">
 	<div th:include="/Common/exportGermplasmList"></div>
@@ -415,6 +427,7 @@
 <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/trial-data-manager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentModal.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/sampleList.js}"></script>
 
 
 <!-- constants here -->

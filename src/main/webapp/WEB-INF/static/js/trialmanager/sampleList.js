@@ -169,7 +169,7 @@
 				});
 			}
 
-			$http.post('/bmsapi/sample/' + cropName + '/sampleList', JSON.stringify($scope.sampleList), config).success(function (data) {
+			$http.post('/bmsapi/sampleLists/' + cropName + '/sampleList', JSON.stringify($scope.sampleList), config).success(function (data) {
 				if (data.id != 0) {
 					var message = 'Sample list created successfully!';
 					showSuccessfulMessage('', message);
@@ -180,7 +180,6 @@
 					$scope.saveSampleListButton = false;
 					Spinner.stop();
 				}
-
 			}).error(function (data) {
 				if (data.status == 401) {
 					bmsAuth.handleReAuthentication();

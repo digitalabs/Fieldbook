@@ -1071,11 +1071,10 @@ public class OpenTrialControllerTest {
 	}
 
 	private List<MeasurementVariable> initMeasurementVariableList() {
-		final MeasurementVariableTestDataInitializer measurementVariableInit = new MeasurementVariableTestDataInitializer();
 		final List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
-		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "10110"));
-		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "SampleFile.csv"));
-		conditions.add(measurementVariableInit.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "2"));
+		conditions.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "10110"));
+		conditions.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "SampleFile.csv"));
+		conditions.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "2"));
 
 		for (final MeasurementVariable var : conditions) {
 			var.setOperation(Operation.ADD);

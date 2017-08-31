@@ -95,8 +95,6 @@ public class ETLServiceTest {
 
 	private UserSelection userSelection;
 
-	private MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer;
-
 	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
 
 	private final static String PROGRAM_UUID = "9f2102ee-ca88-43bc-900a-09dc49a29ddb";
@@ -159,7 +157,6 @@ public class ETLServiceTest {
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(ETLServiceTest.PROGRAM_UUID);
 		Mockito.when(this.fileService.retrieveWorkbook(Matchers.anyString())).thenReturn(this.workbook);
 
-		this.measurementVariableTestDataInitializer = new MeasurementVariableTestDataInitializer();
 		this.measurementDataTestDataInitializer = new MeasurementDataTestDataInitializer();
 
 		final StandardVariable standardVariable = Mockito.mock(StandardVariable.class);
@@ -429,7 +426,7 @@ public class ETLServiceTest {
 	@Test
 	public void testConvertEntryTypeNameToID() {
 		final String value = "T";
-		final MeasurementVariable variable = this.measurementVariableTestDataInitializer
+		final MeasurementVariable variable = MeasurementVariableTestDataInitializer
 				.createMeasurementVariable(TermId.ENTRY_TYPE.getId(), value);
 		final MeasurementData measurementData = this.measurementDataTestDataInitializer.createMeasurementData(value,
 				variable);

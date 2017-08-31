@@ -55,7 +55,6 @@ public class ValidationServiceImplTest {
 
 	private MethodTestDataInitializer methodTestDataInitializer;
 
-	private MeasurementVariableTestDataInitializer measurementVarTestDataInitializer;
 
 	@Before
 	public void setUp() {
@@ -63,9 +62,8 @@ public class ValidationServiceImplTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(project.getProjectId()).thenReturn((long) 1);
 		this.methodTestDataInitializer = new MethodTestDataInitializer();
-		this.measurementVarTestDataInitializer = new MeasurementVariableTestDataInitializer();
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
-		this.workbook.setConditions(this.measurementVarTestDataInitializer.createMeasurementVariableList());
+		this.workbook.setConditions(MeasurementVariableTestDataInitializer.createMeasurementVariableList());
 		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Matchers.eq(false)))
 				.thenReturn(this.methodTestDataInitializer.createMethodList());
 	}
@@ -168,7 +166,7 @@ public class ValidationServiceImplTest {
 	public void testValidatePersonIdIfPIIdHasInvalidValue() {
 		Mockito.doReturn(null).when(this.workbenchDataManager).getWorkbenchUserIdByIBDBUserIdAndProjectId(Matchers.anyInt(), Matchers.anyLong());
 		final String warningMessage =
-				this.validationService.validatePersonId(this.measurementVarTestDataInitializer.createMeasurementVariable());
+				this.validationService.validatePersonId(MeasurementVariableTestDataInitializer.createMeasurementVariable());
 		Assert.assertTrue("There should be a warning message", ValidationServiceImplTest.WARNING_MESSAGE.equals(warningMessage));
 	}
 
@@ -176,21 +174,21 @@ public class ValidationServiceImplTest {
 	public void testValidatePersonIdIfPIIdHasValidValue() {
 		Mockito.doReturn(Integer.valueOf(1)).when(this.workbenchDataManager).getWorkbenchUserIdByIBDBUserIdAndProjectId(Matchers.anyInt(), Matchers.anyLong());
 		final String warningMessage =
-				this.validationService.validatePersonId(this.measurementVarTestDataInitializer.createMeasurementVariable());
+				this.validationService.validatePersonId(MeasurementVariableTestDataInitializer.createMeasurementVariable());
 		Assert.assertTrue("There should be no warning message", ValidationServiceImplTest.EMPTY_STRING.equals(warningMessage));
 	}
 
 	@Test
 	public void testValidateBreedingMethodCodeIfBMCodeHasValue() {
 		final String warningMessage = this.validationService.validateBreedingMethodCode(
-				this.measurementVarTestDataInitializer.createMeasurementVariable(TermId.BREEDING_METHOD_CODE.getId(), "PSP"));
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.BREEDING_METHOD_CODE.getId(), "PSP"));
 		Assert.assertTrue("There should be no warning message", ValidationServiceImplTest.EMPTY_STRING.equals(warningMessage));
 	}
 
 	@Test
 	public void testValidateBreedingMethodCodeIfBMCodeHasInvalue() {
 		final String warningMessage = this.validationService.validateBreedingMethodCode(
-				this.measurementVarTestDataInitializer.createMeasurementVariable(TermId.BREEDING_METHOD_CODE.getId(), "PXP"));
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.BREEDING_METHOD_CODE.getId(), "PXP"));
 		Assert.assertTrue("There should be a warning message", ValidationServiceImplTest.WARNING_MESSAGE.equals(warningMessage));
 	}
 

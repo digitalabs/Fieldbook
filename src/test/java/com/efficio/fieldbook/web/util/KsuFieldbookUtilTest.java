@@ -19,7 +19,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.hamcrest.core.Is;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -89,13 +88,6 @@ public class KsuFieldbookUtilTest {
 
 	private static final String NUMERIC_VALUE = "1";
 	private static final String DATE_VALUE = "20171010";
-
-	private MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer;
-
-	@Before
-	public void setUp() {
-		this.measurementVariableTestDataInitializer = new MeasurementVariableTestDataInitializer();
-	}
 
 	@Test
 	public void testIsValidHeaderNamesReturnsTrueIfAllRequiredColumnsArePresent() {
@@ -167,7 +159,7 @@ public class KsuFieldbookUtilTest {
 
 	@Test
 	public void testGetDataTypeDescription() {
-		final MeasurementVariable mvar = this.measurementVariableTestDataInitializer.createMeasurementVariable(
+		final MeasurementVariable mvar = MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				KsuFieldbookUtilTest.R_SECA_SEV_E_00_TO_99_TEXT_ID,
 				KsuFieldbookUtilTest.R_SECA_SEV_E_00_TO_99_TEXT_NAME,
 				KsuFieldbookUtilTest.R_SECA_SEV_E_00_TO_99_TEXT_DESCRIPTION,
@@ -181,7 +173,7 @@ public class KsuFieldbookUtilTest {
 
 	@Test
 	public void testGetLabelFromKsuRequiredColumnNotRequired() {
-		final MeasurementVariable mvar = this.measurementVariableTestDataInitializer.createMeasurementVariable(
+		final MeasurementVariable mvar = MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				KsuFieldbookUtilTest.R_SECA_SEV_E_00_TO_99_TEXT_ID,
 				KsuFieldbookUtilTest.R_SECA_SEV_E_00_TO_99_TEXT_NAME,
 				KsuFieldbookUtilTest.R_SECA_SEV_E_00_TO_99_TEXT_DESCRIPTION,
@@ -195,7 +187,7 @@ public class KsuFieldbookUtilTest {
 
 	@Test
 	public void testGetLabelFromKsuRequiredColumnIsRequired() {
-		final MeasurementVariable mvar = this.measurementVariableTestDataInitializer
+		final MeasurementVariable mvar = MeasurementVariableTestDataInitializer
 				.createMeasurementVariable(TermId.GID.getId(), "1");
 		final String label = KsuFieldbookUtil.getLabelFromKsuRequiredColumn(mvar);
 		Assert.assertEquals("The label should be GID", "GID", label);
@@ -204,7 +196,7 @@ public class KsuFieldbookUtilTest {
 	private List<MeasurementVariable> initializeListOfTraits() {
 		final List<MeasurementVariable> variates = new ArrayList<>();
 
-		MeasurementVariable measurementVariable = this.measurementVariableTestDataInitializer.createMeasurementVariable(
+		MeasurementVariable measurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				KsuFieldbookUtilTest.HGRAMINC_E_PCT_ID, KsuFieldbookUtilTest.HGRAMINC_E_PCT_NAME,
 				KsuFieldbookUtilTest.HGRAMINC_E_PCT_DESCRIPTION, KsuFieldbookUtilTest.PERCENTAGE_SCALE,
 				KsuFieldbookUtilTest.HGRAMINC_E_PCT_METHOD, KsuFieldbookUtilTest.HGRAMINC_E_PCT_PROPERTY,
@@ -213,7 +205,7 @@ public class KsuFieldbookUtilTest {
 
 		variates.add(measurementVariable);
 
-		measurementVariable = this.measurementVariableTestDataInitializer.createMeasurementVariable(
+		measurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				KsuFieldbookUtilTest.ACDTOL_E_1TO_5_ID, KsuFieldbookUtilTest.ACDTOL_E_1TO_5_NAME,
 				KsuFieldbookUtilTest.ACDTOL_E_1TO_5_DESCRIPTION, KsuFieldbookUtilTest.SCALE_1_5,
 				KsuFieldbookUtilTest.ACDTOL_E_1TO_5_METHOD, KsuFieldbookUtilTest.ACDTOL_E_1TO_5_PROPERTY,
@@ -222,7 +214,7 @@ public class KsuFieldbookUtilTest {
 
 		variates.add(measurementVariable);
 
-		measurementVariable = this.measurementVariableTestDataInitializer.createMeasurementVariable(
+		measurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				KsuFieldbookUtilTest.ANT_DATE_YMD_ID, KsuFieldbookUtilTest.ANT_DATE_YMD_NAME,
 				KsuFieldbookUtilTest.ANT_DATE_YMD_DESCRIPTION, KsuFieldbookUtilTest.YYYYMMDD_SCALE,
 				KsuFieldbookUtilTest.ANT_DATE_YMD_METHOD, KsuFieldbookUtilTest.ANT_DATE_YMD_PROPERTY,
@@ -230,7 +222,7 @@ public class KsuFieldbookUtilTest {
 				TermId.DATE_VARIABLE.getId(), PhenotypicType.VARIATE);
 		variates.add(measurementVariable);
 
-		measurementVariable = this.measurementVariableTestDataInitializer.createMeasurementVariable(
+		measurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				KsuFieldbookUtilTest.R_SECA_SEV_E_00_TO_99_TEXT_ID,
 				KsuFieldbookUtilTest.R_SECA_SEV_E_00_TO_99_TEXT_NAME,
 				KsuFieldbookUtilTest.R_SECA_SEV_E_00_TO_99_TEXT_DESCRIPTION,

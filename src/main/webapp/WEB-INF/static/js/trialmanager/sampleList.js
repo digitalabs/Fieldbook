@@ -130,7 +130,7 @@
 			}
 
 			$http.get('/bmsapi/user/list?projectUUID=' + currentProgramId, config).success(function (data) {
-				$scope.users = data.USERS;
+				$scope.users = data;
 
 				angular.forEach($scope.users, function (user) {
 					if (user.id === loggedInUserId) {
@@ -141,7 +141,7 @@
 				if (data.status == 401) {
 					bmsAuth.handleReAuthentication();
 				}
-				showErrorMessage('', data.ERROR);
+				showErrorMessage('', data.errors[0].message);
 				$scope.selectedUser = [];
 			});
 		};

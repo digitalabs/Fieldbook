@@ -1015,9 +1015,26 @@ function advanceTrial() {
 	'use strict';
 	var idVal = $('#studyId').val();
 	$('#advanceNurseryModal').modal('hide');
+	$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
 	$('#selectEnvironmentModal').modal({ backdrop: 'static', keyboard: true });
 
 	var scope = angular.element('#selectEnvironmentModal').scope();
+	scope.init();
+	scope.$apply();
+}
+
+function createSample() {
+	'use strict';
+	if ($('.import-study-data').data('data-import') === '1') {
+		showErrorMessage('', needSaveImportDataError);
+		return;
+	}
+
+	$('#managerSampleListModal').modal('hide');
+	$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
+	$('#selectEnvironmentToSampleListModal').modal({ backdrop: 'static', keyboard: true });
+
+	var scope = angular.element('#selectEnvironmentToSampleListModal').scope();
 	scope.init();
 	scope.$apply();
 }
@@ -1028,6 +1045,17 @@ function trialSelectEnvironmentContinueAdvancing(trialInstances, noOfReplication
 	$('#selectEnvironmentModal').modal('hide');
 	var locationDetailHtml = generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed);
 	advanceStudy(idVal, trialInstances, noOfReplications, locationDetailHtml);
+}
+
+
+function trialSelectedEnvironmentContinueCreatingSample(trialInstances) {
+	'use strict';
+	var idVal = $('#studyId').val();
+	$('#selectEnvironmentToSampleListModal').modal('hide');
+
+	var scope = angular.element('#managerSampleListModal').scope();
+    scope.init(idVal, trialInstances);
+    $('#managerSampleListModal').modal('show');
 }
 
 function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed) {
@@ -2893,8 +2921,9 @@ function isValidInput(input) {
 
 function doDeleteNursery(id, callback) {
 	'use strict';
+	var studyType = isNursery() ? 'N' : 'T';
 	$.ajax({
-		url: '/Fieldbook/NurseryManager/deleteNursery/' + id,
+		url: '/Fieldbook/StudyManager/deleteStudy/' + id + '/' + studyType,
 		type: 'POST',
 		cache: false,
 		success: function(data) {
@@ -3266,7 +3295,7 @@ function reloadCheckListTable() {
 			window.ImportGermplasm.initialize(dataGermplasmList);
 			$('#entries-details').css('display', 'block');
 			$('#numberOfEntries').html($('#totalGermplasms').val());
-			$('#txtStartingEntryNo').prop('disabled', false);
+			$('#txtStartingEntryNo').prop('readOnly', false);
 		});
 	}
 }
@@ -3637,8 +3666,8 @@ function toggleControlsForGermplasmListManagement(value) {
 		}
 	}
 
-	$('#txtStartingEntryNo').prop('disabled', !value);
-	$('#txtStartingPlotNo').prop('disabled', !value);
+	$('#txtStartingEntryNo').prop('readOnly', !value);
+	$('#txtStartingPlotNo').prop('readOnly', !value);
 }
 
 function showGermplasmDetailsSection() {

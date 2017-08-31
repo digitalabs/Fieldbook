@@ -28,6 +28,9 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 						if (!data) {
 							return '-';
 						}
+						if (type === 'sort') {
+							return data.split("/").reverse().join();
+						}
 						return data;
 					}
 				},

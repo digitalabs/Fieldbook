@@ -96,15 +96,15 @@ public class WorkbookDataUtil {
 	private static final String STUDY = "STUDY";
 	public static final String TRIAL = "TRIAL";
 	public static final String ENTRY = "ENTRY";
-	private static final String PLOT = "PLOT";
+	public static final String PLOT = "PLOT";
 
 	// DATA TYPES
 	private static final String CHAR = "C";
 	public static final String NUMERIC = "N";
 
 	// FACTORS
-	private static final String GID = "GID";
-	private static final String DESIG = "DESIG";
+	public static final String GID = "GID";
+	public static final String DESIG = "DESIG";
 	private static final String CROSS = "CROSS";
 	private static final String SOURCE = "SOURCE";
 	private static final String BLOCK = "BLOCK";

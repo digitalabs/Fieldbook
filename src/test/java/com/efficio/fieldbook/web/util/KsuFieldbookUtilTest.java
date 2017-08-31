@@ -151,10 +151,24 @@ public class KsuFieldbookUtilTest {
 
 	@Test
 	public void testGetHeaderNames() {
+		
 		final List<MeasurementVariable> variables = WorkbookDataUtil.createFactors();
+		final MeasurementVariable check = MeasurementVariableTestDataInitializer.createMeasurementVariableWithName(TermId.CHECK.getId(), TermId.CHECK.name());
+		variables.add(check);
+		
 		final List<String> headers = KsuFieldbookUtil.getHeaderNames(variables);
+		
 		Assert.assertNotNull("The headers should not be null", headers);
 		Assert.assertEquals("The number of headers should be 5", 5, headers.size());
+		Assert.assertFalse(check.getName() + " should not be included in the headers list.", headers.contains(check.getName()));
+		Assert.assertFalse(TermId.CROSS.name() + " should not be included in the headers list.", headers.contains(TermId.CROSS.name()));
+		
+		// The variables list contains ENTRY, GID, DESIG, CROSS, SEED SOURCE, PLOT, BLOCK, REP,	and CHECK; only the following should be included in the resulting headers list
+		Assert.assertTrue(WorkbookDataUtil.ENTRY + " should be included in the headers list.", headers.contains(WorkbookDataUtil.ENTRY));
+		Assert.assertTrue(WorkbookDataUtil.GID + " should be included in the headers list.", headers.contains(WorkbookDataUtil.GID));
+		Assert.assertTrue(WorkbookDataUtil.DESIG + " should be included in the headers list.", headers.contains(WorkbookDataUtil.DESIG));
+		Assert.assertTrue(WorkbookDataUtil.PLOT + " should be included in the headers list.", headers.contains(WorkbookDataUtil.PLOT));
+		Assert.assertTrue(TermId.PLOT_NO.name() + " should be included in the headers list.", headers.contains(TermId.PLOT_NO.name()));
 	}
 
 	@Test

@@ -165,7 +165,7 @@
 				});
 			}
 
-			$http.post('/bmsapi/sample/' + cropName + '/sampleList', JSON.stringify($scope.sampleList), config).success(function (data) {
+			$http.post('/bmsapi/sampleLists/' + cropName + '/sampleList', JSON.stringify($scope.sampleList), config).success(function (data) {
 				var message = 'Sample list created successfully!';
 				showSuccessfulMessage('', message);
 			}).error(function (data) {

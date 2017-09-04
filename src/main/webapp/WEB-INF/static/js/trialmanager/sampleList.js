@@ -110,6 +110,9 @@
 			$scope.dateSampling = '';
 
 			$scope.variables = [];
+			$scope.users = [];
+
+			$scope.selectedUser = undefined;
 			$scope.variableSelected = undefined;
 			$scope.sampleForm.$setPristine();
 
@@ -144,6 +147,7 @@
 		};
 
 		$scope.saveSample = function () {
+			Spinner.play();
 			$scope.saveSampleListButton = true;
 			$scope.sampleList = {
 				"description": "",
@@ -165,17 +169,25 @@
 				});
 			}
 
-			$http.post('/bmsapi/sample/' + cropName + '/sampleList', JSON.stringify($scope.sampleList), config).success(function (data) {
-				var message = 'Sample list created successfully!';
-				showSuccessfulMessage('', message);
+			$http.post('/bmsapi/sampleLists/' + cropName + '/sampleList', JSON.stringify($scope.sampleList), config).success(function (data) {
+				if (data.id != 0) {
+					var message = 'Sample list created successfully!';
+					showSuccessfulMessage('', message);
+					if ($('#fbk-measurements-controller-div').scope() != undefined) {
+						BMS.Fieldbook.MeasurementsDataTable('#measurement-table');
+					}
+					$('#managerSampleListModal').modal('hide');
+					$scope.saveSampleListButton = false;
+					Spinner.stop();
+				}
 			}).error(function (data) {
 				if (data.status == 401) {
 					bmsAuth.handleReAuthentication();
 				}
 				showErrorMessage('', data.errors[0].message);
 				$scope.saveSampleListButton = false;
+				Spinner.stop();
 			});
-			$('#managerSampleListModal').modal('hide');
 		};
 	}]);
 })();

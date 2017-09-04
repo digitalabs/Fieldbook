@@ -74,7 +74,7 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 	return nRow;
 };
 
-//Sortable columns: GID(8240), DESIGNATION(8250), ENTRY_NO(8230), ENTRY_TYPE(8255), ENTRY_CODE(8300), REP_NO(8210), PLOT_NO(8200), BLOCK_NO(8220), ROW(8581), COL(8582) 
+//Sortable columns: GID(8240), DESIGNATION(8250), ENTRY_NO(8230), ENTRY_TYPE(8255), ENTRY_CODE(8300), REP_NO(8210), PLOT_NO(8200), BLOCK_NO(8220), ROW(8581), COL(8582)
 var sortableColumnIDs = [8240, 8250, 8230, 8255, 8300, 8210, 8200, 8220, 8581, 8582];
 
 var getColumns = function(displayColumns, displayTrialInstance) {
@@ -242,6 +242,23 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 					return '<a class="desig-link" href="javascript: void(0)" ' +
 						'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 						full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
+				}
+			});
+		} else if (displayColumn.termId === -2) {
+			// For samples
+			columnsDef.push({
+				defaultContent: '',
+				targets: columns.length - 1,
+				data: displayColumn.name,
+				render: function(data, type, full, meta) {
+					if (data && full) {
+						if (data[0] == "-") {
+							return data[0];
+						}
+						return '<a class="desig-link" href="javascript: void(0)" ' +
+							'onclick="openSampleSummary(\'' + full.PLOT_ID[0] + '\',\'' +  + full.PLOT_NO[0] + '\''
+							+ ')">' + data[0] + '</a>';
+					}
 				}
 			});
 		}

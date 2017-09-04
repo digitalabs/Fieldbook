@@ -89,7 +89,6 @@ public class FileUploadControllerTest {
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
-	private MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer;
 	private MeasurementRowTestDataInitializer measurementRowTestDataInitializer;
 	private Model model;
 	private HttpSession session;
@@ -130,7 +129,6 @@ public class FileUploadControllerTest {
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class),
 				Matchers.anyString())).thenReturn(null);
 
-		this.measurementVariableTestDataInitializer = new MeasurementVariableTestDataInitializer();
 		this.measurementRowTestDataInitializer = new MeasurementRowTestDataInitializer();
 	}
 
@@ -257,7 +255,7 @@ public class FileUploadControllerTest {
 	@Test
 	public void testConvertEntryTypeNameToID() {
 		final String value = "T";
-		final MeasurementVariable measurementVariable = this.measurementVariableTestDataInitializer
+		final MeasurementVariable measurementVariable = MeasurementVariableTestDataInitializer
 				.createMeasurementVariable(TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), value);
 		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class),

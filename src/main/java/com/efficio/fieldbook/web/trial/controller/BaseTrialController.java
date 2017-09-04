@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -610,19 +609,37 @@ public abstract class BaseTrialController extends SettingsController {
 			workbook = this.userSelection.getTemporaryWorkbook();
 		}
 
-		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
+		boolean haveSamples = false;
+		if (this.userSelection.getWorkbook() != null) {
+			haveSamples = fieldbookMiddlewareService.hasSamples(this.userSelection.getWorkbook().getStudyDetails().getId());
+		}
+
+		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
 		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
 
 		final String listCsv = request.getParameter("variableList");
 
 		if (!measurementDatasetVariables.isEmpty()) {
 			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);
+			if (haveSamples) {
+				final MeasurementVariable sample = createSampleVariable();
+				newMeasurementDatasetVariables.add(sample);
+			}
 			this.getTraitsAndSelectionVariates(measurementDatasetVariables, newMeasurementDatasetVariables, listCsv);
 			measurementDatasetVariables = newMeasurementDatasetVariables;
 		}
 
 		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
 		return workbook.arrangeMeasurementVariables(measurementDatasetVariables);
+	}
+
+	private MeasurementVariable createSampleVariable() {
+		final MeasurementVariable sample = new MeasurementVariable();
+		sample.setName("SAMPLES");
+		sample.setTermId(TermId.SAMPLES.getId());
+		sample.setFactor(true);
+
+		return sample;
 	}
 
 	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final List<MeasurementVariable> studyConditions,

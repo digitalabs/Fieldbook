@@ -148,9 +148,6 @@ public class EditNurseryControllerTest {
 	@InjectMocks
 	private EditNurseryController editNurseryController;
 
-	private final MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer =
-			new MeasurementVariableTestDataInitializer();
-
 	@Before
 	public void beforeEachTest() {
 		final Project testProject = new Project();
@@ -161,7 +158,7 @@ public class EditNurseryControllerTest {
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		Mockito.when(workbook.getMeasurementDatesetId()).thenReturn(1);
 		Mockito.when(workbook.getMeasurementDatasetVariables())
-				.thenReturn(this.measurementVariableTestDataInitializer.createMeasurementVariableList());
+				.thenReturn(MeasurementVariableTestDataInitializer.createMeasurementVariableList());
 		Mockito.when(workbook.getVariates()).thenReturn(new ArrayList<MeasurementVariable>());
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 		this.editNurseryController.setFieldbookService(this.fieldbookService);
@@ -655,10 +652,10 @@ public class EditNurseryControllerTest {
 		final String seasonTextValue = "Wet Season";
 
 		final MeasurementVariable seasonCodeVariable =
-				this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), seasonCodeValue);
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), seasonCodeValue);
 		seasonCodeVariable.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
 		final MeasurementVariable seasonTextVariable =
-				this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), seasonTextValue);
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), seasonTextValue);
 		seasonTextVariable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 
 		final List<MeasurementVariable> measurementVariables = Arrays.asList(seasonCodeVariable, seasonTextVariable);
@@ -687,10 +684,10 @@ public class EditNurseryControllerTest {
 	private MeasurementRow createTestMeasurementRowWithSeasonCodeAndText() {
 
 		final MeasurementVariable seasonCodeVariable =
-				this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), "");
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), "");
 		seasonCodeVariable.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
 		final MeasurementVariable seasonTextVariable =
-				this.measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), "");
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), "");
 		seasonTextVariable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 
 		final MeasurementRow measurementRow = new MeasurementRow();

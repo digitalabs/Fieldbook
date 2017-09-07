@@ -77,6 +77,8 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 @RequestMapping(DesignImportController.URL)
 public class DesignImportController extends SettingsController {
 
+	private static final String DEFAULT_DESIGN = "Default Design";
+
 	private static final int DEFAULT_STARTING_PLOT_NO = 1;
 
 	private static final int DEFAULT_STARTING_ENTRY_NO = 1;
@@ -241,17 +243,39 @@ public class DesignImportController extends SettingsController {
 					this.messageSource.getMessage("design.import.change.design.success.message.nursery", null, Locale.ENGLISH));
 		} else {
 			// For Trial
-
 			if (this.userSelection.getTemporaryWorkbook() != null) {
 				WorkbookUtil.resetObservationToDefaultDesign(this.userSelection.getTemporaryWorkbook().getObservations());
 			}
 
 			this.userSelection.setDesignImportData(null);
-			this.userSelection.getExpDesignParams().setFileName("Default Design");
+			this.userSelection.getExpDesignParams().setFileName(DEFAULT_DESIGN);
+			
+			
+			Workbook wb = this.userSelection.getTemporaryWorkbook();
+			if(wb != null) {
+				for(MeasurementRow row: wb.getTrialObservations()){
+					for(MeasurementData data: row.getDataList()){
+						if(TermId.EXPT_DESIGN_SOURCE.name().equals(data.getLabel())){
+							data.setValue(DEFAULT_DESIGN);
+						}
+					}
+				}
+			}
+			
+			wb = this.userSelection.getWorkbook();
+			if(wb != null) {
+				for(MeasurementRow row: wb.getTrialObservations()){
+					for(MeasurementData data: row.getDataList()){
+						if(TermId.EXPT_DESIGN_SOURCE.name().equals(data.getLabel())){
+							data.setValue(DEFAULT_DESIGN);
+						}
+					}
+				}
+			}
 			resultsMap.put(DesignImportController.SUCCESS,
 					this.messageSource.getMessage("design.import.change.design.success.message.trial", null, Locale.ENGLISH));
 		}
-
+		
 		// handling for existing study
 		if (studyId != null && studyId != 0) {
 			WorkbookUtil.resetObservationToDefaultDesign(this.userSelection.getWorkbook().getObservations());
@@ -579,9 +603,9 @@ public class DesignImportController extends SettingsController {
 			// existing design (if saved)
 			final MeasurementVariable expDesignSource = workbook.getExperimentalDesignVariables().getExperimentalDesignSource();
 			output.put("templateName", expDesignSource != null && expDesignSource.getValue() != null
-					&& !expDesignSource.getValue().isEmpty() ? expDesignSource.getValue() : "Default Design");
+					&& !expDesignSource.getValue().isEmpty() ? expDesignSource.getValue() : DEFAULT_DESIGN);
 		} else {
-			output.put("templateName", "Default Design");
+			output.put("templateName", DEFAULT_DESIGN);
 		}
 		
 		return output;

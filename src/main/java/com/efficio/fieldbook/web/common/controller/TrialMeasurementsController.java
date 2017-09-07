@@ -70,8 +70,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	public static final String GID = "GID";
 
-	public static final String SAMPLES = "SAMPLES";
-
 	private static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrialMeasurementsController.class);
@@ -660,7 +658,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		dataMap.put(TrialMeasurementsController.GID, row.getGid());
 		dataMap.put(TrialMeasurementsController.DESIGNATION, row.getDesignation());
 
-		dataMap.put(TrialMeasurementsController.SAMPLES, new Object[] {row.getSamples(), row.getPlotId()});
+		dataMap.put(String.valueOf(TermId.SAMPLES.getId()), new Object[] {row.getSamples(), row.getPlotId()});
 
 		// initialize suffix as empty string if its null
 		final String suffixValue = suffix == null ? "" : suffix;

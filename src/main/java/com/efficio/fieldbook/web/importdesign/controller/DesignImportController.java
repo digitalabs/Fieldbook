@@ -591,8 +591,11 @@ public class DesignImportController extends SettingsController {
 
 		// defaults
 		output.put("name", DesignTypeItem.CUSTOM_IMPORT.getName());
-		if(!this.userSelection.getExpDesignParams().getFileName().isEmpty()){
+		if(this.userSelection.getExpDesignParams() != null && this.userSelection.getExpDesignParams().getFileName() != null && !this.userSelection.getExpDesignParams().getFileName().isEmpty()){
 			output.put("templateName", this.userSelection.getExpDesignParams().getFileName());
+			return output;
+		} else if(this.userSelection.getDesignImportData() != null && !this.userSelection.getDesignImportData().getImportFileName().isEmpty()){
+			output.put("templateName", this.userSelection.getDesignImportData().getImportFileName());
 			return output;
 		}
 		

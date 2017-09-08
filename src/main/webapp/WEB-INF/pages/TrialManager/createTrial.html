@@ -54,7 +54,7 @@
 							</li>
 							<li ng-show="displayMeasurementOnlyActions()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Field map options</a>
-									<ul class="dropdown-menu">
+									<ul class="dropdown-menu" style="margin-left: -20px;">
 										<li>
 											<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
 											<a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link"
@@ -69,7 +69,7 @@
 								
 							<li class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Design and planning options</a>
-								<ul class="dropdown-menu">
+								<ul class="dropdown-menu" style="margin-left: 28px;">
 									<li>
 										<a href="javascript: void(0)" onclick="exportDesignTemplate()" class="export-design-template-link"
 										   th:text="#{nursery.nurserydetails.action.export.design.template}">Export Design Template</a>
@@ -89,7 +89,7 @@
 
 							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Plant level options</a>
-								<ul class="dropdown-menu">
+								<ul class="dropdown-menu" style="margin-left: -18px;">
 									<li >
 										<a href="javascript: createSample();" id="sample-trial-link"
 										   th:text="#{trial.trialdetails.action.create.sample}">Create Sample</a>
@@ -99,7 +99,7 @@
 
 							<li class="dropdown-submenu pull-left" ng-show="displayGermplasmOrMeasurmentOnlyActions()">
 								<a tabindex="-1" href="#">Data collection options</a>
-								<ul class="dropdown-menu">
+								<ul class="dropdown-menu" style="margin-left: 0px;">
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="javascript: showExportOptions();" id="export-study-link"
 										   th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>

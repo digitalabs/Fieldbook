@@ -54,11 +54,9 @@ import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
-import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
 import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
-import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
@@ -92,16 +90,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	private UserSelection studySelection;
 
 	@Resource
-	private FieldroidExportStudyService fielddroidExportStudyService;
-
-	@Resource
 	private ExcelExportStudyService excelExportStudyService;
 
 	@Resource
 	private CsvExportStudyService csvExportStudyService;
-
-	@Resource
-	private DataKaptureExportStudyService dataKaptureExportStudyService;
 
 	@Resource
 	private KsuExcelExportStudyService ksuExcelExportStudyService;
@@ -314,11 +306,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			String outputFilename = null;
 			FieldbookUtil.setColumnOrderingOnWorkbook(userSelection.getWorkbook(), data.get("columnOrders"));
 
-			if (AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType) {
-				filename = filename + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
-				outputFilename = this.fielddroidExportStudyService.export(userSelection.getWorkbook(), filename, instances);
-				response.setContentType(ExportStudyController.CSV_CONTENT_TYPE);
-			} else if (AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType) {
+			if (AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType) {
 				final List<Integer> visibleColumns = this.getVisibleColumns(data.get("visibleColumns"));
 				filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
 				outputFilename = this.excelExportStudyService.export(userSelection.getWorkbook(), filename, instances, visibleColumns);
@@ -331,10 +319,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 					filename = this.getOutputFileName(userSelection.getWorkbook().isNursery(), outputFilename, filename);
 					response.setContentType(ExportStudyController.APPLICATION_VND_MS_EXCEL);
 				}
-			} else if (AppConstants.EXPORT_DATAKAPTURE.getInt() == exportType) {
-				outputFilename = this.dataKaptureExportStudyService.export(userSelection.getWorkbook(), filename, instances);
-				response.setContentType("application/zip");
-				filename = filename + AppConstants.ZIP_FILE_SUFFIX.getString();
 			} else if (AppConstants.EXPORT_KSU_EXCEL.getInt() == exportType) {
 				filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
 				outputFilename = this.ksuExcelExportStudyService.export(userSelection.getWorkbook(), filename, instances);

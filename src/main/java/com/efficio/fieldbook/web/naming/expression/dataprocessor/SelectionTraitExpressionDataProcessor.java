@@ -41,7 +41,7 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 			possibleEnvironmentSources.addAll(workbook.getConstants());
 		}
 		for (final MeasurementVariable condition : possibleEnvironmentSources) {
-			if (condition.getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
+			if (SELECTION_TRAIT_PROPERTY.equalsIgnoreCase(condition.getProperty())) {
 				setSelectionTraitValue(condition.getValue(), source, condition.getTermId(), condition.getPossibleValues());
 			}
 		}
@@ -56,8 +56,9 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 		}
 
 		for (final MeasurementData measurementData : rowData) {
-			if (measurementData.getMeasurementVariable().getProperty().equalsIgnoreCase(SELECTION_TRAIT_PROPERTY)) {
-				setSelectionTraitValue(measurementData.getValue(), source, measurementData.getMeasurementVariable().getTermId(), measurementData.getMeasurementVariable().getPossibleValues());
+			if (SELECTION_TRAIT_PROPERTY.equalsIgnoreCase(measurementData.getMeasurementVariable().getProperty())) {
+				setSelectionTraitValue(measurementData.getValue(), source, measurementData.getMeasurementVariable().getTermId(),
+					measurementData.getMeasurementVariable().getPossibleValues());
 			}
 		}
 	}

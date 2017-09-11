@@ -84,7 +84,7 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 	jQuery.each(displayColumns, function(i, displayColumn) {
 		columns.push({
 			title: displayColumn.name,
-			data: displayColumn.name,
+			data: displayColumn.termId < 0 ? displayColumn.termId : displayColumn.name, // FIXME handle collisions between real and virtual variables when they have the same name. I.e: special column SAMPLES
 			termId: displayColumn.termId,
 			defaultContent: '',
 			orderable: displayColumn.variableType === "TRAIT" ? true : $.inArray(displayColumn.termId, sortableColumnIDs) > -1,
@@ -249,7 +249,7 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 			columnsDef.push({
 				defaultContent: '',
 				targets: columns.length - 1,
-				data: displayColumn.name,
+				data: displayColumn.termId,
 				render: function(data, type, full, meta) {
 					if (data && full) {
 						if (data[0] == "-") {

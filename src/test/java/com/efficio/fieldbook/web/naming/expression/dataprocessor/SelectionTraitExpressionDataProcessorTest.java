@@ -1,6 +1,10 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.google.common.collect.Lists;
+import junit.framework.Assert;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -17,11 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import junit.framework.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,17 +131,7 @@ public class SelectionTraitExpressionDataProcessorTest {
         String testValue = "test";
 
         MeasurementRow measurementRow = new MeasurementRow();
-        List<MeasurementData> dataList = new ArrayList<>();
-        MeasurementData selectionTraitData = new MeasurementData();
-        selectionTraitData.setValue("test");
-
-        MeasurementVariable variable = new MeasurementVariable();
-        variable.setTermId(1);
-        variable.setPossibleValues(Lists.newArrayList(new ValueReference(1,"name","test")));
-        variable.setProperty(unitUnderTest.SELECTION_TRAIT_PROPERTY);
-        selectionTraitData.setMeasurementVariable(variable);
-        dataList.add(selectionTraitData);
-        measurementRow.setDataList(dataList);
+        setMeasurementRow(measurementRow,1,"name","test",unitUnderTest.SELECTION_TRAIT_PROPERTY);
 
         AdvancingSource source = Mockito.mock(AdvancingSource.class);
 
@@ -151,5 +140,43 @@ public class SelectionTraitExpressionDataProcessorTest {
         unitUnderTest.processPlotLevelData(source, measurementRow);
         Mockito.verify(source).setSelectionTraitValue(testValue);
 
+    }
+
+    @Test
+    public void testProcessPlotLevelDataWithMeasurementDataForTrialWithSamples(){
+        String testValue = "test";
+
+        MeasurementRow measurementRow = new MeasurementRow();
+        setMeasurementRow(measurementRow,1,"name","test",unitUnderTest.SELECTION_TRAIT_PROPERTY);
+        setMeasurementRow(measurementRow,-2,"SAMPLES","samples description",null);
+
+        AdvancingSource source = Mockito.mock(AdvancingSource.class);
+
+        Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt("1"), true)).thenReturn(testValue);
+
+        unitUnderTest.processPlotLevelData(source, measurementRow);
+        Mockito.verify(source).setSelectionTraitValue(testValue);
+
+    }
+
+    private void setMeasurementRow(final MeasurementRow measurementRow, final Integer id, final String name,
+        final String description,final String property) {
+        List<MeasurementData> dataList = new ArrayList<>();
+        MeasurementData selectionTraitData = new MeasurementData();
+        selectionTraitData.setValue("test");
+
+        MeasurementVariable variable = new MeasurementVariable();
+        variable.setTermId(id);
+        variable.setPossibleValues(Lists.newArrayList(new ValueReference(id,name,description)));
+        if (null != property) {
+            variable.setProperty(property);
+        }
+        selectionTraitData.setMeasurementVariable(variable);
+        dataList.add(selectionTraitData);
+        if (null != measurementRow.getDataList()) {
+            measurementRow.getDataList().add(selectionTraitData);
+        } else {
+            measurementRow.setDataList(dataList);
+        }
     }
 }

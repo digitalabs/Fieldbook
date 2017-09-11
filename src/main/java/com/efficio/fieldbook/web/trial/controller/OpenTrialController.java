@@ -15,7 +15,6 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -466,8 +465,9 @@ public class OpenTrialController extends BaseTrialController {
 
 				this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(),
 						new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);
-				
-				//Set the flag that indicates whether the variates will be save or not to false since it's already save after inline edit
+
+				// Set the flag that indicates whether the variates will be save
+				// or not to false since it's already save after inline edit
 				this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(),
 						false);
 				returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING,
@@ -497,8 +497,9 @@ public class OpenTrialController extends BaseTrialController {
 	 * @param existingExpDesignVariables
 	 */
 	void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
-		VariableTypeList factors = this.studyDataManager.getAllStudyFactors(this.userSelection.getWorkbook().getStudyDetails().getId());
-		
+		final VariableTypeList factors = this.studyDataManager
+				.getAllStudyFactors(this.userSelection.getWorkbook().getStudyDetails().getId());
+
 		for (final MeasurementVariable mvar : conditions) {
 			// update the operation for experiment design variables :
 			// EXP_DESIGN, EXP_DESIGN_SOURCE, NREP

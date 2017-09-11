@@ -77,7 +77,7 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 @RequestMapping(DesignImportController.URL)
 public class DesignImportController extends SettingsController {
 
-	private static final String DEFAULT_DESIGN = "Default Design";
+	public static final String DEFAULT_DESIGN = "Default Design";
 
 	private static final int DEFAULT_STARTING_PLOT_NO = 1;
 

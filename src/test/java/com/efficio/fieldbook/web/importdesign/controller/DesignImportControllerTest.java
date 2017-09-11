@@ -65,6 +65,7 @@ import com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceIm
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
@@ -152,7 +153,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(data).when(this.userSelection).getDesignImportData();
 
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(this.project);
-
+		Mockito.when(this.userSelection.getExpDesignParams()).thenReturn(new ExpDesignParameterUi());
 		this.initializeOntologyData();
 		this.initializeDesignImportService();
 		this.initializeSettingServiceForChecks();
@@ -1020,7 +1021,6 @@ public class DesignImportControllerTest {
 		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
 		Mockito.verify(this.userSelection).setDesignImportData(null);
 		Mockito.verify(this.userSelection).setExperimentalDesignVariables(new ArrayList<MeasurementVariable>());
-		Mockito.verify(this.userSelection).setExpDesignParams(null);
 		Mockito.verify(this.userSelection).setExpDesignVariables(new ArrayList<Integer>());
 
 		this.assertIfDesignIsResetToDefault(observations);
@@ -1038,7 +1038,8 @@ public class DesignImportControllerTest {
 		DesignImportTestDataInitializer.updatePlotNoValue(observations);
 
 		this.designImportController.changeDesign(trial.getStudyDetails().getId(), false);
-
+		Mockito.verify(this.userSelection).getExpDesignParams();
+		Mockito.verify(this.userSelection).setDesignImportData(null);
 		this.assertIfDesignIsResetToDefault(observations);
 	}
 
@@ -1054,7 +1055,8 @@ public class DesignImportControllerTest {
 		DesignImportTestDataInitializer.updatePlotNoValue(observations);
 
 		this.designImportController.changeDesign(trial.getStudyDetails().getId(), false);
-
+		Mockito.verify(this.userSelection).getExpDesignParams();
+		Mockito.verify(this.userSelection).setDesignImportData(null);
 		this.assertIfDesignIsResetToDefault(observations);
 	}
 
@@ -1178,7 +1180,7 @@ public class DesignImportControllerTest {
 		Mockito.when(this.userSelection.getDesignImportData()).thenReturn(null);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
 
-		Assert.assertEquals("Show default custom import template name", DesignTypeItem.CUSTOM_IMPORT.getTemplateName(),
+		Assert.assertEquals("Show default custom import template name", DesignImportController.DEFAULT_DESIGN,
 				this.designImportController.getCustomImportDesignTypeDetails().get("templateName"));
 	}
 

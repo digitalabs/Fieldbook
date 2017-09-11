@@ -16,9 +16,11 @@ import org.generationcp.middleware.data.initializer.ListDataProjectTestDataIniti
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
+import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -167,8 +169,14 @@ public class OpenTrialControllerTest {
 		Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		workbook.setTrialDatasetId(1);
 		workbook.setMeasurementDatesetId(1);
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setId(1);
+		workbook.setStudyDetails(studyDetails);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 		this.initializeOntology();
+		VariableTypeList factors = Mockito.mock(VariableTypeList.class);
+		Mockito.when(factors.findById(Matchers.anyInt())).thenReturn(null);
+		Mockito.when(this.studyDataManager.getAllStudyFactors(Matchers.anyInt())).thenReturn(factors);
 
 	}
 
@@ -879,7 +887,7 @@ public class OpenTrialControllerTest {
 	public void testAssignOperationOnExpDesignVariablesForExistingTrialWithoutExperimentalDesign() {
 		final List<MeasurementVariable> conditions = this.initMeasurementVariableList();
 
-		this.openTrialController.assignOperationOnExpDesignVariables(conditions, null);
+		this.openTrialController.assignOperationOnExpDesignVariables(conditions);
 
 		for (final MeasurementVariable var : conditions) {
 			Assert.assertTrue("Expecting that the experimental variable's operation still set to ADD",
@@ -889,11 +897,12 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testAssignOperationOnExpDesignVariablesForExistingTrialWithExperimentalDesign() {
+		VariableTypeList factors = Mockito.mock(VariableTypeList.class);
+		Mockito.when(factors.findById(Matchers.anyInt())).thenReturn(new DMSVariableType());
+		Mockito.when(this.studyDataManager.getAllStudyFactors(Matchers.anyInt())).thenReturn(factors);
+		
 		final List<MeasurementVariable> conditions = this.initMeasurementVariableList();
-
-		final List<StandardVariable> existingExpDesignVariables = this.initExpDesignVariables();
-
-		this.openTrialController.assignOperationOnExpDesignVariables(conditions, existingExpDesignVariables);
+		this.openTrialController.assignOperationOnExpDesignVariables(conditions);
 
 		for (final MeasurementVariable var : conditions) {
 			Assert.assertTrue("Expecting that the experimental variable's operation is now set to UPDATE",

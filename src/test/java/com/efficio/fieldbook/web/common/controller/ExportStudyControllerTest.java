@@ -47,10 +47,8 @@ import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
-import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
-import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
@@ -83,13 +81,7 @@ public class ExportStudyControllerTest {
 	private CsvExportStudyService csvExportStudyService;
 
 	@Mock
-	private DataKaptureExportStudyService dataKaptureExportStudyService;
-
-	@Mock
 	private ExcelExportStudyService excelExportStudyService;
-
-	@Mock
-	private FieldroidExportStudyService fielddroidExportStudyService;
 
 	@Mock
 	private KsuExcelExportStudyService ksuExcelExportStudyService;
@@ -382,64 +374,6 @@ public class ExportStudyControllerTest {
 	}
 
 	@Test
-	public void testDoExportNurseryInDataKaptureFormat() throws MiddlewareException, JsonParseException, JsonMappingException, IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
-		this.userSelection.setWorkbook(workbook);
-
-		final String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();
-		this.userSelection.getWorkbook().getStudyDetails().setStudyName(generatedFilename);
-
-		final String outputFilename = ExportStudyControllerTest.SAMPLE_NURSERY_FILENAME + ExportStudyControllerTest.ZIP_EXT;
-		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
-		Mockito.when(this.dataKaptureExportStudyService.export(workbook, generatedFilename, instances)).thenReturn(outputFilename);
-
-		Mockito.when(this.resp.getContentType()).thenReturn(ExportStudyControllerTest.ZIP_CONTENT_TYPE);
-
-		final Integer exportType = AppConstants.EXPORT_DATAKAPTURE.getInt();
-		final Integer exportWayType = 1; // Plot Data
-		final Map<String, String> data = this.getData();
-		final String returnedValue = this.exportStudyController.exportFile(data, exportType, exportWayType, this.req, this.resp);
-		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
-
-		Assert.assertTrue("Unable to properly generate export", (Boolean) result.get(ExportStudyController.IS_SUCCESS));
-		Assert.assertEquals("Expected that the returned content type is " + ExportStudyControllerTest.ZIP_CONTENT_TYPE,
-				ExportStudyControllerTest.ZIP_CONTENT_TYPE, result.get("contentType"));
-		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + ExportStudyControllerTest.ZIP_EXT,
-				generatedFilename + ExportStudyControllerTest.ZIP_EXT, result.get("filename"));
-		Assert.assertEquals("Expected that the returned output filename is " + outputFilename, outputFilename,
-				result.get("outputFilename"));
-	}
-
-	@Test
-	public void testDoExportTrialInDataKaptureFormat() throws MiddlewareException, JsonParseException, JsonMappingException, IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, 3);
-		this.userSelection.setWorkbook(workbook);
-
-		final String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();
-		this.userSelection.getWorkbook().getStudyDetails().setStudyName(generatedFilename);
-
-		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
-		final String outputFilename = ExportStudyControllerTest.SAMPLE_TRIAL_FILENAME + ExportStudyControllerTest.ZIP_EXT;
-		Mockito.when(this.dataKaptureExportStudyService.export(workbook, generatedFilename, instances)).thenReturn(outputFilename);
-		Mockito.when(this.resp.getContentType()).thenReturn(ExportStudyControllerTest.ZIP_CONTENT_TYPE);
-
-		final Integer exportType = AppConstants.EXPORT_DATAKAPTURE.getInt();
-		final Integer exportWayType = 1;
-		final Map<String, String> data = this.getData();
-		final String returnedValue = this.exportStudyController.exportFileTrial(data, exportType, this.getTrialInstanceString(instances),
-				exportWayType, this.req, this.resp);
-		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
-
-		Assert.assertTrue("Unable to properly generate export", (Boolean) result.get(ExportStudyController.IS_SUCCESS));
-		Assert.assertEquals("Expected that the returned content type is " + ExportStudyControllerTest.ZIP_CONTENT_TYPE,
-				ExportStudyControllerTest.ZIP_CONTENT_TYPE, result.get("contentType"));
-		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + ExportStudyControllerTest.ZIP_EXT,
-				generatedFilename + ExportStudyControllerTest.ZIP_EXT, result.get("filename"));
-		Assert.assertEquals("Expected that the returned output filename is " + outputFilename, outputFilename,
-				result.get("outputFilename"));
-	}
-
-	@Test
 	public void testDoExportNurseryInExcelFormat() throws MiddlewareException, JsonParseException, JsonMappingException, IOException {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
 		this.userSelection.setWorkbook(workbook);
@@ -528,66 +462,6 @@ public class ExportStudyControllerTest {
 				generatedFilename + ExportStudyControllerTest.ZIP_EXT, result.get("filename"));
 		Assert.assertEquals("Expected that the returned output filename is " + outputFilename,
 				outputFilename + ExportStudyControllerTest.ZIP_EXT, result.get("outputFilename"));
-	}
-
-	@Test
-	public void testDoExportNurseryInFieldlogFormat() throws MiddlewareException, JsonParseException, JsonMappingException, IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
-		this.userSelection.setWorkbook(workbook);
-
-		final String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();
-		this.userSelection.getWorkbook().getStudyDetails().setStudyName(generatedFilename);
-
-		final String outputFilename = ExportStudyControllerTest.SAMPLE_NURSERY_FILENAME + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
-		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
-		Mockito.when(this.fielddroidExportStudyService.export(workbook, generatedFilename + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString(),
-				instances)).thenReturn(outputFilename);
-
-		Mockito.when(this.resp.getContentType()).thenReturn(ExportStudyControllerTest.CSV_CONTENT_TYPE);
-
-		final Integer exportType = AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt();
-		final Integer exportWayType = 1; // Plot Data
-		final Map<String, String> data = this.getData();
-		final String returnedValue = this.exportStudyController.exportFile(data, exportType, exportWayType, this.req, this.resp);
-		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
-
-		Assert.assertTrue("Unable to properly generate export", (Boolean) result.get(ExportStudyController.IS_SUCCESS));
-		Assert.assertEquals("Expected that the returned content type is " + ExportStudyControllerTest.CSV_CONTENT_TYPE,
-				ExportStudyControllerTest.CSV_CONTENT_TYPE, result.get("contentType"));
-		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString(),
-				generatedFilename + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString(), result.get("filename"));
-		Assert.assertEquals("Expected that the returned output filename is " + outputFilename, outputFilename,
-				result.get("outputFilename"));
-	}
-
-	@Test
-	public void testDoExportTrialInFieldlogFormat() throws MiddlewareException, JsonParseException, JsonMappingException, IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, 3);
-		this.userSelection.setWorkbook(workbook);
-
-		final String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();
-		this.userSelection.getWorkbook().getStudyDetails().setStudyName(generatedFilename);
-
-		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
-		final String outputFilename = ExportStudyControllerTest.SAMPLE_TRIAL_FILENAME + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
-		Mockito.when(this.fielddroidExportStudyService.export(workbook, generatedFilename + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString(),
-				instances)).thenReturn(outputFilename);
-		Mockito.when(this.resp.getContentType()).thenReturn(ExportStudyControllerTest.CSV_CONTENT_TYPE);
-
-		final Integer exportType = AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt();
-		final Integer exportWayType = 1;
-		final Map<String, String> data = this.getData();
-		final String returnedValue = this.exportStudyController.exportFileTrial(data, exportType, this.getTrialInstanceString(instances),
-				exportWayType, this.req, this.resp);
-		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
-
-		Assert.assertTrue("Unable to properly generate export", (Boolean) result.get(ExportStudyController.IS_SUCCESS));
-		Assert.assertEquals("Expected that the returned content type is " + ExportStudyControllerTest.CSV_CONTENT_TYPE,
-				ExportStudyControllerTest.CSV_CONTENT_TYPE, result.get("contentType"));
-		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString(),
-				generatedFilename + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString(), result.get("filename"));
-		Assert.assertEquals("Expected that the returned output filename is " + outputFilename, outputFilename,
-				result.get("outputFilename"));
 	}
 
 	@Test

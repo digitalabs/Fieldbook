@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SampleListController', ['$scope', 'TrialManagerDataService', 'environmentService', function ($scope,
-																															TrialManagerDataService, environmentService) {
+	manageTrialApp.controller('SampleListController', ['$scope', 'TrialManagerDataService', function ($scope,
+																									  TrialManagerDataService) {
 
 		$scope.settings = TrialManagerDataService.settings.environments;
 
@@ -24,11 +24,11 @@
 		$scope.PREFERRED_LOCATION_VARIABLE = 8170;
 		$scope.LOCATION_NAME_ID = 8190;
 
-		$scope.instances = angular.copy(environmentService.environments);
+		$scope.data = TrialManagerDataService.currentData.environments;
 
 		$scope.continueCreatingSampleList = function () {
 			if ($scope.selectedTrialInstancesBySampleList.length === 0) {
-				showErrorMessage('', selectOneLocationErrorMessage);
+				showErrorMessage('', selectOneLocationOrInstanceErrorMessage);
 			} else {
 				trialSelectedEnvironmentContinueCreatingSample($scope.selectedTrialInstancesBySampleList);
 			}
@@ -37,7 +37,7 @@
 		$scope.doSelectAll = function () {
 			$scope.selectedTrialInstancesBySampleList = [];
 			var i = 1;
-			angular.forEach($scope.instances.environments, function (environment) {
+			angular.forEach($scope.data.environments, function (environment) {
 				if ($scope.selectAll) {
 					environment.Selected = i;
 					i = i + 1;
@@ -49,7 +49,7 @@
 		};
 
 		$scope.doSelectInstance = function(index){
-			var environment = $scope.instances.environments[index];
+			var environment = $scope.data.environments[index];
 			if(environment.Selected != undefined){
 				$scope.selectedTrialInstancesBySampleList.push(environment.managementDetailValues[$scope.TRIAL_INSTANCE_ID]);
 			}else{

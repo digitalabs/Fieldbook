@@ -188,7 +188,9 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
     protected void performWorkbookMetadataUpdate() throws WorkbookParserException{
         final Map<String, Object> variableMap = new HashMap<>();
         final WorkbookParser parser = new WorkbookParser();
-        final Workbook descriptionWorkbook = parser.parseFile(new File(currentFile), false, false);
+		org.apache.poi.ss.usermodel.Workbook excelWorkbook = parser.loadFileToExcelWorkbook(new File(currentFile));
+
+		final Workbook descriptionWorkbook = parser.parseFile(excelWorkbook, false, false);
         final Workbook originalWorkbook = workbook;
 
         final List<MeasurementRow> trialObservations =

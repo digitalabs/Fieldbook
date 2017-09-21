@@ -40,7 +40,7 @@
 			angular.forEach($scope.data.environments, function (environment) {
 				if ($scope.selectAll) {
 					environment.Selected = i;
-					i = i + 1;
+					i++;
 					$scope.selectedTrialInstancesBySampleList.push(environment.managementDetailValues[$scope.TRIAL_INSTANCE_ID]);
 				} else {
 					environment.Selected = undefined;

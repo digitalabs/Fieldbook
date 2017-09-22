@@ -61,7 +61,6 @@ public class DeleteStudyControllerTest {
 	@Before
 	public void setUp() {
 		this.locale = new Locale("en", "US");
-		;
 		this.germplasmListTestDataInitializer = new GermplasmListTestDataInitializer();
 		final GermplasmList nurseryList = this.germplasmListTestDataInitializer.createGermplasmListWithType(1,
 				GermplasmListType.NURSERY.name());
@@ -140,5 +139,37 @@ public class DeleteStudyControllerTest {
 		final Map<String, Object> result = this.deleteStudyController
 				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 1", "0", result.get(DeleteStudyController.IS_SUCCESS));
+	}
+
+	@Test
+	public void testSubmitDeleteValidationTrialTemplate() throws UnpermittedDeletionException {
+		final Study study = Mockito.mock(Study.class);
+		Mockito.when(study.getProgramUUID()).thenReturn(null);
+		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
+			.thenReturn(study);
+		final String message = "Program templates cannot be deleted.";
+		Mockito.when(this.messageSource.getMessage(Matchers.anyString(), Matchers.any(Object[].class),
+			Matchers.eq(this.locale))).thenReturn(message);
+
+		final Map<String, Object> result = this.deleteStudyController
+			.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
+		Assert.assertEquals("The value should be 0", "0", result.get(DeleteStudyController.IS_SUCCESS));
+		Assert.assertEquals("Program templates cannot be deleted.", result.get("message"));
+	}
+
+	@Test
+	public void testSubmitDeleteValidationNurseryTemplate() throws UnpermittedDeletionException {
+		final Study study = Mockito.mock(Study.class);
+		Mockito.when(study.getProgramUUID()).thenReturn(null);
+		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
+			.thenReturn(study);
+		final String message = "Program templates cannot be deleted.";
+		Mockito.when(this.messageSource.getMessage(Matchers.anyString(), Matchers.any(Object[].class),
+			Matchers.eq(this.locale))).thenReturn(message);
+
+		final Map<String, Object> result = this.deleteStudyController
+			.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "N", this.model, this.session, this.locale);
+		Assert.assertEquals("The value should be 0", "0", result.get(DeleteStudyController.IS_SUCCESS));
+		Assert.assertEquals("Program templates cannot be deleted.", result.get("message"));
 	}
 }

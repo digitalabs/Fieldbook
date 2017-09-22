@@ -78,6 +78,10 @@ public class DeleteStudyControllerTest {
 
 	@Test
 	public void testSubmitDeleteNursery() throws UnpermittedDeletionException {
+		final Study study = Mockito.mock(Study.class);
+		Mockito.when(study.getProgramUUID()).thenReturn(Mockito.anyString());
+		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
+			.thenReturn(study);
 		final Map<String, Object> result = this.deleteStudyController
 				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "N", this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));
@@ -93,6 +97,10 @@ public class DeleteStudyControllerTest {
 
 	@Test
 	public void testSubmitDeleteTrial() throws UnpermittedDeletionException {
+		final Study study = Mockito.mock(Study.class);
+		Mockito.when(study.getProgramUUID()).thenReturn(Mockito.anyString());
+		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
+			.thenReturn(study);
 		final Map<String, Object> result = this.deleteStudyController
 				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));

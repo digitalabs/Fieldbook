@@ -65,7 +65,7 @@
 			});
 
 			if (!isTrialInstanceSelected) {
-				showErrorMessage('', selectOneLocationErrorMessage);
+				showErrorMessage('', selectOneLocationErrorMessageForAdvancing);
 			} else {
 				if ($scope.locationFromTrialSettings) {
 					selectedLocationDetails

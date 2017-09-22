@@ -2601,11 +2601,6 @@ function deleteFolder(object) {
 		folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key,
 		folderName = JSON.stringify({'folderName': currentFolderName});
 
-		if(isBasicTemplate(currentFolderName)){
-			showMessage('Deleting basic template files are not allowed.');
-			return;
-		}
-		
 		if (isFolder) {
 			$.ajax({
 				url: '/Fieldbook/StudyTreeManager/isFolderEmpty/'+folderId+'/'+studyType,
@@ -2639,17 +2634,9 @@ function deleteFolder(object) {
 				$('#delete-heading-modal').text(deleteTrialTitle);
 				deleteConfirmationText = deleteTrialConfirmation;
 			}
-			
 			showDeleteStudyFolderDiv(deleteConfirmationText);
 		}
 	}
-}
-
-function isBasicTemplate(itemName){
-	if(itemName === 'Basic nursery template' || itemName == 'Basic Trial Template'){
-		return true;
-	}
-	return false;
 }
 
 function showDeleteStudyFolderDiv(deleteConfirmationText) {

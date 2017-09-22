@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.service.initializer;
 
+import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
@@ -19,6 +20,19 @@ public class LabelPrintingServiceDataInitializer {
 	public static final int TEST_REP_NO = 2;
 	public static final int TEST_EXPERIMENT_NUMBER = 1;
     public static final String TEST_FIELDBOOK_NAME = "Test";
+
+	public static final String NURSERY_SETTING_LABEL_NAME = "nurserySettingLabelName";
+	public static final int NURSERY_SETTING_TERM_ID = 100;
+
+	public static final String GERMPLSM_DESCRIPTOR_LABEL_NAME = "germplsmDescriptorLabelName";
+	public static final int GERMPLSM_DESCRIPTOR_TERM_ID = 101;
+
+	public static final String TRIAL_SETTING_LABEL_NAME = "trialSettingLabelName";
+	public static final int TRIAL_SETTING_TERM_ID = 102;
+
+	public static final String TRIAL_ENVIRONMENT_DESIGN_LABEL_NAME = "trialEnvironmentDesignLabelName";
+	public static final int TRIAL_ENVIRONMENT_DESIGN__TERM_ID = 103;
+
 
 	public static List<StudyTrialInstanceInfo> generateStudyTrialInstanceInfoList() {
         final List<StudyTrialInstanceInfo> infoList = new ArrayList<>();
@@ -46,4 +60,49 @@ public class LabelPrintingServiceDataInitializer {
 		return labelList;
 
 	}
+
+	public static List<LabelFields> createNurseryManagementLabelFields() {
+		final List<LabelFields> labelFields = new ArrayList<>();
+
+		final LabelFields field =
+				new LabelFields(LabelPrintingServiceDataInitializer.NURSERY_SETTING_LABEL_NAME,
+						LabelPrintingServiceDataInitializer.NURSERY_SETTING_TERM_ID, false);
+		labelFields.add(field);
+
+		return labelFields;
+	}
+
+	public static List<LabelFields> createGermplsmDescriptorsLabelFields() {
+		final List<LabelFields> labelFields = new ArrayList<>();
+
+		final LabelFields field =
+				new LabelFields(LabelPrintingServiceDataInitializer.GERMPLSM_DESCRIPTOR_LABEL_NAME,
+						LabelPrintingServiceDataInitializer.GERMPLSM_DESCRIPTOR_TERM_ID, false);
+		labelFields.add(field);
+
+		return labelFields;
+	}
+
+	public static List<LabelFields> createTrialSettingLabelFields() {
+		final List<LabelFields> labelFields = new ArrayList<>();
+
+		final LabelFields field =
+				new LabelFields(LabelPrintingServiceDataInitializer.TRIAL_SETTING_LABEL_NAME,
+						LabelPrintingServiceDataInitializer.TRIAL_SETTING_TERM_ID, false);
+		labelFields.add(field);
+
+		return labelFields;
+	}
+
+	public static List<LabelFields> createEnvironmentAndExperimentalDesignSettingsLabelFields() {
+		final List<LabelFields> labelFields = new ArrayList<>();
+
+		final LabelFields field =
+				new LabelFields(LabelPrintingServiceDataInitializer.TRIAL_ENVIRONMENT_DESIGN_LABEL_NAME,
+						LabelPrintingServiceDataInitializer.TRIAL_ENVIRONMENT_DESIGN__TERM_ID, false);
+		labelFields.add(field);
+
+		return labelFields;
+	}
+
 }

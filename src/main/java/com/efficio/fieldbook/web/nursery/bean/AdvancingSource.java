@@ -55,7 +55,10 @@ public class AdvancingSource {
     
     private String trialInstanceNumber;
     private String replicationNumber;
-    
+
+	private int maleGid;
+
+	private int femaleGid;
 
 	private boolean isForceUniqueNameGeneration;
 
@@ -408,4 +411,20 @@ public class AdvancingSource {
         source.setReplicationNumber(this.replicationNumber);
         return source;
     }
+
+	public int getMaleGid() {
+		return maleGid;
+	}
+
+	public void setMaleGid(final int maleGid) {
+		this.maleGid = maleGid;
+	}
+
+	public int getFemaleGid() {
+		return femaleGid;
+	}
+
+	public void setFemaleGid(final int femaleGid) {
+		this.femaleGid = femaleGid;
+	}
 }

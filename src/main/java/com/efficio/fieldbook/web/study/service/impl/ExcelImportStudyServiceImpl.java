@@ -117,6 +117,41 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
     }
 
     @Override
+    protected void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes, final List<String> addedVariates, final List<String> removedVariates) {
+        final Sheet descriptionSheet = parsedData.getSheetAt(0);
+        final int variateRow = this.findRow(descriptionSheet, ExcelImportStudyServiceImpl.TEMPLATE_SECTION_VARIATE);
+        for (int i = variateRow + 1; i <= descriptionSheet.getLastRowNum(); i++) {
+            if (descriptionSheet.getRow(i) != null && descriptionSheet.getRow(i).getCell(0) != null) {
+                final Cell cell = descriptionSheet.getRow(i).getCell(0);
+                if (cell.getStringCellValue() != null && !"".equalsIgnoreCase(cell.getStringCellValue())) {
+                    addedVariates.add(cell.getStringCellValue());
+                }
+            }
+        }
+
+        for (final MeasurementVariable variate : workbook.getVariates()) {
+            removedVariates.add(variate.getName());
+        }
+        for (int i = 0; i < addedVariates.size(); i++) {
+            final String xlsVariate = addedVariates.get(i);
+            for (final String wbVariate : removedVariates) {
+                if (xlsVariate.equalsIgnoreCase(wbVariate)) {
+                    addedVariates.remove(xlsVariate);
+                    removedVariates.remove(wbVariate);
+                    i--;
+                    break;
+                }
+            }
+        }
+        if (!addedVariates.isEmpty()) {
+            modes.add(ChangeType.ADDED_TRAITS);
+        }
+        if (!removedVariates.isEmpty()) {
+            modes.add(ChangeType.DELETED_TRAITS);
+        }
+    }
+    
+    @Override
     public int getObservationSheetNumber() {
         return EXCEL_OBSERVATION_SHEET_NUMBER;
     }
@@ -131,8 +166,10 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
         }
         final int gidCol = this.findColumn(obsSheet, this.getColumnLabel(workbook, TermId.GID.getId()));
         final int desigCol = this.findColumn(obsSheet, this.getColumnLabel(workbook, TermId.DESIG.getId()));
-        if (entryCol <= -1 || plotCol <= -1 || gidCol <= -1 || desigCol <= -1) {
-            throw new WorkbookParserException("error.workbook.import.requiredColumnsMissing");
+		final int plot_id = this.findColumn(obsSheet, this.getColumnLabel(workbook, TermId.PLOT_ID.getId()));
+
+		if (entryCol <= -1 || plotCol <= -1 || gidCol <= -1 || desigCol <= -1 || plot_id <= -1) {
+			throw new WorkbookParserException("error.workbook.import.requiredColumnsMissing");
         }
     }
 
@@ -145,11 +182,6 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
         this.validateSections(descriptionSheet);
 
         this.validateVariates(parsedData, workbook);
-    }
-
-    @Override
-    protected String retrieveTrialInstanceNumber() throws WorkbookParserException {
-        return getTrialInstanceNumber(workbook, parsedData);
     }
 
     @Override
@@ -535,9 +567,6 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 						} else if (WorkbookUtil.getMeasurementVariable(workbookVariates, mvar.getTermId()) != null) {
 							throw new WorkbookParserException(this.messageSource.getMessage("error.import.variate.exists.in.study",
 									new String[] {traitLabel}, LocaleContextHolder.getLocale()));
-						} else {
-							// valid
-							WorkbookUtil.addVariateToObservations(mvar, workbook.getObservations());
 						}
 					}
 

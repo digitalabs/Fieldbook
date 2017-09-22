@@ -82,15 +82,10 @@ public class ExportImportStudyUtilTest {
 		Assert.assertFalse("The site name for nursery is not empty.", "".equalsIgnoreCase(siteName));
 	}
 
-	@Test
+	@Test(expected = MiddlewareQueryException.class)
 	public void testGetPropertyName() throws MiddlewareQueryException {
-		Assert.assertNotNull("Expecting there is a property name returned after call getPropertyName() but didn't.",
-				ExportImportStudyUtil.getPropertyName(this.ontologyService));
-
-		// returns error
 		Mockito.when(this.ontologyService.getProperty(Matchers.anyInt())).thenThrow(new MiddlewareQueryException("error"));
-		Assert.assertTrue("Expecting there is a property name returned after call getPropertyName() but didn't.",
-				"".equalsIgnoreCase(ExportImportStudyUtil.getPropertyName(this.ontologyService)));
+		ExportImportStudyUtil.getPropertyName(this.ontologyService);
 	}
 
 	@Test

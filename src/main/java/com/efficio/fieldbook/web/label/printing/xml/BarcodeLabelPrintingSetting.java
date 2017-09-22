@@ -17,15 +17,18 @@ public class BarcodeLabelPrintingSetting implements Serializable {
 	private boolean isBarcodeNeeded;
 	private String barcodeFormat;
 	private String barcodeFieldsString;
+	private boolean isPlotCodePrefix;
 
 	public BarcodeLabelPrintingSetting() {
 
 	}
 
-	public BarcodeLabelPrintingSetting(boolean isBarcodeNeeded, String barcodeFormat, String barcodeFieldsString) {
+	public BarcodeLabelPrintingSetting(boolean isBarcodeNeeded, String barcodeFormat, String barcodeFieldsString,
+			boolean isPlotCodePrefix) {
 		super();
 		this.isBarcodeNeeded = isBarcodeNeeded;
 		this.barcodeFormat = barcodeFormat;
+		this.isPlotCodePrefix = isPlotCodePrefix;
 		this.setBarcodeFieldsString(barcodeFieldsString);
 	}
 
@@ -75,6 +78,7 @@ public class BarcodeLabelPrintingSetting implements Serializable {
 		result = prime * result + (this.barcodeFieldsString == null ? 0 : this.barcodeFieldsString.hashCode());
 		result = prime * result + (this.barcodeFormat == null ? 0 : this.barcodeFormat.hashCode());
 		result = prime * result + (this.isBarcodeNeeded ? 1231 : 1237);
+		result = prime * result + (this.isPlotCodePrefix ? 1231 : 1237);
 		return result;
 	}
 
@@ -107,13 +111,26 @@ public class BarcodeLabelPrintingSetting implements Serializable {
 		if (this.isBarcodeNeeded != other.isBarcodeNeeded) {
 			return false;
 		}
+		if (this.isPlotCodePrefix != other.isPlotCodePrefix) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
 		return "BarcodeLabelPrintingSetting [isBarcodeNeeded=" + this.isBarcodeNeeded + ", barcodeFormat=" + this.barcodeFormat
-				+ ", barcodeFieldsString=" + this.barcodeFieldsString + "]";
+				+ ", barcodeFieldsString=" + this.barcodeFieldsString + ", isPlotCodePrefix=" + this.isPlotCodePrefix + "]";
+	}
+
+	@XmlAttribute
+	public boolean isPlotCodePrefix() {
+		return isPlotCodePrefix;
+	}
+
+	
+	public void setPlotCodePrefix(boolean isPlotCodePrefix) {
+		this.isPlotCodePrefix = isPlotCodePrefix;
 	}
 
 }

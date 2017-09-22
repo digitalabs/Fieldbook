@@ -13,9 +13,6 @@ import javax.annotation.Resource;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Variable;
@@ -25,11 +22,13 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.ontology.api.OntologyPropertyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.manager.ontology.daoElements.VariableFilter;
+import org.generationcp.middleware.service.api.study.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -76,6 +75,9 @@ public class ManageSettingsController extends SettingsController {
 
 	@Resource
 	private ContextUtil contextUtil;
+
+	@Resource
+	protected StudyService studyService;
 
 	@ResponseBody
 	@RequestMapping(value = "/settings/role/{roleId}", method = RequestMethod.GET,
@@ -289,7 +291,6 @@ public class ManageSettingsController extends SettingsController {
 	 *
 	 * @param mode       the mode
 	 * @param newDetails the new details
-	 * @return the string
 	 * @throws Exception the exception
 	 */
 	private void addNewSettingDetails(int mode, List<SettingDetail> newDetails) throws Exception {
@@ -398,62 +399,36 @@ public class ManageSettingsController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/hasMeasurementData/{mode}", method = RequestMethod.POST)
+	@Transactional
 	public boolean hasMeasurementData(@RequestBody List<Integer> ids, @PathVariable int mode) {
-		for (Integer id : ids) {
-			if (this.checkModeAndHasMeasurementData(mode, id)) {
-				return true;
-			}
+		// if study is not yet saved, no measurement data yet
+		final Workbook savedWorkbook = this.userSelection.getWorkbook();
+		if (savedWorkbook == null) {
+			return false;
 		}
-		return false;
+		return this.checkModeAndHasMeasurementDataEntered(mode, ids, this.userSelection.getWorkbook().getStudyDetails().getId());
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/hasMeasurementData/environmentNo/{environmentNo}", method = RequestMethod.POST)
+	@Transactional
 	public boolean hasMeasurementDataOnEnvironment(@RequestBody List<Integer> ids, @PathVariable int environmentNo) {
-		Workbook workbook = this.userSelection.getWorkbook();
-		List<MeasurementRow> observationsOnEnvironment = this.getObservationsOnEnvironment(workbook, environmentNo);
-
-		for (Integer variableId : ids) {
-			if (SettingsController.hasMeasurementDataEntered(variableId, observationsOnEnvironment)) {
-				return true;
-			}
+		// if study is not yet saved, no measurement data yet
+		final Workbook savedWorkbook = this.userSelection.getWorkbook();
+		if (savedWorkbook == null) {
+			return false;
 		}
-
-		return false;
-	}
-
-	protected List<MeasurementRow> getObservationsOnEnvironment(Workbook workbook, int environmentNo) {
-		List<MeasurementRow> observations = workbook.getObservations();
-		List<MeasurementRow> filteredObservations = new ArrayList<MeasurementRow>();
-
-		// we do a matching of the name here so there won't be a problem in the data table
-		for (MeasurementRow row : observations) {
-			List<MeasurementData> dataList = row.getDataList();
-			for (MeasurementData data : dataList) {
-				if (this.isEnvironmentNotDeleted(data, environmentNo)) {
-					filteredObservations.add(row);
-					break;
-				}
-
-			}
-		}
-		return filteredObservations;
-	}
-
-	private boolean isEnvironmentNotDeleted(MeasurementData data, int environmentNo) {
-		if (data.getMeasurementVariable() != null) {
-			MeasurementVariable var = data.getMeasurementVariable();
-			if (var != null && var.getName() != null && ("TRIAL_INSTANCE".equalsIgnoreCase(var.getName()) || "TRIAL"
-					.equalsIgnoreCase(var.getName())) && data.getValue().equals(String.valueOf(environmentNo))) {
-				return true;
-			}
-		}
-		return false;
+		return this.studyService
+			.hasMeasurementDataOnEnvironment(this.userSelection.getWorkbook().getStudyDetails().getId(), environmentNo);
 	}
 
 	protected boolean checkModeAndHasMeasurementData(int mode, int variableId) {
 		return mode == VariableType.TRAIT.getId() && this.userSelection.getMeasurementRowList() != null && !this.userSelection
 				.getMeasurementRowList().isEmpty() && this.hasMeasurementDataEntered(variableId);
+	}
+
+	protected boolean checkModeAndHasMeasurementDataEntered(final int mode, final List<Integer> ids, final Integer studyId) {
+		return mode == VariableType.TRAIT.getId() && this.studyService.hasMeasurementDataEntered(ids, studyId);
 	}
 
 	@Override

@@ -15,14 +15,20 @@ package com.efficio.fieldbook.web.common.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -93,13 +99,17 @@ import com.google.common.collect.Lists;
 public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	/**
-	 * The default folder open state stored when closing the germplasm lists browser. 
+	 * The default folder open state stored when closing the germplasm lists
+	 * browser.
 	 */
 	static final String DEFAULT_STATE_SAVED_FOR_GERMPLASM_LIST = "Lists";
 
 	private static final String COMMON_SAVE_GERMPLASM_LIST = "Common/saveGermplasmList";
 
 	private static final String GERMPLASM_LIST_TYPES = "germplasmListTypes";
+
+	private static final Integer LIST_DATA_STATUS = 0;
+	private static final Integer LIST_DATA_LRECID = 0;
 
 	/**
 	 * The Constant LOG.
@@ -114,6 +124,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	public static final String GERMPLASM_LIST_TYPE_ADVANCE = "advance";
 	public static final String GERMPLASM_LIST_TYPE_CROSS = "cross";
+	public static final String GERMPLASM_LIST_TYPE_PARENT = "parent";
 	public static final String NODE_NONE = "None";
 	/**
 	 * The Constant BATCH_SIZE.
@@ -138,7 +149,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@Resource
 	private NamingConventionService namingConventionService;
 
-	private static final String NAME_NOT_UNIQUE = "Name not unique";
+	static final String NAME_NOT_UNIQUE = "Name not unique";
 	private static final String HAS_CHILDREN = "Folder has children";
 	private static final String FOLDER = "FOLDER";
 
@@ -166,12 +177,15 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * @return the string
 	 */
 	@RequestMapping(value = "/saveList/{listIdentifier}", method = RequestMethod.GET)
-	public String saveList(@ModelAttribute("saveListForm") final SaveListForm form, @PathVariable final String listIdentifier,
-			final Model model) {
+	public String saveList(@ModelAttribute("saveListForm") final SaveListForm form,
+			@PathVariable final String listIdentifier, final Model model) {
 
 		try {
 			form.setListDate(DateUtil.getCurrentDateInUIFormat());
 			form.setListIdentifier(listIdentifier);
+			final String listOwner = this.fieldbookMiddlewareService
+					.getOwnerListName(this.contextUtil.getCurrentUserLocalId());
+			form.setListOwner(listOwner);
 			final List<UserDefinedField> germplasmListTypes = this.germplasmListManager.getGermplasmListTypes();
 			form.setListType(AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString());
 			model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_TYPES, germplasmListTypes);
@@ -182,22 +196,23 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);
 	}
-	
+
 	private class GermplasmListResult {
-		private Integer germplasmListId;
-		private Boolean isTrimed;
-		
-		public GermplasmListResult(Integer germplasmListId, Boolean isTrimed) {
+		private final Integer germplasmListId;
+		private final Boolean isTrimed;
+
+		public GermplasmListResult(final Integer germplasmListId, final Boolean isTrimed) {
 			super();
 			this.germplasmListId = germplasmListId;
 			this.isTrimed = isTrimed;
 		}
+
 		public Boolean getIsTrimed() {
-			return isTrimed;
+			return this.isTrimed;
 		}
 
 		public Integer getGermplasmListId() {
-			return germplasmListId;
+			return this.germplasmListId;
 		}
 
 	}
@@ -213,35 +228,35 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final Map<String, Object> results = new HashMap<>();
 
 		try {
-			final GermplasmList germplasmListIsNew =
-					this.fieldbookMiddlewareService.getGermplasmListByName(form.getListName(), this.getCurrentProgramUUID());
-			if (germplasmListIsNew == null && !this.isSimilarToRootFolderName(form.getListName())) {
+			final String trimmedListName = form.getListName().trim();
+			final GermplasmList germplasmListIsNew = this.fieldbookMiddlewareService
+					.getGermplasmListByName(trimmedListName, this.getCurrentProgramUUID());
+			if (germplasmListIsNew == null && !this.isSimilarToRootFolderName(trimmedListName)) {
 				final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
-				
-				GermplasmListResult result = this.saveGermplasmList(form, listDataItems);
+
+				final GermplasmListResult result = this.saveGermplasmList(form, listDataItems);
 				final Integer germplasmListId = result.getGermplasmListId();
 
 				final List<GermplasmListData> data = new ArrayList<>();
 				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
-				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
-
-				final Integer listDataProjectListId =
-						this.saveListDataProjectList(form.getGermplasmListType(), germplasmListId, listDataProject);
+				final Integer listDataProjectListId = this.createAndSaveListDataProject(form, germplasmListId, data);
 				results.put(GermplasmTreeController.IS_SUCCESS, 1);
 				results.put("germplasmListId", germplasmListId);
-				results.put("uniqueId", form.getListIdentifier());
+				results.put("uniqueId", form.getListIdentifier().isEmpty() ? "0" : form.getListIdentifier());
 				results.put("listName", form.getListName());
 				results.put("isTrimed", result.getIsTrimed() ? 1 : 0);
 
 				if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
 					results.put("advancedGermplasmListId", listDataProjectListId);
-				} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
+				} else if (GermplasmListType.isCrosses(form.getGermplasmListType())) {
 					results.put("crossesListId", listDataProjectListId);
+				} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(form.getGermplasmListType())) {
+					results.put("parentListId", listDataProjectListId);
 				}
 			} else {
 				results.put(GermplasmTreeController.IS_SUCCESS, 0);
-				results.put(GermplasmTreeController.MESSAGE,
-						this.messageSource.getMessage("germplasm.save.list.name.unique.error", null, LocaleContextHolder.getLocale()));
+				results.put(GermplasmTreeController.MESSAGE, this.messageSource
+						.getMessage("germplasm.save.list.name.unique.error", null, LocaleContextHolder.getLocale()));
 			}
 		} catch (final RulesNotConfiguredException rnce) {
 			GermplasmTreeController.LOG.error(rnce.getMessage(), rnce);
@@ -261,11 +276,27 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
+	private Integer createAndSaveListDataProject(final SaveListForm form, final Integer germplasmListId,
+			final List<GermplasmListData> data) {
+
+		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(form.getGermplasmListType())) {
+			return 0;
+		}
+
+		final List<ListDataProject> listDataProject = ListDataProjectUtil
+				.createListDataProjectFromGermplasmListData(data);
+
+		final Integer listDataProjectListId = this.saveListDataProjectList(form.getGermplasmListType(), germplasmListId,
+				listDataProject);
+		return listDataProjectListId;
+	}
+
+	// TODO Remove
 	@ResponseBody
 	@RequestMapping(value = "/updateCrossesList", method = RequestMethod.POST)
 	public Map<String, Object> updateCrossesList(final Model model, final HttpSession session) {
 		final Map<String, Object> results = new HashMap<>();
-		
+
 		try {
 			final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 			final String crossesListId = (String) session.getAttribute("createdCrossesListId");
@@ -279,10 +310,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 				final List<GermplasmListData> data = new ArrayList<>();
 				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
-				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
+				final List<ListDataProject> listDataProject = ListDataProjectUtil
+						.createListDataProjectFromGermplasmListData(data);
 
-				final Integer listDataProjectListId =
-						this.saveListDataProjectList(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS, germplasmListId, listDataProject);
+				final Integer listDataProjectListId = this.saveListDataProjectList(
+						GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS, germplasmListId, listDataProject);
 				results.put(GermplasmTreeController.IS_SUCCESS, 1);
 				results.put("germplasmListId", germplasmListId);
 				results.put("listName", germplasmList.getName());
@@ -290,8 +322,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				results.put("isTrimed", isTrimed ? 1 : 0);
 			} else {
 				results.put(GermplasmTreeController.IS_SUCCESS, 0);
-				results.put(GermplasmTreeController.MESSAGE,
-						this.messageSource.getMessage("crossing.no.crossing.list", null, LocaleContextHolder.getLocale()));
+				results.put(GermplasmTreeController.MESSAGE, this.messageSource.getMessage("crossing.no.crossing.list",
+						null, LocaleContextHolder.getLocale()));
 			}
 		} catch (final RulesNotConfiguredException rnce) {
 			GermplasmTreeController.LOG.error(rnce.getMessage(), rnce);
@@ -311,8 +343,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	private boolean updateGermplasmList(final Integer germplasmListId, final List<Pair<Germplasm, GermplasmListData>> listDataItems)
-			throws RuleException {
+	private boolean updateGermplasmList(final Integer germplasmListId,
+			final List<Pair<Germplasm, GermplasmListData>> listDataItems) throws RuleException {
 		boolean isTrimed = false;
 		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
 		final CrossSetting crossSetting = this.userSelection.getCrossSettings();
@@ -320,44 +352,111 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		isTrimed = this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
 		this.fieldbookMiddlewareService.updateGermplasmList(listDataItems, germplasmList);
-		
+
 		return isTrimed;
 	}
 
-	protected GermplasmListResult saveGermplasmList(final SaveListForm form, final List<Pair<Germplasm, GermplasmListData>> listDataItems)
-			throws RuleException {
-		
+	@SuppressWarnings("unchecked")
+	protected GermplasmListResult saveGermplasmList(final SaveListForm form,
+			final List<Pair<Germplasm, GermplasmListData>> listDataItems) throws RuleException {
+
 		Boolean isTrimed = false;
 		final Integer currentUserId = this.getCurrentIbdbUserId();
 		final GermplasmList germplasmList = this.createGermplasmList(form, currentUserId);
 		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
-			final AdvancingNurseryForm advancingNurseryForm = this.getPaginationListSelection().getAdvanceDetails(form.getListIdentifier());
+			final AdvancingNurseryForm advancingNurseryForm = this.getPaginationListSelection()
+					.getAdvanceDetails(form.getListIdentifier());
 			final List<Pair<Germplasm, List<Name>>> germplasms = new ArrayList<>();
 			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
 
-			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingNurseryForm, germplasms, listDataItems, currentUserId,
-					germplasmAttributes);
-			Integer germplasmListId =  this.fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList,
-					germplasmAttributes);
+			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingNurseryForm, germplasms, listDataItems,
+					currentUserId, germplasmAttributes);
+			final Integer germplasmListId = this.fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms,
+					listDataItems, germplasmList, germplasmAttributes);
 			return new GermplasmListResult(germplasmListId, false);
-			
-		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
+
+		} else if (GermplasmListType.isCrosses(form.getGermplasmListType())) {
 			final CrossSetting crossSetting = this.userSelection.getCrossSettings();
 			final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
 
-			isTrimed = this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
+			isTrimed = this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting,
+					importedCrossesList);
 			// Set imported user as owner of the list
 			germplasmList.setUserId(importedCrossesList.getUserId());
-			
-			Integer germplasmListId = this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList);
-			
-			return  new GermplasmListResult(germplasmListId, isTrimed);
+
+			final Integer germplasmListId = this.fieldbookMiddlewareService.saveGermplasmList(listDataItems,
+					germplasmList, crossSetting.isApplyNewGroupToPreviousCrosses());
+
+			return new GermplasmListResult(germplasmListId, isTrimed);
+		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(form.getGermplasmListType())) {
+
+			final Integer listId = form.getSourceListId();
+			final List<ListDataProject> listData = this.germplasmListManager
+					.retrieveSnapshotListDataWithParents(listId);
+
+			final Collection<Integer> femaleGids = CollectionUtils.collect(listData, new Transformer() {
+
+				@Override
+				public Object transform(final Object input) {
+					final ListDataProject germplasmListData = (ListDataProject) input;
+					return germplasmListData.getFgid();
+				}
+			});
+
+			final Collection<Integer> maleGids = CollectionUtils.collect(listData, new Transformer() {
+
+				@Override
+				public Object transform(final Object input) {
+					final ListDataProject germplasmListData = (ListDataProject) input;
+					return germplasmListData.getMgid();
+				}
+			});
+
+			final List<Germplasm> germplasms = new ArrayList<>();
+
+			final Set<Integer> parentGids = new HashSet<>();
+			parentGids.addAll(femaleGids);
+			parentGids.addAll(maleGids);
+
+			final ArrayList<Integer> gids = new ArrayList<>();
+			gids.addAll(parentGids);
+			final List<Germplasm> parentList = this.germplasmDataManager.getSortedGermplasmWithPrefName(gids);
+
+			int entryCode = 1;
+			for (final Iterator<Germplasm> iterator = parentList.iterator(); iterator.hasNext();) {
+
+				final Germplasm parent = iterator.next();
+
+				germplasms.add(parent);
+
+				final GermplasmListData germplasmListData = new GermplasmListData();
+
+				germplasmListData.setGid(parent.getGid());
+				germplasmListData.setDesignation(parent.getPreferredName().getNval());
+				germplasmListData.setStatus(GermplasmTreeController.LIST_DATA_STATUS);
+				germplasmListData.setEntryCode(String.valueOf(entryCode));
+				germplasmListData.setLocalRecordId(GermplasmTreeController.LIST_DATA_LRECID);
+				germplasmListData.setEntryId(entryCode);
+				germplasmListData.setSeedSource("");
+				germplasmListData.setGroupName("");
+				germplasmListData.setLocalRecordId(entryCode);
+
+				listDataItems.add(new ImmutablePair<>(parent, germplasmListData));
+				entryCode++;
+			}
+
+			final Integer germplasmListId = this.fieldbookMiddlewareService.saveGermplasmList(listDataItems,
+					germplasmList, false);
+			return new GermplasmListResult(germplasmListId, isTrimed);
+
 		} else {
 			throw new IllegalArgumentException("Unknown germplasm list type supplied when saving germplasm list");
 		}
+
 	}
 
-	private void checkForEmptyDesigNames(final List<ImportedCrosses> importedCrosses) throws RulesNotConfiguredException {
+	private void checkForEmptyDesigNames(final List<ImportedCrosses> importedCrosses)
+			throws RulesNotConfiguredException {
 		boolean valid = true;
 		for (final ImportedCrosses importedCross : importedCrosses) {
 			if (StringUtils.isEmpty(importedCross.getDesig())) {
@@ -365,52 +464,51 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			}
 		}
 		if (!valid) {
-			throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rules.not.configured", null,
-					"The rules" + " were not configured", LocaleContextHolder.getLocale()));
+			throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rules.not.configured",
+					null, "The rules" + " were not configured", LocaleContextHolder.getLocale()));
 		}
 	}
 
 	/**
-	 * Apply the naming setting to the crosses depending whether manual setting or rules based on the breeding method were selected
+	 * Apply the naming setting to the crosses depending whether manual setting
+	 * or rules based on the breeding method were selected
 	 *
 	 * @param listDataItems
 	 * @param germplasmList
 	 * @param crossSetting
 	 * @param importedCrossesList
-	 * @return 
+	 * @return
 	 * @throws RuleException
 	 */
 	private Boolean applyNamingSettingToCrosses(final List<Pair<Germplasm, GermplasmListData>> listDataItems,
-			final GermplasmList germplasmList, final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList)
-			throws RuleException {
+			final GermplasmList germplasmList, final CrossSetting crossSetting,
+			final ImportedCrossesList importedCrossesList) throws RuleException {
 
-		// before continuing processing of the crosses, we process the breeding
-		// method to be used for each imported cross
-		// so that the correct information is available for further operations
-		this.crossingService.processCrossBreedingMethod(crossSetting, importedCrossesList);
-		
-		
 		Boolean isTrimed;
 		if (crossSetting.isUseManualSettingsForNaming()) {
 			// this line of code is where the creation of new germplasm takes
 			// place
-			isTrimed = this.crossingService.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(),
-					this.userSelection.getWorkbook());
-			isTrimed = isTrimed || this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
+			isTrimed = this.crossingService.applyCrossSetting(crossSetting, importedCrossesList,
+					this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
+			isTrimed = isTrimed || this.populateGermplasmListData(germplasmList, listDataItems,
+					importedCrossesList.getImportedCrosses());
 		} else {
-			final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(crossSetting, importedCrossesList);
+			final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(crossSetting,
+					importedCrossesList);
 			// this line of code is where the creation of new germplasm takes
 			// place
-			isTrimed = this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesListWithNamingSettings,
-					this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
-			isTrimed = isTrimed || this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesListWithNamingSettings.getImportedCrosses());
+			isTrimed = this.crossingService.applyCrossSettingWithNamingRules(crossSetting,
+					importedCrossesListWithNamingSettings, this.getCurrentIbdbUserId(),
+					this.userSelection.getWorkbook());
+			isTrimed = isTrimed || this.populateGermplasmListData(germplasmList, listDataItems,
+					importedCrossesListWithNamingSettings.getImportedCrosses());
 		}
 		this.checkForEmptyDesigNames(importedCrossesList.getImportedCrosses());
 		return isTrimed;
 	}
 
-	private ImportedCrossesList applyNamingRules(final CrossSetting setting, final ImportedCrossesList importedCrossesList)
-			throws RuleException {
+	private ImportedCrossesList applyNamingRules(final CrossSetting setting,
+			final ImportedCrossesList importedCrossesList) throws RuleException {
 
 		// TODO REFACTOR THIS
 
@@ -442,8 +540,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final AdvancingNursery advancingParameters = new AdvancingNursery();
 
 		advancingParameters.setCheckAdvanceLinesUnique(true);
-		final List<ImportedCrosses> crosses = this.namingConventionService.generateCrossesList(importedCrosses, list, advancingParameters,
-				this.userSelection.getWorkbook(), gids);
+		final List<ImportedCrosses> crosses = this.namingConventionService.generateCrossesList(importedCrosses, list,
+				advancingParameters, this.userSelection.getWorkbook(), gids);
 
 		importedCrossesList.setImportedGermplasms(crosses);
 		this.userSelection.setImportedCrossesList(importedCrossesList);
@@ -458,10 +556,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(germplasmListType)) {
 			type = GermplasmListType.ADVANCED;
 
-		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS.equalsIgnoreCase(germplasmListType)) {
-			type = GermplasmListType.CROSSES;
+		} else if (GermplasmListType.isCrosses(germplasmListType)) {
+			type = GermplasmListType.valueOf(germplasmListType);
 			// need to add the copying of the duplicate entry here
-			FieldbookUtil.copyDupeNotesToListDataProject(dataProjectList, this.userSelection.getImportedCrossesList().getImportedCrosses());
+			FieldbookUtil.copyDupeNotesToListDataProject(dataProjectList,
+					this.userSelection.getImportedCrossesList().getImportedCrosses());
+		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(germplasmListType)) {
+			type = GermplasmListType.PLCRT;
 		} else {
 			throw new IllegalArgumentException("Unknown germplasm list type supplied when saving germplasm list");
 		}
@@ -472,7 +573,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 		}
 
-		return this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, type, germplasmListId, dataProjectList, currentUserID);
+		return this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, type, germplasmListId,
+				dataProjectList, currentUserID);
 
 	}
 
@@ -489,30 +591,37 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			String listDescription = "";
 			String listType = AppConstants.GERMPLASM_LIST_TYPE_GENERIC_LIST.getString();
 			String listDate = DateUtil.getCurrentDateInUIFormat();
-
+			String listOwner = this.fieldbookMiddlewareService
+					.getOwnerListName(this.contextUtil.getCurrentUserLocalId());
 			if (this.userSelection.getImportedCrossesList() != null) {
 				listName = this.userSelection.getImportedCrossesList().getName();
 				listDescription = this.userSelection.getImportedCrossesList().getTitle();
 				listType = this.userSelection.getImportedCrossesList().getType();
 				listDate = DateUtil.getDateInUIFormat(this.userSelection.getImportedCrossesList().getDate());
+				listOwner = this.fieldbookMiddlewareService
+						.getOwnerListName(this.userSelection.getImportedCrossesList().getUserId());
 			}
 
 			form.setListName(listName);
 			form.setListDescription(listDescription);
 			form.setListType(listType);
 			form.setListDate(listDate);
+			form.setListOwner(listOwner);
 
 			final List<UserDefinedField> germplasmListTypes = this.germplasmListManager.getGermplasmListTypes();
 			model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_TYPES, germplasmListTypes);
 
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
+			throw e;
 		}
 
 		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);
 	}
 
-	protected int saveCrossesList(final Integer germplasmListId, final List<ListDataProject> listDataProject, final Integer userId) {
+	// TODO only used in Test?
+	protected int saveCrossesList(final Integer germplasmListId, final List<ListDataProject> listDataProject,
+			final Integer userId) {
 		int studyId = 0;
 
 		if (this.userSelection.getWorkbook() != null && this.userSelection.getWorkbook().getStudyDetails() != null
@@ -520,16 +629,16 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 		}
 
-		final int crossesId = this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CROSSES,
-				germplasmListId, listDataProject, userId);
+		final int crossesId = this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId,
+				GermplasmListType.CROSSES, germplasmListId, listDataProject, userId);
 		this.userSelection.addImportedCrossesId(crossesId);
 		return crossesId;
 	}
 
-	private GermplasmList createGermplasmList(final SaveListForm saveListForm, final Integer currentUserId) {
+	GermplasmList createGermplasmList(final SaveListForm saveListForm, final Integer currentUserId) {
 
 		// Create germplasm list
-		final String listName = saveListForm.getListName();
+		final String listName = saveListForm.getListName().trim();
 		final String listType = saveListForm.getListType();
 
 		final String description = saveListForm.getListDescription();
@@ -552,21 +661,24 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		}
 
 		final Integer status = 1;
-		final Long dateLong = Long.valueOf(DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), saveListForm.getListDate()));
+		final Long dateLong = Long
+				.valueOf(DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), saveListForm.getListDate()));
 
-		final GermplasmList germplasmList = new GermplasmList(null, listName, dateLong, listType, currentUserId, description, parent,
-				status, saveListForm.getListNotes());
+		final GermplasmList germplasmList = new GermplasmList(null, listName, dateLong, listType, currentUserId,
+				description, parent, status, saveListForm.getListNotes());
 		germplasmList.setProgramUUID(this.getCurrentProgramUUID());
 		return germplasmList;
 
 	}
 
-	private boolean populateGermplasmListData(final GermplasmList germplasmList, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
+	private boolean populateGermplasmListData(final GermplasmList germplasmList,
+			final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			final List<ImportedCrosses> importedGermplasmList) {
-		
+
 		Boolean isTrimed = false;
 		// Create germplasms to save - Map<Germplasm, List<Name>>
 		for (final ImportedCrosses importedCrosses : importedGermplasmList) {
+
 			final Integer gid = importedCrosses.getGid() != null ? Integer.valueOf(importedCrosses.getGid()) : null;
 
 			final Germplasm germplasm = new Germplasm();
@@ -594,32 +706,45 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				groupName = "-";
 			}
 
-			if(groupName.length() > CrossingServiceImpl.MAX_CROSS_NAME_SIZE){
+			if (groupName.length() > CrossingServiceImpl.MAX_CROSS_NAME_SIZE) {
 				groupName = groupName.substring(0, CrossingServiceImpl.MAX_CROSS_NAME_SIZE - 1);
 				groupName = groupName + CrossingServiceImpl.TRUNCATED;
-				isTrimed  = true;
+				isTrimed = true;
 			}
-			
-			final GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource,
-					designation, groupName, listDataStatus, localRecordId, notes, crossingDate);
+
+			final GermplasmListData listData = this.createGermplasmListData(germplasmList, gid, entryId, entryCode,
+					seedSource, designation, notes, crossingDate, groupName, listDataId, listDataStatus, localRecordId);
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));
 		}
 		return isTrimed;
 	}
 
+	private GermplasmListData createGermplasmListData(final GermplasmList germplasmList, final Integer gid,
+			final Integer entryId, final String entryCode, final String seedSource, final String designation,
+			final String notes, final Integer crossingDate, final String groupName, final Integer listDataId,
+			final Integer listDataStatus, final Integer localRecordId) {
+		final GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode,
+				seedSource, designation, groupName, listDataStatus, localRecordId, notes, crossingDate);
+		return listData;
+	}
+
 	/**
 	 * Creates the nursery advance germplasm list.
 	 *
-	 * @param form the form
-	 * @param germplasms the germplasms
-	 * @param listDataItems the list data items
+	 * @param form
+	 *            the form
+	 * @param germplasms
+	 *            the germplasms
+	 * @param listDataItems
+	 *            the list data items
 	 * @return the germplasm list
 	 */
 
 	void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList, final AdvancingNurseryForm form,
-			final List<Pair<Germplasm, List<Name>>> germplasms, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
-			final Integer currentUserID, final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) {
+			final List<Pair<Germplasm, List<Name>>> germplasms,
+			final List<Pair<Germplasm, GermplasmListData>> listDataItems, final Integer currentUserID,
+			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) {
 
 		final String harvestDate = form.getHarvestYear() + form.getHarvestMonth() + "00";
 
@@ -639,13 +764,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		// Common name fields
 		final Integer nRef = 0;
-	
-		Integer plotCodeFldNo = this.germplasmDataManager.getPlotCodeField().getFldno();
-		Integer plotFldNo = this.getPassportAttributeForCode("PLOT_NUMBER");
+
+		final Integer plotCodeFldNo = this.germplasmDataManager.getPlotCodeField().getFldno();
+		final Integer plotFldNo = this.getPassportAttributeForCode("PLOT_NUMBER");
 		Integer trialInstanceFldNo = 0;
 		Integer repFldNo = 0;
 		// get FLDNOs for Attribute Objects to be created
-		if (userSelection.isTrial()){
+		if (this.userSelection.isTrial()) {
 			repFldNo = this.getPassportAttributeForCode("REP_NUMBER");
 			trialInstanceFldNo = this.getPassportAttributeForCode("INSTANCE_NUMBER");
 		}
@@ -677,14 +802,16 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				// If crop == CIMMYT WHEAT (crop with more than one name saved)
 				// Germplasm name is the Names entry with NType = 1027, NVal =
 				// table.desig, NStat = 0
-				if (name.getNstat() == 0 && name.getTypeId() == GermplasmNameType.UNRESOLVED_NAME.getUserDefinedFieldID()) {
+				if (name.getNstat() == 0
+						&& name.getTypeId() == GermplasmNameType.UNRESOLVED_NAME.getUserDefinedFieldID()) {
 					preferredName = name;
 				}
 			}
 
 			final Integer trueGdate = !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate;
 			final Germplasm germplasm;
-			germplasm = new Germplasm(gid, methodId, gnpgs, gpid1, gpid2, currentUserID, lgid, locationId, trueGdate, preferredName);
+			germplasm = new Germplasm(gid, methodId, gnpgs, gpid1, gpid2, currentUserID, lgid, locationId, trueGdate,
+					preferredName);
 
 			germplasm.setMgid(mgid);
 
@@ -703,8 +830,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				groupName = "-";
 			}
 
-			final GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource,
-					designation, groupName, listDataStatus, localRecordId);
+			final GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode,
+					seedSource, designation, groupName, listDataStatus, localRecordId);
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));
 
@@ -717,8 +844,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					plotCodeFldNo, locationId, gDate);
 			attributesPerGermplasm.add(originAttribute);
 
-			final Attribute plotNumberAttribute = this.createAttributeObject(currentUserID, importedGermplasm.getPlotNumber(),
-					plotFldNo, locationId, gDate);
+			final Attribute plotNumberAttribute = this.createAttributeObject(currentUserID,
+					importedGermplasm.getPlotNumber(), plotFldNo, locationId, gDate);
 			attributesPerGermplasm.add(plotNumberAttribute);
 
 			// Adding Instance number and replication number as
@@ -731,12 +858,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					attributesPerGermplasm.add(repNoAttribute);
 				}
 
-				final Attribute instanceNoAttribute = this.createAttributeObject(currentUserID, importedGermplasm.getTrialInstanceNumber(),
-						trialInstanceFldNo, locationId, gDate);
+				final Attribute instanceNoAttribute = this.createAttributeObject(currentUserID,
+						importedGermplasm.getTrialInstanceNumber(), trialInstanceFldNo, locationId, gDate);
 				attributesPerGermplasm.add(instanceNoAttribute);
 			}
 
-			germplasmAttributes.add(new ImmutablePair<Germplasm, List<Attribute>>(germplasm, Lists.newArrayList(attributesPerGermplasm)));
+			germplasmAttributes.add(new ImmutablePair<Germplasm, List<Attribute>>(germplasm,
+					Lists.newArrayList(attributesPerGermplasm)));
 		}
 	}
 
@@ -744,8 +872,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", code).getFldno();
 	}
 
-	private Attribute createAttributeObject(final Integer currentUserID, final String attributeValue, final Integer typeId,
-			final Integer locationId, final Integer gDate) {
+	private Attribute createAttributeObject(final Integer currentUserID, final String attributeValue,
+			final Integer typeId, final Integer locationId, final Integer gDate) {
 		final Attribute originAttribute = new Attribute();
 		originAttribute.setAval(attributeValue);
 		originAttribute.setTypeId(typeId);
@@ -790,8 +918,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitGermplasmTreeTable", method = RequestMethod.GET)
 	public String loadInitialGermplasmTreeTable(final Model model) {
 		final List<TreeTableNode> rootNodes = new ArrayList<>();
-		final TreeTableNode localNode =
-				new TreeTableNode(GermplasmTreeController.LISTS, AppConstants.LISTS.getString(), null, null, null, null, "1");
+		final TreeTableNode localNode = new TreeTableNode(GermplasmTreeController.LISTS, AppConstants.LISTS.getString(),
+				null, null, null, null, "1");
 		rootNodes.add(localNode);
 		model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_ROOT_NODES, rootNodes);
 		return super.showAjaxPage(model, GermplasmTreeController.GERMPLASM_LIST_TABLE_PAGE);
@@ -802,7 +930,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		if (GermplasmTreeController.LISTS.equals(id)) {
 			children = this.germplasmListManager.getAllTopLevelLists(programUUID);
 		} else if (NumberUtils.isNumber(id)) {
-			final int parentId = Integer.valueOf(id);
+			final int parentId = Integer.parseInt(id);
 			children = this.germplasmListManager.getGermplasmListByParentFolderIdBatched(parentId, programUUID,
 					GermplasmTreeController.BATCH_SIZE);
 		} else {
@@ -829,7 +957,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return childNodes;
 	}
 
-	private List<TreeNode> getGermplasmChildNodes(final String parentKey, final boolean isFolderOnly, final String programUUID) {
+	private List<TreeNode> getGermplasmChildNodes(final String parentKey, final boolean isFolderOnly,
+			final String programUUID) {
 		if (!(parentKey != null && !"".equals(parentKey))) {
 			return new ArrayList<>();
 		}
@@ -838,16 +967,17 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		if (GermplasmTreeController.LISTS.equals(parentKey)) {
 			rootLists = this.germplasmListManager.getAllTopLevelLists(programUUID);
 		} else if (NumberUtils.isNumber(parentKey)) {
-			rootLists = this.getGermplasmChildrenNode(parentKey, isFolderOnly, programUUID);
+			rootLists = this.getGermplasmChildrenNode(parentKey, programUUID);
 		} else {
 			throw new IllegalStateException("Add a message");
 		}
 		final List<TreeNode> childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly);
 
-		final Map<Integer, GermplasmFolderMetadata> allListMetaData = germplasmListManager.getGermplasmFolderMetadata(rootLists);
+		final Map<Integer, GermplasmFolderMetadata> allListMetaData = this.germplasmListManager
+				.getGermplasmFolderMetadata(rootLists);
 
 		for (final TreeNode newNode : childNodes) {
-			GermplasmFolderMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));
+			final GermplasmFolderMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));
 			if (nodeMetaData != null && nodeMetaData.getNumberOfChildren() > 0) {
 				newNode.setIsLazy(true);
 			}
@@ -855,14 +985,15 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return childNodes;
 	}
 
-	private List<GermplasmList> getGermplasmChildrenNode(final String parentKey, final boolean isFolderOnly, final String programUUID) {
-		final int parentId = Integer.valueOf(parentKey);
+	private List<GermplasmList> getGermplasmChildrenNode(final String parentKey, final String programUUID) {
+		final int parentId = Integer.parseInt(parentKey);
 		return this.germplasmListManager.getGermplasmListByParentFolderIdBatched(parentId, programUUID,
 				GermplasmTreeController.BATCH_SIZE);
 	}
 
 	private List<TreeTableNode> getGermplasmFolderChildrenNode(final String id, final String programUUID) {
-		return TreeViewUtil.convertGermplasmListToTreeTableNodes(this.getGermplasmListChildren(id, programUUID), this.germplasmListManager);
+		return TreeViewUtil.convertGermplasmListToTreeTableNodes(this.getGermplasmListChildren(id, programUUID),
+				this.germplasmListManager, this.germplasmDataManager);
 	}
 
 	/**
@@ -878,8 +1009,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 			dataResults.put("name", germplasmList.getName());
 			dataResults.put("description", germplasmList.getDescription());
-			Integer listRef = germplasmList.getListRef();
-			if(listRef != null) {
+			final Integer listRef = germplasmList.getListRef();
+			if (listRef != null) {
 				final GermplasmList parentGermplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listRef);
 				dataResults.put("type", this.getTypeString(parentGermplasmList.getType()));
 			} else {
@@ -899,9 +1030,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					&& (germplasmList.getType().equalsIgnoreCase(GermplasmListType.NURSERY.toString())
 							|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.TRIAL.toString()))
 					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.CHECK.toString())
-					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.CROSSES.toString())
+					|| GermplasmListType.isCrosses(germplasmList.getType())
 					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.ADVANCED.toString())) {
-				dataResults.put("totalEntries", this.fieldbookMiddlewareService.countListDataProjectGermplasmListDataByListId(listId));
+				dataResults.put("totalEntries",
+						this.fieldbookMiddlewareService.countListDataProjectGermplasmListDataByListId(listId));
 			} else {
 				dataResults.put("totalEntries", this.fieldbookMiddlewareService.countGermplasmListDataByListId(listId));
 			}
@@ -933,13 +1065,15 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	/**
 	 * Expand germplasm list folder.
 	 *
-	 * @param id the germplasm list ID
+	 * @param id
+	 *            the germplasm list ID
 	 * @return the response page
 	 */
 	@RequestMapping(value = "/expandGermplasmListFolder/{id}", method = RequestMethod.GET)
 	public String expandGermplasmListFolder(@PathVariable final String id, final Model model) {
 		try {
-			final List<TreeTableNode> childNodes = this.getGermplasmListFolderChildNodes(id, this.getCurrentProgramUUID());
+			final List<TreeTableNode> childNodes = this.getGermplasmListFolderChildNodes(id,
+					this.getCurrentProgramUUID());
 			model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_CHILD_NODES, childNodes);
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
@@ -951,7 +1085,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	/**
 	 * Expand germplasm tree.
 	 *
-	 * @param parentKey the parent key
+	 * @param parentKey
+	 *            the parent key
 	 * @return the string
 	 */
 	@ResponseBody
@@ -959,7 +1094,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	public String expandGermplasmTree(@PathVariable final String parentKey, @PathVariable final String isFolderOnly) {
 		final boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly);
 		try {
-			final List<TreeNode> childNodes = this.getGermplasmChildNodes(parentKey, isFolderOnlyBool, this.getCurrentProgramUUID());
+			final List<TreeNode> childNodes = this.getGermplasmChildNodes(parentKey, isFolderOnlyBool,
+					this.getCurrentProgramUUID());
 			return TreeViewUtil.convertTreeViewToJson(childNodes);
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
@@ -974,12 +1110,14 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return this.expandGermplasmTree(parentKey, "0");
 	}
 
-	protected void checkIfUnique(final String folderName, final String programUUID) throws MiddlewareException {
-		final List<GermplasmList> duplicate = this.germplasmListManager.getGermplasmListByName(folderName, programUUID, 0, 1, null);
+	void checkIfUnique(final String folderName, final String programUUID) throws MiddlewareException {
+		final String trimmedName = folderName.trim();
+		final List<GermplasmList> duplicate = this.germplasmListManager.getGermplasmListByName(trimmedName, programUUID,
+				0, 1, null);
 		if (duplicate != null && !duplicate.isEmpty()) {
 			throw new MiddlewareException(GermplasmTreeController.NAME_NOT_UNIQUE);
 		}
-		if (this.isSimilarToRootFolderName(folderName)) {
+		if (this.isSimilarToRootFolderName(trimmedName)) {
 			throw new MiddlewareException(GermplasmTreeController.NAME_NOT_UNIQUE);
 		}
 	}
@@ -1005,7 +1143,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			if (id == null) {
 				newList = new GermplasmList(null, folderName,
-						Long.valueOf(new SimpleDateFormat(GermplasmTreeController.DATE_FORMAT).format(Calendar.getInstance().getTime())),
+						Long.valueOf(new SimpleDateFormat(GermplasmTreeController.DATE_FORMAT)
+								.format(Calendar.getInstance().getTime())),
 						GermplasmTreeController.FOLDER, userId, folderName, null, 0);
 			} else {
 				gpList = this.germplasmListManager.getGermplasmListById(Integer.parseInt(id));
@@ -1017,19 +1156,19 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 					if (parent == null) {
 						newList = new GermplasmList(null, folderName,
-								Long.valueOf(
-										new SimpleDateFormat(GermplasmTreeController.DATE_FORMAT).format(Calendar.getInstance().getTime())),
+								Long.valueOf(new SimpleDateFormat(GermplasmTreeController.DATE_FORMAT)
+										.format(Calendar.getInstance().getTime())),
 								GermplasmTreeController.FOLDER, userId, folderName, null, 0);
 					} else {
 						newList = new GermplasmList(null, folderName,
-								Long.valueOf(
-										new SimpleDateFormat(GermplasmTreeController.DATE_FORMAT).format(Calendar.getInstance().getTime())),
+								Long.valueOf(new SimpleDateFormat(GermplasmTreeController.DATE_FORMAT)
+										.format(Calendar.getInstance().getTime())),
 								GermplasmTreeController.FOLDER, userId, folderName, parent, 0);
 					}
 				} else {
 					newList = new GermplasmList(null, folderName,
-							Long.valueOf(
-									new SimpleDateFormat(GermplasmTreeController.DATE_FORMAT).format(Calendar.getInstance().getTime())),
+							Long.valueOf(new SimpleDateFormat(GermplasmTreeController.DATE_FORMAT)
+									.format(Calendar.getInstance().getTime())),
 							GermplasmTreeController.FOLDER, userId, folderName, gpList, 0);
 				}
 
@@ -1128,22 +1267,23 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/save/state/{type}")
-	public String saveTreeState(@PathVariable final String type, @RequestParam(value = "expandedNodes[]") final String[] expandedNodes) {
+	public String saveTreeState(@PathVariable final String type,
+			@RequestParam(value = "expandedNodes[]") final String[] expandedNodes) {
 		GermplasmTreeController.LOG.debug("Save the debug nodes");
 		final List<String> states = new ArrayList<>();
 		String status = "OK";
 		try {
-			
+
 			if (!GermplasmTreeController.NODE_NONE.equalsIgnoreCase(expandedNodes[0])) {
 				for (int index = 0; index < expandedNodes.length; index++) {
 					states.add(expandedNodes[index]);
 				}
 			}
 
-			if(states.isEmpty()) {
-				states.add(DEFAULT_STATE_SAVED_FOR_GERMPLASM_LIST);
+			if (states.isEmpty()) {
+				states.add(GermplasmTreeController.DEFAULT_STATE_SAVED_FOR_GERMPLASM_LIST);
 			}
-			
+
 			this.userTreeStateService.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentUserLocalId(),
 					this.getCurrentProgramUUID(), type, states);
 		} catch (final MiddlewareQueryException e) {
@@ -1163,10 +1303,38 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		if (saveMode) {
 			stateList = this.userTreeStateService.getUserProgramTreeStateForSaveList(userID, programUUID);
 		} else {
-			stateList = this.userTreeStateService.getUserProgramTreeStateByUserIdProgramUuidAndType(userID, programUUID, type);
+			stateList = this.userTreeStateService.getUserProgramTreeStateByUserIdProgramUuidAndType(userID, programUUID,
+					type);
 		}
-		
+
 		return super.convertObjectToJson(stateList);
+	}
+
+	@RequestMapping(value = "/saveParentList", method = RequestMethod.GET)
+	public String saveParentList(@ModelAttribute("saveListForm") final SaveListForm form, final Model model) {
+
+		try {
+			final String listName = "";
+			final String listDescription = AppConstants.PARENT_LIST_DESCRIPTION.getString();
+			final String listType = AppConstants.PARENT_LIST_TYPE.getString();
+			final String listDate = DateUtil.getCurrentDateInUIFormat();
+			final String listOwner = this.fieldbookMiddlewareService
+					.getOwnerListName(this.contextUtil.getCurrentUserLocalId());
+
+			form.setListName(listName);
+			form.setListOwner(listOwner);
+			form.setListDescription(listDescription);
+			form.setListType(listType);
+			form.setListDate(listDate);
+
+			final List<UserDefinedField> germplasmListTypes = this.germplasmListManager.getGermplasmListTypes();
+			model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_TYPES, germplasmListTypes);
+
+		} catch (final Exception e) {
+			GermplasmTreeController.LOG.error(e.getMessage(), e);
+		}
+
+		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);
 	}
 
 	protected String getCurrentProgramUUID() {

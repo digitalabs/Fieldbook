@@ -27,7 +27,7 @@
     </bean>
 
     <mockito:mock id="dummyDataService" class="org.generationcp.middleware.service.api.DataImportService"/>
-
+	<mockito:mock id="dummyOntologyService" class="org.generationcp.middleware.service.api.OntologyService"/>
 
     <mockito:mock class="org.generationcp.middleware.manager.api.OntologyDataManager" id="dummyManager"/>
 

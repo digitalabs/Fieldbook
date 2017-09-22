@@ -39,7 +39,8 @@ import com.efficio.fieldbook.web.common.form.ReviewDetailsOutOfBoundsForm;
 public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookController {
 
 	public static final String URL = "/Common/ReviewDetailsOutOfBounds";
-	private static final String REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE = "/Common/reviewDetailsOutOfBoundsPerTrait";
+	private static final String REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_NURSERY = "/Common/reviewDetailsOutOfBoundsPerTraitNursery";
+	private static final String REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_TRIAL = "/Common/reviewDetailsOutOfBoundsPerTraitTrial";
 	private static final Logger LOG = LoggerFactory.getLogger(ReviewDetailsOutOfBoundsController.class);
 
 	private static final String SUCCESS = "success";
@@ -68,7 +69,8 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		form.setMeasurementVariables(this.filterColumnsForReviewDetailsTable(userSelection.getWorkbook().getAllVariables(), form
 				.getMeasurementVariable().getTermId()));
 
-		return super.showAjaxPage(model, ReviewDetailsOutOfBoundsController.REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE);
+		return super.showAjaxPage(model, userSelection.getWorkbook().isNursery() ? REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_NURSERY :
+					REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_TRIAL);
 	}
 
 	@RequestMapping(value = "/showDetails/{action}", method = RequestMethod.POST)
@@ -96,7 +98,8 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		form.setMeasurementVariables(this.filterColumnsForReviewDetailsTable(userSelection.getWorkbook().getAllVariables(),
 				form.getTraitTermId()));
 
-		return super.showAjaxPage(model, ReviewDetailsOutOfBoundsController.REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE);
+		return super.showAjaxPage(model, userSelection.getWorkbook().isNursery() ? REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_NURSERY :
+				REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_TRIAL);
 	}
 
 	@ResponseBody

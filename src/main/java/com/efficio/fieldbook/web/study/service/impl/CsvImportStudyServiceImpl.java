@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -15,6 +16,7 @@ import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.study.service.ImportStudyService;
 
 @Transactional
@@ -25,7 +27,7 @@ public class CsvImportStudyServiceImpl  extends AbstractCSVImportStudyService im
 
     public enum CsvRequiredColumnEnum {
         ENTRY_NO(TermId.ENTRY_NO.getId(), "ENTRY_NO"), PLOT_NO(TermId.PLOT_NO.getId(), "PLOT_NO"), GID(TermId.GID.getId(),
-                "GID"), DESIGNATION(TermId.DESIG.getId(), "DESIGNATION");
+                "GID"), DESIGNATION(TermId.DESIG.getId(), "DESIGNATION"), PLOT_ID(TermId.PLOT_ID.getId(), "PLOT_ID");
 
         private final Integer id;
         private final String label;
@@ -95,4 +97,11 @@ public class CsvImportStudyServiceImpl  extends AbstractCSVImportStudyService im
         }
         return true;
     }
+
+	@Override
+	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
+			List<String> removedVariates) {
+		// NO-OP
+		
+	}
 }

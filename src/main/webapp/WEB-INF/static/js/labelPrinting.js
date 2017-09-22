@@ -72,6 +72,7 @@ LabelPrinting = {
 		LabelPrinting.initializeCustomExportReports();
 		LabelPrinting.initializeUserPresets();
 		LabelPrinting.showOrHideBarcodeFields();
+		LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
 
 		$('.loadSavedSettings').on('change', function() {
 			if ($(this).is(':checked')) {
@@ -82,7 +83,7 @@ LabelPrinting = {
 			}
 		});
 
-		$('#saved-settings').on('change', LabelPrinting.doSelectPreset);
+		$('.saved-settings').on('change', LabelPrinting.doSelectPreset);
 
 		$('.fb-delete-settings').on('click', function() {
 			var selectedPreset = LabelPrinting.getSelectedPreset();
@@ -115,6 +116,10 @@ LabelPrinting = {
 			LabelPrinting.showOrHideBarcodeFields();
 		});
 
+		$safeId('input[name=userLabelPrinting.barcodeGeneratedAutomatically]').on('change', function() {
+			LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
+		});
+		
 		$('#export-label-data').on('click', function() {
 			LabelPrinting.doExportLabel($('#label-format').val());
 		});
@@ -402,13 +407,34 @@ LabelPrinting = {
 	 */
 	LabelPrinting.showOrHideBarcodeFields = function() {
 		var barcodeNeeded = $safeId('input[name=userLabelPrinting.barcodeNeeded]:checked').val();
+		var isStockList = $safeId('input[name=isStockList]').val().toString();
+		var inventory = $safeId('input[name=germplasmListId]').val().toString();
+
+		// isPlotCodePrefix
 		if (barcodeNeeded === '1') {
+			if (isStockList === 'false' && (inventory === null || inventory === '')) {
+				$('.automatically-barcode-fields').show();
+				LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
+			}else{
+		    	$('.barcode-fields').show();
+			}
+    	} else {
+			$('.automatically-barcode-fields').hide();
+			$('.barcode-fields').hide();
+		}
+	};
+
+	/**
+	 * Toggle for Automatically barcode fields
+	 */
+	LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields = function() {
+		var barcodeNeeded = $safeId('input[name=userLabelPrinting.barcodeGeneratedAutomatically]:checked').val();
+		if (barcodeNeeded === '0') {
 			$('.barcode-fields').show();
 		} else {
 			$('.barcode-fields').hide();
 		}
 	};
-
 	/**
 	 * returns the currently selected values already parsed into preset type and id (still string)
 	 * @returns {Array}
@@ -501,6 +527,7 @@ LabelPrinting = {
 		$safeId('#userLabelPrinting.rightSelectedLabelFields').val(rightSelectedFields);
 		$safeId('#userLabelPrinting.mainSelectedLabelFields').val(mainSelectedFields);
 
+    	var isStockList = $safeId('input[name=isStockList]').val().toString();
 		var barcodeNeeded = $('input[type="radio"]:checked').length;
 		if (barcodeNeeded == 0) {
 			showInvalidInputMessage(barcodeNeededError);
@@ -509,7 +536,8 @@ LabelPrinting = {
 		}
 
 		//we checked if something was checked
-		if ($safeId('#userLabelPrinting.barcodeNeeded1').is(':checked')) {
+		if ($safeId('#userLabelPrinting.barcodeNeeded1').is(':checked') &&
+			($safeId('#userLabelPrinting.barcodeGeneratedAutomatically2').is(':checked') || isStockList === 'true')) {
 			//we need to check if either one is chosen in the drop downs
 			if ($safeId('#userLabelPrinting.firstBarcodeField').val() == ''
 				&& $safeId('#userLabelPrinting.secondBarcodeField').val() == ''
@@ -519,7 +547,7 @@ LabelPrinting = {
 				return false;
 			}
 		}
-
+		
 		if ($('#selectedTrials .includeTrial:checked').length == 0 && $('#selectedTrials .includeTrial').length > 0) {
 			showMessage(trialInstanceRequired);
 			moveToTopScreen();
@@ -558,7 +586,7 @@ LabelPrinting = {
 
 		var formElm = $('#specifyLabelDetailsForm');
 		$('#customReport').val(isCustomReport);
-		
+
 		if (isCustomReport) {
 			LabelPrinting.updateAdditionalLabelSettingsFormDetails(type);
 			LabelPrinting.proceedExport(formElm);
@@ -567,7 +595,7 @@ LabelPrinting = {
 				showErrorMessage('', 'File name should not exceed 100 characters');
 				return false;
 			}
-			
+
 			var selectedPreset = LabelPrinting.getSelectedPreset();
 
 			if (selectedPreset.length == 0) {
@@ -778,9 +806,15 @@ LabelPrinting = {
 				/** @namespace data.csvExcelSetting */
 				/** @namespace data.pdfSetting */
 				/** @namespace data.barcodeSetting */
+				/** @namespace data.sorting */
+				/** @namespace data.numberOfCopies */
 
 				// set the label output
 				$('#label-format').val(LabelPrinting.labelFormat[data.outputType]).change();
+				// set sorting
+				$('#label-sorting').val(data.sorting).change();
+				// set number of copies
+				$('#label-copies').val(data.numberOfCopies).change();
 
 				if (data.outputType === 'PDF') {
 					LabelPrinting.updatePDFFields(data.pdfSetting);
@@ -869,7 +903,13 @@ LabelPrinting = {
 		//set the radio btns
 		var selectedValue = (barcodeSetting.barcodeNeeded) ? '1' : '0';
 		$('input[name="userLabelPrinting.barcodeNeeded"][value="' + selectedValue + '"]').prop('checked', true).change();
+		
 
+		var isStockList = $safeId('input[name=isStockList]').val().toString();
+		var isPlotCodePrefix = (barcodeSetting.plotCodePrefix) && isStockList === 'false' ? '1' : '0';
+		$('input[name="userLabelPrinting.barcodeGeneratedAutomatically"][value="' + isPlotCodePrefix + '"]').
+					prop('checked', true).change();
+		
 		// set the fields
 		doUISafeSelect($safeId('#userLabelPrinting.firstBarcodeField'), barcodeSetting.barcodeFieldsList[0]);
 		doUISafeSelect($safeId('#userLabelPrinting.secondBarcodeField'), barcodeSetting.barcodeFieldsList[1]);

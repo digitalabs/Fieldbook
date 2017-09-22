@@ -18,7 +18,7 @@
 									<select ui-select2="{minimumResultsForSearch : -1}"
 										ng-model="data.designType"
 										ng-change="onSwitchDesignTypes(data.designType)"
-										ng-disabled="measurementDetails.hasMeasurement">
+										ng-disabled="disableDesignTypeSelect">
 										<option value="">Please Choose</option>
 										<option value="{{item.id}}"
 											ng-repeat="item in designTypeView" ng-disabled="item.isDisabled">
@@ -90,32 +90,30 @@
 <script type="text/javascript" th:inline="javascript">
     var plotNoShouldBeInRange = /*[[#{plot.number.should.be.in.range}]]*/ '';
 
-    function validateAndSetPlotNo() {
-        var customMessage = '';
-        var plotNo = $.trim($("#txtStartingPlotNo").val());
-        if(plotNo != '') {
-            if (!validateEntryAndPlotNo(plotNo)) {
-                customMessage = plotNoShouldBeInRange;
-            }
+	function validateAndSetPlotNo() {
+		var customMessage = '';
+		var plotNo = $.trim($("#txtStartingPlotNo").val());
+		if (!validatePlotNo(plotNo)) {
+			customMessage = plotNoShouldBeInRange;
+		}
 
-            if (customMessage != '') {
-                showInvalidInputMessage(customMessage);
-                $("#txtStartingPlotNo").val('');
-            }
-        } else {
-            // Set starting plot number back to blank if starting plot number is only white spaces
-            $("#txtStartingPlotNo").val('');
-        }
-    }
+		if (customMessage !== '') {
+			showInvalidInputMessage(customMessage);
+		} else {
+			if (isNursery()) {
+				showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+					'To update the Measurements table, please save the Nursery', 10000);
+			} else {
+				showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+					'To update the Measurements table, please save the Trial', 10000);
+			}
+		}
 
-    // Validate Germplasm entry number and plot number if it is non-numeric
-    function validateEntryAndPlotNo(inputNo) {
-        var validNo = '^(?=.*[1-9].*)[0-9]{1,5}$';
+	}
 
-        if (inputNo.match(validNo)) {
-            return true;
-        }
-        return false;
-    }
+	function validatePlotNo(inputNo) {
+		var validNo = '^(?=.*[1-9].*)[0-9]{1,8}$';
+		return !!inputNo.match(validNo);
 
+	}
 </script>

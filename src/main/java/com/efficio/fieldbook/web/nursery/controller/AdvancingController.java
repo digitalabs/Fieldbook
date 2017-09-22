@@ -245,7 +245,8 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		advancingNursery.setCheckAdvanceLinesUnique(false);
         advancingNursery.setSelectedReplications(form.getSelectedReplications());
         advancingNursery.setSelectedTrialInstances(form.getSelectedTrialInstances());
-        
+		boolean observationsLoaded = this.fieldbookMiddlewareService.loadAllObservations(this.userSelection.getWorkbook());
+
 		try {
 
 			if (advancingNursery.getMethodChoice() != null && !advancingNursery.getMethodChoice().isEmpty()) {
@@ -262,6 +263,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 					return results;
 				}
 			}
+
 
 			AdvanceResult advanceResult = this.fieldbookService.advanceNursery(advancingNursery, this.userSelection.getWorkbook());
 			List<ImportedGermplasm> importedGermplasmList = advanceResult.getAdvanceList();
@@ -289,8 +291,13 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			results.put(AdvancingController.IS_SUCCESS, "0");
 			results.put(AdvancingController.LIST_SIZE, 0);
 			results.put(AdvancingController.MESSAGE, form.getErrorInAdvance());
+		} finally {
+			// Important to clear out the observations collection from user session, once we are done with it to keep heap memory under
+			// control. For large trials/nurseries the observations collection can be huge.
+			if (observationsLoaded) {
+				userSelection.getWorkbook().getObservations().clear();
+			}
 		}
-
 		return results;
 	}
 

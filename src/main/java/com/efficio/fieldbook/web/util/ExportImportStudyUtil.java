@@ -163,6 +163,7 @@ public class ExportImportStudyUtil {
 			propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
 		} catch (final MiddlewareQueryException e) {
 			ExportImportStudyUtil.LOG.error(e.getMessage(), e);
+			throw e;
 		}
 		return propertyName;
 	}

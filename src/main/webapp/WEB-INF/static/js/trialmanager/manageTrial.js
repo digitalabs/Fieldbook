@@ -9,7 +9,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
 		'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
-		'showSettingFormElementNew']);
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select']);
 
 	/*** Added to prevent Unsecured HTML error
 	   It is used by ng-bind-html ***/
@@ -172,10 +172,6 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 			$scope.toggleChoosePreviousTrial = function() {
 				$scope.isChoosePreviousTrial = !$scope.isChoosePreviousTrial;
-
-				if (!$scope.isChoosePreviousTrial) {
-					$scope.resetTabsData();
-				}
 			};
 
 			$scope.resetTabsData = function() {
@@ -208,7 +204,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 				var measurementDiv = $('#measurementsDiv');
 				if (measurementDiv.length !== 0) {
-					measurementDiv.html('');
+					//measurementDiv.html('');
 				}
 
 				if (typeof resetGermplasmList !== 'undefined') {
@@ -269,7 +265,8 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 						//Added-selectionVariates
 						TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
 							data.trialSettingsData));
-
+						TrialManagerDataService.updateSettings('selectionVariables', TrialManagerDataService.extractSettings(
+							data.selectionVariableData));
 						TrialManagerDataService.updateSettings('environments', environmentSettings);
 						TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
 						TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
@@ -337,6 +334,10 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				return TrialManagerDataService.applicationData.germplasmListSelected;
 			};
 
+			$scope.displayGermplasmOrMeasurmentOnlyActions = function() {
+				return this.displayGermplasmOnlyActions() || this.displayMeasurementOnlyActions();
+			};
+
 			// Programatically navigate to specified tab state
 			$scope.navigateToTab = function(targetState) {
 				$state.go(targetState);
@@ -355,11 +356,22 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				$scope.isSettingsTab = true;
 				$scope.tabSelected = targetState;
 				if (targetState === 'editMeasurements') {
-					if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
-						$timeout(function() {
-							$('#measurement-table').dataTable().fnAdjustColumnSizing();
-						}, 1);
+					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
+					// of the table if we do not do that
+					if ($('body').hasClass('preview-measurements-only')) {
+						if ($('#preview-measurement-table').length !== 0 && $('#preview-measurement-table').dataTable()) {
+							$timeout(function() {
+								$('#preview-measurement-table').dataTable().fnAdjustColumnSizing();
+							}, 1);
+                        }
+					} else {
+						if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
+							$timeout(function() {
+								$('#measurement-table').dataTable().fnAdjustColumnSizing();
+							}, 1);
+						}
 					}
+
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
@@ -370,37 +382,37 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 							'Please select a design type and specify the parameters for your trial again', 10000);
 					}
 				} else if (targetState === 'createMeasurements') {
+					if (TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
+						$rootScope.$broadcast('previewMeasurements');
+                    }
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
 					}
-				} else if (targetState === 'environment'){
-					// reload environment table to make sure that the header always has proper layout
-					$rootScope.$broadcast('rerenderEnvironmentTable');
-				}
 
-				if (targetState === 'createMeasurements' || targetState === 'editMeasurements') {
-					//TODO Remove this global
-					if ($('body').data('expDesignShowPreview') === '1' && $rootScope.stateSuccessfullyLoaded[targetState]) {
-						//only refresh the measurements table if the state has not yet successfully loaded
-						//this is because the stateProvider displays the measurements table if it has measurements on the first time the Measurements tab is clicked 
-						$.ajax({
-							url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
-							type: 'GET',
-							data: '',
-							cache: false,
-							success: function(html) {
-								setTimeout(function() {
-									$('#measurementsDiv').html(html);
-									//TODO Remove this global
-									$('body').data('expDesignShowPreview', '0');
-								}, 300);
-							},
-							error: function() {
-								//TODO Localise this
-								showErrorMessage('Server Error', 'Experimental design preview could not be generated.');
-							}
-						});
+					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
+                    // of the table if we do not do that
+					if (!TrialManagerDataService.applicationData.unsavedGeneratedDesign && $('#preview-measurement-table').length !== 0 &&
+						$('#preview-measurement-table').dataTable()) {
+						$timeout(function() {
+							$('#preview-measurement-table').dataTable().fnAdjustColumnSizing();
+						}, 1);
+					}
+				} else if (targetState === 'germplasm') {
+					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
+					// of the table if we do not do that
+                    if ($('#tableForGermplasm').length !== 0 && $('#tableForGermplasm').dataTable() !== null) {
+                    	$timeout(function() {
+                    		$('#tableForGermplasm').dataTable().fnAdjustColumnSizing();
+                    	}, 1);
+                    }
+				} else if (targetState === 'environment') {
+					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
+                	// of the table if we do not do that
+					if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
+					 	$timeout(function() {
+					 		$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
+					 	}, 1);
 					}
 				}
 			};

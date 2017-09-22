@@ -65,9 +65,6 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 
 	private static final String PROGRAM_UUID = "2191a54c-7d98-40d0-ae6f-6a400e4546ce";
 
-	private static final String ENTRY_NUMBER_SHOULD_HAVE_VALID_RANGE = "Entry Number should accept only numbers in range 1 to 99999.";
-	private static final String PLOT_NUMBER_SHOULD_HAVE_VALID_RANGE = "Plot Number should accept only numbers in range 1 to 99999.";
-
 	Locale locale = LocaleContextHolder.getLocale();
 
 	@Before
@@ -197,13 +194,15 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 	@Test
 	public void testValidateInvalidEntryNumber(){
 
-		List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 100, 200);
+		int treatmentSize = 200;
+		List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 100, treatmentSize);
 
 		ExpDesignParameterUi param = new ExpDesignParameterUi();
 		param.setReplicationsCount("2");
 		param.setNoOfEnvironments("2");
 		param.setBlockSize("25");
-		param.setStartingEntryNo("99990");
+		String startingEntryNo = "99990";
+		param.setStartingEntryNo(startingEntryNo);
 		param.setStartingPlotNo("400");
 
 		Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); // Key - CVTerm
@@ -217,29 +216,34 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 
 		param.setTreatmentFactorsData(treatmentFactorValues);
 
+		// FIXME why try catch?
 		try{
-			Mockito.doReturn(ResolvableIncompleteBlockDesignServiceImplTest.ENTRY_NUMBER_SHOULD_HAVE_VALID_RANGE).when(this.messageSource)
-					.getMessage("entry.number.should.be.in.range", null, locale);
+			final Integer maxEntry = treatmentSize + Integer.valueOf(startingEntryNo) - 1;
+			Mockito.doReturn("Some error message").when(this.messageSource)
+				.getMessage("experiment.design.entry.number.should.not.exceed", new Object[] {maxEntry}, locale);
 		}catch (Exception e){
 
 		}
 
 		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
 
-		Assert.assertEquals(ResolvableIncompleteBlockDesignServiceImplTest.ENTRY_NUMBER_SHOULD_HAVE_VALID_RANGE, output.getMessage());
+		Assert.assertFalse(output.getMessage().isEmpty());
 	}
 
 	@Test
 	public void testValidateInvalidPlotNumber(){
 
-		List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 100, 200);
+		int treatmentSize = 200;
+		List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 100, treatmentSize);
 
 		ExpDesignParameterUi param = new ExpDesignParameterUi();
-		param.setReplicationsCount("2");
+		String replicationsCount = "2";
+		param.setReplicationsCount(replicationsCount);
 		param.setNoOfEnvironments("2");
 		param.setBlockSize("25");
 		param.setStartingEntryNo("200");
-		param.setStartingPlotNo("99970");
+		String startingPlotNo = "99999970";
+		param.setStartingPlotNo(startingPlotNo);
 
 		Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); // Key - CVTerm
 		// ID , List
@@ -252,16 +256,18 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 
 		param.setTreatmentFactorsData(treatmentFactorValues);
 
+		// FIXME why try catch?
 		try{
-			Mockito.doReturn(ResolvableIncompleteBlockDesignServiceImplTest.PLOT_NUMBER_SHOULD_HAVE_VALID_RANGE).when(this.messageSource)
-					.getMessage("plot.number.should.be.in.range", null, locale);
+			int total = (treatmentSize * Integer.valueOf(replicationsCount)) + Integer.valueOf(startingPlotNo) - 1;
+			Mockito.doReturn("Some error message").when(this.messageSource)
+					.getMessage("experiment.design.plot.number.should.not.exceed", new Object[] {total}, locale);
 		}catch (Exception e){
 
 		}
 
 		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
 
-		Assert.assertEquals(ResolvableIncompleteBlockDesignServiceImplTest.PLOT_NUMBER_SHOULD_HAVE_VALID_RANGE, output.getMessage());
+		Assert.assertFalse(output.getMessage().isEmpty());
 	}
 
 	private MeasurementVariable createMeasurementVariable(final int varId, final String name, final String desc, final String scale,

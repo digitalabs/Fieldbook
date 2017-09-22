@@ -81,14 +81,6 @@ $( document ).ready(function() {
 				'format': 'yyyy-mm-dd'
 			}).on('changeDate', function() {
 				$(this).datepicker('hide');
-			}).on('change', function() {
-				var curDate = $(this).val();
-				try {
-					var r = $.datepicker.parseDate('yy-mm-dd', curDate);
-					$(this).datepicker('setDate', r);
-				} catch (e) {
-					$(this).datepicker('setDate', new Date());
-				}
 			});
 		});
 	}
@@ -102,7 +94,7 @@ function saveExperimentMeasurements() {
 	'use strict';
 	var rowIndex = $('.updateExperimentForm #experimentIndex').val();
 	$.ajax({
-		url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax/submit/' + rowIndex,
+		url: '/Fieldbook/nursery/measurements/inlineinput/multiple/' + rowIndex,
 		type: 'POST',
 		data: $('.updateExperimentForm').serialize(),
 		success: function(data) {

@@ -21,6 +21,7 @@ import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
@@ -37,6 +38,7 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+import org.generationcp.middleware.manager.Operation;
 
 /**
  * This is used by the trial manager and nursery manager in communicating to the data access layer, manipulating workbook files and
@@ -162,6 +164,16 @@ public interface FieldbookService {
 	void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs, boolean deleteIdWhenNameExists);
 
 	/**
+	 * Creates a MeasurementVariable from StandardVariable
+	 * @param idToCreate
+	 * @param value
+	 * @param operation
+	 * @param role
+	 * @return
+	 */
+	MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation, PhenotypicType role);
+
+	/**
 	 * Creates the id code name variable pairs.
 	 *
 	 * @param workbook the workbook
@@ -212,4 +224,21 @@ public interface FieldbookService {
 
 	public List<ValueReference> getAllPossibleValuesWithFilter(final int id, boolean filtered);
 
+	/**
+	 * Adds the specified variable to the measurementVariable list if it does not yet exist in the list.
+	 *
+	 * @param variableIdToAdd - The variable id
+	 * @param phenotypicType
+	 * @param measurementVariables
+	 */
+	void addMeasurementVariableToList(MeasurementVariable measurementVariable, List<MeasurementVariable> measurementVariables);
+
+	/**
+	 * Adds the specified variable to the measurementRows. This will add a blank measurementData on each measurement row for the specified variable.
+	 *
+	 * @param variableIdToAdd
+	 * @param phenotypicType
+	 * @param observations
+	 */
+	void addMeasurementVariableToMeasurementRows(MeasurementVariable measurementVariable, List<MeasurementRow> observations);
 }

@@ -2,8 +2,8 @@
 /*global isStudyNameUnique, validateStartDateEndDateBasic*/
 
 //Used globle variable to selected location for trial
-var selectedLocationForTrail;
-var possibleLocationsForTrail;
+var selectedLocationForTrial;
+var possibleLocationsForTrial;
 
 function checkMethod() {
 	'use strict';
@@ -718,45 +718,78 @@ function toggleMethodDropdown(rowIndex) {
 }
 
 function toggleLocationDropdown(rowIndex) {
-	var possibleValues;
+
+	var possibleValuesAsText;
+	var previousSelectedValue;
+	var selectedValueId = '';
+
 	var showFavorite = $('#' + getJquerySafeId('studyLevelVariables'+ rowIndex
 		+ '.favorite1')).is(':checked');
-	var selectedVal = '';
 	var showAll = true;
 	var filterLocations = $('#' + getJquerySafeId('filterLocations')).is(':checked');
 	var allLocations = $('#' + getJquerySafeId('allLocations')).is(':checked');
 
-	// get previously selected value
+	// If Select2 combobox is initialized, then get the selected value.
 	if ($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).select2('data')) {
-		selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).select2('data').id;
+		previousSelectedValue = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).select2('data');
+		selectedValueId = (previousSelectedValue !== undefined) ? previousSelectedValue.id : '';
+	} else {
+		// If Select2 is not yet initialized, that means the page has just loaded, in this case, get the selected value
+		// from the saved value in the database
+		selectedValueId = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	}
 
-	// reset select2 combo
+	// Reset select2 combo
 	initializePossibleValuesCombo([], '#'
 			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),
 				false, null);
 
-	// get possible values based on checkbox
+	// Get possible values based on checkbox
 	if (showFavorite && !allLocations) {
-		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+		possibleValuesAsText = $('#possibleValuesFavoriteJson' + rowIndex).text();
 	} else if (allLocations && !showFavorite) {
-		possibleValues = $('#allValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+		possibleValuesAsText = $('#allValuesJson' + rowIndex).text();
 	} else if (allLocations && showFavorite) {
-		possibleValues = $('#allFavoriteValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+		possibleValuesAsText = $('#allFavoriteValuesJson' + rowIndex).text();
 	} else {
-		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValue')).val(selectedVal);
-		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).parent().find('.selectedValueFave')).val();
+		possibleValuesAsText = $('#possibleValuesJson' + rowIndex).text();
 	}
-	// recreate select2 combo
-	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
-			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'), showAll, selectedVal);
+
+	// Convert the possible values text as JSON
+	var possibleValuesAsObject = $.parseJSON(possibleValuesAsText);
+
+	if (selectedValueId !== '') {
+
+		// Get all possible values of the location
+		var allPossibleValuesOfLocation = $.parseJSON($('#allValuesJson' + rowIndex).text());
+
+		// Find the item of the previously selected value from the list of all possibleValues of location
+		var selectedValueFoundInAllPossibleValuesOfLocation =
+			allPossibleValuesOfLocation.filter(function(item) { return item.id == selectedValueId; });
+
+		// So that we can add it to the possible values list that will be displayed in the re-populated Select2 combobox.
+		// This is to make sure that the selected item in dropdown remain selected even when the favorites checkbox or
+		// location type radio button is ticked
+		if (selectedValueFoundInAllPossibleValuesOfLocation.length !== 0) {
+			addToListIfNotExisting(selectedValueFoundInAllPossibleValuesOfLocation[0], possibleValuesAsObject);
+		}
+
+	}
+
+	// Recreate select2 combo
+	initializePossibleValuesCombo(possibleValuesAsObject, '#'
+			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'), showAll, selectedValueId);
+}
+
+function addToListIfNotExisting(possibleValueToAdd, possibleValues) {
+
+	var found = possibleValues.filter(function(item) { return item.id == possibleValueToAdd.id; });
+
+	if (found.length === 0) {
+		possibleValues.push(possibleValueToAdd);
+	}
+
+
 }
 
 function createTableSettingVariables(data, name, tableId, varType) {
@@ -937,6 +970,27 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 	if (defaultJsonVal != null) {
 		$(name).select2('data', defaultJsonVal).trigger('change');
 	}
+
+
+	// override the select2 open event to hide the selected item in the dropdown list
+	$(name).off("select2-open");
+	$(name).on("select2-open", function () {
+
+			// get values of selected option
+			var values = $(this).val();
+			// get the pop up selection
+			var popupSelection = $('.select2-result.select2-highlighted');
+
+			if (values != null) {
+				// hide the selected value
+				popupSelection.hide();
+
+			} else {
+				// show all the selection value
+				popupSelection.show();
+			}
+		}
+	);
 }
 
 function checkMeasurementData(variableType, variableId) {
@@ -1370,16 +1424,6 @@ function initializeDateAndSliderInputs() {
 				'format': 'yyyy-mm-dd'
 			}).on('changeDate', function(ev) {
 				$(this).datepicker('hide');
-			}).on('change', function(e) {
-				var curDate = $(this).val();
-				try {
-					var r = $.datepicker.parseDate('yy-mm-dd', curDate);
-					$(this).datepicker('setDate', r);
-				} catch (e) {
-					if (curDate !== '') {
-						$(this).datepicker('setDate', new Date());
-					}
-				}
 			});
 		});
 	}
@@ -1423,8 +1467,6 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus,
 					errorThrown);
-		},
-		complete: function() {
 		}
 	});
 }
@@ -1637,79 +1679,6 @@ function validateCreateNursery() {
 	return true;
 }
 
-function validateAndSetEntryNo() {
-    var customMessage = '';
-    var entryNo = $.trim($("#txtStartingEntryNo").val());
-    var numberOfEntries = parseInt($.trim($("#numberOfEntries").text()));
-    if (entryNo != '') {
-        if (!validateEntryAndPlotNo(entryNo)) {
-            customMessage = entryNoShouldBeInRange;
-        }
-
-        if (customMessage != '') {
-            showInvalidInputMessage(customMessage);
-            $("#txtStartingEntryNo").val('');
-        } else {
-            if (isNursery()) {
-                $("#tableForGermplasm tbody tr").each(function (index, value) {
-                    $(this).find('td:eq(1)').text(entryNo++);
-                });
-                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-                    'To update the Measurements table, please save the Nursery', 10000);
-            } else {
-                $("#tableForGermplasm tbody tr").each(function (index, value) {
-                    $(this).find('td:eq(3)').text(entryNo++);
-                });
-                setUnappliedChangesAvailable();
-                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-                    'To update the Measurements table, please review your settings and regenerate ' +
-                    'the Experimental Design', 10000);
-            }
-        }
-    } else {
-        // Set starting entry number back to blank if starting entry number is only white spaces
-        $("#txtStartingEntryNo").val('');
-    }
-}
-
-// Validate Germplasm entry number and plot number if it is non-numeric
-function validateEntryAndPlotNo(inputNo) {
-    var validNo = '^(?=.*[1-9].*)[0-9]{1,5}$';
-
-    return !!inputNo.match(validNo);
-
-}
-
-function validateAndSetPlotNo() {
-    var customMessage = '';
-    var plotNo = $.trim($("#txtStartingPlotNo").val());
-    if(plotNo != '') {
-        if (!validateEntryAndPlotNo(plotNo)) {
-            customMessage = plotNoShouldBeInRange;
-        }
-
-        if (customMessage != '') {
-            showInvalidInputMessage(customMessage);
-            $("#txtStartingPlotNo").val('');
-        } else {
-            if (isNursery()) {
-                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-                    'To update the Measurements table, please save the Nursery', 10000);
-            } else {
-                showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-                    'To update the Measurements table, please save the Trial', 10000);
-            }
-        }
-    } else {
-        // Set starting plot number back to blank if starting plot number is only white spaces
-        $("#txtStartingPlotNo").val('');
-    }
-}
-
-function setUnappliedChangesAvailable() {
-    var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
-    trialManager.setUnappliedChangesAvailable();
-}
 
 function nurseryValidateStartEndDateBasic() {
 	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
@@ -2015,19 +1984,19 @@ function checkNurseryIfShowRemoveVariableLinks() {
 }
 
 function selectedLocation(location, possibleValues) {
-    selectedLocationForTrail = location;
-    possibleLocationsForTrail = possibleValues;
+	selectedLocationForTrial = location;
+	possibleLocationsForTrial = possibleValues;
 }
 
 
 function setSelectedLocation() {
     //Trial passes preferred values in which location abbreviation available in bracket.
     //We need to split value to get actual abbreviation for selected location
-	if (possibleLocationsForTrail != null && selectedLocationForTrail != null && selectedLocationForTrail != '' &&
-		selectedLocationForTrail.id != undefined) {
-		$('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrail.id);
-		var locationName = $.grep(possibleLocationsForTrail, function(e) {
-			return e.key == selectedLocationForTrail.id;
+	if (possibleLocationsForTrial != null && selectedLocationForTrial != null && selectedLocationForTrial != '' &&
+			selectedLocationForTrial.id != undefined) {
+		$('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrial.id);
+		var locationName = $.grep(possibleLocationsForTrial, function(e) {
+			return e.key == selectedLocationForTrial.id;
 		});
 		$('#' + getJquerySafeId('harvestLocationName')).val(locationName[0].name);
 		var locAbbreviation = locationName[0].name.split("(");

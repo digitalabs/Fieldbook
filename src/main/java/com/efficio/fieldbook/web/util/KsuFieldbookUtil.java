@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.csvreader.CsvWriter;
+import com.google.common.collect.ImmutableMap;
 
 public class KsuFieldbookUtil {
 
@@ -30,39 +31,42 @@ public class KsuFieldbookUtil {
 
 	private static final String PLOT_ID = "plot_id";
 	private static final String RANGE = "range";
-	public static final String PLOT = "plot";
+	public static final String PLOT = "PLOT_NO";
 
 	private static final int TERM_PLOT_ID = TermId.PLOT_CODE.getId();
 	private static final int TERM_RANGE = TermId.RANGE_NO.getId();
 	private static final int TERM_PLOT1 = TermId.PLOT_NO.getId();
 	private static final int TERM_PLOT2 = TermId.PLOT_NNO.getId();
 
-	private static final List<String> TRAIT_FILE_HEADERS =
-			Arrays.asList("trait", "format", "defaultValue", "minimum", "maximum", "details", "categories", "isVisible", "realPosition");
+	private static final List<String> TRAIT_FILE_HEADERS = Arrays.asList("trait", "format", "defaultValue", "minimum",
+			"maximum", "details", "categories", "isVisible", "realPosition");
 
-	private static final String NUMERIC_FORMAT = "numeric";
-	private static final String TEXT_FORMAT = "text";
+	private static final List<Integer> dataTypeList = Arrays.asList(TermId.NUMERIC_VARIABLE.getId(),
+			TermId.CATEGORICAL_VARIABLE.getId(), TermId.DATE_VARIABLE.getId(), TermId.CHARACTER_VARIABLE.getId());
 
 	private static final Map<Integer, String> ID_NAME_MAP;
 
 	// August 2015 : KSU handheld does not process CROSS information, so using
-	// this list to handle omissions of standard Germplasm variables from the export
-	private static final List<Integer> fieldsToOmit = new ArrayList<Integer>();
+	// this list to handle omissions of standard Germplasm variables from the
+	// export
+	private static final List<Integer> fieldsToOmit = new ArrayList<>();
 
 	static {
-		ID_NAME_MAP = new HashMap<Integer, String>();
+		ID_NAME_MAP = new HashMap<>();
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT_ID, KsuFieldbookUtil.PLOT_ID);
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_RANGE, KsuFieldbookUtil.RANGE);
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT1, KsuFieldbookUtil.PLOT);
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT2, KsuFieldbookUtil.PLOT);
-		// Aug 2015 : we are omitting the CROSS and CHECK columns for KSU - add further omissions here
+		// Aug 2015 : we are omitting the CROSS and CHECK columns for KSU - add
+		// further omissions here
 		KsuFieldbookUtil.fieldsToOmit.add(TermId.CROSS.getId());
 		KsuFieldbookUtil.fieldsToOmit.add(TermId.CHECK.getId());
 	}
 
 	public enum KsuRequiredColumnEnum {
-		ENTRY_NO(TermId.ENTRY_NO.getId(), "ENTRY_NO"), PLOT_NO(TermId.PLOT_NO.getId(), KsuFieldbookUtil.PLOT), GID(TermId.GID.getId(),
-				"GID"), DESIGNATION(TermId.DESIG.getId(), "DESIGNATION");
+		ENTRY_NO(TermId.ENTRY_NO.getId(), "ENTRY_NO"), PLOT_NO(TermId.PLOT_NO.getId(), KsuFieldbookUtil.PLOT), GID(
+				TermId.GID.getId(),
+				"GID"), DESIGNATION(TermId.DESIG.getId(), "DESIGNATION"), PLOT_ID(TermId.PLOT_ID.getId(), "PLOT_ID");
 
 		private final Integer id;
 		private final String label;
@@ -93,10 +97,15 @@ public class KsuFieldbookUtil {
 		}
 	}
 
+	private static ImmutableMap<Integer, String> dataTypeFormats = ImmutableMap.<Integer, String> builder()
+			.put(TermId.CATEGORICAL_VARIABLE.getId(), "categorical").put(TermId.NUMERIC_VARIABLE.getId(), "numeric")
+			.put(TermId.DATE_VARIABLE.getId(), "date").put(TermId.CHARACTER_VARIABLE.getId(), "text")
+			.put(0, "unrecognized").build();
+
 	public static List<List<String>> convertWorkbookData(final List<MeasurementRow> observations,
 			final List<MeasurementVariable> variables) {
 
-		final List<List<String>> table = new ArrayList<List<String>>();
+		final List<List<String>> table = new ArrayList<>();
 
 		if (observations != null && !observations.isEmpty()) {
 
@@ -106,13 +115,13 @@ public class KsuFieldbookUtil {
 			final List<MeasurementVariable> labels = KsuFieldbookUtil.getMeasurementLabels(variables);
 
 			for (final MeasurementRow row : observations) {
-				final List<String> dataRow = new ArrayList<String>();
+				final List<String> dataRow = new ArrayList<>();
 
 				for (final MeasurementVariable label : labels) {
 					String value = null;
 					if (label.getPossibleValues() != null && !label.getPossibleValues().isEmpty()) {
-						value = ExportImportStudyUtil.getCategoricalCellValue(row.getMeasurementData(label.getName()).getValue(),
-								label.getPossibleValues());
+						value = ExportImportStudyUtil.getCategoricalCellValue(
+								row.getMeasurementData(label.getName()).getValue(), label.getPossibleValues());
 					} else {
 						value = row.getMeasurementData(label.getName()).getValue();
 					}
@@ -127,25 +136,25 @@ public class KsuFieldbookUtil {
 
 	/**
 	 * Writes the Header Row to the CSV or Excel file. Omits designated columns.
-	 * 
-	 * @param headers : List of MeasurementVariables to filter, processing the name of the Variable
-	 * @param isFactor
+	 *
+	 * @param headers
+	 *            : List of MeasurementVariables to filter, processing the name
+	 *            of the Variable
 	 * @return a list of Strings to print in appropriate format
-	 * 
+	 *
 	 */
-	private static List<String> getHeaderNames(final List<MeasurementVariable> headers) {
-		final List<String> names = new ArrayList<String>();
+	static List<String> getHeaderNames(final List<MeasurementVariable> headers) {
+		final List<String> names = new ArrayList<>();
 
 		if (headers != null && !headers.isEmpty()) {
 			for (final MeasurementVariable header : headers) {
-				// checking first to see if we are omitting fields for KSU - currently 'CROSS' and 'CHECK' is omitted
-				if (!KsuFieldbookUtil.fieldsToOmit.contains(header.getTermId())) {
-					if (header.isFactor()) {
-						if (KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()) != null) {
-							names.add(KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()));
-						} else {
-							names.add(header.getName());
-						}
+				// checking first to see if we are omitting fields for KSU -
+				// currently 'CROSS' and 'CHECK' is omitted
+				if (!KsuFieldbookUtil.fieldsToOmit.contains(header.getTermId()) && header.isFactor()) {
+					if (KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()) != null) {
+						names.add(KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()));
+					} else {
+						names.add(header.getName());
 					}
 				}
 			}
@@ -165,14 +174,15 @@ public class KsuFieldbookUtil {
 	}
 
 	/**
-	 * Collects the measurement data required to export. Processes omissions as required in {@link KsuFieldbookUtil}
-	 * 
-	 * @param factorIds : IDs corresponding to variables to export
-	 * @param variables : The variables to export
+	 * Collects the measurement data required to export. Processes omissions as
+	 * required in {@link KsuFieldbookUtil}
+	 *
+	 * @param variables
+	 *            : The variables to export
 	 * @return
 	 */
 	private static List<MeasurementVariable> getMeasurementLabels(final List<MeasurementVariable> variables) {
-		final List<MeasurementVariable> labels = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> labels = new ArrayList<>();
 
 		for (final MeasurementVariable factor : variables) {
 			if (factor.isFactor() && !KsuFieldbookUtil.fieldsToOmit.contains(new Integer(factor.getTermId()))) {
@@ -189,7 +199,8 @@ public class KsuFieldbookUtil {
 		new File(filenamePath).exists();
 		CsvWriter csvWriter = null;
 		try {
-			final List<List<String>> dataTable = KsuFieldbookUtil.convertTraitsData(traits, fieldbookMiddlewareService, ontologyService);
+			final List<List<String>> dataTable = KsuFieldbookUtil.convertTraitsData(traits, fieldbookMiddlewareService,
+					ontologyService);
 
 			csvWriter = new CsvWriter(new FileWriter(filenamePath, false), ',');
 			for (final List<String> row : dataTable) {
@@ -209,15 +220,15 @@ public class KsuFieldbookUtil {
 		}
 	}
 
-	private static List<List<String>> convertTraitsData(final List<MeasurementVariable> traits,
+	protected static List<List<String>> convertTraitsData(final List<MeasurementVariable> traits,
 			final FieldbookService fieldbookMiddlewareService, final OntologyService ontologyService) {
-		final List<List<String>> data = new ArrayList<List<String>>();
+		final List<List<String>> data = new ArrayList<>();
 
 		data.add(KsuFieldbookUtil.TRAIT_FILE_HEADERS);
 
 		// get name of breeding method property and get all methods
 		String propertyName = "";
-		List<Method> methods = new ArrayList<Method>();
+		List<Method> methods = new ArrayList<>();
 		try {
 			methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
 			propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
@@ -227,13 +238,9 @@ public class KsuFieldbookUtil {
 
 		int index = 1;
 		for (final MeasurementVariable trait : traits) {
-			final List<String> traitData = new ArrayList<String>();
+			final List<String> traitData = new ArrayList<>();
 			traitData.add(trait.getName());
-			if ("C".equalsIgnoreCase(trait.getDataTypeDisplay())) {
-				traitData.add(KsuFieldbookUtil.TEXT_FORMAT);
-			} else {
-				traitData.add(KsuFieldbookUtil.NUMERIC_FORMAT);
-			}
+			traitData.add(KsuFieldbookUtil.getDataTypeDescription(trait));
 			// default value
 			traitData.add("");
 			if (trait.getMinRange() != null) {
@@ -247,7 +254,8 @@ public class KsuFieldbookUtil {
 				traitData.add("");
 			}
 			traitData.add(""); // details
-			if (trait.getPossibleValues() != null && !trait.getPossibleValues().isEmpty() && !trait.getProperty().equals(propertyName)) {
+			if (trait.getPossibleValues() != null && !trait.getPossibleValues().isEmpty()
+					&& !trait.getProperty().equals(propertyName)) {
 				final StringBuilder possibleValuesString = new StringBuilder();
 				for (final ValueReference value : trait.getPossibleValues()) {
 					if (possibleValuesString.length() > 0) {
@@ -277,6 +285,16 @@ public class KsuFieldbookUtil {
 		}
 
 		return data;
+	}
+
+	static String getDataTypeDescription(final MeasurementVariable trait) {
+		Integer dataType;
+		if (trait.getDataTypeId() == null || !KsuFieldbookUtil.dataTypeList.contains(trait.getDataTypeId())) {
+			dataType = 0;
+		} else {
+			dataType = trait.getDataTypeId();
+		}
+		return KsuFieldbookUtil.dataTypeFormats.get(dataType);
 	}
 
 	public static String getLabelFromKsuRequiredColumn(final MeasurementVariable variable) {

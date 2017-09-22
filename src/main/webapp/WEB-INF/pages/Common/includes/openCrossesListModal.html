@@ -8,7 +8,7 @@
 					<div class="row form-group">
 						<div class="col-xs-11 col-md-11">
 							<label class="modal-title fbk-modal-title" id="heading-modal"
-								   th:text="#{open.crosses.import.crosses.header}">Import Crosses</label>
+								   th:text="#{open.crosses.review.imported.crosses}">Review Crosses</label>
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<button id="close" type="button"
@@ -17,30 +17,23 @@
 						</div>
 					</div>
 
-					<div class="row add_top_padding">
-						<div class="col-xs-12 col-md-12">
-							<strong class="sub-content-heading" th:text="#{open.crosses.review.imported.crosses}">REVIEW IMPORTED
-								CROSSES</strong>
-						</div>
-					</div>
 					<div class="row form-group add_top_padding">
 						<div class="col-xs-12 col-md-12 cross-preview-section">
 							<table id="preview-crosses-table" width="100%"
 								class="table-curved table-condensed">
 								<thead>
 									<tr>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.entry}">ENTRY</th>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.parentage}">PARENTAGE</th>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.duplicate}">DUPLICATES</th>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.breedingmethod}">BREEDING METHOD</th>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.fgid}">FEMALE GID</th>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.femalePlot}">FEMALE PLOT</th>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.mgid}">MALE GID</th>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.maleNursery}">MALE NURSERY NAME</th>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.malePlot}">MALE PLOT</th>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.crossingDate}">CROSSING DATE</th>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.notes}">NOTES</th>
-										<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.source}">SOURCE</th>
+										<th nowrap="nowrap" style="min-width: 80px !important;" class="factors" th:text="#{open.crosses.factors.entry}">ENTRY</th>
+										<th nowrap="nowrap" style="min-width: 216px !important;" class="factors" th:text="#{open.crosses.factors.parentage}">PARENTAGE</th>
+										<th nowrap="nowrap" style="min-width: 173px !important;" class="factors" th:text="#{open.crosses.factors.duplicate}">DUPLICATES</th>
+										<th nowrap="nowrap" style="min-width: 100px !important;" class="factors" th:text="#{open.crosses.factors.maleparentpedigree}">PEDIGREE OF FEMALE PARENT</th>
+										<th nowrap="nowrap" style="min-width: 115px !important;" class="factors" th:text="#{open.crosses.factors.femalePlot}">FEMALE PARENT</th>
+										<th nowrap="nowrap" style="min-width: 100px !important;" class="factors" th:text="#{open.crosses.factors.source}">PEDIGREE OF MALE PARENT</th>
+										<th nowrap="nowrap" style="min-width: 115px !important;" class="factors" th:text="#{open.crosses.factors.malePlot}">MALE PARENT</th>
+										<th nowrap="nowrap" style="min-width: 216px !important;" class="factors" th:text="#{open.crosses.factors.breedingmethod}">BREEDING METHOD</th>
+										<th nowrap="nowrap" style="min-width: 100px !important;" class="factors" th:text="#{open.crosses.factors.source}">SOURCE</th>
+										<th nowrap="nowrap" style="min-width: 57px !important;" class="factors" th:text="#{open.crosses.factors.fgid}">FEMALE GID</th>
+										<th nowrap="nowrap" style="min-width: 57px !important;" class="factors" th:text="#{open.crosses.factors.mgid}">MALE GID</th>
 									</tr>
 								</thead>
 							</table>
@@ -49,10 +42,10 @@
 				</div>
 				<div class="modal-footer">
 					<!-- The Back button is hidden with the css styles if we came from the Breeding Manager-->
-					<button type="button" class="btn btn-default" id="goBackToImportCrossesButton" th:text="#{common.form.back.text}">
+					<button type="button" class="btn btn-default" id="goBackToNamingModal" th:text="#{common.form.back.text}">
 						Back</button>
 					<button type="button" class="btn btn-primary" id="openCrossListNextButton"
-						th:text="#{common.form.next.text}" onclick="">Next</button>
+						th:text="#{common.form.finish.text}" onclick="">Finish</button>
 				</div>
 			</div>
 		</div>
@@ -65,15 +58,14 @@
 				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.entry}">ENTRY</th>
 				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.parentage}">PARENTAGE</th>
 				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.duplicate}">DUPLICATES</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.maleparentpedigree}">PEDIGREE OF MALE PARENT</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.femalePlot}">FEMALE PARENT</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.femaleparentpedigree}">PEDIGREE OF FEMALE PARENT</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.malePlot}">MALE PARENT</th>
 				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.breedingmethod}">BREEDING METHOD</th>
-				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.fgid}">FEMALE GID</th>
-				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.femalePlot}">FEMALE PLOT</th>
-				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.mgid}">MALE GID</th>
-				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.maleNursery}">MALE NURSERY NAME</th>
-				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.malePlot}">MALE PLOT</th>
-				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.crossingDate}">CROSSING DATE</th>
-				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.notes}">NOTES</th>
 				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.source}">SOURCE</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.fgid}">FEMALE GID</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.mgid}">MALE GID</th>
 			</tr>
 		</thead>
 	</table>

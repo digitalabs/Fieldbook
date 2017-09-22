@@ -8,15 +8,17 @@ public class ImportResult {
 
 	private Set<ChangeType> modes;
 	private List<GermplasmChangeDetail> changeDetails;
+	private List<String> variablesAdded;
+	private List<String> variablesRemoved;
 	private String errorMessage;
 	private String conditionsAndConstantsErrorMessage;
 
-	public ImportResult(Set<ChangeType> modes, List<GermplasmChangeDetail> changeDetails) {
+	public ImportResult(final Set<ChangeType> modes, final List<GermplasmChangeDetail> changeDetails) {
 		this.modes = modes;
 		this.changeDetails = changeDetails;
 	}
 
-	public ImportResult(String errorMessage) {
+	public ImportResult(final String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
 
@@ -30,7 +32,7 @@ public class ImportResult {
 	/**
 	 * @param modes the modes to set
 	 */
-	public void setModes(Set<ChangeType> modes) {
+	public void setModes(final Set<ChangeType> modes) {
 		this.modes = modes;
 	}
 
@@ -44,7 +46,7 @@ public class ImportResult {
 	/**
 	 * @param changeDetails the changeDetails to set
 	 */
-	public void setChangeDetails(List<GermplasmChangeDetail> changeDetails) {
+	public void setChangeDetails(final List<GermplasmChangeDetail> changeDetails) {
 		this.changeDetails = changeDetails;
 	}
 
@@ -58,7 +60,7 @@ public class ImportResult {
 	/**
 	 * @param errorMessage the errorMessage to set
 	 */
-	public void setErrorMessage(String errorMessage) {
+	public void setErrorMessage(final String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
 
@@ -66,8 +68,24 @@ public class ImportResult {
 		return this.conditionsAndConstantsErrorMessage;
 	}
 
-	public void setConditionsAndConstantsErrorMessage(String conditionsAndConstantsErrorMessage) {
+	public void setConditionsAndConstantsErrorMessage(final String conditionsAndConstantsErrorMessage) {
 		this.conditionsAndConstantsErrorMessage = conditionsAndConstantsErrorMessage;
+	}
+
+	public List<String> getVariablesAdded() {
+		return variablesAdded;
+	}
+
+	public void setVariablesAdded(final List<String> variablesAdded) {
+		this.variablesAdded = variablesAdded;
+	}
+
+	public List<String> getVariablesRemoved() {
+		return variablesRemoved;
+	}
+
+	public void setVariablesRemoved(final List<String> variablesRemoved) {
+		this.variablesRemoved = variablesRemoved;
 	}
 
 }

@@ -5,7 +5,7 @@
 	<artifactId>Fieldbook</artifactId>
 	<packaging>war</packaging>
 	<name>Fieldbook</name>
-        <version>4.0.0.BETA.17.UAT4</version>
+        <version>6.4</version>
 
 	<properties>
         <ibpcommons.version>${project.version}</ibpcommons.version>
@@ -13,27 +13,6 @@
 		<spring.security.version>3.2.5.RELEASE</spring.security.version>
 		<envConfig>${user.name}</envConfig>
 	</properties>
-
-	<distributionManagement>
-		<repository>
-			<id>efficio-nexus</id>
-			<name>Releases</name>
-			<url>http://apps.leafnode.io:8081/nexus/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>efficio-nexus</id>
-			<name>Snapshots</name>
-			<url>http://apps.leafnode.io:8081/nexus/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>gcp-efficio-repo</id>
-			<url>http://apps.leafnode.io:8081/nexus/content/repositories/thirdparty/</url>
-		</repository>
-	</repositories>
-
 
 	<dependencies>
 		<!-- Spring Dependency -->
@@ -142,6 +121,11 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.6</version>
 		</dependency>
+		<dependency>
+		    <groupId>commons-validator</groupId>
+		    <artifactId>commons-validator</artifactId>
+		    <version>1.5.1</version>
+		</dependency>
 		<!-- Other Apache Libs -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -240,8 +224,26 @@
 		
 		<dependency>
 			<groupId>org.generationcp</groupId>
+			<artifactId>ibpcommons</artifactId>
+			<version>${ibpcommons.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.generationcp</groupId>
 			<artifactId>middleware</artifactId>
 			<version>${ibpcommons.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.itextpdf</groupId>
+					<artifactId>itext-pdfa</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.itextpdf</groupId>
+					<artifactId>itextpdf</artifactId>
+				</exclusion>
+			</exclusions>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>

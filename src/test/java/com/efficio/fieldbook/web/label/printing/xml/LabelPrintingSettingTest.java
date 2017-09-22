@@ -22,28 +22,30 @@ public class LabelPrintingSettingTest {
 
 	@Test
 	public void testPDFOutputXMLConfiguration() throws JAXBException {
-		String rightFieldsString = this.stringify(LabelPrintingSettingTest.SELECTED_FIELDS_2, PDFLabelPrintingSetting.DELIMITER);
-		String leftFieldsString = this.stringify(LabelPrintingSettingTest.SELECTED_FIELDS_1, PDFLabelPrintingSetting.DELIMITER);
-		String barcodeFieldsString = this.stringify(LabelPrintingSettingTest.BARCODE_FIELDS, BarcodeLabelPrintingSetting.DELIMITER);
+		final String rightFieldsString = this.stringify(LabelPrintingSettingTest.SELECTED_FIELDS_2, PDFLabelPrintingSetting.DELIMITER);
+		final String leftFieldsString = this.stringify(LabelPrintingSettingTest.SELECTED_FIELDS_1, PDFLabelPrintingSetting.DELIMITER);
+		final String barcodeFieldsString = this.stringify(LabelPrintingSettingTest.BARCODE_FIELDS, BarcodeLabelPrintingSetting.DELIMITER);
 
-		PDFLabelPrintingSetting pdfSetting = new PDFLabelPrintingSetting("A4", 7, leftFieldsString, rightFieldsString);
-		BarcodeLabelPrintingSetting barcodeSetting = new BarcodeLabelPrintingSetting(true, "Barcode", barcodeFieldsString);
-		LabelPrintingSetting labelPrintingSetting = new LabelPrintingSetting("PDF setting", "PDF", null, pdfSetting, barcodeSetting);
+		final PDFLabelPrintingSetting pdfSetting = new PDFLabelPrintingSetting("A4", 7, leftFieldsString, rightFieldsString);
+		final BarcodeLabelPrintingSetting barcodeSetting = new BarcodeLabelPrintingSetting(true, "Barcode", barcodeFieldsString, false);
+		final LabelPrintingSetting labelPrintingSetting = new LabelPrintingSetting("PDF setting", "PDF", null, pdfSetting, barcodeSetting,
+				"stockId", "3");
 
-		JAXBContext context = JAXBContext.newInstance(LabelPrintingSetting.class);
-		Marshaller marshaller = context.createMarshaller();
-		StringWriter writer = new StringWriter();
+		final JAXBContext context = JAXBContext.newInstance(LabelPrintingSetting.class);
+		final Marshaller marshaller = context.createMarshaller();
+		final StringWriter writer = new StringWriter();
 		marshaller.marshal(labelPrintingSetting, writer);
 
-		String xmlToRead =
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><labelPrintingSetting name=\"PDF setting\" outputType=\"PDF\">"
+		final String xmlToRead =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><labelPrintingSetting name=\"PDF setting\" "
+						+ "outputType=\"PDF\" sorting = \"stockId\" numberOfCopies = \"3\" >"
 						+ "<barcodeSetting barcodeFieldsString=\"" + barcodeFieldsString
 						+ "\" barcodeFormat=\"Barcode\" barcodeNeeded=\"true\"/> "
 						+ "<pdfSetting numberOfRowsPerPage=\"7\" selectedLeftFieldsString=\"" + leftFieldsString + "\" "
 						+ "selectedRightFieldsString=\"" + rightFieldsString + "\" sizeOfLabelSheet=\"A4\" /></labelPrintingSetting>";
 
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		LabelPrintingSetting parsedSetting = (LabelPrintingSetting) unmarshaller.unmarshal(new StringReader(xmlToRead));
+		final Unmarshaller unmarshaller = context.createUnmarshaller();
+		final LabelPrintingSetting parsedSetting = (LabelPrintingSetting) unmarshaller.unmarshal(new StringReader(xmlToRead));
 
 		Assert.assertEquals(labelPrintingSetting, parsedSetting);
 		Assert.assertEquals(Arrays.asList(LabelPrintingSettingTest.SELECTED_FIELDS_1), parsedSetting.getPdfSetting()
@@ -57,27 +59,28 @@ public class LabelPrintingSettingTest {
 
 	@Test
 	public void testCSVExcelOutputXMLConfiguration() throws JAXBException {
-		String selectedFieldsString = this.stringify(LabelPrintingSettingTest.SELECTED_FIELDS_1, PDFLabelPrintingSetting.DELIMITER);
-		String barcodeFieldsString = this.stringify(LabelPrintingSettingTest.BARCODE_FIELDS, BarcodeLabelPrintingSetting.DELIMITER);
+		final String selectedFieldsString = this.stringify(LabelPrintingSettingTest.SELECTED_FIELDS_1, PDFLabelPrintingSetting.DELIMITER);
+		final String barcodeFieldsString = this.stringify(LabelPrintingSettingTest.BARCODE_FIELDS, BarcodeLabelPrintingSetting.DELIMITER);
 
-		CSVExcelLabelPrintingSetting csvExcelSetting = new CSVExcelLabelPrintingSetting(false, selectedFieldsString);
-		BarcodeLabelPrintingSetting barcodeSetting = new BarcodeLabelPrintingSetting(true, "Barcode", barcodeFieldsString);
-		LabelPrintingSetting labelPrintingSetting = new LabelPrintingSetting("PDF setting", "PDF", csvExcelSetting, null, barcodeSetting);
+		final CSVExcelLabelPrintingSetting csvExcelSetting = new CSVExcelLabelPrintingSetting(false, selectedFieldsString);
+		final BarcodeLabelPrintingSetting barcodeSetting = new BarcodeLabelPrintingSetting(true, "Barcode", barcodeFieldsString, false);
+		final LabelPrintingSetting labelPrintingSetting = new LabelPrintingSetting("PDF setting", "PDF", csvExcelSetting, null, barcodeSetting, "stockId", "3");
 
-		JAXBContext context = JAXBContext.newInstance(LabelPrintingSetting.class);
-		Marshaller marshaller = context.createMarshaller();
-		StringWriter writer = new StringWriter();
+		final JAXBContext context = JAXBContext.newInstance(LabelPrintingSetting.class);
+		final Marshaller marshaller = context.createMarshaller();
+		final StringWriter writer = new StringWriter();
 		marshaller.marshal(labelPrintingSetting, writer);
 
-		String xmlToRead =
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><labelPrintingSetting name=\"PDF setting\" outputType=\"PDF\">"
+		final String xmlToRead =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><labelPrintingSetting name=\"PDF setting\" "
+						+ "outputType=\"PDF\" sorting = \"stockId\" numberOfCopies = \"3\" >"
 						+ "<barcodeSetting barcodeFieldsString=\"" + barcodeFieldsString
 						+ "\" barcodeFormat=\"Barcode\" barcodeNeeded=\"true\"/> "
 						+ "<csvExcelSetting includeColumnHeadingsInOutput=\"false\" selectedFieldsString=\"" + selectedFieldsString
 						+ "\"/>" + "</labelPrintingSetting>";
 
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		LabelPrintingSetting parsedSetting = (LabelPrintingSetting) unmarshaller.unmarshal(new StringReader(xmlToRead));
+		final Unmarshaller unmarshaller = context.createUnmarshaller();
+		final LabelPrintingSetting parsedSetting = (LabelPrintingSetting) unmarshaller.unmarshal(new StringReader(xmlToRead));
 
 		Assert.assertEquals(labelPrintingSetting, parsedSetting);
 		Assert.assertEquals(Arrays.asList(LabelPrintingSettingTest.SELECTED_FIELDS_1), parsedSetting.getCsvExcelSetting()
@@ -86,9 +89,9 @@ public class LabelPrintingSettingTest {
 				.getBarcodeFieldsList());
 	}
 
-	private String stringify(Object[] values, String delimiter) {
-		StringBuilder sb = new StringBuilder();
-		for (Object value : values) {
+	private String stringify(final Object[] values, final String delimiter) {
+		final StringBuilder sb = new StringBuilder();
+		for (final Object value : values) {
 			if (sb.length() > 0) {
 				sb.append(delimiter);
 			}

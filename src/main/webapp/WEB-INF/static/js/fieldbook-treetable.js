@@ -286,7 +286,7 @@ function renameGermplasmFolerInTreeTable(object) {
 		hideAddGermplasmFolderDiv();
 
 		currentFolderName = getSelectedGermplasmListName();
-		$(getDisplayedModalSelector() + ' #newGermplasmFolderName').val(currentFolderName);
+		$(getDisplayedModalSelector() + ' #newGermplasmFolderName').val($.trim(currentFolderName));
 
 		$(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').slideDown('fast');
 	}
@@ -311,7 +311,7 @@ function submitRenameGermplasmFolderInTreeTable() {
 	}
 
 	var name = getSelectedGermplasmListName();
-	if ($.trim(folderName) === name) {
+	if (folderName === $.trim(name)) {
 		hideRenameGermplasmFolderDiv();
 		return false;
 	}

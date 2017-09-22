@@ -15,7 +15,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.data.initializer.StandardVariableInitializer;
+import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -97,13 +97,15 @@ public class DesignImportServiceImplTest {
 	private DesignImportMeasurementRowGenerator measurementRowGenerator;
 
 	private DesignImportData designImportData;
+	
+	private StandardVariableTestDataInitializer standardVariableTestDataInitializer;
 
 	@InjectMocks
 	private DesignImportServiceImpl service;
 
 	@Before
 	public void setUp() {
-
+		this.standardVariableTestDataInitializer = new StandardVariableTestDataInitializer();
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(DesignImportServiceImplTest.PROGRAM_UUID);
 
 		this.initializeOntologyScaleDataManager();
@@ -317,7 +319,7 @@ public class DesignImportServiceImplTest {
 
 		// If NOT in PREVIEW mode, the method will remove the trial environment factors in the list except for trial instance. This is
 		// because the actual measurements/observations that will be generated from import should not contain trial environment factors.
-		Assert.assertEquals("The total number of Factors and Variates (less the trial environments) in workbook is 13", 13, result.size());
+		Assert.assertEquals("The total number of Factors and Variates (less the trial environments) in workbook is 14", 14, result.size());
 	}
 
 	/**
@@ -535,7 +537,7 @@ public class DesignImportServiceImplTest {
 		final List<ImportedGermplasm> importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
 		final Map<Integer, StandardVariable> germplasmStandardVariables = new HashMap<Integer, StandardVariable>();
 		germplasmStandardVariables.put(TermId.ENTRY_NO.getId(),
-				StandardVariableInitializer.createStdVariable(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name()));
+				this.standardVariableTestDataInitializer.createStandardVariable(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name()));
 		final Set<String> trialInstancesFromUI = new HashSet<String>();
 		trialInstancesFromUI.add("1");
 		trialInstancesFromUI.add("2");
@@ -582,6 +584,12 @@ public class DesignImportServiceImplTest {
 				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.DESIG.getId(), "DESIG", "", "", "",
 						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.DESIG.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
+
+		Mockito.doReturn(
+				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.PLOT_ID.getId(), "PLOT_ID", "", "", "",
+						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
+				.getStandardVariable(TermId.PLOT_ID.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
+
 		Mockito.doReturn(
 				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_TYPE.getId(), "ENTRY_TYPE",
 						"", "", "", DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)

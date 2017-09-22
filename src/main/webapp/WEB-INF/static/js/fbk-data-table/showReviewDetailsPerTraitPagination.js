@@ -1,22 +1,3 @@
-
-
-<table th:object="${reviewDetailsOutOfBoundsForm}" id="review-details-table" width="100%" class="table-curved table-condensed" >
-	<thead>
-	<tr>
-			<th nowrap="nowrap" data-term-id="Check" class="factors">&#10004;</th>
-			<th nowrap="nowrap" th:attr="data-term-id=${measurementVariable.termId},data-term-data-type-id=${measurementVariable.dataTypeId},data-term-valid-values=${measurementVariable.possibleValuesString}"
-			th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
-			th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}"
-			th:utext="${measurementVariable.name} == *{measurementVariable.name} ? 'OLD VALUE' : ${measurementVariable.name}">VARIABLE NAME</th>
-			<th nowrap="nowrap" data-term-id="NewValue" class="variates">NEW VALUE</th>
-		</tr>
-	</thead>
-</table>
-
-
-<script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>
-<script type="text/javascript" th:inline="javascript">
-//<![CDATA[
 jQuery().ready(function() {
 	'use strict';
 	setTimeout(callAjax, 500);
@@ -37,6 +18,7 @@ function callAjax() {
 }
 
 function generateDataForProcessing() {
+	'use strict';
 
 	if (!validateReviewDetailsOutOfBoundsDataForm()) return;
 
@@ -44,9 +26,10 @@ function generateDataForProcessing() {
 
 	var dataChanges = { data: [] };
 
+	var oTable = $('#import-preview-measurement-table').dataTable();
+								
 	if (sessionStorage) {
-		for (var i in sessionStorage)
-		{
+		for (var i in sessionStorage) {
 			if (i.indexOf('reviewDetailsFormDataAction') === 0) {
 				var actionData = JSON.parse(sessionStorage[i]);
 				var data = JSON.parse(sessionStorage['reviewDetailsFormData'+actionData.termId]);
@@ -73,9 +56,40 @@ function generateDataForProcessing() {
 			contentType: "application/json",
 			success: function(data) {
 				if (data.success === '1') {
-					reloadMeasurementTable();
 					$('body').removeClass('modal-open');
 					$('#reviewDetailsOutOfBoundsDataModal').modal('hide');
+
+					$.each(dataChanges.data, function(index, value) {
+						for (i = 0; i < value.values.length; i++) {
+							var columnIndex = value.values[i].colIndex;
+							var rowIndex = value.values[i].rowIndex;
+							var isSelected = value.values[i].isSelected;
+							var action = value.values[i].action;
+							
+														
+							var cell = $(oTable).find('tr').eq(rowIndex+1).find('td').eq(columnIndex-1);
+							
+							// if Action is Accept as is, do not update value. Just highlight as accepted
+							if  (action === '1' && isSelected){
+								$(cell).removeClass('invalid-value');
+								$(cell).addClass('accepted-value');
+								
+							// if action is Assign new value for all entries selected or new value was set individually
+							} else if (((action === '2' && isSelected) || action === '') && value.values[i].newValue !== '') {
+								oTable.fnUpdate([value.values[i].newValue,''], rowIndex,
+										columnIndex, false);
+								$(cell).removeClass('invalid-value');
+								
+							// if action is set cell value to Missing. No highlighting for missing values
+							} else if (value.values[i].action === '3' && isSelected) {
+								oTable.fnUpdate(['missing',''], rowIndex,
+										columnIndex, false);	
+								$(cell).removeClass('invalid-value');
+							} 
+							
+                    	}
+                    });
+
 				} else {
 					showErrorMessage('', data.errorMessage);
 				}
@@ -87,6 +101,7 @@ function generateDataForProcessing() {
 }
 
 function validateReviewDetailsOutOfBoundsDataForm() {
+	'use strict';
 	if ($('#selectAction').val() === '2' && $('#selectActionValue').val().trim() === '') {
 		$('#selectActionValue').focus();
 		showErrorMessage('', 'Please input the new value.');
@@ -108,6 +123,7 @@ function validateReviewDetailsOutOfBoundsDataForm() {
 }
 
 function checkIfAtLeastOneCheckBoxIsTicked() {
+	'use strict';
 	var cells = $('#review-details-table').DataTable().cells().nodes();
 	var isChecked = false;
 	$(cells).find(':checkbox').each(function() {
@@ -120,17 +136,23 @@ function checkIfAtLeastOneCheckBoxIsTicked() {
 }
 
 function saveFormDataToSessionStorage(dataKey) {
+	'use strict';
 	var data = {};
 	var actionData = {};
 	var cells = $('#review-details-table').DataTable().cells().nodes();
 	var selectedActionType = $('#selectAction').val();
 	var selectedActionValue = $('#selectActionValue').val().trim();
 
+	// get the column index of trait from Measurements data table
+	var traitTermName = $("#traitTermName").val();
+	var traitColumnIndex = $('#import-preview-measurement-table').DataTable().column(':contains(' + traitTermName + ')').index();
+	
 	$(cells).find('[data-binding]').each(function() {
 
-		data[$(this).data('row-index')] = data[$(this).data('row-index')] || { rowIndex: null, isSelected: false, newValue: '', action: '' };
+		data[$(this).data('row-index')] = data[$(this).data('row-index')] || { rowIndex: null, colIndex: null, isSelected: false, newValue: '', action: ''};
 
 		data[$(this).data('row-index')].rowIndex = $(this).data('row-index');
+		data[$(this).data('row-index')].colIndex = traitColumnIndex;
 
 		if ($(this).is(':checkbox')) {
 			data[$(this).data('row-index')].isSelected = $(this).prop('checked');
@@ -158,6 +180,7 @@ function saveFormDataToSessionStorage(dataKey) {
 }
 
 function restoreFormDataFromSessionStorage(dataKey) {
+	'use strict';
 	var data;
 	var actionData;
 
@@ -186,5 +209,3 @@ function restoreFormDataFromSessionStorage(dataKey) {
 	}
 
 }
-//]]>
-</script>

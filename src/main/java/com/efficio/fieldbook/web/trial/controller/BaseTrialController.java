@@ -1,8 +1,10 @@
 package com.efficio.fieldbook.web.trial.controller;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
 import com.efficio.fieldbook.web.trial.bean.Environment;
@@ -15,7 +17,9 @@ import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -39,11 +43,11 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
-import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,12 +70,6 @@ public abstract class BaseTrialController extends SettingsController {
 	public static final String URL_EXPERIMENTAL_DESIGN = "TrialManager/templates/experimentalDesign";
 	public static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
 	public static final String URL_DATATABLE = "Common/showAddOrRemoveTraitsPagination";
-
-	/**
-	 * The ontology service.
-	 */
-	@Resource
-	protected OntologyService ontologyService;
 
 	protected void createStudyDetails(final Workbook workbook, final BasicDetails detailBean) {
 		if (workbook.getStudyDetails() == null) {
@@ -176,6 +174,8 @@ public abstract class BaseTrialController extends SettingsController {
 
 			data.setFileName(this.getExperimentalDesignData(xpDesignVariable.getExperimentalDesignSource()));
 
+			// FIXME
+			// Get starting entry and plot without loading all observations in OpenTrialController.openTrial()
 			this.setStartingEntryNoAndPlotNoFromObservations(trialWorkbook, data);
 
 			// Get all entry numbers from workbook, sort it and get first element from entry numbers list
@@ -602,6 +602,46 @@ public abstract class BaseTrialController extends SettingsController {
 		return output;
 	}
 
+	protected List<MeasurementVariable> getLatestMeasurements(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+			final HttpServletRequest request) {
+		Workbook workbook = this.userSelection.getWorkbook();
+		if (this.userSelection.getTemporaryWorkbook() != null) {
+			workbook = this.userSelection.getTemporaryWorkbook();
+		}
+
+		boolean haveSamples = false;
+		if (this.userSelection.getWorkbook() != null) {
+			haveSamples = fieldbookMiddlewareService.hasSamples(this.userSelection.getWorkbook().getStudyDetails().getId());
+		}
+
+		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
+		measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
+
+		final String listCsv = request.getParameter("variableList");
+
+		if (!measurementDatasetVariables.isEmpty()) {
+			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);
+			if (haveSamples) {
+				final MeasurementVariable sample = createSampleVariable();
+				newMeasurementDatasetVariables.add(sample);
+			}
+			this.getTraitsAndSelectionVariates(measurementDatasetVariables, newMeasurementDatasetVariables, listCsv);
+			measurementDatasetVariables = newMeasurementDatasetVariables;
+		}
+
+		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
+		return workbook.arrangeMeasurementVariables(measurementDatasetVariables);
+	}
+
+	private MeasurementVariable createSampleVariable() {
+		final MeasurementVariable sample = new MeasurementVariable();
+		sample.setName("SAMPLES");
+		sample.setTermId(TermId.SAMPLES.getId());
+		sample.setFactor(true);
+
+		return sample;
+	}
+
 	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final List<MeasurementVariable> studyConditions,
 			final boolean isUsePrevious, final int trialID) {
 		final Map<String, String> basicDetails = new HashMap<String, String>();
@@ -671,7 +711,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected String convertDateStringForUI(final String value) {
-		if (!value.contains("-")) {
+		if (value != null && !value.contains("-")) {
 			return DateUtil.convertToUIDateFormat(TermId.DATE_VARIABLE.getId(), value);
 		} else {
 			return value;
@@ -793,5 +833,38 @@ public abstract class BaseTrialController extends SettingsController {
 			x++;
 		}
 
+	}
+
+
+	protected List<MeasurementVariable> getMeasurementVariableFactor(List<MeasurementVariable> measurementDatasetVariables) {
+		List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
+		for (final MeasurementVariable var : measurementDatasetVariables) {
+			if (var.isFactor()) {
+				newMeasurementDatasetVariables.add(var);
+			}
+		}
+		return newMeasurementDatasetVariables;
+	}
+
+	protected void getTraitsAndSelectionVariates(List<MeasurementVariable> measurementDatasetVariables,List<MeasurementVariable> newMeasurementDatasetVariables, String listCsv) {
+
+		if (listCsv != null && !"".equalsIgnoreCase(listCsv)) {
+			final StringTokenizer token = new StringTokenizer(listCsv, ",");
+			while (token.hasMoreTokens()) {
+				final int id = Integer.valueOf(token.nextToken());
+				final MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
+				if (currentVar == null) {
+					final StandardVariable var =
+						this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
+					var.setPhenotypicType(PhenotypicType.VARIATE);
+					final MeasurementVariable newVar =
+						ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
+					newVar.setFactor(false);
+					newMeasurementDatasetVariables.add(newVar);
+				} else {
+					newMeasurementDatasetVariables.add(currentVar);
+				}
+			}
+		}
 	}
 }

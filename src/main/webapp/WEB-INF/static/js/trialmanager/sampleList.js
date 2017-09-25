@@ -27,6 +27,13 @@
 		$scope.data = TrialManagerDataService.currentData.environments;
 
 		$scope.continueCreatingSampleList = function () {
+			$scope.selectedTrialInstancesBySampleList = [];
+			angular.forEach($scope.data.environments, function (environment) {
+				if (environment.Selected) {
+					$scope.selectedTrialInstancesBySampleList.push(environment.managementDetailValues[$scope.TRIAL_INSTANCE_ID]);
+				}
+			});
+
 			if ($scope.selectedTrialInstancesBySampleList.length === 0) {
 				showErrorMessage('', selectOneLocationOrInstanceErrorMessage);
 			} else {
@@ -35,36 +42,33 @@
 		};
 
 		$scope.doSelectAll = function () {
-			$scope.selectedTrialInstancesBySampleList = [];
-			var i = 1;
 			angular.forEach($scope.data.environments, function (environment) {
-				if ($scope.selectAll) {
-					environment.Selected = i;
-					i++;
-					$scope.selectedTrialInstancesBySampleList.push(environment.managementDetailValues[$scope.TRIAL_INSTANCE_ID]);
-				} else {
-					environment.Selected = undefined;
-				}
+				environment.Selected = $scope.selectAll;
 			});
 		};
 
 		$scope.doSelectInstance = function(index){
 			var environment = $scope.data.environments[index];
-			if(environment.Selected != undefined){
-				$scope.selectedTrialInstancesBySampleList.push(environment.managementDetailValues[$scope.TRIAL_INSTANCE_ID]);
-			}else{
+			if (!environment.Selected) {
 				$scope.selectAll = false;
-				var idx = $scope.selectedTrialInstancesBySampleList.indexOf(String(index + 1));
-				$scope.selectedTrialInstancesBySampleList.splice(idx,1);
 			}
 		};
 
-
+		$scope.hasInstancesSelected = function () {
+			var hasSelected = false;
+			angular.forEach($scope.data.environments, function (environment) {
+				if (environment.Selected) {
+					hasSelected = true;
+				}
+			});
+			return hasSelected;
+		}
 
 		$scope.init = function () {
 			$scope.locationFromTrialSettings = false;
 			$scope.locationFromTrial = false;
 			$scope.selectAll = true;
+			$scope.doSelectAll();
 
 			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_ID) != null) {
 				// LOCATION_NAME from environments
@@ -73,7 +77,6 @@
 			} else {
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_ID;
 			}
-			$scope.doSelectAll();
 		};
 
 		$scope.init();

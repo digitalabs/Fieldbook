@@ -68,12 +68,9 @@
 
 				if ($scope.locationFromTrialSettings) {
 					selectedLocationDetails.push($scope.userInput[$scope.PREFERRED_LOCATION_VARIABLE]);
-				} else {
-					if (env.Selected != undefined) {
-						selectedLocationDetails.push(env.managementDetailValues[$scope.PREFERRED_LOCATION_VARIABLE]);
-						selectedTrialInstancesByAdvanceList.push(env.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX]);
-
-					}
+				} else if (env.Selected) {
+					selectedLocationDetails.push(env.managementDetailValues[$scope.PREFERRED_LOCATION_VARIABLE]);
+					selectedTrialInstancesByAdvanceList.push(env.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX]);
 				}
 			});
 
@@ -91,29 +88,22 @@
 		};
 
 		$scope.doSelectAll = function() {
-			var i = 1;
 			angular.forEach($scope.data.environments, function (environment) {
-				if ($scope.selectAll) {
-					environment.Selected = i;
-					i++;
-				} else {
-					environment.Selected = undefined;
-				}
+				environment.Selected = $scope.selectAll;
 			});
 		};
 
 		$scope.doSelectInstance = function (index) {
 			var environment = $scope.data.environments[index];
-			if (environment.Selected != undefined) {
-			} else {
+			if (!environment.Selected) {
 				$scope.selectAll = false;
-				environment.Selected = undefined;
 			}
 		};
 
 		$scope.init = function() {
 			$scope.locationFromTrialSettings = false;
 			$scope.selectAll = true;
+			$scope.doSelectAll();
 
 			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
 				// LOCATION_ABBR from environments
@@ -132,7 +122,6 @@
 			} else {
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_INDEX;
 			}
-			$scope.doSelectAll();
 		};
 		$scope.init();
 

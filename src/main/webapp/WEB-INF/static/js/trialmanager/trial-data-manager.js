@@ -497,6 +497,10 @@
 
 										service.updateCurrentData('environments', extractData(updatedData.environmentData));
 										service.updateSettings('environments', extractSettings(updatedData.environmentData));
+
+										//refresh the environments list in measurements tab
+										$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
+
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
 										service.applicationData.unsavedGeneratedDesign = false;

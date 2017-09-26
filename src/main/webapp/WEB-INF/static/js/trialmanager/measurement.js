@@ -143,7 +143,7 @@
 					$scope.selectedEnvironment = $scope.environmentsList[0];
 				});
 
-				$scope.$on('onUpdateEnvironment', function() {
+				$scope.$on('refreshEnvironmentListInMeasurementTable', function() {
 					$scope.initEnvironmentList();
 				});
 

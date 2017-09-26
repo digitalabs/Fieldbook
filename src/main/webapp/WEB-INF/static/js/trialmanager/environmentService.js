@@ -17,7 +17,6 @@
 
 		environmentService.broadcastEnvironments = function() {
 			$rootScope.$broadcast('changeEnvironments');
-			$rootScope.$broadcast('onUpdateEnvironment');
 		};
 
 		return environmentService;

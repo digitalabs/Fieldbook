@@ -6,7 +6,22 @@
       ng-app="di-mapHeaders">
 <head>
     <title th:inline="text">[[#{page.title.define.variables}]]</title>
-
+    
+    
+    <script type='text/javascript' th:inline="javascript">
+		var applicationBase = /*[[${applicationBase}]]*/ '';
+		var fieldbookWebLink = /*[[${fieldbookWebLink}]]*/ '';
+		var headerList = /*[[${headerList}]]*/ '';
+		var trialEnvironmentList = /*[[${trialEnvironmentList}]]*/ '';
+		var germplasmList = /*[[${germplasmList}]]*/ '';
+		var trialDesignList = /*[[${trialDesignList}]]*/ '';
+		var variateList = /*[[${variateList}]]*/ '';
+		var roleList = /*[[${roleList}]]*/ '';
+		var dsType = /*[[${datasetType}]]*/ '';
+		var errorUnmappedVariables = /*[[#{error.unmapped.variables}]]*/ '';
+		var headerMappingValidationNoPhenotypicType = /*[[#{header.mapping.validation.no.phenotypic.type}]]*/ '';
+		var headerMappingValidationNoStandardVariable = /*[[#{header.mapping.validation.no.standard.variable}]]*/ '';
+    </script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

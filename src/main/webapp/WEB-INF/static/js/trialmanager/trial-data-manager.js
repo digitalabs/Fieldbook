@@ -497,6 +497,8 @@
 
 										service.updateCurrentData('environments', extractData(updatedData.environmentData));
 										service.updateSettings('environments', extractSettings(updatedData.environmentData));
+										service.updateCurrentData('trialSettings', extractData(updatedData.trialSettingsData));
+										service.updateSettings('trialSettings', extractSettings(updatedData.trialSettingsData));
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
 										service.applicationData.unsavedGeneratedDesign = false;

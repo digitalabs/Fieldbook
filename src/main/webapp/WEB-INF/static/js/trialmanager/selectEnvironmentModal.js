@@ -133,7 +133,6 @@
 
 		$scope.init = function() {
 
-			debugger;
 			$scope.locationFromTrialSettings = false;
 
 			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {

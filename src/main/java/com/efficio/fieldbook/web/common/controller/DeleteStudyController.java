@@ -1,16 +1,9 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.UnpermittedDeletionException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -25,7 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Controller
 @RequestMapping(DeleteStudyController.URL)
@@ -38,6 +36,8 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 	public static final String URL = "/StudyManager/deleteStudy";
 
 	public static final String STUDY_DELETE_NOT_PERMITTED = "study.delete.not.permitted";
+
+	public static final String TEMPLATE_DELETE_NOT_PERMITTED = "study.template.delete.not.permitted";
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -56,19 +56,29 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/{studyId}/{studyType}", method = RequestMethod.POST)
 	public Map<String, Object> submitDelete(@PathVariable final int studyId, @PathVariable final String studyType,
-			final Model model, final HttpSession session, final Locale locale) throws MiddlewareException {
+			final Model model, final HttpSession session, final Locale locale) {
 		final Map<String, Object> results = new HashMap<>();
+		final List<GermplasmList> germplasmLists;
+		final Study study;
+
 		try {
+			// Validation to don't delete a template programs
+			study = this.fieldbookMiddlewareService.getStudy(studyId);
+			if (null == study.getProgramUUID()) {
+				results.put(DeleteStudyController.IS_SUCCESS, "0");
+				results.put("message", this.messageSource.getMessage(DeleteStudyController.TEMPLATE_DELETE_NOT_PERMITTED, null, locale));
+				return results;
+			}
+
 			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentUserLocalId());
 
-			List<GermplasmList> germplasmLists = null;
 			if ("N".equals(studyType)) {
 				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,
 						GermplasmListType.NURSERY);
 
 				// Also set the status of checklist to deleted
-				final List<GermplasmList> checkGermplasmLists = this.fieldbookMiddlewareService
-						.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
+				final List<GermplasmList> checkGermplasmLists =
+					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
 				this.deleteGermplasmList(checkGermplasmLists);
 			} else {
 				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,
@@ -77,7 +87,6 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 
 			// Set germplasm list status to deleted
 			this.deleteGermplasmList(germplasmLists);
-
 			results.put(DeleteStudyController.IS_SUCCESS, "1");
 
 		} catch (final UnpermittedDeletionException ude) {

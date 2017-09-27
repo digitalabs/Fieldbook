@@ -334,6 +334,10 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				return TrialManagerDataService.applicationData.germplasmListSelected;
 			};
 
+			$scope.displayGermplasmOrMeasurmentOnlyActions = function() {
+				return this.displayGermplasmOnlyActions() || this.displayMeasurementOnlyActions();
+			};
+
 			// Programatically navigate to specified tab state
 			$scope.navigateToTab = function(targetState) {
 				$state.go(targetState);

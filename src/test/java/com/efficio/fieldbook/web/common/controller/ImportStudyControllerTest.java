@@ -101,33 +101,6 @@ public class ImportStudyControllerTest {
 	}
 
 	@Test
-	public void testValidateImportFile_ForFieldroid_FileIsCSV() {
-		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV);
-		final ImportStudyType importType = ImportStudyType.IMPORT_NURSERY_FIELDLOG_FIELDROID;
-		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
-
-		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
-	}
-
-	@Test
-	public void testValidateImportFile_ForFieldroid_FileIsNotCSV() {
-		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS);
-		final ImportStudyType importType = ImportStudyType.IMPORT_NURSERY_FIELDLOG_FIELDROID;
-		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
-
-		Mockito.verify(this.result, Mockito.times(1)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
-	}
-
-	@Test
-	public void testValidateImportFile_ForDataKapture_FileIsCSV() {
-		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV);
-		final ImportStudyType importType = ImportStudyType.IMPORT_DATAKAPTURE;
-		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
-
-		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
-	}
-
-	@Test
 	public void testSaveImportedFiles() {
 		final CreateNurseryForm form = Mockito.mock(CreateNurseryForm.class);
 		final Model model = Mockito.mock(Model.class);
@@ -290,15 +263,6 @@ public class ImportStudyControllerTest {
 			final MeasurementData entryNum = testValues.get(i).getMeasurementData(TermId.ENTRY_NO.getId());
 			entryNum.setValue(Integer.toString(i));
 		}
-	}
-
-	@Test
-	public void testValidateImportFile_ForDataKapture_FileIsNotCSV() {
-		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS);
-		final ImportStudyType importType = ImportStudyType.IMPORT_DATAKAPTURE;
-		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
-
-		Mockito.verify(this.result, Mockito.times(1)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
 	}
 
 	@Test

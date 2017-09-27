@@ -225,9 +225,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		if (file == null) {
 			result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
 		} else {
-			if (ImportStudyType.IMPORT_NURSERY_FIELDLOG_FIELDROID == importStudyType
-					|| ImportStudyType.IMPORT_DATAKAPTURE == importStudyType
-					|| ImportStudyType.IMPORT_KSU_CSV == importStudyType
+			if (ImportStudyType.IMPORT_KSU_CSV == importStudyType
 					|| ImportStudyType.IMPORT_NURSERY_CSV == importStudyType) {
 				final boolean isCSVFile = file.getOriginalFilename().contains(".csv");
 				if (!isCSVFile) {

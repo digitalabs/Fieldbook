@@ -9,6 +9,8 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.LocationTestDataInitializer;
+import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.MethodTestDataInitializer;
 import org.generationcp.middleware.data.initializer.PersonTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
@@ -23,6 +25,7 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -57,6 +60,8 @@ import junit.framework.Assert;
 @RunWith(MockitoJUnitRunner.class)
 public class FieldbookServiceTest {
 
+	private static final String METHOD_DESCRIPTION = "Method Description 5";
+	private static final String LOCATION_NAME = "Loc1";
 	private static final String PROGRAMUUID = "1000001";
 	private static final String CHECK = "CHECK";
 	private static final String DESIG = "DESIG";
@@ -716,7 +721,6 @@ public class FieldbookServiceTest {
 		measurementRow.setDataList(new ArrayList<MeasurementData>());
 		measurementRows.add(measurementRow);
 
-		List<MeasurementVariable> measurementVariables = new ArrayList<>();
 		this.fieldbookServiceImpl.addMeasurementVariableToMeasurementRows(measurementVariableToAdd, measurementRows);
 
 		final List<MeasurementData> measurementDataList = measurementRows.get(0).getDataList();
@@ -742,5 +746,29 @@ public class FieldbookServiceTest {
 		Assert.assertTrue("Expecting that PLOT_ID variable exists in the list", this.fieldbookServiceImpl.isVariableExistsInList(TermId.PLOT_ID.getId(), measurementVariables));
 		Assert.assertFalse("Expecting that ENTRY_NO variable does not exist in the list", this.fieldbookServiceImpl.isVariableExistsInList(TermId.ENTRY_NO.getId(), measurementVariables));
 	}
-
+	
+	@Test
+	public void testResolveNameVarValueWhereIdVariableIsLocationId() {
+		MeasurementVariable mvar = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "1");
+		final String result = this.fieldbookServiceImpl.resolveNameVarValue(mvar);
+		Assert.assertEquals("The result's value should be " + LOCATION_NAME, LOCATION_NAME, result);
+	}
+	
+	@Test
+	public void testResolveNameVarValueWhereIdVariableIsNotLocationId() {
+		MeasurementVariable mvar = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.BREEDING_METHOD.getId(), TermId.BREEDING_METHOD.name(), "4");
+		Variable var = VariableTestDataInitializer.createVariable(DataType.BREEDING_METHOD);
+		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.eq(this.contextUtil.getCurrentProgramUUID()),
+				Matchers.anyInt(), Matchers.eq(true), Matchers.eq(false))).thenReturn(var);
+		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Matchers.anyBoolean())).thenReturn(MethodTestDataInitializer.createMethodList(5));
+		final String result = this.fieldbookServiceImpl.resolveNameVarValue(mvar);
+		Assert.assertEquals("The result's value should be " + METHOD_DESCRIPTION, METHOD_DESCRIPTION, result);
+	}
+	
+	@Test
+	public void testResolveNameVarValueWhereResultIsEmptyString() {
+		MeasurementVariable mvar = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "5");
+		final String result = this.fieldbookServiceImpl.resolveNameVarValue(mvar);
+		Assert.assertTrue("The result should be an empty string", result.isEmpty());
+	}
 }

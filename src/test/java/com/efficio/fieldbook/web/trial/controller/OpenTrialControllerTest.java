@@ -15,6 +15,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.ListDataProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -78,6 +79,8 @@ import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -145,11 +148,9 @@ public class OpenTrialControllerTest {
 	@InjectMocks
 	private OpenTrialController openTrialController;
 
-	private StandardVariableTestDataInitializer standardVariableTestDataInitializer;
-
+	
 	@Before
 	public void setUp() {
-		this.standardVariableTestDataInitializer = new StandardVariableTestDataInitializer();
 		final Project project = this.createProject();
 		final DmsProject dmsProject = this.createDmsProject();
 		final WorkbenchRuntimeData workbenchRuntimeData = new WorkbenchRuntimeData();
@@ -875,6 +876,27 @@ public class OpenTrialControllerTest {
 		Assert.assertEquals("Advance List Name: ", germplasm.getName(), advancedList.get(0).getName());
 	}
 
+	@Test
+	public void testUpdateSavedTrial() {
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
+		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString())).thenReturn(StandardVariableTestDataInitializer.createStandardVariable(1, "STD"));
+		Mockito.when(this.variableDataManager.getVariable(Matchers.anyString(), Matchers.anyInt(), Matchers.anyBoolean(), Matchers.anyBoolean())).thenReturn(VariableTestDataInitializer.createVariable());
+		Map<String, Object> resultMap = this.openTrialController.updateSavedTrial(TRIAL_ID);
+		Assert.assertNotNull(resultMap.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
+		Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
+		Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
+		Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENTS_DATA));
+		Assert.assertNotNull(resultMap.get(OpenTrialController.SELECTION_VARIABLE_DATA));
+		Assert.assertNotNull(resultMap.get(OpenTrialController.TRIAL_SETTINGS_DATA));
+		
+		Mockito.verify(this.userSelection, Mockito.times(1)).setWorkbook(workbook);
+		Mockito.verify(this.userSelection, Mockito.times(1)).setExperimentalDesignVariables(
+				WorkbookUtil.getExperimentalDesignVariables(workbook.getConditions()));
+		Mockito.verify(this.userSelection, Mockito.times(1)).setExpDesignParams(
+				SettingsUtil.convertToExpDesignParamsUi(this.userSelection.getExperimentalDesignVariables()));
+	}
+	
 	@Test
 	public void testAssignOperationOnExpDesignVariablesForExistingTrialWithoutExperimentalDesign() {
 		final List<MeasurementVariable> conditions = this.initMeasurementVariableList();

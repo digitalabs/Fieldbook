@@ -307,12 +307,12 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB,
 				this.prepareEnvironmentsTabInfo(trialWorkbook, false));
-		model.addAttribute(TRIAL_SETTINGS_DATA,
+		model.addAttribute(OpenTrialController.TRIAL_SETTINGS_DATA,
 				this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
-		model.addAttribute(MEASUREMENTS_DATA,
+		model.addAttribute(OpenTrialController.MEASUREMENTS_DATA,
 				this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));
-		model.addAttribute(SELECTION_VARIABLE_DATA, this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(),
-				VariableType.SELECTION_METHOD, false));
+		model.addAttribute(OpenTrialController.SELECTION_VARIABLE_DATA, this
+				.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
 		model.addAttribute("experimentalDesignData", this.prepareExperimentalDesignTabInfo(trialWorkbook, false));
 
 		model.addAttribute(OpenTrialController.MEASUREMENT_DATA_EXISTING,
@@ -468,8 +468,9 @@ public class OpenTrialController extends BaseTrialController {
 
 				this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(),
 						new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);
-				
-				//Set the flag that indicates whether the variates will be save or not to false since it's already save after inline edit
+
+				// Set the flag that indicates whether the variates will be save
+				// or not to false since it's already save after inline edit
 				this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(),
 						false);
 				returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING,
@@ -540,11 +541,11 @@ public class OpenTrialController extends BaseTrialController {
 						SettingsUtil.buildVariates(trialWorkbook.getVariates())));
 		returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT,
 				this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));
-		returnVal.put(MEASUREMENTS_DATA,
+		returnVal.put(OpenTrialController.MEASUREMENTS_DATA,
 				this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));
-		returnVal.put(SELECTION_VARIABLE_DATA, this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(),
-				VariableType.SELECTION_METHOD, false));
-		returnVal.put(TRIAL_SETTINGS_DATA,
+		returnVal.put(OpenTrialController.SELECTION_VARIABLE_DATA, this
+				.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
+		returnVal.put(OpenTrialController.TRIAL_SETTINGS_DATA,
 				this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
 		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), trialWorkbook.getStudyConditions(), false, id);
 		this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false);

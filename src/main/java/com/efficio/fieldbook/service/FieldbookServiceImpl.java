@@ -168,7 +168,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	 */
 	@Override
 	public AdvanceResult advanceNursery(final AdvancingNursery advanceInfo, final Workbook workbook)
-		throws RuleException, FieldbookException {
+			throws RuleException, FieldbookException {
 
 		return this.namingConventionService.advanceNursery(advanceInfo, workbook);
 	}
@@ -683,10 +683,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public MeasurementVariable createMeasurementVariable(final String idToCreate, final String value, final Operation operation,
-			final PhenotypicType role) {
-		final StandardVariable stdvar =
-				this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate), this.contextUtil.getCurrentProgramUUID());
+	public MeasurementVariable createMeasurementVariable(final String idToCreate, final String value,
+			final Operation operation, final PhenotypicType role) {
+		final StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate),
+				this.contextUtil.getCurrentProgramUUID());
 		stdvar.setPhenotypicType(role);
 		final MeasurementVariable var = new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(),
 				stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
@@ -830,14 +830,15 @@ public class FieldbookServiceImpl implements FieldbookService {
 						final MeasurementVariable tempVarId = studyConditionMap.get(idTermId);
 						final MeasurementVariable tempVarName = studyConditionMap.get(nameTermId);
 						tempVarId.setName(tempVarName.getName() + AppConstants.ID_SUFFIX.getString());
-						tempVarName.setValue(resolveNameVarValue(tempVarId));
+						tempVarName.setValue(this.resolveNameVarValue(tempVarId));
 						tempVarName.setOperation(tempVarId.getOperation());
-						if (tempVarId.getOperation() != null && Operation.DELETE == tempVarId.getOperation() && studyConditionMapList.get(tempVarName.getTermId()) != null) {
-								final List<MeasurementVariable> varList = studyConditionMapList
-										.get(tempVarName.getTermId());
-								for (final MeasurementVariable var : varList) {
-									var.setOperation(Operation.DELETE);
-								}
+						if (tempVarId.getOperation() != null && Operation.DELETE == tempVarId.getOperation()
+								&& studyConditionMapList.get(tempVarName.getTermId()) != null) {
+							final List<MeasurementVariable> varList = studyConditionMapList
+									.get(tempVarName.getTermId());
+							for (final MeasurementVariable var : varList) {
+								var.setOperation(Operation.DELETE);
+							}
 						}
 					} else if (studyConditionMap.get(idTermId) != null && studyConditionMap.get(nameTermId) == null) {
 						/*
@@ -991,17 +992,16 @@ public class FieldbookServiceImpl implements FieldbookService {
 		String actualNameVal = "";
 		if (tempVarId.getValue() != null && !"".equalsIgnoreCase(tempVarId.getValue())) {
 			List<ValueReference> possibleValues;
-			if(TermId.LOCATION_ID.getId() == tempVarId.getTermId()){
-				//Get all locations to make sure that the selected location is included in the list 
-				possibleValues =  this.getLocations(false);
+			if (TermId.LOCATION_ID.getId() == tempVarId.getTermId()) {
+				// Get all locations to make sure that the selected location is
+				// included in the list
+				possibleValues = this.getLocations(false);
 			} else {
-				possibleValues = this.getAllPossibleValues(tempVarId.getTermId(),
-						true);
+				possibleValues = this.getAllPossibleValues(tempVarId.getTermId(), true);
 			}
-			
+
 			for (final ValueReference ref : possibleValues) {
-				if (ref.getId() != null
-						&& ref.getId().toString().equalsIgnoreCase(tempVarId.getValue())) {
+				if (ref.getId() != null && ref.getId().toString().equalsIgnoreCase(tempVarId.getValue())) {
 					actualNameVal = ref.getName();
 					break;
 				}
@@ -1264,7 +1264,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	public void addMeasurementVariableToList(final MeasurementVariable measurementVariable,
 			final List<MeasurementVariable> measurementVariables) {
 
-		if (!isVariableExistsInList(measurementVariable.getTermId(), measurementVariables)) {
+		if (!this.isVariableExistsInList(measurementVariable.getTermId(), measurementVariables)) {
 			measurementVariables.add(measurementVariable);
 
 		}
@@ -1275,7 +1275,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	public void addMeasurementVariableToMeasurementRows(final MeasurementVariable measurementVariable,
 			final List<MeasurementRow> observations) {
 
-		for (MeasurementRow measurementRow : observations) {
+		for (final MeasurementRow measurementRow : observations) {
 			final MeasurementData measurementData = new MeasurementData();
 			measurementData.setLabel(measurementVariable.getName());
 			measurementData.setValue("");
@@ -1287,7 +1287,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	boolean isVariableExistsInList(final int termId, final List<MeasurementVariable> measurementVariables) {
 
-		for (MeasurementVariable measurementVariable : measurementVariables) {
+		for (final MeasurementVariable measurementVariable : measurementVariables) {
 
 			if (measurementVariable.getTermId() == termId) {
 				return true;
@@ -1297,8 +1297,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return false;
 	}
 
-	
-	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+	protected void setFieldbookMiddlewareService(
+			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 

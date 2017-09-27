@@ -100,22 +100,18 @@ public class FieldbookServiceTest {
 	private MeasurementVariable nonLocationVariable;
 
 
-	private StandardVariableTestDataInitializer standardVariableTestDataInitializer;
 	private PersonTestDataInitializer personTestDataInitializer;
 	private LocationTestDataInitializer locationTestDataInitializer;
-	private VariableTestDataInitializer variableTestDataInitializer;
 	private PossibleValuesCache possibleValuesCache;
 
 	@Before
 	public void setUp() throws MiddlewareException {
-		this.standardVariableTestDataInitializer = new StandardVariableTestDataInitializer();
 		this.personTestDataInitializer = new PersonTestDataInitializer();
 		this.locationTestDataInitializer = new LocationTestDataInitializer();
-		this.variableTestDataInitializer = new VariableTestDataInitializer();
 		final List<Location> allLocation = new ArrayList<Location>();
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FieldbookServiceTest.PROGRAMUUID);
-		allLocation.add(this.locationTestDataInitializer.createLocation(1, "Loc1", null));
+		allLocation.add(this.locationTestDataInitializer.createLocation(1, LOCATION_NAME, null));
 		allLocation.add(this.locationTestDataInitializer.createLocation(2, "Loc2", null));
 		Mockito.when(this.fieldbookMiddlewareService.getAllLocations()).thenReturn(allLocation);
 		Mockito.when(this.fieldbookMiddlewareService.getLocationsByProgramUUID(FieldbookServiceTest.PROGRAMUUID)).thenReturn(allLocation);
@@ -151,7 +147,7 @@ public class FieldbookServiceTest {
 
 	private void setUpStandardVariablesForChecks() throws MiddlewareException {
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId(), PROGRAMUUID)).thenReturn(
-				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_START_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_START,
+				StandardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_START_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_START,
 						FieldbookServiceTest.ED_CHECK_START), new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
 								FieldbookServiceTest.NUMBER), new Term(FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL,
 										FieldbookServiceTest.FIELD_TRIAL), new Term(TermId.NUMERIC_VARIABLE.getId(), FieldbookServiceTest.NUMERIC_VARIABLE,
@@ -160,7 +156,7 @@ public class FieldbookServiceTest {
 																FieldbookServiceTest.TRIAL_DESIGN_ID, FieldbookServiceTest.TRIAL_DESIGN, FieldbookServiceTest.TRIAL_DESIGN),
 																PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_START.getId(), FieldbookServiceTest.CHECK_START));
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId(), PROGRAMUUID)).thenReturn(
-				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_INTERVAL_PROPERTY_ID,
+				StandardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_INTERVAL_PROPERTY_ID,
 						FieldbookServiceTest.ED_CHECK_INTERVAL, FieldbookServiceTest.ED_CHECK_INTERVAL), new Term(
 								FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER, FieldbookServiceTest.NUMBER), new Term(
 										FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL, FieldbookServiceTest.FIELD_TRIAL), new Term(
@@ -170,7 +166,7 @@ public class FieldbookServiceTest {
 																FieldbookServiceTest.TRIAL_DESIGN), PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_INTERVAL.getId(),
 																FieldbookServiceTest.CHECK_INTERVAL));
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId(), PROGRAMUUID)).thenReturn(
-				this.standardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_PLAN_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_PLAN,
+				StandardVariableTestDataInitializer.createStandardVariable(new Term(FieldbookServiceTest.CHECK_PLAN_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_PLAN,
 						FieldbookServiceTest.ED_CHECK_PLAN), new Term(FieldbookServiceTest.CODE_ID, FieldbookServiceTest.CODE,
 								FieldbookServiceTest.CODE), new Term(FieldbookServiceTest.ASSIGNED_ID, FieldbookServiceTest.ASSIGNED,
 										FieldbookServiceTest.ASSIGNED), new Term(TermId.CATEGORICAL_VARIABLE.getId(),
@@ -203,7 +199,7 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsFalse() throws Exception {
-		final Variable variable = this.variableTestDataInitializer.createVariable(DataType.LOCATION);
+		final Variable variable = VariableTestDataInitializer.createVariable(DataType.LOCATION);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
 				this.locationVariable.getTermId(), true, false)).thenReturn(variable);
 
@@ -218,7 +214,7 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsTrue() throws Exception {
-		final Variable variable = this.variableTestDataInitializer.createVariable(DataType.LOCATION);
+		final Variable variable = VariableTestDataInitializer.createVariable(DataType.LOCATION);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
 				this.locationVariable.getTermId(), true, false)).thenReturn(variable);
 
@@ -229,7 +225,7 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testGetAllPossibleValuesWhenIdIsNonLocation() throws Exception {
-		final Variable variable = this.variableTestDataInitializer.createVariable(DataType.CATEGORICAL_VARIABLE);
+		final Variable variable = VariableTestDataInitializer.createVariable(DataType.CATEGORICAL_VARIABLE);
 		this.possibleValuesCache.addPossibleValuesByDataType(DataType.CATEGORICAL_VARIABLE,
 				this.nonLocationVariable.getPossibleValues());
 

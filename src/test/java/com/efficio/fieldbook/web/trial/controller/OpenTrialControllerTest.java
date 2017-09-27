@@ -1062,11 +1062,11 @@ public class OpenTrialControllerTest {
 	private List<StandardVariable> initExpDesignVariables() {
 		final List<StandardVariable> existingExpDesignVariables = new ArrayList<StandardVariable>();
 		existingExpDesignVariables.add(
-				this.standardVariableTestDataInitializer.createStandardVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXP_DESIGN"));
+				StandardVariableTestDataInitializer.createStandardVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXP_DESIGN"));
 		existingExpDesignVariables
-				.add(this.standardVariableTestDataInitializer.createStandardVariable(TermId.NUMBER_OF_REPLICATES.getId(), "NREP"));
+				.add(StandardVariableTestDataInitializer.createStandardVariable(TermId.NUMBER_OF_REPLICATES.getId(), "NREP"));
 		existingExpDesignVariables.add(
-				this.standardVariableTestDataInitializer.createStandardVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "EXP_DESIGN_SOURCE"));
+				StandardVariableTestDataInitializer.createStandardVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "EXP_DESIGN_SOURCE"));
 		return existingExpDesignVariables;
 	}
 

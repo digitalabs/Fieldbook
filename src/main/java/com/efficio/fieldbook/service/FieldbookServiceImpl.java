@@ -829,21 +829,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 						 */
 						final MeasurementVariable tempVarId = studyConditionMap.get(idTermId);
 						final MeasurementVariable tempVarName = studyConditionMap.get(nameTermId);
-						String actualNameVal = "";
-						if (tempVarId.getValue() != null && !"".equalsIgnoreCase(tempVarId.getValue())) {
-							final List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId(),
-									true);
-
-							for (final ValueReference ref : possibleValues) {
-								if (ref.getId() != null
-										&& ref.getId().toString().equalsIgnoreCase(tempVarId.getValue())) {
-									actualNameVal = ref.getName();
-									break;
-								}
-							}
-						}
 						tempVarId.setName(tempVarName.getName() + AppConstants.ID_SUFFIX.getString());
-						tempVarName.setValue(actualNameVal);
+						tempVarName.setValue(resolveNameVarValue(tempVarId));
 						tempVarName.setOperation(tempVarId.getOperation());
 						if (tempVarId.getOperation() != null && Operation.DELETE == tempVarId.getOperation()) {
 							if (studyConditionMapList.get(tempVarName.getTermId()) != null) {
@@ -1000,6 +987,29 @@ public class FieldbookServiceImpl implements FieldbookService {
 				}
 			}
 		}
+	}
+
+	public String resolveNameVarValue(final MeasurementVariable tempVarId) {
+		String actualNameVal = "";
+		if (tempVarId.getValue() != null && !"".equalsIgnoreCase(tempVarId.getValue())) {
+			List<ValueReference> possibleValues;
+			if(TermId.LOCATION_ID.getId() == tempVarId.getTermId()){
+				//Get all locations to make sure that the selected location is included in the list 
+				possibleValues =  this.getLocations(false);
+			} else {
+				possibleValues = this.getAllPossibleValues(tempVarId.getTermId(),
+						true);
+			}
+			
+			for (final ValueReference ref : possibleValues) {
+				if (ref.getId() != null
+						&& ref.getId().toString().equalsIgnoreCase(tempVarId.getValue())) {
+					actualNameVal = ref.getName();
+					break;
+				}
+			}
+		}
+		return actualNameVal;
 	}
 
 	@Override

@@ -148,12 +148,14 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 	}
 
 	private boolean isValueOutOfBound(final MeasurementData data) {
-		return data != null && (
-			data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())
-			&& this.isNumericalValueOutOfBounds(data))
-			|| (
-			data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())
-			&& this.isCategoricalValueOutOfBounds(data));
+		return data != null
+			&& !data.isAccepted()
+			&& (
+				data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())
+				&& this.isNumericalValueOutOfBounds(data))
+				|| (
+				data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())
+				&& this.isCategoricalValueOutOfBounds(data));
 	}
 
 	@ResponseBody

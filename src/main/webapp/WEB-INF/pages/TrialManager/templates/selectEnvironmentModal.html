@@ -37,10 +37,10 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="environment in data.environments track by environment.managementDetailValues[TRIAL_INSTANCE_INDEX]" ng-class="{even : $even, odd : $odd}">
-                                        <td><input type="checkbox" name="location" ng-model="trialInstances[$index]"  ng-checked="environment.Selected" ng-true-value="{{environment.managementDetailValues[TRIAL_INSTANCE_INDEX]}}" ng-false-value="{{undefined}}"/></td>
-                                        <td ng-show="!locationFromTrialSettings">{{ environment.managementDetailValues[PREFERRED_LOCATION_VARIABLE] }}</td>
-                                        <td ng-show="locationFromTrialSettings">{{ userInput[PREFERRED_LOCATION_VARIABLE] }}</td>
+                                    <tr ng-repeat="environment in environmentListView track by environment.trialInstanceNumber" ng-class="{even : $even, odd : $odd}">
+                                        <td><input type="checkbox" name="location" ng-model="trialInstances[$index]"  ng-checked="environment.selected" ng-true-value="{{environment.trialInstanceNumber}}" ng-false-value="{{undefined}}"/></td>
+                                        <td ng-show="!locationFromTrialSettings">{{ environment.name }} </td>
+                                        <td ng-show="locationFromTrialSettings">{{ userInput[environment.variableId] }}</td>
                                     </tr>
                                     </tbody>
                                 </table>

@@ -62,6 +62,8 @@
 
 
 		$scope.init = function () {
+
+			$scope.instances = angular.copy(environmentService.environments);
 			$scope.locationFromTrialSettings = false;
 			$scope.locationFromTrial = false;
 			$scope.selectAll = true;

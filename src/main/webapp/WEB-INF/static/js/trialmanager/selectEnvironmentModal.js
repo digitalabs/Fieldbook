@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', function($scope,
-	TrialManagerDataService, environmentService) {
+	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', '$http', function($scope,
+	TrialManagerDataService, environmentService, $http) {
 
 		$scope.settings = TrialManagerDataService.settings.environments;
 		if (Object.keys($scope.settings).length === 0) {
@@ -21,6 +21,8 @@
 		$scope.TRIAL_INSTANCE_INDEX = 8170;
 		$scope.PREFERRED_LOCATION_VARIABLE = 8170;
 		$scope.LOCATION_NAME_ID = 8190;
+		$scope.environmentListView = [];
+
 
 		$scope.data = TrialManagerDataService.currentData.environments;
 
@@ -32,12 +34,21 @@
 			angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues, function(locationVariable) {
             	locationMap[locationVariable.id] = locationVariable;
             });
-			
+
+
+
 			angular.forEach($scope.data.environments, function(environment) {
 				if(locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]]) {
-					//Set the value of the location id per environment
-					environment.managementDetailValues[$scope.LOCATION_NAME_ID] = locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].id;
-					selectedLocationForTrial = {id: environment.managementDetailValues[$scope.LOCATION_NAME_ID], name: locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].name};
+
+					// Ensure that the location id and location name details of the $scope.data.environments
+					// are updated with values from Location json object
+					environment.managementDetailValues[$scope.LOCATION_NAME_ID]
+						= locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].id;
+					environment.managementDetailValues[$scope.TRIAL_LOCATION_NAME_INDEX]
+						= locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].name;
+
+					selectedLocationForTrial = {id: environment.managementDetailValues[$scope.LOCATION_NAME_ID]
+						, name: locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].name};
 				}
 			});
 		});
@@ -82,9 +93,9 @@
 						if ($scope.locationFromTrialSettings) {
 							selectedLocationDetails.push($scope.userInput[$scope.PREFERRED_LOCATION_VARIABLE]);
 						} else {
-							angular.forEach($scope.data.environments, function(env, position) {
+							angular.forEach($scope.data.environments, function(environment, position) {
 								if (position === idx) {
-									selectedLocationDetails.push(env.managementDetailValues[$scope.PREFERRED_LOCATION_VARIABLE]);
+									selectedLocationDetails.push(environment.managementDetailValues[$scope.PREFERRED_LOCATION_VARIABLE]);
 								}
 							});
 						}
@@ -111,16 +122,17 @@
 				$scope.selectAll = false;
 				$scope.trialInstances = [];
 			}
-			angular.forEach($scope.data.environments, function(env) {
-				env.Selected = $scope.selectAll;
+			angular.forEach($scope.environmentListView, function(environment) {
+				environment.selected = $scope.selectAll;
 				if ($scope.selectAll) {
-					$scope.trialInstances.push(env.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX]);
+					$scope.trialInstances.push(environment.trialInstanceNumber);
 				}
 			});
 
 		};
 
 		$scope.init = function() {
+
 			$scope.locationFromTrialSettings = false;
 			$scope.userInput = TrialManagerDataService.currentData.trialSettings.userInput;
 			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
@@ -140,8 +152,26 @@
 			} else {
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_INDEX;
 			}
+
+			$scope.environmentListView = convertToEnvironmentListView($scope.data.environments,
+				$scope.PREFERRED_LOCATION_VARIABLE, $scope.TRIAL_INSTANCE_INDEX);
 		};
+
 		$scope.init();
+
+		// Converts the environments data (($scope.data.environments) for UI usage.
+		function convertToEnvironmentListView(environments, preferredLocationVariable, trialInstanceIndex) {
+
+			var environmentListView = [];
+			angular.forEach($scope.data.environments, function(environment, key) {
+				environmentListView.push({ name: environment.managementDetailValues[preferredLocationVariable]
+					, variableId: preferredLocationVariable, trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]});
+			});
+
+			return environmentListView;
+
+		};
+
 
 	}]);
 

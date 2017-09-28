@@ -3304,20 +3304,25 @@ function reloadCheckListTable() {
 			}
 		});
 	} else {
-		$.ajax({
-			url: '/Fieldbook/ListManager/GermplasmList/refreshListDetails',
-			type: 'GET',
-			cache: false,
-			data: ''
-		}).success(function(html) {
-			$('#imported-germplasm-list').html(html);
-			window.ImportGermplasm.initialize(dataGermplasmList);
-			$('#entries-details').css('display', 'block');
-			$('#numberOfEntries').html($('#totalGermplasms').val());
-			$('#txtStartingEntryNo').prop('readOnly', false);
-		});
+		refreshListDetails();
 	}
 }
+
+function refreshListDetails() {
+	$.ajax({
+		url: '/Fieldbook/ListManager/GermplasmList/refreshListDetails',
+		type: 'GET',
+		cache: false,
+		data: ''
+	}).success(function(html) {
+		$('#imported-germplasm-list').html(html);
+		window.ImportGermplasm.initialize(dataGermplasmList);
+		$('#entries-details').css('display', 'block');
+		$('#numberOfEntries').html($('#totalGermplasms').val());
+		$('#txtStartingEntryNo').prop('readOnly', false);
+	});
+}
+
 function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	'use strict';
 	if (isPreSelect) {

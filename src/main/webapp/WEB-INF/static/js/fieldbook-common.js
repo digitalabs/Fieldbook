@@ -1023,6 +1023,11 @@ function advanceTrial() {
 	scope.$apply();
 }
 
+function backToAdvanceTrial() {
+	$('#advanceNurseryModal').modal('hide');
+	$('#selectEnvironmentModal').modal('show');
+}
+
 function createSample() {
 	'use strict';
 	if ($('.import-study-data').data('data-import') === '1') {

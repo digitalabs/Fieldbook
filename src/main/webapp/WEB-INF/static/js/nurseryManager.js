@@ -1815,7 +1815,7 @@ function recreateSessionVariables() {
 			$('#measurementsDiv').html(html);
 			displayEditFactorsAndGermplasmSection();
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
-
+			refreshListDetails();
 		}
 	});
 }

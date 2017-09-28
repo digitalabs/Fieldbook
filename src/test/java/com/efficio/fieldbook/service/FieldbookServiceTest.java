@@ -101,18 +101,16 @@ public class FieldbookServiceTest {
 	private MeasurementVariable nonLocationVariable;
 
 	private PersonTestDataInitializer personTestDataInitializer;
-	private LocationTestDataInitializer locationTestDataInitializer;
 	private PossibleValuesCache possibleValuesCache;
 
 	@Before
 	public void setUp() throws MiddlewareException {
 		this.personTestDataInitializer = new PersonTestDataInitializer();
-		this.locationTestDataInitializer = new LocationTestDataInitializer();
 		final List<Location> allLocation = new ArrayList<Location>();
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FieldbookServiceTest.PROGRAMUUID);
-		allLocation.add(this.locationTestDataInitializer.createLocation(1, FieldbookServiceTest.LOCATION_NAME, null));
-		allLocation.add(this.locationTestDataInitializer.createLocation(2, "Loc2", null));
+		allLocation.add(LocationTestDataInitializer.createLocation(1, FieldbookServiceTest.LOCATION_NAME, null));
+		allLocation.add(LocationTestDataInitializer.createLocation(2, "Loc2", null));
 		Mockito.when(this.fieldbookMiddlewareService.getAllLocations()).thenReturn(allLocation);
 		Mockito.when(this.fieldbookMiddlewareService.getLocationsByProgramUUID(FieldbookServiceTest.PROGRAMUUID))
 				.thenReturn(allLocation);

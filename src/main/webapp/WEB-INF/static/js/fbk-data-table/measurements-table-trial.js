@@ -795,11 +795,24 @@ function markCellAsAccepted(indexElem, indexTermId, elem) {
 function markAllCellAsAccepted() {
 	'use strict';
 
-	$(".dataTable td[class*='invalid-value']").each(function() {
-		$(this).removeClass('invalid-value');
-		$(this).addClass('accepted-value');
+	$.ajax({
+		url: '/Fieldbook/trial/measurements/update/experiment/cell/accepted/all',
+		type: 'GET',
+		async: false,
+		contentType: 'application/json',
+		success: function(data) {
+			if (data.success === '1') {
+				$(".dataTable td[class*='invalid-value']").each(function() {
+					$(this).removeClass('invalid-value');
+					$(this).addClass('accepted-value');
+				});
+				$('#reviewOutOfBoundsDataModal').modal('hide');
+			} else {
+				showErrorMessage('page-review-out-of-bounds-data-message-modal', data.errorMessage);
+			}
+		}
 	});
-	$('#reviewOutOfBoundsDataModal').modal('hide');
+
 }
 
 function markAllCellAsMissing() {

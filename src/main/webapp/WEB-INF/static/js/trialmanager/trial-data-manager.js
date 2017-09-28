@@ -418,7 +418,7 @@
 					if (!processInlineEditInput()) {
 						return false;
 					}
-					if (hasMeasurementsInvalidValue()) {
+					if (hasOutOfBoundValues()) {
 						//we check if there is invalid value in the measurements
 						showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
 						return false;

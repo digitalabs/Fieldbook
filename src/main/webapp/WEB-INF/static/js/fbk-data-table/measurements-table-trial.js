@@ -363,11 +363,13 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
 					oSettings.oInstance.fnAdjustColumnSizing();
 					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-					if (this.$('.invalid-value').length !== 0) {
-						$('#review-out-of-bounds-data-list').show();
-					} else {
-						$('#review-out-of-bounds-data-list').hide();
-					}
+					hasOutOfBoundValuesAsync().then(function (hasOutOfBound) {
+						if (hasOutOfBound) {
+							$('#review-out-of-bounds-data-list').show();
+						} else {
+							$('#review-out-of-bounds-data-list').hide();
+						}
+					});
 				},
 				dom: '<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp',
 				//TODO localise messages
@@ -530,11 +532,13 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
 					oSettings.oInstance.fnAdjustColumnSizing();
 					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-					if (this.$('.invalid-value').length !== 0) {
-						$('#review-out-of-bounds-data-list').show();
-					} else {
-						$('#review-out-of-bounds-data-list').hide();
-					}
+					hasOutOfBoundValuesAsync().then(function (hasOutOfBound) {
+						if (hasOutOfBound) {
+							$('#review-out-of-bounds-data-list').show();
+						} else {
+							$('#review-out-of-bounds-data-list').hide();
+						}
+					});
 				},
 				dom: '<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp',
 				//TODO localise messages
@@ -653,11 +657,13 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
 					oSettings.oInstance.fnAdjustColumnSizing();
 					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-					if (this.$('.invalid-value').length !== 0) {
-						$('#review-out-of-bounds-data-list').show();
-					} else {
-						$('#review-out-of-bounds-data-list').hide();
-					}
+					hasOutOfBoundValuesAsync().then(function (hasOutOfBound) {
+						if (hasOutOfBound) {
+							$('#review-out-of-bounds-data-list').show();
+						} else {
+							$('#review-out-of-bounds-data-list').hide();
+						}
+					});
 				},
 				dom: '<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp',
 				//TODO localise messages

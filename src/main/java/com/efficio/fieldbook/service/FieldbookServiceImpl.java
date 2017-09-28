@@ -991,14 +991,17 @@ public class FieldbookServiceImpl implements FieldbookService {
 	public String resolveNameVarValue(final MeasurementVariable tempVarId) {
 		String actualNameVal = "";
 		if (tempVarId.getValue() != null && !"".equalsIgnoreCase(tempVarId.getValue())) {
-			List<ValueReference> possibleValues;
 			if (TermId.LOCATION_ID.getId() == tempVarId.getTermId()) {
-				// Get all locations to make sure that the selected location is
-				// included in the list
-				possibleValues = this.getLocations(false);
-			} else {
-				possibleValues = this.getAllPossibleValues(tempVarId.getTermId(), true);
+				final Location loc = this.fieldbookMiddlewareService
+						.getLocationById(Integer.valueOf(tempVarId.getValue()));
+				String locNameDisplay = loc.getLname();
+				if (loc.getLabbr() != null && !"".equalsIgnoreCase(loc.getLabbr())) {
+					locNameDisplay += " - (" + loc.getLabbr() + ")";
+				}
+				return locNameDisplay;
 			}
+
+			final List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId(), true);
 
 			for (final ValueReference ref : possibleValues) {
 				if (ref.getId() != null && ref.getId().toString().equalsIgnoreCase(tempVarId.getValue())) {

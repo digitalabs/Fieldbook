@@ -764,6 +764,8 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testResolveNameVarValueWhereIdVariableIsLocationId() {
+		Mockito.when(this.fieldbookMiddlewareService.getLocationById(1))
+				.thenReturn(LocationTestDataInitializer.createLocation(1, FieldbookServiceTest.LOCATION_NAME));
 		final MeasurementVariable mvar = MeasurementVariableTestDataInitializer
 				.createMeasurementVariable(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "1");
 		final String result = this.fieldbookServiceImpl.resolveNameVarValue(mvar);
@@ -783,13 +785,5 @@ public class FieldbookServiceTest {
 		final String result = this.fieldbookServiceImpl.resolveNameVarValue(mvar);
 		Assert.assertEquals("The result's value should be " + FieldbookServiceTest.METHOD_DESCRIPTION,
 				FieldbookServiceTest.METHOD_DESCRIPTION, result);
-	}
-
-	@Test
-	public void testResolveNameVarValueWhereResultIsEmptyString() {
-		final MeasurementVariable mvar = MeasurementVariableTestDataInitializer
-				.createMeasurementVariable(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "5");
-		final String result = this.fieldbookServiceImpl.resolveNameVarValue(mvar);
-		Assert.assertTrue("The result should be an empty string", result.isEmpty());
 	}
 }

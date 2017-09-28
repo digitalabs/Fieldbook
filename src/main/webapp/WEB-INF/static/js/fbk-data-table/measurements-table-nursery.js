@@ -112,11 +112,13 @@ BMS.Fieldbook.MeasurementsDataTableNursery = (function($) {
 					$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
 					oSettings.oInstance.fnAdjustColumnSizing();
 					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-					if (this.$('.invalid-value').length !== 0) {
-						$('#review-out-of-bounds-data-list').show();
-					} else {
-						$('#review-out-of-bounds-data-list').hide();
-					}
+					hasOutOfBoundValuesAsync().then(function (hasOutOfBound) {
+						if (hasOutOfBound) {
+							$('#review-out-of-bounds-data-list').show();
+						} else {
+							$('#review-out-of-bounds-data-list').hide();
+						}
+					});
 				},
 				language: {
 					search: '<span class="mdt-filtering-label">Search:</span>'

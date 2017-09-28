@@ -44,7 +44,7 @@
 							</tr>
 							</thead>
 							<tbody>
-							<tr ng-repeat="environment in instances.environments" ng-class="{even : $even, odd : $odd}">
+							<tr ng-repeat="environment in instances.environments track by environment.managementDetailValues[TRIAL_INSTANCE_ID]" ng-class="{even : $even, odd : $odd}">
 								<td><input type="checkbox" name="location"
 										   ng-model="environment.Selected"
 										   ng-change="doSelectInstance($index)"

@@ -132,7 +132,12 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 
 	@RequestMapping(value = "/hasOutOfBoundValues", method = RequestMethod.GET)
 	public ResponseEntity<Boolean> hasOutOfBoundValues() {
-		for (MeasurementRow row : this.getUserSelection().getMeasurementRowList()) {
+		List<MeasurementRow> measurementRowList = this.getUserSelection().getMeasurementRowList();
+		if (null == measurementRowList) {
+			return new ResponseEntity<>(false, HttpStatus.OK);
+		}
+
+		for (MeasurementRow row : measurementRowList) {
 			for (MeasurementData data : row.getDataList()) {
 				if (isValueOutOfBound(data)) {
 					return new ResponseEntity<>(true, HttpStatus.OK);
@@ -143,7 +148,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 	}
 
 	private boolean isValueOutOfBound(final MeasurementData data) {
-		return (
+		return data != null && (
 			data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())
 			&& this.isNumericalValueOutOfBounds(data))
 			|| (

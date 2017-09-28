@@ -490,15 +490,20 @@ public class FieldbookServiceImpl implements FieldbookService {
 		if (locations != null && !locations.isEmpty()) {
 			for (final Location loc : locations) {
 				if (loc != null) {
-					String locNameDisplay = loc.getLname();
-					if (loc.getLabbr() != null && !"".equalsIgnoreCase(loc.getLabbr())) {
-						locNameDisplay += " - (" + loc.getLabbr() + ")";
-					}
+					final String locNameDisplay = this.getDisplayName(loc);
 					list.add(new ValueReference(loc.getLocid(), locNameDisplay, locNameDisplay));
 				}
 			}
 		}
 		return list;
+	}
+
+	String getDisplayName(final Location loc) {
+		String locNameDisplay = loc.getLname();
+		if (loc.getLabbr() != null && !"".equalsIgnoreCase(loc.getLabbr())) {
+			locNameDisplay += " - (" + loc.getLabbr() + ")";
+		}
+		return locNameDisplay;
 	}
 
 	@Override
@@ -994,11 +999,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			if (TermId.LOCATION_ID.getId() == tempVarId.getTermId()) {
 				final Location loc = this.fieldbookMiddlewareService
 						.getLocationById(Integer.valueOf(tempVarId.getValue()));
-				String locNameDisplay = loc.getLname();
-				if (loc.getLabbr() != null && !"".equalsIgnoreCase(loc.getLabbr())) {
-					locNameDisplay += " - (" + loc.getLabbr() + ")";
-				}
-				return locNameDisplay;
+				return this.getDisplayName(loc);
 			}
 
 			final List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId(), true);

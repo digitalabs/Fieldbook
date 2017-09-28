@@ -57,6 +57,7 @@ import junit.framework.Assert;
 @RunWith(MockitoJUnitRunner.class)
 public class FieldbookServiceTest {
 
+	private static final String LABBR = "labbr";
 	private static final String METHOD_DESCRIPTION = "Method Description 5";
 	private static final String LOCATION_NAME = "Loc1";
 	private static final String PROGRAMUUID = "1000001";
@@ -764,13 +765,13 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testResolveNameVarValueWhereIdVariableIsLocationId() {
-		Mockito.when(this.fieldbookMiddlewareService.getLocationById(1))
-				.thenReturn(LocationTestDataInitializer.createLocation(1, FieldbookServiceTest.LOCATION_NAME));
+		Mockito.when(this.fieldbookMiddlewareService.getLocationById(1)).thenReturn(LocationTestDataInitializer
+				.createLocationWithLabbr(1, FieldbookServiceTest.LOCATION_NAME, FieldbookServiceTest.LABBR));
 		final MeasurementVariable mvar = MeasurementVariableTestDataInitializer
 				.createMeasurementVariable(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "1");
 		final String result = this.fieldbookServiceImpl.resolveNameVarValue(mvar);
-		Assert.assertEquals("The result's value should be " + FieldbookServiceTest.LOCATION_NAME,
-				FieldbookServiceTest.LOCATION_NAME, result);
+		final String displayName = FieldbookServiceTest.LOCATION_NAME + " - (" + FieldbookServiceTest.LABBR + ")";
+		Assert.assertEquals("The result's value should be " + displayName, displayName, result);
 	}
 
 	@Test
@@ -785,5 +786,22 @@ public class FieldbookServiceTest {
 		final String result = this.fieldbookServiceImpl.resolveNameVarValue(mvar);
 		Assert.assertEquals("The result's value should be " + FieldbookServiceTest.METHOD_DESCRIPTION,
 				FieldbookServiceTest.METHOD_DESCRIPTION, result);
+	}
+
+	@Test
+	public void testgetDisplayNameWithLABBR() {
+		final Location location = LocationTestDataInitializer.createLocationWithLabbr(1,
+				FieldbookServiceTest.LOCATION_NAME, FieldbookServiceTest.LABBR);
+		final String displayName = FieldbookServiceTest.LOCATION_NAME + " - (" + FieldbookServiceTest.LABBR + ")";
+		final String result = this.fieldbookServiceImpl.getDisplayName(location);
+		Assert.assertEquals("The result's value should be " + displayName, displayName, result);
+	}
+
+	@Test
+	public void testgetDisplayNameWithoutLABBR() {
+		final Location location = LocationTestDataInitializer.createLocation(1, FieldbookServiceTest.LOCATION_NAME);
+		final String result = this.fieldbookServiceImpl.getDisplayName(location);
+		Assert.assertEquals("The result's value should be " + FieldbookServiceTest.LOCATION_NAME,
+				FieldbookServiceTest.LOCATION_NAME, result);
 	}
 }

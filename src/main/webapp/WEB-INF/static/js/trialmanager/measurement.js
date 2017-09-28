@@ -143,6 +143,10 @@
 					$scope.selectedEnvironment = $scope.environmentsList[0];
 				});
 
+				$scope.$on('refreshEnvironmentListInMeasurementTable', function() {
+					$scope.initEnvironmentList();
+				});
+
 				$scope.$on('variableAdded', function() {
 					$scope.updateOccurred = true;
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;

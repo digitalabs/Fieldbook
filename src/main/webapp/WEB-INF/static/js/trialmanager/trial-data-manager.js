@@ -497,6 +497,10 @@
 
 										service.updateCurrentData('environments', extractData(updatedData.environmentData));
 										service.updateSettings('environments', extractSettings(updatedData.environmentData));
+
+										//refresh the environments list in measurements tab
+										$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
+
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
 										service.applicationData.unsavedGeneratedDesign = false;
@@ -533,7 +537,8 @@
 						}
 					}
                     // set selected location on save
-                    if (service.currentData.trialSettings.userInput[LOCATION_NAME_ID] != '') {
+                    if (service.currentData.trialSettings.userInput[LOCATION_NAME_ID]
+						&& service.currentData.trialSettings.userInput[LOCATION_NAME_ID] != '') {
                     	selectedLocationForTrial = {
                             name: service.currentData.trialSettings.userInput[TRIAL_LOCATION_NAME_INDEX],
                             id: service.currentData.trialSettings.userInput[LOCATION_NAME_ID]

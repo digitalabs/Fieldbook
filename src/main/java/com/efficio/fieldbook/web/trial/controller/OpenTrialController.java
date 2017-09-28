@@ -15,7 +15,7 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
-import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -423,7 +423,7 @@ public class OpenTrialController extends BaseTrialController {
 					this.userSelection.getTemporaryWorkbook().getTrialObservations());
 		}
 
-		this.assignOperationOnExpDesignVariables(workbook.getConditions(), workbook.getExpDesignVariables());
+		this.assignOperationOnExpDesignVariables(workbook.getConditions());
 
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
 		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
@@ -465,8 +465,9 @@ public class OpenTrialController extends BaseTrialController {
 
 				this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(),
 						new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);
-				
-				//Set the flag that indicates whether the variates will be save or not to false since it's already save after inline edit
+
+				// Set the flag that indicates whether the variates will be save
+				// or not to false since it's already save after inline edit
 				this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(),
 						false);
 				returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING,
@@ -495,18 +496,9 @@ public class OpenTrialController extends BaseTrialController {
 	 * @param conditions
 	 * @param existingExpDesignVariables
 	 */
-	void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions,
-			final List<StandardVariable> existingExpDesignVariables) {
-
-		// skip update if the trial has no existing experimental design
-		if (existingExpDesignVariables == null || existingExpDesignVariables.isEmpty()) {
-			return;
-		}
-
-		final List<Integer> existingExpDesignVariableIds = new ArrayList<>();
-		for (final StandardVariable expVar : existingExpDesignVariables) {
-			existingExpDesignVariableIds.add(expVar.getId());
-		}
+	void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
+		final VariableTypeList factors = this.studyDataManager
+				.getAllStudyFactors(this.userSelection.getWorkbook().getStudyDetails().getId());
 
 		for (final MeasurementVariable mvar : conditions) {
 			// update the operation for experiment design variables :
@@ -515,7 +507,7 @@ public class OpenTrialController extends BaseTrialController {
 			if ((mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()
 					|| mvar.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
 					|| mvar.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId())
-					&& existingExpDesignVariableIds.contains(mvar.getTermId())) {
+					&& factors.findById(mvar.getTermId()) != null) {
 				mvar.setOperation(Operation.UPDATE);
 			}
 		}

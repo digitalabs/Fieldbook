@@ -333,23 +333,28 @@
 					$scope.resetExperimentalDesign = function() {
 
 						$scope.showConfirmResetDesign().then(function(result) {
-							// the following reset the data used for the experimental design, allowing the user to select another design again
-							$scope.applicationData.hasGeneratedDesignPreset = false;
-							$scope.applicationData.isGeneratedOwnDesign = false;
-							$scope.currentDesignType = null;
-							$scope.data.designType = '';
-
-							// the following prevents the user from saving before re-generating the design, to avoid having invalid measurement data
-							if (TrialManagerDataService.trialMeasurement.count > 0) {
-								TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
-							}
+							$scope.resetExperimentalDesignRelatedVariables();
 						});
 					};
+					
+					$scope.resetExperimentalDesignRelatedVariables = function() {
+						// the following reset the data used for the experimental design, allowing the user to select another design again
+						$scope.applicationData.hasGeneratedDesignPreset = false;
+						$scope.applicationData.isGeneratedOwnDesign = false;
+						$scope.currentDesignType = null;
+						$scope.applicationData.importDesignMappedData = null;
+						$scope.data.designType = '';
+						$scope.applicationData.unsavedGeneratedDesign = true;
+					};
+					
+					$scope.$on('importedDesignReset', function() {
+						$scope.resetExperimentalDesignRelatedVariables();
+					});
 
 					$scope.toggleDesignView = function() {
 						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign
-							|| ($scope.data.designType != null
+							|| ($scope.data.designType !== null
 							&& $scope.data.designType !== ''
 							&& selectedDesignType.name === 'Custom Import Design')
 							|| $scope.applicationData.hasGeneratedDesignPreset);

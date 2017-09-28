@@ -417,7 +417,8 @@ var ImportDesign = (function() {
 						// to enforce overwrite when the nursery is saved
 						$('#chooseGermplasmAndChecks').data('replace', '1');
 					} else {
-						ImportDesign.reloadMeasurements();
+						angular.element('#mainApp').scope().$broadcast('importedDesignReset');
+						angular.element('#mainApp').scope().$apply();
 					}
 
 					$('#changeDesignModal').modal('hide');

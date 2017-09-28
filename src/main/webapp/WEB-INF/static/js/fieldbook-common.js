@@ -1015,12 +1015,24 @@ function advanceTrial() {
 	'use strict';
 	var idVal = $('#studyId').val();
 	$('#advanceNurseryModal').modal('hide');
-	$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
+
+	// we need to redraw the columns of the table
+	if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
+		$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
+	}
+
 	$('#selectEnvironmentModal').modal({ backdrop: 'static', keyboard: true });
 
-	var scope = angular.element('#selectEnvironmentModal').scope();
-	scope.init();
-	scope.$apply();
+	// Add hide listener to selectEnvironmentModal
+	$('#selectEnvironmentModal').one('hidden.bs.modal', function (e) {
+		// When the selectEnvironmentModal is closed, remove the bs.modal data
+		// so that the modal content is refreshed when it is opened again.
+		$(e.target).removeData('bs.modal');
+	});
+
+	var $scope = angular.element('#selectEnvironmentModal').scope();
+	$scope.init();
+	$scope.$apply();
 }
 
 function createSample() {

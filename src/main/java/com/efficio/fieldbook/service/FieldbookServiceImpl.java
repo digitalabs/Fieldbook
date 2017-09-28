@@ -851,19 +851,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 						 * variable of the name
 						 */
 						final MeasurementVariable tempVarId = studyConditionMap.get(idTermId);
-						String actualNameVal = "";
-						if (tempVarId.getValue() != null && !"".equalsIgnoreCase(tempVarId.getValue())) {
-							final List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId(),
-									true);
-
-							for (final ValueReference ref : possibleValues) {
-								if (ref.getId() != null
-										&& ref.getId().toString().equalsIgnoreCase(tempVarId.getValue())) {
-									actualNameVal = ref.getName();
-									break;
-								}
-							}
-						}
+						String actualNameVal = this.resolveNameVarValue(tempVarId);
 
 						final StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(
 								Integer.valueOf(nameTermId), this.contextUtil.getCurrentProgramUUID());

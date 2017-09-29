@@ -98,11 +98,14 @@ public class DesignImportServiceImplTest {
 
 	private DesignImportData designImportData;
 	
+	private StandardVariableTestDataInitializer standardVariableTestDataInitializer;
+
 	@InjectMocks
 	private DesignImportServiceImpl service;
 
 	@Before
 	public void setUp() {
+		this.standardVariableTestDataInitializer = new StandardVariableTestDataInitializer();
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(DesignImportServiceImplTest.PROGRAM_UUID);
 
 		this.initializeOntologyScaleDataManager();
@@ -534,7 +537,7 @@ public class DesignImportServiceImplTest {
 		final List<ImportedGermplasm> importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
 		final Map<Integer, StandardVariable> germplasmStandardVariables = new HashMap<Integer, StandardVariable>();
 		germplasmStandardVariables.put(TermId.ENTRY_NO.getId(),
-				StandardVariableTestDataInitializer.createStandardVariable(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name()));
+				this.standardVariableTestDataInitializer.createStandardVariable(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name()));
 		final Set<String> trialInstancesFromUI = new HashSet<String>();
 		trialInstancesFromUI.add("1");
 		trialInstancesFromUI.add("2");

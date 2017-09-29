@@ -53,19 +53,15 @@ public class ValidationServiceImplTest {
 
 	private static final String EMPTY_STRING = "";
 
-	private MethodTestDataInitializer methodTestDataInitializer;
-
-
 	@Before
 	public void setUp() {
 		final Project project = Mockito.mock(Project.class);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(project.getProjectId()).thenReturn((long) 1);
-		this.methodTestDataInitializer = new MethodTestDataInitializer();
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		this.workbook.setConditions(MeasurementVariableTestDataInitializer.createMeasurementVariableList());
 		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Matchers.eq(false)))
-				.thenReturn(this.methodTestDataInitializer.createMethodList());
+				.thenReturn(MethodTestDataInitializer.createMethodList());
 	}
 
 	@Test

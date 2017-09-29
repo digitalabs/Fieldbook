@@ -70,6 +70,9 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @SessionAttributes("isCategoricalDescriptionView")
 public class OpenTrialController extends BaseTrialController {
 
+	public static final String TRIAL_SETTINGS_DATA = "trialSettingsData";
+	public static final String SELECTION_VARIABLE_DATA = "selectionVariableData";
+	public static final String MEASUREMENTS_DATA = "measurementsData";
 	private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
 	private static final String TRIAL = "TRIAL";
 	public static final String URL = "/TrialManager/openTrial";
@@ -304,12 +307,12 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB,
 				this.prepareEnvironmentsTabInfo(trialWorkbook, false));
-		model.addAttribute("trialSettingsData",
+		model.addAttribute(OpenTrialController.TRIAL_SETTINGS_DATA,
 				this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
-		model.addAttribute("measurementsData",
+		model.addAttribute(OpenTrialController.MEASUREMENTS_DATA,
 				this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));
-		model.addAttribute("selectionVariableData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(),
-				VariableType.SELECTION_METHOD, false));
+		model.addAttribute(OpenTrialController.SELECTION_VARIABLE_DATA, this
+				.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
 		model.addAttribute("experimentalDesignData", this.prepareExperimentalDesignTabInfo(trialWorkbook, false));
 
 		model.addAttribute(OpenTrialController.MEASUREMENT_DATA_EXISTING,
@@ -529,11 +532,12 @@ public class OpenTrialController extends BaseTrialController {
 						SettingsUtil.buildVariates(trialWorkbook.getVariates())));
 		returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT,
 				this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));
-		returnVal.put("measurementsData",
+		returnVal.put(OpenTrialController.MEASUREMENTS_DATA,
 				this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));
-		returnVal.put("selectionVariableData", this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(),
-				VariableType.SELECTION_METHOD, false));
-
+		returnVal.put(OpenTrialController.SELECTION_VARIABLE_DATA, this
+				.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
+		returnVal.put(OpenTrialController.TRIAL_SETTINGS_DATA,
+				this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
 		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), trialWorkbook.getStudyConditions(), false, id);
 		this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false);
 		this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false);

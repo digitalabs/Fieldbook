@@ -76,7 +76,7 @@
 			});
 
 			if (!isTrialInstanceSelected) {
-				showErrorMessage('', selectOneLocationErrorMessage);
+				showErrorMessage('', selectOneLocationErrorMessageForAdvancing);
 			} else {
 				if ($scope.locationFromTrialSettings) {
 					selectedLocationDetails
@@ -134,7 +134,7 @@
 		$scope.init = function() {
 
 			$scope.locationFromTrialSettings = false;
-
+			$scope.userInput = TrialManagerDataService.currentData.trialSettings.userInput;
 			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
 				// LOCATION_ABBR from environments
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;

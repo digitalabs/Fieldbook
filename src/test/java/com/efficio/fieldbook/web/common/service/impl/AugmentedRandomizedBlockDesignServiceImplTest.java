@@ -44,6 +44,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	private static int FIRST_CHECK_ENTRY = 0;
 	private static int THIRD_CHECK_ENTRY = 2;
 	
+	private StandardVariableTestDataInitializer standardVariableTestDataInitializer;
 	private StandardVariable entryNoVariable;
 	private StandardVariable blockNoVariable;
 	private StandardVariable plotNoVariable;
@@ -68,9 +69,11 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 
 	@Before
 	public void init() {
-		this.entryNoVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.ENTRY_NO.getId(), "Entry No");
-		this.blockNoVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.BLOCK_NO.getId(), "Block No");
-		this.plotNoVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_NO.getId(), "Plot No");
+		this.standardVariableTestDataInitializer = new StandardVariableTestDataInitializer();
+		
+		this.entryNoVariable = this.standardVariableTestDataInitializer.createStandardVariable(TermId.ENTRY_NO.getId(), "Entry No");
+		this.blockNoVariable = this.standardVariableTestDataInitializer.createStandardVariable(TermId.BLOCK_NO.getId(), "Block No");
+		this.plotNoVariable = this.standardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_NO.getId(), "Plot No");
 		
 		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), PROGRAM_UUID)).thenReturn(entryNoVariable);

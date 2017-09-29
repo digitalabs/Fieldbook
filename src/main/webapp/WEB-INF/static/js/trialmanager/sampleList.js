@@ -28,7 +28,7 @@
 
 		$scope.continueCreatingSampleList = function () {
 			if ($scope.selectedTrialInstancesBySampleList.length === 0) {
-				showErrorMessage('', selectOneLocationErrorMessageForSampleList);
+				showErrorMessage('', selectOneLocationErrorMessage);
 			} else {
 				trialSelectedEnvironmentContinueCreatingSample($scope.selectedTrialInstancesBySampleList);
 			}

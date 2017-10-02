@@ -10,19 +10,11 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.ZipUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -53,11 +45,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
-import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.ZipUtil;
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 @Service
 @Transactional
@@ -79,6 +77,11 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	protected static final int DATATYPE_COLUMN_INDEX = 5;
 	protected static final int VARIABLE_VALUE_COLUMN_INDEX = 6;
 	protected static final int LABEL_COLUMN_INDEX = 7;
+
+	private static final String FULL_RANGE = " to ";
+	private static final String MAX_ONLY = " and below";
+	private static final String MIN_ONLY = " and above";
+	private static final String NO_RANGE = "All values allowed";
 
 	@Resource
 	private MessageSource messageSource;
@@ -513,12 +516,14 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 	protected void setContentOfVariableValueColumn(final HSSFCell cell, final MeasurementVariable measurementVariable) {
 
-		if (measurementVariable.getVariableType() == VariableType.TRAIT) {
+		if (StringUtils.isBlank(measurementVariable.getValue()) && (measurementVariable.getVariableType() == VariableType.TRAIT
+			|| (measurementVariable.getRole().equals(PhenotypicType.VARIATE)))) {
 
 			/**
 			 If the variable is a 'Trait' then the VALUE column for VARIATE table in Description sheet will be:
 			 for numerical variables: we will see the Min and Max values (if any) separated by a dash "-", e.g.: 30 - 100 (we should allow decimal values too, e.g.: 0.50 - 23.09)
-			 for categorical variables: we will see the Categories values separated by a slash "/", e.g.: 1/2/3/4/5
+			 for categorical variables: we will
+			 see the Categories values separated by a slash "/", e.g.: 1/2/3/4/5
 			 for date variables: will remain empty
 			 for character/text variables: will remain empty
 			 **/
@@ -591,9 +596,15 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		if (measurementVariable.getMinRange() != null && measurementVariable.getMaxRange() != null) {
 			return measurementVariable.getMinRange().toString() + " - " + measurementVariable.getMaxRange().toString();
 		}
-
-		return "";
-
+		else if(measurementVariable.getMinRange() == null && measurementVariable.getMaxRange() == null) {
+			return NO_RANGE;
+		}
+		else if(measurementVariable.getMinRange() != null && measurementVariable.getMaxRange() == null) {
+			return measurementVariable.getMinRange().toString() + MIN_ONLY;
+		}
+		else {
+			return measurementVariable.getMaxRange().toString() + MAX_ONLY;
+		}
 	}
 
 	private void writeObservationHeader(final int currentRowNum, final HSSFWorkbook xlsBook, final HSSFSheet xlsSheet,

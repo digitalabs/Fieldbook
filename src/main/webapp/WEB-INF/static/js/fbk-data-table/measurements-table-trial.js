@@ -363,11 +363,13 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
 					oSettings.oInstance.fnAdjustColumnSizing();
 					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-					if (this.$('.invalid-value').length !== 0) {
-						$('#review-out-of-bounds-data-list').show();
-					} else {
-						$('#review-out-of-bounds-data-list').hide();
-					}
+					hasOutOfBoundValuesAsync().then(function (hasOutOfBound) {
+						if (hasOutOfBound) {
+							$('#review-out-of-bounds-data-list').show();
+						} else {
+							$('#review-out-of-bounds-data-list').hide();
+						}
+					});
 				},
 				dom: '<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp',
 				//TODO localise messages
@@ -530,11 +532,13 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
 					oSettings.oInstance.fnAdjustColumnSizing();
 					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-					if (this.$('.invalid-value').length !== 0) {
-						$('#review-out-of-bounds-data-list').show();
-					} else {
-						$('#review-out-of-bounds-data-list').hide();
-					}
+					hasOutOfBoundValuesAsync().then(function (hasOutOfBound) {
+						if (hasOutOfBound) {
+							$('#review-out-of-bounds-data-list').show();
+						} else {
+							$('#review-out-of-bounds-data-list').hide();
+						}
+					});
 				},
 				dom: '<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp',
 				//TODO localise messages
@@ -653,11 +657,13 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
 					oSettings.oInstance.fnAdjustColumnSizing();
 					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-					if (this.$('.invalid-value').length !== 0) {
-						$('#review-out-of-bounds-data-list').show();
-					} else {
-						$('#review-out-of-bounds-data-list').hide();
-					}
+					hasOutOfBoundValuesAsync().then(function (hasOutOfBound) {
+						if (hasOutOfBound) {
+							$('#review-out-of-bounds-data-list').show();
+						} else {
+							$('#review-out-of-bounds-data-list').hide();
+						}
+					});
 				},
 				dom: '<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp',
 				//TODO localise messages
@@ -789,11 +795,21 @@ function markCellAsAccepted(indexElem, indexTermId, elem) {
 function markAllCellAsAccepted() {
 	'use strict';
 
-	$(".dataTable td[class*='invalid-value']").each(function() {
-		$(this).removeClass('invalid-value');
-		$(this).addClass('accepted-value');
+	$.ajax({
+		url: '/Fieldbook/trial/measurements/update/experiment/cell/accepted/all',
+		type: 'GET',
+		async: false,
+		contentType: 'application/json',
+		success: function(data) {
+			if (data.success === '1') {
+				reloadImportPreviewMeasurementsDataTable();
+				$('#reviewOutOfBoundsDataModal').modal('hide');
+			} else {
+				showErrorMessage('page-review-out-of-bounds-data-message-modal', data.errorMessage);
+			}
+		}
 	});
-	$('#reviewOutOfBoundsDataModal').modal('hide');
+
 }
 
 function markAllCellAsMissing() {
@@ -810,16 +826,18 @@ function markAllCellAsMissing() {
 		contentType: 'application/json',
 		success: function(data) {
 			if (data.success === '1') {
-				$(".dataTable td[class*='invalid-value']").each(function() {
-					$(this).removeClass('invalid-value');
-					$(this).html("missing");
-                 });
+				reloadImportPreviewMeasurementsDataTable();
 				$('#reviewOutOfBoundsDataModal').modal('hide');
 			} else {
 				showErrorMessage('page-review-out-of-bounds-data-message-modal', data.errorMessage);
 			}
 		}
 	});
+}
+
+function reloadImportPreviewMeasurementsDataTable() {
+	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+	new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
 }
 
 function onMeasurementsObservationLoad(isCategoricalDisplay) {

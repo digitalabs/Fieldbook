@@ -18,6 +18,8 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -126,6 +128,34 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		}
 
 		return masterList;
+	}
+
+	@RequestMapping(value = "/hasOutOfBoundValues", method = RequestMethod.GET)
+	public ResponseEntity<Boolean> hasOutOfBoundValues() {
+		List<MeasurementRow> measurementRowList = this.getUserSelection().getMeasurementRowList();
+		if (null == measurementRowList) {
+			return new ResponseEntity<>(false, HttpStatus.OK);
+		}
+
+		for (MeasurementRow row : measurementRowList) {
+			for (MeasurementData data : row.getDataList()) {
+				if (isValueOutOfBound(data)) {
+					return new ResponseEntity<>(true, HttpStatus.OK);
+				}
+			}
+		}
+		return new ResponseEntity<>(false, HttpStatus.OK);
+	}
+
+	private boolean isValueOutOfBound(final MeasurementData data) {
+		return data != null
+			&& !data.isAccepted()
+			&& (
+				data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())
+				&& this.isNumericalValueOutOfBounds(data))
+				|| (
+				data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())
+				&& this.isCategoricalValueOutOfBounds(data));
 	}
 
 	@ResponseBody

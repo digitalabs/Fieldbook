@@ -4070,6 +4070,33 @@ function markCellAsMissing(indexElem, indexTermId, indexDataVal, isNew, elem) {
 	});
 }
 
+function hasOutOfBoundValuesAsync() {
+	'use strict';
+
+	return $.ajax({
+		url: '/Fieldbook/Common/ReviewDetailsOutOfBounds/hasOutOfBoundValues',
+		type: 'GET',
+		cache: false
+	});
+}
+
+function hasOutOfBoundValues() {
+	'use strict';
+	var _hasOutOfBound = false;
+
+	$.ajax({
+		url: '/Fieldbook/Common/ReviewDetailsOutOfBounds/hasOutOfBoundValues',
+		type: 'GET',
+		cache: false,
+		async: false,
+		success: function (hasOutOfBound) {
+			_hasOutOfBound = hasOutOfBound;
+		}
+	});
+
+	return _hasOutOfBound;
+}
+
 function hasMeasurementsInvalidValue() {
 	'use strict';
 
@@ -4085,13 +4112,16 @@ function hasMeasurementsInvalidValue() {
 function reviewOutOfBoundsData() {
 	'use strict';
 
-	if (hasMeasurementsInvalidValue()) {
+	hasOutOfBoundValuesAsync().then(function (hasOutOfBound) {
 		// Display the Review Out of Bound Data dialog if there are invalid values in the measurements table.
-		$('#reviewOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
-	} else {
-		showAlertMessage('', 'There are no more out of bounds data to review.', 5000);
-	}
-
+		if (hasOutOfBound) {
+			$('#reviewOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
+		} else {
+			showAlertMessage('', 'There are no more out of bounds data to review.', 5000);
+		}
+	}, function () {
+		// TODO error message
+	});
 }
 
 function displayDetailsOutOfBoundsData() {

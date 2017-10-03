@@ -592,17 +592,14 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 	protected String concatenateMinMaxValueIfAvailable(final MeasurementVariable measurementVariable) {
 
-		if (measurementVariable.getMinRange() != null && measurementVariable.getMaxRange() != null) {
-			return measurementVariable.getMinRange().toString() + " - " + measurementVariable.getMaxRange().toString();
-		}
-		else if(measurementVariable.getMinRange() == null && measurementVariable.getMaxRange() == null) {
+		if (measurementVariable.getMinRange() == null && measurementVariable.getMaxRange() == null) {
 			return NO_RANGE;
-		}
-		else if(measurementVariable.getMinRange() != null && measurementVariable.getMaxRange() == null) {
+		} else if (measurementVariable.getMaxRange() == null) {
 			return measurementVariable.getMinRange().toString() + MIN_ONLY;
-		}
-		else {
+		} else if (measurementVariable.getMinRange() == null) {
 			return measurementVariable.getMaxRange().toString() + MAX_ONLY;
+		} else {
+			return measurementVariable.getMinRange().toString() + " - " + measurementVariable.getMaxRange().toString();
 		}
 	}
 

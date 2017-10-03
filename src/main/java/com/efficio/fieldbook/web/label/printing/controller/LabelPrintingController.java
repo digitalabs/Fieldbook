@@ -404,7 +404,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				germplasmList.getId())));
 
 		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(id, 0, Integer
-				.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
+				.MAX_VALUE, contextUtil.getCurrentProgramUUID()); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
 		final List<GermplasmListData> listWithExistingReservations =  this.getGermplasmListDataListWithExistingReservations
 				(germplasmListDataList);
 		this.userLabelPrinting.setNumberOfLotsWithReservations(String.valueOf(listWithExistingReservations.size()));
@@ -601,7 +601,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		final Integer germplasmListId = form.getGermplasmListId();
 		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(germplasmListId, 0,
-				Integer.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
+				Integer.MAX_VALUE, contextUtil.getCurrentProgramUUID()); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
 		final List<GermplasmListData> germplasmListDataListWithExistingReservations =
 				this.getGermplasmListDataListWithExistingReservations(germplasmListDataList);
 

@@ -6,7 +6,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.ontology.DataType;
@@ -25,6 +24,10 @@ import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExcelExportStudyServiceImplTest {
+
+	private static final String NO_RANGE = "All values allowed";
+	private static final String MAX_ONLY = " and below";
+	private static final String MIN_ONLY = " and above";
 
 	private static final int TEST_VARIABLE_TERMID = 1;
 
@@ -116,7 +119,7 @@ public class ExcelExportStudyServiceImplTest {
 		final ArgumentCaptor<String> cellValueCaptor = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(cell).setCellValue(cellValueCaptor.capture());
 
-		Assert.assertEquals("A/B/C", cellValueCaptor.getValue());
+		Assert.assertEquals("A", cellValueCaptor.getValue());
 
 	}
 
@@ -263,17 +266,17 @@ public class ExcelExportStudyServiceImplTest {
 
 		measurementVariable.setMinRange(null);
 		measurementVariable.setMaxRange(null);
-		Assert.assertEquals("If both min and max value are null, the return value should be empty", "",
+		Assert.assertEquals("If both min and max value are null, the return value should be empty", NO_RANGE,
 				excelExportStudyService.concatenateMinMaxValueIfAvailable(measurementVariable));
 
 		measurementVariable.setMinRange(1.1);
 		measurementVariable.setMaxRange(null);
-		Assert.assertEquals("If both min or max value is null, the return value should be empty", "",
+		Assert.assertEquals("If has min value  but max is null", "1.1" + MIN_ONLY,
 				excelExportStudyService.concatenateMinMaxValueIfAvailable(measurementVariable));
 
 		measurementVariable.setMinRange(null);
 		measurementVariable.setMaxRange(2.2);
-		Assert.assertEquals("If both min or max value is null, the return value should be empty", "",
+		Assert.assertEquals("If has max value  but min is null", "2.2" + MAX_ONLY,
 				excelExportStudyService.concatenateMinMaxValueIfAvailable(measurementVariable));
 
 	}

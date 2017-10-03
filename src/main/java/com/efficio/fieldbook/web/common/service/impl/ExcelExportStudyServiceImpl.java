@@ -78,7 +78,6 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	protected static final int VARIABLE_VALUE_COLUMN_INDEX = 6;
 	protected static final int LABEL_COLUMN_INDEX = 7;
 
-	private static final String FULL_RANGE = " to ";
 	private static final String MAX_ONLY = " and below";
 	private static final String MIN_ONLY = " and above";
 	private static final String NO_RANGE = "All values allowed";

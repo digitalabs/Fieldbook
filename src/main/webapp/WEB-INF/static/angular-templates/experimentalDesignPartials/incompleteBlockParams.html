@@ -10,7 +10,7 @@
 <div ng-show="!hideFeatures">
 
     <div ng-hide="settings.showAdvancedOptions[currentDesignType.id]" class="add_top_padding">
-        <a ng-click="settings.showAdvancedOptions[currentDesignType.id] = true">Show advanced options</a>
+        <a ng-click="showOrHideAdvancedOptions(true)">Show advanced options</a>
     </div>
 
     <div ng-show="settings.showAdvancedOptions[currentDesignType.id]">
@@ -46,7 +46,7 @@
         </div>
 
         <div class="add_top_padding">
-            <a ng-click="settings.showAdvancedOptions[currentDesignType.id] = false">Hide advanced options</a>
+            <a ng-click="showOrHideAdvancedOptions(false)">Hide advanced options</a>
         </div>
 
     </div>

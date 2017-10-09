@@ -166,6 +166,8 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			$location.path('/trialSettings');
 			$scope.advanceTabsData = [];
 			$scope.advanceTrialTabs = [];
+			$scope.sampleListData = [];
+			$scope.sampleListTabs = [];
 			$scope.isOpenTrial = TrialManagerDataService.isOpenTrial;
 
 			$scope.isChoosePreviousTrial = false;
@@ -478,10 +480,74 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 			};
 
+			$scope.addSampleListTabData = function(tabId, tabData, listName, isPageLoading) {
+				var isSwap = false;
+				var isUpdate = false;
+				if (isPageLoading === undefined) {
+					isPageLoading = false;
+				}
+				angular.forEach($scope.sampleListTabs, function(value, index) {
+						if (value.name === listName && parseInt(value.id) === parseInt(tabId)) {
+							isUpdate = true;
+							$scope.sampleListData[index].data = tabData;
+							return;
+						}
+					}
+				);
+
+				angular.forEach($scope.sampleListTabs, function(value, index) {
+					if (!isSwap && !isUpdate) {
+						if (parseInt(value.id) === parseInt(tabId)) {
+							$scope.sampleListTabs.splice(index + 1, 0, {
+								name: listName,
+								state: 'sample-list' + tabId + '-li',
+								id: tabId,
+								displayName: 'Sample List:[' + $scope.sampleListTabs[index].name + ']'
+							});
+
+							$scope.sampleListData.splice(index + 1, 0, {
+								name: 'stample-list' + tabId + '-li',
+								data: tabData,
+								id: 'sample-content-pane' + tabId
+							});
+							isSwap = true;
+							if (isPageLoading !== true) {
+								$scope.tabSelected = 'sample-list' + tabId + '-li';
+							}
+							$('#listActionButton' + tabId).addClass('disabled');
+						}
+					}
+				});
+
+				if (!isSwap && !isUpdate) {
+					$scope.sampleListTabs.push({
+						name: listName,
+						state: 'sample-list' + tabId + '-li',
+						id: tabId,
+						displayName: 'Sample List: [' + listName + ']'
+					});
+					$scope.sampleListData.push({
+						name: 'sample-list' + tabId + '-li',
+						data: tabData,
+						id: 'sample-list' + tabId + '-li'
+					});
+					if (isPageLoading !== true) {
+						$scope.tabSelected = 'sample-list' + tabId + '-li';
+						$scope.isSettingsTab = false;
+					}
+				}
+			};
+
 			$scope.advancedTrialList = TrialManagerDataService.settings.advancedList;
 
 			angular.forEach($scope.advancedTrialList, function(value) {
 				displayAdvanceList('', value.id, value.name, false, '', true);
+			});
+
+			$scope.sampleList = TrialManagerDataService.settings.sampleList;
+
+			angular.forEach($scope.sampleList, function(value) {
+				displaySampleList(value.id, value.name, true);
 			});
 
 			$scope.tabChange = function(selectedTab) {
@@ -508,6 +574,14 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				var index = $scope.findIndexByKeyValue($scope.advanceTrialTabs, 'state', tab);
 				$scope.advanceTrialTabs.splice(index, 1);
 				$scope.advanceTabsData.splice(index, 1);
+				$scope.tabSelected = 'trialSettings';
+				$scope.isSettingsTab = true;
+			};
+
+			$scope.closeSampleListTab = function(tab) {
+				var index = $scope.findIndexByKeyValue($scope.sampleListTabs, 'state', tab);
+				$scope.sampleListTabs.splice(index, 1);
+				$scope.sampleListTabsData.splice(index, 1);
 				$scope.tabSelected = 'trialSettings';
 				$scope.isSettingsTab = true;
 			};

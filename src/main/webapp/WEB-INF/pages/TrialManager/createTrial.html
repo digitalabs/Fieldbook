@@ -297,6 +297,12 @@
             <i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab(tab.state)"></i>
         </a>
     </li>
+	<li ng-repeat="tab in sampleListTabs | orderObjectBy : 'id'  track by $index"  ng-class="{active: tabSelected===tab.state}" ng-click="tabChange(tab.state)"
+	    ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
+		<a href="#tab.name" tab-data='{{tab.id}}'>{{tab.displayName}}
+			<i class="glyphicon glyphicon-remove fbk-close-tab" id="sampleListId" ng-click="closeSampleListTab(tab.state)"></i>
+		</a>
+	</li>
 </ul>
 
 
@@ -311,6 +317,9 @@
         <div class="col-xs-12" ng-repeat="advancetab in advanceTabsData track by $index" id="{{advancetab.id}}" ng-show="tabSelected===advancetab.name">
             <div ng-bind-html="advancetab.data"></div>
         </div>
+		<div class="col-xs-12" ng-repeat="sampleListTab in sampleListData track by $index" id="{{sampleListTab.id}}" ng-show="tabSelected===sampleListTab.name">
+			<div ng-bind-html="sampleListTab.data"></div>
+		</div>
 	</div>
 </div>
 
@@ -566,6 +575,7 @@ var translations = {
 	).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
 	).constant('SELECTION_VARIABLE_INITIAL_DATA', /*[[${selectionVariableData}]]*/ ''
     ).constant('ADVANCE_LIST_DATA', /*[[${advancedList}]]*/ ''
+	).constant('SAMPLE_LIST_DATA', /*[[${sampleList}]]*/ ''
 	).constant('ENVIRONMENTS_INITIAL_DATA', /*[[${environmentData}]]*/ ''
 	).constant('GERMPLASM_INITIAL_DATA', /*[[${germplasmData}]]*/ ''
 	).constant('GERMPLASM_LIST_SIZE',/*[[${germplasmListSize}]]*/ ''

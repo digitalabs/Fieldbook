@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class Value {
 
 	private int rowIndex;
+	private int colIndex;
 	private boolean isSelected;
 	private String newValue;
 	private String action;
@@ -26,7 +27,7 @@ public class Value {
 	 *
 	 * @param rowIndex The rowIndex
 	 */
-	public void setRowIndex(int rowIndex) {
+	public void setRowIndex(final int rowIndex) {
 		this.rowIndex = rowIndex;
 	}
 
@@ -42,7 +43,7 @@ public class Value {
 	 *
 	 * @param isSelected The isSelected
 	 */
-	public void setIsSelected(boolean isSelected) {
+	public void setIsSelected(final boolean isSelected) {
 		this.isSelected = isSelected;
 	}
 
@@ -58,7 +59,7 @@ public class Value {
 	 *
 	 * @param newValue The newValue
 	 */
-	public void setNewValue(String newValue) {
+	public void setNewValue(final String newValue) {
 		this.newValue = newValue;
 	}
 
@@ -74,7 +75,7 @@ public class Value {
 	 *
 	 * @param action The action
 	 */
-	public void setAction(String action) {
+	public void setAction(final String action) {
 		this.action = action;
 	}
 
@@ -82,8 +83,16 @@ public class Value {
 		return this.additionalProperties;
 	}
 
-	public void setAdditionalProperty(String name, Object value) {
+	public void setAdditionalProperty(final String name, final Object value) {
 		this.additionalProperties.put(name, value);
+	}
+
+	public int getColIndex() {
+		return this.colIndex;
+	}
+
+	public void setColIndex(final int colIndex) {
+		this.colIndex = colIndex;
 	}
 
 	@Override

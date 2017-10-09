@@ -89,7 +89,7 @@ public class ImportInventoryServiceTest {
 		InventoryDetails inventoryDetailsFromImport = importedInventoryList.getImportedInventoryDetails().get(0);
 		Mockito.verify(mole, Mockito.atMost(1)).updateInventoryDetailsFromImport(inventoryDetailsFromDB, inventoryDetailsFromImport,
 				germplasmListType);
-		if (germplasmListType == GermplasmListType.CROSSES) {
+		if (GermplasmListType.isCrosses(germplasmListType)) {
 			Assert.assertEquals(inventoryDetailsFromImport.getDuplicate(), inventoryDetailsFromDB.getDuplicate());
 			Assert.assertEquals(inventoryDetailsFromImport.getBulkWith(), inventoryDetailsFromDB.getBulkWith());
 			Assert.assertEquals(inventoryDetailsFromImport.getBulkCompl(), inventoryDetailsFromDB.getBulkCompl());

@@ -48,79 +48,90 @@
 							<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
 						</button>
 						<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-							<li ng-show="displayMeasurementOnlyActions()">
-
-								<a href="javascript: showExportOptions();" id="export-study-link" th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
-
-							</li>
-							<li ng-show="displayMeasurementOnlyActions()">
-
-								<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-								<a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Maoke Field Map</a>
-
-							</li>
-							<li ng-show="displayMeasurementOnlyActions()">
-
-								<a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
-
-							</li>
-							<li ng-show="displayMeasurementOnlyActions()">
-
-								<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
-								<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
-
-							</li>
-							<li ng-show="displayMeasurementOnlyActions()">
-
-								<a href="" style="display: none" id="open-study-url"></a>
-								<a href="javascript: showImportOptions();" id="open-study-url-link"
-								   th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
-
-							</li>
-
-                            <li ng-show="hasMeasurementData()">
-
-                                <a href="javascript: advanceTrial();" id="advance-trial-link" th:text="#{trial.trialdetails.action.advance.trial}">Advance Trial</a>
-
-                            </li>
-
-							<li id="review-out-of-bounds-data-list" style="display:none;">
-								<a href="javascript: reviewOutOfBoundsData();" id="review-out-of-bounds-data-link"
-								   th:text="#{nursery.nurserydetails.action.review.out.of.bounds.data}">Review out of bounds data</a>
-							</li>
-
 							<li>
-								<!--// TODO : replace this with actual saving of nursery-->
-								<a href="javascript: void(0);" ng-click="saveCurrentTrialData()" th:text="#{trial.option.save}">Save Trial</a>
+								<a href="javascript: void(0);" ng-click="saveCurrentTrialData()"
+								   th:text="#{trial.option.save}">Save Trial</a>
+							</li>
+							<li ng-show="displayMeasurementOnlyActions()" class="dropdown-submenu pull-left">
+								<a tabindex="-1" href="#">Field map options</a>
+									<ul class="dropdown-menu" style="margin-left: -20px;">
+										<li>
+											<a href="" style="display: none" id="fieldmap-url"
+											   th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+											<a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link"
+											   th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
+										</li>
+										<li>
+											<a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link"
+											   th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
+										</li>
+									</ul>
+								</li>
+
+							<li class="dropdown-submenu pull-left">
+								<a tabindex="-1" href="#">Design and planning options</a>
+								<ul class="dropdown-menu" style="margin-left: 29px;">
+									<li>
+										<a href="javascript: void(0)" onclick="exportDesignTemplate()" class="export-design-template-link"
+										   th:text="#{nursery.nurserydetails.action.export.design.template}">Export Design Template</a>
+									</li>
+									<li ng-show="displayGermplasmOnlyActions()">
+										<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());"
+										   id="import-design-url-link"
+										   th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
+									</li>
+									<li ng-show="displayMeasurementOnlyActions()">
+										<a href="" style="display: none" id="label-printing-url"
+										   th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
+										<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link"
+										   th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
+									</li>
+								</ul>
+							</li>
+
+							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+								<a tabindex="-1" href="#">Plant level options</a>
+								<ul class="dropdown-menu" style="margin-left: -24px;">
+									<li>
+										<a href="javascript: createSample();" id="sample-trial-link"
+										   th:text="#{trial.trialdetails.action.create.sample}">Create sample list Beta</a>
+									</li>
+								</ul>
+							</li>
+
+							<li class="dropdown-submenu pull-left" ng-show="displayGermplasmOrMeasurmentOnlyActions()">
+								<a tabindex="-1" href="#">Data collection options</a>
+								<ul class="dropdown-menu" style="margin-left: 4px;">
+									<li ng-show="displayMeasurementOnlyActions()">
+										<a href="javascript: showExportOptions();" id="export-study-link"
+										   th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
+									</li>
+									<li ng-show="displayMeasurementOnlyActions()">
+										<a href="" style="display: none" id="open-study-url"></a>
+										<a href="javascript: showImportOptions();" id="open-study-url-link"
+										   th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
+									</li>
+									<li ng-show="displayGermplasmOnlyActions()">
+										<a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link"
+										   th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
+									</li>
+									<li id="review-out-of-bounds-data-list" style="display:none;">
+										<a href="javascript: reviewOutOfBoundsData();" id="review-out-of-bounds-data-link"
+										   th:text="#{nursery.nurserydetails.action.review.out.of.bounds.data}">Review out of bounds data</a>
+									</li>
+								</ul>
+							</li>
+
+							<li ng-show="hasMeasurementData()">
+                                <a href="javascript: advanceTrial();" id="advance-trial-link"
+								   th:text="#{trial.trialdetails.action.advance.trial}">Advance Trial</a>
+                            </li>
+							<li>
+								<a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
 							</li>
 							<li>
 								<a id="delete-success-return-url" style="display:none;" th:href="@{/TrialManager}"></a>
 								<a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
-							</li>
-							<li>
-								<!--TODO : replace with URL for manage trial-->
-								<a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
-							</li>
-
-							<li ng-show="hasMeasurementData()">
-
-								<a href="javascript: showAddEnvironmentsDialog();" id="add-environments-url-link"
-								   th:text="#{trial.add.environments}">Add Environments</a>
-
-							</li>
-
-							<li ng-show="displayGermplasmOnlyActions()">
-
-								<a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link" th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
-
-							</li>
-							<li ng-show="displayGermplasmOnlyActions()">
-
-								<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());" id="import-design-url-link" th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
-
-							</li>
-							<li>
-								<a href="javascript: void(0)" onclick="exportDesignTemplate()" class="export-design-template-link" th:text="#{nursery.nurserydetails.action.export.design.template}">Export Design Template</a>
 							</li>
 						</ul>
 					</div>
@@ -228,6 +239,9 @@
 								<input type="button" ng-click="selectPreviousTrial()" ng-show="isChoosePreviousTrial"
 									   th:value="#{common.form.choose.text}"
 									   class="btn btn-info" id="choosePreviousStudy"/>
+								<input type="button" ng-click="resetTabsData()" ng-show="isChoosePreviousTrial"
+									   th:value="#{trial.managesettings.create.trial.reset}"
+									   class="btn btn-info" id="resetTabsData"/>
 							</div>
 						</div>
 
@@ -364,10 +378,26 @@
 </div>
 
 <div class="row">
-      <div class="col-xs-12 col-md-12">
-            <div id="select-enviornments" th:include="/TrialManager/templates/selectEnvironmentModal"></div>
-        </div>
+	<div class="col-xs-12 col-md-12">
+    	<div id="select-enviornments" th:include="/TrialManager/templates/selectEnvironmentModal"></div>
     </div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div id="sample-list" th:include="/TrialManager/templates/selectEnvironmentToSampleListModal"></div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<div id="Managersample-list" th:include="/TrialManager/templates/managerSampleListModal"></div>
+	</div>
+</div>
+
+<div class="row">
+	<div th:include="/TrialManager/templates/samplesSummary"></div>
+</div>
 
 <div class="row">
 	<div th:include="/Common/exportGermplasmList"></div>
@@ -419,6 +449,8 @@
 <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/trial-data-manager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentModal.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/sampleList.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 
 
 <!-- constants here -->
@@ -571,6 +603,11 @@ var translations = {
 	});
 
 })();
+
+jQuery(function() {
+	'use strict';
+	var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
+});
 
 //]]>
 </script>

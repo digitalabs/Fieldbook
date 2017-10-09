@@ -240,27 +240,27 @@ public class ExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testIsPropertyScaleMethodLabelCellNotNull_ReturnsTrueIfAllFieldsIsNotNull() {
+	public void testIsPropertyScaleMethodLabelCellNotNullReturnsTrueIfAllFieldsIsNotNull() {
 		Assert.assertTrue("Expecting to return true if Property,Scale,Method,Label is not null but didn't.",
 				this.importStudy.isPropertyScaleMethodLabelCellNotNull(this.propertyCell, this.scaleCell, this.methodCell, this.labelCell));
 	}
 
 	@Test
-	public void testIsPropertyScaleMethodLabelCellNotNull_ReturnsFalseIfAtLeastOneFieldIsNull() {
+	public void testIsPropertyScaleMethodLabelCellNotNullReturnsFalseIfAtLeastOneFieldIsNull() {
 		this.labelCell = null;
 		Assert.assertFalse("Expecting to return false if at least 1 field from Property,Scale,Method,Label is null but didn't.",
 				this.importStudy.isPropertyScaleMethodLabelCellNotNull(this.propertyCell, this.scaleCell, this.methodCell, this.labelCell));
 	}
 
 	@Test
-	public void testIsPropertyScaleMethodLabelCellHasStringValue_ReturnsTrueIfAllFieldsHasStringValue() {
+	public void testIsPropertyScaleMethodLabelCellHasStringValueReturnsTrueIfAllFieldsHasStringValue() {
 
 		Assert.assertTrue("Expecting to return true if Property,Scale,Method,Label have string value but didn't.", this.importStudy
 				.isPropertyScaleMethodLabelCellHasStringValue(this.propertyCell, this.scaleCell, this.methodCell, this.labelCell));
 	}
 
 	@Test
-	public void testIsPropertyScaleMethodLabelCellHasStringValue_ReturnsFalseIfAtLeastOneFromFieldsHasNoStringValue() {
+	public void testIsPropertyScaleMethodLabelCellHasStringValueReturnsFalseIfAtLeastOneFromFieldsHasNoStringValue() {
 
 		Mockito.doReturn(null).when(this.labelCell).getStringCellValue();
 
@@ -270,7 +270,7 @@ public class ExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetTrialInstanceNumber_ForNursery() throws WorkbookParserException {
+	public void testGetTrialInstanceNumberForNursery() throws WorkbookParserException {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 
 		final org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
@@ -279,7 +279,7 @@ public class ExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetTrialInstanceNumber_ForTrial() throws WorkbookParserException {
+	public void testGetTrialInstanceNumberForTrial() throws WorkbookParserException {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
 
 		this.setUpXLSWorkbookTestData();
@@ -322,7 +322,7 @@ public class ExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetTrialInstanceNumber_ForTrial_ReturnsExceptionForNullTrialInstance() {
+	public void testGetTrialInstanceNumberForTrial_ReturnsExceptionForNullTrialInstance() {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
 
 		this.setUpXLSWorkbookTestData();
@@ -338,7 +338,7 @@ public class ExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetXlsValue_MeasurementRowIsNull() {
+	public void testGetXlsValueMeasurementRowIsNull() {
 		final MeasurementRow temp = null;
 		final MeasurementVariable var = new MeasurementVariable();
 		final MeasurementVariable origVar = new MeasurementVariable();
@@ -351,7 +351,7 @@ public class ExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetXlsValue_OrigVarPossibleValuesIsNull() {
+	public void testGetXlsValueOrigVarPossibleValuesIsNull() {
 		final MeasurementRow temp = new MeasurementRow();
 		final MeasurementVariable var = new MeasurementVariable();
 		final MeasurementVariable origVar = new MeasurementVariable();
@@ -366,7 +366,7 @@ public class ExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetXlsValue_OrigVarPossibleValuesIsEmpty() {
+	public void testGetXlsValueOrigVarPossibleValuesIsEmpty() {
 		final MeasurementRow temp = new MeasurementRow();
 		final MeasurementVariable var = new MeasurementVariable();
 		final MeasurementVariable origVar = new MeasurementVariable();
@@ -381,7 +381,7 @@ public class ExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetXlsValue_ReturnsXlsValueFromCategoricalVariablePossibleValues() {
+	public void testGetXlsValueReturnsXlsValueFromCategoricalVariablePossibleValues() {
 		final MeasurementRow temp = new MeasurementRow();
 
 		final MeasurementVariable var = new MeasurementVariable();
@@ -397,7 +397,7 @@ public class ExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testIsMatchingPropertyScaleMethodLabel_ReturnsTrueIfAllFieldsValueAreMatched() {
+	public void testIsMatchingPropertyScaleMethodLabelReturnsTrueIfAllFieldsValueAreMatched() {
 
 		final MeasurementVariable var = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
 		final MeasurementVariable temp = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
@@ -407,7 +407,7 @@ public class ExcelImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testIsMatchingPropertyScaleMethodLabel_ReturnsFalseIfAtLeast1FromFieldsValueAreNotMatched() {
+	public void testIsMatchingPropertyScaleMethodLabelReturnsFalseIfAtLeast1FromFieldsValueAreNotMatched() {
 
 		final MeasurementVariable var = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
 		final MeasurementVariable temp = this.createMeasurementVariable(TermId.NUMERIC_VARIABLE.getId());
@@ -449,22 +449,9 @@ public class ExcelImportStudyServiceImplTest {
     public void testCreateMeasurementRowsMap() {
         final List<MeasurementRow> observations = this.workbook.getObservations();
 
-        final Map<String, MeasurementRow> measurementRowsMap = this.importStudy.createMeasurementRowsMap(observations, "1", true);
+        final Map<String, MeasurementRow> measurementRowsMap = this.importStudy.createMeasurementRowsMap(observations);
         Assert.assertEquals("The number of measurements in the measurementRowsMap should be equal to the number of the observationss",
                 observations.size(), measurementRowsMap.size());
-    }
-
-    @Test(expected = WorkbookParserException.class)
-    public void testGetTrialInstanceNumberOfNurseryWithError() throws WorkbookParserException {
-        this.workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyType.T);
-        this.importStudy.getTrialInstanceNo(this.workbook, "filename");
-    }
-
-    @Test
-    public void testGetTrialInstanceNumberOfNurseryOfTrial() throws WorkbookParserException {
-        this.workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyType.T);
-        final String trialInstanceNumber = importStudy.getTrialInstanceNo(this.workbook, "filename-11");
-        Assert.assertEquals("The trial instance number should be 11", "11", trialInstanceNumber);
     }
 
     @Test
@@ -475,8 +462,6 @@ public class ExcelImportStudyServiceImplTest {
         Assert.assertNotNull("Conditions copy should not be emprt after copy operation", workbook.getImportConditionsCopy());
         Assert.assertTrue("Unable to properly copy conditions portion of workbook", workbook.getImportConditionsCopy().size() == workbook.getConditions().size());
     }
-
-
 
     @Test
     public void testDetectAddedTraitsNoTraitsAdded() throws WorkbookParserException{
@@ -511,7 +496,7 @@ public class ExcelImportStudyServiceImplTest {
             Mockito.doReturn(constructHeaderName(i)).when(cell).getStringCellValue();
         }
 
-        Cell cell = Mockito.mock(Cell.class);
+        final Cell cell = Mockito.mock(Cell.class);
         Mockito.doReturn(cell).when(row).getCell(TEST_COLUMN_HEADER_COUNT);
         Mockito.doReturn(KsuFieldbookUtil.PLOT).when(cell).getStringCellValue();
     }

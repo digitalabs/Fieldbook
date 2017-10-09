@@ -11,19 +11,16 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.PairedVariable;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.hazelcast.util.StringUtil;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -59,16 +56,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.PairedVariable;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.hazelcast.util.StringUtil;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * The Class SettingsUtil.
@@ -1340,13 +1339,11 @@ public class SettingsUtil {
 	}
 
 	private static MeasurementVariable convertConstantToMeasurementVariable(final Constant constant) {
-		String label = null;
+		String label = constant.getLabel();
 
 		// currently if operation is add, then it's always a trial constant
-		if (constant.getOperation() == Operation.ADD) {
+		if (constant.getOperation() == Operation.ADD || (label == null && constant.getOperation() == Operation.UPDATE)) {
 			label = PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0);
-		} else {
-			label = constant.getLabel();
 		}
 
 		final MeasurementVariable mvar = new MeasurementVariable(constant.getName(), constant.getDescription(), constant.getScale(),
@@ -1876,11 +1873,13 @@ public class SettingsUtil {
 		final List<Integer> indices = new ArrayList<>();
 		final MeasurementRow mrow = observations.get(0);
 		final Map<Integer, StandardVariable> varCache = new HashMap<>();
-		StandardVariable stdVar = null;
+		StandardVariable stdVar;
 		int index = 0;
 		// FIXME this is OTT logic
 		for (final MeasurementData data : mrow.getDataList()) {
-			if (!varCache.keySet().contains(data.getMeasurementVariable().getTermId())) {
+			final boolean isVariableSample = data.getMeasurementVariable().getTermId() == TermId.SAMPLES.getId();
+			if (!varCache.keySet().contains(data.getMeasurementVariable().getTermId()) && !isVariableSample) {
+
 				// EHCached we hope
 				stdVar = ontologyService.getStandardVariable(data.getMeasurementVariable().getTermId(), programUUID);
 				varCache.put(data.getMeasurementVariable().getTermId(), stdVar);

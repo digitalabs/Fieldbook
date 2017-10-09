@@ -206,6 +206,10 @@ public class DesignImportMeasurementRowGenerator {
 		if (germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()), germplasmEntry.getSource()));
 		}
+		if (germplasmStandardVariables.get(TermId.PLOT_ID.getId()) != null) {
+			// This will initially create blank values for PLOT_ID but the generation of plot IDs will be handled during the saving of Workbook.
+			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.PLOT_ID.getId()), ""));
+		}
 	}
 
 	protected MeasurementData createMeasurementData(final StandardVariable standardVariable, final String value) {

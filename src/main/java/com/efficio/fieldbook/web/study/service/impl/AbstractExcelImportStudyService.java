@@ -8,10 +8,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -66,13 +66,11 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
     public abstract int getObservationSheetNumber();
 
 	@Override
-	protected void performStudyDataImport(final Set<ChangeType> modes, final Workbook parsedData,
-			final Map<String, MeasurementRow> rowsMap, final String trialInstanceNumber,
-			final List<GermplasmChangeDetail> changeDetailsList, final org.generationcp.middleware.domain.etl.Workbook workbook)
-			throws WorkbookParserException {
+	protected void performStudyDataImport(final Set<ChangeType> modes, final Workbook parsedData, final Map<String, MeasurementRow> measurementRowsMap,
+		final List<GermplasmChangeDetail> changeDetailsList,
+		final org.generationcp.middleware.domain.etl.Workbook workbook) throws WorkbookParserException {
 
 		final List<MeasurementVariable> variablesFactors = workbook.getFactors();
-		final List<MeasurementRow> observations = workbook.getObservations();
 		final Sheet observationSheet = parsedData.getSheetAt(getObservationSheetNumber());
 
 		final Map<Integer, MeasurementVariable> factorVariableMap = new HashMap<>();
@@ -80,113 +78,80 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 			factorVariableMap.put(var.getTermId(), var);
 		}
 
-		if (rowsMap != null && !rowsMap.isEmpty()) {
+		if (!Objects.equals(measurementRowsMap,null) && !measurementRowsMap.isEmpty()) {
 
 			workbook.setHasExistingDataOverwrite(false);
+			workbook.setPlotsIdNotfound(0);
+			int countPlotIdNotFound = 0;
+
 			final int lastXlsRowIndex = observationSheet.getLastRowNum();
-			final String indexes = this.getColumnIndexesFromXlsSheet(observationSheet, variablesFactors, trialInstanceNumber);
+			final String plotIdIndex = this.getIndexOfPlotIdFromXlsSheet(observationSheet, variablesFactors);
 			final int desigColumn = this.findColumn(observationSheet, this.getColumnLabel(variablesFactors, TermId.DESIG.getId()));
 			final Row headerRow = observationSheet.getRow(0);
 			final int lastXlsColIndex = headerRow.getLastCellNum();
 
 			for (int i = 1; i <= lastXlsRowIndex; i++) {
 				final Row xlsRow = observationSheet.getRow(i);
-				final String key = this.getKeyIdentifierFromXlsRow(xlsRow, indexes);
-				if (key != null) {
-					final MeasurementRow wRow = rowsMap.get(key);
-					if (wRow == null) {
-						throw new WorkbookParserException("confirmation.import.add.or.delete.rows");
-					} else {
-						rowsMap.remove(key);
+				final String plotId = this.getPlotIdFromRow(xlsRow, plotIdIndex);
+				final MeasurementRow measurementRow = measurementRowsMap.get(plotId);
 
-						final String originalDesig = wRow.getMeasurementDataValue(TermId.DESIG.getId());
-						final Cell desigCell = xlsRow.getCell(desigColumn);
-						if (desigCell == null) {
-							// throw an error
-							throw new WorkbookParserException("error.workbook.import.designation.empty.cell");
-						}
-						final String newDesig = desigCell.getStringCellValue().trim();
-						final String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
-						final String entryNumber = wRow.getMeasurementDataValue(TermId.ENTRY_NO.getId());
-						String plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NO.getId());
-						if (plotNumber == null || "".equalsIgnoreCase(plotNumber)) {
-							plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NNO.getId());
-						}
+				if (measurementRow == null) {
+					countPlotIdNotFound++;
+					continue;
+				}
 
-						if (originalDesig != null && !originalDesig.equalsIgnoreCase(newDesig)) {
-							final List<Integer> newGids = this.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
-							if (originalGid != null && newGids.contains(Integer.valueOf(originalGid))) {
-								final MeasurementData wData = wRow.getMeasurementData(TermId.DESIG.getId());
-								wData.setValue(newDesig);
-							} else {
-								final int index = observations.indexOf(wRow);
-								final GermplasmChangeDetail changeDetail =
-										new GermplasmChangeDetail(index, originalDesig, originalGid, newDesig, "", trialInstanceNumber,
-												entryNumber, plotNumber);
-								if (newGids != null && !newGids.isEmpty()) {
-									changeDetail.setMatchingGids(newGids);
-								}
-								changeDetailsList.add(changeDetail);
-							}
-						}
+				measurementRowsMap.remove(plotId);
 
-						for (int j = 0; j <= lastXlsColIndex; j++) {
-							final Cell headerCell = headerRow.getCell(j);
-							if (headerCell != null) {
-								final MeasurementData wData = wRow.getMeasurementData(headerCell.getStringCellValue());
-								this.importDataCellValues(wData, xlsRow, j, workbook, factorVariableMap);
-							}
-						}
+				this.validateAndSetNewDesignation(desigColumn, xlsRow, measurementRow);
+
+				for (int j = 0; j <= lastXlsColIndex; j++) {
+					final Cell headerCell = headerRow.getCell(j);
+					if (headerCell != null) {
+						final MeasurementData wData = measurementRow.getMeasurementData(headerCell.getStringCellValue());
+						this.importDataCellValues(wData, xlsRow, j, workbook, factorVariableMap);
 					}
 				}
 			}
-			if (!rowsMap.isEmpty()) {
-				// meaning there are items in the original list, so there are items deleted
-				throw new WorkbookParserException("confirmation.import.add.or.delete.rows");
-			}
 
+			if (countPlotIdNotFound != 0) {
+				workbook.setPlotsIdNotfound(countPlotIdNotFound);
+			}
 		}
 	}
 
-	protected String getColumnIndexesFromXlsSheet(final Sheet observationSheet, final List<MeasurementVariable> variables,
-			final String trialInstanceNumber) throws WorkbookParserException {
-		String plotLabel = null, entryLabel = null;
+	private void validateAndSetNewDesignation(final int desigColumn, final Row xlsRow, final MeasurementRow measurementRow)
+		throws WorkbookParserException {
+
+		final String newDesig = this.getDesignation(xlsRow, desigColumn);
+
+		this.setNewDesignation(measurementRow, newDesig);
+	}
+
+	protected String getIndexOfPlotIdFromXlsSheet(final Sheet observationSheet, final List<MeasurementVariable> variables)
+		throws WorkbookParserException {
+		String plotIdLabel = null;
 		for (final MeasurementVariable variable : variables) {
-			if (variable.getTermId() == TermId.PLOT_NO.getId() || variable.getTermId() == TermId.PLOT_NNO.getId()) {
-				plotLabel = variable.getName();
-			} else if (variable.getTermId() == TermId.ENTRY_NO.getId()) {
-				entryLabel = variable.getName();
+			if (variable.getTermId() == TermId.PLOT_ID.getId()) {
+				plotIdLabel = variable.getName();
+				break;
 			}
 		}
-		if (plotLabel != null && entryLabel != null) {
-			final String indexes = this.findColumns(observationSheet, trialInstanceNumber, plotLabel, entryLabel);
-			for (final String index : indexes.split(",")) {
-				if (!NumberUtils.isNumber(index) || "-1".equalsIgnoreCase(index)) {
-					return null;
-				}
-			}
-			return indexes;
+
+		if (plotIdLabel != null) {
+			return this.findColumns(observationSheet, plotIdLabel);
 		}
-		return null;
+
+		throw new WorkbookParserException("error.workbook.import.plot.id.empty.cell");
 	}
 
-	private String getKeyIdentifierFromXlsRow(final Row xlsRow, final String indexes) throws WorkbookParserException {
-		if (indexes != null) {
-			final String[] indexArray = indexes.split(",");
-			// plot no
-			final Cell plotCell = xlsRow.getCell(Integer.valueOf(indexArray[1]));
-			// entry no
-			final Cell entryCell = xlsRow.getCell(Integer.valueOf(indexArray[2]));
+	private String getPlotIdFromRow(final Row xlsRow, final String index) throws WorkbookParserException {
+		final String plotId = this.getCellValue(xlsRow.getCell(Integer.valueOf(index)));
 
-			if (plotCell == null) {
-				throw new WorkbookParserException("error.workbook.import.plot.no.empty.cell");
-			} else if (entryCell == null) {
-				throw new WorkbookParserException("error.workbook.import.entry.no.empty.cell");
-			}
-
-			return indexArray[0] + "-" + this.getRealNumericValue(plotCell) + "-" + this.getRealNumericValue(entryCell);
+		if (StringUtils.isBlank(plotId)) {
+			throw new WorkbookParserException("error.workbook.import.plot.id.empty.cell");
 		}
-		return null;
+
+		return plotId;
 	}
 
 	protected void importDataCellValues(final MeasurementData workbookMeasurementData, final Row xlsRow, final int columnIndex,
@@ -232,14 +197,10 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 				} else {
 
 					if (workbookMeasurementData.getMeasurementVariable() != null
-							&& workbookMeasurementData.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
+						&& workbookMeasurementData.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
 						workbookMeasurementData.setAccepted(false);
 					}
-					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-						xlsValue = this.getRealNumericValue(cell);
-					} else {
-						xlsValue = cell.getStringCellValue();
-					}
+					xlsValue = this.getCellValue(cell);
 				}
 
 				if (!workbookMeasurementData.getValue().equals(xlsValue)) {
@@ -253,7 +214,7 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 		}
 	}
 
-	private String getRealNumericValue(final Cell cell) {
+	private String getCellValue(final Cell cell) {
 		String realValue = "";
 		if (cell != null) {
 			if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
@@ -329,4 +290,21 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 		}
 		return result;
 	}
+
+	private String getDesignation(final Row xlsRow,final int desigColumn) throws WorkbookParserException{
+		final Cell desigCell = xlsRow.getCell(desigColumn);
+		if (desigCell == null) {
+			throw new WorkbookParserException("error.workbook.import.designation.empty.cell");
+		}
+		return desigCell.getStringCellValue().trim();
+	}
+
+	private String getPlotNo(final MeasurementRow wRow) {
+		String plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NO.getId());
+		if (plotNumber == null || "".equalsIgnoreCase(plotNumber)) {
+			plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NNO.getId());
+		}
+		return plotNumber;
+	}
+
 }

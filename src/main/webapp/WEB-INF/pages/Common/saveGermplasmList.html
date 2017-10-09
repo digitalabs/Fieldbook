@@ -18,6 +18,15 @@
 			<input type="text" class="form-control" th:field="*{listName}"/>
 		</div>
 	</div>
+	
+	<div class="row form-group">
+		<div class="col-xs-5 col-md-5">
+			<label class="control-label label-bold" th:text="#{germplasm.save.list.owner.label}">List Owner:</label>
+		</div>
+		<div class="col-xs-7 col-md-7">
+			<label class="control-label" th:text="*{listOwner}"></label>
+		</div>
+	</div>
 
 	<div class="row form-group">
 		<div class="col-xs-5 col-md-5">
@@ -72,15 +81,7 @@
 
 	if ($('#saveListForm .date-input').length > 0) {
 		$('#saveListForm .date-input').each(function() {
-			$(this).datepicker({'format': 'yyyy-mm-dd'}).on('change', function() {
-				var curDate = $(this).val();
-				try {
-					var r = $.datepicker.parseDate('yy-mm-dd', curDate);
-					$(this).datepicker('setDate', r);
-				} catch (e) {
-					$(this).datepicker('setDate', new Date());
-				}
-			}).on('changeDate', function() {
+			$(this).datepicker({'format': 'yyyy-mm-dd'}).on('changeDate', function() {
 				$(this).datepicker('hide');
 
 			}).on('show', function() {

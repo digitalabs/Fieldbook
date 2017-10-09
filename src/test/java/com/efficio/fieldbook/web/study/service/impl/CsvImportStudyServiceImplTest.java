@@ -32,8 +32,10 @@ public class CsvImportStudyServiceImplTest {
 
     private static final String GID = "GID";
 
-    private final String[] rowHeaders = {"ENTRY_TYPE", CsvImportStudyServiceImplTest.GID, "DESIGNATION", CsvImportStudyServiceImplTest.ENTRY_NO, "REP_NO",
-            CsvImportStudyServiceImplTest.PLOT_NO};
+	private static final String PLOT_ID = "PLOT_ID";
+
+    private final String[] rowHeaders = {"ENTRY_TYPE", this.GID, "DESIGNATION", this.ENTRY_NO, "REP_NO",
+		this.PLOT_NO, this.PLOT_ID};
     @Mock
     private Map<Integer, List<String>> csvMap;
 
@@ -47,7 +49,7 @@ public class CsvImportStudyServiceImplTest {
 	public void setUp() {
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(1, StudyType.N);
         this.csvImport = new CsvImportStudyServiceImpl(workbook, "", "");
-		this.rowsMap = csvImport.createMeasurementRowsMap(this.workbook.getObservations(), "1", this.workbook.isNursery());
+		this.rowsMap = csvImport.createMeasurementRowsMap(this.workbook.getObservations());
 
 	}
 
@@ -58,7 +60,7 @@ public class CsvImportStudyServiceImplTest {
 
 	@Test
 	public void testIsValidHeaderNamesFalse() {
-		final String[] headers = {"ENTRY_TYPE", CsvImportStudyServiceImplTest.GID, "DESIGNATION", CsvImportStudyServiceImplTest.ENTRY_NO, "REP_NO", "plot"};
+		final String[] headers = {"ENTRY_TYPE", this.GID, "DESIGNATION", this.ENTRY_NO, "REP_NO", "plot"};
 		Assert.assertFalse("The headers should be valid.", this.csvImport.isValidHeaderNames(headers));
 	}
 
@@ -72,6 +74,15 @@ public class CsvImportStudyServiceImplTest {
 	}
 
 	@Test
+	public void testGetLabelFromKsuRequiredColumnPlotIdPresentInEnum() {
+		final MeasurementTestDataInitializer measurementTestDataInitializer = new MeasurementTestDataInitializer();
+		final MeasurementVariable mVar = measurementTestDataInitializer.createMeasurementVariable(TermId.PLOT_ID.getId(), 1);
+		final String label = this.csvImport.getLabelFromRequiredColumn(mVar);
+		Assert.assertEquals("The label should be PLOT_ID", CsvImportStudyServiceImplTest.PLOT_ID, label);
+
+	}
+
+	@Test
 	public void testGetLabelFromKsuRequiredColumnTermIdNotPresentInEnum() {
 		final MeasurementTestDataInitializer measurementTestDataInitializer = new MeasurementTestDataInitializer();
 		final MeasurementVariable mVar = measurementTestDataInitializer.createMeasurementVariable(1, 1);
@@ -80,18 +91,10 @@ public class CsvImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetKeyIdentifierFromRow() throws WorkbookParserException {
-		final List<String> row = Arrays.asList("1", "1", "1");
-		final List<Integer> indexes = Arrays.asList(1, 1, 2);
-		final String keyIdentifier = this.csvImport.getKeyIdentifierFromRow(row, indexes);
-		Assert.assertEquals("KeyIdendtifier should be 1-1-1", "1-1-1", keyIdentifier);
-	}
-
-	@Test(expected = WorkbookParserException.class)
-	public void testGetKeyIdentifierFromRowWithFileParsingException() throws WorkbookParserException {
-		final List<String> row = Arrays.asList("1", "", "1");
-		final List<Integer> indexes = Arrays.asList(1, 1, 2);
-		this.csvImport.getKeyIdentifierFromRow(row, indexes);
+	public void testGetPlotIdFromRow() throws WorkbookParserException {
+		final List<String> row = Arrays.asList("1", "1", "1","PLOT123P123456");
+		final String keyIdentifier = this.csvImport.getPlotIdFromRow(row, 3);
+		Assert.assertEquals("KeyIdendtifier should be PLOT123P123456", "PLOT123P123456", keyIdentifier);
 	}
 
 	@Test
@@ -108,8 +111,8 @@ public class CsvImportStudyServiceImplTest {
 
 	private Map<Integer, List<String>> createCsvMap() {
 		final Map<Integer, List<String>> csvMap = new HashMap<>();
-		final List<String> headers = Arrays.asList(CsvImportStudyServiceImplTest.GID, CsvImportStudyServiceImplTest.DESIG, CsvImportStudyServiceImplTest.ENTRY_NO,
-				CsvImportStudyServiceImplTest.PLOT_NO, CsvImportStudyServiceImplTest.GW100_G);
+		final List<String> headers =
+			Arrays.asList(this.GID, CsvImportStudyServiceImplTest.DESIG, this.ENTRY_NO, this.PLOT_NO, this.GW100_G);
 		csvMap.put(0, headers);
 		final List<String> row = Arrays.asList("999999", "TIANDOUGOU-9", "0", "0", CsvImportStudyServiceImplTest.GW100_G_VALUE);
 		csvMap.put(1, row);

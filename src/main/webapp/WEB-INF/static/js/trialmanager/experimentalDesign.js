@@ -7,7 +7,7 @@
 			.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages) {
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
 
@@ -18,6 +18,8 @@
 							$scope.refreshDesignDetailsForAugmentedDesign();
 						}
 					});
+
+					var $body = $('body');
 
 					$scope.applicationData = TrialManagerDataService.applicationData;
 					$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
@@ -168,6 +170,9 @@
 						2: 'In a single row',
 						3: 'In adjacent columns'
 					};
+					
+					$scope.disableDesignTypeSelect = ((TrialManagerDataService.trialMeasurement.hasMeasurement) || (TrialManagerDataService.trialMeasurement.count > 0 && TrialManagerDataService.applicationData.hasNewEnvironmentAdded));
+					
 					$scope.onSwitchDesignTypes = function(newId) {
 						if (newId !== '') {
 
@@ -203,12 +208,15 @@
 						TrialManagerDataService.clearUnappliedChangesFlag();
 						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 						$('#chooseGermplasmAndChecks').data('replace', '1');
-						$('body').data('expDesignShowPreview', '1');
 						$scope.toggleIsPresetWithGeneratedDesign();
+						//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
+						$rootScope.$broadcast('previewMeasurements');
+						$('body').addClass('preview-measurements-only');
 					};
 
 					// on click generate design button
 					$scope.generateDesign = function() {
+
 						if (!$scope.doValidate()) {
 							return;
 						}
@@ -325,23 +333,28 @@
 					$scope.resetExperimentalDesign = function() {
 
 						$scope.showConfirmResetDesign().then(function(result) {
-							// the following reset the data used for the experimental design, allowing the user to select another design again
-							$scope.applicationData.hasGeneratedDesignPreset = false;
-							$scope.applicationData.isGeneratedOwnDesign = false;
-							$scope.currentDesignType = null;
-							$scope.data.designType = '';
-
-							// the following prevents the user from saving before re-generating the design, to avoid having invalid measurement data
-							if (TrialManagerDataService.trialMeasurement.count > 0) {
-								TrialManagerDataService.applicationData.unappliedChangesAvailable = true;
-							}
+							$scope.resetExperimentalDesignRelatedVariables();
 						});
 					};
+					
+					$scope.resetExperimentalDesignRelatedVariables = function() {
+						// the following reset the data used for the experimental design, allowing the user to select another design again
+						$scope.applicationData.hasGeneratedDesignPreset = false;
+						$scope.applicationData.isGeneratedOwnDesign = false;
+						$scope.currentDesignType = null;
+						$scope.applicationData.importDesignMappedData = null;
+						$scope.data.designType = '';
+						$scope.applicationData.unsavedGeneratedDesign = true;
+					};
+					
+					$scope.$on('importedDesignReset', function() {
+						$scope.resetExperimentalDesignRelatedVariables();
+					});
 
 					$scope.toggleDesignView = function() {
 						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign
-							|| ($scope.data.designType != null
+							|| ($scope.data.designType !== null
 							&& $scope.data.designType !== ''
 							&& selectedDesignType.name === 'Custom Import Design')
 							|| $scope.applicationData.hasGeneratedDesignPreset);

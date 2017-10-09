@@ -62,7 +62,7 @@ function submitEditForm() {
 		return false;
 	}
 
-	if (hasMeasurementsInvalidValue()) {
+	if (hasOutOfBoundValues()) {
 		//we check if there is invalid value in the measurements
 		showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
 		return false;
@@ -102,7 +102,7 @@ $(document).ready(function() {
 
 	if (createdCrossesListId !== null && createdCrossesListId.length > 0) {
 		ImportCrosses.isFileCrossesImport = false;
-		ImportCrosses.openCrossesList(createdCrossesListId);
+		ImportCrosses.openBreedingModal();
 	}
 
 	$('#basicDetails.toggle-icon').click(function() {
@@ -155,26 +155,26 @@ $(document).ready(function() {
 			}else {
 				$('.import-study-data').data('measurement-show-already', '0');
 			}
-		}else if ($(this).hasClass('germplasm')) {
+		} else if ($(this).hasClass('germplasm')) {
 			if (germplasmDataTable != null) {
 				germplasmDataTable.getDataTable().fnAdjustColumnSizing();
 			}
 			if (selectedCheckListDataTable != null) {
 				selectedCheckListDataTable.getDataTable().fnAdjustColumnSizing();
 			}
-		}else if ($(this).hasClass('measurements')) {
+		} else if ($(this).hasClass('measurements')) {
 			if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable()) {
 				$('#measurement-table').dataTable().fnAdjustColumnSizing();
 			}
-		}else if ($(this).hasClass('stockList') && $(this).data('has-loaded') !== '1') {
+		} else if ($(this).hasClass('stockList') && $(this).data('has-loaded') !== '1') {
 			$(this).data('has-loaded', '1');
 			StockIDFunctions.displayStockList($(this).data('list-id'));
 
-		}else if ($(this).hasClass('crossesList') && $(this).data('has-loaded') !== '1') {
+		} else if ($(this).hasClass('crossesList') && $(this).data('has-loaded') !== '1') {
 			$(this).data('has-loaded', '1');
 			ImportCrosses.displayCrossesList($(this).data('list-id'), $(this).data('list-id'), '', true);
 
-		}else if ($(this).hasClass('advanceList') && $(this).data('has-loaded') !== '1') {
+		} else if ($(this).hasClass('advanceList') && $(this).data('has-loaded') !== '1') {
 			$(this).data('has-loaded', '1');
 			displayAdvanceList($(this).data('list-id'), $(this).data('list-id'), '', true);
 
@@ -193,7 +193,7 @@ $(document).ready(function() {
 
 	if ($('#experimentTypeId').val() !== '') {
 		$('#nursery-experimental-design-li').show();
-	}else {
+	} else {
 		$('#nursery-experimental-design-li').hide();
 	}
 

@@ -106,8 +106,6 @@ function viewTabs(variableName, variableId) {
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus, errorThrown);
-		},
-		complete: function() {
 		}
 	});
 }
@@ -1095,8 +1093,6 @@ function deleteOntology(combo) {
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus, errorThrown);
-		},
-		complete: function() {
 		}
 	});
 }

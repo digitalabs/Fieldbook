@@ -18,6 +18,8 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -39,7 +41,8 @@ import com.efficio.fieldbook.web.common.form.ReviewDetailsOutOfBoundsForm;
 public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookController {
 
 	public static final String URL = "/Common/ReviewDetailsOutOfBounds";
-	private static final String REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE = "/Common/reviewDetailsOutOfBoundsPerTrait";
+	private static final String REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_NURSERY = "/Common/reviewDetailsOutOfBoundsPerTraitNursery";
+	private static final String REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_TRIAL = "/Common/reviewDetailsOutOfBoundsPerTraitTrial";
 	private static final Logger LOG = LoggerFactory.getLogger(ReviewDetailsOutOfBoundsController.class);
 
 	private static final String SUCCESS = "success";
@@ -68,7 +71,8 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		form.setMeasurementVariables(this.filterColumnsForReviewDetailsTable(userSelection.getWorkbook().getAllVariables(), form
 				.getMeasurementVariable().getTermId()));
 
-		return super.showAjaxPage(model, ReviewDetailsOutOfBoundsController.REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE);
+		return super.showAjaxPage(model, userSelection.getWorkbook().isNursery() ? REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_NURSERY :
+					REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_TRIAL);
 	}
 
 	@RequestMapping(value = "/showDetails/{action}", method = RequestMethod.POST)
@@ -96,7 +100,8 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		form.setMeasurementVariables(this.filterColumnsForReviewDetailsTable(userSelection.getWorkbook().getAllVariables(),
 				form.getTraitTermId()));
 
-		return super.showAjaxPage(model, ReviewDetailsOutOfBoundsController.REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE);
+		return super.showAjaxPage(model, userSelection.getWorkbook().isNursery() ? REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_NURSERY :
+				REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_TRIAL);
 	}
 
 	@ResponseBody
@@ -123,6 +128,34 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		}
 
 		return masterList;
+	}
+
+	@RequestMapping(value = "/hasOutOfBoundValues", method = RequestMethod.GET)
+	public ResponseEntity<Boolean> hasOutOfBoundValues() {
+		List<MeasurementRow> measurementRowList = this.getUserSelection().getMeasurementRowList();
+		if (null == measurementRowList) {
+			return new ResponseEntity<>(false, HttpStatus.OK);
+		}
+
+		for (MeasurementRow row : measurementRowList) {
+			for (MeasurementData data : row.getDataList()) {
+				if (isValueOutOfBound(data)) {
+					return new ResponseEntity<>(true, HttpStatus.OK);
+				}
+			}
+		}
+		return new ResponseEntity<>(false, HttpStatus.OK);
+	}
+
+	private boolean isValueOutOfBound(final MeasurementData data) {
+		return data != null
+			&& !data.isAccepted()
+			&& (
+				data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())
+				&& this.isNumericalValueOutOfBounds(data))
+				|| (
+				data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())
+				&& this.isCategoricalValueOutOfBounds(data));
 	}
 
 	@ResponseBody

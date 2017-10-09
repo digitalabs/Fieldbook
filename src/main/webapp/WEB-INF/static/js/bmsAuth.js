@@ -15,8 +15,28 @@ var bmsAuth = (function(bmsAuth, window) {
 	};
 
 	bmsAuth.isValidToken = function() {
-		var token = JSON.parse(localStorage.getItem("bms.xAuthToken"));
-		return token && token.expires > new Date().getTime();
+
+		var isTokenValid = true;
+
+		// Send the authorization token with the web request.
+		// If the token is not valid, the web method will return a '401 Unauthorized' response.
+		$.ajax({
+			url: '/bmsapi/validateToken',
+			type: 'GET',
+			async: false,
+			beforeSend: function(xhr) {
+				var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+				xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+			},
+			error: function(jqxhr, textStatus, error) {
+				if (jqxhr.status == 401) {
+					isTokenValid = false;
+				}
+			}
+		});
+
+		return isTokenValid;
+
 	};
 
 	return bmsAuth;

@@ -1,94 +1,76 @@
 <div>
 	<form id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
-	th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
-
-	<input type="hidden" th:field="*{totalGermplasms}"/>
-	<input type="hidden" th:field="*{lastDraggedPrimaryList}"/>
-
-	<!-- case 1: no data means no table -->
-	<div th:if="*{importedGermplasm == null or #lists.isEmpty(importedGermplasm)}">
-		<span class="noGermplasmListIndicator"></span>
-	</div>
-
-	<!-- case 2: advanced view of the importedGermplasm -->
-	<div th:if="*{importedGermplasm != null and not #lists.isEmpty(importedGermplasm)}">
-		<div class="germplasm-list-table-old fbk-hide-opacity germplasm-list-data-table" th:if="*{importedGermplasmMainInfo.isAdvanceImportType()}">
-			<table id="tableForGermplasm" th:if="*{not #lists.isEmpty(importedGermplasm)}" width="100%"
-			class="table-curved table-condensed germplasm-list-items check-table-popover">
-				<thead>
+		  th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}"
+		  enctype="multipart/form-data">
+		<input type="hidden" th:field="*{totalGermplasms}"/>
+		<input type="hidden" th:field="*{lastDraggedPrimaryList}"/>
+		<!-- case 1: no data means no table -->
+		<div th:if="*{importedGermplasm == null or #lists.isEmpty(importedGermplasm)}">
+			<span class="noGermplasmListIndicator"></span>
+		</div>
+		<!-- case 2: advanced view of the importedGermplasm -->
+		<div th:if="*{importedGermplasm != null and not #lists.isEmpty(importedGermplasm)}">
+			<div class="germplasm-list-table-old fbk-hide-opacity germplasm-list-data-table"
+				 th:if="*{importedGermplasmMainInfo.isAdvanceImportType()}">
+				<table id="tableForGermplasm" th:if="*{not #lists.isEmpty(importedGermplasm)}" width="100%"
+					   class="table-curved table-condensed germplasm-list-items check-table-popover">
+					<thead>
 					<tr>
-					<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>
+						<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"
+							th:attr="data-col-name=${tableHeader.dataCol}"></th>
 					</tr>
-				</thead>
-			</table>
+					</thead>
+				</table>
+				<div class="btn-group mdt-columns pull-right fbk-hide">
+					<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column" data-toggle="dropdown"></i>
 
-			<div class="btn-group mdt-columns pull-right fbk-hide">
-				<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column" data-toggle="dropdown"></i>
-
-				<ul class="dropdown-menu germplasm-dropdown-menu fbk-right-button-drop-down" role="menu">
-					<li th:each="tableHeader, rowIndex : ${tableHeaderList}" >
-						<a href="javascript: void(0)"
-						th:text="${tableHeader.columnName}"
-						th:attr="data-column-name=${tableHeader.dataCol}"
-						th:attrappend="data-index=${rowIndex.index+1}">GID</a>
-					</li>
-				</ul>
+					<ul class="dropdown-menu germplasm-dropdown-menu fbk-right-button-drop-down" role="menu">
+						<li th:each="tableHeader, rowIndex : ${tableHeaderList}">
+							<a href="javascript: void(0)"
+							   th:text="${tableHeader.columnName}"
+							   th:attr="data-column-name=${tableHeader.dataCol}"
+							   th:attrappend="data-index=${rowIndex.index+1}">GID</a>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
-	</div>
+		<div class="row col-xs-12 col-md-12">
+			<div id="imported-germplasm-list-reset-button" class="pull-left" th:style="${hasMeasurement} ? 'display:none;' : 'opacity: 1;'">
+				<a style="margin-top: 5px;" href="javascript: resetGermplasmList()" class="btn btn-default"
+				   th:text="#{common.clear.list}"></a>
+			</div>
+		</div>
 
+		<br/>
+		<div class="rowForNumberingAndChecks row col-xs-12 col-md-12">
+			<div id="specify-numbering-section"><img th:src="@{/static/img/review-list-details.png}"/>
+				<!-- Section for Specify Numbering -->
+				<label class="control-label"><strong id="specifynumbering" class="sub-content-heading"
+													 th:text="#{germplasm.list.specify.numbering}">Specify Numbering</strong></label>
+				<div class="form-group">
+					<div class="col-xs-6">
+						<!-- The following label and input box will be displayed for both Nursery & Trial -->
+						<label class="control-label-bold" id="startingEntryNumber" th:text="#{germplasm.list.specify.starting.entry.number}"
+							   style="margin-left: 5px;">Specify Starting Entry Number</label>
+						<input class="inputForNumberingAndChecks" id="txtStartingEntryNo" rows="1" th:field="*{startingEntryNo}"
+							   readonly="readonly" title="Click Replace button to edit entry number"/>
+					</div>
 
-	<div class="row col-xs-12 col-md-12">
-		<div id="imported-germplasm-list-reset-button" class="pull-left" th:style="${hasMeasurement} ? 'display:none;' : 'opacity: 1;'">
-			 <a style="margin-top: 5px;" href="javascript: resetGermplasmList()" class="btn btn-default" th:text="#{common.clear.list}"></a>
-		 </div>
-	</div>
-
-	<br/>
-
-    <div class="rowForNumberingAndChecks row col-xs-12 col-md-12">
-        <div id="specify-numbering-section"> <img th:src="@{/static/img/review-list-details.png}" />
-            <!-- Section for Specify Numbering -->
-            <label class="control-label"><strong id="specifynumbering" class="sub-content-heading" th:text="#{germplasm.list.specify.numbering}">Specify Numbering</strong></label>
-
-            <div class="form-group">
-                <div class="col-xs-5">
-                    <!-- The following label and input box will be displayed for both Nursery & Trial -->
-                    <label class="control-label-bold labelForNumberingAndChecks" id="startingEntryNumber" th:text="#{germplasm.list.specify.starting.entry.number}">Specify Starting Entry Number</label>
-                    <input class="inputForNumberingAndChecks" id="txtStartingEntryNo" rows="1" th:field="*{startingEntryNo}" disabled="disabled"
-                           title="Click Replace button to edit entry number" />
-                </div>
-
-                <div class="col-xs-6" th:if="${type == 'N'}">
-                    <!-- Display this section for Nursery only -->
-                    <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}" style="margin-right: 36px;">Specify Starting Plot Number</label>
-                    <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" rows="1" th:field="*{startingPlotNo}" disabled="disabled"
-                           title="Click Replace button to edit plot number" />
-                </div>
-            </div>
-        </div>
-    </div>
-
-	<div id="cpecify-crosses-section" class="row col-xs-12 col-md-12" th:if="${type == 'N'}">
-		<img th:src="@{/static/img/review-crosses.png}" />
-        <label class="control-label"><strong id="cpefifyCrossesLabel" class="sub-content-heading"
-												 th:text="#{germplasm.list.specify.crosses}">Specify Crosses</strong></label>
-        <div th:if="*{germplasmListId > -1}">
-            <a th:href="@{~/BreedingManager/main/createcrosses(nurseryid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${contextInfo.loggedInUserId},selectedProjectId=${contextInfo.selectedProjectId})}"
-               th:text="#{nursery.managesettings.create.nursery.createcrosses.label} + ' ' ">.Create</a>
-            <label class="control-label" th:text="#{germplasm.list.create.new.crosses}">. new crosses</label>
-        </div>
-	</div>
-</form>
-
+					<div class="col-xs-6" th:if="${type == 'N'}">
+						<!-- Display this section for Nursery only -->
+						<label class="control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}"
+							   style="margin-left: 5px;">Specify Starting Plot Number</label>
+						<input class="inputForNumberingAndChecks" id="txtStartingPlotNo" rows="1" th:field="*{startingPlotNo}"
+							   readonly="readonly" title="Click Replace button to edit plot number"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
 </div>
-
 <script type="text/javascript" th:inline="javascript">
-//<![CDATA[
-var dataGermplasmList = /*[[${listDataTable}]]*/ [];
-$(document).ready(function() {
-	'use strict';
-	window.ImportGermplasm.initialize(dataGermplasmList);
-});
-//]]>
+	//<![CDATA[
+	var dataGermplasmList = /*[[${listDataTable}]]*/ [];
+	//]]>
 </script>

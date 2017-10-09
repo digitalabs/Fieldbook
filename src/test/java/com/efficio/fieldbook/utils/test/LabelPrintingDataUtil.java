@@ -52,6 +52,7 @@ public class LabelPrintingDataUtil {
 	private static final int RANGE = 1;
 	private static final String STUDY_NAME = "labelPrintingTest";
 	public static final int SAMPLE_EXPERIMENT_NO = -2;
+	public static final String SAMPLE_PLOT_ID = "CROPPRANDOM";
 	public static final int SAMPLE_EXPERIMENT_NO_2 = 0;
 
 	// data for FieldMapDatasetInfo
@@ -221,6 +222,7 @@ public class LabelPrintingDataUtil {
 		label.setRange(LabelPrintingDataUtil.RANGE);
 		label.setStudyName(LabelPrintingDataUtil.STUDY_NAME);
 		label.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO);
+		label.setPlotId(LabelPrintingDataUtil.SAMPLE_PLOT_ID);
 		labels.add(label);
 
 		return labels;
@@ -239,6 +241,7 @@ public class LabelPrintingDataUtil {
 		label.setRange(LabelPrintingDataUtil.RANGE);
 		label.setStudyName(LabelPrintingDataUtil.STUDY_NAME);
 		label.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO_2);
+		label.setPlotId(LabelPrintingDataUtil.SAMPLE_PLOT_ID);
 		labels.add(label);
 
 		return labels;

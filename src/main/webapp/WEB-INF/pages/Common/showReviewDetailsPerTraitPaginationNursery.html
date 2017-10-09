@@ -73,9 +73,17 @@ function generateDataForProcessing() {
 			contentType: "application/json",
 			success: function(data) {
 				if (data.success === '1') {
-					reloadMeasurementTable();
 					$('body').removeClass('modal-open');
 					$('#reviewDetailsOutOfBoundsDataModal').modal('hide');
+					if ($('#measurement-table').length !== 0) {
+						$.ajax({
+							url: '/Fieldbook/ImportManager/import/preview',
+							type: 'POST',
+							success: function(html) {
+									onMeasurementsObservationLoadNursery(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
+							}
+						});
+					}
 				} else {
 					showErrorMessage('', data.errorMessage);
 				}

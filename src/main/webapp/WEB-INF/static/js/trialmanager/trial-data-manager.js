@@ -1,4 +1,4 @@
-/*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
+/*globals angular, displayStudyGermplasmSection, isStudyNameUnique, showSuccessfulMessage, isCategoricalDisplay,
  showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
  invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates, showErrorMessage*/
 (function() {
@@ -149,7 +149,8 @@
 				$('#startIndex').val($('#startIndex2').val());
 				$('#interval').val($('#interval2').val());
 				$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
-				var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+				var columnsOrder = ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) ?
+					BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];
 
 				var serializedData = $form.serializeArray();
 				serializedData[serializedData.length] = {name: 'columnOrders', value: (JSON.stringify(columnsOrder))};
@@ -159,7 +160,9 @@
 				$http.post('/Fieldbook/TrialManager/GermplasmList/next', $.param(serializedData),
 					{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).success(function(data) {
 					d.resolve(data);
-				});
+				}).error(function(data, status, header, config) {
+                      showErrorMessage('', 'Could not persist the germplasm list.');
+                });
 
 				return d.promise;
 			};
@@ -172,14 +175,14 @@
 					cache: false,
 					success: function(html) {
 						$('body').data('columnReordered', '0');
-						$('#measurementsDiv').html(html);
+						//$('#measurementsDiv').html(html);
 						showSuccessfulMessage('', saveSuccessMessage);
 					}
 				});
 			};
 
 			var notifySaveEventListeners = function() {
-				$('body').data('expDesignShowPreview', '0');
+				$('body').removeClass('preview-measurements-only');
 				angular.forEach(saveEventListeners, function(saveListenerFunction) {
 					saveListenerFunction();
 				});
@@ -292,7 +295,6 @@
 					service.clearUnappliedChangesFlag();
 					service.applicationData.unsavedGeneratedDesign = true;
 					$('#chooseGermplasmAndChecks').data('replace', '1');
-					$('body').data('expDesignShowPreview', '1');
 				},
 
 				retrieveDesignType: function() {
@@ -365,14 +367,10 @@
 					return refreshMeasurementDeferred.promise;
 				},
 
+				//TODO Remove that function, we are not reloading the entire page
 				reloadMeasurementAjax: function(data) {
-					return $http({
-						url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
-						method: 'POST',
-						headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-						data: data,
-						transformResponse: undefined
-					});
+					return $http.post('/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement', data,
+						{headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
 				},
 
 				indicateUnappliedChangesAvailable: function(displayWarningMessage) {
@@ -416,10 +414,11 @@
 				extractSettings: extractSettings,
 				extractTreatmentFactorSettings: extractTreatmentFactorSettings,
 				saveCurrentData: function() {
+
 					if (!processInlineEditInput()) {
 						return false;
 					}
-					if (hasMeasurementsInvalidValue()) {
+					if (hasOutOfBoundValues()) {
 						//we check if there is invalid value in the measurements
 						showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
 						return false;
@@ -434,7 +433,8 @@
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
                         stockListImportNotSaved = false;
 						performDataCleanup();
-						var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+						var columnsOrder =  ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) ?
+							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];
 						var serializedData = (JSON.stringify(columnsOrder));
 						if (!service.isOpenTrial()) {
 							service.currentData.columnOrders = serializedData;
@@ -497,6 +497,12 @@
 
 										service.updateCurrentData('environments', extractData(updatedData.environmentData));
 										service.updateSettings('environments', extractSettings(updatedData.environmentData));
+										service.updateCurrentData('trialSettings', extractData(updatedData.trialSettingsData));
+										service.updateSettings('trialSettings', extractSettings(updatedData.trialSettingsData));
+
+										//refresh the environments list in measurements tab
+										$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
+
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
 										service.applicationData.unsavedGeneratedDesign = false;
@@ -533,12 +539,23 @@
 						}
 					}
                     // set selected location on save
-                    if (service.currentData.trialSettings.userInput[LOCATION_NAME_ID] != '') {
-                        selectedLocationForTrail = {
+                    if (service.currentData.trialSettings.userInput[LOCATION_NAME_ID]
+						&& service.currentData.trialSettings.userInput[LOCATION_NAME_ID] != '') {
+                    	selectedLocationForTrial = {
                             name: service.currentData.trialSettings.userInput[TRIAL_LOCATION_NAME_INDEX],
                             id: service.currentData.trialSettings.userInput[LOCATION_NAME_ID]
                         };
                         setSelectedLocation();
+                    }
+
+                    //After Save Measurements table is available in edit mode
+                    $('body').removeClass('preview-measurements-only');
+                    $('body').removeClass('import-preview-measurements');
+                    //TODO Remove other classes as well
+
+                    // GLOBAL
+                    if ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) {
+                    	onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
                     }
 				},
 				onUpdateData: function(dataKey, updateFunction) {

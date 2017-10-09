@@ -13,19 +13,26 @@ package com.efficio.fieldbook.utils.test;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.operation.builder.WorkbookBuilder;
 import org.generationcp.middleware.pojos.Location;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
@@ -73,6 +80,7 @@ public class WorkbookDataUtil {
 	private static final String DATE = "Date (yyyymmdd)";
 	private static final String KG_HA = "kg/ha";
 	private static final String PH = "ph";
+	private static final String TEXT = "TEXT";
 
 	// METHODS
 	private static final String ASSIGNED = "ASSIGNED";
@@ -88,15 +96,15 @@ public class WorkbookDataUtil {
 	private static final String STUDY = "STUDY";
 	public static final String TRIAL = "TRIAL";
 	public static final String ENTRY = "ENTRY";
-	private static final String PLOT = "PLOT";
+	public static final String PLOT = "PLOT";
 
 	// DATA TYPES
 	private static final String CHAR = "C";
 	public static final String NUMERIC = "N";
 
 	// FACTORS
-	private static final String GID = "GID";
-	private static final String DESIG = "DESIG";
+	public static final String GID = "GID";
+	public static final String DESIG = "DESIG";
 	private static final String CROSS = "CROSS";
 	private static final String SOURCE = "SOURCE";
 	private static final String BLOCK = "BLOCK";
@@ -134,6 +142,12 @@ public class WorkbookDataUtil {
 	private static final Integer SNL1ID = 1;
 	private static final Integer CNTRYID = 1;
 	private static final Integer LRPLCE = 1;
+
+	private static final String NUMERIC_VARIABLE = "NUMERIC VARIABLE";
+	private static final String TEST_METHOD = "TEST METHOD";
+	private static final String TEST_SCALE = "TEST SCALE";
+	private static final String TEST_PROPERTY = "TEST PROPERTY";
+	private static final String TEST_DESCRIPTION = "TEST DESCRIPTION";
 
 	public static Workbook getTestWorkbook(final int noOfObservations, final StudyType studyType) {
 		return WorkbookDataUtil.createTestWorkbook(noOfObservations, studyType);
@@ -272,7 +286,7 @@ public class WorkbookDataUtil {
 		workbook.getConditions().add(variable);
 	}
 
-	private static List<MeasurementVariable> createFactors() {
+	public static List<MeasurementVariable> createFactors() {
 		// Create measurement variables and set its dataTypeId
 		final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 
@@ -282,6 +296,7 @@ public class WorkbookDataUtil {
 						WorkbookDataUtil.NUMBER, WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.GERMPLASM_ENTRY, WorkbookDataUtil.NUMERIC,
 						WorkbookDataUtil.STUDY, WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		variable.setFactor(true);
 		factors.add(variable);
 
 		variable =
@@ -289,6 +304,7 @@ public class WorkbookDataUtil {
 						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.GERMPLASM_ID, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
 						WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
+		variable.setFactor(true);
 		factors.add(variable);
 
 		variable =
@@ -296,6 +312,7 @@ public class WorkbookDataUtil {
 						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.GERMPLASM_ID, WorkbookDataUtil.CHAR, WorkbookDataUtil.STUDY,
 						WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		variable.setFactor(true);
 		factors.add(variable);
 
 		variable =
@@ -303,6 +320,7 @@ public class WorkbookDataUtil {
 						WorkbookDataUtil.PEDIGREE_STRING, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.CROSS_HISTORY, WorkbookDataUtil.CHAR,
 						WorkbookDataUtil.STUDY, WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		variable.setFactor(true);
 		factors.add(variable);
 
 		variable =
@@ -316,7 +334,16 @@ public class WorkbookDataUtil {
 				new MeasurementVariable(TermId.PLOT_NO.getId(), WorkbookDataUtil.PLOT, "Plot number ", WorkbookDataUtil.NESTED_NUMBER,
 						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.FIELD_PLOT, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
 						WorkbookDataUtil.PLOT);
+		variable.setFactor(true);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
+		factors.add(variable);
+
+		variable =
+				new MeasurementVariable(TermId.PLOT_ID.getId(), WorkbookDataUtil.PLOT, "Field plot id - assigned (text)", WorkbookDataUtil.TEXT,
+						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.FIELD_PLOT, WorkbookDataUtil.CHAR, "",
+						WorkbookDataUtil.ENTRY);
+		variable.setFactor(true);
+		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		factors.add(variable);
 
 		// Plot Factors
@@ -674,5 +701,72 @@ public class WorkbookDataUtil {
 		measurementVariable.setValue(value);
 		return measurementVariable;
 	}
+
+	public static List<SettingDetail> getPlotLevelList() {
+		final List<SettingDetail> plotLevelList = new ArrayList<>();
+
+		for (final Map.Entry<TermId, Boolean> entry : WorkbookDataUtil.getVisibleColumnMap().entrySet()) {
+			plotLevelList.add(WorkbookDataUtil.generateSettingDetail(entry.getKey()));
+		}
+
+		return plotLevelList;
+
+	}
+
+	public static Map<TermId, Boolean> getVisibleColumnMap() {
+		final Map<TermId, Boolean> visibleColumnMap = new LinkedHashMap<>();
+
+		visibleColumnMap.put(TermId.GID, true);
+		visibleColumnMap.put(TermId.DESIG, true);
+		visibleColumnMap.put(TermId.CROSS, true);
+		visibleColumnMap.put(TermId.ENTRY_NO, true);
+		visibleColumnMap.put(TermId.DESIG, true);
+		visibleColumnMap.put(TermId.ENTRY_CODE, true);
+		visibleColumnMap.put(TermId.SEED_SOURCE, true);
+
+		return visibleColumnMap;
+
+	}
+
+	public static SettingDetail generateSettingDetail(final TermId termId) {
+		final SettingDetail settingDetail = new SettingDetail();
+		settingDetail.setHidden(false);
+		final SettingVariable var = new SettingVariable();
+		var.setCvTermId(termId.getId());
+		settingDetail.setVariable(var);
+
+		StandardVariable stdVar = WorkbookDataUtil.createStandardVariable(termId.getId(), termId.name());
+		settingDetail.getVariable().setName(stdVar.getName());
+		settingDetail.getVariable().setDescription(stdVar.getDescription());
+		settingDetail.setPossibleValues(new ArrayList<ValueReference>());
+
+		return settingDetail;
+	}
+
+	public static StandardVariable createStandardVariable(final int id, final String name) {
+		final StandardVariable stdVar = new StandardVariable();
+		stdVar.setId(id);
+		stdVar.setName(name);
+		stdVar.setDescription(WorkbookDataUtil.TEST_DESCRIPTION);
+
+		final Term prop = new Term();
+		prop.setName(WorkbookDataUtil.TEST_PROPERTY);
+		stdVar.setProperty(prop);
+
+		final Term scale = new Term();
+		scale.setName(WorkbookDataUtil.TEST_SCALE);
+		stdVar.setScale(scale);
+
+		final Term method = new Term();
+		method.setName(WorkbookDataUtil.TEST_METHOD);
+		stdVar.setMethod(method);
+
+		final Term dataType = new Term();
+		dataType.setName(WorkbookDataUtil.NUMERIC_VARIABLE);
+		stdVar.setDataType(dataType);
+
+		return stdVar;
+	}
+
 
 }

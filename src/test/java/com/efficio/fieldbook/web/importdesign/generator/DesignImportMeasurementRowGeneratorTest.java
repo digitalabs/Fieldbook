@@ -121,50 +121,49 @@ public class DesignImportMeasurementRowGeneratorTest {
 		final List<ImportedGermplasm> importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
 		final Map<Integer, StandardVariable> germplasmStandardVariables =
 				DesignImportTestDataInitializer.getStandardVariables(PhenotypicType.GERMPLASM, workbook.getFactors());
-		final List<MeasurementData> dataList = new ArrayList<>();
+		final List<MeasurementData> measurementDataList = new ArrayList<>();
 
 		this.generator.setWorkbook(workbook);
-		this.generator.addGermplasmDetailsToDataList(importedGermplasm, germplasmStandardVariables, dataList, 1, false);
 
-		Assert.assertEquals("The added MeasurementData should Match the germplasm Standard Variables", germplasmStandardVariables.size(),
-				dataList.size());
+		// Generate MeasurementData for entry no 1
+		int entryNo = 1;
+		this.generator.addGermplasmDetailsToDataList(importedGermplasm, germplasmStandardVariables, measurementDataList, entryNo, false);
+
+		Assert.assertEquals("The size of generated MeasurementData list should match the size of germplasm Standard Variables list", germplasmStandardVariables.size(),
+				measurementDataList.size());
 
 		final ImportedGermplasm germplasmEntry = importedGermplasm.get(0);
 
-		for (final MeasurementData measurementData : dataList) {
+		for (final MeasurementData measurementData : measurementDataList) {
 
 			if (TermId.ENTRY_NO.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.ENTRY_NO.toString(),
+				Assert.assertEquals("The value of MeasurementData should match the germplasm value for " + TermId.ENTRY_NO.toString() + " variable",
 						measurementData.getValue().toString(), germplasmEntry.getEntryId().toString());
-			}
-			if (TermId.GID.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.GID.toString(),
+			} else if (TermId.GID.getId() == measurementData.getMeasurementVariable().getTermId()) {
+				Assert.assertEquals("The value of MeasurementData should match the germplasm value for " + TermId.GID.toString() + " variable.",
 						measurementData.getValue().toString(), germplasmEntry.getGid().toString());
-			}
-			if (TermId.DESIG.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.DESIG.toString(),
+			} else if (TermId.DESIG.getId() == measurementData.getMeasurementVariable().getTermId()) {
+				Assert.assertEquals("The value of MeasurementData should match the germplasm value for " + TermId.DESIG.toString()  + " variable.",
 						measurementData.getValue().toString(), germplasmEntry.getDesig().toString());
-			}
-			if (TermId.ENTRY_TYPE.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.ENTRY_TYPE.toString(),
+			} else if (TermId.ENTRY_TYPE.getId() == measurementData.getMeasurementVariable().getTermId()) {
+				Assert.assertEquals("The value of MeasurementData should match the germplasm value for " + TermId.ENTRY_TYPE.toString() + " variable.",
 						measurementData.getValue().toString(), germplasmEntry.getEntryTypeValue().toString());
-			}
-			if (TermId.CROSS.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.CROSS.toString(),
+			} else if (TermId.CROSS.getId() == measurementData.getMeasurementVariable().getTermId()) {
+				Assert.assertEquals("The value of MeasurementData should match the germplasm value for " + TermId.CROSS.toString() + " variable.",
 						measurementData.getValue().toString(), germplasmEntry.getCross().toString());
-			}
-			if (TermId.ENTRY_CODE.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.ENTRY_CODE.toString(),
+			} else if (TermId.ENTRY_CODE.getId() == measurementData.getMeasurementVariable().getTermId()) {
+				Assert.assertEquals("The value of MeasurementData should match the germplasm value for " + TermId.ENTRY_CODE.toString() + " variable.",
 						measurementData.getValue().toString(), germplasmEntry.getEntryCode().toString());
-			}
-			if (TermId.GERMPLASM_SOURCE.getId() == measurementData.getMeasurementVariable().getTermId()) {
+			} else if (TermId.GERMPLASM_SOURCE.getId() == measurementData.getMeasurementVariable().getTermId()) {
 				Assert.assertEquals(
-						"The value of MeasurementData should match the germplasm value : " + TermId.GERMPLASM_SOURCE.toString(),
+						"The value of MeasurementData should match the germplasm value for " + TermId.GERMPLASM_SOURCE.toString() + " variable.",
 						measurementData.getValue().toString(), germplasmEntry.getSource().toString());
-			}
-			if (TermId.SEED_SOURCE.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.SEED_SOURCE.toString(),
+			} else if (TermId.SEED_SOURCE.getId() == measurementData.getMeasurementVariable().getTermId()) {
+				Assert.assertEquals("The value of MeasurementData should match the germplasm value for " + TermId.SEED_SOURCE.toString()  + " variable.",
 						measurementData.getValue().toString(), germplasmEntry.getSource().toString());
+			} else if (TermId.PLOT_ID.getId() == measurementData.getMeasurementVariable().getTermId()) {
+				Assert.assertEquals("The value of MeasurementData should be empty for " + TermId.PLOT_ID.toString() + " variable",
+						measurementData.getValue().toString(), "");
 			}
 
 		}

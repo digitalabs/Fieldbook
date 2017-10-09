@@ -56,7 +56,7 @@ public interface ETLService {
 
   public int calculateObservationRows(Workbook workbook, int sheetIndex, int contentRowIndex, int indexColumnIndex);
 
-  public List<String> retrieveColumnHeaders(Workbook workbook, UserSelection userSelection);
+  public List<String> retrieveColumnHeaders(Workbook workbook, UserSelection userSelection, Boolean addPlotId);
 
   public int getAvailableRowsForDisplay(Workbook workbook, int selectedSheetIndex);
 
@@ -150,5 +150,20 @@ public interface ETLService {
    * @return
    */
   org.generationcp.middleware.domain.etl.Workbook createWorkbookFromUserSelection(UserSelection userSelection, boolean isMeansDataImport);
+
+  /**
+   * Verify if the file header contains PLOT_ID
+   * @param importData
+   * @return
+   */
+  boolean headersContainsPlotId(final org.generationcp.middleware.domain.etl.Workbook importData);
+  
+  /**
+   * Returns all available entry types at the moment in the form of a map <Name, CVTermId> i.e <C,10170>
+   * @param programUUID 
+   * 
+   * @return map <Name, CVTermId>
+   **/
+  Map<String, Integer> retrieveAvailableEntryTypes(String programUUID);
 
 }

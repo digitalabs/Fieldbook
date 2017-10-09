@@ -1,18 +1,18 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import junit.framework.Assert;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
@@ -53,14 +53,20 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+
+import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EditNurseryControllerTest {
@@ -142,20 +148,33 @@ public class EditNurseryControllerTest {
 	@InjectMocks
 	private EditNurseryController editNurseryController;
 
-	private final MeasurementVariableTestDataInitializer measurementVariableTestDataInitializer = new MeasurementVariableTestDataInitializer();
-
 	@Before
 	public void beforeEachTest() {
 		final Project testProject = new Project();
 		testProject.setProjectId(1L);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
-		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(EditNurseryControllerTest.PROGRAM_UUID);
 		Mockito.when(this.request.getSession()).thenReturn(this.session);
-		this.editNurseryController.setFieldbookService(this.fieldbookService);
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		Mockito.when(workbook.getMeasurementDatesetId()).thenReturn(1);
+		Mockito.when(workbook.getMeasurementDatasetVariables())
+				.thenReturn(MeasurementVariableTestDataInitializer.createMeasurementVariableList());
 		Mockito.when(workbook.getVariates()).thenReturn(new ArrayList<MeasurementVariable>());
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		this.editNurseryController.setFieldbookService(this.fieldbookService);
+	}
+
+	@Test
+	public void testSaveMeasurementRows() {
+		final CreateNurseryForm form = Mockito.mock(CreateNurseryForm.class);
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		workbook.setFactors(new ArrayList<MeasurementVariable>());
+		workbook.setVariates(new ArrayList<MeasurementVariable>());
+		final Map<String, String> resultMap = new HashMap<>();
+		this.editNurseryController.saveMeasurementRows(form, 1, workbook, resultMap);
+		Assert.assertEquals(EditNurseryController.SUCCESS, resultMap.get(EditNurseryController.STATUS));
+		Assert.assertFalse(Boolean.valueOf(resultMap.get(EditNurseryController.HAS_MEASUREMENT_DATA_STR)));
+		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), true);
 	}
 
 	@Test
@@ -179,7 +198,7 @@ public class EditNurseryControllerTest {
 		// test
 		final String out = this.editNurseryController
 				.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm, EditNurseryControllerTest.NURSERY_ID,
-						"context-info", this.model, this.request, this.redirectAttributes, "", "");
+						"context-info", this.model, this.request, this.redirectAttributes, "");
 
 		Mockito.verify(this.fieldbookMiddlewareService).getNurseryDataSet(Matchers.anyInt());
 		Assert.assertEquals("Should return the URL of the base_template", AbstractBaseFieldbookController.BASE_TEMPLATE_NAME, out);
@@ -190,7 +209,8 @@ public class EditNurseryControllerTest {
 	public void testUseExistingNurseryRedirectForIncompatibleStudy() throws Exception {
 		final DmsProject dmsProject = Mockito.mock(DmsProject.class);
 
-		// setup: we don't care actually what's happening inside controller.useExistingNursery, we just want it to return the URL
+		// setup: we don't care actually what's happening inside
+		// controller.useExistingNursery, we just want it to return the URL
 		Mockito.doReturn(dmsProject).when(this.studyDataManagerImpl).getProject(Matchers.anyInt());
 		Mockito.when(dmsProject.getProgramUUID()).thenReturn("1002");
 		Mockito.when(this.request.getCookies()).thenReturn(new Cookie[] {});
@@ -199,7 +219,7 @@ public class EditNurseryControllerTest {
 
 		final String out = this.editNurseryController
 				.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm, EditNurseryControllerTest.NURSERY_ID,
-						"context-info", this.model, this.request, this.redirectAttributes, "", "");
+						"context-info", this.model, this.request, this.redirectAttributes, "");
 		Assert.assertEquals("should redirect to manage nurseries page", "redirect:" + ManageNurseriesController.URL, out);
 
 		// assert that we should have produced a redirectErrorMessage
@@ -265,21 +285,110 @@ public class EditNurseryControllerTest {
 	}
 
 	@Test
+	public void testCombineStudyLevelVariablesInNurseryForm() {
+
+		final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
+		createNurseryForm.setStudyLevelVariables(Arrays.asList(this.createSettingDetail(TermId.COOPERATOOR_ID.getId())));
+		createNurseryForm.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
+
+		final List<SettingDetail> result = this.editNurseryController.combineStudyLevelVariablesInNurseryForm(createNurseryForm);
+
+		// The combined size of SettingDetails from Study Level Variables and Basic Details and Hidden Variables
+		// must equal to 2
+		Assert.assertEquals(2, result.size());
+	}
+
+	@Test
+	public void testCombineStudyLevelConditionsInUserSelection() {
+
+		final UserSelection testUserSelection = new UserSelection();
+
+		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
+		studyLevelConditions.add(this.createSettingDetail(TermId.LOCATION_ID.getId()));
+
+		testUserSelection.setStudyLevelConditions(studyLevelConditions);
+		testUserSelection.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
+		testUserSelection.setRemovedConditions(Arrays.asList(this.createSettingDetail(TermId.TRIAL_LOCATION.getId())));
+
+		final List<SettingDetail> result = this.editNurseryController.combineStudyLevelConditionsInUserSelection(testUserSelection);
+
+		Assert.assertSame(studyLevelConditions, result);
+
+		// The combined size of SettingDetails from Study Level Conditions, Basic Details and Hidden Variables
+		// must equal to 3
+		Assert.assertEquals(3, studyLevelConditions.size());
+
+	}
+
+	@Test
+	public void testCopyTheRoleAndVariableType() {
+
+		final SettingDetail locationNameVariableInStudyLevel = this.createSettingDetail(TermId.TRIAL_LOCATION.getId());
+		final SettingDetail cooperatorNameVariableInStudyLevel = this.createSettingDetail(TermId.COOPERATOR.getId());
+		final SettingDetail locationNameVariableInConditionList = this.createSettingDetail(TermId.TRIAL_LOCATION.getId());
+		locationNameVariableInConditionList.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+		locationNameVariableInConditionList.setVariableType(VariableType.ENVIRONMENT_DETAIL);
+
+		final Set<SettingDetail> studyLevelVariables = new HashSet<>();
+		studyLevelVariables.add(locationNameVariableInStudyLevel);
+		studyLevelVariables.add(cooperatorNameVariableInStudyLevel);
+
+		this.editNurseryController.copyTheRoleAndVariableType(studyLevelVariables, Arrays.asList(locationNameVariableInConditionList));
+
+		// The Role and Variable Type detail of the Location Name in Conditons list should be copied
+		// to the Location Name in Study Level Variables
+		Assert.assertEquals(locationNameVariableInStudyLevel.getRole(), locationNameVariableInConditionList.getRole());
+		Assert.assertEquals(locationNameVariableInStudyLevel.getVariableType(), locationNameVariableInConditionList.getVariableType());
+
+		// Cooperator Name doesn't exist in Conditions list so the Role and Variable Type should remain unchanged (null)
+		Assert.assertNull(cooperatorNameVariableInStudyLevel.getRole());
+		Assert.assertNull(cooperatorNameVariableInStudyLevel.getVariableType());
+
+	}
+
+	@Test
+	public void testCombineStudyConditions() {
+
+		final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
+		createNurseryForm.setStudyLevelVariables(Arrays.asList(this.createSettingDetail(TermId.COOPERATOOR_ID.getId())));
+		createNurseryForm.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
+
+		final UserSelection testUserSelection = new UserSelection();
+		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
+		studyLevelConditions.add(this.createSettingDetail(TermId.LOCATION_ID.getId()));
+		testUserSelection.setStudyLevelConditions(studyLevelConditions);
+		testUserSelection.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
+		testUserSelection.setRemovedConditions(Arrays.asList(this.createSettingDetail(TermId.TRIAL_LOCATION.getId())));
+		testUserSelection.setNurseryTypeForDesign(1);
+
+		final List<SettingDetail> result = this.editNurseryController.combineStudyConditions(createNurseryForm, testUserSelection);
+
+		// Ensure that condition variables from Create Nursery Form, UserSelection and Hidden Variable are included
+		// in the list.
+		Assert.assertTrue(containsTermId(TermId.COOPERATOOR_ID.getId(), result));
+		Assert.assertTrue(containsTermId(TermId.STUDY_NAME.getId(), result));
+		Assert.assertTrue(containsTermId(TermId.LOCATION_ID.getId(), result));
+		Assert.assertTrue(containsTermId(TermId.TRIAL_LOCATION.getId(), result));
+		Assert.assertTrue(containsTermId(TermId.NURSERY_TYPE.getId(), result));
+
+	}
+
+	@Test
 	public void testAddNurseryTypeFromDesignImportWhenNurseryTypeValueIsNull() {
-		final List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
 		Mockito.doReturn(null).when(this.userSelection).getNurseryTypeForDesign();
-		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
+		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertTrue("studyLevelVariables should not be null", studyLevelVariables.isEmpty());
 	}
 
 	@Test
 	public void testAddNurseryTypeFromDesignImportWhenNurseryTypeValueHasValue() {
-		final List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
-		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
+		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
+		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertNotNull("studyLevelVariables should not be null", studyLevelVariables);
-		final SettingDetail settingDetail = studyLevelVariables.get(0);
+		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
 
 		Assert.assertEquals("Value should be zero but " + settingDetail.getValue(), "0", settingDetail.getValue());
 		Assert.assertNotNull("settingDetail Variable should not be null ", settingDetail.getVariable());
@@ -287,16 +396,16 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testAddNurseryFromDesignImportWhenDesignImportHasValue() {
-		final List<SettingDetail> studyLevelVariables = Arrays.asList(this.initializeSettingDetails(true));
+		final Set<SettingDetail> studyLevelVariables = new HashSet<>(Arrays.asList(this.initializeSettingDetails(true)));
 		final List<Integer> expDesignVariables = new ArrayList<Integer>();
 		expDesignVariables.add(1);
 
 		Mockito.when(this.userSelection.getExpDesignVariables()).thenReturn(expDesignVariables);
 
-		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
+		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertEquals("studyLevelVariables' size should be 1", studyLevelVariables.size(), 1);
-		final SettingDetail settingDetail = studyLevelVariables.get(0);
+		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
 
 		Assert.assertNull("SettingDetail value should be null but " + settingDetail.getValue(), settingDetail.getValue());
 		Assert.assertNotNull("settingDetail Variable should not be null ", settingDetail.getVariable());
@@ -304,14 +413,14 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testAddExperimentalDesignTypeFromDesignImportTrue() {
-		final List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
 		final List<Integer> expDesignVariables = new ArrayList<Integer>();
 		expDesignVariables.add(1);
 		Mockito.doReturn(expDesignVariables).when(this.userSelection).getExpDesignVariables();
-		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
+		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertFalse("studyLevelVariables should not be empty", studyLevelVariables.isEmpty());
-		final SettingDetail settingDetail = studyLevelVariables.get(0);
+		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
 
 		Assert.assertEquals("Value should be " + TermId.OTHER_DESIGN.getId() + " but " + settingDetail.getValue(),
 				String.valueOf(TermId.OTHER_DESIGN.getId()), settingDetail.getValue());
@@ -320,27 +429,70 @@ public class EditNurseryControllerTest {
 
 	@Test
 	public void testAddExperimentalDesignTypeFromDesignImportFalse() {
-		final List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
-		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
+		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
+		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertTrue("studyLevelVariables should be empty", studyLevelVariables.isEmpty());
 	}
 
 	@Test
 	public void testAddExperimentalDesignTypeFromDesignImportUpdate() {
-		final List<SettingDetail> studyLevelVariables = Arrays.asList(this.initializeSettingDetails(false));
+		final Set<SettingDetail> studyLevelVariables = new HashSet<>(Arrays.asList(this.initializeSettingDetails(false)));
 		final List<Integer> expDesignVariables = new ArrayList<Integer>();
 		expDesignVariables.add(1);
 
 		Mockito.when(this.userSelection.getExpDesignVariables()).thenReturn(expDesignVariables);
 
-		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
+		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables, this.userSelection);
 
 		Assert.assertEquals("studyLevelVariables' size should be 1", studyLevelVariables.size(), 1);
-		final SettingDetail settingDetail = studyLevelVariables.get(0);
+		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
 
 		Assert.assertNull("SettingDetail value should be null but " + settingDetail.getValue(), settingDetail.getValue());
 		Assert.assertNotNull("settingDetail Variable should not be null ", settingDetail.getVariable());
+	}
+
+	@Test
+	public void testAddHiddenVariablesToFactorsListInFormAndSession() {
+
+		final int removedFactorTermId = 111;
+		final UserSelection testUserSelection = new UserSelection();
+		final CreateNurseryForm testCreateNurseryForm = new CreateNurseryForm();
+		testCreateNurseryForm.setPlotLevelVariables(new ArrayList<SettingDetail>());
+		testUserSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
+
+		// Create any removed factors
+		testUserSelection.setRemovedFactors(Arrays.asList(this.createSettingDetail(removedFactorTermId)));
+
+		this.editNurseryController.addHiddenVariablesToFactorsListInFormAndSession(testCreateNurseryForm, testUserSelection);
+
+		// Verify that removed factor is added to CreateNurseryForm's plotLevelVariables
+		Assert.assertEquals(removedFactorTermId,
+				testCreateNurseryForm.getPlotLevelVariables().get(0).getVariable().getCvTermId().intValue());
+
+		// Verify that removed factor is added to UserSelection's plotLevelList
+		Assert.assertEquals(removedFactorTermId, testUserSelection.getPlotsLevelList().get(0).getVariable().getCvTermId().intValue());
+
+	}
+
+	@Test
+	public void testAddHiddenVariablesToFactorsListInFormAndSessionNoRemovedFactors() {
+
+		final UserSelection testUserSelection = new UserSelection();
+		final CreateNurseryForm testCreateNurseryForm = new CreateNurseryForm();
+		testCreateNurseryForm.setPlotLevelVariables(new ArrayList<SettingDetail>());
+		testUserSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
+
+		// Set the removed factors to null
+		testUserSelection.setRemovedFactors(null);
+
+		this.editNurseryController.addHiddenVariablesToFactorsListInFormAndSession(testCreateNurseryForm, testUserSelection);
+
+		// PlotLevelVariables and PlotLevelList should remain empty because
+		// there is  no removed factors.
+		Assert.assertTrue(testCreateNurseryForm.getPlotLevelVariables().isEmpty());
+		Assert.assertTrue(testUserSelection.getPlotsLevelList().isEmpty());
+
 	}
 
 	@Test
@@ -391,7 +543,7 @@ public class EditNurseryControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))
 				.thenReturn(this.standardVariable);
 
-		final Map<String, String> out = this.editNurseryController.submit(this.createNurseryForm, this.model);
+		final Map<String, String> out = this.editNurseryController.submit(this.createNurseryForm);
 
 		Assert.assertEquals("The status should be 1", "1", out.get("status"));
 	}
@@ -419,7 +571,7 @@ public class EditNurseryControllerTest {
 		Mockito.when(standardVariable.getMethod()).thenReturn(term);
 		Mockito.when(standardVariable.getPhenotypicType()).thenReturn(PhenotypicType.STUDY);
 		Mockito.when(standardVariable.getDataType()).thenReturn(term);
-		final Map<String, String> out = this.editNurseryController.submit(this.createNurseryForm, this.model);
+		final Map<String, String> out = this.editNurseryController.submit(this.createNurseryForm);
 
 		Assert.assertEquals("The status should be 1", "1", out.get("status"));
 	}
@@ -488,7 +640,8 @@ public class EditNurseryControllerTest {
 		Assert.assertSame(workbook.getOriginalObservations(), workbookFromUserSelection.getOriginalObservations());
 		Assert.assertSame(workbook.getTrialObservations(), workbookFromUserSelection.getTrialObservations());
 
-		Mockito.verify(dataImportService).populatePossibleValuesForCategoricalVariates(workbook.getConditions(), PROGRAM_UUID);
+		Mockito.verify(this.dataImportService)
+				.populatePossibleValuesForCategoricalVariates(workbook.getConditions(), EditNurseryControllerTest.PROGRAM_UUID);
 
 	}
 
@@ -499,10 +652,10 @@ public class EditNurseryControllerTest {
 		final String seasonTextValue = "Wet Season";
 
 		final MeasurementVariable seasonCodeVariable =
-				measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), seasonCodeValue);
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), seasonCodeValue);
 		seasonCodeVariable.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
 		final MeasurementVariable seasonTextVariable =
-				measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), seasonTextValue);
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), seasonTextValue);
 		seasonTextVariable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 
 		final List<MeasurementVariable> measurementVariables = Arrays.asList(seasonCodeVariable, seasonTextVariable);
@@ -518,13 +671,23 @@ public class EditNurseryControllerTest {
 
 	}
 
+	@Test
+	public void testGetColumns() {
+
+		final List<MeasurementVariable> columns = this.editNurseryController.getColumns();
+
+		Assert.assertEquals("Expecting only 1 column returned", 1, columns.size());
+		Assert.assertEquals("Expecting PI_ID measurement variable is returned", TermId.PI_ID.getId(), columns.get(0).getTermId());
+
+	}
+
 	private MeasurementRow createTestMeasurementRowWithSeasonCodeAndText() {
 
 		final MeasurementVariable seasonCodeVariable =
-				measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), "");
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON.getId(), "");
 		seasonCodeVariable.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
 		final MeasurementVariable seasonTextVariable =
-				measurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), "");
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(), "");
 		seasonTextVariable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 
 		final MeasurementRow measurementRow = new MeasurementRow();
@@ -546,6 +709,16 @@ public class EditNurseryControllerTest {
 
 	}
 
+	private SettingDetail createSettingDetail(final Integer cvTermId) {
+
+		final SettingDetail settingDetail = new SettingDetail();
+		final SettingVariable settingVariable = new SettingVariable();
+		settingVariable.setCvTermId(cvTermId);
+		settingDetail.setVariable(settingVariable);
+
+		return settingDetail;
+	}
+
 	private SettingDetail initializeSettingDetails(final boolean isAddNursery) {
 		final SettingDetail settingDetail = Mockito.mock(SettingDetail.class);
 
@@ -563,7 +736,8 @@ public class EditNurseryControllerTest {
 
 	private void initializeMeasurementRowList() {
 		final Random random = new Random(1000);
-		// random numbers generated up-to 3 digits only so as not to conflict with test data
+		// random numbers generated up-to 3 digits only so as not to conflict
+		// with test data
 		final List<MeasurementData> measurementDataList =
 				Arrays.asList(this.generateMockedMeasurementData(random.nextInt(100), Integer.toString(random.nextInt(100))),
 						this.generateMockedMeasurementData(random.nextInt(100), Integer.toString(random.nextInt(100))),
@@ -587,5 +761,16 @@ public class EditNurseryControllerTest {
 		Mockito.when(measurementData.getValue()).thenReturn(value);
 
 		return measurementData;
+	}
+
+	private boolean containsTermId(final Integer termid, final List<SettingDetail> settingDetails) {
+
+		for (final SettingDetail settingDetail : settingDetails) {
+			if (termid.equals(settingDetail.getVariable().getCvTermId())) {
+				return true;
+			}
+		}
+		return false;
+
 	}
 }

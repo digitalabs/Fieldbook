@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.validator.routines.DateValidator;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -28,6 +29,8 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
@@ -81,6 +84,45 @@ public class ValidationServiceImpl implements ValidationService {
 		return true;
 	}
 
+	public boolean isValidValue(final Variable var, final String value) {
+		if (StringUtils.isBlank(value)) {
+			return true;
+		}
+
+		if (var.getScale().getDataType() == DataType.NUMERIC_VARIABLE) {
+			boolean isNumber = NumberUtils.isNumber(value);
+
+			if (!isNumber) {
+				return false;
+			}
+
+			boolean withinValidRange = true;
+			Double currentValue = Double.valueOf(value);
+
+			if (var.getScale().getMinValue() != null) {
+				Double minValue = Double.valueOf(var.getScale().getMinValue());
+				if (currentValue < minValue) {
+					withinValidRange = false;
+				}
+			}
+
+			if (var.getScale().getMaxValue() != null) {
+				Double maxValue = Double.valueOf(var.getScale().getMaxValue());
+				if (currentValue > maxValue) {
+					withinValidRange = false;
+				}
+			}
+			return withinValidRange;
+		}
+		
+		else if (var.getScale().getDataType() == DataType.DATE_TIME_VARIABLE) {
+			return new DateValidator().isValid(value, "yyyyMMdd");
+		}
+
+		// TODO Are there other validation cases?
+		return true;
+	}
+
 	private boolean validateIfValueIsMissingOrNumber(final String value) {
 		if (MeasurementData.MISSING_VALUE.equals(value.trim())) {
 			return true;
@@ -89,20 +131,10 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	@Override
-	public void validateObservationValues(final Workbook workbook, final String instanceNumber) throws WorkbookParserException {
+	public void validateObservationValues(final Workbook workbook) throws WorkbookParserException {
 		final Locale locale = LocaleContextHolder.getLocale();
 		if (workbook.getObservations() != null) {
-			final List<MeasurementRow> observations;
-			if (instanceNumber != null && "".equalsIgnoreCase(instanceNumber)) {
-				// meaning we want to validate all
-				observations = workbook.getObservations();
-			} else {
-				observations =
-						workbook.isNursery() ? workbook.getObservations() : WorkbookUtil.filterObservationsByTrialInstance(
-								workbook.getObservations(), instanceNumber);
-			}
-
-			for (final MeasurementRow row : observations) {
+			for (final MeasurementRow row : workbook.getObservations()) {
 				for (final MeasurementData data : row.getDataList()) {
 					final MeasurementVariable variate = data.getMeasurementVariable();
 					if (!this.isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
@@ -116,8 +148,9 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	@Override
-	public String validateConditionAndConstantValues(final Workbook workbook, final String instanceNumber) {
+	public String validateConditionAndConstantValues(final Workbook workbook) {
 		String warningMessage = "";
+
 		if (workbook.getConditions() != null) {
 			for (final MeasurementVariable var : workbook.getConditions()) {
 				if (WorkbookUtil.isConditionValidate(var.getTermId())) {
@@ -136,10 +169,7 @@ public class ValidationServiceImpl implements ValidationService {
 			}
 		}
 		if (!workbook.getTrialObservations().isEmpty()) {
-			List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
-			observations = WorkbookUtil.filterObservationsByTrialInstance(workbook.getTrialObservations(), instanceNumber);
-
-			for (final MeasurementRow row : observations) {
+			for (final MeasurementRow row : workbook.getTrialObservations()) {
 				for (final MeasurementData data : row.getDataList()) {
 					final MeasurementVariable variate = data.getMeasurementVariable();
 					if (!this.isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
@@ -204,6 +234,11 @@ public class ValidationServiceImpl implements ValidationService {
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean validateObservationValue(final Variable variable, String value) {
+		return this.isValidValue(variable, value);
 	}
 
 	private String setWarningMessage(final String value) {

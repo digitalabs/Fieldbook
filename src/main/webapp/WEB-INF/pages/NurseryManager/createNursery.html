@@ -171,6 +171,9 @@
 				<input type="button" onclick="javascript: openStudyTree(3);"
 					   th:value="#{common.form.choose.text}"
 					   class="btn btn-info fbk-hide" id="choosePreviousStudy" />
+				<input type="button" onclick="clearSettings()"
+					   th:value="#{nursery.managesettings.create.nursery.reset}"
+					   class="btn btn-info fbk-hide" id="resetTabsData"/>
 			</div>
 		</div>
 
@@ -245,6 +248,8 @@
 <div id="choose-user" th:include="/Common/includes/chooseUser"></div>
 
 <div id="crossImport" th:include="/Common/includes/crossingImportPresets"></div>
+
+<div id="crossSetBreedingMethod" th:include="/Common/includes/crosses/setBreedingMethod"></div>
 
 <div th:include="/Common/includes/importInventory"></div>
 

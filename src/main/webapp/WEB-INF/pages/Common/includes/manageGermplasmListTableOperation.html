@@ -152,7 +152,7 @@
 				success: function(html) {
 					$('#imported-germplasm-list').css('display', 'block');					 
 					$('#imported-germplasm-list').html(html).trigger("germplasmListIsUpdated");
-					
+					window.ImportGermplasm.initialize(dataGermplasmList);
 					$('#entries-details').css('display', 'block');
 					$('#numberOfEntries').html($('#totalGermplasms').val());
                     toggleControlsForGermplasmListManagement(true);

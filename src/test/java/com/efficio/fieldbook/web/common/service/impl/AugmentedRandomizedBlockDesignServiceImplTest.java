@@ -11,7 +11,7 @@ import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import junit.framework.Assert;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.data.initializer.StandardVariableInitializer;
+import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -43,10 +43,10 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 
 	private static int FIRST_CHECK_ENTRY = 0;
 	private static int THIRD_CHECK_ENTRY = 2;
-
-	private final StandardVariable entryNoVariable = StandardVariableInitializer.createStdVariable(TermId.ENTRY_NO.getId(), "Entry No");
-	private final StandardVariable blockNoVariable = StandardVariableInitializer.createStdVariable(TermId.BLOCK_NO.getId(), "Block No");
-	private final StandardVariable plotNoVariable = StandardVariableInitializer.createStdVariable(TermId.PLOT_NO.getId(), "Plot No");
+	
+	private StandardVariable entryNoVariable;
+	private StandardVariable blockNoVariable;
+	private StandardVariable plotNoVariable;
 
 	@Mock
 	private ExperimentDesignGenerator experimentDesignGenerator;
@@ -68,7 +68,10 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 
 	@Before
 	public void init() {
-
+		this.entryNoVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.ENTRY_NO.getId(), "Entry No");
+		this.blockNoVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.BLOCK_NO.getId(), "Block No");
+		this.plotNoVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_NO.getId(), "Plot No");
+		
 		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), PROGRAM_UUID)).thenReturn(entryNoVariable);
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(), PROGRAM_UUID)).thenReturn(blockNoVariable);

@@ -8,11 +8,11 @@ import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -28,8 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -82,20 +80,19 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			final List<String> removedTraits = new ArrayList<String>();
 			
 			this.detectAddedTraitsAndPerformRename(modes,addedTraits,removedTraits);
-			
-			final String trialInstanceNo = this.retrieveTrialInstanceNumber();
+
 			final List<GermplasmChangeDetail> changeDetailsList = new ArrayList<>();
 
 			this.performWorkbookMetadataUpdate();
-			final Map<String, MeasurementRow> rowsMap =
-					this.createMeasurementRowsMap(workbook.getObservations(), trialInstanceNo, workbook.isNursery());
-			this.performStudyDataImport(modes, parsedData, rowsMap, trialInstanceNo, changeDetailsList, workbook);
+			final Map<String, MeasurementRow> measurementRowsMap =
+				this.createMeasurementRowsMap(workbook.getObservations());
+			this.performStudyDataImport(modes, parsedData, measurementRowsMap, changeDetailsList, workbook);
 
 			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService, 
 					workbook.getStudyDetails().getProgramUUID());
 
 			try {
-				this.validationService.validateObservationValues(workbook, trialInstanceNo);
+				this.validationService.validateObservationValues(workbook);
 			} catch (final MiddlewareQueryException e) {
 				AbstractImportStudyService.LOG.error(e.getMessage(), e);
 				WorkbookUtil.resetWorkbookObservations(workbook);
@@ -105,7 +102,7 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			String conditionsAndConstantsErrorMessage = "";
 
 			try {
-				this.validationService.validateConditionAndConstantValues(workbook, trialInstanceNo);
+				this.validationService.validateConditionAndConstantValues(workbook);
 			} catch (final MiddlewareQueryException e) {
 				conditionsAndConstantsErrorMessage = e.getMessage();
 				WorkbookUtil.revertImportedConditionAndConstantsData(workbook);
@@ -154,18 +151,6 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
     */
 	protected abstract void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes, final List<String> addedVariates, final List<String> removedVariates) throws IOException, WorkbookParserException;
 
-	
-	/**
-	 * Provides an implementation of retrieving the trial instance number by calling another method. Can be overridden in cases where study
-	 * import service needs a different logic with a different set of working parameters for calculating the trial instance number
-	 *
-	 * @return
-	 * @throws WorkbookParserException
-	 */
-	protected String retrieveTrialInstanceNumber() throws WorkbookParserException {
-		return this.getTrialInstanceNo(workbook, originalFileName);
-	}
-
 	/**
 	 * The following method abstracts the implementation and even the return type of the result of parsing the observation data contained
 	 * within the target file This is to accommodate differences in parsing output regarding CSV based and Excel based file formats
@@ -180,54 +165,34 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 	 * @param modes
 	 * @param parsedData
 	 * @param rowsMap
-	 * @param trialInstanceNumber
 	 * @param changeDetailsList
 	 * @param workbook
 	 */
 	protected abstract void performStudyDataImport(final Set<ChangeType> modes, final T parsedData,
-			final Map<String, MeasurementRow> rowsMap, final String trialInstanceNumber,
+			final Map<String, MeasurementRow> rowsMap,
 			final List<GermplasmChangeDetail> changeDetailsList, final Workbook workbook) throws WorkbookParserException;
 
-	public String getTrialInstanceNo(final Workbook workbook, final String filename) throws WorkbookParserException {
-		final String trialInstanceNumber = workbook != null && workbook.isNursery() ? "1" : this.getTrialInstanceNoFromFileName(filename);
-		if (StringUtils.isEmpty(trialInstanceNumber)) {
-			throw new WorkbookParserException("error.workbook.import.missing.trial.instance");
+	protected void setNewDesignation(MeasurementRow measurementRow, String newDesig) {
+		final String originalDesig = measurementRow.getMeasurementDataValue(TermId.DESIG.getId());
+		final String originalGid = measurementRow.getMeasurementDataValue(TermId.GID.getId());
+
+		if (originalDesig != null && !originalDesig.equalsIgnoreCase(newDesig)) {
+			final List<Integer> newGids = this.getGermplasmIdsByName(newDesig);
+			if (originalGid != null && newGids.contains(Integer.valueOf(originalGid))) {
+				final MeasurementData wData = measurementRow.getMeasurementData(TermId.DESIG.getId());
+				wData.setValue(newDesig);
+			}
 		}
-		return trialInstanceNumber;
 	}
 
-	public String getTrialInstanceNoFromFileName(final String filename) throws WorkbookParserException {
-		String trialInstanceNumber = "";
-
-		final String pattern = "(.+)[-](\\d+)";
-		final Pattern r = Pattern.compile(pattern);
-		final Matcher m = r.matcher(filename);
-
-		if (m.find()) {
-			trialInstanceNumber = m.group(m.groupCount());
-		}
-
-		if (!NumberUtils.isNumber(trialInstanceNumber)) {
-			throw new WorkbookParserException("error.workbook.import.missing.trial.instance");
-		}
-
-		return trialInstanceNumber;
+	protected List<Integer> getGermplasmIdsByName(final String newDesig) {
+		return this.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
 	}
 
-	public Map<String, MeasurementRow> createMeasurementRowsMap(final List<MeasurementRow> observations, final String instanceNumber,
-			final boolean isNursery) {
+	public Map<String, MeasurementRow> createMeasurementRowsMap(List<MeasurementRow> observations) {
 		final Map<String, MeasurementRow> map = new HashMap<>();
-		final List<MeasurementRow> newObservations;
-		if (!isNursery) {
-
-			newObservations = WorkbookUtil.filterObservationsByTrialInstance(observations, instanceNumber);
-
-		} else {
-			newObservations = observations;
-		}
-
-		if (newObservations != null && !newObservations.isEmpty()) {
-			for (final MeasurementRow row : newObservations) {
+		if (observations != null && !observations.isEmpty()) {
+			for (final MeasurementRow row : observations) {
 				map.put(row.getKeyIdentifier(), row);
 			}
 		}

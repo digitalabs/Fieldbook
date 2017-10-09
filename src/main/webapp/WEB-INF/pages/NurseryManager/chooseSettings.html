@@ -139,9 +139,7 @@
 					<strong class="sub-content-heading" th:text="#{nursery.managesettings.plot.level.details}">PLOT-LEVEL DETAILS</strong>
 					<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.managesettings.plot.level.notes}"></span>
 				</label>
-				<!-- NOTE: This is just a temporary hiding of Add Germplasm Descriptor as part of BMS-3637. 
-				It will be shown again once the bug in adding germplasm descriptors is fixed -->
-				<!--  <a href="#" class="btn btn-info pull-right chs-add-variable chs-add-variable-factor fbk-hide" th:text="#{nursery.create.nursery.add.settings}">Add</a> -->
+				  <a href="#" class="btn btn-info pull-right chs-add-variable chs-add-variable-factor fbk-hide" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 			</div>
 			<div class="form-group collapse in plotLevelDetails">
 				<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
@@ -392,8 +390,8 @@ var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '',
 		 * VariableType when saving the nursery.
 		 **/
 
-		selectionVariatesSegment = /*[[${T(org.generationcp.middleware.domain.ontology.VariableType).SELECTION_METHOD.getId().toString()}]]*/ 1807,
-		baselineTraitsSegment =  /*[[${T(org.generationcp.middleware.domain.ontology.VariableType).TRAIT.getId().toString()}]]*/ 1808;
+		selectionVariatesSegment = /*[[${T(org.generationcp.middleware.domain.ontology.VariableType).SELECTION_METHOD.getId()}]]*/ 1807,
+		baselineTraitsSegment =  /*[[${T(org.generationcp.middleware.domain.ontology.VariableType).TRAIT.getId()}]]*/ 1808;
 		inputChange = false;
 
 // Labels for Entry No and Plot No

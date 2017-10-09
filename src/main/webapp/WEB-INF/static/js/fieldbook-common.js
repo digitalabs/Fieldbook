@@ -872,7 +872,11 @@ function setSelectTrialOrderValues() {
 
 function onCloseVariableSelection() {
 	// After closing the variable selection modal, make sure that the table header is properly adjusted.
-	setTimeout(function() {$("#environments-table").resize();}, 500);
+	if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
+		setTimeout(function() {
+			$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
+		}, 400);
+	}	
 }
 
 function styleDynamicTree(treeName) {

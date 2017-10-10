@@ -152,4 +152,5 @@
 <div class="row col-xs-12 col-md-12" id="inventory-germplasm-list">
 	<div th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') || listType == 'ADVANCED'}" th:include="/Common/includes/listPagination"></div>
 	<div th:if="*{listType == 'STOCK'}" th:include="/Inventory/seedInventoryPagination"></div>
+	<div th:if="*{listType == 'SAMPLE_LIST'}" th:include="/Common/includes/listSampleList"></div>
 </div>

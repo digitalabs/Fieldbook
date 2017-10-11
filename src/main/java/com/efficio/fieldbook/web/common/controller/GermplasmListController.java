@@ -368,11 +368,13 @@ public class GermplasmListController {
 				locale), this.messageSource.getMessage(GermplasmListController.TAKEN_BY, null, locale)));
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLING_DATE, null,
 				locale), this.messageSource.getMessage(GermplasmListController.SAMPLING_DATE, null, locale)));
-			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLING_DATE, null,
+			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.TAKEN_BY, null,
+				locale), this.messageSource.getMessage(GermplasmListController.TAKEN_BY, null, locale)));
+			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLE_UID, null,
 				locale), this.messageSource.getMessage(GermplasmListController.SAMPLE_UID, null, locale)));
-			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLING_DATE, null,
+			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.PLANT_UID, null,
 				locale), this.messageSource.getMessage(GermplasmListController.PLANT_UID, null, locale)));
-			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLING_DATE, null,
+			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.PLOT_ID, null,
 				locale), this.messageSource.getMessage(GermplasmListController.PLOT_ID, null, locale)));
 		}
 

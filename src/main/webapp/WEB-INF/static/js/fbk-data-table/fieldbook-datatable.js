@@ -264,7 +264,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 				bAutoWidth: false,
 				iDisplayLength: 100,
-				retrieve: true,
+
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
 					// Assuming ID is in last column
@@ -1215,10 +1215,21 @@ function transformDuplicateStringToColorCodedSpans(td) {
 					scrollX: '100%',
 					scrollCollapse: true,
 					aoColumns: aoColumnsDef,
+					colVis: {
+						exclude: [0],
+						restore: 'Restore',
+						showAll: 'Show all'
+					},
+					colReorder: {
+						fixedColumns: 1
+					},
 					lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
-					dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
-
+					dom: 'R<t><"fbk-page-div"p>',
 					iDisplayLength: 100,
+					fnDrawCallback: function(oSettings) {
+						makeGermplasmListDraggable(true);
+					},
+
 					fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 						$(nRow).data('entry', aData.entry);
 						$(nRow).data('gid', aData.gid);
@@ -1230,11 +1241,9 @@ function transformDuplicateStringToColorCodedSpans(td) {
 						if (totalPages === 1) {
 							$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
 						}
-						BMS.Fieldbook.checkPagination(parentDiv);
 						$(parentDiv).removeClass('fbk-hide-opacity');
 						oSettings.oInstance.fnAdjustColumnSizing();
-						oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize, tableIdentifier);
-						$(parentDiv + ' .dataTables_length select').select2({minimumResultsForSearch: 10});
+						oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
 						oSettings.oInstance.fnAdjustColumnSizing();
 					}
 				});

@@ -547,7 +547,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			$scope.sampleList = TrialManagerDataService.settings.sampleList;
 
 			angular.forEach($scope.sampleList, function(value) {
-				displaySampleList(value.id, value.name, true);
+				displaySampleList(value.listId, value.listName, true);
 			});
 
 			$scope.tabChange = function(selectedTab) {

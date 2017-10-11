@@ -39,6 +39,7 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.samplelist.SampleListDTO;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -581,16 +582,8 @@ public abstract class BaseTrialController extends SettingsController {
 		return advanceList;
 	}
 
-	protected List<AdvanceList> getSampleList(final Integer trialId) {
-		final List sampleLists = this.fieldbookMiddlewareService.getSampleLists(trialId);
-		final List<AdvanceList> list = new ArrayList<>();
-
-		for (final Object g : sampleLists) {
-			SampleList sampleList = (SampleList) g;
-			list.add(new AdvanceList(sampleList.getId(), sampleList.getListName()));
-		}
-
-		return list;
+	protected List<SampleListDTO> getSampleList(final Integer trialId) {
+		return this.fieldbookMiddlewareService.getSampleLists(trialId);
 	}
 
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {

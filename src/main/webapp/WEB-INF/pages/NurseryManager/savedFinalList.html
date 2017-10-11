@@ -45,7 +45,7 @@
 			&nbsp;&nbsp;&nbsp;
 			 
 			<span th:if="*{listType !='SAMPLE_LIST'}" th:text="#{list.number.of.selected}" class="control-label control-label-italic advanced-list-label">Selected:</span>
-			<span class="control-label control-label-bold control-label-italic advance-list-size advanced-list-label numberOfAdvanceSelected">0</span>
+			<span th:if="*{listType !='SAMPLE_LIST'}" class="control-label control-label-bold control-label-italic advance-list-size advanced-list-label numberOfAdvanceSelected">0</span>
 		</div>
 		<div class="pull-right" th:if="*{listType != 'SAMPLE_LIST'}">
 			<div class="col-md-12">

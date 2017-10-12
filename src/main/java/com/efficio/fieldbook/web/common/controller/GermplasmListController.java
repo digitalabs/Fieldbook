@@ -14,10 +14,8 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.SampleList;
 import org.generationcp.middleware.service.api.InventoryService;
-import org.generationcp.middleware.service.api.SampleListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
@@ -63,6 +61,7 @@ public class GermplasmListController {
 	private static final String PLANT_UID = "sample.list.plant.uid";
 	private static final String PLANT_NO = "sample.list.plant.no";
 	private static final String PLOT_ID = "sample.list.plot.id";
+	public static final String TOTAL_NUMBER_OF_GERMPLASMS = "totalNumberOfGermplasms";
 
 	@Resource
 	private GermplasmListManager germplasmListManager;
@@ -142,10 +141,9 @@ public class GermplasmListController {
 		return GermplasmListController.NURSERY_MANAGER_SAVED_FINAL_LIST;
 	}
 
-	protected void prepareStockList(Model model, Integer listId, List<InventoryDetails> detailList, GermplasmList germplasmList)
-			throws MiddlewareQueryException {
+	protected void prepareStockList(Model model, Integer listId, List<InventoryDetails> detailList, GermplasmList germplasmList) {
 
-		model.addAttribute("totalNumberOfGermplasms", detailList.size());
+		model.addAttribute(TOTAL_NUMBER_OF_GERMPLASMS, detailList.size());
 		model.addAttribute("listId", listId);
 		model.addAttribute("listNotes", germplasmList.getNotes());
 		model.addAttribute("listType", GermplasmListType.STOCK.name());
@@ -165,7 +163,7 @@ public class GermplasmListController {
 		model.addAttribute("hasCompletedBulking", hasCompletedBulking);
 	}
 
-	private boolean stockHasCompletedBulking(Integer listId) throws MiddlewareQueryException {
+	private boolean stockHasCompletedBulking(Integer listId) {
 		return this.inventoryService.stockHasCompletedBulking(listId);
 	}
 
@@ -183,7 +181,7 @@ public class GermplasmListController {
 				type = sampleList.getType().name();
 				final List<SampleDetailsDTO> sampleDetailsDTOs = this.fieldbookMiddlewareService.getSampleDetailsDTOs(listId);
 				model.addAttribute(GermplasmListController.SAMPLE_LIST, sampleDetailsDTOs);
-				model.addAttribute("totalNumberOfGermplasms", sampleDetailsDTOs.size());
+				model.addAttribute(TOTAL_NUMBER_OF_GERMPLASMS, sampleDetailsDTOs.size());
 			} else {
 				GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(listId);
 				listData = this.getListDataProjectByListType(listId, germplasmListType);
@@ -191,7 +189,7 @@ public class GermplasmListController {
 				name = germplasmList.getName();
 				type = germplasmList.getType();
 				model.addAttribute(GermplasmListController.GERMPLASM_LIST, listData);
-				model.addAttribute("totalNumberOfGermplasms", listData.size());
+				model.addAttribute(TOTAL_NUMBER_OF_GERMPLASMS, listData.size());
 			}
 
 			model.addAttribute(GermplasmListController.TABLE_HEADER_LIST, this.getGermplasmListTableHeaders(germplasmListType));
@@ -368,8 +366,6 @@ public class GermplasmListController {
 				locale), this.messageSource.getMessage(GermplasmListController.TAKEN_BY, null, locale)));
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLING_DATE, null,
 				locale), this.messageSource.getMessage(GermplasmListController.SAMPLING_DATE, null, locale)));
-			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.TAKEN_BY, null,
-				locale), this.messageSource.getMessage(GermplasmListController.TAKEN_BY, null, locale)));
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLE_UID, null,
 				locale), this.messageSource.getMessage(GermplasmListController.SAMPLE_UID, null, locale)));
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.PLANT_UID, null,

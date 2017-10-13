@@ -299,7 +299,7 @@
     </li>
 	<li ng-repeat="tab in sampleListTabs | orderObjectBy : 'id'  track by $index"  ng-class="{active: tabSelected===tab.state}" ng-click="tabChange(tab.state)"
 	    ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
-		<a href="#tab.name" tab-data='{{tab.id}}'>{{tab.displayName}}
+		<a href="#tab.name" tab-data='{{tab.id}}' ng-click="initSampleListTab(tab)">{{tab.displayName}}
 			<i class="glyphicon glyphicon-remove fbk-close-tab" id="sampleListId" ng-click="closeSampleListTab(tab.state)"></i>
 		</a>
 	</li>

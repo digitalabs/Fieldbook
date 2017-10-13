@@ -561,7 +561,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				$scope.isSettingsTab = false;
 
 				// Load selected stock list inventory page setup function single time
-				if ($scope.stockListTabs.indexOf(selectedTab) === -1) {
+				if ($scope.stockListTabs && $scope.stockListTabs.indexOf(selectedTab) === -1) {
 					var isStock = selectedTab.split('-');
 					if (isStock[0] === 'stock') {
 						$scope.stockListTabs.push(selectedTab);
@@ -584,6 +584,12 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				$scope.sampleListTabsData.splice(index, 1);
 				$scope.tabSelected = 'trialSettings';
 				$scope.isSettingsTab = true;
+			};
+
+			$scope.initSampleListTab = function(tab) {
+				$timeout(function() {
+					$('#sample-list-' + tab.id).dataTable().fnAdjustColumnSizing();
+				}, 1);
 			};
 
 			$('body').on('DO_AUTO_SAVE', function() {

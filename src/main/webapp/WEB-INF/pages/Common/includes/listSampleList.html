@@ -13,8 +13,10 @@
 			       class="table-curved table-condensed">
 				<thead>
 				<tr>
-					<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"
-					    th:attr="data-col-name=${tableHeader.dataCol}"></th>
+					<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}"
+						th:text="${tableHeader.columnName}"
+					    th:attr="data-col-name=${tableHeader.dataCol}"
+						th:attrappend="data-col-visible=${tableHeader.visible}"></th>
 				</tr>
 				</thead>
 				<tbody>

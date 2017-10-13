@@ -1190,7 +1190,7 @@ BMS.Fieldbook.FinalSampleListDataTable = (function($) {
 
 		$(tableIdentifier + ' thead tr th').each(function(index) {
 			columns.push({data: $(this).data('col-name')});
-			aoColumnsDef.push({bSortable: false});
+			aoColumnsDef.push({bSortable: false, bVisible: $(this).data('col-visible')});
 		});
 
 		table = $(tableIdentifier).dataTable({

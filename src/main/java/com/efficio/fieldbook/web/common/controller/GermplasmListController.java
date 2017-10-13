@@ -367,11 +367,11 @@ public class GermplasmListController {
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLING_DATE, null,
 				locale), this.messageSource.getMessage(GermplasmListController.SAMPLING_DATE, null, locale)));
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLE_UID, null,
-				locale), this.messageSource.getMessage(GermplasmListController.SAMPLE_UID, null, locale)));
+				locale), this.messageSource.getMessage(GermplasmListController.SAMPLE_UID, null, locale), false));
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.PLANT_UID, null,
-				locale), this.messageSource.getMessage(GermplasmListController.PLANT_UID, null, locale)));
+				locale), this.messageSource.getMessage(GermplasmListController.PLANT_UID, null, locale), false));
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.PLOT_ID, null,
-				locale), this.messageSource.getMessage(GermplasmListController.PLOT_ID, null, locale)));
+				locale), this.messageSource.getMessage(GermplasmListController.PLOT_ID, null, locale), false));
 		}
 
 		return tableHeaderList;

@@ -706,7 +706,7 @@
 								return true;
 							} else if (key === 'treatmentFactors') {
 								settingsArray.push(value.details);
-							} else if (key === 'advancedList') {
+							} else if (key === 'advancedList' || key === 'sampleList') {
 								return true;
 							} else {
 								if (value) {

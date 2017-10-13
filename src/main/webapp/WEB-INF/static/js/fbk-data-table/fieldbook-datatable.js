@@ -1186,36 +1186,35 @@ BMS.Fieldbook.FinalSampleListDataTable = (function($) {
 
 		var columns = [],
 			aoColumnsDef = [],
-			germplasmDataTable;
+			table;
 
 		$(tableIdentifier + ' thead tr th').each(function(index) {
 			columns.push({data: $(this).data('col-name')});
 			aoColumnsDef.push({bSortable: false});
-
 		});
 
-		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
-			this.germplasmDataTable = $(tableIdentifier).DataTable();
-			this.germplasmDataTable.clear();
-			this.germplasmDataTable.rows.add(dataList).draw();
-		} else {
-			this.germplasmDataTable = $(tableIdentifier).dataTable({
-				autoWidth: tableAutoWidth,
-				retrieve: true,
-				scrollY: '500px',
-				scrollX: '100%',
-				scrollCollapse: true,
-				columns: columns,
-				aoColumns: aoColumnsDef,
-				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
-				dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
-				iDisplayLength: 100
-			});
-		}
+		table = $(tableIdentifier).dataTable({
+			autoWidth: tableAutoWidth,
+			scrollY: '500px',
+			scrollX: '100%',
+			scrollCollapse: true,
+			columns: columns,
+			aoColumns: aoColumnsDef,
+			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+			dom: 'R<"mdt-header" rli<"mdt-columns"B>><t><"fbk-page-div"p>',
+			iDisplayLength: 100,
+			buttons: [
+				{
+					extend: 'colvis',
+					className: 'fbk-buttons-no-border fbk-colvis-button',
+					text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>'
+				}
+			]
+		});
 
 		FinalSampleListDataTable.prototype.getDataTable = function()
 		{
-			return this.germplasmDataTable;
+			return table;
 		};
 	};
 

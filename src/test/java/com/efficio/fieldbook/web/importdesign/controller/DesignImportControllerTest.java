@@ -81,7 +81,8 @@ public class DesignImportControllerTest {
 	public static final String LOCATION_NAME = "LOCATION_NAME";
 	public static final String LOCATION_ID = "LOCATION_ID";
 	public static final String SITE_NAME = "SITE_NAME";
-	public static final String COOPERATOR_NAME = "COOPERATOR_NAME";
+	public static final String COOPERATOR_NAME = "COOPERATOR";
+	public static final String COOPERATOR_ID = "COOPERATOR_ID";
 
 	@Mock
 	private HttpServletRequest httpRequest;
@@ -137,8 +138,8 @@ public class DesignImportControllerTest {
 
 	@Before
 	public void init() throws Exception {
-		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 
+		final DesignImportData data = createDesignImportDataWithCooperatorVariable();
 		this.settingDetailTestDataInitializer = new SettingDetailTestDataInitializer();
 
 		Mockito.when(this.multiPartFile.getOriginalFilename())
@@ -152,7 +153,8 @@ public class DesignImportControllerTest {
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
 		Mockito.when(this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_CSV, this.multiPartFile))
 				.thenReturn(data);
-		Mockito.when(this.ontologyDataManager.getTermById(TermId.COOPERATOOR_ID.getId())).thenReturn(new Term(TermId.COOPERATOOR_ID.getId(), COOPERATOR_NAME, ""));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.COOPERATOOR_ID.getId())).thenReturn(new Term(TermId.COOPERATOOR_ID.getId(), COOPERATOR_ID, ""));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.COOPERATOR.getId())).thenReturn(new Term(TermId.COOPERATOR.getId(), COOPERATOR_NAME, ""));
 
 		Mockito.doReturn(data).when(this.userSelection).getDesignImportData();
 
@@ -400,14 +402,14 @@ public class DesignImportControllerTest {
 
 		final Set<MeasurementVariable> trialVariables = new HashSet<>();
 
-		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = createDesignImportDataWithCooperatorVariable();
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
 		Mockito.doReturn(this.createSettingDetails()).when(this.userSelection).getTrialLevelVariableList();
 		this.designImportController.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData,
 				trialVariables);
 
-		Assert.assertEquals(5, trialVariables.size());
+		Assert.assertEquals(6, trialVariables.size());
 		Assert.assertEquals("LOCATION_ID should be added to the Trial Variables", "LOCATION_ID",
 				this.getMeasurementVariable(TermId.LOCATION_ID.getId(), trialVariables).getName());
 		Assert.assertEquals("COOPERATOR_ID should be added to the Trial Variables", "COOPERATOR_ID",
@@ -441,7 +443,7 @@ public class DesignImportControllerTest {
 
 		final Set<MeasurementVariable> trialVariables = new HashSet<>();
 
-		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = createDesignImportDataWithCooperatorVariable();
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
 		final List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
@@ -1363,7 +1365,7 @@ public class DesignImportControllerTest {
 
 		Assert.assertEquals(
 				"Expecting variable name COOPERATOR_ID because the variable exists in Ontology",
-				COOPERATOR_NAME, this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(
+				COOPERATOR_ID, this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(
 						TermId.COOPERATOOR_ID.getId(), trialLevelVariableList, designImportData));
 
 		Assert.assertEquals(
@@ -1531,7 +1533,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(repNo).when(this.ontologyDataManager).getStandardVariable(TermId.REP_NO.getId(),
 				this.project.getUniqueID());
 		Mockito.doReturn(cooperator).when(this.ontologyDataManager)
-				.getStandardVariable(TermId.COOPERATOOR_ID.getId(), this.project.getUniqueID());
+				.getStandardVariable(TermId.COOPERATOR.getId(), this.project.getUniqueID());
 
 		Mockito.doReturn(cooperatorId).when(this.ontologyDataManager).getStandardVariable(TermId.COOPERATOOR_ID.getId(),
 				this.project.getUniqueID());
@@ -1698,5 +1700,23 @@ public class DesignImportControllerTest {
 
 		return list;
 	}
+
+	private DesignImportData createDesignImportDataWithCooperatorVariable() {
+
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
+
+		final DesignHeaderItem cooperatorNameDesignHeaderItem = DesignImportTestDataInitializer.
+				createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.COOPERATOR.getId(), COOPERATOR_NAME , 1,
+				DesignImportTestDataInitializer.NUMERIC_VARIABLE);
+		cooperatorNameDesignHeaderItem.setName(COOPERATOR_NAME);
+
+		data.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT).add(cooperatorNameDesignHeaderItem);
+
+		return data;
+
+	}
+
+
+
 
 }

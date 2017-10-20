@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.web.util;
 
 import junit.framework.Assert;
-import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;

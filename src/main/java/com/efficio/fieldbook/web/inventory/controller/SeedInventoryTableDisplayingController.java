@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
-import org.generationcp.commons.constant.ColumnLabels;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

@@ -373,6 +373,11 @@
 							&& $scope.data.designType !== ''
 							&& !selectedDesignType.isPreset && selectedDesignType.name !== 'Custom Import Design';
 					};
+					
+					$scope.showOrHideAdvancedOptions = function (isShown) {
+						$scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = isShown;
+						$scope.data.useLatenized = isShown;
+					};
 
 					$scope.doValidate = function() {
 

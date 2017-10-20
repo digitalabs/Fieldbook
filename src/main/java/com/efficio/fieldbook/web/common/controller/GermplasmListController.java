@@ -2,7 +2,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.common.bean.TableHeader;
-import org.generationcp.commons.constant.ColumnLabels;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;

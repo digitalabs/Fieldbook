@@ -90,6 +90,9 @@
 				else if($('#saveListTreeModal').hasClass('in') === true){
 					return 'germplasmFolderTree';
 				}
+				else if($('#saveSampleListTreeModal').hasClass('in') === true){
+					return 'sampleFolderTree';
+				}
 			}
 			function getDisplayedModalSelector(){
 				'use strict';
@@ -98,6 +101,9 @@
 				}
 				else if($('#saveListTreeModal').hasClass('in') === true){
 					return '#saveListTreeModal';
+				}
+				else if($('#saveSampleListTreeModal').hasClass('in') === true){
+					return '#saveSampleListTreeModal';
 				}
 			}
 			function getMessageErrorDiv(){

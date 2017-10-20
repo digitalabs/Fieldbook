@@ -128,8 +128,7 @@
 						</div>
 						<div class="row form-group">
 							<div class="col-xs-5 col-md-5">
-								<label class="control-label label-bold" th:text="#{germplasm.save.list.type.label}">List Type:</label><span
-								class="required">*</span>
+								<label class="control-label label-bold" th:text="#{germplasm.save.list.type.label}">List Type:</label>
 							</div>
 							<div class="col-xs-7 col-md-7">
 								<label class="control-label">SAMPLE LIST</label>
@@ -203,10 +202,6 @@
 	<script type="text/javascript" th:src="@{/static/js/nursery-manager/listTreeOperation.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
 		$(document).ready(function() {
-			$('#listDate').text("");
-			$('#listDescription').text("");
-			$('#listNotes').text("");
-
 			$('#saveSampleListTreeModal select').select2({minimumResultsForSearch: 20});
 
 			if ($('#saveSampleListTreeModal .date-input').length > 0) {
@@ -222,7 +217,6 @@
 				});
 			}
 			SaveSampleList.initializeSampleListTree();
-			SaveSampleList.clearForm();
 		});
 	</script>
 </div>

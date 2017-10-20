@@ -50,6 +50,63 @@ var ListTreeOperation = {};
 		}
 		return false;
 	};
+
+	ListTreeOperation.createSampleFolder = function() {
+		'use strict';
+		var node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+		if (!node) {
+			showErrorMessage('page-add-message-modal', invalidNodeGermplasmTreeMessage);
+			return false;
+		}
+		if (!node.data.isFolder) {
+			showErrorMessage('page-add-message-modal', addGermplasmInvalidFolderMessage);
+			return false;
+		}
+		var folderName = $.trim($(getDisplayedModalSelector() + ' #addFolderName').val()),
+			parentFolderId;
+		if (folderName === '') {
+			showErrorMessage('page-add-message-modal', folderNameRequiredMessage);
+			return false;
+		} else if (!isValidInput(folderName)) {
+			showErrorMessage('page-add-message-modal', invalidFolderNameCharacterMessage);
+			return false;
+		} else {
+			parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
+			if (parentFolderId === 'LISTS') {
+				parentFolderId = 0;
+			}
+			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+
+			$.ajax({
+				url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder?folderName=' + folderName + '&parentId=' + parentFolderId + '&programUUID=' + currentProgramId,
+				type: 'POST',
+				beforeSend: function (xhr) {
+					xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+				},
+				error: function (data) {
+					if (data.status == 401) {
+						bmsAuth.handleReAuthentication();
+					} else if (data.status == 500) {
+						showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
+					} else if (data.status == 409) {
+						showErrorMessage('page-rename-message-modal', data.responseJSON.ERROR);
+
+					}
+				},
+				success: function() {
+						// Lazy load the node
+						var node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+						doSampleLazyLoad(node);
+						node.focus();
+						node.expand();
+						$(getDisplayedModalSelector() + ' #addSampleFolderDiv').slideUp('fast');
+						showSuccessfulMessage('', addFolderSuccessful);
+				}
+			});
+		}
+		return false;
+	};
+
 	ListTreeOperation.addGermplasmFolder = function(object) {
 		'use strict';
 		if (!$(object).hasClass('disable-image')) {
@@ -58,6 +115,16 @@ var ListTreeOperation = {};
 			$(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').slideDown('fast');
 		}
 	};
+
+	ListTreeOperation.addSampleFolder = function(object) {
+		'use strict';
+		if (!$(object).hasClass('disable-image')) {
+			$(getDisplayedModalSelector() + ' #renameSampleFolderDiv').slideUp('fast');
+			$(getDisplayedModalSelector() + ' #addFolderName').val('');
+			$(getDisplayedModalSelector() + ' #addSampleFolderDiv').slideDown('fast');
+		}
+	};
+
 
 	ListTreeOperation.renameGermplasmFolder = function(object) {
 		'use strict';
@@ -69,14 +136,34 @@ var ListTreeOperation = {};
 		}
 	};
 
+	ListTreeOperation.renameSampleFolder = function(object) {
+		'use strict';
+		var currentFolderName;
+		if (!$(object).hasClass('disable-image')) {
+			currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title;
+			$(getDisplayedModalSelector() + ' #renameFolderName').val(currentFolderName);
+			$(getDisplayedModalSelector() + ' #renameSampleFolderDiv').slideDown('fast');
+		}
+	};
+
 	ListTreeOperation.hideAddGermplasmFolderDiv = function() {
 		'use strict';
 		$(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').slideUp('fast');
 	};
 
+	ListTreeOperation.hideAddSampleListFolderDiv = function() {
+		'use strict';
+		$(getDisplayedModalSelector() + ' #addSampleFolderDiv').slideUp('fast');
+	};
+
 	ListTreeOperation.hideRenameGermplasmFolderDiv = function() {
 		'use strict';
 		$(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').slideUp('fast');
+	};
+
+	ListTreeOperation.hideRenameSampleListFolderDiv = function() {
+		'use strict';
+		$(getDisplayedModalSelector() + ' #renameSampleFolderDiv').slideUp('fast');
 	};
 
 	ListTreeOperation.hideDeleteGermplasmFolderDiv = function() {
@@ -134,6 +221,67 @@ var ListTreeOperation = {};
 		}
 	};
 
+	ListTreeOperation.submitRenameSampleListFolder = function() {
+		'use strict';
+		var folderName = $.trim($(getDisplayedModalSelector() + ' #renameFolderName').val()),
+			parentFolderId;
+		var node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+		if (! node) {
+			showErrorMessage('page-rename-message-modal', invalidNodeGermplasmTreeMessage);
+			return false;
+		}
+		if (!node.data.isFolder || node.data.key === 'LISTS') {
+			showErrorMessage('page-rename-message-modal', renameGermplasmInvalidFolderMessage);
+			return false;
+		}
+		if ($.trim(folderName) === $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title) {
+			$(getDisplayedModalSelector() + ' #renameSampleFolderDiv').slideUp('fast');
+			return false;
+		}
+		if (folderName === '') {
+			showErrorMessage('page-rename-message-modal', folderNameRequiredMessage);
+			return false;
+		} else if (!isValidInput(folderName)) {
+			showErrorMessage('page-rename-message-modal', invalidFolderNameCharacterMessage);
+			return false;
+		} else {
+			parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
+			if (parentFolderId === 'LISTS') {
+				parentFolderId = 0;
+			}
+
+			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+
+			$.ajax({
+				url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + parentFolderId + '?newFolderName=' + folderName,
+				type: 'PUT',
+				beforeSend: function (xhr) {
+					xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+				},
+				error: function (data) {
+					if (data.status == 401) {
+						bmsAuth.handleReAuthentication();
+					} else if (data.status == 500) {
+						showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
+					} else if (data.status == 409) {
+						showErrorMessage('page-rename-message-modal', data.responseJSON.ERROR);
+
+					}
+				},
+				success: function () {
+					var node;
+					$(getDisplayedModalSelector() + ' #renameSampleFolderDiv').slideUp('fast');
+					node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+					node.data.title = folderName;
+					$(node.span).find('a').html(folderName);
+					node.focus();
+					showSuccessfulMessage('', renameItemSuccessful);
+
+				}
+			});
+		}
+	};
+
 	ListTreeOperation.deleteGermplasmFolder = function(object) {
 		'use strict';
 		var currentFolderName;
@@ -143,6 +291,19 @@ var ListTreeOperation = {};
 			hideRenameGermplasmFolderDiv();
 			currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title;
 			$('#delete-folder-confirm').html(deleteConfirmation + ' ' + currentFolderName + '?');
+			$('#page-delete-germplasm-folder-message-modal').html('');
+		}
+	};
+
+	ListTreeOperation.deleteSampleFolder = function(object) {
+		'use strict';
+		var currentFolderName;
+		if (!$(object).hasClass('disable-image')) {
+			$('#deleteSampleListFolderModal').modal('show');
+			hideAddSampleFolderDiv();
+			hideRenameSampleFolderDiv();
+			currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title;
+			$('#delete-SampleList-folder-confirm').html(deleteConfirmation + ' ' + currentFolderName + '?');
 			$('#page-delete-germplasm-folder-message-modal').html('');
 		}
 	};
@@ -165,6 +326,37 @@ var ListTreeOperation = {};
 				} else {
 					showErrorMessage('page-delete-message-modal', data.message);
 				}
+			}
+		});
+	};
+
+	ListTreeOperation.submitDeleteSampleFolder = function() {
+		'use strict';
+		var folderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
+		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+
+		$.ajax({
+			url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + folderId,
+			type: 'DELETE',
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+			},
+			error: function (data) {
+				if (data.status == 401) {
+					bmsAuth.handleReAuthentication();
+				} else if (data.status == 500) {
+					showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
+				} else if (data.status == 409) {
+					showErrorMessage('page-rename-message-modal', data.responseJSON.ERROR);
+
+				}
+			},
+			success: function() {
+				var node;
+				$('#deleteSampleListFolderModal').modal('hide');
+				node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+				node.remove();
+				showSuccessfulMessage('', deleteItemSuccessful);
 			}
 		});
 	};

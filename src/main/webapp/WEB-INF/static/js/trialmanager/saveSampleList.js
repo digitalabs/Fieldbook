@@ -1,19 +1,17 @@
 /*globals displaySampleListTree, changeBrowseSampleButtonBehavior, displayAdvanceList,saveGermplasmReviewError */
-/*globals $,showErrorMessage, showInvalidInputMessage, getDisplayedTreeName,ImportCrosses,listShouldNotBeEmptyError,getJquerySafeId,
+/*globals $,showErrorMessage, showInvalidInputMessage, getDisplayedTreeName,listShouldNotBeEmptyError,getJquerySafeId,
  validateAllDates, saveListSuccessfullyMessage */
 /*globals listParentFolderRequired, listNameRequired */
 /*globals listDateRequired, listTypeRequired, moveToTopScreen */
-/*globals TreePersist, showSuccessfulMessage, console, germplasmEntrySelectError */
-/*exported saveGermplasmList, openSaveSampleListModal*/
+/*globals TreePersist, showSuccessfulMessage, console, */
+/*exported save, openSaveSampleListModal*/
 
-// TODO saveGermplasmList = cambiar. germplasmEntrySelectError ??
 var SaveSampleList = {};
-var sampleList = {};
-var programUUID = undefined;
+var SampleList = {};
 (function() {
 	'use strict';
 	SaveSampleList.initializeSampleListTree = function() {
-		displaySampleListTree('sampleFolderTree', true, 1);// TODO Carga el Arbol
+		displaySampleListTree('sampleFolderTree', true, 1);
 		changeBrowseSampleButtonBehavior(false);
 		$('#saveSampleListTreeModal').off('hide.bs.modal');
 		$('#saveSampleListTreeModal').on('hide.bs.modal', function() {
@@ -24,59 +22,34 @@ var programUUID = undefined;
 			changeBrowseSampleButtonBehavior(false);
 		});
 	};
-	SaveSampleList.clearForm = function(){
-
-		//document.getElementById('listOwner').innerText = sampleList.createdBy;
-		$('#listOwner').val(sampleList.createdBy);
-		$('#listDate').val("");
-		$('#listDescription').val("");
-		$('#listNotes').val("");
-	};
 
 	SaveSampleList.openSaveSampleListModal = function(object) {
-		console.log(object);
-		sampleList = object;
+		SampleList = object;
 		$('#selectSelectionVariableToSampleListModal').modal('hide');
 
-		/*		if (parseInt($('#reviewAdvanceNurseryModal .total-review-items').html(), 10) < 1) {
-					showErrorMessage('', saveGermplasmReviewError);
-					return false;
-				}
-				$('#reviewAdvanceNurseryModal').modal('hide');*/
-
-/*
-		var listIdentifier = $(object).attr('id'),
-*/
-		var sampleListTreeNode = $('#sampleFolderTree').dynatree('getTree'),
-			additionalLazyLoadUrl = '/1';
-/*		$.ajax(
-			{
-				url: '/Fieldbook/SampleListTreeManager/saveList/' + listIdentifier,
-				type: 'GET',
-				cache: false,
-				success: function(html) {
-					// WTF $('#saveSampleListTreeModal').data('is-save-crosses', '0');
-					$('#saveSampleRightSection').html(html);
-					setTimeout(function() {
-						$('#saveSampleListTreeModal').modal({ backdrop: 'static', keyboard: true });
-						TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
-					}, 300);
-					//we preselect the program lists
-					if (sampleListTreeNode !== null && sampleListTreeNode.getNodeByKey('LISTS') !== null) {
-						sampleListTreeNode.getNodeByKey('LISTS').activate();
-					}
-				}
-			}
-		);*/
+		var sampleListTreeNode = $('#sampleFolderTree').dynatree('getTree');
 		setTimeout(function() {
+
+			$('#saveSampleListTreeModal').on('shown.bs.modal', function () {
+				TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
+				$('#listName').val('');
+				$('#listDate').val('');
+				$('#listDescription').val('');
+				$('#listNotes').val('');
+				$('#listOwner').text(SampleList.createdBy);
+			});
 			$('#saveSampleListTreeModal').modal({ backdrop: 'static', keyboard: true });
-			//TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
+/*			TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
+			$('#listName').val('');
+			$('#listDate').val('');
+			$('#listDescription').val('');
+			$('#listNotes').val('');
+			$('#listOwner').text(SampleList.createdBy);*/
 		}, 300);
 		//we preselect the program lists
 		if (sampleListTreeNode !== null && sampleListTreeNode.getNodeByKey('LISTS') !== null) {
 			sampleListTreeNode.getNodeByKey('LISTS').activate();
 		}
-
 	};
 
 	SaveSampleList.save = function() {
@@ -90,7 +63,7 @@ var programUUID = undefined;
 			showInvalidInputMessage(listNameRequired);
 			return false;
 		}
-		sampleList.listName = $('#listName').val();
+		SampleList.listName = $('#listName').val();
 
 		if ($('#listDate').val() === '') {
 			showInvalidInputMessage(listDateRequired);
@@ -102,19 +75,19 @@ var programUUID = undefined;
 			showInvalidInputMessage(invalidDateMsg);
 			return false;
 		}
-		sampleList.createdDate = $('#listDate').val();
-		sampleList.description = $('#listDescription').val();
-		sampleList.notes = $('#listNotes').val();
+		SampleList.createdDate = $('#listDate').val();
+		SampleList.description = $('#listDescription').val();
+		SampleList.notes = $('#listNotes').val();
 
 		var parentId = chosenNodeFolder.data.key;
-		sampleList.parentId = parentId;
+		SampleList.parentId = parentId;
 
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 		$.ajax({
 			url: '/bmsapi/sampleLists/' + cropName + '/sampleList',
 			type: 'POST',
-			data: JSON.stringify(sampleList),
+			data: JSON.stringify(SampleList),
 			contentType: "application/json",
 			beforeSend: function (xhr) {
 				xhr.setRequestHeader('X-Auth-Token', xAuthToken);

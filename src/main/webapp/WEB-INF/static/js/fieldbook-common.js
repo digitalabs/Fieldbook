@@ -1042,7 +1042,7 @@ function createSample() {
 		return;
 	}
 
-	$('#managerSampleListModal').modal('hide');
+	$('#selectSelectionVariableToSampleListModal').modal('hide');
 	$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
 	$('#selectEnvironmentToSampleListModal').modal({ backdrop: 'static', keyboard: true });
 
@@ -1065,9 +1065,9 @@ function trialSelectedEnvironmentContinueCreatingSample(trialInstances) {
 	var idVal = $('#studyId').val();
 	$('#selectEnvironmentToSampleListModal').modal('hide');
 
-	var scope = angular.element('#managerSampleListModal').scope();
+	var scope = angular.element('#selectSelectionVariableToSampleListModal').scope();
     scope.init(idVal, trialInstances);
-    $('#managerSampleListModal').modal('show');
+    $('#selectSelectionVariableToSampleListModal').modal('show');
 }
 
 function openSampleSummary(plotId, plotNumber) {
@@ -2794,6 +2794,43 @@ function moveGermplasm(sourceNode, targetNode) {
 	});
 }
 
+function moveSamplesListFolder(sourceNode, targetNode) {
+
+	'use strict';
+	var sourceId = sourceNode.data.key,
+		targetId = targetNode.data.key;
+
+	if (targetId === 'LISTS') {
+		targetId = 0;
+	}
+
+	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+
+	$.ajax({
+		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId,
+		type: 'PUT',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+		},
+		error: function (data) {
+			if (data.status == 401) {
+				bmsAuth.handleReAuthentication();
+			} else if (data.status == 500) {
+				showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
+			} else if (data.status == 409) {
+				showErrorMessage('page-rename-message-modal', data.responseJSON.ERROR);
+
+			}
+		},
+		success: function() {
+			var node = targetNode;
+			sourceNode.remove();
+			doSampleLazyLoad(node);
+			node.focus();
+		}
+	});
+}
+
 function closeModal(modalId) {
 	'use strict';
 	$('#' + modalId).modal('hide');
@@ -2964,6 +3001,15 @@ function changeBrowseGermplasmButtonBehavior(isEnable) {
 		$('.browse-germplasm-action').removeClass('disable-image');
 	} else {
 		$('.browse-germplasm-action').addClass('disable-image');
+	}
+}
+
+function changeBrowseSampleButtonBehavior(isEnable) {
+	'use strict';
+	if (isEnable) {
+		$('.browse-sample-action').removeClass('disable-image');
+	} else {
+		$('.browse-sample-action').addClass('disable-image');
 	}
 }
 function showManageCheckTypePopup() {

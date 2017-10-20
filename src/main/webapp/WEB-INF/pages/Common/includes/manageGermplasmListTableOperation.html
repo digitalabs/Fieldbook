@@ -195,18 +195,26 @@
 			}
 			
 		}
-		
-        
 
         function hideAddGermplasmFolderDiv() {
             'use strict';
             $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').slideUp('fast');
         }
 
+		function hideAddSampleFolderDiv() {
+			'use strict';
+			$(getDisplayedModalSelector() + ' #addSampleFolderDiv').slideUp('fast');
+		}
+
         function hideRenameGermplasmFolderDiv() {
             'use strict';
             $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').slideUp('fast');
         }
+
+		function hideRenameSampleFolderDiv() {
+			'use strict';
+			$(getDisplayedModalSelector() + ' #renameSampleFolderDiv').slideUp('fast');
+		}
         
         function openListTree(type, selectListFunctionParam) {
 			'use strict';

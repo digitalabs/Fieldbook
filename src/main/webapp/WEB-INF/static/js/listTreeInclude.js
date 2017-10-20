@@ -1,10 +1,10 @@
 //<![CDATA[
 /*globals console, changeBrowseGermplasmButtonBehavior, chooseListNode, chooseList, showListTreeToolTip*/
-/*glboals getMessageErrorDiv, showErrorMessage, moveGermplasm*/
-/*exported displayGermplasmListTree, cannotMove,hasChildrenString,pleaseChooseFolder,openTreeType*/
-/*exported getDisplayedTreeName, doGermplasmLazyLoad*/
+/*glboals getMessageErrorDiv, showErrorMessage, moveGermplasm, moveSamplesListFolder*/
+/*exported displayGermplasmListTree, displaySampleListTree, cannotMove,hasChildrenString,pleaseChooseFolder,openTreeType*/
+/*exported getDisplayedTreeName, doGermplasmLazyLoad, doSampleLazyLoad*/
 
-var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/'', hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/'', pleaseChooseFolder = /*[[#{import.germplasm.choose.a.list}]]*/'', lazyLoadUrl = '/Fieldbook/ListTreeManager/expandGermplasmTree/', lazySampleLoadUrl = '/Fieldbook/ListTreeManager/expandSampleTree/', additionalLazyLoadUrl = '', germplasmFocusNode = null, sampleFocusNode = null, openTreeType = 0, selectListFunction;
+var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/'', hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/'', pleaseChooseFolder = /*[[#{import.germplasm.choose.a.list}]]*/'', lazyLoadUrl = '/Fieldbook/ListTreeManager/expandGermplasmTree/', lazySampleLoadUrl = '/Fieldbook/SampleListTreeManager/expandTree/', additionalLazyLoadUrl = '', germplasmFocusNode = null, sampleFocusNode = null, openTreeType = 0, selectListFunction;
 
 function getDisplayedTreeName() {
 	'use strict';
@@ -102,16 +102,16 @@ function doSampleLazyLoad(node) {
 				}
 
 				if (node.data.isFolder === false) {
-					changeBrowseGermplasmButtonBehavior(false);
+					changeBrowseSampleButtonBehavior(false);
 				} else {
 					if (node.data.key === 'LISTS') {
-						changeBrowseGermplasmButtonBehavior(true);
+						changeBrowseSampleButtonBehavior(true);
 						$('.edit-germplasm-folder').addClass(
 							'disable-image');
 						$('.delete-germplasm-folder').addClass(
 							'disable-image');
 					} else {
-						changeBrowseGermplasmButtonBehavior(true);
+						changeBrowseSampleButtonBehavior(true);
 					}
 				}
 			},
@@ -133,7 +133,6 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 	'use strict';
 	var lazyLoadUrlGetChildren = '/Fieldbook/ListTreeManager/expandGermplasmTree/';
 	var initLoadUrl = '/Fieldbook/ListTreeManager/loadInitGermplasmTree';
-	console.log('displayGermplasmListTree');
 	initLoadUrl += '/' + isFolderOnly;
 
 	var dynaTreeOptions = {
@@ -302,9 +301,8 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 							   clickFunction) {
 	'use strict';
-	var lazyLoadUrlGetChildren = '/Fieldbook/ListTreeManager/expandSampleTree/';
-	var initLoadUrl = '/Fieldbook/ListTreeManager/loadInitSampleTree';
-	console.log('displaySampleListTree');
+	var lazyLoadUrlGetChildren = '/Fieldbook/SampleListTreeManager/expandTree/';
+	var initLoadUrl = '/Fieldbook/SampleListTreeManager/loadInitTree';
 	initLoadUrl += '/' + isFolderOnly;
 
 	var dynaTreeOptions = {
@@ -319,12 +317,9 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 			dataType : 'json'
 		},
 		onLazyRead : function(node) {
-			console.log('onLazyRead');
 			doSampleLazyLoad(node);
 		},
 		onRender : function(node, nodeSpan) {
-			console.log('onRender');
-
 			if (node.data.key !== 'LISTS'
 				&& node.data.key !== '_statusNode'
 				&& node.data.isFolder === false) {
@@ -340,8 +335,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 									.find(
 										'a.dynatree-title')
 									.addClass('has-popover');
-								showListTreeToolTip(node,
-									nodeSpan);
+								//showListTreeSampleListToolTip(node, nodeSpan); // TODO NO ES NECESARIO??. CUENYAD
 							}
 
 						})
@@ -372,15 +366,14 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 									.find(
 										'a.dynatree-title')
 									.addClass('has-popover');
-								showListTreeToolTip(node,
-									nodeSpan);
+								//showListTreeToolTip(node, nodeSpan);  // TODO NO ES NECESARIO??. CUENYAD
 							}
 						});
 				if ($(nodeSpan).find('a.dynatree-title').hasClass(
 						'has-popover') === false) {
 					$(nodeSpan).find('a.dynatree-title').addClass(
 						'has-popover');
-					showListTreeToolTip(node, nodeSpan);
+					//showListTreeToolTip(node, nodeSpan);  // TODO NO ES NECESARIO??. CUENYAD
 				} else {
 					$('.popover').hide();
 					$(nodeSpan).find('a.dynatree-title')
@@ -390,7 +383,6 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 			sampleFocusNode = node;
 		},
 		onActivate : function(node) {
-
 			if (node.data.isFolder === false) {
 				changeBrowseSampleButtonBehavior(false);
 			} else {
@@ -431,6 +423,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 				 * the tree.
 				 */
 				if (sourceNode.hasChildren()) {
+					//console.log("Error aca onDrop moviendo");
 					showErrorMessage(getMessageErrorDiv(), cannotMove
 						+ ' ' + sourceNode.data.title + ' '
 						+ hasChildrenString);
@@ -444,7 +437,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 						success : function(data) {
 							var childCount = $.parseJSON(data).length;
 							if (childCount === 0) {
-								moveGermplasm(sourceNode, node);
+								moveSamplesListFolder(sourceNode, node);
 							} else {
 								showErrorMessage(getMessageErrorDiv(),
 									cannotMove + ' '

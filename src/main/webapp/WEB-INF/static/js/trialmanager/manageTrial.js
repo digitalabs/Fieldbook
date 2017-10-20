@@ -581,7 +581,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			$scope.closeSampleListTab = function(tab) {
 				var index = $scope.findIndexByKeyValue($scope.sampleListTabs, 'state', tab);
 				$scope.sampleListTabs.splice(index, 1);
-				$scope.sampleListTabsData.splice(index, 1);
+				$scope.sampleListData.splice(index, 1);
 				$scope.tabSelected = 'trialSettings';
 				$scope.isSettingsTab = true;
 			};

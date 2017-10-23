@@ -261,11 +261,10 @@ var ListTreeOperation = {};
 				error: function (data) {
 					if (data.status == 401) {
 						bmsAuth.handleReAuthentication();
+					} else if (data.status == 404 || data.status == 409) {
+						showErrorMessage('page-rename-message-modal', data.responseJSON.ERROR);
 					} else if (data.status == 500) {
 						showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
-					} else if (data.status == 409) {
-						showErrorMessage('page-rename-message-modal', data.responseJSON.ERROR);
-
 					}
 				},
 				success: function () {
@@ -344,20 +343,19 @@ var ListTreeOperation = {};
 			error: function (data) {
 				if (data.status == 401) {
 					bmsAuth.handleReAuthentication();
+				} else if (data.status == 404 || data.status == 409) {
+					showErrorMessage('page-rename-message-modal', data.responseJSON.ERROR);
 				} else if (data.status == 500) {
 					showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
-				} else if (data.status == 409) {
-					showErrorMessage('page-rename-message-modal', data.responseJSON.ERROR);
-
 				}
 			},
 			success: function() {
 				var node;
-				$('#deleteSampleListFolderModal').modal('hide');
 				node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 				node.remove();
 				showSuccessfulMessage('', deleteItemSuccessful);
 			}
 		});
+		$('#deleteSampleListFolderModal').modal('hide');
 	};
 })();

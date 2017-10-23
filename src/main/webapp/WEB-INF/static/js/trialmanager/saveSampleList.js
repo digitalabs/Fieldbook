@@ -7,7 +7,6 @@
 /*exported save, openSaveSampleListModal*/
 
 var SaveSampleList = {};
-var SampleList = {};
 (function() {
 	'use strict';
 	SaveSampleList.initializeSampleListTree = function() {
@@ -23,28 +22,21 @@ var SampleList = {};
 		});
 	};
 
-	SaveSampleList.openSaveSampleListModal = function(object) {
-		SampleList = object;
+	SaveSampleList.openSaveSampleListModal = function(details) {
+		SaveSampleList.details = details;
 		$('#selectSelectionVariableToSampleListModal').modal('hide');
 
 		var sampleListTreeNode = $('#sampleFolderTree').dynatree('getTree');
 		setTimeout(function() {
-
 			$('#saveSampleListTreeModal').on('shown.bs.modal', function () {
 				TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
 				$('#listName').val('');
 				$('#listDate').val('');
 				$('#listDescription').val('');
 				$('#listNotes').val('');
-				$('#listOwner').text(SampleList.createdBy);
+				$('#listOwner').text(SaveSampleList.details.createdBy);
 			});
 			$('#saveSampleListTreeModal').modal({ backdrop: 'static', keyboard: true });
-/*			TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
-			$('#listName').val('');
-			$('#listDate').val('');
-			$('#listDescription').val('');
-			$('#listNotes').val('');
-			$('#listOwner').text(SampleList.createdBy);*/
 		}, 300);
 		//we preselect the program lists
 		if (sampleListTreeNode !== null && sampleListTreeNode.getNodeByKey('LISTS') !== null) {
@@ -63,7 +55,7 @@ var SampleList = {};
 			showInvalidInputMessage(listNameRequired);
 			return false;
 		}
-		SampleList.listName = $('#listName').val();
+		SaveSampleList.details.listName = $('#listName').val();
 
 		if ($('#listDate').val() === '') {
 			showInvalidInputMessage(listDateRequired);
@@ -75,19 +67,24 @@ var SampleList = {};
 			showInvalidInputMessage(invalidDateMsg);
 			return false;
 		}
-		SampleList.createdDate = $('#listDate').val();
-		SampleList.description = $('#listDescription').val();
-		SampleList.notes = $('#listNotes').val();
+		SaveSampleList.details.createdDate = $('#listDate').val();
+		SaveSampleList.details.description = $('#listDescription').val();
+		SaveSampleList.details.notes = $('#listNotes').val();
 
 		var parentId = chosenNodeFolder.data.key;
-		SampleList.parentId = parentId;
+
+		if (parentId === 'LISTS') {
+			parentId = 0;
+		}
+
+		SaveSampleList.details.parentId = parentId;
 
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 		$.ajax({
 			url: '/bmsapi/sampleLists/' + cropName + '/sampleList',
 			type: 'POST',
-			data: JSON.stringify(SampleList),
+			data: JSON.stringify(SaveSampleList.details),
 			contentType: "application/json",
 			beforeSend: function (xhr) {
 				xhr.setRequestHeader('X-Auth-Token', xAuthToken);

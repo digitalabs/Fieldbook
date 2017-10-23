@@ -73,4 +73,13 @@
 	</div>
 </div>
 
-<script type="text/javascript" th:src="@{/static/js/listTreeInclude.js}"></script>
+<div layout:fragment="page-script">
+	<script type="text/javascript" th:src="@{/static/js/listTreeInclude.js}"></script>
+	<script type='text/javascript' th:inline="javascript">
+		//<![CDATA[
+		var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/'';
+		var hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/'';
+		var	pleaseChooseFolder = /*[[#{import.germplasm.choose.a.list}]]*/'';
+		//]]>
+	</script>
+</div>

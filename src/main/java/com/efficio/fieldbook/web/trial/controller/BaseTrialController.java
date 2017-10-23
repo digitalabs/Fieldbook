@@ -39,10 +39,12 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.samplelist.SampleListDTO;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.SampleList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -578,6 +580,10 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		return advanceList;
+	}
+
+	protected List<SampleListDTO> getSampleList(final Integer trialId) {
+		return this.fieldbookMiddlewareService.getSampleLists(trialId);
 	}
 
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {

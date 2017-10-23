@@ -335,7 +335,7 @@ public class TreeViewUtil {
 
 		treeNode.setKey(sampleList.getId().toString());
 		treeNode.setTitle(sampleList.getListName());
-		treeNode.setIsFolder(sampleList.getType() != null && "FOLDER".equals(sampleList.getType().name()) ? true : false);
+		treeNode.setIsFolder(sampleList.isFolder() ? true : false);
 		treeNode.setIsLazy(false);
 		if (treeNode.getIsFolder()) {
 			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());

@@ -263,7 +263,7 @@ var TreePersist = {
 					node.deactivate();
 				});
 
-				if (shouldActivateNode) { // TODO CUENYAD HAY QUE ARREGLAR QUE RECUPERE LA ULTIMA LISTA SALVADA TABLA user_program_tree_state
+				if (shouldActivateNode) {
 					dynatree.getNodeByKey(expandedNodes[expandedNodes.length - 1]).activate();
 				}
 			}, 50);
@@ -276,12 +276,10 @@ var TreePersist = {
 		for (index = 0; index < expandedNodes.length; index++) {
 			key = expandedNodes[index];
 			if (index === 0) {
-				if (listType === GERMPLASM_LIST_TYPE) {
+				if (listType === GERMPLASM_LIST_TYPE || listType === SAMPLE_LIST_TYPE) {
 					key = 'LISTS';
 				} else if (listType === STUDY_LIST_TYPE) {
 					key = 'LOCAL';
-				} else if (listType === SAMPLE_LIST_TYPE) {
-					key = 'LISTS';
 				}
 			}
 			key = $.trim(key);

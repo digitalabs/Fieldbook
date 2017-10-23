@@ -1944,6 +1944,25 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
 	});
 }
 
+function displaySampleList(id, listName, isPageLoading) {
+	'use script';
+
+	var url = '/Fieldbook/germplasm/list/sampleList/' + id;
+
+	$.ajax({
+		url: url,
+		type: 'GET',
+		cache: false,
+		success: function(html) {
+				var element = angular.element(document.getElementById("mainApp")).scope();
+				// To apply scope safely
+				element.safeApply(function (){
+					element.addSampleListTabData(id, html, listName, isPageLoading);
+				});
+			}
+	});
+}
+
 function validateBreedingMethod() {
 	var id = $('#methodVariateId').val(),
 		valid = true;

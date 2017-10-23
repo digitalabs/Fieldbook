@@ -329,6 +329,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
 		model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
 		model.addAttribute("advancedList", this.getAdvancedList(trialId));
+		model.addAttribute("sampleList", this.getSampleList(trialId));
 
 		model.addAttribute("germplasmListSize", 0);
 	}

@@ -3,7 +3,7 @@
  validateAllDates, saveListSuccessfullyMessage */
 /*globals listParentFolderRequired, listNameRequired */
 /*globals listDateRequired, listTypeRequired, moveToTopScreen */
-/*globals TreePersist, showSuccessfulMessage, console, */
+/*globals TreePersist, showSuccessfulMessage, console */
 /*exported save, openSaveSampleListModal*/
 
 var SaveSampleList = {};
@@ -29,12 +29,13 @@ var SaveSampleList = {};
 		var sampleListTreeNode = $('#sampleFolderTree').dynatree('getTree');
 		setTimeout(function() {
 			$('#saveSampleListTreeModal').on('shown.bs.modal', function () {
-				TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
+				$(getDisplayedModalSelector() + ' #renameSampleFolderDiv').slideUp('fast');
 				$('#listName').val('');
-				$('#listDate').val('');
+				$('#listDate').datepicker({ dateFormat: 'yyyy-mm-dd'}).datepicker("setDate", new Date());
 				$('#listDescription').val('');
 				$('#listNotes').val('');
 				$('#listOwner').text(SaveSampleList.details.createdBy);
+				TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
 			});
 			$('#saveSampleListTreeModal').modal({ backdrop: 'static', keyboard: true });
 		}, 300);
@@ -99,9 +100,12 @@ var SaveSampleList = {};
 
 				}
 			},
-			success: function () {
+			success: function (response) {
 				$('#saveSampleListTreeModal').modal('hide');
 				showSuccessfulMessage('', saveListSuccessfullyMessage);
+				displaySampleList(
+					response.id, SaveSampleList.details.listName
+					, false);
 			}
 		});
 	};

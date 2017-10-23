@@ -182,7 +182,7 @@
 					</div>
 				</div>
 				<div class="row form-group">
-					<div class="col-xs-12 col-md-12 add_top_padding">
+					<div class="col-xs-12 col-md-12 add_top_padding text-center">
 						<label class="control-label" id="delete-SampleList-folder-confirm"></label>
 					</div>
 				</div>
@@ -204,8 +204,8 @@
 		$(document).ready(function() {
 			$('#saveSampleListTreeModal select').select2({minimumResultsForSearch: 20});
 
-			if ($('#saveSampleListTreeModal .date-input').length > 0) {
-				$('#saveSampleListTreeModal .date-input').each(function() {
+			if ($('.date-input').length > 0) {
+				$('.date-input').each(function() {
 					$(this).datepicker({'format': 'yyyy-mm-dd'}).on('changeDate', function() {
 						$(this).datepicker('hide');
 

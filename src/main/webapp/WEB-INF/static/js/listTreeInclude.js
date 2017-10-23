@@ -1,10 +1,15 @@
-//<![CDATA[
-/*globals console, changeBrowseGermplasmButtonBehavior, chooseListNode, chooseList, showListTreeToolTip*/
+/*globals console, changeBrowseGermplasmButtonBehavior, chooseListNode, chooseList, showListTreeToolTip, hasChildrenString, cannotMove, pleaseChooseFolder*/
 /*glboals getMessageErrorDiv, showErrorMessage, moveGermplasm, moveSamplesListFolder*/
-/*exported displayGermplasmListTree, displaySampleListTree, cannotMove,hasChildrenString,pleaseChooseFolder,openTreeType*/
+/*exported displayGermplasmListTree, displaySampleListTree, openTreeType*/
 /*exported getDisplayedTreeName, doGermplasmLazyLoad, doSampleLazyLoad*/
 
-var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/'', hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/'', pleaseChooseFolder = /*[[#{import.germplasm.choose.a.list}]]*/'', lazyLoadUrl = '/Fieldbook/ListTreeManager/expandGermplasmTree/', lazySampleLoadUrl = '/Fieldbook/SampleListTreeManager/expandTree/', additionalLazyLoadUrl = '', germplasmFocusNode = null, sampleFocusNode = null, openTreeType = 0, selectListFunction;
+var lazyLoadUrl = '/Fieldbook/ListTreeManager/expandGermplasmTree/',
+	lazySampleLoadUrl = '/Fieldbook/SampleListTreeManager/expandTree/',
+	additionalLazyLoadUrl = '',
+	germplasmFocusNode = null,
+	sampleFocusNode = null,
+	openTreeType = 0,
+	selectListFunction;
 
 function getDisplayedTreeName() {
 	'use strict';

@@ -30,6 +30,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
@@ -1178,12 +1179,10 @@ public class DesignImportController extends SettingsController {
 				// TermID 8180 is added in managementDetailValues
 				// so we need to convert it to LOCATION_NAME_ID (8190) and
 				// create and update the trial variables
-				if (resolvingTermIdKey.intValue() == TermId.TRIAL_LOCATION.getId()) {
+				if (resolvingTermIdKey.intValue() == TermId.TRIAL_LOCATION.getId() && this.isTermIdExisting(resolvingTermIdKey,
+						designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT))) {
 					// The termId of the pair ID variable
 					final String termIdOfPairIdVariable = nameIdMap.get(resolvingTermIdKey.toString().toUpperCase());
-
-					if (this.isTermIdExisting(resolvingTermIdKey,
-							designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT))) {
 
 						// It is expected that the LOCATION_NAME column in
 						// design file has the name values of the location.
@@ -1191,7 +1190,7 @@ public class DesignImportController extends SettingsController {
 						// corresponding locationid in the database.
 						this.populateTheValueOfLocationIDBasedOnLocationName(copyOfManagementDetailValues,
 								Integer.valueOf(termIdOfPairIdVariable), resolvingTermIdValue);
-					}
+
 
 					final SettingDetail settingDetail = this.createSettingDetail(
 							Integer.valueOf(termIdOfPairIdVariable), variableLocalName,
@@ -1215,7 +1214,8 @@ public class DesignImportController extends SettingsController {
 					// TermID 8373 is added in managementDetailValues
 					// so we need to convert it to COOPERATOR_ID (8372) and
 					// create and update the trial variables
-				} else if (resolvingTermIdKey.intValue() == TermId.COOPERATOR.getId()) {
+				} else if (resolvingTermIdKey.intValue() == TermId.COOPERATOR.getId() && this.isTermIdExisting(TermId.COOPERATOR.getId(),
+						designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT))) {
 
 					// The termId of the pair ID variable
 					final String termIdOfPairIdVariable = nameIdMap.get(resolvingTermIdKey.toString());
@@ -1246,7 +1246,7 @@ public class DesignImportController extends SettingsController {
 
 				} else {
 
-					// Every variable added in Environment tab should be added
+					// Every variable added in Environment tab that does not exist in mapped headers of Design Import Data should be added
 					// to the trial variables.
 					final MeasurementVariable measurementVariable = this.createMeasurementVariableFromStandardVariable(
 							standardVariableName, resolvingTermIdKey, PhenotypicType.TRIAL_ENVIRONMENT);
@@ -1294,7 +1294,7 @@ public class DesignImportController extends SettingsController {
 	/**
 	 * Gets the standard name of the specified termId in trial variable list if
 	 * available. If not, the system will search for the standard name from the
-	 * headers in Design Import Data.
+	 * headers in Design Import Data and Ontology.
 	 * 
 	 * @param termId
 	 * @param userSelection
@@ -1304,11 +1304,20 @@ public class DesignImportController extends SettingsController {
 	String resolveStandardVariableNameOfTheTrialEnvironmentVariable(final int termId,
 			final List<SettingDetail> trialLevelVariableList, final DesignImportData designImportData) {
 
+		// Get the standard variable name from the trialLevelVariableList if available
 		String standardVariableName = this.getVariableNameFromSettingDetails(termId, trialLevelVariableList);
 
+		// Get the standard variable name from the mapped headers of Design Import Data if available
 		if ("".equals(standardVariableName)) {
 			standardVariableName = this.getStandardVariableName(termId,
 					designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+		}
+
+		// Get the standard variable name from the Ontology if the term is not available from both trialLevelVariableList
+		// and mapped header of Design Import Data
+		if ("".equals(standardVariableName)) {
+			Term term = this.ontologyDataManager.getTermById(termId);
+			return term != null ? term.getName() : "";
 		}
 
 		return standardVariableName;

@@ -65,6 +65,7 @@ var SaveSampleList = {};
 	};
 
 	SaveSampleList.save = function() {
+		Spinner.play();
 		$("#saveSampleListTreeModal .form-group").removeClass("has-error");
 		var chosenNodeFolder = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 
@@ -102,7 +103,7 @@ var SaveSampleList = {};
 		SaveSampleList.details.parentId = parentId;
 
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
-
+		$("#saveList").prop("disabled", true);
 		$.ajax({
 			url: '/bmsapi/sampleLists/' + cropName + '/sampleList',
 			type: 'POST',
@@ -121,15 +122,17 @@ var SaveSampleList = {};
 					$('#listName').closest(".form-group").addClass("has-error");
 
 				}
+				Spinner.stop();
 			},
 			success: function (response) {
-				$('#saveSampleListTreeModal').modal('hide');
 				showSuccessfulMessage('', saveListSuccessfullyMessage);
-				displaySampleList(
-					response.id, SaveSampleList.details.listName
-					, false);
+				BMS.Fieldbook.MeasurementsDataTable('#measurement-table');
+				$('#saveSampleListTreeModal').modal('hide');
+				displaySampleList(response.id, SaveSampleList.details.listName, false);
+				Spinner.stop();
 			}
 		});
+		$("#saveList").prop("disabled", true);
 	};
 })();
 

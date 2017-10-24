@@ -46,11 +46,8 @@ var TreePersist = {
 	},
 	saveTreeState : function(isTreeTable, containerSection, listType) {
 		'use strict';
-		//console.log("saveTreeState --> isTreeTable:" + isTreeTable + " ,containerSection:" + containerSection + " ,listType:" + listType);
-
 		var expandedNodesState = TreePersist.retrieveExpandedNodes(isTreeTable,
 				containerSection);
-		//console.log("saveTreeState -->  expandedNodesState: " + expandedNodesState + " ,listType:" + listType);
 		if (expandedNodesState.length === 0) {
 			expandedNodesState = ['None'];
 		}
@@ -63,7 +60,6 @@ var TreePersist = {
 			cache : false,
 			async : false,
 			success : function(data) {
-				//console.log("saveTreeState: " + data);
 			}
 		});
 	},
@@ -74,7 +70,6 @@ var TreePersist = {
 	},
 	preLoadGermplasmTreeState: function(isTreeTable, containerSection, isSaveList) {
 		'use strict';
-		//console.log("isTreeTable:" + isTreeTable + " ,containerSection:" + containerSection + " ,isSaveList:" + isSaveList);
 		if (isTreeTable){
 			TreePersist.preLoadTreeTableState(GERMPLASM_LIST_TYPE, isSaveList);
 		} else {
@@ -85,7 +80,6 @@ var TreePersist = {
 
 	preLoadSampleTreeState: function(isTreeTable, containerSection, isSaveList) {
 		'use strict';
-		//console.log("isTreeTable:" + isTreeTable + " ,containerSection:" + containerSection + " ,isSaveList:" + isSaveList);
 		if (isTreeTable){
 			TreePersist.preLoadTreeTableSampleListState(SAMPLE_LIST_TYPE, isSaveList);
 		} else {
@@ -96,7 +90,6 @@ var TreePersist = {
 	retrievePreviousTreeState: function(listType, isSaveList) {
 		'use strict';
 		var deferred = $.Deferred();
-		//console.log("retrievePreviousTreeState--> listType:" + listType + " ,isSaveList:" + isSaveList);
 
 		if (isSaveList === undefined) {
 			isSaveList = false;
@@ -128,7 +121,6 @@ var TreePersist = {
 		if (isSaveList === undefined) {
 			isSaveList = false;
 		}
-		//console.log("retrievePreviousTreeSampleListState--> listType:" + listType + " ,isSaveList:" + isSaveList);
 
 		$.ajax({
 			url: '/Fieldbook/SampleListTreeManager/retrieve/state/' + listType + '/' + isSaveList,
@@ -138,7 +130,6 @@ var TreePersist = {
 			async : false,
 			success : function(data) {
 				var expandedNodes = $.parseJSON(data);
-				//console.log("retrievePreviousTreeSampleListState--> data:" + data);
 				if((expandedNodes.length === 1 && expandedNodes[0] === '') || expandedNodes.length === 0){
 					deferred.reject(expandedNodes);
 				} else {
@@ -157,7 +148,6 @@ var TreePersist = {
 		if (isSaveList === undefined) {
 			isSaveList = false;
 		}
-		//console.log("retrievePreviousTreeSampleListState: ");
 
 		$.ajax({
 			url: '/Fieldbook/SampleListTreeManager/retrieve/state/' + listType + '/' + isSaveList,
@@ -167,7 +157,6 @@ var TreePersist = {
 			async : false,
 			success : function(data) {
 				var expandedNodes = $.parseJSON(data);
-				//console.log(data);
 				if((expandedNodes.length === 1 && expandedNodes[0] === '') || expandedNodes.length === 0){
 					deferred.reject(expandedNodes);
 				} else {

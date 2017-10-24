@@ -54,6 +54,7 @@ var SaveSampleList = {};
 				lisNameEmpy = true;
 				listDateEmpty = false;
 				TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
+				$("#saveSampleListTreeModal .form-group").removeClass("has-error");
 			});
 			$('#saveSampleListTreeModal').modal({ backdrop: 'static', keyboard: true });
 		}, 300);
@@ -71,6 +72,7 @@ var SaveSampleList = {};
 			return false;
 		}
 		if ($('#listName').val() === '') {
+			$('#listName').closest(".form-group").addClass("has-error");
 			showInvalidInputMessage(listNameRequired);
 			return false;
 		}

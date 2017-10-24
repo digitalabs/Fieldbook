@@ -65,6 +65,7 @@ var SaveSampleList = {};
 	};
 
 	SaveSampleList.save = function() {
+		$("#saveSampleListTreeModal .form-group").removeClass("has-error");
 		var chosenNodeFolder = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 
 		if (chosenNodeFolder === null) {
@@ -117,6 +118,7 @@ var SaveSampleList = {};
 					showErrorMessage('page-save-list-message-modal', data.responseJSON.errors[0].message);
 				} else if (data.status == 409) {
 					showErrorMessage('page-save-list-message-modal', data.responseJSON.ERROR);
+					$('#listName').closest(".form-group").addClass("has-error");
 
 				}
 			},

@@ -1,6 +1,6 @@
 /*globals displaySampleListTree, changeBrowseSampleButtonBehavior, displayAdvanceList,saveGermplasmReviewError */
-/*globals $,showErrorMessage, showInvalidInputMessage, getDisplayedTreeName,listShouldNotBeEmptyError,getJquerySafeId,
- validateAllDates, saveListSuccessfullyMessage */
+/*globals $,showErrorMessage, showInvalidInputMessage, getDisplayedTreeName, listShouldNotBeEmptyError, getJquerySafeId,
+ validateAllDates, saveSampleListSuccessfullyMessage */
 /*globals listParentFolderRequired, listNameRequired */
 /*globals listDateRequired, listTypeRequired, moveToTopScreen */
 /*globals TreePersist, showSuccessfulMessage, console */
@@ -125,14 +125,19 @@ var SaveSampleList = {};
 				Spinner.stop();
 			},
 			success: function (response) {
-				showSuccessfulMessage('', saveListSuccessfullyMessage);
-				BMS.Fieldbook.MeasurementsDataTable('#measurement-table');
+				showSuccessfulMessage('', saveSampleListSuccessfullyMessage);
+				if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
+					BMS.Fieldbook.MeasurementsDataTable('#measurement-table');
+
+				}
 				$('#saveSampleListTreeModal').modal('hide');
 				displaySampleList(response.id, SaveSampleList.details.listName, false);
 				Spinner.stop();
 			}
+
 		});
 		$("#saveList").prop("disabled", true);
+
 	};
 })();
 

@@ -9,12 +9,28 @@
 var SaveSampleList = {};
 (function() {
 	'use strict';
+	var lisNameEmpy = true, listDateEmpty = false;
+	$("#listName").keyup(function () {
+		lisNameEmpy = this.value === '';
+		var disableButton = lisNameEmpy || listDateEmpty;
+		$("#saveList").prop("disabled", disableButton);
+	});
+
+	$("#listDate").keyup(function () {
+		listDateEmpty = this.value === '';
+		var disableButton = lisNameEmpy || listDateEmpty;
+		$("#saveList").prop("disabled", disableButton);
+	});
+
 	SaveSampleList.initializeSampleListTree = function() {
 		displaySampleListTree('sampleFolderTree', true, 1);
 		changeBrowseSampleButtonBehavior(false);
 		$('#saveSampleListTreeModal').off('hide.bs.modal');
 		$('#saveSampleListTreeModal').on('hide.bs.modal', function() {
 			TreePersist.saveSampleTreeState(false, '#sampleFolderTree');
+			listDateEmpty = $('#listDate').val() === '';
+			var disableButton = lisNameEmpy || listDateEmpty;
+			$("#saveList").prop("disabled", disableButton);
 		});
 		$('#saveSampleListTreeModal').on('hidden.bs.modal', function() {
 			$('#sampleFolderTree').dynatree('getTree').reload();
@@ -35,6 +51,8 @@ var SaveSampleList = {};
 				$('#listDescription').val('');
 				$('#listNotes').val('');
 				$('#listOwner').text(SaveSampleList.details.createdBy);
+				lisNameEmpy = true;
+				listDateEmpty = false;
 				TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
 			});
 			$('#saveSampleListTreeModal').modal({ backdrop: 'static', keyboard: true });

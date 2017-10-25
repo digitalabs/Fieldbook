@@ -9,18 +9,14 @@
 var SaveSampleList = {};
 (function() {
 	'use strict';
-	var lisNameEmpy = true, listDateEmpty = false;
-	$("#sampleListName").keyup(function () {
-		lisNameEmpy = this.value === '';
-		var disableButton = lisNameEmpy || listDateEmpty;
-		$("#submitSampleList").prop("disabled", disableButton);
-	});
 
-	$("#sampleListDate").keyup(function () {
-		listDateEmpty = this.value === '';
-		var disableButton = lisNameEmpy || listDateEmpty;
+	var toggleSaveButton = function () {
+		var disableButton = $("#sampleListName").val() === ''
+			|| $('#sampleListDate').val() === '';
 		$("#submitSampleList").prop("disabled", disableButton);
-	});
+	};
+
+	$("#sampleListName, #sampleListDate").on("change keyup", toggleSaveButton);
 
 	SaveSampleList.initializeSampleListTree = function() {
 		displaySampleListTree('sampleFolderTree', true, 1);
@@ -28,9 +24,7 @@ var SaveSampleList = {};
 		$('#saveSampleListTreeModal').off('hide.bs.modal');
 		$('#saveSampleListTreeModal').on('hide.bs.modal', function() {
 			TreePersist.saveSampleTreeState(false, '#sampleFolderTree');
-			listDateEmpty = $('#listDate').val() === '';
-			var disableButton = lisNameEmpy || listDateEmpty;
-			$("#submitSampleList").prop("disabled", disableButton);
+			toggleSaveButton();
 		});
 		$('#saveSampleListTreeModal').on('hidden.bs.modal', function() {
 			$('#sampleFolderTree').dynatree('getTree').reload();
@@ -51,8 +45,6 @@ var SaveSampleList = {};
 				$('#sampleListDescription').val('');
 				$('#sampleListNotes').val('');
 				$('#sampleListOwner').text(SaveSampleList.details.createdBy);
-				lisNameEmpy = true;
-				listDateEmpty = false;
 				TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
 				$("#saveSampleListTreeModal .form-group").removeClass("has-error");
 			});
@@ -65,7 +57,6 @@ var SaveSampleList = {};
 	};
 
 	SaveSampleList.save = function() {
-		Spinner.play();
 		$("#saveSampleListTreeModal .form-group").removeClass("has-error");
 		var chosenNodeFolder = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 
@@ -89,7 +80,10 @@ var SaveSampleList = {};
 		SaveSampleList.details.parentId = parentId;
 
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+
 		$("#submitSampleList").prop("disabled", true);
+		Spinner.play();
+
 		$.ajax({
 			url: '/bmsapi/sampleLists/' + cropName + '/sampleList',
 			type: 'POST',
@@ -115,10 +109,12 @@ var SaveSampleList = {};
 				}
 				$('#saveSampleListTreeModal').modal('hide');
 				displaySampleList(response.id, SaveSampleList.details.listName, false);
+			},
+			complete: function () {
+				$("#submitSampleList").prop("disabled", false);
+				Spinner.stop();
 			}
 		});
-		Spinner.stop();
-		$("#submitSampleList").prop("disabled", false);
 	};
 })();
 

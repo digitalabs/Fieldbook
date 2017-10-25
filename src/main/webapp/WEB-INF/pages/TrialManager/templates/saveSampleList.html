@@ -105,7 +105,7 @@
 								<label class="control-label label-bold" th:text="#{germplasm.save.list.name.label}">List Name:</label><span class="required">*</span>
 							</div>
 							<div class="col-xs-7 col-md-7">
-								<input type="text" id="listName" class="form-control" value=""/>
+								<input type="text" id="sampleListName" class="form-control" value=""/>
 							</div>
 						</div>
 						<div class="row form-group">
@@ -113,7 +113,7 @@
 								<label class="control-label label-bold" th:text="#{germplasm.save.list.owner.label}">List Owner:</label>
 							</div>
 							<div class="col-xs-7 col-md-7">
-								<label class="control-label" id="listOwner"></label>
+								<label class="control-label" id="sampleListOwner"></label>
 							</div>
 						</div>
 
@@ -123,7 +123,7 @@
 									Description:</label>
 							</div>
 							<div class="col-xs-7 col-md-7">
-								<textarea rows="5" cols="20" class="form-control" id="listDescription"/>
+								<textarea rows="5" cols="20" class="form-control" id="sampleListDescription"/>
 							</div>
 						</div>
 						<div class="row form-group">
@@ -139,8 +139,8 @@
 								<label class="control-label label-bold" th:text="#{germplasm.save.list.date.label}">List Date:</label><span class="required">*</span>
 							</div>
 							<div class="col-xs-7 col-md-7" data-date="" data-date-format="yyyymmdd">
-								<input placeholder="yyyy-mm-dd" type="text" id="listDate" class="form-control date-input" value="" style="width: 100px"/>
-								<label for="listDate" class="btn datepicker">
+								<input placeholder="yyyy-mm-dd" type="text" id="sampleListDate" class="form-control date-input" value="" style="width: 100px"/>
+								<label for="sampleListDate" class="btn datepicker">
 									<img width="20" height="22" th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;"/>
 								</label>
 							</div>
@@ -151,7 +151,7 @@
 								<label class="control-label label-bold" th:text="#{germplasm.save.list.notes.label}">Notes:</label>
 							</div>
 							<div class="col-xs-7 col-md-7">
-								<textarea rows="5" cols="20" class="form-control" id="listNotes"/>
+								<textarea rows="5" cols="20" class="form-control" id="sampleListNotes"/>
 							</div>
 						</div>
 					</div>
@@ -159,7 +159,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-				<button type="button" class="btn btn-primary" th:text="#{common.form.save.text}" id="saveList" disabled="disabled" onclick="javascript: SaveSampleList.save();">Ok</button>
+				<button type="button" class="btn btn-primary" th:text="#{common.form.save.text}" id="submitSampleList" disabled="disabled" onclick="javascript: SaveSampleList.save();">Ok</button>
 			</div>
 		</div>
 	</div>

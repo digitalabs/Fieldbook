@@ -10,16 +10,16 @@ var SaveSampleList = {};
 (function() {
 	'use strict';
 	var lisNameEmpy = true, listDateEmpty = false;
-	$("#listName").keyup(function () {
+	$("#sampleListName").keyup(function () {
 		lisNameEmpy = this.value === '';
 		var disableButton = lisNameEmpy || listDateEmpty;
-		$("#saveList").prop("disabled", disableButton);
+		$("#submitSampleList").prop("disabled", disableButton);
 	});
 
-	$("#listDate").keyup(function () {
+	$("#sampleListDate").keyup(function () {
 		listDateEmpty = this.value === '';
 		var disableButton = lisNameEmpy || listDateEmpty;
-		$("#saveList").prop("disabled", disableButton);
+		$("#submitSampleList").prop("disabled", disableButton);
 	});
 
 	SaveSampleList.initializeSampleListTree = function() {
@@ -30,7 +30,7 @@ var SaveSampleList = {};
 			TreePersist.saveSampleTreeState(false, '#sampleFolderTree');
 			listDateEmpty = $('#listDate').val() === '';
 			var disableButton = lisNameEmpy || listDateEmpty;
-			$("#saveList").prop("disabled", disableButton);
+			$("#submitSampleList").prop("disabled", disableButton);
 		});
 		$('#saveSampleListTreeModal').on('hidden.bs.modal', function() {
 			$('#sampleFolderTree').dynatree('getTree').reload();
@@ -46,11 +46,11 @@ var SaveSampleList = {};
 		setTimeout(function() {
 			$('#saveSampleListTreeModal').on('shown.bs.modal', function () {
 				$(getDisplayedModalSelector() + ' #renameSampleFolderDiv').slideUp('fast');
-				$('#listName').val('');
-				$('#listDate').datepicker({ dateFormat: 'yyyy-mm-dd'}).datepicker("setDate", new Date());
-				$('#listDescription').val('');
-				$('#listNotes').val('');
-				$('#listOwner').text(SaveSampleList.details.createdBy);
+				$('#sampleListName').val('');
+				$('#sampleListDate').datepicker({ dateFormat: 'yyyy-mm-dd'}).datepicker("setDate", new Date());
+				$('#sampleListDescription').val('');
+				$('#sampleListNotes').val('');
+				$('#sampleListOwner').text(SaveSampleList.details.createdBy);
 				lisNameEmpy = true;
 				listDateEmpty = false;
 				TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
@@ -70,29 +70,15 @@ var SaveSampleList = {};
 		var chosenNodeFolder = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 
 		if (chosenNodeFolder === null) {
+			Spinner.stop();
 			showErrorMessage('page-save-list-message-modal', listParentFolderRequired);
 			return false;
 		}
-		if ($('#listName').val() === '') {
-			$('#listName').closest(".form-group").addClass("has-error");
-			showInvalidInputMessage(listNameRequired);
-			return false;
-		}
-		SaveSampleList.details.listName = $('#listName').val();
 
-		if ($('#listDate').val() === '') {
-			showInvalidInputMessage(listDateRequired);
-			return false;
-		}
-
-		var invalidDateMsg = validateAllDates();
-		if (invalidDateMsg !== '') {
-			showInvalidInputMessage(invalidDateMsg);
-			return false;
-		}
-		SaveSampleList.details.createdDate = $('#listDate').val();
-		SaveSampleList.details.description = $('#listDescription').val();
-		SaveSampleList.details.notes = $('#listNotes').val();
+		SaveSampleList.details.listName = $('#sampleListName').val();
+		SaveSampleList.details.createdDate = $('#sampleListDate').val();
+		SaveSampleList.details.description = $('#sampleListDescription').val();
+		SaveSampleList.details.notes = $('#sampleListNotes').val();
 
 		var parentId = chosenNodeFolder.data.key;
 
@@ -103,7 +89,7 @@ var SaveSampleList = {};
 		SaveSampleList.details.parentId = parentId;
 
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
-		$("#saveList").prop("disabled", true);
+		$("#submitSampleList").prop("disabled", true);
 		$.ajax({
 			url: '/bmsapi/sampleLists/' + cropName + '/sampleList',
 			type: 'POST',
@@ -119,25 +105,20 @@ var SaveSampleList = {};
 					showErrorMessage('page-save-list-message-modal', data.responseJSON.errors[0].message);
 				} else if (data.status == 409) {
 					showErrorMessage('page-save-list-message-modal', data.responseJSON.ERROR);
-					$('#listName').closest(".form-group").addClass("has-error");
-
+					$('#sampleListName').closest(".form-group").addClass("has-error");
 				}
-				Spinner.stop();
 			},
 			success: function (response) {
 				showSuccessfulMessage('', saveSampleListSuccessfullyMessage);
 				if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
 					BMS.Fieldbook.MeasurementsDataTable('#measurement-table');
-
 				}
 				$('#saveSampleListTreeModal').modal('hide');
 				displaySampleList(response.id, SaveSampleList.details.listName, false);
-				Spinner.stop();
 			}
-
 		});
-		$("#saveList").prop("disabled", true);
-
+		Spinner.stop();
+		$("#submitSampleList").prop("disabled", false);
 	};
 })();
 

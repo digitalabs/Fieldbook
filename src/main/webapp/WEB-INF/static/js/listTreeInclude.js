@@ -302,6 +302,7 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 }
 
 
+// TODO Extract common functionality with displayGermplasmListTree
 /** Sample Tree **/
 function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 							   clickFunction) {

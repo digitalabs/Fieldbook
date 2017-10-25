@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The Class SampleTreeController.
+ * The Class SampleTreeController. <br/>
+ * TODO Extract supper class with {@link GermplasmTreeController}
  */
 @Controller
 @RequestMapping(value = "/SampleListTreeManager")

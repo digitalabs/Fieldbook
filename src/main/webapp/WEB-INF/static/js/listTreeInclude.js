@@ -328,7 +328,6 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 			if (node.data.key !== 'LISTS'
 				&& node.data.key !== '_statusNode'
 				&& node.data.isFolder === false) {
-				//showListTreeToolTip(node, nodeSpan);
 				$(nodeSpan)
 					.find('a.dynatree-title')
 					.hover(
@@ -340,9 +339,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 									.find(
 										'a.dynatree-title')
 									.addClass('has-popover');
-								//showListTreeSampleListToolTip(node, nodeSpan); // TODO NO ES NECESARIO??. CUENYAD
 							}
-
 						})
 			}
 		},
@@ -371,14 +368,12 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 									.find(
 										'a.dynatree-title')
 									.addClass('has-popover');
-								//showListTreeToolTip(node, nodeSpan);  // TODO NO ES NECESARIO??. CUENYAD
 							}
 						});
 				if ($(nodeSpan).find('a.dynatree-title').hasClass(
 						'has-popover') === false) {
 					$(nodeSpan).find('a.dynatree-title').addClass(
 						'has-popover');
-					//showListTreeToolTip(node, nodeSpan);  // TODO NO ES NECESARIO??. CUENYAD
 				} else {
 					$('.popover').hide();
 					$(nodeSpan).find('a.dynatree-title')

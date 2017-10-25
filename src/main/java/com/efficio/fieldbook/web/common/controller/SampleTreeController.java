@@ -10,7 +10,7 @@ import org.generationcp.commons.service.UserTreeStateService;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmFolderMetadata;
 import org.generationcp.middleware.pojos.SampleList;
-import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.SampleListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -66,7 +66,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	public static final int BATCH_SIZE = 500;
 
 	@Resource
-	private FieldbookService fieldbookMiddlewareService;
+	private SampleListService sampleListService;
 
 	@Resource
 	private UserTreeStateService userTreeStateService;
@@ -106,7 +106,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 
 		final List<SampleList> rootLists;
 		if (SampleTreeController.LISTS.equals(parentKey)) {
-			rootLists = this.fieldbookMiddlewareService.getAllSampleTopLevelLists(programUUID);
+			rootLists = this.sampleListService.getAllSampleTopLevelLists(programUUID);
 		} else if (NumberUtils.isNumber(parentKey)) {
 			rootLists = this.getSampleChildrenNode(parentKey, programUUID);
 		} else {
@@ -114,7 +114,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 		}
 		final List<TreeNode> childNodes = TreeViewUtil.convertListToTreeView(rootLists, isFolderOnly);
 
-		final Map<Integer, GermplasmFolderMetadata> allListMetaData = this.fieldbookMiddlewareService.getSampleFolderMetadata(rootLists);
+		final Map<Integer, GermplasmFolderMetadata> allListMetaData = this.sampleListService.getFolderMetadata(rootLists);
 
 		for (final TreeNode newNode : childNodes) {
 			final GermplasmFolderMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));
@@ -127,7 +127,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 
 	private List<SampleList> getSampleChildrenNode(final String parentKey, final String programUUID) {
 		final int parentId = Integer.parseInt(parentKey);
-		return this.fieldbookMiddlewareService.getSampleListByParentFolderIdBatched(parentId, programUUID, SampleTreeController.BATCH_SIZE);
+		return this.sampleListService.getSampleListByParentFolderIdBatched(parentId, programUUID, SampleTreeController.BATCH_SIZE);
 	}
 
 	/**
@@ -204,8 +204,8 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 		return null;
 	}
 
-	protected void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
-		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	protected void setSampleListService(final SampleListService sampleListService) {
+		this.sampleListService = sampleListService;
 	}
 
 	protected String getCurrentProgramUUID() {

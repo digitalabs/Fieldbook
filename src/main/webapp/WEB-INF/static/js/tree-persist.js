@@ -141,33 +141,6 @@ var TreePersist = {
 		return deferred.promise();
 	},
 
-	retrievePreviousTreeSampleListState: function(listType, isSaveList) {
-		'use strict';
-		var deferred = $.Deferred();
-
-		if (isSaveList === undefined) {
-			isSaveList = false;
-		}
-
-		$.ajax({
-			url: '/Fieldbook/SampleListTreeManager/retrieve/state/' + listType + '/' + isSaveList,
-			type : 'GET',
-			data : '',
-			cache : false,
-			async : false,
-			success : function(data) {
-				var expandedNodes = $.parseJSON(data);
-				if((expandedNodes.length === 1 && expandedNodes[0] === '') || expandedNodes.length === 0){
-					deferred.reject(expandedNodes);
-				} else {
-					deferred.resolve(expandedNodes);
-				}
-			}
-		});
-
-		return deferred.promise();
-	},
-
 	preLoadTreeTableState: function(listType, isSaveList) {
 		'use strict';
 		TreePersist.retrievePreviousTreeState(listType, isSaveList).done(function(expandedNodes) {

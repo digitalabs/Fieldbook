@@ -204,26 +204,6 @@ public class TreeViewUtil {
 	}
 
 	/**
-	 * Convert SampleLists list to tree view.
-	 *
-	 * @param sampleLists the germplasm lists
-	 * @return the list
-	 */
-	public static List<TreeNode> convertSampleListToTreeView(List<SampleList> sampleLists, boolean isFolderOnly) {
-		List<TreeNode> treeNodes = new ArrayList<>();
-		if (sampleLists != null && !sampleLists.isEmpty()) {
-			for (SampleList sampleList : sampleLists) {
-				TreeNode node = TreeViewUtil.convertSampleListToTreeNode(sampleList, isFolderOnly);
-				if (node != null) {
-					treeNodes.add(node);
-				}
-			}
-		}
-		return treeNodes;
-	}
-
-
-	/**
 	 * Convert sample list to tree view.
 	 *
 	 * @param sampleLists the sample lists
@@ -335,7 +315,7 @@ public class TreeViewUtil {
 
 		treeNode.setKey(sampleList.getId().toString());
 		treeNode.setTitle(sampleList.getListName());
-		treeNode.setIsFolder(sampleList.isFolder() ? true : false);
+		treeNode.setIsFolder(sampleList.isFolder());
 		treeNode.setIsLazy(false);
 		if (treeNode.getIsFolder()) {
 			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
@@ -373,30 +353,6 @@ public class TreeViewUtil {
 		return treeNode;
 	}
 
-	/**
-	 * Convert germplasm list to tree node.
-	 *
-	 * @param sampleList the germplasm list
-	 * @return the tree node
-	 */
-	private static TreeNode convertSampleListToTreeNode(SampleList sampleList, boolean isFolderOnly) {
-		TreeNode treeNode = new TreeNode();
-
-		treeNode.setKey(sampleList.getId().toString());
-		treeNode.setTitle(sampleList.getListName());
-		treeNode.setIsFolder(sampleList.isFolder() ? true : false);
-		treeNode.setIsLazy(false);
-		if (treeNode.getIsFolder()) {
-			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
-		} else {
-			treeNode.setIcon(AppConstants.BASIC_DETAILS_PNG.getString());
-		}
-		if (isFolderOnly && !treeNode.getIsFolder()) {
-			return null;
-		}
-
-		return treeNode;
-	}
 	/**
 	 * Convert germplasm list to tree node.
 	 *

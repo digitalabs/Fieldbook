@@ -1947,7 +1947,7 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
 function displaySampleList(id, listName, isPageLoading) {
 	'use script';
 
-	var url = '/Fieldbook/germplasm/list/sampleList/' + id;
+	var url = '/Fieldbook/sample/list/sampleList/' + id;
 
 	$.ajax({
 		url: url,

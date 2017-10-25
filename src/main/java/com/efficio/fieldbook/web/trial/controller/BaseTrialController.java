@@ -583,7 +583,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected List<SampleListDTO> getSampleList(final Integer trialId) {
-		return this.fieldbookMiddlewareService.getSampleLists(trialId);
+		return this.sampleListService.getSampleLists(trialId);
 	}
 
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {

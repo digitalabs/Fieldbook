@@ -424,7 +424,6 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 				 * the tree.
 				 */
 				if (sourceNode.hasChildren()) {
-					//console.log("Error aca onDrop moviendo");
 					showErrorMessage(getMessageErrorDiv(), cannotMove
 						+ ' ' + sourceNode.data.title + ' '
 						+ hasChildrenString);

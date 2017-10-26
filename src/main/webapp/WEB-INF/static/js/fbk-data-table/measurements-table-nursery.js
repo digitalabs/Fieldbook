@@ -366,7 +366,7 @@ function getColumns(tableIdentifier, displayColumns) {
 						var categoricalNameDom = '<span class="fbk-measurement-categorical-name" '+ showName  + '>' + EscapeHTML.escape(data[1]) + '</span>';
 						var categoricalDescDom = '<span class="fbk-measurement-categorical-desc" '+ showDescription  + '>' + EscapeHTML.escape(data[0]) + '</span>';
 
-						return (isVariates ? categoricalNameDom + categoricalDescDom : EscapeHTML.escape(data[1])) +
+						return categoricalNameDom + categoricalDescDom +
 							'<input type="hidden" value="' + EscapeHTML.escape(data[2]) + '" />';
 					}
 				}

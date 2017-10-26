@@ -44,9 +44,9 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.SampleList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +61,7 @@ import java.util.StringTokenizer;
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
+@Transactional
 public abstract class BaseTrialController extends SettingsController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BaseTrialController.class);

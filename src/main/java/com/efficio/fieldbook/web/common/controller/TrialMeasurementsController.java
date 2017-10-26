@@ -862,6 +862,10 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		for (final Pair<String, String> additionalGermplasmAttrCols : row.getAdditionalGermplasmDescriptors()) {
 			dataMap.put(additionalGermplasmAttrCols.getLeft(), new Object[] { additionalGermplasmAttrCols.getRight() });
 		}
+		
+		for (final Pair<String, String> additionalDesignCols : row.getAdditionalDesignFactors()) {
+			dataMap.put(additionalDesignCols.getLeft(), new Object[] { additionalDesignCols.getRight() });
+		}
 	}
 
 	void addDataTableDataMapForCategoricalVariable(final Variable measurementVariable, final MeasurementDto data,

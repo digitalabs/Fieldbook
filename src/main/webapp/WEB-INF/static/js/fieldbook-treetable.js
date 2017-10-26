@@ -80,7 +80,7 @@ function updateTools() {
 			changeBrowseGermplasmButtonBehavior(true);
 			$('.edit-germplasm-folder').addClass('disable-image');
 			$('.delete-germplasm-folder').addClass('disable-image');
-			hideRenameGermplasmFolderDiv();
+			hideFolderDiv('#renameGermplasmFolderDiv');
 		} else if ($(this).attr('num-of-children') !== '0') {
 			changeBrowseGermplasmButtonBehavior(true);
 			$('.delete-germplasm-folder').addClass('disable-image');
@@ -238,7 +238,7 @@ function createGermplasmFolderInTreeTable() {
 					var id = data.id;
 					selectNode(id);
 					setAsDroppableAndDraggable(id);
-					hideAddGermplasmFolderDiv();
+					hideFolderDiv('#addGermplasmFolderDiv');
 					changeBrowseGermplasmButtonBehavior(true);
 					showSuccessfulMessage('', addFolderSuccessful);
 				} else {
@@ -271,7 +271,7 @@ function selectNode(id) {
 function addGermplasmFolderInTreeTable(object) {
 	'use strict';
 	if (!$(object).hasClass('disable-image')) {
-		hideRenameGermplasmFolderDiv();
+		hideFolderDiv('#renameGermplasmFolderDiv');
 		$(getDisplayedModalSelector() + ' #addGermplasmFolderName').val('');
 		$(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').slideDown('fast');
 	}
@@ -283,8 +283,7 @@ function renameGermplasmFolerInTreeTable(object) {
 	var currentFolderName;
 
 	if (!$(object).hasClass('disable-image')) {
-		hideAddGermplasmFolderDiv();
-
+		hideFolderDiv('#addGermplasmFolderDiv');
 		currentFolderName = getSelectedGermplasmListName();
 		$(getDisplayedModalSelector() + ' #newGermplasmFolderName').val($.trim(currentFolderName));
 
@@ -312,7 +311,7 @@ function submitRenameGermplasmFolderInTreeTable() {
 
 	var name = getSelectedGermplasmListName();
 	if (folderName === $.trim(name)) {
-		hideRenameGermplasmFolderDiv();
+		hideFolderDiv('#renameGermplasmFolderDiv');
 		return false;
 	}
 
@@ -336,7 +335,7 @@ function submitRenameGermplasmFolderInTreeTable() {
 			success: function(data) {
 				var node;
 				if (data.isSuccess === '1') {
-					hideRenameGermplasmFolderDiv();
+					hideFolderDiv('#renameGermplasmFolderDiv');
 					setSelectedGermplasmListName(folderName);
 					showSuccessfulMessage('', renameItemSuccessful);
 				} else {

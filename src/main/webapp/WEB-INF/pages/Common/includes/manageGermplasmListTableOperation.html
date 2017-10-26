@@ -6,7 +6,7 @@
 			<form onsubmit="return createGermplasmFolderInTreeTable();">
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">					
+					<div class="col-xs-11 col-md-11">					h
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.add.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
@@ -196,26 +196,11 @@
 			
 		}
 
-        function hideAddGermplasmFolderDiv() {
-            'use strict';
-            $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').slideUp('fast');
-        }
-
-		function hideAddSampleFolderDiv() {
+		function hideFolderDiv(selector) {
 			'use strict';
-			$(getDisplayedModalSelector() + ' #addSampleFolderDiv').slideUp('fast');
+			$(getDisplayedModalSelector() + ' ' + selector).slideUp('fast');
 		}
 
-        function hideRenameGermplasmFolderDiv() {
-            'use strict';
-            $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').slideUp('fast');
-        }
-
-		function hideRenameSampleFolderDiv() {
-			'use strict';
-			$(getDisplayedModalSelector() + ' #renameSampleFolderDiv').slideUp('fast');
-		}
-        
         function openListTree(type, selectListFunctionParam) {
 			'use strict';
 			openTreeType = type;

@@ -146,24 +146,14 @@ var ListTreeOperation = {};
 		}
 	};
 
+	ListTreeOperation.hideFolderDiv = function(selector) {
+		'use strict';
+		$(getDisplayedModalSelector() + ' ' + selector).slideUp('fast');
+	};
+
 	ListTreeOperation.hideAddGermplasmFolderDiv = function() {
 		'use strict';
 		$(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').slideUp('fast');
-	};
-
-	ListTreeOperation.hideAddSampleListFolderDiv = function() {
-		'use strict';
-		$(getDisplayedModalSelector() + ' #addSampleFolderDiv').slideUp('fast');
-	};
-
-	ListTreeOperation.hideRenameGermplasmFolderDiv = function() {
-		'use strict';
-		$(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').slideUp('fast');
-	};
-
-	ListTreeOperation.hideRenameSampleListFolderDiv = function() {
-		'use strict';
-		$(getDisplayedModalSelector() + ' #renameSampleFolderDiv').slideUp('fast');
 	};
 
 	ListTreeOperation.hideDeleteGermplasmFolderDiv = function() {
@@ -286,8 +276,8 @@ var ListTreeOperation = {};
 		var currentFolderName;
 		if (!$(object).hasClass('disable-image')) {
 			$('#deleteFolderModal').modal('show');
-			hideAddGermplasmFolderDiv();
-			hideRenameGermplasmFolderDiv();
+			hideFolderDiv('#addGermplasmFolderDiv');
+			hideFolderDiv('#renameGermplasmFolderDiv');
 			currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title;
 			$('#delete-folder-confirm').html(deleteConfirmation + ' ' + currentFolderName + '?');
 			$('#page-delete-germplasm-folder-message-modal').html('');
@@ -299,8 +289,8 @@ var ListTreeOperation = {};
 		var currentFolderName;
 		if (!$(object).hasClass('disable-image')) {
 			$('#deleteSampleListFolderModal').modal('show');
-			hideAddSampleFolderDiv();
-			hideRenameSampleFolderDiv();
+			hideFolderDiv('#addSampleFolderDiv');
+			hideFolderDiv('#renameSampleFolderDiv');
 			currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title;
 			$('#delete-SampleList-folder-confirm').html(deleteConfirmation + ' ' + currentFolderName + '?');
 			$('#page-delete-germplasm-folder-message-modal').html('');

@@ -200,7 +200,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final List<ObservationDto> singleObservation = this.studyService
 				.getSingleObservation(this.userSelection.getWorkbook().getStudyDetails().getId(), experimentId);
 		if (!singleObservation.isEmpty()) {
-			dataMap = this.generateDatatableDataMap(singleObservation.get(0), "");
+			dataMap = this.generateDatatableDataMap(singleObservation.get(0));
 		}
 		map.put(TrialMeasurementsController.DATA, dataMap);
 		return map;
@@ -544,7 +544,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final List<ObservationDto> pageResults = this.studyService.getObservations(studyId, instanceId, pageNumber, pageSize, sortBy, sortOrder);
 
 		for (final ObservationDto row : pageResults) {
-			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
+			final Map<String, Object> dataMap = this.generateDatatableDataMap(row);
 			masterDataList.add(dataMap);
 		}
 
@@ -691,7 +691,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	Map<String, Object> generateDatatableDataMap(final ObservationDto row, final String suffix) {
+	Map<String, Object> generateDatatableDataMap(final ObservationDto row) {
 		final Map<String, Object> dataMap = new HashMap<>();
 		// the 4 attributes are needed always
 		dataMap.put("Action", Integer.toString(row.getMeasurementId()));
@@ -702,9 +702,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		dataMap.put(TrialMeasurementsController.DESIGNATION, row.getDesignation());
 
 		dataMap.put(String.valueOf(TermId.SAMPLES.getId()), new Object[] {row.getSamples(), row.getPlotId()});
-
-		// initialize suffix as empty string if its null
-		final String suffixValue = suffix == null ? "" : suffix;
 
 		final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
 		measurementDatasetVariables.addAll(this.userSelection.getWorkbook().getMeasurementDatasetVariablesView());
@@ -723,8 +720,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			if (measurementVariable != null) {
 				if (variable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
 
-					this.addDataTableDataMapForCategoricalVariable(variable, data, dataMap,
-							measurementVariable.getName(), suffixValue);
+					dataMap.put(measurementVariable.getName(),this.convertForCategoricalVariable(variable, data.getVariableValue(),
+							String.valueOf(data.getPhenotypeId()), false));
 
 				} else if (variable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
 					dataMap.put(measurementVariable.getName(),
@@ -864,16 +861,32 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 		
 		for (final Pair<String, String> additionalDesignCols : row.getAdditionalDesignFactors()) {
-			dataMap.put(additionalDesignCols.getLeft(), new Object[] { additionalDesignCols.getRight() });
+
+			final MeasurementVariable columnVariable = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, additionalDesignCols.getLeft());
+
+			if (columnVariable != null) {
+
+				final Variable variable = this.ontologyVariableDataManager
+						.getVariable(this.contextUtil.getCurrentProgramUUID(), columnVariable.getTermId(), true, false);
+
+				if (variable.getScale().getDataType().getId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+					dataMap.put(additionalDesignCols.getLeft(), convertForCategoricalVariable(variable, additionalDesignCols.getRight(), "", true));
+				} else {
+					dataMap.put(additionalDesignCols.getLeft(), new Object[] { additionalDesignCols.getRight() });
+				}
+
+
+			}
+
+
 		}
 	}
 
-	void addDataTableDataMapForCategoricalVariable(final Variable measurementVariable, final MeasurementDto data,
-			final Map<String, Object> dataMap, final String localVariableName, final String suffix) {
+	Object[] convertForCategoricalVariable(final Variable variable, final String variableValue, final String phenotypeId,
+			final boolean isFactor) {
 
-		if (StringUtils.isBlank(data.getVariableValue())) {
-			dataMap.put(localVariableName,
-					new Object[] { "", "", false, data.getPhenotypeId() != null ? data.getPhenotypeId() : "" });
+		if (StringUtils.isBlank(variableValue)) {
+			return new Object[] { "", "", false, phenotypeId != null ? phenotypeId : "" };
 		} else {
 			boolean isCategoricalValueFound = false;
 			String catName = "";
@@ -881,8 +894,11 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 			// Find the categorical value (possible value) of the measurement
 			// data, so we can get its name and definition.
-			for (final TermSummary category : measurementVariable.getScale().getCategories()) {
-				if (category.getName().equals(data.getVariableValue())) {
+			for (final TermSummary category : variable.getScale().getCategories()) {
+
+				String compareValue = isFactor ? String.valueOf(category.getId()) : category.getName();
+
+				if (compareValue.equalsIgnoreCase(variableValue)) {
 					catName = category.getName();
 					catDisplayValue = category.getDefinition();
 					isCategoricalValueFound = true;
@@ -894,11 +910,12 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			// then the assumption is, it is custom value.
 			// For this case, just display the measurement data as is.
 			if (!isCategoricalValueFound) {
-				catName = data.getVariableValue();
-				catDisplayValue = data.getVariableValue();
+				catName = variableValue;
+				catDisplayValue = variableValue;
 			}
-			dataMap.put(localVariableName, new Object[] { catName + suffix, catDisplayValue + suffix, true,
-					data.getPhenotypeId() != null ? data.getPhenotypeId() : "" });
+
+			return new Object[] { catName, catDisplayValue, true,
+					phenotypeId != null ? phenotypeId : "" };
 		}
 
 	}

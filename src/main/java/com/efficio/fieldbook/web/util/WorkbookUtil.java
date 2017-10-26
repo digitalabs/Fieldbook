@@ -97,6 +97,17 @@ public class WorkbookUtil {
 		return null;
 	}
 
+	public static MeasurementVariable getMeasurementVariable(final List<MeasurementVariable> variables, final String variableName) {
+		if (variables != null && !variables.isEmpty()) {
+			for (final MeasurementVariable variable : variables) {
+				if (variable != null && variableName.equalsIgnoreCase(variable.getName())) {
+					return variable;
+				}
+			}
+		}
+		return null;
+	}
+
 	public static List<MeasurementRow> createMeasurementRowsFromEnvironments(final List<Environment> environments,
 			final List<MeasurementVariable> variables, final ExpDesignParameterUi params) {
 

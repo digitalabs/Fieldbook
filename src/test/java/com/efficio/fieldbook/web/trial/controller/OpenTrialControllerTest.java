@@ -34,6 +34,7 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.samplelist.SampleListDTO;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -47,6 +48,7 @@ import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Assert;
 import org.junit.Before;
@@ -150,6 +152,9 @@ public class OpenTrialControllerTest {
 	@InjectMocks
 	private OpenTrialController openTrialController;
 
+	@Mock
+	private SampleListService sampleListService;
+
 	@Before
 	public void setUp() {
 		final Project project = this.createProject();
@@ -177,6 +182,9 @@ public class OpenTrialControllerTest {
 		final VariableTypeList factors = Mockito.mock(VariableTypeList.class);
 		Mockito.when(factors.findById(Matchers.anyInt())).thenReturn(null);
 		Mockito.when(this.studyDataManager.getAllStudyFactors(Matchers.anyInt())).thenReturn(factors);
+		final List<SampleListDTO> sampleListDTOs = new ArrayList<>();
+		Mockito.when(this.sampleListService.getSampleLists(Matchers.anyInt())).thenReturn(sampleListDTOs);
+
 
 	}
 

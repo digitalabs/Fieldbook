@@ -3,7 +3,7 @@
  validateAllDates, saveSampleListSuccessfullyMessage */
 /*globals listParentFolderRequired, listNameRequired */
 /*globals listDateRequired, listTypeRequired, moveToTopScreen */
-/*globals TreePersist, showSuccessfulMessage, console */
+/*globals TreePersist, showSuccessfulMessage, console, ListTreeOperation */
 /*exported save, openSaveSampleListModal*/
 
 var SaveSampleList = {};
@@ -53,6 +53,16 @@ var SaveSampleList = {};
 		//we preselect the program lists
 		if (sampleListTreeNode !== null && sampleListTreeNode.getNodeByKey('LISTS') !== null) {
 			sampleListTreeNode.getNodeByKey('LISTS').activate();
+		}
+	};
+	SaveSampleList.folderChangeKeypress = function (event, type){
+		'use strict';
+		if(event.keyCode === 13){
+			if(type === '1'){
+				ListTreeOperation.createSampleFolder();
+			}else if(type === '2'){
+				ListTreeOperation.submitRenameSampleListFolder();
+			}
 		}
 	};
 

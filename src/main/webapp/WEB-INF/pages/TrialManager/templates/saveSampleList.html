@@ -59,7 +59,7 @@
 								</div>
 								<div class="col-xs-8 col-md-8 nopadding">
 									<div class="input-group">
-										<input id="addFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '1');"/>
+										<input id="addFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="SaveSampleList.folderChangeKeypress(event, '1');"/>
 										<span class="input-group-btn">
                                      <button class="btn btn-success" id="addSampleFolderOkButton" onclick="javascript: ListTreeOperation.createSampleFolder()">
                                          <span class="glyphicon glyphicon-ok"></span>
@@ -79,7 +79,7 @@
 								</div>
 								<div class="col-xs-8 col-md-8 nopadding">
 									<div class="input-group">
-										<input id="renameFolderName" name="renameFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '2');"/>
+										<input id="renameFolderName" name="renameFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="SaveSampleList.folderChangeKeypress(event, '2');"/>
 										<span class="input-group-btn">
                                       <button class="btn btn-success" id="renameSampleFolderOkButton" onclick="javascript: ListTreeOperation.submitRenameSampleListFolder()">
                                           <span class="glyphicon glyphicon-ok"></span>

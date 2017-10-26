@@ -946,6 +946,12 @@ public class OpenTrialControllerTest {
 				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(1, "STD"));
 		Mockito.when(this.variableDataManager.getVariable(Matchers.anyString(), Matchers.anyInt(),
 				Matchers.anyBoolean(), Matchers.anyBoolean())).thenReturn(VariableTestDataInitializer.createVariable());
+
+		// Verify that workbook has Analysis and/or Analysis Summary variables
+		// beforehand to check that they were later removed
+		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConditions()));
+		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConstants()));
+
 		final Map<String, Object> resultMap = this.openTrialController
 				.updateSavedTrial(OpenTrialControllerTest.TRIAL_ID);
 		Assert.assertNotNull(resultMap.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
@@ -960,6 +966,10 @@ public class OpenTrialControllerTest {
 				.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(workbook.getConditions()));
 		Mockito.verify(this.userSelection, Mockito.times(1)).setExpDesignParams(
 				SettingsUtil.convertToExpDesignParamsUi(this.userSelection.getExperimentalDesignVariables()));
+
+		// Verify that Analysis and/or Analysis Summary variables are removed
+		Assert.assertFalse(this.hasAnalysisVariables(workbook.getConditions()));
+		Assert.assertFalse(this.hasAnalysisVariables(workbook.getConstants()));
 	}
 
 	@Test

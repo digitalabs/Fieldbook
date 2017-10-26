@@ -522,6 +522,9 @@ public class OpenTrialController extends BaseTrialController {
 	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") final int id) {
 		final Map<String, Object> returnVal = new HashMap<>();
 		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(id);
+
+		this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
+
 		this.userSelection.setWorkbook(trialWorkbook);
 		this.userSelection.setExperimentalDesignVariables(
 				WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));

@@ -66,7 +66,6 @@ import java.util.StringTokenizer;
 /**
  * The Class SettingsController.
  */
-@Transactional
 public abstract class SettingsController extends AbstractBaseFieldbookController {
 
 	/** The Constant LOG. */
@@ -102,10 +101,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	@Resource
 	protected OntologyService ontologyService;
-
-	@Resource
-	protected SampleListService sampleListService;
-
 
 
 	/**

@@ -61,7 +61,6 @@ import java.util.StringTokenizer;
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
-@Transactional
 public abstract class BaseTrialController extends SettingsController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BaseTrialController.class);
@@ -581,10 +580,6 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		return advanceList;
-	}
-
-	protected List<SampleListDTO> getSampleList(final Integer trialId) {
-		return this.sampleListService.getSampleLists(trialId);
 	}
 
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {

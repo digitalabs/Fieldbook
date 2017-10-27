@@ -163,7 +163,7 @@
 		function convertToEnvironmentListView(environments, preferredLocationVariable, trialInstanceIndex) {
 
 			var environmentListView = [];
-			angular.forEach($scope.data.environments, function(environment, key) {
+			angular.forEach(environments, function(environment) {
 				environmentListView.push({ name: environment.managementDetailValues[preferredLocationVariable]
 					, variableId: preferredLocationVariable, trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]});
 			});

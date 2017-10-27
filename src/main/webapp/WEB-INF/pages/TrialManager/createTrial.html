@@ -400,7 +400,7 @@
 
 <div class="row">
 	<div class="col-xs-6 col-md-6">
-		<div id="Managersample-list" th:include="/TrialManager/templates/managerSampleListModal"></div>
+		<div id="Managersample-list" th:include="/TrialManager/templates/selectSelectionVariableToSampleListModal"></div>
 	</div>
 </div>
 
@@ -418,6 +418,10 @@
 
 <div class="row">
     <div th:include="/Common/includes/saveList"></div>
+</div>
+
+<div class="row">
+	<div th:include="/TrialManager/templates/saveSampleList"></div>
 </div>
 
 <div class="row">
@@ -458,7 +462,8 @@
 <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/trial-data-manager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentModal.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/trialmanager/sampleList.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/selectSelectionVariableToSampleList.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentToSampleList.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 
 

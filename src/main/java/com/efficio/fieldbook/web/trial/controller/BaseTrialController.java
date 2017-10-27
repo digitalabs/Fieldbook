@@ -44,9 +44,9 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.SampleList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
@@ -580,10 +580,6 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		return advanceList;
-	}
-
-	protected List<SampleListDTO> getSampleList(final Integer trialId) {
-		return this.fieldbookMiddlewareService.getSampleLists(trialId);
 	}
 
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {

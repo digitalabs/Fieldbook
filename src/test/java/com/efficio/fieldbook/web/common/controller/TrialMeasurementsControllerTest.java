@@ -943,7 +943,7 @@ public class TrialMeasurementsControllerTest {
 	}
 
 	@Test
-	public void testAddDataTableDataMapForCategoricalVariableBlankMeasurementDto() {
+	public void testConvertForCategoricalVariableBlankMeasurementDto() {
 
 		Map<String, Object> dataMap = new HashMap<>();
 
@@ -966,7 +966,7 @@ public class TrialMeasurementsControllerTest {
 
 
 	@Test
-	public void testAddDataTableDataMapForCategoricalVariableTraitValueIsOutOfRangeFromCategoricalValues() {
+	public void testConvertForCategoricalVariableTraitValueIsOutOfRangeFromCategoricalValues() {
 
 		Map<String, Object> dataMap = new HashMap<>();
 
@@ -990,7 +990,7 @@ public class TrialMeasurementsControllerTest {
 
 
 	@Test
-	public void testAddDataTableDataMapForCategoricalVariableTraitValueIsWithinCategoricalValues() {
+	public void testConvertForCategoricalVariableTraitValueIsWithinCategoricalValues() {
 
 		Map<String, Object> dataMap = new HashMap<>();
 

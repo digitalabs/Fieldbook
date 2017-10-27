@@ -721,7 +721,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				if (variable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
 
 					dataMap.put(measurementVariable.getName(),this.convertForCategoricalVariable(variable, data.getVariableValue(),
-							String.valueOf(data.getPhenotypeId()), false));
+							data.getPhenotypeId(), false));
 
 				} else if (variable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
 					dataMap.put(measurementVariable.getName(),
@@ -870,7 +870,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 						.getVariable(this.contextUtil.getCurrentProgramUUID(), columnVariable.getTermId(), true, false);
 
 				if (variable.getScale().getDataType().getId() == TermId.CATEGORICAL_VARIABLE.getId()) {
-					dataMap.put(additionalDesignCols.getLeft(), convertForCategoricalVariable(variable, additionalDesignCols.getRight(), "", true));
+					dataMap.put(additionalDesignCols.getLeft(), convertForCategoricalVariable(variable, additionalDesignCols.getRight(), null , true));
 				} else {
 					dataMap.put(additionalDesignCols.getLeft(), new Object[] { additionalDesignCols.getRight() });
 				}
@@ -882,7 +882,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	Object[] convertForCategoricalVariable(final Variable variable, final String variableValue, final String phenotypeId,
+	Object[] convertForCategoricalVariable(final Variable variable, final String variableValue, final Integer phenotypeId,
 			final boolean isFactor) {
 
 		if (StringUtils.isBlank(variableValue)) {

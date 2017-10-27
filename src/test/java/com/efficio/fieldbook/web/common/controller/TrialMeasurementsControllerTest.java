@@ -951,14 +951,11 @@ public class TrialMeasurementsControllerTest {
 		final int aleucolPhenotypeId = 456;
 		final String aleucolPhenotypeTraitValue = "";
 
-		final MeasurementDto measurementDto = new MeasurementDto(new MeasurementVariableDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
+		final MeasurementDto measurementDto = new MeasurementDto(new MeasurementVariableDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME),
+				aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
-		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap , ALEUCOL_1_5_TRAIT_NAME, "");
-
-		assertThat(1, is(equalTo(dataMap.size())));
-		assertThat(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME) ,is(true));
-
-		Object[] values = (Object[]) dataMap.get(ALEUCOL_1_5_TRAIT_NAME);
+		Object[] values = trialMeasurementsController.convertForCategoricalVariable(measurementVariable, measurementDto.getVariableValue(),
+				measurementDto.getPhenotypeId(), false);
 
 		assertThat("", is(equalTo(values[0])));
 		assertThat("", is(equalTo(values[1])));
@@ -981,12 +978,8 @@ public class TrialMeasurementsControllerTest {
 
 		final MeasurementDto measurementDto = new MeasurementDto(new MeasurementVariableDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
-		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap , ALEUCOL_1_5_TRAIT_NAME, "");
-
-		assertThat(1, is(equalTo(dataMap.size())));
-		assertThat(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME) ,is(true));
-
-		Object[] values = (Object[]) dataMap.get(ALEUCOL_1_5_TRAIT_NAME);
+		Object[] values = trialMeasurementsController.convertForCategoricalVariable(measurementVariable, measurementDto.getVariableValue(),
+				measurementDto.getPhenotypeId(), false);
 
 		assertThat(aleucolPhenotypeTraitValue, is(equalTo(values[0])));
 		assertThat(aleucolPhenotypeTraitValue, is(equalTo(values[1])));
@@ -1009,12 +1002,8 @@ public class TrialMeasurementsControllerTest {
 
 		final MeasurementDto measurementDto = new MeasurementDto(new MeasurementVariableDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
-		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap ,ALEUCOL_1_5_TRAIT_NAME, "");
-
-		assertThat(1, is(equalTo(dataMap.size())));
-		assertThat(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME) ,is(true));
-
-		Object[] values = (Object[]) dataMap.get(ALEUCOL_1_5_TRAIT_NAME);
+		Object[] values = trialMeasurementsController.convertForCategoricalVariable(measurementVariable, measurementDto.getVariableValue(),
+				measurementDto.getPhenotypeId(), false);
 
 		assertThat(aleucolPhenotypeTraitValue, is(equalTo(values[0])));
 		assertThat("AAA Definition 1", is(equalTo(values[1])));
@@ -1157,7 +1146,7 @@ public class TrialMeasurementsControllerTest {
 		final ObservationDto observationDto = observations.get(0);
 
 		// Method to test
-		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto, "");
+		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto);
 
 		assertThat("Expected a non-null data map.", dataMap.size(),is(not(equalTo(0))));
 		assertThat(String.valueOf(observationDto.getMeasurementId()), is(equalTo(dataMap.get(EXPERIMENT_ID))));
@@ -1183,7 +1172,7 @@ public class TrialMeasurementsControllerTest {
 		final ObservationDto observationDto = observations.get(0);
 
 		// Method to test
-		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto, "");
+		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto);
 
 		// Verify that values exist for retained traits but deleted trait is not included in data map
 		assertThat(dataMap.get(this.measurementNumeric.getMeasurementVariable().getName()),is(not(nullValue())));

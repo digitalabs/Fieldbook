@@ -93,7 +93,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			model.addAttribute("fieldbookWebLink",
 					WorkbenchAppPathResolver.getFullWebAddress(this.etlService.getFieldbookWebTool().getPath()));
 
-			final Map<String, List<Integer>> tmp = new HashMap<String, List<Integer>>();
+			final Map<String, List<Integer>> tmp = new HashMap<>();
 			for (final PhenotypicType type : PhenotypicType.values()) {
 				tmp.put(type.toString(), type.getTypeStorages());
 			}
@@ -148,21 +148,21 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
 
 			final Map<String, List<Message>> messages = this.etlService.validateProjectOntology(importData);
-			final Map<String, List<String>> proxy = new HashMap<String, List<String>>();
+			final Map<String, List<String>> proxy = new HashMap<>();
 
-			final Set<String> vars = new HashSet<String>();
+			final Set<String> vars = new HashSet<>();
 			for (final VariableDTO variable : variables) {
 				if (variable.getId() == null) {
 					final Message message = new Message("error.header.no.mapping");
 					message.setMessageParams(new String[] {variable.getHeaderName()});
-					final List<Message> messageList = new ArrayList<Message>();
+					final List<Message> messageList = new ArrayList<>();
 					messageList.add(message);
 					proxy.put(variable.getHeaderName(), this.etlService.convertMessageList(messageList));
 				}
 				if (!vars.add(variable.getHeaderName())) {// duplicate
 					final Message message = new Message("error.duplicate.local.variable");
 					message.setMessageParams(new String[] {variable.getHeaderName()});
-					final List<Message> messageList = new ArrayList<Message>();
+					final List<Message> messageList = new ArrayList<>();
 					messageList.add(message);
 					proxy.put(variable.getHeaderName() + ":" + variable.getId(), this.etlService.convertMessageList(messageList));
 				}
@@ -178,8 +178,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 		} catch (final IOException e) {
 			AngularMapOntologyController.LOG.error(e.getMessage(), e);
-			final Map<String, List<String>> errorMap = new HashMap<String, List<String>>();
-			final List<Message> error = new ArrayList<Message>();
+			final Map<String, List<String>> errorMap = new HashMap<>();
+			final List<Message> error = new ArrayList<>();
 			error.add(new Message(Constants.MESSAGE_KEY_GENERIC_ERROR));
 			errorMap.put(Constants.GLOBAL, this.etlService.convertMessageList(error));
 			return errorMap;
@@ -244,7 +244,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 		} catch (final Exception e) {
 			AngularMapOntologyController.LOG.error(e.getMessage(), e);
-			final List<Message> error = new ArrayList<Message>();
+			final List<Message> error = new ArrayList<>();
 			error.add(new Message(Constants.MESSAGE_KEY_GENERIC_ERROR));
 			final List<String> errorMessages = this.etlService.convertMessageList(error);
 			return this.wrapFormResult(errorMessages);

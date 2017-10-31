@@ -229,6 +229,10 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			// if it is not available as it is necessary in displaying the PLOT_ID column in measurements table.
 			this.fieldbookService.addMeasurementVariableToList(plotIdMeasurementVariable, importData.getFactors());
 
+			//Add the STUDY_UID variable to make sure that user logged in during the import will be set as the owner
+			final MeasurementVariable userIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.STUDY_UID.getId()), String.valueOf(this.contextUtil.getCurrentUserLocalId()), Operation.ADD, PhenotypicType.STUDY);
+			this.fieldbookService.addMeasurementVariableToList(userIdMeasurementVariable, importData.getConditions());
+			
 			this.etlService.saveProjectOntology(importData, this.contextUtil.getCurrentProgramUUID());
 
 			this.userSelection.setStudyId(importData.getStudyDetails().getId());

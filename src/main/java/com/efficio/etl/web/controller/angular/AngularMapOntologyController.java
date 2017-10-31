@@ -1,13 +1,18 @@
 
 package com.efficio.etl.web.controller.angular;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.AbstractBaseETLController;
-import com.efficio.etl.web.bean.FileUploadForm;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.bean.VariableDTO;
-import com.efficio.etl.web.validators.FileUploadFormValidator;
-import com.efficio.fieldbook.service.api.FieldbookService;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
@@ -28,16 +33,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.AbstractBaseETLController;
+import com.efficio.etl.web.bean.FileUploadForm;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.bean.VariableDTO;
+import com.efficio.etl.web.validators.FileUploadFormValidator;
+import com.efficio.fieldbook.service.api.FieldbookService;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -77,12 +79,14 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 		try {
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
-			final List<String> headers = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, Boolean.FALSE);
+			final List<String> headers = this.etlService.retrieveColumnHeaders(workbook, this.userSelection,
+					Boolean.FALSE);
 
-			final Map<PhenotypicType, List<VariableDTO>> headerMap =
-					this.etlService.prepareInitialCategorization(headers, this.userSelection);
+			final Map<PhenotypicType, List<VariableDTO>> headerMap = this.etlService
+					.prepareInitialCategorization(headers, this.userSelection);
 
-			// null key is used to store variabledtos not initially mapped to any standard variable (and thus, any phenotypic type)
+			// null key is used to store variabledtos not initially mapped to
+			// any standard variable (and thus, any phenotypic type)
 			model.addAttribute("headerList", headerMap.get(null));
 			model.addAttribute("trialEnvironmentList", headerMap.get(PhenotypicType.TRIAL_ENVIRONMENT));
 			model.addAttribute("trialDesignList", headerMap.get(PhenotypicType.TRIAL_DESIGN));
@@ -134,8 +138,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, List<String>> processImport(@RequestBody final VariableDTO[] variables, final HttpSession session,
-			final HttpServletRequest request) {
+	public Map<String, List<String>> processImport(@RequestBody final VariableDTO[] variables,
+			final HttpSession session, final HttpServletRequest request) {
 
 		try {
 
@@ -145,7 +149,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			this.etlService.mergeVariableData(variables, workbook, this.userSelection);
 
-			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
+			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService
+					.convertToWorkbook(this.userSelection);
 
 			final Map<String, List<Message>> messages = this.etlService.validateProjectOntology(importData);
 			final Map<String, List<String>> proxy = new HashMap<>();
@@ -154,17 +159,18 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			for (final VariableDTO variable : variables) {
 				if (variable.getId() == null) {
 					final Message message = new Message("error.header.no.mapping");
-					message.setMessageParams(new String[] {variable.getHeaderName()});
+					message.setMessageParams(new String[] { variable.getHeaderName() });
 					final List<Message> messageList = new ArrayList<>();
 					messageList.add(message);
 					proxy.put(variable.getHeaderName(), this.etlService.convertMessageList(messageList));
 				}
 				if (!vars.add(variable.getHeaderName())) {// duplicate
 					final Message message = new Message("error.duplicate.local.variable");
-					message.setMessageParams(new String[] {variable.getHeaderName()});
+					message.setMessageParams(new String[] { variable.getHeaderName() });
 					final List<Message> messageList = new ArrayList<>();
 					messageList.add(message);
-					proxy.put(variable.getHeaderName() + ":" + variable.getId(), this.etlService.convertMessageList(messageList));
+					proxy.put(variable.getHeaderName() + ":" + variable.getId(),
+							this.etlService.convertMessageList(messageList));
 				}
 			}
 
@@ -187,7 +193,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 	}
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public String uploadFile(@ModelAttribute("uploadForm") final FileUploadForm uploadForm, final BindingResult result, final Model model) {
+	public String uploadFile(@ModelAttribute("uploadForm") final FileUploadForm uploadForm, final BindingResult result,
+			final Model model) {
 		final FileUploadFormValidator validator = new FileUploadFormValidator();
 		validator.validate(uploadForm, result);
 
@@ -215,24 +222,29 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			this.userSelection.clearMeasurementVariables();
 
-
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			this.etlService.mergeVariableData(variables, workbook, this.userSelection);
 
-			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
+			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService
+					.convertToWorkbook(this.userSelection);
 
-			final MeasurementVariable plotIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "",
-					Operation.ADD, PhenotypicType.GERMPLASM);
+			final MeasurementVariable plotIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(
+					String.valueOf(TermId.PLOT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM);
 			plotIdMeasurementVariable.setFactor(true);
 
-			// PLOT_ID is not required in processing the Fieldbook data file, but we need to add it in the background
-			// if it is not available as it is necessary in displaying the PLOT_ID column in measurements table.
+			// PLOT_ID is not required in processing the Fieldbook data file,
+			// but we need to add it in the background
+			// if it is not available as it is necessary in displaying the
+			// PLOT_ID column in measurements table.
 			this.fieldbookService.addMeasurementVariableToList(plotIdMeasurementVariable, importData.getFactors());
 
-			//Add the STUDY_UID variable to make sure that user logged in during the import will be set as the owner
-			final MeasurementVariable userIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.STUDY_UID.getId()), String.valueOf(this.contextUtil.getCurrentUserLocalId()), Operation.ADD, PhenotypicType.STUDY);
+			// Add the STUDY_UID variable to make sure that user logged in
+			// during the import will be set as the owner
+			final MeasurementVariable userIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(
+					String.valueOf(TermId.STUDY_UID.getId()), String.valueOf(this.contextUtil.getCurrentUserLocalId()),
+					Operation.ADD, PhenotypicType.STUDY);
 			this.fieldbookService.addMeasurementVariableToList(userIdMeasurementVariable, importData.getConditions());
-			
+
 			this.etlService.saveProjectOntology(importData, this.contextUtil.getCurrentProgramUUID());
 
 			this.userSelection.setStudyId(importData.getStudyDetails().getId());

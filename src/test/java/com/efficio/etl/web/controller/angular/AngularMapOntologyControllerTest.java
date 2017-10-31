@@ -6,6 +6,7 @@ import com.efficio.etl.web.bean.VariableDTO;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import junit.framework.Assert;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -63,10 +64,12 @@ public class AngularMapOntologyControllerTest {
 	@Test
 	public void testConfirmImport() throws IOException {
 
-		final MeasurementVariable plotIdMeasurementVariable = new MeasurementVariable();
-		plotIdMeasurementVariable.setTermId(TermId.PLOT_ID.getId());
-		plotIdMeasurementVariable.setName(TermId.PLOT_ID.name());
+		final MeasurementVariable plotIdMeasurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.PLOT_ID.getId(), TermId.PLOT_ID.name(), null);
 		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM)).thenReturn(plotIdMeasurementVariable);
+		
+		final MeasurementVariable userIdMeasurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.STUDY_UID.getId(), TermId.STUDY_UID.name(), "");
+		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.STUDY_UID.getId()), String.valueOf(this.contextUtil.getCurrentUserLocalId()),
+				Operation.ADD, PhenotypicType.STUDY)).thenReturn(userIdMeasurementVariable);
 
 		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
 		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1, false);
@@ -81,6 +84,8 @@ public class AngularMapOntologyControllerTest {
 		Mockito.verify(this.etlService).mergeVariableData(variables, apacheWorkbook, this.userSelection);
 		Mockito.verify(this.fieldbookService)
 				.addMeasurementVariableToList(plotIdMeasurementVariable, workbook.getFactors());
+		Mockito.verify(this.fieldbookService)
+			.addMeasurementVariableToList(userIdMeasurementVariable, workbook.getConditions());
 		Mockito.verify(this.etlService).saveProjectOntology(workbook, PROGRAM_UUID);
 
 		Mockito.verify(this.userSelection).setStudyId(workbook.getStudyDetails().getId());

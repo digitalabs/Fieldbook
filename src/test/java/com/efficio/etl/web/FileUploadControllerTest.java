@@ -95,6 +95,7 @@ public class FileUploadControllerTest {
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 	private MeasurementVariable plotIdMeasurementVariable;
+	private MeasurementVariable  userIdMeasurementVariable;
 
 	@InjectMocks
 	private FileUploadController fileUploadController;
@@ -120,11 +121,14 @@ public class FileUploadControllerTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FileUploadControllerTest.PROGRAM_UUID);
 
-		this.plotIdMeasurementVariable = new MeasurementVariable();
-		this.plotIdMeasurementVariable.setTermId(TermId.PLOT_ID.getId());
-		this.plotIdMeasurementVariable.setName(TermId.PLOT_ID.name());
+		this.plotIdMeasurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.PLOT_ID.getId(), TermId.PLOT_ID.name(), null); 
 		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "",
 				Operation.ADD, PhenotypicType.GERMPLASM)).thenReturn(this.plotIdMeasurementVariable);
+		
+		this.userIdMeasurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.STUDY_UID.getId(), TermId.STUDY_UID.name(), "");
+		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.STUDY_UID.getId()), String.valueOf(this.contextUtil.getCurrentUserLocalId()),
+				Operation.ADD, PhenotypicType.STUDY)).thenReturn(this.userIdMeasurementVariable);
+		
 		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class),
 				Matchers.anyString())).thenReturn(null);
@@ -179,6 +183,8 @@ public class FileUploadControllerTest {
 
 		Mockito.verify(this.fieldbookService).addMeasurementVariableToList(this.plotIdMeasurementVariable,
 				workbook.getFactors());
+		Mockito.verify(this.fieldbookService).addMeasurementVariableToList(this.userIdMeasurementVariable,
+				workbook.getConditions());
 		Mockito.verify(this.fieldbookService).addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable,
 				workbook.getObservations());
 		Mockito.verify(this.dataImportService).saveDataset(workbook, FileUploadControllerTest.PROGRAM_UUID,
@@ -210,6 +216,8 @@ public class FileUploadControllerTest {
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
+		.addMeasurementVariableToList(this.userIdMeasurementVariable, workbook.getConditions());
+		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,
 				FileUploadControllerTest.PROGRAM_UUID, FileUploadControllerTest.PROJECT_CODE_PREFIX);
@@ -237,6 +245,8 @@ public class FileUploadControllerTest {
 
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
+		Mockito.verify(this.fieldbookService, Mockito.times(0))
+		.addMeasurementVariableToList(this.userIdMeasurementVariable, workbook.getConditions());
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,

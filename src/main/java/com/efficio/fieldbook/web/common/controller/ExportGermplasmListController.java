@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.util.FileUtils;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -63,7 +64,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 
 		String[] clientVisibleColumnTermIds = exportGermplasmListForm.getGermplasmListVisibleColumns().split(",");
 
-		Boolean isNursery = "N".equals(studyType);
+		Boolean isNursery = StudyType.N.getName().equals(studyType);
 		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnsMap(clientVisibleColumnTermIds, isNursery);
 
 		return this.doExport(exportType, response, req, visibleColumnsMap, isNursery);

@@ -928,7 +928,7 @@ public class ETLServiceImpl implements ETLService {
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
 		final String studyType = this.getCellStringValue(sheet, ETLServiceImpl.STUDY_TYPE_ROW_INDEX - rowAdjustMent,
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		StudyType studyTypeValue = StudyType.getStudyType(studyType);
+		StudyType studyTypeValue = StudyType.getStudyTypeByName(studyType);
 		if (studyTypeValue == null) {
 			studyTypeValue = StudyType.N;
 		}

@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.common.controller;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.UnpermittedDeletionException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -72,7 +73,7 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 
 			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentUserLocalId());
 
-			if ("N".equals(studyType)) {
+			if (StudyType.N.getName().equals(studyType)) {
 				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,
 						GermplasmListType.NURSERY);
 

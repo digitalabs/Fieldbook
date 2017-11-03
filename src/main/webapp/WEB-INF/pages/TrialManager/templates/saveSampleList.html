@@ -1,0 +1,222 @@
+<div class="modal fade" id="saveSampleListTreeModal" tabindex="-1" role="dialog" aria-labelledby="saveSampleListTreeModal" aria-hidden="true">
+	<div class="modal-dialog modal-large">
+		<div class="modal-content">
+
+			<div class="modal-body">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{trial.sample.header}">Create sample
+							list</label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="closeSaveListTreeModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					</div>
+				</div>
+				<div class="row form-group">
+					<div id="page-advance-modal-message"></div>
+				</div>
+				<div class="separator"></div>
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">
+						<br></br>
+						<label class="modal-title fbk-modal-title" id="sample-heading-modal" th:text="#{trial.sample.save.list.header}">SAVE SAMPLE LIST</label>
+						<div>
+							<label class=""><em th:utext="#{trial.sample.list.mandatory.fields}">* Indicates mandatory
+								fields</em></label>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div id="page-save-list-message-modal" class="col-xs-12 col-md-12">
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-6 col-md-6">
+						<div style="margin-left: -10px" class="col-xs-6 col-md-6">
+							<label class="control-label"><strong class="sub-content-heading">List Location</strong></label>
+						</div>
+						<div style="margin-left: 10px" class="col-xs-6 col-md-6">
+							<div style="float: right; ">
+								<img onclick="javascript: ListTreeOperation.addSampleFolder(this)" th:src="@{/static/img/add2.png}" class="image-padding browse-sample-action"/>
+								<img onclick="javascript: ListTreeOperation.renameSampleFolder(this)" th:src="@{/static/img/edit.png}" class="image-padding browse-sample-action edit-germplasm-folder"/>
+								<img onclick="javascript: ListTreeOperation.deleteSampleFolder(this)" th:src="@{/static/img/delete.png}" class="image-padding browse-sample-action delete-germplasm-folder"/>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-6 col-md-6">
+						<div style="top: 8px; left: -15px" class="col-xs-12 col-md-12">
+							<label class="control-label"><strong class="sub-content-heading">List Details</strong></label>
+						</div>
+					</div>
+				</div>
+
+				<div class="row form-group">
+					<div class="col-xs-6 col-md-6">
+						<div class="form-horizontal form-group">
+							<div id="addSampleFolderDiv" class="fbk-hide">
+								<div class="col-xs-4 col-md-4 nopadding">
+									<label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name: <span class="required">*</span></label>
+								</div>
+								<div class="col-xs-8 col-md-8 nopadding">
+									<div class="input-group">
+										<input id="addFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="SaveSampleList.folderChangeKeypress(event, '1');"/>
+										<span class="input-group-btn">
+                                     <button class="btn btn-success" id="addSampleFolderOkButton" onclick="javascript: ListTreeOperation.createSampleFolder()">
+                                         <span class="glyphicon glyphicon-ok"></span>
+                                     </button>
+                                     <button class="btn btn-danger" id="addSampleFolderCancelButton" onclick="javascript: ListTreeOperation.hideFolderDiv('#addSampleFolderDiv')">
+                                         <span class="glyphicon glyphicon-remove"></span>
+                                     </button>
+                                 </span>
+									</div>
+								</div>
+								<div class="clearfix"></div>
+							</div>
+							<div id="renameSampleFolderDiv" class="fbk-hide">
+								<div class="col-xs-4 col-md-4 nopadding">
+									<label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder
+										Name: <span class="required">*</span></label>
+								</div>
+								<div class="col-xs-8 col-md-8 nopadding">
+									<div class="input-group">
+										<input id="renameFolderName" name="renameFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="SaveSampleList.folderChangeKeypress(event, '2');"/>
+										<span class="input-group-btn">
+                                      <button class="btn btn-success" id="renameSampleFolderOkButton" onclick="javascript: ListTreeOperation.submitRenameSampleListFolder()">
+                                          <span class="glyphicon glyphicon-ok"></span>
+                                      </button>
+                                      <button class="btn btn-danger" id="renameSampleFolderCancelButton" onclick="javascript: ListTreeOperation.hideFolderDiv('#renameSampleFolderDiv')">
+                                          <span class="glyphicon glyphicon-remove"></span>
+                                      </button>
+                                  </span>
+									</div>
+								</div>
+								<div class="clearfix"></div>
+							</div>
+						</div>
+						<div class="clearfix"></div>
+						<div id="sampleFolderTree" style="height:350px; overflow:auto;"></div>
+					</div>
+<!--
+					<div class="col-xs-6 col-md-6" id="saveGermplasmRightSection">
+-->
+					<div class="col-xs-6 col-md-6">
+						<div class="row form-group">
+							<div class="col-xs-5 col-md-5">
+								<label class="control-label label-bold" th:text="#{germplasm.save.list.name.label}">List Name:</label><span class="required">*</span>
+							</div>
+							<div class="col-xs-7 col-md-7">
+								<input type="text" id="sampleListName" class="form-control" value=""/>
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-xs-5 col-md-5">
+								<label class="control-label label-bold" th:text="#{germplasm.save.list.owner.label}">List Owner:</label>
+							</div>
+							<div class="col-xs-7 col-md-7">
+								<label class="control-label" id="sampleListOwner"></label>
+							</div>
+						</div>
+
+						<div class="row form-group">
+							<div class="col-xs-5 col-md-5">
+								<label class="control-label label-bold" th:text="#{germplasm.save.list.description.label}">List
+									Description:</label>
+							</div>
+							<div class="col-xs-7 col-md-7">
+								<textarea rows="5" cols="20" class="form-control" id="sampleListDescription"/>
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-xs-5 col-md-5">
+								<label class="control-label label-bold" th:text="#{germplasm.save.list.type.label}">List Type:</label>
+							</div>
+							<div class="col-xs-7 col-md-7">
+								<label class="control-label">SAMPLE LIST</label>
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-xs-5 col-md-5">
+								<label class="control-label label-bold" th:text="#{germplasm.save.list.date.label}">List Date:</label><span class="required">*</span>
+							</div>
+							<div class="col-xs-7 col-md-7" data-date="" data-date-format="yyyymmdd">
+								<input placeholder="yyyy-mm-dd" type="text" id="sampleListDate" class="form-control date-input" value="" style="width: 100px"/>
+								<label for="sampleListDate" class="btn datepicker">
+									<img width="20" height="22" th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;"/>
+								</label>
+							</div>
+						</div>
+
+						<div class="row form-group">
+							<div class="col-xs-5 col-md-5">
+								<label class="control-label label-bold" th:text="#{germplasm.save.list.notes.label}">Notes:</label>
+							</div>
+							<div class="col-xs-7 col-md-7">
+								<textarea rows="5" cols="20" class="form-control" id="sampleListNotes"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+				<button type="button" class="btn btn-primary" th:text="#{common.form.save.text}" id="submitSampleList" disabled="disabled" onclick="javascript: SaveSampleList.save();">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="deleteSampleListFolderModal" role="dialog" aria-labelledby="deleteSampleListFolderModal" aria-hidden="true" style="overflow: hidden">
+	<div class="modal-dialog modal-extra-small">
+		<div class="modal-content">
+			<div class="modal-body" id="manageCheckTypesModalBody">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}"></label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button id="closeDeleteFolderModal" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('deleteSampleListFolderModal')"/>
+					</div>
+				</div>
+
+				<div class="row">
+					<div id="page-delete-message-modal" class="col-xs-12 col-md-12">
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12 add_top_padding text-center">
+						<label class="control-label" id="delete-SampleList-folder-confirm"></label>
+					</div>
+				</div>
+
+			</div>
+			<div class="modal-footer addVariable-footer">
+				<button type="button" class="btn btn-default" onclick="javascript: closeModal('deleteSampleListFolderModal')" th:text="#{common.form.no.text}">Cancel</button>
+				<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.yes.text}" onclick="javascript: ListTreeOperation.submitDeleteSampleFolder();">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="list-tree-include" th:include="/Common/includes/listTreeInclude"></div>
+
+<div layout:fragment="page-script">
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/saveSampleList.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/nursery-manager/listTreeOperation.js}"></script>
+	<script type="text/javascript" th:inline="javascript">
+		$(document).ready(function() {
+			$('#saveSampleListTreeModal select').select2({minimumResultsForSearch: 20});
+
+			if ($('.date-input').length > 0) {
+				$('.date-input').each(function() {
+					$(this).datepicker({'format': 'yyyy-mm-dd'}).on('changeDate', function() {
+						$(this).datepicker('hide');
+
+					}).on('show', function() {
+						treeReloading = 1;
+					}).on('hide', function() {
+						setTimeout(function() {treeReloading = 0;}, 1000);
+					});
+				});
+			}
+			SaveSampleList.initializeSampleListTree();
+		});
+	</script>
+</div>

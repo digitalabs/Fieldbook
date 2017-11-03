@@ -34,6 +34,7 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.samplelist.SampleListDTO;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -47,6 +48,7 @@ import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Assert;
 import org.junit.Before;
@@ -150,6 +152,9 @@ public class OpenTrialControllerTest {
 	@InjectMocks
 	private OpenTrialController openTrialController;
 
+	@Mock
+	private SampleListService sampleListService;
+
 	@Before
 	public void setUp() {
 		final Project project = this.createProject();
@@ -177,6 +182,9 @@ public class OpenTrialControllerTest {
 		final VariableTypeList factors = Mockito.mock(VariableTypeList.class);
 		Mockito.when(factors.findById(Matchers.anyInt())).thenReturn(null);
 		Mockito.when(this.studyDataManager.getAllStudyFactors(Matchers.anyInt())).thenReturn(factors);
+		final List<SampleListDTO> sampleListDTOs = new ArrayList<>();
+		Mockito.when(this.sampleListService.getSampleLists(Matchers.anyInt())).thenReturn(sampleListDTOs);
+
 
 	}
 
@@ -938,6 +946,12 @@ public class OpenTrialControllerTest {
 				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(1, "STD"));
 		Mockito.when(this.variableDataManager.getVariable(Matchers.anyString(), Matchers.anyInt(),
 				Matchers.anyBoolean(), Matchers.anyBoolean())).thenReturn(VariableTestDataInitializer.createVariable());
+
+		// Verify that workbook has Analysis and/or Analysis Summary variables
+		// beforehand to check that they were later removed
+		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConditions()));
+		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConstants()));
+
 		final Map<String, Object> resultMap = this.openTrialController
 				.updateSavedTrial(OpenTrialControllerTest.TRIAL_ID);
 		Assert.assertNotNull(resultMap.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
@@ -952,6 +966,10 @@ public class OpenTrialControllerTest {
 				.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(workbook.getConditions()));
 		Mockito.verify(this.userSelection, Mockito.times(1)).setExpDesignParams(
 				SettingsUtil.convertToExpDesignParamsUi(this.userSelection.getExperimentalDesignVariables()));
+
+		// Verify that Analysis and/or Analysis Summary variables are removed
+		Assert.assertFalse(this.hasAnalysisVariables(workbook.getConditions()));
+		Assert.assertFalse(this.hasAnalysisVariables(workbook.getConstants()));
 	}
 
 	@Test

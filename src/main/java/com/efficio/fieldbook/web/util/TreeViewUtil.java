@@ -11,11 +11,9 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.efficio.pojos.treeview.TreeNode;
+import com.efficio.pojos.treeview.TreeTableNode;
+import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.workbook.generator.RowColumnType;
 import org.generationcp.middleware.domain.dms.DatasetReference;
@@ -30,14 +28,15 @@ import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmFolderMetadata;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListMetadata;
+import org.generationcp.middleware.pojos.SampleList;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.pojos.treeview.TreeNode;
-import com.efficio.pojos.treeview.TreeTableNode;
-import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class TreeViewUtil.
@@ -118,7 +117,7 @@ public class TreeViewUtil {
 	 * @return the list
 	 */
 	private static List<TreeNode> convertReferencesToTreeView(List<Reference> references) {
-		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+		List<TreeNode> treeNodes = new ArrayList<>();
 		if (references != null && !references.isEmpty()) {
 			for (Reference reference : references) {
 				treeNodes.add(TreeViewUtil.convertReferenceToTreeNode(reference));
@@ -134,7 +133,7 @@ public class TreeViewUtil {
 	 * @return the list
 	 */
 	private static List<TreeNode> convertFolderReferencesToTreeView(List<FolderReference> references, boolean isLazy) {
-		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+		List<TreeNode> treeNodes = new ArrayList<>();
 		TreeNode treeNode;
 		if (references != null && !references.isEmpty()) {
 			for (FolderReference reference : references) {
@@ -153,7 +152,7 @@ public class TreeViewUtil {
 
 	public static List<TreeNode> convertStudyFolderReferencesToTreeView(List<Reference> references, boolean isAll, boolean isLazy,
 			boolean isFolderOnly) {
-		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+		List<TreeNode> treeNodes = new ArrayList<>();
 		if (references != null && !references.isEmpty()) {
 			for (Reference reference : references) {
 				// isFolderOnly also comes all the way from UI. Keeping the existing logic. Not entirely sure what it is for.
@@ -176,7 +175,7 @@ public class TreeViewUtil {
 	 * @return the list
 	 */
 	private static List<TreeNode> convertDatasetReferencesToTreeView(List<DatasetReference> references) {
-		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+		List<TreeNode> treeNodes = new ArrayList<>();
 		if (references != null && !references.isEmpty()) {
 			for (DatasetReference reference : references) {
 				treeNodes.add(TreeViewUtil.convertReferenceToTreeNode(reference));
@@ -192,7 +191,7 @@ public class TreeViewUtil {
 	 * @return the list
 	 */
 	public static List<TreeNode> convertGermplasmListToTreeView(List<GermplasmList> germplasmLists, boolean isFolderOnly) {
-		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+		List<TreeNode> treeNodes = new ArrayList<>();
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
 			for (GermplasmList germplasmList : germplasmLists) {
 				TreeNode node = TreeViewUtil.convertGermplasmListToTreeNode(germplasmList, isFolderOnly);
@@ -205,6 +204,26 @@ public class TreeViewUtil {
 	}
 
 	/**
+	 * Convert sample list to tree view.
+	 *
+	 * @param sampleLists the sample lists
+	 * @return the list
+	 */
+	public static List<TreeNode> convertListToTreeView(List<SampleList> sampleLists, boolean isFolderOnly) {
+		final List<TreeNode> treeNodes = new ArrayList<>();
+		if (sampleLists != null && !sampleLists.isEmpty()) {
+			for (final SampleList sampleList : sampleLists) {
+				TreeNode node = TreeViewUtil.convertListToTreeNode(sampleList, isFolderOnly);
+				if (node != null) {
+					treeNodes.add(node);
+				}
+			}
+		}
+		return treeNodes;
+	}
+
+
+	/**
 	 * Convert list of germplasmList to tree table nodes.
 	 *
 	 * @param germplasmLists the germplasm lists
@@ -212,7 +231,7 @@ public class TreeViewUtil {
 	 */
 	public static List<TreeTableNode> convertGermplasmListToTreeTableNodes(List<GermplasmList> germplasmLists,
 			GermplasmListManager germplasmListManager, GermplasmDataManager germplasmDataManager) {
-		List<TreeTableNode> treeTableNodes = new ArrayList<TreeTableNode>();
+		List<TreeTableNode> treeTableNodes = new ArrayList<>();
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
 			
 			final List<UserDefinedField> listTypes =
@@ -285,6 +304,30 @@ public class TreeViewUtil {
 		return treeNode;
 	}
 
+	/**
+	 * Convert sample list to tree node.
+	 *
+	 * @param sampleList the Sample list
+	 * @return the tree node
+	 */
+	private static TreeNode convertListToTreeNode(SampleList sampleList, boolean isFolderOnly) {
+		TreeNode treeNode = new TreeNode();
+
+		treeNode.setKey(sampleList.getId().toString());
+		treeNode.setTitle(sampleList.getListName());
+		treeNode.setIsFolder(sampleList.isFolder());
+		treeNode.setIsLazy(false);
+		if (treeNode.getIsFolder()) {
+			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
+		} else {
+			treeNode.setIcon(AppConstants.BASIC_DETAILS_PNG.getString());
+		}
+		if (isFolderOnly && !treeNode.getIsFolder()) {
+			return null;
+		}
+
+		return treeNode;
+	}
 	/**
 	 * Convert germplasm list to tree node.
 	 *
@@ -442,7 +485,7 @@ public class TreeViewUtil {
 						key = parentId + "_" + key;
 					}
 
-					List<String> token = new ArrayList<String>();
+					List<String> token = new ArrayList<>();
 					token.add(propRef.getName());
 					TypeAheadSearchTreeNode searchTreeNode =
 							new TypeAheadSearchTreeNode(key, token, propRef.getName(), parentTitle, "Property");
@@ -462,7 +505,7 @@ public class TreeViewUtil {
 						if (addVariableToSearch) {
 							String varParentTitle = reference.getName() + " > " + propRef.getName();
 							String varKey = key + "_" + variableRef.getId().toString();
-							List<String> varToken = new ArrayList<String>();
+							List<String> varToken = new ArrayList<>();
 							varToken.add(variableRef.getName());
 							TypeAheadSearchTreeNode varSearchTreeNode =
 									new TypeAheadSearchTreeNode(varKey, varToken, variableRef.getName(), varParentTitle,
@@ -531,7 +574,7 @@ public class TreeViewUtil {
 		treeNode.setIcon(false);
 		treeNode.setIncludeInSearch(false);
 
-		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+		List<TreeNode> treeNodes = new ArrayList<>();
 
 		// this is for the inner trait classes
 		if (reference.getTraitClassChildren() != null && !reference.getTraitClassChildren().isEmpty()) {
@@ -574,7 +617,7 @@ public class TreeViewUtil {
 		String newParentTitle = parentTitle + " > " + reference.getName();
 		treeNode.setParentTitle(newParentTitle);
 		// we need to set the children for the property
-		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+		List<TreeNode> treeNodes = new ArrayList<>();
 		if (reference.getStandardVariables() != null && !reference.getStandardVariables().isEmpty()) {
 			for (StandardVariableReference variableRef : reference.getStandardVariables()) {
 				TreeNode variableTreeNode =
@@ -618,7 +661,7 @@ public class TreeViewUtil {
 		String newParentTitle = parentTitle + " > " + reference.getName();
 		treeNode.setParentTitle(newParentTitle);
 		// we need to set the children for the property
-		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+		List<TreeNode> treeNodes = new ArrayList<>();
 		treeNode.setChildren(treeNodes);
 
 		return treeNode;

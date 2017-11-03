@@ -98,6 +98,7 @@ public class TrialMeasurementsControllerTest {
 	private static final String FIELDMAP_COLUMN = "FIELDMAP_COLUMN";
 	private static final String FIELDMAP_RANGE = "FIELDMAP_RANGE";
 	
+
 	@InjectMocks
 	private TrialMeasurementsController trialMeasurementsController;
 	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
@@ -932,6 +933,12 @@ public class TrialMeasurementsControllerTest {
 		this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				this.measurementCategorical.getMeasurementVariable().getId(), useDifferentLocalName? trait3Name + LOCAL : trait3Name, null));
 
+		this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(ALEUCOL_1_5_TERM_ID
+				, ALEUCOL_1_5_TRAIT_NAME, null));
+
+		this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(
+				this.measurementCategorical.getMeasurementVariable().getId(), useDifferentLocalName? trait3Name + LOCAL : trait3Name, null));
+
 		for (final TermId term : this.standardFactors) {
 			measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(term.getId(), useDifferentLocalName? term.name() + LOCAL : term.name(), null));
 		}
@@ -970,7 +977,7 @@ public class TrialMeasurementsControllerTest {
 
 		Map<String, Object> dataMap = new HashMap<>();
 
-		final Variable measurementVariable = createTestVariable();
+		final Variable measurementVariable = createTestCategoricalVariable();
 
 
 		final int aleucolPhenotypeId = 456;
@@ -994,7 +1001,7 @@ public class TrialMeasurementsControllerTest {
 
 		Map<String, Object> dataMap = new HashMap<>();
 
-		final Variable measurementVariable = createTestVariable();
+		final Variable measurementVariable = createTestCategoricalVariable();
 
 
 		final int aleucolPhenotypeId = 456;
@@ -1105,6 +1112,32 @@ public class TrialMeasurementsControllerTest {
 		final boolean isGidDesigFactorsIncluded = false;
 		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded, doAddNewGermplasmDescriptors, useDifferentLocalNames);
 	}
+
+	@Test
+	public void testAddGermplasmAndPlotFactorsDataToDataMapWithAdditionalDesignFactors() {
+
+		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), ALEUCOL_1_5_TERM_ID, true, false))
+				.thenReturn(this.createTestCategoricalVariable());
+
+		Map<String, Object> dataMap = new HashMap<>();
+		final boolean useDifferentLocalNames = false;
+		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
+
+		final boolean doAddNewGermplasmDescriptors = true;
+		// null because we are not interested in categorical traits for this test method
+		List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
+
+		final ObservationDto observationDto = observations.get(0);
+		// Add categorical design factor
+		observations.get(0).additionalDesignFactor(ALEUCOL_1_5_TRAIT_NAME, "1");
+
+		// Method to test
+		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables);
+
+		assertThat(dataMap, hasKey(ALEUCOL_1_5_TRAIT_NAME));
+		assertThat(dataMap.get(ALEUCOL_1_5_TRAIT_NAME), is(not(nullValue())));
+
+	}
 	
 	@Test
 	public void testUpdateTraits() throws WorkbookParserException {
@@ -1121,10 +1154,11 @@ public class TrialMeasurementsControllerTest {
 		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), true);
 	}
 
-	private Variable createTestVariable() {
+	private Variable createTestCategoricalVariable() {
 
 		final Variable measurementVariable = new Variable();
 		final Scale scale = new Scale();
+		scale.setDataType(DataType.CATEGORICAL_VARIABLE);
 		scale.addCategory(new TermSummary(1, "AAA", "AAA Definition 1"));
 		scale.addCategory(new TermSummary(2, "BBB", "AAA Definition 2"));
 		scale.addCategory(new TermSummary(3, "CCC", "AAA Definition 3"));

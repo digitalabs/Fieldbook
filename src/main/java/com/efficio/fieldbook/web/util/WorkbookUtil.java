@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -97,15 +98,15 @@ public class WorkbookUtil {
 		return null;
 	}
 
-	public static MeasurementVariable getMeasurementVariable(final List<MeasurementVariable> variables, final String variableName) {
+	public static Optional<MeasurementVariable> findMeasurementVariableByName(final List<MeasurementVariable> variables, final String variableName) {
 		if (variables != null && !variables.isEmpty()) {
 			for (final MeasurementVariable variable : variables) {
 				if (variable != null && variableName.equalsIgnoreCase(variable.getName())) {
-					return variable;
+					return Optional.of(variable);
 				}
 			}
 		}
-		return null;
+		return Optional.absent();
 	}
 
 	public static List<MeasurementRow> createMeasurementRowsFromEnvironments(final List<Environment> environments,

@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.google.common.base.Optional;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -862,12 +863,12 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		
 		for (final Pair<String, String> additionalDesignCols : row.getAdditionalDesignFactors()) {
 
-			final MeasurementVariable columnVariable = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, additionalDesignCols.getLeft());
+			final Optional<MeasurementVariable> columnVariable = WorkbookUtil.findMeasurementVariableByName(measurementDatasetVariables, additionalDesignCols.getLeft());
 
-			if (columnVariable != null) {
+			if (columnVariable.isPresent()) {
 
 				final Variable variable = this.ontologyVariableDataManager
-						.getVariable(this.contextUtil.getCurrentProgramUUID(), columnVariable.getTermId(), true, false);
+						.getVariable(this.contextUtil.getCurrentProgramUUID(), columnVariable.get().getTermId(), true, false);
 
 				if (variable.getScale().getDataType().getId() == TermId.CATEGORICAL_VARIABLE.getId()) {
 					dataMap.put(additionalDesignCols.getLeft(), convertForCategoricalVariable(variable, additionalDesignCols.getRight(), null , true));
